@@ -2,7 +2,7 @@
   "name": "proto",
   "version": "0.0.0",
   "description": "Prototype for ELMU",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {},
   "keywords": [],
   "license": "MIT",
@@ -14,6 +14,8 @@
   },
   "private": true,
   "dependencies": {
+    "ejs": "~2.5.7",
+    "express": "~4.16.2",
     "mongodb": "~3.0.2"
   },
   "devDependencies": {

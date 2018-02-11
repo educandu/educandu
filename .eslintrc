@@ -15,6 +15,7 @@
     "max-len": ["off"],
     "no-magic-numbers": ["off"],
     "object-curly-spacing": ["error", "always"],
+    "object-curly-newline": ["error", { "consistent": true }],
     "one-var": ["error", "never"],
     "padded-blocks": ["off"],
     "quote-props": ["error", "consistent-as-needed"],
