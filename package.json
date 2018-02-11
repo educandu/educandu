@@ -16,6 +16,7 @@
   "dependencies": {
     "ejs": "~2.5.7",
     "express": "~4.16.2",
+    "markdown-it": "~8.4.0",
     "mongodb": "~3.0.2"
   },
   "devDependencies": {
