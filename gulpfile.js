@@ -1,8 +1,10 @@
 const del = require('del');
 const gulp = require('gulp');
 const jest = require('jest');
+const less = require('gulp-less');
 const gulpif = require('gulp-if');
 const shell = require('gulp-shell');
+const initDb = require('./init-db');
 const eslint = require('gulp-eslint');
 const { spawn } = require('child_process');
 const { MongoClient } = require('mongodb');
@@ -21,6 +23,10 @@ gulp.task('lint', () => {
 });
 
 gulp.task('test', () => {
+  return jest.runCLI({}, '.');
+});
+
+gulp.task('test:changed', () => {
   return jest.runCLI({ onlyChanged: true }, '.');
 });
 
@@ -28,7 +34,15 @@ gulp.task('test:watch', () => {
   return jest.runCLI({ watch: true }, '.');
 });
 
+gulp.task('less', () => {
+  return gulp.src('src/styles/main.less')
+    .pipe(less())
+    .pipe(gulp.dest('src/static'));
+});
+
 gulp.task('mongo:create', shell.task('docker run --name elmu-mongo -d -p 27017:27017 mongo:3.6.2'));
+
+gulp.task('mongo:seed', initDb);
 
 gulp.task('mongo:wait', done => setTimeout(done, 500));
 
@@ -38,25 +52,33 @@ gulp.task('mongo:user', async () => {
   await client.close();
 });
 
-gulp.task('mongo:up', gulp.series('mongo:create', 'mongo:wait', 'mongo:user'));
+gulp.task('mongo:up', gulp.series('mongo:create', 'mongo:wait', 'mongo:user', 'mongo:seed'));
 
 gulp.task('mongo:down', shell.task('docker rm -f elmu-mongo'));
 
 gulp.task('serve', done => {
+  const createServer = () => {
+    return spawn(process.execPath, ['src/index.js'], {
+      env: { NODE_ENV: 'development' },
+      stdio: 'inherit'
+    });
+  };
   if (server) {
     server.once('exit', () => {
-      server = spawn(process.execPath, ['src/index.js'], { env: { NODE_ENV: 'development' } });
+      server = createServer();
       done();
     });
     server.kill();
   } else {
-    server = spawn(process.execPath, ['src/index.js'], { env: { NODE_ENV: 'development' } });
+    server = createServer();
+    process.on('exit', () => server.kill());
     done();
   }
 });
 
 gulp.task('watch:js', () => {
-  gulp.watch(['**/*.js', '!node_modules/**'], gulp.parallel('lint', 'test', 'serve'));
+  gulp.watch(['**/*.js', '!node_modules/**'], gulp.parallel('lint', 'test:changed', 'serve'));
+  gulp.watch(['**/*.less', '!node_modules/**'], gulp.parallel('less'));
 });
 
 gulp.task('watch', gulp.parallel('serve', 'watch:js'));

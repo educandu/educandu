@@ -1,52 +1,78 @@
 const express = require('express');
-const ArticleRepository = require('./repositories/article-repository');
+const Database = require('./database');
+const { Container } = require('./common/di');
 const MarkdownPlugin = require('./plugins/markdown');
+const expressLayouts = require('express-ejs-layouts');
+const ArticleRepository = require('./repositories/article-repository');
 
-const settings = {
-  port: 3000
-};
+function createApp(articleRepository) {
+  const app = express();
 
-const app = express();
+  app.set('views', `${__dirname}/views`);
+  app.set('view engine', 'ejs');
+  app.use(expressLayouts);
 
-const articleRepository = new ArticleRepository();
+  app.use(express.static(`${__dirname}/static`));
 
-function getPluginForType(type) {
-  switch (type) {
-    case 'markdown':
-      return new MarkdownPlugin();
-    default:
-      throw new Error(`Plugin for type ${type} is not available.`);
+  function getPluginForType(type) {
+    switch (type) {
+      case 'markdown':
+        return new MarkdownPlugin();
+      default:
+        throw new Error(`Plugin for type ${type} is not available.`);
+    }
   }
-}
-
-app.set('views', `${__dirname}/views`);
-app.set('view engine', 'ejs');
-
-app.use(express.static(`${__dirname}/static`));
-
-app.get('/', (req, res) => {
-  res.render('index', { title: 'The index page!' });
-});
-
-app.get('/articles/:articleId', async (req, res) => {
-  const article = await articleRepository.findArticleById(req.articleId);
-  if (!article) {
-    return res.send(404).end();
-  }
-
-  const sections = article.sections.map(section => {
-    const plugin = getPluginForType(section.type);
-    return { html: plugin.renderHtml(section) };
+  app.get('/', (req, res) => {
+    res.render('index', { title: 'The index page!' });
   });
 
-  return res.render('article', { sections });
-});
+  app.get('/articles', async (req, res) => {
+    const articles = await articleRepository.findLastArticles();
+    if (!articles) {
+      return res.send(404).end();
+    }
 
-app.listen(settings.port, err => {
-  if (err) {
-    /* eslint no-console: off */
-    console.error(err);
-  } else {
-    console.log(`Example app listening on port ${settings.port}`);
-  }
-});
+    return res.render('articles', { articles });
+  });
+
+  app.get('/articles/:articleId', async (req, res) => {
+    const article = await articleRepository.findArticleById(req.params.articleId);
+    if (!article) {
+      return res.send(404).end();
+    }
+
+    const sections = article.sections.map(section => {
+      const plugin = getPluginForType(section.type);
+      return { html: plugin.renderHtml(section) };
+    });
+
+    return res.render('article', { sections });
+  });
+
+  return app;
+}
+
+(async function index() {
+
+  const settings = {
+    dbConnectionString: 'mongodb://elmu:elmu@localhost:27017',
+    dbName: 'elmu',
+    port: 3000
+  };
+
+  const container = new Container();
+  container.registerInstance(Database, await Database.create(settings));
+
+  const articleRepository = container.get(ArticleRepository);
+  const app = createApp(articleRepository);
+
+  app.listen(settings.port, err => {
+    if (err) {
+      /* eslint no-console: off */
+      console.error(err);
+    } else {
+      console.log(`Example app listening on port ${settings.port}`);
+    }
+  });
+
+})();
