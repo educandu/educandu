@@ -1,16 +1,18 @@
 const { MongoClient } = require('mongodb');
 
 const DB_COLLECTION_NAME_ARTICLES = 'articles';
+const DB_COLLECTION_NAME_ORDERS = 'orders';
 
 class Database {
   constructor({ mongoClient, dbName }) {
-    this.mongoClient = mongoClient;
-    this.db = this.mongoClient.db(dbName);
-    this.articles = this.db.collection(DB_COLLECTION_NAME_ARTICLES);
+    this._mongoClient = mongoClient;
+    this._db = this._mongoClient.db(dbName);
+    this.articles = this._db.collection(DB_COLLECTION_NAME_ARTICLES);
+    this.orders = this._db.collection(DB_COLLECTION_NAME_ORDERS);
   }
 
   async dispose() {
-    await this.mongoClient.close();
+    await this._mongoClient.close();
   }
 
   static async create({ dbConnectionString, dbName }) {

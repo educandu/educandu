@@ -11,7 +11,7 @@
     "ecmaVersion": 2018
   },
   "rules": {
-    "array-element-newline": ["error", { "multiline": true }],
+    "array-element-newline": ["off"],
     "arrow-parens": ["error", "as-needed"],
     "arrow-body-style": ["off"],
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
@@ -20,11 +20,13 @@
     "func-names": ["error", "as-needed"],
     "func-style": ["off"],
     "indent": ["error", 2, { "SwitchCase": 1 }],
+    "init-declarations": ["off"],
     "max-len": ["off"],
     "multiline-comment-style": ["off"],
     "multiline-ternary": ["error", "always-multiline"],
     "no-magic-numbers": ["off"],
     "no-ternary": ["off"],
+    "no-underscore-dangle": ["off"],
     "object-curly-spacing": ["error", "always"],
     "object-curly-newline": ["error", { "consistent": true }],
     "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
