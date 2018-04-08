@@ -21,4 +21,4 @@ phases:
   build:
     commands:
       - echo Entered the build phase...
-      - yarn run test
+      - yarn run ci
