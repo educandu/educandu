@@ -76,9 +76,11 @@ gulp.task('serve', done => {
   }
 });
 
-// gulp.task('ci', gulp.series('mongo:up', 'test', 'mongo:down'));
+gulp.task('ci:prepare', gulp.series('mongo:up'));
 
-gulp.task('ci', () => console.log('HELLO FROM GULP CI'));
+gulp.task('ci:cleanup', gulp.series('mongo:down'));
+
+gulp.task('ci', gulp.series('clean', 'test'));
 
 gulp.task('watch:js', () => {
   gulp.watch(['**/*.js', '!node_modules/**'], gulp.parallel('lint', 'test:changed', 'serve'));

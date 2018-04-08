@@ -4,6 +4,8 @@
   "description": "Prototype for ELMU",
   "main": "src/index.js",
   "scripts": {
+    "ci:prepare": "gulp ci:prepare",
+    "ci:cleanup": "gulp ci:cleanup",
     "ci": "gulp ci"
   },
   "keywords": [],
