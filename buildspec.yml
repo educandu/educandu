@@ -1,0 +1,24 @@
+version: 0.2
+
+env:
+  variables:
+    NODE_ENV: "production"
+
+phases:
+  install:
+    commands:
+      - echo Entered the install phase...
+      # - sudo apt-get update -y && sudo apt-get install -y make apt-transport-https
+      - curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+      - sudo apt-get update -y && sudo apt-get install -y nodejs build-essential
+      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+      - sudo apt-get update -y && sudo apt-get install -y yarn
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - yarn install
+  build:
+    commands:
+      - echo Entered the build phase...
+      - yarn run test
