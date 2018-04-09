@@ -17,7 +17,7 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - yarn install
+      - yarn install --non-interactive --frozen-lockfile
       - yarn run ci:prepare
   build:
     commands:
