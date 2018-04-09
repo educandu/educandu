@@ -9,6 +9,8 @@ const eslint = require('gulp-eslint');
 const { spawn } = require('child_process');
 const { MongoClient } = require('mongodb');
 
+const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.6.3-0';
+
 let server = null;
 
 gulp.task('clean', () => {
@@ -40,7 +42,7 @@ gulp.task('less', () => {
     .pipe(gulp.dest('src/static'));
 });
 
-gulp.task('mongo:create', shell.task('docker run --name elmu-mongo -d -p 27017:27017 mongo:3.6.2'));
+gulp.task('mongo:create', shell.task(`docker run --name elmu-mongo -d -p 27017:27017 ${TEST_MONGO_IMAGE}`));
 
 gulp.task('mongo:seed', initDb);
 
