@@ -18,12 +18,12 @@ phases:
     commands:
       - echo Entered the pre_build phase...
       - yarn install --non-interactive --frozen-lockfile
-      - ./node_modules/.bin/gulp ci:prepare
+      - yarn run ci:prepare
   build:
     commands:
       - echo Entered the build phase...
-      - ./node_modules/.bin/gulp ci
+      - yarn run ci
   post_build:
     commands:
       - echo Entered the post_build phase...
-      - ./node_modules/.bin/gulp ci:cleanup
+      - yarn run ci:cleanup

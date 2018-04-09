@@ -8,10 +8,30 @@ const initDb = require('./init-db');
 const eslint = require('gulp-eslint');
 const { spawn } = require('child_process');
 const { MongoClient } = require('mongodb');
+const runSequence = require('run-sequence');
 
-const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.6.3-0';
+const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.4.10-0';
 
 let server = null;
+process.on('exit', () => server && server.kill());
+const spawnServer = () => {
+  return spawn(process.execPath, ['src/index.js'], {
+    env: { NODE_ENV: 'development' },
+    stdio: 'inherit'
+  });
+};
+const restartServer = done => {
+  if (server) {
+    server.once('exit', () => {
+      server = spawnServer();
+      done();
+    });
+    server.kill();
+  } else {
+    server = spawnServer();
+    done();
+  }
+};
 
 gulp.task('clean', () => {
   return del(['dist']);
@@ -54,41 +74,23 @@ gulp.task('mongo:user', async () => {
   await client.close();
 });
 
-gulp.task('mongo:up', gulp.series('mongo:create', 'mongo:wait', 'mongo:user', 'mongo:seed'));
+gulp.task('mongo:up', done => {
+  runSequence('mongo:create', 'mongo:wait', 'mongo:user', 'mongo:seed', done);
+});
 
 gulp.task('mongo:down', shell.task('docker rm -f elmu-mongo'));
 
-gulp.task('serve', done => {
-  const createServer = () => {
-    return spawn(process.execPath, ['src/index.js'], {
-      env: { NODE_ENV: 'development' },
-      stdio: 'inherit'
-    });
-  };
-  if (server) {
-    server.once('exit', () => {
-      server = createServer();
-      done();
-    });
-    server.kill();
-  } else {
-    server = createServer();
-    process.on('exit', () => server.kill());
-    done();
-  }
+gulp.task('serve', restartServer);
+
+gulp.task('ci:prepare', ['mongo:up']);
+
+gulp.task('ci:cleanup', ['mongo:down']);
+
+gulp.task('ci', done => runSequence('clean', 'test', done));
+
+gulp.task('watch', ['serve'], () => {
+  gulp.watch(['**/*.js', '!node_modules/**'], ['lint', 'test:changed', 'serve']);
+  gulp.watch(['**/*.less', '!node_modules/**'], ['less']);
 });
 
-gulp.task('ci:prepare', gulp.series('mongo:up'));
-
-gulp.task('ci:cleanup', gulp.series('mongo:down'));
-
-gulp.task('ci', gulp.series('clean', 'test'));
-
-gulp.task('watch:js', () => {
-  gulp.watch(['**/*.js', '!node_modules/**'], gulp.parallel('lint', 'test:changed', 'serve'));
-  gulp.watch(['**/*.less', '!node_modules/**'], gulp.parallel('less'));
-});
-
-gulp.task('watch', gulp.parallel('serve', 'watch:js'));
-
-gulp.task('default', gulp.series('watch'));
+gulp.task('default', ['watch']);

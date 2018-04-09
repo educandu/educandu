@@ -11,6 +11,7 @@ describe('order-repository', () => {
 
   afterAll(async () => {
     await testHelper.dropDatabase(db);
+    await db.dispose();
   });
 
   beforeEach(async () => {
