@@ -1,11 +1,9 @@
 const Database = require('./database');
 
 function createTestDatabase() {
-  const settings = {
-    dbConnectionString: 'mongodb://elmu:elmu@localhost:27017',
-    dbName: `test-${Date.now()}`
-  };
-  return Database.create(settings);
+  const tempDbName = `test-elmu-web-${Date.now()}`;
+  const connStr = `mongodb://elmu:elmu@localhost:27017/${tempDbName}?authSource=admin`;
+  return Database.create(connStr);
 }
 
 function dropDatabase(db) {

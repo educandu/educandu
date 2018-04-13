@@ -1,5 +1,6 @@
 const express = require('express');
 const Database = require('./database');
+const settings = require('./settings');
 const { Container } = require('./common/di');
 const MarkdownPlugin = require('./plugins/markdown');
 const expressLayouts = require('express-ejs-layouts');
@@ -54,14 +55,8 @@ function createApp(articleRepository) {
 
 (async function index() {
 
-  const settings = {
-    dbConnectionString: 'mongodb://elmu:elmu@localhost:27017',
-    dbName: 'elmu',
-    port: 3000
-  };
-
   const container = new Container();
-  container.registerInstance(Database, await Database.create(settings));
+  container.registerInstance(Database, await Database.create(settings.elmuWebConnectionString));
 
   const articleRepository = container.get(ArticleRepository);
   const app = createApp(articleRepository);

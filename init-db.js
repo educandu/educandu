@@ -77,9 +77,9 @@ Curabitur consequat nisi velit, sit amet finibus nibh commodo nec. Cras vel nunc
 
 module.exports = async function initDb() {
 
-  const client = await MongoClient.connect('mongodb://elmu:elmu@localhost:27017');
-  const elmuDb = client.db('elmu');
-  const articles = elmuDb.collection('articles');
+  const client = await MongoClient.connect('mongodb://elmu:elmu@localhost:27017/dev-elmu-web?ssl=false&authSource=admin');
+  const db = client.db();
+  const articles = db.collection('articles');
 
   await articles.insertOne({
     _id: shortid.generate(),
