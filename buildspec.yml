@@ -5,6 +5,9 @@ env:
     NODE_VERSION: "8.11.1"
     YARN_VERSION: "1.5.1"
     NODE_ENV: "development"
+    AWS_ACCOUNT_ID: "344601915837"
+    AWS_DEFAULT_REGION: "eu-central-1"
+    IMAGE_REPO_NAME: "elmu-proto"
 
 phases:
   install:
@@ -15,6 +18,8 @@ phases:
       - rm "node-v$NODE_VERSION-linux-x64.tar.gz"
       - ln -s /usr/local/bin/node /usr/local/bin/nodejs
       - npm install -g "yarn@$YARN_VERSION"
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
   pre_build:
     commands:
       - echo Entered the pre_build phase...
@@ -25,7 +30,13 @@ phases:
     commands:
       - echo Entered the build phase...
       - yarn run ci
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION .
+      - docker tag $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
   post_build:
     commands:
       - echo Entered the post_build phase...
       - yarn run ci:cleanup
+      - echo Pushing the Docker image...
+      - echo docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION

@@ -74,9 +74,7 @@ gulp.task('mongo:user', async () => {
   await client.close();
 });
 
-gulp.task('mongo:up', done => {
-  runSequence('mongo:create', 'mongo:wait', 'mongo:user', 'mongo:seed', done);
-});
+gulp.task('mongo:up', done => runSequence('mongo:create', 'mongo:wait', 'mongo:user', 'mongo:seed', done));
 
 gulp.task('mongo:down', shell.task('docker rm -f elmu-mongo'));
 
