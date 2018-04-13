@@ -1,3 +1,5 @@
+/* eslint no-process-env: off */
+
 const env = process.env.ELMU_ENV || 'dev';
 
 const commonSettings = {

@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const Database = require('./database');
 const settings = require('./settings');
@@ -13,7 +14,9 @@ function createApp(articleRepository) {
   app.set('view engine', 'ejs');
   app.use(expressLayouts);
 
-  app.use(express.static(`${__dirname}/static`));
+  ['../dist', './static']
+    .map(dir => path.join(__dirname, dir))
+    .forEach(dir => app.use(express.static(dir)));
 
   function getPluginForType(type) {
     switch (type) {
@@ -66,7 +69,7 @@ function createApp(articleRepository) {
       /* eslint no-console: off */
       console.error(err);
     } else {
-      console.log(`Example app listening on port ${settings.port}`);
+      console.log(`Example app listening on http://localhost:${settings.port}`);
     }
   });
 
