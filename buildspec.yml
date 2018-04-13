@@ -8,6 +8,9 @@ env:
     AWS_ACCOUNT_ID: "344601915837"
     AWS_DEFAULT_REGION: "eu-central-1"
     IMAGE_REPO_NAME: "elmu-proto"
+    BEANSTALK_PROJECT: "elmu-web"
+    BEANSTALK_ENVIRONMENT: "Staging"
+    BUILD_ARTIFACTS_BUCKET: "elmu-proto-build-artifacts"
 
 phases:
   install:
@@ -38,5 +41,9 @@ phases:
       - echo Entered the post_build phase...
       - yarn run ci:cleanup
       - echo Pushing the Docker image...
-      - echo docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
+      - echo Deploying to Elastic Beanstalk...
+      - sed -i'' -e "s;%IMAGE_NAME%;$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION;g" ./Dockerrun.aws.json
+      - aws s3 cp ./Dockerrun.aws.json s3://$BUILD_ARTIFACTS_BUCKET/$CODEBUILD_SOURCE_VERSION/Dockerrun.aws.json
+      - aws elasticbeanstalk create-application-version --application-name "$BEANSTALK_PROJECT" --version-label "$CODEBUILD_SOURCE_VERSION" --source-bundle S3Bucket=$BUILD_ARTIFACTS_BUCKET,S3Key=$CODEBUILD_SOURCE_VERSION/Dockerrun.aws.json --description "Description"
+      - aws elasticbeanstalk update-environment --environment-name "$BEANSTALK_ENVIRONMENT" --version-label "$CODEBUILD_SOURCE_VERSION"
