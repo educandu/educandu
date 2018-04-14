@@ -1,7 +1,7 @@
 {
-  "name": "proto",
+  "name": "elmu-web",
   "version": "0.0.0",
-  "description": "Prototype for ELMU",
+  "description": "The elmu website",
   "main": "src/index.js",
   "scripts": {
     "ci:prepare": "gulp ci:prepare",
@@ -11,10 +11,10 @@
   "keywords": [],
   "license": "MIT",
   "author": "ELMU Team <admin@elmu.online>",
-  "homepage": "https://github.com/elmu/proto",
+  "homepage": "https://github.com/elmu/elmu-web",
   "repository": {
     "type": "git",
-    "url": "https://github.com/elmu/proto"
+    "url": "https://github.com/elmu/elmu-web"
   },
   "private": true,
   "dependencies": {

@@ -1,6 +1,6 @@
-# ELMU - Prototype
+# elmu-web
 
-Prototype for ELMU
+The elmu website
 
 ## License
 
