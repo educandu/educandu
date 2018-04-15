@@ -53,6 +53,8 @@ jobs:
           name: Create application version
           command: |
             echo 'export CODEBUILD_SOURCE_VERSION="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            echo 'export CODEBUILD_IMAGE_NAME="elmu-web:0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            echo 'export CODEBUILD_REPOSITORY_NAME="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"' >> $BASH_ENV
             source $BASH_ENV
       - run:
           name: Install AWS CLI
@@ -64,16 +66,20 @@ jobs:
           command: $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - run:
           name: Build Docker image
-          command: docker build -t $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION .
+          command: docker build -t $CODEBUILD_IMAGE_NAME .
       - run:
           name: Tag Docker image
-          command: docker tag $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
+          command: docker tag $CODEBUILD_IMAGE_NAME $CODEBUILD_REPOSITORY_NAME/$CODEBUILD_IMAGE_NAME
       - run:
           name: Push Docker image
-          command: docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
+          command: docker push $CODEBUILD_REPOSITORY_NAME/$CODEBUILD_IMAGE_NAME
       - run:
-          name: List directory
-          command: ls -la
+          name: Prepare deployment artifact
+          command: |
+            sed -i'' -e "s;%IMAGE_NAME%;$CODEBUILD_REPOSITORY_NAME/$CODEBUILD_IMAGE_NAME;g" ./Dockerrun.aws.json
+      - run:
+          name: Upload deployment artifact
+          command: aws s3 cp ./Dockerrun.aws.json s3://$BUILD_ARTIFACTS_BUCKET/$CODEBUILD_SOURCE_VERSION/Dockerrun.aws.json
 
 workflows:
   version: 2
