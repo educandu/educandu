@@ -105,9 +105,7 @@ gulp.task('serve', ['build'], startServer);
 
 gulp.task('serve:restart', restartServer);
 
-gulp.task('ci:prepare', ['mongo:up']);
-
-gulp.task('ci:cleanup', ['mongo:down']);
+gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', done));
 
 gulp.task('ci', done => runSequence('clean', 'test', 'build', done));
 

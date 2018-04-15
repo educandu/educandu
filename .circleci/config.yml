@@ -1,0 +1,59 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~/elmu-web
+
+jobs:
+  build:
+    <<: *defaults
+    docker:
+      - image: circleci/node:8.11.1
+      - image: mvertes/alpine-mongo:3.4.10-0
+    environment:
+      - NODE_ENV: development
+      - YARN_CACHE_FOLDER: ~/.cache/yarn
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Node Modules
+          command: yarn install --non-interactive --check-files --frozen-lockfile
+      - save_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run:
+          name: Prepare build
+          command: ./node_modules/.bin/gulp ci:prepare
+      - run:
+          name: Build
+          command: ./node_modules/.bin/gulp ci
+      - persist_to_workspace:
+          root: "."
+          paths:
+            - dist
+  deploy:
+    <<: *defaults
+    docker:
+      - image: circleci/buildpack-deps:artful
+    steps:
+      - attach_workspace:
+          at: "."
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get install -y python-pip libyaml-dev python-dev
+            sudo pip install awscli
+      - run:
+          name: List directory
+          command: ls -la
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
