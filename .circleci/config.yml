@@ -38,7 +38,7 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:artful
     environment:
-      - AWS_ACCOUNT_ID: 344601915837
+      - AWS_ACCOUNT_ID: "344601915837"
       - AWS_DEFAULT_REGION: eu-central-1
       - IMAGE_REPO_NAME: elmu-web
       - BEANSTALK_PROJECT: elmu-web
@@ -50,6 +50,11 @@ jobs:
       - attach_workspace:
           at: "."
       - run:
+          name: Create application version
+          command: |
+            echo 'export CODEBUILD_SOURCE_VERSION="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
           name: Install AWS CLI
           command: |
             sudo apt-get install -y python-pip libyaml-dev python-dev
@@ -57,6 +62,15 @@ jobs:
       - run:
           name: Login to AWS ECR
           command: $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION .
+      - run:
+          name: Tag Docker image
+          command: docker tag $IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
+      - run:
+          name: Push Docker image
+          command: docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_SOURCE_VERSION
       - run:
           name: List directory
           command: ls -la
