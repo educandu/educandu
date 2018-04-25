@@ -38,12 +38,12 @@ jobs:
     docker:
       - image: circleci/buildpack-deps:artful
     environment:
+      - APPLICATION_NAME: elmu-web
       - AWS_ACCOUNT_ID: "344601915837"
       - AWS_DEFAULT_REGION: eu-central-1
-      - IMAGE_REPO_NAME: elmu-web
-      - BEANSTALK_PROJECT: elmu-web
-      - BEANSTALK_ENVIRONMENT: Staging
-      - BUILD_ARTIFACTS_BUCKET: elmu-web-build-artifacts
+      - BEANSTALK_ENVIRONMENT_NAME: Staging
+      - BEANSTALK_DOCKERRUN_FILE: Dockerrun.aws.json
+      - S3_BUILD_ARTIFACTS_BUCKET: elmu-web-build-artifacts
     steps:
       - setup_remote_docker
       - checkout
@@ -52,9 +52,10 @@ jobs:
       - run:
           name: Create application version
           command: |
-            echo 'export CODEBUILD_SOURCE_VERSION="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
-            echo 'export CODEBUILD_IMAGE_NAME="elmu-web:0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
-            echo 'export CODEBUILD_REPOSITORY_NAME="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"' >> $BASH_ENV
+            echo 'export APPLICATION_VERSION="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            echo 'export APPLICATION_RELEASE_NOTES="$CIRCLE_COMPARE_URL"' >> $BASH_ENV
+            echo 'export APPLICATION_DOCKER_IMAGE_NAME="$APPLICATION_NAME:0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            echo 'export APPLICATION_DOCKER_REPOSITORY_NAME="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"' >> $BASH_ENV
             source $BASH_ENV
       - run:
           name: Install AWS CLI
@@ -66,20 +67,37 @@ jobs:
           command: $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - run:
           name: Build Docker image
-          command: docker build -t $CODEBUILD_IMAGE_NAME .
+          command: docker build -t $APPLICATION_DOCKER_IMAGE_NAME .
       - run:
           name: Tag Docker image
-          command: docker tag $CODEBUILD_IMAGE_NAME $CODEBUILD_REPOSITORY_NAME/$CODEBUILD_IMAGE_NAME
+          command: docker tag $APPLICATION_DOCKER_IMAGE_NAME $APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME
       - run:
           name: Push Docker image
-          command: docker push $CODEBUILD_REPOSITORY_NAME/$CODEBUILD_IMAGE_NAME
+          command: docker push $APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME
       - run:
           name: Prepare deployment artifact
           command: |
-            sed -i'' -e "s;%IMAGE_NAME%;$CODEBUILD_REPOSITORY_NAME/$CODEBUILD_IMAGE_NAME;g" ./Dockerrun.aws.json
+            sed -i'' -e "s;%IMAGE_NAME%;$APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME;g" ./$BEANSTALK_DOCKERRUN_FILE
       - run:
           name: Upload deployment artifact
-          command: aws s3 cp ./Dockerrun.aws.json s3://$BUILD_ARTIFACTS_BUCKET/$CODEBUILD_SOURCE_VERSION/Dockerrun.aws.json
+          command: aws s3 cp ./$BEANSTALK_DOCKERRUN_FILE s3://$S3_BUILD_ARTIFACTS_BUCKET/$APPLICATION_VERSION/$BEANSTALK_DOCKERRUN_FILE
+      - run:
+          name: Create Elastic Beanstalk application version
+          command: |
+            aws elasticbeanstalk create-application-version \
+              --region $AWS_DEFAULT_REGION \
+              --application-name $APPLICATION_NAME \
+              --version-label $APPLICATION_VERSION \
+              --description "$APPLICATION_RELEASE_NOTES" \
+              --source-bundle S3Bucket=$S3_BUILD_ARTIFACTS_BUCKET,S3Key=$APPLICATION_VERSION/$BEANSTALK_DOCKERRUN_FILE
+      - run:
+          name: Deploy application version to Staging environment
+          command: |
+            aws elasticbeanstalk update-environment \
+              --region $AWS_DEFAULT_REGION \
+              --application-name $APPLICATION_NAME \
+              --environment-name $BEANSTALK_ENVIRONMENT_NAME \
+              --version-label $APPLICATION_VERSION
 
 workflows:
   version: 2
