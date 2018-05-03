@@ -1,7 +1,7 @@
-const { MongoClient } = require('mongodb');
-const shortid = require('shortid');
-
-shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
+const uniqueId = require('./src/utils/unique-id');
+const Database = require('./src/stores/database');
+const bootstrapper = require('./src/bootstrapper');
+const DocumentService = require('./src/services/document-service');
 
 const section1 = `
 # Lorem ipsum
@@ -77,36 +77,65 @@ Curabitur consequat nisi velit, sit amet finibus nibh commodo nec. Cras vel nunc
 
 module.exports = async function initDb() {
 
-  const client = await MongoClient.connect('mongodb://elmu:elmu@localhost:27017/dev-elmu-web?ssl=false&authSource=admin');
-  const db = client.db();
-  const articles = db.collection('articles');
+  const container = await bootstrapper.createContainer();
 
-  await articles.insertOne({
-    _id: shortid.generate(),
-    title: 'Lorem ipsum',
-    sections: [
-      {
-        type: 'markdown',
-        content: section1
-      },
-      {
-        type: 'markdown',
-        content: section2
-      },
-      {
-        type: 'markdown',
-        content: section3
-      },
-      {
-        type: 'markdown',
-        content: section4
-      },
-      {
-        type: 'markdown',
-        content: section5
+  const db = container.get(Database);
+  const documentService = container.get(DocumentService);
+
+  const documentId = uniqueId.create();
+  const title = 'Lorem Ipsum';
+  const sections = [
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section1
       }
-    ]
-  });
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section2
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section3
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section4
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section5
+      }
+    }
+  ];
+  const user = {
+    name: 'init-user'
+  };
 
-  await client.close();
+  await documentService.createDocumentRevision({ documentId, title, sections, user });
+
+  await db.dispose();
 };

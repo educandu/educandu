@@ -68,8 +68,8 @@ gulp.task('bundle:js', async () => {
 
   const stats = await util.promisify(webpack)([
     Object.assign({ entry: './src/bundles/index.js', output: { filename: 'index.js' } }, webpackConfig),
-    Object.assign({ entry: './src/bundles/article.js', output: { filename: 'article.js' } }, webpackConfig),
-    Object.assign({ entry: './src/bundles/articles.js', output: { filename: 'articles.js' } }, webpackConfig)
+    Object.assign({ entry: './src/bundles/docs.js', output: { filename: 'docs.js' } }, webpackConfig),
+    Object.assign({ entry: './src/bundles/doc.js', output: { filename: 'doc.js' } }, webpackConfig)
   ]);
 
   console.log(stats.toString({ chunks: false, colors: true }));
@@ -107,7 +107,7 @@ gulp.task('serve:restart', restartServer);
 
 gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', done));
 
-gulp.task('ci', done => runSequence('clean', 'test', 'build', done));
+gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
 
 gulp.task('watch', ['serve'], () => {
   gulp.watch(['**/*.js', '!dist/**', '!node_modules/**'], ['lint', 'test:changed', 'bundle:js', 'serve:restart']);

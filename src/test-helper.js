@@ -1,4 +1,4 @@
-const Database = require('./database');
+const Database = require('./stores/database');
 
 function createTestDatabase() {
   const tempDbName = `test-elmu-web-${Date.now()}`;
@@ -6,17 +6,22 @@ function createTestDatabase() {
   return Database.create(connStr);
 }
 
+function getTestCollection(db, collectionName) {
+  return db._db.collection(collectionName);
+}
+
 function dropDatabase(db) {
   return db._db.dropDatabase();
 }
 
-async function dropCollectionSafely(coll) {
-  await coll.insertOne({});
-  await coll.drop();
+async function dropAllCollections(db) {
+  const collections = await db._db.collections();
+  await Promise.all(collections.map(col => db._db.dropCollection(col.s.name)));
 }
 
 module.exports = {
   createTestDatabase,
+  getTestCollection,
   dropDatabase,
-  dropCollectionSafely
+  dropAllCollections
 };
