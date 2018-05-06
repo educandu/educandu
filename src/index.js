@@ -32,7 +32,7 @@ function createApp(documentStore) {
   app.get('/docs', async (req, res) => {
     const docs = await documentStore.getLastUpdatedDocuments();
     if (!docs) {
-      return res.send(404).end();
+      return res.sendStatus(404);
     }
 
     return res.render('docs', { docs });
@@ -41,15 +41,15 @@ function createApp(documentStore) {
   app.get('/docs/:docId', async (req, res) => {
     const doc = await documentStore.getDocumentById(req.params.docId);
     if (!doc) {
-      return res.send(404).end();
+      return res.sendStatus(404);
     }
 
-    const sections = doc.sections.map(section => {
+    doc.sections.forEach(section => {
       const plugin = getPluginForType(section.type);
-      return { html: plugin.renderHtml(section) };
+      section._rendered = plugin.render(section);
     });
 
-    return res.render('doc', { sections });
+    return res.render('doc', { doc });
   });
 
   return app;

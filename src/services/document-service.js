@@ -43,7 +43,7 @@ class DocumentService {
       order: order,
       user: user,
       title: title,
-      sections: sections // TODO: render!
+      sections: sections
     };
     await this.documentStore.save(latest);
     await this.documentLockStore.releaseDocumentLock(documentId);

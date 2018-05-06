@@ -19,6 +19,7 @@
     "dot-location": ["error", "property"],
     "func-names": ["error", "as-needed"],
     "func-style": ["off"],
+    "id-length": ["off"],
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "init-declarations": ["off"],
     "max-len": ["off"],

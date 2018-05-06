@@ -1,3 +1,4 @@
+const { MongoClient } = require('mongodb');
 const uniqueId = require('./src/utils/unique-id');
 const Database = require('./src/stores/database');
 const bootstrapper = require('./src/bootstrapper');
@@ -75,7 +76,13 @@ Sed sed velit lectus. Quisque nec bibendum leo. Nam a purus nec dui vulputate lu
 Curabitur consequat nisi velit, sit amet finibus nibh commodo nec. Cras vel nunc felis. Praesent eleifend nisi elit, vitae pharetra urna ornare sit amet. Vestibulum fringilla vulputate facilisis. In sem lectus, placerat nec semper eget, congue in est. Integer a tristique augue. Curabitur ut nibh id mi suscipit volutpat ut sit amet magna. Nullam malesuada laoreet porttitor. Fusce non felis ut nisi elementum auctor. Duis maximus nisi nec dolor fermentum condimentum. Suspendisse id ex velit. Sed eleifend aliquam vestibulum. Nulla a ornare nunc, nec tempus tellus.
 `;
 
-module.exports = async function initDb() {
+async function createUser() {
+  const client = await MongoClient.connect('mongodb://localhost:27017');
+  await client.db('admin').addUser('elmu', 'elmu', { roles: ['readWriteAnyDatabase'] });
+  await client.close();
+}
+
+async function seed() {
 
   const container = await bootstrapper.createContainer();
 
@@ -138,4 +145,9 @@ module.exports = async function initDb() {
   await documentService.createDocumentRevision({ documentId, title, sections, user });
 
   await db.dispose();
+}
+
+module.exports = {
+  createUser,
+  seed
 };
