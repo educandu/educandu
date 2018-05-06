@@ -2,6 +2,7 @@ const { MongoClient } = require('mongodb');
 const uniqueId = require('./src/utils/unique-id');
 const Database = require('./src/stores/database');
 const bootstrapper = require('./src/bootstrapper');
+const testHelper = require('./src/test-helper');
 const DocumentService = require('./src/services/document-service');
 
 const section1 = `
@@ -89,6 +90,8 @@ async function seed() {
   const db = container.get(Database);
   const documentService = container.get(DocumentService);
 
+  await testHelper.dropAllCollections(db);
+
   const documentId = uniqueId.create();
   const title = 'Lorem Ipsum';
   const sections = [
@@ -97,8 +100,53 @@ async function seed() {
       order: 1,
       type: 'markdown',
       content: {
-        de:
-        section1
+        de: section1
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'quick-tester',
+      content: {
+        de: {
+          name: 'Fragen zum übermäßigen Quintsextakkord',
+          tests: [
+            {
+              question: 'Wie heißen die Töne des übermäßigen Quintsextakkords in c-Moll?',
+              answer: '_as_-_c_-_es_-_fis_.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Schluss »wie nach dem Grab«](#brahms-doppeldominante).'
+            }, {
+              question: 'Wohin löst sich der übermäßige Quintsextakkord _as_-_c_-_es_-_fis_ als Sixte ajoutée auf?',
+              answer: 'Es-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, »still ist die Flur«](#brahms-plagal).'
+            }, {
+              question: 'Wohin löst sich der Dominantseptakkord _as_-_c_-_es_-_ges_ auf?',
+              answer: 'Des-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, zweite Phrase »sinkt auch«](#brahms-d7).'
+            }, {
+              question: 'In welche Tonart gehört der übermäßige Quintsextakkord _b_-_d_-_f_-_gis_ (als Doppeldominante)?',
+              answer: 'nach d-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
+            }, {
+              question: 'In welche Tonart gehört der übermäßige Quintsextakkord _c_-_e_-_g_-_ais_ (als Doppeldominante)?',
+              answer: 'nach e-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
+            }, {
+              question: 'In welche Tonart gehört der übermäßige Quintsextakkord _d_-_fis_-_a_-_his_ (als Doppeldominante)?',
+              answer: 'nach fis-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
+            }, {
+              question: 'Wohin löst sich der übermäßige Quintsextakkord _f_-_a_-_c_-_dis_ als Sixte ajoutée auf?',
+              answer: 'nach C-Dur.'
+            }, {
+              question: 'Wie heißt der übermäßige Quintsextakkord in g-Moll?',
+              answer: '_es_-_g_-_b_-_cis_'
+            }, {
+              question: 'Wie heißt der übermäßige Quintsextakkord in B-Dur?',
+              answer: '_ges_-_b_-_des_-_e_'
+            }, {
+              question: 'Wie heißt der übermäßige Quintsextakkord in a-Moll?',
+              answer: '_f_-_a_-_c_-_dis_'
+            }, {
+              question: 'Wie heißt der übermäßige Quintsextakkord in Es-Dur?',
+              answer: '_ces_-_es_-_ges_-_a_'
+            }
+          ]
+        }
       }
     },
     {
@@ -106,8 +154,7 @@ async function seed() {
       order: 1,
       type: 'markdown',
       content: {
-        de:
-        section2
+        de: section2
       }
     },
     {
@@ -115,8 +162,7 @@ async function seed() {
       order: 1,
       type: 'markdown',
       content: {
-        de:
-        section3
+        de: section3
       }
     },
     {
@@ -124,8 +170,7 @@ async function seed() {
       order: 1,
       type: 'markdown',
       content: {
-        de:
-        section4
+        de: section4
       }
     },
     {
@@ -133,8 +178,7 @@ async function seed() {
       order: 1,
       type: 'markdown',
       content: {
-        de:
-        section5
+        de: section5
       }
     }
   ];

@@ -1,10 +1,12 @@
 const path = require('path');
 const express = require('express');
 const settings = require('./settings');
+const htmlescape = require('htmlescape');
 const bootstrapper = require('./bootstrapper');
 const MarkdownPlugin = require('./plugins/markdown');
 const expressLayouts = require('express-ejs-layouts');
 const DocumentStore = require('./stores/document-store');
+const QuickTesterPlugin = require('./plugins/quick-tester');
 
 function createApp(documentStore) {
   const app = express();
@@ -21,6 +23,8 @@ function createApp(documentStore) {
     switch (type) {
       case 'markdown':
         return new MarkdownPlugin();
+      case 'quick-tester':
+        return new QuickTesterPlugin();
       default:
         throw new Error(`Plugin for type ${type} is not available.`);
     }
@@ -49,7 +53,7 @@ function createApp(documentStore) {
       section._rendered = plugin.render(section);
     });
 
-    return res.render('doc', { doc });
+    return res.render('doc', { doc, htmlescape });
   });
 
   return app;
