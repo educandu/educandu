@@ -2,8 +2,11 @@ const MarkdownIt = require('markdown-it');
 const gfm = new MarkdownIt();
 
 class Markdown {
-  renderHtml(section) {
-    return gfm.render(section.content);
+  render(section) {
+    return Object.keys(section.content).reduce((result, key) => {
+      result[key] = gfm.render(section.content[key]);
+      return result;
+    }, {});
   }
 }
 

@@ -4,17 +4,18 @@ const del = require('del');
 const gulp = require('gulp');
 const jest = require('jest');
 const util = require('util');
+const delay = require('delay');
 const less = require('gulp-less');
 const gulpif = require('gulp-if');
 const webpack = require('webpack');
-const shell = require('gulp-shell');
 const initDb = require('./init-db');
 const eslint = require('gulp-eslint');
 const { spawn } = require('child_process');
-const { MongoClient } = require('mongodb');
 const runSequence = require('run-sequence');
+const { Docker } = require('docker-cli-js');
 
 const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.4.10-0';
+const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
 let server = null;
 process.on('exit', () => server && server.kill());
@@ -68,8 +69,8 @@ gulp.task('bundle:js', async () => {
 
   const stats = await util.promisify(webpack)([
     Object.assign({ entry: './src/bundles/index.js', output: { filename: 'index.js' } }, webpackConfig),
-    Object.assign({ entry: './src/bundles/article.js', output: { filename: 'article.js' } }, webpackConfig),
-    Object.assign({ entry: './src/bundles/articles.js', output: { filename: 'articles.js' } }, webpackConfig)
+    Object.assign({ entry: './src/bundles/docs.js', output: { filename: 'docs.js' } }, webpackConfig),
+    Object.assign({ entry: './src/bundles/doc.js', output: { filename: 'doc.js' } }, webpackConfig)
   ]);
 
   console.log(stats.toString({ chunks: false, colors: true }));
@@ -85,29 +86,39 @@ gulp.task('bundle:js', async () => {
 
 gulp.task('build', ['bundle:css', 'bundle:js']);
 
-gulp.task('mongo:create', shell.task(`docker run --name elmu-mongo -d -p 27017:27017 ${TEST_MONGO_IMAGE}`));
-
-gulp.task('mongo:seed', initDb);
-
-gulp.task('mongo:wait', done => setTimeout(done, 500));
-
-gulp.task('mongo:user', async () => {
-  const client = await MongoClient.connect('mongodb://localhost:27017');
-  await client.db('admin').addUser('elmu', 'elmu', { roles: ['readWriteAnyDatabase'] });
-  await client.close();
+gulp.task('mongo:up', async () => {
+  const docker = new Docker();
+  const data = await docker.command('ps -a');
+  const container = data.containerList.find(c => c.names === TEST_MONGO_CONTAINER_NAME);
+  if (!container) {
+    await docker.command(`run --name ${TEST_MONGO_CONTAINER_NAME} -d -p 27017:27017 ${TEST_MONGO_IMAGE}`);
+    await delay(500);
+    await initDb.createUser();
+    await initDb.seed();
+  } else if (!container.status.startsWith('Up')) {
+    await docker.command(`restart ${TEST_MONGO_CONTAINER_NAME}`);
+    await delay(500);
+  }
 });
 
-gulp.task('mongo:up', done => runSequence('mongo:create', 'mongo:wait', 'mongo:user', 'mongo:seed', done));
+gulp.task('mongo:down', async () => {
+  const docker = new Docker();
+  await docker.command(`rm -f ${TEST_MONGO_CONTAINER_NAME}`);
+});
 
-gulp.task('mongo:down', shell.task('docker rm -f elmu-mongo'));
+gulp.task('mongo:reset', done => runSequence('mongo:down', 'mongo:up', done));
 
-gulp.task('serve', ['build'], startServer);
+gulp.task('mongo:user', initDb.createUser);
+
+gulp.task('mongo:seed', initDb.seed);
+
+gulp.task('serve', ['mongo:up', 'build'], startServer);
 
 gulp.task('serve:restart', restartServer);
 
 gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', done));
 
-gulp.task('ci', done => runSequence('clean', 'test', 'build', done));
+gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
 
 gulp.task('watch', ['serve'], () => {
   gulp.watch(['**/*.js', '!dist/**', '!node_modules/**'], ['lint', 'test:changed', 'bundle:js', 'serve:restart']);

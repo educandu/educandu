@@ -1,0 +1,10 @@
+<h1>Dokumente</h1>
+
+<ul>
+  <% docs.forEach(doc => { %>
+  <li>
+    <a href="/docs/<%= doc._id %>"><%= doc.title %></a>
+  </li>
+  <% }); %>
+</ul>
+<script src="/docs.js"></script>

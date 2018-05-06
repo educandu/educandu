@@ -1,13 +1,12 @@
 const path = require('path');
 const express = require('express');
-const Database = require('./database');
 const settings = require('./settings');
-const { Container } = require('./common/di');
+const bootstrapper = require('./bootstrapper');
 const MarkdownPlugin = require('./plugins/markdown');
 const expressLayouts = require('express-ejs-layouts');
-const ArticleRepository = require('./repositories/article-repository');
+const DocumentStore = require('./stores/document-store');
 
-function createApp(articleRepository) {
+function createApp(documentStore) {
   const app = express();
 
   app.set('views', `${__dirname}/views`);
@@ -30,27 +29,27 @@ function createApp(articleRepository) {
     res.render('index', { title: 'The index page!' });
   });
 
-  app.get('/articles', async (req, res) => {
-    const articles = await articleRepository.findLastArticles();
-    if (!articles) {
-      return res.send(404).end();
+  app.get('/docs', async (req, res) => {
+    const docs = await documentStore.getLastUpdatedDocuments();
+    if (!docs) {
+      return res.sendStatus(404);
     }
 
-    return res.render('articles', { articles });
+    return res.render('docs', { docs });
   });
 
-  app.get('/articles/:articleId', async (req, res) => {
-    const article = await articleRepository.findArticleById(req.params.articleId);
-    if (!article) {
-      return res.send(404).end();
+  app.get('/docs/:docId', async (req, res) => {
+    const doc = await documentStore.getDocumentById(req.params.docId);
+    if (!doc) {
+      return res.sendStatus(404);
     }
 
-    const sections = article.sections.map(section => {
+    doc.sections.forEach(section => {
       const plugin = getPluginForType(section.type);
-      return { html: plugin.renderHtml(section) };
+      section._rendered = plugin.render(section);
     });
 
-    return res.render('article', { sections });
+    return res.render('doc', { doc });
   });
 
   return app;
@@ -58,11 +57,9 @@ function createApp(articleRepository) {
 
 (async function index() {
 
-  const container = new Container();
-  container.registerInstance(Database, await Database.create(settings.elmuWebConnectionString));
-
-  const articleRepository = container.get(ArticleRepository);
-  const app = createApp(articleRepository);
+  const container = await bootstrapper.createContainer();
+  const documentStore = container.get(DocumentStore);
+  const app = createApp(documentStore);
 
   app.listen(settings.port, err => {
     if (err) {

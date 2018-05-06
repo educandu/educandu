@@ -1,0 +1,12 @@
+<main class="Doc">
+  <% doc.sections.forEach(section => { %>
+  <section
+    data-section-id="<%= section._id %>"
+    data-section-order="<%= section.order %>"
+    data-section-type="<%= section.type %>"
+    >
+    <%- section._rendered.de %>
+  </section>
+  <% }); %>
+</main>
+<script src="/doc.js"></script>

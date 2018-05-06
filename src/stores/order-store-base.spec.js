@@ -1,9 +1,12 @@
 const testHelper = require('../test-helper');
-const OrderRepository = require('./order-repository');
+const OrderStoreBase = require('./order-store-base');
 
-describe('order-repository', () => {
+describe('order-store-base', () => {
   let db;
   let sut;
+  let collection;
+  let testOrderKey;
+  let testOrderCollectionName;
 
   beforeAll(async () => {
     db = await testHelper.createTestDatabase();
@@ -14,21 +17,26 @@ describe('order-repository', () => {
     await db.dispose();
   });
 
-  beforeEach(async () => {
-    await testHelper.dropCollectionSafely(db.orders);
-    sut = new OrderRepository(db);
+  beforeEach(() => {
+    testOrderKey = 'test-order-name';
+    testOrderCollectionName = 'test-orders';
+    collection = testHelper.getTestCollection(db, testOrderCollectionName);
+    sut = new OrderStoreBase(collection, testOrderKey);
+  });
+
+  afterEach(async () => {
+    await testHelper.dropAllCollections(db);
   });
 
   describe('_getNextOrder', () => {
-    const testOrderName = 'test';
 
     describe('when there is no order entry', () => {
       let result;
       beforeEach(async () => {
-        result = await sut._getNextOrder(testOrderName);
+        result = await sut._getNextOrder();
       });
       it('should create one', async () => {
-        const count = await db.orders.count({ _id: testOrderName });
+        const count = await collection.count({ _id: testOrderKey });
         expect(count).toBe(1);
       });
       it('should return 1', () => {
@@ -39,8 +47,8 @@ describe('order-repository', () => {
     describe('when there is an existing order entry', () => {
       let result;
       beforeEach(async () => {
-        await db.orders.insertOne({ _id: testOrderName, seq: 5 });
-        result = await sut._getNextOrder(testOrderName);
+        await collection.insertOne({ _id: testOrderKey, seq: 5 });
+        result = await sut._getNextOrder();
       });
       it('should increase the sequential number by 1', () => {
         expect(result).toBe(6);
@@ -51,14 +59,14 @@ describe('order-repository', () => {
       let result;
       beforeEach(async () => {
         result = await Promise.all([
-          sut._getNextOrder(testOrderName),
-          sut._getNextOrder(testOrderName),
-          sut._getNextOrder(testOrderName),
-          sut._getNextOrder(testOrderName),
-          sut._getNextOrder(testOrderName),
-          sut._getNextOrder(testOrderName),
-          sut._getNextOrder(testOrderName),
-          sut._getNextOrder(testOrderName)
+          sut._getNextOrder(),
+          sut._getNextOrder(),
+          sut._getNextOrder(),
+          sut._getNextOrder(),
+          sut._getNextOrder(),
+          sut._getNextOrder(),
+          sut._getNextOrder(),
+          sut._getNextOrder()
         ]);
       });
       it('should create a contiguous sequence of numbers', () => {

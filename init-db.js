@@ -1,7 +1,8 @@
 const { MongoClient } = require('mongodb');
-const shortid = require('shortid');
-
-shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
+const uniqueId = require('./src/utils/unique-id');
+const Database = require('./src/stores/database');
+const bootstrapper = require('./src/bootstrapper');
+const DocumentService = require('./src/services/document-service');
 
 const section1 = `
 # Lorem ipsum
@@ -75,38 +76,78 @@ Sed sed velit lectus. Quisque nec bibendum leo. Nam a purus nec dui vulputate lu
 Curabitur consequat nisi velit, sit amet finibus nibh commodo nec. Cras vel nunc felis. Praesent eleifend nisi elit, vitae pharetra urna ornare sit amet. Vestibulum fringilla vulputate facilisis. In sem lectus, placerat nec semper eget, congue in est. Integer a tristique augue. Curabitur ut nibh id mi suscipit volutpat ut sit amet magna. Nullam malesuada laoreet porttitor. Fusce non felis ut nisi elementum auctor. Duis maximus nisi nec dolor fermentum condimentum. Suspendisse id ex velit. Sed eleifend aliquam vestibulum. Nulla a ornare nunc, nec tempus tellus.
 `;
 
-module.exports = async function initDb() {
-
-  const client = await MongoClient.connect('mongodb://elmu:elmu@localhost:27017/dev-elmu-web?ssl=false&authSource=admin');
-  const db = client.db();
-  const articles = db.collection('articles');
-
-  await articles.insertOne({
-    _id: shortid.generate(),
-    title: 'Lorem ipsum',
-    sections: [
-      {
-        type: 'markdown',
-        content: section1
-      },
-      {
-        type: 'markdown',
-        content: section2
-      },
-      {
-        type: 'markdown',
-        content: section3
-      },
-      {
-        type: 'markdown',
-        content: section4
-      },
-      {
-        type: 'markdown',
-        content: section5
-      }
-    ]
-  });
-
+async function createUser() {
+  const client = await MongoClient.connect('mongodb://localhost:27017');
+  await client.db('admin').addUser('elmu', 'elmu', { roles: ['readWriteAnyDatabase'] });
   await client.close();
+}
+
+async function seed() {
+
+  const container = await bootstrapper.createContainer();
+
+  const db = container.get(Database);
+  const documentService = container.get(DocumentService);
+
+  const documentId = uniqueId.create();
+  const title = 'Lorem Ipsum';
+  const sections = [
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section1
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section2
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section3
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section4
+      }
+    },
+    {
+      _id: uniqueId.create(),
+      order: 1,
+      type: 'markdown',
+      content: {
+        de:
+        section5
+      }
+    }
+  ];
+  const user = {
+    name: 'init-user'
+  };
+
+  await documentService.createDocumentRevision({ documentId, title, sections, user });
+
+  await db.dispose();
+}
+
+module.exports = {
+  createUser,
+  seed
 };
