@@ -5,17 +5,19 @@ const gulp = require('gulp');
 const jest = require('jest');
 const util = require('util');
 const delay = require('delay');
+const execa = require('execa');
 const less = require('gulp-less');
 const gulpif = require('gulp-if');
 const webpack = require('webpack');
-const initDb = require('./init-db');
 const eslint = require('gulp-eslint');
 const { spawn } = require('child_process');
-const runSequence = require('run-sequence');
 const { Docker } = require('docker-cli-js');
+const runSequence = require('run-sequence');
 
 const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.4.10-0';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
+
+const ci = (process.argv[2] || '').startsWith('ci');
 
 let server = null;
 process.on('exit', () => server && server.kill());
@@ -64,7 +66,19 @@ gulp.task('bundle:css', () => {
 
 gulp.task('bundle:js', async () => {
   const webpackConfig = {
-    mode: 'production'
+    mode: ci ? 'production' : 'development',
+    devtool: ci ? 'source-map' : 'cheap-module-eval-source-map',
+    module: {
+      rules: [
+        {
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader'
+          }
+        }
+      ]
+    }
   };
 
   const stats = await util.promisify(webpack)([
@@ -93,8 +107,8 @@ gulp.task('mongo:up', async () => {
   if (!container) {
     await docker.command(`run --name ${TEST_MONGO_CONTAINER_NAME} -d -p 27017:27017 ${TEST_MONGO_IMAGE}`);
     await delay(500);
-    await initDb.createUser();
-    await initDb.seed();
+    await execa('./db-create-user');
+    await execa('./db-seed');
   } else if (!container.status.startsWith('Up')) {
     await docker.command(`restart ${TEST_MONGO_CONTAINER_NAME}`);
     await delay(500);
@@ -108,9 +122,9 @@ gulp.task('mongo:down', async () => {
 
 gulp.task('mongo:reset', done => runSequence('mongo:down', 'mongo:up', done));
 
-gulp.task('mongo:user', initDb.createUser);
+gulp.task('mongo:user', () => execa('./db-create-user'));
 
-gulp.task('mongo:seed', initDb.seed);
+gulp.task('mongo:seed', () => execa('./db-seed'));
 
 gulp.task('serve', ['mongo:up', 'build'], startServer);
 
@@ -123,6 +137,7 @@ gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
 gulp.task('watch', ['serve'], () => {
   gulp.watch(['**/*.js', '!dist/**', '!node_modules/**'], ['lint', 'test:changed', 'bundle:js', 'serve:restart']);
   gulp.watch(['**/*.less', '!node_modules/**'], ['bundle:css']);
+  gulp.watch(['db-seed'], ['mongo:seed']);
 });
 
 gulp.task('default', ['watch']);

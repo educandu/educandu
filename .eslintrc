@@ -27,6 +27,7 @@
     "max-statements": ["off"],
     "multiline-comment-style": ["off"],
     "multiline-ternary": ["error", "always-multiline"],
+    "no-empty-function": ["off"],
     "no-magic-numbers": ["off"],
     "no-ternary": ["off"],
     "no-underscore-dangle": ["off"],

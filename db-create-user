@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+const { MongoClient } = require('mongodb');
+
+(async function createUser() {
+
+  const client = await MongoClient.connect('mongodb://localhost:27017');
+  await client.db('admin').addUser('elmu', 'elmu', { roles: ['readWriteAnyDatabase'] });
+  await client.close();
+
+})();

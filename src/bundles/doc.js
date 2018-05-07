@@ -1,12 +1,10 @@
-const QuickTesterPlugin = require('../plugins/quick-tester-client');
-
-/* eslint no-console: off */
-console.log('doc bundle');
+const MarkdownPlugin = require('../plugins/markdown/client-renderer');
+const QuickTesterPlugin = require('../plugins/quick-tester/client-renderer');
 
 function getPluginForType(type) {
   switch (type) {
     case 'markdown':
-      return null;
+      return new MarkdownPlugin();
     case 'quick-tester':
       return new QuickTesterPlugin();
     default:

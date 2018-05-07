@@ -3,10 +3,10 @@ const express = require('express');
 const settings = require('./settings');
 const htmlescape = require('htmlescape');
 const bootstrapper = require('./bootstrapper');
-const MarkdownPlugin = require('./plugins/markdown');
 const expressLayouts = require('express-ejs-layouts');
 const DocumentStore = require('./stores/document-store');
-const QuickTesterPlugin = require('./plugins/quick-tester');
+const MarkdownPlugin = require('./plugins/markdown/server-renderer');
+const QuickTesterPlugin = require('./plugins/quick-tester/server-renderer');
 
 function createApp(documentStore) {
   const app = express();
