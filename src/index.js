@@ -1,14 +1,13 @@
 const path = require('path');
 const express = require('express');
-const settings = require('./settings');
 const htmlescape = require('htmlescape');
-const bootstrapper = require('./bootstrapper');
 const expressLayouts = require('express-ejs-layouts');
 const DocumentStore = require('./stores/document-store');
-const MarkdownPlugin = require('./plugins/markdown/server-renderer');
-const QuickTesterPlugin = require('./plugins/quick-tester/server-renderer');
+const serverSettings = require('./bootstrap/server-settings');
+const bootstrapper = require('./bootstrap/server-bootstrapper');
+const ServerRendererFactory = require('./plugins/server-renderer-factory');
 
-function createApp(documentStore) {
+function createApp(documentStore, serverRendererFactory) {
   const app = express();
 
   app.set('views', `${__dirname}/views`);
@@ -19,16 +18,6 @@ function createApp(documentStore) {
     .map(dir => path.join(__dirname, dir))
     .forEach(dir => app.use(express.static(dir)));
 
-  function getPluginForType(type) {
-    switch (type) {
-      case 'markdown':
-        return new MarkdownPlugin();
-      case 'quick-tester':
-        return new QuickTesterPlugin();
-      default:
-        throw new Error(`Plugin for type ${type} is not available.`);
-    }
-  }
   app.get('/', (req, res) => {
     res.render('index', { title: 'The index page!' });
   });
@@ -49,8 +38,8 @@ function createApp(documentStore) {
     }
 
     doc.sections.forEach(section => {
-      const plugin = getPluginForType(section.type);
-      section._rendered = plugin.render(section);
+      const renderer = serverRendererFactory.createRenderer(section.type);
+      section._rendered = renderer.render(section);
     });
 
     return res.render('doc', { doc, htmlescape });
@@ -63,14 +52,15 @@ function createApp(documentStore) {
 
   const container = await bootstrapper.createContainer();
   const documentStore = container.get(DocumentStore);
-  const app = createApp(documentStore);
+  const serverRendererFactory = container.get(ServerRendererFactory);
+  const app = createApp(documentStore, serverRendererFactory);
 
-  app.listen(settings.port, err => {
+  app.listen(serverSettings.port, err => {
     if (err) {
       /* eslint no-console: off */
       console.error(err);
     } else {
-      console.log(`Example app listening on http://localhost:${settings.port}`);
+      console.log(`Example app listening on http://localhost:${serverSettings.port}`);
     }
   });
 

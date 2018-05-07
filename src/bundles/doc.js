@@ -1,21 +1,15 @@
-const MarkdownPlugin = require('../plugins/markdown/client-renderer');
-const QuickTesterPlugin = require('../plugins/quick-tester/client-renderer');
+const bootstrapper = require('../bootstrap/client-bootstrapper');
+const ClientRendererFactory = require('../plugins/client-renderer-factory');
 
-function getPluginForType(type) {
-  switch (type) {
-    case 'markdown':
-      return new MarkdownPlugin();
-    case 'quick-tester':
-      return new QuickTesterPlugin();
-    default:
-      throw new Error(`Plugin for type ${type} is not available.`);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const initialState = window.__initalState__;
+
+  const container = await bootstrapper.createContainer();
+
+  const clientRendererFactory = container.get(ClientRendererFactory);
+
   initialState.sections.forEach(section => {
-    const plugin = getPluginForType(section.type);
+    const plugin = clientRendererFactory.createRenderer(section.type);
     if (plugin) {
       const parentElement = document.body.querySelector(`[data-section-id="${section._id}"]`);
       plugin.init(parentElement);

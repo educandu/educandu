@@ -7,17 +7,19 @@ const util = require('util');
 const delay = require('delay');
 const execa = require('execa');
 const less = require('gulp-less');
+const csso = require('gulp-csso');
 const gulpif = require('gulp-if');
 const webpack = require('webpack');
 const eslint = require('gulp-eslint');
 const { spawn } = require('child_process');
 const { Docker } = require('docker-cli-js');
 const runSequence = require('run-sequence');
+const sourcemaps = require('gulp-sourcemaps');
 
 const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.4.10-0';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
-const ci = (process.argv[2] || '').startsWith('ci');
+const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimize');
 
 let server = null;
 process.on('exit', () => server && server.kill());
@@ -60,14 +62,17 @@ gulp.task('test:watch', () => {
 
 gulp.task('bundle:css', () => {
   return gulp.src('src/styles/main.less')
+    .pipe(sourcemaps.init())
     .pipe(less())
+    .pipe(gulpif(optimize, csso()))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist'));
 });
 
 gulp.task('bundle:js', async () => {
   const webpackConfig = {
-    mode: ci ? 'production' : 'development',
-    devtool: ci ? 'source-map' : 'cheap-module-eval-source-map',
+    mode: optimize ? 'production' : 'development',
+    devtool: optimize ? 'source-map' : 'cheap-module-eval-source-map',
     module: {
       rules: [
         {
@@ -81,11 +86,13 @@ gulp.task('bundle:js', async () => {
     }
   };
 
-  const stats = await util.promisify(webpack)([
-    Object.assign({ entry: './src/bundles/index.js', output: { filename: 'index.js' } }, webpackConfig),
-    Object.assign({ entry: './src/bundles/docs.js', output: { filename: 'docs.js' } }, webpackConfig),
-    Object.assign({ entry: './src/bundles/doc.js', output: { filename: 'doc.js' } }, webpackConfig)
-  ]);
+  const bundles = [
+    { src: './src/bundles/index.js', dest: 'index.js' },
+    { src: './src/bundles/docs.js', dest: 'docs.js' },
+    { src: './src/bundles/doc.js', dest: 'doc.js' }
+  ].map(f => Object.assign({ entry: ['babel-polyfill', f.src], output: { filename: f.dest } }, webpackConfig));
+
+  const stats = await util.promisify(webpack)(bundles);
 
   console.log(stats.toString({ chunks: false, colors: true }));
 

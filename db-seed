@@ -2,8 +2,8 @@
 
 const testHelper = require('./src/test-helper');
 const Database = require('./src/stores/database');
-const bootstrapper = require('./src/bootstrapper');
 const DocumentService = require('./src/services/document-service');
+const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
 
 const section1 = `
 # Lorem ipsum
@@ -51,7 +51,7 @@ Etiam cursus sem at dignissim facilisis. Morbi rhoncus porttitor tellus vitae or
 
 (async function seed() {
 
-  const container = await bootstrapper.createContainer();
+  const container = await serverBootstrapper.createContainer();
 
   const db = container.get(Database);
   const documentService = container.get(DocumentService);

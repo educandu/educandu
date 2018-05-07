@@ -27,6 +27,8 @@ function renderSection(teaser, name, tests) {
 }
 
 class QuickTester {
+  static get typeName() { return 'quick-tester'; }
+
   render(section) {
     return Object.keys(section.content).reduce((result, key) => {
       result[key] = renderSection(section.content[key].teaser, section.content[key].name, section.content[key].tests);

@@ -1,4 +1,6 @@
 class Markdown {
+  static get typeName() { return 'markdown'; }
+
   init() {}
 }
 

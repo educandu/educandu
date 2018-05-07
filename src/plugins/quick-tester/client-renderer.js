@@ -58,6 +58,8 @@ function startTester(element) {
 }
 
 class QuickTester {
+  static get typeName() { return 'quick-tester'; }
+
   init(parentElement) {
     startTester(parentElement);
   }
