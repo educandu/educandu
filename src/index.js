@@ -7,12 +7,16 @@ const serverSettings = require('./bootstrap/server-settings');
 const bootstrapper = require('./bootstrap/server-bootstrapper');
 const ServerRendererFactory = require('./plugins/server-renderer-factory');
 
-function createApp(documentStore, serverRendererFactory) {
+function createApp(container) {
+  const documentStore = container.get(DocumentStore);
+  const serverRendererFactory = container.get(ServerRendererFactory);
+
   const app = express();
 
   app.set('views', `${__dirname}/views`);
   app.set('view engine', 'ejs');
   app.use(expressLayouts);
+  app.locals.htmlescape = htmlescape;
 
   ['../dist', './static']
     .map(dir => path.join(__dirname, dir))
@@ -38,11 +42,25 @@ function createApp(documentStore, serverRendererFactory) {
     }
 
     doc.sections.forEach(section => {
-      const renderer = serverRendererFactory.createRenderer(section.type);
-      section._rendered = renderer.render(section);
+      const renderer = serverRendererFactory.createRenderer(section.type, section);
+      section._rendered = renderer.render();
     });
 
-    return res.render('doc', { doc, htmlescape });
+    return res.render('doc', { doc });
+  });
+
+  app.get('/edit/doc/:docId', async (req, res) => {
+    const doc = await documentStore.getDocumentById(req.params.docId);
+    if (!doc) {
+      return res.sendStatus(404);
+    }
+
+    doc.sections.forEach(section => {
+      const renderer = serverRendererFactory.createRenderer(section.type, section);
+      section._rendered = renderer.render();
+    });
+
+    return res.render('edit', { doc });
   });
 
   return app;
@@ -50,10 +68,7 @@ function createApp(documentStore, serverRendererFactory) {
 
 (async function index() {
 
-  const container = await bootstrapper.createContainer();
-  const documentStore = container.get(DocumentStore);
-  const serverRendererFactory = container.get(ServerRendererFactory);
-  const app = createApp(documentStore, serverRendererFactory);
+  const app = createApp(await bootstrapper.createContainer());
 
   app.listen(serverSettings.port, err => {
     if (err) {

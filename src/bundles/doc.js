@@ -9,10 +9,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const clientRendererFactory = container.get(ClientRendererFactory);
 
   initialState.sections.forEach(section => {
-    const plugin = clientRendererFactory.createRenderer(section.type);
+    const parentElement = document.body.querySelector(`[data-section-id="${section._id}"]`);
+    const plugin = clientRendererFactory.createRenderer(section.type, section, parentElement);
     if (plugin) {
-      const parentElement = document.body.querySelector(`[data-section-id="${section._id}"]`);
-      plugin.init(parentElement);
+      plugin.init();
     }
   });
 });

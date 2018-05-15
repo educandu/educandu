@@ -60,8 +60,13 @@ function startTester(element) {
 class QuickTester {
   static get typeName() { return 'quick-tester'; }
 
-  init(parentElement) {
-    startTester(parentElement);
+  constructor(section, parentElement) {
+    this.section = section;
+    this.parentElement = parentElement;
+  }
+
+  init() {
+    startTester(this.parentElement);
   }
 }
 

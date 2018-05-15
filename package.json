@@ -49,6 +49,7 @@
     "jest": "~22.4.3",
     "run-sequence": "~2.2.1",
     "sinon": "~5.0.7",
-    "webpack": "~4.8.0"
+    "webpack": "~4.8.0",
+    "webpack-bundle-analyzer": "~2.11.2"
   }
 }

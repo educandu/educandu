@@ -29,9 +29,13 @@ function renderSection(teaser, name, tests) {
 class QuickTester {
   static get typeName() { return 'quick-tester'; }
 
-  render(section) {
-    return Object.keys(section.content).reduce((result, key) => {
-      result[key] = renderSection(section.content[key].teaser, section.content[key].name, section.content[key].tests);
+  constructor(section) {
+    this.section = section;
+  }
+
+  render() {
+    return Object.keys(this.section.content).reduce((result, key) => {
+      result[key] = renderSection(this.section.content[key].teaser, this.section.content[key].name, this.section.content[key].tests);
       return result;
     }, {});
   }

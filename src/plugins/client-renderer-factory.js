@@ -12,8 +12,8 @@ class ClientRendererFactory extends PluginFactoryBase {
     super(container, renderers);
   }
 
-  createRenderer(pluginType, options) {
-    return this._createInstance(pluginType, options);
+  createRenderer(pluginType, section, parentElement) {
+    return this._createInstance(pluginType, section, parentElement);
   }
 }
 

@@ -4,9 +4,13 @@ const gfm = new MarkdownIt();
 class Markdown {
   static get typeName() { return 'markdown'; }
 
-  render(section) {
-    return Object.keys(section.content).reduce((result, key) => {
-      result[key] = gfm.render(section.content[key]);
+  constructor(section) {
+    this.section = section;
+  }
+
+  render() {
+    return Object.keys(this.section.content).reduce((result, key) => {
+      result[key] = gfm.render(this.section.content[key]);
       return result;
     }, {});
   }

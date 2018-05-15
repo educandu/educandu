@@ -15,6 +15,7 @@ const { spawn } = require('child_process');
 const { Docker } = require('docker-cli-js');
 const runSequence = require('run-sequence');
 const sourcemaps = require('gulp-sourcemaps');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.4.10-0';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
@@ -70,29 +71,40 @@ gulp.task('bundle:css', () => {
 });
 
 gulp.task('bundle:js', async () => {
-  const webpackConfig = {
-    mode: optimize ? 'production' : 'development',
-    devtool: optimize ? 'source-map' : 'cheap-module-eval-source-map',
-    module: {
-      rules: [
-        {
-          test: /\.jsx?$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader'
-          }
-        }
+  const createBundleConfig = bundleName => {
+    const plugins = optimize
+      ? [
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          reportFilename: `../reports/${bundleName}.html`,
+          openAnalyzer: false
+        })
       ]
-    }
+      : [];
+
+    return {
+      entry: ['babel-polyfill', `./src/bundles/${bundleName}.js`],
+      output: { filename: `${bundleName}.js` },
+      mode: optimize ? 'production' : 'development',
+      devtool: optimize ? 'source-map' : 'cheap-module-eval-source-map',
+      module: {
+        rules: [
+          {
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            use: {
+              loader: 'babel-loader'
+            }
+          }
+        ]
+      },
+      plugins: plugins
+    };
   };
 
-  const bundles = [
-    { src: './src/bundles/index.js', dest: 'index.js' },
-    { src: './src/bundles/docs.js', dest: 'docs.js' },
-    { src: './src/bundles/doc.js', dest: 'doc.js' }
-  ].map(f => Object.assign({ entry: ['babel-polyfill', f.src], output: { filename: f.dest } }, webpackConfig));
+  const bundleConfigs = ['index', 'docs', 'doc'].map(createBundleConfig);
 
-  const stats = await util.promisify(webpack)(bundles);
+  const stats = await util.promisify(webpack)(bundleConfigs);
 
   console.log(stats.toString({ chunks: false, colors: true }));
 

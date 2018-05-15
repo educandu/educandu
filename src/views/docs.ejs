@@ -1,10 +1,14 @@
-<h1>Dokumente</h1>
-
-<ul>
-  <% docs.forEach(doc => { %>
-  <li>
-    <a href="/docs/<%= doc._id %>"><%= doc.title %></a>
-  </li>
-  <% }); %>
-</ul>
+<div class="Elmu">
+  <a class="Elmu-logo" href="/">elmu</a>
+</div>
+<div class="Section">
+  <h1>Dokumente</h1>
+  <ul>
+    <% docs.forEach(doc => { %>
+    <li>
+      <a href="/docs/<%= doc._id %>"><%= doc.title %></a>
+    </li>
+    <% }); %>
+  </ul>
+</div>
 <script src="/docs.js"></script>
