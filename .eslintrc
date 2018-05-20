@@ -1,5 +1,5 @@
 {
-  "extends": "eslint:all",
+  "extends": ["eslint:all", "plugin:react/all"],
   "parser": "babel-eslint",
   "env": {
     "es6": true,
@@ -8,7 +8,10 @@
     "jest": true
   },
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
   "rules": {
     "array-element-newline": ["off"],
@@ -20,28 +23,41 @@
     "func-names": ["error", "as-needed"],
     "func-style": ["off"],
     "id-length": ["off"],
-    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "indent": ["error", 2, { "SwitchCase": 1, "ignoredNodes": ["JSXOpeningElement"] }],
     "init-declarations": ["off"],
     "max-len": ["off"],
     "max-params": ["error", 5],
     "max-statements": ["off"],
     "multiline-comment-style": ["off"],
     "multiline-ternary": ["error", "always-multiline"],
+    "no-confusing-arrow": ["off"],
     "no-empty-function": ["off"],
+    "no-extra-parens": ["error", "all", { ignoreJSX: "all" }],
     "no-magic-numbers": ["off"],
     "no-ternary": ["off"],
     "no-underscore-dangle": ["off"],
+    "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
     "object-curly-spacing": ["error", "always"],
     "object-curly-newline": ["error", { "consistent": true }],
     "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
     "object-shorthand": ["error", "consistent-as-needed"],
     "one-var": ["error", "never"],
+    "operator-linebreak": ["error", "before"],
     "padded-blocks": ["off"],
     "require-jsdoc": ["off"],
     "sort-keys": ["off"],
     "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
     "quote-props": ["error", "consistent-as-needed"],
     "quotes": ["error", "single"],
-    "wrap-iife": ["error", "inside"]
+    "wrap-iife": ["error", "inside"],
+    "react/jsx-closing-bracket-location": [1, "props-aligned"],
+    "react/jsx-indent": ["error", 2],
+    "react/jsx-indent-props": ["error", 2],
+    "react/jsx-max-props-per-line": ["error", { "maximum": 1, "when": "multiline" }],
+    "react/jsx-no-literals": ["off"],
+    "react/jsx-one-expression-per-line": ["off"],
+    "react/jsx-sort-props": ["off"],
+    "react/no-danger": ["off"],
+    "react/no-set-state": ["off"]
   }
 }

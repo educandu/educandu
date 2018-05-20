@@ -1,3 +1,5 @@
+require('babel-register')({ extensions: ['.jsx'] });
+
 const path = require('path');
 const express = require('express');
 const htmlescape = require('htmlescape');
@@ -6,6 +8,10 @@ const DocumentStore = require('./stores/document-store');
 const serverSettings = require('./bootstrap/server-settings');
 const bootstrapper = require('./bootstrap/server-bootstrapper');
 const ServerRendererFactory = require('./plugins/server-renderer-factory');
+
+const Editor = require('./components/editor.jsx');
+const ReactDOMServer = require('react-dom/server');
+const React = require('react');
 
 function createApp(container) {
   const documentStore = container.get(DocumentStore);
@@ -55,12 +61,10 @@ function createApp(container) {
       return res.sendStatus(404);
     }
 
-    doc.sections.forEach(section => {
-      const renderer = serverRendererFactory.createRenderer(section.type, section);
-      section._rendered = renderer.render();
-    });
-
-    return res.render('edit', { doc });
+    const props = { container, doc };
+    const elem = React.createElement(Editor, props);
+    const html = ReactDOMServer.renderToString(elem);
+    return res.render('edit', { html, doc });
   });
 
   return app;

@@ -1,20 +1,5 @@
-<div class="Elmu">
-  <a class="Elmu-logo" href="/">elmu</a>
-  <a class="Elmu-editLink" href="/edit/doc/<%= doc._id %>">Bearbeiten</a>
-</div>
-<main>
-  <% doc.sections.forEach(section => { %>
-  <section
-    class="Section"
-    data-section-id="<%= section._id %>"
-    data-section-order="<%= section.order %>"
-    data-section-type="<%= section.type %>"
-    >
-    <%- section._rendered.de %>
-  </section>
-  <% }); %>
-</main>
+<main id="main"><%- html %></main>
 <script>
   window.__initalState__ = <%- htmlescape(doc) %>;
 </script>
-<script src="/doc.js"></script>
+<script src="/edit.js"></script>

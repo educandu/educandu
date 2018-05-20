@@ -1,13 +1,5 @@
 @import './variables.less';
 
-@font-face {
-  font-family: 'Dancing Script';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Dancing Script Regular'), local('DancingScript-Regular'), url('https://fonts.gstatic.com/s/dancingscript/v9/If2RXTr6YS-zF4S-kcSWSVi_szLgiuE.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 html, body {
   color: #333;
   background-color: #eee;
@@ -30,42 +22,11 @@ a {
   }
 }
 
-.Elmu {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: white;
-  background-color: @global-elmu-blue;
-  padding: 5px 20px;
-  position: sticky;
-  top: 0;
-}
-
-.Elmu-logo {
-  flex: none;
-  display: block;
-  color: inherit;
-  background-color: inherit;
-  font-family: 'Dancing Script';
-  font-size: 32px;
-  text-decoration: none;
-
-  &:link, &:visited, &:active, &:hover {
-    text-decoration: none;
-  }
-}
-
-.Elmu-editLink {
-  flex: none;
-  display: block;
-  color: inherit;
-  background-color: inherit;
-}
-
 .Section {
   margin: 0 auto;
   width: @global-section-width-large-screen;
   padding: @global-section-padding-large-screen;
 }
 
+@import '../components/page-header.less';
 @import '../plugins/quick-tester/quick-tester.less';

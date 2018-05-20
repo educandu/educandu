@@ -43,7 +43,7 @@ gulp.task('clean', () => {
 });
 
 gulp.task('lint', () => {
-  return gulp.src(['**/*.js', '!node_modules/**'])
+  return gulp.src(['**/*.{js,jsx}', '!node_modules/**'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(gulpif(!server, eslint.failAfterError()));
@@ -102,7 +102,7 @@ gulp.task('bundle:js', async () => {
     };
   };
 
-  const bundleConfigs = ['index', 'docs', 'doc'].map(createBundleConfig);
+  const bundleConfigs = ['index', 'docs', 'doc', 'edit'].map(createBundleConfig);
 
   const stats = await util.promisify(webpack)(bundleConfigs);
 
@@ -154,7 +154,7 @@ gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', done));
 gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
 
 gulp.task('watch', ['serve'], () => {
-  gulp.watch(['**/*.js', '!dist/**', '!node_modules/**'], ['lint', 'test:changed', 'bundle:js', 'serve:restart']);
+  gulp.watch(['**/*.{js,jsx,ejs}', '!dist/**', '!node_modules/**'], ['lint', 'test:changed', 'bundle:js', 'serve:restart']);
   gulp.watch(['**/*.less', '!node_modules/**'], ['bundle:css']);
   gulp.watch(['db-seed'], ['mongo:seed']);
 });
