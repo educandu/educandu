@@ -28,12 +28,12 @@ describe('order-store-base', () => {
     await testHelper.dropAllCollections(db);
   });
 
-  describe('_getNextOrder', () => {
+  describe('getNextOrder', () => {
 
     describe('when there is no order entry', () => {
       let result;
       beforeEach(async () => {
-        result = await sut._getNextOrder();
+        result = await sut.getNextOrder();
       });
       it('should create one', async () => {
         const count = await collection.count({ _id: testOrderKey });
@@ -48,7 +48,7 @@ describe('order-store-base', () => {
       let result;
       beforeEach(async () => {
         await collection.insertOne({ _id: testOrderKey, seq: 5 });
-        result = await sut._getNextOrder();
+        result = await sut.getNextOrder();
       });
       it('should increase the sequential number by 1', () => {
         expect(result).toBe(6);
@@ -59,14 +59,14 @@ describe('order-store-base', () => {
       let result;
       beforeEach(async () => {
         result = await Promise.all([
-          sut._getNextOrder(),
-          sut._getNextOrder(),
-          sut._getNextOrder(),
-          sut._getNextOrder(),
-          sut._getNextOrder(),
-          sut._getNextOrder(),
-          sut._getNextOrder(),
-          sut._getNextOrder()
+          sut.getNextOrder(),
+          sut.getNextOrder(),
+          sut.getNextOrder(),
+          sut.getNextOrder(),
+          sut.getNextOrder(),
+          sut.getNextOrder(),
+          sut.getNextOrder(),
+          sut.getNextOrder()
         ]);
       });
       it('should create a contiguous sequence of numbers', () => {

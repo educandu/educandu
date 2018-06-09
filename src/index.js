@@ -1,85 +1,22 @@
-require('babel-register')({ extensions: ['.jsx'] });
+/* eslint no-console: off */
 
-const path = require('path');
-const express = require('express');
-const htmlescape = require('htmlescape');
-const expressLayouts = require('express-ejs-layouts');
-const DocumentStore = require('./stores/document-store');
+require('babel-register')({ extensions: ['.jsx'] });
+require('babel-polyfill');
+
+const ElmuServer = require('./elmu-server');
 const serverSettings = require('./bootstrap/server-settings');
 const bootstrapper = require('./bootstrap/server-bootstrapper');
-const ServerRendererFactory = require('./plugins/server-renderer-factory');
-
-const Editor = require('./components/editor.jsx');
-const ReactDOMServer = require('react-dom/server');
-const React = require('react');
-
-function createApp(container) {
-  const documentStore = container.get(DocumentStore);
-  const serverRendererFactory = container.get(ServerRendererFactory);
-
-  const app = express();
-
-  app.set('views', `${__dirname}/views`);
-  app.set('view engine', 'ejs');
-  app.use(expressLayouts);
-  app.locals.htmlescape = htmlescape;
-
-  ['../dist', './static']
-    .map(dir => path.join(__dirname, dir))
-    .forEach(dir => app.use(express.static(dir)));
-
-  app.get('/', (req, res) => {
-    res.render('index', { title: 'The index page!' });
-  });
-
-  app.get('/docs', async (req, res) => {
-    const docs = await documentStore.getLastUpdatedDocuments();
-    if (!docs) {
-      return res.sendStatus(404);
-    }
-
-    return res.render('docs', { docs });
-  });
-
-  app.get('/docs/:docId', async (req, res) => {
-    const doc = await documentStore.getDocumentById(req.params.docId);
-    if (!doc) {
-      return res.sendStatus(404);
-    }
-
-    doc.sections.forEach(section => {
-      const renderer = serverRendererFactory.createRenderer(section.type, section);
-      section._rendered = renderer.render();
-    });
-
-    return res.render('doc', { doc });
-  });
-
-  app.get('/edit/doc/:docId', async (req, res) => {
-    const doc = await documentStore.getDocumentById(req.params.docId);
-    if (!doc) {
-      return res.sendStatus(404);
-    }
-
-    const props = { container, doc };
-    const elem = React.createElement(Editor, props);
-    const html = ReactDOMServer.renderToString(elem);
-    return res.render('edit', { html, doc });
-  });
-
-  return app;
-}
 
 (async function index() {
 
-  const app = createApp(await bootstrapper.createContainer());
+  const container = await bootstrapper.createContainer();
+  const elmuServer = container.get(ElmuServer);
 
-  app.listen(serverSettings.port, err => {
+  elmuServer.listen(serverSettings.port, err => {
     if (err) {
-      /* eslint no-console: off */
       console.error(err);
     } else {
-      console.log(`Example app listening on http://localhost:${serverSettings.port}`);
+      console.log(`App listening on http://localhost:${serverSettings.port}`);
     }
   });
 

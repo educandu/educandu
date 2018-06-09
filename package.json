@@ -25,6 +25,8 @@
     "babel-preset-env": "~1.7.0",
     "babel-preset-react": "~6.24.1",
     "babel-register": "~6.26.0",
+    "body-parser": "~1.18.3",
+    "classnames": "~2.2.5",
     "ejs": "~2.6.1",
     "express": "~4.16.3",
     "express-ejs-layouts": "~2.4.0",
@@ -35,7 +37,8 @@
     "prop-types": "~15.6.1",
     "react": "~16.3.2",
     "react-dom": "~16.3.2",
-    "shortid": "~2.2.8"
+    "shortid": "~2.2.8",
+    "superagent": "~3.8.3"
   },
   "devDependencies": {
     "babel-core": "~6.26.3",

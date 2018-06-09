@@ -1,18 +1,11 @@
 const Database = require('../stores/database');
+const LockStoreBase = require('./lock-store-base');
 
-class DocumentLockStore {
+class DocumentLockStore extends LockStoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    this.documentLocks = db.documentLocks;
-  }
-
-  async takeDocumentLock(documentId) {
-    await this.documentLocks.insertOne({ _id: documentId });
-  }
-
-  async releaseDocumentLock(documentId) {
-    await this.documentLocks.deleteOne({ _id: documentId });
+    super(db.documentLocks);
   }
 }
 

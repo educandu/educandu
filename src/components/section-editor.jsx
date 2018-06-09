@@ -1,3 +1,4 @@
+const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
@@ -8,9 +9,13 @@ const preferredLanguages = ['de', 'en'];
 class SectionEditor extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      mode: 'preview'
+    };
+
     this.handleEditClick = this.handleEditClick.bind(this);
-    this.handleSaveClick = this.handleSaveClick.bind(this);
-    this.handleCancelClick = this.handleCancelClick.bind(this);
+    this.handlePreviewClick = this.handlePreviewClick.bind(this);
     this.handleContentChange = this.handleContentChange.bind(this);
   }
 
@@ -19,39 +24,36 @@ class SectionEditor extends React.Component {
   }
 
   handleEditClick() {
-    const { onEnterEditMode, section } = this.props;
-    onEnterEditMode(section._id);
+    this.setState({
+      mode: 'edit'
+    });
   }
 
-  handleSaveClick() {
-    const { onSave, section } = this.props;
-    onSave(section._id);
-  }
-
-  handleCancelClick() {
-    const { onCancelEditMode, section } = this.props;
-    onCancelEditMode(section._id);
+  handlePreviewClick() {
+    this.setState({
+      mode: 'preview'
+    });
   }
 
   handleContentChange(content) {
     const { onContentChanged, section } = this.props;
-    onContentChanged(section._id, content);
+    onContentChanged(section.key, content);
   }
 
   render() {
-    const { section, editorInstance, EditorComponent, mode } = this.props;
+    const { mode } = this.state;
+    const { section, editorInstance, EditorComponent } = this.props;
     return (
       <section
-        key={section._id}
-        className="Section"
-        data-section-id={section._id}
+        key={section.key}
+        className={classNames('Section', { 'Section-display': mode === 'preview', 'Section-edit': mode === 'edit' })}
+        data-section-key={section.key}
         data-section-order={section.order}
         data-section-type={section.type}
         >
         <div>
           <button type="button" onClick={this.handleEditClick}>Edit</button>
-          <button type="button" onClick={this.handleCancelClick}>Cancel</button>
-          <button type="button" onClick={this.handleSaveClick}>Save</button>
+          <button type="button" onClick={this.handlePreviewClick}>Preview</button>
         </div>
         <EditorComponent
           section={section}
@@ -68,13 +70,9 @@ class SectionEditor extends React.Component {
 SectionEditor.propTypes = {
   EditorComponent: PropTypes.func.isRequired,
   editorInstance: PropTypes.object.isRequired,
-  mode: PropTypes.string.isRequired,
-  onCancelEditMode: PropTypes.func.isRequired,
   onContentChanged: PropTypes.func.isRequired,
-  onEnterEditMode: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
   section: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
+    key: PropTypes.string.isRequired,
     content: PropTypes.object,
     order: PropTypes.number.isRequired,
     type: PropTypes.string.isRequired

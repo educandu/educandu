@@ -1,14 +1,14 @@
 const Database = require('../stores/database');
 const OrderStoreBase = require('../stores/order-store-base');
 
-const DOCUMENT_ORDER_KEY = 'document-order';
+const SECTION_ORDER_KEY = 'section-order';
 
-class DocumentOrderStore extends OrderStoreBase {
+class SectionOrderStore extends OrderStoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.documentOrders, DOCUMENT_ORDER_KEY);
+    super(db.sectionOrders, SECTION_ORDER_KEY);
   }
 }
 
-module.exports = DocumentOrderStore;
+module.exports = SectionOrderStore;

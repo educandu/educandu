@@ -1,12 +1,12 @@
 const Database = require('./database');
 const StoreBase = require('./store-base');
 
-class DocumentSnapshotStore extends StoreBase {
+class SectionStore extends StoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.documentSnapshots);
+    super(db.sections);
   }
 }
 
-module.exports = DocumentSnapshotStore;
+module.exports = SectionStore;

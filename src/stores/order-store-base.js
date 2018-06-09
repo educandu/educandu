@@ -1,10 +1,12 @@
-class OrderStoreBase {
+const StoreBase = require('./store-base');
+
+class OrderStoreBase extends StoreBase {
   constructor(collection, orderKey) {
-    this.collection = collection;
+    super(collection);
     this.orderKey = orderKey;
   }
 
-  async _getNextOrder() {
+  async getNextOrder() {
     const query = { _id: this.orderKey };
     const update = { $inc: { seq: 1 } };
     const options = { upsert: true, returnOriginal: false };

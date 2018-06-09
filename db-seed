@@ -5,7 +5,7 @@ const Database = require('./src/stores/database');
 const DocumentService = require('./src/services/document-service');
 const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
 
-const section1 = `
+const section0 = `
 # Lorem ipsum
 
 ## Nam interdum magna eu pretium laoreet
@@ -20,6 +20,47 @@ Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi id ultricies
 
 Aenean condimentum massa eu lectus imperdiet luctus. Maecenas scelerisque condimentum arcu, quis faucibus nisi vulputate non. Praesent egestas diam a nisl ullamcorper pharetra. Quisque viverra porttitor dui quis feugiat. Donec non luctus massa. Mauris sit amet eros id lorem consequat elementum tempus et tellus. Fusce quam ipsum, aliquam feugiat mi vel, dapibus scelerisque nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam feugiat convallis neque facilisis placerat. Fusce molestie nisl libero, id tempor felis gravida sit amet.
 `;
+
+const section1 = {
+  teaser: 'Möchten Sie Ihr Wissen testen?',
+  name: 'Fragen zum übermäßigen Quintsextakkord',
+  tests: [
+    {
+      question: 'Wie heißen die Töne des übermäßigen Quintsextakkords in c-Moll?',
+      answer: '_as_-_c_-_es_-_fis_.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Schluss »wie nach dem Grab«](#brahms-doppeldominante).'
+    }, {
+      question: 'Wohin löst sich der übermäßige Quintsextakkord _as_-_c_-_es_-_fis_ als Sixte ajoutée auf?',
+      answer: 'Es-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, »still ist die Flur«](#brahms-plagal).'
+    }, {
+      question: 'Wohin löst sich der Dominantseptakkord _as_-_c_-_es_-_ges_ auf?',
+      answer: 'Des-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, zweite Phrase »sinkt auch«](#brahms-d7).'
+    }, {
+      question: 'In welche Tonart gehört der übermäßige Quintsextakkord _b_-_d_-_f_-_gis_ (als Doppeldominante)?',
+      answer: 'nach d-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
+    }, {
+      question: 'In welche Tonart gehört der übermäßige Quintsextakkord _c_-_e_-_g_-_ais_ (als Doppeldominante)?',
+      answer: 'nach e-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
+    }, {
+      question: 'In welche Tonart gehört der übermäßige Quintsextakkord _d_-_fis_-_a_-_his_ (als Doppeldominante)?',
+      answer: 'nach fis-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
+    }, {
+      question: 'Wohin löst sich der übermäßige Quintsextakkord _f_-_a_-_c_-_dis_ als Sixte ajoutée auf?',
+      answer: 'nach C-Dur.'
+    }, {
+      question: 'Wie heißt der übermäßige Quintsextakkord in g-Moll?',
+      answer: '_es_-_g_-_b_-_cis_'
+    }, {
+      question: 'Wie heißt der übermäßige Quintsextakkord in B-Dur?',
+      answer: '_ges_-_b_-_des_-_e_'
+    }, {
+      question: 'Wie heißt der übermäßige Quintsextakkord in a-Moll?',
+      answer: '_f_-_a_-_c_-_dis_'
+    }, {
+      question: 'Wie heißt der übermäßige Quintsextakkord in Es-Dur?',
+      answer: '_ces_-_es_-_ges_-_a_'
+    }
+  ]
+};
 
 const section2 = `
 ## Vivamus ac dictum mauris
@@ -58,86 +99,57 @@ Etiam cursus sem at dignissim facilisis. Morbi rhoncus porttitor tellus vitae or
 
   await testHelper.dropAllCollections(db);
 
-  const documentId = 'SyMXOa6aM';
-  const title = 'Lorem Ipsum';
-  const sections = [
-    {
-      _id: 'Sye$V$ppTz',
+  const payload = {
+    doc: {
+      _id: 'SyMXOa6aM',
+      key: 'B1Ek$Wy1m',
       order: 1,
-      type: 'markdown',
-      content: {
-        de: section1
-      }
+      title: 'Lorem Ipsum'
     },
-    {
-      _id: 'HybdE$6pTf',
-      order: 1,
-      type: 'quick-tester',
-      content: {
-        de: {
-          teaser: 'Möchten Sie Ihr Wissen testen?',
-          name: 'Fragen zum übermäßigen Quintsextakkord',
-          tests: [
-            {
-              question: 'Wie heißen die Töne des übermäßigen Quintsextakkords in c-Moll?',
-              answer: '_as_-_c_-_es_-_fis_.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Schluss »wie nach dem Grab«](#brahms-doppeldominante).'
-            }, {
-              question: 'Wohin löst sich der übermäßige Quintsextakkord _as_-_c_-_es_-_fis_ als Sixte ajoutée auf?',
-              answer: 'Es-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, »still ist die Flur«](#brahms-plagal).'
-            }, {
-              question: 'Wohin löst sich der Dominantseptakkord _as_-_c_-_es_-_ges_ auf?',
-              answer: 'Des-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, zweite Phrase »sinkt auch«](#brahms-d7).'
-            }, {
-              question: 'In welche Tonart gehört der übermäßige Quintsextakkord _b_-_d_-_f_-_gis_ (als Doppeldominante)?',
-              answer: 'nach d-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
-            }, {
-              question: 'In welche Tonart gehört der übermäßige Quintsextakkord _c_-_e_-_g_-_ais_ (als Doppeldominante)?',
-              answer: 'nach e-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
-            }, {
-              question: 'In welche Tonart gehört der übermäßige Quintsextakkord _d_-_fis_-_a_-_his_ (als Doppeldominante)?',
-              answer: 'nach fis-Moll.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Sequenz »er ahnt«](#brahms-sequenz).'
-            }, {
-              question: 'Wohin löst sich der übermäßige Quintsextakkord _f_-_a_-_c_-_dis_ als Sixte ajoutée auf?',
-              answer: 'nach C-Dur.'
-            }, {
-              question: 'Wie heißt der übermäßige Quintsextakkord in g-Moll?',
-              answer: '_es_-_g_-_b_-_cis_'
-            }, {
-              question: 'Wie heißt der übermäßige Quintsextakkord in B-Dur?',
-              answer: '_ges_-_b_-_des_-_e_'
-            }, {
-              question: 'Wie heißt der übermäßige Quintsextakkord in a-Moll?',
-              answer: '_f_-_a_-_c_-_dis_'
-            }, {
-              question: 'Wie heißt der übermäßige Quintsextakkord in Es-Dur?',
-              answer: '_ces_-_es_-_ges_-_a_'
-            }
-          ]
+    sections: [
+      {
+        _id: null,
+        key: 'Sye$V$ppTz',
+        order: null,
+        type: 'markdown',
+        updatedContent: {
+          de: section0
+        }
+      },
+      {
+        _id: null,
+        key: 'HybdE$6pTf',
+        order: null,
+        type: 'quick-tester',
+        updatedContent: {
+          de: section1
+        }
+      },
+      {
+        _id: null,
+        key: 'rkGdNdTaaM',
+        order: null,
+        type: 'markdown',
+        updatedContent: {
+          de: section2
+        }
+      },
+      {
+        _id: null,
+        key: 'Skmu4u6TaM',
+        order: null,
+        type: 'markdown',
+        updatedContent: {
+          de: section3
         }
       }
-    },
-    {
-      _id: 'rkGdNdTaaM',
-      order: 1,
-      type: 'markdown',
-      content: {
-        de: section2
-      }
-    },
-    {
-      _id: 'Skmu4u6TaM',
-      order: 1,
-      type: 'markdown',
-      content: {
-        de: section3
-      }
+    ],
+    user: {
+      name: 'init-user'
     }
-  ];
-  const user = {
-    name: 'init-user'
   };
 
-  await documentService.createDocumentRevision({ documentId, title, sections, user });
+  await documentService.createDocumentRevision(payload);
 
   await db.dispose();
 

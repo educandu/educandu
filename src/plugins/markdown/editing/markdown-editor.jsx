@@ -9,7 +9,7 @@ function clone(obj) {
 }
 
 const defaultState = {
-  mode: 'display',
+  mode: 'preview',
   currentEditorValue: null,
   currentEditorContent: null,
   currentEditorLanguage: null,
@@ -25,7 +25,7 @@ class MarkdownEditor extends React.Component {
 
     if (nextProps.mode !== prevState.mode) {
       switch (nextProps.mode) {
-        case 'display':
+        case 'preview':
           newState.currentEditorContent = null;
           newState.currentEditorLanguage = null;
           newState.currentEditorValue = null;
@@ -47,7 +47,7 @@ class MarkdownEditor extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = Object.assign({}, defaultState);
+    this.state = { ...defaultState };
     this.handleCurrentEditorValueChanged = this.handleCurrentEditorValueChanged.bind(this);
   }
 
@@ -85,13 +85,13 @@ class MarkdownEditor extends React.Component {
     const { section } = this.props;
     const { mode, currentEditorValue } = this.state;
     switch (mode) {
-      case 'display':
+      case 'preview':
         return (
           <div className="MarkdownEditor" dangerouslySetInnerHTML={{ __html: gfm.render(section.content.de) }} />
         );
       case 'edit':
         return (
-          <textarea value={currentEditorValue} onChange={this.handleCurrentEditorValueChanged} />
+          <textarea value={currentEditorValue} onChange={this.handleCurrentEditorValueChanged} style={{ width: '100%', height: '250px' }} />
         );
       default:
         throw new Error(`Unknown editor mode: ${mode}`);
