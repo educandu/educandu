@@ -71,6 +71,7 @@ class Editor extends React.Component {
     };
     const result = await this.documentApiClient.saveDocument(payload);
     this.setState({ ...this.createStateFromDoc(result), isDirty: false });
+    window.location = `/docs/${result._id}`;
   }
 
   render() {
@@ -89,7 +90,7 @@ class Editor extends React.Component {
         <PageHeader>
           {isDirty && <a onClick={this.handleSave}>Save</a>}
           &nbsp;
-          <a>Cancel</a>
+          <a>Back</a>
         </PageHeader>
         <div>
           {children}

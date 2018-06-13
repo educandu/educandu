@@ -62,20 +62,6 @@ const section1 = {
   ]
 };
 
-const section2 = `
-## Vivamus ac dictum mauris
-
-Nam interdum magna eu pretium laoreet. Nam congue, justo vel fringilla luctus, sapien elit aliquam nunc, a bibendum est odio nec turpis. Nam id porttitor ex. Morbi sit amet felis vitae ex accumsan auctor eget quis sapien. Praesent id metus vitae diam sagittis suscipit ut in ex. Ut non venenatis quam, a pharetra lacus. Praesent venenatis volutpat nisl. Vivamus est erat, vehicula sed vestibulum non, vehicula blandit lorem. Nullam vehicula quis tortor ut pulvinar. Integer laoreet quam in risus pharetra, eu iaculis tortor volutpat. Sed sagittis mauris a congue commodo.
-
-Pellentesque ac eros leo. Morbi et congue mauris, quis imperdiet velit. Vivamus congue velit in elit eleifend, ut molestie felis pellentesque. Pellentesque gravida ultrices odio, nec bibendum augue. Nunc sit amet mi elementum, venenatis lorem in, rutrum nunc. Quisque eget pharetra orci. Donec vel lorem in odio tempus gravida et et nibh. Proin nisl nibh, maximus eget dolor sit amet, luctus placerat justo.
-
-Cras et tellus non turpis lobortis molestie in sollicitudin massa. Quisque at urna posuere, convallis felis sit amet, suscipit erat. Pellentesque at accumsan est, et dapibus diam. Nam volutpat consequat tortor, ac porttitor arcu consectetur vitae. Donec tempus, enim quis sodales pretium, sapien lacus sollicitudin libero, non sollicitudin tortor nulla in urna. Etiam venenatis tincidunt fermentum. Pellentesque sit amet turpis tincidunt, finibus enim eget, sollicitudin neque.
-
-Vivamus in feugiat tellus, quis imperdiet ipsum. Duis vel libero quis metus sollicitudin feugiat. Aenean ipsum dui, lacinia sit amet volutpat sed, lobortis et nunc. Nulla convallis, arcu quis condimentum eleifend, sem nulla congue mauris, in congue neque justo vitae erat. Mauris facilisis purus eget justo tempus bibendum. Vivamus sed lacinia risus. Phasellus sit amet laoreet erat. Nulla egestas massa nec felis commodo finibus. Nulla consequat massa id ultrices efficitur. Sed maximus interdum auctor. Fusce a commodo orci. Sed dictum, tortor ac porttitor pharetra, arcu justo convallis turpis, vel tristique lacus tellus quis ligula.
-
-Donec in nisl sollicitudin, luctus elit eget, viverra dolor. Aliquam eget odio id mauris rutrum blandit. Quisque vitae nunc sed risus varius dignissim. Quisque porttitor nibh ac ex facilisis posuere. Vivamus varius tempus ligula, at scelerisque mauris posuere nec. Aliquam in lorem sed leo mattis lacinia. Nullam sollicitudin rhoncus congue. Nam tristique vulputate leo et venenatis. Suspendisse et auctor ex. Quisque mattis mi at enim fermentum viverra. Sed mattis, ligula in molestie venenatis, nibh eros rhoncus purus, ut pharetra purus nunc sed metus.
-`;
-
 const section3 = `
 ## Nam tortor erat
 
@@ -129,9 +115,12 @@ Etiam cursus sem at dignissim facilisis. Morbi rhoncus porttitor tellus vitae or
         _id: null,
         key: 'rkGdNdTaaM',
         order: null,
-        type: 'markdown',
+        type: 'youtube-video',
         updatedContent: {
-          de: section2
+          de: {
+            url: 'https://www.youtube.com/watch?v=SQNymNaTr-Y',
+            maxWidth: '75%'
+          }
         }
       },
       {

@@ -2,8 +2,9 @@ const { Container } = require('../common/di');
 const PluginFactoryBase = require('./plugin-factory-base');
 const MarkdownPlugin = require('./markdown/editor');
 const QuickTesterPlugin = require('./quick-tester/editor');
+const YoutubeVideoPlugin = require('./youtube-video/editor');
 
-const editors = [MarkdownPlugin, QuickTesterPlugin];
+const editors = [MarkdownPlugin, QuickTesterPlugin, YoutubeVideoPlugin];
 
 class EditorFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }
