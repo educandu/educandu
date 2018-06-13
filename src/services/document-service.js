@@ -52,19 +52,22 @@ class DocumentService {
     await this.documentLockStore.takeLock(documentKey);
 
     const updatedSections = await Promise.all(sections.map(async section => {
-      // If we re-use an existing section revision:
-      if (section._id && !section.updatedContent) {
-        return this.getSectionById(section._id);
+      // Load potentially existing revision:
+      const existingSection = section._id ? await this.getSectionById(section._id) : null;
+
+      // If not changed, re-use existing revision:
+      if (existingSection && !section.updatedContent) {
+        return existingSection;
       }
 
       // Otherwise, create a new one:
       const newRevision = {
         _id: uniqueId.create(),
-        key: section.key || uniqueId.create(),
+        key: existingSection ? existingSection.key : uniqueId.create(),
         createdOn: now,
         order: await this.sectionOrderStore.getNextOrder(),
         user: user,
-        type: section.type,
+        type: existingSection ? existingSection.type : section.type,
         content: section.updatedContent
       };
 

@@ -28,7 +28,6 @@ describe('document-service', () => {
   afterAll(async () => {
     await testHelper.dropDatabase(db);
     await db.dispose();
-    sandbox.restore();
   });
 
   beforeEach(() => {
@@ -262,66 +261,36 @@ describe('document-service', () => {
       });
     });
 
-    /* eslint max-lines: 0 */
-    /* eslint no-unused-vars: 0 */
-    /* eslint capitalized-comments: 0 */
-    xdescribe('when called with an existing document', () => {
+    describe('when called with an existing document', () => {
       let testUser;
       let testTitle;
       let initialDateNow;
-      let updateDateNow;
-      let initialSectionId;
-      let updatedSectionId;
-      let additionalSectionId;
-      let initialSnapshotId;
-      let updatedSnapshotId;
-      let initialSectionKey;
-      let additionalSectionKey;
-      let testDocumentKey;
+      let updatedDateNow;
       let initialTestSectionContent;
       let updatedTestSectionContent;
       let additionalTestSectionContent;
+      let initialResult;
       let actualResult;
-      let expectedSnapshot;
+      let expectedSnapshots;
       let expectedLatestDocument;
-      let expectedSectionRevision;
+      let expectedSectionRevisions;
 
       beforeEach(async () => {
-        testDocumentKey = 'Syvf4ZK6z';
-        initialSectionKey = 'Skmu4u6TaM';
-        additionalSectionKey = 'SyMXOa6aM';
-        initialSectionId = 'rkGdNdTaaM';
-        updatedSectionId = 'Sye$V$ppTz';
-        additionalSectionId = 'B1Ek$Wy1m';
         testTitle = 'This is a test title';
         testUser = { name: 'test-user' };
         initialDateNow = new Date('2018-05-03T18:35:32.000Z');
-        updateDateNow = new Date('2018-05-03T18:35:32.000Z');
-        initialSnapshotId = 'Hyfb4tZKTf';
-        updatedSnapshotId = 'HybdE$6pTf';
+        updatedDateNow = new Date('2018-05-03T18:35:32.000Z');
         initialTestSectionContent = { de: '# Hello World!' };
         updatedTestSectionContent = { de: '# UPDATED!' };
         additionalTestSectionContent = { de: '# Additional' };
 
         sandbox.stub(dateTime, 'now')
           .onCall(0).returns(initialDateNow)
-          .onCall(1).returns(updateDateNow)
+          .onCall(1).returns(updatedDateNow)
           .throws('More calls than expected to dateTime.now');
 
-        sandbox.stub(uniqueId, 'create')
-          .onCall(0).returns(testDocumentKey)
-          .onCall(1).returns(initialSectionId)
-          .onCall(2).returns(initialSectionKey)
-          .onCall(3).returns(initialSnapshotId)
-          .onCall(4).returns(updatedSectionId)
-          .onCall(5).returns(additionalSectionId)
-          .onCall(6).returns(additionalSectionKey)
-          .onCall(7).returns(updatedSnapshotId)
-          .onCall(8).returns('75vn94z5n')
-          .throws('More calls than expected to uniqueId.create');
-
         // Create initial document with one section:
-        await sut.createDocumentRevision({
+        initialResult = await sut.createDocumentRevision({
           doc: {
             title: testTitle
           },
@@ -336,12 +305,12 @@ describe('document-service', () => {
 
         actualResult = await sut.createDocumentRevision({
           doc: {
-            key: testDocumentKey,
+            key: initialResult._id,
             title: testTitle
           },
           sections: [
             {
-              _id: initialSectionId,
+              _id: initialResult.sections[0]._id,
               updatedContent: updatedTestSectionContent
             },
             {
@@ -352,49 +321,91 @@ describe('document-service', () => {
           user: testUser
         });
 
-        // expectedSectionRevision = {
-        //   _id: initialSectionId,
-        //   key: testSectionKey,
-        //   createdOn: testDateNow,
-        //   order: 1,
-        //   user: testUser,
-        //   type: 'markdown',
-        //   content: updatedTestSectionContent
-        // };
+        expectedSectionRevisions = [
+          {
+            _id: initialResult.sections[0]._id,
+            key: initialResult.sections[0].key,
+            createdOn: initialDateNow,
+            order: sinon.match.number,
+            user: testUser,
+            type: 'markdown',
+            content: initialTestSectionContent
+          },
+          {
+            _id: sinon.match.string,
+            key: initialResult.sections[0].key, // Should be the same as in the initial revision
+            createdOn: updatedDateNow,
+            order: sinon.match.number,
+            user: testUser,
+            type: 'markdown',
+            content: updatedTestSectionContent
+          },
+          {
+            _id: sinon.match.string,
+            key: sinon.match.string,
+            createdOn: updatedDateNow,
+            order: sinon.match.number,
+            user: testUser,
+            type: 'markdown',
+            content: additionalTestSectionContent
+          }
+        ];
 
-        // expectedSnapshot = {
-        //   _id: testSnapshotId,
-        //   key: testDocumentKey,
-        //   createdOn: testDateNow,
-        //   order: 1,
-        //   user: testUser,
-        //   title: testTitle,
-        //   sections: [{ id: initialSectionId }]
-        // };
+        expectedSnapshots = [
+          {
+            _id: sinon.match.string,
+            key: sinon.match.string,
+            createdOn: initialDateNow,
+            order: 1,
+            user: testUser,
+            title: testTitle,
+            sections: [
+              {
+                id: initialResult.sections[0]._id
+              }
+            ]
+          },
+          {
+            _id: sinon.match.string,
+            key: sinon.match.string,
+            createdOn: updatedDateNow,
+            order: 2,
+            user: testUser,
+            title: testTitle,
+            sections: [
+              {
+                id: sinon.match.string
+              },
+              {
+                id: sinon.match.string
+              }
+            ]
+          }
+        ];
 
         expectedLatestDocument = {
-          _id: testDocumentKey,
-          snapshotId: updatedSnapshotId,
+          _id: sinon.match.string,
+          snapshotId: sinon.match.string,
           createdOn: initialDateNow,
-          updatedOn: updateDateNow,
+          updatedOn: updatedDateNow,
           order: 2,
           user: testUser,
           title: testTitle,
           sections: [
             {
-              _id: initialSectionId,
-              key: initialSectionKey,
-              createdOn: updateDateNow,
-              order: 2,
+              _id: sinon.match.string,
+              key: sinon.match.string,
+              createdOn: updatedDateNow,
+              order: sinon.match.number,
               user: testUser,
               type: 'markdown',
               content: updatedTestSectionContent
             },
             {
-              _id: additionalSectionId,
-              key: additionalSectionKey,
-              createdOn: updateDateNow,
-              order: 1,
+              _id: sinon.match.string,
+              key: sinon.match.string,
+              createdOn: updatedDateNow,
+              order: sinon.match.number,
               user: testUser,
               type: 'markdown',
               content: additionalTestSectionContent
@@ -405,12 +416,12 @@ describe('document-service', () => {
 
       it('should take the document lock for each invocation', () => {
         sinon.assert.calledTwice(documentLockStore.takeLock);
-        sinon.assert.calledWith(documentLockStore.takeLock, testDocumentKey);
+        sinon.assert.calledWith(documentLockStore.takeLock, initialResult._id);
       });
 
       it('should release the document lock for each invocation', () => {
         sinon.assert.calledTwice(documentLockStore.releaseLock);
-        sinon.assert.calledWith(documentLockStore.releaseLock, testDocumentKey);
+        sinon.assert.calledWith(documentLockStore.releaseLock, initialResult._id);
       });
 
       it('should get the next section order for each revision', () => {
@@ -421,23 +432,26 @@ describe('document-service', () => {
         sinon.assert.calledTwice(documentOrderStore.getNextOrder);
       });
 
-      // it('should save the section revision', () => {
-      //   sinon.assert.calledOnce(sectionStore.save);
-      //   sinon.assert.calledWith(sectionStore.save, expectedSectionRevision);
-      // });
+      it('should save all section revisions', () => {
+        sinon.assert.calledThrice(sectionStore.save);
+        sinon.assert.calledWith(sectionStore.save, expectedSectionRevisions[0]);
+        sinon.assert.calledWith(sectionStore.save, expectedSectionRevisions[1]);
+        sinon.assert.calledWith(sectionStore.save, expectedSectionRevisions[2]);
+      });
 
-      // it('should save the document snapshot', () => {
-      //   sinon.assert.calledOnce(documentSnapshotStore.save);
-      //   sinon.assert.calledWith(documentSnapshotStore.save, expectedSnapshot);
-      // });
+      it('should save the document snapshot', () => {
+        sinon.assert.calledTwice(documentSnapshotStore.save);
+        sinon.assert.calledWith(documentSnapshotStore.save, expectedSnapshots[0]);
+        sinon.assert.calledWith(documentSnapshotStore.save, expectedSnapshots[1]);
+      });
 
-      // it('should save the latest document', () => {
-      //   sinon.assert.calledOnce(documentStore.save);
-      //   sinon.assert.calledWith(documentStore.save, expectedLatestDocument);
-      // });
+      it('should save the latest document', () => {
+        sinon.assert.calledTwice(documentStore.save);
+        sinon.assert.calledWith(documentStore.save.secondCall, expectedLatestDocument);
+      });
 
       it('should return the latest document', () => {
-        expect(actualResult).toEqual(expectedLatestDocument);
+        sinon.assert.match(actualResult, expectedLatestDocument);
       });
     });
 

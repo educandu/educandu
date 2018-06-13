@@ -56,7 +56,7 @@ class YoutubeVideoEditor extends React.Component {
       <div>
         <label>Url:</label>
         <input type="text" value={this.state.section.content.de.url} onChange={this.handleUrlValueChanged} />
-        <br/>
+        <br />
         <label>MaxWidth:</label>
         <input type="text" value={this.state.section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />
       </div>
@@ -64,6 +64,7 @@ class YoutubeVideoEditor extends React.Component {
   }
 }
 
+/* eslint react/no-unused-prop-types: 0 */
 YoutubeVideoEditor.propTypes = {
   onContentChanged: PropTypes.func.isRequired,
   preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
