@@ -1,6 +1,6 @@
-/* eslint no-console: off */
-
 const del = require('del');
+const path = require('path');
+const glob = require('glob');
 const gulp = require('gulp');
 const jest = require('jest');
 const util = require('util');
@@ -11,6 +11,7 @@ const csso = require('gulp-csso');
 const gulpif = require('gulp-if');
 const webpack = require('webpack');
 const eslint = require('gulp-eslint');
+const plumber = require('gulp-plumber');
 const { spawn } = require('child_process');
 const { Docker } = require('docker-cli-js');
 const runSequence = require('run-sequence');
@@ -39,7 +40,7 @@ const restartServer = done => {
 };
 
 gulp.task('clean', () => {
-  return del(['dist']);
+  return del(['dist', 'reports']);
 });
 
 gulp.task('lint', () => {
@@ -63,6 +64,7 @@ gulp.task('test:watch', () => {
 
 gulp.task('bundle:css', () => {
   return gulp.src('src/styles/main.less')
+    .pipe(gulpif(!!server, plumber({ errorHandler: true })))
     .pipe(sourcemaps.init())
     .pipe(less())
     .pipe(gulpif(optimize, csso()))
@@ -71,50 +73,70 @@ gulp.task('bundle:css', () => {
 });
 
 gulp.task('bundle:js', async () => {
-  const createBundleConfig = bundleName => {
-    const plugins = optimize
-      ? [
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          reportFilename: `../reports/${bundleName}.html`,
-          openAnalyzer: false
-        })
-      ]
-      : [];
+  const entry = glob.sync('./src/bundles/*.js')
+    .map(bundleFile => path.basename(bundleFile, '.js'))
+    .reduce((all, name) => ({ ...all, [name]: ['babel-polyfill', `./src/bundles/${name}.js`] }), {});
 
-    return {
-      entry: ['babel-polyfill', `./src/bundles/${bundleName}.js`],
-      output: { filename: `${bundleName}.js` },
-      mode: optimize ? 'production' : 'development',
-      devtool: optimize ? 'source-map' : 'cheap-module-eval-source-map',
-      module: {
-        rules: [
-          {
-            test: /\.jsx?$/,
-            exclude: /node_modules/,
-            use: {
-              loader: 'babel-loader'
-            }
+  const plugins = optimize
+    ? [
+      new BundleAnalyzerPlugin({
+        analyzerMode: 'static',
+        reportFilename: '../reports/bundles.html',
+        openAnalyzer: false
+      })
+    ]
+    : [];
+
+  const bundleConfigs = {
+    entry: entry,
+    output: {
+      filename: '[name].js'
+    },
+    mode: optimize ? 'production' : 'development',
+    devtool: optimize ? 'source-map' : 'cheap-module-eval-source-map',
+    module: {
+      rules: [
+        {
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader'
           }
-        ]
-      },
-      plugins: plugins
-    };
+        }
+      ]
+    },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/](babel-polyfill|core-js|regenerator-runtime|object-assign|aurelia-.+|react(-.+)?|fbjs|prop-types)[\\/]/,
+            name: 'commons',
+            chunks: 'all'
+          }
+        }
+      }
+    },
+    performance: {
+      hints: optimize && 'warning',
+      maxAssetSize: 500000,
+      maxEntrypointSize: 500000
+    },
+    plugins: plugins
   };
-
-  const bundleConfigs = ['index', 'docs', 'doc', 'edit'].map(createBundleConfig);
 
   const stats = await util.promisify(webpack)(bundleConfigs);
 
-  console.log(stats.toString({ chunks: false, colors: true }));
-
-  if (stats.hasErrors()) {
-    stats.toJson().errors.forEach(error => console.error(error));
-  }
-
-  if (stats.hasWarnings()) {
-    stats.toJson().warnings.forEach(warning => console.warn(warning));
-  }
+  /* eslint-disable-next-line no-console */
+  console.log(stats.toString({
+    builtAt: false,
+    chunks: false,
+    colors: true,
+    entrypoints: false,
+    hash: false,
+    modules: false,
+    timings: false,
+    version: false
+  }));
 });
 
 gulp.task('build', ['bundle:css', 'bundle:js']);
@@ -147,14 +169,14 @@ gulp.task('mongo:seed', () => execa('./db-seed'));
 
 gulp.task('serve', ['mongo:up', 'build'], startServer);
 
-gulp.task('serve:restart', restartServer);
+gulp.task('serve:restart', ['lint', 'test:changed', 'bundle:js'], restartServer);
 
 gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', done));
 
 gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
 
 gulp.task('watch', ['serve'], () => {
-  gulp.watch(['**/*.{js,jsx,ejs}', '!dist/**', '!node_modules/**'], ['lint', 'test:changed', 'bundle:js', 'serve:restart']);
+  gulp.watch(['**/*.{js,jsx,ejs}', '!dist/**', '!node_modules/**'], ['serve:restart']);
   gulp.watch(['**/*.less', '!node_modules/**'], ['bundle:css']);
   gulp.watch(['db-seed'], ['mongo:seed']);
 });

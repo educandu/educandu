@@ -1,18 +1,11 @@
 const bootstrapper = require('../bootstrap/client-bootstrapper');
-const ClientRendererFactory = require('../plugins/client-renderer-factory');
+const Doc = require('../components/pages/doc.jsx');
+const ReactDOM = require('react-dom');
+const React = require('react');
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const initialState = window.__initalState__;
-
+(async () => {
   const container = await bootstrapper.createContainer();
-
-  const clientRendererFactory = container.get(ClientRendererFactory);
-
-  initialState.sections.forEach(section => {
-    const parentElement = document.body.querySelector(`[data-section-id="${section._id}"]`);
-    const plugin = clientRendererFactory.createRenderer(section.type, section, parentElement);
-    if (plugin) {
-      plugin.init();
-    }
-  });
-});
+  const initialState = window.__initalState__;
+  const props = { container, initialState };
+  ReactDOM.hydrate(React.createElement(Doc, props), document.getElementById('main'));
+})();

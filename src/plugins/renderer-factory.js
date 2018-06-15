@@ -1,12 +1,12 @@
 const { Container } = require('../common/di');
 const PluginFactoryBase = require('./plugin-factory-base');
-const MarkdownPlugin = require('./markdown/client-renderer');
-const QuickTesterPlugin = require('./quick-tester/client-renderer');
-const YoutubeVideoPlugin = require('./youtube-video/client-renderer');
+const MarkdownPlugin = require('./markdown/renderer');
+const QuickTesterPlugin = require('./quick-tester/renderer');
+const YoutubeVideoPlugin = require('./youtube-video/renderer');
 
 const renderers = [MarkdownPlugin, QuickTesterPlugin, YoutubeVideoPlugin];
 
-class ClientRendererFactory extends PluginFactoryBase {
+class RendererFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }
 
   constructor(container) {
@@ -18,4 +18,4 @@ class ClientRendererFactory extends PluginFactoryBase {
   }
 }
 
-module.exports = ClientRendererFactory;
+module.exports = RendererFactory;

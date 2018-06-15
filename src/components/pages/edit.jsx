@@ -1,8 +1,8 @@
-const DocumentApiClient = require('../services/document-api-client');
-const EditorFactory = require('../plugins/editor-factory');
-const SectionEditor = require('./section-editor.jsx');
-const PageHeader = require('./page-header.jsx');
-const { Container } = require('../common/di');
+const DocumentApiClient = require('../../services/document-api-client');
+const EditorFactory = require('../../plugins/editor-factory');
+const SectionEditor = require('./../section-editor.jsx');
+const PageHeader = require('./../page-header.jsx');
+const { Container } = require('../../common/di');
 const PropTypes = require('prop-types');
 const React = require('react');
 
@@ -13,7 +13,8 @@ class Editor extends React.Component {
   constructor(props) {
     super(props);
 
-    const { container, doc } = this.props;
+    const { container, initialState } = this.props;
+    const doc = initialState;
 
     this.editorFactory = container.get(EditorFactory);
     this.documentApiClient = container.get(DocumentApiClient);
@@ -75,7 +76,7 @@ class Editor extends React.Component {
   }
 
   render() {
-    const { sectionInfos, isDirty } = this.state;
+    const { originalDoc, sectionInfos, isDirty } = this.state;
     const children = sectionInfos.map(({ section, editorInstance, EditorComponent }) => (
       <SectionEditor
         key={section.key}
@@ -88,9 +89,9 @@ class Editor extends React.Component {
     return (
       <React.Fragment>
         <PageHeader>
-          {isDirty && <a onClick={this.handleSave}>Save</a>}
+          {isDirty && <a onClick={this.handleSave}>Übernehmen</a>}
           &nbsp;
-          <a>Back</a>
+          <a href={`/docs/${originalDoc._id}`}>Abbrechen</a>
         </PageHeader>
         <div>
           {children}
@@ -102,7 +103,7 @@ class Editor extends React.Component {
 
 Editor.propTypes = {
   container: PropTypes.instanceOf(Container).isRequired,
-  doc: PropTypes.shape({
+  initialState: PropTypes.shape({
     sections: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.string.isRequired,
       content: PropTypes.object,

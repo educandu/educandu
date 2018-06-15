@@ -1,26 +1,41 @@
 const path = require('path');
+const React = require('react');
 const express = require('express');
 const htmlescape = require('htmlescape');
 const bodyParser = require('body-parser');
 const { Container } = require('./common/di');
-const expressLayouts = require('express-ejs-layouts');
-const DocumentService = require('./services/document-service');
-const ServerRendererFactory = require('./plugins/server-renderer-factory');
-
-const Editor = require('./components/editor.jsx');
+const Doc = require('./components/pages/doc.jsx');
 const ReactDOMServer = require('react-dom/server');
-const React = require('react');
+const Docs = require('./components/pages/docs.jsx');
+const Edit = require('./components/pages/edit.jsx');
+const Index = require('./components/pages/index.jsx');
+const DocumentService = require('./services/document-service');
+
+const renderPageTemplate = (bundleName, html, initialState) => `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ELMU</title>
+    <link rel="stylesheet" href="/main.css">
+  </head>
+  <body>
+    <main id="main">${html}</main>
+    <script>
+      window.__initalState__ = ${htmlescape(initialState)};
+    </script>
+    <script src="/commons.js"></script>
+    <script src="/${bundleName}.js"></script>
+  </body>
+</html>
+`;
 
 class ElmuServer {
-  static get inject() { return [Container, DocumentService, ServerRendererFactory]; }
+  static get inject() { return [Container, DocumentService]; }
 
-  constructor(container, documentService, serverRendererFactory) {
+  constructor(container, documentService) {
+    this.container = container;
     this.app = express();
-
-    this.app.set('views', `${__dirname}/views`);
-    this.app.set('view engine', 'ejs');
-    this.app.use(expressLayouts);
-    this.app.locals.htmlescape = htmlescape;
 
     const jsonParser = bodyParser.json();
 
@@ -29,44 +44,36 @@ class ElmuServer {
       .forEach(dir => this.app.use(express.static(dir)));
 
     this.app.get('/', (req, res) => {
-      res.render('index', { title: 'The index page!' });
+      return this._sendPage(res, 'index', Index, {});
     });
 
     this.app.get('/docs', async (req, res) => {
       const docs = await documentService.getLastUpdatedDocuments();
-      return res.render('docs', { docs });
+      return this._sendPage(res, 'docs', Docs, docs);
     });
 
     this.app.get('/docs/:docId', async (req, res) => {
       const doc = await documentService.getDocumentById(req.params.docId);
-      if (!doc) {
-        return res.sendStatus(404);
-      }
-
-      doc.sections.forEach(section => {
-        const renderer = serverRendererFactory.createRenderer(section.type, section);
-        section._rendered = renderer.render();
-      });
-
-      return res.render('doc', { doc });
+      return doc ? this._sendPage(res, 'doc', Doc, doc) : res.sendStatus(404);
     });
 
     this.app.get('/edit/doc/:docId', async (req, res) => {
       const doc = await documentService.getDocumentById(req.params.docId);
-      if (!doc) {
-        return res.sendStatus(404);
-      }
-
-      const props = { container, doc };
-      const elem = React.createElement(Editor, props);
-      const html = ReactDOMServer.renderToString(elem);
-      return res.render('edit', { html, doc });
+      return doc ? this._sendPage(res, 'edit', Edit, doc) : res.sendStatus(404);
     });
 
     this.app.post('/api/v1/docs', jsonParser, async (req, res) => {
       const doc = await documentService.createDocumentRevision({ doc: req.body.doc, sections: req.body.sections, user: req.body.user });
       return res.send(doc);
     });
+  }
+
+  _sendPage(res, bundleName, PageComponent, initialState) {
+    const { container } = this;
+    const props = { container, initialState };
+    const elem = React.createElement(PageComponent, props);
+    const mainContent = ReactDOMServer.renderToString(elem);
+    return res.type('html').send(renderPageTemplate(bundleName, mainContent, initialState));
   }
 
   listen(port, cb) {
