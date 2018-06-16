@@ -1,9 +1,8 @@
 const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
+const { inject } = require('../../../components/container-context.jsx');
 const arrayShuffle = require('array-shuffle');
 const PropTypes = require('prop-types');
 const React = require('react');
-
-/* eslint-disable no-warning-comments */
 
 class QuickTesterDisplay extends React.Component {
   constructor(props) {
@@ -19,8 +18,6 @@ class QuickTesterDisplay extends React.Component {
       currentIndex: -1,
       showResult: false
     };
-
-    this.gfm = new GithubFlavoredMarkdown(); // TODO Inject
 
     this.handleInitClick = this.handleInitClick.bind(this);
     this.handleResultClick = this.handleResultClick.bind(this);
@@ -51,6 +48,7 @@ class QuickTesterDisplay extends React.Component {
   }
 
   render() {
+    const { githubFlavoredMarkdown } = this.props;
     const { name, teaser, tests, currentIndex, showResult } = this.state;
 
     if (currentIndex === -1) {
@@ -79,8 +77,14 @@ class QuickTesterDisplay extends React.Component {
       <div className="QuickTester">
         <h3 className="QuickTester-header">{name}</h3>
         <div className="QuickTester-test">
-          <div className="QuickTester-question" dangerouslySetInnerHTML={{ __html: this.gfm.render(currentTest.question) }} />
-          {showResult && <div className="QuickTester-answer" dangerouslySetInnerHTML={{ __html: this.gfm.render(currentTest.answer) }} />}
+          <div
+            className="QuickTester-question"
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(currentTest.question) }}
+            />
+          {showResult && <div
+            className="QuickTester-answer"
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(currentTest.answer) }}
+            />}
         </div>
         <div className="QuickTester-buttons">
           {buttons}
@@ -91,10 +95,13 @@ class QuickTesterDisplay extends React.Component {
 }
 
 QuickTesterDisplay.propTypes = {
+  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired,
   preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
   section: PropTypes.shape({
     content: PropTypes.object
   }).isRequired
 };
 
-module.exports = QuickTesterDisplay;
+module.exports = inject({
+  githubFlavoredMarkdown: GithubFlavoredMarkdown
+}, QuickTesterDisplay);

@@ -1,27 +1,22 @@
 const DocumentApiClient = require('../../services/document-api-client');
 const EditorFactory = require('../../plugins/editor-factory');
 const SectionEditor = require('./../section-editor.jsx');
+const { inject } = require('../container-context.jsx');
 const PageHeader = require('./../page-header.jsx');
-const { Container } = require('../../common/di');
 const PropTypes = require('prop-types');
 const React = require('react');
-
-/* eslint no-warning-comments: 0 */
-/* eslint react/forbid-prop-types: 0 */
 
 class Editor extends React.Component {
   constructor(props) {
     super(props);
 
-    const { container, initialState } = this.props;
-    const doc = initialState;
+    const { editorFactory, documentApiClient, initialState } = this.props;
 
-    this.editorFactory = container.get(EditorFactory);
-    this.documentApiClient = container.get(DocumentApiClient);
+    this.editorFactory = editorFactory;
+    this.documentApiClient = documentApiClient;
 
     this.state = {
-      container: container,
-      ...this.createStateFromDoc(doc),
+      ...this.createStateFromDoc(initialState),
       isDirty: false
     };
 
@@ -44,7 +39,6 @@ class Editor extends React.Component {
   handleContentChanged(sectionKey, updatedContent) {
     this.setState(prevState => {
       return {
-        ...prevState, // TODO Do we need this?
         editedDoc: {
           ...prevState.editedDoc,
           sections: prevState.editedDoc.sections.map(sec => sec.key === sectionKey ? { ...sec, updatedContent } : sec)
@@ -60,7 +54,7 @@ class Editor extends React.Component {
     const payload = {
       doc: {
         key: editedDoc._id,
-        title: editedDoc.title // TODO Make update-able
+        title: editedDoc.title
       },
       sections: editedDoc.sections.map(section => ({
         _id: section._id,
@@ -102,15 +96,17 @@ class Editor extends React.Component {
 }
 
 Editor.propTypes = {
-  container: PropTypes.instanceOf(Container).isRequired,
+  documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
+  editorFactory: PropTypes.instanceOf(EditorFactory).isRequired,
   initialState: PropTypes.shape({
     sections: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.string.isRequired,
-      content: PropTypes.object,
-      order: PropTypes.number.isRequired,
       type: PropTypes.string.isRequired
     }))
   }).isRequired
 };
 
-module.exports = Editor;
+module.exports = inject({
+  documentApiClient: DocumentApiClient,
+  editorFactory: EditorFactory
+}, Editor);

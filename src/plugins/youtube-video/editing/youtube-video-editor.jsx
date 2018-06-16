@@ -64,10 +64,8 @@ class YoutubeVideoEditor extends React.Component {
   }
 }
 
-/* eslint react/no-unused-prop-types: 0 */
 YoutubeVideoEditor.propTypes = {
   onContentChanged: PropTypes.func.isRequired,
-  preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
   section: PropTypes.shape({
     content: PropTypes.object
   }).isRequired

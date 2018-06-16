@@ -2,8 +2,6 @@ const classNames = require('classnames');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-/* eslint react/forbid-prop-types: 0 */
-
 const preferredLanguages = ['de', 'en'];
 
 class SectionEditor extends React.Component {
@@ -24,15 +22,11 @@ class SectionEditor extends React.Component {
   }
 
   handleEditClick() {
-    this.setState({
-      mode: 'edit'
-    });
+    this.setState({ mode: 'edit' });
   }
 
   handlePreviewClick() {
-    this.setState({
-      mode: 'preview'
-    });
+    this.setState({ mode: 'preview' });
   }
 
   handleContentChange(content) {
@@ -69,11 +63,12 @@ class SectionEditor extends React.Component {
 
 SectionEditor.propTypes = {
   EditorComponent: PropTypes.func.isRequired,
-  editorInstance: PropTypes.object.isRequired,
+  editorInstance: PropTypes.shape({
+    getEditorComponent: PropTypes.func.isRequired
+  }).isRequired,
   onContentChanged: PropTypes.func.isRequired,
   section: PropTypes.shape({
     key: PropTypes.string.isRequired,
-    content: PropTypes.object,
     order: PropTypes.number.isRequired,
     type: PropTypes.string.isRequired
   }).isRequired

@@ -4,6 +4,7 @@ const express = require('express');
 const htmlescape = require('htmlescape');
 const bodyParser = require('body-parser');
 const { Container } = require('./common/di');
+const Page = require('./components/page.jsx');
 const Doc = require('./components/pages/doc.jsx');
 const ReactDOMServer = require('react-dom/server');
 const Docs = require('./components/pages/docs.jsx');
@@ -70,8 +71,8 @@ class ElmuServer {
 
   _sendPage(res, bundleName, PageComponent, initialState) {
     const { container } = this;
-    const props = { container, initialState };
-    const elem = React.createElement(PageComponent, props);
+    const props = { container, initialState, PageComponent };
+    const elem = React.createElement(Page, props);
     const mainContent = ReactDOMServer.renderToString(elem);
     return res.type('html').send(renderPageTemplate(bundleName, mainContent, initialState));
   }

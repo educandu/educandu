@@ -1,5 +1,3 @@
-/* eslint no-console: off */
-
 require('babel-register')({ extensions: ['.jsx'] });
 require('babel-polyfill');
 
@@ -14,8 +12,10 @@ const bootstrapper = require('./bootstrap/server-bootstrapper');
 
   elmuServer.listen(serverSettings.port, err => {
     if (err) {
+      /* eslint-disable-next-line no-console */
       console.error(err);
     } else {
+      /* eslint-disable-next-line no-console */
       console.log(`App listening on http://localhost:${serverSettings.port}`);
     }
   });
