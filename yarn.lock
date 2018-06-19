@@ -657,7 +657,7 @@ async-validator@1.x:
   dependencies:
     babel-runtime "6.x"
 
-async@^1.4.0:
+async@^1.4.0, async@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
@@ -1368,6 +1368,14 @@ binary-extensions@^1.0.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.11.0.tgz#46aa1751fb6a2f93ee5e689bb1087d4b14c6c205"
 
+block-stream2@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/block-stream2/-/block-stream2-1.1.0.tgz#c738e3a91ba977ebb5e1fef431e13ca11d8639e2"
+  dependencies:
+    defined "^1.0.0"
+    inherits "^2.0.1"
+    readable-stream "^2.0.4"
+
 block-stream@*:
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/block-stream/-/block-stream-0.0.9.tgz#13ebfe778a03205cfe03751481ebb4b3300c126a"
@@ -1860,7 +1868,7 @@ concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
 
-concat-stream@^1.5.0, concat-stream@^1.6.0:
+concat-stream@^1.4.8, concat-stream@^1.5.0, concat-stream@^1.6.0:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-1.6.2.tgz#904bdf194cd3122fc675c77fc4ac3d4ff0fd1a34"
   dependencies:
@@ -2157,6 +2165,10 @@ define-property@^2.0.2:
     is-descriptor "^1.0.2"
     isobject "^3.0.1"
 
+defined@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/defined/-/defined-1.0.0.tgz#c98d9bcef75674188e110969151199e39b1fa693"
+
 del@^2.0.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/del/-/del-2.2.2.tgz#c12c981d067846c84bcaf862cff930d907ffd1a8"
@@ -2448,6 +2460,10 @@ es5-ext@^0.10.14, es5-ext@^0.10.30, es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~
     es6-iterator "~2.0.3"
     es6-symbol "~3.1.1"
     next-tick "1"
+
+es6-error@^2.0.2:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/es6-error/-/es6-error-2.1.1.tgz#91384301ec5ed1c9a7247d1128247216f03547cd"
 
 es6-iterator@^2.0.1, es6-iterator@~2.0.3:
   version "2.0.3"
@@ -4451,6 +4467,10 @@ json-stable-stringify@^1.0.1:
   dependencies:
     jsonify "~0.0.0"
 
+json-stream@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/json-stream/-/json-stream-1.0.0.tgz#1a3854e28d2bbeeab31cc7ddf683d2ddc5652708"
+
 json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
@@ -4729,7 +4749,7 @@ lodash.uniq@^4.3.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@^4.12.0, lodash@^4.16.5, lodash@^4.17.5, lodash@^4.2.0:
+lodash@^4.12.0, lodash@^4.14.2, lodash@^4.16.5, lodash@^4.17.5, lodash@^4.2.0:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
@@ -4928,7 +4948,7 @@ mime-db@~1.33.0:
   version "1.33.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.33.0.tgz#a3492050a5cb9b63450541e39d9788d2272783db"
 
-mime-types@^2.1.12, mime-types@~2.1.17, mime-types@~2.1.18, mime-types@~2.1.7:
+mime-types@^2.1.12, mime-types@^2.1.14, mime-types@~2.1.17, mime-types@~2.1.18, mime-types@~2.1.7:
   version "2.1.18"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.18.tgz#6f323f60a83d11146f831ff11fd66e2fe5503bb8"
   dependencies:
@@ -4998,6 +5018,25 @@ minimist@^1.1.0, minimist@^1.1.1, minimist@^1.2.0:
 minimist@~0.0.1:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
+
+minio@~6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/minio/-/minio-6.0.0.tgz#7e514d38eaacf2264556b232f1c2c063cc6ca7ba"
+  dependencies:
+    async "^1.5.2"
+    block-stream2 "^1.0.0"
+    concat-stream "^1.4.8"
+    es6-error "^2.0.2"
+    json-stream "^1.0.0"
+    lodash "^4.14.2"
+    mime-types "^2.1.14"
+    mkdirp "^0.5.1"
+    querystring "0.2.0"
+    source-map-support "^0.4.12"
+    through2 "^0.6.5"
+    uuid "^3.1.0"
+    xml "^1.0.0"
+    xml2js "^0.4.15"
 
 minipass@^2.2.1, minipass@^2.2.4:
   version "2.3.0"
@@ -5541,6 +5580,10 @@ parse-passwd@^1.0.0:
 parse5@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-4.0.0.tgz#6d78656e3da8d78b4ec0b906f7c08ef1dfe3f608"
+
+parseboolean@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/parseboolean/-/parseboolean-1.0.0.tgz#efac90efb06a7062c159e184d3a81abb84bcc716"
 
 parseurl@~1.3.2:
   version "1.3.2"
@@ -6656,7 +6699,7 @@ sane@^2.0.0:
   optionalDependencies:
     fsevents "^1.1.1"
 
-sax@^1.2.4:
+sax@>=0.6.0, sax@^1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
 
@@ -6870,7 +6913,7 @@ source-map-resolve@^0.5.0, source-map-resolve@^0.5.1:
     source-map-url "^0.4.0"
     urix "^0.1.0"
 
-source-map-support@^0.4.15:
+source-map-support@^0.4.12, source-map-support@^0.4.15:
   version "0.4.18"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.18.tgz#0286a6de8be42641338594e97ccea75f0a2c585f"
   dependencies:
@@ -7231,7 +7274,7 @@ through2@2.X, through2@^2.0.0, through2@^2.0.1, through2@^2.0.3:
     readable-stream "^2.1.5"
     xtend "~4.0.1"
 
-through2@^0.6.1:
+through2@^0.6.1, through2@^0.6.5:
   version "0.6.5"
   resolved "https://registry.yarnpkg.com/through2/-/through2-0.6.5.tgz#41ab9c67b29d57209071410e1d7a7a968cd3ad48"
   dependencies:
@@ -7825,6 +7868,21 @@ xhr@2.4.0:
 xml-name-validator@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/xml-name-validator/-/xml-name-validator-3.0.0.tgz#6ae73e06de4d8c6e47f9fb181f78d648ad457c6a"
+
+xml2js@^0.4.15:
+  version "0.4.19"
+  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.19.tgz#686c20f213209e94abf0d1bcf1efaa291c7827a7"
+  dependencies:
+    sax ">=0.6.0"
+    xmlbuilder "~9.0.1"
+
+xml@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/xml/-/xml-1.0.1.tgz#78ba72020029c5bc87b8a81a3cfcd74b4a2fc1e5"
+
+xmlbuilder@~9.0.1:
+  version "9.0.7"
+  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-9.0.7.tgz#132ee63d2ec5565c557e20f4c22df9aca686b10d"
 
 "xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.1"

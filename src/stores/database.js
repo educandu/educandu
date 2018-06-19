@@ -21,10 +21,11 @@ class Database {
 
   async dispose() {
     await this._mongoClient.close();
+    this._mongoClient = null;
   }
 
-  static async create(dbConnectionString) {
-    const mongoClient = await MongoClient.connect(dbConnectionString);
+  static async create({ connectionString }) {
+    const mongoClient = await MongoClient.connect(connectionString);
     return new Database(mongoClient);
   }
 }

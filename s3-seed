@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+const Cdn = require('./src/repositories/cdn');
+const testHelper = require('./src/test-helper');
+const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
+
+(async function seed() {
+
+  const container = await serverBootstrapper.createContainer();
+
+  const cdn = container.get(Cdn);
+
+  await testHelper.removeAllBuckets(cdn);
+
+  await testHelper.createElmuCdnBucket(cdn);
+
+  await serverBootstrapper.disposeContainer(container);
+
+})();

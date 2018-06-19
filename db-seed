@@ -156,6 +156,6 @@ const section4 = {
 
   await documentService.createDocumentRevision(payload);
 
-  await db.dispose();
+  await serverBootstrapper.disposeContainer(container);
 
 })();
