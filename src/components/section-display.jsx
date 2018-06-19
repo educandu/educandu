@@ -5,13 +5,7 @@ const preferredLanguages = ['de', 'en'];
 
 function SectionDisplay({ DisplayComponent, rendererInstance, section }) {
   return (
-    <section
-      key={section.key}
-      className="Section Section-display"
-      data-section-key={section.key}
-      data-section-order={section.order}
-      data-section-type={section.type}
-      >
+    <section key={section.key} className="Section">
       <DisplayComponent
         section={section}
         renderer={rendererInstance}

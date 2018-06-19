@@ -76,6 +76,13 @@ Sed convallis et nunc et sagittis. Aenean sit amet ultricies enim. Nunc dapibus 
 Etiam cursus sem at dignissim facilisis. Morbi rhoncus porttitor tellus vitae ornare. Vivamus auctor eget mi et dictum. Ut accumsan interdum erat, eu lacinia turpis condimentum ullamcorper. Cras tempus vehicula pellentesque. Vivamus eleifend consequat enim eu venenatis. Integer ac magna vulputate, venenatis mauris id, laoreet justo. Pellentesque vestibulum convallis porta. Maecenas sit amet nisi dui. Integer scelerisque ullamcorper justo, vel bibendum nulla tempor a. Aenean pellentesque varius neque, vel pellentesque augue rhoncus eget. Aenean vestibulum eleifend tellus, sit amet interdum magna volutpat hendrerit.
 `;
 
+const section4 = {
+  src: {
+    type: 'external',
+    url: 'http://www.musikanalyse.net/content/tutorials/i-x-v-i-schema/sound/03_Mozart-FuldaSymphonicOrchestra-Schindler.mp3'
+  }
+};
+
 (async function seed() {
 
   const container = await serverBootstrapper.createContainer();
@@ -119,7 +126,7 @@ Etiam cursus sem at dignissim facilisis. Morbi rhoncus porttitor tellus vitae or
         updatedContent: {
           de: {
             url: 'https://www.youtube.com/watch?v=SQNymNaTr-Y',
-            maxWidth: '75%'
+            maxWidth: 75
           }
         }
       },
@@ -130,6 +137,15 @@ Etiam cursus sem at dignissim facilisis. Morbi rhoncus porttitor tellus vitae or
         type: 'markdown',
         updatedContent: {
           de: section3
+        }
+      },
+      {
+        _id: null,
+        key: 'Alfu4u6Tas',
+        order: null,
+        type: 'audio',
+        updatedContent: {
+          de: section4
         }
       }
     ],

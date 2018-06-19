@@ -41,7 +41,7 @@ class Doc extends React.Component {
         <PageHeader>
           <a href={`/edit/doc/${originalDoc._id}`}>Bearbeiten</a>
         </PageHeader>
-        <div>
+        <div className="PageContent">
           {children}
         </div>
       </React.Fragment>

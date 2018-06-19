@@ -1,16 +1,18 @@
-const Slider = require('antd/lib/slider');
 const PropTypes = require('prop-types');
+const Radio = require('antd/lib/radio');
 const Input = require('antd/lib/input');
 const Form = require('antd/lib/form');
 const React = require('react');
 
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
-class YoutubeVideoEditor extends React.Component {
+class AudioEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = { section: props.section };
     this.handleUrlValueChanged = this.handleUrlValueChanged.bind(this);
-    this.handleMaxWidthValueChanged = this.handleMaxWidthValueChanged.bind(this);
+    this.handleTypeValueChanged = this.handleTypeValueChanged.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -27,7 +29,10 @@ class YoutubeVideoEditor extends React.Component {
           ...oldState.section.content,
           de: {
             ...oldState.section.content.de,
-            url: value
+            src: {
+              ...oldState.section.content.de.src,
+              url: value
+            }
           }
         }
       }
@@ -36,7 +41,8 @@ class YoutubeVideoEditor extends React.Component {
     this.props.onContentChanged(newState.section.content);
   }
 
-  handleMaxWidthValueChanged(value) {
+  handleTypeValueChanged(event) {
+    const { value } = event.target;
     const oldState = this.state;
     const newState = {
       section: {
@@ -45,7 +51,10 @@ class YoutubeVideoEditor extends React.Component {
           ...oldState.section.content,
           de: {
             ...oldState.section.content.de,
-            maxWidth: value
+            src: {
+              ...oldState.section.content.de.src,
+              type: value
+            }
           }
         }
       }
@@ -59,32 +68,38 @@ class YoutubeVideoEditor extends React.Component {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 }
     };
-    const marks = {
-      25: '25%',
-      50: '50%',
-      75: '75%',
-      100: '100%'
-    };
+    const { type, url } = this.state.section.content.de.src;
     return (
       <div>
         <Form layout="horizontal">
-          <Form.Item label="URL" {...formItemLayout}>
-            <Input placeholder="input placeholder" value={this.state.section.content.de.url} onChange={this.handleUrlValueChanged} />
+          <Form.Item label="Quelle" {...formItemLayout}>
+            <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
+              <RadioButton value="external">Externer Link</RadioButton>
+              <RadioButton value="internal">Elmu CDN</RadioButton>
+            </RadioGroup>
           </Form.Item>
-          <Form.Item label="Maximale Breite" {...formItemLayout}>
-            <Slider marks={marks} step={null} defaultValue={this.state.section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />
-          </Form.Item>
+          {type === 'external' && (
+            <Form.Item label="Externe URL" {...formItemLayout}>
+              <Input value={url} onChange={this.handleUrlValueChanged} />
+            </Form.Item>
+          )}
+          {type === 'internal' && (
+            <Form.Item label="CDN-Key" {...formItemLayout}>
+              <div style={{ color: 'red' }}>(not implemented)</div>
+              <Input value="Hello World!" />
+            </Form.Item>
+          )}
         </Form>
       </div>
     );
   }
 }
 
-YoutubeVideoEditor.propTypes = {
+AudioEditor.propTypes = {
   onContentChanged: PropTypes.func.isRequired,
   section: PropTypes.shape({
     content: PropTypes.object
   }).isRequired
 };
 
-module.exports = YoutubeVideoEditor;
+module.exports = AudioEditor;

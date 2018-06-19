@@ -1,6 +1,9 @@
 const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
 const PropTypes = require('prop-types');
+const Input = require('antd/lib/input');
 const React = require('react');
+
+const { TextArea } = Input;
 
 const gfm = new GithubFlavoredMarkdown();
 
@@ -91,7 +94,7 @@ class MarkdownEditor extends React.Component {
         );
       case 'edit':
         return (
-          <textarea value={currentEditorValue} onChange={this.handleCurrentEditorValueChanged} style={{ width: '100%', height: '250px' }} />
+          <TextArea value={currentEditorValue} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
         );
       default:
         throw new Error(`Unknown editor mode: ${mode}`);

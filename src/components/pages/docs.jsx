@@ -6,7 +6,7 @@ function Docs({ initialState }) {
   return (
     <React.Fragment>
       <PageHeader />
-      <div className="Section">
+      <div className="PageContent">
         <h1>Docs</h1>
         <ul>
           {initialState.map(doc => (

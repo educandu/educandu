@@ -1,10 +1,11 @@
 const { Container } = require('../common/di');
-const PluginFactoryBase = require('./plugin-factory-base');
+const AudioPlugin = require('./audio/renderer');
 const MarkdownPlugin = require('./markdown/renderer');
+const PluginFactoryBase = require('./plugin-factory-base');
 const QuickTesterPlugin = require('./quick-tester/renderer');
 const YoutubeVideoPlugin = require('./youtube-video/renderer');
 
-const renderers = [MarkdownPlugin, QuickTesterPlugin, YoutubeVideoPlugin];
+const renderers = [MarkdownPlugin, QuickTesterPlugin, YoutubeVideoPlugin, AudioPlugin];
 
 class RendererFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }

@@ -3,8 +3,47 @@ const EditorFactory = require('../../plugins/editor-factory');
 const SectionEditor = require('./../section-editor.jsx');
 const { inject } = require('../container-context.jsx');
 const PageHeader = require('./../page-header.jsx');
+const utils = require('../../utils/unique-id');
+const Dropdown = require('antd/lib/dropdown');
+const Button = require('antd/lib/button');
 const PropTypes = require('prop-types');
+const Menu = require('antd/lib/menu');
 const React = require('react');
+
+const pluginInfos = [
+  {
+    name: 'Markdown',
+    type: 'markdown',
+    defaultContent: ''
+  },
+  {
+    name: 'Audio',
+    type: 'audio',
+    defaultContent: {
+      src: {
+        type: 'external',
+        url: ''
+      }
+    }
+  },
+  {
+    name: 'Youtube-Video',
+    type: 'youtube-video',
+    defaultContent: {
+      url: '',
+      maxWidth: 75
+    }
+  },
+  {
+    name: 'Quick-Tester',
+    type: 'quick-tester',
+    defaultContent: {
+      name: '',
+      teaser: '',
+      tests: []
+    }
+  }
+];
 
 class Editor extends React.Component {
   constructor(props) {
@@ -22,17 +61,25 @@ class Editor extends React.Component {
 
     this.handleSave = this.handleSave.bind(this);
     this.handleContentChanged = this.handleContentChanged.bind(this);
+    this.handleNewSectionClick = this.handleNewSectionClick.bind(this);
+
+    this.pluginInfos = pluginInfos.map(t => ({
+      ...t,
+      handleNew: this.handleNewSectionClick.bind(this, t)
+    }));
+  }
+
+  createSectionInfoFromSection(section) {
+    const editorInstance = this.editorFactory.createEditor(section.type, section);
+    const EditorComponent = editorInstance.getEditorComponent();
+    return { section, editorInstance, EditorComponent };
   }
 
   createStateFromDoc(doc) {
     return {
       originalDoc: doc,
       editedDoc: JSON.parse(JSON.stringify(doc)),
-      sectionInfos: doc.sections.map(section => {
-        const editorInstance = this.editorFactory.createEditor(section.type, section);
-        const EditorComponent = editorInstance.getEditorComponent();
-        return { section, editorInstance, EditorComponent };
-      })
+      sectionInfos: doc.sections.map(section => this.createSectionInfoFromSection(section))
     };
   }
 
@@ -43,6 +90,31 @@ class Editor extends React.Component {
           ...prevState.editedDoc,
           sections: prevState.editedDoc.sections.map(sec => sec.key === sectionKey ? { ...sec, updatedContent } : sec)
         },
+        isDirty: true
+      };
+    });
+  }
+
+  handleNewSectionClick(pluginInfo) {
+    const newSection = {
+      _id: null,
+      key: utils.create(),
+      order: null,
+      type: pluginInfo.type,
+      content: {
+        de: JSON.parse(JSON.stringify(pluginInfo.defaultContent))
+      },
+      updatedContent: {
+        de: JSON.parse(JSON.stringify(pluginInfo.defaultContent))
+      }
+    };
+    this.setState(prevState => {
+      return {
+        editedDoc: {
+          ...prevState.editedDoc,
+          sections: [...prevState.editedDoc.sections, newSection]
+        },
+        sectionInfos: [...prevState.sectionInfos, this.createSectionInfoFromSection(newSection)],
         isDirty: true
       };
     });
@@ -80,6 +152,25 @@ class Editor extends React.Component {
         section={section}
         />
     ));
+
+    const newSectionMenu = (
+      <Menu>
+        {this.pluginInfos.map(pt => (
+          <Menu.Item key={pt.type}>
+            <a rel="noopener noreferrer" onClick={pt.handleNew}>{pt.name}</a>
+          </Menu.Item>
+        ))}
+      </Menu>
+    );
+
+    const newSectionDropdown = (
+      <Dropdown key="new-section-dropdown" overlay={newSectionMenu} placement="topCenter">
+        <Button type="primary" shape="circle" icon="plus" size="large" />
+      </Dropdown>
+    );
+
+    children.push(newSectionDropdown);
+
     return (
       <React.Fragment>
         <PageHeader>
@@ -87,7 +178,7 @@ class Editor extends React.Component {
           &nbsp;
           <a href={`/docs/${originalDoc._id}`}>Abbrechen</a>
         </PageHeader>
-        <div>
+        <div className="PageContent">
           {children}
         </div>
       </React.Fragment>

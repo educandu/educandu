@@ -5,7 +5,7 @@ function Index() {
   return (
     <React.Fragment>
       <PageHeader />
-      <div className="Section">
+      <div className="PageContent">
         <h1>Index</h1>
         <p>Go to the <a href="/docs">documents</a>!</p>
       </div>

@@ -35,7 +35,7 @@ class YoutubeVideoDisplay extends React.Component {
     const data = section.content[preferredLanguages[0]];
     return (
       <div className="YoutubeVideo">
-        <div className="YoutubeVideo-videoWrapper" style={{ maxWidth: data.maxWidth || '100%' }}>
+        <div className="YoutubeVideo-videoWrapper" style={{ maxWidth: `${data.maxWidth || 100}%` }}>
           <video className="video-js vjs-default-skin" ref={this.videoElement} />
         </div>
       </div>
