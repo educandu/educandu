@@ -79,8 +79,11 @@ gulp.task('lint', () => {
     .pipe(gulpif(!server, eslint.failAfterError()));
 });
 
-gulp.task('test', () => {
-  return jest.runCLI({}, '.');
+gulp.task('test', async () => {
+  const { results } = await jest.runCLI({}, '.');
+  if (!results.success) {
+    throw Error(`${results.numFailedTests} test(s) failed`);
+  }
 });
 
 gulp.task('test:changed', () => {
