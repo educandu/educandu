@@ -1,8 +1,12 @@
+const os = require('os');
 const path = require('path');
 const React = require('react');
+const multer = require('multer');
 const express = require('express');
 const htmlescape = require('htmlescape');
 const bodyParser = require('body-parser');
+const Cdn = require('./repositories/cdn');
+const parseBool = require('parseboolean');
 const { Container } = require('./common/di');
 const Page = require('./components/page.jsx');
 const Doc = require('./components/pages/doc.jsx');
@@ -33,15 +37,16 @@ const renderPageTemplate = (bundleName, html, initialState) => `
 `;
 
 class ElmuServer {
-  static get inject() { return [Container, DocumentService]; }
+  static get inject() { return [Container, DocumentService, Cdn]; }
 
-  constructor(container, documentService) {
+  constructor(container, documentService, cdn) {
     this.container = container;
     this.app = express();
 
     const jsonParser = bodyParser.json();
+    const multipartParser = multer({ dest: os.tmpdir() });
 
-    ['../dist', './static']
+    ['../dist', '../static']
       .map(dir => path.join(__dirname, dir))
       .forEach(dir => this.app.use(express.static(dir)));
 
@@ -67,6 +72,23 @@ class ElmuServer {
     this.app.post('/api/v1/docs', jsonParser, async (req, res) => {
       const doc = await documentService.createDocumentRevision({ doc: req.body.doc, sections: req.body.sections, user: req.body.user });
       return res.send(doc);
+    });
+
+    this.app.get('/api/v1/cdn/objects', jsonParser, async (req, res) => {
+      const objects = await cdn.listObjects({ prefix: req.query.prefix, recursive: parseBool(req.query.recursive) });
+      return res.send({ objects });
+    });
+
+    this.app.post('/api/v1/cdn/objects', multipartParser.array('files'), async (req, res) => {
+      if (req.files && req.files.length) {
+        const uploads = req.files.map(file => cdn.uploadObject(req.body.prefix + file.originalname, file.path, {}));
+        await Promise.all(uploads);
+      } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
+        // Just create a folder
+        cdn.uploadEmptyObject(req.body.prefix, {});
+      }
+
+      return res.send({});
     });
   }
 

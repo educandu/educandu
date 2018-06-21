@@ -1,9 +1,36 @@
+const fs = require('fs');
+const del = require('del');
+const path = require('path');
+const util = require('util');
+const { URL } = require('url');
+const Cdn = require('./repositories/cdn');
 const Database = require('./stores/database');
+const serverSettings = require('./bootstrap/server-settings');
+
+const mkdir = util.promisify(fs.mkdir);
+const mkdtemp = util.promisify(fs.mkdtemp);
+
+async function createTestDir() {
+  const tempDir = path.join(__dirname, '../.tmp/');
+  try {
+    await mkdir(tempDir);
+  } catch (err) {
+    if (err.code !== 'EEXIST') {
+      throw err;
+    }
+  }
+  const prefix = path.join(tempDir, './test-');
+  return mkdtemp(prefix);
+}
+
+function deleteTestDir(testDir) {
+  return del(testDir);
+}
 
 function createTestDatabase() {
-  const tempDbName = `test-elmu-web-${Date.now()}`;
-  const connectionString = `mongodb://elmu:elmu@localhost:27017/${tempDbName}?authSource=admin`;
-  return Database.create({ connectionString });
+  const url = new URL(serverSettings.elmuWebConnectionString);
+  url.pathname = `test-elmu-web-${Date.now()}`;
+  return Database.create({ connectionString: url.toString() });
 }
 
 function getTestCollection(db, collectionName) {
@@ -19,16 +46,11 @@ async function dropAllCollections(db) {
   await Promise.all(collections.map(col => db._db.dropCollection(col.s.name)));
 }
 
-async function removeAllBuckets(cdn) {
-  const minioClient = cdn._minioClient;
-  const buckets = await minioClient.listBuckets();
-  await Promise.all(buckets.map(b => minioClient.removeBucket(b.name)));
-}
-
-async function createElmuCdnBucket(cdn) {
-  const minioClient = cdn._minioClient;
-  const bucketName = cdn._bucketName;
-  const region = cdn._region;
+// If `bucketName` is undefined, it uses the
+// bucket associated with `cdn`, same with `region`!
+async function ensurePublicBucketExists(cdn, bucketName, region) {
+  const bRegion = region || cdn._region;
+  const bName = bucketName || cdn._bucketName;
   const bucketPolicy = {
     Version: '2012-10-17',
     Statement: [
@@ -37,19 +59,66 @@ async function createElmuCdnBucket(cdn) {
         Effect: 'Allow',
         Principal: '*',
         Action: 's3:GetObject',
-        Resource: `arn:aws:s3:::${bucketName}/*`
+        Resource: `arn:aws:s3:::${bName}/*`
       }
     ]
   };
-  await minioClient.makeBucket(bucketName, region);
-  await minioClient.setBucketPolicy(bucketName, JSON.stringify(bucketPolicy));
+
+  const s3Client = cdn._s3Client;
+  await s3Client.makeBucket(bName, bRegion);
+  await s3Client.setBucketPolicy(bName, JSON.stringify(bucketPolicy));
+
+  return cdn;
+}
+
+async function createTestCdn() {
+  const cdn = await Cdn.create({
+    endPoint: serverSettings.cdnEndpoint,
+    port: serverSettings.cdnPort,
+    secure: serverSettings.cdnSecure,
+    region: serverSettings.cdnRegion,
+    accessKey: serverSettings.cdnAccessKey,
+    secretKey: serverSettings.cdnSecretKey,
+    bucketName: `test-elmu-cdn-${Date.now()}`
+  });
+
+  return ensurePublicBucketExists(cdn);
+}
+
+// If `bucketName` is undefined, it uses the
+// bucket associated with `cdn`!
+async function purgeBucket(cdn, bucketName) {
+  const s3Client = cdn._s3Client;
+  const bName = bucketName || cdn._bucketName;
+  const objects = await s3Client.listObjects(bName, '', true);
+  await s3Client.removeObjects(bName, objects.map(obj => obj.name));
+}
+
+// If `bucketName` is undefined, it uses the
+// bucket associated with `cdn`!
+async function removeBucket(cdn, bucketName) {
+  const s3Client = cdn._s3Client;
+  const bName = bucketName || cdn._bucketName;
+  await purgeBucket(cdn, bName);
+  await s3Client.removeBucket(bName);
+}
+
+async function removeAllBuckets(cdn) {
+  const s3Client = cdn._s3Client;
+  const buckets = await s3Client.listBuckets();
+  await Promise.all(buckets.map(b => removeBucket(cdn, b.name)));
 }
 
 module.exports = {
+  createTestDir,
+  deleteTestDir,
   createTestDatabase,
   getTestCollection,
   dropDatabase,
   dropAllCollections,
-  removeAllBuckets,
-  createElmuCdnBucket
+  ensurePublicBucketExists,
+  createTestCdn,
+  purgeBucket,
+  removeBucket,
+  removeAllBuckets
 };

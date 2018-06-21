@@ -69,11 +69,11 @@ const ensureContainerRemoved = async ({ containerName }) => {
 };
 
 gulp.task('clean', () => {
-  return del(['dist', 'reports']);
+  return del(['.tmp', 'dist', 'reports']);
 });
 
 gulp.task('lint', () => {
-  return gulp.src(['**/*.{js,jsx}', '!node_modules/**'])
+  return gulp.src(['src/**/*.{js,jsx}', '*.js', 'db-create-user', 'db-seed', 's3-seed'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(gulpif(!server, eslint.failAfterError()));
@@ -235,10 +235,12 @@ gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', 'minio:s
 gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
 
 gulp.task('watch', ['serve'], () => {
-  gulp.watch(['**/*.{js,jsx,ejs}', '!dist/**', '!node_modules/**'], ['serve:restart']);
-  gulp.watch(['**/*.less', '!node_modules/**'], ['bundle:css']);
-  gulp.watch(['db-seed'], ['mongo:seed']);
-  gulp.watch(['s3-seed'], ['minio:seed']);
+  gulp.watch(['src/**/*.{js,jsx}'], ['serve:restart']);
+  gulp.watch(['src/**/*.less'], ['bundle:css']);
+  gulp.watch(['*.js'], ['lint']);
+  gulp.watch(['db-create-user'], ['lint']);
+  gulp.watch(['db-seed'], ['lint', 'mongo:seed']);
+  gulp.watch(['s3-seed'], ['lint', 'minio:seed']);
 });
 
 gulp.task('default', ['watch']);

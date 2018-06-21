@@ -1,0 +1,44 @@
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const sinon = require('sinon');
+const testHelper = require('../test-helper');
+
+const writeFile = util.promisify(fs.writeFile);
+
+describe('cdn', () => {
+  let sut;
+  let testDir;
+
+  beforeEach(async () => {
+    sut = await testHelper.createTestCdn();
+    testDir = await testHelper.createTestDir();
+  });
+
+  afterEach(async () => {
+    await testHelper.deleteTestDir(testDir);
+    await testHelper.removeBucket(sut);
+    await sut.dispose();
+  });
+
+  describe('uploadObject', () => {
+    const targetFileName = 'some-folder/sub/test-file.txt';
+    const testFileContent = 'Hello World!';
+    const metadata = { someKey: 'someValue' };
+    let testFileName;
+    let actualResult;
+
+    beforeEach(async () => {
+      testFileName = path.join(testDir, 'test.txt');
+      await writeFile(testFileName, testFileContent, 'utf8');
+      actualResult = await sut.uploadObject(targetFileName, testFileName, metadata);
+    });
+
+    it('should return an object containing the etag', () => {
+      const expectedResult = { etag: sinon.match.string };
+      sinon.assert.match(actualResult, expectedResult);
+    });
+
+  });
+
+});

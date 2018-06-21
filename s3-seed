@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+const path = require('path');
+const glob = require('glob');
+const util = require('util');
 const Cdn = require('./src/repositories/cdn');
 const testHelper = require('./src/test-helper');
 const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
@@ -12,7 +15,19 @@ const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
 
   await testHelper.removeAllBuckets(cdn);
 
-  await testHelper.createElmuCdnBucket(cdn);
+  await testHelper.ensurePublicBucketExists(cdn);
+
+  const rootDir = path.join(__dirname, './src');
+
+  const files = await util.promisify(glob)(`${rootDir}/**/*`, { nodir: true });
+  const uploads = files
+    .map(f => ({
+      src: f,
+      dst: `test/${path.relative(rootDir, f)}`
+    }))
+    .map(f => cdn.uploadObject(f.dst, f.src, {}));
+
+  await Promise.all(uploads);
 
   await serverBootstrapper.disposeContainer(container);
 

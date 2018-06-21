@@ -1,3 +1,4 @@
+const RepositoryBrowser = require('./repository-browser.jsx');
 const { ContainerProvider } = require('./container-context.jsx');
 const { Container } = require('../common/di');
 const PropTypes = require('prop-types');
@@ -6,6 +7,7 @@ const React = require('react');
 function Page({ container, initialState, PageComponent }) {
   return (
     <ContainerProvider value={container}>
+      <RepositoryBrowser rootPrefix="test" selectionMode="single" />
       <PageComponent initialState={initialState} />
     </ContainerProvider>
   );
