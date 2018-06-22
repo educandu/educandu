@@ -12,7 +12,7 @@ class SectionEditor extends React.Component {
     super(props);
 
     this.state = {
-      mode: 'preview'
+      mode: 'edit'
     };
 
     this.handleEditClick = this.handleEditClick.bind(this);
@@ -68,8 +68,8 @@ class SectionEditor extends React.Component {
           </div>
           <div className="Panel-footer">
             <RadioGroup value={mode} onChange={this.handleModeChange}>
-              <RadioButton value="preview">Vorschau</RadioButton>
               <RadioButton value="edit">Bearbeiten</RadioButton>
+              <RadioButton value="preview">Vorschau</RadioButton>
             </RadioGroup>
           </div>
         </div>

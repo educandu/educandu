@@ -11,7 +11,7 @@ const browserHelper = require('../ui/browser-helper');
 const { inject } = require('./container-context.jsx');
 const mimeTypeHelper = require('../ui/mime-type-helper');
 const CdnApiClient = require('../services/cdn-api-client');
-const { Table, Divider, Icon, Breadcrumb, message } = require('antd');
+const { Table, Divider, Icon, Breadcrumb, Upload, Button, message } = require('antd');
 
 const BROWSER_LOCALE = 'de';
 
@@ -34,6 +34,8 @@ function localizeCategory(cat) {
   return mappingsDe[cat];
 }
 
+const showActionsColumn = false;
+
 class RepositoryBrowser extends React.Component {
   constructor(props) {
     super(props);
@@ -47,9 +49,11 @@ class RepositoryBrowser extends React.Component {
 
     this.state = {
       records: [],
-      loading: false,
+      isRefreshing: false,
       selectedRowKeys: [],
+      currentUploadCount: 0,
       currentDropTarget: null,
+      currentUploadMessage: null,
       currentPathSegments: rootPathSegments,
       lockedPathSegmentsCount: rootPathSegments.length
     };
@@ -61,7 +65,9 @@ class RepositoryBrowser extends React.Component {
         key: 'displayName',
         align: 'left',
         render: this.renderNameColumn,
-        sorter: firstBy('isDirectory', { direction: -1 }).thenBy('displayName', { ignoreCase: true }),
+        sorter: firstBy('isDirectory', { direction: -1 })
+          .thenBy('displayName', { ignoreCase: true })
+          .thenBy('displayName', { ignoreCase: false }),
         defaultSortOrder: 'ascend'
       },
       {
@@ -70,7 +76,7 @@ class RepositoryBrowser extends React.Component {
         key: 'categoryText',
         align: 'left',
         width: 150,
-        sorter: firstBy('categoryText', { ignoreCase: true })
+        sorter: firstBy('categoryText', { ignoreCase: false })
       },
       {
         title: 'Größe',
@@ -87,15 +93,18 @@ class RepositoryBrowser extends React.Component {
         align: 'right',
         width: 200,
         sorter: firstBy('lastModified')
-      },
-      {
+      }
+    ];
+
+    if (showActionsColumn) {
+      this.columns.push({
         title: 'Aktion',
         key: 'action',
         align: 'right',
         width: 250,
         render: this.renderActionsColumn
-      }
-    ];
+      });
+    }
   }
 
   componentDidMount() {
@@ -115,8 +124,43 @@ class RepositoryBrowser extends React.Component {
     window.removeEventListener('drop', this.handleWindowDragOverOrDrop);
   }
 
-  sortRecordsByName(a, b) {
-    return firstBy('isDirectory', { direction: -1 }).thenBy('displayName', { ignoreCase: true })(a, b);
+  increaseCurrentUploadCount() {
+    const { currentUploadCount, currentUploadMessage } = this.state;
+
+    const newUploadCount = currentUploadCount + 1;
+    let newUploadMessage;
+    if (currentUploadMessage) {
+      newUploadMessage = currentUploadMessage;
+    } else {
+      const hide = message.loading('Datei-Upload', 0);
+      newUploadMessage = { hide };
+    }
+
+    this.setState({
+      currentUploadCount: newUploadCount,
+      currentUploadMessage: newUploadMessage
+    });
+  }
+
+  decreaseCurrentUploadCount() {
+    const { currentUploadCount, currentUploadMessage } = this.state;
+
+    const newUploadCount = currentUploadCount - 1;
+    let newUploadMessage;
+
+    if (newUploadCount === 0) {
+      newUploadMessage = null;
+      if (currentUploadMessage) {
+        currentUploadMessage.hide();
+      }
+    } else {
+      newUploadMessage = currentUploadMessage;
+    }
+
+    this.setState({
+      currentUploadCount: newUploadCount,
+      currentUploadMessage: newUploadMessage
+    });
   }
 
   eventHasFiles(event) {
@@ -202,7 +246,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   async refreshFiles(pathSegments, keysToSelect) {
-    this.setState({ loading: true });
+    this.setState({ isRefreshing: true });
 
     const { cdnApiClient } = this.props;
     const prefix = pathHelper.getPrefix(pathSegments);
@@ -214,24 +258,22 @@ class RepositoryBrowser extends React.Component {
       records: records,
       selectedRowKeys: selectedRowKeys,
       currentPathSegments: pathSegments,
-      loading: false
+      isRefreshing: false
     });
   }
 
-  async uploadFiles(pathSegments, files) {
-    this.setState({ loading: true });
+  async uploadFiles(pathSegments, files, { onProgress } = {}) {
+    this.increaseCurrentUploadCount();
 
     const { cdnApiClient } = this.props;
     const prefix = pathHelper.getPrefix(pathSegments);
 
-    const hide = message.loading('Datei-Upload', 0);
-    await cdnApiClient.uploadFiles(files, prefix);
+    await cdnApiClient.uploadFiles(files, prefix, { onProgress });
+
+    this.decreaseCurrentUploadCount();
 
     const { currentPathSegments, selectedRowKeys } = this.state;
     await this.refreshFiles(currentPathSegments, selectedRowKeys);
-
-    hide();
-    message.success('Upload erfolgreich');
   }
 
 
@@ -294,7 +336,13 @@ class RepositoryBrowser extends React.Component {
 
     this.setState({ selectedRowKeys: newSelectedRowKeys });
 
-    onSelectionChanged(selectedRowKeys.map(key => records.find(r => r.key === key).originalObject));
+    onSelectionChanged(newSelectedRowKeys.map(key => records.find(r => r.key === key).originalObject));
+  }
+
+  async onCustomUpload({ file, onProgress, onSuccess }) {
+    const { currentPathSegments } = this.state;
+    const result = await this.uploadFiles(currentPathSegments, [file], { onProgress });
+    onSuccess(result);
   }
 
   getRowClassName(record) {
@@ -327,7 +375,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   renderRecordsTable(records) {
-    const { loading } = this.state;
+    const { isRefreshing, currentUploadCount } = this.state;
 
     return (
       <Table
@@ -337,7 +385,7 @@ class RepositoryBrowser extends React.Component {
         columns={this.columns}
         dataSource={records}
         rowClassName={this.getRowClassName}
-        loading={loading}
+        loading={isRefreshing || currentUploadCount !== 0}
         onRow={this.handleRow}
         />
     );
@@ -412,7 +460,20 @@ class RepositoryBrowser extends React.Component {
 
     return (
       <div className="RepositoryBrowser PageContent">
-        {this.renderBreadCrumbs(currentPathSegments, lockedPathSegmentsCount)}
+        <div style={{ display: 'flex' }}>
+          <div style={{ flex: '1 0 0%' }}>
+            {this.renderBreadCrumbs(currentPathSegments, lockedPathSegmentsCount)}
+          </div>
+          <div style={{ flex: 'none' }}>
+            <Upload
+              multiple
+              showUploadList={false}
+              customRequest={this.onCustomUpload}
+              >
+              <Button><Icon type="upload" /> Select Files</Button>
+            </Upload>
+          </div>
+        </div>
         <div
           ref={this.browserRef}
           className={browserClassNames}

@@ -207,7 +207,6 @@ gulp.task('minio:up', () => {
       `-e MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}`,
       `-e MINIO_SECRET_KEY=${MINIO_SECRET_KEY}`,
       '-e MINIO_BROWSER=on',
-      '-e MINIO_DOMAIN=localhost',
       `${TEST_MINIO_IMAGE} server /data`
     ].join(' '),
     afterRun: async () => {
@@ -230,6 +229,8 @@ gulp.task('serve', ['mongo:up', 'minio:up', 'build'], startServer);
 
 gulp.task('serve:restart', ['lint', 'test:changed', 'bundle:js'], restartServer);
 
+gulp.task('serve:restart:raw', ['bundle:js'], restartServer);
+
 gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', 'minio:seed', done));
 
 gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
@@ -241,6 +242,13 @@ gulp.task('watch', ['serve'], () => {
   gulp.watch(['db-create-user'], ['lint']);
   gulp.watch(['db-seed'], ['lint', 'mongo:seed']);
   gulp.watch(['s3-seed'], ['lint', 'minio:seed']);
+});
+
+gulp.task('watch:raw', ['serve'], () => {
+  gulp.watch(['src/**/*.{js,jsx}'], ['serve:restart:raw']);
+  gulp.watch(['src/**/*.less'], ['bundle:css']);
+  gulp.watch(['db-seed'], ['mongo:seed']);
+  gulp.watch(['s3-seed'], ['minio:seed']);
 });
 
 gulp.task('default', ['watch']);

@@ -4,7 +4,6 @@ const Input = require('antd/lib/input');
 const Form = require('antd/lib/form');
 const React = require('react');
 
-
 class YoutubeVideoEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -69,7 +68,7 @@ class YoutubeVideoEditor extends React.Component {
       <div>
         <Form layout="horizontal">
           <Form.Item label="URL" {...formItemLayout}>
-            <Input placeholder="input placeholder" value={this.state.section.content.de.url} onChange={this.handleUrlValueChanged} />
+            <Input placeholder="URL" value={this.state.section.content.de.url} onChange={this.handleUrlValueChanged} />
           </Form.Item>
           <Form.Item label="Maximale Breite" {...formItemLayout}>
             <Slider marks={marks} step={null} defaultValue={this.state.section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />

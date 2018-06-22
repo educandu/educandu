@@ -1,48 +1,50 @@
-const PropTypes = require('prop-types');
-const Radio = require('antd/lib/radio');
-const Input = require('antd/lib/input');
-const Form = require('antd/lib/form');
 const React = require('react');
+const autoBind = require('auto-bind');
+const PropTypes = require('prop-types');
+const { Form, Input, Radio } = require('antd');
+const clientSettings = require('../../../bootstrap/client-settings');
+const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+const FormItem = Form.Item;
 
 class AudioEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { section: props.section };
-    this.handleUrlValueChanged = this.handleUrlValueChanged.bind(this);
-    this.handleTypeValueChanged = this.handleTypeValueChanged.bind(this);
+    autoBind.react(this);
+    this.state = {
+      section: props.section,
+      currentType: props.section.content.de.src.type,
+      currentExternalUrl: props.section.content.de.src.type === 'external' ? props.section.content.de.src.type.url : null,
+      currentInternalUrl: props.section.content.de.src.type === 'internal' ? props.section.content.de.src.type.url : null
+    };
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  handleUrlValueChanged(event) {
+  handleExternalUrlValueChanged(event) {
     const { value } = event.target;
-    const oldState = this.state;
-    const newState = {
-      section: {
-        ...oldState.section,
-        content: {
-          ...oldState.section.content,
-          de: {
-            ...oldState.section.content.de,
-            src: {
-              ...oldState.section.content.de.src,
-              url: value
-            }
-          }
-        }
-      }
-    };
-    this.setState(newState);
-    this.props.onContentChanged(newState.section.content);
+    this.setState({ currentExternalUrl: value });
+    this.changeSrc({ url: value });
+  }
+
+  handleInternalUrlValueChanged(value) {
+    this.setState({ currentInternalUrl: value });
+    this.changeSrc({ url: value });
   }
 
   handleTypeValueChanged(event) {
     const { value } = event.target;
+    const { currentExternalUrl, currentInternalUrl } = this.state;
+    const url = value === 'external' ? currentExternalUrl : currentInternalUrl;
+    this.setState({ currentType: value });
+    this.changeSrc({ type: value, url: url });
+  }
+
+  changeSrc(newSrcValues) {
     const oldState = this.state;
     const newState = {
       section: {
@@ -53,7 +55,7 @@ class AudioEditor extends React.Component {
             ...oldState.section.content.de,
             src: {
               ...oldState.section.content.de.src,
-              type: value
+              ...newSrcValues
             }
           }
         }
@@ -64,30 +66,42 @@ class AudioEditor extends React.Component {
   }
 
   render() {
+    const { currentType, currentExternalUrl, currentInternalUrl } = this.state;
+
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 }
     };
-    const { type, url } = this.state.section.content.de.src;
+
     return (
       <div>
         <Form layout="horizontal">
-          <Form.Item label="Quelle" {...formItemLayout}>
-            <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
+          <FormItem label="Quelle" {...formItemLayout}>
+            <RadioGroup value={currentType} onChange={this.handleTypeValueChanged}>
               <RadioButton value="external">Externer Link</RadioButton>
               <RadioButton value="internal">Elmu CDN</RadioButton>
             </RadioGroup>
-          </Form.Item>
-          {type === 'external' && (
-            <Form.Item label="Externe URL" {...formItemLayout}>
-              <Input value={url} onChange={this.handleUrlValueChanged} />
-            </Form.Item>
+          </FormItem>
+          {currentType === 'external' && (
+            <FormItem label="Externe URL" {...formItemLayout}>
+              <Input value={currentExternalUrl} onChange={this.handleExternalUrlValueChanged} />
+            </FormItem>
           )}
-          {type === 'internal' && (
-            <Form.Item label="CDN-Key" {...formItemLayout}>
-              <div style={{ color: 'red' }}>(not implemented)</div>
-              <Input value="Hello World!" />
-            </Form.Item>
+          {currentType === 'internal' && (
+            <FormItem label="Interne URL" {...formItemLayout}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Input
+                  addonBefore={clientSettings.cdnRootURL}
+                  value={currentInternalUrl}
+                  readOnly
+                  />
+                <CdnFilePicker
+                  rootPrefix="media"
+                  fileName={currentInternalUrl}
+                  onFileNameChanged={this.handleInternalUrlValueChanged}
+                  />
+              </div>
+            </FormItem>
           )}
         </Form>
       </div>

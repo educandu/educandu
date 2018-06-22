@@ -14,11 +14,12 @@ class CdnApiClient {
       .then(res => res.body);
   }
 
-  uploadFiles(files, prefix) {
+  uploadFiles(files, prefix, { onProgress = () => {} } = {}) {
     const request = this.httpClient
       .post('/api/v1/cdn/objects')
       .accept('json')
-      .field('prefix', prefix);
+      .field('prefix', prefix)
+      .on('progress', onProgress);
 
     files.forEach(file => {
       request.attach('files', file, file.name);

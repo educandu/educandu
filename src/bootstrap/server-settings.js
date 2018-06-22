@@ -18,7 +18,7 @@ const overrides = {
     cdnRegion: 'eu-central-1',
     cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
     cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
-    cdnBucketName: 'dev-cdn.elmu.online'
+    cdnBucketName: 'dev-elmu-cdn'
   },
   test: {
     elmuWebConnectionString: 'mongodb://elmu:elmu@localhost:27017/test-elmu-web?authSource=admin',
@@ -28,7 +28,7 @@ const overrides = {
     cdnRegion: 'eu-central-1',
     cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
     cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
-    cdnBucketName: 'test-cdn.elmu.online'
+    cdnBucketName: 'test-elmu-cdn'
   },
   stag: {
     elmuWebConnectionString: process.env.ELMU_WEB_CONNECTION_STRING,

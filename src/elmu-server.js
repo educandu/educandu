@@ -14,9 +14,10 @@ const ReactDOMServer = require('react-dom/server');
 const Docs = require('./components/pages/docs.jsx');
 const Edit = require('./components/pages/edit.jsx');
 const Index = require('./components/pages/index.jsx');
+const serverSettings = require('./bootstrap/server-settings');
 const DocumentService = require('./services/document-service');
 
-const renderPageTemplate = (bundleName, html, initialState) => `
+const renderPageTemplate = (bundleName, html, initialState, clientEnv) => `
 <!DOCTYPE html>
 <html>
   <head>
@@ -28,6 +29,7 @@ const renderPageTemplate = (bundleName, html, initialState) => `
   <body>
     <main id="main">${html}</main>
     <script>
+      window.env = ${htmlescape(clientEnv)};
       window.__initalState__ = ${htmlescape(initialState)};
     </script>
     <script src="/commons.js"></script>
@@ -97,7 +99,8 @@ class ElmuServer {
     const props = { container, initialState, PageComponent };
     const elem = React.createElement(Page, props);
     const mainContent = ReactDOMServer.renderToString(elem);
-    return res.type('html').send(renderPageTemplate(bundleName, mainContent, initialState));
+    const clientEnv = { ELMU_ENV: serverSettings.env };
+    return res.type('html').send(renderPageTemplate(bundleName, mainContent, initialState, clientEnv));
   }
 
   listen(port, cb) {
