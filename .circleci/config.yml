@@ -50,6 +50,7 @@ jobs:
       - AWS_ACCOUNT_ID: "344601915837"
       - BEANSTALK_ENVIRONMENT_NAME: Staging
       - BEANSTALK_DOCKERRUN_FILE: Dockerrun.aws.json
+      - BEANSTALK_DEPLOYMENT_PACKAGE: elmu-web-deploy.zip
       - S3_BUILD_ARTIFACTS_BUCKET: elmu-web-build-artifacts
     steps:
       - setup_remote_docker
@@ -82,11 +83,14 @@ jobs:
           name: Push Docker image
           command: docker push $APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME
       - run:
-          name: Prepare deployment artifact
+          name: Replace image name in Dockerrun file
           command: sed -i'' -e "s;%IMAGE_NAME%;$APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME;g" ./$BEANSTALK_DOCKERRUN_FILE
       - run:
-          name: Upload deployment artifact
-          command: aws s3 cp ./$BEANSTALK_DOCKERRUN_FILE s3://$S3_BUILD_ARTIFACTS_BUCKET/$APPLICATION_VERSION/$BEANSTALK_DOCKERRUN_FILE
+          name: Create deployment package
+          command: zip -r ./$BEANSTALK_DEPLOYMENT_PACKAGE ./$BEANSTALK_DOCKERRUN_FILE .ebextensions/
+      - run:
+          name: Upload deployment package
+          command: aws s3 cp ./$BEANSTALK_DEPLOYMENT_PACKAGE s3://$S3_BUILD_ARTIFACTS_BUCKET/$APPLICATION_VERSION/$BEANSTALK_DEPLOYMENT_PACKAGE
       - run:
           name: Create Elastic Beanstalk application version
           command: |
@@ -95,7 +99,7 @@ jobs:
               --application-name $APPLICATION_NAME \
               --version-label $APPLICATION_VERSION \
               --description "$APPLICATION_RELEASE_NOTES" \
-              --source-bundle S3Bucket=$S3_BUILD_ARTIFACTS_BUCKET,S3Key=$APPLICATION_VERSION/$BEANSTALK_DOCKERRUN_FILE
+              --source-bundle S3Bucket=$S3_BUILD_ARTIFACTS_BUCKET,S3Key=$APPLICATION_VERSION/$BEANSTALK_DEPLOYMENT_PACKAGE
       - run:
           name: Deploy application version to Staging environment
           command: |
