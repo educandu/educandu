@@ -100,6 +100,11 @@ gulp.task('test:watch', () => {
   return jest.runCLI({ watch: true }, '.');
 });
 
+gulp.task('copy:iframeresizer', () => {
+  return gulp.src('./node_modules/iframe-resizer/js/iframeResizer.contentWindow.*')
+    .pipe(gulp.dest('static/scripts'));
+});
+
 gulp.task('bundle:css', () => {
   return gulp.src('src/styles/main.less')
     .pipe(gulpif(!!server, plumber({ errorHandler: true })))

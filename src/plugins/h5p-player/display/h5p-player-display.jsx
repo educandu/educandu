@@ -1,6 +1,7 @@
 const React = require('react');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
+const { iframeResizer } = require('iframe-resizer');
 
 class H5pPlayerDisplay extends React.Component {
   constructor(props) {
@@ -16,9 +17,7 @@ class H5pPlayerDisplay extends React.Component {
 
     fetch(playUrl).then(x => x.text()).then(html => {
       const iframe = this.contentFrame.current;
-      iframe.onload = () => {
-        iframe.style.height = `${iframe.contentWindow.document.body.scrollHeight}px`;
-      };
+      iframe.onload = () => iframeResizer({ checkOrigin: false, log: true }, iframe);
       iframe.contentWindow.document.open();
       iframe.contentWindow.document.write(html);
       iframe.contentWindow.document.close();

@@ -31,6 +31,7 @@ const renderPlayTemplate = (contentId, integration, h5pLibRootUrl) => `
   <script>
     window.H5PIntegration = ${htmlescape(integration)};
   </script>
+  <script src="/scripts/iframeResizer.contentWindow.min.js"></script>
 </body>
 </html>
 `;
