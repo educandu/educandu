@@ -2,23 +2,24 @@ const he = require('he');
 const htmlescape = require('htmlescape');
 const h5pHelper = require('./h5p-helper');
 const Cdn = require('../../repositories/cdn');
+const clientSettings = require('../../bootstrap/client-settings');
 
-const renderPlayTemplate = (contentId, integration) => `
+const renderPlayTemplate = (contentId, integration, h5pLibRootUrl) => `
 <!DOCTYPE html>
 <html>
 <head>
   <title>H5P Player</title>
-  <script src="/plugins/h5p-player/static/js/jquery.js"></script>
-  <script src="/plugins/h5p-player/static/js/h5p.js"></script>
-  <script src="/plugins/h5p-player/static/js/h5p-event-dispatcher.js"></script>
-  <script src="/plugins/h5p-player/static/js/h5p-x-api-event.js"></script>
-  <script src="/plugins/h5p-player/static/js/h5p-x-api.js"></script>
-  <script src="/plugins/h5p-player/static/js/h5p-content-type.js"></script>
-  <script src="/plugins/h5p-player/static/js/h5p-confirmation-dialog.js"></script>
-  <script src="/plugins/h5p-player/static/js/h5p-action-bar.js"></script>
-  <link rel="stylesheet" href="/plugins/h5p-player/static/styles/h5p.css">
-  <link rel="stylesheet" href="/plugins/h5p-player/static/styles/h5p-confirmation-dialog.css">
-  <link rel="stylesheet" href="/plugins/h5p-player/static/styles/h5p-core-button.css">
+  <script src="${h5pLibRootUrl}/js/jquery.js"></script>
+  <script src="${h5pLibRootUrl}/js/h5p.js"></script>
+  <script src="${h5pLibRootUrl}/js/h5p-event-dispatcher.js"></script>
+  <script src="${h5pLibRootUrl}/js/h5p-x-api-event.js"></script>
+  <script src="${h5pLibRootUrl}/js/h5p-x-api.js"></script>
+  <script src="${h5pLibRootUrl}/js/h5p-content-type.js"></script>
+  <script src="${h5pLibRootUrl}/js/h5p-confirmation-dialog.js"></script>
+  <script src="${h5pLibRootUrl}/js/h5p-action-bar.js"></script>
+  <link rel="stylesheet" href="${h5pLibRootUrl}/styles/h5p.css">
+  <link rel="stylesheet" href="${h5pLibRootUrl}/styles/h5p-confirmation-dialog.css">
+  <link rel="stylesheet" href="${h5pLibRootUrl}/styles/h5p-core-button.css">
   <style>
     body { margin: 0; }
   </style>
@@ -53,9 +54,16 @@ class H5pPlayer {
   }
 
   async handleGetPlay(req, res) {
+    const proto = req.secure ? 'https' : 'http';
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+
     const { contentId } = req.params;
-    const integration = await h5pHelper.createIntegration(contentId);
-    const html = renderPlayTemplate(contentId, integration);
+    const baseUrl = `${proto}://${host}`;
+    const h5pLibRootUrl = `${baseUrl}/plugins/h5p-player/static`;
+    const applicationRootUrl = `${clientSettings.cdnRootURL}/plugins/h5p-player/content`;
+
+    const integration = await h5pHelper.createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationRootUrl);
+    const html = renderPlayTemplate(contentId, integration, h5pLibRootUrl);
     return res.type('html').send(html);
   }
 }

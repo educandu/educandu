@@ -2,6 +2,7 @@
 /* eslint no-use-before-define: 0 */
 /* eslint curly: 0 */
 
+const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
@@ -9,8 +10,7 @@ const shortid = require('shortid'); // TODO ELMU ID
 const toposort = require('toposort');
 const decompress = require('decompress');
 const recursiveReaddir = require('recursive-readdir');
-
-const applicationsRootDir = path.join(__dirname, '../../../test/h5p-test-applications');
+const applicationsRootDir = path.join(os.tmpdir(), './elmu/h5p');
 
 
 async function install(h5pFileName, cdn) {
@@ -96,18 +96,15 @@ async function addLibraryToMap(libName, map, applicationDir) {
   await Promise.all(preloadedDependencies.map(lib => addLibraryToMap(lib, map, applicationDir)));
 }
 
-async function createIntegration(contentId) {
+async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationRootUrl) {
   const elmuInfoFile = path.join(applicationsRootDir, `./${contentId}/_elmu-info.json`);
   const { dependencies, content, manifest } = await loadJson(elmuInfoFile);
 
-  const h5pLibRootUrl = 'http://localhost:3000/plugins/h5p-player/static';
-  const applicationRootUrl = 'http://localhost:9000/dev-elmu-cdn/plugins/h5p-player/content';
-
   return {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: baseUrl,
     url: '/',
     postUserStatistics: false,
-    siteUrl: 'http://localhost:3000/',
+    siteUrl: `${baseUrl}/`,
     l10n: {},
     loadedJs: [],
     loadedCss: [],

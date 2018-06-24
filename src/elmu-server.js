@@ -46,6 +46,8 @@ class ElmuServer {
     this.container = container;
     this.app = express();
 
+    this.app.enable('trust proxy');
+
     const jsonParser = bodyParser.json();
     const multipartParser = multer({ dest: os.tmpdir() });
 
