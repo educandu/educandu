@@ -1,0 +1,126 @@
+{
+  "semantics": [
+    {
+      "label": "قائمة الأسئلة",
+      "entity": "السؤال",
+      "field": {
+        "label": "أسئلة واجوبة بديلة",
+        "fields": [
+          {
+            "label": "السؤال"
+          },
+          {
+            "label": "اجوبة بديلة - أول جواب هو الصحيح",
+            "entity": "جواب",
+            "field": {
+              "label": "اجوبة بديلة"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "شفافية خلفية العناصر",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "الافتراضي"
+            }
+          ],
+          "label": "Define custom feedback for any score range",
+          "description": "Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
+          "entity": "range",
+          "field": {
+            "fields": [
+              {
+                "label": "Score Range"
+              },
+              {},
+              {
+                "label": "Feedback for defined score range",
+                "placeholder": "Fill in the feedback"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "إعدادت النشاط",
+      "fields": [
+        {
+          "label": "Auto continue",
+          "description": "Automatically go to next question when alternative is selected"
+        },
+        {
+          "label": "مهلة على الإجابات الصحيحة",
+          "description": "القيمة بالمللي ثانية"
+        },
+        {
+          "label": "المهلة على الإجابات الخاطئة",
+          "description": "القيمة بالمللي ثانية"
+        },
+        {
+          "label": "تفعيل المؤثرات الصوتية"
+        },
+        {
+          "label": "تفعيل زر إعادة المحاولة"
+        },
+        {
+          "label": "تفعيل إظهار زر الحل"
+        },
+        {
+          "label": "نسبة النجاح",
+          "description": "النسبة المئوية لمجموع النقاط المطلوبة لاجتياز الاختبار"
+        }
+      ]
+    },
+    {
+      "label": "توطين مجموعة الخيار واحد",
+      "fields": [
+        {
+          "label": "تسمية لزر \"مشاهدة حل \"",
+          "default": "مشاهدة الحل"
+        },
+        {
+          "label": "تسمية لزر \"إعادة المحاولة \"",
+          "default": "إعادة المحاولة"
+        },
+        {
+          "label": "عنوان مشاهدة عرض الحل",
+          "default": "حل"
+        },
+        {
+          "label": "النص Readspeaker عن الإجابة الصحيحة",
+          "default": "صحيح!"
+        },
+        {
+          "label": "النص Readspeaker للإجابة غير صحيحة",
+          "default": "غير صحيح!"
+        },
+        {
+          "label": "تسمية لزر كتم الصوت، لتعطيل الصوت ردود الفعل",
+          "default": "صوت ردود الفعل البكم"
+        },
+        {
+          "label": "تسمية الزر إغلاق",
+          "default": "أغلق"
+        },
+        {
+          "label": "النص رقم الشريحة",
+          "default": "الشريحة :num أو :total"
+        },
+        {
+          "label": "Textual representation of the score bar for those using a readspeaker",
+          "description": "Announces current slide and total number of slides, variables are :num and :total",
+          "default": "You got :num out of :total points"
+        },
+        {
+          "label": "Textual representation of the score bar for those using a readspeaker",
+          "default": "You got :num out of :total points"
+        }
+      ]
+    }
+  ]
+}

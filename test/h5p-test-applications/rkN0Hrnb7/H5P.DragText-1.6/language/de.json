@@ -1,0 +1,135 @@
+{
+  "semantics": [
+    {
+      "label": "Aufgabenbeschreibung",
+      "description": "Beschreibe, wie der Nutzer die Aufgabe lösen kann.",
+      "default": "Ziehen Sie die Wörter in die richtigen Felder!"
+    },
+    {
+      "label": "Text",
+      "placeholder": "* Oslo * ist die Hauptstadt von Norwegen, * Stockholm * ist die Hauptstadt von Schweden und * Copenhagen * ist die Hauptstadt von Dänemark. Alle Städte befinden sich der * skandinavischen: nördliche Teil von Europa * Halbinsel.",
+      "description": "",
+      "important": {
+        "description": "<ul><li>Dementsprechende Wörter sind mit einem Sternchen (*) vor und hinter den richtigen Wort oder Satzteil hinzugefügt.</li> <li>Du kannst einen Tipp mit einem Doppelpunkt (:) vor der Spitze hinzufügen.</li> <li>Für jede leere Stelle gibt es nur ein richtiges Wort.</li> <li>Du kannst auch eine Rückmeldung hinzufügen, die angezeigt wird, wenn eine Aufgabe abgeschlossen ist. Verwende \"\\+\" für positive und \" \\-\" für negative Rückmeldungen.</li></ul>"
+      }
+    },
+    {
+      "label": "Hintergrunddeckkraft für bewegliche Elemente",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "Vorgabe"
+            }
+          ],
+          "label": "Benutzerdefinierte Rückmeldung für jeden Punkte-Bereich definieren",
+          "description": "Klicke auf \"Bereich hinzufügen\", um so viele Bereiche zu erstellen, wie du benötigst. Beispiel: 0-20 % Schlechte Punktzahl, 21-91 % Durchschnittliche Punktzahl, 91-100 % Sehr gute Punktzahl!",
+          "entity": "Bereich",
+          "field": {
+            "fields": [
+              {
+                "label": "Punkte-Bereich"
+              },
+              {},
+              {
+                "label": "Rückmeldung für den definierten Punktebereich",
+                "placeholder": "Fülle die Rückmeldung aus"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Beschriftung für den \"Überprüfen\"-Knopf",
+      "default": "Überprüfen"
+    },
+    {
+      "label": "Beschriftung für den \"Wiederholen\"-Button",
+      "default": "Wiederholen"
+    },
+    {
+      "label": "Text für den \"Lösung anzeigen\"-Button",
+      "default": "Lösung anzeigen"
+    },
+    {
+      "label": "Numbered Drop zone label",
+      "default": "Drop-Zone @index.",
+      "description": "Label used for accessibility, where the Read speaker will read the index of a drop zone. Variable available: @index"
+    },
+    {
+      "label": "Empty Drop Zone label",
+      "default": "Drop-Zone @index ist leer.",
+      "description": "Label used for accessibility, where the Read speaker will read that the drop zone is empty"
+    },
+    {
+      "label": "Contains Drop Zone label",
+      "default": "Drop-Zone @index enthält ziehbare @draggable.",
+      "description": "Label used for accessibility, where the Read speaker will read that the drop zone contains a draggable"
+    },
+    {
+      "label": "Draggable elements label",
+      "default": "Draggable @text. @index of @count draggables.",
+      "description": "Label used for accessibility, where the Read speaker reads that this is a draggable element. Variable available: @index, @count"
+    },
+    {
+      "label": "Beschriftung für Senden-Schaltfäche",
+      "default": "Tipp anzeigen",
+      "description": "Label used for accessibility, where the Read speaker reads it before the tip is read out"
+    },
+    {
+      "label": "\"Readspeaker\"-Text für eine richtige Antwort",
+      "default": "Richtig!"
+    },
+    {
+      "label": "\"Readspeaker\"-Text für eine falsche Antwort",
+      "default": "Falsch!"
+    },
+    {
+      "label": "Confirmation dialog title that user wants to reset a droppable",
+      "default": "Reset drop"
+    },
+    {
+      "label": "Confirmation dialog description that user wants to reset a droppable",
+      "default": "Sind Sie sicher, dass Sie alle Optionen zurücksetzen möchten?"
+    },
+    {
+      "label": "Label used for accessibility, where the read speaker indicates that dragging is initiated",
+      "default": "Draggable is grabbed."
+    },
+    {
+      "label": "Label used for accessibility, where the read speaker indicates that dragging is canceled",
+      "default": "Cancelled dragging."
+    },
+    {
+      "label": "Label used for accessibility, where the read speaker indicates that a text is the correct answer",
+      "default": "Korrekte Antwort:"
+    },
+    {
+      "label": "Header for panel containing feedback for correct/incorrect answers",
+      "default": "Rückmeldung"
+    },
+    {
+      "label": "Verhaltenseinstellungen.",
+      "description": "Diese Optionen legen fest, wie die Aufgabe auf Eingaben reagiert.",
+      "fields": [
+        {
+          "label": "\"Wiederholen\" zulassen"
+        },
+        {
+          "label": "\"Lösung zeigen\"-Button anzeigen"
+        },
+        {
+          "label": "Enable \"Check\" button"
+        },
+        {
+          "label": "Instant feedback"
+        }
+      ]
+    },
+    {
+      "label": "Textual representation of the score bar for those using a readspeaker",
+      "default": "You got :num out of :total points"
+    }
+  ]
+}

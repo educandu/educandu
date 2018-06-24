@@ -64,8 +64,14 @@ const ensureContainerRunning = async ({ containerName, runArgs, afterRun }) => {
 
 const ensureContainerRemoved = async ({ containerName }) => {
   const docker = new Docker();
-  await docker.command(`rm -f ${containerName}`);
-  await delay(1000);
+  try {
+    await docker.command(`rm -f ${containerName}`);
+    await delay(1000);
+  } catch (err) {
+    if (!err.toString().includes('No such container')) {
+      throw err;
+    }
+  }
 };
 
 gulp.task('clean', () => {

@@ -111,6 +111,17 @@ const section4 = {
       },
       {
         _id: null,
+        key: 'Sylsu$4ke8',
+        order: null,
+        type: 'h5p-player',
+        updatedContent: {
+          de: {
+            contentId: 'rkN0Hrnb7'
+          }
+        }
+      },
+      {
+        _id: null,
         key: 'HybdE$6pTf',
         order: null,
         type: 'quick-tester',
