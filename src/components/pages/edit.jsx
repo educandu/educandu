@@ -17,11 +17,21 @@ const pluginInfos = [
     defaultContent: ''
   },
   {
+    name: 'Image',
+    type: 'image',
+    defaultContent: {
+      src: {
+        type: 'internal',
+        url: ''
+      }
+    }
+  },
+  {
     name: 'Audio',
     type: 'audio',
     defaultContent: {
       src: {
-        type: 'external',
+        type: 'internal',
         url: ''
       }
     }
@@ -41,6 +51,13 @@ const pluginInfos = [
       name: '',
       teaser: '',
       tests: []
+    }
+  },
+  {
+    name: 'H5P-Player',
+    type: 'h5p-player',
+    defaultContent: {
+      contentId: null
     }
   }
 ];
