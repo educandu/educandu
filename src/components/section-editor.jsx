@@ -1,6 +1,7 @@
-const PropTypes = require('prop-types');
-const Radio = require('antd/lib/radio');
 const React = require('react');
+const autoBind = require('auto-bind');
+const PropTypes = require('prop-types');
+const { Radio, Button } = require('antd');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -11,14 +12,11 @@ class SectionEditor extends React.Component {
   constructor(props) {
     super(props);
 
+    autoBind.react(this);
+
     this.state = {
       mode: 'edit'
     };
-
-    this.handleEditClick = this.handleEditClick.bind(this);
-    this.handleModeChange = this.handleModeChange.bind(this);
-    this.handlePreviewClick = this.handlePreviewClick.bind(this);
-    this.handleContentChange = this.handleContentChange.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -37,6 +35,11 @@ class SectionEditor extends React.Component {
     this.setState({ mode: event.target.value });
   }
 
+  handleSectionDeleteClick() {
+    const { onSectionDeleted, section } = this.props;
+    onSectionDeleted(section.key);
+  }
+
   handleContentChange(content) {
     const { onContentChanged, section } = this.props;
     onContentChanged(section.key, content);
@@ -48,13 +51,22 @@ class SectionEditor extends React.Component {
     return (
       <section key={section.key} className="Section">
         <div className="Panel">
-          <div className="Panel-header">
-            <div>
+          <div className="Panel-header" style={{ display: 'flex' }}>
+            <div style={{ flex: '1 0 0%' }}>
               <span>Section Key:</span> <b>{section.key}</b>
               <span>&nbsp;&nbsp;&nbsp;</span>
               <span>Revision:</span> <b>{section.order}</b>
               <span>&nbsp;&nbsp;&nbsp;</span>
               <span>Type:</span> <b>{section.type}</b>
+            </div>
+            <div style={{ flex: 'none' }}>
+              <Button
+                size="small"
+                type="danger"
+                onClick={this.handleSectionDeleteClick}
+                >
+                Abschnitt löschen
+              </Button>
             </div>
           </div>
           <div className="Panel-content">
@@ -84,6 +96,7 @@ SectionEditor.propTypes = {
     getEditorComponent: PropTypes.func.isRequired
   }).isRequired,
   onContentChanged: PropTypes.func.isRequired,
+  onSectionDeleted: PropTypes.func.isRequired,
   section: PropTypes.shape({
     key: PropTypes.string.isRequired,
     order: PropTypes.number,

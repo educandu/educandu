@@ -1,14 +1,13 @@
-const DocumentApiClient = require('../../services/document-api-client');
-const EditorFactory = require('../../plugins/editor-factory');
-const SectionEditor = require('./../section-editor.jsx');
-const { inject } = require('../container-context.jsx');
-const PageHeader = require('./../page-header.jsx');
-const utils = require('../../utils/unique-id');
-const Dropdown = require('antd/lib/dropdown');
-const Button = require('antd/lib/button');
-const PropTypes = require('prop-types');
-const Menu = require('antd/lib/menu');
 const React = require('react');
+const autoBind = require('auto-bind');
+const PropTypes = require('prop-types');
+const utils = require('../../utils/unique-id');
+const PageHeader = require('./../page-header.jsx');
+const { Menu, Button, Dropdown } = require('antd');
+const { inject } = require('../container-context.jsx');
+const SectionEditor = require('./../section-editor.jsx');
+const EditorFactory = require('../../plugins/editor-factory');
+const DocumentApiClient = require('../../services/document-api-client');
 
 const pluginInfos = [
   {
@@ -66,6 +65,8 @@ class Editor extends React.Component {
   constructor(props) {
     super(props);
 
+    autoBind.react(this);
+
     const { editorFactory, documentApiClient, initialState } = this.props;
 
     this.editorFactory = editorFactory;
@@ -75,10 +76,6 @@ class Editor extends React.Component {
       ...this.createStateFromDoc(initialState),
       isDirty: false
     };
-
-    this.handleSave = this.handleSave.bind(this);
-    this.handleContentChanged = this.handleContentChanged.bind(this);
-    this.handleNewSectionClick = this.handleNewSectionClick.bind(this);
 
     this.pluginInfos = pluginInfos.map(t => ({
       ...t,
@@ -107,6 +104,19 @@ class Editor extends React.Component {
           ...prevState.editedDoc,
           sections: prevState.editedDoc.sections.map(sec => sec.key === sectionKey ? { ...sec, updatedContent } : sec)
         },
+        isDirty: true
+      };
+    });
+  }
+
+  handleSectionDeleted(sectionKey) {
+    this.setState(prevState => {
+      return {
+        editedDoc: {
+          ...prevState.editedDoc,
+          sections: prevState.editedDoc.sections.filter(sec => sec.key !== sectionKey)
+        },
+        sectionInfos: prevState.sectionInfos.filter(info => info.section.key !== sectionKey),
         isDirty: true
       };
     });
@@ -166,6 +176,7 @@ class Editor extends React.Component {
         EditorComponent={EditorComponent}
         editorInstance={editorInstance}
         onContentChanged={this.handleContentChanged}
+        onSectionDeleted={this.handleSectionDeleted}
         section={section}
         />
     ));
