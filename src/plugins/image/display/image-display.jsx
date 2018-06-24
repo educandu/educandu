@@ -17,7 +17,7 @@ class ImageDisplay extends React.Component {
         src = data.src.url || null;
         break;
       case 'internal':
-        src = data.src.url ? `${clientSettings.cdnRootURL}${data.src.url}` : null;
+        src = data.src.url ? `${clientSettings.cdnRootURL}/${data.src.url}` : null;
         break;
       default:
         src = null;

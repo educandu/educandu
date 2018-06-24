@@ -91,7 +91,7 @@ class ImageEditor extends React.Component {
             <FormItem label="Interne URL" {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={clientSettings.cdnRootURL}
+                  addonBefore={`${clientSettings.cdnRootURL}/`}
                   value={currentInternalUrl}
                   readOnly
                   />

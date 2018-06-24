@@ -8,16 +8,16 @@ const commonSettings = {};
 
 const overrides = {
   dev: {
-    cdnRootURL: 'http://localhost:9000/dev-elmu-cdn/'
+    cdnRootURL: 'http://localhost:9000/dev-elmu-cdn'
   },
   test: {
-    cdnRootURL: 'http://localhost:9000/test-elmu-cdn/'
+    cdnRootURL: 'http://localhost:9000/test-elmu-cdn'
   },
   stag: {
-    cdnRootURL: 'http://stag-cdn.elmu.online/'
+    cdnRootURL: 'http://stag-cdn.elmu.online'
   },
   prod: {
-    cdnRootURL: 'http://cdn.elmu.online/'
+    cdnRootURL: 'http://cdn.elmu.online'
   }
 };
 
