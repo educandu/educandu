@@ -6,16 +6,14 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const shortid = require('shortid'); // TODO ELMU ID
 const toposort = require('toposort');
 const decompress = require('decompress');
+const uniqueId = require('../../utils/unique-id');
 const recursiveReaddir = require('recursive-readdir');
-const applicationsRootDir = path.join(os.tmpdir(), './elmu/h5p');
-
 
 async function install(h5pFileName, cdn) {
-  const contentId = shortid();
-  const applicationDir = path.join(applicationsRootDir, `./${contentId}`);
+  const contentId = uniqueId.create();
+  const applicationDir = path.join(os.tmpdir(), `./elmu/h5p/${contentId}`);
   const elmuInfoPath = path.join(applicationDir, './_elmu-info.json');
 
   await decompress(h5pFileName, applicationDir);
@@ -24,7 +22,7 @@ async function install(h5pFileName, cdn) {
   await writeJson(elmuInfoPath, elmuInfo);
 
   const metaData = {};
-  const prefix = `plugins/h5p-player/content/${contentId}`;
+  const prefix = getPrefixForContentId(contentId);
   const files = await recursiveReaddir(applicationDir);
   const uploads = files.map(file => {
     const objectName = path.join(prefix, path.relative(applicationDir, file));
@@ -96,9 +94,11 @@ async function addLibraryToMap(libName, map, applicationDir) {
   await Promise.all(preloadedDependencies.map(lib => addLibraryToMap(lib, map, applicationDir)));
 }
 
-async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationRootUrl) {
-  const elmuInfoFile = path.join(applicationsRootDir, `./${contentId}/_elmu-info.json`);
-  const { dependencies, content, manifest } = await loadJson(elmuInfoFile);
+async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationRootUrl, cdn) {
+  const prefix = getPrefixForContentId(contentId);
+  const elmuInfoFile = `${prefix}/_elmu-info.json`;
+  const elmuInfoFileString = await cdn.getObjectAsString(elmuInfoFile, 'utf8');
+  const { dependencies, content, manifest } = JSON.parse(elmuInfoFileString);
 
   return {
     baseUrl: baseUrl,
@@ -146,6 +146,10 @@ async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationR
       }
     }
   };
+}
+
+function getPrefixForContentId(contentId) {
+  return `plugins/h5p-player/content/${contentId}`;
 }
 
 function getMainLibraryForContent(manifest) {

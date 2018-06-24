@@ -63,7 +63,7 @@ class H5pPlayer {
     const h5pLibRootUrl = `${baseUrl}/plugins/h5p-player/static`;
     const applicationRootUrl = `${clientSettings.cdnRootURL}/plugins/h5p-player/content`;
 
-    const integration = await h5pHelper.createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationRootUrl);
+    const integration = await h5pHelper.createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationRootUrl, this.cdn);
     const html = renderPlayTemplate(contentId, integration, h5pLibRootUrl);
     return res.type('html').send(html);
   }

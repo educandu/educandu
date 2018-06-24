@@ -1,4 +1,5 @@
 const { Client } = require('minio');
+const streamToArray = require('stream-to-array');
 const PriorityQueue = require('../common/priority-queue');
 
 const PRIORITY_UPLOAD = 2;
@@ -27,13 +28,11 @@ class S3Client {
   }
 
   listObjects(bucketName, prefix, recursive) {
-    return this._tasks.push(cb => {
-      const objects = [];
-      const objectStream = this._minioClient.listObjects(bucketName, prefix, recursive);
-      objectStream.on('data', obj => objects.push(obj));
-      objectStream.on('error', err => cb(err));
-      objectStream.on('end', () => cb(null, objects));
-    }, PRIORITY_DOWNLOAD);
+    return this._tasks.push(cb => streamToArray(this._minioClient.listObjects(bucketName, prefix, recursive), cb), PRIORITY_DOWNLOAD);
+  }
+
+  getObject(bucketName, objectName) {
+    return this._tasks.push(cb => this._minioClient.getObject(bucketName, objectName, cb), PRIORITY_DOWNLOAD);
   }
 
   // Docs say `objects` should be a 'list' of objects,

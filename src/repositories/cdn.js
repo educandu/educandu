@@ -1,5 +1,6 @@
-const S3Client = require('./s3-client');
 const Stream = require('stream');
+const S3Client = require('./s3-client');
+const readAllStream = require('read-all-stream');
 
 // Wraps access to a specific bucket using S3 client
 class Cdn {
@@ -11,6 +12,20 @@ class Cdn {
 
   listObjects({ prefix = '', recursive = false } = {}) {
     return this._s3Client.listObjects(this._bucketName, prefix, recursive);
+  }
+
+  getObject(objectName) {
+    return this._s3Client.getObject(this._bucketName, objectName);
+  }
+
+  async getObjectAsBuffer(objectName) {
+    const stream = await this.getObject(objectName);
+    return readAllStream(stream);
+  }
+
+  async getObjectAsString(objectName, encoding) {
+    const stream = await this.getObject(objectName);
+    return readAllStream(stream, encoding || 'utf8');
   }
 
   deleteObjects(objectNames) {
