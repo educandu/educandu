@@ -49,7 +49,8 @@ ObjectMaxWidthSlider.propTypes = {
 };
 
 ObjectMaxWidthSlider.defaultProps = {
-  defaultValue: maxValue
+  defaultValue: maxValue,
+  value: null
 };
 
 module.exports = ObjectMaxWidthSlider;
