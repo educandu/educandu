@@ -37,13 +37,21 @@ const startServer = () => {
     env: { NODE_ENV: 'development' },
     stdio: 'inherit'
   });
+  server.once('exit', () => {
+    server = null;
+  });
 };
 const restartServer = done => {
-  server.once('exit', () => {
+  if (server) {
+    server.once('exit', () => {
+      startServer();
+      done();
+    });
+    server.kill();
+  } else {
     startServer();
     done();
-  });
-  server.kill();
+  }
 };
 
 const ensureContainerRunning = async ({ containerName, runArgs, afterRun }) => {
