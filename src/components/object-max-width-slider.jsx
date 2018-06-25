@@ -2,6 +2,7 @@ const React = require('react');
 const { Slider } = require('antd');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
+const browserHelper = require('../ui/browser-helper');
 
 const possibleValues = [25, 33, 50, 66, 75, 100];
 const maxValue = possibleValues[possibleValues.length - 1];
@@ -22,7 +23,7 @@ function ObjectMaxWidthSlider({ value, defaultValue, onChange }) {
   if (typeof val !== 'number' || !possibleValues.includes(val)) {
     val = defaultValue;
 
-    if (window) {
+    if (browserHelper.isBrowser()) {
       setTimeout(() => onChange(val), 0);
     }
   }
