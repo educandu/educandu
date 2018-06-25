@@ -100,10 +100,10 @@ async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationR
   const { dependencies, content, manifest } = JSON.parse(elmuInfoFileString);
 
   return {
-    baseUrl: baseUrl,
-    url: '/',
+    baseUrl: baseUrl, // No trailing slash
+    url: `${applicationRootUrl}/${contentId}`, // Relative to web root
+    siteUrl: `${baseUrl}/`, // Only if NOT logged in!
     postUserStatistics: false,
-    siteUrl: `${baseUrl}/`,
     l10n: {},
     loadedJs: [],
     loadedCss: [],

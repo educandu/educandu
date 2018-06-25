@@ -1,23 +1,24 @@
 const React = require('react');
 const videojs = require('video.js');
 const PropTypes = require('prop-types');
+const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 
 require('videojs-youtube');
 
-class YoutubeVideoDisplay extends React.Component {
+class YoutubeVideoContentDisplay extends React.Component {
   constructor(props) {
     super(props);
-    this.videoElement = React.createRef();
+    this.player = null;
+    this.videoElementRef = React.createRef();
   }
 
   componentDidMount() {
-    const { preferredLanguages, section } = this.props;
-    const data = section.content[preferredLanguages[0]];
+    const { content } = this.props;
 
-    videojs(this.videoElement.current, {
+    this.player = videojs(this.videoElementRef.current, {
       sources: [
         {
-          src: data.url,
+          src: content.url,
           type: 'video/youtube'
         }
       ],
@@ -27,17 +28,39 @@ class YoutubeVideoDisplay extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    if (this.player) {
+      this.player.dispose();
+      this.player = null;
+    }
+  }
+
   render() {
-    const { preferredLanguages, section } = this.props;
-    const data = section.content[preferredLanguages[0]];
+    const { content } = this.props;
     return (
       <div className="YoutubeVideo">
-        <div className={`YoutubeVideo-videoWrapper u-max-width-${data.maxWidth || 100}`}>
-          <video className="video-js vjs-default-skin" ref={this.videoElement} />
+        <div className={`YoutubeVideo-videoWrapper u-max-width-${content.maxWidth || 100}`}>
+          <video className="YoutubeVideo-video video-js vjs-default-skin" ref={this.videoElementRef} />
         </div>
       </div>
     );
   }
+}
+
+YoutubeVideoContentDisplay.propTypes = {
+  ...sectionDisplayProps
+};
+
+// Wrapper:
+/* eslint react/no-multi-comp: 0 */
+
+function YoutubeVideoDisplay({ preferredLanguages, section }) {
+  const language = preferredLanguages[0];
+  const content = section.content[language];
+
+  return (
+    <YoutubeVideoContentDisplay content={content} language={language} />
+  );
 }
 
 YoutubeVideoDisplay.propTypes = {

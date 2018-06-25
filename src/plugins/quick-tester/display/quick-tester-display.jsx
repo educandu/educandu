@@ -1,28 +1,29 @@
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
-const { inject } = require('../../../components/container-context.jsx');
-const arrayShuffle = require('array-shuffle');
-const PropTypes = require('prop-types');
 const React = require('react');
+const autoBind = require('auto-bind');
+const PropTypes = require('prop-types');
+const arrayShuffle = require('array-shuffle');
+const memoizeLast = require('../../../utils/memoize-last');
+const { inject } = require('../../../components/container-context.jsx');
+const { sectionDisplayProps } = require('../../../ui/default-prop-types');
+const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
 
-class QuickTesterDisplay extends React.Component {
+class QuickTesterContentDisplay extends React.Component {
   constructor(props) {
     super(props);
 
-    const { preferredLanguages, section } = this.props;
-    const data = section.content[preferredLanguages[0]];
+    autoBind.react(this);
+
+    const { githubFlavoredMarkdown, content } = this.props;
+
+    this.renderMarkdown = memoizeLast(s => githubFlavoredMarkdown.render(s), 100, s => s);
 
     this.state = {
-      name: data.name,
-      teaser: data.teaser,
-      tests: data.tests,
+      name: content.name,
+      teaser: content.teaser,
+      tests: content.tests,
       currentIndex: -1,
       showResult: false
     };
-
-    this.handleInitClick = this.handleInitClick.bind(this);
-    this.handleResultClick = this.handleResultClick.bind(this);
-    this.handleNextClick = this.handleNextClick.bind(this);
-    this.handleResetClick = this.handleResetClick.bind(this);
   }
 
   handleInitClick() {
@@ -44,13 +45,16 @@ class QuickTesterDisplay extends React.Component {
   }
 
   render() {
-    const { githubFlavoredMarkdown } = this.props;
     const { name, teaser, tests, currentIndex, showResult } = this.state;
 
     if (currentIndex === -1) {
       return (
         <div className="QuickTester">
-          <a className="QuickTester-initLink" onClick={this.handleInitClick}>{teaser}</a>
+          <a
+            className="QuickTester-initLink"
+            onClick={this.handleInitClick}
+            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(teaser) }}
+            />
         </div>
       );
     }
@@ -60,26 +64,29 @@ class QuickTesterDisplay extends React.Component {
     const buttons = [];
 
     if (showResult && currentIndex < tests.length - 1) {
-      buttons.push(<button type="button" key="next" onClick={this.handleNextClick}>Nächste Frage</button>);
+      buttons.push(<button key="next" type="button" onClick={this.handleNextClick}>Nächste Frage</button>);
     }
 
     if (!showResult) {
-      buttons.push(<button type="button" key="result" onClick={this.handleResultClick}>Lösung</button>);
+      buttons.push(<button key="result" type="button" onClick={this.handleResultClick}>Lösung</button>);
     }
 
-    buttons.push(<button type="button" key="reset" onClick={this.handleResetClick}>Beenden</button>);
+    buttons.push(<button key="reset" type="button" onClick={this.handleResetClick}>Beenden</button>);
 
     return (
       <div className="QuickTester">
-        <h3 className="QuickTester-header">{name}</h3>
+        <h3
+          className="QuickTester-header"
+          dangerouslySetInnerHTML={{ __html: this.renderMarkdown(name) }}
+          />
         <div className="QuickTester-test">
           <div
             className="QuickTester-question"
-            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(currentTest.question) }}
+            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(currentTest.question) }}
             />
           {showResult && <div
             className="QuickTester-answer"
-            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(currentTest.answer) }}
+            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(currentTest.answer) }}
             />}
         </div>
         <div className="QuickTester-buttons">
@@ -90,14 +97,32 @@ class QuickTesterDisplay extends React.Component {
   }
 }
 
+QuickTesterContentDisplay.propTypes = {
+  ...sectionDisplayProps,
+  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
+};
+
+const Injected = inject({
+  githubFlavoredMarkdown: GithubFlavoredMarkdown
+}, QuickTesterContentDisplay);
+
+// Wrapper:
+/* eslint react/no-multi-comp: 0 */
+
+function QuickTesterDisplay({ preferredLanguages, section }) {
+  const language = preferredLanguages[0];
+  const content = section.content[language];
+
+  return (
+    <Injected content={content} language={language} />
+  );
+}
+
 QuickTesterDisplay.propTypes = {
-  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired,
   preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
   section: PropTypes.shape({
     content: PropTypes.object
   }).isRequired
 };
 
-module.exports = inject({
-  githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, QuickTesterDisplay);
+module.exports = QuickTesterDisplay;
