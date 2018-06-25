@@ -26,7 +26,7 @@ class ImageDisplay extends React.Component {
 
     return (
       <div className="Image">
-        <img className="Image-img" src={src} />
+        <img className={`Image-img u-max-width-${data.maxWidth || 100}`} src={src} />
       </div>
     );
   }

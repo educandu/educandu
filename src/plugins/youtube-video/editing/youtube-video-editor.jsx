@@ -1,15 +1,14 @@
-const Slider = require('antd/lib/slider');
-const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
-const Form = require('antd/lib/form');
 const React = require('react');
+const autoBind = require('auto-bind');
+const PropTypes = require('prop-types');
+const { Form, Input } = require('antd');
+const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
 class YoutubeVideoEditor extends React.Component {
   constructor(props) {
     super(props);
+    autoBind.react(this);
     this.state = { section: props.section };
-    this.handleUrlValueChanged = this.handleUrlValueChanged.bind(this);
-    this.handleMaxWidthValueChanged = this.handleMaxWidthValueChanged.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -58,12 +57,7 @@ class YoutubeVideoEditor extends React.Component {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 }
     };
-    const marks = {
-      25: '25%',
-      50: '50%',
-      75: '75%',
-      100: '100%'
-    };
+
     return (
       <div>
         <Form layout="horizontal">
@@ -71,7 +65,7 @@ class YoutubeVideoEditor extends React.Component {
             <Input placeholder="URL" value={this.state.section.content.de.url} onChange={this.handleUrlValueChanged} />
           </Form.Item>
           <Form.Item label="Maximale Breite" {...formItemLayout}>
-            <Slider marks={marks} step={null} defaultValue={this.state.section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />
+            <ObjectMaxWidthSlider value={this.state.section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />
           </Form.Item>
         </Form>
       </div>

@@ -2,16 +2,16 @@ const { Container } = require('../common/di');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const ContainerContext = React.createContext();
+const { Consumer, Provider } = React.createContext();
 
 function inject(dependencies, Component) {
   const createInjectedProps = container => Object.entries(dependencies).reduce((all, entry) => ({ ...all, [entry[0]]: container.get(entry[1]) }), {});
 
   function InjectingComponent(props) {
     return (
-      <ContainerContext.Consumer>
+      <Consumer>
         {container => <Component {...props} {...createInjectedProps(container)} />}
-      </ContainerContext.Consumer>
+      </Consumer>
     );
   }
 
@@ -27,6 +27,6 @@ function inject(dependencies, Component) {
 }
 
 module.exports = {
-  ContainerProvider: ContainerContext.Provider,
+  ContainerProvider: Provider,
   inject: inject
 };

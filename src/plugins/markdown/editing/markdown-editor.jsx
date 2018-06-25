@@ -1,11 +1,11 @@
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
-const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
 const React = require('react');
+const { Input } = require('antd');
+const autoBind = require('auto-bind');
+const PropTypes = require('prop-types');
+const { inject } = require('../../../components/container-context.jsx');
+const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
 
 const { TextArea } = Input;
-
-const gfm = new GithubFlavoredMarkdown();
 
 function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
@@ -50,8 +50,8 @@ class MarkdownEditor extends React.Component {
 
   constructor(props) {
     super(props);
+    autoBind.react(this);
     this.state = { ...defaultState };
-    this.handleCurrentEditorValueChanged = this.handleCurrentEditorValueChanged.bind(this);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -85,12 +85,12 @@ class MarkdownEditor extends React.Component {
   }
 
   render() {
-    const { section } = this.props;
+    const { section, githubFlavoredMarkdown } = this.props;
     const { mode, currentEditorValue } = this.state;
     switch (mode) {
       case 'preview':
         return (
-          <div className="MarkdownEditor" dangerouslySetInnerHTML={{ __html: gfm.render(section.content.de) }} />
+          <div className="MarkdownEditor" dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(section.content.de) }} />
         );
       case 'edit':
         return (
@@ -103,6 +103,7 @@ class MarkdownEditor extends React.Component {
 }
 
 MarkdownEditor.propTypes = {
+  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired,
   onContentChanged: PropTypes.func.isRequired,
   preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
   section: PropTypes.shape({
@@ -110,4 +111,6 @@ MarkdownEditor.propTypes = {
   }).isRequired
 };
 
-module.exports = MarkdownEditor;
+module.exports = inject({
+  githubFlavoredMarkdown: GithubFlavoredMarkdown
+}, MarkdownEditor);

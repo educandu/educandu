@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const HttpClient = require('../../../services/http-client');
 const { Form, Input, Upload, Button, Icon, message } = require('antd');
 const { inject } = require('../../../components/container-context.jsx');
+const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
 const FormItem = Form.Item;
 
@@ -20,7 +21,7 @@ class H5pPlayerEditor extends React.Component {
     return true;
   }
 
-  updateContentId(newValue) {
+  updateContent(newValues) {
     const oldState = this.state;
     const newState = {
       section: {
@@ -28,13 +29,18 @@ class H5pPlayerEditor extends React.Component {
         content: {
           ...oldState.section.content,
           de: {
-            contentId: newValue
+            ...oldState.section.content.de,
+            ...newValues
           }
         }
       }
     };
     this.setState(newState);
     this.props.onContentChanged(newState.section.content);
+  }
+
+  handleMaxWidthValueChanged(value) {
+    this.updateContent({ maxWidth: value });
   }
 
   async onCustomUpload({ file, onProgress, onSuccess }) {
@@ -52,7 +58,7 @@ class H5pPlayerEditor extends React.Component {
     onSuccess();
     hide();
 
-    this.updateContentId(contentId);
+    this.updateContent({ contentId });
   }
 
   render() {
@@ -82,6 +88,9 @@ class H5pPlayerEditor extends React.Component {
               </div>
             </div>
           </FormItem>
+          <Form.Item label="Maximale Breite" {...formItemLayout}>
+            <ObjectMaxWidthSlider value={section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />
+          </Form.Item>
         </Form>
       </div>
     );

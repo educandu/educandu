@@ -1,10 +1,11 @@
 const React = require('react');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
-const { Radio, Button } = require('antd');
+const { Radio, Button, Icon, Modal } = require('antd');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+const confirm = Modal.confirm;
 
 const preferredLanguages = ['de', 'en'];
 
@@ -36,8 +37,18 @@ class SectionEditor extends React.Component {
   }
 
   handleSectionDeleteClick() {
-    const { onSectionDeleted, section } = this.props;
-    onSectionDeleted(section.key);
+    confirm({
+      title: 'Sind Sie sicher?',
+      content: 'Möchten Sie diesen Abschnitt löschen?',
+      okText: 'Ja',
+      okType: 'danger',
+      cancelText: 'Nein',
+      onOk: () => {
+        const { onSectionDeleted, section } = this.props;
+        onSectionDeleted(section.key);
+      },
+      onCancel: () => {}
+    });
   }
 
   handleContentChange(content) {
@@ -63,10 +74,9 @@ class SectionEditor extends React.Component {
               <Button
                 size="small"
                 type="danger"
+                icon="delete"
                 onClick={this.handleSectionDeleteClick}
-                >
-                Abschnitt löschen
-              </Button>
+                />
             </div>
           </div>
           <div className="Panel-content">
@@ -79,9 +89,13 @@ class SectionEditor extends React.Component {
               />
           </div>
           <div className="Panel-footer">
-            <RadioGroup value={mode} onChange={this.handleModeChange}>
-              <RadioButton value="edit">Bearbeiten</RadioButton>
-              <RadioButton value="preview">Vorschau</RadioButton>
+            <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
+              <RadioButton value="edit">
+                <Icon type="edit" />&nbsp;Bearbeiten
+              </RadioButton>
+              <RadioButton value="preview">
+                <Icon type="eye-o" />&nbsp;Vorschau
+              </RadioButton>
             </RadioGroup>
           </div>
         </div>

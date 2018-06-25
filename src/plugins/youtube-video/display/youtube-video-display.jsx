@@ -1,6 +1,7 @@
-const PropTypes = require('prop-types');
 const React = require('react');
 const videojs = require('video.js');
+const PropTypes = require('prop-types');
+
 require('videojs-youtube');
 
 class YoutubeVideoDisplay extends React.Component {
@@ -35,7 +36,7 @@ class YoutubeVideoDisplay extends React.Component {
     const data = section.content[preferredLanguages[0]];
     return (
       <div className="YoutubeVideo">
-        <div className="YoutubeVideo-videoWrapper" style={{ maxWidth: `${data.maxWidth || 100}%` }}>
+        <div className={`YoutubeVideo-videoWrapper u-max-width-${data.maxWidth || 100}`}>
           <video className="video-js vjs-default-skin" ref={this.videoElement} />
         </div>
       </div>

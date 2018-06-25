@@ -1,0 +1,8 @@
+@iterations: 0;
+.u-max-width-loop (@i) when (@i <= 100) {
+  .u-max-width-@{i} {
+    max-width: ~"@{i}%" !important;
+  }
+  .u-max-width-loop(@i + 1);
+}
+.u-max-width-loop (@iterations);

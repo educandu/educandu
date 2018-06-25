@@ -22,7 +22,8 @@ const pluginInfos = [
       src: {
         type: 'internal',
         url: ''
-      }
+      },
+      maxWidth: 100
     }
   },
   {
@@ -40,7 +41,7 @@ const pluginInfos = [
     type: 'youtube-video',
     defaultContent: {
       url: '',
-      maxWidth: 75
+      maxWidth: 100
     }
   },
   {
@@ -56,7 +57,8 @@ const pluginInfos = [
     name: 'H5P-Player',
     type: 'h5p-player',
     defaultContent: {
-      contentId: null
+      contentId: null,
+      maxWidth: 100
     }
   }
 ];

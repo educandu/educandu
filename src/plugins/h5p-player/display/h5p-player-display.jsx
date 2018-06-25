@@ -38,7 +38,9 @@ class H5pPlayerDisplay extends React.Component {
     const playUrl = `/plugins/h5p-player/play/${data.contentId}`;
     return (
       <div className="H5pPlayer">
-        <iframe className="H5pPlayer-contentFrame" src={playUrl} frameBorder="0" scrolling="no" ref={this.contentFrame} />
+        <div className={`H5pPlayer-contentFrameWrapper u-max-width-${data.maxWidth || 100}`}>
+          <iframe className="H5pPlayer-contentFrame" src={playUrl} frameBorder="0" scrolling="no" ref={this.contentFrame} />
+        </div>
       </div>
     );
   }

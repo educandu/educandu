@@ -4,6 +4,7 @@ const PropTypes = require('prop-types');
 const { Form, Input, Radio } = require('antd');
 const clientSettings = require('../../../bootstrap/client-settings');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
+const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -15,6 +16,7 @@ class ImageEditor extends React.Component {
     autoBind.react(this);
     this.state = {
       section: props.section,
+      maxWidth: props.section.content.de.maxWidth,
       currentType: props.section.content.de.src.type,
       currentExternalUrl: props.section.content.de.src.type === 'external' ? props.section.content.de.src.type.url : null,
       currentInternalUrl: props.section.content.de.src.type === 'internal' ? props.section.content.de.src.type.url : null
@@ -44,6 +46,29 @@ class ImageEditor extends React.Component {
     this.changeSrc({ type: value, url: url });
   }
 
+  handleMaxWidthValueChanged(value) {
+    this.setState({ maxWidth: value });
+    this.changeContent({ maxWidth: value });
+  }
+
+  changeContent(newContentValues) {
+    const oldState = this.state;
+    const newState = {
+      section: {
+        ...oldState.section,
+        content: {
+          ...oldState.section.content,
+          de: {
+            ...oldState.section.content.de,
+            ...newContentValues
+          }
+        }
+      }
+    };
+    this.setState(newState);
+    this.props.onContentChanged(newState.section.content);
+  }
+
   changeSrc(newSrcValues) {
     const oldState = this.state;
     const newState = {
@@ -66,7 +91,7 @@ class ImageEditor extends React.Component {
   }
 
   render() {
-    const { currentType, currentExternalUrl, currentInternalUrl } = this.state;
+    const { currentType, currentExternalUrl, currentInternalUrl, maxWidth } = this.state;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -103,6 +128,9 @@ class ImageEditor extends React.Component {
               </div>
             </FormItem>
           )}
+          <Form.Item label="Maximale Breite" {...formItemLayout}>
+            <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthValueChanged} />
+          </Form.Item>
         </Form>
       </div>
     );
