@@ -1,6 +1,19 @@
+const mime = require('mime');
 const Stream = require('stream');
 const S3Client = require('./s3-client');
 const readAllStream = require('read-all-stream');
+
+const contentTypeKey = 'Content-Type';
+const defaultContentType = 'application/octet-stream';
+
+function enrichMetaData(userMetaData, filePath = null) {
+  if (userMetaData && userMetaData[contentTypeKey]) {
+    return userMetaData;
+  }
+
+  const additionalMetaData = { [contentTypeKey]: filePath ? mime.getType(filePath) : defaultContentType };
+  return userMetaData ? { ...userMetaData, ...additionalMetaData } : additionalMetaData;
+}
 
 // Wraps access to a specific bucket using S3 client
 class Cdn {
@@ -33,12 +46,12 @@ class Cdn {
   }
 
   async uploadObject(objectName, filePath, metaData) {
-    const etag = await this._s3Client.fPutObject(this._bucketName, objectName, filePath, metaData);
+    const etag = await this._s3Client.fPutObject(this._bucketName, objectName, filePath, enrichMetaData(metaData, filePath));
     return { etag };
   }
 
   async uploadEmptyObject(objectName, metaData) {
-    const etag = await this._s3Client.putObject(this._bucketName, objectName, new Stream(), 0, metaData);
+    const etag = await this._s3Client.putObject(this._bucketName, objectName, new Stream(), 0, enrichMetaData(metaData));
     return { etag };
   }
 
