@@ -138,6 +138,22 @@ gulp.task('bundle:js', async () => {
     ]
     : [];
 
+  const commonChunkModules = new Set([
+    'babel-polyfill',
+    'babel-runtime',
+    'core-js',
+    'regenerator-runtime',
+    'object-assign',
+    'aurelia-dependency-injection',
+    'aurelia-metadata',
+    'aurelia-pal',
+    'react',
+    'react-dom',
+    'fbjs',
+    'prop-types',
+    'auto-bind'
+  ]);
+
   const bundleConfigs = {
     entry: entry,
     output: {
@@ -160,7 +176,10 @@ gulp.task('bundle:js', async () => {
       splitChunks: {
         cacheGroups: {
           commons: {
-            test: /[\\/]node_modules[\\/](babel-polyfill|core-js|regenerator-runtime|object-assign|aurelia-.+|react(-.+)?|fbjs|prop-types)[\\/]/,
+            test: ({ resource }) => {
+              const segments = path.relative(__dirname, resource || './').split(path.sep);
+              return segments[0] === 'node_modules' && commonChunkModules.has(segments[1]);
+            },
             name: 'commons',
             chunks: 'all'
           }

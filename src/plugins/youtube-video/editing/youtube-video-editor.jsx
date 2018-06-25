@@ -11,10 +11,6 @@ class YoutubeVideoEditor extends React.Component {
     this.state = { section: props.section };
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   handleUrlValueChanged(event) {
     const { value } = event.target;
     const oldState = this.state;

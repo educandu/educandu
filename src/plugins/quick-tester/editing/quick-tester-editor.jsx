@@ -12,10 +12,6 @@ class QuickTesterEditor extends React.Component {
     this.state = { section: props.section };
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   handleJSONValueChanged(event) {
     const { value } = event.target;
 

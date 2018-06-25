@@ -54,14 +54,6 @@ class MarkdownEditor extends React.Component {
     this.state = { ...defaultState };
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const prevState = this.state;
-    const shouldUpdate = prevState.mode !== nextState.mode
-      || prevState.currentEditorLanguage !== nextState.currentEditorLanguage
-      || prevState.currentEditorValue !== nextState.currentEditorValue;
-    return shouldUpdate;
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const newState = this.state;
     const hasModeChanged = prevState.mode !== newState.mode;

@@ -23,10 +23,6 @@ class ImageEditor extends React.Component {
     };
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   handleExternalUrlValueChanged(event) {
     const { value } = event.target;
     this.setState({ currentExternalUrl: value });

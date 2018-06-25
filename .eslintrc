@@ -67,6 +67,7 @@
     "react/jsx-one-expression-per-line": ["off"],
     "react/jsx-sort-props": ["off"],
     "react/no-danger": ["off"],
-    "react/no-set-state": ["off"]
+    "react/no-set-state": ["off"],
+    "react/require-optimization": ["off"]
   }
 }

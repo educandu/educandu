@@ -24,10 +24,6 @@ class CdnFilePicker extends React.Component {
     };
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   handleSelectButtonClick() {
     this.setState({ isModalVisible: true });
   }

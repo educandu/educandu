@@ -25,10 +25,6 @@ class QuickTesterDisplay extends React.Component {
     this.handleResetClick = this.handleResetClick.bind(this);
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   handleInitClick() {
     const { tests } = this.state;
     this.setState({ tests: arrayShuffle(tests), currentIndex: 0, showResult: false });

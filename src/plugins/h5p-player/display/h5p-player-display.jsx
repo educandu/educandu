@@ -15,10 +15,6 @@ class H5pPlayerDisplay extends React.Component {
     this.ensureIframeIsSynced();
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
   componentDidUpdate() {
     this.ensureIframeIsSynced();
   }

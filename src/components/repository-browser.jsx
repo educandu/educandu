@@ -115,10 +115,6 @@ class RepositoryBrowser extends React.Component {
     return this.refreshFiles(currentPathSegments, selectedRowKeys);
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   componentWillUnmount() {
     window.removeEventListener('dragover', this.handleWindowDragOverOrDrop);
     window.removeEventListener('drop', this.handleWindowDragOverOrDrop);

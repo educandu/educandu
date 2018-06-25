@@ -17,10 +17,6 @@ class H5pPlayerEditor extends React.Component {
     this.state = { section: props.section };
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   updateContent(newValues) {
     const oldState = this.state;
     const newState = {

@@ -20,10 +20,6 @@ class SectionEditor extends React.Component {
     };
   }
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
   handleEditClick() {
     this.setState({ mode: 'edit' });
   }

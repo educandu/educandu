@@ -27,10 +27,6 @@ class YoutubeVideoDisplay extends React.Component {
     });
   }
 
-  shouldComponentUpdate() {
-    return false;
-  }
-
   render() {
     const { preferredLanguages, section } = this.props;
     const data = section.content[preferredLanguages[0]];
