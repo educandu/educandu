@@ -21,12 +21,11 @@ async function install(h5pFileName, cdn) {
   const elmuInfo = await createElmuInfo(applicationDir);
   await writeJson(elmuInfoPath, elmuInfo);
 
-  const metaData = {};
   const prefix = getPrefixForContentId(contentId);
   const files = await recursiveReaddir(applicationDir);
   const uploads = files.map(file => {
     const objectName = path.join(prefix, path.relative(applicationDir, file));
-    return cdn.uploadObject(objectName, file, metaData);
+    return cdn.uploadObject(objectName, file, {});
   });
 
   await Promise.all(uploads);
