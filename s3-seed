@@ -1,33 +1,25 @@
 #!/usr/bin/env node
 
 const path = require('path');
-const glob = require('glob');
-const util = require('util');
 const Cdn = require('./src/repositories/cdn');
 const testHelper = require('./src/test-helper');
 const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
+const H5pFileProcessor = require('./src/plugins/h5p-player/h5p-file-processor');
 
 (async function seed() {
 
   const container = await serverBootstrapper.createContainer();
 
   const cdn = container.get(Cdn);
+  const h5pFileProcessor = container.get(H5pFileProcessor);
 
   await testHelper.removeAllBuckets(cdn);
 
   await testHelper.ensurePublicBucketExists(cdn);
 
-  const rootDir = path.join(__dirname, './test/h5p-test-applications');
+  const h5pTestFile = path.join(__dirname, './test/h5p-test-files/interactive-video-2-618.h5p');
 
-  const files = await util.promisify(glob)(`${rootDir}/**/*`, { nodir: true });
-  const uploads = files
-    .map(f => ({
-      src: f,
-      dst: `plugins/h5p-player/content/${path.relative(rootDir, f)}`
-    }))
-    .map(f => cdn.uploadObject(f.dst, f.src, {}));
-
-  await Promise.all(uploads);
+  await h5pFileProcessor.install(h5pTestFile, '1', 'rkN0Hrnb7');
 
   await serverBootstrapper.disposeContainer(container);
 

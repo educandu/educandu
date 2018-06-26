@@ -98,12 +98,13 @@ class ElmuServer {
       return res.send({});
     });
 
-    this.apiFactory.getRegisteredTypes().forEach(pluginType => {
-      const api = apiFactory.createApi(pluginType);
+    this.apis = this.apiFactory.getRegisteredTypes().map(pluginType => {
       const router = express.Router();
       const pathPrefix = `/plugins/${pluginType}`;
-      api.register(pathPrefix, router);
+      const api = apiFactory.createApi(pluginType, pathPrefix);
+      api.registerRoutes(router);
       this.app.use(pathPrefix, router);
+      return api;
     });
   }
 

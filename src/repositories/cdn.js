@@ -61,9 +61,9 @@ class Cdn {
     return Promise.resolve();
   }
 
-  static create({ endPoint, port, secure, region, accessKey, secretKey, bucketName }) {
+  static create({ endPoint, port, secure, region, accessKey, secretKey, bucketName, rootUrl }) {
     const s3Client = new S3Client({ endPoint, port, secure, region, accessKey, secretKey });
-    return Promise.resolve(new Cdn(s3Client, bucketName, region));
+    return Promise.resolve(new Cdn(s3Client, bucketName, region, rootUrl));
   }
 }
 
