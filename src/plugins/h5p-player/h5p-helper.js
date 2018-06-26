@@ -11,33 +11,51 @@ const decompress = require('decompress');
 const uniqueId = require('../../utils/unique-id');
 const recursiveReaddir = require('recursive-readdir');
 
-async function install(h5pFileName, cdn) {
-  const contentId = uniqueId.create();
-  const applicationDir = path.join(os.tmpdir(), `./elmu/h5p/${contentId}`);
+const DEFAULT_CONTENT_ID = '1';
+
+async function install(h5pFileName, cdn, tempDir = os.tmpdir(), applicationId = uniqueId.create(), contentId = DEFAULT_CONTENT_ID) {
+  const applicationDir = path.join(tempDir, `./elmu-h5p-tmp-${applicationId}`);
   const elmuInfoPath = path.join(applicationDir, './_elmu-info.json');
 
-  await decompress(h5pFileName, applicationDir);
+  const map = file => {
+    file.path = rewriteH5pFolderFilePath(file.path, contentId);
+    return file;
+  };
 
-  const elmuInfo = await createElmuInfo(applicationDir);
+  await decompress(h5pFileName, applicationDir, { map });
+
+  const elmuInfo = await createElmuInfo(applicationDir, contentId);
   await writeJson(elmuInfoPath, elmuInfo);
 
-  const prefix = getPrefixForContentId(contentId);
-  const files = await recursiveReaddir(applicationDir);
-  const uploads = files.map(file => {
-    const objectName = path.join(prefix, path.relative(applicationDir, file));
-    return cdn.uploadObject(objectName, file, {});
-  });
-
-  await Promise.all(uploads);
+  if (cdn) {
+    await uploadFolderToCdn(cdn, applicationDir, applicationId);
+  }
 
   return {
-    contentId
+    applicationId
   };
 }
 
-async function createElmuInfo(applicationDir) {
+function rewriteH5pFolderFilePath(filePath, contentId) {
+  const unixStylePath = filePath.replace(/\\/g, '/');
+
+  // Just simple files without directory
+  if (/^[^/]+$/.test(unixStylePath)) {
+    return unixStylePath;
+  }
+
+  // Any file that is in the `content` directory
+  if (/^content(\/[^/]+)*$/.test(unixStylePath)) {
+    return unixStylePath.replace(/^content/, `content/${contentId}`);
+  }
+
+  // Otherwise, it can only be a library file
+  return `libraries/${unixStylePath}`;
+}
+
+async function createElmuInfo(applicationDir, contentId) {
   const manifestPath = path.join(applicationDir, './h5p.json');
-  const contentPath = path.join(applicationDir, './content/content.json');
+  const contentPath = path.join(applicationDir, `./content/${contentId}/content.json`);
 
   const manifest = await loadJson(manifestPath);
   const content = await loadJson(contentPath);
@@ -79,29 +97,40 @@ async function collectDependencies(applicationDir, preloadedDependencies) {
 async function addLibraryToMap(libName, map, applicationDir) {
   if (map.has(libName)) return;
 
-  const libFileName = path.join(applicationDir, `./${libName}/library.json`);
+  const libFileName = path.join(applicationDir, `./libraries/${libName}/library.json`);
   const libFile = await loadJson(libFileName);
   const preloadedJs = [];
   const preloadedCss = [];
   const preloadedDependencies = [];
 
-  preloadedJs.push(...(libFile.preloadedJs || []).map(dep => path.join(libName, dep.path)));
-  preloadedCss.push(...(libFile.preloadedCss || []).map(dep => path.join(libName, dep.path)));
+  preloadedJs.push(...(libFile.preloadedJs || []).map(dep => path.join('libraries', libName, dep.path)));
+  preloadedCss.push(...(libFile.preloadedCss || []).map(dep => path.join('libraries', libName, dep.path)));
   preloadedDependencies.push(...(libFile.preloadedDependencies || []).map(dependencyToDirName));
   map.set(libName, { preloadedJs, preloadedCss, preloadedDependencies });
 
   await Promise.all(preloadedDependencies.map(lib => addLibraryToMap(lib, map, applicationDir)));
 }
 
-async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationRootUrl, cdn) {
-  const prefix = getPrefixForContentId(contentId);
+async function uploadFolderToCdn(cdn, applicationDir, applicationId) {
+  const prefix = getPrefixForApplicationId(applicationId);
+  const files = await recursiveReaddir(applicationDir);
+  const uploads = files.map(file => {
+    const objectName = path.join(prefix, path.relative(applicationDir, file));
+    return cdn.uploadObject(objectName, file, {});
+  });
+
+  await Promise.all(uploads);
+}
+
+async function createIntegration(applicationId, baseUrl, h5pLibRootUrl, applicationRootUrl, cdn, contentId = DEFAULT_CONTENT_ID) {
+  const prefix = getPrefixForApplicationId(applicationId);
   const elmuInfoFile = `${prefix}/_elmu-info.json`;
   const elmuInfoFileString = await cdn.getObjectAsString(elmuInfoFile, 'utf8');
   const { dependencies, content, manifest } = JSON.parse(elmuInfoFileString);
 
   return {
     baseUrl: baseUrl, // No trailing slash
-    url: `${applicationRootUrl}/${contentId}`, // Relative to web root
+    url: `${applicationRootUrl}/${applicationId}`, // Relative to web root
     siteUrl: `${baseUrl}/`, // Only if NOT logged in!
     postUserStatistics: false,
     l10n: {},
@@ -130,7 +159,7 @@ async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationR
         jsonContent: JSON.stringify(content),
         fullScreen: false, // No fullscreen support
         mainId: contentId,
-        url: `${applicationRootUrl}/${contentId}`,
+        url: `${applicationRootUrl}/${applicationId}`,
         title: manifest.title,
         contentUserData: null,
         displayOptions: {
@@ -140,15 +169,15 @@ async function createIntegration(contentId, baseUrl, h5pLibRootUrl, applicationR
           copyright: true, // Display copyright button
           icon: false // Display H5P icon
         },
-        styles: dependencies.preloadedCss.map(p => `${applicationRootUrl}/${contentId}/${p}`),
-        scripts: dependencies.preloadedJs.map(p => `${applicationRootUrl}/${contentId}/${p}`)
+        styles: dependencies.preloadedCss.map(p => `${applicationRootUrl}/${applicationId}/${p}`),
+        scripts: dependencies.preloadedJs.map(p => `${applicationRootUrl}/${applicationId}/${p}`)
       }
     }
   };
 }
 
-function getPrefixForContentId(contentId) {
-  return `plugins/h5p-player/content/${contentId}`;
+function getPrefixForApplicationId(applicationId) {
+  return `plugins/h5p-player/content/${applicationId}`;
 }
 
 function getMainLibraryForContent(manifest) {

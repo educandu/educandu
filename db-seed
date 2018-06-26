@@ -116,7 +116,7 @@ const section4 = {
         type: 'h5p-player',
         updatedContent: {
           de: {
-            contentId: 'rkN0Hrnb7',
+            applicationId: 'rkN0Hrnb7',
             maxWidth: 75
           }
         }

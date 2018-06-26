@@ -19,7 +19,8 @@ async function createContainer() {
     region: serverSettings.cdnRegion,
     accessKey: serverSettings.cdnAccessKey,
     secretKey: serverSettings.cdnSecretKey,
-    bucketName: serverSettings.cdnBucketName
+    bucketName: serverSettings.cdnBucketName,
+    rootUrl: serverSettings.cdnRootURL
   });
 
   container.registerInstance(Cdn, cdn);

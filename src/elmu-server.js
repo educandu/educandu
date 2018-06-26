@@ -13,8 +13,8 @@ const Doc = require('./components/pages/doc.jsx');
 const ReactDOMServer = require('react-dom/server');
 const Docs = require('./components/pages/docs.jsx');
 const Edit = require('./components/pages/edit.jsx');
+const ApiFactory = require('./plugins/api-factory');
 const Index = require('./components/pages/index.jsx');
-const H5pPlayerApi = require('./plugins/h5p-player/api');
 const serverSettings = require('./bootstrap/server-settings');
 const DocumentService = require('./services/document-service');
 
@@ -40,10 +40,12 @@ const renderPageTemplate = (bundleName, html, initialState, clientEnv) => `
 `;
 
 class ElmuServer {
-  static get inject() { return [Container, DocumentService, Cdn]; }
+  static get inject() { return [Container, ApiFactory, DocumentService, Cdn]; }
 
-  constructor(container, documentService, cdn) {
+  constructor(container, apiFactory, documentService, cdn) {
     this.container = container;
+    this.apiFactory = apiFactory;
+
     this.app = express();
 
     this.app.enable('trust proxy');
@@ -54,10 +56,6 @@ class ElmuServer {
     ['../dist', '../static']
       .map(dir => path.join(__dirname, dir))
       .forEach(dir => this.app.use(express.static(dir)));
-
-    // Register H5P plugin static dirs
-    this.app.use('/plugins/h5p-player/static', express.static(path.join(__dirname, './plugins/h5p-player/static')));
-    this.app.use('/plugins/h5p-player/applications', express.static(path.join(__dirname, '../test/h5p-test-applications')));
 
     this.app.get('/', (req, res) => {
       return this._sendPage(res, 'index', Index, {});
@@ -100,16 +98,12 @@ class ElmuServer {
       return res.send({});
     });
 
-    // Register H5P plugin upload route
-    this.app.post('/plugins/h5p-player/upload', multipartParser.single('file'), async (req, res) => {
-      const api = container.get(H5pPlayerApi);
-      await api.handlePostUpload(req, res);
-    });
-
-    // Register H5P play route
-    this.app.get('/plugins/h5p-player/play/:contentId', async (req, res) => {
-      const api = container.get(H5pPlayerApi);
-      await api.handleGetPlay(req, res);
+    this.apiFactory.getRegisteredTypes().forEach(pluginType => {
+      const api = apiFactory.createApi(pluginType);
+      const router = express.Router();
+      const pathPrefix = `/plugins/${pluginType}`;
+      api.register(pathPrefix, router);
+      this.app.use(pathPrefix, router);
     });
   }
 

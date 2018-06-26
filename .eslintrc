@@ -33,6 +33,7 @@
     "max-statements": ["off"],
     "multiline-comment-style": ["off"],
     "multiline-ternary": ["error", "always-multiline"],
+    "new-cap": ["error", { "capIsNewExceptionPattern": "^express\\.Router" }],
     "newline-per-chained-call": ["off"],
     "no-confusing-arrow": ["off"],
     "no-empty-function": ["off"],

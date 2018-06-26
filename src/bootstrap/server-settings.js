@@ -1,5 +1,6 @@
 /* eslint no-process-env: off */
 
+const clientSettings = require('./client-settings');
 const parseBoolean = require('parseboolean');
 
 const env = process.env.ELMU_ENV || 'dev';
@@ -52,4 +53,4 @@ const overrides = {
   }
 };
 
-module.exports = Object.assign({}, commonSettings, overrides[env]);
+module.exports = Object.assign({}, clientSettings, commonSettings, overrides[env]);

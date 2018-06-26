@@ -17,10 +17,11 @@ function enrichMetaData(userMetaData, filePath = null) {
 
 // Wraps access to a specific bucket using S3 client
 class Cdn {
-  constructor(s3Client, bucketName, region) {
+  constructor(s3Client, bucketName, region, rootUrl) {
     this._s3Client = s3Client;
     this._bucketName = bucketName;
     this._region = region;
+    this.rootUrl = rootUrl;
   }
 
   listObjects({ prefix = '', recursive = false } = {}) {

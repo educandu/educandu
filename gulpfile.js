@@ -94,18 +94,18 @@ gulp.task('lint', () => {
 });
 
 gulp.task('test', async () => {
-  const { results } = await jest.runCLI({}, '.');
+  const { results } = await jest.runCLI({ testEnvironment: 'node' }, '.');
   if (!results.success) {
     throw Error(`${results.numFailedTests} test(s) failed`);
   }
 });
 
 gulp.task('test:changed', () => {
-  return jest.runCLI({ onlyChanged: true }, '.');
+  return jest.runCLI({ testEnvironment: 'node', onlyChanged: true }, '.');
 });
 
 gulp.task('test:watch', () => {
-  return jest.runCLI({ watch: true }, '.');
+  return jest.runCLI({ testEnvironment: 'node', watch: true }, '.');
 });
 
 gulp.task('copy:iframeresizer', () => {

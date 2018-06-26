@@ -44,7 +44,7 @@ class H5pPlayerContentDisplay extends React.Component {
 
   render() {
     const { content } = this.props;
-    const playUrl = `/plugins/h5p-player/play/${content.contentId}`;
+    const playUrl = `/plugins/h5p-player/play/${content.applicationId}`;
     return (
       <div className="H5pPlayer">
         <div className={`H5pPlayer-contentFrameWrapper u-max-width-${content.maxWidth || 100}`}>

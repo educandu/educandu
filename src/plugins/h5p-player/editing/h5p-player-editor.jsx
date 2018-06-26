@@ -44,7 +44,7 @@ class H5pPlayerEditor extends React.Component {
 
     const hide = message.loading('Datei-Upload', 0);
 
-    const { contentId } = await httpClient
+    const { applicationId } = await httpClient
       .post('/plugins/h5p-player/upload')
       .accept('json')
       .attach('file', file, file.name)
@@ -54,7 +54,7 @@ class H5pPlayerEditor extends React.Component {
     onSuccess();
     hide();
 
-    this.updateContent({ contentId });
+    this.updateContent({ applicationId });
   }
 
   render() {
@@ -71,7 +71,7 @@ class H5pPlayerEditor extends React.Component {
           <FormItem label="Content-ID" {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
-                value={section.content.de.contentId}
+                value={section.content.de.applicationId}
                 readOnly
                 />
               <div style={{ flex: 'none' }}>
