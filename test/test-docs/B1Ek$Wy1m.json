@@ -1,0 +1,81 @@
+{
+  "doc": {
+    "key": "B1Ek$Wy1m",
+    "title": "Lorem Ipsum"
+  },
+  "sections": [
+    {
+      "key": "Sye$V$ppTz",
+      "type": "markdown",
+      "updatedContent": {
+        "de": "# Lorem ipsum\n\n## Nam interdum magna eu pretium laoreet\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum commodo eros non augue vestibulum, vitae pellentesque nunc gravida. Nullam id elit quis arcu accumsan malesuada a non arcu. Aliquam bibendum turpis urna, nec tempor metus laoreet a. Cras consequat ex id tincidunt auctor. Aenean non elementum dolor. Morbi facilisis, ex et faucibus elementum, risus odio hendrerit justo, et ultricies libero risus a eros. Pellentesque eu auctor diam. Etiam quis odio sed mauris gravida porta sed sit amet nisi. Sed scelerisque tincidunt mattis. Donec vel orci faucibus, molestie nisi in, feugiat arcu. Nullam tincidunt sapien leo, convallis mollis neque accumsan at. Mauris vel placerat orci. Nam rutrum ullamcorper orci et scelerisque. Cras commodo ipsum purus, et venenatis leo lobortis quis.\n\nEtiam facilisis, nisl sed posuere vehicula, enim libero accumsan dui, eget pulvinar diam nulla sed ligula. Fusce fringilla iaculis interdum. Mauris vitae posuere ante, non sollicitudin lectus. Quisque mollis ligula placerat semper tristique. Aliquam viverra feugiat diam, vel placerat tortor. Curabitur at lectus ac mauris varius pretium eget sagittis libero. Vivamus ultrices leo massa. Aenean vehicula ipsum eu gravida tempor. Proin pharetra, justo sit amet dictum hendrerit, elit ex pellentesque ipsum, ut accumsan elit nunc sit amet augue.\n\nAenean in sodales neque, nec imperdiet mi. Nam purus purus, accumsan quis dictum ac, interdum et est. Vivamus pulvinar est placerat tempus rhoncus. In sollicitudin, quam vestibulum vestibulum tempus, mauris lorem ultricies turpis, non gravida ex elit quis lectus. Integer ac tristique nisl. Suspendisse ac maximus urna. Etiam consequat eu dui eu scelerisque. Fusce blandit sagittis leo. Sed accumsan leo id odio auctor consectetur ut sed leo. Aenean aliquam tempor diam, eget mattis neque convallis non. Integer tincidunt mattis neque et condimentum.\n\nInterdum et malesuada fames ac ante ipsum primis in faucibus. Morbi id ultricies erat, ac mollis nisi. Etiam vestibulum consectetur sodales. Suspendisse tempor lobortis enim, volutpat aliquet turpis iaculis id. Nam et fringilla erat, eu pulvinar tellus. Morbi pretium ante non iaculis feugiat. Integer feugiat tellus finibus lectus feugiat consectetur. Nulla luctus, est quis rhoncus porttitor, felis urna molestie elit, id placerat elit nunc sed nisl. Integer quis dui elit. Praesent dolor turpis, sagittis ut orci sed, aliquam tristique libero. Morbi mollis sagittis leo, et dictum quam dapibus vel. Vivamus ornare mauris sit amet ligula consequat, id imperdiet enim vestibulum.\n\nAenean condimentum massa eu lectus imperdiet luctus. Maecenas scelerisque condimentum arcu, quis faucibus nisi vulputate non. Praesent egestas diam a nisl ullamcorper pharetra. Quisque viverra porttitor dui quis feugiat. Donec non luctus massa. Mauris sit amet eros id lorem consequat elementum tempus et tellus. Fusce quam ipsum, aliquam feugiat mi vel, dapibus scelerisque nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam feugiat convallis neque facilisis placerat. Fusce molestie nisl libero, id tempor felis gravida sit amet."
+      }
+    },
+    {
+      "key": "Sylsu$4ke8",
+      "type": "h5p-player",
+      "updatedContent": {
+        "de": {
+          "applicationId": "rkN0Hrnb7",
+          "maxWidth": 75
+        }
+      }
+    },
+    {
+      "key": "HybdE$6pTf",
+      "type": "quick-tester",
+      "updatedContent": {
+        "de": {
+          "teaser": "Möchten Sie Ihr Wissen testen?",
+          "name": "Fragen zum übermäßigen Quintsextakkord",
+          "tests": [
+            {
+              "question": "Wie heißen die Töne des übermäßigen Quintsextakkords in c-Moll?",
+              "answer": "_as_-_c_-_es_-_fis_.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, Schluss »wie nach dem Grab«](#brahms-doppeldominante)."
+            },
+            {
+              "question": "Wohin löst sich der übermäßige Quintsextakkord _as_-_c_-_es_-_fis_ als Sixte ajoutée auf?",
+              "answer": "Es-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, »still ist die Flur«](#brahms-plagal)."
+            },
+            {
+              "question": "Wohin löst sich der Dominantseptakkord _as_-_c_-_es_-_ges_ auf?",
+              "answer": "Des-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, zweite Phrase »sinkt auch«](#brahms-d7)."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "rkGdNdTaaM",
+      "type": "youtube-video",
+      "updatedContent": {
+        "de": {
+          "url": "https://www.youtube.com/watch?v=SQNymNaTr-Y",
+          "maxWidth": 75
+        }
+      }
+    },
+    {
+      "key": "Skmu4u6TaM",
+      "type": "markdown",
+      "updatedContent": {
+        "de": "## Nam tortor erat\n\nNam tortor erat, lacinia at cursus sit amet, dignissim id nibh. Nulla id nunc quis ante fringilla consequat sollicitudin non nisl. Cras tempus finibus mauris eget sodales. Donec congue sed erat sed efficitur. Donec vel leo erat. Sed commodo luctus turpis vel rutrum. Phasellus a tincidunt sem, a ullamcorper nibh. Nunc pharetra congue lacus eget maximus. Nullam venenatis sit amet nibh at consectetur. Mauris hendrerit leo lobortis feugiat ullamcorper. Sed mattis lectus at metus aliquam placerat. Donec malesuada lacus in arcu sagittis finibus. Proin blandit mi non libero vulputate tristique. Praesent quis tortor tempus, feugiat enim ac, porttitor libero. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;\n\nNunc gravida eleifend ante sed sagittis. Sed id turpis nibh. Donec id dui non lorem laoreet lacinia eget sed tellus. Curabitur at dolor aliquam, rhoncus elit eget, auctor leo. Duis ut justo facilisis, ultrices erat convallis, semper erat. Sed ac risus facilisis, vestibulum nunc ac, fringilla magna. Aenean eget nulla ac purus laoreet dictum quis a tortor. Donec ultricies varius ligula, ac ultrices odio ornare eu. Praesent venenatis viverra augue ut bibendum. Fusce commodo lectus a finibus euismod. Ut tempus mauris et dui feugiat hendrerit ac quis turpis. Aenean fringilla velit quis aliquam imperdiet. Suspendisse pellentesque tristique gravida. Nulla facilisi. Nunc laoreet, ex eu ullamcorper ullamcorper, libero lorem suscipit tellus, a hendrerit nunc dui sit amet lacus. Nam quis ante nisl.\n\nNulla vel dolor sed nisl ultricies lobortis. Donec mattis sem vitae ante sollicitudin maximus. Cras fringilla erat et nisi hendrerit, ut egestas tellus maximus. Proin vitae mauris in arcu rutrum ullamcorper. Nulla fringilla dapibus sapien vitae iaculis. Aliquam egestas sem sit amet urna ultrices, quis viverra massa tincidunt. Proin convallis congue risus vitae blandit. Suspendisse nec tellus nisl. Donec finibus augue volutpat ipsum suscipit sagittis.\n\nSed convallis et nunc et sagittis. Aenean sit amet ultricies enim. Nunc dapibus augue eu malesuada posuere. Vestibulum aliquet pharetra porttitor. Integer iaculis turpis eget urna efficitur vehicula. Quisque eu fermentum lorem, et viverra tortor. Vestibulum non leo ut libero lobortis elementum. Suspendisse vel sem tellus. Integer non magna ut dolor blandit ullamcorper eu eget leo.\n\nEtiam cursus sem at dignissim facilisis. Morbi rhoncus porttitor tellus vitae ornare. Vivamus auctor eget mi et dictum. Ut accumsan interdum erat, eu lacinia turpis condimentum ullamcorper. Cras tempus vehicula pellentesque. Vivamus eleifend consequat enim eu venenatis. Integer ac magna vulputate, venenatis mauris id, laoreet justo. Pellentesque vestibulum convallis porta. Maecenas sit amet nisi dui. Integer scelerisque ullamcorper justo, vel bibendum nulla tempor a. Aenean pellentesque varius neque, vel pellentesque augue rhoncus eget. Aenean vestibulum eleifend tellus, sit amet interdum magna volutpat hendrerit."
+      }
+    },
+    {
+      "key": "Alfu4u6Tas",
+      "type": "audio",
+      "updatedContent": {
+        "de": {
+          "src": {
+            "type": "external",
+            "url": "http://www.musikanalyse.net/content/tutorials/i-x-v-i-schema/sound/03_Mozart-FuldaSymphonicOrchestra-Schindler.mp3"
+          }
+        }
+      }
+    }
+  ],
+  "user": {
+    "name": "init-user"
+  }
+}
