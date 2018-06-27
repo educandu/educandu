@@ -1,10 +1,17 @@
 const PropTypes = require('prop-types');
 
 const sectionDisplayProps = {
-  language: PropTypes.string.isRequired,
-  content: PropTypes.any.isRequired
+  content: PropTypes.object.isRequired,
+  language: PropTypes.string.isRequired
+};
+
+const sectionEditorProps = {
+  content: PropTypes.object.isRequired,
+  onContentChanged: PropTypes.func.isRequired,
+  language: PropTypes.string.isRequired
 };
 
 module.exports = {
-  sectionDisplayProps
+  sectionDisplayProps,
+  sectionEditorProps
 };

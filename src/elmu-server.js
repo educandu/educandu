@@ -18,6 +18,8 @@ const Index = require('./components/pages/index.jsx');
 const serverSettings = require('./bootstrap/server-settings');
 const DocumentService = require('./services/document-service');
 
+const LANGUAGE = 'de';
+
 const renderPageTemplate = (bundleName, html, initialState, clientEnv) => `
 <!DOCTYPE html>
 <html>
@@ -38,6 +40,33 @@ const renderPageTemplate = (bundleName, html, initialState, clientEnv) => `
   </body>
 </html>
 `;
+
+function createInitialDisplayState({ doc, language }) {
+  return {
+    doc: {
+      key: doc._id,
+      title: doc.title
+    },
+    sections: doc.sections.map(section => ({
+      key: section.key,
+      type: section.type,
+      order: section.order,
+      content: section.content[language]
+    })),
+    language: language
+  };
+}
+
+function createInitialEditorState({ doc, language }) {
+  return {
+    doc: {
+      key: doc._id,
+      title: doc.title
+    },
+    sections: doc.sections,
+    language: language
+  };
+}
 
 class ElmuServer {
   static get inject() { return [Container, ApiFactory, DocumentService, Cdn]; }
@@ -68,17 +97,28 @@ class ElmuServer {
 
     this.app.get('/docs/:docId', async (req, res) => {
       const doc = await documentService.getDocumentById(req.params.docId);
-      return doc ? this._sendPage(res, 'doc', Doc, doc) : res.sendStatus(404);
+      if (!doc) {
+        return res.sendStatus(404);
+      }
+
+      const initialState = createInitialDisplayState({ doc: doc, language: LANGUAGE });
+      return this._sendPage(res, 'doc', Doc, initialState);
     });
 
     this.app.get('/edit/doc/:docId', async (req, res) => {
       const doc = await documentService.getDocumentById(req.params.docId);
-      return doc ? this._sendPage(res, 'edit', Edit, doc) : res.sendStatus(404);
+      if (!doc) {
+        return res.sendStatus(404);
+      }
+
+      const initialState = createInitialEditorState({ doc: doc, language: LANGUAGE });
+      return this._sendPage(res, 'edit', Edit, initialState);
     });
 
     this.app.post('/api/v1/docs', jsonParser, async (req, res) => {
       const doc = await documentService.createDocumentRevision({ doc: req.body.doc, sections: req.body.sections, user: req.body.user });
-      return res.send(doc);
+      const initialState = createInitialEditorState({ doc: doc, language: LANGUAGE });
+      return res.send(initialState);
     });
 
     this.app.get('/api/v1/cdn/objects', jsonParser, async (req, res) => {

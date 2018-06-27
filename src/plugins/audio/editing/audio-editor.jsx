@@ -1,68 +1,42 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
 const { Form, Input, Radio } = require('antd');
 const clientSettings = require('../../../bootstrap/client-settings');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
+const { sectionEditorProps } = require('../../../ui/default-prop-types');
 
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 
 class AudioEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
-    this.state = {
-      section: props.section,
-      currentType: props.section.content.de.src.type,
-      currentExternalUrl: props.section.content.de.src.type === 'external' ? props.section.content.de.src.type.url : null,
-      currentInternalUrl: props.section.content.de.src.type === 'internal' ? props.section.content.de.src.type.url : null
-    };
   }
 
   handleExternalUrlValueChanged(event) {
     const { value } = event.target;
-    this.setState({ currentExternalUrl: value });
-    this.changeSrc({ url: value });
+    this.changeContent({ url: value });
   }
 
   handleInternalUrlValueChanged(value) {
-    this.setState({ currentInternalUrl: value });
-    this.changeSrc({ url: value });
+    this.changeContent({ url: value });
   }
 
   handleTypeValueChanged(event) {
     const { value } = event.target;
-    const { currentExternalUrl, currentInternalUrl } = this.state;
-    const url = value === 'external' ? currentExternalUrl : currentInternalUrl;
-    this.setState({ currentType: value });
-    this.changeSrc({ type: value, url: url });
+    this.changeContent({ type: value, url: '' });
   }
 
-  changeSrc(newSrcValues) {
-    const oldState = this.state;
-    const newState = {
-      section: {
-        ...oldState.section,
-        content: {
-          ...oldState.section.content,
-          de: {
-            ...oldState.section.content.de,
-            src: {
-              ...oldState.section.content.de.src,
-              ...newSrcValues
-            }
-          }
-        }
-      }
-    };
-    this.setState(newState);
-    this.props.onContentChanged(newState.section.content);
+  changeContent(newContentValues) {
+    const { content, onContentChanged } = this.props;
+    onContentChanged({ ...content, ...newContentValues });
   }
 
   render() {
-    const { currentType, currentExternalUrl, currentInternalUrl } = this.state;
+    const { content } = this.props;
+    const { type, url } = content;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -73,27 +47,27 @@ class AudioEditor extends React.Component {
       <div>
         <Form layout="horizontal">
           <FormItem label="Quelle" {...formItemLayout}>
-            <RadioGroup value={currentType} onChange={this.handleTypeValueChanged}>
+            <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
               <RadioButton value="external">Externer Link</RadioButton>
               <RadioButton value="internal">Elmu CDN</RadioButton>
             </RadioGroup>
           </FormItem>
-          {currentType === 'external' && (
+          {type === 'external' && (
             <FormItem label="Externe URL" {...formItemLayout}>
-              <Input value={currentExternalUrl} onChange={this.handleExternalUrlValueChanged} />
+              <Input value={url} onChange={this.handleExternalUrlValueChanged} />
             </FormItem>
           )}
-          {currentType === 'internal' && (
+          {type === 'internal' && (
             <FormItem label="Interne URL" {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
                   addonBefore={`${clientSettings.cdnRootURL}/`}
-                  value={currentInternalUrl}
+                  value={url}
                   readOnly
                   />
                 <CdnFilePicker
                   rootPrefix="media"
-                  fileName={currentInternalUrl}
+                  fileName={url}
                   onFileNameChanged={this.handleInternalUrlValueChanged}
                   />
               </div>
@@ -106,10 +80,7 @@ class AudioEditor extends React.Component {
 }
 
 AudioEditor.propTypes = {
-  onContentChanged: PropTypes.func.isRequired,
-  section: PropTypes.shape({
-    content: PropTypes.object
-  }).isRequired
+  ...sectionEditorProps
 };
 
 module.exports = AudioEditor;

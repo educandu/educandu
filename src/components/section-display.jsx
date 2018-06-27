@@ -1,15 +1,12 @@
 const PropTypes = require('prop-types');
 const React = require('react');
 
-const preferredLanguages = ['de', 'en'];
-
-function SectionDisplay({ DisplayComponent, rendererInstance, section }) {
+function SectionDisplay({ DisplayComponent, language, section }) {
   return (
     <section key={section.key} className="Section">
       <DisplayComponent
-        section={section}
-        renderer={rendererInstance}
-        preferredLanguages={preferredLanguages}
+        content={section.content}
+        language={language}
         />
     </section>
   );
@@ -17,13 +14,12 @@ function SectionDisplay({ DisplayComponent, rendererInstance, section }) {
 
 SectionDisplay.propTypes = {
   DisplayComponent: PropTypes.func.isRequired,
-  rendererInstance: PropTypes.shape({
-    getDisplayComponent: PropTypes.func.isRequired
-  }).isRequired,
+  language: PropTypes.string.isRequired,
   section: PropTypes.shape({
     key: PropTypes.string.isRequired,
     order: PropTypes.number.isRequired,
-    type: PropTypes.string.isRequired
+    type: PropTypes.string.isRequired,
+    content: PropTypes.any.isRequired
   }).isRequired
 };
 

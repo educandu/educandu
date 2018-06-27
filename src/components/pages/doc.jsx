@@ -5,57 +5,47 @@ const PageHeader = require('./../page-header.jsx');
 const PropTypes = require('prop-types');
 const React = require('react');
 
-class Doc extends React.Component {
-  constructor(props) {
-    super(props);
+function Doc({ initialState, rendererFactory }) {
+  const { doc, sections, language } = initialState;
 
-    const { initialState, rendererFactory } = this.props;
-
-    this.rendererFactory = rendererFactory;
-    this.state = this.createStateFromDoc(initialState);
-  }
-
-  createStateFromDoc(doc) {
-    return {
-      originalDoc: doc,
-      sectionInfos: doc.sections.map(section => {
-        const rendererInstance = this.rendererFactory.createRenderer(section.type, section);
-        const DisplayComponent = rendererInstance.getDisplayComponent();
-        return { section, rendererInstance, DisplayComponent };
-      })
-    };
-  }
-
-  render() {
-    const { originalDoc, sectionInfos } = this.state;
-    const children = sectionInfos.map(({ section, rendererInstance, DisplayComponent }) => (
+  const children = sections.map(section => {
+    const renderer = rendererFactory.createRenderer(section.type);
+    const DisplayComponent = renderer.getDisplayComponent();
+    return (
       <SectionDisplay
         key={section.key}
-        DisplayComponent={DisplayComponent}
-        rendererInstance={rendererInstance}
         section={section}
+        language={language}
+        DisplayComponent={DisplayComponent}
         />
-    ));
-    return (
-      <React.Fragment>
-        <PageHeader>
-          <a href={`/edit/doc/${originalDoc._id}`}>Bearbeiten</a>
-        </PageHeader>
-        <div className="PageContent">
-          {children}
-        </div>
-      </React.Fragment>
     );
-  }
+  });
+
+  return (
+    <React.Fragment>
+      <PageHeader>
+        <a href={`/edit/doc/${doc.key}`}>Bearbeiten</a>
+      </PageHeader>
+      <div className="PageContent">
+        {children}
+      </div>
+    </React.Fragment>
+  );
 }
 
 Doc.propTypes = {
   initialState: PropTypes.shape({
+    doc: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired
+    }),
     sections: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.string.isRequired,
       order: PropTypes.number.isRequired,
-      type: PropTypes.string.isRequired
-    }))
+      type: PropTypes.string.isRequired,
+      content: PropTypes.any.isRequired
+    })),
+    language: PropTypes.string.isRequired
   }).isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
 };

@@ -175,7 +175,7 @@ describe('document-service', () => {
           sections: [
             {
               type: 'markdown',
-              updatedContent: testSectionContent
+              content: testSectionContent
             }
           ],
           user: testUser
@@ -183,6 +183,7 @@ describe('document-service', () => {
 
         expectedSectionRevision = {
           _id: testSectionId,
+          ancestorId: null,
           key: testSectionKey,
           createdOn: testDateNow,
           order: 1,
@@ -212,6 +213,7 @@ describe('document-service', () => {
           sections: [
             {
               _id: testSectionId,
+              ancestorId: null,
               key: testSectionKey,
               createdOn: testDateNow,
               order: 1,
@@ -297,7 +299,7 @@ describe('document-service', () => {
           sections: [
             {
               type: 'markdown',
-              updatedContent: initialTestSectionContent
+              content: initialTestSectionContent
             }
           ],
           user: testUser
@@ -310,12 +312,12 @@ describe('document-service', () => {
           },
           sections: [
             {
-              _id: initialResult.sections[0]._id,
-              updatedContent: updatedTestSectionContent
+              ancestorId: initialResult.sections[0]._id,
+              content: updatedTestSectionContent
             },
             {
               type: 'markdown',
-              updatedContent: additionalTestSectionContent
+              content: additionalTestSectionContent
             }
           ],
           user: testUser
@@ -324,6 +326,7 @@ describe('document-service', () => {
         expectedSectionRevisions = [
           {
             _id: initialResult.sections[0]._id,
+            ancestorId: null,
             key: initialResult.sections[0].key,
             createdOn: initialDateNow,
             order: sinon.match.number,
@@ -333,6 +336,7 @@ describe('document-service', () => {
           },
           {
             _id: sinon.match.string,
+            ancestorId: initialResult.sections[0]._id,
             key: initialResult.sections[0].key, // Should be the same as in the initial revision
             createdOn: updatedDateNow,
             order: sinon.match.number,
@@ -342,6 +346,7 @@ describe('document-service', () => {
           },
           {
             _id: sinon.match.string,
+            ancestorId: null,
             key: sinon.match.string,
             createdOn: updatedDateNow,
             order: sinon.match.number,
@@ -394,6 +399,7 @@ describe('document-service', () => {
           sections: [
             {
               _id: sinon.match.string,
+              ancestorId: initialResult.sections[0]._id,
               key: sinon.match.string,
               createdOn: updatedDateNow,
               order: sinon.match.number,
@@ -403,6 +409,7 @@ describe('document-service', () => {
             },
             {
               _id: sinon.match.string,
+              ancestorId: null,
               key: sinon.match.string,
               createdOn: updatedDateNow,
               order: sinon.match.number,

@@ -1,10 +1,9 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
 const { iframeResizer } = require('iframe-resizer');
 const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 
-class H5pPlayerContentDisplay extends React.Component {
+class H5pPlayerDisplay extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
@@ -21,21 +20,9 @@ class H5pPlayerContentDisplay extends React.Component {
     this.ensureIframeIsSynced();
   }
 
-  componentWillUnmount() {
-    this.ensureCurrentIframeIsClosed();
-  }
-
-  ensureCurrentIframeIsClosed() {
-    if (this.iframeResizer) {
-      this.iframeResizer.close();
-      this.iframeResizer = null;
-    }
-  }
-
   ensureIframeIsSynced() {
     const currentIframe = this.iframeRef.current;
     if (currentIframe !== this.lastIframe) {
-      this.ensureCurrentIframeIsClosed();
       this.iframeResizer = iframeResizer({ checkOrigin: false, inPageLinks: true }, currentIframe);
     }
 
@@ -55,27 +42,8 @@ class H5pPlayerContentDisplay extends React.Component {
   }
 }
 
-H5pPlayerContentDisplay.propTypes = {
-  ...sectionDisplayProps
-};
-
-// Wrapper:
-/* eslint react/no-multi-comp: 0 */
-
-function H5pPlayerDisplay({ preferredLanguages, section }) {
-  const language = preferredLanguages[0];
-  const content = section.content[language];
-
-  return (
-    <H5pPlayerContentDisplay content={content} language={language} />
-  );
-}
-
 H5pPlayerDisplay.propTypes = {
-  preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
-  section: PropTypes.shape({
-    content: PropTypes.object
-  }).isRequired
+  ...sectionDisplayProps
 };
 
 module.exports = H5pPlayerDisplay;

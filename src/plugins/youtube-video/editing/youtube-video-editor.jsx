@@ -1,54 +1,33 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
 const { Form, Input } = require('antd');
+const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
 class YoutubeVideoEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
-    this.state = { section: props.section };
   }
 
   handleUrlValueChanged(event) {
     const { value } = event.target;
-    const oldState = this.state;
-    const newState = {
-      section: {
-        ...oldState.section,
-        content: {
-          ...oldState.section.content,
-          de: {
-            ...oldState.section.content.de,
-            url: value
-          }
-        }
-      }
-    };
-    this.setState(newState);
-    this.props.onContentChanged(newState.section.content);
+    this.changeContent({ url: value });
   }
 
   handleMaxWidthValueChanged(value) {
-    const oldState = this.state;
-    const newState = {
-      section: {
-        ...oldState.section,
-        content: {
-          ...oldState.section.content,
-          de: {
-            ...oldState.section.content.de,
-            maxWidth: value
-          }
-        }
-      }
-    };
-    this.setState(newState);
-    this.props.onContentChanged(newState.section.content);
+    this.changeContent({ maxWidth: value });
+  }
+
+  changeContent(newContentValues) {
+    const { content, onContentChanged } = this.props;
+    onContentChanged({ ...content, ...newContentValues });
   }
 
   render() {
+    const { content } = this.props;
+    const { url, maxWidth } = content;
+
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 }
@@ -58,10 +37,10 @@ class YoutubeVideoEditor extends React.Component {
       <div>
         <Form layout="horizontal">
           <Form.Item label="URL" {...formItemLayout}>
-            <Input placeholder="URL" value={this.state.section.content.de.url} onChange={this.handleUrlValueChanged} />
+            <Input placeholder="URL" value={url} onChange={this.handleUrlValueChanged} />
           </Form.Item>
           <Form.Item label="Maximale Breite" {...formItemLayout}>
-            <ObjectMaxWidthSlider value={this.state.section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />
+            <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthValueChanged} />
           </Form.Item>
         </Form>
       </div>
@@ -70,10 +49,7 @@ class YoutubeVideoEditor extends React.Component {
 }
 
 YoutubeVideoEditor.propTypes = {
-  onContentChanged: PropTypes.func.isRequired,
-  section: PropTypes.shape({
-    content: PropTypes.object
-  }).isRequired
+  ...sectionEditorProps
 };
 
 module.exports = YoutubeVideoEditor;

@@ -6,6 +6,7 @@ const PropTypes = require('prop-types');
 const HttpClient = require('../../../services/http-client');
 const { Form, Input, Upload, Button, Icon, message } = require('antd');
 const { inject } = require('../../../components/container-context.jsx');
+const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
 const FormItem = Form.Item;
@@ -14,29 +15,10 @@ class H5pPlayerEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
-    this.state = { section: props.section };
-  }
-
-  updateContent(newValues) {
-    const oldState = this.state;
-    const newState = {
-      section: {
-        ...oldState.section,
-        content: {
-          ...oldState.section.content,
-          de: {
-            ...oldState.section.content.de,
-            ...newValues
-          }
-        }
-      }
-    };
-    this.setState(newState);
-    this.props.onContentChanged(newState.section.content);
   }
 
   handleMaxWidthValueChanged(value) {
-    this.updateContent({ maxWidth: value });
+    this.changeContent({ maxWidth: value });
   }
 
   async onCustomUpload({ file, onProgress, onSuccess }) {
@@ -54,11 +36,17 @@ class H5pPlayerEditor extends React.Component {
     onSuccess();
     hide();
 
-    this.updateContent({ applicationId });
+    this.changeContent({ applicationId });
+  }
+
+  changeContent(newContentValues) {
+    const { content, onContentChanged } = this.props;
+    onContentChanged({ ...content, ...newContentValues });
   }
 
   render() {
-    const { section } = this.state;
+    const { content } = this.props;
+    const { applicationId, maxWidth } = content;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -71,7 +59,7 @@ class H5pPlayerEditor extends React.Component {
           <FormItem label="Content-ID" {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
-                value={section.content.de.applicationId}
+                value={applicationId}
                 readOnly
                 />
               <div style={{ flex: 'none' }}>
@@ -85,7 +73,7 @@ class H5pPlayerEditor extends React.Component {
             </div>
           </FormItem>
           <Form.Item label="Maximale Breite" {...formItemLayout}>
-            <ObjectMaxWidthSlider value={section.content.de.maxWidth} onChange={this.handleMaxWidthValueChanged} />
+            <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthValueChanged} />
           </Form.Item>
         </Form>
       </div>
@@ -94,10 +82,8 @@ class H5pPlayerEditor extends React.Component {
 }
 
 H5pPlayerEditor.propTypes = {
-  onContentChanged: PropTypes.func.isRequired,
-  section: PropTypes.shape({
-    content: PropTypes.object
-  }).isRequired
+  ...sectionEditorProps,
+  httpClient: PropTypes.instanceOf(HttpClient).isRequired
 };
 
 

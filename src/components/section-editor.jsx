@@ -7,17 +7,11 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const confirm = Modal.confirm;
 
-const preferredLanguages = ['de', 'en'];
-
 class SectionEditor extends React.Component {
   constructor(props) {
     super(props);
-
     autoBind.react(this);
-
-    this.state = {
-      mode: 'edit'
-    };
+    this.state = { mode: 'edit' };
   }
 
   handleEditClick() {
@@ -47,14 +41,28 @@ class SectionEditor extends React.Component {
     });
   }
 
-  handleContentChange(content) {
-    const { onContentChanged, section } = this.props;
-    onContentChanged(section.key, content);
+  handleContentChange(updatedContent) {
+    const { onContentChanged, section, language } = this.props;
+    onContentChanged(section.key, { ...section.content, [language]: updatedContent });
   }
 
   render() {
     const { mode } = this.state;
-    const { section, editorInstance, EditorComponent } = this.props;
+    const { section, EditorComponent, DisplayComponent, language } = this.props;
+
+    let componentToShow;
+    switch (mode) {
+      case 'preview':
+        componentToShow = <DisplayComponent content={section.content[language]} language={language} />;
+        break;
+      case 'edit':
+        componentToShow = <EditorComponent content={section.content[language]} onContentChanged={this.handleContentChange} language={language} />;
+        break;
+      default:
+        componentToShow = '';
+        break;
+    }
+
     return (
       <section key={section.key} className="Section">
         <div className="Panel">
@@ -76,13 +84,7 @@ class SectionEditor extends React.Component {
             </div>
           </div>
           <div className="Panel-content">
-            <EditorComponent
-              section={section}
-              editor={editorInstance}
-              mode={mode}
-              preferredLanguages={preferredLanguages}
-              onContentChanged={this.handleContentChange}
-              />
+            {componentToShow}
           </div>
           <div className="Panel-footer">
             <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
@@ -101,13 +103,13 @@ class SectionEditor extends React.Component {
 }
 
 SectionEditor.propTypes = {
+  DisplayComponent: PropTypes.func.isRequired,
   EditorComponent: PropTypes.func.isRequired,
-  editorInstance: PropTypes.shape({
-    getEditorComponent: PropTypes.func.isRequired
-  }).isRequired,
+  language: PropTypes.string.isRequired,
   onContentChanged: PropTypes.func.isRequired,
   onSectionDeleted: PropTypes.func.isRequired,
   section: PropTypes.shape({
+    content: PropTypes.any.isRequired,
     key: PropTypes.string.isRequired,
     order: PropTypes.number,
     type: PropTypes.string.isRequired

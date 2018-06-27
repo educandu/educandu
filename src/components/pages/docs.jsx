@@ -2,27 +2,27 @@ const React = require('react');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const { Button, Input, Modal } = require('antd');
-const uniqueId = require('../../utils/unique-id');
 const PageHeader = require('./../page-header.jsx');
 const { inject } = require('../container-context.jsx');
 const DocumentApiClient = require('../../services/document-api-client');
+
+const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
 
 class Docs extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
     this.state = {
-      newDocKey: null,
-      visible: false,
-      loading: false
+      newDocTitle: DEFAULT_DOCUMENT_TITLE,
+      isNewDocModalVisible: false,
+      isLoading: false
     };
   }
 
-  createNewDocument(key, title) {
+  createNewDocument(title) {
     return {
       doc: {
-        key: key,
-        title: title || 'Unbenannt'
+        title: title || DEFAULT_DOCUMENT_TITLE
       },
       sections: [],
       user: {
@@ -33,37 +33,38 @@ class Docs extends React.Component {
 
   handleNewDocumentClick() {
     this.setState({
-      newDocKey: uniqueId.create(),
-      visible: true
+      newDocTitle: DEFAULT_DOCUMENT_TITLE,
+      isNewDocModalVisible: true
     });
   }
 
-  handleNewDocKeyChange(event) {
-    this.setState({ newDocKey: event.target.value });
+  handleNewDocTitleChange(event) {
+    this.setState({ newDocTitle: event.target.value });
   }
 
   async handleOk() {
-    const { newDocKey } = this.state;
+    const { newDocTitle } = this.state;
     const { documentApiClient } = this.props;
 
-    this.setState({ loading: true });
+    this.setState({ isLoading: true });
 
-    await documentApiClient.saveDocument(this.createNewDocument(newDocKey));
+    const { doc } = await documentApiClient.saveDocument(this.createNewDocument(newDocTitle));
 
     this.setState({
-      newDocKey: null,
-      visible: false,
-      loading: false
+      isNewDocModalVisible: false,
+      isLoading: false
     });
+
+    window.location = `/edit/doc/${doc.key}`;
   }
 
   handleCancel() {
-    this.setState({ visible: false });
+    this.setState({ isNewDocModalVisible: false });
   }
 
   render() {
     const { initialState } = this.props;
-    const { newDocKey, visible, loading } = this.state;
+    const { newDocTitle, isNewDocModalVisible, isLoading } = this.state;
     return (
       <React.Fragment>
         <PageHeader />
@@ -79,13 +80,13 @@ class Docs extends React.Component {
           <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewDocumentClick} />
           <Modal
             title="Neues Dokument"
-            visible={visible}
+            visible={isNewDocModalVisible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
             >
-            <p>ID</p>
-            <p><Input value={newDocKey} onChange={this.handleNewDocKeyChange} /></p>
-            {loading && <p>Wird erstellt ...</p>}
+            <p>Titel</p>
+            <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
+            {isLoading && <p>Wird erstellt ...</p>}
           </Modal>
         </div>
       </React.Fragment>

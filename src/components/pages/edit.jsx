@@ -7,6 +7,7 @@ const { Menu, Button, Dropdown } = require('antd');
 const { inject } = require('../container-context.jsx');
 const SectionEditor = require('./../section-editor.jsx');
 const EditorFactory = require('../../plugins/editor-factory');
+const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
 
 const pluginInfos = [
@@ -19,10 +20,8 @@ const pluginInfos = [
     name: 'Image',
     type: 'image',
     defaultContent: {
-      src: {
-        type: 'internal',
-        url: ''
-      },
+      type: 'internal',
+      url: '',
       maxWidth: 100
     }
   },
@@ -30,10 +29,8 @@ const pluginInfos = [
     name: 'Audio',
     type: 'audio',
     defaultContent: {
-      src: {
-        type: 'internal',
-        url: ''
-      }
+      type: 'internal',
+      url: ''
     }
   },
   {
@@ -63,20 +60,22 @@ const pluginInfos = [
   }
 ];
 
-class Editor extends React.Component {
+class Edit extends React.Component {
   constructor(props) {
     super(props);
 
     autoBind.react(this);
 
-    const { editorFactory, documentApiClient, initialState } = this.props;
+    const { editorFactory, rendererFactory, documentApiClient, initialState } = this.props;
+    const { doc, sections, language } = initialState;
 
     this.editorFactory = editorFactory;
+    this.rendererFactory = rendererFactory;
     this.documentApiClient = documentApiClient;
 
     this.state = {
-      ...this.createStateFromDoc(initialState),
-      isDirty: false
+      ...this.createStateFromDoc({ doc, sections }),
+      language
     };
 
     this.pluginInfos = pluginInfos.map(t => ({
@@ -85,27 +84,28 @@ class Editor extends React.Component {
     }));
   }
 
-  createSectionInfoFromSection(section) {
-    const editorInstance = this.editorFactory.createEditor(section.type, section);
-    const EditorComponent = editorInstance.getEditorComponent();
-    return { section, editorInstance, EditorComponent };
+  getEditorComponentForSection(section) {
+    return this.editorFactory.createEditor(section.type).getEditorComponent();
   }
 
-  createStateFromDoc(doc) {
+  getDisplayComponentForSection(section) {
+    return this.rendererFactory.createRenderer(section.type).getDisplayComponent();
+  }
+
+  createStateFromDoc({ doc, sections }) {
     return {
       originalDoc: doc,
+      originalSections: sections,
       editedDoc: JSON.parse(JSON.stringify(doc)),
-      sectionInfos: doc.sections.map(section => this.createSectionInfoFromSection(section))
+      editedSections: JSON.parse(JSON.stringify(sections)),
+      isDirty: false
     };
   }
 
-  handleContentChanged(sectionKey, updatedContent) {
+  handleContentChanged(sectionKey, content) {
     this.setState(prevState => {
       return {
-        editedDoc: {
-          ...prevState.editedDoc,
-          sections: prevState.editedDoc.sections.map(sec => sec.key === sectionKey ? { ...sec, updatedContent } : sec)
-        },
+        editedSections: prevState.editedSections.map(sec => sec.key === sectionKey ? { ...sec, content } : sec),
         isDirty: true
       };
     });
@@ -114,11 +114,7 @@ class Editor extends React.Component {
   handleSectionDeleted(sectionKey) {
     this.setState(prevState => {
       return {
-        editedDoc: {
-          ...prevState.editedDoc,
-          sections: prevState.editedDoc.sections.filter(sec => sec.key !== sectionKey)
-        },
-        sectionInfos: prevState.sectionInfos.filter(info => info.section.key !== sectionKey),
+        editedSections: prevState.editedSections.filter(sec => sec.key !== sectionKey),
         isDirty: true
       };
     });
@@ -132,53 +128,46 @@ class Editor extends React.Component {
       type: pluginInfo.type,
       content: {
         de: JSON.parse(JSON.stringify(pluginInfo.defaultContent))
-      },
-      updatedContent: {
-        de: JSON.parse(JSON.stringify(pluginInfo.defaultContent))
       }
     };
     this.setState(prevState => {
       return {
-        editedDoc: {
-          ...prevState.editedDoc,
-          sections: [...prevState.editedDoc.sections, newSection]
-        },
-        sectionInfos: [...prevState.sectionInfos, this.createSectionInfoFromSection(newSection)],
+        editedSections: [...prevState.editedSections, newSection],
         isDirty: true
       };
     });
   }
 
   async handleSave() {
-    const { editedDoc } = this.state;
+    const { editedDoc, editedSections } = this.state;
     const user = { name: 'Mr. Browser' };
     const payload = {
       doc: {
-        key: editedDoc._id,
+        key: editedDoc.key,
         title: editedDoc.title
       },
-      sections: editedDoc.sections.map(section => ({
-        _id: section._id,
+      sections: editedSections.map(section => ({
+        ancestorId: section._id,
         key: section.key,
         type: section.type,
-        updatedContent: section.updatedContent
+        content: section.content
       })),
       user: user
     };
-    const result = await this.documentApiClient.saveDocument(payload);
-    this.setState({ ...this.createStateFromDoc(result), isDirty: false });
-    window.location = `/docs/${result._id}`;
+    const { doc, sections } = await this.documentApiClient.saveDocument(payload);
+    this.setState(this.createStateFromDoc({ doc, sections }));
   }
 
   render() {
-    const { originalDoc, sectionInfos, isDirty } = this.state;
-    const children = sectionInfos.map(({ section, editorInstance, EditorComponent }) => (
+    const { originalDoc, editedSections, isDirty, language } = this.state;
+    const children = editedSections.map(section => (
       <SectionEditor
         key={section.key}
-        EditorComponent={EditorComponent}
-        editorInstance={editorInstance}
+        EditorComponent={this.getEditorComponentForSection(section)}
+        DisplayComponent={this.getDisplayComponentForSection(section)}
         onContentChanged={this.handleContentChanged}
         onSectionDeleted={this.handleSectionDeleted}
+        language={language}
         section={section}
         />
     ));
@@ -204,9 +193,9 @@ class Editor extends React.Component {
     return (
       <React.Fragment>
         <PageHeader>
-          {isDirty && <a onClick={this.handleSave}>Übernehmen</a>}
+          {isDirty && <a onClick={this.handleSave}>Speichern</a>}
           &nbsp;
-          <a href={`/docs/${originalDoc._id}`}>Abbrechen</a>
+          <a href={`/docs/${originalDoc.key}`}>Zurück</a>
         </PageHeader>
         <div className="PageContent">
           {children}
@@ -216,18 +205,27 @@ class Editor extends React.Component {
   }
 }
 
-Editor.propTypes = {
+Edit.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   editorFactory: PropTypes.instanceOf(EditorFactory).isRequired,
   initialState: PropTypes.shape({
+    doc: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired
+    }),
     sections: PropTypes.arrayOf(PropTypes.shape({
       key: PropTypes.string.isRequired,
-      type: PropTypes.string.isRequired
-    }))
-  }).isRequired
+      order: PropTypes.number.isRequired,
+      type: PropTypes.string.isRequired,
+      content: PropTypes.any.isRequired
+    })),
+    language: PropTypes.string.isRequired
+  }).isRequired,
+  rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
 };
 
 module.exports = inject({
   documentApiClient: DocumentApiClient,
+  rendererFactory: RendererFactory,
   editorFactory: EditorFactory
-}, Editor);
+}, Edit);

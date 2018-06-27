@@ -16,8 +16,8 @@ class EditorFactory extends PluginFactoryBase {
     super(container, editors);
   }
 
-  createEditor(pluginType, section) {
-    return this._createInstance(pluginType, section);
+  createEditor(pluginType) {
+    return this._createInstance(pluginType);
   }
 }
 

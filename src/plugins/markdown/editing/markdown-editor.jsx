@@ -1,108 +1,38 @@
 const React = require('react');
 const { Input } = require('antd');
 const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const { inject } = require('../../../components/container-context.jsx');
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
+const { sectionEditorProps } = require('../../../ui/default-prop-types');
 
 const { TextArea } = Input;
 
-function clone(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
-const defaultState = {
-  mode: 'preview',
-  currentEditorValue: null,
-  currentEditorContent: null,
-  currentEditorLanguage: null,
-  isDirty: false
-};
-
 class MarkdownEditor extends React.Component {
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const newState = {
-      ...prevState,
-      mode: nextProps.mode
-    };
-
-    if (nextProps.mode !== prevState.mode) {
-      switch (nextProps.mode) {
-        case 'preview':
-          newState.currentEditorContent = null;
-          newState.currentEditorLanguage = null;
-          newState.currentEditorValue = null;
-          newState.isDirty = false;
-          break;
-        case 'edit':
-          newState.currentEditorContent = clone(nextProps.section.content || {});
-          newState.currentEditorLanguage = Object.keys(nextProps.section.content)[0] || nextProps.preferredLanguages[0];
-          newState.currentEditorValue = newState.currentEditorContent[newState.currentEditorLanguage] || '';
-          newState.isDirty = false;
-          break;
-        default:
-          throw new Error(`Unknown editor mode: ${nextProps.mode}`);
-      }
-    }
-
-    return newState;
-  }
-
   constructor(props) {
     super(props);
     autoBind.react(this);
-    this.state = { ...defaultState };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const newState = this.state;
-    const hasModeChanged = prevState.mode !== newState.mode;
-    const hasValueChanged = prevState.currentEditorValue !== newState.currentEditorValue;
-    if (hasValueChanged && !hasModeChanged) {
-      const { onContentChanged } = this.props;
-      onContentChanged(newState.currentEditorContent);
-    }
   }
 
   handleCurrentEditorValueChanged(event) {
     const newValue = event.target.value;
-    this.setState(prevState => ({
-      currentEditorContent: {
-        ...prevState.currentEditorContent,
-        [prevState.currentEditorLanguage]: newValue
-      },
-      currentEditorValue: newValue,
-      isDirty: true
-    }));
+    this.changeContent({ text: newValue });
+  }
+
+  changeContent(newContentValues) {
+    const { content, onContentChanged } = this.props;
+    onContentChanged({ ...content, ...newContentValues });
   }
 
   render() {
-    const { section, githubFlavoredMarkdown } = this.props;
-    const { mode, currentEditorValue } = this.state;
-    switch (mode) {
-      case 'preview':
-        return (
-          <div className="MarkdownEditor" dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(section.content.de) }} />
-        );
-      case 'edit':
-        return (
-          <TextArea value={currentEditorValue} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
-        );
-      default:
-        throw new Error(`Unknown editor mode: ${mode}`);
-    }
+    const { content } = this.props;
+    const { text } = content;
+
+    return (
+      <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
+    );
   }
 }
 
 MarkdownEditor.propTypes = {
-  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired,
-  onContentChanged: PropTypes.func.isRequired,
-  preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
-  section: PropTypes.shape({
-    content: PropTypes.object
-  }).isRequired
+  ...sectionEditorProps
 };
 
-module.exports = inject({
-  githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, MarkdownEditor);
+module.exports = MarkdownEditor;

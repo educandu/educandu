@@ -5,7 +5,7 @@ const { inject } = require('../../../components/container-context.jsx');
 const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
 
-class MarkdownContentDisplay extends React.PureComponent {
+class MarkdownDisplay extends React.PureComponent {
   constructor(props) {
     super(props);
     autoBind.react(this);
@@ -13,41 +13,22 @@ class MarkdownContentDisplay extends React.PureComponent {
 
   render() {
     const { content, githubFlavoredMarkdown } = this.props;
+    const html = githubFlavoredMarkdown.render(content.text);
+
     return (
       <div
         className="Markdown"
-        dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content) }}
+        dangerouslySetInnerHTML={{ __html: html }}
         />
     );
   }
 }
 
-MarkdownContentDisplay.propTypes = {
+MarkdownDisplay.propTypes = {
   ...sectionDisplayProps,
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
-const WrappedMarkdownContentDisplay = inject({
+module.exports = inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, MarkdownContentDisplay);
-
-// Wrapper:
-/* eslint react/no-multi-comp: 0 */
-
-function MarkdownDisplay({ preferredLanguages, section }) {
-  const language = preferredLanguages[0];
-  const content = section.content[language];
-
-  return (
-    <WrappedMarkdownContentDisplay content={content} language={language} />
-  );
-}
-
-MarkdownDisplay.propTypes = {
-  preferredLanguages: PropTypes.arrayOf(PropTypes.string).isRequired,
-  section: PropTypes.shape({
-    content: PropTypes.object
-  }).isRequired
-};
-
-module.exports = MarkdownDisplay;
+}, MarkdownDisplay);
