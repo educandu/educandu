@@ -66,6 +66,7 @@
     "videojs-youtube": "~2.5.0"
   },
   "devDependencies": {
+    "acorn": "~5.7.1",
     "babel-core": "~6.26.3",
     "babel-eslint": "~8.2.5",
     "babel-loader": "~7.1.4",

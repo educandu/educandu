@@ -1,5 +1,8 @@
+/* eslint no-sync: off */
+/* eslint no-console: off */
 /* eslint no-process-env: off */
 
+const fs = require('fs');
 const del = require('del');
 const path = require('path');
 const glob = require('glob');
@@ -8,6 +11,8 @@ const jest = require('jest');
 const util = require('util');
 const delay = require('delay');
 const execa = require('execa');
+const acorn = require('acorn');
+const { EOL } = require('os');
 const less = require('gulp-less');
 const csso = require('gulp-csso');
 const gulpif = require('gulp-if');
@@ -29,7 +34,7 @@ const TEST_MINIO_CONTAINER_NAME = 'elmu-minio';
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
 const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
 
-const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimize');
+const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimized');
 const verbous = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbous');
 
 let server = null;
@@ -167,7 +172,7 @@ gulp.task('bundle:js', async () => {
       rules: [
         {
           test: /\.jsx?$/,
-          exclude: /node_modules/,
+          exclude: /node_modules[\\/](?!(auto-bind|mem|mimic-fn|p-is-promise|pretty-bytes|quick-lru)[\\/]).*/,
           use: {
             loader: 'babel-loader'
           }
@@ -209,7 +214,6 @@ gulp.task('bundle:js', async () => {
     version: false
   };
 
-  /* eslint-disable-next-line no-console */
   console.log(stats.toString(verbous ? {} : minimalStatsOutput));
 });
 
@@ -225,6 +229,34 @@ gulp.task('mongo:up', () => {
     }
   });
 });
+
+gulp.task('verify:es5compat', () => {
+  const files = glob.sync('dist/**/*.js');
+  const errors = [];
+
+  for (const file of files) {
+    const content = fs.readFileSync(file, 'utf8');
+
+    try {
+      acorn.parse(content, { ecmaVersion: 5 });
+    } catch (error) {
+      errors.push({ file, error });
+    }
+  }
+
+  if (errors.length) {
+    const lines = [];
+    lines.push('Verification error, ES5 compatibility is broken:');
+    for (const err of errors) {
+      lines.push(err.error.message);
+      lines.push(`  --> in: ${err.file}`);
+    }
+
+    throw new Error(lines.join(EOL));
+  }
+});
+
+gulp.task('verify', ['verify:es5compat']);
 
 gulp.task('mongo:down', () => {
   return ensureContainerRemoved({
@@ -273,7 +305,7 @@ gulp.task('serve:restart:raw', ['bundle:js'], restartServer);
 
 gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', 'minio:seed', done));
 
-gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', done));
+gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', 'verify', done));
 
 gulp.task('watch', ['serve'], () => {
   gulp.watch(['src/**/*.{js,jsx}'], ['serve:restart']);
