@@ -49,8 +49,8 @@ async function dropAllCollections(db) {
 // If `bucketName` is undefined, it uses the
 // bucket associated with `cdn`, same with `region`!
 async function ensurePublicBucketExists(cdn, bucketName, region) {
-  const bRegion = region || cdn._region;
-  const bName = bucketName || cdn._bucketName;
+  const bRegion = region || cdn.region;
+  const bName = bucketName || cdn.bucketName;
   const bucketPolicy = {
     Version: '2012-10-17',
     Statement: [
@@ -64,18 +64,16 @@ async function ensurePublicBucketExists(cdn, bucketName, region) {
     ]
   };
 
-  const s3Client = cdn._s3Client;
-  await s3Client.makeBucket(bName, bRegion);
-  await s3Client.setBucketPolicy(bName, JSON.stringify(bucketPolicy));
+  const s3Client = cdn.s3Client;
+  await s3Client.createBucket(bName, bRegion);
+  await s3Client.putBucketPolicy(bName, JSON.stringify(bucketPolicy));
 
   return cdn;
 }
 
 async function createTestCdn() {
   const cdn = await Cdn.create({
-    endPoint: serverSettings.cdnEndpoint,
-    port: serverSettings.cdnPort,
-    secure: serverSettings.cdnSecure,
+    endpoint: serverSettings.cdnEndpoint,
     region: serverSettings.cdnRegion,
     accessKey: serverSettings.cdnAccessKey,
     secretKey: serverSettings.cdnSecretKey,
@@ -88,23 +86,23 @@ async function createTestCdn() {
 // If `bucketName` is undefined, it uses the
 // bucket associated with `cdn`!
 async function purgeBucket(cdn, bucketName) {
-  const s3Client = cdn._s3Client;
-  const bName = bucketName || cdn._bucketName;
+  const s3Client = cdn.s3Client;
+  const bName = bucketName || cdn.bucketName;
   const objects = await s3Client.listObjects(bName, '', true);
-  await s3Client.removeObjects(bName, objects.map(obj => obj.name));
+  await s3Client.deleteObjects(bName, objects.map(obj => obj.name));
 }
 
 // If `bucketName` is undefined, it uses the
 // bucket associated with `cdn`!
 async function removeBucket(cdn, bucketName) {
-  const s3Client = cdn._s3Client;
-  const bName = bucketName || cdn._bucketName;
+  const s3Client = cdn.s3Client;
+  const bName = bucketName || cdn.bucketName;
   await purgeBucket(cdn, bName);
-  await s3Client.removeBucket(bName);
+  await s3Client.deleteBucket(bName);
 }
 
 async function removeAllBuckets(cdn) {
-  const s3Client = cdn._s3Client;
+  const s3Client = cdn.s3Client;
   const buckets = await s3Client.listBuckets();
   await Promise.all(buckets.map(b => removeBucket(cdn, b.name)));
 }

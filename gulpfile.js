@@ -1,3 +1,5 @@
+/* eslint no-process-env: off */
+
 const del = require('del');
 const path = require('path');
 const glob = require('glob');
@@ -34,7 +36,7 @@ let server = null;
 process.on('exit', () => server && server.kill());
 const startServer = () => {
   server = spawn(process.execPath, ['src/index.js'], {
-    env: { NODE_ENV: 'development' },
+    env: { ...process.env, NODE_ENV: 'development' },
     stdio: 'inherit'
   });
   server.once('exit', () => {
@@ -87,7 +89,7 @@ gulp.task('clean', () => {
 });
 
 gulp.task('lint', () => {
-  return gulp.src(['src/**/*.{js,jsx}', '*.js', 'db-create-user', 'db-seed', 's3-seed'])
+  return gulp.src(['src/**/*.{js,jsx}', '*.js', 'db-create-user', 'db-seed', 's3-seed', 'prune-env'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(gulpif(!server, eslint.failAfterError()));

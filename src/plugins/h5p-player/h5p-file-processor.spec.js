@@ -11,6 +11,11 @@ describe('h5p-file-processor', () => {
     sut = new H5pFileProcessor(cdn);
   });
 
+  afterAll(async () => {
+    await testHelper.removeBucket(cdn);
+    await cdn.dispose();
+  });
+
   describe('install', () => {
     const h5pFileName = path.join(__dirname, '../../../test/h5p-test-files/interactive-video-2-618.h5p');
     const applicationId = 'some-application';

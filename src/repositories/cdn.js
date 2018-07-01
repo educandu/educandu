@@ -1,68 +1,54 @@
+const fs = require('fs');
 const mime = require('mime');
 const Stream = require('stream');
-const S3Client = require('./s3-client');
-const readAllStream = require('read-all-stream');
+const MinioS3Client = require('./minio-s3-client');
+const AwsSdkS3Client = require('./aws-sdk-s3-client');
 
-const contentTypeKey = 'Content-Type';
 const defaultContentType = 'application/octet-stream';
-
-function enrichMetaData(userMetaData, filePath = null) {
-  if (userMetaData && userMetaData[contentTypeKey]) {
-    return userMetaData;
-  }
-
-  const additionalMetaData = { [contentTypeKey]: filePath ? mime.getType(filePath) : defaultContentType };
-  return userMetaData ? { ...userMetaData, ...additionalMetaData } : additionalMetaData;
-}
 
 // Wraps access to a specific bucket using S3 client
 class Cdn {
   constructor(s3Client, bucketName, region, rootUrl) {
-    this._s3Client = s3Client;
-    this._bucketName = bucketName;
-    this._region = region;
+    this.s3Client = s3Client;
+    this.bucketName = bucketName;
+    this.region = region;
     this.rootUrl = rootUrl;
   }
 
   listObjects({ prefix = '', recursive = false } = {}) {
-    return this._s3Client.listObjects(this._bucketName, prefix, recursive);
+    return this.s3Client.listObjects(this.bucketName, prefix, recursive);
   }
 
-  getObject(objectName) {
-    return this._s3Client.getObject(this._bucketName, objectName);
+  getObjectAsBuffer(objectName) {
+    return this.s3Client.getObject(this.bucketName, objectName);
   }
 
-  async getObjectAsBuffer(objectName) {
-    const stream = await this.getObject(objectName);
-    return readAllStream(stream);
+  async getObjectAsString(objectName, encoding = 'utf8') {
+    const buffer = await this.getObjectAsBuffer(objectName);
+    return buffer.toString(encoding);
   }
 
-  async getObjectAsString(objectName, encoding) {
-    const stream = await this.getObject(objectName);
-    return readAllStream(stream, encoding || 'utf8');
+  uploadObject(objectName, filePath, metadata) {
+    const stream = fs.createReadStream(filePath);
+    const contentType = mime.getType(filePath) || defaultContentType;
+
+    return this.s3Client.upload(this.bucketName, objectName, stream, contentType, metadata);
   }
 
-  deleteObjects(objectNames) {
-    return this._s3Client.removeObjects(this._bucketName, objectNames);
-  }
-
-  async uploadObject(objectName, filePath, metaData) {
-    const etag = await this._s3Client.fPutObject(this._bucketName, objectName, filePath, enrichMetaData(metaData, filePath));
-    return { etag };
-  }
-
-  async uploadEmptyObject(objectName, metaData) {
-    const etag = await this._s3Client.putObject(this._bucketName, objectName, new Stream(), 0, enrichMetaData(metaData));
-    return { etag };
+  uploadEmptyObject(objectName, metadata) {
+    return this.s3Client.upload(this.bucketName, objectName, new Stream(), defaultContentType, metadata);
   }
 
   dispose() {
-    this._s3Client = null;
+    this.s3Client = null;
     return Promise.resolve();
   }
 
-  static create({ endPoint, port, secure, region, accessKey, secretKey, bucketName, rootUrl }) {
-    const s3Client = new S3Client({ endPoint, port, secure, region, accessKey, secretKey });
+  static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {
+    const s3Client = endpoint.includes('.amazonaws.com')
+      ? new AwsSdkS3Client({ endpoint, region, accessKey, secretKey })
+      : new MinioS3Client({ endpoint, region, accessKey, secretKey });
+
     return Promise.resolve(new Cdn(s3Client, bucketName, region, rootUrl));
   }
 }

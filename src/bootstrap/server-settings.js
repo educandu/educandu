@@ -1,7 +1,6 @@
 /* eslint no-process-env: off */
 
 const clientSettings = require('./client-settings');
-const parseBoolean = require('parseboolean');
 
 const env = process.env.ELMU_ENV || 'dev';
 
@@ -13,9 +12,7 @@ const commonSettings = {
 const overrides = {
   dev: {
     elmuWebConnectionString: 'mongodb://elmu:elmu@localhost:27017/dev-elmu-web?authSource=admin',
-    cdnEndpoint: 'localhost',
-    cdnPort: 9000,
-    cdnSecure: false,
+    cdnEndpoint: 'http://localhost:9000',
     cdnRegion: 'eu-central-1',
     cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
     cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
@@ -23,9 +20,7 @@ const overrides = {
   },
   test: {
     elmuWebConnectionString: 'mongodb://elmu:elmu@localhost:27017/test-elmu-web?authSource=admin',
-    cdnEndpoint: 'localhost',
-    cdnPort: 9000,
-    cdnSecure: false,
+    cdnEndpoint: 'http://localhost:9000',
     cdnRegion: 'eu-central-1',
     cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
     cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
@@ -34,8 +29,6 @@ const overrides = {
   stag: {
     elmuWebConnectionString: process.env.ELMU_WEB_CONNECTION_STRING,
     cdnEndpoint: process.env.ELMU_CDN_ENDPOINT,
-    cdnPort: Number.parseInt(process.env.ELMU_CDN_PORT, 10),
-    cdnSecure: parseBoolean(process.env.ELMU_CDN_SECURE),
     cdnRegion: process.env.ELMU_CDN_REGION,
     cdnAccessKey: process.env.ELMU_CDN_ACCESS_KEY,
     cdnSecretKey: process.env.ELMU_CDN_SECRET_KEY,
@@ -44,8 +37,6 @@ const overrides = {
   prod: {
     elmuWebConnectionString: process.env.ELMU_WEB_CONNECTION_STRING,
     cdnEndpoint: process.env.ELMU_CDN_ENDPOINT,
-    cdnPort: Number.parseInt(process.env.ELMU_CDN_PORT, 10),
-    cdnSecure: parseBoolean(process.env.ELMU_CDN_SECURE),
     cdnRegion: process.env.ELMU_CDN_REGION,
     cdnAccessKey: process.env.ELMU_CDN_ACCESS_KEY,
     cdnSecretKey: process.env.ELMU_CDN_SECRET_KEY,
@@ -53,4 +44,8 @@ const overrides = {
   }
 };
 
-module.exports = Object.assign({}, clientSettings, commonSettings, overrides[env]);
+module.exports = {
+  ...clientSettings,
+  ...commonSettings,
+  ...overrides[env]
+};

@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+const Cdn = require('./src/repositories/cdn');
+const testHelper = require('./src/test-helper');
+const Database = require('./src/stores/database');
+const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
+
+(async function seed() {
+
+  const container = await serverBootstrapper.createContainer();
+
+  // CDN
+  const cdn = container.get(Cdn);
+  await testHelper.purgeBucket(cdn);
+
+  // DB
+  const db = container.get(Database);
+  await testHelper.dropAllCollections(db);
+
+  await serverBootstrapper.disposeContainer(container);
+
+})();

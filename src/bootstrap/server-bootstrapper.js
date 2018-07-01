@@ -13,9 +13,7 @@ async function createContainer() {
   container.registerInstance(Database, database);
 
   const cdn = await Cdn.create({
-    endPoint: serverSettings.cdnEndpoint,
-    port: serverSettings.cdnPort,
-    secure: serverSettings.cdnSecure,
+    endpoint: serverSettings.cdnEndpoint,
     region: serverSettings.cdnRegion,
     accessKey: serverSettings.cdnAccessKey,
     secretKey: serverSettings.cdnSecretKey,
