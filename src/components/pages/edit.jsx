@@ -14,7 +14,9 @@ const pluginInfos = [
   {
     name: 'Markdown',
     type: 'markdown',
-    defaultContent: ''
+    defaultContent: {
+      text: ''
+    }
   },
   {
     name: 'Image',
