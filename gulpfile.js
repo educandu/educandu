@@ -117,7 +117,7 @@ gulp.task('copy:iframeresizer', () => {
 
 gulp.task('bundle:css', () => {
   return gulp.src('src/styles/main.less')
-    .pipe(gulpif(!!server, plumber({ errorHandler: true })))
+    .pipe(gulpif(!!server, plumber()))
     .pipe(sourcemaps.init())
     .pipe(less({ javascriptEnabled: true }))
     .pipe(gulpif(optimize, csso()))

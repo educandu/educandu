@@ -1,0 +1,45 @@
+.IndexPage {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.IndexPage-content {
+  max-width: 900px;
+}
+
+.IndexPage-title {
+  font-family: 'Dancing Script';
+  font-size: 64px;
+  text-align: center;
+  color: @global-elmu-blue;
+  margin: 32px 0;
+}
+
+.IndexPage-search {
+  margin: 32px 0;
+}
+
+.IndexPage-categories {
+  margin: 64px 0 32px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.IndexPage-category {
+  flex: 0 0 20%;
+}
+
+.IndexPage-categoryLink {
+  display: block;
+}
+
+.IndexPage-categoryImage {
+  max-width: 100%;
+  transition: all .2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1, 1.1);
+  }
+}
