@@ -1,6 +1,5 @@
 const React = require('react');
 const { Input } = require('antd');
-const PageHeader = require('../page-header.jsx');
 const HoverImage = require('../hover-image.jsx');
 
 const { Search } = Input;
@@ -48,27 +47,22 @@ function Index() {
   });
 
   return (
-    <React.Fragment>
-      <PageHeader />
-      <div className="PageContent">
-        <main className="IndexPage">
-          <div className="IndexPage-content">
-            <h1 className="IndexPage-title">elmu.online</h1>
-            <div className="IndexPage-search">
-              <Search
-                placeholder="Geben Sie einen Suchbegriff ein"
-                enterButton="Suchen"
-                size="large"
-                onSearch={goToDocs}
-                />
-            </div>
-            <div className="IndexPage-categories">
-              {categoryElements}
-            </div>
-          </div>
-        </main>
+    <main className="IndexPage">
+      <div className="IndexPage-content">
+        <h1 className="IndexPage-title">elmu</h1>
+        <div className="IndexPage-search">
+          <Search
+            placeholder="Suchbegriff"
+            enterButton="Suchen"
+            size="large"
+            onSearch={goToDocs}
+            />
+        </div>
+        <div className="IndexPage-categories">
+          {categoryElements}
+        </div>
       </div>
-    </React.Fragment>
+    </main>
   );
 }
 
