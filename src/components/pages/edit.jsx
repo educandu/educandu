@@ -1,11 +1,13 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
+const Menu = require('antd/lib/menu');
 const PropTypes = require('prop-types');
+const Button = require('antd/lib/button');
+const Dropdown = require('antd/lib/dropdown');
 const utils = require('../../utils/unique-id');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
-const { Menu, Button, Dropdown } = require('antd');
 const { inject } = require('../container-context.jsx');
 const SectionEditor = require('../section-editor.jsx');
 const EditorFactory = require('../../plugins/editor-factory');

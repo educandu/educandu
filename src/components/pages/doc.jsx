@@ -1,8 +1,8 @@
 const React = require('react');
-const { Button } = require('antd');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
+const Button = require('antd/lib/button');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');

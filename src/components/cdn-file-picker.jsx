@@ -1,7 +1,8 @@
 const React = require('react');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
-const { Modal, Button } = require('antd');
+const Modal = require('antd/lib/modal');
+const Button = require('antd/lib/button');
 const selection = require('../ui/selection');
 const RepositoryBrowser = require('./repository-browser.jsx');
 

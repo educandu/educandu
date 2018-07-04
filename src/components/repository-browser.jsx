@@ -2,16 +2,22 @@ const React = require('react');
 const moment = require('moment');
 const firstBy = require('thenby');
 const autoBind = require('auto-bind');
+const Icon = require('antd/lib/icon');
+const Table = require('antd/lib/table');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
+const Upload = require('antd/lib/upload');
+const Button = require('antd/lib/button');
+const Divider = require('antd/lib/divider');
+const message = require('antd/lib/message');
 const prettyBytes = require('pretty-bytes');
 const selection = require('../ui/selection');
 const pathHelper = require('../ui/path-helper');
+const Breadcrumb = require('antd/lib/breadcrumb');
 const browserHelper = require('../ui/browser-helper');
 const { inject } = require('./container-context.jsx');
 const mimeTypeHelper = require('../ui/mime-type-helper');
 const CdnApiClient = require('../services/cdn-api-client');
-const { Table, Divider, Icon, Breadcrumb, Upload, Button, message } = require('antd');
 
 const BROWSER_LOCALE = 'de';
 

@@ -1,6 +1,6 @@
 const React = require('react');
-const { Input } = require('antd');
 const Page = require('../page.jsx');
+const Input = require('antd/lib/input');
 const PageContent = require('../page-content.jsx');
 
 const { Search } = Input;

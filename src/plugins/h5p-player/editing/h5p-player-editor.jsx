@@ -2,9 +2,14 @@
 
 const React = require('react');
 const autoBind = require('auto-bind');
+const Icon = require('antd/lib/icon');
+const Form = require('antd/lib/form');
+const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
+const Upload = require('antd/lib/upload');
+const Button = require('antd/lib/button');
+const message = require('antd/lib/message');
 const HttpClient = require('../../../services/http-client');
-const { Form, Input, Upload, Button, Icon, message } = require('antd');
 const { inject } = require('../../../components/container-context.jsx');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');

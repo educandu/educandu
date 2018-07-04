@@ -1,7 +1,10 @@
 const React = require('react');
 const autoBind = require('auto-bind');
+const Icon = require('antd/lib/icon');
+const Modal = require('antd/lib/modal');
 const PropTypes = require('prop-types');
-const { Radio, Button, Icon, Modal } = require('antd');
+const Radio = require('antd/lib/radio');
+const Button = require('antd/lib/button');
 const { sortableHandle } = require('react-sortable-hoc');
 
 const RadioButton = Radio.Button;

@@ -1,6 +1,8 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const { Form, Input, Radio } = require('antd');
+const Form = require('antd/lib/form');
+const Input = require('antd/lib/input');
+const Radio = require('antd/lib/radio');
 const clientSettings = require('../../../bootstrap/client-settings');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');

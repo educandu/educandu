@@ -1,6 +1,7 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const { Input, message } = require('antd');
+const Input = require('antd/lib/input');
+const message = require('antd/lib/message');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 
 const { TextArea } = Input;
