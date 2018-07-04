@@ -62,7 +62,7 @@ class SectionEditor extends React.Component {
         componentToShow = <EditorComponent content={section.content[language]} onContentChanged={this.handleContentChange} language={language} />;
         break;
       default:
-        componentToShow = '';
+        componentToShow = null;
         break;
     }
 
@@ -99,11 +99,11 @@ class SectionEditor extends React.Component {
           </div>
           <div className="Panel-footer">
             <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
-              <RadioButton value="edit">
-                <Icon type="edit" />&nbsp;Bearbeiten
-              </RadioButton>
               <RadioButton value="preview">
                 <Icon type="eye-o" />&nbsp;Vorschau
+              </RadioButton>
+              <RadioButton value="edit">
+                <Icon type="edit" />&nbsp;Bearbeiten
               </RadioButton>
             </RadioGroup>
           </div>
