@@ -2,10 +2,13 @@ const React = require('react');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const { Radio, Button, Icon, Modal } = require('antd');
+const { sortableHandle } = require('react-sortable-hoc');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const confirm = Modal.confirm;
+
+const DragHandle = sortableHandle(({ children }) => <React.Fragment>{children}</React.Fragment>);
 
 class SectionEditor extends React.Component {
   constructor(props) {
@@ -63,16 +66,16 @@ class SectionEditor extends React.Component {
         break;
     }
 
-    return (
-      <section key={section.key} className="Section">
-        <div className="Panel">
-          <div className="Panel-header" style={{ display: 'flex' }}>
+    const PanelHeader = sortableHandle(() => {
+      return (
+        <DragHandle>
+          <div className="Panel-header" style={{ display: 'flex', cursor: 'move' }}>
             <div style={{ flex: '1 0 0%' }}>
-              <span>Section Key:</span> <b>{section.key}</b>
+              <span>Typ:</span> <b>{section.type}</b>
               <span>&nbsp;&nbsp;&nbsp;</span>
-              <span>Revision:</span> <b>{section.order}</b>
+              <span>Key:</span> <b>{section.key}</b>
               <span>&nbsp;&nbsp;&nbsp;</span>
-              <span>Type:</span> <b>{section.type}</b>
+              <span>Revision:</span> <b>{section._id}</b>
             </div>
             <div style={{ flex: 'none' }}>
               <Button
@@ -83,6 +86,14 @@ class SectionEditor extends React.Component {
                 />
             </div>
           </div>
+        </DragHandle>
+      );
+    });
+
+    return (
+      <section key={section.key} className="Section">
+        <div className="Panel">
+          <PanelHeader />
           <div className="Panel-content">
             {componentToShow}
           </div>

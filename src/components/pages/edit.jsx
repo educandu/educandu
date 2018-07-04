@@ -9,6 +9,8 @@ const SectionEditor = require('./../section-editor.jsx');
 const EditorFactory = require('../../plugins/editor-factory');
 const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
+const { sortableContainer, sortableElement, arrayMove } = require('react-sortable-hoc');
+
 
 const pluginInfos = [
   {
@@ -61,6 +63,9 @@ const pluginInfos = [
     }
   }
 ];
+
+const SectionItem = sortableElement(({ render, ...rest }) => render({ ...rest }));
+const SectionList = sortableContainer(({ render, ...rest }) => render({ ...rest }));
 
 class Edit extends React.Component {
   constructor(props) {
@@ -160,9 +165,27 @@ class Edit extends React.Component {
     this.setState(this.createStateFromDoc({ doc, sections }));
   }
 
-  render() {
-    const { originalDoc, editedSections, isDirty, language } = this.state;
-    const children = editedSections.map(section => (
+  handleSectionSortEnd({ oldIndex, newIndex }) {
+    this.setState(prevState => {
+      return {
+        editedSections: arrayMove(prevState.editedSections, oldIndex, newIndex),
+        isDirty: true
+      };
+    });
+  }
+
+  renderSectionList({ sections, language }) {
+    return (
+      <div>
+        {sections.map((section, index) => (
+          <SectionItem key={section.key} index={index} section={section} language={language} render={this.renderSection} />
+        ))}
+      </div>
+    );
+  }
+
+  renderSection({ section, language }) {
+    return (
       <SectionEditor
         key={section.key}
         EditorComponent={this.getEditorComponentForSection(section)}
@@ -172,7 +195,11 @@ class Edit extends React.Component {
         language={language}
         section={section}
         />
-    ));
+    );
+  }
+
+  render() {
+    const { originalDoc, editedSections, isDirty, language } = this.state;
 
     const newSectionMenu = (
       <Menu>
@@ -190,8 +217,6 @@ class Edit extends React.Component {
       </Dropdown>
     );
 
-    children.push(newSectionDropdown);
-
     return (
       <React.Fragment>
         <PageHeader>
@@ -200,7 +225,16 @@ class Edit extends React.Component {
           <a href={`/docs/${originalDoc.key}`}>Zurück</a>
         </PageHeader>
         <div className="PageContent">
-          {children}
+          <SectionList
+            sections={editedSections}
+            language={language}
+            render={this.renderSectionList}
+            onSortEnd={this.handleSectionSortEnd}
+            transitionDuration={800}
+            useWindowAsScrollContainer
+            useDragHandle
+            />
+          {newSectionDropdown}
         </div>
       </React.Fragment>
     );
