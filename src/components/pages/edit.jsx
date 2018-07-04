@@ -1,11 +1,13 @@
 const React = require('react');
+const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const utils = require('../../utils/unique-id');
-const PageHeader = require('./../page-header.jsx');
+const PageHeader = require('../page-header.jsx');
+const PageContent = require('../page-content.jsx');
 const { Menu, Button, Dropdown } = require('antd');
 const { inject } = require('../container-context.jsx');
-const SectionEditor = require('./../section-editor.jsx');
+const SectionEditor = require('../section-editor.jsx');
 const EditorFactory = require('../../plugins/editor-factory');
 const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
@@ -145,7 +147,7 @@ class Edit extends React.Component {
     });
   }
 
-  async handleSave() {
+  async handleSaveClick() {
     const { editedDoc, editedSections } = this.state;
     const user = { name: 'Mr. Browser' };
     const payload = {
@@ -163,6 +165,11 @@ class Edit extends React.Component {
     };
     const { doc, sections } = await this.documentApiClient.saveDocument(payload);
     this.setState(this.createStateFromDoc({ doc, sections }));
+  }
+
+  handleBackClick() {
+    const { originalDoc } = this.state;
+    window.location = `/docs/${originalDoc.key}`;
   }
 
   handleSectionSortEnd({ oldIndex, newIndex }) {
@@ -199,7 +206,7 @@ class Edit extends React.Component {
   }
 
   render() {
-    const { originalDoc, editedSections, isDirty, language } = this.state;
+    const { editedSections, isDirty, language } = this.state;
 
     const newSectionMenu = (
       <Menu>
@@ -218,13 +225,13 @@ class Edit extends React.Component {
     );
 
     return (
-      <React.Fragment>
+      <Page>
         <PageHeader>
-          {isDirty && <a onClick={this.handleSave}>Speichern</a>}
+          {isDirty && <Button type="primary" icon="save" onClick={this.handleSaveClick}>Speichern</Button>}
           &nbsp;
-          <a href={`/docs/${originalDoc.key}`}>Zurück</a>
+          <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
         </PageHeader>
-        <div className="PageContent">
+        <PageContent>
           <SectionList
             sections={editedSections}
             language={language}
@@ -235,8 +242,8 @@ class Edit extends React.Component {
             useDragHandle
             />
           {newSectionDropdown}
-        </div>
-      </React.Fragment>
+        </PageContent>
+      </Page>
     );
   }
 }

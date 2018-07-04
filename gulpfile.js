@@ -131,9 +131,9 @@ gulp.task('bundle:css', () => {
 });
 
 gulp.task('bundle:js', async () => {
-  const entry = glob.sync('./src/bundles/*.jsx')
-    .map(bundleFile => path.basename(bundleFile, '.jsx'))
-    .reduce((all, name) => ({ ...all, [name]: ['babel-polyfill', `./src/bundles/${name}.jsx`] }), {});
+  const entry = glob.sync('./src/bundles/*.js')
+    .map(bundleFile => path.basename(bundleFile, '.js'))
+    .reduce((all, name) => ({ ...all, [name]: ['babel-polyfill', `./src/bundles/${name}.js`] }), {});
 
   const plugins = optimize
     ? [

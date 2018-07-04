@@ -3,12 +3,12 @@ const React = require('react');
 
 function PageHeader({ children }) {
   return (
-    <div className="PageHeader">
+    <header className="PageHeader">
       <a className="PageHeader-logo" href="/">elmu</a>
       <div className="PageHeader-links">
         {children}
       </div>
-    </div>
+    </header>
   );
 }
 

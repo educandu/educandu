@@ -1,8 +1,10 @@
 const React = require('react');
+const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const { Button, Input, Modal } = require('antd');
-const PageHeader = require('./../page-header.jsx');
+const PageHeader = require('../page-header.jsx');
+const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
 const DocumentApiClient = require('../../services/document-api-client');
 
@@ -66,10 +68,12 @@ class Docs extends React.Component {
     const { initialState } = this.props;
     const { newDocTitle, isNewDocModalVisible, isLoading } = this.state;
     return (
-      <React.Fragment>
-        <PageHeader />
-        <div className="PageContent">
-          <h1>Docs</h1>
+      <Page>
+        <PageHeader>
+          <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>
+        </PageHeader>
+        <PageContent>
+          <h1>Dokumente</h1>
           <ul>
             {initialState.map(doc => (
               <li key={doc._id}>
@@ -77,7 +81,6 @@ class Docs extends React.Component {
               </li>
             ))}
           </ul>
-          <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewDocumentClick} />
           <Modal
             title="Neues Dokument"
             visible={isNewDocModalVisible}
@@ -88,8 +91,8 @@ class Docs extends React.Component {
             <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
             {isLoading && <p>Wird erstellt ...</p>}
           </Modal>
-        </div>
-      </React.Fragment>
+        </PageContent>
+      </Page>
     );
   }
 }

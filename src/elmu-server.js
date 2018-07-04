@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const Cdn = require('./repositories/cdn');
 const parseBool = require('parseboolean');
 const { Container } = require('./common/di');
-const Page = require('./components/page.jsx');
+const Root = require('./components/root.jsx');
 const Doc = require('./components/pages/doc.jsx');
 const ReactDOMServer = require('react-dom/server');
 const Docs = require('./components/pages/docs.jsx');
@@ -30,7 +30,7 @@ const renderPageTemplate = (bundleName, html, initialState, clientEnv) => `
     <link rel="stylesheet" href="/main.css">
   </head>
   <body>
-    <main id="main">${html}</main>
+    <div id="root">${html}</div>
     <script>
       window.env = ${htmlescape(clientEnv)};
       window.__initalState__ = ${htmlescape(initialState)};
@@ -151,10 +151,11 @@ class ElmuServer {
   _sendPage(res, bundleName, PageComponent, initialState) {
     const { container } = this;
     const props = { container, initialState, PageComponent };
-    const elem = React.createElement(Page, props);
+    const elem = React.createElement(Root, props);
     const mainContent = ReactDOMServer.renderToString(elem);
     const clientEnv = { ELMU_ENV: serverSettings.env };
-    return res.type('html').send(renderPageTemplate(bundleName, mainContent, initialState, clientEnv));
+    const pageHtml = renderPageTemplate(bundleName, mainContent, initialState, clientEnv);
+    return res.type('html').send(pageHtml);
   }
 
   listen(port, cb) {

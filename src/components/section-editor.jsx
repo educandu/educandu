@@ -14,7 +14,7 @@ class SectionEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
-    this.state = { mode: 'edit' };
+    this.state = { mode: 'preview' };
   }
 
   handleEditClick() {

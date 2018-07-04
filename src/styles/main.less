@@ -12,21 +12,15 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-.PageContent {
-  margin: 0 auto;
-  max-width: @global-section-width-large-screen;
-  padding: @global-section-padding-large-screen;
-}
-
 .Section {
-  margin: 12px 0;
+  padding: 24px 0;
 
   &:first-child {
-    margin-top: 0;
+    padding-top: 0;
   }
 
   &:last-child {
-    margin-bottom: 0;
+    padding-bottom: 0;
   }
 }
 
@@ -53,8 +47,10 @@ body {
   padding: 12px 24px;
 }
 
-@import '../components/pages/index.less';
+@import '../components/page.less';
 @import '../components/page-header.less';
+@import '../components/page-content.less';
+@import '../components/pages/index.less';
 @import '../components/repository-browser.less';
 @import '../components/object-max-width-slider.less';
 @import '../plugins/markdown/markdown.less';

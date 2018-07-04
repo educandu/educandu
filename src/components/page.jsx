@@ -1,26 +1,28 @@
-const { ContainerProvider } = require('./container-context.jsx');
-const { Container } = require('../common/di');
-const PropTypes = require('prop-types');
 const React = require('react');
+const PropTypes = require('prop-types');
+const classNames = require('classnames');
 
-function Page({ container, initialState, PageComponent }) {
+function Page({ children, fullScreen }) {
+  const classes = classNames({
+    'Page': true,
+    'Page-fullScreen': fullScreen
+  });
+
   return (
-    <ContainerProvider value={container}>
-      <PageComponent initialState={initialState} />
-    </ContainerProvider>
+    <div className={classes}>
+      {children}
+    </div>
   );
 }
 
 Page.propTypes = {
-  PageComponent: PropTypes.func.isRequired,
-  container: PropTypes.instanceOf(Container).isRequired,
-  /* eslint-disable-next-line react/forbid-prop-types */
-  initialState: PropTypes.any
+  children: PropTypes.node,
+  fullScreen: PropTypes.bool
 };
 
 Page.defaultProps = {
-  /* eslint-disable-next-line no-undefined */
-  initialState: undefined
+  children: null,
+  fullScreen: false
 };
 
 module.exports = Page;
