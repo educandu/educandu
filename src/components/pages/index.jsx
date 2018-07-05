@@ -26,6 +26,7 @@ function Index() {
     <Page fullScreen>
       <PageContent>
         <div className="IndexPage">
+          <aside className="IndexPage-logo" />
           <h1 className="IndexPage-title">elmu</h1>
           <div className="IndexPage-search">
             <Search
