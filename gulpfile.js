@@ -25,6 +25,10 @@ const runSequence = require('run-sequence');
 const sourcemaps = require('gulp-sourcemaps');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
+if (process.env.ELMU_ENV === 'prod') {
+  throw new Error('Tasks should not run in production environment!');
+}
+
 const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.4.10-0';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
@@ -94,7 +98,7 @@ gulp.task('clean', () => {
 });
 
 gulp.task('lint', () => {
-  return gulp.src(['src/**/*.{js,jsx}', '*.js', 'db-create-user', 'db-seed', 's3-seed', 'prune-env'])
+  return gulp.src(['*.js', 'src/**/*.{js,jsx}', 'scripts/**'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(gulpif(!server, eslint.failAfterError()));
@@ -224,8 +228,8 @@ gulp.task('mongo:up', () => {
     containerName: TEST_MONGO_CONTAINER_NAME,
     runArgs: `-d -p 27017:27017 ${TEST_MONGO_IMAGE}`,
     afterRun: async () => {
-      await execa('./db-create-user', { stdio: 'inherit' });
-      await execa('./db-seed', { stdio: 'inherit' });
+      await execa('./scripts/db-create-user', { stdio: 'inherit' });
+      await execa('./scripts/db-seed', { stdio: 'inherit' });
     }
   });
 });
@@ -266,9 +270,9 @@ gulp.task('mongo:down', () => {
 
 gulp.task('mongo:reset', done => runSequence('mongo:down', 'mongo:up', done));
 
-gulp.task('mongo:user', () => execa('./db-create-user', { stdio: 'inherit' }));
+gulp.task('mongo:user', () => execa('./scripts/db-create-user', { stdio: 'inherit' }));
 
-gulp.task('mongo:seed', () => execa('./db-seed', { stdio: 'inherit' }));
+gulp.task('mongo:seed', () => execa('./scripts/db-seed', { stdio: 'inherit' }));
 
 gulp.task('minio:up', () => {
   return ensureContainerRunning({
@@ -282,7 +286,7 @@ gulp.task('minio:up', () => {
       `${TEST_MINIO_IMAGE} server /data`
     ].join(' '),
     afterRun: async () => {
-      await execa('./s3-seed', { stdio: 'inherit' });
+      await execa('./scripts/s3-seed', { stdio: 'inherit' });
     }
   });
 });
@@ -295,7 +299,7 @@ gulp.task('minio:down', () => {
 
 gulp.task('minio:reset', done => runSequence('minio:down', 'minio:up', done));
 
-gulp.task('minio:seed', () => execa('./s3-seed', { stdio: 'inherit' }));
+gulp.task('minio:seed', () => execa('./scripts/s3-seed', { stdio: 'inherit' }));
 
 gulp.task('serve', ['mongo:up', 'minio:up', 'build'], startServer);
 
@@ -311,16 +315,16 @@ gulp.task('watch', ['serve'], () => {
   gulp.watch(['src/**/*.{js,jsx}'], ['serve:restart']);
   gulp.watch(['src/**/*.less'], ['bundle:css']);
   gulp.watch(['*.js'], ['lint']);
-  gulp.watch(['db-create-user'], ['lint']);
-  gulp.watch(['db-seed'], ['lint', 'mongo:seed']);
-  gulp.watch(['s3-seed'], ['lint', 'minio:seed']);
+  gulp.watch(['scripts/**'], ['lint']);
+  gulp.watch(['scripts/db-seed'], ['mongo:seed']);
+  gulp.watch(['scripts/s3-seed'], ['minio:seed']);
 });
 
 gulp.task('watch:raw', ['serve'], () => {
   gulp.watch(['src/**/*.{js,jsx}'], ['serve:restart:raw']);
   gulp.watch(['src/**/*.less'], ['bundle:css']);
-  gulp.watch(['db-seed'], ['mongo:seed']);
-  gulp.watch(['s3-seed'], ['minio:seed']);
+  gulp.watch(['scripts/db-seed'], ['mongo:seed']);
+  gulp.watch(['scripts/s3-seed'], ['minio:seed']);
 });
 
 gulp.task('default', ['watch']);

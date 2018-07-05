@@ -16,6 +16,14 @@ class StoreBase {
     const options = { upsert: true };
     return this.collection.replaceOne(query, doc, options);
   }
+
+  deleteOne(query = {}) {
+    return this.collection.deleteOne(query);
+  }
+
+  deleteMany(query = {}) {
+    return this.collection.deleteMany(query);
+  }
 }
 
 module.exports = StoreBase;

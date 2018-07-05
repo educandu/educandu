@@ -3,11 +3,11 @@
 const path = require('path');
 const util = require('util');
 const glob = require('glob');
-const testHelper = require('./src/test-helper');
-const Database = require('./src/stores/database');
-const { readJson } = require('./src/utils/file-helper');
-const DocumentService = require('./src/services/document-service');
-const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
+const testHelper = require('../src/test-helper');
+const Database = require('../src/stores/database');
+const { readJson } = require('../src/utils/file-helper');
+const DocumentService = require('../src/services/document-service');
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
 (async function seed() {
 
@@ -18,7 +18,7 @@ const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
 
   await testHelper.dropAllCollections(db);
 
-  const files = await util.promisify(glob)(path.join(__dirname, './test/test-docs/*.json'));
+  const files = await util.promisify(glob)(path.join(__dirname, '../test/test-docs/*.json'));
 
   const docPayloads = await Promise.all(files.map(file => readJson(file)));
 

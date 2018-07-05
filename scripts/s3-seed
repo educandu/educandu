@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 const path = require('path');
-const Cdn = require('./src/repositories/cdn');
-const testHelper = require('./src/test-helper');
-const serverBootstrapper = require('./src/bootstrap/server-bootstrapper');
-const H5pFileProcessor = require('./src/plugins/h5p-player/h5p-file-processor');
+const Cdn = require('../src/repositories/cdn');
+const testHelper = require('../src/test-helper');
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+const H5pFileProcessor = require('../src/plugins/h5p-player/h5p-file-processor');
 
 (async function seed() {
 
@@ -17,7 +17,7 @@ const H5pFileProcessor = require('./src/plugins/h5p-player/h5p-file-processor');
 
   await testHelper.ensurePublicBucketExists(cdn);
 
-  const h5pTestFile = path.join(__dirname, './test/h5p-test-files/interactive-video-2-618.h5p');
+  const h5pTestFile = path.join(__dirname, '../test/h5p-test-files/interactive-video-2-618.h5p');
 
   await h5pFileProcessor.install(h5pTestFile, '1', 'rkN0Hrnb7');
 

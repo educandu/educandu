@@ -124,6 +124,13 @@ class DocumentService {
 
     return latest;
   }
+
+  async deleteDocument({ documentKey }) {
+    await this.documentLockStore.takeLock(documentKey);
+    await this.documentStore.deleteOne({ _id: documentKey });
+    await this.documentSnapshotStore.deleteMany({ key: documentKey });
+    await this.documentLockStore.releaseLock(documentKey);
+  }
 }
 
 module.exports = DocumentService;
