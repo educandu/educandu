@@ -15,12 +15,13 @@ const Docs = require('./components/pages/docs.jsx');
 const Edit = require('./components/pages/edit.jsx');
 const ApiFactory = require('./plugins/api-factory');
 const Index = require('./components/pages/index.jsx');
-const serverSettings = require('./bootstrap/server-settings');
+const ClientSettings = require('./bootstrap/client-settings');
+const ServerSettings = require('./bootstrap/server-settings');
 const DocumentService = require('./services/document-service');
 
 const LANGUAGE = 'de';
 
-const renderPageTemplate = (bundleName, html, initialState, clientEnv) => `
+const renderPageTemplate = (bundleName, html, initialState, clientSettings) => `
 <!DOCTYPE html>
 <html>
   <head>
@@ -32,7 +33,7 @@ const renderPageTemplate = (bundleName, html, initialState, clientEnv) => `
   <body>
     <div id="root">${html}</div>
     <script>
-      window.env = ${htmlescape(clientEnv)};
+      window.__settings__ = ${htmlescape(clientSettings)};
       window.__initalState__ = ${htmlescape(initialState)};
     </script>
     <script src="/commons.js"></script>
@@ -69,10 +70,12 @@ function createInitialEditorState({ doc, language }) {
 }
 
 class ElmuServer {
-  static get inject() { return [Container, ApiFactory, DocumentService, Cdn]; }
+  static get inject() { return [Container, ServerSettings, ClientSettings, ApiFactory, DocumentService, Cdn]; }
 
-  constructor(container, apiFactory, documentService, cdn) {
+  constructor(container, serverSettings, clientSettings, apiFactory, documentService, cdn) {
     this.container = container;
+    this.serverSettings = serverSettings;
+    this.clientSettings = clientSettings;
     this.apiFactory = apiFactory;
 
     this.app = express();
@@ -87,12 +90,12 @@ class ElmuServer {
       .forEach(dir => this.app.use(express.static(dir)));
 
     this.app.get('/', (req, res) => {
-      return this._sendPage(res, 'index', Index, {});
+      return this._sendPage(res, 'index', Index, {}, this.clientSettings);
     });
 
     this.app.get('/docs', async (req, res) => {
       const docs = await documentService.getLastUpdatedDocuments();
-      return this._sendPage(res, 'docs', Docs, docs);
+      return this._sendPage(res, 'docs', Docs, docs, this.clientSettings);
     });
 
     this.app.get('/docs/:docId', async (req, res) => {
@@ -102,7 +105,7 @@ class ElmuServer {
       }
 
       const initialState = createInitialDisplayState({ doc: doc, language: LANGUAGE });
-      return this._sendPage(res, 'doc', Doc, initialState);
+      return this._sendPage(res, 'doc', Doc, initialState, this.clientSettings);
     });
 
     this.app.get('/edit/doc/:docId', async (req, res) => {
@@ -112,7 +115,7 @@ class ElmuServer {
       }
 
       const initialState = createInitialEditorState({ doc: doc, language: LANGUAGE });
-      return this._sendPage(res, 'edit', Edit, initialState);
+      return this._sendPage(res, 'edit', Edit, initialState, this.clientSettings);
     });
 
     this.app.post('/api/v1/docs', jsonParser, async (req, res) => {
@@ -148,18 +151,17 @@ class ElmuServer {
     });
   }
 
-  _sendPage(res, bundleName, PageComponent, initialState) {
+  _sendPage(res, bundleName, PageComponent, initialState, clientSettings) {
     const { container } = this;
     const props = { container, initialState, PageComponent };
     const elem = React.createElement(Root, props);
     const mainContent = ReactDOMServer.renderToString(elem);
-    const clientEnv = { ELMU_ENV: serverSettings.env };
-    const pageHtml = renderPageTemplate(bundleName, mainContent, initialState, clientEnv);
+    const pageHtml = renderPageTemplate(bundleName, mainContent, initialState, clientSettings);
     return res.type('html').send(pageHtml);
   }
 
-  listen(port, cb) {
-    return this.app.listen(port, cb);
+  listen(cb) {
+    return this.app.listen(this.serverSettings.port, err => err ? cb(err) : cb(null, this.serverSettings.port));
   }
 }
 

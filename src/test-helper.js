@@ -5,10 +5,11 @@ const util = require('util');
 const { URL } = require('url');
 const Cdn = require('./repositories/cdn');
 const Database = require('./stores/database');
-const serverSettings = require('./bootstrap/server-settings');
+const ServerSettings = require('./bootstrap/server-settings');
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
+const serverSettings = new ServerSettings();
 
 async function createTestDir() {
   const tempDir = path.join(__dirname, '../.tmp/');

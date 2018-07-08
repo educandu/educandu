@@ -11,7 +11,15 @@ const sectionEditorProps = {
   language: PropTypes.string.isRequired
 };
 
+const clientSettingsProps = {
+  clientSettings: PropTypes.shape({
+    env: PropTypes.string.isRequired,
+    cdnRootUrl: PropTypes.string.isRequired
+  }).isRequired
+};
+
 module.exports = {
   sectionDisplayProps,
-  sectionEditorProps
+  sectionEditorProps,
+  clientSettingsProps
 };

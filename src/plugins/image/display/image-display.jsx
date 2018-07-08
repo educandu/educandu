@@ -1,15 +1,16 @@
 const React = require('react');
-const clientSettings = require('../../../bootstrap/client-settings');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
+const ClientSettings = require('../../../bootstrap/client-settings');
+const { inject } = require('../../../components/container-context.jsx');
+const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
 
-function ImageDisplay({ content }) {
+function ImageDisplay({ content, clientSettings }) {
   let src;
   switch (content.type) {
     case 'external':
       src = content.url || null;
       break;
     case 'internal':
-      src = content.url ? `${clientSettings.cdnRootURL}/${content.url}` : null;
+      src = content.url ? `${clientSettings.cdnRootUrl}/${content.url}` : null;
       break;
     default:
       src = null;
@@ -24,7 +25,10 @@ function ImageDisplay({ content }) {
 }
 
 ImageDisplay.propTypes = {
-  ...sectionDisplayProps
+  ...sectionDisplayProps,
+  ...clientSettingsProps
 };
 
-module.exports = ImageDisplay;
+module.exports = inject({
+  clientSettings: ClientSettings
+}, ImageDisplay);

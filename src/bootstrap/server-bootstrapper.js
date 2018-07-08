@@ -1,10 +1,16 @@
 const Cdn = require('../repositories/cdn');
 const Database = require('../stores/database');
-const serverSettings = require('./server-settings');
+const ClientSettings = require('./client-settings');
+const ServerSettings = require('./server-settings');
 const commonBootstrapper = require('./common-bootstrapper');
 
 async function createContainer() {
   const container = await commonBootstrapper.createContainer();
+
+  const serverSettings = container.get(ServerSettings);
+
+  const clientSettings = new ClientSettings(serverSettings.exportClientSettingValues());
+  container.registerInstance(ClientSettings, clientSettings);
 
   const database = await Database.create({
     connectionString: serverSettings.elmuWebConnectionString
@@ -18,7 +24,7 @@ async function createContainer() {
     accessKey: serverSettings.cdnAccessKey,
     secretKey: serverSettings.cdnSecretKey,
     bucketName: serverSettings.cdnBucketName,
-    rootUrl: serverSettings.cdnRootURL
+    rootUrl: serverSettings.cdnRootUrl
   });
 
   container.registerInstance(Cdn, cdn);

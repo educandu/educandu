@@ -3,9 +3,10 @@ const autoBind = require('auto-bind');
 const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
-const clientSettings = require('../../../bootstrap/client-settings');
+const ClientSettings = require('../../../bootstrap/client-settings');
+const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
+const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default-prop-types');
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -37,7 +38,7 @@ class AudioEditor extends React.Component {
   }
 
   render() {
-    const { content } = this.props;
+    const { content, clientSettings } = this.props;
     const { type, url } = content;
 
     const formItemLayout = {
@@ -63,7 +64,7 @@ class AudioEditor extends React.Component {
             <FormItem label="Interne URL" {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={`${clientSettings.cdnRootURL}/`}
+                  addonBefore={`${clientSettings.cdnRootUrl}/`}
                   value={url}
                   readOnly
                   />
@@ -82,7 +83,10 @@ class AudioEditor extends React.Component {
 }
 
 AudioEditor.propTypes = {
-  ...sectionEditorProps
+  ...sectionEditorProps,
+  ...clientSettingsProps
 };
 
-module.exports = AudioEditor;
+module.exports = inject({
+  clientSettings: ClientSettings
+}, AudioEditor);
