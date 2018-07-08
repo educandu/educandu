@@ -4,7 +4,7 @@ const readAllStream = require('read-all-stream');
 const streamToArray = require('stream-to-array');
 const PriorityQueue = require('../common/priority-queue');
 
-const MAX_REQUESTS = 250;
+const MAX_REQUESTS = 100;
 const PRIORITY_UPLOAD = 2;
 const PRIORITY_DOWNLOAD = 1;
 const PRIORITY_ADMINISTRATIVE = 0;
