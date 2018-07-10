@@ -1,17 +1,21 @@
 const React = require('react');
 const autoBind = require('auto-bind');
 const Icon = require('antd/lib/icon');
+const Menu = require('antd/lib/menu');
 const Modal = require('antd/lib/modal');
 const PropTypes = require('prop-types');
 const Radio = require('antd/lib/radio');
+const classNames = require('classnames');
 const Button = require('antd/lib/button');
-const { sortableHandle } = require('react-sortable-hoc');
+const Dropdown = require('antd/lib/dropdown');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const confirm = Modal.confirm;
 
-const DragHandle = sortableHandle(({ children }) => <React.Fragment>{children}</React.Fragment>);
+const SECTION_MENU_KEY_MOVE_UP = 'move-up';
+const SECTION_MENU_KEY_MOVE_DOWN = 'move-down';
+const SECTION_MENU_KEY_DELETE = 'delete';
 
 class SectionEditor extends React.Component {
   constructor(props) {
@@ -32,18 +36,32 @@ class SectionEditor extends React.Component {
     this.setState({ mode: event.target.value });
   }
 
-  handleSectionDeleteClick() {
+  handleSectionMenuClick({ key }) {
+    const { section, onSectionMovedUp, onSectionMovedDown, onSectionDeleted } = this.props;
+    switch (key) {
+      case SECTION_MENU_KEY_MOVE_UP:
+        onSectionMovedUp(section.key);
+        break;
+      case SECTION_MENU_KEY_MOVE_DOWN:
+        onSectionMovedDown(section.key);
+        break;
+      case SECTION_MENU_KEY_DELETE:
+        this.confirmDelete(() => onSectionDeleted(section.key));
+        break;
+      default:
+        break;
+    }
+  }
+
+  confirmDelete(onOk, onCancel = (() => {})) {
     confirm({
       title: 'Sind Sie sicher?',
       content: 'Möchten Sie diesen Abschnitt löschen?',
       okText: 'Ja',
       okType: 'danger',
       cancelText: 'Nein',
-      onOk: () => {
-        const { onSectionDeleted, section } = this.props;
-        onSectionDeleted(section.key);
-      },
-      onCancel: () => {}
+      onOk: onOk,
+      onCancel: onCancel
     });
   }
 
@@ -54,7 +72,7 @@ class SectionEditor extends React.Component {
 
   render() {
     const { mode } = this.state;
-    const { section, EditorComponent, DisplayComponent, language } = this.props;
+    const { section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, language } = this.props;
 
     let componentToShow;
     switch (mode) {
@@ -69,49 +87,55 @@ class SectionEditor extends React.Component {
         break;
     }
 
-    const PanelHeader = sortableHandle(() => {
-      return (
-        <DragHandle>
-          <div className="Panel-header" style={{ display: 'flex', cursor: 'move' }}>
-            <div style={{ flex: '1 0 0%' }}>
-              <span>Typ:</span> <b>{section.type}</b>
-              <span>&nbsp;&nbsp;&nbsp;</span>
-              <span>Key:</span> <b>{section.key}</b>
-              <span>&nbsp;&nbsp;&nbsp;</span>
-              <span>Revision:</span> <b>{section._id}</b>
-            </div>
-            <div style={{ flex: 'none' }}>
-              <Button
-                size="small"
-                type="danger"
-                icon="delete"
-                onClick={this.handleSectionDeleteClick}
-                />
-            </div>
-          </div>
-        </DragHandle>
-      );
+    const panelClasses = classNames({
+      'Panel': true,
+      'is-highlighted': isHighlighted
     });
 
+    const sectionMenu = (
+      <Menu onClick={this.handleSectionMenuClick}>
+        <Menu.Item key={SECTION_MENU_KEY_MOVE_UP}>
+          <Icon type="arrow-up" />&nbsp;&nbsp;<span>Nach oben verschieben</span>
+        </Menu.Item>
+        <Menu.Item key={SECTION_MENU_KEY_MOVE_DOWN}>
+          <Icon type="arrow-down" />&nbsp;&nbsp;<span>Nach unten verschieben</span>
+        </Menu.Item>
+        <Menu.Item key={SECTION_MENU_KEY_DELETE}>
+          <Icon type="delete" style={{ color: 'red' }} />&nbsp;&nbsp;<span>Löschen</span>
+        </Menu.Item>
+      </Menu>
+    );
+
     return (
-      <section key={section.key} className="Section">
-        <div className="Panel">
-          <PanelHeader />
-          <div className="Panel-content">
-            {componentToShow}
+      <div className={panelClasses}>
+        <div className="Panel-header" style={{ display: 'flex' }} {...dragHandleProps}>
+          <div style={{ flex: '1 0 0%' }}>
+            <span>Typ:</span> <b>{section.type}</b>
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <span>Key:</span> <b>{section.key}</b>
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <span>Revision:</span> <b>{section._id}</b>
           </div>
-          <div className="Panel-footer">
-            <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
-              <RadioButton value="preview">
-                <Icon type="eye-o" />&nbsp;Vorschau
-              </RadioButton>
-              <RadioButton value="edit">
-                <Icon type="edit" />&nbsp;Bearbeiten
-              </RadioButton>
-            </RadioGroup>
+          <div style={{ flex: 'none' }}>
+            <Dropdown key="new-section-dropdown" overlay={sectionMenu} placement="bottomRight">
+              <Button type="ghost" icon="setting" size="small" />
+            </Dropdown>
           </div>
         </div>
-      </section>
+        <div className="Panel-content">
+          {componentToShow}
+        </div>
+        <div className="Panel-footer">
+          <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
+            <RadioButton value="preview">
+              <Icon type="eye-o" />&nbsp;Vorschau
+            </RadioButton>
+            <RadioButton value="edit">
+              <Icon type="edit" />&nbsp;Bearbeiten
+            </RadioButton>
+          </RadioGroup>
+        </div>
+      </div>
     );
   }
 }
@@ -119,15 +143,24 @@ class SectionEditor extends React.Component {
 SectionEditor.propTypes = {
   DisplayComponent: PropTypes.func.isRequired,
   EditorComponent: PropTypes.func.isRequired,
+  dragHandleProps: PropTypes.object,
+  isHighlighted: PropTypes.bool,
   language: PropTypes.string.isRequired,
   onContentChanged: PropTypes.func.isRequired,
   onSectionDeleted: PropTypes.func.isRequired,
+  onSectionMovedDown: PropTypes.func.isRequired,
+  onSectionMovedUp: PropTypes.func.isRequired,
   section: PropTypes.shape({
     content: PropTypes.any.isRequired,
     key: PropTypes.string.isRequired,
     order: PropTypes.number,
     type: PropTypes.string.isRequired
   }).isRequired
+};
+
+SectionEditor.defaultProps = {
+  dragHandleProps: {},
+  isHighlighted: false
 };
 
 module.exports = SectionEditor;

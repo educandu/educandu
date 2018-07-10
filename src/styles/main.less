@@ -14,14 +14,6 @@ body {
 
 .Section {
   padding: 24px 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
 }
 
 .Panel {
@@ -30,6 +22,11 @@ body {
   border-radius: 4px;
   width: 100%;
   margin: 0;
+  transition: border-color 0.5s ease-in-out;
+
+  &.is-highlighted {
+    border-color: @global-elmu-blue;
+  }
 }
 
 .Panel-content {

@@ -11,10 +11,10 @@ const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
 const SectionEditor = require('../section-editor.jsx');
 const EditorFactory = require('../../plugins/editor-factory');
+const ShallowUpdateList = require('../shallow-update-list.jsx');
 const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
-const { sortableContainer, sortableElement, arrayMove } = require('react-sortable-hoc');
-
+const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
 
 const pluginInfos = [
   {
@@ -68,8 +68,28 @@ const pluginInfos = [
   }
 ];
 
-const SectionItem = sortableElement(({ render, ...rest }) => render({ ...rest }));
-const SectionList = sortableContainer(({ render, ...rest }) => render({ ...rest }));
+const cloneDeep = obj => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
+const canReorder = (list, startIndex, endIndex) => {
+  return typeof startIndex === 'number'
+    && !Number.isNaN(startIndex)
+    && startIndex >= 0
+    && startIndex < list.length
+    && typeof endIndex === 'number'
+    && !Number.isNaN(endIndex)
+    && endIndex >= 0
+    && endIndex < list.length
+    && startIndex !== endIndex;
+};
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+};
 
 class Edit extends React.Component {
   constructor(props) {
@@ -107,8 +127,8 @@ class Edit extends React.Component {
     return {
       originalDoc: doc,
       originalSections: sections,
-      editedDoc: JSON.parse(JSON.stringify(doc)),
-      editedSections: JSON.parse(JSON.stringify(sections)),
+      editedDoc: cloneDeep(doc),
+      editedSections: cloneDeep(sections),
       isDirty: false
     };
   }
@@ -120,6 +140,20 @@ class Edit extends React.Component {
         isDirty: true
       };
     });
+  }
+
+  handleSectionMovedUp(sectionKey) {
+    const { editedSections } = this.state;
+    const sourceIndex = editedSections.findIndex(section => section.key === sectionKey);
+    const destinationIndex = sourceIndex - 1;
+    this.moveSection(sourceIndex, destinationIndex);
+  }
+
+  handleSectionMovedDown(sectionKey) {
+    const { editedSections } = this.state;
+    const sourceIndex = editedSections.findIndex(section => section.key === sectionKey);
+    const destinationIndex = sourceIndex + 1;
+    this.moveSection(sourceIndex, destinationIndex);
   }
 
   handleSectionDeleted(sectionKey) {
@@ -174,37 +208,20 @@ class Edit extends React.Component {
     window.location = `/docs/${originalDoc.key}`;
   }
 
-  handleSectionSortEnd({ oldIndex, newIndex }) {
-    this.setState(prevState => {
-      return {
-        editedSections: arrayMove(prevState.editedSections, oldIndex, newIndex),
+  handleDragEnd({ source, destination }) {
+    if (destination) {
+      this.moveSection(source.index, destination.index);
+    }
+  }
+
+  moveSection(sourceIndex, destinationIndex) {
+    const { editedSections } = this.state;
+    if (canReorder(editedSections, sourceIndex, destinationIndex)) {
+      this.setState({
+        editedSections: reorder(editedSections, sourceIndex, destinationIndex),
         isDirty: true
-      };
-    });
-  }
-
-  renderSectionList({ sections, language }) {
-    return (
-      <div>
-        {sections.map((section, index) => (
-          <SectionItem key={section.key} index={index} section={section} language={language} render={this.renderSection} />
-        ))}
-      </div>
-    );
-  }
-
-  renderSection({ section, language }) {
-    return (
-      <SectionEditor
-        key={section.key}
-        EditorComponent={this.getEditorComponentForSection(section)}
-        DisplayComponent={this.getDisplayComponentForSection(section)}
-        onContentChanged={this.handleContentChanged}
-        onSectionDeleted={this.handleSectionDeleted}
-        language={language}
-        section={section}
-        />
-    );
+      });
+    }
   }
 
   render() {
@@ -234,16 +251,49 @@ class Edit extends React.Component {
           <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
         </PageHeader>
         <PageContent>
-          <SectionList
-            sections={editedSections}
-            language={language}
-            render={this.renderSectionList}
-            onSortEnd={this.handleSectionSortEnd}
-            transitionDuration={800}
-            useWindowAsScrollContainer
-            useDragHandle
-            />
-          {newSectionDropdown}
+          <DragDropContext onDragEnd={this.handleDragEnd}>
+            <Droppable droppableId="droppable" ignoreContainerClipping="true">
+              {droppableProvided => (
+                <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+                  <ShallowUpdateList items={editedSections}>
+                    {(section, index) => (
+                      <Draggable key={section.key} draggableId={section.key} index={index}>
+                        {(draggableProvided, draggableState) => (
+                          <section
+                            key={section.key}
+                            className="Section"
+                            ref={draggableProvided.innerRef}
+                            {...draggableProvided.draggableProps}
+                            style={{
+                              userSelect: draggableState.isDragging ? 'none' : null,
+                              ...draggableProvided.draggableProps.style
+                            }}
+                            >
+                            <SectionEditor
+                              EditorComponent={this.getEditorComponentForSection(section)}
+                              DisplayComponent={this.getDisplayComponentForSection(section)}
+                              onContentChanged={this.handleContentChanged}
+                              onSectionMovedUp={this.handleSectionMovedUp}
+                              onSectionMovedDown={this.handleSectionMovedDown}
+                              onSectionDeleted={this.handleSectionDeleted}
+                              dragHandleProps={draggableProvided.dragHandleProps}
+                              isHighlighted={draggableState.isDragging}
+                              language={language}
+                              section={section}
+                              />
+                          </section>
+                        )}
+                      </Draggable>
+                    )}
+                  </ShallowUpdateList>
+                  {droppableProvided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <aside style={{ marginTop: '25px' }}>
+            {newSectionDropdown}
+          </aside>
         </PageContent>
       </Page>
     );

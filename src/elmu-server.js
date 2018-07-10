@@ -17,6 +17,7 @@ const ApiFactory = require('./plugins/api-factory');
 const Index = require('./components/pages/index.jsx');
 const ClientSettings = require('./bootstrap/client-settings');
 const ServerSettings = require('./bootstrap/server-settings');
+const { resetServerContext } = require('react-beautiful-dnd');
 const DocumentService = require('./services/document-service');
 
 const LANGUAGE = 'de';
@@ -155,6 +156,7 @@ class ElmuServer {
     const { container } = this;
     const props = { container, initialState, PageComponent };
     const elem = React.createElement(Root, props);
+    resetServerContext();
     const mainContent = ReactDOMServer.renderToString(elem);
     const pageHtml = renderPageTemplate(bundleName, mainContent, initialState, clientSettings);
     return res.type('html').send(pageHtml);
