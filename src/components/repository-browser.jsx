@@ -40,8 +40,6 @@ function localizeCategory(cat) {
   return mappingsDe[cat];
 }
 
-const showActionsColumn = false;
-
 class RepositoryBrowser extends React.Component {
   constructor(props) {
     super(props);
@@ -101,16 +99,6 @@ class RepositoryBrowser extends React.Component {
         sorter: firstBy('lastModified')
       }
     ];
-
-    if (showActionsColumn) {
-      this.columns.push({
-        title: 'Aktion',
-        key: 'action',
-        align: 'right',
-        width: 250,
-        render: this.renderActionsColumn
-      });
-    }
   }
 
   componentDidMount() {

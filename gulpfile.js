@@ -29,10 +29,10 @@ if (process.env.ELMU_ENV === 'prod') {
   throw new Error('Tasks should not run in production environment!');
 }
 
-const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.4.10-0';
+const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.6.5-0';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
-const TEST_MINIO_IMAGE = 'minio/minio:RELEASE.2018-06-09T03-43-35Z';
+const TEST_MINIO_IMAGE = 'minio/minio:RELEASE.2018-07-10T01-42-11Z';
 const TEST_MINIO_CONTAINER_NAME = 'elmu-minio';
 
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';

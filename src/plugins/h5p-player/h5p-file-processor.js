@@ -44,12 +44,12 @@ class H5pFileProcessor {
     const unixStylePath = filePath.replace(/\\/g, '/');
 
     // Just simple files without directory
-    if (/^[^/]+$/.test(unixStylePath)) {
+    if ((/^[^/]+$/).test(unixStylePath)) {
       return unixStylePath;
     }
 
     // Any file that is in the `content` directory
-    if (/^content(\/[^/]+)*$/.test(unixStylePath)) {
+    if ((/^content(\/[^/]+)*$/).test(unixStylePath)) {
       return unixStylePath.replace(/^content/, `content/${contentId}`);
     }
 

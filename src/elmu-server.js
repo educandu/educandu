@@ -70,6 +70,9 @@ function createInitialEditorState({ doc, language }) {
   };
 }
 
+const jsonParser = bodyParser.json();
+const multipartParser = multer({ dest: os.tmpdir() });
+
 class ElmuServer {
   static get inject() { return [Container, ServerSettings, ClientSettings, ApiFactory, DocumentService, Cdn]; }
 
@@ -78,29 +81,34 @@ class ElmuServer {
     this.serverSettings = serverSettings;
     this.clientSettings = clientSettings;
     this.apiFactory = apiFactory;
+    this.documentService = documentService;
+    this.cdn = cdn;
 
     this.app = express();
 
     this.app.enable('trust proxy');
 
-    const jsonParser = bodyParser.json();
-    const multipartParser = multer({ dest: os.tmpdir() });
-
     ['../dist', '../static']
       .map(dir => path.join(__dirname, dir))
       .forEach(dir => this.app.use(express.static(dir)));
 
+    this.registerPages();
+    this.registerCoreApi();
+    this.registerPluginApis();
+  }
+
+  registerPages() {
     this.app.get('/', (req, res) => {
       return this._sendPage(res, 'index', Index, {}, this.clientSettings);
     });
 
     this.app.get('/docs', async (req, res) => {
-      const docs = await documentService.getLastUpdatedDocuments();
+      const docs = await this.documentService.getLastUpdatedDocuments();
       return this._sendPage(res, 'docs', Docs, docs, this.clientSettings);
     });
 
     this.app.get('/docs/:docId', async (req, res) => {
-      const doc = await documentService.getDocumentById(req.params.docId);
+      const doc = await this.documentService.getDocumentById(req.params.docId);
       if (!doc) {
         return res.sendStatus(404);
       }
@@ -110,7 +118,7 @@ class ElmuServer {
     });
 
     this.app.get('/edit/doc/:docId', async (req, res) => {
-      const doc = await documentService.getDocumentById(req.params.docId);
+      const doc = await this.documentService.getDocumentById(req.params.docId);
       if (!doc) {
         return res.sendStatus(404);
       }
@@ -118,34 +126,41 @@ class ElmuServer {
       const initialState = createInitialEditorState({ doc: doc, language: LANGUAGE });
       return this._sendPage(res, 'edit', Edit, initialState, this.clientSettings);
     });
+  }
 
+  registerCoreApi() {
     this.app.post('/api/v1/docs', jsonParser, async (req, res) => {
-      const doc = await documentService.createDocumentRevision({ doc: req.body.doc, sections: req.body.sections, user: req.body.user });
-      const initialState = createInitialEditorState({ doc: doc, language: LANGUAGE });
+      const { doc, sections, user } = req.body;
+      const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });
+      const initialState = createInitialEditorState({ doc: docRevision, language: LANGUAGE });
       return res.send(initialState);
     });
 
     this.app.get('/api/v1/cdn/objects', jsonParser, async (req, res) => {
-      const objects = await cdn.listObjects({ prefix: req.query.prefix, recursive: parseBool(req.query.recursive) });
+      const prefix = req.query.prefix;
+      const recursive = parseBool(req.query.recursive);
+      const objects = await this.cdn.listObjects({ prefix, recursive });
       return res.send({ objects });
     });
 
     this.app.post('/api/v1/cdn/objects', multipartParser.array('files'), async (req, res) => {
       if (req.files && req.files.length) {
-        const uploads = req.files.map(file => cdn.uploadObject(req.body.prefix + file.originalname, file.path, {}));
+        const uploads = req.files.map(file => this.cdn.uploadObject(req.body.prefix + file.originalname, file.path, {}));
         await Promise.all(uploads);
       } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
         // Just create a folder
-        cdn.uploadEmptyObject(req.body.prefix, {});
+        this.cdn.uploadEmptyObject(req.body.prefix, {});
       }
 
       return res.send({});
     });
+  }
 
+  registerPluginApis() {
     this.apis = this.apiFactory.getRegisteredTypes().map(pluginType => {
       const router = express.Router();
       const pathPrefix = `/plugins/${pluginType}`;
-      const api = apiFactory.createApi(pluginType, pathPrefix);
+      const api = this.apiFactory.createApi(pluginType, pathPrefix);
       api.registerRoutes(router);
       this.app.use(pathPrefix, router);
       return api;
