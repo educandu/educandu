@@ -127,15 +127,15 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/samsam/-/samsam-2.0.0.tgz#9163742ac35c12d3602dece74317643b35db6a80"
 
 "@types/blue-tape@^0.1.30":
-  version "0.1.31"
-  resolved "https://registry.yarnpkg.com/@types/blue-tape/-/blue-tape-0.1.31.tgz#67e0aa9062015fc5fc40db5834162723327ad915"
+  version "0.1.32"
+  resolved "https://registry.yarnpkg.com/@types/blue-tape/-/blue-tape-0.1.32.tgz#944cc454cd53690a6a03c791ab82cb1ee83a7b2e"
   dependencies:
     "@types/node" "*"
     "@types/tape" "*"
 
 "@types/lodash@^4.14.64", "@types/lodash@~4.14.76":
-  version "4.14.111"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.111.tgz#d926250baa9526c0ffe85914dd10363068e7893a"
+  version "4.14.112"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.112.tgz#4a8d8e5716b97a1ac01fe1931ad1e4cba719de5a"
 
 "@types/node@*":
   version "10.5.2"
@@ -2348,9 +2348,9 @@ diffie-hellman@^5.0.0:
     miller-rabin "^4.0.0"
     randombytes "^2.0.0"
 
-"docker-cli-js@git://github.com/elmu/docker-cli-js.git#linefix":
-  version "2.2.0"
-  resolved "git://github.com/elmu/docker-cli-js.git#28eceb600abaf72eba3f0f7b9575eec110782729"
+docker-cli-js@~2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/docker-cli-js/-/docker-cli-js-2.3.0.tgz#4864be3d06fc3109a494808a081937fc0b8f36a6"
   dependencies:
     "@types/lodash" "~4.14.76"
     cli-table-2-json "~1.0.8"

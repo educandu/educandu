@@ -74,7 +74,7 @@
     "babel-eslint": "~8.2.5",
     "babel-loader": "~7.1.5",
     "delay": "~3.0.0",
-    "docker-cli-js": "git://github.com/elmu/docker-cli-js.git#linefix",
+    "docker-cli-js": "~2.3.0",
     "eslint": "~5.1.0",
     "eslint-plugin-react": "~7.10.0",
     "execa": "~0.10.0",

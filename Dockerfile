@@ -1,7 +1,5 @@
 FROM node:10.5.0-alpine
 
-RUN apk add --no-cache git
-
 ENV NODE_ENV "production"
 
 WORKDIR /app
