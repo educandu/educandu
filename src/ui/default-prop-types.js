@@ -18,8 +18,30 @@ const clientSettingsProps = {
   }).isRequired
 };
 
+const requestProps = {
+  request: PropTypes.shape({
+    ip: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
+    protocol: PropTypes.string.isRequired,
+    originalUrl: PropTypes.string.isRequired,
+    query: PropTypes.object.isRequired
+  }).isRequired
+};
+
+const userProps = {
+  user: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    provider: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    roles: PropTypes.arrayOf(PropTypes.string).isRequired
+  })
+};
+
 module.exports = {
   sectionDisplayProps,
   sectionEditorProps,
-  clientSettingsProps
+  clientSettingsProps,
+  requestProps,
+  userProps
 };

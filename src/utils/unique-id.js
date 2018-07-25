@@ -1,9 +1,11 @@
-const shortid = require('shortid');
+const uuidv4 = require('uuid/v4');
+const anyBase = require('any-base');
 
-shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
+const flickrBase58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+const hexToFlickrBase58 = anyBase(anyBase.HEX, flickrBase58);
 
 module.exports = {
   create() {
-    return shortid.generate();
+    return hexToFlickrBase58(uuidv4().replace(/-/g, ''));
   }
 };

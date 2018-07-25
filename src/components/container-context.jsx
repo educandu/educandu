@@ -1,5 +1,3 @@
-const { Container } = require('../common/di');
-const PropTypes = require('prop-types');
 const React = require('react');
 
 const { Consumer, Provider } = React.createContext();
@@ -14,14 +12,6 @@ function inject(dependencies, Component) {
       </Consumer>
     );
   }
-
-  InjectingComponent.propTypes = {
-    container: PropTypes.instanceOf(Container)
-  };
-
-  InjectingComponent.defaultProps = {
-    container: null
-  };
 
   return InjectingComponent;
 }

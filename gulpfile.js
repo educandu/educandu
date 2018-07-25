@@ -29,6 +29,9 @@ if (process.env.ELMU_ENV === 'prod') {
   throw new Error('Tasks should not run in production environment!');
 }
 
+const TEST_MAILDEV_IMAGE = 'djfarrelly/maildev:1.0.0-rc2';
+const TEST_MAILDEV_CONTAINER_NAME = 'elmu-maildev';
+
 const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.6.5-0';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
@@ -65,16 +68,14 @@ const restartServer = done => {
   }
 };
 
-const ensureContainerRunning = async ({ containerName, runArgs, afterRun }) => {
+const ensureContainerRunning = async ({ containerName, runArgs, afterRun = (() => Promise.resolve()) }) => {
   const docker = new Docker();
   const data = await docker.command('ps -a');
   const container = data.containerList.find(c => c.names === containerName);
   if (!container) {
     await docker.command(`run --name ${containerName} ${runArgs}`);
     await delay(1000);
-    if (afterRun) {
-      await afterRun();
-    }
+    await afterRun();
   } else if (!container.status.startsWith('Up')) {
     await docker.command(`restart ${containerName}`);
     await delay(1000);
@@ -223,17 +224,6 @@ gulp.task('bundle:js', async () => {
 
 gulp.task('build', ['bundle:css', 'bundle:js']);
 
-gulp.task('mongo:up', () => {
-  return ensureContainerRunning({
-    containerName: TEST_MONGO_CONTAINER_NAME,
-    runArgs: `-d -p 27017:27017 ${TEST_MONGO_IMAGE}`,
-    afterRun: async () => {
-      await execa('./scripts/db-create-user', { stdio: 'inherit' });
-      await execa('./scripts/db-seed', { stdio: 'inherit' });
-    }
-  });
-});
-
 gulp.task('verify:es5compat', () => {
   const files = glob.sync('dist/**/*.js');
   const errors = [];
@@ -261,6 +251,32 @@ gulp.task('verify:es5compat', () => {
 });
 
 gulp.task('verify', ['verify:es5compat']);
+
+gulp.task('maildev:up', () => {
+  return ensureContainerRunning({
+    containerName: TEST_MAILDEV_CONTAINER_NAME,
+    runArgs: `-d -p 8000:80 -p 8025:25 ${TEST_MAILDEV_IMAGE}`
+  });
+});
+
+gulp.task('maildev:down', () => {
+  return ensureContainerRemoved({
+    containerName: TEST_MAILDEV_CONTAINER_NAME
+  });
+});
+
+gulp.task('maildev:reset', done => runSequence('maildev:down', 'maildev:up', done));
+
+gulp.task('mongo:up', () => {
+  return ensureContainerRunning({
+    containerName: TEST_MONGO_CONTAINER_NAME,
+    runArgs: `-d -p 27017:27017 ${TEST_MONGO_IMAGE}`,
+    afterRun: async () => {
+      await execa('./scripts/db-create-user', { stdio: 'inherit' });
+      await execa('./scripts/db-seed', { stdio: 'inherit' });
+    }
+  });
+});
 
 gulp.task('mongo:down', () => {
   return ensureContainerRemoved({
@@ -301,7 +317,7 @@ gulp.task('minio:reset', done => runSequence('minio:down', 'minio:up', done));
 
 gulp.task('minio:seed', () => execa('./scripts/s3-seed', { stdio: 'inherit' }));
 
-gulp.task('serve', ['mongo:up', 'minio:up', 'build'], startServer);
+gulp.task('serve', ['maildev:up', 'mongo:up', 'minio:up', 'build'], startServer);
 
 gulp.task('serve:restart', ['lint', 'test:changed', 'bundle:js'], restartServer);
 

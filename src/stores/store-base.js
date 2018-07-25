@@ -11,10 +11,10 @@ class StoreBase {
     return this.collection.findOne(query, { sort, limit });
   }
 
-  save(doc) {
-    const query = { _id: doc._id };
+  save(item) {
+    const query = { _id: item._id };
     const options = { upsert: true };
-    return this.collection.replaceOne(query, doc, options);
+    return this.collection.replaceOne(query, item, options);
   }
 
   deleteOne(query = {}) {

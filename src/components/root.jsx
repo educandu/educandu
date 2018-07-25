@@ -1,17 +1,26 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const { Container } = require('../common/di');
+const { UserProvider } = require('./user-context.jsx');
+const { RequestProvider } = require('./request-context.jsx');
 const { ContainerProvider } = require('./container-context.jsx');
+const { requestProps, userProps } = require('../ui/default-prop-types');
 
-function Root({ container, initialState, PageComponent }) {
+function Root({ request, user, container, initialState, PageComponent }) {
   return (
-    <ContainerProvider value={container}>
-      <PageComponent initialState={initialState} />
-    </ContainerProvider>
+    <RequestProvider value={request}>
+      <UserProvider value={user}>
+        <ContainerProvider value={container}>
+          <PageComponent initialState={initialState} />
+        </ContainerProvider>
+      </UserProvider>
+    </RequestProvider>
   );
 }
 
 Root.propTypes = {
+  ...requestProps,
+  ...userProps,
   PageComponent: PropTypes.func.isRequired,
   container: PropTypes.instanceOf(Container).isRequired,
   /* eslint-disable-next-line react/forbid-prop-types */

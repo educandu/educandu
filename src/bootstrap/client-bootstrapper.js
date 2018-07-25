@@ -15,6 +15,8 @@ async function createContainer() {
 
 async function hydrateApp(PageComponent) {
   const props = {
+    request: window.__request__,
+    user: window.__user__,
     container: await createContainer(),
     initialState: window.__initalState__,
     PageComponent: PageComponent

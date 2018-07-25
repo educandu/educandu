@@ -3,7 +3,6 @@
 .PageHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 5px 20px;
   position: sticky;
   top: 0;
@@ -13,7 +12,7 @@
 }
 
 .PageHeader-logo {
-  flex: none;
+  flex: 1 0 0%;
   display: block;
   font-family: 'Dancing Script';
   font-size: 32px;
@@ -27,6 +26,12 @@
 .PageHeader-links {
   flex: none;
   display: block;
+}
+
+.PageHeader-user {
+  flex: 1 0 0%;
+  display: block;
+  text-align: right;
 }
 
 .PageHeader-editLink {
