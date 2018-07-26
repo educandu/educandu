@@ -2,8 +2,13 @@
 
 const env = process.env.ELMU_ENV || 'dev';
 const port = Number(process.env.ELMU_PORT) || 3000;
+const sessionDurationInMinutes = 60;
 
-const shared = { env, port };
+const shared = {
+  env,
+  port,
+  sessionDurationInMinutes
+};
 
 const settingsMap = {
   dev: {

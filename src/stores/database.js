@@ -1,41 +1,64 @@
 const { MongoClient } = require('mongodb');
+const usersSpec = require('./collection-specs/users');
+const sessionsSpec = require('./collection-specs/sessions');
+const sectionsSpec = require('./collection-specs/sections');
+const documentsSpec = require('./collection-specs/documents');
+const documentLocksSpec = require('./collection-specs/document-locks');
+const sectionOrdersSpec = require('./collection-specs/section-orders');
+const documentOrdersSpec = require('./collection-specs/document-orders');
+const documentSnapshotsSpec = require('./collection-specs/document-snapshots');
+const passwordResetRequestsSpec = require('./collection-specs/password-reset-requests');
+
+const collectionSpecs = [
+  usersSpec,
+  sessionsSpec,
+  sectionsSpec,
+  documentsSpec,
+  documentLocksSpec,
+  sectionOrdersSpec,
+  documentOrdersSpec,
+  documentSnapshotsSpec,
+  passwordResetRequestsSpec
+];
 
 class Database {
-  constructor(mongoClient) {
-    this._mongoClient = mongoClient;
+  constructor(connectionString) {
+    this._connectionString = connectionString;
+  }
+
+  async connect() {
+    this._mongoClient = await MongoClient.connect(this._connectionString);
     this._db = this._mongoClient.db();
-    this.users = this._db.collection(Database.DB_COLLECTION_NAME_USERS);
-    this.sessions = this._db.collection(Database.DB_COLLECTION_NAME_SESSIONS);
-    this.sections = this._db.collection(Database.DB_COLLECTION_NAME_SECTIONS);
-    this.documents = this._db.collection(Database.DB_COLLECTION_NAME_DOCUMENTS);
-    this.documentLocks = this._db.collection(Database.DB_COLLECTION_NAME_DOCUMENT_LOCKS);
-    this.sectionOrders = this._db.collection(Database.DB_COLLECTION_NAME_SECTION_ORDERS);
-    this.documentOrders = this._db.collection(Database.DB_COLLECTION_NAME_DOCUMENT_ORDERS);
-    this.documentSnapshots = this._db.collection(Database.DB_COLLECTION_NAME_DOCUMENT_SNAPSHOTS);
-    this.passwordResetRequests = this._db.collection(Database.DB_COLLECTION_NAME_PASSWORD_RESET_REQUESTS);
+  }
+
+  async createCollections() {
+    const promises = collectionSpecs.map(collectionSpec => this.createCollection(collectionSpec));
+    await Promise.all(promises);
+  }
+
+  async createCollection(collectionSpec) {
+    const collectionName = collectionSpec.name;
+    const indexes = collectionSpec.indexes || [];
+
+    const collection = await this._db.createCollection(collectionName);
+
+    if (indexes.length) {
+      await collection.createIndexes(indexes);
+    }
+
+    this[collectionName] = collection;
   }
 
   async dispose() {
     await this._mongoClient.close();
-    this._mongoClient = null;
   }
 
   static async create({ connectionString }) {
-    const mongoClient = await MongoClient.connect(connectionString);
-    return new Database(mongoClient);
+    const database = new Database(connectionString);
+    await database.connect();
+    await database.createCollections();
+    return database;
   }
 }
 
-Database.DB_COLLECTION_NAME_USERS = 'users';
-Database.DB_COLLECTION_NAME_SESSIONS = 'sessions';
-Database.DB_COLLECTION_NAME_SECTIONS = 'sections';
-Database.DB_COLLECTION_NAME_DOCUMENTS = 'documents';
-Database.DB_COLLECTION_NAME_DOCUMENT_LOCKS = 'documentLocks';
-Database.DB_COLLECTION_NAME_SECTION_ORDERS = 'sectionOrders';
-Database.DB_COLLECTION_NAME_DOCUMENT_ORDERS = 'documentOrders';
-Database.DB_COLLECTION_NAME_DOCUMENT_SNAPSHOTS = 'documentSnapshots';
-Database.DB_COLLECTION_NAME_PASSWORD_RESET_REQUESTS = 'passwordResetRequests';
-
 module.exports = Database;
-
-

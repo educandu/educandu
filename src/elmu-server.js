@@ -30,6 +30,7 @@ const ServerSettings = require('./bootstrap/server-settings');
 const { resetServerContext } = require('react-beautiful-dnd');
 const DocumentService = require('./services/document-service');
 const ResetPassword = require('./components/pages/reset-password.jsx');
+const sessionsStoreSpec = require('./stores/collection-specs/sessions');
 const CompleteRegistration = require('./components/pages/complete-registration.jsx');
 const CompletePasswordReset = require('./components/pages/complete-password-reset.jsx');
 
@@ -119,8 +120,10 @@ class ElmuServer {
       saveUninitialized: false, // Don't create session until something stored
       store: new MongoStore({
         db: database._db,
-        collection: Database.DB_COLLECTION_NAME_SESSIONS,
-        stringify: false
+        collection: sessionsStoreSpec.name,
+        ttl: this.serverSettings.sessionDurationInMinutes * 60,
+        autoRemove: 'disabled', // We use our own index
+        stringify: false // Do not serialize session data
       })
     }));
 
