@@ -7,7 +7,7 @@ class MailService {
   static get inject() { return [ServerSettings]; }
 
   constructor(serverSettings) {
-    this.transport = nodemailer.createTransport(serverSettings.smtpServer);
+    this.transport = nodemailer.createTransport(serverSettings.smtpOptions);
   }
 
   sendRegistrationVerificationLink(emailAddress, verificationLink) {

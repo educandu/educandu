@@ -21,7 +21,11 @@ const settingsMap = {
     cdnBucketName: 'dev-elmu-cdn',
     cdnRootUrl: 'http://localhost:9000/dev-elmu-cdn',
     sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
-    smtpServer: 'smtp://localhost:8025/?ignoreTLS=true'
+    smtpOptions: {
+      host: 'localhost',
+      port: 8025,
+      ignoreTLS: true
+    }
   },
   test: {
     ...shared,
@@ -33,7 +37,11 @@ const settingsMap = {
     cdnBucketName: 'test-elmu-cdn',
     cdnRootUrl: 'http://localhost:9000/test-elmu-cdn',
     sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
-    smtpServer: 'smtp://localhost:25/?ignoreTLS=true'
+    smtpOptions: {
+      host: 'localhost',
+      port: 25,
+      ignoreTLS: true
+    }
   },
   stag: {
     ...shared,
@@ -45,7 +53,7 @@ const settingsMap = {
     cdnBucketName: process.env.ELMU_CDN_BUCKET_NAME,
     cdnRootUrl: process.env.ELMU_CDN_ROOT_URL,
     sessionSecret: process.env.ELMU_SESSION_SECRET,
-    smtpServer: process.env.ELMU_SMTP_SERVER
+    smtpOptions: JSON.parse(process.env.ELMU_SMTP_OPTIONS)
   },
   prod: {
     ...shared,
@@ -57,7 +65,7 @@ const settingsMap = {
     cdnBucketName: process.env.ELMU_CDN_BUCKET_NAME,
     cdnRootUrl: process.env.ELMU_CDN_ROOT_URL,
     sessionSecret: process.env.ELMU_SESSION_SECRET,
-    smtpServer: process.env.ELMU_SMTP_SERVER
+    smtpOptions: JSON.parse(process.env.ELMU_SMTP_OPTIONS)
   }
 };
 
