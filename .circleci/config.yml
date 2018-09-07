@@ -19,6 +19,7 @@ jobs:
         command: ["server", "/data"]
     environment:
       - NODE_ENV: development
+      - ELMU_ENV: test
       - YARN_CACHE_FOLDER: ~/.cache/yarn
     steps:
       - checkout
