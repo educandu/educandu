@@ -133,11 +133,28 @@ describe('document-service', () => {
     });
   });
 
+  describe('getLatestDocumentSnapshot', () => {
+    let actualResult;
+
+    beforeEach(async () => {
+      actualResult = await sut.getLatestDocumentSnapshot('abc');
+    });
+
+    it('should query the db by key', () => {
+      sinon.assert.calledOnce(documentSnapshotStore.findOne);
+      sinon.assert.calledWith(documentSnapshotStore.findOne, { query: { key: 'abc' }, sort: [['order', -1]] });
+    });
+
+    it('should return null if not found', () => {
+      expect(actualResult).toBeNull();
+    });
+  });
+
   describe('createDocumentRevision', () => {
 
     describe('when called without an existing document', () => {
-      let testUser;
       let testTitle;
+      let testUserId;
       let testDateNow;
       let testSectionId;
       let testSnapshotId;
@@ -150,11 +167,11 @@ describe('document-service', () => {
       let expectedSectionRevision;
 
       beforeEach(async () => {
+        testUserId = 'test-user';
         testDocumentKey = 'Syvf4ZK6z';
         testSectionKey = 'Skmu4u6TaM';
         testSectionId = 'rkGdNdTaaM';
         testTitle = 'This is a test title';
-        testUser = { name: 'test-user' };
         testDateNow = new Date('2018-05-03T18:35:32.000Z');
         testSnapshotId = 'Hyfb4tZKTf';
         testSectionContent = { de: '# Hello World!' };
@@ -178,7 +195,7 @@ describe('document-service', () => {
               content: testSectionContent
             }
           ],
-          user: testUser
+          user: { _id: testUserId }
         });
 
         expectedSectionRevision = {
@@ -186,8 +203,8 @@ describe('document-service', () => {
           ancestorId: null,
           key: testSectionKey,
           createdOn: testDateNow,
+          createdBy: { id: testUserId },
           order: 1,
-          user: testUser,
           type: 'markdown',
           content: testSectionContent
         };
@@ -196,8 +213,8 @@ describe('document-service', () => {
           _id: testSnapshotId,
           key: testDocumentKey,
           createdOn: testDateNow,
+          createdBy: { id: testUserId },
           order: 1,
-          user: testUser,
           title: testTitle,
           sections: [{ id: testSectionId }]
         };
@@ -207,8 +224,9 @@ describe('document-service', () => {
           snapshotId: testSnapshotId,
           createdOn: testDateNow,
           updatedOn: testDateNow,
+          createdBy: { id: testUserId },
+          updatedBy: { id: testUserId },
           order: 1,
-          user: testUser,
           title: testTitle,
           sections: [
             {
@@ -216,8 +234,8 @@ describe('document-service', () => {
               ancestorId: null,
               key: testSectionKey,
               createdOn: testDateNow,
+              createdBy: { id: testUserId },
               order: 1,
-              user: testUser,
               type: 'markdown',
               content: testSectionContent
             }
@@ -264,7 +282,8 @@ describe('document-service', () => {
     });
 
     describe('when called with an existing document', () => {
-      let testUser;
+      let initialTestUserId;
+      let updatedTestUserId;
       let testTitle;
       let initialDateNow;
       let updatedDateNow;
@@ -279,7 +298,8 @@ describe('document-service', () => {
 
       beforeEach(async () => {
         testTitle = 'This is a test title';
-        testUser = { name: 'test-user' };
+        initialTestUserId = 'initial-test-user';
+        updatedTestUserId = 'updated-test-user';
         initialDateNow = new Date('2018-05-03T18:35:32.000Z');
         updatedDateNow = new Date('2018-05-03T18:35:32.000Z');
         initialTestSectionContent = { de: '# Hello World!' };
@@ -302,7 +322,7 @@ describe('document-service', () => {
               content: initialTestSectionContent
             }
           ],
-          user: testUser
+          user: { _id: initialTestUserId }
         });
 
         actualResult = await sut.createDocumentRevision({
@@ -320,7 +340,7 @@ describe('document-service', () => {
               content: additionalTestSectionContent
             }
           ],
-          user: testUser
+          user: { _id: updatedTestUserId }
         });
 
         expectedSectionRevisions = [
@@ -329,8 +349,8 @@ describe('document-service', () => {
             ancestorId: null,
             key: initialResult.sections[0].key,
             createdOn: initialDateNow,
+            createdBy: { id: initialTestUserId },
             order: sinon.match.number,
-            user: testUser,
             type: 'markdown',
             content: initialTestSectionContent
           },
@@ -339,8 +359,8 @@ describe('document-service', () => {
             ancestorId: initialResult.sections[0]._id,
             key: initialResult.sections[0].key, // Should be the same as in the initial revision
             createdOn: updatedDateNow,
+            createdBy: { id: updatedTestUserId },
             order: sinon.match.number,
-            user: testUser,
             type: 'markdown',
             content: updatedTestSectionContent
           },
@@ -349,8 +369,8 @@ describe('document-service', () => {
             ancestorId: null,
             key: sinon.match.string,
             createdOn: updatedDateNow,
+            createdBy: { id: updatedTestUserId },
             order: sinon.match.number,
-            user: testUser,
             type: 'markdown',
             content: additionalTestSectionContent
           }
@@ -361,8 +381,8 @@ describe('document-service', () => {
             _id: sinon.match.string,
             key: sinon.match.string,
             createdOn: initialDateNow,
+            createdBy: { id: initialTestUserId },
             order: 1,
-            user: testUser,
             title: testTitle,
             sections: [
               {
@@ -374,8 +394,8 @@ describe('document-service', () => {
             _id: sinon.match.string,
             key: sinon.match.string,
             createdOn: updatedDateNow,
+            createdBy: { id: updatedTestUserId },
             order: 2,
-            user: testUser,
             title: testTitle,
             sections: [
               {
@@ -393,8 +413,9 @@ describe('document-service', () => {
           snapshotId: sinon.match.string,
           createdOn: initialDateNow,
           updatedOn: updatedDateNow,
+          createdBy: { id: initialTestUserId },
+          updatedBy: { id: updatedTestUserId },
           order: 2,
-          user: testUser,
           title: testTitle,
           sections: [
             {
@@ -402,8 +423,8 @@ describe('document-service', () => {
               ancestorId: initialResult.sections[0]._id,
               key: sinon.match.string,
               createdOn: updatedDateNow,
+              createdBy: { id: updatedTestUserId },
               order: sinon.match.number,
-              user: testUser,
               type: 'markdown',
               content: updatedTestSectionContent
             },
@@ -412,8 +433,8 @@ describe('document-service', () => {
               ancestorId: null,
               key: sinon.match.string,
               createdOn: updatedDateNow,
+              createdBy: { id: updatedTestUserId },
               order: sinon.match.number,
-              user: testUser,
               type: 'markdown',
               content: additionalTestSectionContent
             }

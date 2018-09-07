@@ -98,16 +98,13 @@ class Edit extends React.Component {
     autoBind.react(this);
 
     const { editorFactory, rendererFactory, documentApiClient, initialState } = this.props;
-    const { doc, sections, language } = initialState;
+    const { doc, sections } = initialState;
 
     this.editorFactory = editorFactory;
     this.rendererFactory = rendererFactory;
     this.documentApiClient = documentApiClient;
 
-    this.state = {
-      ...this.createStateFromDoc({ doc, sections }),
-      language
-    };
+    this.state = this.createStateFromDoc({ doc, sections });
 
     this.pluginInfos = pluginInfos.map(t => ({
       ...t,
@@ -185,7 +182,6 @@ class Edit extends React.Component {
 
   async handleSaveClick() {
     const { editedDoc, editedSections } = this.state;
-    const user = { name: 'Mr. Browser' };
     const payload = {
       doc: {
         key: editedDoc.key,
@@ -196,8 +192,7 @@ class Edit extends React.Component {
         key: section.key,
         type: section.type,
         content: section.content
-      })),
-      user: user
+      }))
     };
     const { doc, sections } = await this.documentApiClient.saveDocument(payload);
     this.setState(this.createStateFromDoc({ doc, sections }));
@@ -225,7 +220,8 @@ class Edit extends React.Component {
   }
 
   render() {
-    const { editedSections, isDirty, language } = this.state;
+    const { language } = this.props;
+    const { editedSections, isDirty } = this.state;
 
     const newSectionMenu = (
       <Menu>
@@ -313,9 +309,9 @@ Edit.propTypes = {
       order: PropTypes.number.isRequired,
       type: PropTypes.string.isRequired,
       content: PropTypes.any.isRequired
-    })),
-    language: PropTypes.string.isRequired
+    }))
   }).isRequired,
+  language: PropTypes.string.isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
 };
 

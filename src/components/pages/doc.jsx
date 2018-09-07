@@ -5,8 +5,10 @@ const PropTypes = require('prop-types');
 const Button = require('antd/lib/button');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
+const { withUser } = require('../user-context.jsx');
 const { inject } = require('../container-context.jsx');
 const SectionDisplay = require('../section-display.jsx');
+const { userProps } = require('../../ui/default-prop-types');
 const RendererFactory = require('../../plugins/renderer-factory');
 
 class Doc extends React.Component {
@@ -22,8 +24,8 @@ class Doc extends React.Component {
   }
 
   render() {
-    const { initialState, rendererFactory } = this.props;
-    const { sections, language } = initialState;
+    const { initialState, rendererFactory, user, language } = this.props;
+    const { sections } = initialState;
 
     const children = sections.map(section => {
       const renderer = rendererFactory.createRenderer(section.type);
@@ -41,7 +43,7 @@ class Doc extends React.Component {
     return (
       <Page>
         <PageHeader>
-          <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>
+          {user && <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>}
         </PageHeader>
         <PageContent>
           {children}
@@ -52,6 +54,7 @@ class Doc extends React.Component {
 }
 
 Doc.propTypes = {
+  ...userProps,
   initialState: PropTypes.shape({
     doc: PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -62,12 +65,12 @@ Doc.propTypes = {
       order: PropTypes.number.isRequired,
       type: PropTypes.string.isRequired,
       content: PropTypes.any.isRequired
-    })),
-    language: PropTypes.string.isRequired
+    }))
   }).isRequired,
+  language: PropTypes.string.isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
 };
 
-module.exports = inject({
+module.exports = withUser(inject({
   rendererFactory: RendererFactory
-}, Doc);
+}, Doc));

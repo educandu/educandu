@@ -50,6 +50,7 @@ const renderPageTemplate = ({ bundleName, request, user, initialState, clientSet
     <script>
       window.__user__ = ${htmlescape(user)};
       window.__request__ = ${htmlescape(request)};
+      window.__language__ = ${htmlescape(LANGUAGE)};
       window.__settings__ = ${htmlescape(clientSettings)};
       window.__initalState__ = ${htmlescape(initialState)};
     </script>
@@ -59,30 +60,17 @@ const renderPageTemplate = ({ bundleName, request, user, initialState, clientSet
 </html>
 `;
 
-function createInitialDisplayState({ doc, language }) {
+function mapDocToInitialState({ doc }) {
   return {
     doc: {
       key: doc._id,
-      title: doc.title
+      title: doc.title,
+      createdOn: doc.createdOn,
+      updatedOn: doc.updatedOn,
+      createdBy: doc.createdBy,
+      updatedBy: doc.updatedBy
     },
-    sections: doc.sections.map(section => ({
-      key: section.key,
-      type: section.type,
-      order: section.order,
-      content: section.content[language]
-    })),
-    language: language
-  };
-}
-
-function createInitialEditorState({ doc, language }) {
-  return {
-    doc: {
-      key: doc._id,
-      title: doc.title
-    },
-    sections: doc.sections,
-    language: language
+    sections: doc.sections
   };
 }
 
@@ -213,7 +201,7 @@ class ElmuServer {
         return res.sendStatus(404);
       }
 
-      const initialState = createInitialDisplayState({ doc: doc, language: LANGUAGE });
+      const initialState = mapDocToInitialState({ doc });
       return this._sendPage(req, res, 'doc', Doc, initialState);
     });
 
@@ -223,7 +211,7 @@ class ElmuServer {
         return res.sendStatus(404);
       }
 
-      const initialState = createInitialEditorState({ doc: doc, language: LANGUAGE });
+      const initialState = mapDocToInitialState({ doc });
       return this._sendPage(req, res, 'edit', Edit, initialState);
     });
   }
@@ -279,9 +267,10 @@ class ElmuServer {
     });
 
     this.app.post('/api/v1/docs', jsonParser, async (req, res) => {
-      const { doc, sections, user } = req.body;
+      const { user } = req;
+      const { doc, sections } = req.body;
       const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });
-      const initialState = createInitialEditorState({ doc: docRevision, language: LANGUAGE });
+      const initialState = mapDocToInitialState({ doc: docRevision });
       return res.send(initialState);
     });
 
@@ -317,10 +306,11 @@ class ElmuServer {
   }
 
   _sendPage(req, res, bundleName, PageComponent, initialState) {
+    const language = LANGUAGE;
     const { container, clientSettings } = this;
     const request = requestHelper.expressReqToRequest(req);
     const user = this.userService.dbUserToClientUser(req.user);
-    const props = { request, user, container, initialState, PageComponent };
+    const props = { request, user, container, initialState, language, PageComponent };
     const elem = React.createElement(Root, props);
     resetServerContext();
     const html = ReactDOMServer.renderToString(elem);

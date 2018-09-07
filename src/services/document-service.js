@@ -46,11 +46,28 @@ class DocumentService {
     });
   }
 
+  getLatestDocumentSnapshot(documentKey) {
+    return this.documentSnapshotStore.findOne({
+      query: { key: documentKey },
+      sort: [['order', -1]]
+    });
+  }
+
   async createDocumentRevision({ doc, sections, user }) {
+    if (!user || !user._id) {
+      throw new Error('No user specified');
+    }
+
     const now = dateTime.now();
     const documentKey = doc.key || uniqueId.create();
 
     await this.documentLockStore.takeLock(documentKey);
+
+    const latestSnapshot = await this.getLatestDocumentSnapshot(documentKey);
+
+    if (!this.userCanUpdateDoc(latestSnapshot, doc, user)) {
+      throw new Error('The user does not have permission to update the document');
+    }
 
     const updatedSections = await Promise.all(sections.map(async section => {
       // Load potentially existing revision:
@@ -83,8 +100,8 @@ class DocumentService {
         ancestorId: section.ancestorId || null,
         key: existingSection ? existingSection.key : section.key || uniqueId.create(),
         createdOn: now,
+        createdBy: { id: user._id },
         order: await this.sectionOrderStore.getNextOrder(),
-        user: user,
         type: existingSection ? existingSection.type : section.type,
         content: section.content
       };
@@ -97,8 +114,8 @@ class DocumentService {
       _id: uniqueId.create(),
       key: documentKey,
       createdOn: now,
+      createdBy: { id: user._id },
       order: await this.documentOrderStore.getNextOrder(),
-      user: user,
       title: doc.title,
       sections: updatedSections.map(section => ({ id: section._id }))
     };
@@ -107,22 +124,28 @@ class DocumentService {
 
     const firstSnapshot = await this.getInitialDocumentSnapshot(documentKey);
 
-    const latest = {
+    const latestDocument = {
       _id: documentKey,
       snapshotId: newSnapshot._id,
       createdOn: firstSnapshot.createdOn,
       updatedOn: newSnapshot.createdOn,
+      createdBy: firstSnapshot.createdBy,
+      updatedBy: newSnapshot.createdBy,
       order: newSnapshot.order,
-      user: newSnapshot.user,
       title: newSnapshot.title,
       sections: updatedSections
     };
 
-    await this.documentStore.save(latest);
+    await this.documentStore.save(latestDocument);
 
     await this.documentLockStore.releaseLock(documentKey);
 
-    return latest;
+    return latestDocument;
+  }
+
+  /* eslint-disable-next-line no-unused-vars */
+  userCanUpdateDoc(previousSnapshot, newDoc, user) {
+    return true;
   }
 
   async deleteDocument({ documentKey }) {

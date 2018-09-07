@@ -5,7 +5,7 @@ function SectionDisplay({ DisplayComponent, language, section }) {
   return (
     <section key={section.key} className="Section">
       <DisplayComponent
-        content={section.content}
+        content={section.content[language]}
         language={language}
         />
     </section>

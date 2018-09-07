@@ -7,7 +7,9 @@ const Modal = require('antd/lib/modal');
 const Button = require('antd/lib/button');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
+const { withUser } = require('../user-context.jsx');
 const { inject } = require('../container-context.jsx');
+const { userProps } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
 
 const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
@@ -28,10 +30,7 @@ class Docs extends React.Component {
       doc: {
         title: title || DEFAULT_DOCUMENT_TITLE
       },
-      sections: [],
-      user: {
-        name: 'Mr. Browser'
-      }
+      sections: []
     };
   }
 
@@ -67,12 +66,12 @@ class Docs extends React.Component {
   }
 
   render() {
-    const { initialState } = this.props;
+    const { initialState, user } = this.props;
     const { newDocTitle, isNewDocModalVisible, isLoading } = this.state;
     return (
       <Page>
         <PageHeader>
-          <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>
+          {user && <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>}
         </PageHeader>
         <PageContent>
           <h1>Dokumente</h1>
@@ -100,6 +99,7 @@ class Docs extends React.Component {
 }
 
 Docs.propTypes = {
+  ...userProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.arrayOf(PropTypes.shape({
     _id: PropTypes.string.isRequired,
@@ -107,6 +107,6 @@ Docs.propTypes = {
   })).isRequired
 };
 
-module.exports = inject({
+module.exports = withUser(inject({
   documentApiClient: DocumentApiClient
-}, Docs);
+}, Docs));
