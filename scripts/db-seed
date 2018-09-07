@@ -6,6 +6,7 @@ const glob = require('glob');
 const testHelper = require('../src/test-helper');
 const Database = require('../src/stores/database');
 const { readJson } = require('../src/utils/file-helper');
+const UserService = require('../src/services/user-service');
 const DocumentService = require('../src/services/document-service');
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
@@ -14,13 +15,21 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
   const container = await serverBootstrapper.createContainer();
 
   const db = container.get(Database);
+  const userService = container.get(UserService);
   const documentService = container.get(DocumentService);
 
   await testHelper.dropAllCollections(db);
 
+  const unverifiedUser = await userService.createUser('test-user', 'test-password', 'test-email@test.com');
+  const user = await userService.verifyUser(unverifiedUser.verificationCode);
+
   const files = await util.promisify(glob)(path.join(__dirname, '../test/test-docs/*.json'));
 
   const docPayloads = await Promise.all(files.map(file => readJson(file)));
+
+  docPayloads.forEach(payload => {
+    payload.user = user;
+  });
 
   await Promise.all(docPayloads.map(payload => documentService.createDocumentRevision(payload)));
 
