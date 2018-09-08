@@ -1,49 +1,24 @@
+const url = require('url');
 const React = require('react');
-const videojs = require('video.js');
+const YouTubeEmbed = require('react-youtube-embed');
 const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 
-require('videojs-youtube');
+function parseVideoId(urlString) {
+  const videoId = urlString && url.parse(urlString, true).query.v;
+  return videoId || null;
+}
 
-class YoutubeVideoDisplay extends React.Component {
-  constructor(props) {
-    super(props);
-    this.player = null;
-    this.videoElementRef = React.createRef();
-  }
+function YoutubeVideoDisplay(props) {
+  const { content } = props;
+  const videoId = parseVideoId(content.url);
 
-  componentDidMount() {
-    const { content } = this.props;
-
-    this.player = videojs(this.videoElementRef.current, {
-      sources: [
-        {
-          src: content.url,
-          type: 'video/youtube'
-        }
-      ],
-      techOrder: ['youtube'],
-      controls: true,
-      fluid: true
-    });
-  }
-
-  componentWillUnmount() {
-    if (this.player) {
-      this.player.dispose();
-      this.player = null;
-    }
-  }
-
-  render() {
-    const { content } = this.props;
-    return (
-      <div className="YoutubeVideo">
-        <div className={`YoutubeVideo-videoWrapper u-max-width-${content.maxWidth || 100}`}>
-          <video className="YoutubeVideo-video video-js vjs-default-skin" ref={this.videoElementRef} />
-        </div>
+  return (
+    <div className="YoutubeVideo">
+      <div className={`YoutubeVideo-videoWrapper u-max-width-${content.maxWidth || 100}`}>
+        {videoId && <YouTubeEmbed id={videoId} />}
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 YoutubeVideoDisplay.propTypes = {
