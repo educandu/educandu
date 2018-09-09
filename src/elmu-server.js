@@ -4,6 +4,7 @@ const React = require('react');
 const multer = require('multer');
 const express = require('express');
 const passport = require('passport');
+const urls = require('./utils/urls');
 const htmlescape = require('htmlescape');
 const bodyParser = require('body-parser');
 const Cdn = require('./repositories/cdn');
@@ -24,6 +25,7 @@ const UserService = require('./services/user-service');
 const MailService = require('./services/mail-service');
 const requestHelper = require('./utils/request-helper');
 const LocalStrategy = require('passport-local').Strategy;
+const Article = require('./components/pages/article.jsx');
 const Register = require('./components/pages/register.jsx');
 const ClientSettings = require('./bootstrap/client-settings');
 const ServerSettings = require('./bootstrap/server-settings');
@@ -65,6 +67,7 @@ function mapDocToInitialState({ doc }) {
     doc: {
       key: doc._id,
       title: doc.title,
+      slug: doc.slug,
       createdOn: doc.createdOn,
       updatedOn: doc.updatedOn,
       createdBy: doc.createdBy,
@@ -177,7 +180,7 @@ class ElmuServer {
 
     this.app.get('/logout', (req, res) => {
       req.logout();
-      return res.redirect('/');
+      return res.redirect(urls.getDefaultLogoutRedirectUrl());
     });
 
     this.app.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
@@ -188,6 +191,16 @@ class ElmuServer {
 
       const initialState = { passwordResetRequestId: resetRequest._id };
       return this._sendPage(req, res, 'complete-password-reset', CompletePasswordReset, initialState);
+    });
+
+    this.app.get('/articles/:slug', async (req, res) => {
+      const doc = await this.documentService.getDocumentBySlug(req.params.slug);
+      if (!doc) {
+        return res.sendStatus(404);
+      }
+
+      const initialState = mapDocToInitialState({ doc });
+      return this._sendPage(req, res, 'article', Article, initialState);
     });
 
     this.app.get('/docs', async (req, res) => {
@@ -221,7 +234,7 @@ class ElmuServer {
       const { username, password, email } = req.body;
       const user = await this.userService.createUser(username, password, email);
       const { origin } = requestHelper.getHostInfo(req);
-      const verificationLink = `${origin}/complete-registration/${user.verificationCode}`;
+      const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
       await this.mailService.sendRegistrationVerificationLink(email, verificationLink);
       res.send({ user: this.userService.dbUserToClientUser(user) });
     });
@@ -235,7 +248,7 @@ class ElmuServer {
 
       const resetRequest = await this.userService.createPasswordResetRequest(user);
       const { origin } = requestHelper.getHostInfo(req);
-      const resetCompletionLink = `${origin}/complete-password-reset/${resetRequest._id}`;
+      const resetCompletionLink = urls.concatParts(origin, urls.getCompletePasswordResetUrl(resetRequest._id));
       await this.mailService.sendPasswordResetRequestCompletionLink(user.email, resetCompletionLink);
       return res.send({});
     });
@@ -286,7 +299,7 @@ class ElmuServer {
         const uploads = req.files.map(file => this.cdn.uploadObject(req.body.prefix + file.originalname, file.path, {}));
         await Promise.all(uploads);
       } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
-        // Just create a folder
+        // If no file but a prefix ending with `/` is provided, create a folder instead of a file:
         this.cdn.uploadEmptyObject(req.body.prefix, {});
       }
 
@@ -297,7 +310,7 @@ class ElmuServer {
   registerPluginApis() {
     this.apis = this.apiFactory.getRegisteredTypes().map(pluginType => {
       const router = express.Router();
-      const pathPrefix = `/plugins/${pluginType}`;
+      const pathPrefix = urls.getPluginApiPathPrefix(pluginType);
       const api = this.apiFactory.createApi(pluginType, pathPrefix);
       api.registerRoutes(router);
       this.app.use(pathPrefix, router);

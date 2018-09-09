@@ -20,7 +20,7 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
   await testHelper.dropAllCollections(db);
 
-  const unverifiedUser = await userService.createUser('test-user', 'test-password', 'test-email@test.com');
+  const unverifiedUser = await userService.createUser('test', 'test', 'test@test.com');
   const user = await userService.verifyUser(unverifiedUser.verificationCode);
 
   const files = await util.promisify(glob)(path.join(__dirname, '../test/test-docs/*.json'));

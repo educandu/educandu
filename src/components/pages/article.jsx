@@ -9,10 +9,10 @@ const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const { inject } = require('../container-context.jsx');
 const SectionDisplay = require('../section-display.jsx');
+const { userProps } = require('../../ui/default-prop-types');
 const RendererFactory = require('../../plugins/renderer-factory');
-const { userProps, docShape, sectionShape } = require('../../ui/default-prop-types');
 
-class Doc extends React.Component {
+class Article extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
@@ -26,7 +26,7 @@ class Doc extends React.Component {
 
   render() {
     const { initialState, rendererFactory, user, language } = this.props;
-    const { doc, sections } = initialState;
+    const { sections } = initialState;
 
     const children = sections.map(section => {
       const renderer = rendererFactory.createRenderer(section.type);
@@ -47,11 +47,6 @@ class Doc extends React.Component {
           {user && <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>}
         </PageHeader>
         <PageContent>
-          <div>
-            <span>Titel:</span> <span>{doc.title}</span>
-            <br />
-            <span>URL-Pfad:</span> {doc.slug ? <span>{urls.getArticleUrl(doc.slug)}</span> : <i>(nicht zugewiesen)</i>}
-          </div>
           {children}
         </PageContent>
       </Page>
@@ -59,11 +54,19 @@ class Doc extends React.Component {
   }
 }
 
-Doc.propTypes = {
+Article.propTypes = {
   ...userProps,
   initialState: PropTypes.shape({
-    doc: docShape,
-    sections: PropTypes.arrayOf(sectionShape)
+    doc: PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired
+    }),
+    sections: PropTypes.arrayOf(PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      order: PropTypes.number.isRequired,
+      type: PropTypes.string.isRequired,
+      content: PropTypes.any.isRequired
+    }))
   }).isRequired,
   language: PropTypes.string.isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
@@ -71,4 +74,4 @@ Doc.propTypes = {
 
 module.exports = withUser(inject({
   rendererFactory: RendererFactory
-}, Doc));
+}, Article));

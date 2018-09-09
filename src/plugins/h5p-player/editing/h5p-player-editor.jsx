@@ -9,6 +9,7 @@ const PropTypes = require('prop-types');
 const Upload = require('antd/lib/upload');
 const Button = require('antd/lib/button');
 const message = require('antd/lib/message');
+const urls = require('../../../utils/urls');
 const HttpClient = require('../../../services/http-client');
 const { inject } = require('../../../components/container-context.jsx');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
@@ -32,7 +33,7 @@ class H5pPlayerEditor extends React.Component {
     const hide = message.loading('Datei-Upload', 0);
 
     const { applicationId } = await httpClient
-      .post('/plugins/h5p-player/upload')
+      .post(urls.concatParts((urls.getPluginApiPathPrefix('h5p-player'), 'upload')))
       .accept('json')
       .attach('file', file, file.name)
       .on('progress', onProgress)

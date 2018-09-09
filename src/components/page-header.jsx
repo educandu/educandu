@@ -1,4 +1,5 @@
 const React = require('react');
+const urls = require('../utils/urls');
 const PropTypes = require('prop-types');
 const { withUser } = require('./user-context.jsx');
 const { userProps } = require('../ui/default-prop-types');
@@ -8,7 +9,7 @@ function createAuthenticatedUserHeader(user) {
     <div>
       <span>Willkommen, <b>{user.username}</b></span>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="/logout">Abmelden</a>
+      <a href={urls.getLogoutUrl()}>Abmelden</a>
     </div>
   );
 }
@@ -16,9 +17,9 @@ function createAuthenticatedUserHeader(user) {
 function createAnonymousUserHeader() {
   return (
     <div>
-      <a href="/login">Anmelden</a>
+      <a href={urls.getLoginUrl()}>Anmelden</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="/register">Registrieren</a>
+      <a href={urls.getRegisterUrl()}>Registrieren</a>
     </div>
   );
 }
@@ -26,7 +27,7 @@ function createAnonymousUserHeader() {
 function PageHeader({ user, children }) {
   return (
     <header className="PageHeader">
-      <a className="PageHeader-logo" href="/">elmu</a>
+      <a className="PageHeader-logo" href={urls.getHomeUrl()}>elmu</a>
       <div className="PageHeader-links">
         {children}
       </div>

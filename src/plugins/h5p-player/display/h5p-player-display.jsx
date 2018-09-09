@@ -1,5 +1,6 @@
 const React = require('react');
 const autoBind = require('auto-bind');
+const urls = require('../../../utils/urls');
 const { iframeResizer } = require('iframe-resizer');
 const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 
@@ -31,7 +32,7 @@ class H5pPlayerDisplay extends React.Component {
 
   render() {
     const { content } = this.props;
-    const playUrl = `/plugins/h5p-player/play/${content.applicationId}`;
+    const playUrl = urls.concatParts(urls.getPluginApiPathPrefix('h5p-player'), 'play', content.applicationId);
     return (
       <div className="H5pPlayer">
         <div className={`H5pPlayer-contentFrameWrapper u-max-width-${content.maxWidth || 100}`}>

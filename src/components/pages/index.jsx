@@ -1,6 +1,7 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const Input = require('antd/lib/input');
+const urls = require('../../utils/urls');
 const PageContent = require('../page-content.jsx');
 
 const { Search } = Input;
@@ -8,7 +9,7 @@ const { Search } = Input;
 const categories = ['Musikhochschule', 'Schule', 'Musikschule', 'Materialkiste'];
 
 function goToDocs() {
-  document.location = '/docs';
+  document.location = urls.getDocUrl();
 }
 
 function Index() {

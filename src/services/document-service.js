@@ -33,6 +33,12 @@ class DocumentService {
     });
   }
 
+  getDocumentBySlug(slug) {
+    return this.documentStore.findOne({
+      query: { slug }
+    });
+  }
+
   getSectionById(sectionId) {
     return this.sectionStore.findOne({
       query: { _id: sectionId }
@@ -116,7 +122,8 @@ class DocumentService {
       createdOn: now,
       createdBy: { id: user._id },
       order: await this.documentOrderStore.getNextOrder(),
-      title: doc.title,
+      title: doc.title || '',
+      slug: doc.slug || null,
       sections: updatedSections.map(section => ({ id: section._id }))
     };
 
@@ -133,6 +140,7 @@ class DocumentService {
       updatedBy: newSnapshot.createdBy,
       order: newSnapshot.order,
       title: newSnapshot.title,
+      slug: newSnapshot.slug,
       sections: updatedSections
     };
 

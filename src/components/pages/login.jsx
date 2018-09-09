@@ -5,6 +5,7 @@ const Form = require('antd/lib/form');
 const PropTypes = require('prop-types');
 const Input = require('antd/lib/input');
 const { formShape } = require('rc-form');
+const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
@@ -36,7 +37,7 @@ class Login extends React.Component {
     }
 
     const { request } = this.props;
-    return this.redirect(request.redirect || '/');
+    return this.redirect(request.redirect || urls.getDefaultLoginRedirectUrl());
   }
 
   redirect(location) {
@@ -128,7 +129,7 @@ class Login extends React.Component {
           {errorMessage}
         </FormItem>
         <FormItem {...tailFormItemLayout}>
-          <a href="/reset-password">Kennwort vergessen?</a>
+          <a href={urls.getResetPasswordUrl()}>Kennwort vergessen?</a>
         </FormItem>
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">Anmelden</Button>

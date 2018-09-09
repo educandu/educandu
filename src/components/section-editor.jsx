@@ -8,6 +8,7 @@ const Radio = require('antd/lib/radio');
 const classNames = require('classnames');
 const Button = require('antd/lib/button');
 const Dropdown = require('antd/lib/dropdown');
+const { sectionShape } = require('../ui/default-prop-types');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -150,12 +151,7 @@ SectionEditor.propTypes = {
   onSectionDeleted: PropTypes.func.isRequired,
   onSectionMovedDown: PropTypes.func.isRequired,
   onSectionMovedUp: PropTypes.func.isRequired,
-  section: PropTypes.shape({
-    content: PropTypes.any.isRequired,
-    key: PropTypes.string.isRequired,
-    order: PropTypes.number,
-    type: PropTypes.string.isRequired
-  }).isRequired
+  section: sectionShape.isRequired
 };
 
 SectionEditor.defaultProps = {

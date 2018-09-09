@@ -9,6 +9,8 @@ const documentOrdersSpec = require('./collection-specs/document-orders');
 const documentSnapshotsSpec = require('./collection-specs/document-snapshots');
 const passwordResetRequestsSpec = require('./collection-specs/password-reset-requests');
 
+const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
+
 const collectionSpecs = [
   usersSpec,
   sessionsSpec,
@@ -43,7 +45,16 @@ class Database {
     const collection = await this._db.createCollection(collectionName);
 
     if (indexes.length) {
-      await collection.createIndexes(indexes);
+      try {
+        await collection.createIndexes(indexes);
+      } catch (error) {
+        if (error.code === MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT) {
+          await collection.dropIndexes();
+          await collection.createIndexes(indexes);
+        } else {
+          throw error;
+        }
+      }
     }
 
     this[collectionName] = collection;

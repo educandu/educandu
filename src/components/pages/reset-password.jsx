@@ -88,7 +88,7 @@ class ResetPassword extends React.Component {
             {getFieldDecorator('email', { rules: emailValidationRules })(<Input />)}
           </FormItem>
           <FormItem {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">Registrieren</Button>
+            <Button type="primary" htmlType="submit">Reset anfordern</Button>
           </FormItem>
         </Form>
       </div>

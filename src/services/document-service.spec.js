@@ -154,6 +154,7 @@ describe('document-service', () => {
 
     describe('when called without an existing document', () => {
       let testTitle;
+      let testSlug;
       let testUserId;
       let testDateNow;
       let testSectionId;
@@ -172,6 +173,7 @@ describe('document-service', () => {
         testSectionKey = 'Skmu4u6TaM';
         testSectionId = 'rkGdNdTaaM';
         testTitle = 'This is a test title';
+        testSlug = 'test-slug';
         testDateNow = new Date('2018-05-03T18:35:32.000Z');
         testSnapshotId = 'Hyfb4tZKTf';
         testSectionContent = { de: '# Hello World!' };
@@ -187,7 +189,8 @@ describe('document-service', () => {
 
         actualResult = await sut.createDocumentRevision({
           doc: {
-            title: testTitle
+            title: testTitle,
+            slug: testSlug
           },
           sections: [
             {
@@ -216,6 +219,7 @@ describe('document-service', () => {
           createdBy: { id: testUserId },
           order: 1,
           title: testTitle,
+          slug: testSlug,
           sections: [{ id: testSectionId }]
         };
 
@@ -228,6 +232,7 @@ describe('document-service', () => {
           updatedBy: { id: testUserId },
           order: 1,
           title: testTitle,
+          slug: testSlug,
           sections: [
             {
               _id: testSectionId,
@@ -285,6 +290,7 @@ describe('document-service', () => {
       let initialTestUserId;
       let updatedTestUserId;
       let testTitle;
+      let testSlug;
       let initialDateNow;
       let updatedDateNow;
       let initialTestSectionContent;
@@ -298,6 +304,7 @@ describe('document-service', () => {
 
       beforeEach(async () => {
         testTitle = 'This is a test title';
+        testSlug = 'test-slug';
         initialTestUserId = 'initial-test-user';
         updatedTestUserId = 'updated-test-user';
         initialDateNow = new Date('2018-05-03T18:35:32.000Z');
@@ -314,7 +321,8 @@ describe('document-service', () => {
         // Create initial document with one section:
         initialResult = await sut.createDocumentRevision({
           doc: {
-            title: testTitle
+            title: testTitle,
+            slug: testSlug
           },
           sections: [
             {
@@ -328,7 +336,8 @@ describe('document-service', () => {
         actualResult = await sut.createDocumentRevision({
           doc: {
             key: initialResult._id,
-            title: testTitle
+            title: testTitle,
+            slug: testSlug
           },
           sections: [
             {
@@ -384,6 +393,7 @@ describe('document-service', () => {
             createdBy: { id: initialTestUserId },
             order: 1,
             title: testTitle,
+            slug: testSlug,
             sections: [
               {
                 id: initialResult.sections[0]._id
@@ -397,6 +407,7 @@ describe('document-service', () => {
             createdBy: { id: updatedTestUserId },
             order: 2,
             title: testTitle,
+            slug: testSlug,
             sections: [
               {
                 id: sinon.match.string
@@ -417,6 +428,7 @@ describe('document-service', () => {
           updatedBy: { id: updatedTestUserId },
           order: 2,
           title: testTitle,
+          slug: testSlug,
           sections: [
             {
               _id: sinon.match.string,

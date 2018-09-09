@@ -38,10 +38,37 @@ const userProps = {
   })
 };
 
+const docShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  createdOn: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  createdBy: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired,
+  updatedBy: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
+});
+
+const sectionShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  order: PropTypes.number.isRequired,
+  type: PropTypes.string.isRequired,
+  content: PropTypes.any.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
+});
+
 module.exports = {
   sectionDisplayProps,
   sectionEditorProps,
   clientSettingsProps,
   requestProps,
-  userProps
+  userProps,
+  docShape,
+  sectionShape
 };

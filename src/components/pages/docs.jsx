@@ -4,15 +4,18 @@ const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
+const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const { inject } = require('../container-context.jsx');
+const { toTrimmedString } = require('../../utils/sanitize');
 const { userProps } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
 
 const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
+const DEFAULT_DOCUMENT_SLUG = '';
 
 class Docs extends React.Component {
   constructor(props) {
@@ -20,15 +23,17 @@ class Docs extends React.Component {
     autoBind.react(this);
     this.state = {
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
+      newDocSlug: DEFAULT_DOCUMENT_SLUG,
       isNewDocModalVisible: false,
       isLoading: false
     };
   }
 
-  createNewDocument(title) {
+  createNewDocument(title, slug) {
     return {
       doc: {
-        title: title || DEFAULT_DOCUMENT_TITLE
+        title: toTrimmedString(title) || DEFAULT_DOCUMENT_TITLE,
+        slug: toTrimmedString(slug) || null
       },
       sections: []
     };
@@ -37,6 +42,7 @@ class Docs extends React.Component {
   handleNewDocumentClick() {
     this.setState({
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
+      newDocSlug: DEFAULT_DOCUMENT_SLUG,
       isNewDocModalVisible: true
     });
   }
@@ -45,20 +51,24 @@ class Docs extends React.Component {
     this.setState({ newDocTitle: event.target.value });
   }
 
+  handleNewDocSlugChange(event) {
+    this.setState({ newDocSlug: event.target.value });
+  }
+
   async handleOk() {
-    const { newDocTitle } = this.state;
+    const { newDocTitle, newDocSlug } = this.state;
     const { documentApiClient } = this.props;
 
     this.setState({ isLoading: true });
 
-    const { doc } = await documentApiClient.saveDocument(this.createNewDocument(newDocTitle));
+    const { doc } = await documentApiClient.saveDocument(this.createNewDocument(newDocTitle, newDocSlug));
 
     this.setState({
       isNewDocModalVisible: false,
       isLoading: false
     });
 
-    window.location = `/edit/doc/${doc.key}`;
+    window.location = urls.getDocUrl(doc.key);
   }
 
   handleCancel() {
@@ -67,7 +77,7 @@ class Docs extends React.Component {
 
   render() {
     const { initialState, user } = this.props;
-    const { newDocTitle, isNewDocModalVisible, isLoading } = this.state;
+    const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading } = this.state;
     return (
       <Page>
         <PageHeader>
@@ -78,7 +88,7 @@ class Docs extends React.Component {
           <ul>
             {initialState.map(doc => (
               <li key={doc._id}>
-                <a href={`/docs/${doc._id}`}>{doc.title}</a>
+                <a href={`${urls.docsPrefix}${doc._id}`}>{doc.title}</a>
               </li>
             ))}
           </ul>
@@ -90,6 +100,8 @@ class Docs extends React.Component {
             >
             <p>Titel</p>
             <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
+            <p>URL-Pfad</p>
+            <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
             {isLoading && <p>Wird erstellt ...</p>}
           </Modal>
         </PageContent>

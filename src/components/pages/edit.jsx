@@ -3,9 +3,11 @@ const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const Menu = require('antd/lib/menu');
 const PropTypes = require('prop-types');
+const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const Dropdown = require('antd/lib/dropdown');
 const utils = require('../../utils/unique-id');
+const DocEditor = require('../doc-editor.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
@@ -14,6 +16,7 @@ const EditorFactory = require('../../plugins/editor-factory');
 const ShallowUpdateList = require('../shallow-update-list.jsx');
 const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
+const { docShape, sectionShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
 
 const pluginInfos = [
@@ -130,6 +133,15 @@ class Edit extends React.Component {
     };
   }
 
+  handleMetadataChanged(metadata) {
+    this.setState(prevState => {
+      return {
+        editedDoc: { ...prevState.editedDoc, ...metadata },
+        isDirty: true
+      };
+    });
+  }
+
   handleContentChanged(sectionKey, content) {
     this.setState(prevState => {
       return {
@@ -185,7 +197,8 @@ class Edit extends React.Component {
     const payload = {
       doc: {
         key: editedDoc.key,
-        title: editedDoc.title
+        title: editedDoc.title,
+        slug: editedDoc.slug
       },
       sections: editedSections.map(section => ({
         ancestorId: section._id,
@@ -200,7 +213,7 @@ class Edit extends React.Component {
 
   handleBackClick() {
     const { originalDoc } = this.state;
-    window.location = `/docs/${originalDoc.key}`;
+    window.location = urls.getDocUrl(originalDoc.key);
   }
 
   handleDragEnd({ source, destination }) {
@@ -221,7 +234,7 @@ class Edit extends React.Component {
 
   render() {
     const { language } = this.props;
-    const { editedSections, isDirty } = this.state;
+    const { editedDoc, editedSections, isDirty } = this.state;
 
     const newSectionMenu = (
       <Menu>
@@ -247,6 +260,10 @@ class Edit extends React.Component {
           <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
         </PageHeader>
         <PageContent>
+          <DocEditor
+            onChanged={this.handleMetadataChanged}
+            doc={editedDoc}
+            />
           <DragDropContext onDragEnd={this.handleDragEnd}>
             <Droppable droppableId="droppable" ignoreContainerClipping="true">
               {droppableProvided => (
@@ -300,16 +317,8 @@ Edit.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   editorFactory: PropTypes.instanceOf(EditorFactory).isRequired,
   initialState: PropTypes.shape({
-    doc: PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired
-    }),
-    sections: PropTypes.arrayOf(PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      order: PropTypes.number.isRequired,
-      type: PropTypes.string.isRequired,
-      content: PropTypes.any.isRequired
-    }))
+    doc: docShape,
+    sections: PropTypes.arrayOf(sectionShape)
   }).isRequired,
   language: PropTypes.string.isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired

@@ -2,6 +2,7 @@ const os = require('os');
 const path = require('path');
 const multer = require('multer');
 const express = require('express');
+const urls = require('../../utils/urls');
 const Cdn = require('../../repositories/cdn');
 const H5pFileProcessor = require('./h5p-file-processor');
 const H5pPlayerRenderer = require('./h5p-player-renderer');
@@ -47,7 +48,7 @@ class H5pPlayer {
   async handlePlay(req, res) {
     const { applicationId } = req.params;
     const { origin } = requestHelper.getHostInfo(req);
-    const h5pLibRootUrl = `${origin}${this.pathPrefix}/static`;
+    const h5pLibRootUrl = urls.concatParts(origin, this.pathPrefix, 'static');
 
     const html = await this.h5pPlayerRenderer.renderHtml(applicationId, origin, h5pLibRootUrl, DEFAULT_CONTENT_ID);
     return res.type('html').send(html);
