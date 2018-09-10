@@ -47,7 +47,7 @@ class CdnFilePicker extends React.Component {
   }
 
   render() {
-    const { rootPrefix } = this.props;
+    const { rootPrefix, uploadPrefix, initialPrefix } = this.props;
     const { isModalVisible, currentSelectedFile } = this.state;
 
     return (
@@ -83,6 +83,8 @@ class CdnFilePicker extends React.Component {
           >
           <RepositoryBrowser
             rootPrefix={rootPrefix}
+            uploadPrefix={uploadPrefix}
+            initialPrefix={initialPrefix}
             selectionMode={selection.SINGLE}
             onSelectionChanged={this.handleSelectionChanged}
             />
@@ -93,12 +95,16 @@ class CdnFilePicker extends React.Component {
 }
 
 CdnFilePicker.propTypes = {
+  initialPrefix: PropTypes.string,
   onFileNameChanged: PropTypes.func,
-  rootPrefix: PropTypes.string.isRequired
+  rootPrefix: PropTypes.string.isRequired,
+  uploadPrefix: PropTypes.string
 };
 
 CdnFilePicker.defaultProps = {
-  onFileNameChanged: () => {}
+  initialPrefix: null,
+  onFileNameChanged: () => {},
+  uploadPrefix: null
 };
 
 module.exports = CdnFilePicker;

@@ -38,7 +38,7 @@ class AudioEditor extends React.Component {
   }
 
   render() {
-    const { content, clientSettings } = this.props;
+    const { docKey, content, clientSettings } = this.props;
     const { type, url } = content;
 
     const formItemLayout = {
@@ -70,6 +70,8 @@ class AudioEditor extends React.Component {
                   />
                 <CdnFilePicker
                   rootPrefix="media"
+                  uploadPrefix={`media/${docKey}`}
+                  initialPrefix={`media/${docKey}`}
                   fileName={url}
                   onFileNameChanged={this.handleInternalUrlValueChanged}
                   />

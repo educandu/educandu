@@ -8,7 +8,7 @@ const Radio = require('antd/lib/radio');
 const classNames = require('classnames');
 const Button = require('antd/lib/button');
 const Dropdown = require('antd/lib/dropdown');
-const { sectionShape } = require('../ui/default-prop-types');
+const { docShape, sectionShape } = require('../ui/default-prop-types');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -73,15 +73,30 @@ class SectionEditor extends React.Component {
 
   render() {
     const { mode } = this.state;
-    const { section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, language } = this.props;
+    const { doc, section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, language } = this.props;
 
     let componentToShow;
     switch (mode) {
       case 'preview':
-        componentToShow = <DisplayComponent content={section.content[language]} language={language} />;
+        componentToShow = (
+          <DisplayComponent
+            docKey={doc.key}
+            sectionKey={section.key}
+            content={section.content[language]}
+            language={language}
+            />
+        );
         break;
       case 'edit':
-        componentToShow = <EditorComponent content={section.content[language]} onContentChanged={this.handleContentChange} language={language} />;
+        componentToShow = (
+          <EditorComponent
+            docKey={doc.key}
+            sectionKey={section.key}
+            content={section.content[language]}
+            onContentChanged={this.handleContentChange}
+            language={language}
+            />
+        );
         break;
       default:
         componentToShow = null;
@@ -144,6 +159,7 @@ class SectionEditor extends React.Component {
 SectionEditor.propTypes = {
   DisplayComponent: PropTypes.func.isRequired,
   EditorComponent: PropTypes.func.isRequired,
+  doc: docShape.isRequired,
   dragHandleProps: PropTypes.object,
   isHighlighted: PropTypes.bool,
   language: PropTypes.string.isRequired,

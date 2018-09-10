@@ -43,12 +43,14 @@ class MinioS3Client {
 
   async listObjects(bucketName, prefix, recursive) {
     const objects = await this.tasks.push(cb => streamToArray(this.minioClient.listObjects(bucketName, prefix, recursive), cb), PRIORITY_DOWNLOAD);
-    return objects.map(obj => ({
-      name: obj.name,
-      lastModified: new Date(obj.lastModified),
-      etag: obj.etag,
-      size: obj.size
-    }));
+    return objects
+      .filter(obj => obj.name)
+      .map(obj => ({
+        name: obj.name,
+        lastModified: new Date(obj.lastModified),
+        etag: obj.etag,
+        size: obj.size
+      }));
   }
 
   async getObject(bucketName, objectName) {

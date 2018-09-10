@@ -43,7 +43,7 @@ class ImageEditor extends React.Component {
   }
 
   render() {
-    const { content, clientSettings } = this.props;
+    const { docKey, content, clientSettings } = this.props;
     const { type, url, maxWidth } = content;
 
     const formItemLayout = {
@@ -75,6 +75,8 @@ class ImageEditor extends React.Component {
                   />
                 <CdnFilePicker
                   rootPrefix="media"
+                  uploadPrefix={`media/${docKey}`}
+                  initialPrefix={`media/${docKey}`}
                   fileName={url}
                   onFileNameChanged={this.handleInternalUrlValueChanged}
                   />

@@ -293,6 +293,7 @@ class Edit extends React.Component {
                               isHighlighted={draggableState.isDragging}
                               language={language}
                               section={section}
+                              doc={editedDoc}
                               />
                           </section>
                         )}

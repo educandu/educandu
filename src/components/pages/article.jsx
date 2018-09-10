@@ -9,8 +9,8 @@ const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const { inject } = require('../container-context.jsx');
 const SectionDisplay = require('../section-display.jsx');
-const { userProps } = require('../../ui/default-prop-types');
 const RendererFactory = require('../../plugins/renderer-factory');
+const { userProps, docShape, sectionShape } = require('../../ui/default-prop-types');
 
 class Article extends React.Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class Article extends React.Component {
 
   render() {
     const { initialState, rendererFactory, user, language } = this.props;
-    const { sections } = initialState;
+    const { doc, sections } = initialState;
 
     const children = sections.map(section => {
       const renderer = rendererFactory.createRenderer(section.type);
@@ -34,6 +34,7 @@ class Article extends React.Component {
       return (
         <SectionDisplay
           key={section.key}
+          doc={doc}
           section={section}
           language={language}
           DisplayComponent={DisplayComponent}
@@ -57,16 +58,8 @@ class Article extends React.Component {
 Article.propTypes = {
   ...userProps,
   initialState: PropTypes.shape({
-    doc: PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired
-    }),
-    sections: PropTypes.arrayOf(PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      order: PropTypes.number.isRequired,
-      type: PropTypes.string.isRequired,
-      content: PropTypes.any.isRequired
-    }))
+    doc: docShape,
+    sections: PropTypes.arrayOf(sectionShape)
   }).isRequired,
   language: PropTypes.string.isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired

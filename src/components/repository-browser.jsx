@@ -50,6 +50,16 @@ class RepositoryBrowser extends React.Component {
     this.browserRef = React.createRef();
 
     const rootPathSegments = pathHelper.getPathSegments(props.rootPrefix);
+    const uploadPathSegments = props.uploadPrefix ? pathHelper.getPathSegments(props.uploadPrefix) : rootPathSegments;
+    const initialPathSegments = props.initialPrefix ? pathHelper.getPathSegments(props.initialPrefix) : rootPathSegments;
+
+    if (!pathHelper.isInPath(uploadPathSegments, rootPathSegments)) {
+      throw new Error(`${props.uploadPrefix} is not a subpath of root ${props.rootPrefix}`);
+    }
+
+    if (!pathHelper.isInPath(initialPathSegments, rootPathSegments)) {
+      throw new Error(`${props.initialPrefix} is not a subpath of root ${props.rootPrefix}`);
+    }
 
     this.state = {
       records: [],
@@ -58,8 +68,10 @@ class RepositoryBrowser extends React.Component {
       currentUploadCount: 0,
       currentDropTarget: null,
       currentUploadMessage: null,
-      currentPathSegments: rootPathSegments,
-      lockedPathSegmentsCount: rootPathSegments.length
+      currentPathSegments: initialPathSegments,
+      lockedPathSegmentsCount: rootPathSegments.length,
+      initialPathSegments: initialPathSegments,
+      uploadPathSegments: uploadPathSegments
     };
 
     this.columns = [
@@ -239,13 +251,15 @@ class RepositoryBrowser extends React.Component {
     this.setState({ isRefreshing: true });
 
     const { cdnApiClient } = this.props;
+    const { initialPathSegments, uploadPathSegments } = this.state;
     const prefix = pathHelper.getPrefix(pathSegments);
     const result = await cdnApiClient.getObjects(prefix);
-    const records = this.convertObjectsToRecords(result.objects);
-    const selectedRowKeys = selection.removeInvalidKeys(keysToSelect, records.map(r => r.key));
+    const recordsFromCdn = this.convertObjectsToRecords(result.objects);
+    const recordsWithVirtualPaths = this.ensureVirtualFolders(pathSegments, recordsFromCdn, [initialPathSegments, uploadPathSegments]);
+    const selectedRowKeys = selection.removeInvalidKeys(keysToSelect, recordsWithVirtualPaths.map(r => r.key));
 
     this.setState({
-      records: records,
+      records: recordsWithVirtualPaths,
       selectedRowKeys: selectedRowKeys,
       currentPathSegments: pathSegments,
       isRefreshing: false
@@ -266,6 +280,18 @@ class RepositoryBrowser extends React.Component {
     await this.refreshFiles(currentPathSegments, selectedRowKeys);
   }
 
+  ensureVirtualFolders(currentPathSegments, existingRecords, virtualFolderPathSegments) {
+    let result = existingRecords.slice();
+    for (const segments of virtualFolderPathSegments) {
+      if (segments.length > currentPathSegments.length && pathHelper.isInPath(segments, currentPathSegments)) {
+        const assumedDirectoryPath = pathHelper.getPrefix(segments.slice(0, currentPathSegments.length + 1));
+        if (!result.find(rec => rec.isDirectory && rec.path === assumedDirectoryPath)) {
+          result = result.concat(this.convertObjectsToRecords([{ prefix: assumedDirectoryPath, isVirtual: true }]));
+        }
+      }
+    }
+    return result;
+  }
 
   convertObjectsToRecords(objects) {
     return objects.map(obj => {
@@ -277,7 +303,7 @@ class RepositoryBrowser extends React.Component {
         key: path,
         path: path,
         size: obj.size,
-        sizeText: obj.size ? prettyBytes(obj.size, { locale: BROWSER_LOCALE }) : '---',
+        sizeText: Number.isFinite(obj.size) ? prettyBytes(obj.size, { locale: BROWSER_LOCALE }) : '---',
         lastModified: obj.lastModified,
         lastModifiedText: obj.lastModified ? moment(obj.lastModified).locale(BROWSER_LOCALE).format('lll') : '---',
         displayName: segments[segments.length - 1] || '',
@@ -285,6 +311,7 @@ class RepositoryBrowser extends React.Component {
         category: category,
         categoryText: localizeCategory(category),
         originalObject: obj,
+        segments: segments,
         rowProps: {}
       };
 
@@ -300,6 +327,9 @@ class RepositoryBrowser extends React.Component {
 
   handleBreadCrumbClick(breadCrumb) {
     const { selectedRowKeys } = this.state;
+    const { onSelectionChanged } = this.props;
+    this.setState({ selectedRowKeys: [] });
+    onSelectionChanged([]);
     this.refreshFiles(breadCrumb.segments, selectedRowKeys);
   }
 
@@ -309,6 +339,9 @@ class RepositoryBrowser extends React.Component {
 
   handleDirectoryClick(record) {
     const { selectedRowKeys } = this.state;
+    const { onSelectionChanged } = this.props;
+    this.setState({ selectedRowKeys: [] });
+    onSelectionChanged([]);
     return this.refreshFiles(pathHelper.getPathSegments(record.path), selectedRowKeys);
   }
 
@@ -439,38 +472,42 @@ class RepositoryBrowser extends React.Component {
   }
 
   render() {
-    const { records, currentPathSegments, lockedPathSegmentsCount, currentDropTarget } = this.state;
+    const { records, currentPathSegments, uploadPathSegments, lockedPathSegmentsCount, currentDropTarget } = this.state;
 
     const currentPrefix = pathHelper.getPrefix(currentPathSegments);
+    const canUpload = pathHelper.isInPath(currentPathSegments, uploadPathSegments);
 
     const browserClassNames = classNames({
       'RepositoryBrowser-browser': true,
-      'RepositoryBrowser-browser--dropTarget': currentDropTarget === currentPrefix
+      'RepositoryBrowser-browser--dropTarget': canUpload && currentDropTarget === currentPrefix
     });
 
     return (
-      <div className="RepositoryBrowser PageContent">
-        <div style={{ display: 'flex' }}>
-          <div style={{ flex: '1 0 0%' }}>
+      <div className="RepositoryBrowser">
+        <div className="RepositoryBrowser-header">
+          <div className="RepositoryBrowser-headerBreadCrumbs">
             {this.renderBreadCrumbs(currentPathSegments, lockedPathSegmentsCount)}
           </div>
-          <div style={{ flex: 'none' }}>
+          <div className="RepositoryBrowser-headerButtons">
             <Upload
               multiple
+              disabled={!canUpload}
               showUploadList={false}
               customRequest={this.onCustomUpload}
               >
-              <Button><Icon type="upload" /> Select Files</Button>
+              <Button disabled={!canUpload}>
+                <Icon type="upload" />&nbsp;<span>Dateien hochladen</span>
+              </Button>
             </Upload>
           </div>
         </div>
         <div
           ref={this.browserRef}
           className={browserClassNames}
-          onDragOver={this.handleFrameDrag}
-          onDragLeave={this.handleFrameLeave}
-          onDrop={this.handleFrameDrop}
-          data-drop-target={currentPrefix}
+          onDragOver={canUpload ? this.handleFrameDrag : null}
+          onDragLeave={canUpload ? this.handleFrameLeave : null}
+          onDrop={canUpload ? this.handleFrameDrop : null}
+          data-drop-target={canUpload ? currentPrefix : null}
           >
           {this.renderRecordsTable(records)}
         </div>
@@ -481,14 +518,18 @@ class RepositoryBrowser extends React.Component {
 
 RepositoryBrowser.propTypes = {
   cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
+  initialPrefix: PropTypes.string,
   onSelectionChanged: PropTypes.func,
   rootPrefix: PropTypes.string.isRequired,
-  selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE])
+  selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE]),
+  uploadPrefix: PropTypes.string
 };
 
 RepositoryBrowser.defaultProps = {
+  initialPrefix: null,
   onSelectionChanged: () => {},
-  selectionMode: selection.NONE
+  selectionMode: selection.NONE,
+  uploadPrefix: null
 };
 
 module.exports = inject({

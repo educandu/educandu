@@ -34,6 +34,7 @@ class Doc extends React.Component {
       return (
         <SectionDisplay
           key={section.key}
+          doc={doc}
           section={section}
           language={language}
           DisplayComponent={DisplayComponent}

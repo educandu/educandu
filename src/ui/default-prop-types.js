@@ -1,14 +1,15 @@
 const PropTypes = require('prop-types');
 
 const sectionDisplayProps = {
+  docKey: PropTypes.string.isRequired,
+  sectionKey: PropTypes.string.isRequired,
   content: PropTypes.object.isRequired,
   language: PropTypes.string.isRequired
 };
 
 const sectionEditorProps = {
-  content: PropTypes.object.isRequired,
-  onContentChanged: PropTypes.func.isRequired,
-  language: PropTypes.string.isRequired
+  ...sectionDisplayProps,
+  onContentChanged: PropTypes.func.isRequired
 };
 
 const clientSettingsProps = {
@@ -54,7 +55,7 @@ const docShape = PropTypes.shape({
 
 const sectionShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
-  order: PropTypes.number.isRequired,
+  order: PropTypes.number,
   type: PropTypes.string.isRequired,
   content: PropTypes.any.isRequired,
   createdOn: PropTypes.string.isRequired,

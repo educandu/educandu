@@ -26,6 +26,7 @@ const MailService = require('./services/mail-service');
 const requestHelper = require('./utils/request-helper');
 const LocalStrategy = require('passport-local').Strategy;
 const Article = require('./components/pages/article.jsx');
+const fileNameHelper = require('./utils/file-name-helper');
 const Register = require('./components/pages/register.jsx');
 const ClientSettings = require('./bootstrap/client-settings');
 const ServerSettings = require('./bootstrap/server-settings');
@@ -296,7 +297,11 @@ class ElmuServer {
 
     this.app.post('/api/v1/cdn/objects', multipartParser.array('files'), async (req, res) => {
       if (req.files && req.files.length) {
-        const uploads = req.files.map(file => this.cdn.uploadObject(req.body.prefix + file.originalname, file.path, {}));
+        const uploads = req.files.map(file => {
+          const fileName = urls.concatParts(req.body.prefix, file.originalname);
+          const uniqueFileName = fileNameHelper.makeUnique(fileName);
+          return this.cdn.uploadObject(uniqueFileName, file.path, {});
+        });
         await Promise.all(uploads);
       } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
         // If no file but a prefix ending with `/` is provided, create a folder instead of a file:
@@ -323,7 +328,14 @@ class ElmuServer {
     const { container, clientSettings } = this;
     const request = requestHelper.expressReqToRequest(req);
     const user = this.userService.dbUserToClientUser(req.user);
-    const props = { request, user, container, initialState, language, PageComponent };
+    const props = {
+      request: JSON.parse(JSON.stringify(request)),
+      user: JSON.parse(JSON.stringify(user)),
+      container: container,
+      initialState: JSON.parse(JSON.stringify(initialState)),
+      language: language,
+      PageComponent: PageComponent
+    };
     const elem = React.createElement(Root, props);
     resetServerContext();
     const html = ReactDOMServer.renderToString(elem);
