@@ -19,4 +19,5 @@ const bootstrapper = require('./bootstrap/server-bootstrapper');
     }
   });
 
-})();
+/* eslint-disable-next-line no-console */
+})().catch(err => console.error(err));
