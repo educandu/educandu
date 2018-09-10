@@ -58,10 +58,10 @@ const sectionShape = PropTypes.shape({
   order: PropTypes.number,
   type: PropTypes.string.isRequired,
   content: PropTypes.any.isRequired,
-  createdOn: PropTypes.string.isRequired,
+  createdOn: PropTypes.string,
   createdBy: PropTypes.shape({
     id: PropTypes.string.isRequired
-  }).isRequired
+  })
 });
 
 module.exports = {

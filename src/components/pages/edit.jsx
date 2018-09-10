@@ -48,7 +48,7 @@ const pluginInfos = [
     name: 'Youtube-Video',
     type: 'youtube-video',
     defaultContent: {
-      url: '',
+      videoId: '',
       maxWidth: 100
     }
   },
