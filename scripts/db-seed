@@ -5,10 +5,13 @@ const util = require('util');
 const glob = require('glob');
 const testHelper = require('../src/test-helper');
 const Database = require('../src/stores/database');
-const { readJson } = require('../src/utils/file-helper');
+const fileHelper = require('../src/utils/file-helper');
 const UserService = require('../src/services/user-service');
+const MenuService = require('../src/services/menu-service');
 const DocumentService = require('../src/services/document-service');
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+
+const globP = util.promisify(glob);
 
 (async function seed() {
 
@@ -16,6 +19,7 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
   const db = container.get(Database);
   const userService = container.get(UserService);
+  const menuService = container.get(MenuService);
   const documentService = container.get(DocumentService);
 
   await testHelper.dropAllCollections(db);
@@ -23,15 +27,22 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
   const unverifiedUser = await userService.createUser('test', 'test', 'test@test.com');
   const user = await userService.verifyUser(unverifiedUser.verificationCode);
 
-  const files = await util.promisify(glob)(path.join(__dirname, '../test/test-docs/*.json'));
+  const docFiles = await globP(path.join(__dirname, '../test/test-docs/*.json'));
+  const menuFiles = await globP(path.join(__dirname, '../test/test-menus/*.json'));
 
-  const docPayloads = await Promise.all(files.map(file => readJson(file)));
+  const docPayloads = await Promise.all(docFiles.map(file => fileHelper.readJson(file)));
+  const menuPayloads = await Promise.all(menuFiles.map(file => fileHelper.readJson(file)));
 
   docPayloads.forEach(payload => {
     payload.user = user;
   });
 
+  menuPayloads.forEach(payload => {
+    payload.user = user;
+  });
+
   await Promise.all(docPayloads.map(payload => documentService.createDocumentRevision(payload)));
+  await Promise.all(menuPayloads.map(payload => menuService.saveMenu(payload)));
 
   await serverBootstrapper.disposeContainer(container);
 

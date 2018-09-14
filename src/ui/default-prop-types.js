@@ -39,6 +39,12 @@ const userProps = {
   })
 };
 
+const docMetadataShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string
+});
+
 const docShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
@@ -64,12 +70,33 @@ const sectionShape = PropTypes.shape({
   })
 });
 
+const menuNodeShape = PropTypes.any;
+
+const menuShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  defaultDocumentKey: PropTypes.string,
+  nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
+  createdOn: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  createdBy: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired,
+  updatedBy: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
+});
+
 module.exports = {
   sectionDisplayProps,
   sectionEditorProps,
   clientSettingsProps,
   requestProps,
   userProps,
+  docMetadataShape,
   docShape,
-  sectionShape
+  sectionShape,
+  menuNodeShape,
+  menuShape
 };

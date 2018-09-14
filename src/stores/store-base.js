@@ -3,12 +3,12 @@ class StoreBase {
     this.collection = collection;
   }
 
-  find({ query = {}, sort = null, limit = 0 }) {
-    return this.collection.find(query, { sort, limit }).toArray();
+  find({ query = {}, sort = null, projection = null, limit = 0 }) {
+    return this.collection.find(query, { sort, limit, projection }).toArray();
   }
 
-  findOne({ query = {}, sort = null, limit = 0 }) {
-    return this.collection.findOne(query, { sort, limit });
+  findOne({ query = {}, sort = null, projection = null, limit = 0 }) {
+    return this.collection.findOne(query, { sort, limit, projection });
   }
 
   save(item) {

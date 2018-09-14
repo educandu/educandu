@@ -27,6 +27,21 @@ class DocumentService {
     });
   }
 
+  getDocumentsMetadata() {
+    return this.documentStore.find({
+      sort: [['updatedOn', -1]],
+      projection: {
+        _id: 1,
+        title: 1,
+        slug: 1,
+        createdOn: 1,
+        updatedOn: 1,
+        createdBy: 1,
+        updatedBy: 1
+      }
+    });
+  }
+
   getDocumentById(documentId) {
     return this.documentStore.findOne({
       query: { _id: documentId }

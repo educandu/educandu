@@ -21,13 +21,16 @@ const ApiFactory = require('./plugins/api-factory');
 const MongoStore = require('connect-mongo')(session);
 const Index = require('./components/pages/index.jsx');
 const Login = require('./components/pages/login.jsx');
+const Menus = require('./components/pages/menus.jsx');
 const UserService = require('./services/user-service');
+const MenuService = require('./services/menu-service');
 const MailService = require('./services/mail-service');
 const requestHelper = require('./utils/request-helper');
 const LocalStrategy = require('passport-local').Strategy;
 const Article = require('./components/pages/article.jsx');
 const fileNameHelper = require('./utils/file-name-helper');
 const Register = require('./components/pages/register.jsx');
+const EditMenu = require('./components/pages/edit-menu.jsx');
 const ClientSettings = require('./bootstrap/client-settings');
 const ServerSettings = require('./bootstrap/server-settings');
 const { resetServerContext } = require('react-beautiful-dnd');
@@ -63,36 +66,54 @@ const renderPageTemplate = ({ bundleName, request, user, initialState, clientSet
 </html>
 `;
 
+function mapDocMetadata(doc) {
+  return {
+    key: doc._id,
+    title: doc.title,
+    slug: doc.slug,
+    createdOn: doc.createdOn,
+    updatedOn: doc.updatedOn,
+    createdBy: doc.createdBy,
+    updatedBy: doc.updatedBy
+  };
+}
+
 function mapDocToInitialState({ doc }) {
   return {
-    doc: {
-      key: doc._id,
-      title: doc.title,
-      slug: doc.slug,
-      createdOn: doc.createdOn,
-      updatedOn: doc.updatedOn,
-      createdBy: doc.createdBy,
-      updatedBy: doc.updatedBy
-    },
+    doc: mapDocMetadata(doc),
     sections: doc.sections
   };
+}
+
+function mapDocsMetadataToInitialState({ docs }) {
+  return {
+    docs: docs.reduce((all, doc) => {
+      all[doc._id] = mapDocMetadata(doc);
+      return all;
+    }, {})
+  };
+}
+
+function mapMenuToInitialState({ menu }) {
+  return { menu };
 }
 
 const jsonParser = bodyParser.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 class ElmuServer {
-  static get inject() { return [Container, ServerSettings, ClientSettings, ApiFactory, DocumentService, UserService, MailService, Cdn, Database]; }
+  static get inject() { return [Container, ServerSettings, ClientSettings, ApiFactory, DocumentService, MenuService, UserService, MailService, Cdn, Database]; }
 
   /* eslint-disable-next-line no-warning-comments */
   // TODO: Refactor!
   /* eslint-disable-next-line max-params */
-  constructor(container, serverSettings, clientSettings, apiFactory, documentService, userService, mailService, cdn, database) {
+  constructor(container, serverSettings, clientSettings, apiFactory, documentService, menuService, userService, mailService, cdn, database) {
     this.container = container;
     this.serverSettings = serverSettings;
     this.clientSettings = clientSettings;
     this.apiFactory = apiFactory;
     this.documentService = documentService;
+    this.menuService = menuService;
     this.userService = userService;
     this.mailService = mailService;
     this.cdn = cdn;
@@ -228,6 +249,26 @@ class ElmuServer {
       const initialState = mapDocToInitialState({ doc });
       return this._sendPage(req, res, 'edit', Edit, initialState);
     });
+
+    this.app.get('/menus', async (req, res) => {
+      const initialState = await this.menuService.getMenus();
+      return this._sendPage(req, res, 'menus', Menus, initialState);
+    });
+
+    this.app.get('/edit/menu/:menuId', async (req, res) => {
+      const menu = await this.menuService.getMenuById(req.params.menuId);
+      if (!menu) {
+        return res.sendStatus(404);
+      }
+
+      const docs = await this.documentService.getDocumentsMetadata();
+
+      const initialState = {
+        ...mapMenuToInitialState({ menu }),
+        ...mapDocsMetadataToInitialState({ docs })
+      };
+      return this._sendPage(req, res, 'edit-menu', EditMenu, initialState);
+    });
   }
 
   registerCoreApi() {
@@ -285,6 +326,14 @@ class ElmuServer {
       const { doc, sections } = req.body;
       const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });
       const initialState = mapDocToInitialState({ doc: docRevision });
+      return res.send(initialState);
+    });
+
+    this.app.post('/api/v1/menus', jsonParser, async (req, res) => {
+      const user = req.user;
+      const menu = req.body;
+      const updatedMenu = await this.menuService.saveMenu({ menu, user });
+      const initialState = mapMenuToInitialState({ menu: updatedMenu });
       return res.send(initialState);
     });
 

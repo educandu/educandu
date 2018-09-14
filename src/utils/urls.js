@@ -1,5 +1,6 @@
 const homePath = '/';
 const docsPath = '/docs';
+const menusPath = '/menus';
 const loginPath = '/login';
 const logoutPath = '/logout';
 const registerPath = '/register';
@@ -7,6 +8,8 @@ const resetPasswordPath = '/reset-password';
 
 const docsPrefix = '/docs/';
 const editDocPrefix = '/edit/doc/';
+const menusPrefix = '/menus/';
+const editMenuPrefix = '/edit/menu/';
 const articlesPrefix = '/articles/';
 const pluginApiPathPrefix = '/plugins/';
 const completeRegistrationPrefix = '/complete-registration/';
@@ -30,6 +33,14 @@ function getDocUrl(docKey = null) {
 
 function getEditDocUrl(docKey) {
   return concatParts(editDocPrefix, docKey);
+}
+
+function getMenusUrl() {
+  return menusPath;
+}
+
+function getEditMenuUrl(menuId) {
+  return concatParts(editMenuPrefix, menuId);
 }
 
 function getArticleUrl(slug) {
@@ -79,12 +90,15 @@ function getResetPasswordUrl() {
 module.exports = {
   homePath,
   docsPath,
+  menusPath,
   loginPath,
   logoutPath,
   registerPath,
   resetPasswordPath,
   docsPrefix,
   editDocPrefix,
+  menusPrefix,
+  editMenuPrefix,
   articlesPrefix,
   pluginApiPathPrefix,
   completeRegistrationPrefix,
@@ -94,6 +108,8 @@ module.exports = {
   concatParts,
   getDocUrl,
   getEditDocUrl,
+  getMenusUrl,
+  getEditMenuUrl,
   getArticleUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,

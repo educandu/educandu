@@ -1,8 +1,10 @@
 const { MongoClient } = require('mongodb');
+const menusSpec = require('./collection-specs/menus');
 const usersSpec = require('./collection-specs/users');
 const sessionsSpec = require('./collection-specs/sessions');
 const sectionsSpec = require('./collection-specs/sections');
 const documentsSpec = require('./collection-specs/documents');
+const menuLocksSpec = require('./collection-specs/menu-locks');
 const documentLocksSpec = require('./collection-specs/document-locks');
 const sectionOrdersSpec = require('./collection-specs/section-orders');
 const documentOrdersSpec = require('./collection-specs/document-orders');
@@ -12,10 +14,12 @@ const passwordResetRequestsSpec = require('./collection-specs/password-reset-req
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 
 const collectionSpecs = [
+  menusSpec,
   usersSpec,
   sessionsSpec,
   sectionsSpec,
   documentsSpec,
+  menuLocksSpec,
   documentLocksSpec,
   sectionOrdersSpec,
   documentOrdersSpec,
