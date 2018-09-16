@@ -5,6 +5,7 @@ const multer = require('multer');
 const express = require('express');
 const passport = require('passport');
 const urls = require('./utils/urls');
+const treeCrawl = require('tree-crawl');
 const htmlescape = require('htmlescape');
 const bodyParser = require('body-parser');
 const Cdn = require('./repositories/cdn');
@@ -17,6 +18,7 @@ const Doc = require('./components/pages/doc.jsx');
 const ReactDOMServer = require('react-dom/server');
 const Docs = require('./components/pages/docs.jsx');
 const Edit = require('./components/pages/edit.jsx');
+const Menu = require('./components/pages/menu.jsx');
 const ApiFactory = require('./plugins/api-factory');
 const MongoStore = require('connect-mongo')(session);
 const Index = require('./components/pages/index.jsx');
@@ -93,6 +95,10 @@ function mapDocsMetadataToInitialState({ docs }) {
 
 function mapMenuToInitialState({ menu }) {
   return { menu };
+}
+
+function visitMenuNodes(nodes, cb) {
+  nodes.forEach(rootNode => treeCrawl(rootNode, cb, { getChildren: node => node.children }));
 }
 
 const jsonParser = bodyParser.json();
@@ -220,6 +226,25 @@ class ElmuServer {
 
       const initialState = mapDocToInitialState({ doc });
       return this._sendPage(req, res, 'article', Article, initialState);
+    });
+
+    this.app.get('/menus/:slug', async (req, res) => {
+      const menu = await this.menuService.getMenuBySlug(req.params.slug);
+      if (!menu) {
+        return res.sendStatus(404);
+      }
+
+      const docKeys = new Set();
+      docKeys.add(menu.defaultDocumentKey);
+      visitMenuNodes(menu.nodes, node => docKeys.add(node.key));
+
+      const docs = await this.documentService.getDocumentsMetadata(Array.from(docKeys));
+
+      const initialState = {
+        ...mapMenuToInitialState({ menu }),
+        ...mapDocsMetadataToInitialState({ docs })
+      };
+      return this._sendPage(req, res, 'menu', Menu, initialState);
     });
 
     this.app.get('/docs', async (req, res) => {

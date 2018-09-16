@@ -21,11 +21,13 @@ class MenuDocRef extends React.PureComponent {
     const { doc, onDelete } = this.props;
     return (
       <div className="MenuDocRef">
-        <div className="MenuDocRef-title">{doc.title}</div>
-        <div className="MenuDocRef-url">{urls.getArticleUrl(doc.slug) || '(Kein URL-Pfad zugewiesen)'}</div>
+        <div className="MenuDocRef-titleAndUrl">
+          <div className="MenuDocRef-title">{doc.title}</div>
+          <div className="MenuDocRef-url">{urls.getArticleUrl(doc.slug) || '(Kein URL-Pfad zugewiesen)'}</div>
+        </div>
         {onDelete && (
           <div className="MenuDocRef-deleteButton">
-            <Button onClick={this.handleDeleteButtonClick}>(X)</Button>
+            <Button type="danger" size="small" icon="delete" ghost onClick={this.handleDeleteButtonClick} />
           </div>
         )}
       </div>

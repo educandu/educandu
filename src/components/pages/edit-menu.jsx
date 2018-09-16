@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const treeCrawl = require('tree-crawl');
 const Input = require('antd/lib/input');
 const urls = require('../../utils/urls');
+const classnames = require('classnames');
 const Button = require('antd/lib/button');
 const MenuTree = require('../menu-tree.jsx');
 const PageHeader = require('../page-header.jsx');
@@ -58,27 +59,6 @@ const replaceSingle = (source, destination, droppableSource, droppableDestinatio
   };
 };
 
-const grid = 8;
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // Some basic styles to make the items look a bit nicer
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // Change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
-
-  // Styles we need to apply on draggables
-  ...draggableStyle
-});
-
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  padding: grid,
-  minHeight: '250px'
-});
-
 class EditMenu extends React.Component {
   constructor(props) {
     super(props);
@@ -97,6 +77,7 @@ class EditMenu extends React.Component {
       menuDefaultDocumentKey: null,
       menuNodes: [],
       selectedNodeKey: null,
+      currentCategoryTitle: '',
       docRefs: docs.map(this.createInitialDocRef),
       currentMenuItemDocRefs: [],
       defaultDocRefs: [],
@@ -217,26 +198,33 @@ class EditMenu extends React.Component {
       };
 
       newState.selectedNodeKey = selectedNodeKey;
-      newState.currentMenuItemDocRefs = this.createCurrentDocRefs(newState);
+
+      const selectedNode = this.getSelectedNode(newState.menuNodes, newState.selectedNodeKey);
+      newState.currentCategoryTitle = selectedNode ? selectedNode.title : '';
+      newState.currentMenuItemDocRefs = selectedNode ? this.createCurrentDocRefs(selectedNode, newState.docRefs) : [];
 
       return newState;
     });
   }
 
-  createCurrentDocRefs({ menuNodes, selectedNodeKey, docRefs }) {
-    let currentDocRefs = [];
+  getSelectedNode(menuNodes, selectedNodeKey) {
+    let selectedNode = null;
+
     this.visitMenuNodes(menuNodes, (node, context) => {
       if (node.key === selectedNodeKey) {
-        currentDocRefs = node.documentKeys
-          .map(key => docRefs.find(x => x.key === key))
-          .filter(x => x)
-          .map(this.createDerivedDocRef);
-
+        selectedNode = node;
         context.break();
       }
     });
 
-    return currentDocRefs;
+    return selectedNode;
+  }
+
+  createCurrentDocRefs(currentNode, currentDocRefs) {
+    return currentNode.documentKeys
+      .map(key => currentDocRefs.find(x => x.key === key))
+      .filter(x => x)
+      .map(this.createDerivedDocRef);
   }
 
   id2List(id) {
@@ -355,6 +343,21 @@ class EditMenu extends React.Component {
     });
   }
 
+  handleCategoryTitleChange(event) {
+    const newCategoryTitle = event.target.value;
+    this.setState(({ menuNodes, selectedNodeKey }) => {
+      const newMenuNodes = cloneDeep(menuNodes);
+      const selectedNode = this.getSelectedNode(newMenuNodes, selectedNodeKey);
+      selectedNode.title = newCategoryTitle;
+
+      return {
+        currentCategoryTitle: newCategoryTitle,
+        menuNodes: newMenuNodes,
+        isDirty: true
+      };
+    });
+  }
+
   handleMenuTitleChange(event) {
     const newValue = event.target.value;
     this.setState({
@@ -372,7 +375,18 @@ class EditMenu extends React.Component {
   }
 
   render() {
-    const { menuNodes, menuTitle, menuSlug, selectedNodeKey, isDirty } = this.state;
+    const {
+      menuNodes,
+      menuTitle,
+      currentCategoryTitle,
+      menuSlug,
+      selectedNodeKey,
+      defaultDocRefs,
+      currentMenuItemDocRefs,
+      docRefs,
+      isDirty
+    } = this.state;
+
     return (
       <Page>
         <PageHeader>
@@ -401,10 +415,13 @@ class EditMenu extends React.Component {
                             {(droppableProvided, droppableState) => (
                               <div
                                 ref={droppableProvided.innerRef}
-                                style={getListStyle(droppableState.isDraggingOver)}
+                                className={classnames({ 'EditMenuPage-menuRefList': true, 'EditMenuPage-menuRefList--oneLine': true, 'is-draggingOver': droppableState.isDraggingOver })}
                                 >
-                                {this.state.defaultDocRefs.map(item => (
-                                  <div key={item.key}>
+                                {defaultDocRefs.map(item => (
+                                  <div
+                                    key={item.key}
+                                    className="EditMenuPage-menuRefListItem"
+                                    >
                                     <MenuDocRef
                                       docRefKey={item.key}
                                       doc={item.doc}
@@ -439,6 +456,19 @@ class EditMenu extends React.Component {
                   <div className="EditMenuPage-editorBox">
                     <div className="Panel">
                       <div className="Panel-header">
+                        Eigenschaften der Kategorie
+                      </div>
+                      <div className="Panel-content">
+                        <div>Titel</div>
+                        <div>
+                          <Input value={currentCategoryTitle} onChange={this.handleCategoryTitleChange} disabled={!selectedNodeKey} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="EditMenuPage-editorBox">
+                    <div className="Panel">
+                      <div className="Panel-header">
                         Verlinkte Dokumente in Kategorie
                       </div>
                       <div className="Panel-content">
@@ -446,9 +476,9 @@ class EditMenu extends React.Component {
                           {(droppableProvided, droppableState) => (
                             <div
                               ref={droppableProvided.innerRef}
-                              style={getListStyle(droppableState.isDraggingOver)}
+                              className={classnames({ 'EditMenuPage-menuRefList': true, 'is-draggingOver': droppableState.isDraggingOver })}
                               >
-                              {this.state.currentMenuItemDocRefs.map((item, index) => (
+                              {currentMenuItemDocRefs.map((item, index) => (
                                 <Draggable
                                   key={item.key}
                                   draggableId={item.key}
@@ -459,7 +489,7 @@ class EditMenu extends React.Component {
                                       ref={draggableProvided.innerRef}
                                       {...draggableProvided.draggableProps}
                                       {...draggableProvided.dragHandleProps}
-                                      style={getItemStyle(draggableState.isDragging, draggableProvided.draggableProps.style)}
+                                      className={classnames({ 'EditMenuPage-menuRefListItem': true, 'is-dragging': draggableState.isDragging })}
                                       >
                                       <MenuDocRef
                                         docRefKey={item.key}
@@ -487,9 +517,9 @@ class EditMenu extends React.Component {
                           {(droppableProvided, droppableState) => (
                             <div
                               ref={droppableProvided.innerRef}
-                              style={getListStyle(droppableState.isDraggingOver)}
+                              className={classnames({ 'EditMenuPage-menuRefList': true, 'is-draggingOver': droppableState.isDraggingOver })}
                               >
-                              {this.state.docRefs.map((item, index) => (
+                              {docRefs.map((item, index) => (
                                 <Draggable
                                   key={item.key}
                                   draggableId={item.key}
@@ -500,7 +530,7 @@ class EditMenu extends React.Component {
                                       ref={draggableProvided.innerRef}
                                       {...draggableProvided.draggableProps}
                                       {...draggableProvided.dragHandleProps}
-                                      style={getItemStyle(draggableState.isDragging, draggableProvided.draggableProps.style)}
+                                      className={classnames({ 'EditMenuPage-menuRefListItem': true, 'is-dragging': draggableState.isDragging })}
                                       >
                                       <MenuDocRef
                                         docRefKey={item.key}

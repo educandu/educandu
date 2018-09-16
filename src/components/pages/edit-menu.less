@@ -1,4 +1,16 @@
 @edit-menu-editor-box-gutter: 20px;
+@edit-menu-ref-list-padding: 5px;
+@edit-menu-ref-list-item-height: 52px;
+@edit-menu-ref-list-item-padding: 5px 8px;
+@edit-menu-ref-list-border-width: 1px;
+
+@droppable-bg-color: @grey-3;
+@droppable-border-color: @grey-5;
+@droppable-bg-active-color: @grey-4;
+@droppable-border-active-color: @green-6;
+
+@draggable-bg-color: @grey-5;
+@draggable-bg-active-color: @grey-6;
 
 .EditMenuPage {}
 
@@ -20,4 +32,41 @@
 
 .EditMenuPage-editorBox {
   padding-bottom: @edit-menu-editor-box-gutter;
+}
+
+.EditMenuPage-menuRefList {
+  background-color: @droppable-bg-color;
+  padding: @edit-menu-ref-list-padding;
+  min-height: 250px;
+  border-radius: 3px;
+  border-width: @edit-menu-ref-list-border-width;
+  border-style: solid;
+  border-color: @droppable-border-color;
+  transition: all 0.3s ease;
+
+  &.EditMenuPage-menuRefList--oneLine {
+    min-height: inherit;
+    height: @edit-menu-ref-list-item-height + (2 * @edit-menu-ref-list-padding) + (2 * @edit-menu-ref-list-border-width);
+  }
+
+  &.is-draggingOver {
+    background-color: @droppable-bg-active-color;
+    border-color: @droppable-border-active-color;
+    transition: all 0.3s ease;
+  }
+}
+
+.EditMenuPage-menuRefListItem {
+  display: flex;
+  align-items: center;
+  background-color: @draggable-bg-color;
+  border-radius: 3px;
+  margin: 0 0 @edit-menu-ref-list-padding 0;
+  padding: @edit-menu-ref-list-item-padding;
+  height: @edit-menu-ref-list-item-height;
+  user-select: none;
+
+  &.is-dragging {
+    background-color: @draggable-bg-active-color;
+  }
 }

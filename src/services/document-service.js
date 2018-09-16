@@ -27,8 +27,10 @@ class DocumentService {
     });
   }
 
-  getDocumentsMetadata() {
+  getDocumentsMetadata(documentIds = null) {
+    const query = documentIds ? { _id: { $in: documentIds } } : {};
     return this.documentStore.find({
+      query: query,
       sort: [['updatedOn', -1]],
       projection: {
         _id: 1,
