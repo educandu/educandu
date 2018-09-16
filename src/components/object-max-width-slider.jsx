@@ -1,18 +1,12 @@
 const React = require('react');
 const PropTypes = require('prop-types');
-const classNames = require('classnames');
 const Slider = require('antd/lib/slider');
 const browserHelper = require('../ui/browser-helper');
 
-const possibleValues = [25, 33, 50, 66, 75, 100];
+const possibleValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 const maxValue = possibleValues[possibleValues.length - 1];
 const marks = possibleValues.reduce((all, val) => {
-  const classes = classNames({
-    'ObjectMaxWidthSlider-tick': true,
-    'ObjectMaxWidthSlider-tick--quarter': val % 25 === 0,
-    'ObjectMaxWidthSlider-tick--third': val % 33 === 0
-  });
-  const node = <span className={classes}>{`${val}%`}</span>;
+  const node = <span>{`${val}%`}</span>;
   return { ...all, [val]: node };
 }, {});
 const tipFormatter = val => `${val}%`;
@@ -29,7 +23,7 @@ function ObjectMaxWidthSlider({ value, defaultValue, onChange }) {
   }
 
   return (
-    <div className="ObjectMaxWidthSlider">
+    <div>
       <Slider
         min={0}
         max={maxValue}
