@@ -87,10 +87,7 @@ function mapDocToInitialState({ doc }) {
 
 function mapDocsMetadataToInitialState({ docs }) {
   return {
-    docs: docs.reduce((all, doc) => {
-      all[doc._id] = mapDocMetadata(doc);
-      return all;
-    }, {})
+    docs: docs.map(mapDocMetadata)
   };
 }
 

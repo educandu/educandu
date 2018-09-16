@@ -60,7 +60,7 @@ class Menus extends React.Component {
 
     this.setState({ isLoading: true });
 
-    const menu = await menuApiClient.saveMenu(this.createNewMenu(newMenuTitle, newMenuSlug));
+    const { menu } = await menuApiClient.saveMenu(this.createNewMenu(newMenuTitle, newMenuSlug));
 
     this.setState({
       isNewMenuModalVisible: false,

@@ -1,0 +1,23 @@
+@edit-menu-editor-box-gutter: 20px;
+
+.EditMenuPage {}
+
+.EditMenuPage-editor {
+  display: flex;
+}
+
+.EditMenuPage-editorColumn {
+  flex: 1 0 0%;
+
+  &.EditMenuPage-editorColumn--left {
+    padding-right: (@edit-menu-editor-box-gutter / 2);
+  }
+
+  &.EditMenuPage-editorColumn--right {
+    padding-left: (@edit-menu-editor-box-gutter / 2);
+  }
+}
+
+.EditMenuPage-editorBox {
+  padding-bottom: @edit-menu-editor-box-gutter;
+}

@@ -7,15 +7,18 @@ const Modal = require('antd/lib/modal');
 const PropTypes = require('prop-types');
 const treeCrawl = require('tree-crawl');
 const Button = require('antd/lib/button');
+const uniqueId = require('../utils/unique-id');
 const { inject } = require('./container-context.jsx');
-const stringUtils = require('./../utils/string-utils');
 const MenuApiClient = require('./../services/menu-api-client');
 const { menuNodeShape } = require('./../ui/default-prop-types');
 
 const TreeNode = Tree.TreeNode;
-const Search = Input.Search;
 
 const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
+
+const visitMenuNodes = (nodes, cb) => {
+  nodes.forEach(rootNode => treeCrawl(rootNode, cb, { getChildren: node => node.children }));
+};
 
 class MenuTree extends React.PureComponent {
   constructor(props) {
@@ -23,24 +26,23 @@ class MenuTree extends React.PureComponent {
 
     autoBind.react(this);
 
-    const { nodes } = this.props;
-
     this.state = {
-      ...this.createStateValuesFromMenu({ nodes }),
+      nodes: [],
+      selectedKey: null,
+      expandedKeys: [],
+      autoExpandParent: true,
       isNewNodeModalVisible: false,
       newNodeTitle: ''
     };
   }
 
-  createStateValuesFromMenu({ nodes, selectedKey, expandedKeys, searchTerm }) {
+  static getDerivedStateFromProps({ nodes }, { selectedKey, expandedKeys }) {
     const proposedExpandedKeys = expandedKeys || [];
     const validExpandedKeys = [];
     let validSelectedKey = null;
 
-    this.visitMenuNodes(nodes, (node, context) => {
+    visitMenuNodes(nodes, node => {
       if (proposedExpandedKeys.includes(node.key)) {
-        validExpandedKeys.push(node.key);
-      } else if (searchTerm && context.parent && stringUtils.getSearchTermIndex(node.title, searchTerm) !== -1) {
         validExpandedKeys.push(node.key);
       }
 
@@ -51,28 +53,10 @@ class MenuTree extends React.PureComponent {
 
     return {
       nodes: cloneDeep(nodes),
-      isDirty: false,
       selectedKey: validSelectedKey || null,
       expandedKeys: validExpandedKeys,
-      searchTerm: searchTerm || '',
       autoExpandParent: true
     };
-  }
-
-  visitMenuNodes(nodes, cb) {
-    nodes.forEach(rootNode => treeCrawl(rootNode, cb, { getChildren: node => node.children }));
-  }
-
-  getExpandedKeysForSearchTerm(searchTerm) {
-    const expandedKeys = [];
-
-    this.visitMenuNodes(this.state.nodes, (node, context) => {
-      if (context.parent && stringUtils.getSearchTermIndex(node.title, searchTerm) !== -1) {
-        expandedKeys.push(node.key);
-      }
-    });
-
-    return expandedKeys;
   }
 
   handleSelect(selectedKeys) {
@@ -97,7 +81,7 @@ class MenuTree extends React.PureComponent {
   }
 
   handleNewNodeOk() {
-    const { onNodesChanged } = this.props;
+    const { onNodesChanged, onSelectedNodeChanged } = this.props;
     const { nodes, selectedKey, expandedKeys, newNodeTitle } = this.state;
     const updatedNodes = cloneDeep(nodes);
     let nodeKeyToExpand;
@@ -120,9 +104,10 @@ class MenuTree extends React.PureComponent {
     }
 
     const newNode = {
-      key: newNodeTitle,
+      key: uniqueId.create(),
       title: newNodeTitle,
-      children: []
+      children: [],
+      documentKeys: []
     };
 
     nodeList.push(newNode);
@@ -141,6 +126,7 @@ class MenuTree extends React.PureComponent {
     });
 
     onNodesChanged(updatedNodes);
+    onSelectedNodeChanged(newNode.key);
   }
 
   handleNewNodeCancel() {
@@ -150,32 +136,61 @@ class MenuTree extends React.PureComponent {
     });
   }
 
+  handleDeleteNodeClick() {
+    const { onNodesChanged, onSelectedNodeChanged } = this.props;
+    const { nodes, selectedKey, expandedKeys } = this.state;
+    let updatedNodes = cloneDeep(nodes);
+
+    const foundNode = this.findParentNodeByKey(updatedNodes, selectedKey);
+    if (foundNode) {
+      foundNode.children = foundNode.children.filter(x => x.key !== selectedKey);
+    } else {
+      updatedNodes = updatedNodes.filter(x => x.key !== selectedKey);
+    }
+
+    const newExpandedKeys = [];
+    visitMenuNodes(updatedNodes, node => {
+      if (expandedKeys.includes(node.key)) {
+        newExpandedKeys.push(node.key);
+      }
+    });
+
+    this.setState({
+      nodes: updatedNodes,
+      selectedKey: null,
+      expandedKeys: newExpandedKeys
+    });
+
+    onNodesChanged(updatedNodes);
+    onSelectedNodeChanged(null);
+  }
+
   findNodeByKey(nodes, key) {
     let foundNode;
-    this.visitMenuNodes(nodes, (node, context) => {
+    visitMenuNodes(nodes, (node, context) => {
       if (node.key === key) {
         foundNode = node;
         context.break();
       }
     });
-    return foundNode;
+    return foundNode || null;
+  }
+
+  findParentNodeByKey(nodes, key) {
+    let foundNode;
+    visitMenuNodes(nodes, (node, context) => {
+      if (node.key === key) {
+        foundNode = context.parent;
+        context.break();
+      }
+    });
+    return foundNode || null;
   }
 
   handleExpand(newExpandedKeys) {
     this.setState({
       expandedKeys: newExpandedKeys,
       autoExpandParent: false
-    });
-  }
-
-  handleSearchChange(event) {
-    const newSearchTerm = event.target.value;
-    const newExpandedKeys = this.getExpandedKeysForSearchTerm(newSearchTerm);
-
-    this.setState({
-      expandedKeys: newExpandedKeys,
-      autoExpandParent: true,
-      searchTerm: newSearchTerm
     });
   }
 
@@ -234,37 +249,22 @@ class MenuTree extends React.PureComponent {
     onNodesChanged(newNodes);
   }
 
-  renderNodeTitle(title, highlighText) {
-    const index = stringUtils.getSearchTermIndex(title, highlighText);
-    if (index === -1) {
-      return <span>{title}</span>;
-    }
-
-    const parts = stringUtils.splitAt(title, index, index + highlighText.length);
-    return (
-      <span>{parts[0]}<span style={{ backgroundColor: 'yellow' }}>{parts[1]}</span>{parts[2]}</span>
-    );
-  }
-
-  renderNodeList(nodes, highlighText) {
+  renderNodeList(nodes) {
     return nodes.map(node => (
       <TreeNode
         key={node.key}
-        icon={<Icon type={Math.random() < 0.5 ? 'bars' : 'file'} />}
-        title={this.renderNodeTitle(node.title, highlighText)}
+        icon={<Icon type={node.documentKeys.length ? 'bars' : 'file'} />}
+        title={<span>{node.title}</span>}
         >
-        {node.children && this.renderNodeList(node.children, highlighText)}
+        {node.children && this.renderNodeList(node.children)}
       </TreeNode>
     ));
   }
 
   render() {
-    const { searchTerm, expandedKeys, selectedKey, autoExpandParent, nodes, isNewNodeModalVisible, newNodeTitle } = this.state;
+    const { expandedKeys, selectedKey, autoExpandParent, nodes, isNewNodeModalVisible, newNodeTitle } = this.state;
     return (
       <div>
-        <Search placeholder="Search" onChange={this.handleSearchChange} />
-        <br />
-        <br />
         <Tree
           showIcon
           draggable
@@ -276,11 +276,12 @@ class MenuTree extends React.PureComponent {
           selectedKeys={[selectedKey].filter(x => x)}
           defaultExpandedKeys={this.state.expandedKeys}
           >
-          {this.renderNodeList(nodes, searchTerm)}
+          {this.renderNodeList(nodes)}
         </Tree>
         <br />
         <br />
         <Button type="primary" icon="plus" onClick={this.handleNewNodeClick}>Neuer Menüeintrag</Button>
+        {selectedKey && <Button type="danger" icon="delete" onClick={this.handleDeleteNodeClick}>Menüeintrag löschen</Button>}
         <Modal
           title="Neuer Menüeintrag"
           visible={isNewNodeModalVisible}
