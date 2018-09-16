@@ -16,7 +16,7 @@ function Index() {
   const categoryElements = categories.map(category => {
     return (
       <div key={category} className="IndexPage-category">
-        <a className="IndexPage-categoryLink" href="/docs">
+        <a className="IndexPage-categoryLink" href={`/menus/${category.toLowerCase()}`}>
           <img className="IndexPage-categoryImage u-img-color-flip" src={`/images/${category}.png`} />
         </a>
       </div>
