@@ -27,6 +27,10 @@ function concatParts(...parts) {
   return parts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
 }
 
+function getIndexPageUrls(category) {
+  return concatParts(menusPrefix, category.toLowerCase());
+}
+
 function getDocUrl(docKey = null) {
   return docKey ? concatParts(docsPrefix, docKey) : docsPath;
 }
@@ -106,6 +110,7 @@ module.exports = {
   removeTrailingSlash,
   removeLeadingSlash,
   concatParts,
+  getIndexPageUrls,
   getDocUrl,
   getEditDocUrl,
   getMenusUrl,
