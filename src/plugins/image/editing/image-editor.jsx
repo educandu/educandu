@@ -12,6 +12,7 @@ const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
+const { TextArea } = Input;
 
 class ImageEditor extends React.Component {
   constructor(props) {
@@ -42,9 +43,14 @@ class ImageEditor extends React.Component {
     onContentChanged({ ...content, ...newContentValues });
   }
 
+  handleCurrentEditorValueChanged(event) {
+    const newValue = event.target.value;
+    this.changeContent({ text: newValue });
+  }
+
   render() {
     const { docKey, content, clientSettings } = this.props;
-    const { type, url, maxWidth } = content;
+    const { type, url, maxWidth, text } = content;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -85,6 +91,9 @@ class ImageEditor extends React.Component {
           )}
           <Form.Item label="Maximale Breite" {...formItemLayout}>
             <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthValueChanged} />
+          </Form.Item>
+          <Form.Item label="Copyright Infos" {...formItemLayout}>
+            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
       </div>

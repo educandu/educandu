@@ -1,9 +1,14 @@
 const React = require('react');
 const ClientSettings = require('../../../bootstrap/client-settings');
+const PropTypes = require('prop-types');
 const { inject } = require('../../../components/container-context.jsx');
 const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
 
-function ImageDisplay({ content, clientSettings }) {
+function ImageDisplay({ content, clientSettings, githubFlavoredMarkdown }) {
+
+  const html = githubFlavoredMarkdown.render(content.text);
+
   let src;
   switch (content.type) {
     case 'external':
@@ -20,15 +25,18 @@ function ImageDisplay({ content, clientSettings }) {
   return (
     <div className="Image">
       <img className={`Image-img u-max-width-${content.maxWidth || 100}`} src={src} />
+      <div className="Image-copyrightInfo" dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
 
 ImageDisplay.propTypes = {
   ...sectionDisplayProps,
-  ...clientSettingsProps
+  ...clientSettingsProps,
+  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
 module.exports = inject({
-  clientSettings: ClientSettings
+  clientSettings: ClientSettings,
+  githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, ImageDisplay);
