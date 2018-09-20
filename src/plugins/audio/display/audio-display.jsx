@@ -1,9 +1,14 @@
 const React = require('react');
 const ClientSettings = require('../../../bootstrap/client-settings');
+const PropTypes = require('prop-types');
 const { inject } = require('../../../components/container-context.jsx');
 const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
 
-function AudioDisplay({ content, clientSettings }) {
+function AudioDisplay({ content, clientSettings, githubFlavoredMarkdown }) {
+
+  const html = githubFlavoredMarkdown.render(content.text || '');
+
   let src;
   switch (content.type) {
     case 'external':
@@ -19,16 +24,21 @@ function AudioDisplay({ content, clientSettings }) {
 
   return (
     <div className="Audio">
-      <audio src={src} controls />
+      <div className="Audio-playerContainer">
+        <audio src={src} controls />
+      </div>
+      <div className="Audio-copyrightInfo" dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
 
 AudioDisplay.propTypes = {
   ...sectionDisplayProps,
-  ...clientSettingsProps
+  ...clientSettingsProps,
+  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
 module.exports = inject({
-  clientSettings: ClientSettings
+  clientSettings: ClientSettings,
+  githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, AudioDisplay);

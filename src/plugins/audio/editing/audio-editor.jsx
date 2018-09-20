@@ -11,6 +11,7 @@ const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
+const { TextArea } = Input;
 
 class AudioEditor extends React.Component {
   constructor(props) {
@@ -37,9 +38,14 @@ class AudioEditor extends React.Component {
     onContentChanged({ ...content, ...newContentValues });
   }
 
+  handleCurrentEditorValueChanged(event) {
+    const newValue = event.target.value;
+    this.changeContent({ text: newValue });
+  }
+
   render() {
     const { docKey, content, clientSettings } = this.props;
-    const { type, url } = content;
+    const { type, url, text } = content;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -78,6 +84,9 @@ class AudioEditor extends React.Component {
               </div>
             </FormItem>
           )}
+          <Form.Item label="Copyright Infos" {...formItemLayout}>
+            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
+          </Form.Item>
         </Form>
       </div>
     );
