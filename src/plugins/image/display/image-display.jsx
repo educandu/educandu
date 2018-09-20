@@ -7,7 +7,7 @@ const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown
 
 function ImageDisplay({ content, clientSettings, githubFlavoredMarkdown }) {
 
-  const html = githubFlavoredMarkdown.render(content.text);
+  const html = githubFlavoredMarkdown.render(content.text || '');
 
   let src;
   switch (content.type) {
