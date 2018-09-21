@@ -68,6 +68,13 @@ const pluginInfos = [
       contentId: null,
       maxWidth: 100
     }
+  },
+  {
+    name: 'Credit',
+    type: 'credit',
+    defaultContent: {
+      text: ''
+    }
   }
 ];
 
