@@ -6,12 +6,12 @@ const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
-const { withUser } = require('../user-context.jsx');
 const { inject } = require('../container-context.jsx');
+const permissions = require('../../domain/permissions');
 const { toTrimmedString } = require('../../utils/sanitize');
-const { userProps } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
 
 const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
@@ -76,19 +76,21 @@ class Docs extends React.Component {
   }
 
   render() {
-    const { initialState, user } = this.props;
+    const { initialState } = this.props;
     const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading } = this.state;
     return (
       <Page>
         <PageHeader>
-          {user && <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>}
+          <Restricted to={permissions.EDIT_DOC}>
+            <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>
+          </Restricted>
         </PageHeader>
         <PageContent>
           <h1>Dokumente</h1>
           <ul>
             {initialState.map(doc => (
               <li key={doc._id}>
-                <a href={`${urls.docsPrefix}${doc._id}`}>{doc.title}</a>
+                <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
               </li>
             ))}
           </ul>
@@ -111,7 +113,6 @@ class Docs extends React.Component {
 }
 
 Docs.propTypes = {
-  ...userProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.arrayOf(PropTypes.shape({
     _id: PropTypes.string.isRequired,
@@ -119,6 +120,6 @@ Docs.propTypes = {
   })).isRequired
 };
 
-module.exports = withUser(inject({
+module.exports = inject({
   documentApiClient: DocumentApiClient
-}, Docs));
+}, Docs);

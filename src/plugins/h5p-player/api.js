@@ -4,9 +4,11 @@ const multer = require('multer');
 const express = require('express');
 const urls = require('../../utils/urls');
 const Cdn = require('../../repositories/cdn');
+const permissions = require('../../domain/permissions');
 const H5pFileProcessor = require('./h5p-file-processor');
 const H5pPlayerRenderer = require('./h5p-player-renderer');
 const requestHelper = require('../../utils/request-helper');
+const needsPermission = require('../../domain/needs-permission-middleware');
 
 const DEFAULT_CONTENT_ID = '1';
 
@@ -27,7 +29,7 @@ class H5pPlayer {
 
     router.use('/static', express.static(path.join(__dirname, './static')));
 
-    router.post('/upload', multipartParser.single('file'), async (req, res) => {
+    router.post('/upload', [needsPermission(permissions.EDIT_FILE), multipartParser.single('file')], async (req, res) => {
       await this.handleUpload(req, res);
     });
 

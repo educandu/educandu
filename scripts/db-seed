@@ -3,6 +3,7 @@
 const path = require('path');
 const util = require('util');
 const glob = require('glob');
+const roles = require('../src/domain/roles');
 const testHelper = require('../src/test-helper');
 const Database = require('../src/stores/database');
 const fileHelper = require('../src/utils/file-helper');
@@ -26,6 +27,8 @@ const globP = util.promisify(glob);
 
   const unverifiedUser = await userService.createUser('test', 'test', 'test@test.com');
   const user = await userService.verifyUser(unverifiedUser.verificationCode);
+  user.roles = [roles.USER, roles.EDITOR, roles.SUPER_USER, roles.SUPER_EDITOR];
+  await userService.saveUser(user);
 
   const docFiles = await globP(path.join(__dirname, '../test/test-docs/*.json'));
   const menuFiles = await globP(path.join(__dirname, '../test/test-menus/*.json'));

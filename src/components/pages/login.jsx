@@ -37,7 +37,7 @@ class Login extends React.Component {
     }
 
     const { request } = this.props;
-    return this.redirect(request.redirect || urls.getDefaultLoginRedirectUrl());
+    return this.redirect(request.query.redirect || urls.getDefaultLoginRedirectUrl());
   }
 
   redirect(location) {

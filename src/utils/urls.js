@@ -1,3 +1,5 @@
+const urlencode = require('urlencode');
+
 const homePath = '/';
 const docsPath = '/docs';
 const menusPath = '/menus';
@@ -27,12 +29,16 @@ function concatParts(...parts) {
   return parts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
 }
 
-function getIndexPageUrls(category) {
-  return concatParts(menusPrefix, category.toLowerCase());
+function createRedirectUrl(path, redirect) {
+  return `${path}?redirect=${urlencode(redirect)}`;
 }
 
-function getDocUrl(docKey = null) {
-  return docKey ? concatParts(docsPrefix, docKey) : docsPath;
+function getDocsUrl() {
+  return docsPath;
+}
+
+function getDocUrl(docKey) {
+  return concatParts(docsPrefix, docKey);
 }
 
 function getEditDocUrl(docKey) {
@@ -41,6 +47,10 @@ function getEditDocUrl(docKey) {
 
 function getMenusUrl() {
   return menusPath;
+}
+
+function getMenuUrl(slug) {
+  return concatParts(menusPrefix, slug);
 }
 
 function getEditMenuUrl(menuId) {
@@ -75,8 +85,8 @@ function getHomeUrl() {
   return homePath;
 }
 
-function getLoginUrl() {
-  return loginPath;
+function getLoginUrl(redirect = null) {
+  return redirect ? createRedirectUrl(loginPath, redirect) : loginPath;
 }
 
 function getLogoutUrl() {
@@ -107,10 +117,12 @@ module.exports = {
   pluginApiPathPrefix,
   completeRegistrationPrefix,
   completePasswordResetPrefix,
+  createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
   concatParts,
-  getIndexPageUrls,
+  getMenuUrl,
+  getDocsUrl,
   getDocUrl,
   getEditDocUrl,
   getMenusUrl,

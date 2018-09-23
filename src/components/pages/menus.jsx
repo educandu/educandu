@@ -6,13 +6,14 @@ const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
-const { withUser } = require('../user-context.jsx');
 const { inject } = require('../container-context.jsx');
+const permissions = require('../../domain/permissions');
 const { toTrimmedString } = require('../../utils/sanitize');
+const { menuShape } = require('../../ui/default-prop-types');
 const MenuApiClient = require('../../services/menu-api-client');
-const { menuShape, userProps } = require('../../ui/default-prop-types');
 
 const DEFAULT_MENU_TITLE = 'Neues Menü';
 const DEFAULT_MENU_SLUG = '';
@@ -75,12 +76,14 @@ class Menus extends React.Component {
   }
 
   render() {
-    const { initialState, user } = this.props;
+    const { initialState } = this.props;
     const { newMenuTitle, newMenuSlug, isNewMenuModalVisible, isLoading } = this.state;
     return (
       <Page>
         <PageHeader>
-          {user && <Button type="primary" icon="plus" onClick={this.handleNewMenuClick}>Neues Menü</Button>}
+          <Restricted to={permissions.EDIT_MENU}>
+            <Button type="primary" icon="plus" onClick={this.handleNewMenuClick}>Neues Menü</Button>
+          </Restricted>
         </PageHeader>
         <PageContent>
           <h1>Menüs</h1>
@@ -110,11 +113,10 @@ class Menus extends React.Component {
 }
 
 Menus.propTypes = {
-  ...userProps,
   initialState: PropTypes.arrayOf(menuShape).isRequired,
   menuApiClient: PropTypes.instanceOf(MenuApiClient).isRequired
 };
 
-module.exports = withUser(inject({
+module.exports = inject({
   menuApiClient: MenuApiClient
-}, Menus));
+}, Menus);

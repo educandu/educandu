@@ -5,10 +5,12 @@ const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
+const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
-const { userProps, docShape, sectionShape } = require('../../ui/default-prop-types');
+const permissions = require('../../domain/permissions');
+const { docShape, sectionShape } = require('../../ui/default-prop-types');
 
 class Doc extends React.Component {
   constructor(props) {
@@ -23,13 +25,15 @@ class Doc extends React.Component {
   }
 
   render() {
-    const { initialState, user, language } = this.props;
+    const { initialState, language } = this.props;
     const { doc, sections } = initialState;
 
     return (
       <Page>
         <PageHeader>
-          {user && <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>}
+          <Restricted to={permissions.EDIT_DOC}>
+            <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>
+          </Restricted>
         </PageHeader>
         <PageContent>
           <div>
@@ -45,7 +49,6 @@ class Doc extends React.Component {
 }
 
 Doc.propTypes = {
-  ...userProps,
   initialState: PropTypes.shape({
     doc: docShape,
     sections: PropTypes.arrayOf(sectionShape)

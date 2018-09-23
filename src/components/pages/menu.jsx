@@ -6,11 +6,12 @@ const urls = require('../../utils/urls');
 const classnames = require('classnames');
 const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
+const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
-const { withUser } = require('../user-context.jsx');
+const permissions = require('../../domain/permissions');
 const MenuCategoryItem = require('../menu-category-item.jsx');
-const { menuShape, docMetadataShape, docShape, sectionShape, userProps } = require('../../ui/default-prop-types');
+const { menuShape, docMetadataShape, docShape, sectionShape } = require('../../ui/default-prop-types');
 
 const DEFAULT_MENU_TITLE = 'Inhalt';
 const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
@@ -98,7 +99,7 @@ class Menu extends React.Component {
   }
 
   render() {
-    const { initialState, user, language } = this.props;
+    const { initialState, language } = this.props;
     const { currentActiveNode, documentDictionary } = this.state;
     const { menu, defaultDocument } = initialState;
 
@@ -109,7 +110,9 @@ class Menu extends React.Component {
     return (
       <Page>
         <PageHeader>
-          {user && <Button type="primary" icon="edit" onClick={this.handleEditMenuClick}>Bearbeiten</Button>}
+          <Restricted to={permissions.EDIT_MENU}>
+            <Button type="primary" icon="edit" onClick={this.handleEditMenuClick}>Bearbeiten</Button>
+          </Restricted>
         </PageHeader>
         <PageContent>
           <div className="MenuPage">
@@ -128,7 +131,6 @@ class Menu extends React.Component {
 }
 
 Menu.propTypes = {
-  ...userProps,
   initialState: PropTypes.shape({
     docs: PropTypes.arrayOf(docMetadataShape).isRequired,
     menu: menuShape.isRequired,
@@ -140,4 +142,4 @@ Menu.propTypes = {
   language: PropTypes.string.isRequired
 };
 
-module.exports = withUser(Menu);
+module.exports = Menu;

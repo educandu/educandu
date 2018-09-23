@@ -20,6 +20,7 @@ const Docs = require('./components/pages/docs.jsx');
 const Edit = require('./components/pages/edit.jsx');
 const Menu = require('./components/pages/menu.jsx');
 const ApiFactory = require('./plugins/api-factory');
+const permissions = require('./domain/permissions');
 const MongoStore = require('connect-mongo')(session);
 const Index = require('./components/pages/index.jsx');
 const Login = require('./components/pages/login.jsx');
@@ -38,6 +39,7 @@ const ServerSettings = require('./bootstrap/server-settings');
 const { resetServerContext } = require('react-beautiful-dnd');
 const DocumentService = require('./services/document-service');
 const ResetPassword = require('./components/pages/reset-password.jsx');
+const needsPermission = require('./domain/needs-permission-middleware');
 const sessionsStoreSpec = require('./stores/collection-specs/sessions');
 const CompleteRegistration = require('./components/pages/complete-registration.jsx');
 const CompletePasswordReset = require('./components/pages/complete-password-reset.jsx');
@@ -252,12 +254,12 @@ class ElmuServer {
       return this._sendPage(req, res, 'menu', Menu, initialState);
     });
 
-    this.app.get('/docs', async (req, res) => {
+    this.app.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const initialState = await this.documentService.getLastUpdatedDocuments();
       return this._sendPage(req, res, 'docs', Docs, initialState);
     });
 
-    this.app.get('/docs/:docId', async (req, res) => {
+    this.app.get('/docs/:docId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const doc = await this.documentService.getDocumentById(req.params.docId);
       if (!doc) {
         return res.sendStatus(404);
@@ -267,7 +269,7 @@ class ElmuServer {
       return this._sendPage(req, res, 'doc', Doc, initialState);
     });
 
-    this.app.get('/edit/doc/:docId', async (req, res) => {
+    this.app.get('/edit/doc/:docId', needsPermission(permissions.EDIT_DOC), async (req, res) => {
       const doc = await this.documentService.getDocumentById(req.params.docId);
       if (!doc) {
         return res.sendStatus(404);
@@ -277,12 +279,12 @@ class ElmuServer {
       return this._sendPage(req, res, 'edit', Edit, initialState);
     });
 
-    this.app.get('/menus', async (req, res) => {
+    this.app.get('/menus', needsPermission(permissions.VIEW_MENUS), async (req, res) => {
       const initialState = await this.menuService.getMenus();
       return this._sendPage(req, res, 'menus', Menus, initialState);
     });
 
-    this.app.get('/edit/menu/:menuId', async (req, res) => {
+    this.app.get('/edit/menu/:menuId', needsPermission(permissions.EDIT_MENU), async (req, res) => {
       const menu = await this.menuService.getMenuById(req.params.menuId);
       if (!menu) {
         return res.sendStatus(404);
@@ -348,7 +350,7 @@ class ElmuServer {
       })(req, res, next);
     });
 
-    this.app.post('/api/v1/docs', jsonParser, async (req, res) => {
+    this.app.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
       const { user } = req;
       const { doc, sections } = req.body;
       const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });
@@ -356,7 +358,7 @@ class ElmuServer {
       return res.send(initialState);
     });
 
-    this.app.post('/api/v1/menus', jsonParser, async (req, res) => {
+    this.app.post('/api/v1/menus', [needsPermission(permissions.EDIT_MENU), jsonParser], async (req, res) => {
       const user = req.user;
       const menu = req.body;
       const updatedMenu = await this.menuService.saveMenu({ menu, user });
@@ -364,14 +366,14 @@ class ElmuServer {
       return res.send(initialState);
     });
 
-    this.app.get('/api/v1/cdn/objects', jsonParser, async (req, res) => {
+    this.app.get('/api/v1/cdn/objects', [needsPermission(permissions.VIEW_FILES), jsonParser], async (req, res) => {
       const prefix = req.query.prefix;
       const recursive = parseBool(req.query.recursive);
       const objects = await this.cdn.listObjects({ prefix, recursive });
       return res.send({ objects });
     });
 
-    this.app.post('/api/v1/cdn/objects', multipartParser.array('files'), async (req, res) => {
+    this.app.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files')], async (req, res) => {
       if (req.files && req.files.length) {
         const uploads = req.files.map(file => {
           const fileName = urls.concatParts(req.body.prefix, file.originalname);
