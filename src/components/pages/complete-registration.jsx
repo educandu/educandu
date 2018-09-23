@@ -6,7 +6,7 @@ const PageContent = require('../page-content.jsx');
 function CompleteRegistration() {
   return (
     <Page fullScreen>
-      <PageContent>
+      <PageContent fullScreen>
         <div className="CompleteRegistrationPage">
           <h1 className="CompleteRegistrationPage-title">elmu</h1>
           <div className="CompleteRegistrationPage-message">

@@ -177,7 +177,7 @@ class Register extends React.Component {
 
     return (
       <Page fullScreen>
-        <PageContent>
+        <PageContent fullScreen>
           <div className="RegisterPage">
             <h1 className="RegisterPage-title">elmu</h1>
             {isRegistered ? registrationConfirmation : registrationForm}

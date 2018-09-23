@@ -27,7 +27,7 @@ function Index() {
 
   return (
     <Page fullScreen>
-      <PageContent>
+      <PageContent fullScreen>
         <div className="IndexPage">
           <aside className="IndexPage-logo" />
           <aside className="IndexPage-loginLogout">
