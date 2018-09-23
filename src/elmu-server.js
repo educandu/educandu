@@ -234,6 +234,10 @@ class ElmuServer {
         return res.sendStatus(404);
       }
 
+      const defaultDocument = menu.defaultDocumentKey
+        ? await this.documentService.getDocumentById(menu.defaultDocumentKey)
+        : null;
+
       const docKeys = new Set();
       docKeys.add(menu.defaultDocumentKey);
       visitMenuNodes(menu.nodes, node => docKeys.add(node.key));
@@ -242,7 +246,8 @@ class ElmuServer {
 
       const initialState = {
         ...mapMenuToInitialState({ menu }),
-        ...mapDocsMetadataToInitialState({ docs })
+        ...mapDocsMetadataToInitialState({ docs }),
+        defaultDocument: defaultDocument ? mapDocToInitialState({ doc: defaultDocument }) : null
       };
       return this._sendPage(req, res, 'menu', Menu, initialState);
     });

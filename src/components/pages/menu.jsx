@@ -3,12 +3,16 @@ const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
+const classnames = require('classnames');
 const Button = require('antd/lib/button');
+const DocView = require('../doc-view.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const MenuCategoryItem = require('../menu-category-item.jsx');
-const { menuShape, docMetadataShape, userProps } = require('../../ui/default-prop-types');
+const { menuShape, docMetadataShape, docShape, sectionShape, userProps } = require('../../ui/default-prop-types');
+
+const DEFAULT_MENU_TITLE = 'Inhalt';
 
 class Menu extends React.Component {
   constructor(props) {
@@ -36,13 +40,21 @@ class Menu extends React.Component {
     this.setState({ currentActiveNode: node });
   }
 
+  handleMenuTitleClick() {
+    this.setState({ currentActiveNode: null });
+  }
+
   renderCategoryList(nodes, level, activeNode) {
     return (
       <ul className="MenuPage-categoryList">
         {nodes.map(node => (
           <li key={node.key}>
-            <div>
-              <MenuCategoryItem node={node} isActive={node === activeNode} onNodeClick={this.handleNodeClick} />
+            <div className={classnames(['MenuPage-categoryListItem', `u-level-${level}`])}>
+              <MenuCategoryItem
+                node={node}
+                isActive={node === activeNode}
+                onNodeClick={this.handleNodeClick}
+                />
             </div>
             {!!node.children.length && this.renderCategoryList(node.children, level + 1, activeNode)}
           </li>
@@ -51,22 +63,47 @@ class Menu extends React.Component {
     );
   }
 
-  renderDoc(doc) {
-    return <div>Document: {JSON.stringify(doc)}</div>;
+  renderLinkListItemContent(doc) {
+    return doc.slug
+      ? <a href={urls.getArticleUrl(doc.slug)}>{doc.title}</a>
+      : <span>{doc.title}</span>;
   }
 
-  renderLinkList(documents) {
-    return <div>Liste: {JSON.stringify(documents)}</div>;
+  renderLinkList(title, docs) {
+    return (
+      <React.Fragment>
+        <h2 className="MenuPage-linkListTitle">{title}</h2>
+        <ul className="MenuPage-linkList">
+          {docs.map((doc, index) => {
+            const key = `${doc.key}-${index}`;
+            return (
+              <li
+                key={key}
+                className="MenuPage-linkListItem"
+                >
+                {this.renderLinkListItemContent(doc)}
+              </li>
+            );
+          })}
+        </ul>
+      </React.Fragment>
+    );
+  }
+
+  renderDefaultDoc(defaultDocument, language) {
+    return defaultDocument
+      ? <DocView doc={defaultDocument.doc} sections={defaultDocument.sections} language={language} />
+      : <div />;
   }
 
   render() {
-    const { user, initialState } = this.props;
+    const { initialState, user, language } = this.props;
     const { currentActiveNode, documentDictionary } = this.state;
-    const { menu } = initialState;
+    const { menu, defaultDocument } = initialState;
 
     const article = currentActiveNode && currentActiveNode.documentKeys.length
-      ? this.renderLinkList(currentActiveNode.documentKeys.map(key => documentDictionary.get(key)))
-      : this.renderDoc(documentDictionary.get(menu.defaultDocumentKey));
+      ? this.renderLinkList(currentActiveNode.title, currentActiveNode.documentKeys.map(key => documentDictionary.get(key)))
+      : this.renderDefaultDoc(defaultDocument, language);
 
     return (
       <Page>
@@ -76,14 +113,13 @@ class Menu extends React.Component {
         <PageContent>
           <div className="MenuPage">
             <aside className="MenuPage-categories">
-              <h2>Inhalt</h2>
+              <h2><a onClick={this.handleMenuTitleClick}>{menu.title || DEFAULT_MENU_TITLE}</a></h2>
               {this.renderCategoryList(menu.nodes, 0, currentActiveNode)}
             </aside>
             <article className="MenuPage-details">
               {article}
             </article>
           </div>
-          <pre>{JSON.stringify(menu, null, 2)}</pre>
         </PageContent>
       </Page>
     );
@@ -93,9 +129,14 @@ class Menu extends React.Component {
 Menu.propTypes = {
   ...userProps,
   initialState: PropTypes.shape({
-    docs: PropTypes.arrayOf(docMetadataShape.isRequired).isRequired,
-    menu: menuShape.isRequired
-  }).isRequired
+    docs: PropTypes.arrayOf(docMetadataShape).isRequired,
+    menu: menuShape.isRequired,
+    defaultDocument: PropTypes.shape({
+      doc: docShape,
+      sections: PropTypes.arrayOf(sectionShape).isRequired
+    })
+  }).isRequired,
+  language: PropTypes.string.isRequired
 };
 
 module.exports = withUser(Menu);

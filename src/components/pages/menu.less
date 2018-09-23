@@ -7,11 +7,39 @@
 .MenuPage-categories {
   flex: 1 0 0%;
   padding-right: (@menu-page-gutter-width / 2);
-  background-color: azure;
 }
 
 .MenuPage-details {
   flex: 3 0 0%;
   padding-left: (@menu-page-gutter-width / 2);
-  background-color: yellow;
+}
+
+.MenuPage-categoryList {
+  padding-left: 0;
+  list-style-type: none;
+
+  .MenuPage-categoryList {
+    padding-left: 20px;
+  }
+}
+
+.MenuPage-categoryListItem {
+
+  &.u-level-0 {
+    font-weight: bold;
+  }
+}
+
+.MenuPage-linkListTitle {
+  background-color: transparent;
+}
+
+.MenuPage-linkList {
+  background-color: transparent;
+  padding-left: 20px;
+}
+
+.MenuPage-linkListItem {
+  background-color: transparent;
+  list-style-type: none;
 }

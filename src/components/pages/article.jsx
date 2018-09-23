@@ -4,12 +4,10 @@ const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const DocView = require('../doc-view.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
-const { inject } = require('../container-context.jsx');
-const SectionDisplay = require('../section-display.jsx');
-const RendererFactory = require('../../plugins/renderer-factory');
 const { userProps, docShape, sectionShape } = require('../../ui/default-prop-types');
 
 class Article extends React.Component {
@@ -24,23 +22,13 @@ class Article extends React.Component {
     window.location = urls.getEditDocUrl(doc.key);
   }
 
-  render() {
-    const { initialState, rendererFactory, user, language } = this.props;
-    const { doc, sections } = initialState;
+  handleBackClick() {
+    window.history.back();
+  }
 
-    const children = sections.map(section => {
-      const renderer = rendererFactory.createRenderer(section.type);
-      const DisplayComponent = renderer.getDisplayComponent();
-      return (
-        <SectionDisplay
-          key={section.key}
-          doc={doc}
-          section={section}
-          language={language}
-          DisplayComponent={DisplayComponent}
-          />
-      );
-    });
+  render() {
+    const { initialState, user, language } = this.props;
+    const { doc, sections } = initialState;
 
     return (
       <Page>
@@ -48,7 +36,8 @@ class Article extends React.Component {
           {user && <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>}
         </PageHeader>
         <PageContent>
-          {children}
+          <p><a onClick={this.handleBackClick}>Zurück</a></p>
+          <DocView doc={doc} sections={sections} language={language} />
         </PageContent>
       </Page>
     );
@@ -61,10 +50,7 @@ Article.propTypes = {
     doc: docShape,
     sections: PropTypes.arrayOf(sectionShape)
   }).isRequired,
-  language: PropTypes.string.isRequired,
-  rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
+  language: PropTypes.string.isRequired
 };
 
-module.exports = withUser(inject({
-  rendererFactory: RendererFactory
-}, Article));
+module.exports = withUser(Article);

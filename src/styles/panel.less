@@ -1,0 +1,27 @@
+.Panel {
+  background-color: #fafafa;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  width: 100%;
+  margin: 0;
+  transition: border-color 0.5s ease-in-out;
+
+  &.is-highlighted {
+    border-color: @global-elmu-blue;
+  }
+}
+
+.Panel-content {
+  background-color: #fff;
+  padding: 24px;
+}
+
+.Panel-header {
+  border-bottom: 1px solid #d9d9d9;
+  padding: 12px 24px;
+}
+
+.Panel-footer {
+  border-top: 1px solid #d9d9d9;
+  padding: 12px 24px;
+}

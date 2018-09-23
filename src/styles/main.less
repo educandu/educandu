@@ -12,43 +12,12 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-.Section {
-  padding: 24px 0;
-}
-
-.Panel {
-  background-color: #fafafa;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  width: 100%;
-  margin: 0;
-  transition: border-color 0.5s ease-in-out;
-
-  &.is-highlighted {
-    border-color: @global-elmu-blue;
-  }
-}
-
-.Panel-content {
-  background-color: #fff;
-  padding: 24px;
-}
-
-.Panel-header {
-  border-bottom: 1px solid #d9d9d9;
-  padding: 12px 24px;
-}
-
-.Panel-footer {
-  border-top: 1px solid #d9d9d9;
-  padding: 12px 24px;
-}
-
 @import '../components/page.less';
 @import '../components/page-header.less';
 @import '../components/page-content.less';
 @import '../components/pages/index.less';
 @import '../components/pages/menu.less';
+@import '../components/pages/edit.less';
 @import '../components/pages/edit-menu.less';
 @import '../components/pages/login.less';
 @import '../components/pages/register.less';
@@ -56,6 +25,8 @@ body {
 @import '../components/pages/complete-password-reset.less';
 @import '../components/menu-doc-ref.less';
 @import '../components/repository-browser.less';
+@import '../styles/panel.less';
+@import '../styles/section.less';
 @import '../plugins/markdown/markdown.less';
 @import '../plugins/quick-tester/quick-tester.less';
 @import '../plugins/youtube-video/youtube-video.less';
