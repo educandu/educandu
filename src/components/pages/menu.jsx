@@ -13,6 +13,7 @@ const MenuCategoryItem = require('../menu-category-item.jsx');
 const { menuShape, docMetadataShape, docShape, sectionShape, userProps } = require('../../ui/default-prop-types');
 
 const DEFAULT_MENU_TITLE = 'Inhalt';
+const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
 
 class Menu extends React.Component {
   constructor(props) {
@@ -63,7 +64,7 @@ class Menu extends React.Component {
     );
   }
 
-  renderLinkListItemContent(doc) {
+  renderLinkListItemContent(doc = { title: UNKNOWN_DOC_TITLE }) {
     return doc.slug
       ? <a href={urls.getArticleUrl(doc.slug)}>{doc.title}</a>
       : <span>{doc.title}</span>;
@@ -75,7 +76,7 @@ class Menu extends React.Component {
         <h2 className="MenuPage-linkListTitle">{title}</h2>
         <ul className="MenuPage-linkList">
           {docs.map((doc, index) => {
-            const key = `${doc.key}-${index}`;
+            const key = `doc-link-${index}`;
             return (
               <li
                 key={key}

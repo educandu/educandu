@@ -240,7 +240,7 @@ class ElmuServer {
 
       const docKeys = new Set();
       docKeys.add(menu.defaultDocumentKey);
-      visitMenuNodes(menu.nodes, node => docKeys.add(node.key));
+      visitMenuNodes(menu.nodes, node => (node.documentKeys || []).forEach(key => docKeys.add(key)));
 
       const docs = await this.documentService.getDocumentsMetadata(Array.from(docKeys));
 
