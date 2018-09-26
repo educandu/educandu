@@ -23,21 +23,30 @@ class H5pPlayerDisplay extends React.Component {
 
   ensureIframeIsSynced() {
     const currentIframe = this.iframeRef.current;
-    if (currentIframe !== this.lastIframe) {
+    if (currentIframe && currentIframe !== this.lastIframe) {
       this.iframeResizer = iframeResizer({ checkOrigin: false, inPageLinks: true }, currentIframe);
     }
 
     this.lastIframe = currentIframe;
   }
 
+  renderPlayer({ applicationId, maxWidth }) {
+    const pluginPrefix = urls.getPluginApiPathPrefix('h5p-player');
+    const playUrl = urls.concatParts(pluginPrefix, 'play', applicationId);
+
+    return (
+      <div className={`H5pPlayer-contentFrameWrapper u-max-width-${maxWidth || 100}`}>
+        <iframe className="H5pPlayer-contentFrame" src={playUrl} frameBorder="0" scrolling="no" ref={this.iframeRef} />
+      </div>
+    );
+  }
+
   render() {
     const { content } = this.props;
-    const playUrl = urls.concatParts(urls.getPluginApiPathPrefix('h5p-player'), 'play', content.applicationId);
+
     return (
       <div className="H5pPlayer">
-        <div className={`H5pPlayer-contentFrameWrapper u-max-width-${content.maxWidth || 100}`}>
-          <iframe className="H5pPlayer-contentFrame" src={playUrl} frameBorder="0" scrolling="no" ref={this.iframeRef} />
-        </div>
+        {content.applicationId && this.renderPlayer(content)}
       </div>
     );
   }

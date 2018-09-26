@@ -32,8 +32,11 @@ class H5pPlayerEditor extends React.Component {
 
     const hide = message.loading('Datei-Upload', 0);
 
+    const pluginPrefix = urls.getPluginApiPathPrefix('h5p-player');
+    const uploadUrl = urls.concatParts(pluginPrefix, 'upload');
+
     const { applicationId } = await httpClient
-      .post(urls.concatParts((urls.getPluginApiPathPrefix('h5p-player'), 'upload')))
+      .post(uploadUrl)
       .accept('json')
       .attach('file', file, file.name)
       .on('progress', onProgress)
