@@ -13,6 +13,7 @@ const EDIT_MENU = 'edit-menu';
 const VIEW_MENUS = 'view-menus';
 const EDIT_FILE = 'edit-file';
 const VIEW_FILES = 'view-files';
+const CREATE_FILE = 'create-file';
 
 const rolesForPermission = {
   [EDIT_DOC]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
@@ -20,7 +21,8 @@ const rolesForPermission = {
   [EDIT_MENU]: [SUPER_USER, SUPER_EDITOR],
   [VIEW_MENUS]: [SUPER_USER, SUPER_EDITOR],
   [EDIT_FILE]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
-  [VIEW_FILES]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER]
+  [VIEW_FILES]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
+  [CREATE_FILE]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER]
 };
 
 function hasUserPermission(user, permission) {
@@ -34,5 +36,6 @@ module.exports = {
   VIEW_MENUS,
   EDIT_FILE,
   VIEW_FILES,
+  CREATE_FILE,
   hasUserPermission
 };
