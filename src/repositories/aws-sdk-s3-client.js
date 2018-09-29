@@ -105,7 +105,7 @@ class AwsSdkS3Client {
     }));
 
     const transformedCommonPrefixes = Array.from(commonPrefixes).map(pre => ({
-      name: pre,
+      prefix: pre,
       size: 0
     }));
 
