@@ -30,20 +30,28 @@ class CdnFilePicker extends React.Component {
   }
 
   handleApply() {
-    const { onFileNameChanged } = this.props;
     const { currentSelectedFile } = this.state;
-
-    this.setState({ isModalVisible: false });
-    onFileNameChanged(currentSelectedFile);
+    this.applySelection(currentSelectedFile);
   }
 
   handleCancel() {
     this.setState({ isModalVisible: false });
   }
 
-  handleSelectionChanged(objects) {
+  handleSelectionChanged(objects, applySelection) {
     const newSelectedFile = objects.length ? objects[0].name : null;
     this.setState({ currentSelectedFile: newSelectedFile });
+
+    if (applySelection) {
+      this.applySelection(newSelectedFile);
+    }
+  }
+
+  applySelection(currentSelectedFile) {
+    const { onFileNameChanged } = this.props;
+    onFileNameChanged(currentSelectedFile);
+
+    this.setState({ isModalVisible: false });
   }
 
   render() {
