@@ -1,6 +1,7 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const Input = require('antd/lib/input');
+const Modal = require('antd/lib/modal');
 const urls = require('../../utils/urls');
 const PageFooter = require('../page-footer.jsx');
 const LoginLogout = require('../login-logout.jsx');
@@ -10,8 +11,11 @@ const { Search } = Input;
 
 const categories = ['Musikhochschule', 'Schule', 'Musikschule', 'Materialkiste'];
 
-function goToDocs() {
-  document.location = urls.getDocsUrl();
+function showNotImplementedNotification() {
+  Modal.error({
+    title: 'Leider, leider ...',
+    content: '... steckt ELMU noch in den Kinderschuhen. Wir arbeiten daran ...'
+  });
 }
 
 function Index() {
@@ -39,7 +43,7 @@ function Index() {
               placeholder="Suchbegriff"
               enterButton="Suchen"
               size="large"
-              onSearch={goToDocs}
+              onSearch={showNotImplementedNotification}
               />
           </div>
           <div className="IndexPage-categories">
