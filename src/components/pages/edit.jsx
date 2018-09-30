@@ -9,7 +9,9 @@ const Dropdown = require('antd/lib/dropdown');
 const utils = require('../../utils/unique-id');
 const DocEditor = require('../doc-editor.jsx');
 const PageHeader = require('../page-header.jsx');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const cloneDeep = require('../../utils/clone-deep');
 const { inject } = require('../container-context.jsx');
 const SectionEditor = require('../section-editor.jsx');
 const EditorFactory = require('../../plugins/editor-factory');
@@ -78,9 +80,6 @@ const pluginInfos = [
   }
 ];
 
-const cloneDeep = obj => {
-  return JSON.parse(JSON.stringify(obj));
-};
 
 const canReorder = (list, startIndex, endIndex) => {
   return typeof startIndex === 'number'
@@ -320,6 +319,7 @@ class Edit extends React.Component {
             </aside>
           </div>
         </PageContent>
+        <PageFooter />
       </Page>
     );
   }

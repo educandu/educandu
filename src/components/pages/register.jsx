@@ -7,6 +7,7 @@ const PropTypes = require('prop-types');
 const { formShape } = require('rc-form');
 const Button = require('antd/lib/button');
 const Checkbox = require('antd/lib/checkbox');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
@@ -182,6 +183,7 @@ class Register extends React.Component {
             {isRegistered ? registrationConfirmation : registrationForm}
           </div>
         </PageContent>
+        <PageFooter fullScreen />
       </Page>
     );
   }

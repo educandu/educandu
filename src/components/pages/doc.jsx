@@ -7,6 +7,7 @@ const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
 const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const permissions = require('../../domain/permissions');
@@ -43,6 +44,7 @@ class Doc extends React.Component {
           </div>
           <DocView doc={doc} sections={sections} language={language} />
         </PageContent>
+        <PageFooter />
       </Page>
     );
   }

@@ -6,6 +6,7 @@ const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
 const PageHeader = require('../page-header.jsx');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const { userProps, docShape, sectionShape } = require('../../ui/default-prop-types');
@@ -39,6 +40,7 @@ class Article extends React.Component {
           <p><a onClick={this.handleBackClick}>Zurück</a></p>
           <DocView doc={doc} sections={sections} language={language} />
         </PageContent>
+        <PageFooter />
       </Page>
     );
   }

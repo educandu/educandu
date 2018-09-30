@@ -5,7 +5,7 @@ const classNames = require('classnames');
 function Page({ children, fullScreen }) {
   const classes = classNames({
     'Page': true,
-    'Page-fullScreen': fullScreen
+    'Page--fullScreen': fullScreen
   });
 
   return (

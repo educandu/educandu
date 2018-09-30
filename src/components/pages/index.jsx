@@ -2,6 +2,7 @@ const React = require('react');
 const Page = require('../page.jsx');
 const Input = require('antd/lib/input');
 const urls = require('../../utils/urls');
+const PageFooter = require('../page-footer.jsx');
 const LoginLogout = require('../login-logout.jsx');
 const PageContent = require('../page-content.jsx');
 
@@ -46,6 +47,7 @@ function Index() {
           </div>
         </div>
       </PageContent>
+      <PageFooter fullScreen />
     </Page>
   );
 }
