@@ -317,6 +317,10 @@ class RepositoryBrowser extends React.Component {
 
       record.rowProps.onClick = () => this.handleRecordClick(record);
 
+      if (!record.isDirectory) {
+        record.rowProps.onDoubleClick = () => this.handleFileDoubleClick(record);
+      }
+
       if (record.isDirectory) {
         record.rowProps['data-drop-target'] = path;
       }
@@ -334,7 +338,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   handleRecordClick(record) {
-    return record.isDirectory ? this.handleDirectoryClick(record) : this.handleFileClick(record);
+    return record.isDirectory ? this.handleDirectoryClick(record) : this.handleFileClick(record, false);
   }
 
   handleDirectoryClick(record) {
@@ -345,21 +349,28 @@ class RepositoryBrowser extends React.Component {
     return this.refreshFiles(pathHelper.getPathSegments(record.path), selectedRowKeys);
   }
 
-  handleRow(record) {
-    return record.rowProps;
-  }
-
-  handleFileClick(record) {
+  handleFileClick(record, applySelection) {
     const { selectedRowKeys, records } = this.state;
     const { selectionMode, onSelectionChanged } = this.props;
 
-    const newSelectedRowKeys = selectedRowKeys.includes(record.key)
-      ? selection.removeKeyFromSelection(selectedRowKeys, record.key, selectionMode)
-      : selection.addKeyToSelection(selectedRowKeys, record.key, selectionMode);
+    let newSelectedRowKeys;
+    if (selectedRowKeys.includes(record.key)) {
+      newSelectedRowKeys = applySelection ? selectedRowKeys : selection.removeKeyFromSelection(selectedRowKeys, record.key, selectionMode);
+    } else {
+      newSelectedRowKeys = selection.addKeyToSelection(selectedRowKeys, record.key, selectionMode);
+    }
 
     this.setState({ selectedRowKeys: newSelectedRowKeys });
 
-    onSelectionChanged(newSelectedRowKeys.map(key => records.find(r => r.key === key).originalObject));
+    onSelectionChanged(newSelectedRowKeys.map(key => records.find(r => r.key === key).originalObject), applySelection);
+  }
+
+  handleFileDoubleClick(record) {
+    this.handleFileClick(record, true);
+  }
+
+  handleRow(record) {
+    return record.rowProps;
   }
 
   async onCustomUpload({ file, onProgress, onSuccess }) {
