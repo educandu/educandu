@@ -5,6 +5,7 @@ const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
 const { formShape } = require('rc-form');
+const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const Checkbox = require('antd/lib/checkbox');
 const PageFooter = require('../page-footer.jsx');
@@ -140,7 +141,7 @@ class Register extends React.Component {
     ];
 
     const agreementCheckbox = (
-      <Checkbox>Ich habe die <a href="">Nutzungsbedingungen</a> gelesen und bin damit einverstanden.</Checkbox>
+      <Checkbox>Ich habe die <a href={urls.getArticleUrl('nutzungsvertrag')}>Nutzungsbedingungen</a> gelesen und bin damit einverstanden.</Checkbox>
     );
 
     const registrationForm = (
