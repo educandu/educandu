@@ -48,7 +48,7 @@
       "type": "youtube-video",
       "content": {
         "de": {
-          "url": "https://www.youtube.com/watch?v=SQNymNaTr-Y",
+          "videoId": "SQNymNaTr-Y",
           "maxWidth": 70
         }
       }
