@@ -23,6 +23,7 @@ const { spawn } = require('child_process');
 const { Docker } = require('docker-cli-js');
 const runSequence = require('run-sequence');
 const sourcemaps = require('gulp-sourcemaps');
+const LessAutoprefix = require('less-plugin-autoprefix');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 if (process.env.ELMU_ENV === 'prod') {
@@ -43,6 +44,10 @@ const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
 
 const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimized');
 const verbous = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbous');
+
+const autoprefixOptions = {
+  browsers: ['last 3 versions', 'Firefox ESR', 'IE 11']
+};
 
 let server = null;
 process.on('exit', () => server && server.kill());
@@ -129,7 +134,7 @@ gulp.task('bundle:css', () => {
   return gulp.src('src/styles/main.less')
     .pipe(gulpif(!!server, plumber()))
     .pipe(sourcemaps.init())
-    .pipe(less({ javascriptEnabled: true }))
+    .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix(autoprefixOptions)] }))
     .pipe(gulpif(optimize, csso()))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist'));

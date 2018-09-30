@@ -96,6 +96,7 @@
     "gulp-plumber": "~1.2.0",
     "gulp-sourcemaps": "~2.6.4",
     "jest": "~23.5.0",
+    "less-plugin-autoprefix": "~2.0.0",
     "run-sequence": "~2.2.1",
     "sinon": "~6.2.0",
     "webpack": "~4.17.2",

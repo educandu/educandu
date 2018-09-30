@@ -151,7 +151,7 @@ class CompletePasswordReset extends React.Component {
 
     return (
       <Page fullScreen>
-        <PageContent>
+        <PageContent fullScreen>
           <div className="CompletePasswordResetPage">
             <h1 className="CompletePasswordResetPage-title">elmu</h1>
             {isCompleted ? completionConfirmation : completionForm}

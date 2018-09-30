@@ -140,7 +140,7 @@ class Login extends React.Component {
 
     return (
       <Page fullScreen>
-        <PageContent>
+        <PageContent fullScreen>
           <div className="LoginPage">
             <h1 className="LoginPage-title">elmu</h1>
             <div className="LoginPage-form">

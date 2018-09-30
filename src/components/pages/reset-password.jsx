@@ -109,7 +109,7 @@ class ResetPassword extends React.Component {
 
     return (
       <Page fullScreen>
-        <PageContent>
+        <PageContent fullScreen>
           <div className="ResetPasswordPage">
             <h1 className="ResetPasswordPage-title">elmu</h1>
             {isRequestSent ? resetRequestConfirmation : resetRequestForm}
