@@ -1,10 +1,16 @@
 const React = require('react');
 const urls = require('../utils/urls');
+const PropTypes = require('prop-types');
+const classNames = require('classnames');
 
-function PageFooter() {
+function PageFooter({ fullScreen }) {
+  const classes = classNames({
+    'PageFooter': true,
+    'PageFooter--fullScreen': fullScreen
+  });
 
   return (
-    <footer className="PageFooter">
+    <footer className={classes}>
       <a href={urls.getArticleUrl('ueber-elmu')}>Über ELMU</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a href={urls.getArticleUrl('organisation')}>Organisation</a>
@@ -15,5 +21,13 @@ function PageFooter() {
     </footer>
   );
 }
+
+PageFooter.propTypes = {
+  fullScreen: PropTypes.bool
+};
+
+PageFooter.defaultProps = {
+  fullScreen: false
+};
 
 module.exports = PageFooter;

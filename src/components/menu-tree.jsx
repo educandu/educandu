@@ -8,13 +8,12 @@ const PropTypes = require('prop-types');
 const treeCrawl = require('tree-crawl');
 const Button = require('antd/lib/button');
 const uniqueId = require('../utils/unique-id');
+const cloneDeep = require('../utils/clone-deep');
 const { inject } = require('./container-context.jsx');
 const MenuApiClient = require('./../services/menu-api-client');
 const { menuNodeShape } = require('./../ui/default-prop-types');
 
 const TreeNode = Tree.TreeNode;
-
-const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
 
 const visitMenuNodes = (nodes, cb) => {
   nodes.forEach(rootNode => treeCrawl(rootNode, cb, { getChildren: node => node.children }));

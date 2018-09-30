@@ -8,6 +8,7 @@ const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
 const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const permissions = require('../../domain/permissions');
 const MenuCategoryItem = require('../menu-category-item.jsx');
@@ -125,6 +126,7 @@ class Menu extends React.Component {
             </article>
           </div>
         </PageContent>
+        <PageFooter />
       </Page>
     );
   }

@@ -1,3 +1,5 @@
+/* eslint max-lines: off */
+
 const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
@@ -8,18 +10,16 @@ const urls = require('../../utils/urls');
 const classnames = require('classnames');
 const Button = require('antd/lib/button');
 const MenuTree = require('../menu-tree.jsx');
+const PageFooter = require('../page-footer.jsx');
 const PageHeader = require('../page-header.jsx');
 const MenuDocRef = require('../menu-doc-ref.jsx');
 const uniqueId = require('../../utils/unique-id');
 const PageContent = require('../page-content.jsx');
+const cloneDeep = require('../../utils/clone-deep');
 const { inject } = require('../container-context.jsx');
 const MenuApiClient = require('../../services/menu-api-client');
 const { menuShape, docMetadataShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
-
-const cloneDeep = obj => JSON.parse(JSON.stringify(obj));
-
-// See also: https://codesandbox.io/s/ql08j35j3q
 
 const DOCS_DROPPABLE_ID = 'docRefs';
 const DEFAULT_DOCS_DROPPABLE_ID = 'defaultDocRefs';
@@ -552,6 +552,7 @@ class EditMenu extends React.Component {
             </DragDropContext>
           </div>
         </PageContent>
+        <PageFooter />
       </Page>
     );
   }

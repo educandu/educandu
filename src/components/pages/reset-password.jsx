@@ -6,6 +6,7 @@ const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
 const { formShape } = require('rc-form');
 const Button = require('antd/lib/button');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
@@ -114,6 +115,7 @@ class ResetPassword extends React.Component {
             {isRequestSent ? resetRequestConfirmation : resetRequestForm}
           </div>
         </PageContent>
+        <PageFooter fullScreen />
       </Page>
     );
   }

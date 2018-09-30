@@ -47,7 +47,7 @@ function Index() {
           </div>
         </div>
       </PageContent>
-      <PageFooter className="PageFooter" />
+      <PageFooter fullScreen />
     </Page>
   );
 }

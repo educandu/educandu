@@ -8,6 +8,7 @@ const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
@@ -107,6 +108,7 @@ class Menus extends React.Component {
             {isLoading && <p>Wird erstellt ...</p>}
           </Modal>
         </PageContent>
+        <PageFooter />
       </Page>
     );
   }

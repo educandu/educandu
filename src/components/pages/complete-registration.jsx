@@ -1,5 +1,6 @@
 const React = require('react');
 const Page = require('../page.jsx');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 
 function CompleteRegistration() {
@@ -14,6 +15,7 @@ function CompleteRegistration() {
           </div>
         </div>
       </PageContent>
+      <PageFooter fullScreen />
     </Page>
   );
 }

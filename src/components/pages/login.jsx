@@ -7,6 +7,7 @@ const Input = require('antd/lib/input');
 const { formShape } = require('rc-form');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { inject } = require('../container-context.jsx');
 const { withRequest } = require('../request-context.jsx');
@@ -147,6 +148,7 @@ class Login extends React.Component {
             </div>
           </div>
         </PageContent>
+        <PageFooter fullScreen />
       </Page>
     );
   }
