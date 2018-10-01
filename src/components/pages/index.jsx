@@ -2,20 +2,24 @@ const React = require('react');
 const Page = require('../page.jsx');
 const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
+const Button = require('antd/lib/button');
 const urls = require('../../utils/urls');
 const PageFooter = require('../page-footer.jsx');
 const LoginLogout = require('../login-logout.jsx');
 const PageContent = require('../page-content.jsx');
 
 const { Search } = Input;
+const confirm = Modal.confirm;
 
 const categories = ['Musikhochschule', 'Schule', 'Musikschule', 'Materialkiste'];
 
 function showNotImplementedNotification() {
-  Modal.error({
-    title: 'Leider, leider ...',
-    content: '... steckt ELMU noch in den Kinderschuhen. Wir arbeiten daran ...'
-  });
+  Button.showConfirm(confirm({
+    title: 'Leider, leider steckt ELMU noch in den Kinderschuhen. Wir arbeiten daran ...',
+    content: 'Wenn Sie angemeldet sind, gelangen Sie über "OK" zu den Dokumenten. Wählen Sie "Cancel", wenn Sie sich noch anmelden oder registrieren müssen.',
+    onOk: function () { document.location = urls.getDocsUrl(); },
+    onCancel: function () { }
+  }));
 }
 
 function Index() {
