@@ -4,22 +4,25 @@ const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
 const Button = require('antd/lib/button');
 const urls = require('../../utils/urls');
+const Restricted = require('../restricted.jsx');
 const PageFooter = require('../page-footer.jsx');
 const LoginLogout = require('../login-logout.jsx');
 const PageContent = require('../page-content.jsx');
+const permissions = require('../../domain/permissions');
 
 const { Search } = Input;
-const confirm = Modal.confirm;
 
 const categories = ['Musikhochschule', 'Schule', 'Musikschule', 'Materialkiste'];
 
 function showNotImplementedNotification() {
-  Button.showConfirm(confirm({
-    title: 'Leider, leider steckt ELMU noch in den Kinderschuhen. Wir arbeiten daran ...',
-    content: 'Wenn Sie angemeldet sind, gelangen Sie über "OK" zu den Dokumenten. Wählen Sie "Cancel", wenn Sie sich noch anmelden oder registrieren müssen.',
-    onOk: function () { document.location = urls.getDocsUrl(); },
-    onCancel: function () { }
-  }));
+  Modal.error({
+    title: 'Leider, leider ...',
+    content: '... ist ELMU noch nicht so weit, dass Sie hier komfortabel suchen können. Wir arbeiten daran ...'
+  });
+}
+
+function handleNewDocumentClick() {
+  document.location = urls.getDocsUrl();
 }
 
 function Index() {
@@ -35,6 +38,9 @@ function Index() {
 
   return (
     <Page fullScreen>
+      <Restricted to={permissions.EDIT_DOC}>
+        <Button className="IndexPage-docsButton" type="primary" onClick={handleNewDocumentClick}>Zu den Dokumenten</Button>
+      </Restricted>
       <PageContent fullScreen>
         <div className="IndexPage">
           <aside className="IndexPage-logo" />
