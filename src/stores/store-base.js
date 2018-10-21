@@ -3,7 +3,7 @@ class StoreBase {
     this.collection = collection;
   }
 
-  find({ query = {}, sort = null, projection = null, limit = 0 }) {
+  find({ query = {}, sort = null, projection = null, limit = 0 } = {}) {
     return this.collection.find(query, { sort, limit, projection }).toArray();
   }
 

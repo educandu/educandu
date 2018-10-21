@@ -22,6 +22,7 @@ const Menu = require('./components/pages/menu.jsx');
 const ApiFactory = require('./plugins/api-factory');
 const permissions = require('./domain/permissions');
 const MongoStore = require('connect-mongo')(session);
+const Users = require('./components/pages/users.jsx');
 const Index = require('./components/pages/index.jsx');
 const Login = require('./components/pages/login.jsx');
 const Menus = require('./components/pages/menus.jsx');
@@ -298,6 +299,11 @@ class ElmuServer {
       };
       return this._sendPage(req, res, 'edit-menu', EditMenu, initialState);
     });
+
+    this.app.get('/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
+      const initialState = await this.userService.getAllUsers();
+      return this._sendPage(req, res, 'users', Users, initialState);
+    });
   }
 
   registerCoreApi() {
@@ -348,6 +354,20 @@ class ElmuServer {
           return res.send({ user: this.userService.dbUserToClientUser(user) });
         });
       })(req, res, next);
+    });
+
+    this.app.post('/api/v1/users/:userId/roles', [needsPermission(permissions.EDIT_USERS), jsonParser], async (req, res) => {
+      const { userId } = req.params;
+      const { roles } = req.body;
+      const newRoles = await this.userService.updateUserRoles(userId, roles);
+      return res.send({ roles: newRoles });
+    });
+
+    this.app.post('/api/v1/users/:userId/lockedOut', [needsPermission(permissions.EDIT_USERS), jsonParser], async (req, res) => {
+      const { userId } = req.params;
+      const { lockedOut } = req.body;
+      const newLockedOutState = await this.userService.updateUserLockedOutState(userId, lockedOut);
+      return res.send({ lockedOut: newLockedOutState });
     });
 
     this.app.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
