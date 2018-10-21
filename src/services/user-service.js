@@ -1,10 +1,11 @@
 const bcrypt = require('bcrypt');
 const moment = require('moment');
+const roles = require('../domain/roles');
 const uniqueId = require('../utils/unique-id');
 const UserStore = require('../stores/user-store');
 const PasswordResetRequestStore = require('../stores/password-reset-request-store');
 
-const ROLE_NAME_USER = 'user';
+const DEFAULT_ROLE_NAME = roles.USER;
 const PROVIDER_NAME_ELMU = 'elmu';
 const PASSWORD_SALT_ROUNDS = 1024;
 const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
@@ -16,6 +17,10 @@ class UserService {
   constructor(userStore, passwordResetRequestStore) {
     this.userStore = userStore;
     this.passwordResetRequestStore = passwordResetRequestStore;
+  }
+
+  getAllUsers() {
+    return this.userStore.find();
   }
 
   getUserById(id) {
@@ -34,6 +39,22 @@ class UserService {
     return this.userStore.save(user);
   }
 
+  async updateUserRoles(userId, newRoles) {
+    const user = await this.getUserById(userId);
+    const roleSet = new Set(newRoles || []);
+    roleSet.add(DEFAULT_ROLE_NAME);
+    user.roles = Array.from(roleSet.values());
+    await this.saveUser(user);
+    return user.roles;
+  }
+
+  async updateUserLockedOutState(userId, lockedOut) {
+    const user = await this.getUserById(userId);
+    user.lockedOut = lockedOut;
+    await this.saveUser(user);
+    return user.lockedOut;
+  }
+
   async createUser(username, password, email, provider = PROVIDER_NAME_ELMU) {
     const user = {
       _id: uniqueId.create(),
@@ -41,7 +62,7 @@ class UserService {
       username: username,
       passwordHash: await this._hashPassword(password),
       email: email,
-      roles: [ROLE_NAME_USER],
+      roles: [DEFAULT_ROLE_NAME],
       expires: moment.utc().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
       verificationCode: uniqueId.create(),
       lockedOut: false

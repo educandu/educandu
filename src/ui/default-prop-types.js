@@ -29,14 +29,18 @@ const requestProps = {
   }).isRequired
 };
 
+const userShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  provider: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  roles: PropTypes.arrayOf(PropTypes.string).isRequired,
+  expires: PropTypes.string,
+  lockedOut: PropTypes.bool
+});
+
 const userProps = {
-  user: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    provider: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    roles: PropTypes.arrayOf(PropTypes.string).isRequired
-  })
+  user: userShape
 };
 
 const docMetadataShape = PropTypes.shape({
@@ -98,5 +102,6 @@ module.exports = {
   docShape,
   sectionShape,
   menuNodeShape,
-  menuShape
+  menuShape,
+  userShape
 };

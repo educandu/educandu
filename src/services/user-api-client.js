@@ -42,6 +42,24 @@ class UserApiClient {
       .send({ username, password })
       .then(res => res.body);
   }
+
+  saveUserRoles({ userId, roles }) {
+    return this.httpClient
+      .post(`/api/v1/users/${userId}/roles`)
+      .type('json')
+      .accept('json')
+      .send({ roles })
+      .then(res => res.body);
+  }
+
+  saveUserLockedOutState({ userId, lockedOut }) {
+    return this.httpClient
+      .post(`/api/v1/users/${userId}/lockedOut`)
+      .type('json')
+      .accept('json')
+      .send({ lockedOut })
+      .then(res => res.body);
+  }
 }
 
 module.exports = UserApiClient;
