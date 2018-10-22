@@ -1,7 +1,7 @@
 require('babel-register')({ extensions: ['.jsx'] });
 require('babel-polyfill');
 
-const ElmuServer = require('./elmu-server');
+const ElmuServer = require('./server/elmu-server');
 const bootstrapper = require('./bootstrap/server-bootstrapper');
 
 (async function index() {

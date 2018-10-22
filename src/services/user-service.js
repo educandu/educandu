@@ -138,20 +138,6 @@ class UserService {
     return this.passwordResetRequestStore.save(request);
   }
 
-  dbUserToClientUser(user) {
-    if (!user) {
-      return null;
-    }
-
-    return {
-      _id: user._id,
-      provider: user.provider,
-      username: user.username,
-      email: user.email,
-      roles: user.roles
-    };
-  }
-
   _hashPassword(password) {
     return bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
   }
