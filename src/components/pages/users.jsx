@@ -106,7 +106,7 @@ class Users extends React.Component {
         key: 'expires',
         sorter: firstBy('expires')
       }, {
-        title: 'Aktiv',
+        title: 'Ausgesperrt',
         dataIndex: 'lockedOut',
         key: 'lockedOut',
         sorter: firstBy('lockedOut'),
