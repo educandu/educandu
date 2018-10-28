@@ -20,7 +20,7 @@ class DocumentService {
     this.sectionStore = sectionStore;
   }
 
-  getLastUpdatedDocuments(numberOfDocs = 10) {
+  getLastUpdatedDocuments(numberOfDocs = 0) {
     return this.documentStore.find({
       sort: [['updatedOn', -1]],
       limit: numberOfDocs
