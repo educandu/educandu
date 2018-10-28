@@ -10,8 +10,8 @@ const Button = require('antd/lib/button');
 const uniqueId = require('../utils/unique-id');
 const cloneDeep = require('../utils/clone-deep');
 const { inject } = require('./container-context.jsx');
-const MenuApiClient = require('./../services/menu-api-client');
-const { menuNodeShape } = require('./../ui/default-prop-types');
+const MenuApiClient = require('../services/menu-api-client');
+const { menuNodeShape } = require('../ui/default-prop-types');
 
 const TreeNode = Tree.TreeNode;
 
@@ -261,12 +261,13 @@ class MenuTree extends React.PureComponent {
   }
 
   render() {
+    const { isReadonly } = this.props;
     const { expandedKeys, selectedKey, autoExpandParent, nodes, isNewNodeModalVisible, newNodeTitle } = this.state;
     return (
       <div>
         <Tree
           showIcon
-          draggable
+          draggable={!isReadonly}
           onDrop={this.handleDrop}
           expandedKeys={expandedKeys}
           onExpand={this.handleExpand}
@@ -279,8 +280,8 @@ class MenuTree extends React.PureComponent {
         </Tree>
         <br />
         <br />
-        <Button type="primary" icon="plus" onClick={this.handleNewNodeClick}>Neuer Menüeintrag</Button>
-        {selectedKey && <Button type="danger" icon="delete" onClick={this.handleDeleteNodeClick}>Menüeintrag löschen</Button>}
+        <Button type="primary" icon="plus" onClick={this.handleNewNodeClick} disabled={isReadonly}>Neuer Menüeintrag</Button>
+        {selectedKey && <Button type="danger" icon="delete" onClick={this.handleDeleteNodeClick} disabled={isReadonly}>Menüeintrag löschen</Button>}
         <Modal
           title="Neuer Menüeintrag"
           visible={isNewNodeModalVisible}
@@ -296,9 +297,14 @@ class MenuTree extends React.PureComponent {
 }
 
 MenuTree.propTypes = {
+  isReadonly: PropTypes.bool,
   nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
   onNodesChanged: PropTypes.func.isRequired,
   onSelectedNodeChanged: PropTypes.func.isRequired
+};
+
+MenuTree.defaultProps = {
+  isReadonly: false
 };
 
 module.exports = inject({

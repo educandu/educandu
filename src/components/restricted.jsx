@@ -4,13 +4,18 @@ const permissions = require('../domain/permissions');
 const { userProps } = require('../ui/default-prop-types');
 
 function Restricted({ to, user, children }) {
-  return permissions.hasUserPermission(user, to) ? children : null;
+  const permissionsToCheck = Array.isArray(to) ? to : [to];
+  const allPermissionsGranted = permissionsToCheck.every(perm => permissions.hasUserPermission(user, perm));
+  return allPermissionsGranted ? children : null;
 }
 
 Restricted.propTypes = {
   ...userProps,
   children: PropTypes.node,
-  to: PropTypes.string.isRequired
+  to: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string)
+  ]).isRequired
 };
 
 Restricted.defaultProps = {

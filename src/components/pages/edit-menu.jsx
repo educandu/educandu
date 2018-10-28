@@ -17,9 +17,12 @@ const uniqueId = require('../../utils/unique-id');
 const PageContent = require('../page-content.jsx');
 const cloneDeep = require('../../utils/clone-deep');
 const { inject } = require('../container-context.jsx');
+const CheckPermissions = require('../check-permissions.jsx');
 const MenuApiClient = require('../../services/menu-api-client');
+const { EDIT_MENU_STRUCTURE } = require('../../domain/permissions');
 const { menuShape, docMetadataShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
+
 
 const DOCS_DROPPABLE_ID = 'docRefs';
 const DEFAULT_DOCS_DROPPABLE_ID = 'defaultDocRefs';
@@ -388,172 +391,194 @@ class EditMenu extends React.Component {
     } = this.state;
 
     return (
-      <Page>
-        <PageHeader>
-          {isDirty && <Button type="primary" icon="save" onClick={this.handleSaveClick}>Speichern</Button>}
-        </PageHeader>
-        <PageContent>
-          <div className="EditMenuPage">
-            <DragDropContext onDragEnd={this.handleDragEnd}>
-              <div className="EditMenuPage-editor">
-                <div className="EditMenuPage-editorColumn EditMenuPage-editorColumn--left">
-                  <div className="EditMenuPage-editorBox">
-                    <div className="Panel">
-                      <div className="Panel-header">
-                        Metadaten
-                      </div>
-                      <div className="Panel-content">
-                        <div>Titel</div>
-                        <div><Input value={menuTitle} onChange={this.handleMenuTitleChange} /></div>
-                        <br />
-                        <div>URL-Pfad</div>
-                        <div><Input addonBefore={urls.menusPrefix} value={menuSlug} onChange={this.handleMenuSlugChange} /></div>
-                        <br />
-                        <div>Standard-Dokument</div>
-                        <div>
-                          <Droppable droppableId={DEFAULT_DOCS_DROPPABLE_ID}>
-                            {(droppableProvided, droppableState) => (
-                              <div
-                                ref={droppableProvided.innerRef}
-                                className={classnames({ 'EditMenuPage-menuRefList': true, 'EditMenuPage-menuRefList--oneLine': true, 'is-draggingOver': droppableState.isDraggingOver })}
-                                >
-                                {defaultDocRefs.map(item => (
+      <CheckPermissions permissions={EDIT_MENU_STRUCTURE}>
+        {canEditMenuStructure => (
+          <Page>
+            <PageHeader>
+              {isDirty && <Button type="primary" icon="save" onClick={this.handleSaveClick}>Speichern</Button>}
+            </PageHeader>
+            <PageContent>
+              <div className="EditMenuPage">
+                <DragDropContext onDragEnd={this.handleDragEnd}>
+                  <div className="EditMenuPage-editor">
+                    <div className="EditMenuPage-editorColumn EditMenuPage-editorColumn--left">
+                      <div className="EditMenuPage-editorBox">
+                        <div className="Panel">
+                          <div className="Panel-header">
+                            Metadaten
+                          </div>
+                          <div className="Panel-content">
+                            <div>Titel</div>
+                            <div>
+                              <Input
+                                value={menuTitle}
+                                onChange={this.handleMenuTitleChange}
+                                disabled={!canEditMenuStructure}
+                                />
+                            </div>
+                            <br />
+                            <div>URL-Pfad</div>
+                            <div>
+                              <Input
+                                addonBefore={urls.menusPrefix}
+                                value={menuSlug}
+                                onChange={this.handleMenuSlugChange}
+                                disabled={!canEditMenuStructure}
+                                />
+                            </div>
+                            <br />
+                            <div>Standard-Dokument</div>
+                            <div>
+                              <Droppable droppableId={DEFAULT_DOCS_DROPPABLE_ID} isDropDisabled={!canEditMenuStructure}>
+                                {(droppableProvided, droppableState) => (
                                   <div
-                                    key={item.key}
-                                    className="EditMenuPage-menuRefListItem"
+                                    ref={droppableProvided.innerRef}
+                                    className={classnames({ 'EditMenuPage-menuRefList': true, 'EditMenuPage-menuRefList--oneLine': true, 'is-draggingOver': droppableState.isDraggingOver })}
                                     >
-                                    <MenuDocRef
-                                      docRefKey={item.key}
-                                      doc={item.doc}
-                                      onDelete={this.handleDeleteDefaultDocRef}
-                                      />
+                                    {defaultDocRefs.map(item => (
+                                      <div
+                                        key={item.key}
+                                        className="EditMenuPage-menuRefListItem"
+                                        >
+                                        <MenuDocRef
+                                          docRefKey={item.key}
+                                          doc={item.doc}
+                                          onDelete={canEditMenuStructure ? this.handleDeleteDefaultDocRef : null}
+                                          />
+                                      </div>
+                                    ))}
+                                    {droppableProvided.placeholder}
                                   </div>
-                                ))}
-                                {droppableProvided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
+                                )}
+                              </Droppable>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="EditMenuPage-editorBox">
+                        <div className="Panel">
+                          <div className="Panel-header">
+                            Kategorien
+                          </div>
+                          <div className="Panel-content">
+                            <MenuTree
+                              nodes={menuNodes}
+                              isReadonly={!canEditMenuStructure}
+                              onNodesChanged={this.handleMenuNodesChanged}
+                              onSelectedNodeChanged={this.handleSelectedMenuNodeChanged}
+                              />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="EditMenuPage-editorColumn EditMenuPage-editorColumn--right">
+                      <div className="EditMenuPage-editorBox">
+                        <div className="Panel">
+                          <div className="Panel-header">
+                            Eigenschaften der Kategorie
+                          </div>
+                          <div className="Panel-content">
+                            <div>Titel</div>
+                            <div>
+                              <Input
+                                value={currentCategoryTitle}
+                                onChange={this.handleCategoryTitleChange}
+                                disabled={!canEditMenuStructure || !selectedNodeKey}
+                                />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="EditMenuPage-editorBox">
+                        <div className="Panel">
+                          <div className="Panel-header">
+                            Verlinkte Dokumente in Kategorie
+                          </div>
+                          <div className="Panel-content">
+                            <Droppable droppableId={CURRENT_MENU_ITEM_DOC_DROPPABLE_ID} isDropDisabled={!selectedNodeKey}>
+                              {(droppableProvided, droppableState) => (
+                                <div
+                                  ref={droppableProvided.innerRef}
+                                  className={classnames({ 'EditMenuPage-menuRefList': true, 'is-draggingOver': droppableState.isDraggingOver })}
+                                  >
+                                  {currentMenuItemDocRefs.map((item, index) => (
+                                    <Draggable
+                                      key={item.key}
+                                      draggableId={item.key}
+                                      index={index}
+                                      >
+                                      {(draggableProvided, draggableState) => (
+                                        <div
+                                          ref={draggableProvided.innerRef}
+                                          {...draggableProvided.draggableProps}
+                                          {...draggableProvided.dragHandleProps}
+                                          className={classnames({ 'EditMenuPage-menuRefListItem': true, 'is-dragging': draggableState.isDragging })}
+                                          >
+                                          <MenuDocRef
+                                            docRefKey={item.key}
+                                            doc={item.doc}
+                                            onDelete={this.handleDeleteMenuItemDocRef}
+                                            />
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))}
+                                  {droppableProvided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="EditMenuPage-editorBox">
+                        <div className="Panel">
+                          <div className="Panel-header">
+                            Verfügbare Dokumente
+                          </div>
+                          <div className="Panel-content">
+                            <Droppable droppableId={DOCS_DROPPABLE_ID} isDropDisabled>
+                              {(droppableProvided, droppableState) => (
+                                <div
+                                  ref={droppableProvided.innerRef}
+                                  className={classnames({ 'EditMenuPage-menuRefList': true, 'is-draggingOver': droppableState.isDraggingOver })}
+                                  >
+                                  {docRefs.map((item, index) => (
+                                    <Draggable
+                                      key={item.key}
+                                      draggableId={item.key}
+                                      index={index}
+                                      >
+                                      {(draggableProvided, draggableState) => (
+                                        <div
+                                          ref={draggableProvided.innerRef}
+                                          {...draggableProvided.draggableProps}
+                                          {...draggableProvided.dragHandleProps}
+                                          className={classnames({ 'EditMenuPage-menuRefListItem': true, 'is-dragging': draggableState.isDragging })}
+                                          >
+                                          <MenuDocRef
+                                            docRefKey={item.key}
+                                            doc={item.doc}
+                                            />
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))}
+                                  {droppableProvided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="EditMenuPage-editorBox">
-                    <div className="Panel">
-                      <div className="Panel-header">
-                        Kategorien
-                      </div>
-                      <div className="Panel-content">
-                        <MenuTree
-                          nodes={menuNodes}
-                          onNodesChanged={this.handleMenuNodesChanged}
-                          onSelectedNodeChanged={this.handleSelectedMenuNodeChanged}
-                          />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="EditMenuPage-editorColumn EditMenuPage-editorColumn--right">
-                  <div className="EditMenuPage-editorBox">
-                    <div className="Panel">
-                      <div className="Panel-header">
-                        Eigenschaften der Kategorie
-                      </div>
-                      <div className="Panel-content">
-                        <div>Titel</div>
-                        <div>
-                          <Input value={currentCategoryTitle} onChange={this.handleCategoryTitleChange} disabled={!selectedNodeKey} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="EditMenuPage-editorBox">
-                    <div className="Panel">
-                      <div className="Panel-header">
-                        Verlinkte Dokumente in Kategorie
-                      </div>
-                      <div className="Panel-content">
-                        <Droppable droppableId={CURRENT_MENU_ITEM_DOC_DROPPABLE_ID} isDropDisabled={!selectedNodeKey}>
-                          {(droppableProvided, droppableState) => (
-                            <div
-                              ref={droppableProvided.innerRef}
-                              className={classnames({ 'EditMenuPage-menuRefList': true, 'is-draggingOver': droppableState.isDraggingOver })}
-                              >
-                              {currentMenuItemDocRefs.map((item, index) => (
-                                <Draggable
-                                  key={item.key}
-                                  draggableId={item.key}
-                                  index={index}
-                                  >
-                                  {(draggableProvided, draggableState) => (
-                                    <div
-                                      ref={draggableProvided.innerRef}
-                                      {...draggableProvided.draggableProps}
-                                      {...draggableProvided.dragHandleProps}
-                                      className={classnames({ 'EditMenuPage-menuRefListItem': true, 'is-dragging': draggableState.isDragging })}
-                                      >
-                                      <MenuDocRef
-                                        docRefKey={item.key}
-                                        doc={item.doc}
-                                        onDelete={this.handleDeleteMenuItemDocRef}
-                                        />
-                                    </div>
-                                  )}
-                                </Draggable>
-                              ))}
-                              {droppableProvided.placeholder}
-                            </div>
-                          )}
-                        </Droppable>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="EditMenuPage-editorBox">
-                    <div className="Panel">
-                      <div className="Panel-header">
-                        Verfügbare Dokumente
-                      </div>
-                      <div className="Panel-content">
-                        <Droppable droppableId={DOCS_DROPPABLE_ID} isDropDisabled>
-                          {(droppableProvided, droppableState) => (
-                            <div
-                              ref={droppableProvided.innerRef}
-                              className={classnames({ 'EditMenuPage-menuRefList': true, 'is-draggingOver': droppableState.isDraggingOver })}
-                              >
-                              {docRefs.map((item, index) => (
-                                <Draggable
-                                  key={item.key}
-                                  draggableId={item.key}
-                                  index={index}
-                                  >
-                                  {(draggableProvided, draggableState) => (
-                                    <div
-                                      ref={draggableProvided.innerRef}
-                                      {...draggableProvided.draggableProps}
-                                      {...draggableProvided.dragHandleProps}
-                                      className={classnames({ 'EditMenuPage-menuRefListItem': true, 'is-dragging': draggableState.isDragging })}
-                                      >
-                                      <MenuDocRef
-                                        docRefKey={item.key}
-                                        doc={item.doc}
-                                        />
-                                    </div>
-                                  )}
-                                </Draggable>
-                              ))}
-                              {droppableProvided.placeholder}
-                            </div>
-                          )}
-                        </Droppable>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                </DragDropContext>
               </div>
-            </DragDropContext>
-          </div>
-        </PageContent>
-        <PageFooter />
-      </Page>
+            </PageContent>
+            <PageFooter />
+          </Page>
+        )}
+      </CheckPermissions>
     );
   }
 }
