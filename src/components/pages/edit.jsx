@@ -14,73 +14,13 @@ const PageContent = require('../page-content.jsx');
 const cloneDeep = require('../../utils/clone-deep');
 const { inject } = require('../container-context.jsx');
 const SectionEditor = require('../section-editor.jsx');
+const pluginInfos = require('../../plugins/plugin-infos');
 const EditorFactory = require('../../plugins/editor-factory');
 const ShallowUpdateList = require('../shallow-update-list.jsx');
 const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
 const { docShape, sectionShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
-
-const pluginInfos = [
-  {
-    name: 'Markdown',
-    type: 'markdown',
-    defaultContent: {
-      text: ''
-    }
-  },
-  {
-    name: 'Image',
-    type: 'image',
-    defaultContent: {
-      type: 'internal',
-      url: '',
-      maxWidth: 100
-    }
-  },
-  {
-    name: 'Audio',
-    type: 'audio',
-    defaultContent: {
-      type: 'internal',
-      url: ''
-    }
-  },
-  {
-    name: 'Youtube-Video',
-    type: 'youtube-video',
-    defaultContent: {
-      videoId: '',
-      maxWidth: 100
-    }
-  },
-  {
-    name: 'Quick-Tester',
-    type: 'quick-tester',
-    defaultContent: {
-      title: '',
-      teaser: '',
-      tests: []
-    }
-  },
-  {
-    name: 'H5P-Player',
-    type: 'h5p-player',
-    defaultContent: {
-      contentId: null,
-      maxWidth: 100
-    }
-  },
-  {
-    name: 'Annotation',
-    type: 'annotation',
-    defaultContent: {
-      title: '',
-      text: ''
-    }
-  }
-];
-
 
 const canReorder = (list, startIndex, endIndex) => {
   return typeof startIndex === 'number'
