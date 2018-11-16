@@ -72,9 +72,10 @@ const pluginInfos = [
     }
   },
   {
-    name: 'Credit',
-    type: 'credit',
+    name: 'Annotation',
+    type: 'annotation',
     defaultContent: {
+      displayText: '',
       text: ''
     }
   }
