@@ -32,6 +32,7 @@
     "babel-polyfill": "~6.26.0",
     "babel-preset-env": "~1.7.0",
     "babel-preset-react": "~6.24.1",
+    "babel-preset-stage-3": "~6.24.1",
     "babel-register": "~6.26.0",
     "bcrypt": "~3.0.0",
     "body-parser": "~1.18.3",
@@ -99,6 +100,7 @@
     "less-plugin-autoprefix": "~2.0.0",
     "run-sequence": "~2.2.1",
     "sinon": "~6.2.0",
+    "umzug": "~2.2.0",
     "webpack": "~4.17.2",
     "webpack-bundle-analyzer": "~2.13.1"
   }

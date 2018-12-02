@@ -3,12 +3,12 @@ const AudioPlugin = require('./audio/renderer');
 const ImagePlugin = require('./image/renderer');
 const MarkdownPlugin = require('./markdown/renderer');
 const H5pPlayerPlugin = require('./h5p-player/renderer');
+const AnnotationPlugin = require('./annotation/renderer');
 const PluginFactoryBase = require('./plugin-factory-base');
 const QuickTesterPlugin = require('./quick-tester/renderer');
 const YoutubeVideoPlugin = require('./youtube-video/renderer');
-const CreditPlugin = require('./credit/renderer');
 
-const renderers = [MarkdownPlugin, QuickTesterPlugin, YoutubeVideoPlugin, AudioPlugin, ImagePlugin, H5pPlayerPlugin, CreditPlugin];
+const renderers = [MarkdownPlugin, QuickTesterPlugin, YoutubeVideoPlugin, AudioPlugin, ImagePlugin, H5pPlayerPlugin, AnnotationPlugin];
 
 class RendererFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }

@@ -3,6 +3,15 @@ class StoreBase {
     this.collection = collection;
   }
 
+  async *aggregate({ pipeline }) {
+    const cursor = this.collection.aggregate(pipeline);
+    /* eslint-disable-next-line no-await-in-loop */
+    while (await cursor.hasNext()) {
+      /* eslint-disable-next-line no-await-in-loop */
+      yield await cursor.next();
+    }
+  }
+
   find({ query = {}, sort = null, projection = null, limit = 0 } = {}) {
     return this.collection.find(query, { sort, limit, projection }).toArray();
   }

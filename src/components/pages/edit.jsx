@@ -58,7 +58,7 @@ const pluginInfos = [
     name: 'Quick-Tester',
     type: 'quick-tester',
     defaultContent: {
-      name: '',
+      title: '',
       teaser: '',
       tests: []
     }
@@ -72,9 +72,10 @@ const pluginInfos = [
     }
   },
   {
-    name: 'Credit',
-    type: 'credit',
+    name: 'Annotation',
+    type: 'annotation',
     defaultContent: {
+      title: '',
       text: ''
     }
   }

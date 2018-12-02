@@ -8,7 +8,7 @@ const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown
 
 const { Panel } = Collapse;
 
-class CreditDisplay extends React.PureComponent {
+class AnnotationDisplay extends React.PureComponent {
   constructor(props) {
     super(props);
     autoBind.react(this);
@@ -20,19 +20,19 @@ class CreditDisplay extends React.PureComponent {
 
     return (
       <Collapse accordion>
-        <Panel header="Credits" key="1">
-          <p className="Credit" dangerouslySetInnerHTML={{ __html: html }} />
+        <Panel header={content.title} key="1">
+          <p className="Annotation" dangerouslySetInnerHTML={{ __html: html }} />
         </Panel>
       </Collapse>
     );
   }
 }
 
-CreditDisplay.propTypes = {
+AnnotationDisplay.propTypes = {
   ...sectionDisplayProps,
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
 module.exports = inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, CreditDisplay);
+}, AnnotationDisplay);

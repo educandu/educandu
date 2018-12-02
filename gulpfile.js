@@ -295,6 +295,8 @@ gulp.task('mongo:user', () => execa('./scripts/db-create-user', { stdio: 'inheri
 
 gulp.task('mongo:seed', () => execa('./scripts/db-seed', { stdio: 'inherit' }));
 
+gulp.task('mongo:migrate', () => execa('./scripts/db-migrate', { stdio: 'inherit' }));
+
 gulp.task('minio:up', () => {
   return ensureContainerRunning({
     containerName: TEST_MINIO_CONTAINER_NAME,

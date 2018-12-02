@@ -18,7 +18,7 @@ class QuickTesterDisplay extends React.Component {
     this.renderMarkdown = memoizeLast(s => githubFlavoredMarkdown.render(s), 100, s => s);
 
     this.state = {
-      name: content.name,
+      title: content.title,
       teaser: content.teaser,
       tests: content.tests,
       currentIndex: -1,
@@ -45,7 +45,7 @@ class QuickTesterDisplay extends React.Component {
   }
 
   render() {
-    const { name, teaser, tests, currentIndex, showResult } = this.state;
+    const { title, teaser, tests, currentIndex, showResult } = this.state;
 
     if (currentIndex === -1) {
       return (
@@ -95,7 +95,7 @@ class QuickTesterDisplay extends React.Component {
       <div className="QuickTester">
         <h3
           className="QuickTester-header"
-          dangerouslySetInnerHTML={{ __html: this.renderMarkdown(name) }}
+          dangerouslySetInnerHTML={{ __html: this.renderMarkdown(title) }}
           />
         {testComponent}
         <div className="QuickTester-buttons">
