@@ -58,7 +58,7 @@ const pluginInfos = [
     name: 'Quick-Tester',
     type: 'quick-tester',
     defaultContent: {
-      name: '',
+      title: '',
       teaser: '',
       tests: []
     }
@@ -75,7 +75,7 @@ const pluginInfos = [
     name: 'Annotation',
     type: 'annotation',
     defaultContent: {
-      displayText: '',
+      title: '',
       text: ''
     }
   }

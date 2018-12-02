@@ -44,6 +44,16 @@ class DocumentService {
     });
   }
 
+  async *getDocumentKeys() {
+    const groups = this.documentSnapshotStore.aggregate({
+      pipeline: [{ $group: { _id: '$key' } }]
+    });
+
+    for await (const group of groups) {
+      yield group._id;
+    }
+  }
+
   getDocumentById(documentId) {
     return this.documentStore.findOne({
       query: { _id: documentId }
@@ -60,6 +70,20 @@ class DocumentService {
     return this.sectionStore.findOne({
       query: { _id: sectionId }
     });
+  }
+
+  async getSectionsByIds(sectionIds) {
+    if (!sectionIds.length) {
+      return [];
+    }
+
+    const sections = await this.sectionStore.find({
+      query: { _id: { $in: sectionIds } }
+    });
+
+    return sectionIds
+      .map(id => sections.find(section => section._id === id))
+      .filter(section => !!section);
   }
 
   getInitialDocumentSnapshot(documentKey) {
@@ -148,24 +172,41 @@ class DocumentService {
 
     const firstSnapshot = await this.getInitialDocumentSnapshot(documentKey);
 
-    const latestDocument = {
-      _id: documentKey,
-      snapshotId: newSnapshot._id,
-      createdOn: firstSnapshot.createdOn,
-      updatedOn: newSnapshot.createdOn,
-      createdBy: firstSnapshot.createdBy,
-      updatedBy: newSnapshot.createdBy,
-      order: newSnapshot.order,
-      title: newSnapshot.title,
-      slug: newSnapshot.slug,
-      sections: updatedSections
-    };
+    const latestDocument = this.createLatestDocument(documentKey, firstSnapshot, newSnapshot, updatedSections);
 
     await this.documentStore.save(latestDocument);
 
     await this.documentLockStore.releaseLock(documentKey);
 
     return latestDocument;
+  }
+
+  createLatestDocument(documentKey, firstSnapshot, lastSnapshot, sections) {
+    return {
+      _id: documentKey,
+      snapshotId: lastSnapshot._id,
+      createdOn: firstSnapshot.createdOn,
+      updatedOn: lastSnapshot.createdOn,
+      createdBy: firstSnapshot.createdBy,
+      updatedBy: lastSnapshot.createdBy,
+      order: lastSnapshot.order,
+      title: lastSnapshot.title,
+      slug: lastSnapshot.slug,
+      sections: sections
+    };
+  }
+
+  async regenerateLatestDocument(documentKey) {
+    await this.documentLockStore.takeLock(documentKey);
+
+    const firstSnapshot = await this.getInitialDocumentSnapshot(documentKey);
+    const lastSnapshot = await this.getLatestDocumentSnapshot(documentKey);
+    const sections = await this.getSectionsByIds(lastSnapshot.sections.map(section => section.id));
+
+    const latestDocument = this.createLatestDocument(documentKey, firstSnapshot, lastSnapshot, sections);
+    await this.documentStore.save(latestDocument);
+
+    await this.documentLockStore.releaseLock(documentKey);
   }
 
   /* eslint-disable-next-line no-unused-vars */

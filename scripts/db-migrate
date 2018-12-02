@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+const path = require('path');
+const Umzug = require('umzug');
+const Database = require('../src/stores/database');
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+
+(async function migrate() {
+
+  const container = await serverBootstrapper.createContainer();
+
+  const db = container.get(Database);
+
+  const umzug = new Umzug({
+    storage: 'mongodb',
+    storageOptions: {
+      collection: db._db.collection('migrations')
+    },
+    migrations: {
+      path: path.join(__dirname, 'migrations'),
+      pattern: /^\d{4}-\d{2}-\d{2}-.*\.js$/,
+      /* eslint-disable-next-line global-require */
+      customResolver: filePath => container.get(require(filePath))
+    }
+  });
+
+  try {
+    const result = await umzug.up();
+    /* eslint-disable-next-line no-console */
+    console.log(result);
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.error(err);
+  }
+
+  await serverBootstrapper.disposeContainer(container);
+
+})();

@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+/* eslint no-console: 0 */
+/* eslint no-await-in-loop: 0 */
+
+const DocumentService = require('../src/services/document-service');
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+
+(async function pruneEnv() {
+
+  const container = await serverBootstrapper.createContainer();
+
+  const documentService = container.get(DocumentService);
+
+  const documentKeys = documentService.getDocumentKeys();
+
+  for await (const documentKey of documentKeys) {
+    console.log(`Regenerating document ${documentKey}...`);
+    await documentService.regenerateLatestDocument(documentKey);
+  }
+
+  await serverBootstrapper.disposeContainer(container);
+
+  console.log('Done!');
+
+})();

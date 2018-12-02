@@ -16,9 +16,9 @@ class AnnotationEditor extends React.Component {
     this.changeContent({ text: newValue });
   }
 
-  handleDisplayTextChange(event) {
+  handleTitleChange(event) {
     const newValue = event.target.value;
-    this.changeContent({ displayText: newValue });
+    this.changeContent({ title: newValue });
   }
 
   changeContent(newContentValues) {
@@ -28,11 +28,11 @@ class AnnotationEditor extends React.Component {
 
   render() {
     const { content } = this.props;
-    const { text, displayText } = content;
+    const { text, title } = content;
 
     return (
       <div>
-        <Input value={displayText} placeholder="Geben Sie hier einen Anzeigetext ein..." onChange={this.handleDisplayTextChange} />
+        <Input value={title} placeholder="Geben Sie hier einen Anzeigetext ein..." onChange={this.handleTitleChange} />
         <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
       </div>
     );
