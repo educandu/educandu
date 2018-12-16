@@ -22,6 +22,34 @@
       }
     },
     {
+      "type": "interval-trainer",
+      "content": {
+        "de": {
+          "title": "Große und kleine Intervalle",
+          "keyboardShortcuts": "Q2W3ER5T6Z7UYSXDCVGBHNJM",
+          "keyboardStart": 0,
+          "keyboardEnd": 24,
+          "keyboardOffset": 48,
+          "tests": [
+            {
+              "question": "Spielen Sie eine kleine Terz aufwärts vom Ton c aus.",
+              "interval": [
+                0,
+                3
+              ]
+            },
+            {
+              "question": "Spielen Sie eine kleine Terz abwärts vom Ton as aus.",
+              "interval": [
+                8,
+                5
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
       "type": "quick-tester",
       "content": {
         "de": {
