@@ -3,6 +3,7 @@ const moment = require('moment');
 const firstBy = require('thenby');
 const autoBind = require('auto-bind');
 const Icon = require('antd/lib/icon');
+const Input = require('antd/lib/input');
 const Table = require('antd/lib/table');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
@@ -13,6 +14,7 @@ const message = require('antd/lib/message');
 const prettyBytes = require('pretty-bytes');
 const selection = require('../ui/selection');
 const pathHelper = require('../ui/path-helper');
+const Highlighter = require('react-highlighter');
 const Breadcrumb = require('antd/lib/breadcrumb');
 const browserHelper = require('../ui/browser-helper');
 const { inject } = require('./container-context.jsx');
@@ -48,6 +50,7 @@ class RepositoryBrowser extends React.Component {
 
     this.lastDragElement = null;
     this.browserRef = React.createRef();
+    this.filterTextInputRef = React.createRef();
 
     const rootPathSegments = pathHelper.getPathSegments(props.rootPrefix);
     const uploadPathSegments = props.uploadPrefix ? pathHelper.getPathSegments(props.uploadPrefix) : rootPathSegments;
@@ -63,6 +66,7 @@ class RepositoryBrowser extends React.Component {
 
     this.state = {
       records: [],
+      filterText: '',
       isRefreshing: false,
       selectedRowKeys: [],
       currentUploadCount: 0,
@@ -373,6 +377,15 @@ class RepositoryBrowser extends React.Component {
     return record.rowProps;
   }
 
+  handleFilterTextChange(event) {
+    this.setState({ filterText: event.target.value });
+  }
+
+  handleFilterTextClear() {
+    this.filterTextInputRef.current.focus();
+    this.setState({ filterText: '' });
+  }
+
   async onCustomUpload({ file, onProgress, onSuccess }) {
     const { currentPathSegments } = this.state;
     const result = await this.uploadFiles(currentPathSegments, [file], { onProgress });
@@ -389,11 +402,19 @@ class RepositoryBrowser extends React.Component {
   }
 
   renderNameColumn(text, record) {
+    const { filterText } = this.state;
+    const normalizedFilterText = filterText.toLowerCase().trim();
     const icon = record.isDirectory
       ? <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--folder"><Icon type="folder" /></span>
       : <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--file"><Icon type="file" /></span>;
 
-    return <span>{icon}&nbsp;&nbsp;&nbsp;{text}</span>;
+    return (
+      <span className="RepositoryBrowser-browserRecordText">
+        {icon}
+        &nbsp;&nbsp;&nbsp;
+        <Highlighter search={normalizedFilterText} matchClass="RepositoryBrowser-browserRecordText is-highlighted">{text}</Highlighter>
+      </span>
+    );
   }
 
   renderActionsColumn() {
@@ -483,7 +504,10 @@ class RepositoryBrowser extends React.Component {
   }
 
   render() {
-    const { records, currentPathSegments, uploadPathSegments, lockedPathSegmentsCount, currentDropTarget } = this.state;
+    const { records, currentPathSegments, uploadPathSegments, lockedPathSegmentsCount, currentDropTarget, filterText } = this.state;
+
+    const normalizedFilterText = filterText.toLowerCase().trim();
+    const filteredRecords = records.filter(r => r.displayName && r.displayName.toLowerCase().includes(normalizedFilterText));
 
     const currentPrefix = pathHelper.getPrefix(currentPathSegments);
     const canUpload = pathHelper.isInPath(currentPathSegments, uploadPathSegments);
@@ -493,6 +517,12 @@ class RepositoryBrowser extends React.Component {
       'RepositoryBrowser-browser--dropTarget': canUpload && currentDropTarget === currentPrefix
     });
 
+    const suffix = normalizedFilterText ? <Icon className="RepositoryBrowser-filterClearButton" type="close" onClick={this.handleFilterTextClear} /> : null;
+    const filterTextInputClassNames = classNames({
+      'RepositoryBrowser-filterInput': true,
+      'is-active': !!normalizedFilterText
+    });
+
     return (
       <div className="RepositoryBrowser">
         <div className="RepositoryBrowser-header">
@@ -500,6 +530,14 @@ class RepositoryBrowser extends React.Component {
             {this.renderBreadCrumbs(currentPathSegments, lockedPathSegmentsCount)}
           </div>
           <div className="RepositoryBrowser-headerButtons">
+            <Input
+              suffix={suffix}
+              value={filterText}
+              placeholder="Suchfilter"
+              ref={this.filterTextInputRef}
+              onChange={this.handleFilterTextChange}
+              className={filterTextInputClassNames}
+              />
             <Upload
               multiple
               disabled={!canUpload}
@@ -520,7 +558,7 @@ class RepositoryBrowser extends React.Component {
           onDrop={canUpload ? this.handleFrameDrop : null}
           data-drop-target={canUpload ? currentPrefix : null}
           >
-          {this.renderRecordsTable(records)}
+          {this.renderRecordsTable(filteredRecords)}
         </div>
       </div>
     );
