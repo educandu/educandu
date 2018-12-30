@@ -1,3 +1,5 @@
+@repository-browser-filter-input-active-border-color: @orange-6;
+
 .RepositoryBrowser {}
 
 .RepositoryBrowser-browser {
@@ -33,6 +35,16 @@
   }
 }
 
+.RepositoryBrowser-browserRecordText {
+  white-space: nowrap;
+
+  &.is-highlighted {
+    padding: 0;
+    font-weight: bold;
+    background-color: lighten(@repository-browser-filter-input-active-border-color, 33%);
+  }
+}
+
 .RepositoryBrowser-tableRow {
   cursor: pointer;
 
@@ -45,4 +57,18 @@
     background-color: @orange-2;
     box-shadow: 0px 0px 5px @orange-8;
   }
+}
+
+.RepositoryBrowser-filterInput {
+  width: 250px;
+  margin-right: 10px;
+
+  &.is-active > input:not(:focus):not(:active):not(:hover) {
+    border-color: @repository-browser-filter-input-active-border-color;
+    box-shadow: 0 0 0 2px lighten(@repository-browser-filter-input-active-border-color, 33%);
+  }
+}
+
+.RepositoryBrowser-filterClearButton {
+  cursor: pointer;
 }
