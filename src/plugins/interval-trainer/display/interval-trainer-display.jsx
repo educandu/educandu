@@ -264,6 +264,14 @@ class IntervalTrainerDisplay extends React.Component {
     const { keyboardStart, keyboardEnd, keyboardOffset, title } = content;
 
     const test = tests[currentTestIndex];
+    if (!test) {
+      return (
+        <div className="IntervalTrainer">
+          Keine Tests vorhanden
+        </div>
+      );
+    }
+
     const showResolveButton = test.state !== TEST_STATE_GREEN;
     const showNextButton = test.state === TEST_STATE_GREEN && currentTestIndex < tests.length - 1;
     const showStatsButton = test.state === TEST_STATE_GREEN && currentTestIndex === tests.length - 1 && !showStats;
