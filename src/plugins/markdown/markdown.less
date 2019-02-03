@@ -1,1 +1,50 @@
-.Markdown {}
+@markdown-blockquote-color: @orange-7;
+@markdown-blockquote-background-color: @grey-1;
+@markdown-blockquote-shadow-color: @grey-6;
+@markdown-blockquote-quotations-color: @grey-7;
+
+.Markdown {
+  blockquote {
+    display:block;
+    background: @markdown-blockquote-background-color;
+    padding: 15px 20px 15px 45px;
+    margin: 40px 80px;
+    position: relative;
+
+    @media only screen and (max-width: 576px) {
+      margin: 40px 0;
+    }
+
+    /*Borders - (Optional)*/
+    border-left: 15px solid @markdown-blockquote-color;
+    border-right: 2px solid @markdown-blockquote-color;
+
+    /*Box Shadow - (Optional)*/
+    box-shadow: 2px 2px 15px @markdown-blockquote-shadow-color;
+  }
+
+  blockquote::before{
+    content: "\201C"; /*Unicode for Left Double Quote*/
+
+    /*Font*/
+    line-height: 60px;
+    font-family: Georgia, serif;
+    font-size: 60px;
+    font-weight: bold;
+    color: @markdown-blockquote-quotations-color;
+
+    /*Positioning*/
+    position: absolute;
+    left: 10px;
+    top:5px;
+  }
+
+  blockquote::after{
+    /*Reset to make sure*/
+    content: "";
+  }
+
+  blockquote > *:last-child {
+    margin-bottom: 0;
+  }
+}
