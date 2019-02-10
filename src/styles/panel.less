@@ -1,6 +1,10 @@
+@panel-background-color: @grey-2;
+@panel-border-color: @grey-5;
+@panel-content-background-color: @grey-1;
+
 .Panel {
-  background-color: #fafafa;
-  border: 1px solid #d9d9d9;
+  background-color: @panel-background-color;
+  border: 1px solid @panel-border-color;
   border-radius: 4px;
   width: 100%;
   margin: 0;
@@ -12,16 +16,28 @@
 }
 
 .Panel-content {
-  background-color: #fff;
+  background-color: @panel-content-background-color;
   padding: 24px;
+
+  &.Panel-content--darker {
+    background-color: inherit;
+  }
+
+  & > *:first-child {
+    margin-top: 0;
+  }
+
+  & > *:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .Panel-header {
-  border-bottom: 1px solid #d9d9d9;
+  border-bottom: 1px solid @panel-border-color;
   padding: 12px 24px;
 }
 
 .Panel-footer {
-  border-top: 1px solid #d9d9d9;
+  border-top: 1px solid @panel-border-color;
   padding: 12px 24px;
 }
