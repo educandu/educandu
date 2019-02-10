@@ -12,7 +12,9 @@ module.exports = [
     defaultContent: {
       type: 'internal',
       url: '',
-      maxWidth: 100
+      maxWidth: 100,
+      text: '',
+      hover: null
     }
   },
   {
@@ -20,7 +22,8 @@ module.exports = [
     type: 'audio',
     defaultContent: {
       type: 'internal',
-      url: ''
+      url: '',
+      text: ''
     }
   },
   {
