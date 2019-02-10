@@ -1,4 +1,21 @@
-.Image {}
+.Image {
+  &--hoverable {
+    .Image-primary {
+      display: block;
+    }
+    .Image-secondary {
+      display: none;
+    }
+  }
+  &--hoverable:hover {
+    .Image-primary {
+      display: none;
+    }
+    .Image-secondary {
+      display: block;
+    }
+  }
+}
 
 .Image-img {
   display: block;
