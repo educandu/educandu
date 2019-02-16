@@ -68,6 +68,7 @@
     "react-dom": "~16.5.0",
     "react-highlighter": "~0.4.3",
     "react-piano": "~3.1.1",
+    "react-player": "~1.9.3",
     "react-vis": "~1.11.5",
     "react-youtube-embed": "~1.0.2",
     "read-all-stream": "~3.1.0",

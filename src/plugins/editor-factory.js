@@ -1,5 +1,6 @@
 const { Container } = require('../common/di');
 const AudioPlugin = require('./audio/editor');
+const VideoPlugin = require('./video/editor');
 const ImagePlugin = require('./image/editor');
 const MarkdownPlugin = require('./markdown/editor');
 const H5pPlayerPlugin = require('./h5p-player/editor');
@@ -9,7 +10,17 @@ const QuickTesterPlugin = require('./quick-tester/editor');
 const YoutubeVideoPlugin = require('./youtube-video/editor');
 const IntervalTrainerPlugin = require('./interval-trainer/editor');
 
-const editors = [MarkdownPlugin, QuickTesterPlugin, YoutubeVideoPlugin, AudioPlugin, ImagePlugin, H5pPlayerPlugin, AnnotationPlugin, IntervalTrainerPlugin];
+const editors = [
+  MarkdownPlugin,
+  QuickTesterPlugin,
+  YoutubeVideoPlugin,
+  AudioPlugin,
+  VideoPlugin,
+  ImagePlugin,
+  H5pPlayerPlugin,
+  AnnotationPlugin,
+  IntervalTrainerPlugin
+];
 
 class EditorFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }

@@ -27,6 +27,20 @@ module.exports = [
     }
   },
   {
+    name: 'Video',
+    type: 'video',
+    defaultContent: {
+      type: 'internal',
+      url: '',
+      text: '',
+      width: 100,
+      aspectRatio: {
+        h: 16,
+        v: 9
+      }
+    }
+  },
+  {
     name: 'Youtube-Video',
     type: 'youtube-video',
     defaultContent: {

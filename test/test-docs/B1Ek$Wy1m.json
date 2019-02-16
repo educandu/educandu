@@ -13,6 +13,20 @@
       }
     },
     {
+      "type": "video",
+      "content": {
+        "de": {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+          "width": 80,
+          "aspectRatio": {
+            "h": 16,
+            "v": 9
+          }
+        }
+      }
+    },
+    {
       "type": "h5p-player",
       "content": {
         "de": {
