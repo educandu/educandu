@@ -1,22 +1,29 @@
 .Video {}
 
-.Video-playerContainerOuter {
+.Video-players {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.Video-playerContainerInner {}
+.Video-mainPlayerContainer {
 
-.Video-playerOuter {
+  &.Video-mainPlayerContainer--noDisplay {
+    display: none;
+  }
+}
+
+.Video-mainPlayerOuter {
   position: relative;
 }
 
-.Video-playerInner {
+.Video-mainPlayerInner {
   position: absolute;
   top: 0;
   left: 0;
 }
+
+.VideoDisplay-mediaControlContainer {}
 
 .Video-text {
   padding-top: 20px;

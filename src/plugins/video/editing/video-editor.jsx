@@ -3,6 +3,7 @@ const autoBind = require('auto-bind');
 const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
+const Switch = require('antd/lib/switch');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -12,7 +13,11 @@ const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const { TextArea } = Input;
+const TextArea = Input.TextArea;
+
+const TYPE_EXTERNAL = 'external';
+const TYPE_INTERNAL = 'internal';
+const TYPE_YOUTUBE = 'youtube';
 
 class VideoEditor extends React.Component {
   constructor(props) {
@@ -36,18 +41,16 @@ class VideoEditor extends React.Component {
 
   handleTypeValueChanged(event) {
     const { value } = event.target;
-    this.changeContent({ type: value, url: '' });
+    this.changeContent({ type: value, url: '', showVideo: true });
   }
 
   handleAspectRatioChanged(event) {
-    const { value } = event.target;
-    const [h, v] = value.split(':').map(Number);
+    const [h, v] = event.target.value.split(':').map(Number);
     this.changeContent({ aspectRatio: { h, v } });
   }
 
-  changeContent(newContentValues) {
-    const { content, onContentChanged } = this.props;
-    onContentChanged({ ...content, ...newContentValues });
+  handleShowVideoChanged(showVideo) {
+    this.changeContent({ showVideo });
   }
 
   handleCurrentEditorValueChanged(event) {
@@ -59,9 +62,14 @@ class VideoEditor extends React.Component {
     this.changeContent({ width: newValue });
   }
 
+  changeContent(newContentValues) {
+    const { content, onContentChanged } = this.props;
+    onContentChanged({ ...content, ...newContentValues });
+  }
+
   render() {
     const { docKey, content, clientSettings } = this.props;
-    const { type, url, text, width, aspectRatio } = content;
+    const { type, url, text, width, aspectRatio, showVideo } = content;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -78,12 +86,12 @@ class VideoEditor extends React.Component {
               <RadioButton value="youtube">Youtube</RadioButton>
             </RadioGroup>
           </FormItem>
-          {type === 'external' && (
+          {type === TYPE_EXTERNAL && (
             <FormItem label="Externe URL" {...formItemLayout}>
               <Input value={url} onChange={this.handleExternalUrlValueChanged} />
             </FormItem>
           )}
-          {type === 'internal' && (
+          {type === TYPE_INTERNAL && (
             <FormItem label="Interne URL" {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
@@ -101,7 +109,7 @@ class VideoEditor extends React.Component {
               </div>
             </FormItem>
           )}
-          {type === 'youtube' && (
+          {type === TYPE_YOUTUBE && (
             <FormItem label="Youtube URL" {...formItemLayout}>
               <Input value={url} onChange={this.handleYoutubeUrlValueChanged} />
             </FormItem>
@@ -111,6 +119,9 @@ class VideoEditor extends React.Component {
               <RadioButton value="16:9">16:9</RadioButton>
               <RadioButton value="4:3">4:3</RadioButton>
             </RadioGroup>
+          </Form.Item>
+          <Form.Item label="Videoanzeige" {...formItemLayout}>
+            <Switch size="small" defaultChecked checked={showVideo} onChange={this.handleShowVideoChanged} />
           </Form.Item>
           <Form.Item label="Breite" {...formItemLayout}>
             <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={this.handleWidthChanged} />

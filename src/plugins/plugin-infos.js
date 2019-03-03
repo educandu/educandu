@@ -37,7 +37,8 @@ module.exports = [
       aspectRatio: {
         h: 16,
         v: 9
-      }
+      },
+      showVideo: true
     }
   },
   {
