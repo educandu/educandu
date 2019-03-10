@@ -27,11 +27,18 @@ module.exports = [
     }
   },
   {
-    name: 'Youtube-Video',
-    type: 'youtube-video',
+    name: 'Video',
+    type: 'video',
     defaultContent: {
-      videoId: '',
-      maxWidth: 100
+      type: 'internal',
+      url: '',
+      text: '',
+      width: 100,
+      aspectRatio: {
+        h: 16,
+        v: 9
+      },
+      showVideo: true
     }
   },
   {

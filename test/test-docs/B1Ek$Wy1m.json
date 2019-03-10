@@ -13,6 +13,21 @@
       }
     },
     {
+      "type": "video",
+      "content": {
+        "de": {
+          "type": "youtube",
+          "url": "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+          "width": 80,
+          "aspectRatio": {
+            "h": 16,
+            "v": 9
+          },
+          "showVideo": true
+        }
+      }
+    },
+    {
       "type": "h5p-player",
       "content": {
         "de": {
@@ -69,15 +84,6 @@
               "answer": "Des-Dur.  \nZum Nachlesen: [J. Brahms, Op. 104, Nr. 5, ›Im Hebst‹, zweite Phrase »sinkt auch«](#brahms-d7)."
             }
           ]
-        }
-      }
-    },
-    {
-      "type": "youtube-video",
-      "content": {
-        "de": {
-          "videoId": "SQNymNaTr-Y",
-          "maxWidth": 70
         }
       }
     },

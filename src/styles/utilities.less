@@ -7,6 +7,15 @@
 }
 .u-max-width-loop (@iterations);
 
+@iterations: 0;
+.u-width-loop (@i) when (@i <= 100) {
+  .u-width-@{i} {
+    width: ~"@{i}%" !important;
+  }
+  .u-width-loop(@i + 1);
+}
+.u-width-loop (@iterations);
+
 .u-img-color-flip {
   filter: grayscale(100%);
   transition: all .2s ease-in-out;
