@@ -88,15 +88,6 @@
       }
     },
     {
-      "type": "youtube-video",
-      "content": {
-        "de": {
-          "videoId": "SQNymNaTr-Y",
-          "maxWidth": 70
-        }
-      }
-    },
-    {
       "type": "markdown",
       "content": {
         "de": {

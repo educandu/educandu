@@ -42,14 +42,6 @@ module.exports = [
     }
   },
   {
-    name: 'Youtube-Video',
-    type: 'youtube-video',
-    defaultContent: {
-      videoId: '',
-      maxWidth: 100
-    }
-  },
-  {
     name: 'Quick-Tester',
     type: 'quick-tester',
     defaultContent: {

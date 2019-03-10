@@ -71,7 +71,6 @@
     "react-player": "~1.9.3",
     "react-soundplayer": "~1.0.4",
     "react-vis": "~1.11.5",
-    "react-youtube-embed": "~1.0.2",
     "read-all-stream": "~3.1.0",
     "recursive-readdir": "~2.2.2",
     "shallow-equal": "~1.0.0",

@@ -7,13 +7,11 @@ const H5pPlayerPlugin = require('./h5p-player/renderer');
 const AnnotationPlugin = require('./annotation/renderer');
 const PluginFactoryBase = require('./plugin-factory-base');
 const QuickTesterPlugin = require('./quick-tester/renderer');
-const YoutubeVideoPlugin = require('./youtube-video/renderer');
 const IntervalTrainerPlugin = require('./interval-trainer/renderer');
 
 const renderers = [
   MarkdownPlugin,
   QuickTesterPlugin,
-  YoutubeVideoPlugin,
   AudioPlugin,
   VideoPlugin,
   ImagePlugin,
