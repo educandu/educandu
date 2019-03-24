@@ -7,6 +7,16 @@ const Button = require('antd/lib/button');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 
 const FormItem = Form.Item;
+const ButtonGroup = Button.Group;
+
+const swapItems = (items, index1, index2) => {
+  const newItems = items.slice();
+  const item1 = newItems[index1];
+  const item2 = newItems[index2];
+  newItems[index1] = item2;
+  newItems[index2] = item1;
+  return newItems;
+};
 
 class QuickTesterEditor extends React.Component {
   constructor(props) {
@@ -15,6 +25,15 @@ class QuickTesterEditor extends React.Component {
 
     this.columns = [
       {
+        width: 80,
+        key: 'upDown',
+        render: (upDown, item, index) => (
+          <ButtonGroup>
+            <Button data-index={index} disabled={index === 0} icon="arrow-up" onClick={this.handleUpCircleButtonClick} />
+            <Button data-index={index} disabled={index === this.props.content.tests.length - 1} icon="arrow-down" onClick={this.handleDownCircleButtonClick} />
+          </ButtonGroup>
+        )
+      }, {
         title: 'Frage',
         dataIndex: 'question',
         key: 'question',
@@ -83,6 +102,20 @@ class QuickTesterEditor extends React.Component {
   handleAddButtonClick() {
     const newTests = this.props.content.tests.slice();
     newTests.push({ question: '', answer: '' });
+    this.changeContent({ tests: newTests });
+  }
+
+  handleUpCircleButtonClick(event) {
+    const { dataset } = event.target;
+    const index = Number.parseInt(dataset.index, 10);
+    const newTests = swapItems(this.props.content.tests, index, index - 1);
+    this.changeContent({ tests: newTests });
+  }
+
+  handleDownCircleButtonClick(event) {
+    const { dataset } = event.target;
+    const index = Number.parseInt(dataset.index, 10);
+    const newTests = swapItems(this.props.content.tests, index, index + 1);
     this.changeContent({ tests: newTests });
   }
 
