@@ -3,10 +3,9 @@ const Form = require('antd/lib/form');
 const autoBind = require('auto-bind');
 const Input = require('antd/lib/input');
 const Table = require('antd/lib/table');
-const message = require('antd/lib/message');
+const Button = require('antd/lib/button');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 
-const { TextArea } = Input;
 const FormItem = Form.Item;
 
 class QuickTesterEditor extends React.Component {
@@ -29,22 +28,17 @@ class QuickTesterEditor extends React.Component {
         render: (answer, item, index) => (
           <Input data-index={index} value={answer} onChange={this.handleInputAnswerChanged} />
         )
+      }, {
+        title: (
+          <Button type="primary" icon="plus" onClick={this.handleAddButtonClick} />
+        ),
+        width: 48,
+        key: 'button',
+        render: (answer, item, index) => (
+          <Button data-index={index} type="danger" icon="delete" onClick={this.handleDeletButtonClick} />
+        )
       }
     ];
-  }
-
-  handleJSONValueChanged(event) {
-    const { value } = event.target;
-
-    let newContent;
-    try {
-      newContent = JSON.parse(value);
-    } catch (err) {
-      message.error('Kein gültiges JSON');
-      return;
-    }
-
-    this.changeContent({ ...newContent });
   }
 
   changeContent(newContentValues) {
@@ -78,6 +72,20 @@ class QuickTesterEditor extends React.Component {
     this.changeContent({ tests: newTests });
   }
 
+  handleDeletButtonClick(event) {
+    const { dataset } = event.target;
+    const index = Number.parseInt(dataset.index, 10);
+    const oldTests = this.props.content.tests;
+    const newTests = oldTests.filter((t, i) => i !== index);
+    this.changeContent({ tests: newTests });
+  }
+
+  handleAddButtonClick() {
+    const newTests = this.props.content.tests.slice();
+    newTests.push({ question: '', answer: '' });
+    this.changeContent({ tests: newTests });
+  }
+
   render() {
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -89,7 +97,6 @@ class QuickTesterEditor extends React.Component {
       question: t.question,
       answer: t.answer
     }));
-    const json = JSON.stringify(content, null, 2) || '';
 
     return (
       <div>
@@ -102,7 +109,6 @@ class QuickTesterEditor extends React.Component {
           </FormItem>
         </Form>
         <Table dataSource={dataSource} columns={this.columns} pagination={false} size="small" />
-        <TextArea value={json} onChange={this.handleJSONValueChanged} autosize={{ minRows: 3 }} />
       </div>
     );
   }
