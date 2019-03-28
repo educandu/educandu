@@ -1,11 +1,7 @@
 const bodyParser = require('body-parser');
 const PageRenderer = require('./page-renderer');
-const Doc = require('../components/pages/doc.jsx');
-const Docs = require('../components/pages/docs.jsx');
-const Edit = require('../components/pages/edit.jsx');
 const permissions = require('../domain/permissions');
 const ClientDataMapper = require('./client-data-mapper');
-const Article = require('../components/pages/article.jsx');
 const DocumentService = require('../services/document-service');
 const needsPermission = require('../domain/needs-permission-middleware');
 
@@ -28,12 +24,12 @@ class DocumentController {
       }
 
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
-      return this.pageRenderer.sendPage(req, res, 'article', Article, initialState);
+      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'article', initialState);
     });
 
     app.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const initialState = await this.documentService.getLastUpdatedDocuments();
-      return this.pageRenderer.sendPage(req, res, 'docs', Docs, initialState);
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'docs', initialState);
     });
 
     app.get('/docs/:docId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
@@ -43,7 +39,7 @@ class DocumentController {
       }
 
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
-      return this.pageRenderer.sendPage(req, res, 'doc', Doc, initialState);
+      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'doc', initialState);
     });
 
     app.get('/edit/doc/:docId', needsPermission(permissions.EDIT_DOC), async (req, res) => {
@@ -53,7 +49,7 @@ class DocumentController {
       }
 
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
-      return this.pageRenderer.sendPage(req, res, 'edit', Edit, initialState);
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-doc', initialState);
     });
   }
 

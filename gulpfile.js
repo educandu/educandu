@@ -166,9 +166,11 @@ gulp.task('bundle:js', async () => {
     : [];
 
   const commonChunkModules = new Set([
+    '@ant-design',
     'babel-polyfill',
     'babel-runtime',
     'core-js',
+    'iconv-lite',
     'regenerator-runtime',
     'object-assign',
     'aurelia-dependency-injection',

@@ -1,12 +1,9 @@
 const treeCrawl = require('tree-crawl');
 const bodyParser = require('body-parser');
 const PageRenderer = require('./page-renderer');
-const Menu = require('../components/pages/menu.jsx');
 const permissions = require('../domain/permissions');
-const Menus = require('../components/pages/menus.jsx');
 const MenuService = require('../services/menu-service');
 const ClientDataMapper = require('./client-data-mapper');
-const EditMenu = require('../components/pages/edit-menu.jsx');
 const DocumentService = require('../services/document-service');
 const needsPermission = require('../domain/needs-permission-middleware');
 
@@ -48,12 +45,12 @@ class MenuController {
         ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs }),
         defaultDocument: defaultDocument ? this.clientDataMapper.mapDocToInitialState({ doc: defaultDocument }) : null
       };
-      return this.pageRenderer.sendPage(req, res, 'menu', Menu, initialState);
+      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'menu', initialState);
     });
 
     app.get('/menus', needsPermission(permissions.VIEW_MENUS), async (req, res) => {
       const initialState = await this.menuService.getMenus();
-      return this.pageRenderer.sendPage(req, res, 'menus', Menus, initialState);
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'menus', initialState);
     });
 
     app.get('/edit/menu/:menuId', needsPermission(permissions.EDIT_MENU), async (req, res) => {
@@ -68,7 +65,7 @@ class MenuController {
         ...this.clientDataMapper.mapMenuToInitialState({ menu }),
         ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs })
       };
-      return this.pageRenderer.sendPage(req, res, 'edit-menu', EditMenu, initialState);
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-menu', initialState);
     });
   }
 

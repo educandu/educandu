@@ -1,5 +1,4 @@
 const PageRenderer = require('./page-renderer');
-const Index = require('../components/pages/index.jsx');
 
 class IndexController {
   static get inject() { return [PageRenderer]; }
@@ -10,7 +9,7 @@ class IndexController {
 
   registerPages(app) {
     app.get('/', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'index', Index, {});
+      return this.pageRenderer.sendPage(req, res, 'index-bundle', 'index', {});
     });
   }
 }

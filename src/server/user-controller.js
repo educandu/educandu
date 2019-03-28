@@ -7,22 +7,14 @@ const PageRenderer = require('./page-renderer');
 const passportLocal = require('passport-local');
 const Database = require('../stores/database.js');
 const permissions = require('../domain/permissions');
-const Users = require('../components/pages/users.jsx');
-const Index = require('../components/pages/index.jsx');
-const Login = require('../components/pages/login.jsx');
 const UserService = require('../services/user-service');
 const MailService = require('../services/mail-service');
 const requestHelper = require('../utils/request-helper');
 const ClientDataMapper = require('./client-data-mapper');
-const Profile = require('../components/pages/profile.jsx');
-const Register = require('../components/pages/register.jsx');
 const ServerSettings = require('../bootstrap/server-settings');
-const ResetPassword = require('../components/pages/reset-password.jsx');
 const needsPermission = require('../domain/needs-permission-middleware');
 const sessionsStoreSpec = require('../stores/collection-specs/sessions');
 const needsAuthentication = require('../domain/needs-authentication-middleware');
-const CompleteRegistration = require('../components/pages/complete-registration.jsx');
-const CompletePasswordReset = require('../components/pages/complete-password-reset.jsx');
 
 const jsonParser = bodyParser.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -80,11 +72,11 @@ class UserController {
 
   registerPages(app) {
     app.get('/register', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'register', Register, {});
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'register', {});
     });
 
     app.get('/reset-password', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'reset-password', ResetPassword, {});
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'reset-password', {});
     });
 
     app.get('/complete-registration/:verificationCode', async (req, res) => {
@@ -93,15 +85,17 @@ class UserController {
         return res.sendStatus(404);
       }
 
-      return this.pageRenderer.sendPage(req, res, 'complete-registration', CompleteRegistration, {});
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', {});
     });
 
+    /* eslint-disable-next-line no-warning-comments */
+    // TODO: Move this to an index controller
     app.get('/', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'index', Index, {});
+      return this.pageRenderer.sendPage(req, res, 'index-bundle', 'index', {});
     });
 
     app.get('/login', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'login', Login, {});
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'login', {});
     });
 
     app.get('/logout', (req, res) => {
@@ -110,7 +104,7 @@ class UserController {
     });
 
     app.get('/profile', needsAuthentication(), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'profile', Profile, {}, ['country-names']);
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {}, ['country-names']);
     });
 
     app.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
@@ -120,12 +114,12 @@ class UserController {
       }
 
       const initialState = { passwordResetRequestId: resetRequest._id };
-      return this.pageRenderer.sendPage(req, res, 'complete-password-reset', CompletePasswordReset, initialState);
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-password-reset', initialState);
     });
 
     app.get('/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
       const initialState = await this.userService.getAllUsers();
-      return this.pageRenderer.sendPage(req, res, 'users', Users, initialState, ['country-names']);
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'users', initialState, ['country-names']);
     });
   }
 

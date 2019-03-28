@@ -13,7 +13,7 @@ async function createContainer() {
   return container;
 }
 
-async function hydrateApp(PageComponent) {
+async function hydrateApp(bundleConfig) {
   const props = {
     user: window.__user__,
     data: window.__data__,
@@ -21,7 +21,7 @@ async function hydrateApp(PageComponent) {
     language: window.__language__,
     container: await createContainer(),
     initialState: window.__initalState__,
-    PageComponent: PageComponent
+    PageComponent: bundleConfig[window.__pageName__]
   };
 
   ReactDOM.hydrate(

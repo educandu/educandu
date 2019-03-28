@@ -3,6 +3,7 @@ const htmlescape = require('htmlescape');
 const { Container } = require('../common/di');
 const Root = require('../components/root.jsx');
 const cloneDeep = require('../utils/clone-deep');
+const bundleConfig = require('./bundle-config.js');
 const ReactDOMServer = require('react-dom/server');
 const DataProvider = require('../data/data-provider.js');
 const requestHelper = require('../utils/request-helper');
@@ -22,7 +23,7 @@ class PageRenderer {
     this.dataProvider = dataProvider;
   }
 
-  sendPage(req, res, bundleName, PageComponent, initialState = {}, dataKeys = []) {
+  sendPage(req, res, bundleName, pageName, initialState = {}, dataKeys = []) {
     const language = 'de';
     const container = this.container;
     const clientSettings = this.clientSettings;
@@ -39,13 +40,13 @@ class PageRenderer {
       initialState: cloneDeep(initialState),
       language: language,
       data: data,
-      PageComponent: PageComponent
+      PageComponent: bundleConfig[pageName]
     };
-    const html = this._renderHtml(bundleName, request, user, initialState, clientSettings, props, data, language);
+    const html = this.renderHtml({ bundleName, pageName, request, user, initialState, clientSettings, props, data, language });
     return res.type('html').send(html);
   }
 
-  _renderHtml(bundleName, request, user, initialState, clientSettings, props, data, language) {
+  renderHtml({ bundleName, pageName, request, user, initialState, clientSettings, props, data, language }) {
     const elem = React.createElement(Root, props);
     reactBeautifulDnd.resetServerContext();
     const html = ReactDOMServer.renderToString(elem);
@@ -65,6 +66,7 @@ class PageRenderer {
       window.__user__ = ${htmlescape(user)};
       window.__data__ = ${htmlescape(data)};
       window.__request__ = ${htmlescape(request)};
+      window.__pageName__ = ${htmlescape(pageName)};
       window.__language__ = ${htmlescape(language)};
       window.__settings__ = ${htmlescape(clientSettings)};
       window.__initalState__ = ${htmlescape(initialState)};

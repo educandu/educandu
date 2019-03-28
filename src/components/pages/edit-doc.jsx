@@ -41,7 +41,7 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-class Edit extends React.Component {
+class EditDoc extends React.Component {
   constructor(props) {
     super(props);
 
@@ -207,8 +207,8 @@ class Edit extends React.Component {
           <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
         </PageHeader>
         <PageContent>
-          <div className="EditPage">
-            <div className="EditPage-docEditor">
+          <div className="EditDocPage">
+            <div className="EditDocPage-docEditor">
               <DocEditor
                 onChanged={this.handleMetadataChanged}
                 doc={editedDoc}
@@ -266,7 +266,7 @@ class Edit extends React.Component {
   }
 }
 
-Edit.propTypes = {
+EditDoc.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   editorFactory: PropTypes.instanceOf(EditorFactory).isRequired,
   initialState: PropTypes.shape({
@@ -281,4 +281,4 @@ module.exports = inject({
   documentApiClient: DocumentApiClient,
   rendererFactory: RendererFactory,
   editorFactory: EditorFactory
-}, Edit);
+}, EditDoc);
