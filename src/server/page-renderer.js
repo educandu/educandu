@@ -2,7 +2,9 @@ const React = require('react');
 const htmlescape = require('htmlescape');
 const { Container } = require('../common/di');
 const Root = require('../components/root.jsx');
+const cloneDeep = require('../utils/clone-deep');
 const ReactDOMServer = require('react-dom/server');
+const DataProvider = require('../data/data-provider.js');
 const requestHelper = require('../utils/request-helper');
 const ClientDataMapper = require('./client-data-mapper');
 const reactBeautifulDnd = require('react-beautiful-dnd');
@@ -10,34 +12,40 @@ const ClientSettings = require('../bootstrap/client-settings');
 const ServerSettings = require('../bootstrap/server-settings');
 
 class PageRenderer {
-  static get inject() { return [Container, ServerSettings, ClientSettings, ClientDataMapper]; }
+  static get inject() { return [Container, ServerSettings, ClientSettings, ClientDataMapper, DataProvider]; }
 
-  constructor(container, serverSettings, clientSettings, clientDataMapper) {
+  constructor(container, serverSettings, clientSettings, clientDataMapper, dataProvider) {
     this.container = container;
     this.serverSettings = serverSettings;
     this.clientSettings = clientSettings;
     this.clientDataMapper = clientDataMapper;
+    this.dataProvider = dataProvider;
   }
 
-  sendPage(req, res, bundleName, PageComponent, initialState) {
+  sendPage(req, res, bundleName, PageComponent, initialState = {}, dataKeys = []) {
     const language = 'de';
     const container = this.container;
     const clientSettings = this.clientSettings;
     const request = requestHelper.expressReqToRequest(req);
     const user = this.clientDataMapper.dbUserToClientUser(req.user);
+    const data = dataKeys.reduce((d, key) => {
+      d[key] = this.dataProvider.getData(key, language);
+      return d;
+    }, {});
     const props = {
-      request: JSON.parse(JSON.stringify(request)),
-      user: JSON.parse(JSON.stringify(user)),
+      request: cloneDeep(request),
+      user: cloneDeep(user),
       container: container,
-      initialState: JSON.parse(JSON.stringify(initialState)),
+      initialState: cloneDeep(initialState),
       language: language,
+      data: data,
       PageComponent: PageComponent
     };
-    const html = this._renderHtml(bundleName, request, user, initialState, clientSettings, props, language);
+    const html = this._renderHtml(bundleName, request, user, initialState, clientSettings, props, data, language);
     return res.type('html').send(html);
   }
 
-  _renderHtml(bundleName, request, user, initialState, clientSettings, props, language) {
+  _renderHtml(bundleName, request, user, initialState, clientSettings, props, data, language) {
     const elem = React.createElement(Root, props);
     reactBeautifulDnd.resetServerContext();
     const html = ReactDOMServer.renderToString(elem);
@@ -55,6 +63,7 @@ class PageRenderer {
     <div id="root">${html}</div>
     <script>
       window.__user__ = ${htmlescape(user)};
+      window.__data__ = ${htmlescape(data)};
       window.__request__ = ${htmlescape(request)};
       window.__language__ = ${htmlescape(language)};
       window.__settings__ = ${htmlescape(clientSettings)};

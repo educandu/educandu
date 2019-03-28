@@ -52,6 +52,15 @@ class UserApiClient {
       .then(res => res.body);
   }
 
+  saveUserProfile({ profile }) {
+    return this.httpClient
+      .post('/api/v1/users/profile')
+      .type('json')
+      .accept('json')
+      .send({ profile })
+      .then(res => res.body);
+  }
+
   saveUserLockedOutState({ userId, lockedOut }) {
     return this.httpClient
       .post(`/api/v1/users/${userId}/lockedOut`)

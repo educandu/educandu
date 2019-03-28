@@ -39,6 +39,13 @@ class UserService {
     return this.userStore.save(user);
   }
 
+  async updateUserProfile(userId, newProfile) {
+    const user = await this.getUserById(userId);
+    user.profile = newProfile;
+    await this.saveUser(user);
+    return user.profile;
+  }
+
   async updateUserRoles(userId, newRoles) {
     const user = await this.getUserById(userId);
     const roleSet = new Set(newRoles || []);

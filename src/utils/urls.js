@@ -5,6 +5,7 @@ const docsPath = '/docs';
 const menusPath = '/menus';
 const loginPath = '/login';
 const logoutPath = '/logout';
+const profilePath = '/profile';
 const registerPath = '/register';
 const resetPasswordPath = '/reset-password';
 
@@ -93,6 +94,10 @@ function getLogoutUrl() {
   return logoutPath;
 }
 
+function getProfileUrl() {
+  return profilePath;
+}
+
 function getRegisterUrl() {
   return registerPath;
 }
@@ -136,6 +141,7 @@ module.exports = {
   getHomeUrl,
   getLoginUrl,
   getLogoutUrl,
+  getProfileUrl,
   getRegisterUrl,
   getResetPasswordUrl
 };

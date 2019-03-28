@@ -19,10 +19,12 @@ const gulpif = require('gulp-if');
 const webpack = require('webpack');
 const eslint = require('gulp-eslint');
 const plumber = require('gulp-plumber');
+const superagent = require('superagent');
 const { spawn } = require('child_process');
 const { Docker } = require('docker-cli-js');
 const runSequence = require('run-sequence');
 const sourcemaps = require('gulp-sourcemaps');
+const streamToPromise = require('stream-to-promise');
 const LessAutoprefix = require('less-plugin-autoprefix');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -48,6 +50,8 @@ const verbous = (process.argv[2] || '').startsWith('ci') || process.argv.include
 const autoprefixOptions = {
   browsers: ['last 3 versions', 'Firefox ESR', 'IE 11']
 };
+
+const supportedLanguages = ['en', 'de'];
 
 let server = null;
 process.on('exit', () => server && server.kill());
@@ -97,6 +101,12 @@ const ensureContainerRemoved = async ({ containerName }) => {
       throw err;
     }
   }
+};
+
+const downloadCountryList = lang => {
+  return superagent
+    .get(`https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`)
+    .pipe(fs.createWriteStream(`./src/data/country-names/${lang}.json`));
 };
 
 gulp.task('clean', () => {
@@ -256,6 +266,10 @@ gulp.task('verify:es5compat', () => {
 });
 
 gulp.task('verify', ['verify:es5compat']);
+
+gulp.task('countries:update', () => {
+  return Promise.all(supportedLanguages.map(downloadCountryList).map(streamToPromise));
+});
 
 gulp.task('maildev:up', () => {
   return ensureContainerRunning({

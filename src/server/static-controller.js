@@ -1,11 +1,27 @@
 const path = require('path');
 const express = require('express');
 
+const staticConfig = [
+  {
+    root: '/',
+    destination: '../../dist'
+  },
+  {
+    root: '/',
+    destination: '../../static'
+  },
+  {
+    root: '/images/flags',
+    destination: '../../node_modules/flag-icon-css/flags'
+  }
+];
+
 class StaticController {
   registerMiddleware(app) {
-    ['../../dist', '../../static']
-      .map(dir => path.join(__dirname, dir))
-      .forEach(dir => app.use(express.static(dir)));
+    staticConfig.forEach(({ root, destination }) => {
+      const dir = path.join(__dirname, destination);
+      app.use(root, express.static(dir));
+    });
   }
 }
 

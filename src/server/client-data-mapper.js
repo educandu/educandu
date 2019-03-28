@@ -9,7 +9,8 @@ class ClientDataMapper {
       provider: user.provider,
       username: user.username,
       email: user.email,
-      roles: user.roles
+      roles: user.roles,
+      profile: user.profile
     };
   }
 

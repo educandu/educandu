@@ -14,11 +14,13 @@ const UserService = require('../services/user-service');
 const MailService = require('../services/mail-service');
 const requestHelper = require('../utils/request-helper');
 const ClientDataMapper = require('./client-data-mapper');
+const Profile = require('../components/pages/profile.jsx');
 const Register = require('../components/pages/register.jsx');
 const ServerSettings = require('../bootstrap/server-settings');
 const ResetPassword = require('../components/pages/reset-password.jsx');
 const needsPermission = require('../domain/needs-permission-middleware');
 const sessionsStoreSpec = require('../stores/collection-specs/sessions');
+const needsAuthentication = require('../domain/needs-authentication-middleware');
 const CompleteRegistration = require('../components/pages/complete-registration.jsx');
 const CompletePasswordReset = require('../components/pages/complete-password-reset.jsx');
 
@@ -107,6 +109,10 @@ class UserController {
       return res.redirect(urls.getDefaultLogoutRedirectUrl());
     });
 
+    app.get('/profile', needsAuthentication(), (req, res) => {
+      return this.pageRenderer.sendPage(req, res, 'profile', Profile, {}, ['country-names']);
+    });
+
     app.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
       const resetRequest = await this.userService.getPasswordResetRequestById(req.params.passwordResetRequestId);
       if (!resetRequest) {
@@ -119,7 +125,7 @@ class UserController {
 
     app.get('/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
       const initialState = await this.userService.getAllUsers();
-      return this.pageRenderer.sendPage(req, res, 'users', Users, initialState);
+      return this.pageRenderer.sendPage(req, res, 'users', Users, initialState, ['country-names']);
     });
   }
 
@@ -151,6 +157,13 @@ class UserController {
       const { passwordResetRequestId, password } = req.body;
       const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, password);
       return res.send({ user: user || null });
+    });
+
+    app.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], async (req, res) => {
+      const userId = req.user._id;
+      const { profile } = req.body;
+      const savedProfile = await this.userService.updateUserProfile(userId, profile);
+      return res.send({ profile: savedProfile || null });
     });
 
     app.post('/api/v1/users/login', jsonParser, (req, res, next) => {

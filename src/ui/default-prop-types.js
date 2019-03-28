@@ -29,6 +29,16 @@ const requestProps = {
   }).isRequired
 };
 
+const userProfileShape = PropTypes.shape({
+  city: PropTypes.string,
+  country: PropTypes.string,
+  firstName: PropTypes.string,
+  lastName: PropTypes.string,
+  postalCode: PropTypes.string,
+  street: PropTypes.string,
+  streetSupplement: PropTypes.string
+});
+
 const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   provider: PropTypes.string.isRequired,
@@ -36,11 +46,16 @@ const userShape = PropTypes.shape({
   email: PropTypes.string.isRequired,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
   expires: PropTypes.string,
-  lockedOut: PropTypes.bool
+  lockedOut: PropTypes.bool,
+  profile: userProfileShape
 });
 
 const userProps = {
   user: userShape
+};
+
+const dataProps = {
+  data: PropTypes.object.isRequired
 };
 
 const docMetadataShape = PropTypes.shape({
@@ -98,6 +113,7 @@ module.exports = {
   clientSettingsProps,
   requestProps,
   userProps,
+  dataProps,
   docMetadataShape,
   docShape,
   sectionShape,
