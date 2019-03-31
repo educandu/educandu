@@ -119,7 +119,7 @@ class UserController {
 
     app.get('/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
       const initialState = await this.userService.getAllUsers();
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'users', initialState, ['country-names']);
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState, ['country-names']);
     });
   }
 
