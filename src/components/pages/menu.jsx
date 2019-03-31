@@ -14,7 +14,6 @@ const permissions = require('../../domain/permissions');
 const MenuCategoryItem = require('../menu-category-item.jsx');
 const { menuShape, docMetadataShape, docShape, sectionShape } = require('../../ui/default-prop-types');
 
-const DEFAULT_MENU_TITLE = 'Inhalt';
 const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
 
 class Menu extends React.Component {
@@ -104,9 +103,27 @@ class Menu extends React.Component {
     const { currentActiveNode, documentDictionary } = this.state;
     const { menu, defaultDocument } = initialState;
 
+    const hasCategories = menu.nodes && menu.nodes.length;
+
     const article = currentActiveNode && currentActiveNode.documentKeys.length
       ? this.renderLinkList(currentActiveNode.title, currentActiveNode.documentKeys.map(key => documentDictionary.get(key)))
       : this.renderDefaultDoc(defaultDocument, language);
+
+    const titleMarkup = <h2><a onClick={this.handleMenuTitleClick}>{menu.title}</a></h2>;
+
+    const categoryPanel = hasCategories ? (
+      <aside className="MenuPage-categories">
+        {menu.title && titleMarkup}
+        {this.renderCategoryList(menu.nodes, 0, currentActiveNode)}
+      </aside>
+    ) : null;
+
+    const detailsPanel = (
+      <article className="MenuPage-details">
+        {menu.title && !hasCategories && titleMarkup}
+        {article}
+      </article>
+    );
 
     return (
       <Page>
@@ -117,13 +134,8 @@ class Menu extends React.Component {
         </PageHeader>
         <PageContent>
           <div className="MenuPage">
-            <aside className="MenuPage-categories">
-              <h2><a onClick={this.handleMenuTitleClick}>{menu.title || DEFAULT_MENU_TITLE}</a></h2>
-              {this.renderCategoryList(menu.nodes, 0, currentActiveNode)}
-            </aside>
-            <article className="MenuPage-details">
-              {article}
-            </article>
+            {categoryPanel}
+            {detailsPanel}
           </div>
         </PageContent>
         <PageFooter />
