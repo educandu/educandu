@@ -5,6 +5,7 @@ const ImagePlugin = require('./image/editor');
 const MarkdownPlugin = require('./markdown/editor');
 const H5pPlayerPlugin = require('./h5p-player/editor');
 const AnnotationPlugin = require('./annotation/editor');
+const ImageTilePlugin = require('./image-tiles/editor.js');
 const PluginFactoryBase = require('./plugin-factory-base');
 const QuickTesterPlugin = require('./quick-tester/editor');
 const IntervalTrainerPlugin = require('./interval-trainer/editor');
@@ -15,6 +16,7 @@ const editors = [
   AudioPlugin,
   VideoPlugin,
   ImagePlugin,
+  ImageTilePlugin,
   H5pPlayerPlugin,
   AnnotationPlugin,
   IntervalTrainerPlugin

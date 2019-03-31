@@ -18,6 +18,16 @@ module.exports = [
     }
   },
   {
+    name: 'Bildkacheln',
+    type: 'image-tiles',
+    defaultContent: {
+      tiles: [],
+      maxTilesPerRow: 3,
+      maxWidth: 100,
+      hoverEffect: null
+    }
+  },
+  {
     name: 'Audio',
     type: 'audio',
     defaultContent: {
