@@ -18,31 +18,54 @@ function getSource(type, url, cdnRootUrl) {
 }
 
 function ImageTilesDisplay({ content, clientSettings, githubFlavoredMarkdown }) {
-  const hover = content.hover && (
-    <div className="ImageTiles-secondary">
-      <img
-        className={`ImageTiles-img u-max-width-${content.maxWidth || 100}`}
-        src={getSource(content.hover.type, content.hover.url, clientSettings.cdnRootUrl)}
-        />
-      <div
-        className="ImageTiles-copyrightInfo"
-        dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.hover.text || '') }}
-        />
-    </div>
-  );
   return (
-    <div className={classNames('ImageTiles', { 'ImageTiles--hoverable': content.hover })}>
-      <div className="ImageTiles-primary">
-        <img
-          className={`ImageTiles-img u-max-width-${content.maxWidth || 100}`}
-          src={getSource(content.type, content.url, clientSettings.cdnRootUrl)}
-          />
-        <div
-          className="ImageTiles-copyrightInfo"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }}
-          />
+    <div className={classNames('ImageTiles')}>
+      <div className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
+        <div className="ImageTiles-tilesContainer">
+          <img
+            className="ImageTiles-img"
+            src={getSource(content.tiles[0].image.type, content.tiles[0].image.url, clientSettings.cdnRootUrl)}
+            />
+          <div
+            className="ImageTiles-description"
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[0].description || '') }}
+            />
+        </div>
+        <div className="ImageTiles-tilesContainer">
+          <img
+            className="ImageTiles-img"
+            src={getSource(content.tiles[1].image.type, content.tiles[1].image.url, clientSettings.cdnRootUrl)}
+            />
+          <div
+            className="ImageTiles-description"
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[1].description || '') }}
+            />
+        </div>
+        <div className="ImageTiles-tilesContainer">
+          <img
+            className="ImageTiles-img"
+            src={getSource(content.tiles[2].image.type, content.tiles[2].image.url, clientSettings.cdnRootUrl)}
+            />
+          <div
+            className="ImageTiles-description"
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[2].description || '') }}
+            />
+        </div>
       </div>
-      {hover}
+      <div className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
+        <div className="ImageTiles-tilesContainer">
+          <img
+            className="ImageTiles-img"
+            src={getSource(content.tiles[3].image.type, content.tiles[3].image.url, clientSettings.cdnRootUrl)}
+            />
+          <div
+            className="ImageTiles-description"
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[3].description || '') }}
+            />
+        </div>
+        <div className="ImageTiles-tilesContainer" />
+        <div className="ImageTiles-tilesContainer" />
+      </div>
     </div>
   );
 }

@@ -114,8 +114,40 @@
                 "type": "external",
                 "url": "/images/Musikhochschule.png"
               },
-              "title": "Test",
-              "description": "Ulis Bilder",
+              "description": "Musikhochschule",
+              "link": {
+                "type": "menu",
+                "url": "test-menu"
+              }
+            },
+            {
+              "image": {
+                "type": "external",
+                "url": "/images/Musikschule.png"
+              },
+              "description": "Musikschuler",
+              "link": {
+                "type": "menu",
+                "url": "test-menu"
+              }
+            },
+            {
+              "image": {
+                "type": "external",
+                "url": "/images/Materialkiste.png"
+              },
+              "description": "Materialkiste",
+              "link": {
+                "type": "menu",
+                "url": "test-menu"
+              }
+            },
+            {
+              "image": {
+                "type": "external",
+                "url": "/images/Schule.png"
+              },
+              "description": "Schule",
               "link": {
                 "type": "menu",
                 "url": "test-menu"
