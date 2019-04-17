@@ -11,7 +11,7 @@ const userHasSufficientProfile = user => user.profile && (user.profile.firstName
 function PageHeader({ children, disableProfileWarning, user }) {
   let profileWarning;
 
-  if (disableProfileWarning || userHasSufficientProfile(user)) {
+  if (disableProfileWarning || !user || userHasSufficientProfile(user)) {
     profileWarning = null;
   } else {
     const message = (
