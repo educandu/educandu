@@ -1,6 +1,7 @@
 const React = require('react');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
+const splitArray = require('split-array');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
@@ -17,55 +18,44 @@ function getSource(type, url, cdnRootUrl) {
   }
 }
 
+function createTile(index, tile, clientSettings, githubFlavoredMarkdown) {
+  return (
+    <div key={index.toString()} className="ImageTiles-tilesContainer">
+      {tile && (
+        <img
+          className="ImageTiles-img"
+          src={getSource(tile.image.type, tile.image.url, clientSettings.cdnRootUrl)}
+          />
+      )}
+      {tile && (
+        <div
+          className="ImageTiles-description"
+          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(tile.description || '') }}
+          />
+      )}
+    </div>
+  );
+}
+
+function createRow(rowIndex, row, content, clientSettings, githubFlavoredMarkdown) {
+  return (
+    <div key={rowIndex.toString()} className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
+      {row.map((tile, tileIndex) => createTile(tileIndex, tile, clientSettings, githubFlavoredMarkdown))}
+    </div>
+  );
+}
+
 function ImageTilesDisplay({ content, clientSettings, githubFlavoredMarkdown }) {
+  const rows = splitArray(content.tiles, content.maxTilesPerRow);
+  const tilesOfLastRow = rows[rows.length - 1];
+  const rest = content.maxTilesPerRow - tilesOfLastRow.length;
+  for (let i = 0; i < rest; i += 1) {
+    tilesOfLastRow.push(null);
+  }
+
   return (
     <div className={classNames('ImageTiles')}>
-      <div className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
-        <div className="ImageTiles-tilesContainer">
-          <img
-            className="ImageTiles-img"
-            src={getSource(content.tiles[0].image.type, content.tiles[0].image.url, clientSettings.cdnRootUrl)}
-            />
-          <div
-            className="ImageTiles-description"
-            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[0].description || '') }}
-            />
-        </div>
-        <div className="ImageTiles-tilesContainer">
-          <img
-            className="ImageTiles-img"
-            src={getSource(content.tiles[1].image.type, content.tiles[1].image.url, clientSettings.cdnRootUrl)}
-            />
-          <div
-            className="ImageTiles-description"
-            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[1].description || '') }}
-            />
-        </div>
-        <div className="ImageTiles-tilesContainer">
-          <img
-            className="ImageTiles-img"
-            src={getSource(content.tiles[2].image.type, content.tiles[2].image.url, clientSettings.cdnRootUrl)}
-            />
-          <div
-            className="ImageTiles-description"
-            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[2].description || '') }}
-            />
-        </div>
-      </div>
-      <div className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
-        <div className="ImageTiles-tilesContainer">
-          <img
-            className="ImageTiles-img"
-            src={getSource(content.tiles[3].image.type, content.tiles[3].image.url, clientSettings.cdnRootUrl)}
-            />
-          <div
-            className="ImageTiles-description"
-            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.tiles[3].description || '') }}
-            />
-        </div>
-        <div className="ImageTiles-tilesContainer" />
-        <div className="ImageTiles-tilesContainer" />
-      </div>
+      {rows.map((row, index) => createRow(index, row, content, clientSettings, githubFlavoredMarkdown))}
     </div>
   );
 }
