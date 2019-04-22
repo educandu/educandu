@@ -2,7 +2,7 @@ const path = require('path');
 const testHelper = require('../../test-helper');
 const H5pFileProcessor = require('./h5p-file-processor');
 
-jest.setTimeout(10000);
+jest.setTimeout(15000);
 
 describe('h5p-file-processor', () => {
   let cdn;

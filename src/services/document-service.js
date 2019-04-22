@@ -7,6 +7,9 @@ const SectionStore = require('../stores/section-store');
 const uniqueId = require('../utils/unique-id');
 const dateTime = require('../utils/date-time');
 const deepEqual = require('fast-deep-equal');
+const Logger = require('../common/logger');
+
+const logger = new Logger(__filename);
 
 class DocumentService {
   static get inject() { return [DocumentSnapshotStore, DocumentOrderStore, SectionOrderStore, DocumentLockStore, DocumentStore, SectionStore]; }
@@ -108,17 +111,31 @@ class DocumentService {
     const now = dateTime.now();
     const documentKey = doc.key || uniqueId.create();
 
+    logger.info('Creating new document revision for document key %s', documentKey);
+
     await this.documentLockStore.takeLock(documentKey);
 
     const latestSnapshot = await this.getLatestDocumentSnapshot(documentKey);
+    if (latestSnapshot) {
+      logger.info('Found existing snapshot with id %s', latestSnapshot._id);
+    } else {
+      logger.info('No existing snapshot found for document key %s', documentKey);
+    }
 
     if (!this.userCanUpdateDoc(latestSnapshot, doc, user)) {
       throw new Error('The user does not have permission to update the document');
     }
 
     const updatedSections = await Promise.all(sections.map(async section => {
+      logger.info('Processing section with key %s', section.key);
+
       // Load potentially existing revision:
       const existingSection = section.ancestorId ? await this.getSectionById(section.ancestorId) : null;
+      if (existingSection) {
+        logger.info('Found ancestor section with id %s', existingSection._id);
+      } else {
+        logger.info('No ancestor section found');
+      }
 
       if (existingSection && section.type && existingSection.type !== section.type) {
         throw new Error('Sections cannot change their type');
@@ -138,6 +155,7 @@ class DocumentService {
 
       // If not changed, re-use existing revision:
       if (existingSection && deepEqual(existingSection.content, section.content)) {
+        logger.info('Section has not changed compared to ancestor section with id %s, using the existing', existingSection._id);
         return existingSection;
       }
 
@@ -153,6 +171,7 @@ class DocumentService {
         content: section.content
       };
 
+      logger.info('Saving new section revision with id %s', newRevision._id);
       await this.sectionStore.save(newRevision);
       return newRevision;
     }));
@@ -168,12 +187,14 @@ class DocumentService {
       sections: updatedSections.map(section => ({ id: section._id }))
     };
 
+    logger.info('Saving new document snapshot with id %s', newSnapshot._id);
     await this.documentSnapshotStore.save(newSnapshot);
 
     const firstSnapshot = await this.getInitialDocumentSnapshot(documentKey);
 
     const latestDocument = this.createLatestDocument(documentKey, firstSnapshot, newSnapshot, updatedSections);
 
+    logger.info('Latest document will have %s', latestDocument._id);
     await this.documentStore.save(latestDocument);
 
     await this.documentLockStore.releaseLock(documentKey);

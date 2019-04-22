@@ -1,7 +1,10 @@
+const Logger = require('../common/logger');
 const uniqueId = require('../utils/unique-id');
 const dateTime = require('../utils/date-time');
 const MenuStore = require('../stores/menu-store');
 const MenuLockStore = require('../stores/menu-lock-store');
+
+const logger = new Logger(__filename);
 
 class MenuService {
   static get inject() { return [MenuStore, MenuLockStore]; }
@@ -37,9 +40,16 @@ class MenuService {
     const now = dateTime.now();
     const menuId = menu._id || uniqueId.create();
 
+    logger.info('Creating new menu with id %s', menuId);
+
     await this.menuLockStore.takeLock(menuId);
 
     let existingMenu = await this.getMenuById(menuId);
+    if (existingMenu) {
+      logger.info('Found existing menu with id %s', menuId);
+    } else {
+      logger.info('No existing menu found with id %s', menuId);
+    }
 
     if (!this.userCanUpdateMenu(existingMenu, menu, user)) {
       throw new Error('The user does not have permission to update the menu');
@@ -65,6 +75,7 @@ class MenuService {
       nodes: menu.nodes || []
     };
 
+    logger.info('Saving menu with id %s', updatedMenu._id);
     await this.menuStore.save(updatedMenu);
 
     await this.menuLockStore.releaseLock(menuId);

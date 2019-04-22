@@ -1,8 +1,11 @@
+const Logger = require('../common/logger');
+
+const logger = new Logger(__filename);
+
 class ErrorController {
   registerErrorHandler(app) {
     app.use((err, req, res, next) => {
-      /* eslint-disable-next-line no-console */
-      console.error(err);
+      logger.fatal(err);
       next(err);
     });
   }

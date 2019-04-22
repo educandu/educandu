@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const roles = require('../domain/roles');
+const Logger = require('../common/logger');
 const uniqueId = require('../utils/unique-id');
 const UserStore = require('../stores/user-store');
 const PasswordResetRequestStore = require('../stores/password-reset-request-store');
@@ -10,6 +11,8 @@ const PROVIDER_NAME_ELMU = 'elmu';
 const PASSWORD_SALT_ROUNDS = 1024;
 const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
 const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
+
+const logger = new Logger(__filename);
 
 class UserService {
   static get inject() { return [UserStore, PasswordResetRequestStore]; }
@@ -36,10 +39,12 @@ class UserService {
   }
 
   saveUser(user) {
+    logger.info('Saving user with id %s', user._id);
     return this.userStore.save(user);
   }
 
   async updateUserProfile(userId, newProfile) {
+    logger.info('Updating profile for user with id %s', userId);
     const user = await this.getUserById(userId);
     user.profile = newProfile;
     await this.saveUser(user);
@@ -47,6 +52,7 @@ class UserService {
   }
 
   async updateUserRoles(userId, newRoles) {
+    logger.info('Updating roles for user with id %s: %j', userId, newRoles);
     const user = await this.getUserById(userId);
     const roleSet = new Set(newRoles || []);
     roleSet.add(DEFAULT_ROLE_NAME);
@@ -56,6 +62,7 @@ class UserService {
   }
 
   async updateUserLockedOutState(userId, lockedOut) {
+    logger.info('Updating locked out state for user with id %s: %j', userId, lockedOut);
     const user = await this.getUserById(userId);
     user.lockedOut = lockedOut;
     await this.saveUser(user);
@@ -75,24 +82,29 @@ class UserService {
       lockedOut: false
     };
 
+    logger.info('Creating new user with id %s', user._id);
     await this.saveUser(user);
     return user;
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME_ELMU) {
+    logger.info('Verifying user with verification code %s', verificationCode);
+    let user = null;
     try {
-      const user = await this.userStore.findOne({ query: { verificationCode, provider } });
+      user = await this.userStore.findOne({ query: { verificationCode, provider } });
       if (user) {
+        logger.info('Found user with id %s', user._id);
         user.expires = null;
         user.verificationCode = null;
         await this.saveUser(user);
-        return user;
+      } else {
+        logger.info('No user found for verification code %s', verificationCode);
       }
     } catch (err) {
-      return false;
+      logger.fatal(err);
     }
 
-    return false;
+    return user;
   }
 
   async authenticateUser(username, password, provider = PROVIDER_NAME_ELMU) {
@@ -120,23 +132,28 @@ class UserService {
       expires: moment.utc().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
     };
 
+    logger.info('Creating password reset request %s for user with id %s', request._id, request.userId);
     await this.savePasswordResetRequest(request);
     return request;
   }
 
   async completePasswordResetRequest(passwordResetRequestId, password) {
+    logger.info('Completing password reset request %s', passwordResetRequestId);
     const request = await this.getPasswordResetRequestById(passwordResetRequestId);
     if (!request) {
+      logger.info('No password reset request has been found for id %s. Aborting request.', passwordResetRequestId);
       return false;
     }
 
     const user = await this.getUserById(request.userId);
     if (!user) {
+      logger.info('No user has been found for id %s. Aborting request.', passwordResetRequestId);
       return false;
     }
 
     user.passwordHash = await this._hashPassword(password);
 
+    logger.info('Updating user %s with new password.', user._id);
     await this.saveUser(user);
     return user;
   }

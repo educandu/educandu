@@ -121,18 +121,33 @@ gulp.task('lint', () => {
 });
 
 gulp.task('test', async () => {
-  const { results } = await jest.runCLI({ testEnvironment: 'node' }, '.');
+  const { results } = await jest.runCLI({
+    testEnvironment: 'node',
+    setupFiles: ['./src/test-setup.js'],
+    setupTestFrameworkScriptFile: './src/test-setup-after-env.js',
+    runInBand: true
+  }, '.');
   if (!results.success) {
     throw Error(`${results.numFailedTests} test(s) failed`);
   }
 });
 
 gulp.task('test:changed', () => {
-  return jest.runCLI({ testEnvironment: 'node', onlyChanged: true }, '.');
+  return jest.runCLI({
+    testEnvironment: 'node',
+    setupFiles: ['./src/test-setup.js'],
+    setupTestFrameworkScriptFile: './src/test-setup-after-env.js',
+    onlyChanged: true
+  }, '.');
 });
 
 gulp.task('test:watch', () => {
-  return jest.runCLI({ testEnvironment: 'node', watch: true }, '.');
+  return jest.runCLI({
+    testEnvironment: 'node',
+    setupFiles: ['./src/test-setup.js'],
+    setupTestFrameworkScriptFile: './src/test-setup-after-env.js',
+    watch: true
+  }, '.');
 });
 
 gulp.task('copy:iframeresizer', () => {
@@ -194,7 +209,7 @@ gulp.task('bundle:js', async () => {
       rules: [
         {
           test: /\.jsx?$/,
-          exclude: /node_modules[\\/](?!(auto-bind|mem|mimic-fn|p-is-promise|pretty-bytes|quick-lru)[\\/]).*/,
+          exclude: /node_modules[\\/](?!(acho|ansi-styles|auto-bind|chalk|mem|mimic-fn|p-is-promise|parse-ms|pretty-bytes|pretty-ms|quick-lru)[\\/]).*/,
           use: {
             loader: 'babel-loader'
           }
@@ -202,6 +217,8 @@ gulp.task('bundle:js', async () => {
       ]
     },
     optimization: {
+      minimize: !!optimize,
+      namedModules: !optimize,
       splitChunks: {
         cacheGroups: {
           commons: {
@@ -219,6 +236,9 @@ gulp.task('bundle:js', async () => {
       hints: optimize && 'warning',
       maxAssetSize: 500000,
       maxEntrypointSize: 500000
+    },
+    node: {
+      __filename: true
     },
     plugins: plugins
   };

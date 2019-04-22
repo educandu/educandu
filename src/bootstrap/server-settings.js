@@ -1,8 +1,14 @@
 /* eslint no-process-env: off */
 
+const Logger = require('../common/logger');
+
+const logger = new Logger(__filename);
+
 const env = process.env.ELMU_ENV || 'dev';
 const port = Number(process.env.ELMU_PORT) || 3000;
 const sessionDurationInMinutes = 60;
+
+logger.info('Environment is set to %s', env);
 
 const settings = {
   env,

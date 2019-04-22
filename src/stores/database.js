@@ -1,3 +1,4 @@
+const Logger = require('../common/logger');
 const { MongoClient } = require('mongodb');
 const menusSpec = require('./collection-specs/menus');
 const usersSpec = require('./collection-specs/users');
@@ -12,6 +13,8 @@ const documentSnapshotsSpec = require('./collection-specs/document-snapshots');
 const passwordResetRequestsSpec = require('./collection-specs/password-reset-requests');
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
+
+const logger = new Logger(__filename);
 
 const collectionSpecs = [
   menusSpec,
@@ -33,7 +36,9 @@ class Database {
   }
 
   async connect() {
+    logger.info('Trying to connect to MongoDB');
     this._mongoClient = await MongoClient.connect(this._connectionString);
+    logger.info('Successfully connected to MongoDB');
     this._db = this._mongoClient.db();
   }
 
@@ -46,14 +51,18 @@ class Database {
     const collectionName = collectionSpec.name;
     const indexes = collectionSpec.indexes || [];
 
+    logger.info('Creating MongoDB collection %s', collectionName);
     const collection = await this._db.createCollection(collectionName);
 
     if (indexes.length) {
       try {
+        logger.info('Creating %s indexes on MongoDB collection %s', indexes.length, collectionName);
         await collection.createIndexes(indexes);
       } catch (error) {
         if (error.code === MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT) {
+          logger.info('Indexes on MongoDB collection %s seem to have changes. Dropping old ones.', collectionName);
           await collection.dropIndexes();
+          logger.info('Creating %s indexes on MongoDB collection %s', indexes.length, collectionName);
           await collection.createIndexes(indexes);
         } else {
           throw error;
@@ -65,6 +74,7 @@ class Database {
   }
 
   async dispose() {
+    logger.info('Closing MongoDB connection');
     await this._mongoClient.close();
   }
 

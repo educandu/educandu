@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+require('babel-register')({ extensions: ['.jsx'] });
+require('babel-polyfill');
+
 const { MongoClient } = require('mongodb');
 
 (async function createUser() {

@@ -1,23 +1,68 @@
 require('babel-register')({ extensions: ['.jsx'] });
 require('babel-polyfill');
 
+const Graceful = require('node-graceful');
+const Logger = require('./common/logger');
 const ElmuServer = require('./server/elmu-server');
 const bootstrapper = require('./bootstrap/server-bootstrapper');
 
+const logger = new Logger(__filename);
+
+Graceful.exitOnDouble = true;
+Graceful.timeout = 10000;
+
 (async function index() {
 
-  const container = await bootstrapper.createContainer();
-  const elmuServer = container.get(ElmuServer);
+  let container = null;
 
-  elmuServer.listen((err, port) => {
-    if (err) {
-      /* eslint-disable-next-line no-console */
-      console.error(err);
-    } else {
-      /* eslint-disable-next-line no-console */
-      console.log(`App listening on http://localhost:${port}`);
+  Graceful.on('exit', async (event, signal) => {
+    logger.info(`Received ${signal} - Starting graceful exit process`);
+
+    let hasError = false;
+    if (container) {
+      try {
+        logger.info('Start disposing of container');
+        await bootstrapper.disposeContainer(container);
+        logger.info('Container was sucessfully disposed');
+      } catch (err) {
+        logger.fatal(err);
+        hasError = true;
+      }
     }
+
+    logger.info(`Graceful exit process has finished ${hasError ? 'with' : 'without'} errors`);
+
+    // eslint-disable-next-line no-process-exit
+    process.exit(hasError ? 1 : 0);
   });
 
-/* eslint-disable-next-line no-console */
-})().catch(err => console.error(err));
+  process.on('uncaughtException', err => {
+    logger.fatal(err);
+    Graceful.exit(1);
+  });
+
+  try {
+
+    logger.info('Starting application');
+
+    container = await bootstrapper.createContainer();
+    const elmuServer = container.get(ElmuServer);
+
+    logger.info('Starting server');
+    elmuServer.listen((err, port) => {
+      if (err) {
+        logger.fatal(err);
+        Graceful.exit(1);
+      } else {
+        logger.info(`App listening on http://localhost:${port}`);
+      }
+    });
+
+  } catch (err) {
+
+    logger.fatal(err);
+    Graceful.exit(1);
+
+  }
+
+})();

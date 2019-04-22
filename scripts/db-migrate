@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+require('babel-register')({ extensions: ['.jsx'] });
+require('babel-polyfill');
+
 const path = require('path');
 const Umzug = require('umzug');
 const Database = require('../src/stores/database');

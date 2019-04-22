@@ -3,7 +3,6 @@ const htmlescape = require('htmlescape');
 const { Container } = require('../common/di');
 const Root = require('../components/root.jsx');
 const cloneDeep = require('../utils/clone-deep');
-const bundleConfig = require('./bundle-config.js');
 const ReactDOMServer = require('react-dom/server');
 const DataProvider = require('../data/data-provider.js');
 const requestHelper = require('../utils/request-helper');
@@ -11,6 +10,9 @@ const ClientDataMapper = require('./client-data-mapper');
 const reactBeautifulDnd = require('react-beautiful-dnd');
 const ClientSettings = require('../bootstrap/client-settings');
 const ServerSettings = require('../bootstrap/server-settings');
+
+// eslint-disable-next-line global-require
+const getPageComponent = pageName => require(`../components/pages/${pageName}.jsx`);
 
 class PageRenderer {
   static get inject() { return [Container, ServerSettings, ClientSettings, ClientDataMapper, DataProvider]; }
@@ -40,7 +42,7 @@ class PageRenderer {
       initialState: cloneDeep(initialState),
       language: language,
       data: data,
-      PageComponent: bundleConfig[pageName]
+      PageComponent: getPageComponent(pageName)
     };
     const html = this.renderHtml({ bundleName, pageName, request, user, initialState, clientSettings, props, data, language });
     return res.type('html').send(html);
