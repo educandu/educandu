@@ -1,20 +1,14 @@
 const React = require('react');
-const { Switch } = require('antd');
 const autoBind = require('auto-bind');
 const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
 const Slider = require('antd/lib/slider');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context.jsx');
-const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
+const TileEditor = require('./tile-editor.jsx');
+const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
-const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default-prop-types');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-const FormItem = Form.Item;
-const { TextArea } = Input;
 
 class ImageTilesEditor extends React.Component {
   constructor(props) {
@@ -45,8 +39,14 @@ class ImageTilesEditor extends React.Component {
     this.changeContent({ hoverEffect: value || null });
   }
 
+  handleTileChange(index, newValues) {
+    const newTiles = this.props.content.tiles.slice();
+    newTiles[index] = { ...newTiles[index], ...newValues };
+    this.changeContent({ tiles: newTiles });
+  }
+
   render() {
-    const { docKey, content, clientSettings } = this.props;
+    const { docKey, content } = this.props;
     const { tiles, maxWidth, maxTilesPerRow, hoverEffect } = content;
 
     const formItemLayout = {
@@ -75,6 +75,7 @@ class ImageTilesEditor extends React.Component {
               <RadioButton value="colorize-zoom">Färben und Zoomen</RadioButton>
             </RadioGroup>
           </Form.Item>
+          {tiles.map((tile, index) => <TileEditor key={index.toString()} {...tile} index={index} onChange={this.handleTileChange} docKey={docKey} />)}
         </Form>
       </div>
     );
@@ -82,11 +83,7 @@ class ImageTilesEditor extends React.Component {
 }
 
 ImageTilesEditor.propTypes = {
-  ...sectionEditorProps,
-  ...clientSettingsProps
+  ...sectionEditorProps
 };
 
-module.exports = inject({
-  clientSettings: ClientSettings
-}, ImageTilesEditor);
-
+module.exports = ImageTilesEditor;
