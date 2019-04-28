@@ -4,6 +4,7 @@ const autoBind = require('auto-bind');
 const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
+const Slider = require('antd/lib/slider');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -21,41 +22,6 @@ class ImageTilesEditor extends React.Component {
     autoBind.react(this);
   }
 
-  handleExternalUrlValueChanged(event) {
-    const { value } = event.target;
-    this.changeContent({ url: value });
-  }
-
-  handleHoverExternalUrlValueChanged(event) {
-    const { value } = event.target;
-    const hover = this.props.content.hover || {};
-    hover.url = value;
-    this.changeContent({ hover });
-  }
-
-  handleInternalUrlValueChanged(value) {
-    this.changeContent({ url: value });
-  }
-
-  handleHoverInternalUrlValueChanged(value) {
-    const hover = this.props.content.hover || {};
-    hover.url = value;
-    this.changeContent({ hover });
-  }
-
-  handleTypeValueChanged(event) {
-    const { value } = event.target;
-    this.changeContent({ type: value, url: '' });
-  }
-
-  handleHoverTypeValueChanged(event) {
-    const { value } = event.target;
-    const hover = this.props.content.hover || {};
-    hover.type = value;
-    hover.url = '';
-    this.changeContent({ hover });
-  }
-
   handleMaxWidthValueChanged(value) {
     this.changeContent({ maxWidth: value });
   }
@@ -70,24 +36,18 @@ class ImageTilesEditor extends React.Component {
     this.changeContent({ text: newValue });
   }
 
-  handleCurrentHoverEditorValueChanged(event) {
-    const newValue = event.target.value;
-    const hover = this.props.content.hover || {};
-    hover.text = newValue;
-    this.changeContent({ hover });
+  handleMaxTilesPerRowChanged(value) {
+    this.changeContent({ maxTilesPerRow: value });
   }
 
-  handleHoverSwitchChange(checked) {
-    if (checked) {
-      this.changeContent({ hover: { type: 'internal', url: '', text: '' } });
-    } else {
-      this.changeContent({ hover: null });
-    }
+  handleHoverEffectValueChanged(event) {
+    const { value } = event.target;
+    this.changeContent({ hoverEffect: value || null });
   }
 
   render() {
     const { docKey, content, clientSettings } = this.props;
-    const { type, url, maxWidth, text, hover } = content;
+    const { tiles, maxWidth, maxTilesPerRow, hoverEffect } = content;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -97,81 +57,23 @@ class ImageTilesEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label="Quelle" {...formItemLayout}>
-            <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
-              <RadioButton value="external">Externer Link</RadioButton>
-              <RadioButton value="internal">Elmu CDN</RadioButton>
-            </RadioGroup>
-          </FormItem>
-          {type === 'external' && (
-            <FormItem label="Externe URL" {...formItemLayout}>
-              <Input value={url} onChange={this.handleExternalUrlValueChanged} />
-            </FormItem>
-          )}
-          {type === 'internal' && (
-            <FormItem label="Interne URL" {...formItemLayout}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Input
-                  addonBefore={`${clientSettings.cdnRootUrl}/`}
-                  value={url}
-                  readOnly
-                  />
-                <CdnFilePicker
-                  rootPrefix="media"
-                  uploadPrefix={`media/${docKey}`}
-                  initialPrefix={`media/${docKey}`}
-                  fileName={url}
-                  onFileNameChanged={this.handleInternalUrlValueChanged}
-                  />
-              </div>
-            </FormItem>
-          )}
-          <Form.Item label="Copyright Infos" {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
-          </Form.Item>
-          <Form.Item label="Hoverbild" {...formItemLayout}>
-            <Switch checked={!!hover} onChange={this.handleHoverSwitchChange} />
-          </Form.Item>
-          {hover && (
-            <div className="Panel">
-              <div className="Panel-content Panel-content--darker">
-                <FormItem label="Quelle" {...formItemLayout}>
-                  <RadioGroup value={hover.type} onChange={this.handleHoverTypeValueChanged}>
-                    <RadioButton value="external">Externer Link</RadioButton>
-                    <RadioButton value="internal">Elmu CDN</RadioButton>
-                  </RadioGroup>
-                </FormItem>
-                {hover.type === 'external' && (
-                  <FormItem label="Externe URL" {...formItemLayout}>
-                    <Input value={hover.url} onChange={this.handleHoverExternalUrlValueChanged} />
-                  </FormItem>
-                )}
-                {hover.type === 'internal' && (
-                  <FormItem label="Interne URL" {...formItemLayout}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Input
-                        addonBefore={`${clientSettings.cdnRootUrl}/`}
-                        value={hover.url}
-                        readOnly
-                        />
-                      <CdnFilePicker
-                        rootPrefix="media"
-                        uploadPrefix={`media/${docKey}`}
-                        initialPrefix={`media/${docKey}`}
-                        fileName={hover.url}
-                        onFileNameChanged={this.handleHoverInternalUrlValueChanged}
-                        />
-                    </div>
-                  </FormItem>
-                )}
-                <Form.Item label="Copyright Infos" {...formItemLayout}>
-                  <TextArea value={hover.text} onChange={this.handleCurrentHoverEditorValueChanged} autosize={{ minRows: 3 }} />
-                </Form.Item>
-              </div>
-            </div>
-          )}
           <Form.Item label="Maximale Breite" {...formItemLayout}>
             <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthValueChanged} />
+          </Form.Item>
+          <Form.Item label="Maximale Anzahl an Kacheln pro Zeile" {...formItemLayout}>
+            <Slider
+              min={0}
+              max={10}
+              step={1}
+              value={maxTilesPerRow}
+              onChange={this.handleMaxTilesPerRowChanged}
+              />
+          </Form.Item>
+          <Form.Item label="Hovereffekt" {...formItemLayout}>
+            <RadioGroup value={hoverEffect} onChange={this.handleHoverEffectValueChanged}>
+              <RadioButton value="">kein Effekt</RadioButton>
+              <RadioButton value="colorize-zoom">Färben und Zoomen</RadioButton>
+            </RadioGroup>
           </Form.Item>
         </Form>
       </div>
