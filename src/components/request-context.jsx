@@ -1,20 +1,17 @@
 const React = require('react');
 
-const { Consumer, Provider } = React.createContext();
+const { useContext } = React;
+
+const requestContext = React.createContext();
 
 function withRequest(Component) {
-  function InjectingComponent(props) {
-    return (
-      <Consumer>
-        {request => <Component {...props} request={request} />}
-      </Consumer>
-    );
-  }
-
-  return InjectingComponent;
+  return function RequestInjector(props) {
+    const request = useContext(requestContext);
+    return <Component {...props} request={request} />;
+  };
 }
 
 module.exports = {
-  RequestProvider: Provider,
+  RequestProvider: requestContext.Provider,
   withRequest: withRequest
 };

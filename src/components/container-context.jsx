@@ -1,22 +1,19 @@
 const React = require('react');
 
-const { Consumer, Provider } = React.createContext();
+const { useContext } = React;
+
+const containerContext = React.createContext();
 
 function inject(dependencies, Component) {
   const createInjectedProps = container => Object.entries(dependencies).reduce((all, entry) => ({ ...all, [entry[0]]: container.get(entry[1]) }), {});
 
-  function InjectingComponent(props) {
-    return (
-      <Consumer>
-        {container => <Component {...props} {...createInjectedProps(container)} />}
-      </Consumer>
-    );
-  }
-
-  return InjectingComponent;
+  return function InjectingComponent(props) {
+    const container = useContext(containerContext);
+    return <Component {...props} {...createInjectedProps(container)} />;
+  };
 }
 
 module.exports = {
-  ContainerProvider: Provider,
+  ContainerProvider: containerContext.Provider,
   inject: inject
 };

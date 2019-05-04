@@ -1,20 +1,17 @@
 const React = require('react');
 
-const { Consumer, Provider } = React.createContext();
+const { useContext } = React;
+
+const userContext = React.createContext();
 
 function withUser(Component) {
-  function InjectingComponent(props) {
-    return (
-      <Consumer>
-        {user => <Component {...props} user={user} />}
-      </Consumer>
-    );
-  }
-
-  return InjectingComponent;
+  return function UserInjector(props) {
+    const user = useContext(userContext);
+    return <Component {...props} user={user} />;
+  };
 }
 
 module.exports = {
-  UserProvider: Provider,
+  UserProvider: userContext.Provider,
   withUser: withUser
 };

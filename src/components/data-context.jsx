@@ -1,20 +1,17 @@
 const React = require('react');
 
-const { Consumer, Provider } = React.createContext();
+const { useContext } = React;
+
+const dataContext = React.createContext();
 
 function withData(Component) {
-  function InjectingComponent(props) {
-    return (
-      <Consumer>
-        {data => <Component {...props} data={data} />}
-      </Consumer>
-    );
-  }
-
-  return InjectingComponent;
+  return function DataInjector(props) {
+    const data = useContext(dataContext);
+    return <Component {...props} data={data} />;
+  };
 }
 
 module.exports = {
-  DataProvider: Provider,
+  DataProvider: dataContext.Provider,
   withData: withData
 };
