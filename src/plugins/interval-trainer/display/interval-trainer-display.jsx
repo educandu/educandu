@@ -3,13 +3,13 @@ const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const { Piano } = require('react-piano');
 const Button = require('antd/lib/button');
+const { RadialChart } = require('react-vis');
 const arrayShuffle = require('array-shuffle');
 const SoundfontProvider = require('./soundfont-provider.jsx');
 const DimensionsProvider = require('./dimensions-provider.jsx');
 const { inject } = require('../../../components/container-context.jsx');
 const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 const AudioContextProvider = require('../../../common/audio-context-provider');
-const { RadialChart } = require('react-vis');
 
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
