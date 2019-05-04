@@ -215,7 +215,7 @@ class EditDoc extends React.Component {
                 />
             </div>
             <DragDropContext onDragEnd={this.handleDragEnd}>
-              <Droppable droppableId="droppable" ignoreContainerClipping="true">
+              <Droppable droppableId="droppable" ignoreContainerClipping>
                 {droppableProvided => (
                   <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
                     <ShallowUpdateList items={editedSections}>
