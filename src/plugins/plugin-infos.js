@@ -24,7 +24,7 @@ module.exports = [
       tiles: [],
       maxTilesPerRow: 3,
       maxWidth: 100,
-      hoverEffect: null
+      hoverEffect: 'none'
     }
   },
   {

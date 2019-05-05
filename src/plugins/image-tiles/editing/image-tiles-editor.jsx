@@ -36,7 +36,7 @@ class ImageTilesEditor extends React.Component {
 
   handleHoverEffectValueChanged(event) {
     const { value } = event.target;
-    this.changeContent({ hoverEffect: value || null });
+    this.changeContent({ hoverEffect: value });
   }
 
   handleTileChange(index, newValues) {
@@ -71,7 +71,7 @@ class ImageTilesEditor extends React.Component {
           </Form.Item>
           <Form.Item label="Hovereffekt" {...formItemLayout}>
             <RadioGroup value={hoverEffect} onChange={this.handleHoverEffectValueChanged}>
-              <RadioButton value="">kein Effekt</RadioButton>
+              <RadioButton value="none">kein Effekt</RadioButton>
               <RadioButton value="colorize-zoom">Färben und Zoomen</RadioButton>
             </RadioGroup>
           </Form.Item>

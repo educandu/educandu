@@ -18,9 +18,13 @@ function getSource(type, url, cdnRootUrl) {
   }
 }
 
-function createTile(index, tile, clientSettings, githubFlavoredMarkdown) {
+function createTile(index, tile, hoverEffect, clientSettings, githubFlavoredMarkdown) {
+  const containerClasses = classNames({
+    'ImageTiles-tilesContainer': true,
+    'u-img-color-flip': hoverEffect === 'colorize-zoom'
+  });
   return (
-    <div key={index.toString()} className="ImageTiles-tilesContainer">
+    <div key={index.toString()} className={containerClasses}>
       {tile && (
         <img
           className="ImageTiles-img"
@@ -40,7 +44,7 @@ function createTile(index, tile, clientSettings, githubFlavoredMarkdown) {
 function createRow(rowIndex, row, content, clientSettings, githubFlavoredMarkdown) {
   return (
     <div key={rowIndex.toString()} className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
-      {row.map((tile, tileIndex) => createTile(tileIndex, tile, clientSettings, githubFlavoredMarkdown))}
+      {row.map((tile, tileIndex) => createTile(tileIndex, tile, content.hoverEffect, clientSettings, githubFlavoredMarkdown))}
     </div>
   );
 }
