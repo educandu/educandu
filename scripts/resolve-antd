@@ -2,8 +2,8 @@
 
 /* eslint no-sync: 0 */
 
-require('babel-register')({ extensions: ['.jsx'] });
-require('babel-polyfill');
+require('@babel/register')({ extensions: ['.jsx'] });
+require('@babel/polyfill');
 
 const fs = require('fs');
 const path = require('path');

@@ -168,7 +168,7 @@ gulp.task('bundle:css', () => {
 gulp.task('bundle:js', async () => {
   const entry = glob.sync('./src/bundles/*.js')
     .map(bundleFile => path.basename(bundleFile, '.js'))
-    .reduce((all, name) => ({ ...all, [name]: ['babel-polyfill', `./src/bundles/${name}.js`] }), {});
+    .reduce((all, name) => ({ ...all, [name]: ['@babel/polyfill', `./src/bundles/${name}.js`] }), {});
 
   const plugins = optimize
     ? [
@@ -182,8 +182,7 @@ gulp.task('bundle:js', async () => {
 
   const commonChunkModules = new Set([
     '@ant-design',
-    'babel-polyfill',
-    'babel-runtime',
+    '@babel',
     'core-js',
     'iconv-lite',
     'regenerator-runtime',
@@ -198,6 +197,21 @@ gulp.task('bundle:js', async () => {
     'auto-bind'
   ]);
 
+  const nonEs5Modules = [
+    'acho',
+    'ansi-styles',
+    'aurelia-dependency-injection',
+    'auto-bind',
+    'chalk',
+    'mem',
+    'mimic-fn',
+    'p-is-promise',
+    'parse-ms',
+    'pretty-bytes',
+    'pretty-ms',
+    'quick-lru'
+  ];
+
   const bundleConfigs = {
     entry: entry,
     output: {
@@ -209,9 +223,16 @@ gulp.task('bundle:js', async () => {
       rules: [
         {
           test: /\.jsx?$/,
-          exclude: /node_modules[\\/](?!(acho|ansi-styles|auto-bind|chalk|mem|mimic-fn|p-is-promise|parse-ms|pretty-bytes|pretty-ms|quick-lru)[\\/]).*/,
+          exclude: new RegExp(`node_modules[\\/](?!(${nonEs5Modules.join('|')})[\\/]).*`),
           use: {
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              presets: [
+                ['@babel/preset-env', { forceAllTransforms: true }],
+                '@babel/preset-react'
+              ]
+            }
           }
         }
       ]

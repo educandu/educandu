@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-require('babel-register')({ extensions: ['.jsx'] });
-require('babel-polyfill');
+require('@babel/register')({ extensions: ['.jsx'] });
+require('@babel/polyfill');
 
 const Cdn = require('../src/repositories/cdn');
 const testHelper = require('../src/test-helper');

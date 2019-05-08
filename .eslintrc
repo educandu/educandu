@@ -60,6 +60,7 @@
     "operator-linebreak": ["error", "before"],
     "padded-blocks": ["off"],
     "prefer-destructuring": ["off"],
+    "prefer-named-capture-group": ["off"],
     "require-jsdoc": ["off"],
     "sort-keys": ["off"],
     "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }],

@@ -1,5 +1,5 @@
-require('babel-register')({ extensions: ['.jsx'] });
-require('babel-polyfill');
+require('@babel/register')({ extensions: ['.jsx'] });
+require('@babel/polyfill');
 
 const Graceful = require('node-graceful');
 const Logger = require('./common/logger');
