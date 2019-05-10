@@ -43,7 +43,6 @@ function Index() {
       </Restricted>
       <PageContent fullScreen>
         <div className="IndexPage">
-          <aside className="IndexPage-logo" />
           <aside className="IndexPage-loginLogout">
             <LoginLogout />
           </aside>
