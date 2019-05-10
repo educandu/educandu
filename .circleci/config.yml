@@ -45,7 +45,7 @@ jobs:
   deploy:
     <<: *defaults
     docker:
-      - image: circleci/buildpack-deps:artful
+      - image: circleci/buildpack-deps:bionic
     environment:
       - APPLICATION_NAME: elmu-web
       - AWS_REGION: eu-central-1
