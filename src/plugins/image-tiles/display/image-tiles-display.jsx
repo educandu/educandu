@@ -67,10 +67,12 @@ function createRow(rowIndex, row, content, clientSettings, githubFlavoredMarkdow
 
 function ImageTilesDisplay({ content, clientSettings, githubFlavoredMarkdown }) {
   const rows = splitArray(content.tiles, content.maxTilesPerRow);
-  const tilesOfLastRow = rows[rows.length - 1];
-  const rest = content.maxTilesPerRow - tilesOfLastRow.length;
-  for (let i = 0; i < rest; i += 1) {
-    tilesOfLastRow.push(null);
+  if (rows.length) {
+    const tilesOfLastRow = rows[rows.length - 1];
+    const rest = content.maxTilesPerRow - tilesOfLastRow.length;
+    for (let i = 0; i < rest; i += 1) {
+      tilesOfLastRow.push(null);
+    }
   }
 
   return (
