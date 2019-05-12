@@ -59,7 +59,7 @@ class TileEditor extends React.Component {
 
     return (
       <React.Fragment>
-        <FormItem label="Quelle" {...formItemLayout}>
+        <FormItem label="Bildquelle" {...formItemLayout}>
           <RadioGroup value={image.type} onChange={this.handleImageTypeValueChanged}>
             <RadioButton value="external">Externer Link</RadioButton>
             <RadioButton value="internal">Elmu CDN</RadioButton>
@@ -91,7 +91,7 @@ class TileEditor extends React.Component {
         <FormItem label="Bildunterschrift" {...formItemLayout}>
           <Input value={description} onChange={this.handleDescriptionValueChanged} />
         </FormItem>
-        <FormItem label="Quelle" {...formItemLayout}>
+        <FormItem label="Linkquelle" {...formItemLayout}>
           <RadioGroup value={link.type} onChange={this.handleLinkTypeValueChanged}>
             <RadioButton value="external">Externer Link</RadioButton>
             <RadioButton value="menu">Menü-Link</RadioButton>

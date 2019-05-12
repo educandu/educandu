@@ -2,6 +2,7 @@ const React = require('react');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
 const splitArray = require('split-array');
+const urls = require('../../../utils/urls');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
@@ -18,26 +19,41 @@ function getSource(type, url, cdnRootUrl) {
   }
 }
 
+function createTileUrl(tile) {
+  const link = tile.link || {};
+  switch (link.type) {
+    case 'external':
+      return link.url;
+    case 'menu':
+      return urls.getMenuUrl(link.url);
+    case 'article':
+      return urls.getArticleUrl(link.url);
+    default:
+      return '';
+  }
+}
+
 function createTile(index, tile, hoverEffect, clientSettings, githubFlavoredMarkdown) {
   const containerClasses = classNames({
     'ImageTiles-tilesContainer': true,
     'u-img-color-flip': hoverEffect === 'colorize-zoom'
   });
+
+  if (!tile) {
+    return <div key={index.toString()} className={containerClasses} />;
+  }
+
   return (
-    <div key={index.toString()} className={containerClasses}>
-      {tile && (
-        <img
-          className="ImageTiles-img"
-          src={getSource(tile.image.type, tile.image.url, clientSettings.cdnRootUrl)}
-          />
-      )}
-      {tile && (
-        <div
-          className="ImageTiles-description"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(tile.description || '') }}
-          />
-      )}
-    </div>
+    <a key={index.toString()} className={containerClasses} href={createTileUrl(tile)}>
+      <img
+        className="ImageTiles-img"
+        src={getSource(tile.image.type, tile.image.url, clientSettings.cdnRootUrl)}
+        />
+      <div
+        className="ImageTiles-description"
+        dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(tile.description || '') }}
+        />
+    </a>
   );
 }
 
