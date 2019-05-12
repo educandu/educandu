@@ -5,18 +5,10 @@ const Input = require('antd/lib/input');
 const Table = require('antd/lib/table');
 const Button = require('antd/lib/button');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
+const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
 
 const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
-
-const swapItems = (items, index1, index2) => {
-  const newItems = items.slice();
-  const item1 = newItems[index1];
-  const item2 = newItems[index2];
-  newItems[index1] = item2;
-  newItems[index2] = item1;
-  return newItems;
-};
 
 class QuickTesterEditor extends React.Component {
   constructor(props) {
@@ -95,7 +87,7 @@ class QuickTesterEditor extends React.Component {
     const { dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.filter((t, i) => i !== index);
+    const newTests = removeItem(oldTests, index);
     this.changeContent({ tests: newTests });
   }
 

@@ -103,6 +103,62 @@
           "url": "http://www.musikanalyse.net/content/tutorials/i-x-v-i-schema/sound/03_Mozart-FuldaSymphonicOrchestra-Schindler.mp3"
         }
       }
+    },
+    {
+      "type": "image-tiles",
+      "content": {
+        "de": {
+          "tiles": [
+            {
+              "image": {
+                "type": "external",
+                "url": "/images/Musikhochschule.png"
+              },
+              "description": "Musikhochschule",
+              "link": {
+                "type": "menu",
+                "url": "test-menu"
+              }
+            },
+            {
+              "image": {
+                "type": "external",
+                "url": "/images/Musikschule.png"
+              },
+              "description": "Musikschuler",
+              "link": {
+                "type": "menu",
+                "url": "test-menu"
+              }
+            },
+            {
+              "image": {
+                "type": "external",
+                "url": "/images/Materialkiste.png"
+              },
+              "description": "Materialkiste",
+              "link": {
+                "type": "menu",
+                "url": "test-menu"
+              }
+            },
+            {
+              "image": {
+                "type": "external",
+                "url": "/images/Schule.png"
+              },
+              "description": "Schule",
+              "link": {
+                "type": "menu",
+                "url": "test-menu"
+              }
+            }
+          ],
+          "maxTilesPerRow": 3,
+          "maxWidth": 100,
+          "hoverEffect": "colorize-zoom"
+        }
+      }
     }
   ]
 }
