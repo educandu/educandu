@@ -60,7 +60,16 @@ function Index() {
           </div>
         </div>
       </PageContent>
-      <PageFooter fullScreen />
+      <PageFooter fullScreen>
+        <Button
+          className="IndexPage-helpButton"
+          size="large"
+          icon="question-circle"
+          href={urls.getArticleUrl('hilfe')}
+          >
+          Hilfe
+        </Button>
+      </PageFooter>
     </Page>
   );
 }

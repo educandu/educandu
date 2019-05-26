@@ -1,3 +1,5 @@
+@page-footer-content-layer-margin: 45px;
+
 .PageFooter {
   padding: 20px 0;
   text-align: center;
@@ -8,4 +10,13 @@
     left: 0;
     right: 0;
   }
+}
+
+.PageFooter-content {
+  position: absolute;
+  display: block;
+  left: @page-footer-content-layer-margin;
+  right: @page-footer-content-layer-margin;
+  bottom: @page-footer-content-layer-margin;
+  text-align: right;
 }
