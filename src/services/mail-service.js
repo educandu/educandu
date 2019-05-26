@@ -14,7 +14,7 @@ class MailService {
   }
 
   sendRegistrationVerificationLink(emailAddress, verificationLink) {
-    logger.log('Creating email with registration verification link %s', verificationLink);
+    logger.info('Creating email with registration verification link %s', verificationLink);
     const message = {
       from: ELMU_WEB_EMAIL_ADDRESS,
       to: emailAddress,
@@ -27,7 +27,7 @@ class MailService {
   }
 
   sendPasswordResetRequestCompletionLink(emailAddress, completionLink) {
-    logger.log('Creating email with password reset request completion link %s', completionLink);
+    logger.info('Creating email with password reset request completion link %s', completionLink);
     const message = {
       from: ELMU_WEB_EMAIL_ADDRESS,
       to: emailAddress,
@@ -40,7 +40,7 @@ class MailService {
   }
 
   _sendMail(message) {
-    logger.log('Sending email with subject "%s"', message.subject);
+    logger.info('Sending email with subject "%s"', message.subject);
     return this.transport.sendMail(message);
   }
 }
