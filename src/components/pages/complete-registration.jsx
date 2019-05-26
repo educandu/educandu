@@ -10,8 +10,8 @@ function CompleteRegistration() {
         <div className="CompleteRegistrationPage">
           <h1 className="CompleteRegistrationPage-title">elmu</h1>
           <div className="CompleteRegistrationPage-message">
-            <p>Ihre Registrierung ist erfolgreich abgeschlossen.</p>
-            <p>Klicken Sie <a href="/login">hier</a>, um sich anzumelden.</p>
+            <p>Gratulation! Sie sind nun ein elmu-User und haben Ihre Registrierung erfolgreich abgeschlossen.</p>
+            <p>Klicken Sie bitte <a href="/login">hier</a>, wenn Sie sich anmelden möchten.</p>
           </div>
         </div>
       </PageContent>
