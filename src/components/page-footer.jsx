@@ -3,7 +3,7 @@ const urls = require('../utils/urls');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
 
-function PageFooter({ fullScreen }) {
+function PageFooter({ children, fullScreen }) {
   const classes = classNames({
     'PageFooter': true,
     'PageFooter--fullScreen': fullScreen
@@ -18,15 +18,20 @@ function PageFooter({ fullScreen }) {
       <a href={urls.getArticleUrl('nutzungsvertrag')}>Nutzungsvertrag</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a href={urls.getArticleUrl('datenschutz')}>Datenschutz</a>
+      <div className="PageFooter-content">
+        {children}
+      </div>
     </footer>
   );
 }
 
 PageFooter.propTypes = {
+  children: PropTypes.node,
   fullScreen: PropTypes.bool
 };
 
 PageFooter.defaultProps = {
+  children: null,
   fullScreen: false
 };
 
