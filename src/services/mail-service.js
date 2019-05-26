@@ -18,9 +18,9 @@ class MailService {
     const message = {
       from: ELMU_WEB_EMAIL_ADDRESS,
       to: emailAddress,
-      subject: 'Ihre Registrierung auf ELMU',
-      text: `Verifizieren Sie sich hier: ${verificationLink}`,
-      html: `<p>Verifizieren Sie sich <a href="${verificationLink}">hier</a></p>`
+      subject: 'Willkommen auf elmu!',
+      text: `Willkommen! Sie haben sich erfolgreich auf elmu registriert. Bitte bestätigen Sie Ihre Registrierung hier: ${verificationLink}`,
+      html: `<p>Willkommen! Sie haben sich erfolgreich auf elmu registriert. Bitte bestätigen Sie Ihre Registrierung hier: <a href="${verificationLink}">Registrierung bestätigen</a></p>`
     };
 
     return this._sendMail(message);
@@ -32,8 +32,8 @@ class MailService {
       from: ELMU_WEB_EMAIL_ADDRESS,
       to: emailAddress,
       subject: 'Ihr Kennwort auf ELMU',
-      text: `Ändern Sie hier Ihr Kennwort: ${completionLink}`,
-      html: `<p>Ändern Sie <a href="${completionLink}">hier</a> Ihr Kennwort.</p>`
+      text: `Sie möchten Ihr Kennwort auf elmu ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: ${completionLink}`,
+      html: `<p>Sie möchten Ihr Kennwort auf elmu ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: <a href="${completionLink}">Kennwort ändern</a>.</p>`
     };
 
     return this._sendMail(message);

@@ -61,7 +61,7 @@ class CompletePasswordReset extends React.Component {
   compareToFirstPassword(rule, value, cb) {
     const { form } = this.props;
     const otherPassword = form.getFieldValue('password');
-    return value && value !== otherPassword ? cb('Die Kennwörter stimmen nicht überein') : cb();
+    return value && value !== otherPassword ? cb('Sie haben sich wahrscheinlich vertippt, die Kennwörter stimmen leider nicht überein') : cb();
   }
 
   validateToNextPassword(rule, value, cb) {
@@ -103,7 +103,7 @@ class CompletePasswordReset extends React.Component {
     const passwordValidationRules = [
       {
         required: true,
-        message: 'Bitte geben Sie ein Kennwort an'
+        message: 'Bitte geben Sie hier ein Kennwort an'
       },
       {
         validator: this.validateToNextPassword
@@ -113,7 +113,7 @@ class CompletePasswordReset extends React.Component {
     const passwordConfirmationValidationRules = [
       {
         required: true,
-        message: 'Bitte bestätigen Sie das Kennwort'
+        message: 'Bitte bestätigen Sie Ihr Kennwort'
       }, {
         validator: this.compareToFirstPassword
       }
