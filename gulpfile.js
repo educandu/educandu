@@ -24,6 +24,7 @@ const { spawn } = require('child_process');
 const { Docker } = require('docker-cli-js');
 const runSequence = require('run-sequence');
 const sourcemaps = require('gulp-sourcemaps');
+const realFavicon = require('gulp-real-favicon');
 const streamToPromise = require('stream-to-promise');
 const LessAutoprefix = require('less-plugin-autoprefix');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -43,6 +44,8 @@ const TEST_MINIO_CONTAINER_NAME = 'elmu-minio';
 
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
 const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
+
+const FAVICON_DATA_FILE = 'favicon-data.json';
 
 const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimized');
 const verbous = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbous');
@@ -278,6 +281,83 @@ gulp.task('bundle:js', async () => {
   };
 
   console.log(stats.toString(verbous ? {} : minimalStatsOutput));
+});
+
+gulp.task('favicon:generate', done => {
+  realFavicon.generateFavicon({
+    masterPicture: 'favicon.png',
+    dest: 'static',
+    iconsPath: '/',
+    design: {
+      ios: {
+        pictureAspect: 'backgroundAndMargin',
+        backgroundColor: '#ffffff',
+        margin: '14%',
+        assets: {
+          ios6AndPriorIcons: false,
+          ios7AndLaterIcons: false,
+          precomposedIcons: false,
+          declareOnlyDefaultIcon: true
+        },
+        appName: 'elmu'
+      },
+      desktopBrowser: {},
+      windows: {
+        pictureAspect: 'noChange',
+        backgroundColor: '#2b5797',
+        onConflict: 'override',
+        assets: {
+          windows80Ie10Tile: false,
+          windows10Ie11EdgeTiles: {
+            small: false,
+            medium: true,
+            big: false,
+            rectangle: false
+          }
+        },
+        appName: 'elmu'
+      },
+      androidChrome: {
+        pictureAspect: 'backgroundAndMargin',
+        margin: '17%',
+        backgroundColor: '#ffffff',
+        themeColor: '#ffffff',
+        manifest: {
+          name: 'elmu',
+          display: 'standalone',
+          orientation: 'notSet',
+          onConflict: 'override',
+          declared: true
+        },
+        assets: {
+          legacyIcon: false,
+          lowResolutionIcons: false
+        }
+      },
+      safariPinnedTab: {
+        pictureAspect: 'blackAndWhite',
+        threshold: 71.09375,
+        themeColor: '#5bbad5'
+      }
+    },
+    settings: {
+      scalingAlgorithm: 'Mitchell',
+      errorOnImageTooSmall: true,
+      readmeFile: false,
+      htmlCodeFile: false,
+      usePathAsIs: false
+    },
+    versioning: {
+      paramName: 'v',
+      paramValue: 'cakfaagb'
+    },
+    markupFile: FAVICON_DATA_FILE
+  }, () => done());
+});
+
+gulp.task('favicon:checkupdate', done => {
+  const currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).version;
+  realFavicon.checkForUpdates(currentVersion, done);
 });
 
 gulp.task('build', ['bundle:css', 'bundle:js']);
