@@ -4,6 +4,7 @@ const { Container } = require('../common/di');
 const Root = require('../components/root.jsx');
 const cloneDeep = require('../utils/clone-deep');
 const ReactDOMServer = require('react-dom/server');
+const faviconData = require('../../favicon-data.json');
 const DataProvider = require('../data/data-provider.js');
 const requestHelper = require('../utils/request-helper');
 const ClientDataMapper = require('./client-data-mapper');
@@ -59,6 +60,7 @@ class PageRenderer {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    ${faviconData.favicon.html_code}
     <title>ELMU</title>
     <link rel="stylesheet" href="/main.css">
   </head>

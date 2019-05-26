@@ -106,6 +106,7 @@
     "gulp-if": "~2.0.2",
     "gulp-less": "~3.5.0",
     "gulp-plumber": "~1.2.0",
+    "gulp-real-favicon": "~0.3.2",
     "gulp-sourcemaps": "~2.6.4",
     "jest": "~24.8.0",
     "less-plugin-autoprefix": "~2.0.0",
