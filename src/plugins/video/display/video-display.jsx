@@ -120,7 +120,7 @@ class VideoDisplay extends React.Component {
 
     const containerInnerClasses = classNames({
       'Video-mainPlayerContainer': true,
-      [`u-width-${width}`]: true,
+      [`u-width-${width}`]: !!content.showVideo,
       'Video-mainPlayerContainer--noDisplay': !content.showVideo
     });
 
