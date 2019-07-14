@@ -87,5 +87,14 @@ module.exports = [
       keyboardOffset: 48,
       tests: []
     }
+  },
+  {
+    name: 'ABC-Notation',
+    type: 'abc-notation',
+    defaultContent: {
+      abcCode: '',
+      maxWidth: 100,
+      text: ''
+    }
   }
 ];

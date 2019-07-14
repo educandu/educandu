@@ -26,6 +26,7 @@
     "@babel/preset-env": "~7.4.4",
     "@babel/preset-react": "~7.0.0",
     "@babel/register": "~7.4.4",
+    "abcjs": "~5.7.0",
     "acho": "~4.0.4",
     "antd": "~3.9.1",
     "any-base": "~1.1.0",
