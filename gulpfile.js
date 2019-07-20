@@ -173,7 +173,7 @@ gulp.task('bundle:js', async () => {
     .map(bundleFile => path.basename(bundleFile, '.js'))
     .reduce((all, name) => ({ ...all, [name]: ['@babel/polyfill', `./src/bundles/${name}.js`] }), {});
 
-  const plugins = [new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs')];
+  const plugins = [new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi')];
 
   if (optimize) {
     plugins.push(new BundleAnalyzerPlugin({

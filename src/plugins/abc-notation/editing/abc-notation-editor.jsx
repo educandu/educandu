@@ -2,6 +2,7 @@ const React = require('react');
 const Form = require('antd/lib/form');
 const autoBind = require('auto-bind');
 const Input = require('antd/lib/input');
+const Switch = require('antd/lib/switch');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
@@ -16,6 +17,10 @@ class AbcNotationEditor extends React.Component {
   handleCurrentAbcCodeChanged(event) {
     const newValue = event.target.value;
     this.changeContent({ abcCode: newValue });
+  }
+
+  handleDisplayMidiChanged(checked) {
+    this.changeContent({ displayMidi: !!checked });
   }
 
   handleMaxWidthChanged(newValue) {
@@ -34,7 +39,7 @@ class AbcNotationEditor extends React.Component {
 
   render() {
     const { content } = this.props;
-    const { abcCode, maxWidth, text } = content;
+    const { abcCode, maxWidth, displayMidi, text } = content;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -46,6 +51,9 @@ class AbcNotationEditor extends React.Component {
         <Form layout="horizontal">
           <Form.Item label="ABC Code" {...formItemLayout}>
             <TextArea value={abcCode} onChange={this.handleCurrentAbcCodeChanged} autosize={{ minRows: 5 }} />
+          </Form.Item>
+          <Form.Item label="MIDI-Sound" {...formItemLayout}>
+            <Switch checked={!!displayMidi} onChange={this.handleDisplayMidiChanged} />
           </Form.Item>
           <Form.Item label="Maximale Breite" {...formItemLayout}>
             <ObjectMaxWidthSlider defaultValue={100} value={maxWidth} onChange={this.handleMaxWidthChanged} />

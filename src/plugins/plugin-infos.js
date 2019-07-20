@@ -94,6 +94,7 @@ module.exports = [
     defaultContent: {
       abcCode: '',
       maxWidth: 100,
+      displayMidi: true,
       text: ''
     }
   }
