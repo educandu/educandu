@@ -1,9 +1,9 @@
 const React = require('react');
-const { Switch } = require('antd');
 const autoBind = require('auto-bind');
 const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
+const Switch = require('antd/lib/switch');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');

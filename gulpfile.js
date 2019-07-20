@@ -173,15 +173,15 @@ gulp.task('bundle:js', async () => {
     .map(bundleFile => path.basename(bundleFile, '.js'))
     .reduce((all, name) => ({ ...all, [name]: ['@babel/polyfill', `./src/bundles/${name}.js`] }), {});
 
-  const plugins = optimize
-    ? [
-      new BundleAnalyzerPlugin({
-        analyzerMode: 'static',
-        reportFilename: '../reports/bundles.html',
-        openAnalyzer: false
-      })
-    ]
-    : [];
+  const plugins = [new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi')];
+
+  if (optimize) {
+    plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: '../reports/bundles.html',
+      openAnalyzer: false
+    }));
+  }
 
   const commonChunkModules = new Set([
     '@ant-design',
