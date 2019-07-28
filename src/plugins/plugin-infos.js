@@ -89,6 +89,20 @@ module.exports = [
     }
   },
   {
+    name: 'Gehörbildungsübung',
+    type: 'ear-training',
+    defaultContent: {
+      title: '',
+      maxWidth: 100,
+      tests: [
+        {
+          startAbcCode: 'X:1',
+          fullAbcCode: 'X:1'
+        }
+      ]
+    }
+  },
+  {
     name: 'ABC-Notation',
     type: 'abc-notation',
     defaultContent: {

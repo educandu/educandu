@@ -9,6 +9,7 @@ const ImageTilePlugin = require('./image-tiles/renderer');
 const PluginFactoryBase = require('./plugin-factory-base');
 const QuickTesterPlugin = require('./quick-tester/renderer');
 const AbcNotationPlugin = require('./abc-notation/renderer');
+const EarTrainingPlugin = require('./ear-training/renderer');
 const IntervalTrainerPlugin = require('./interval-trainer/renderer');
 
 const renderers = [
@@ -21,6 +22,7 @@ const renderers = [
   H5pPlayerPlugin,
   AnnotationPlugin,
   AbcNotationPlugin,
+  EarTrainingPlugin,
   IntervalTrainerPlugin
 ];
 

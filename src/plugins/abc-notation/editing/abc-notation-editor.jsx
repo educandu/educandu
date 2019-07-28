@@ -49,7 +49,7 @@ class AbcNotationEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <Form.Item label="ABC Code" {...formItemLayout}>
+          <Form.Item label="ABC-Code" {...formItemLayout}>
             <TextArea value={abcCode} onChange={this.handleCurrentAbcCodeChanged} autosize={{ minRows: 5 }} />
           </Form.Item>
           <Form.Item label="MIDI-Sound" {...formItemLayout}>

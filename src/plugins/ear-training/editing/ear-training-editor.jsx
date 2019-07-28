@@ -6,11 +6,13 @@ const Table = require('antd/lib/table');
 const Button = require('antd/lib/button');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
+const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
+const { TextArea } = Input;
 const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
 
-class QuickTesterEditor extends React.Component {
+class EarTrainingEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
@@ -26,18 +28,18 @@ class QuickTesterEditor extends React.Component {
           </ButtonGroup>
         )
       }, {
-        title: 'Frage',
-        dataIndex: 'question',
-        key: 'question',
-        render: (question, item, index) => (
-          <Input data-index={index} value={question} onChange={this.handleInputQuestionChanged} />
+        title: 'Vorgabe-ABC-Code',
+        dataIndex: 'startAbcCode',
+        key: 'startAbcCode',
+        render: (startAbcCode, item, index) => (
+          <TextArea data-index={index} value={startAbcCode} onChange={this.handleStartAbcCodeChanged} rows={6} />
         )
       }, {
-        title: 'Antwort',
-        dataIndex: 'answer',
-        key: 'answer',
-        render: (answer, item, index) => (
-          <Input data-index={index} value={answer} onChange={this.handleInputAnswerChanged} />
+        title: 'Lösungs-ABC-Code',
+        dataIndex: 'fullAbcCode',
+        key: 'fullAbcCode',
+        render: (fullAbcCode, item, index) => (
+          <TextArea data-index={index} value={fullAbcCode} onChange={this.handleFullAbcCodeChanged} rows={6} />
         )
       }, {
         title: (
@@ -46,7 +48,7 @@ class QuickTesterEditor extends React.Component {
         width: 48,
         key: 'button',
         render: (value, item, index) => (
-          <Button data-index={index} type="danger" icon="delete" onClick={this.handleDeletButtonClick} />
+          <Button data-index={index} type="danger" icon="delete" disabled={this.props.content.tests.length < 2} onClick={this.handleDeletButtonClick} />
         )
       }
     ];
@@ -57,29 +59,28 @@ class QuickTesterEditor extends React.Component {
     onContentChanged({ ...content, ...newContentValues });
   }
 
-  handleTeaserValueChanged(event) {
-    const { value } = event.target;
-    this.changeContent({ teaser: value });
-  }
-
-  handleTitleValueChanged(event) {
+  handleTitleChanged(event) {
     const { value } = event.target;
     this.changeContent({ title: value });
   }
 
-  handleInputQuestionChanged(event) {
+  handleMaxWidthChanged(newValue) {
+    this.changeContent({ maxWidth: newValue });
+  }
+
+  handleStartAbcCodeChanged(event) {
     const { value, dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((t, i) => i === index ? { question: value, answer: t.answer } : t);
+    const newTests = oldTests.map((t, i) => i === index ? { startAbcCode: value, fullAbcCode: t.fullAbcCode } : t);
     this.changeContent({ tests: newTests });
   }
 
-  handleInputAnswerChanged(event) {
+  handleFullAbcCodeChanged(event) {
     const { value, dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((t, i) => i === index ? { question: t.question, answer: value } : t);
+    const newTests = oldTests.map((t, i) => i === index ? { startAbcCode: t.startAbcCode, fullAbcCode: value } : t);
     this.changeContent({ tests: newTests });
   }
 
@@ -93,7 +94,7 @@ class QuickTesterEditor extends React.Component {
 
   handleAddButtonClick() {
     const newTests = this.props.content.tests.slice();
-    newTests.push({ question: '', answer: '' });
+    newTests.push({ startAbcCode: 'X:1', fullAbcCode: 'X:1' });
     this.changeContent({ tests: newTests });
   }
 
@@ -119,19 +120,19 @@ class QuickTesterEditor extends React.Component {
     const { content } = this.props;
     const dataSource = content.tests.map((t, i) => ({
       key: i,
-      question: t.question,
-      answer: t.answer
+      startAbcCode: t.startAbcCode,
+      fullAbcCode: t.fullAbcCode
     }));
 
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label="Link-Text:" {...formItemLayout}>
-            <Input value={content.teaser} onChange={this.handleTeaserValueChanged} />
-          </FormItem>
           <FormItem label="Titel:" {...formItemLayout}>
-            <Input value={content.title} onChange={this.handleTitleValueChanged} />
+            <Input value={content.title} onChange={this.handleTitleChanged} />
           </FormItem>
+          <Form.Item label="Maximale Breite" {...formItemLayout}>
+            <ObjectMaxWidthSlider defaultValue={100} value={content.maxWidth} onChange={this.handleMaxWidthChanged} />
+          </Form.Item>
         </Form>
         <Table dataSource={dataSource} columns={this.columns} pagination={false} size="small" />
       </div>
@@ -139,8 +140,8 @@ class QuickTesterEditor extends React.Component {
   }
 }
 
-QuickTesterEditor.propTypes = {
+EarTrainingEditor.propTypes = {
   ...sectionEditorProps
 };
 
-module.exports = QuickTesterEditor;
+module.exports = EarTrainingEditor;
