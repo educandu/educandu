@@ -6,12 +6,14 @@ const IndexController = require('./index-controller');
 const ErrorController = require('./error-controller');
 const StaticController = require('./static-controller');
 const PluginController = require('./plugin-controller');
+const SettingController = require('./setting-controller');
 const DocumentController = require('./document-controller');
 
 const controllerTypes = [
   StaticController,
   IndexController,
   UserController,
+  SettingController,
   DocumentController,
   MenuController,
   CdnController,
