@@ -12,6 +12,7 @@ const Database = require('../src/stores/database');
 const fileHelper = require('../src/utils/file-helper');
 const UserService = require('../src/services/user-service');
 const MenuService = require('../src/services/menu-service');
+const SettingService = require('../src/services/setting-service');
 const DocumentService = require('../src/services/document-service');
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
@@ -24,6 +25,7 @@ const globP = util.promisify(glob);
   const db = container.get(Database);
   const userService = container.get(UserService);
   const menuService = container.get(MenuService);
+  const settingService = container.get(SettingService);
   const documentService = container.get(DocumentService);
 
   await testHelper.dropAllCollections(db);
@@ -47,8 +49,9 @@ const globP = util.promisify(glob);
     payload.user = user;
   });
 
-  await Promise.all(docPayloads.map(payload => documentService.createDocumentRevision(payload)));
+  const docs = await Promise.all(docPayloads.map(payload => documentService.createDocumentRevision(payload)));
   await Promise.all(menuPayloads.map(payload => menuService.saveMenu(payload)));
+  await settingService.setLandingPageDocumentId(docs.find(doc => doc.title === 'Landing Page')._id);
 
   await serverBootstrapper.disposeContainer(container);
 
