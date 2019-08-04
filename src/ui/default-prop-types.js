@@ -29,6 +29,10 @@ const requestProps = {
   }).isRequired
 };
 
+const settingsShape = PropTypes.shape({
+  landingPageDocumentId: PropTypes.string
+});
+
 const userProfileShape = PropTypes.shape({
   city: PropTypes.string,
   country: PropTypes.string,
@@ -112,6 +116,7 @@ module.exports = {
   sectionEditorProps,
   clientSettingsProps,
   requestProps,
+  settingsShape,
   userProps,
   dataProps,
   docMetadataShape,

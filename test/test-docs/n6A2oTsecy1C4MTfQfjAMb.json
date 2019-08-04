@@ -1,0 +1,16 @@
+{
+  "doc": {
+    "title": "Landing Page",
+    "slug": ""
+  },
+  "sections": [
+    {
+      "type": "markdown",
+      "content": {
+        "de": {
+          "text": "## Hello World"
+        }
+      }
+    }
+  ]
+}

@@ -19,6 +19,13 @@ class ClientDataMapper {
   }
 
   mapDocToInitialState({ doc }) {
+    if (!doc) {
+      return {
+        doc: null,
+        sections: null
+      };
+    }
+
     return {
       doc: this._mapDocMetadata(doc),
       sections: doc.sections

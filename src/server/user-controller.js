@@ -88,12 +88,6 @@ class UserController {
       return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', {});
     });
 
-    /* eslint-disable-next-line no-warning-comments */
-    // TODO: Move this to an index controller
-    app.get('/', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'index-bundle', 'index', {});
-    });
-
     app.get('/login', (req, res) => {
       return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'login', {});
     });

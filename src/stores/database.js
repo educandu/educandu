@@ -2,6 +2,7 @@ const Logger = require('../common/logger');
 const { MongoClient } = require('mongodb');
 const menusSpec = require('./collection-specs/menus');
 const usersSpec = require('./collection-specs/users');
+const settingsSpec = require('./collection-specs/settings');
 const sessionsSpec = require('./collection-specs/sessions');
 const sectionsSpec = require('./collection-specs/sections');
 const documentsSpec = require('./collection-specs/documents');
@@ -19,6 +20,7 @@ const logger = new Logger(__filename);
 const collectionSpecs = [
   menusSpec,
   usersSpec,
+  settingsSpec,
   sessionsSpec,
   sectionsSpec,
   documentsSpec,

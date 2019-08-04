@@ -2,17 +2,18 @@ const React = require('react');
 const Page = require('../page.jsx');
 const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
+const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const DocView = require('../doc-view.jsx');
 const Restricted = require('../restricted.jsx');
 const PageFooter = require('../page-footer.jsx');
 const LoginLogout = require('../login-logout.jsx');
 const PageContent = require('../page-content.jsx');
 const permissions = require('../../domain/permissions');
+const { docShape, sectionShape } = require('../../ui/default-prop-types');
 
 const { Search } = Input;
-
-const categories = ['Musikhochschule', 'Schule', 'Musikschule', 'Materialkiste'];
 
 function showNotImplementedNotification() {
   Modal.error({
@@ -25,16 +26,8 @@ function handleNewDocumentClick() {
   document.location = urls.getDocsUrl();
 }
 
-function Index() {
-  const categoryElements = categories.map(category => {
-    return (
-      <div key={category} className="IndexPage-category">
-        <a className="IndexPage-categoryLink" href={urls.getMenuUrl(category.toLowerCase())}>
-          <img className="IndexPage-categoryImage u-img-color-flip" src={`/images/${category}.png`} />
-        </a>
-      </div>
-    );
-  });
+function Index({ initialState, language }) {
+  const { doc, sections } = initialState;
 
   return (
     <Page fullScreen>
@@ -55,9 +48,7 @@ function Index() {
               onSearch={showNotImplementedNotification}
               />
           </div>
-          <div className="IndexPage-categories">
-            {categoryElements}
-          </div>
+          {doc && sections && <DocView doc={doc} sections={sections} language={language} />}
         </div>
       </PageContent>
       <PageFooter fullScreen>
@@ -73,5 +64,14 @@ function Index() {
     </Page>
   );
 }
+
+Index.propTypes = {
+  initialState: PropTypes.shape({
+    doc: docShape,
+    sections: PropTypes.arrayOf(sectionShape)
+  }).isRequired,
+  language: PropTypes.string.isRequired
+};
+
 
 module.exports = Index;
