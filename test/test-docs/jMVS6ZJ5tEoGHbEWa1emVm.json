@@ -124,15 +124,30 @@
           "tests": [
             {
               "startAbcCode": "X:1\nM:C\nL:1/4\nK:C\nC D",
-              "fullAbcCode": "X:1\nM:C\nL:1/4\nK:C\nC D E F | G2 G2 | A A A A | G4 | A A A A | G4 | F F F F | E2 E2 | D D D D | C4 |]"
+              "fullAbcCode": "X:1\nM:C\nL:1/4\nK:C\nC D E F | G2 G2 | A A A A | G4 | A A A A | G4 | F F F F | E2 E2 | D D D D | C4 |]",
+              "sound": {
+                "type": "midi",
+                "url": null,
+                "text": null
+              }
             },
             {
               "startAbcCode": "X:1\nM:C\nL:1/4\nK:C\nC D",
-              "fullAbcCode": "X:1\nM:C\nL:1/4\nK:C\nC D E F | G G G G | A F c A | G4 | A F c A | G4 | G F F F | F E E E | E D E D | C E G2 | G F F F | F E E E | E D E D | C4 |]"
+              "fullAbcCode": "X:1\nM:C\nL:1/4\nK:C\nC D E F | G G G G | A F c A | G4 | A F c A | G4 | G F F F | F E E E | E D E D | C E G2 | G F F F | F E E E | E D E D | C4 |]",
+              "sound": {
+                "type": "midi",
+                "url": null,
+                "text": null
+              }
             },
             {
               "startAbcCode": "X:1\nM:C\nL:1/4\nK:D\nA F",
-              "fullAbcCode": "X:1\nM:C\nL:1/4\nK:D\nA F F2 | G E E2 | D E F G | A A A2 | A F F2 | G E E2 | D F A A | D4 |]"
+              "fullAbcCode": "X:1\nM:C\nL:1/4\nK:D\nA F F2 | G E E2 | D E F G | A A A2 | A F F2 | G E E2 | D F A A | D4 |]",
+              "sound": {
+                "type": "midi",
+                "url": null,
+                "text": null
+              }
             }
           ]
         }
