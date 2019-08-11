@@ -97,7 +97,12 @@ module.exports = [
       tests: [
         {
           startAbcCode: 'X:1',
-          fullAbcCode: 'X:1'
+          fullAbcCode: 'X:1',
+          sound: {
+            type: 'internal',
+            url: '',
+            text: ''
+          }
         }
       ]
     }
