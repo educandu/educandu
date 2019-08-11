@@ -1,12 +1,13 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
 const arrayShuffle = require('array-shuffle');
 const abcjs = require('../../../common/abcjs-import');
 const memoizeLast = require('../../../utils/memoize-last');
+const AudioPlayer = require('../../../components/audio-player.jsx');
+const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
+const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
 
 const abcOptions = {
   paddingtop: 0,
@@ -74,9 +75,31 @@ class EarTrainingDisplay extends React.Component {
   }
 
   render() {
+    const { clientSettings } = this.props;
     const { title, maxWidth, tests, currentIndex, showResult } = this.state;
 
     const currentTest = tests[currentIndex];
+
+    let soundType;
+    let soundUrl;
+    let legendHtml;
+    if (currentTest.sound && currentTest.sound.type === 'internal') {
+      soundType = 'internal';
+      soundUrl = currentTest.sound.url ? `${clientSettings.cdnRootUrl}/${currentTest.sound.url}` : null;
+      legendHtml = currentTest.sound.text || '';
+    } else if (currentTest.sound && currentTest.sound.type === 'external') {
+      soundType = 'external';
+      soundUrl = currentTest.sound.url || null;
+      legendHtml = currentTest.sound.text || '';
+    } else {
+      soundType = 'midi';
+      soundUrl = null;
+      legendHtml = '';
+    }
+
+    const soundPlayer = soundType === 'midi'
+      ? <div ref={this.midiContainerRef} />
+      : <AudioPlayer soundUrl={soundUrl} legendHtml={legendHtml} />;
 
     const buttons = [];
 
@@ -98,7 +121,7 @@ class EarTrainingDisplay extends React.Component {
             dangerouslySetInnerHTML={{ __html: this.renderMarkdown(title) }}
             />
           <div ref={this.abcContainerRef} />
-          <div ref={this.midiContainerRef} />
+          {soundPlayer}
           <div className="EarTraining-buttons">
             {buttons}
           </div>
@@ -110,9 +133,10 @@ class EarTrainingDisplay extends React.Component {
 
 EarTrainingDisplay.propTypes = {
   ...sectionDisplayProps,
-  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
+  ...clientSettingsProps
 };
 
 module.exports = inject({
-  githubFlavoredMarkdown: GithubFlavoredMarkdown
+  githubFlavoredMarkdown: GithubFlavoredMarkdown,
+  clientSettings: ClientSettings
 }, EarTrainingDisplay);

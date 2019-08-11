@@ -4,13 +4,18 @@ const autoBind = require('auto-bind');
 const Input = require('antd/lib/input');
 const Table = require('antd/lib/table');
 const Button = require('antd/lib/button');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
+const ClientSettings = require('../../../bootstrap/client-settings');
+const { inject } = require('../../../components/container-context.jsx');
+const EarTrainingSoundEditor = require('./ear-training-sound-editor.jsx');
 const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
+const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default-prop-types');
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
+
+const defaultSound = { type: 'midi', url: null, text: null };
 
 class EarTrainingEditor extends React.Component {
   constructor(props) {
@@ -23,24 +28,71 @@ class EarTrainingEditor extends React.Component {
         key: 'upDown',
         render: (upDown, item, index) => (
           <ButtonGroup>
-            <Button data-index={index} disabled={index === 0} icon="arrow-up" onClick={this.handleUpCircleButtonClick} />
-            <Button data-index={index} disabled={index === this.props.content.tests.length - 1} icon="arrow-down" onClick={this.handleDownCircleButtonClick} />
+            <Button
+              data-index={index}
+              disabled={index === 0}
+              icon="arrow-up"
+              onClick={this.handleUpCircleButtonClick}
+              />
+            <Button
+              data-index={index}
+              disabled={index === this.props.content.tests.length - 1}
+              icon="arrow-down"
+              onClick={this.handleDownCircleButtonClick}
+              />
           </ButtonGroup>
         )
       }, {
         title: 'Vorgabe-ABC-Code',
-        dataIndex: 'startAbcCode',
         key: 'startAbcCode',
-        render: (startAbcCode, item, index) => (
-          <TextArea data-index={index} value={startAbcCode} onChange={this.handleStartAbcCodeChanged} rows={6} />
-        )
+        render: (val, item, index) => ({
+          children: (
+            <table style={{ width: '100%' }}>
+              <tbody>
+                <tr>
+                  <td>
+                    <TextArea
+                      data-index={index}
+                      value={item.startAbcCode}
+                      onChange={this.handleStartAbcCodeChanged}
+                      rows={6}
+                      />
+                  </td>
+                  <td>
+                    <TextArea
+                      data-index={index}
+                      value={item.fullAbcCode}
+                      onChange={this.handleFullAbcCodeChanged}
+                      rows={6}
+                      />
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="2">
+                    <EarTrainingSoundEditor
+                      testIndex={index}
+                      docKey={this.props.docKey}
+                      sound={item.sound || { ...defaultSound }}
+                      onSoundChanged={this.handleSoundChanged}
+                      />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ),
+          props: {
+            colSpan: 2
+          }
+        })
       }, {
         title: 'Lösungs-ABC-Code',
-        dataIndex: 'fullAbcCode',
         key: 'fullAbcCode',
-        render: (fullAbcCode, item, index) => (
-          <TextArea data-index={index} value={fullAbcCode} onChange={this.handleFullAbcCodeChanged} rows={6} />
-        )
+        render: () => ({
+          children: null,
+          props: {
+            colSpan: 0
+          }
+        })
       }, {
         title: (
           <Button type="primary" icon="plus" onClick={this.handleAddButtonClick} />
@@ -48,7 +100,13 @@ class EarTrainingEditor extends React.Component {
         width: 48,
         key: 'button',
         render: (value, item, index) => (
-          <Button data-index={index} type="danger" icon="delete" disabled={this.props.content.tests.length < 2} onClick={this.handleDeletButtonClick} />
+          <Button
+            data-index={index}
+            type="danger"
+            icon="delete"
+            disabled={this.props.content.tests.length < 2}
+            onClick={this.handleDeletButtonClick}
+            />
         )
       }
     ];
@@ -72,7 +130,7 @@ class EarTrainingEditor extends React.Component {
     const { value, dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((t, i) => i === index ? { startAbcCode: value, fullAbcCode: t.fullAbcCode } : t);
+    const newTests = oldTests.map((test, i) => i === index ? { startAbcCode: value, fullAbcCode: test.fullAbcCode } : test);
     this.changeContent({ tests: newTests });
   }
 
@@ -80,7 +138,13 @@ class EarTrainingEditor extends React.Component {
     const { value, dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((t, i) => i === index ? { startAbcCode: t.startAbcCode, fullAbcCode: value } : t);
+    const newTests = oldTests.map((test, i) => i === index ? { startAbcCode: test.startAbcCode, fullAbcCode: value } : test);
+    this.changeContent({ tests: newTests });
+  }
+
+  handleSoundChanged({ testIndex, sound }) {
+    const oldTests = this.props.content.tests;
+    const newTests = oldTests.map((test, i) => i === testIndex ? { ...test, sound } : test);
     this.changeContent({ tests: newTests });
   }
 
@@ -118,10 +182,11 @@ class EarTrainingEditor extends React.Component {
       wrapperCol: { span: 14 }
     };
     const { content } = this.props;
-    const dataSource = content.tests.map((t, i) => ({
+    const dataSource = content.tests.map((test, i) => ({
       key: i,
-      startAbcCode: t.startAbcCode,
-      fullAbcCode: t.fullAbcCode
+      startAbcCode: test.startAbcCode,
+      fullAbcCode: test.fullAbcCode,
+      sound: test.sound
     }));
 
     return (
@@ -141,7 +206,10 @@ class EarTrainingEditor extends React.Component {
 }
 
 EarTrainingEditor.propTypes = {
-  ...sectionEditorProps
+  ...sectionEditorProps,
+  ...clientSettingsProps
 };
 
-module.exports = EarTrainingEditor;
+module.exports = inject({
+  clientSettings: ClientSettings
+}, EarTrainingEditor);
