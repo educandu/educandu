@@ -1,4 +1,5 @@
 const bodyParser = require('body-parser');
+const { NotFound } = require('http-errors');
 const PageRenderer = require('./page-renderer');
 const permissions = require('../domain/permissions');
 const ClientDataMapper = require('./client-data-mapper');
@@ -16,36 +17,36 @@ class DocumentController {
     this.pageRenderer = pageRenderer;
   }
 
-  registerPages(app) {
-    app.get('/articles/:slug', async (req, res) => {
+  registerPages(router) {
+    router.get('/articles/:slug', async (req, res) => {
       const doc = await this.documentService.getDocumentBySlug(req.params.slug);
       if (!doc) {
-        return res.sendStatus(404);
+        throw new NotFound();
       }
 
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'article', initialState);
     });
 
-    app.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
+    router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const initialState = await this.documentService.getLastUpdatedDocuments();
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'docs', initialState);
     });
 
-    app.get('/docs/:docId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
+    router.get('/docs/:docId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const doc = await this.documentService.getDocumentById(req.params.docId);
       if (!doc) {
-        return res.sendStatus(404);
+        throw new NotFound();
       }
 
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'doc', initialState);
     });
 
-    app.get('/edit/doc/:docId', needsPermission(permissions.EDIT_DOC), async (req, res) => {
+    router.get('/edit/doc/:docId', needsPermission(permissions.EDIT_DOC), async (req, res) => {
       const doc = await this.documentService.getDocumentById(req.params.docId);
       if (!doc) {
-        return res.sendStatus(404);
+        throw new NotFound();
       }
 
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
@@ -53,8 +54,8 @@ class DocumentController {
     });
   }
 
-  registerApi(app) {
-    app.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
+  registerApi(router) {
+    router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
       const { user } = req;
       const { doc, sections } = req.body;
       const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });

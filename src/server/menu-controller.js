@@ -1,5 +1,6 @@
 const treeCrawl = require('tree-crawl');
 const bodyParser = require('body-parser');
+const { NotFound } = require('http-errors');
 const PageRenderer = require('./page-renderer');
 const permissions = require('../domain/permissions');
 const MenuService = require('../services/menu-service');
@@ -23,11 +24,11 @@ class MenuController {
     this.pageRenderer = pageRenderer;
   }
 
-  registerPages(app) {
-    app.get('/menus/:slug', async (req, res) => {
+  registerPages(router) {
+    router.get('/menus/:slug', async (req, res) => {
       const menu = await this.menuService.getMenuBySlug(req.params.slug);
       if (!menu) {
-        return res.sendStatus(404);
+        throw new NotFound();
       }
 
       const defaultDocument = menu.defaultDocumentKey
@@ -48,15 +49,15 @@ class MenuController {
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'menu', initialState);
     });
 
-    app.get('/menus', needsPermission(permissions.VIEW_MENUS), async (req, res) => {
+    router.get('/menus', needsPermission(permissions.VIEW_MENUS), async (req, res) => {
       const initialState = await this.menuService.getMenus();
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'menus', initialState);
     });
 
-    app.get('/edit/menu/:menuId', needsPermission(permissions.EDIT_MENU), async (req, res) => {
+    router.get('/edit/menu/:menuId', needsPermission(permissions.EDIT_MENU), async (req, res) => {
       const menu = await this.menuService.getMenuById(req.params.menuId);
       if (!menu) {
-        return res.sendStatus(404);
+        throw new NotFound();
       }
 
       const docs = await this.documentService.getDocumentsMetadata();
@@ -69,8 +70,8 @@ class MenuController {
     });
   }
 
-  registerApi(app) {
-    app.post('/api/v1/menus', [needsPermission(permissions.EDIT_MENU), jsonParser], async (req, res) => {
+  registerApi(router) {
+    router.post('/api/v1/menus', [needsPermission(permissions.EDIT_MENU), jsonParser], async (req, res) => {
       const user = req.user;
       const menu = req.body;
       const updatedMenu = await this.menuService.saveMenu({ menu, user });

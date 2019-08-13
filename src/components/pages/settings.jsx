@@ -4,13 +4,16 @@ const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const Input = require('antd/lib/input');
 const Button = require('antd/lib/button');
-const message = require('antd/lib/message');
+const Logger = require('../../common/logger');
 const PageHeader = require('../page-header.jsx');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const { settingsShape } = require('../../ui/default-prop-types');
 const SettingApiClient = require('../../services/setting-api-client');
+
+const logger = new Logger(__filename);
 
 class Settings extends React.Component {
   constructor(props) {
@@ -37,8 +40,8 @@ class Settings extends React.Component {
     const { settingApiClient } = this.props;
     try {
       await settingApiClient.saveSettings({ settings });
-    } catch (err) {
-      message.error(err.message);
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
     }
   }
 

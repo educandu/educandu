@@ -20,6 +20,7 @@ switch (env) {
   case 'dev':
     settings.redirectToHttps = false;
     settings.redirectToNonWwwDomain = false;
+    settings.exposeErrorDetails = true;
     settings.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/dev-elmu-web?authSource=admin';
     settings.cdnEndpoint = 'http://localhost:9000';
     settings.cdnRegion = 'eu-central-1';
@@ -38,6 +39,7 @@ switch (env) {
   case 'test':
     settings.redirectToHttps = false;
     settings.redirectToNonWwwDomain = false;
+    settings.exposeErrorDetails = true;
     settings.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/test-elmu-web?authSource=admin';
     settings.cdnEndpoint = 'http://localhost:9000';
     settings.cdnRegion = 'eu-central-1';
@@ -57,6 +59,7 @@ switch (env) {
   case 'prod':
     settings.redirectToHttps = true;
     settings.redirectToNonWwwDomain = true;
+    settings.exposeErrorDetails = false;
     settings.elmuWebConnectionString = process.env.ELMU_WEB_CONNECTION_STRING;
     settings.cdnEndpoint = process.env.ELMU_CDN_ENDPOINT;
     settings.cdnRegion = process.env.ELMU_CDN_REGION;

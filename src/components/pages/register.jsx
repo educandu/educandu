@@ -7,11 +7,16 @@ const PropTypes = require('prop-types');
 const { formShape } = require('rc-form');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const Logger = require('../../common/logger');
 const Checkbox = require('antd/lib/checkbox');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
+const { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } = require('../../domain/user-management');
+
+const logger = new Logger(__filename);
 
 const FormItem = Form.Item;
 
@@ -21,29 +26,43 @@ class Register extends React.Component {
     autoBind.react(this);
     this.state = {
       confirmDirty: false,
-      isRegistered: false
+      user: null,
+      forbiddenEmails: [],
+      forbiddenUsernames: []
     };
   }
 
-  register({ username, password, email }) {
-    const { userApiClient } = this.props;
-    return userApiClient.register({ username, password, email });
-  }
-
-  handleRegistrationResult({ user }) {
-    if (user) {
-      this.setState({ isRegistered: true });
+  async register({ username, password, email }) {
+    try {
+      const { form, userApiClient } = this.props;
+      const { result, user } = await userApiClient.register({ username, password, email });
+      switch (result) {
+        case CREATE_USER_RESULT_SUCCESS:
+          this.setState({ user });
+          break;
+        case CREATE_USER_RESULT_DUPLICATE_EMAIL:
+          this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
+          form.validateFields(['email'], { force: true });
+          break;
+        case CREATE_USER_RESULT_DUPLICATE_USERNAME:
+          this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
+          form.validateFields(['username'], { force: true });
+          break;
+        default:
+          throw new Error(`Unknown result: ${result}`);
+      }
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
     }
   }
 
   handleSubmit(e) {
     e.preventDefault();
     const { form } = this.props;
-    form.validateFieldsAndScroll(async (err, values) => {
+    form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { username, password, email } = values;
-        const result = await this.register({ username, password, email });
-        this.handleRegistrationResult(result);
+        this.register({ username, password, email });
       }
     });
   }
@@ -59,8 +78,18 @@ class Register extends React.Component {
     return value && value !== otherPassword ? cb('Die Kennwörter stimmen nicht überein') : cb();
   }
 
+  validateUniqueEmail(rule, value, cb) {
+    const { forbiddenEmails } = this.state;
+    return value && forbiddenEmails.includes(value.toLowerCase()) ? cb('Diese E-Mail-Adresse ist bereits vergeben') : cb();
+  }
+
+  validateUniqueUsername(rule, value, cb) {
+    const { forbiddenUsernames } = this.state;
+    return value && forbiddenUsernames.includes(value.toLowerCase()) ? cb('Der Benutzername ist bereits vergeben') : cb();
+  }
+
   validateToNextPassword(rule, value, cb) {
-    const form = this.props.form;
+    const { form } = this.props;
     if (value && this.state.confirmDirty) {
       form.validateFields(['confirm'], { force: true });
     }
@@ -68,7 +97,7 @@ class Register extends React.Component {
   }
 
   render() {
-    const { isRegistered } = this.state;
+    const { user } = this.state;
     const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
@@ -100,6 +129,9 @@ class Register extends React.Component {
         required: true,
         message: 'Bitte geben Sie einen Benutzernamen an',
         whitespace: true
+      },
+      {
+        validator: this.validateUniqueUsername
       }
     ];
 
@@ -111,6 +143,9 @@ class Register extends React.Component {
       {
         required: true,
         message: 'Bitte geben Sie Ihre E-Mail-Adresse an'
+      },
+      {
+        validator: this.validateUniqueEmail
       }
     ];
 
@@ -181,7 +216,7 @@ class Register extends React.Component {
         <PageContent fullScreen>
           <div className="RegisterPage">
             <h1 className="RegisterPage-title">elmu</h1>
-            {isRegistered ? registrationConfirmation : registrationForm}
+            {user ? registrationConfirmation : registrationForm}
           </div>
         </PageContent>
         <PageFooter fullScreen />

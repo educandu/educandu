@@ -6,15 +6,19 @@ const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
 const { toTrimmedString } = require('../../utils/sanitize');
 const { menuShape } = require('../../ui/default-prop-types');
 const MenuApiClient = require('../../services/menu-api-client');
+
+const logger = new Logger(__filename);
 
 const DEFAULT_MENU_TITLE = 'Neues Menü';
 const DEFAULT_MENU_SLUG = '';
@@ -60,16 +64,21 @@ class Menus extends React.Component {
     const { newMenuTitle, newMenuSlug } = this.state;
     const { menuApiClient } = this.props;
 
-    this.setState({ isLoading: true });
+    try {
+      this.setState({ isLoading: true });
 
-    const { menu } = await menuApiClient.saveMenu(this.createNewMenu(newMenuTitle, newMenuSlug));
+      const { menu } = await menuApiClient.saveMenu(this.createNewMenu(newMenuTitle, newMenuSlug));
 
-    this.setState({
-      isNewMenuModalVisible: false,
-      isLoading: false
-    });
+      this.setState({
+        isNewMenuModalVisible: false,
+        isLoading: false
+      });
 
-    window.location = urls.getEditMenuUrl(menu._id);
+      window.location = urls.getEditMenuUrl(menu._id);
+    } catch (error) {
+      this.setState({ isLoading: false });
+      errorHelper.handleApiError(error, logger);
+    }
   }
 
   handleCancel() {

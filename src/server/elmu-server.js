@@ -4,6 +4,8 @@ const Logger = require('../common/logger');
 const ControllerFactory = require('./controller-factory');
 const ServerSettings = require('../bootstrap/server-settings');
 
+require('express-async-errors');
+
 const logger = new Logger(__filename);
 
 class ElmuServer {
@@ -20,32 +22,35 @@ class ElmuServer {
 
     this.app.enable('trust proxy');
 
+    const router = express.Router();
+    this.app.use('/', router);
+
     logger.info('Registering healthcheck');
-    this.app.use((req, res, next) => req.path === '/healthcheck' ? res.send('OK') : next());
+    router.use((req, res, next) => req.path === '/healthcheck' ? res.send('OK') : next());
 
     if (this.serverSettings.redirectToHttps) {
       logger.info('Registering redirect to HTTPS');
-      this.app.use((req, res, next) => req.secure ? next() : res.redirect(301, `https://${req.headers.host}${req.originalUrl}`));
+      router.use((req, res, next) => req.secure ? next() : res.redirect(301, `https://${req.headers.host}${req.originalUrl}`));
     }
 
     if (this.serverSettings.redirectToNonWwwDomain) {
       logger.info('Registering redirect to domain name without www');
-      this.app.use((req, res, next) => (/^www\./).test(req.headers.host) ? res.redirect(301, `${req.protocol}://${req.headers.host.replace(/^www\./, '')}${req.originalUrl}`) : next());
+      router.use((req, res, next) => (/^www\./).test(req.headers.host) ? res.redirect(301, `${req.protocol}://${req.headers.host.replace(/^www\./, '')}${req.originalUrl}`) : next());
     }
 
     const controllers = controllerFactory.getAllControllers();
 
     logger.info('Registering middlewares');
-    controllers.filter(c => c.registerMiddleware).forEach(c => c.registerMiddleware(this.app));
+    controllers.filter(c => c.registerMiddleware).forEach(c => c.registerMiddleware(router));
 
     logger.info('Registering pages');
-    controllers.filter(c => c.registerPages).forEach(c => c.registerPages(this.app));
+    controllers.filter(c => c.registerPages).forEach(c => c.registerPages(router));
 
     logger.info('Registering APIs');
-    controllers.filter(c => c.registerApi).forEach(c => c.registerApi(this.app));
+    controllers.filter(c => c.registerApi).forEach(c => c.registerApi(router));
 
     logger.info('Registering error handlers');
-    controllers.filter(c => c.registerErrorHandler).forEach(c => c.registerErrorHandler(this.app));
+    controllers.filter(c => c.registerErrorHandler).forEach(c => c.registerErrorHandler(router));
   }
 
   listen(cb) {

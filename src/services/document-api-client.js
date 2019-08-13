@@ -10,6 +10,7 @@ class DocumentApiClient {
   saveDocument(doc) {
     return this.httpClient
       .post('/api/v1/docs')
+      .accept('json')
       .type('json')
       .send(doc)
       .then(res => res.body);

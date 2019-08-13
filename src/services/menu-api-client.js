@@ -10,6 +10,7 @@ class MenuApiClient {
   saveMenu(menu) {
     return this.httpClient
       .post('/api/v1/menus')
+      .accept('json')
       .type('json')
       .send(menu)
       .then(res => res.body);

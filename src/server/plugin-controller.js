@@ -9,13 +9,13 @@ class PluginController {
     this.apiFactory = apiFactory;
   }
 
-  registerApi(app) {
+  registerApi(router) {
     this.apis = this.apiFactory.getRegisteredTypes().map(pluginType => {
-      const router = express.Router();
+      const pluginRouter = express.Router();
       const pathPrefix = urls.getPluginApiPathPrefix(pluginType);
       const api = this.apiFactory.createApi(pluginType, pathPrefix);
-      api.registerRoutes(router);
-      app.use(pathPrefix, router);
+      api.registerRoutes(pluginRouter);
+      router.use(pathPrefix, pluginRouter);
       return api;
     });
   }

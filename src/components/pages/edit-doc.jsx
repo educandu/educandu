@@ -5,6 +5,7 @@ const Menu = require('antd/lib/menu');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const Logger = require('../../common/logger');
 const Dropdown = require('antd/lib/dropdown');
 const utils = require('../../utils/unique-id');
 const DocEditor = require('../doc-editor.jsx');
@@ -12,6 +13,7 @@ const PageHeader = require('../page-header.jsx');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const cloneDeep = require('../../utils/clone-deep');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const SectionEditor = require('../section-editor.jsx');
 const pluginInfos = require('../../plugins/plugin-infos');
@@ -21,6 +23,8 @@ const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
 const { docShape, sectionShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
+
+const logger = new Logger(__filename);
 
 const canReorder = (list, startIndex, endIndex) => {
   return typeof startIndex === 'number'
@@ -154,8 +158,13 @@ class EditDoc extends React.Component {
         content: section.content
       }))
     };
-    const { doc, sections } = await this.documentApiClient.saveDocument(payload);
-    this.setState(this.createStateFromDoc({ doc, sections }));
+
+    try {
+      const { doc, sections } = await this.documentApiClient.saveDocument(payload);
+      this.setState(this.createStateFromDoc({ doc, sections }));
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
+    }
   }
 
   handleBackClick() {

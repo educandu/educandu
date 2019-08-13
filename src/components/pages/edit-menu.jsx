@@ -10,12 +10,14 @@ const urls = require('../../utils/urls');
 const classnames = require('classnames');
 const Button = require('antd/lib/button');
 const MenuTree = require('../menu-tree.jsx');
+const Logger = require('../../common/logger');
 const PageFooter = require('../page-footer.jsx');
 const PageHeader = require('../page-header.jsx');
 const MenuDocRef = require('../menu-doc-ref.jsx');
 const uniqueId = require('../../utils/unique-id');
 const PageContent = require('../page-content.jsx');
 const cloneDeep = require('../../utils/clone-deep');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const CheckPermissions = require('../check-permissions.jsx');
 const MenuApiClient = require('../../services/menu-api-client');
@@ -23,6 +25,7 @@ const { EDIT_MENU_STRUCTURE } = require('../../domain/permissions');
 const { menuShape, docMetadataShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
 
+const logger = new Logger(__filename);
 
 const DOCS_DROPPABLE_ID = 'docRefs';
 const DEFAULT_DOCS_DROPPABLE_ID = 'defaultDocRefs';
@@ -180,11 +183,16 @@ class EditMenu extends React.Component {
 
   async handleSaveClick() {
     const payload = this.mapStateToMenu();
-    const { menu } = await this.menuApiClient.saveMenu(payload);
-    this.setState(prevState => ({
-      ...this.mapMenuToState(menu, prevState),
-      isDirty: false
-    }));
+
+    try {
+      const { menu } = await this.menuApiClient.saveMenu(payload);
+      this.setState(prevState => ({
+        ...this.mapMenuToState(menu, prevState),
+        isDirty: false
+      }));
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
+    }
   }
 
   handleMenuNodesChanged(nodes) {
@@ -319,6 +327,10 @@ class EditMenu extends React.Component {
     return newMenuNodes;
   }
 
+  handleBackClick() {
+    window.location = urls.getMenusUrl();
+  }
+
   handleDeleteDefaultDocRef(docRefKey) {
     this.setState(({ defaultDocRefs }) => ({
       defaultDocRefs: defaultDocRefs.filter(x => x.key !== docRefKey),
@@ -396,6 +408,8 @@ class EditMenu extends React.Component {
           <Page>
             <PageHeader>
               {isDirty && <Button type="primary" icon="save" onClick={this.handleSaveClick}>Speichern</Button>}
+              &nbsp;
+              <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
             </PageHeader>
             <PageContent>
               <div className="EditMenuPage">
