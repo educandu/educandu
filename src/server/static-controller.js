@@ -21,10 +21,10 @@ const staticConfig = [
 ];
 
 class StaticController {
-  registerMiddleware(app) {
+  registerMiddleware(router) {
     staticConfig.forEach(({ root, destination }) => {
       const dir = path.join(__dirname, destination);
-      app.use(root, express.static(dir));
+      router.use(root, express.static(dir));
     });
   }
 }

@@ -6,14 +6,18 @@ const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
 const { toTrimmedString } = require('../../utils/sanitize');
 const DocumentApiClient = require('../../services/document-api-client');
+
+const logger = new Logger(__filename);
 
 const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
 const DEFAULT_DOCUMENT_SLUG = '';
@@ -60,16 +64,22 @@ class Docs extends React.Component {
     const { newDocTitle, newDocSlug } = this.state;
     const { documentApiClient } = this.props;
 
-    this.setState({ isLoading: true });
+    try {
+      this.setState({ isLoading: true });
 
-    const { doc } = await documentApiClient.saveDocument(this.createNewDocument(newDocTitle, newDocSlug));
+      const newDoc = this.createNewDocument(newDocTitle, newDocSlug);
+      const { doc } = await documentApiClient.saveDocument(newDoc);
 
-    this.setState({
-      isNewDocModalVisible: false,
-      isLoading: false
-    });
+      this.setState({
+        isNewDocModalVisible: false,
+        isLoading: false
+      });
 
-    window.location = urls.getDocUrl(doc.key);
+      window.location = urls.getDocUrl(doc.key);
+    } catch (error) {
+      this.setState({ isLoading: false });
+      errorHelper.handleApiError(error, logger);
+    }
   }
 
   handleCancel() {

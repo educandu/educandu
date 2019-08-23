@@ -4,12 +4,13 @@ const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const Table = require('antd/lib/table');
-const message = require('antd/lib/message');
 const Popover = require('antd/lib/popover');
 const roles = require('../../domain/roles');
+const Logger = require('../../common/logger');
 const PageHeader = require('../page-header.jsx');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const { userShape } = require('../../ui/default-prop-types');
 const UserApiClient = require('../../services/user-api-client');
@@ -17,13 +18,14 @@ const UserRoleTagEditor = require('../user-role-tag-editor.jsx');
 const CountryFlagAndName = require('../country-flag-and-name.jsx');
 const UserLockedOutStateEditor = require('../user-locked-out-state-editor.jsx');
 
+const logger = new Logger(__filename);
+
 const availableRoles = [
   { name: roles.USER, isReadonly: false },
   { name: roles.EDITOR, isReadonly: false },
   { name: roles.SUPER_EDITOR, isReadonly: false },
   { name: roles.SUPER_USER, isReadonly: true }
 ];
-
 
 class Users extends React.Component {
   constructor(props) {
@@ -147,8 +149,8 @@ class Users extends React.Component {
           users: prevState.users.map(usr => usr._id === user._id ? { ...user, roles: result.roles } : usr)
         };
       });
-    } catch (err) {
-      message.error(err.message);
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
     }
   }
 
@@ -162,8 +164,8 @@ class Users extends React.Component {
           users: prevState.users.map(usr => usr._id === user._id ? { ...user, lockedOut: result.lockedOut } : usr)
         };
       });
-    } catch (err) {
-      message.error(err.message);
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
     }
   }
 

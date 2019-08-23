@@ -7,12 +7,16 @@ const Input = require('antd/lib/input');
 const { formShape } = require('rc-form');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const Logger = require('../../common/logger');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const { withRequest } = require('../request-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
 const { requestProps } = require('../../ui/default-prop-types');
+
+const logger = new Logger(__filename);
 
 const FormItem = Form.Item;
 
@@ -27,46 +31,43 @@ class Login extends React.Component {
     };
   }
 
-  login({ username, password }) {
-    const { userApiClient } = this.props;
-    return userApiClient.login({ username, password });
-  }
+  async login({ username, password }) {
+    try {
+      const { form, userApiClient } = this.props;
+      const { user } = await userApiClient.login({ username, password });
 
-  handleLoginResult({ user }) {
-    if (!user) {
-      return this.showLoginError();
+      if (user) {
+        this.redirectAfterLogin();
+      } else {
+        form.resetFields();
+        this.showLoginError();
+      }
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
     }
-
-    const { request } = this.props;
-    return this.redirect(request.query.redirect || urls.getDefaultLoginRedirectUrl());
   }
 
-  redirect(location) {
-    window.location = location;
+  redirectAfterLogin() {
+    const { request } = this.props;
+    window.location = request.query.redirect || urls.getDefaultLoginRedirectUrl();
   }
 
   clearLoginError() {
-    this.setState({
-      loginError: null
-    });
+    this.setState({ loginError: null });
   }
 
   showLoginError() {
-    this.setState({
-      loginError: GENERIC_LOGIN_ERROR
-    });
+    this.setState({ loginError: GENERIC_LOGIN_ERROR });
   }
 
   handleSubmit(e) {
     e.preventDefault();
     this.clearLoginError();
     const { form } = this.props;
-    form.validateFieldsAndScroll(async (err, values) => {
+    form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { username, password } = values;
-        const result = await this.login({ username, password });
-        form.resetFields();
-        this.handleLoginResult(result);
+        this.login({ username, password });
       }
     });
   }

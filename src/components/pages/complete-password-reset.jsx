@@ -6,14 +6,16 @@ const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
 const { formShape } = require('rc-form');
 const Button = require('antd/lib/button');
+const Logger = require('../../common/logger');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
 
-const FormItem = Form.Item;
+const logger = new Logger(__filename);
 
-const GENERIC_COMPLETION_ERROR = 'Die Anforderung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.';
+const FormItem = Form.Item;
 
 class CompletePasswordReset extends React.Component {
   constructor(props) {
@@ -21,34 +23,28 @@ class CompletePasswordReset extends React.Component {
     autoBind.react(this);
     this.state = {
       confirmDirty: false,
-      isCompleted: false,
-      completionError: null
+      user: null
     };
   }
 
-  completePasswordReset(password) {
-    const { userApiClient, initialState } = this.props;
-    const { passwordResetRequestId } = initialState;
-    return userApiClient.completePasswordReset({ passwordResetRequestId, password });
-  }
-
-  handlePasswordResetCompletionResult({ user }) {
-    if (user) {
-      this.setState({ isCompleted: true });
-    } else {
-      this.setState({ completionError: GENERIC_COMPLETION_ERROR });
+  async completePasswordReset(password) {
+    try {
+      const { userApiClient, initialState } = this.props;
+      const { passwordResetRequestId } = initialState;
+      const { user } = await userApiClient.completePasswordReset({ passwordResetRequestId, password });
+      this.setState({ user });
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
     }
   }
 
   handleSubmit(e) {
     e.preventDefault();
     const { form } = this.props;
-    this.setState({ completionError: null });
-    form.validateFieldsAndScroll(async (err, values) => {
+    form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { password } = values;
-        const result = await this.completePasswordReset(password);
-        this.handlePasswordResetCompletionResult(result);
+        this.completePasswordReset(password);
       }
     });
   }
@@ -73,7 +69,7 @@ class CompletePasswordReset extends React.Component {
   }
 
   render() {
-    const { isCompleted, completionError } = this.state;
+    const { user } = this.state;
     const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
@@ -119,10 +115,6 @@ class CompletePasswordReset extends React.Component {
       }
     ];
 
-    const errorMessage = completionError
-      ? <div className="CompletePasswordResetPage-errorMessage">{completionError}</div>
-      : null;
-
     const completionForm = (
       <div className="CompletePasswordResetPage-form">
         <Form onSubmit={this.handleSubmit}>
@@ -131,9 +123,6 @@ class CompletePasswordReset extends React.Component {
           </FormItem>
           <FormItem {...formItemLayout} label="Kennwortbestätigung">
             {getFieldDecorator('confirm', { rules: passwordConfirmationValidationRules })(<Input type="password" onBlur={this.handleConfirmBlur} />)}
-          </FormItem>
-          <FormItem {...tailFormItemLayout}>
-            {errorMessage}
           </FormItem>
           <FormItem {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">Passwort speichern</Button>
@@ -154,7 +143,7 @@ class CompletePasswordReset extends React.Component {
         <PageContent fullScreen>
           <div className="CompletePasswordResetPage">
             <h1 className="CompletePasswordResetPage-title">elmu</h1>
-            {isCompleted ? completionConfirmation : completionForm}
+            {user ? completionConfirmation : completionForm}
           </div>
         </PageContent>
         <PageFooter fullScreen />

@@ -18,15 +18,15 @@ class CdnController {
     this.cdn = cdn;
   }
 
-  registerApi(app) {
-    app.get('/api/v1/cdn/objects', [needsPermission(permissions.VIEW_FILES), jsonParser], async (req, res) => {
+  registerApi(router) {
+    router.get('/api/v1/cdn/objects', [needsPermission(permissions.VIEW_FILES), jsonParser], async (req, res) => {
       const prefix = req.query.prefix;
       const recursive = parseBool(req.query.recursive);
       const objects = await this.cdn.listObjects({ prefix, recursive });
       return res.send({ objects });
     });
 
-    app.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files')], async (req, res) => {
+    router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files')], async (req, res) => {
       if (req.files && req.files.length) {
         const uploads = req.files.map(file => {
           const fileName = urls.concatParts(req.body.prefix, file.originalname);

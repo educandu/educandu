@@ -13,8 +13,8 @@ class IndexController {
     this.pageRenderer = pageRenderer;
   }
 
-  registerPages(app) {
-    app.get('/', async (req, res) => {
+  registerPages(router) {
+    router.get('/', async (req, res) => {
       const lpDocId = await this.settingService.getLandingPageDocumentId();
       const doc = lpDocId ? await this.documentService.getDocumentById(lpDocId) : null;
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc });

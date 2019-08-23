@@ -2,13 +2,14 @@ const React = require('react');
 const urls = require('../utils/urls');
 const Alert = require('antd/lib/alert');
 const PropTypes = require('prop-types');
+const classNames = require('classnames');
 const LoginLogout = require('./login-logout.jsx');
 const { userProps } = require('../ui/default-prop-types');
 const { withUser } = require('../components/user-context.jsx');
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
 
-function PageHeader({ children, disableProfileWarning, user }) {
+function PageHeader({ children, fullScreen, disableProfileWarning, user }) {
   let profileWarning;
 
   if (disableProfileWarning || !user || userHasSufficientProfile(user)) {
@@ -24,10 +25,17 @@ function PageHeader({ children, disableProfileWarning, user }) {
     profileWarning = <Alert message={message} banner />;
   }
 
+  const classes = classNames({
+    'PageHeader': true,
+    'PageHeader--fullScreen': fullScreen
+  });
+
   return (
     <React.Fragment>
-      <header className="PageHeader">
-        <a className="PageHeader-logo" href={urls.getHomeUrl()}>elmu</a>
+      <header className={classes}>
+        <div className="PageHeader-logo">
+          {!fullScreen && <a href={urls.getHomeUrl()}>elmu</a>}
+        </div>
         <div className="PageHeader-links">
           {children}
         </div>
@@ -35,7 +43,7 @@ function PageHeader({ children, disableProfileWarning, user }) {
           <LoginLogout />
         </div>
       </header>
-      {profileWarning}
+      {!fullScreen && profileWarning}
     </React.Fragment>
   );
 }
@@ -43,12 +51,14 @@ function PageHeader({ children, disableProfileWarning, user }) {
 PageHeader.propTypes = {
   ...userProps,
   children: PropTypes.node,
-  disableProfileWarning: PropTypes.bool
+  disableProfileWarning: PropTypes.bool,
+  fullScreen: PropTypes.bool
 };
 
 PageHeader.defaultProps = {
   children: null,
-  disableProfileWarning: false
+  disableProfileWarning: false,
+  fullScreen: false
 };
 
 module.exports = withUser(PageHeader);

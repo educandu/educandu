@@ -6,10 +6,14 @@ const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
 const { formShape } = require('rc-form');
 const Button = require('antd/lib/button');
+const Logger = require('../../common/logger');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
+
+const logger = new Logger(__filename);
 
 const FormItem = Form.Item;
 
@@ -22,23 +26,23 @@ class ResetPassword extends React.Component {
     };
   }
 
-  requestPasswordReset({ email }) {
-    const { userApiClient } = this.props;
-    return userApiClient.requestPasswordReset({ email });
-  }
-
-  handleResetRequestResult() {
-    this.setState({ isRequestSent: true });
+  async requestPasswordReset({ email }) {
+    try {
+      const { userApiClient } = this.props;
+      await userApiClient.requestPasswordReset({ email });
+      this.setState({ isRequestSent: true });
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
+    }
   }
 
   handleSubmit(e) {
     e.preventDefault();
     const { form } = this.props;
-    form.validateFieldsAndScroll(async (err, values) => {
+    form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { email } = values;
-        await this.requestPasswordReset({ email });
-        this.handleResetRequestResult();
+        this.requestPasswordReset({ email });
       }
     });
   }

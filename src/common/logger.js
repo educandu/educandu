@@ -3,11 +3,12 @@
 const path = require('path');
 const acho = require('acho');
 const cookie = require('./cookie');
+const formatErrorM = require('format-error');
 const browserHelper = require('../ui/browser-helper');
 
 const getServerLevel = () => process.env.ELMU_LOG_LEVEL || 'debug';
 const getBrowserLevel = () => cookie.get('ELMU_LOG_LEVEL') || 'debug';
-const formatError = err => err.stack || err.message || err.toString();
+const formatError = err => formatErrorM.format(err) || err.stack || err.message || err.toString();
 const explodeError = obj => obj instanceof Error ? formatError(obj) : obj;
 const makeFilenameRelative = filename => path.relative(process.cwd(), filename);
 

@@ -1,13 +1,15 @@
 const permissions = require('./permissions');
-const { UserNotAuthenticatedError, PermissionNotGrantedError } = require('./errors');
+const { Unauthorized, Forbidden } = require('http-errors');
 
 function evaluatePermission(permission, req, res, next) {
   if (!req.isAuthenticated()) {
-    return next(new UserNotAuthenticatedError());
+    return next(new Unauthorized());
   }
 
   if (!permissions.hasUserPermission(req.user, permission)) {
-    return next(new PermissionNotGrantedError({ permission }));
+    const forbidden = new Forbidden();
+    forbidden.requiredPermission = permission;
+    return next(forbidden);
   }
 
   return next();

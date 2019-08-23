@@ -5,6 +5,7 @@ const Logger = require('../common/logger');
 const uniqueId = require('../utils/unique-id');
 const UserStore = require('../stores/user-store');
 const PasswordResetRequestStore = require('../stores/password-reset-request-store');
+const { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } = require('../domain/user-management');
 
 const DEFAULT_ROLE_NAME = roles.USER;
 const PROVIDER_NAME_ELMU = 'elmu';
@@ -70,12 +71,19 @@ class UserService {
   }
 
   async createUser(username, password, email, provider = PROVIDER_NAME_ELMU) {
+    const existingUser = await this.userStore.findOne({ query: { $or: [{ username }, { email }] } });
+    if (existingUser) {
+      return existingUser.email.toLowerCase() === email.toLowerCase()
+        ? { result: CREATE_USER_RESULT_DUPLICATE_EMAIL, user: null }
+        : { result: CREATE_USER_RESULT_DUPLICATE_USERNAME, user: null };
+    }
+
     const user = {
       _id: uniqueId.create(),
       provider: provider,
       username: username,
       passwordHash: await this._hashPassword(password),
-      email: email,
+      email: email.toLowerCase(),
       roles: [DEFAULT_ROLE_NAME],
       expires: moment.utc().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
       verificationCode: uniqueId.create(),
@@ -84,7 +92,7 @@ class UserService {
 
     logger.info('Creating new user with id %s', user._id);
     await this.saveUser(user);
-    return user;
+    return { result: CREATE_USER_RESULT_SUCCESS, user: user };
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME_ELMU) {

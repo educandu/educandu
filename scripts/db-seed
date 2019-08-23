@@ -30,10 +30,10 @@ const globP = util.promisify(glob);
 
   await testHelper.dropAllCollections(db);
 
-  const unverifiedUser = await userService.createUser('test', 'test', 'test@test.com');
-  const user = await userService.verifyUser(unverifiedUser.verificationCode);
-  user.roles = [roles.USER, roles.EDITOR, roles.SUPER_USER, roles.SUPER_EDITOR];
-  await userService.saveUser(user);
+  const { user } = await userService.createUser('test', 'test', 'test@test.com');
+  const verifiedUser = await userService.verifyUser(user.verificationCode);
+  verifiedUser.roles = [roles.USER, roles.EDITOR, roles.SUPER_USER, roles.SUPER_EDITOR];
+  await userService.saveUser(verifiedUser);
 
   const docFiles = await globP(path.join(__dirname, '../test/test-docs/*.json'));
   const menuFiles = await globP(path.join(__dirname, '../test/test-menus/*.json'));

@@ -12,16 +12,20 @@ const Avatar = require('antd/lib/avatar');
 const Button = require('antd/lib/button');
 const Select = require('antd/lib/select');
 const message = require('antd/lib/message');
+const Logger = require('../../common/logger');
 const localeCompare = require('locale-compare');
 const PageHeader = require('../page-header.jsx');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const { withData } = require('../data-context.jsx');
+const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
 const CountryFlagAndName = require('../country-flag-and-name.jsx');
 const { userProps, dataProps } = require('../../ui/default-prop-types');
+
+const logger = new Logger(__filename);
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -40,28 +44,25 @@ class Profile extends React.Component {
     };
   }
 
-  saveProfile(profile) {
-    const { userApiClient } = this.props;
-    return userApiClient.saveUserProfile({ profile });
+  async saveProfile(profileToSave) {
+    try {
+      const { user, userApiClient } = this.props;
+      const { profile } = await userApiClient.saveUserProfile({ profile: profileToSave });
+      user.profile = profile;
+      message.success('Das Profil wurde erfolgreich aktualisiert.');
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
+    }
   }
 
   handleBackClick() {
-    if (window.history && window.history.back) {
-      window.history.back();
-    }
-  }
-
-  handleSubmitResult({ profile }) {
-    if (profile) {
-      this.props.user.profile = profile;
-      message.success('Das Profil wurde erfolgreich aktualisiert.');
-    }
+    window.history.back();
   }
 
   handleSubmit(e) {
     e.preventDefault();
     const { form } = this.props;
-    form.validateFieldsAndScroll(async (err, values) => {
+    form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const profile = {
           firstName: values.firstName,
@@ -72,8 +73,8 @@ class Profile extends React.Component {
           city: values.city,
           country: values.country
         };
-        const result = await this.saveProfile(profile);
-        this.handleSubmitResult(result);
+
+        this.saveProfile(profile);
       }
     });
   }
