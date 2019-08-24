@@ -40,6 +40,10 @@ class Cdn {
     return this.s3Client.upload(this.bucketName, sanitizedObjectName, new Stream(), defaultContentType, metadata);
   }
 
+  async deleteObjects(objectNames) {
+    await this.s3Client.deleteObjects(this.bucketName, objectNames);
+  }
+
   dispose() {
     this.s3Client = null;
     return Promise.resolve();

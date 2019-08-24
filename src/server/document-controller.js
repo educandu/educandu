@@ -1,7 +1,9 @@
+const parseBool = require('parseboolean');
 const bodyParser = require('body-parser');
 const { NotFound } = require('http-errors');
 const PageRenderer = require('./page-renderer');
 const permissions = require('../domain/permissions');
+const privateData = require('../domain/private-data');
 const ClientDataMapper = require('./client-data-mapper');
 const DocumentService = require('../services/document-service');
 const needsPermission = require('../domain/needs-permission-middleware');
@@ -34,12 +36,14 @@ class DocumentController {
     });
 
     router.get('/docs/:docId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
-      const doc = await this.documentService.getDocumentById(req.params.docId);
-      if (!doc) {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
+      const docs = await this.documentService.getDocumentHistory(req.params.docId);
+      if (!docs.length) {
         throw new NotFound();
       }
 
-      const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
+      const initialState = this.clientDataMapper.mapDocHistoryToInitialState({ docs, allowedUserFields });
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'doc', initialState);
     });
 
@@ -61,6 +65,30 @@ class DocumentController {
       const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc: docRevision });
       return res.send(initialState);
+    });
+
+    router.get('/api/v1/docs/:docId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
+      const fullHistory = parseBool(req.query.fullHistory);
+      if (!fullHistory) {
+        throw new NotFound();
+      }
+
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
+      const docs = await this.documentService.getDocumentHistory(req.params.docId);
+      if (!docs.length) {
+        throw new NotFound();
+      }
+
+      const initialState = this.clientDataMapper.mapDocHistoryToInitialState({ docs, allowedUserFields });
+      return res.send(initialState);
+    });
+
+    router.delete('/api/v1/docs/sections', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
+      const { user } = req;
+      const { key, order, reason, deleteDescendants } = req.body;
+      const result = await this.documentService.hardDeleteSection({ key, order, reason, deleteDescendants, user });
+      return res.send(result);
     });
   }
 }

@@ -2,25 +2,31 @@ const DocumentSnapshotStore = require('../stores/document-snapshot-store');
 const DocumentOrderStore = require('../stores/document-order-store');
 const SectionOrderStore = require('../stores/section-order-store');
 const DocumentLockStore = require('../stores/document-lock-store');
+const HandlerFactory = require('../plugins/handler-factory');
 const DocumentStore = require('../stores/document-store');
 const SectionStore = require('../stores/section-store');
 const uniqueId = require('../utils/unique-id');
 const dateTime = require('../utils/date-time');
+const UserService = require('./user-service');
 const deepEqual = require('fast-deep-equal');
 const Logger = require('../common/logger');
 
 const logger = new Logger(__filename);
 
 class DocumentService {
-  static get inject() { return [DocumentSnapshotStore, DocumentOrderStore, SectionOrderStore, DocumentLockStore, DocumentStore, SectionStore]; }
+  static get inject() {
+    return [DocumentSnapshotStore, DocumentOrderStore, SectionOrderStore, DocumentLockStore, DocumentStore, SectionStore, UserService, HandlerFactory];
+  }
 
-  constructor(documentSnapshotStore, documentOrderStore, sectionOrderStore, documentLockStore, documentStore, sectionStore) {
+  constructor(documentSnapshotStore, documentOrderStore, sectionOrderStore, documentLockStore, documentStore, sectionStore, userService, handlerFactory) {
     this.documentSnapshotStore = documentSnapshotStore;
     this.documentOrderStore = documentOrderStore;
     this.sectionOrderStore = sectionOrderStore;
     this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
     this.sectionStore = sectionStore;
+    this.userService = userService;
+    this.handlerFactory = handlerFactory;
   }
 
   getLastUpdatedDocuments(numberOfDocs = 0) {
@@ -63,6 +69,56 @@ class DocumentService {
     });
   }
 
+  async getDocumentHistory(documentKey) {
+    const snapshots = await this.documentSnapshotStore.find({
+      query: { key: documentKey },
+      sort: [['order', 1]]
+    });
+
+    if (!snapshots.length) {
+      return [];
+    }
+
+    const sectionsById = new Map();
+    const usersById = new Map();
+
+    snapshots.forEach(snapshot => {
+      this.getAllUserIdsForSnapshot(snapshot).forEach(userId => usersById.set(userId, null));
+      snapshot.sections.forEach(section => {
+        sectionsById.set(section.id, null);
+        this.getAllUserIdsForSection(section).forEach(userId => usersById.set(userId, null));
+      });
+    });
+
+    const sections = await this.getSectionsByIds(Array.from(sectionsById.keys()));
+    sections.forEach(section => sectionsById.set(section._id, section));
+
+    const users = await this.userService.getUsersByIds(Array.from(usersById.keys()));
+    users.forEach(user => usersById.set(user._id, user));
+
+    for (const [id, section] in sectionsById.entries()) {
+      if (!section) {
+        throw new Error(`Section with ID ${id} is referenced but could not be found in the database.`);
+      }
+    }
+
+    for (const [id, user] in usersById.entries()) {
+      if (!user) {
+        throw new Error(`User with ID ${id} is referenced but could not be found in the database.`);
+      }
+    }
+
+    snapshots.forEach(snapshot => this.setUserObjectsInSnapshot(snapshot, usersById));
+    sections.forEach(section => this.setUserObjectsInSection(section, usersById));
+
+    const firstSnapshot = snapshots[0];
+    return snapshots.map(lastSnapshot => {
+      const sectionsInLastSnapshot = lastSnapshot.sections.map(section => sectionsById.get(section.id));
+      const latestSnapshot = this.createLatestDocument(documentKey, firstSnapshot, lastSnapshot, sectionsInLastSnapshot);
+      return latestSnapshot;
+    });
+  }
+
   getDocumentBySlug(slug) {
     return this.documentStore.findOne({
       query: { slug }
@@ -101,6 +157,73 @@ class DocumentService {
       query: { key: documentKey },
       sort: [['order', -1]]
     });
+  }
+
+  async hardDeleteSection({ key, order, reason, deleteDescendants, user }) {
+    if (!user || !user._id) {
+      throw new Error('No user specified');
+    }
+
+    const now = dateTime.now();
+
+    const selectByKey = { key };
+    const selectByOrder = deleteDescendants ? { order: { $gte: order } } : { order };
+    const sectionsQuery = { $and: [selectByKey, selectByOrder] };
+
+    const fieldsToSet = {
+      content: null,
+      deletedOn: now,
+      deletedBy: { id: user._id },
+      deletedBecause: reason
+    };
+
+    logger.info('Hard-deleting content for sections with key %s and order %s %s', key, deleteDescendants ? '>=' : '=', order);
+    const sections = await this.sectionStore.find({ query: sectionsQuery });
+    if (!sections.length) {
+      logger.info('No sections found with key %s and order %s %s', key, deleteDescendants ? '>=' : '=', order);
+      return;
+    }
+
+    const sectionIds = sections.map(section => section._id);
+    const handlersBySectionId = sections.reduce((map, section) => {
+      map.set(section._id, this.handlerFactory.createHandler(section.type));
+      return map;
+    }, new Map());
+
+    logger.info('Calling before hard delete plugin handlers');
+    await Promise.all(sections.map(section => {
+      const handler = handlersBySectionId.get(section._id);
+      return handler && handler.handleBeforeHardDelete && handler.handleBeforeHardDelete(section);
+    }));
+
+    await this.sectionStore.updateMany({ _id: { $in: sectionIds } }, { $set: fieldsToSet });
+    logger.info('%s sections were hard-deleted', sections.length);
+
+    logger.info('Calling after hard delete plugin handlers');
+    await Promise.all(sections.map(section => {
+      const handler = handlersBySectionId.get(section._id);
+      return handler && handler.handleAfterHardDelete && handler.handleAfterHardDelete(section, { ...section, ...fieldsToSet });
+    }));
+
+    logger.info('Searching for documents referencing hard-deleted sections');
+    const docs = await this.documentStore.find({
+      query: { sections: { $elemMatch: { _id: { $in: sectionIds } } } },
+      projection: { _id: 1 }
+    });
+
+    const docKeys = docs.map(doc => doc._id);
+    logger.info('Found %s documents referencing hard-deleted sections', docKeys.length);
+
+    logger.info('Obtaining document locks');
+    await Promise.all(docKeys.map(docKey => this.documentLockStore.takeLock(docKey)));
+
+    logger.info('Regenerating documents');
+    await Promise.all(docKeys.map(docKey => this.regenerateLatestDocumentUnlocked(docKey)));
+
+    logger.info('Releasing document locks');
+    await Promise.all(docKeys.map(docKey => this.documentLockStore.releaseLock(docKey)));
+
+    logger.info('Hard-delete completed');
   }
 
   async createDocumentRevision({ doc, sections, user }) {
@@ -149,14 +272,14 @@ class DocumentService {
         throw new Error('New sections must specify a type');
       }
 
-      if (!section.content) {
-        throw new Error('Sections must specify a content');
-      }
-
       // If not changed, re-use existing revision:
       if (existingSection && deepEqual(existingSection.content, section.content)) {
         logger.info('Section has not changed compared to ancestor section with id %s, using the existing', existingSection._id);
         return existingSection;
+      }
+
+      if (!section.content) {
+        throw new Error('Sections must specify a content');
       }
 
       // Otherwise, create a new one:
@@ -219,15 +342,17 @@ class DocumentService {
 
   async regenerateLatestDocument(documentKey) {
     await this.documentLockStore.takeLock(documentKey);
+    await this.regenerateLatestDocumentUnlocked(documentKey);
+    await this.documentLockStore.releaseLock(documentKey);
+  }
 
+  async regenerateLatestDocumentUnlocked(documentKey) {
     const firstSnapshot = await this.getInitialDocumentSnapshot(documentKey);
     const lastSnapshot = await this.getLatestDocumentSnapshot(documentKey);
     const sections = await this.getSectionsByIds(lastSnapshot.sections.map(section => section.id));
 
     const latestDocument = this.createLatestDocument(documentKey, firstSnapshot, lastSnapshot, sections);
     await this.documentStore.save(latestDocument);
-
-    await this.documentLockStore.releaseLock(documentKey);
   }
 
   /* eslint-disable-next-line no-unused-vars */
@@ -240,6 +365,32 @@ class DocumentService {
     await this.documentStore.deleteOne({ _id: documentKey });
     await this.documentSnapshotStore.deleteMany({ key: documentKey });
     await this.documentLockStore.releaseLock(documentKey);
+  }
+
+  getAllUserIdsForSnapshot(snapshot) {
+    const ids = [snapshot.createdBy].filter(x => x && x.id).map(x => x.id);
+    return Array.from(new Set(ids));
+  }
+
+  getAllUserIdsForSection(section) {
+    const ids = [section.createdBy, section.deletedBy].filter(x => x && x.id).map(x => x.id);
+    return Array.from(new Set(ids));
+  }
+
+  setUserObjectsInSnapshot(snapshot, usersById) {
+    if (snapshot.createdBy && snapshot.createdBy.id) {
+      snapshot.createdBy = usersById.get(snapshot.createdBy.id);
+    }
+  }
+
+  setUserObjectsInSection(section, usersById) {
+    if (section.createdBy && section.createdBy.id) {
+      section.createdBy = usersById.get(section.createdBy.id);
+    }
+
+    if (section.deletedBy && section.deletedBy.id) {
+      section.deletedBy = usersById.get(section.deletedBy.id);
+    }
   }
 }
 

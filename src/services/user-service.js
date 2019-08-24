@@ -31,6 +31,12 @@ class UserService {
     return this.userStore.findOne({ query: { _id: id } });
   }
 
+  getUsersByIds(ids) {
+    return ids.length
+      ? this.userStore.find({ query: { _id: { $in: ids } } })
+      : Promise.resolve([]);
+  }
+
   getUserByEmailAddress(email, provider = PROVIDER_NAME_ELMU) {
     return this.userStore.findOne({ query: { email, provider } });
   }

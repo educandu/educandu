@@ -14,6 +14,18 @@ class ClientDataMapper {
     };
   }
 
+  dbUserToClientForeignUser(user, includeEmail) {
+    if (!user) {
+      return null;
+    }
+
+    return {
+      _id: user._id,
+      username: user.username,
+      email: includeEmail ? user.email : null
+    };
+  }
+
   mapMenuToInitialState({ menu }) {
     return { menu };
   }
@@ -29,6 +41,23 @@ class ClientDataMapper {
     return {
       doc: this._mapDocMetadata(doc),
       sections: doc.sections
+    };
+  }
+
+  mapDocHistoryToInitialState({ docs, allowedUserFields }) {
+    return {
+      docs: docs.map(doc => ({
+        ...doc,
+        key: doc._id,
+        createdBy: this._mapUser(doc.createdBy, allowedUserFields),
+        updatedBy: this._mapUser(doc.updatedBy, allowedUserFields),
+        sections: doc.sections.map(section => ({
+          ...section,
+          createdBy: this._mapUser(section.createdBy, allowedUserFields),
+          deletedOn: section.deletedOn || null,
+          deletedBy: this._mapUser(section.deletedBy, allowedUserFields)
+        }))
+      }))
     };
   }
 
@@ -48,6 +77,24 @@ class ClientDataMapper {
       createdBy: doc.createdBy,
       updatedBy: doc.updatedBy
     };
+  }
+
+  _mapUser(user, allowedUserFields) {
+    if (!user) {
+      return null;
+    }
+
+    const mappedUser = {};
+    for (const field of allowedUserFields) {
+      if (field in user) {
+        mappedUser[field] = user[field];
+        if (field === '_id') {
+          mappedUser.key = user._id;
+        }
+      }
+    }
+
+    return mappedUser;
   }
 }
 

@@ -2,17 +2,17 @@ const React = require('react');
 const autoBind = require('auto-bind');
 const Icon = require('antd/lib/icon');
 const Menu = require('antd/lib/menu');
-const Modal = require('antd/lib/modal');
 const PropTypes = require('prop-types');
 const Radio = require('antd/lib/radio');
 const classNames = require('classnames');
 const Button = require('antd/lib/button');
 const Dropdown = require('antd/lib/dropdown');
+const DeletedSection = require('./deleted-section.jsx');
+const { confirmDelete } = require('./section-action-dialogs.jsx');
 const { docShape, sectionShape } = require('../ui/default-prop-types');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-const confirm = Modal.confirm;
 
 const SECTION_MENU_KEY_MOVE_UP = 'move-up';
 const SECTION_MENU_KEY_MOVE_DOWN = 'move-down';
@@ -47,23 +47,11 @@ class SectionEditor extends React.Component {
         onSectionMovedDown(section.key);
         break;
       case SECTION_MENU_KEY_DELETE:
-        this.confirmDelete(() => onSectionDeleted(section.key));
+        confirmDelete(section, () => onSectionDeleted(section.key));
         break;
       default:
         break;
     }
-  }
-
-  confirmDelete(onOk, onCancel = (() => {})) {
-    confirm({
-      title: 'Sind Sie sicher?',
-      content: 'Möchten Sie diesen Abschnitt löschen?',
-      okText: 'Ja',
-      okType: 'danger',
-      cancelText: 'Nein',
-      onOk: onOk,
-      onCancel: onCancel
-    });
   }
 
   handleContentChange(updatedContent) {
@@ -75,32 +63,34 @@ class SectionEditor extends React.Component {
     const { mode } = this.state;
     const { doc, section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, language } = this.props;
 
+    const hasContent = !!section.content;
+
     let componentToShow;
-    switch (mode) {
-      case 'preview':
-        componentToShow = (
-          <DisplayComponent
-            docKey={doc.key}
-            sectionKey={section.key}
-            content={section.content[language]}
-            language={language}
-            />
-        );
-        break;
-      case 'edit':
-        componentToShow = (
-          <EditorComponent
-            docKey={doc.key}
-            sectionKey={section.key}
-            content={section.content[language]}
-            onContentChanged={this.handleContentChange}
-            language={language}
-            />
-        );
-        break;
-      default:
-        componentToShow = null;
-        break;
+    if (!hasContent) {
+      componentToShow = (
+        <DeletedSection section={section} />
+      );
+    } else if (mode === 'preview') {
+      componentToShow = (
+        <DisplayComponent
+          docKey={doc.key}
+          sectionKey={section.key}
+          content={section.content[language]}
+          language={language}
+          />
+      );
+    } else if (mode === 'edit') {
+      componentToShow = (
+        <EditorComponent
+          docKey={doc.key}
+          sectionKey={section.key}
+          content={section.content[language]}
+          onContentChanged={this.handleContentChange}
+          language={language}
+          />
+      );
+    } else {
+      componentToShow = null;
     }
 
     const panelClasses = classNames({
@@ -142,11 +132,11 @@ class SectionEditor extends React.Component {
           {componentToShow}
         </div>
         <div className="Panel-footer">
-          <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
+          <RadioGroup size="small" value={hasContent ? mode : 'preview'} onChange={this.handleModeChange}>
             <RadioButton value="preview">
               <Icon type="eye-o" />&nbsp;Vorschau
             </RadioButton>
-            <RadioButton value="edit">
+            <RadioButton value="edit" disabled={!hasContent}>
               <Icon type="edit" />&nbsp;Bearbeiten
             </RadioButton>
           </RadioGroup>

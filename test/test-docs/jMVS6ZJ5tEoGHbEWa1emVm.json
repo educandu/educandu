@@ -161,9 +161,9 @@
             {
               "image": {
                 "type": "external",
-                "url": "/images/Musikhochschule.png"
+                "url": "https://cdn.pixabay.com/photo/2017/11/09/21/41/cat-2934720_1280.jpg"
               },
-              "description": "Musikhochschule",
+              "description": "Katze 1",
               "link": {
                 "type": "menu",
                 "url": "test-menu"
@@ -172,9 +172,9 @@
             {
               "image": {
                 "type": "external",
-                "url": "/images/Musikschule.png"
+                "url": "https://cdn.pixabay.com/photo/2016/01/20/13/05/cat-1151519_1280.jpg"
               },
-              "description": "Musikschuler",
+              "description": "Katze 2",
               "link": {
                 "type": "menu",
                 "url": "test-menu"
@@ -183,9 +183,9 @@
             {
               "image": {
                 "type": "external",
-                "url": "/images/Materialkiste.png"
+                "url": "https://cdn.pixabay.com/photo/2016/03/28/10/05/kitten-1285341_1280.jpg"
               },
-              "description": "Materialkiste",
+              "description": "Katze 3",
               "link": {
                 "type": "menu",
                 "url": "test-menu"
@@ -194,16 +194,16 @@
             {
               "image": {
                 "type": "external",
-                "url": "/images/Schule.png"
+                "url": "https://cdn.pixabay.com/photo/2018/03/27/17/25/cat-3266673_1280.jpg"
               },
-              "description": "Schule",
+              "description": "Katze 4",
               "link": {
                 "type": "menu",
                 "url": "test-menu"
               }
             }
           ],
-          "maxTilesPerRow": 3,
+          "maxTilesPerRow": 2,
           "maxWidth": 100,
           "hoverEffect": "colorize-zoom"
         }

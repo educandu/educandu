@@ -5,9 +5,12 @@ const toposort = require('toposort');
 const decompress = require('decompress');
 const h5pHelper = require('./h5p-helper');
 const Cdn = require('../../repositories/cdn');
+const Logger = require('../../common/logger');
 const uniqueId = require('../../utils/unique-id');
 const recursiveReaddir = require('recursive-readdir');
 const { readJson, writeJson } = require('../../utils/file-helper');
+
+const logger = new Logger(__filename);
 
 class H5pFileProcessor {
   static get inject() { return [Cdn]; }
@@ -15,6 +18,10 @@ class H5pFileProcessor {
   constructor(cdn) {
     this.cdn = cdn;
     this.tempDir = os.tmpdir();
+  }
+
+  async uninstall(applicationId) {
+    await this.pruneApplicationDirInCdn(applicationId);
   }
 
   async install(h5pFileName, contentId, applicationId = uniqueId.create()) {
@@ -127,6 +134,17 @@ class H5pFileProcessor {
 
   cleanupTempFiles(applicationDir) {
     return del(`${applicationDir}/**`, { force: true });
+  }
+
+  async pruneApplicationDirInCdn(applicationId) {
+    logger.debug('Pruning application with ID %s', applicationId);
+    const cdnApplicationPath = `${h5pHelper.CDN_APPLICATION_PREFIX}/${applicationId}`;
+    logger.debug('Application path to prune is %s', cdnApplicationPath);
+    const objects = await this.cdn.listObjects({ prefix: cdnApplicationPath, recursive: true });
+    const objectNames = objects.map(object => object.name);
+    objectNames.forEach(name => logger.debug('Pruning object %s', name));
+    await this.cdn.deleteObjects(objectNames);
+    logger.debug('Application %s has been pruned', applicationId);
   }
 }
 

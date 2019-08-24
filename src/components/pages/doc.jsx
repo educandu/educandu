@@ -1,33 +1,129 @@
 const React = require('react');
+const moment = require('moment');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
+const Slider = require('antd/lib/slider');
 const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
+const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
 const PageHeader = require('../page-header.jsx');
 const PageFooter = require('../page-footer.jsx');
 const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
+const errorHelper = require('../../ui/error-helper');
+const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
-const { docShape, sectionShape } = require('../../ui/default-prop-types');
+const { fullDocShape } = require('../../ui/default-prop-types');
+const DocumentApiClient = require('../../services/document-api-client');
+
+const logger = new Logger(__filename);
 
 class Doc extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
+    this.state = {
+      docs: props.initialState.docs,
+      currentDoc: props.initialState.docs[props.initialState.docs.length - 1]
+    };
   }
 
   handleEditClick() {
-    const { initialState } = this.props;
-    const { doc } = initialState;
-    window.location = urls.getEditDocUrl(doc.key);
+    const { currentDoc } = this.state;
+    window.location = urls.getEditDocUrl(currentDoc.key);
+  }
+
+  handleRevisionChanged(value) {
+    const { docs } = this.state;
+    this.setState({ currentDoc: docs.find(doc => doc.snapshotId === value) });
+  }
+
+  formatRevisionTooltip(index) {
+    const doc = this.state.docs[index];
+    const date = moment(doc.updatedOn).locale('de-DE');
+
+    return (
+      <div>
+        <div>Revision: <b>{index + 1}</b></div>
+        <div>Datum: <b>{date.format('L')} {date.format('LT')}</b></div>
+        <div>Benutzer: <b>{doc.updatedBy.username}</b></div>
+        <div>ID: <b>{doc.snapshotId}</b></div>
+      </div>
+    );
+  }
+
+  handleIndexChanged(index) {
+    this.setState(prevState => ({ currentDoc: prevState.docs[index] }));
+  }
+
+  handleAction({ name, data }) {
+    switch (name) {
+      case 'hard-delete':
+        return this.hardDelete(data);
+      default:
+        throw new Error(`Unknown action ${name}`);
+    }
+  }
+
+  async hardDelete({ sectionKey, sectionOrder, deletionReason, deleteDescendants }) {
+    const { documentApiClient } = this.props;
+    const { currentDoc } = this.state;
+    const docKey = currentDoc.key;
+
+    try {
+      await documentApiClient.hardDeleteSection(sectionKey, sectionOrder, deletionReason, deleteDescendants);
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
+    }
+
+    const { docs } = await documentApiClient.getDocumentHistory(docKey);
+    this.setState(prevState => ({
+      docs: docs,
+      currentDoc: docs.find(doc => doc.snapshotId === prevState.currentDoc.snapshotId) || docs[docs.length - 1]
+    }));
   }
 
   render() {
-    const { initialState, language } = this.props;
-    const { doc, sections } = initialState;
+    const { language } = this.props;
+    const { docs, currentDoc } = this.state;
+
+    let revisionPicker = null;
+
+    if (docs.length > 1) {
+      const marks = docs.reduce((accu, item, index) => {
+        let text;
+        if (index === 0) {
+          text = 'erste';
+        } else if (index === docs.length - 1) {
+          text = 'aktuelle';
+        } else {
+          text = '';
+        }
+        accu[index] = text;
+        return accu;
+      }, {});
+
+      revisionPicker = (
+        <div className="DocPage-revisionPicker">
+          <div className="DocPage-revisionPickerLabel">Revision:</div>
+          <div className="DocPage-revisionPickerSlider">
+            <Slider
+              min={0}
+              max={docs.length - 1}
+              value={docs.indexOf(currentDoc)}
+              step={null}
+              marks={marks}
+              onChange={this.handleIndexChanged}
+              tipFormatter={this.formatRevisionTooltip}
+              tooltipVisible
+              />
+          </div>
+        </div>
+      );
+    }
 
     return (
       <Page>
@@ -37,12 +133,10 @@ class Doc extends React.Component {
           </Restricted>
         </PageHeader>
         <PageContent>
-          <div>
-            <span>Titel:</span> <span>{doc.title}</span>
-            <br />
-            <span>URL-Pfad:</span> {doc.slug ? <span>{urls.getArticleUrl(doc.slug)}</span> : <i>(nicht zugewiesen)</i>}
+          <div className="DocPage">
+            {revisionPicker}
+            <DocView doc={currentDoc} sections={currentDoc.sections} language={language} onAction={this.handleAction} />
           </div>
-          <DocView doc={doc} sections={sections} language={language} />
         </PageContent>
         <PageFooter />
       </Page>
@@ -51,11 +145,13 @@ class Doc extends React.Component {
 }
 
 Doc.propTypes = {
+  documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
-    doc: docShape,
-    sections: PropTypes.arrayOf(sectionShape)
+    docs: PropTypes.arrayOf(fullDocShape)
   }).isRequired,
   language: PropTypes.string.isRequired
 };
 
-module.exports = withUser(Doc);
+module.exports = withUser(inject({
+  documentApiClient: DocumentApiClient
+}, Doc));

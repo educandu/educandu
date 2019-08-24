@@ -1,11 +1,21 @@
 .Section {
-  padding: @global-section-padding-large-screen 0;
+  margin: (0 - 1px) -(@global-section-padding-large-screen + 1px);
+  position: relative;
+  border: 1px dashed transparent;
+  padding: @global-section-padding-large-screen;
 
-  &:first-of-type {
-    padding-top: 0;
+  &.is-active {
+    border-color: @grey-7;
   }
+}
 
-  &:last-of-type {
-    padding-bottom: 0;
+.Section-actions {
+  display: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+
+  &.is-active {
+    display: block;
   }
 }

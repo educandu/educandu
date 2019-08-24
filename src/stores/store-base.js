@@ -26,6 +26,14 @@ class StoreBase {
     return this.collection.replaceOne(query, item, options);
   }
 
+  updateOne(query = {}, update = {}) {
+    return this.collection.updateOne(query, update);
+  }
+
+  updateMany(query = {}, update = {}) {
+    return this.collection.updateMany(query, update);
+  }
+
   deleteOne(query = {}) {
     return this.collection.deleteOne(query);
   }

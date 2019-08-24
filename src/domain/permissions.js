@@ -17,6 +17,8 @@ const CREATE_FILE = 'create-file';
 const EDIT_USERS = 'edit-users';
 const EDIT_SETTINGS = 'edit-settings';
 const EDIT_MENU_STRUCTURE = 'edit-menu-structure';
+const HARD_DELETE_SECTION = 'hard-delete-section';
+const SEE_USER_EMAIL = 'see-user-email';
 
 const rolesForPermission = {
   [EDIT_DOC]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
@@ -28,7 +30,9 @@ const rolesForPermission = {
   [VIEW_FILES]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
   [CREATE_FILE]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
   [EDIT_SETTINGS]: [SUPER_USER],
-  [EDIT_USERS]: [SUPER_USER]
+  [EDIT_USERS]: [SUPER_USER],
+  [HARD_DELETE_SECTION]: [SUPER_USER],
+  [SEE_USER_EMAIL]: [SUPER_USER]
 };
 
 function hasUserPermission(user, permission) {
@@ -46,5 +50,7 @@ module.exports = {
   EDIT_USERS,
   EDIT_SETTINGS,
   EDIT_MENU_STRUCTURE,
+  HARD_DELETE_SECTION,
+  SEE_USER_EMAIL,
   hasUserPermission
 };

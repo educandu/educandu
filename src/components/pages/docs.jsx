@@ -110,6 +110,7 @@ class Docs extends React.Component {
             visible={isNewDocModalVisible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
+            maskClosable={false}
             >
             <p>Titel</p>
             <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>

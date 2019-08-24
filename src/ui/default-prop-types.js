@@ -3,7 +3,7 @@ const PropTypes = require('prop-types');
 const sectionDisplayProps = {
   docKey: PropTypes.string.isRequired,
   sectionKey: PropTypes.string.isRequired,
-  content: PropTypes.object.isRequired,
+  content: PropTypes.any,
   language: PropTypes.string.isRequired
 };
 
@@ -54,6 +54,18 @@ const userShape = PropTypes.shape({
   profile: userProfileShape
 });
 
+// This should always use the full user in the future
+const userInDocShape = PropTypes.oneOfType([
+  PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string // This is only visible to super users
+  }),
+  PropTypes.shape({
+    id: PropTypes.string.isRequired
+  })
+]);
+
 const userProps = {
   user: userShape
 };
@@ -74,23 +86,42 @@ const docShape = PropTypes.shape({
   slug: PropTypes.string,
   createdOn: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
-  createdBy: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired,
-  updatedBy: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired
+  createdBy: userInDocShape.isRequired,
+  updatedBy: userInDocShape.isRequired
+});
+
+const fullDocShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  snapshotId: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  order: PropTypes.number.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  createdBy: userInDocShape.isRequired,
+  updatedBy: userInDocShape.isRequired,
+  sections: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    ancestorId: PropTypes.string,
+    order: PropTypes.number.isRequired,
+    type: PropTypes.string.isRequired,
+    content: PropTypes.any,
+    createdOn: PropTypes.string.isRequired,
+    createdBy: userInDocShape.isRequired,
+    deletedOn: PropTypes.string,
+    deletedBy: userInDocShape
+  }))
 });
 
 const sectionShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
   order: PropTypes.number,
   type: PropTypes.string.isRequired,
-  content: PropTypes.any.isRequired,
+  content: PropTypes.any,
   createdOn: PropTypes.string,
-  createdBy: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  })
+  createdBy: userInDocShape,
+  deletedOn: PropTypes.string,
+  deletedBy: userInDocShape
 });
 
 const menuNodeShape = PropTypes.any;
@@ -103,12 +134,8 @@ const menuShape = PropTypes.shape({
   nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
   createdOn: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
-  createdBy: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired,
-  updatedBy: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired
+  createdBy: userInDocShape.isRequired,
+  updatedBy: userInDocShape.isRequired
 });
 
 module.exports = {
@@ -121,6 +148,7 @@ module.exports = {
   dataProps,
   docMetadataShape,
   docShape,
+  fullDocShape,
   sectionShape,
   menuNodeShape,
   menuShape,
