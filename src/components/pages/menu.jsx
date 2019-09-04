@@ -7,9 +7,6 @@ const classnames = require('classnames');
 const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
 const Restricted = require('../restricted.jsx');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const permissions = require('../../domain/permissions');
 const MenuCategoryItem = require('../menu-category-item.jsx');
 const { menuShape, docMetadataShape, docShape, sectionShape } = require('../../ui/default-prop-types');
@@ -125,20 +122,20 @@ class Menu extends React.Component {
       </article>
     );
 
+    const headerContent = (
+      <aside>
+        <Restricted to={permissions.EDIT_MENU}>
+          <Button type="primary" icon="edit" onClick={this.handleEditMenuClick}>Bearbeiten</Button>
+        </Restricted>
+      </aside>
+    );
+
     return (
-      <Page>
-        <PageHeader>
-          <Restricted to={permissions.EDIT_MENU}>
-            <Button type="primary" icon="edit" onClick={this.handleEditMenuClick}>Bearbeiten</Button>
-          </Restricted>
-        </PageHeader>
-        <PageContent>
-          <div className="MenuPage">
-            {categoryPanel}
-            {detailsPanel}
-          </div>
-        </PageContent>
-        <PageFooter />
+      <Page headerContent={headerContent}>
+        <div className="MenuPage">
+          {categoryPanel}
+          {detailsPanel}
+        </div>
       </Page>
     );
   }

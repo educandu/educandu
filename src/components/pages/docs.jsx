@@ -8,9 +8,6 @@ const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
@@ -89,37 +86,38 @@ class Docs extends React.Component {
   render() {
     const { initialState } = this.props;
     const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading } = this.state;
+
+    const headerContent = (
+      <aside>
+        <Restricted to={permissions.EDIT_DOC}>
+          <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>
+        </Restricted>
+      </aside>
+    );
+
     return (
-      <Page>
-        <PageHeader>
-          <Restricted to={permissions.EDIT_DOC}>
-            <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>
-          </Restricted>
-        </PageHeader>
-        <PageContent>
-          <h1>Dokumente</h1>
-          <ul>
-            {initialState.map(doc => (
-              <li key={doc._id}>
-                <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
-              </li>
-            ))}
-          </ul>
-          <Modal
-            title="Neues Dokument"
-            visible={isNewDocModalVisible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-            maskClosable={false}
-            >
-            <p>Titel</p>
-            <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
-            <p>URL-Pfad</p>
-            <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
-            {isLoading && <p>Wird erstellt ...</p>}
-          </Modal>
-        </PageContent>
-        <PageFooter />
+      <Page headerContent={headerContent}>
+        <h1>Dokumente</h1>
+        <ul>
+          {initialState.map(doc => (
+            <li key={doc._id}>
+              <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
+            </li>
+          ))}
+        </ul>
+        <Modal
+          title="Neues Dokument"
+          visible={isNewDocModalVisible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          maskClosable={false}
+          >
+          <p>Titel</p>
+          <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
+          <p>URL-Pfad</p>
+          <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
+          {isLoading && <p>Wird erstellt ...</p>}
+        </Modal>
       </Page>
     );
   }

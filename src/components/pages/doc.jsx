@@ -9,10 +9,6 @@ const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
 const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
-const { withUser } = require('../user-context.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
@@ -125,20 +121,20 @@ class Doc extends React.Component {
       );
     }
 
+    const headerContent = (
+      <aside>
+        <Restricted to={permissions.EDIT_DOC}>
+          <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>
+        </Restricted>
+      </aside>
+    );
+
     return (
-      <Page>
-        <PageHeader>
-          <Restricted to={permissions.EDIT_DOC}>
-            <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>
-          </Restricted>
-        </PageHeader>
-        <PageContent>
-          <div className="DocPage">
-            {revisionPicker}
-            <DocView doc={currentDoc} sections={currentDoc.sections} language={language} onAction={this.handleAction} />
-          </div>
-        </PageContent>
-        <PageFooter />
+      <Page headerContent={headerContent}>
+        <div className="DocPage">
+          {revisionPicker}
+          <DocView doc={currentDoc} sections={currentDoc.sections} language={language} onAction={this.handleAction} />
+        </div>
       </Page>
     );
   }
@@ -152,6 +148,6 @@ Doc.propTypes = {
   language: PropTypes.string.isRequired
 };
 
-module.exports = withUser(inject({
+module.exports = inject({
   documentApiClient: DocumentApiClient
-}, Doc));
+}, Doc);

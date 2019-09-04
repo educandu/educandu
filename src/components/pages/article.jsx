@@ -5,11 +5,9 @@ const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
-const { withUser } = require('../user-context.jsx');
-const { userProps, docShape, sectionShape } = require('../../ui/default-prop-types');
+const Restricted = require('../restricted.jsx');
+const permissions = require('../../domain/permissions');
+const { docShape, sectionShape } = require('../../ui/default-prop-types');
 
 class Article extends React.Component {
   constructor(props) {
@@ -28,26 +26,27 @@ class Article extends React.Component {
   }
 
   render() {
-    const { initialState, user, language } = this.props;
+    const { initialState, language } = this.props;
     const { doc, sections } = initialState;
 
+    const headerContent = (
+      <aside>
+        <Restricted to={permissions.EDIT_DOC}>
+          <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>
+        </Restricted>
+      </aside>
+    );
+
     return (
-      <Page>
-        <PageHeader>
-          {user && <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>}
-        </PageHeader>
-        <PageContent>
-          <p><a onClick={this.handleBackClick}>Zurück</a></p>
-          <DocView doc={doc} sections={sections} language={language} />
-        </PageContent>
-        <PageFooter />
+      <Page headerContent={headerContent}>
+        <p><a onClick={this.handleBackClick}>Zurück</a></p>
+        <DocView doc={doc} sections={sections} language={language} />
       </Page>
     );
   }
 }
 
 Article.propTypes = {
-  ...userProps,
   initialState: PropTypes.shape({
     doc: docShape,
     sections: PropTypes.arrayOf(sectionShape)
@@ -55,4 +54,4 @@ Article.propTypes = {
   language: PropTypes.string.isRequired
 };
 
-module.exports = withUser(Article);
+module.exports = Article;

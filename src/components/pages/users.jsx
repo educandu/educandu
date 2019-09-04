@@ -7,9 +7,6 @@ const Table = require('antd/lib/table');
 const Popover = require('antd/lib/popover');
 const roles = require('../../domain/roles');
 const Logger = require('../../common/logger');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const { userShape } = require('../../ui/default-prop-types');
@@ -173,12 +170,8 @@ class Users extends React.Component {
     const { users } = this.state;
     return (
       <Page>
-        <PageHeader />
-        <PageContent>
-          <h1>Benutzer</h1>
-          <Table dataSource={users} columns={this.columns} rowKey="_id" />
-        </PageContent>
-        <PageFooter />
+        <h1>Benutzer</h1>
+        <Table dataSource={users} columns={this.columns} rowKey="_id" />
       </Page>
     );
   }

@@ -281,6 +281,7 @@ class MenuTree extends React.PureComponent {
         <br />
         <br />
         <Button type="primary" icon="plus" onClick={this.handleNewNodeClick} disabled={isReadonly}>Neuer Menüeintrag</Button>
+        &nbsp;
         {selectedKey && <Button type="danger" icon="delete" onClick={this.handleDeleteNodeClick} disabled={isReadonly}>Menüeintrag löschen</Button>}
         <Modal
           title="Neuer Menüeintrag"

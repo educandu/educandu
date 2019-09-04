@@ -31,7 +31,7 @@ function SectionDisplay({ DisplayComponent, language, doc, section, onAction }) 
           onAction={action => onAction(action)}
           onVisibleChange={visible => setIsDropDownVisible(visible)}
           >
-          <Button type="ghost" icon="setting" size="small" />
+          <Button icon="setting" size="small" />
         </SectionActionDropdown>
       </aside>
     );

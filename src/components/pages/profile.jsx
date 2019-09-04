@@ -14,9 +14,6 @@ const Select = require('antd/lib/select');
 const message = require('antd/lib/message');
 const Logger = require('../../common/logger');
 const localeCompare = require('locale-compare');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const { withUser } = require('../user-context.jsx');
 const { withData } = require('../data-context.jsx');
 const errorHelper = require('../../ui/error-helper');
@@ -140,8 +137,10 @@ class Profile extends React.Component {
 
     const profileForm = (
       <div className="ProfilePage-form">
-        <h2>Profil</h2>
         <Form onSubmit={this.handleSubmit}>
+          <FormItem {...tailFormItemLayout}>
+            <h1>Profil</h1>
+          </FormItem>
           <FormItem {...tailFormItemLayout}>
             <Avatar shape="square" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
             <br />
@@ -184,17 +183,17 @@ class Profile extends React.Component {
       </div>
     );
 
+    const headerContent = (
+      <aside>
+        <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
+      </aside>
+    );
+
     return (
-      <Page>
-        <PageHeader disableProfileWarning>
-          <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
-        </PageHeader>
-        <PageContent>
-          <div className="ProfilePage">
-            {profileForm}
-          </div>
-        </PageContent>
-        <PageFooter />
+      <Page headerContent={headerContent} disableProfileWarning>
+        <div className="ProfilePage">
+          {profileForm}
+        </div>
       </Page>
     );
   }

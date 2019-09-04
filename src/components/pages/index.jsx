@@ -6,16 +6,14 @@ const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
+const ElmuLogo = require('../elmu-logo.jsx');
 const Restricted = require('../restricted.jsx');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const permissions = require('../../domain/permissions');
 const { docShape, sectionShape } = require('../../ui/default-prop-types');
 
 const { Search } = Input;
 
-function showNotImplementedNotification() {
+function handleSearchClick() {
   Modal.error({
     title: 'Leider, leider ...',
     content: '... ist ELMU noch nicht so weit, dass Sie hier komfortabel suchen können. Wir arbeiten daran ...'
@@ -30,44 +28,67 @@ function handleGoToMenusClick() {
   document.location = urls.getMenusUrl();
 }
 
+function handleGoToUsersClick() {
+  document.location = urls.getUsersUrl();
+}
+
+function handleGoToSettingsClick() {
+  document.location = urls.getSettingsUrl();
+}
+
 function Index({ initialState, language }) {
   const { doc, sections } = initialState;
 
+  const headerContent = (
+    <aside>
+      <Restricted to={permissions.EDIT_DOC}>
+        <Button type="primary" onClick={handleGoToDocumentsClick}>Dokumente</Button>
+      </Restricted>
+      &nbsp;
+      <Restricted to={permissions.EDIT_MENU}>
+        <Button type="primary" onClick={handleGoToMenusClick}>Menüs</Button>
+      </Restricted>
+      &nbsp;
+      <Restricted to={permissions.EDIT_USERS}>
+        <Button type="primary" onClick={handleGoToUsersClick}>Benutzer</Button>
+      </Restricted>
+      &nbsp;
+      <Restricted to={permissions.EDIT_SETTINGS}>
+        <Button type="primary" onClick={handleGoToSettingsClick}>Einstellungen</Button>
+      </Restricted>
+    </aside>
+  );
+
+  /* eslint-ignore-next-line capitalized-comments */
+  // const footer = (
+  //   <div>
+  //     <Button
+  //       className="IndexPage-helpButton"
+  //       size="large"
+  //       icon="question-circle"
+  //       href={urls.getArticleUrl('hilfe')}
+  //       >
+  //       Hilfe
+  //     </Button>
+  //   </div>
+  // );
+
   return (
-    <Page fullScreen>
-      <PageHeader fullScreen>
-        <Restricted to={permissions.EDIT_DOC}>
-          <Button type="primary" onClick={handleGoToDocumentsClick}>Zu den Dokumenten</Button>
-        </Restricted>
-        &nbsp;
-        <Restricted to={permissions.EDIT_MENU}>
-          <Button type="primary" onClick={handleGoToMenusClick}>Zu den Menüs</Button>
-        </Restricted>
-      </PageHeader>
-      <PageContent fullScreen>
-        <div className="IndexPage">
-          <h1 className="IndexPage-title">elmu</h1>
-          <div className="IndexPage-search">
-            <Search
-              placeholder="Suchbegriff"
-              enterButton="Suchen"
-              size="large"
-              onSearch={showNotImplementedNotification}
-              />
-          </div>
-          {doc && sections && <DocView doc={doc} sections={sections} language={language} />}
+    <Page headerContent={headerContent} fullScreen>
+      <div className="IndexPage">
+        <div className="IndexPage-title">
+          <ElmuLogo size="big" readonly />
         </div>
-      </PageContent>
-      <PageFooter fullScreen>
-        <Button
-          className="IndexPage-helpButton"
-          size="large"
-          icon="question-circle"
-          href={urls.getArticleUrl('hilfe')}
-          >
-          Hilfe
-        </Button>
-      </PageFooter>
+        <div className="IndexPage-search">
+          <Search
+            placeholder="Suchbegriff"
+            enterButton="Suchen"
+            size="large"
+            onSearch={handleSearchClick}
+            />
+        </div>
+        {doc && sections && <DocView doc={doc} sections={sections} language={language} />}
+      </div>
     </Page>
   );
 }

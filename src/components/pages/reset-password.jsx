@@ -6,9 +6,8 @@ const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
 const { formShape } = require('rc-form');
 const Button = require('antd/lib/button');
+const ElmuLogo = require('../elmu-logo.jsx');
 const Logger = require('../../common/logger');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
@@ -113,13 +112,12 @@ class ResetPassword extends React.Component {
 
     return (
       <Page fullScreen>
-        <PageContent fullScreen>
-          <div className="ResetPasswordPage">
-            <h1 className="ResetPasswordPage-title">elmu</h1>
-            {isRequestSent ? resetRequestConfirmation : resetRequestForm}
+        <div className="ResetPasswordPage">
+          <div className="ResetPasswordPage-title">
+            <ElmuLogo size="big" readonly />
           </div>
-        </PageContent>
-        <PageFooter fullScreen />
+          {isRequestSent ? resetRequestConfirmation : resetRequestForm}
+        </div>
       </Page>
     );
   }

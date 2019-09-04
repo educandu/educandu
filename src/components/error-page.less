@@ -1,4 +1,4 @@
-.Page {
+.ErrorPage {
   margin: 0;
   padding: 0;
   display: flex;
@@ -9,69 +9,56 @@
   max-width: 100vw;
 }
 
-.Page-headerArea {
+.ErrorPage-headerArea {
   top: 0;
   flex: none;
   width: 100%;
   z-index: 1000;
   position: sticky;
   background-color: @grey-1;
-  box-shadow: 0 2px 8px @grey-4;
   margin-bottom: @global-content-padding;
-
-  &.Page-headerArea--fullScreen {
-    box-shadow: none;
-  }
 }
 
-.Page-header {
+.ErrorPage-header {
   display: flex;
   align-items: center;
 }
 
-.Page-headerContent {
+.ErrorPage-headerContent {
   display: block;
   padding: @global-content-padding;
 
-  &.Page-headerContent--left {
+  &.ErrorPage-headerContent--left {
     flex: 1 0 0%;
     display: flex;
     align-items: flex-end;
   }
 
-  &.Page-headerContent--center {
+  &.ErrorPage-headerContent--center {
     flex: none;
     text-align: center;
   }
 
-  &.Page-headerContent--right {
+  &.ErrorPage-headerContent--right {
     flex: 1 0 0%;
     text-align: right;
   }
 }
 
-.Page-contentArea {
+.ErrorPage-contentArea {
   flex: 1 0 0%;
   display: flex;
-  align-items: flex-start;
-
-  &.Page-contentArea--fullScreen {
-    align-items: center;
-  }
+  align-items: center;
 }
 
-.Page-content {
+.ErrorPage-content {
   margin: 0 auto;
   width: 100%;
   min-width: @global-min-page-width;
-  max-width: @global-content-width-wide;
-
-  &.Page-content--fullScreen {
-    max-width: @global-content-width-narrow;
-  }
+  max-width: @global-content-width-narrow;
 }
 
-.Page-footer {
+.ErrorPage-footer {
   flex: none;
   display: flex;
   z-index: 1000;

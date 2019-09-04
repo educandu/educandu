@@ -5,9 +5,6 @@ const PropTypes = require('prop-types');
 const Input = require('antd/lib/input');
 const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const { settingsShape } = require('../../ui/default-prop-types');
@@ -50,20 +47,16 @@ class Settings extends React.Component {
 
     return (
       <Page>
-        <PageHeader />
-        <PageContent>
-          <div className="SettingPage">
-            <h1>Einstellungen</h1>
-            <div className="SettingPage-formItem">
-              <label className="SettingPage-formItemLabel">Landing-Page-ID</label>
-              <Input className="SettingPage-formItemInput" value={settings.landingPageDocumentId || ''} onChange={this.handleLandingPageDocumentIdChange} />
-            </div>
-            <div className="SettingPage-submitButton">
-              <Button onClick={this.handleSaveClick} type="primary">Speichern</Button>
-            </div>
+        <div className="SettingPage">
+          <h1>Einstellungen</h1>
+          <div className="SettingPage-formItem">
+            <label className="SettingPage-formItemLabel">Landing-Page-ID</label>
+            <Input className="SettingPage-formItemInput" value={settings.landingPageDocumentId || ''} onChange={this.handleLandingPageDocumentIdChange} />
           </div>
-        </PageContent>
-        <PageFooter />
+          <div className="SettingPage-submitButton">
+            <Button onClick={this.handleSaveClick} type="primary">Speichern</Button>
+          </div>
+        </div>
       </Page>
     );
   }

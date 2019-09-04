@@ -116,11 +116,15 @@ class SectionEditor extends React.Component {
       <div className={panelClasses}>
         <div className="Panel-header" style={{ display: 'flex' }} {...dragHandleProps}>
           <div style={{ flex: '1 0 0%' }}>
-            <span>Typ:</span> <b>{section.type}</b>
-            <span>&nbsp;&nbsp;&nbsp;</span>
-            <span>Key:</span> <b>{section.key}</b>
-            <span>&nbsp;&nbsp;&nbsp;</span>
-            <span>Revision:</span> <b>{section._id}</b>
+            <span style={{ display: 'inline-block', marginRight: '1em' }}>
+              <span>Typ:</span>&nbsp;<b>{section.type}</b>
+            </span>
+            <span style={{ display: 'inline-block', marginRight: '1em' }}>
+              <span>Key:</span>&nbsp;<b>{section.key}</b>
+            </span>
+            <span style={{ display: 'inline-block', marginRight: '1em' }}>
+              <span>Revision:</span>&nbsp;<b>{section._id}</b>
+            </span>
           </div>
           <div style={{ flex: 'none' }}>
             <Dropdown key="new-section-dropdown" overlay={sectionMenu} placement="bottomRight">

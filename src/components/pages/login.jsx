@@ -7,9 +7,8 @@ const Input = require('antd/lib/input');
 const { formShape } = require('rc-form');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
+const ElmuLogo = require('../elmu-logo.jsx');
 const Logger = require('../../common/logger');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const { withRequest } = require('../request-context.jsx');
@@ -141,15 +140,14 @@ class Login extends React.Component {
 
     return (
       <Page fullScreen>
-        <PageContent fullScreen>
-          <div className="LoginPage">
-            <h1 className="LoginPage-title">elmu</h1>
-            <div className="LoginPage-form">
-              {loginForm}
-            </div>
+        <div className="LoginPage">
+          <div className="LoginPage-title">
+            <ElmuLogo size="big" readonly />
           </div>
-        </PageContent>
-        <PageFooter fullScreen />
+          <div className="LoginPage-form">
+            {loginForm}
+          </div>
+        </div>
       </Page>
     );
   }

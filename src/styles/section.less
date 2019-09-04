@@ -1,19 +1,24 @@
+@section-min-height: 36px;
+@active-section-border-width: 1px;
+@active-section-border-color: @grey-7;
+
 .Section {
-  margin: (0 - 1px) -(@global-section-padding-large-screen + 1px);
+  border: none;
   position: relative;
-  border: 1px dashed transparent;
-  padding: @global-section-padding-large-screen;
+  padding: @global-content-padding;
+  min-height: @section-min-height;
 
   &.is-active {
-    border-color: @grey-7;
+    padding: @global-content-padding - @active-section-border-width;
+    border: @active-section-border-width dashed @active-section-border-color;
   }
 }
 
 .Section-actions {
   display: none;
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 4px;
+  right: 4px;
 
   &.is-active {
     display: block;

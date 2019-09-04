@@ -9,9 +9,6 @@ const Logger = require('../../common/logger');
 const Dropdown = require('antd/lib/dropdown');
 const utils = require('../../utils/unique-id');
 const DocEditor = require('../doc-editor.jsx');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const cloneDeep = require('../../utils/clone-deep');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
@@ -208,68 +205,68 @@ class EditDoc extends React.Component {
       </Dropdown>
     );
 
+    const headerContent = (
+      <aside>
+        {isDirty && <Button type="primary" icon="save" onClick={this.handleSaveClick}>Speichern</Button>}
+        &nbsp;
+        <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
+      </aside>
+    );
+
     return (
-      <Page>
-        <PageHeader>
-          {isDirty && <Button type="primary" icon="save" onClick={this.handleSaveClick}>Speichern</Button>}
-          &nbsp;
-          <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
-        </PageHeader>
-        <PageContent>
-          <div className="EditDocPage">
-            <div className="EditDocPage-docEditor">
-              <DocEditor
-                onChanged={this.handleMetadataChanged}
-                doc={editedDoc}
-                />
-            </div>
-            <DragDropContext onDragEnd={this.handleDragEnd}>
-              <Droppable droppableId="droppable" ignoreContainerClipping>
-                {droppableProvided => (
-                  <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-                    <ShallowUpdateList items={editedSections}>
-                      {(section, index) => (
-                        <Draggable key={section.key} draggableId={section.key} index={index}>
-                          {(draggableProvided, draggableState) => (
-                            <section
-                              key={section.key}
-                              className="Section"
-                              ref={draggableProvided.innerRef}
-                              {...draggableProvided.draggableProps}
-                              style={{
-                                userSelect: draggableState.isDragging ? 'none' : null,
-                                ...draggableProvided.draggableProps.style
-                              }}
-                              >
-                              <SectionEditor
-                                EditorComponent={this.getEditorComponentForSection(section)}
-                                DisplayComponent={this.getDisplayComponentForSection(section)}
-                                onContentChanged={this.handleContentChanged}
-                                onSectionMovedUp={this.handleSectionMovedUp}
-                                onSectionMovedDown={this.handleSectionMovedDown}
-                                onSectionDeleted={this.handleSectionDeleted}
-                                dragHandleProps={draggableProvided.dragHandleProps}
-                                isHighlighted={draggableState.isDragging}
-                                language={language}
-                                section={section}
-                                doc={editedDoc}
-                                />
-                            </section>
-                          )}
-                        </Draggable>
-                      )}
-                    </ShallowUpdateList>
-                    {droppableProvided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-            <aside style={{ marginTop: '25px' }}>
-              {newSectionDropdown}
-            </aside>
+      <Page headerContent={headerContent}>
+        <div className="EditDocPage">
+          <div className="EditDocPage-docEditor">
+            <DocEditor
+              onChanged={this.handleMetadataChanged}
+              doc={editedDoc}
+              />
           </div>
-        </PageContent>
-        <PageFooter />
+          <DragDropContext onDragEnd={this.handleDragEnd}>
+            <Droppable droppableId="droppable" ignoreContainerClipping>
+              {droppableProvided => (
+                <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+                  <ShallowUpdateList items={editedSections}>
+                    {(section, index) => (
+                      <Draggable key={section.key} draggableId={section.key} index={index}>
+                        {(draggableProvided, draggableState) => (
+                          <section
+                            key={section.key}
+                            className="Section"
+                            ref={draggableProvided.innerRef}
+                            {...draggableProvided.draggableProps}
+                            style={{
+                              userSelect: draggableState.isDragging ? 'none' : null,
+                              ...draggableProvided.draggableProps.style
+                            }}
+                            >
+                            <SectionEditor
+                              EditorComponent={this.getEditorComponentForSection(section)}
+                              DisplayComponent={this.getDisplayComponentForSection(section)}
+                              onContentChanged={this.handleContentChanged}
+                              onSectionMovedUp={this.handleSectionMovedUp}
+                              onSectionMovedDown={this.handleSectionMovedDown}
+                              onSectionDeleted={this.handleSectionDeleted}
+                              dragHandleProps={draggableProvided.dragHandleProps}
+                              isHighlighted={draggableState.isDragging}
+                              language={language}
+                              section={section}
+                              doc={editedDoc}
+                              />
+                          </section>
+                        )}
+                      </Draggable>
+                    )}
+                  </ShallowUpdateList>
+                  {droppableProvided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <aside className="EditDocPage-addSectionButton">
+            {newSectionDropdown}
+          </aside>
+        </div>
       </Page>
     );
   }

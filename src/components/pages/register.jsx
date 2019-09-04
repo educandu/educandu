@@ -8,9 +8,8 @@ const { formShape } = require('rc-form');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
+const ElmuLogo = require('../elmu-logo.jsx');
 const Checkbox = require('antd/lib/checkbox');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
@@ -213,13 +212,12 @@ class Register extends React.Component {
 
     return (
       <Page fullScreen>
-        <PageContent fullScreen>
-          <div className="RegisterPage">
-            <h1 className="RegisterPage-title">elmu</h1>
-            {user ? registrationConfirmation : registrationForm}
+        <div className="RegisterPage">
+          <div className="RegisterPage-title">
+            <ElmuLogo size="big" readonly />
           </div>
-        </PageContent>
-        <PageFooter fullScreen />
+          {user ? registrationConfirmation : registrationForm}
+        </div>
       </Page>
     );
   }

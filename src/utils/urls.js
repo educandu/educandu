@@ -3,6 +3,8 @@ const urlencode = require('urlencode');
 const homePath = '/';
 const docsPath = '/docs';
 const menusPath = '/menus';
+const usersPath = '/users';
+const settingsPath = '/settings';
 const loginPath = '/login';
 const logoutPath = '/logout';
 const profilePath = '/profile';
@@ -58,8 +60,16 @@ function getEditMenuUrl(menuId) {
   return concatParts(editMenuPrefix, menuId);
 }
 
+function getUsersUrl() {
+  return usersPath;
+}
+
 function getArticleUrl(slug) {
   return concatParts(articlesPrefix, slug);
+}
+
+function getSettingsUrl() {
+  return settingsPath;
 }
 
 function getCompleteRegistrationUrl(verificationCode) {
@@ -110,6 +120,7 @@ module.exports = {
   homePath,
   docsPath,
   menusPath,
+  usersPath,
   loginPath,
   logoutPath,
   registerPath,
@@ -132,7 +143,9 @@ module.exports = {
   getEditDocUrl,
   getMenusUrl,
   getEditMenuUrl,
+  getUsersUrl,
   getArticleUrl,
+  getSettingsUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
   getPluginApiPathPrefix,

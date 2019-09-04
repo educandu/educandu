@@ -8,9 +8,6 @@ const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
-const PageHeader = require('../page-header.jsx');
-const PageFooter = require('../page-footer.jsx');
-const PageContent = require('../page-content.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
@@ -88,36 +85,37 @@ class Menus extends React.Component {
   render() {
     const { initialState } = this.props;
     const { newMenuTitle, newMenuSlug, isNewMenuModalVisible, isLoading } = this.state;
+
+    const headerContent = (
+      <aside>
+        <Restricted to={permissions.EDIT_MENU}>
+          <Button type="primary" icon="plus" onClick={this.handleNewMenuClick}>Neues Menü</Button>
+        </Restricted>
+      </aside>
+    );
+
     return (
-      <Page>
-        <PageHeader>
-          <Restricted to={permissions.EDIT_MENU}>
-            <Button type="primary" icon="plus" onClick={this.handleNewMenuClick}>Neues Menü</Button>
-          </Restricted>
-        </PageHeader>
-        <PageContent>
-          <h1>Menüs</h1>
-          <ul>
-            {initialState.map(menu => (
-              <li key={menu._id}>
-                <a href={urls.getEditMenuUrl(menu._id)}>{menu.title}</a>
-              </li>
-            ))}
-          </ul>
-          <Modal
-            title="Neues Menü"
-            visible={isNewMenuModalVisible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-            >
-            <p>Titel</p>
-            <p><Input value={newMenuTitle} onChange={this.handleNewMenuTitleChange} /></p>
-            <p>URL-Pfad</p>
-            <p><Input addonBefore={urls.menusPrefix} value={newMenuSlug} onChange={this.handleNewMenuSlugChange} /></p>
-            {isLoading && <p>Wird erstellt ...</p>}
-          </Modal>
-        </PageContent>
-        <PageFooter />
+      <Page headerContent={headerContent}>
+        <h1>Menüs</h1>
+        <ul>
+          {initialState.map(menu => (
+            <li key={menu._id}>
+              <a href={urls.getEditMenuUrl(menu._id)}>{menu.title}</a>
+            </li>
+          ))}
+        </ul>
+        <Modal
+          title="Neues Menü"
+          visible={isNewMenuModalVisible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          >
+          <p>Titel</p>
+          <p><Input value={newMenuTitle} onChange={this.handleNewMenuTitleChange} /></p>
+          <p>URL-Pfad</p>
+          <p><Input addonBefore={urls.menusPrefix} value={newMenuSlug} onChange={this.handleNewMenuSlugChange} /></p>
+          {isLoading && <p>Wird erstellt ...</p>}
+        </Modal>
       </Page>
     );
   }
