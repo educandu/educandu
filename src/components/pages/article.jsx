@@ -1,49 +1,37 @@
 const React = require('react');
 const Page = require('../page.jsx');
-const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
-const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
-const Restricted = require('../restricted.jsx');
 const permissions = require('../../domain/permissions');
 const { docShape, sectionShape } = require('../../ui/default-prop-types');
 
-class Article extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind.react(this);
-  }
+const handleBackClick = () => window.history.back();
 
-  handleEditClick() {
-    const { initialState } = this.props;
-    const { doc } = initialState;
-    window.location = urls.getEditDocUrl(doc.key);
-  }
+function Article({ initialState, language }) {
+  const { doc, sections } = initialState;
 
-  handleBackClick() {
-    window.history.back();
-  }
+  const headerActions = React.useMemo(() => [
+    {
+      handleClick: () => {
+        window.location = urls.getEditDocUrl(doc.key);
+      },
+      icon: 'edit',
+      key: 'edit',
+      permission: permissions.EDIT_DOC,
+      text: 'Bearbeiten',
+      type: 'primary'
+    }
+  ], [doc.key]);
 
-  render() {
-    const { initialState, language } = this.props;
-    const { doc, sections } = initialState;
-
-    const headerContent = (
-      <aside>
-        <Restricted to={permissions.EDIT_DOC}>
-          <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>
-        </Restricted>
+  return (
+    <Page headerActions={headerActions}>
+      <aside className="Content">
+        <a onClick={handleBackClick}>Zurück</a>
       </aside>
-    );
-
-    return (
-      <Page headerContent={headerContent}>
-        <p><a onClick={this.handleBackClick}>Zurück</a></p>
-        <DocView doc={doc} sections={sections} language={language} />
-      </Page>
-    );
-  }
+      <DocView doc={doc} sections={sections} language={language} />
+    </Page>
+  );
 }
 
 Article.propTypes = {

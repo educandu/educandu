@@ -4,9 +4,7 @@ const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const classnames = require('classnames');
-const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
-const Restricted = require('../restricted.jsx');
 const permissions = require('../../domain/permissions');
 const MenuCategoryItem = require('../menu-category-item.jsx');
 const { menuShape, docMetadataShape, docShape, sectionShape } = require('../../ui/default-prop-types');
@@ -122,16 +120,19 @@ class Menu extends React.Component {
       </article>
     );
 
-    const headerContent = (
-      <aside>
-        <Restricted to={permissions.EDIT_MENU}>
-          <Button type="primary" icon="edit" onClick={this.handleEditMenuClick}>Bearbeiten</Button>
-        </Restricted>
-      </aside>
-    );
+    const headerActions = [
+      {
+        key: 'edit',
+        type: 'primary',
+        icon: 'edit',
+        text: 'Bearbeiten',
+        permission: permissions.EDIT_MENU,
+        handleClick: this.handleEditMenuClick
+      }
+    ];
 
     return (
-      <Page headerContent={headerContent}>
+      <Page headerActions={headerActions}>
         <div className="MenuPage">
           {categoryPanel}
           {detailsPanel}

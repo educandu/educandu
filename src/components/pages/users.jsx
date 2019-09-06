@@ -170,8 +170,10 @@ class Users extends React.Component {
     const { users } = this.state;
     return (
       <Page>
-        <h1>Benutzer</h1>
-        <Table dataSource={users} columns={this.columns} rowKey="_id" />
+        <div className="UsersPage">
+          <h1>Benutzer</h1>
+          <Table dataSource={users} columns={this.columns} rowKey="_id" />
+        </div>
       </Page>
     );
   }

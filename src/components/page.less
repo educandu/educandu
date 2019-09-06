@@ -1,3 +1,6 @@
+@page-header-content-min-height: 32px;
+@page-header-button-spacing: 6px;
+
 .Page {
   margin: 0;
   padding: 0;
@@ -27,6 +30,7 @@
 .Page-header {
   display: flex;
   align-items: center;
+  min-height: @page-header-content-min-height + (2* @global-content-padding);
 }
 
 .Page-headerContent {
@@ -36,18 +40,42 @@
   &.Page-headerContent--left {
     flex: 1 0 0%;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: flex-start;
   }
 
   &.Page-headerContent--center {
     flex: none;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &.Page-headerContent--right {
     flex: 1 0 0%;
-    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
+}
+
+.Page-headerButton {
+  margin-right: @page-header-button-spacing;
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &.ant-btn > span {
+    @media @phone {
+      display: none;
+    }
+  }
+}
+
+.Page-loginLogoutButton {
+  cursor: pointer;
+  margin-left: (2.5 * @page-header-button-spacing);
 }
 
 .Page-contentArea {
@@ -78,4 +106,30 @@
   align-items: center;
   justify-content: center;
   padding: @global-content-padding;
+}
+
+.Page-footerLine {
+  display: inline-block;
+
+  @media @phone {
+    display: block;
+    text-align: center;
+  }
+
+  &:not(:last-child)::after {
+    content: "\00A0\00A0|\00A0\00A0";
+
+    @media @phone {
+      content: none;
+    }
+  }
+}
+
+.Page-footerLink {
+  display: inline-block;
+  white-space: nowrap;
+
+  &:not(:last-child)::after {
+    content: "\00A0\00A0|\00A0\00A0";
+  }
 }

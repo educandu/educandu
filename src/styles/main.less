@@ -14,6 +14,7 @@
 @import './roboto-font.less';
 @import './variables.less';
 @import './utilities.less';
+@import './mixins.less';
 
 body {
   font-family: 'Roboto', sans-serif;
@@ -27,13 +28,15 @@ h2 {
   font-size: 1.5em;
 }
 
+// React components
 @import '../components/page.less';
 @import '../components/error-page.less';
-@import '../components/page-menu.less';
 @import '../components/pages/index.less';
 @import '../components/pages/doc.less';
+@import '../components/pages/docs.less';
 @import '../components/pages/edit-doc.less';
 @import '../components/pages/menu.less';
+@import '../components/pages/menus.less';
 @import '../components/pages/edit-menu.less';
 @import '../components/pages/login.less';
 @import '../components/pages/users.less';
@@ -43,6 +46,7 @@ h2 {
 @import '../components/pages/reset-password.less';
 @import '../components/pages/complete-registration.less';
 @import '../components/pages/complete-password-reset.less';
+@import '../components/link-popover.less';
 @import '../components/elmu-logo.less';
 @import '../components/error-root.less';
 @import '../components/menu-doc-ref.less';
@@ -50,8 +54,13 @@ h2 {
 @import '../components/repository-browser.less';
 @import '../components/media-control.less';
 @import '../components/deleted-section.less';
+
+// Pure CSS components
 @import '../styles/panel.less';
+@import '../styles/content.less';
 @import '../styles/section.less';
+
+// Plugin styles
 @import '../plugins/markdown/markdown.less';
 @import '../plugins/abc-notation/abc-notation.less';
 @import '../plugins/quick-tester/quick-tester.less';

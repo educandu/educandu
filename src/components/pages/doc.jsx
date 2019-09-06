@@ -5,10 +5,8 @@ const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const Slider = require('antd/lib/slider');
-const Button = require('antd/lib/button');
 const DocView = require('../doc-view.jsx');
 const Logger = require('../../common/logger');
-const Restricted = require('../restricted.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
@@ -121,16 +119,19 @@ class Doc extends React.Component {
       );
     }
 
-    const headerContent = (
-      <aside>
-        <Restricted to={permissions.EDIT_DOC}>
-          <Button type="primary" icon="edit" onClick={this.handleEditClick}>Bearbeiten</Button>
-        </Restricted>
-      </aside>
-    );
+    const headerActions = [
+      {
+        key: 'edit',
+        type: 'primary',
+        icon: 'edit',
+        text: 'Bearbeiten',
+        permission: permissions.EDIT_DOC,
+        handleClick: this.handleEditClick
+      }
+    ];
 
     return (
-      <Page headerContent={headerContent}>
+      <Page headerActions={headerActions}>
         <div className="DocPage">
           {revisionPicker}
           <DocView doc={currentDoc} sections={currentDoc.sections} language={language} onAction={this.handleAction} />

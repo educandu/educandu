@@ -8,7 +8,6 @@ const treeCrawl = require('tree-crawl');
 const Input = require('antd/lib/input');
 const urls = require('../../utils/urls');
 const classnames = require('classnames');
-const Button = require('antd/lib/button');
 const MenuTree = require('../menu-tree.jsx');
 const Logger = require('../../common/logger');
 const MenuDocRef = require('../menu-doc-ref.jsx');
@@ -399,18 +398,28 @@ class EditMenu extends React.Component {
       isDirty
     } = this.state;
 
-    const headerContent = (
-      <aside>
-        {isDirty && <Button type="primary" icon="save" onClick={this.handleSaveClick}>Speichern</Button>}
-        &nbsp;
-        <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
-      </aside>
-    );
+    const headerActions = [];
+    if (isDirty) {
+      headerActions.push({
+        key: 'save',
+        type: 'primary',
+        icon: 'save',
+        text: 'Speichern',
+        handleClick: this.handleSaveClick
+      });
+    }
+
+    headerActions.push({
+      key: 'close',
+      icon: 'close',
+      text: 'Zurück',
+      handleClick: this.handleBackClick
+    });
 
     return (
       <CheckPermissions permissions={EDIT_MENU_STRUCTURE}>
         {canEditMenuStructure => (
-          <Page headerContent={headerContent}>
+          <Page headerActions={headerActions}>
             <div className="EditMenuPage">
               <DragDropContext onDragEnd={this.handleDragEnd}>
                 <div className="EditMenuPage-editor">

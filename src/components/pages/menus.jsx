@@ -86,36 +86,35 @@ class Menus extends React.Component {
     const { initialState } = this.props;
     const { newMenuTitle, newMenuSlug, isNewMenuModalVisible, isLoading } = this.state;
 
-    const headerContent = (
-      <aside>
-        <Restricted to={permissions.EDIT_MENU}>
-          <Button type="primary" icon="plus" onClick={this.handleNewMenuClick}>Neues Menü</Button>
-        </Restricted>
-      </aside>
-    );
-
     return (
-      <Page headerContent={headerContent}>
-        <h1>Menüs</h1>
-        <ul>
-          {initialState.map(menu => (
-            <li key={menu._id}>
-              <a href={urls.getEditMenuUrl(menu._id)}>{menu.title}</a>
-            </li>
-          ))}
-        </ul>
-        <Modal
-          title="Neues Menü"
-          visible={isNewMenuModalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          >
-          <p>Titel</p>
-          <p><Input value={newMenuTitle} onChange={this.handleNewMenuTitleChange} /></p>
-          <p>URL-Pfad</p>
-          <p><Input addonBefore={urls.menusPrefix} value={newMenuSlug} onChange={this.handleNewMenuSlugChange} /></p>
-          {isLoading && <p>Wird erstellt ...</p>}
-        </Modal>
+      <Page>
+        <div className="MenusPage">
+          <h1>Menüs</h1>
+          <ul>
+            {initialState.map(menu => (
+              <li key={menu._id}>
+                <a href={urls.getEditMenuUrl(menu._id)}>{menu.title}</a>
+              </li>
+            ))}
+          </ul>
+          <aside>
+            <Restricted to={permissions.EDIT_MENU}>
+              <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewMenuClick} />
+            </Restricted>
+          </aside>
+          <Modal
+            title="Neues Menü"
+            visible={isNewMenuModalVisible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+            >
+            <p>Titel</p>
+            <p><Input value={newMenuTitle} onChange={this.handleNewMenuTitleChange} /></p>
+            <p>URL-Pfad</p>
+            <p><Input addonBefore={urls.menusPrefix} value={newMenuSlug} onChange={this.handleNewMenuSlugChange} /></p>
+            {isLoading && <p>Wird erstellt ...</p>}
+          </Modal>
+        </div>
       </Page>
     );
   }

@@ -183,14 +183,17 @@ class Profile extends React.Component {
       </div>
     );
 
-    const headerContent = (
-      <aside>
-        <Button icon="close" onClick={this.handleBackClick}>Zurück</Button>
-      </aside>
-    );
+    const headerActions = [
+      {
+        handleClick: this.handleBackClick,
+        icon: 'close',
+        key: 'close',
+        text: 'Zurück'
+      }
+    ];
 
     return (
-      <Page headerContent={headerContent} disableProfileWarning>
+      <Page headerActions={headerActions} disableProfileWarning>
         <div className="ProfilePage">
           {profileForm}
         </div>

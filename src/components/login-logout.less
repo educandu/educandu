@@ -2,43 +2,27 @@ const React = require('react');
 const gravatar = require('gravatar');
 const urls = require('../utils/urls');
 const Avatar = require('antd/lib/avatar');
-const { useUser } = require('./user-context.jsx');
-const PopoverContent = require('./link-popover.jsx');
-const { useRequest } = require('./request-context.jsx');
-
-const gravatarPopoverItems = [
-  {
-    key: 'profile',
-    href: urls.getProfileUrl(),
-    text: 'Profil bearbeiten',
-    icon: 'profile',
-    permission: null
-  }, {
-    key: 'logout',
-    href: urls.getLogoutUrl(),
-    text: 'Abmelden',
-    icon: 'logout',
-    permission: null
-  }
-];
+const Popover = require('antd/lib/popover');
+const { withUser } = require('./user-context.jsx');
+const { withRequest } = require('./request-context.jsx');
+const { requestProps, userProps } = require('../ui/default-prop-types');
 
 function createAuthenticatedUserHeader(user) {
   const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
-
-  const popoverTitle = (
+  const title = (
     <span>Sie sind angemeldet als <b>{user.username}</b></span>
   );
-
+  const popoverContent = (
+    <div>
+      <div><a href={urls.getProfileUrl()}>Profil bearbeiten</a></div>
+      <div><a href={urls.getLogoutUrl()}>Abmelden</a></div>
+    </div>
+  );
   return (
     <div>
-      <PopoverContent
-        title={popoverTitle}
-        items={gravatarPopoverItems}
-        placement="bottomRight"
-        trigger="hover"
-        >
+      <Popover title={title} content={popoverContent} placement="bottomRight" trigger="hover">
         <Avatar src={gravatarUrl} alt={user.username} shape="square" />
-      </PopoverContent>
+      </Popover>
     </div>
   );
 }
@@ -53,10 +37,7 @@ function createAnonymousUserHeader(redirectUrl) {
   );
 }
 
-function LoginLogout() {
-  const user = useUser();
-  const request = useRequest();
-
+function LoginLogout({ request, user }) {
   return (
     <span className="LoginLogout">
       {user ? createAuthenticatedUserHeader(user) : createAnonymousUserHeader(request.originalUrl)}
@@ -64,4 +45,10 @@ function LoginLogout() {
   );
 }
 
-module.exports = LoginLogout;
+LoginLogout.propTypes = {
+  ...requestProps,
+  ...userProps
+};
+
+
+module.exports = withRequest(withUser(LoginLogout));

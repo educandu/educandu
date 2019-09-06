@@ -87,37 +87,36 @@ class Docs extends React.Component {
     const { initialState } = this.props;
     const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading } = this.state;
 
-    const headerContent = (
-      <aside>
-        <Restricted to={permissions.EDIT_DOC}>
-          <Button type="primary" icon="plus" onClick={this.handleNewDocumentClick}>Neues Dokument</Button>
-        </Restricted>
-      </aside>
-    );
-
     return (
-      <Page headerContent={headerContent}>
-        <h1>Dokumente</h1>
-        <ul>
-          {initialState.map(doc => (
-            <li key={doc._id}>
-              <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
-            </li>
-          ))}
-        </ul>
-        <Modal
-          title="Neues Dokument"
-          visible={isNewDocModalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          maskClosable={false}
-          >
-          <p>Titel</p>
-          <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
-          <p>URL-Pfad</p>
-          <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
-          {isLoading && <p>Wird erstellt ...</p>}
-        </Modal>
+      <Page>
+        <div className="DocsPage">
+          <h1>Dokumente</h1>
+          <ul>
+            {initialState.map(doc => (
+              <li key={doc._id}>
+                <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
+              </li>
+            ))}
+          </ul>
+          <aside>
+            <Restricted to={permissions.EDIT_DOC}>
+              <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewDocumentClick} />
+            </Restricted>
+          </aside>
+          <Modal
+            title="Neues Dokument"
+            visible={isNewDocModalVisible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+            maskClosable={false}
+            >
+            <p>Titel</p>
+            <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
+            <p>URL-Pfad</p>
+            <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
+            {isLoading && <p>Wird erstellt ...</p>}
+          </Modal>
+        </div>
       </Page>
     );
   }

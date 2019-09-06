@@ -1,0 +1,28 @@
+.LinkPopover {
+  margin: 0;
+  padding: 0;
+  display: list;
+  list-style: none;
+}
+
+.LinkPopover-item {
+  display: block;
+  margin: 0;
+  padding: 6px 0;
+  border-bottom: 1px solid @grey-4;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.LinkPopover-itemLink {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+}

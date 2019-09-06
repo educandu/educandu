@@ -18,6 +18,9 @@
       "version": "16.5"
     }
   },
+  "plugins": [
+    "react-hooks"
+  ],
   "rules": {
     "array-element-newline": ["off"],
     "arrow-parens": ["error", "as-needed"],
@@ -84,6 +87,8 @@
     "react/no-danger": ["off"],
     "react/no-multi-comp": ["off"],
     "react/no-set-state": ["off"],
-    "react/require-optimization": ["off"]
+    "react/require-optimization": ["off"],
+    "react-hooks/rules-of-hooks": ["error"],
+    "react-hooks/exhaustive-deps": ["off"]
   }
 }

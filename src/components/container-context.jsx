@@ -4,6 +4,11 @@ const { useContext } = React;
 
 const containerContext = React.createContext();
 
+function useService(dependecy) {
+  const container = useContext(containerContext);
+  return container.get(dependecy);
+}
+
 function inject(dependencies, Component) {
   const createInjectedProps = container => Object.entries(dependencies).reduce((all, entry) => ({ ...all, [entry[0]]: container.get(entry[1]) }), {});
 
@@ -15,5 +20,6 @@ function inject(dependencies, Component) {
 
 module.exports = {
   ContainerProvider: containerContext.Provider,
-  inject: inject
+  inject: inject,
+  useService: useService
 };

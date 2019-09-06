@@ -2,22 +2,16 @@
 @index-page-help-button-hover-shadow-color: @global-elmu-blue;
 
 .IndexPage {
-  padding: @global-content-padding @global-content-padding 20vh @global-content-padding;
+  .m-fullscreen;
 }
 
 .IndexPage-title {
+  .m-content;
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
 
 .IndexPage-search {
+  .m-content;
   margin-bottom: 32px;
-}
-
-.IndexPage-helpButton {
-  box-shadow: @index-page-help-button-shadow-color 1px 1px 4px 0px;
-
-  &:hover {
-    box-shadow: @index-page-help-button-hover-shadow-color 1px 1px 4px 0px;
-  }
 }

@@ -252,7 +252,7 @@ class MenuTree extends React.PureComponent {
     return nodes.map(node => (
       <TreeNode
         key={node.key}
-        icon={<Icon type={node.documentKeys.length ? 'bars' : 'file'} />}
+        icon={<Icon type={node.documentKeys.length ? 'menu-unfold' : 'file'} />}
         title={<span>{node.title}</span>}
         >
         {node.children && this.renderNodeList(node.children)}
