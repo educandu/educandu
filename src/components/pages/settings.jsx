@@ -47,13 +47,13 @@ class Settings extends React.Component {
 
     return (
       <Page>
-        <div className="SettingPage">
+        <div className="SettingsPage">
           <h1>Einstellungen</h1>
-          <div className="SettingPage-formItem">
-            <label className="SettingPage-formItemLabel">Landing-Page-ID</label>
-            <Input className="SettingPage-formItemInput" value={settings.landingPageDocumentId || ''} onChange={this.handleLandingPageDocumentIdChange} />
+          <div className="SettingsPage-formItem">
+            <label className="SettingsPage-formItemLabel">Landing-Page-ID</label>
+            <Input className="SettingsPage-formItemInput" value={settings.landingPageDocumentId || ''} onChange={this.handleLandingPageDocumentIdChange} />
           </div>
-          <div className="SettingPage-submitButton">
+          <div className="SettingsPage-submitButton">
             <Button onClick={this.handleSaveClick} type="primary">Speichern</Button>
           </div>
         </div>
