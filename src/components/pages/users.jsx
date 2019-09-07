@@ -29,7 +29,10 @@ class Users extends React.Component {
     super(props);
     autoBind.react(this);
     this.state = {
-      users: props.initialState
+      users: props.initialState,
+      changedLockOutStates: {},
+      changedRoles: {},
+      isDirty: false
     };
 
     this.columns = [
@@ -136,43 +139,97 @@ class Users extends React.Component {
     return <UserLockedOutStateEditor user={user} onLockedOutStateChange={this.handleLockedOutStateChange} />;
   }
 
-  async handleRoleChange(user, newRoles) {
-    const { userApiClient } = this.props;
-    try {
-      const result = await userApiClient.saveUserRoles({ userId: user._id, roles: newRoles });
-      this.setState(prevState => {
-        return {
-          ...prevState,
-          users: prevState.users.map(usr => usr._id === user._id ? { ...user, roles: result.roles } : usr)
-        };
-      });
-    } catch (error) {
-      errorHelper.handleApiError(error, logger);
-    }
+  handleRoleChange(user, newRoles) {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        users: prevState.users.map(usr => usr._id === user._id ? { ...user, roles: newRoles } : usr),
+        changedRoles: {
+          ...prevState.changedRoles,
+          [user._id]: newRoles
+        },
+        isDirty: true
+      };
+    });
   }
 
-  async handleLockedOutStateChange(user, newLockedOutState) {
+  handleLockedOutStateChange(user, newLockedOut) {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        users: prevState.users.map(usr => usr._id === user._id ? { ...user, lockedOut: newLockedOut } : usr),
+        changedLockOutStates: {
+          ...prevState.changedLockOutStates,
+          [user._id]: newLockedOut
+        },
+        isDirty: true
+      };
+    });
+  }
+
+  async handleSaveClick() {
     const { userApiClient } = this.props;
+    const { changedLockOutStates, changedRoles } = this.state;
+
     try {
-      const result = await userApiClient.saveUserLockedOutState({ userId: user._id, lockedOut: newLockedOutState });
-      this.setState(prevState => {
-        return {
-          ...prevState,
-          users: prevState.users.map(usr => usr._id === user._id ? { ...user, lockedOut: result.lockedOut } : usr)
-        };
-      });
+      for (const [userId, newLockedOut] of Object.entries(changedLockOutStates)) {
+        /* eslint-disable-next-line no-await-in-loop */
+        await userApiClient.saveUserLockedOutState({ userId: userId, lockedOut: newLockedOut });
+      }
+
+      for (const [userId, newRoles] of Object.entries(changedRoles)) {
+        /* eslint-disable-next-line no-await-in-loop */
+        await userApiClient.saveUserRoles({ userId: userId, roles: newRoles });
+      }
     } catch (error) {
       errorHelper.handleApiError(error, logger);
     }
+
+    this.setState({
+      changedLockOutStates: {},
+      changedRoles: {},
+      isDirty: false
+    });
+  }
+
+  async handleCancelClick() {
+    const { userApiClient } = this.props;
+
+    const { users } = await userApiClient.getUsers();
+
+    this.setState({
+      users: users,
+      changedLockOutStates: {},
+      changedRoles: {},
+      isDirty: false
+    });
   }
 
   render() {
-    const { users } = this.state;
+    const { users, isDirty } = this.state;
+
+    const headerActions = [];
+    if (isDirty) {
+      headerActions.push({
+        key: 'save',
+        type: 'primary',
+        icon: 'save',
+        text: 'Speichern',
+        handleClick: this.handleSaveClick
+      });
+      headerActions.push({
+        key: 'close',
+        icon: 'close',
+        text: 'Abbrechen',
+        handleClick: this.handleCancelClick
+      });
+    }
+
     return (
-      <Page>
+      <Page headerActions={headerActions}>
         <div className="UsersPage">
           <h1>Benutzer</h1>
-          <Table dataSource={users} columns={this.columns} rowKey="_id" />
+          <Table dataSource={users} columns={this.columns} rowKey="_id" size="middle" bordered />
         </div>
       </Page>
     );

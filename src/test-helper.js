@@ -6,6 +6,7 @@ const { URL } = require('url');
 const Cdn = require('./repositories/cdn');
 const Database = require('./stores/database');
 const ServerSettings = require('./bootstrap/server-settings');
+const { CREATE_USER_RESULT_SUCCESS } = require('./domain/user-management');
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
@@ -108,6 +109,19 @@ async function removeAllBuckets(cdn) {
   await Promise.all(buckets.map(b => removeBucket(cdn, b.name)));
 }
 
+async function createAndVerifyUser(userService, username, password, email, roles, profile, lockedOut) {
+  const { result, user } = await userService.createUser(username, password, email);
+  if (result !== CREATE_USER_RESULT_SUCCESS) {
+    throw new Error(JSON.stringify({ result, username, password, email }));
+  }
+  const verifiedUser = await userService.verifyUser(user.verificationCode);
+  verifiedUser.roles = roles;
+  verifiedUser.profile = profile || null;
+  verifiedUser.lockedOut = lockedOut || false;
+  await userService.saveUser(verifiedUser);
+  return verifiedUser;
+}
+
 module.exports = {
   createTestDir,
   deleteTestDir,
@@ -119,5 +133,6 @@ module.exports = {
   createTestCdn,
   purgeBucket,
   removeBucket,
-  removeAllBuckets
+  removeAllBuckets,
+  createAndVerifyUser
 };

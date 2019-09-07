@@ -18,6 +18,11 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
 const globP = util.promisify(glob);
 
+const ROLES_USER = [roles.USER];
+const ROLES_EDITOR = [roles.USER, roles.EDITOR];
+const ROLES_SUPER_EDITOR = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR];
+const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SUPER_USER];
+
 (async function seed() {
 
   const container = await serverBootstrapper.createContainer();
@@ -30,16 +35,31 @@ const globP = util.promisify(glob);
 
   await testHelper.dropAllCollections(db);
 
-  const { user } = await userService.createUser('test', 'test', 'test@test.com');
-  const verifiedUser = await userService.verifyUser(user.verificationCode);
-  verifiedUser.roles = [roles.USER, roles.EDITOR, roles.SUPER_USER, roles.SUPER_EDITOR];
-  await userService.saveUser(verifiedUser);
+  const user = await testHelper.createAndVerifyUser(userService, 'test', 'test', 'test@test.com', ROLES_SUPER_USER);
+  await testHelper.createAndVerifyUser(userService, 'test-user', 'test-user', 'test-user@test.com', ROLES_USER);
+  await testHelper.createAndVerifyUser(userService, 'test-editor', 'test-editor', 'test-editor@test.com', ROLES_EDITOR);
+  await testHelper.createAndVerifyUser(userService, 'test-super-editor', 'test-super-editor', 'test-super-editor@test.com', ROLES_SUPER_EDITOR);
+  await testHelper.createAndVerifyUser(userService, 'test-super-user', 'test-super-user', 'test-super-user@test.com', ROLES_SUPER_USER);
 
+  const userFile = path.join(__dirname, '../test/test-users.json');
   const docFiles = await globP(path.join(__dirname, '../test/test-docs/*.json'));
   const menuFiles = await globP(path.join(__dirname, '../test/test-menus/*.json'));
 
+  const userPayloads = await fileHelper.readJson(userFile);
   const docPayloads = await Promise.all(docFiles.map(file => fileHelper.readJson(file)));
   const menuPayloads = await Promise.all(menuFiles.map(file => fileHelper.readJson(file)));
+
+  Promise.all(userPayloads.map(payload => {
+    return testHelper.createAndVerifyUser(
+      userService,
+      payload.username,
+      payload.password,
+      payload.email,
+      payload.roles,
+      payload.profile,
+      payload.lockedOut
+    );
+  }));
 
   docPayloads.forEach(payload => {
     payload.user = user;

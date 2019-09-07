@@ -7,6 +7,13 @@ class UserApiClient {
     this.httpClient = httpClient;
   }
 
+  getUsers() {
+    return this.httpClient
+      .get('/api/v1/users')
+      .accept('json')
+      .then(res => res.body);
+  }
+
   register({ username, password, email }) {
     return this.httpClient
       .post('/api/v1/users')

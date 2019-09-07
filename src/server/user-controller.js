@@ -120,6 +120,11 @@ class UserController {
   }
 
   registerApi(router) {
+    router.get('/api/v1/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
+      const result = await this.userService.getAllUsers();
+      res.send({ users: result });
+    });
+
     router.post('/api/v1/users', jsonParser, async (req, res) => {
       const { username, password, email } = req.body;
       const { result, user } = await this.userService.createUser(username, password, email);
