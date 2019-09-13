@@ -22,7 +22,8 @@ class H5pPlayerRenderer {
       `${h5pLibRootUrl}/js/h5p-x-api.js`,
       `${h5pLibRootUrl}/js/h5p-content-type.js`,
       `${h5pLibRootUrl}/js/h5p-confirmation-dialog.js`,
-      `${h5pLibRootUrl}/js/h5p-action-bar.js`
+      `${h5pLibRootUrl}/js/h5p-action-bar.js`,
+      `${h5pLibRootUrl}/js/request-queue.js`
     ];
 
     const h5pLibStyles = [
