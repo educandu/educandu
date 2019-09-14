@@ -11,6 +11,7 @@ class SoundfontProvider extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
+    this.canReceiveInstrument = false;
     this.state = {
       activeAudioNodes: {},
       instrument: null
@@ -18,6 +19,7 @@ class SoundfontProvider extends React.Component {
   }
 
   componentDidMount() {
+    this.canReceiveInstrument = true;
     this.loadInstrument(this.props.instrumentName);
   }
 
@@ -25,6 +27,10 @@ class SoundfontProvider extends React.Component {
     if (prevProps.instrumentName !== this.props.instrumentName) {
       this.loadInstrument(this.props.instrumentName);
     }
+  }
+
+  componentWillUnmount() {
+    this.canReceiveInstrument = false;
   }
 
   async loadInstrument(instrumentName) {
@@ -35,7 +41,9 @@ class SoundfontProvider extends React.Component {
       soundfont: this.props.soundfont,
       nameToUrl: (name, soundfont, format) => `${this.props.hostname}/${soundfont}/${name}-${format}.js`
     });
-    this.setState({ instrument });
+    if (this.canReceiveInstrument) {
+      this.setState({ instrument });
+    }
   }
 
   async playNote(midiNumber) {

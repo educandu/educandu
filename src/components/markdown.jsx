@@ -25,4 +25,4 @@ Markdown.defaultProps = {
   tag: 'div'
 };
 
-module.exports = Markdown;
+module.exports = React.memo(Markdown);

@@ -239,7 +239,6 @@ class IntervalTrainerDisplay extends React.Component {
             audioContext={this.audioContext}
             hostname={soundfontHostname}
             offset={keyboardOffset || 0}
-            /* eslint-disable-next-line react/jsx-no-bind */
             render={({ isLoading, playNote, stopNote }) => (
               <Piano
                 noteRange={noteRange}
