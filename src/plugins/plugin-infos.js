@@ -55,9 +55,14 @@ module.exports = [
     name: 'Quick-Tester',
     type: 'quick-tester',
     defaultContent: {
-      title: '',
-      teaser: '',
-      tests: []
+      title: '[Titel]',
+      teaser: '[Teaser]',
+      tests: [
+        {
+          question: '[Frage]',
+          answer: '[Antwort]'
+        }
+      ]
     }
   },
   {
