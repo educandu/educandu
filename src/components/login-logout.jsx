@@ -3,7 +3,7 @@ const gravatar = require('gravatar');
 const urls = require('../utils/urls');
 const Avatar = require('antd/lib/avatar');
 const { useUser } = require('./user-context.jsx');
-const PopoverContent = require('./link-popover.jsx');
+const LinkPopover = require('./link-popover.jsx');
 const { useRequest } = require('./request-context.jsx');
 
 const gravatarPopoverItems = [
@@ -31,14 +31,14 @@ function createAuthenticatedUserHeader(user) {
 
   return (
     <div>
-      <PopoverContent
+      <LinkPopover
         title={popoverTitle}
         items={gravatarPopoverItems}
         placement="bottomRight"
         trigger="hover"
         >
         <Avatar src={gravatarUrl} alt={user.username} shape="square" />
-      </PopoverContent>
+      </LinkPopover>
     </div>
   );
 }

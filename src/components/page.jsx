@@ -109,7 +109,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions }) {
           </div>
           <div className="Page-headerContent Page-headerContent--right">
             <Button className="Page-headerButton" icon="question" href={urls.getArticleUrl('hilfe')} />
-            <LinkPopover items={pageMenuItems} trigger="hover">
+            <LinkPopover items={pageMenuItems} trigger="hover" placement="bottom">
               <Button className="Page-headerButton" icon="menu" />
             </LinkPopover>
             <div className="Page-loginLogoutButton">

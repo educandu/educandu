@@ -1,116 +1,107 @@
 const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
+const Button = require('antd/lib/button');
 const arrayShuffle = require('array-shuffle');
-const memoizeLast = require('../../../utils/memoize-last');
-const { inject } = require('../../../components/container-context.jsx');
+const Markdown = require('../../../components/markdown.jsx');
 const { sectionDisplayProps } = require('../../../ui/default-prop-types');
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
 
-class QuickTesterDisplay extends React.Component {
-  constructor(props) {
-    super(props);
+function QuickTesterDisplay({ content }) {
+  const [showAnswer, setShowAnswer] = React.useState(false);
+  const [currentIndex, setCurrentIndex] = React.useState(-1);
+  const [tests, setTests] = React.useState(arrayShuffle(content.tests));
+  const restart = React.useCallback(() => {
+    setTests(arrayShuffle(content.tests));
+    setShowAnswer(false);
+    setCurrentIndex(0);
+  }, [content.tests]);
+  const moveToIndex = React.useCallback(index => {
+    setShowAnswer(false);
+    setCurrentIndex(index);
+  }, []);
 
-    autoBind.react(this);
-
-    const { githubFlavoredMarkdown, content } = this.props;
-
-    this.renderMarkdown = memoizeLast(s => githubFlavoredMarkdown.render(s), 100, s => s);
-
-    this.state = {
-      title: content.title,
-      teaser: content.teaser,
-      tests: content.tests,
-      currentIndex: -1,
-      showResult: false
-    };
-  }
-
-  handleInitClick() {
-    const { tests } = this.state;
-    this.setState({ tests: arrayShuffle(tests), currentIndex: 0, showResult: false });
-  }
-
-  handleResultClick() {
-    this.setState({ showResult: true });
-  }
-
-  handleNextClick() {
-    const { currentIndex } = this.state;
-    this.setState({ currentIndex: currentIndex + 1, showResult: false });
-  }
-
-  handleResetClick() {
-    this.setState({ currentIndex: -1, showResult: false });
-  }
-
-  render() {
-    const { title, teaser, tests, currentIndex, showResult } = this.state;
-
-    if (currentIndex === -1) {
-      return (
-        <div className="QuickTester">
-          <a
-            className="QuickTester-initLink"
-            onClick={this.handleInitClick}
-            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(teaser) }}
-            />
-        </div>
-      );
-    }
-
-    const currentTest = tests[currentIndex];
-
-    const buttons = [];
-
-    if (showResult && currentIndex < tests.length - 1) {
-      buttons.push(<button key="next" type="button" onClick={this.handleNextClick}>Nächste Frage</button>);
-    }
-
-    if (currentTest && !showResult) {
-      buttons.push(<button key="result" type="button" onClick={this.handleResultClick}>Lösung</button>);
-    }
-
-    buttons.push(<button key="reset" type="button" onClick={this.handleResetClick}>Beenden</button>);
-
-    let testComponent;
-    if (currentTest) {
-      testComponent = (
-        <div className="QuickTester-test">
-          <div
-            className="QuickTester-question"
-            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(currentTest.question) }}
-            />
-          {showResult && <div
-            className="QuickTester-answer"
-            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(currentTest.answer) }}
-            />}
-        </div>
-      );
-    } else {
-      testComponent = <div>N/A</div>;
-    }
-
+  if (currentIndex === -1) {
     return (
       <div className="QuickTester">
-        <h3
-          className="QuickTester-header"
-          dangerouslySetInnerHTML={{ __html: this.renderMarkdown(title) }}
-          />
-        {testComponent}
-        <div className="QuickTester-buttons">
-          {buttons}
+        <div className="QuickTester-content">
+          <Markdown
+            tag="a"
+            className="QuickTester-initLink"
+            onClick={restart}
+            inline
+            >
+            {content.teaser}
+          </Markdown>
         </div>
       </div>
     );
   }
+
+  let testProgress = null;
+  let testArea = null;
+  if (tests.length) {
+    const percentDone = Math.max(0, Math.min(100, Math.round(((currentIndex + 1) / tests.length) * 100)));
+
+    testProgress = <div className="QuickTester-progress" style={{ width: `${percentDone}%` }} />;
+    const answerArea = showAnswer
+      ? <Markdown inline>{tests[currentIndex].answer}</Markdown>
+      : <Button type="primary" size="large" onClick={() => setShowAnswer(true)}>Antwort anzeigen</Button>;
+
+    testArea = (
+      <React.Fragment>
+        <div className="QuickTester-question">
+          <div className="QuickTester-questionHeader">Frage {currentIndex + 1} von {tests.length}</div>
+          <Markdown>{tests[currentIndex].question}</Markdown>
+        </div>
+        <div className="QuickTester-answer">
+          {answerArea}
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  return (
+    <div className="QuickTester">
+      <div className="QuickTester-content">
+        <div className="QuickTester-header">
+          <div className="QuickTester-title">
+            <Markdown inline>{content.title}</Markdown>
+          </div>
+          <div className="QuickTester-closeButton">
+            <Button size="small" icon="close" onClick={() => moveToIndex(-1)} ghost />
+          </div>
+        </div>
+        {testProgress}
+        <div className="QuickTester-test">
+          {testArea}
+        </div>
+        <div className="QuickTester-buttons">
+          <Button
+            className="QuickTester-button"
+            shape="circle"
+            icon="left"
+            disabled={currentIndex === 0}
+            onClick={() => moveToIndex(currentIndex - 1)}
+            />
+          <Button
+            className="QuickTester-button"
+            shape="circle"
+            icon="reload"
+            onClick={restart}
+            />
+          <Button
+            className="QuickTester-button"
+            shape="circle"
+            icon="right"
+            disabled={!showAnswer || currentIndex === tests.length - 1}
+            onClick={() => moveToIndex(currentIndex + 1)}
+            />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 QuickTesterDisplay.propTypes = {
-  ...sectionDisplayProps,
-  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
+  ...sectionDisplayProps
 };
 
-module.exports = inject({
-  githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, QuickTesterDisplay);
+module.exports = QuickTesterDisplay;

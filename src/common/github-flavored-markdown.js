@@ -8,4 +8,8 @@ module.exports = class GithubFlavoredMarkdown {
   render(markdown) {
     return this._gfm.render(markdown);
   }
+
+  renderInline(markdown) {
+    return this._gfm.renderInline(markdown);
+  }
 };
