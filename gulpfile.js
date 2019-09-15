@@ -80,7 +80,7 @@ const restartServer = done => {
   }
 };
 
-const ensureContainerRunning = async ({ containerName, runArgs, afterRun = (() => Promise.resolve()) }) => {
+const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () => Promise.resolve() }) => {
   const docker = new Docker();
   const data = await docker.command('ps -a');
   const container = data.containerList.find(c => c.names === containerName);

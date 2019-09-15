@@ -6,7 +6,7 @@ const Checkbox = require('antd/lib/checkbox');
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
 
-const confirmDelete = (section, onOk, onCancel = (() => {})) => {
+const confirmDelete = (section, onOk, onCancel = () => {}) => {
   confirm({
     title: 'Sind Sie sicher?',
     content: <span>Möchten Sie diesen Abschnitt wirklich löschen?</span>,
@@ -18,7 +18,7 @@ const confirmDelete = (section, onOk, onCancel = (() => {})) => {
   });
 };
 
-const confirmHardDelete = (section, onOk, onCancel = (() => {})) => {
+const confirmHardDelete = (section, onOk, onCancel = () => {}) => {
   let dialog = null;
   let deletionReason = '';
   let deleteDescendants = false;

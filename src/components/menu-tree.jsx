@@ -299,6 +299,7 @@ class MenuTree extends React.PureComponent {
 
 MenuTree.propTypes = {
   isReadonly: PropTypes.bool,
+  /* eslint-disable-next-line react/no-unused-prop-types */ // It is used in getDerivedStateFromProps !!!
   nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
   onNodesChanged: PropTypes.func.isRequired,
   onSelectedNodeChanged: PropTypes.func.isRequired

@@ -111,7 +111,7 @@ class ImageTilesEditor extends React.Component {
     this.changeContent({ tiles: removeItem(tiles, index) });
   }
 
-  confirmDelete(onOk, onCancel = (() => {})) {
+  confirmDelete(onOk, onCancel = () => {}) {
     confirm({
       title: 'Sind Sie sicher?',
       content: 'Möchten Sie diese Kachel löschen?',
