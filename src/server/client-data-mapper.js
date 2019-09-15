@@ -44,6 +44,17 @@ class ClientDataMapper {
     };
   }
 
+  mapDocMetadataToInitialState({ docs, allowedUserFields }) {
+    return {
+      docs: docs.map(doc => ({
+        ...doc,
+        key: doc._id,
+        createdBy: this._mapUser(doc.createdBy, allowedUserFields),
+        updatedBy: this._mapUser(doc.updatedBy, allowedUserFields)
+      }))
+    };
+  }
+
   mapDocHistoryToInitialState({ docs, allowedUserFields }) {
     return {
       docs: docs.map(doc => ({

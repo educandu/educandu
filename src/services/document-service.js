@@ -36,21 +36,44 @@ class DocumentService {
     });
   }
 
-  getDocumentsMetadata(documentIds = null) {
+  async getDocumentsMetadata(documentIds = null) {
     const query = documentIds ? { _id: { $in: documentIds } } : {};
-    return this.documentStore.find({
+    const docs = await this.documentStore.find({
       query: query,
       sort: [['updatedOn', -1]],
       projection: {
         _id: 1,
+        snapshotId: 1,
+        order: 1,
         title: 1,
         slug: 1,
         createdOn: 1,
         updatedOn: 1,
+        deletedOn: 1,
         createdBy: 1,
-        updatedBy: 1
+        updatedBy: 1,
+        deletedBy: 1
       }
     });
+
+    const usersById = new Map();
+
+    docs.forEach(doc => {
+      this.getAllUserIdsForDocOrSnapshot(doc).forEach(userId => usersById.set(userId, null));
+    });
+
+    const users = await this.userService.getUsersByIds(Array.from(usersById.keys()));
+    users.forEach(user => usersById.set(user._id, user));
+
+    for (const [id, user] of usersById.entries()) {
+      if (!user) {
+        throw new Error(`User with ID ${id} is referenced but could not be found in the database.`);
+      }
+    }
+
+    docs.forEach(doc => this.setUserObjectsInDocOrSnapshot(doc, usersById));
+
+    return docs;
   }
 
   async *getDocumentKeys() {
@@ -69,6 +92,7 @@ class DocumentService {
     });
   }
 
+
   async getDocumentHistory(documentKey) {
     const snapshots = await this.documentSnapshotStore.find({
       query: { key: documentKey },
@@ -83,7 +107,7 @@ class DocumentService {
     const usersById = new Map();
 
     snapshots.forEach(snapshot => {
-      this.getAllUserIdsForSnapshot(snapshot).forEach(userId => usersById.set(userId, null));
+      this.getAllUserIdsForDocOrSnapshot(snapshot).forEach(userId => usersById.set(userId, null));
       snapshot.sections.forEach(section => {
         sectionsById.set(section.id, null);
         this.getAllUserIdsForSection(section).forEach(userId => usersById.set(userId, null));
@@ -96,19 +120,19 @@ class DocumentService {
     const users = await this.userService.getUsersByIds(Array.from(usersById.keys()));
     users.forEach(user => usersById.set(user._id, user));
 
-    for (const [id, section] in sectionsById.entries()) {
+    for (const [id, section] of sectionsById.entries()) {
       if (!section) {
         throw new Error(`Section with ID ${id} is referenced but could not be found in the database.`);
       }
     }
 
-    for (const [id, user] in usersById.entries()) {
+    for (const [id, user] of usersById.entries()) {
       if (!user) {
         throw new Error(`User with ID ${id} is referenced but could not be found in the database.`);
       }
     }
 
-    snapshots.forEach(snapshot => this.setUserObjectsInSnapshot(snapshot, usersById));
+    snapshots.forEach(snapshot => this.setUserObjectsInDocOrSnapshot(snapshot, usersById));
     sections.forEach(section => this.setUserObjectsInSection(section, usersById));
 
     const firstSnapshot = snapshots[0];
@@ -367,8 +391,9 @@ class DocumentService {
     await this.documentLockStore.releaseLock(documentKey);
   }
 
-  getAllUserIdsForSnapshot(snapshot) {
-    const ids = [snapshot.createdBy].filter(x => x && x.id).map(x => x.id);
+  getAllUserIdsForDocOrSnapshot(docOrSnapshot) {
+    // Note: updatedBy only exists in documents, not in snapshots:
+    const ids = [docOrSnapshot.createdBy, docOrSnapshot.updatedBy].filter(x => x && x.id).map(x => x.id);
     return Array.from(new Set(ids));
   }
 
@@ -377,9 +402,14 @@ class DocumentService {
     return Array.from(new Set(ids));
   }
 
-  setUserObjectsInSnapshot(snapshot, usersById) {
-    if (snapshot.createdBy && snapshot.createdBy.id) {
-      snapshot.createdBy = usersById.get(snapshot.createdBy.id);
+  setUserObjectsInDocOrSnapshot(docOrSnapshot, usersById) {
+    if (docOrSnapshot.createdBy && docOrSnapshot.createdBy.id) {
+      docOrSnapshot.createdBy = usersById.get(docOrSnapshot.createdBy.id);
+    }
+
+    // Note: updatedBy only exists in documents, not in snapshots:
+    if (docOrSnapshot.updatedBy && docOrSnapshot.updatedBy.id) {
+      docOrSnapshot.updatedBy = usersById.get(docOrSnapshot.updatedBy.id);
     }
   }
 

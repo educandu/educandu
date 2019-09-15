@@ -12,6 +12,7 @@ const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
 const { toTrimmedString } = require('../../utils/sanitize');
+const { docMetadataShape } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
 
 const logger = new Logger(__filename);
@@ -92,7 +93,7 @@ class Docs extends React.Component {
         <div className="DocsPage">
           <h1>Dokumente</h1>
           <ul>
-            {initialState.map(doc => (
+            {initialState.docs.map(doc => (
               <li key={doc._id}>
                 <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
               </li>
@@ -124,10 +125,9 @@ class Docs extends React.Component {
 
 Docs.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
-  initialState: PropTypes.arrayOf(PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
-  })).isRequired
+  initialState: PropTypes.shape({
+    docs: PropTypes.arrayOf(docMetadataShape).isRequired
+  }).isRequired
 };
 
 module.exports = inject({

@@ -31,7 +31,11 @@ class DocumentController {
     });
 
     router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
-      const initialState = await this.documentService.getLastUpdatedDocuments();
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
+      const docs = await this.documentService.getDocumentsMetadata();
+      const initialState = this.clientDataMapper.mapDocMetadataToInitialState({ docs, allowedUserFields });
+
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'docs', initialState);
     });
 

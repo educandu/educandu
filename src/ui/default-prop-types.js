@@ -76,8 +76,14 @@ const dataProps = {
 
 const docMetadataShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
+  snapshotId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  slug: PropTypes.string
+  slug: PropTypes.string,
+  order: PropTypes.number.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  createdBy: userInDocShape.isRequired,
+  updatedBy: userInDocShape.isRequired
 });
 
 const docShape = PropTypes.shape({
