@@ -130,7 +130,7 @@ class EarTrainingEditor extends React.Component {
     const { value, dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((test, i) => i === index ? { startAbcCode: value, fullAbcCode: test.fullAbcCode } : test);
+    const newTests = oldTests.map((test, i) => i === index ? { ...test, startAbcCode: value } : test);
     this.changeContent({ tests: newTests });
   }
 
@@ -138,7 +138,7 @@ class EarTrainingEditor extends React.Component {
     const { value, dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((test, i) => i === index ? { startAbcCode: test.startAbcCode, fullAbcCode: value } : test);
+    const newTests = oldTests.map((test, i) => i === index ? { ...test, fullAbcCode: value } : test);
     this.changeContent({ tests: newTests });
   }
 

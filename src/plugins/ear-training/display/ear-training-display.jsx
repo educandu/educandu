@@ -55,7 +55,7 @@ class EarTrainingDisplay extends React.Component {
     const { tests, currentIndex, showResult } = this.state;
     const currentTest = tests[currentIndex];
     abcjs.renderAbc(this.abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
-    if (currentIndex !== prevState.currentIndex) {
+    if (tests !== prevState.tests || currentIndex !== prevState.currentIndex) {
       abcjs.renderMidi(this.midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
     }
   }
