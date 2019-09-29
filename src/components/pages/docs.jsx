@@ -1,3 +1,4 @@
+const by = require('thenby');
 const React = require('react');
 const moment = require('moment');
 const Page = require('../page.jsx');
@@ -17,6 +18,8 @@ const { toTrimmedString } = require('../../utils/sanitize');
 const { docMetadataShape } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
 
+const { Search } = Input;
+
 const logger = new Logger(__filename);
 
 const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
@@ -33,7 +36,7 @@ class Docs extends React.Component {
       filterInput: DEFAULT_FILTER_INPUT,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
       isNewDocModalVisible: false,
-      isLoading: false,
+      isLoading: false
     };
   }
 
@@ -66,9 +69,11 @@ class Docs extends React.Component {
   handleFilterInputChange(event) {
     const filterInput = event.target.value;
     const docs = this.props.initialState.docs;
-    const filteredDocs = docs.filter(doc => doc.title.toLowerCase().includes(filterInput.toLowerCase()));
-    console.log(filteredDocs);
-    this.setState({ filteredDocs: filteredDocs, filterInput: filterInput });
+    const filteredDocs = docs.filter(doc => {
+      return doc.title.toLowerCase().includes(filterInput.toLowerCase())
+        || doc.updatedBy.username.toLowerCase().includes(filterInput.toLowerCase());
+    });
+    this.setState({ filteredDocs, filterInput });
   }
 
   async handleOk() {
@@ -97,27 +102,46 @@ class Docs extends React.Component {
     this.setState({ isNewDocModalVisible: false });
   }
 
+  renderTitle(title, doc) {
+    return <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>;
+  }
+
+  renderUpdatedOn(title, doc) {
+    const date = moment(doc.updatedOn).locale('de-DE');
+    return <span>{date.format('L')} - {date.format('LT')}</span>;
+  }
+
+  renderUpdatedBy(title, doc) {
+    return doc.updatedBy.email
+      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>E-Mail</a></span>
+      : <span>{doc.updatedBy.username}</span>;
+  }
+
   render() {
     const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading, filterInput, filteredDocs } = this.state;
-    console.log(filteredDocs);
 
     const columns = [
       {
         title: 'Name',
         dataIndex: 'title',
         key: 'title',
-        render: (title, doc) => <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
-      },{
+        render: this.renderTitle,
+        sorter: by(x => x.title)
+      },
+      {
         title: 'Update-Datum',
         dataIndex: 'udate',
         key: 'udate',
-        render: (title, doc) => <span>{moment(doc.updatedOn).locale('de-DE').format('L')} - {moment(doc.updatedOn).locale('de-DE').format('LT')}</span>
+        render: this.renderUpdatedOn,
+        defaultSortOrder: 'descend',
+        sorter: by(x => x.updatedOn)
       },
       {
         title: 'User-Info',
         dataIndex: 'user',
         key: 'user',
-        render: (title, doc) => <span>{doc.updatedBy.username} | {doc.updatedBy.email}</span>
+        render: this.renderUpdatedBy,
+        sorter: by(x => x.updatedBy.username)
       }
     ];
 
@@ -125,8 +149,15 @@ class Docs extends React.Component {
       <Page>
         <div className="DocsPage">
           <h1>Dokumente</h1>
-          <p><Input value={filterInput} onChange={this.handleFilterInputChange} /></p>
-          <Table dataSource={filteredDocs} columns={columns} />
+          <div className="DocsPage-search">
+            <Search
+              className="DocsPage-searchField"
+              value={filterInput}
+              onChange={this.handleFilterInputChange}
+              placeholder="Suchbegriff eingeben"
+              />
+          </div>
+          <Table dataSource={filteredDocs} columns={columns} size="middle" />
           <aside>
             <Restricted to={permissions.EDIT_DOC}>
               <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewDocumentClick} />
