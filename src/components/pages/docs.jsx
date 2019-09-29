@@ -1,9 +1,12 @@
+const by = require('thenby');
 const React = require('react');
+const moment = require('moment');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const Input = require('antd/lib/input');
 const Modal = require('antd/lib/modal');
+const Table = require('antd/lib/table');
 const urls = require('../../utils/urls');
 const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
@@ -15,17 +18,22 @@ const { toTrimmedString } = require('../../utils/sanitize');
 const { docMetadataShape } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
 
+const { Search } = Input;
+
 const logger = new Logger(__filename);
 
 const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
 const DEFAULT_DOCUMENT_SLUG = '';
+const DEFAULT_FILTER_INPUT = '';
 
 class Docs extends React.Component {
   constructor(props) {
     super(props);
     autoBind.react(this);
     this.state = {
+      filteredDocs: props.initialState.docs.slice(),
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
+      filterInput: DEFAULT_FILTER_INPUT,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
       isNewDocModalVisible: false,
       isLoading: false
@@ -58,6 +66,16 @@ class Docs extends React.Component {
     this.setState({ newDocSlug: event.target.value });
   }
 
+  handleFilterInputChange(event) {
+    const filterInput = event.target.value;
+    const docs = this.props.initialState.docs;
+    const filteredDocs = docs.filter(doc => {
+      return doc.title.toLowerCase().includes(filterInput.toLowerCase())
+        || doc.updatedBy.username.toLowerCase().includes(filterInput.toLowerCase());
+    });
+    this.setState({ filteredDocs, filterInput });
+  }
+
   async handleOk() {
     const { newDocTitle, newDocSlug } = this.state;
     const { documentApiClient } = this.props;
@@ -84,21 +102,62 @@ class Docs extends React.Component {
     this.setState({ isNewDocModalVisible: false });
   }
 
+  renderTitle(title, doc) {
+    return <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>;
+  }
+
+  renderUpdatedOn(title, doc) {
+    const date = moment(doc.updatedOn).locale('de-DE');
+    return <span>{date.format('L')} - {date.format('LT')}</span>;
+  }
+
+  renderUpdatedBy(title, doc) {
+    return doc.updatedBy.email
+      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>E-Mail</a></span>
+      : <span>{doc.updatedBy.username}</span>;
+  }
+
   render() {
-    const { initialState } = this.props;
-    const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading } = this.state;
+    const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading, filterInput, filteredDocs } = this.state;
+
+    const columns = [
+      {
+        title: 'Name',
+        dataIndex: 'title',
+        key: 'title',
+        render: this.renderTitle,
+        sorter: by(x => x.title)
+      },
+      {
+        title: 'Update-Datum',
+        dataIndex: 'udate',
+        key: 'udate',
+        render: this.renderUpdatedOn,
+        defaultSortOrder: 'descend',
+        sorter: by(x => x.updatedOn)
+      },
+      {
+        title: 'User-Info',
+        dataIndex: 'user',
+        key: 'user',
+        render: this.renderUpdatedBy,
+        sorter: by(x => x.updatedBy.username)
+      }
+    ];
 
     return (
       <Page>
         <div className="DocsPage">
           <h1>Dokumente</h1>
-          <ul>
-            {initialState.docs.map(doc => (
-              <li key={doc._id}>
-                <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>
-              </li>
-            ))}
-          </ul>
+          <div className="DocsPage-search">
+            <Search
+              className="DocsPage-searchField"
+              value={filterInput}
+              onChange={this.handleFilterInputChange}
+              placeholder="Suchbegriff eingeben"
+              />
+          </div>
+          <Table dataSource={filteredDocs} columns={columns} size="middle" />
           <aside>
             <Restricted to={permissions.EDIT_DOC}>
               <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewDocumentClick} />
