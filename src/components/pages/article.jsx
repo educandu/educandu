@@ -31,7 +31,7 @@ function Article({ initialState, language }) {
         <a onClick={handleBackClick}>Zurück</a>
       </aside>
       <DocView doc={doc} sections={sections} language={language} />
-      <ArticleCredits doc={doc} sections={sections} />
+      <ArticleCredits doc={doc} />
     </Page>
   );
 }

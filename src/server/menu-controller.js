@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { NotFound } = require('http-errors');
 const PageRenderer = require('./page-renderer');
 const permissions = require('../domain/permissions');
+const privateData = require('../domain/private-data');
 const MenuService = require('../services/menu-service');
 const ClientDataMapper = require('./client-data-mapper');
 const DocumentService = require('../services/document-service');
@@ -26,6 +27,8 @@ class MenuController {
 
   registerPages(router) {
     router.get('/menus/:slug', async (req, res) => {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
       const menu = await this.menuService.getMenuBySlug(req.params.slug);
       if (!menu) {
         throw new NotFound();
@@ -43,8 +46,8 @@ class MenuController {
 
       const initialState = {
         ...this.clientDataMapper.mapMenuToInitialState({ menu }),
-        ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs }),
-        defaultDocument: defaultDocument ? this.clientDataMapper.mapDocToInitialState({ doc: defaultDocument }) : null
+        ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs, allowedUserFields }),
+        defaultDocument: defaultDocument ? this.clientDataMapper.mapDocToInitialState({ doc: defaultDocument, allowedUserFields: allowedUserFields }) : null
       };
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'menu', initialState);
     });
@@ -55,6 +58,8 @@ class MenuController {
     });
 
     router.get('/edit/menu/:menuId', needsPermission(permissions.EDIT_MENU), async (req, res) => {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
       const menu = await this.menuService.getMenuById(req.params.menuId);
       if (!menu) {
         throw new NotFound();
@@ -64,7 +69,7 @@ class MenuController {
 
       const initialState = {
         ...this.clientDataMapper.mapMenuToInitialState({ menu }),
-        ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs })
+        ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs, allowedUserFields })
       };
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-menu', initialState);
     });
