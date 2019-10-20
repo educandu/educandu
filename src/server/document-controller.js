@@ -21,12 +21,14 @@ class DocumentController {
 
   registerPages(router) {
     router.get('/articles/:slug', async (req, res) => {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
       const doc = await this.documentService.getDocumentBySlug(req.params.slug);
       if (!doc) {
         throw new NotFound();
       }
 
-      const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
+      const initialState = this.clientDataMapper.mapDocToInitialState({ doc, allowedUserFields });
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'article', initialState);
     });
 
@@ -52,22 +54,26 @@ class DocumentController {
     });
 
     router.get('/edit/doc/:docId', needsPermission(permissions.EDIT_DOC), async (req, res) => {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
       const doc = await this.documentService.getDocumentById(req.params.docId);
       if (!doc) {
         throw new NotFound();
       }
 
-      const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
+      const initialState = this.clientDataMapper.mapDocToInitialState({ doc, allowedUserFields });
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-doc', initialState);
     });
   }
 
   registerApi(router) {
     router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
       const { user } = req;
       const { doc, sections } = req.body;
       const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });
-      const initialState = this.clientDataMapper.mapDocToInitialState({ doc: docRevision });
+      const initialState = this.clientDataMapper.mapDocToInitialState({ doc: docRevision, allowedUserFields: allowedUserFields });
       return res.send(initialState);
     });
 

@@ -30,7 +30,7 @@ class ClientDataMapper {
     return { menu };
   }
 
-  mapDocToInitialState({ doc }) {
+  mapDocToInitialState({ doc, allowedUserFields }) {
     if (!doc) {
       return {
         doc: null,
@@ -39,8 +39,13 @@ class ClientDataMapper {
     }
 
     return {
-      doc: this._mapDocMetadata(doc),
-      sections: doc.sections
+      doc: this._mapDocMetadata(doc, allowedUserFields),
+      sections: doc.sections.map(section => ({
+        ...section,
+        createdBy: this._mapUser(section.createdBy, allowedUserFields),
+        deletedOn: section.deletedOn || null,
+        deletedBy: this._mapUser(section.deletedBy, allowedUserFields)
+      }))
     };
   }
 
@@ -72,21 +77,22 @@ class ClientDataMapper {
     };
   }
 
-  mapDocsMetadataToInitialState({ docs }) {
+  mapDocsMetadataToInitialState({ docs, allowedUserFields }) {
     return {
-      docs: docs.map(doc => this._mapDocMetadata(doc))
+      docs: docs.map(doc => this._mapDocMetadata(doc, allowedUserFields))
     };
   }
 
-  _mapDocMetadata(doc) {
+  _mapDocMetadata(doc, allowedUserFields) {
     return {
       key: doc._id,
       title: doc.title,
       slug: doc.slug,
       createdOn: doc.createdOn,
       updatedOn: doc.updatedOn,
-      createdBy: doc.createdBy,
-      updatedBy: doc.updatedBy
+      createdBy: this._mapUser(doc.createdBy, allowedUserFields),
+      updatedBy: this._mapUser(doc.updatedBy, allowedUserFields),
+      contributors: doc.contributors ? doc.contributors.map(c => this._mapUser(c, allowedUserFields)) : null
     };
   }
 

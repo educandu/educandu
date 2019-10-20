@@ -1,4 +1,5 @@
 const PageRenderer = require('./page-renderer');
+const privateData = require('../domain/private-data');
 const ClientDataMapper = require('./client-data-mapper');
 const SettingService = require('../services/setting-service');
 const DocumentService = require('../services/document-service');
@@ -15,9 +16,11 @@ class IndexController {
 
   registerPages(router) {
     router.get('/', async (req, res) => {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
       const lpDocId = await this.settingService.getLandingPageDocumentId();
       const doc = lpDocId ? await this.documentService.getDocumentById(lpDocId) : null;
-      const initialState = this.clientDataMapper.mapDocToInitialState({ doc });
+      const initialState = this.clientDataMapper.mapDocToInitialState({ doc, allowedUserFields });
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'index', initialState);
     });
   }

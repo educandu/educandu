@@ -83,7 +83,8 @@ const docMetadataShape = PropTypes.shape({
   createdOn: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
-  updatedBy: userInDocShape.isRequired
+  updatedBy: userInDocShape.isRequired,
+  contributors: PropTypes.arrayOf(userInDocShape)
 });
 
 const docShape = PropTypes.shape({
@@ -93,7 +94,8 @@ const docShape = PropTypes.shape({
   createdOn: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
-  updatedBy: userInDocShape.isRequired
+  updatedBy: userInDocShape.isRequired,
+  contributors: PropTypes.arrayOf(userInDocShape)
 });
 
 const fullDocShape = PropTypes.shape({
@@ -106,6 +108,7 @@ const fullDocShape = PropTypes.shape({
   updatedOn: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
   updatedBy: userInDocShape.isRequired,
+  contributors: PropTypes.arrayOf(userInDocShape),
   sections: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
     ancestorId: PropTypes.string,

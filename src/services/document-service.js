@@ -1,15 +1,16 @@
-const DocumentSnapshotStore = require('../stores/document-snapshot-store');
-const DocumentOrderStore = require('../stores/document-order-store');
-const SectionOrderStore = require('../stores/section-order-store');
-const DocumentLockStore = require('../stores/document-lock-store');
-const HandlerFactory = require('../plugins/handler-factory');
-const DocumentStore = require('../stores/document-store');
-const SectionStore = require('../stores/section-store');
-const uniqueId = require('../utils/unique-id');
-const dateTime = require('../utils/date-time');
-const UserService = require('./user-service');
-const deepEqual = require('fast-deep-equal');
+const by = require('thenby');
 const Logger = require('../common/logger');
+const deepEqual = require('fast-deep-equal');
+const UserService = require('./user-service');
+const dateTime = require('../utils/date-time');
+const uniqueId = require('../utils/unique-id');
+const SectionStore = require('../stores/section-store');
+const DocumentStore = require('../stores/document-store');
+const HandlerFactory = require('../plugins/handler-factory');
+const DocumentLockStore = require('../stores/document-lock-store');
+const SectionOrderStore = require('../stores/section-order-store');
+const DocumentOrderStore = require('../stores/document-order-store');
+const DocumentSnapshotStore = require('../stores/document-snapshot-store');
 
 const logger = new Logger(__filename);
 
@@ -86,12 +87,13 @@ class DocumentService {
     }
   }
 
-  getDocumentById(documentId) {
-    return this.documentStore.findOne({
+  async getDocumentById(documentId) {
+    const doc = await this.documentStore.findOne({
       query: { _id: documentId }
     });
-  }
 
+    return doc ? this.addAllRelevantUsersToDocument(doc) : null;
+  }
 
   async getDocumentHistory(documentKey) {
     const snapshots = await this.documentSnapshotStore.find({
@@ -143,10 +145,28 @@ class DocumentService {
     });
   }
 
-  getDocumentBySlug(slug) {
-    return this.documentStore.findOne({
+  async getDocumentBySlug(slug) {
+    const doc = await this.documentStore.findOne({
       query: { slug }
     });
+
+    return doc ? this.addAllRelevantUsersToDocument(doc) : null;
+  }
+
+  async addAllRelevantUsersToDocument(doc) {
+    const allUsers = await this.getAllHistoricalUsersForDocument(doc);
+
+    const allUsersById = allUsers.reduce((map, user) => {
+      map.set(user._id, user);
+      return map;
+    }, new Map());
+
+    this.setUserObjectsInDocOrSnapshot(doc, allUsersById);
+    doc.sections.forEach(section => this.setUserObjectsInSection(section, allUsersById));
+
+    this.setUserObjectsAsContributorsInDocOrSnapshot(doc, allUsers);
+
+    return doc;
   }
 
   getSectionById(sectionId) {
@@ -397,9 +417,57 @@ class DocumentService {
     return Array.from(new Set(ids));
   }
 
+  getAllUserIdsForDocsOrSnapshots(docsOrSnapshots) {
+    return Array.from(docsOrSnapshots.reduce((set, doc) => {
+      if (doc.createdBy && doc.createdBy.id) {
+        set.add(doc.createdBy.id);
+      }
+
+      if (doc.updatedBy && doc.updatedBy.id) {
+        set.add(doc.updatedBy.id);
+      }
+
+      return set;
+    }, new Set()));
+  }
+
   getAllUserIdsForSection(section) {
     const ids = [section.createdBy, section.deletedBy].filter(x => x && x.id).map(x => x.id);
     return Array.from(new Set(ids));
+  }
+
+  getAllUserIdsForSections(sections) {
+    return Array.from(sections.reduce((set, section) => {
+      if (section.createdBy && section.createdBy.id) {
+        set.add(section.createdBy.id);
+      }
+
+      if (section.deletedBy && section.deletedBy.id) {
+        set.add(section.deletedBy.id);
+      }
+
+      return set;
+    }, new Set()));
+  }
+
+  async getAllHistoricalUsersForDocument(doc) {
+    const allDocSnapshots = await this.documentSnapshotStore.find({
+      query: { key: doc.snapshotId },
+      projection: { createdBy: 1, deletedBy: 1 }
+    });
+
+    const allSectionKeys = doc.sections.map(section => section.key);
+    const allSections = await this.sectionStore.find({
+      query: { key: { $in: allSectionKeys } },
+      projection: { createdBy: 1, deletedBy: 1 }
+    });
+
+    const allUserIds = Array.from(new Set([
+      ...this.getAllUserIdsForDocsOrSnapshots(allDocSnapshots),
+      ...this.getAllUserIdsForSections(allSections)
+    ]));
+
+    return this.userService.getUsersByIds(allUserIds);
   }
 
   setUserObjectsInDocOrSnapshot(docOrSnapshot, usersById) {
@@ -421,6 +489,11 @@ class DocumentService {
     if (section.deletedBy && section.deletedBy.id) {
       section.deletedBy = usersById.get(section.deletedBy.id);
     }
+  }
+
+  setUserObjectsAsContributorsInDocOrSnapshot(docOrSnapshot, contributors) {
+    docOrSnapshot.contributors = contributors.slice().sort(by(x => x.username));
+    return docOrSnapshot;
   }
 }
 
