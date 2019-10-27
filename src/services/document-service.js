@@ -95,12 +95,37 @@ class DocumentService {
     return doc ? this.addAllRelevantUsersToDocument(doc) : null;
   }
 
+  async getDocumentRevision(revisionId) {
+    const snapshot = await this.documentSnapshotStore.findOne({
+      query: { _id: revisionId }
+    });
+
+    if (!snapshot) {
+      return null;
+    }
+
+    const docs = await this.snapshotsToDocs([snapshot]);
+    return docs[0];
+  }
+
   async getDocumentHistory(documentKey) {
     const snapshots = await this.documentSnapshotStore.find({
       query: { key: documentKey },
       sort: [['order', 1]]
     });
 
+    return this.snapshotsToDocs(snapshots);
+  }
+
+  async getDocumentBySlug(slug) {
+    const doc = await this.documentStore.findOne({
+      query: { slug }
+    });
+
+    return doc ? this.addAllRelevantUsersToDocument(doc) : null;
+  }
+
+  async snapshotsToDocs(snapshots) {
     if (!snapshots.length) {
       return [];
     }
@@ -140,17 +165,9 @@ class DocumentService {
     const firstSnapshot = snapshots[0];
     return snapshots.map(lastSnapshot => {
       const sectionsInLastSnapshot = lastSnapshot.sections.map(section => sectionsById.get(section.id));
-      const latestSnapshot = this.createLatestDocument(documentKey, firstSnapshot, lastSnapshot, sectionsInLastSnapshot);
+      const latestSnapshot = this.createLatestDocument(firstSnapshot.key, firstSnapshot, lastSnapshot, sectionsInLastSnapshot);
       return latestSnapshot;
     });
-  }
-
-  async getDocumentBySlug(slug) {
-    const doc = await this.documentStore.findOne({
-      query: { slug }
-    });
-
-    return doc ? this.addAllRelevantUsersToDocument(doc) : null;
   }
 
   async addAllRelevantUsersToDocument(doc) {

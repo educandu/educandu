@@ -32,6 +32,18 @@ class DocumentController {
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'article', initialState);
     });
 
+    router.get('/revs/articles/:revId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
+      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+
+      const doc = await this.documentService.getDocumentRevision(req.params.revId);
+      if (!doc) {
+        throw new NotFound();
+      }
+
+      const initialState = this.clientDataMapper.mapDocToInitialState({ doc, allowedUserFields });
+      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'article', initialState);
+    });
+
     router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const allowedUserFields = privateData.getAllowedUserFields(req.user);
 

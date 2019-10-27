@@ -4,9 +4,12 @@ const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
+const Button = require('antd/lib/button');
 const Slider = require('antd/lib/slider');
 const DocView = require('../doc-view.jsx');
+const message = require('antd/lib/message');
 const Logger = require('../../common/logger');
+const clipboardCopy = require('clipboard-copy');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
@@ -51,6 +54,24 @@ class Doc extends React.Component {
 
   handleIndexChanged(index) {
     this.setState(prevState => ({ currentDoc: prevState.docs[index] }));
+  }
+
+  async handlePermalinkRequest() {
+    const { currentDoc } = this.state;
+    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getArticleRevisionUrl(currentDoc.snapshotId));
+    try {
+      await clipboardCopy(permalinkUrl);
+      message.success('Der Permalink wurde in die Zwischenablage kopiert');
+    } catch (error) {
+      const msg = (
+        <span>
+          <span>Der Permalink konnte nicht in die Zwischenablage kopiert werden:</span>
+          <br />
+          <a href={permalinkUrl}>{permalinkUrl}</a>
+        </span>
+      );
+      message.error(msg, 10);
+    }
   }
 
   handleAction({ name, data }) {
@@ -114,6 +135,15 @@ class Doc extends React.Component {
               tipFormatter={this.formatRevisionTooltip}
               tooltipVisible
               />
+          </div>
+          <div className="DocPage-revisionPickerResetButton">
+            <Button
+              type="primary"
+              icon="paper-clip"
+              onClick={this.handlePermalinkRequest}
+              >
+              Permalink
+            </Button>
           </div>
         </div>
       );

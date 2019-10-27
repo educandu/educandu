@@ -16,6 +16,7 @@ const editDocPrefix = '/edit/doc/';
 const menusPrefix = '/menus/';
 const editMenuPrefix = '/edit/menu/';
 const articlesPrefix = '/articles/';
+const articleRevisionPrefix = '/revs/articles/';
 const pluginApiPathPrefix = '/plugins/';
 const completeRegistrationPrefix = '/complete-registration/';
 const completePasswordResetPrefix = '/complete-password-reset/';
@@ -68,6 +69,10 @@ function getArticleUrl(slug) {
   return concatParts(articlesPrefix, slug);
 }
 
+function getArticleRevisionUrl(revisionId) {
+  return concatParts(articleRevisionPrefix, revisionId);
+}
+
 function getSettingsUrl() {
   return settingsPath;
 }
@@ -116,6 +121,12 @@ function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
+function createFullyQualifiedUrl(pathname) {
+  const url = new URL(document.location);
+  url.pathname = pathname;
+  return url.href;
+}
+
 module.exports = {
   homePath,
   docsPath,
@@ -145,6 +156,7 @@ module.exports = {
   getEditMenuUrl,
   getUsersUrl,
   getArticleUrl,
+  getArticleRevisionUrl,
   getSettingsUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
@@ -156,5 +168,6 @@ module.exports = {
   getLogoutUrl,
   getProfileUrl,
   getRegisterUrl,
-  getResetPasswordUrl
+  getResetPasswordUrl,
+  createFullyQualifiedUrl
 };
