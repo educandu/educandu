@@ -13,9 +13,9 @@ module.exports = [
       width: 100,
       parts: [
         {
-          name: 'Ritornell',
-          color: '#FFD700',
-          length: 138075.36947451317
+          name: 'Unbenannt',
+          color: '#4582b4',
+          length: 1000
         }
       ],
       annotations: [],
