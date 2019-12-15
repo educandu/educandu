@@ -88,7 +88,7 @@ class AnavisDisplay extends React.Component {
   render() {
     const { content, clientSettings, githubFlavoredMarkdown } = this.props;
     const { playState, durationInSeconds, playedSeconds, volume } = this.state;
-    const { parts, annotations, media } = content;
+    const { parts, media } = content;
     const html = githubFlavoredMarkdown.render(media.text || '');
     const aspectRatio = media.aspectRatio || { h: 16, v: 9 };
     const paddingTop = `${(aspectRatio.v / aspectRatio.h * 100).toFixed(2)}%`;
@@ -171,11 +171,35 @@ class AnavisDisplay extends React.Component {
       </div>
     ));
 
+    const annotationCount = parts.reduce((maxCount, part) => Math.max(maxCount, part.annotations.length), 0);
+
+    const annotationComponents = Array.from({ length: annotationCount }, (item, index) => index).map((item, annotationIndex) => (
+      <div key={annotationIndex.toString()} className="Anavis-annotation">
+        {parts.map((part, partIndex) => (
+          <div
+            key={partIndex.toString()}
+            className="Anavis-annotationItem"
+            title={part.annotations[annotationIndex]}
+            style={{ flex: `${part.length} 0 0%` }}
+            >
+            <div className="Anavis-annotationItemText">
+              {part.annotations[annotationIndex]}
+            </div>
+          </div>
+        ))}
+      </div>
+    ));
+
     return (
       <div className="Anavis">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'stretch', marginBottom: '25px' }}>
+        <div className="Anavis-row">
           <div className={`Anavis-parts u-width-${width}`}>
             {partsComponents}
+          </div>
+        </div>
+        <div className="Anavis-row">
+          <div className={`Anavis-annotations u-width-${width}`}>
+            {annotationComponents}
           </div>
         </div>
         {players}

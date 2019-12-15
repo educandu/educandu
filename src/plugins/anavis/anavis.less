@@ -5,6 +5,12 @@
 
 .Anavis {}
 
+.Anavis-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
 .Anavis-parts {
   display: flex;
   justify-content: stretch;
@@ -33,6 +39,27 @@
 
 .Anavis-partName {
   text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.Anavis-annotation {
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+  margin: 0.5em 0;
+}
+
+.Anavis-annotationItem {
+  display: flex;
+  justify-content: stretch;
+  align-items: stretch;
+  border: 1px solid transparent;
+  overflow: hidden;
+}
+
+.Anavis-annotationItemText {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

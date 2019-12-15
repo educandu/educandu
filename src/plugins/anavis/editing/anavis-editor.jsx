@@ -96,12 +96,12 @@ class AnavisEditor extends React.Component {
         )
       }, {
         title: (
-          <Button type="primary" icon="plus" onClick={this.handleAddButtonClick} />
+          <Button type="primary" icon="plus" onClick={this.handleAddPartButtonClick} />
         ),
         width: 48,
         key: 'button',
         render: (value, item, index) => (
-          <Button data-index={index} type="danger" icon="delete" onClick={this.handleDeletButtonClick} />
+          <Button data-index={index} type="danger" icon="delete" onClick={this.handleDeleteButtonClick} />
         )
       }
     ];
@@ -201,7 +201,7 @@ class AnavisEditor extends React.Component {
     this.changeContent({ parts: newParts });
   }
 
-  handleDeletButtonClick(event) {
+  handleDeleteButtonClick(event) {
     const { dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldParts = this.props.content.parts;
@@ -209,7 +209,25 @@ class AnavisEditor extends React.Component {
     this.changeContent({ parts: newParts });
   }
 
-  handleAddButtonClick() {
+  handleAddAnnotationButtonClick() {
+    const newParts = this.props.content.parts.map(part => ({
+      ...part,
+      annotations: [...part.annotations, '']
+    }));
+
+    this.changeContent({ parts: newParts });
+  }
+
+  handleDeleteAnnotationButtonClick(annotationIndex) {
+    const newParts = this.props.content.parts.map(part => ({
+      ...part,
+      annotations: part.annotations.filter((a, i) => i !== annotationIndex)
+    }));
+
+    this.changeContent({ parts: newParts });
+  }
+
+  handleAddPartButtonClick() {
     const newParts = this.props.content.parts.slice();
     newParts.push({ name: DEFAULT_NAME, color: DEFAULT_COLOR, length: DEFAULT_LENGTH });
     this.changeContent({ parts: newParts });
@@ -229,6 +247,15 @@ class AnavisEditor extends React.Component {
     this.changeContent({ parts: newParts });
   }
 
+  handleAnnotationChange(event, partIndex, annotationIndex) {
+    const newParts = this.props.content.parts.map((p, pi) => ({
+      ...p,
+      annotations: p.annotations.map((a, ai) => pi === partIndex && ai === annotationIndex ? event.target.value : a)
+    }));
+
+    this.changeContent({ parts: newParts });
+  }
+
   changeContent(newContentValuesOrFunc) {
     const { content, onContentChanged } = this.props;
     if (typeof newContentValuesOrFunc === 'function') {
@@ -238,9 +265,29 @@ class AnavisEditor extends React.Component {
     }
   }
 
+  renderExpandedRow(part, partIndex) {
+    return (
+      <div>
+        {part.annotations.map((annotation, annotationIndex) => (
+          <div key={annotationIndex.toString()} style={{ display: 'flex', marginTop: annotationIndex === 0 ? '0' : '4px' }}>
+            <div style={{ flex: '1 0 0%', marginRight: '8px' }}>
+              <Input value={annotation} onChange={event => this.handleAnnotationChange(event, partIndex, annotationIndex)} />
+            </div>
+            <div style={{ flex: 'none', marginLeft: '8px' }}>
+              <Button type="danger" icon="delete" onClick={() => this.handleDeleteAnnotationButtonClick(annotationIndex)} />
+            </div>
+          </div>
+        ))}
+        <div style={{ marginTop: part.annotations.length === 0 ? '0' : '4px' }}>
+          <Button type="primary" icon="plus" onClick={this.handleAddAnnotationButtonClick} />
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const { docKey, content, clientSettings } = this.props;
-    const { width, parts, annotations, media } = content;
+    const { width, parts, media } = content;
     const { kind, type, url, text, aspectRatio } = media;
 
     const dataSource = parts.map((part, i) => ({ key: i, ...part }));
@@ -304,7 +351,7 @@ class AnavisEditor extends React.Component {
             <TextArea value={text} onChange={this.handleTextChanged} autosize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
-        <Table dataSource={dataSource} columns={this.columns} pagination={false} size="small" />
+        <Table dataSource={dataSource} expandedRowRender={this.renderExpandedRow} columns={this.columns} pagination={false} size="small" />
       </div>
     );
   }

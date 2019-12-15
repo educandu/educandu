@@ -15,10 +15,10 @@ module.exports = [
         {
           name: 'Unbenannt',
           color: '#4582b4',
-          length: 1000
+          length: 1000,
+          annotations: []
         }
       ],
-      annotations: [],
       media: {
         kind: 'video',
         type: 'youtube',

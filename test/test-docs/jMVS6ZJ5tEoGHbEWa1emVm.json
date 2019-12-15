@@ -21,96 +21,108 @@
             {
               "name": "Ritornell",
               "color": "#FFD700",
-              "length": 138075.36947451317
-            },
-            {
-              "name": "Episode 1",
-              "color": "#228B22",
-              "length": 86140.80682682843
-            },
-            {
-              "name": "Ritornell",
-              "color": "#FFD700",
-              "length": 20273.757642262502
-            },
-            {
-              "name": "Episode 2",
-              "color": "#32CD32",
-              "length": 47004.571206404165
-            },
-            {
-              "name": "Ritornell",
-              "color": "#FFD700",
-              "length": 187703.227246042
-            },
-            {
-              "name": "Episode 1",
-              "color": "#228B22",
-              "length": 97841.03562023539
-            },
-            {
-              "name": "Ritornell",
-              "color": "#FFD700",
-              "length": 22248.312841285166
-            },
-            {
-              "name": "Episode 3",
-              "color": "#90EE90",
-              "length": 98184.63916805788
-            },
-            {
-              "name": "Ritornell",
-              "color": "#FFD700",
-              "length": 22935.519471268875
-            },
-            {
-              "name": "Episode 3",
-              "color": "#90EE90",
-              "length": 46111.284776642584
-            },
-            {
-              "name": "Episode 2",
-              "color": "#32CD32",
-              "length": 45666.84507097436
-            },
-            {
-              "name": "Ritornell",
-              "color": "#FFD700",
-              "length": 187814.6306554855
-            }
-          ],
-          "annotations": [
-            {
-              "type": "remarks",
-              "values": [
+              "length": 138075.36947451317,
+              "annotations": [
                 "a → e",
-                "a",
-                "a",
-                "a→ C",
-                "C→ e",
-                "e → d",
-                "d",
-                "d→ a",
-                "a",
-                "a→ f",
-                "f→ a",
-                "a"
+                "I → V"
               ]
             },
             {
-              "type": "harmonies",
-              "values": [
-                "I → V",
-                "I",
-                "I",
-                "I → III",
-                "III → V",
-                "V → IV",
-                "IV",
-                "IV → I",
-                "I",
-                "I → VI",
-                "IV → I",
+              "name": "Episode 1",
+              "color": "#228B22",
+              "length": 86140.80682682843,
+              "annotations": [
+                "a",
+                "I"
+              ]
+            },
+            {
+              "name": "Ritornell",
+              "color": "#FFD700",
+              "length": 20273.757642262502,
+              "annotations": [
+                "a",
+                "I"
+              ]
+            },
+            {
+              "name": "Episode 2",
+              "color": "#32CD32",
+              "length": 47004.571206404165,
+              "annotations": [
+                "a → C",
+                "I → III"
+              ]
+            },
+            {
+              "name": "Ritornell",
+              "color": "#FFD700",
+              "length": 187703.227246042,
+              "annotations": [
+                "C → e",
+                "III → V"
+              ]
+            },
+            {
+              "name": "Episode 1",
+              "color": "#228B22",
+              "length": 97841.03562023539,
+              "annotations": [
+                "e → d",
+                "V → IV"
+              ]
+            },
+            {
+              "name": "Ritornell",
+              "color": "#FFD700",
+              "length": 22248.312841285166,
+              "annotations": [
+                "d",
+                "IV"
+              ]
+            },
+            {
+              "name": "Episode 3",
+              "color": "#90EE90",
+              "length": 98184.63916805788,
+              "annotations": [
+                "d → a",
+                "IV → I"
+              ]
+            },
+            {
+              "name": "Ritornell",
+              "color": "#FFD700",
+              "length": 22935.519471268875,
+              "annotations": [
+                "a",
+                "I"
+              ]
+            },
+            {
+              "name": "Episode 3",
+              "color": "#90EE90",
+              "length": 46111.284776642584,
+              "annotations": [
+                "a → f",
+                "I → VI"
+              ]
+            },
+            {
+              "name": "Episode 2",
+              "color": "#32CD32",
+              "length": 45666.84507097436,
+              "annotations": [
+                "f → a",
+                "IV → I"
+              ]
+            },
+            {
+              "name": "Ritornell",
+              "color": "#FFD700",
+              "length": 187814.6306554855,
+              "annotations": [
+                "a",
                 "I"
               ]
             }
