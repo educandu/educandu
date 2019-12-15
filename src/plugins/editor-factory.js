@@ -1,6 +1,7 @@
 const { Container } = require('../common/di');
 const AudioPlugin = require('./audio/editor');
 const VideoPlugin = require('./video/editor');
+const AnavisPlugin = require('./anavis/editor');
 const ImagePlugin = require('./image/editor');
 const MarkdownPlugin = require('./markdown/editor');
 const H5pPlayerPlugin = require('./h5p-player/editor');
@@ -17,6 +18,7 @@ const editors = [
   QuickTesterPlugin,
   AudioPlugin,
   VideoPlugin,
+  AnavisPlugin,
   ImagePlugin,
   ImageTilePlugin,
   H5pPlayerPlugin,

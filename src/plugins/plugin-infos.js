@@ -7,6 +7,31 @@ module.exports = [
     }
   },
   {
+    name: 'Anavis',
+    type: 'anavis',
+    defaultContent: {
+      width: 100,
+      parts: [
+        {
+          name: 'Unbenannt',
+          color: '#4582b4',
+          length: 1000,
+          annotations: []
+        }
+      ],
+      media: {
+        kind: 'video',
+        type: 'youtube',
+        url: '',
+        text: '',
+        aspectRatio: {
+          h: 16,
+          v: 9
+        }
+      }
+    }
+  },
+  {
     name: 'Image',
     type: 'image',
     defaultContent: {
