@@ -1,7 +1,8 @@
-@part-border-color: #111;
-@part-inner-border-color: rgba(255, 255, 255, 0.2);
-@part-inner-border-color-selected: #000;
-@part-inner-background-gradient: linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.2) 100%);
+@anavis-part-border-color: #111;
+@anavis-part-inner-border-color: rgba(255, 255, 255, 0.2);
+@anavis-part-inner-border-color-selected: #000;
+@anavis-part-inner-background-gradient: linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.2) 100%);
+@anavis-vertical-spacing: 0.5em;
 
 .Anavis {}
 
@@ -16,11 +17,12 @@
   justify-content: stretch;
   align-items: stretch;
   height: 3em;
+  margin-bottom: @anavis-vertical-spacing;
 }
 
 .Anavis-partOuter {
   overflow: auto;
-  border: 1px solid @part-border-color;
+  border: 1px solid @anavis-part-border-color;
   height: 100%;
   display: flex;
   justify-content: stretch;
@@ -28,8 +30,8 @@
 }
 
 .Anavis-partInner {
-  border: 1px solid @part-inner-border-color;
-  background: @part-inner-background-gradient;
+  border: 1px solid @anavis-part-inner-border-color;
+  background: @anavis-part-inner-background-gradient;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +50,7 @@
   display: flex;
   justify-content: stretch;
   align-items: stretch;
-  margin: 0.5em 0;
+  margin: @anavis-vertical-spacing 0;
 }
 
 .Anavis-annotationItem {
@@ -69,6 +71,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: @anavis-vertical-spacing;
 }
 
 .Anavis-mainPlayerContainer {
@@ -90,10 +93,21 @@
   left: 0;
 }
 
-.AnavisDisplay-mediaControlContainer {}
-
 .Anavis-text {
   padding-top: 20px;
   font-size: 12px;
   text-align: center;
+}
+
+.AnavisEditor-table {
+  .ant-table {
+    border-width: 2px;
+    border-style: dashed;
+  }
+
+  &.u-can-drop {
+    .ant-table {
+      border-color: @global-elmu-blue;
+    }
+  }
 }

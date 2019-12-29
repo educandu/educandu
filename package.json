@@ -45,6 +45,7 @@
     "core-js": "~3.2.1",
     "decompress": "~4.2.0",
     "del": "~3.0.0",
+    "dropperx": "~1.0.1",
     "express": "~4.17.1",
     "express-async-errors": "~3.1.1",
     "express-session": "~1.16.2",

@@ -3,9 +3,12 @@ const autoBind = require('auto-bind');
 const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
+const Modal = require('antd/lib/modal');
 const Table = require('antd/lib/table');
+const classNames = require('classnames');
 const Button = require('antd/lib/button');
 const Switch = require('antd/lib/switch');
+const Dropperx = require('dropperx').default;
 const InputNumber = require('antd/lib/input-number');
 const ColorPicker = require('../../../components/color-picker.jsx');
 const ClientSettings = require('../../../bootstrap/client-settings');
@@ -256,6 +259,26 @@ class AnavisEditor extends React.Component {
     this.changeContent({ parts: newParts });
   }
 
+  handleJsonDrop(files) {
+    try {
+      const ejected = JSON.parse(files[0].content);
+      if (ejected.version !== '2') {
+        throw new Error('Nicht unterstütztes Dateiformat');
+      }
+
+      const newParts = ejected.parts.map((ejectedPart, index) => ({
+        name: ejectedPart.name,
+        color: ejectedPart.color,
+        length: ejectedPart.length,
+        annotations: ejected.annotations.map(ejectedAnnotation => ejectedAnnotation.values[index])
+      }));
+
+      this.changeContent({ parts: newParts });
+    } catch (error) {
+      Modal.error({ title: 'Fehler', content: error.message });
+    }
+  }
+
   changeContent(newContentValuesOrFunc) {
     const { content, onContentChanged } = this.props;
     if (typeof newContentValuesOrFunc === 'function') {
@@ -298,7 +321,7 @@ class AnavisEditor extends React.Component {
     };
 
     return (
-      <div>
+      <div className="AnavisEditor">
         <Form layout="horizontal">
           <FormItem label="Quelle" {...formItemLayout}>
             <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
@@ -351,7 +374,18 @@ class AnavisEditor extends React.Component {
             <TextArea value={text} onChange={this.handleTextChanged} autosize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
-        <Table dataSource={dataSource} expandedRowRender={this.renderExpandedRow} columns={this.columns} pagination={false} size="small" />
+        <Dropperx accept="application/json" maxSize={500000} onDrop={this.handleJsonDrop}>
+          {({ canDrop }) => (
+            <Table
+              className={classNames({ 'AnavisEditor-table': true, 'u-can-drop': canDrop })}
+              dataSource={dataSource}
+              expandedRowRender={this.renderExpandedRow}
+              columns={this.columns}
+              pagination={false}
+              size="small"
+              />
+          )}
+        </Dropperx>
       </div>
     );
   }
