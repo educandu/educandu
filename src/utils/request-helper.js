@@ -11,7 +11,8 @@ function expressReqToRequest(req) {
     path: req.path,
     protocol: req.protocol,
     originalUrl: req.originalUrl,
-    query: JSON.parse(JSON.stringify(req.query))
+    query: JSON.parse(JSON.stringify(req.query)),
+    hostInfo: getHostInfo(req)
   };
 }
 
