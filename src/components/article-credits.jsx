@@ -6,7 +6,7 @@ const { docShape } = require('../ui/default-prop-types');
 function ArticleCredits({ doc }) {
   const contributors = doc.contributors || [];
 
-  const articleUrl = `https://elmu.online'${urls.getArticleUrl(doc.slug)}`;
+  const articleUrl = `https://elmu.online${urls.getArticleUrl(doc.slug)}`;
   const citation = `Artikel »${doc.title}«, ${articleUrl}, ${moment().locale('de-DE').format('DoMM.YYYY, h:mm')}`;
 
   return (
