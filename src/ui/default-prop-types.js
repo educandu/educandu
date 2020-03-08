@@ -25,7 +25,12 @@ const requestProps = {
     path: PropTypes.string.isRequired,
     protocol: PropTypes.string.isRequired,
     originalUrl: PropTypes.string.isRequired,
-    query: PropTypes.object.isRequired
+    query: PropTypes.object.isRequired,
+    hostInfo: PropTypes.shape({
+      proto: PropTypes.string.isRequired,
+      host: PropTypes.string.isRequired,
+      origin: PropTypes.string.isRequired
+    }).isRequired
   }).isRequired
 };
 
