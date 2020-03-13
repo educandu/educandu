@@ -101,7 +101,7 @@
     "uuid": "~3.3.3"
   },
   "devDependencies": {
-    "acorn": "~5.7.2",
+    "acorn": "~5.7.4",
     "babel-jest": "~24.9.0",
     "babel-loader": "~8.0.6",
     "delay": "~3.0.0",
