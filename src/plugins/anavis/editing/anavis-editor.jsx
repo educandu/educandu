@@ -232,7 +232,7 @@ class AnavisEditor extends React.Component {
 
   handleAddPartButtonClick() {
     const newParts = this.props.content.parts.slice();
-    newParts.push({ name: DEFAULT_NAME, color: DEFAULT_COLOR, length: DEFAULT_LENGTH });
+    newParts.push({ name: DEFAULT_NAME, color: DEFAULT_COLOR, length: DEFAULT_LENGTH, annotations: [] });
     this.changeContent({ parts: newParts });
   }
 
