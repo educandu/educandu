@@ -10,7 +10,7 @@ class Migration2020042801 {
 
   async up() {
     await updateAll(this.db.sections, { type: 'anavis' }, doc => {
-      Object.values(doc.content).forEach(val => {
+      Object.values(doc.content || {}).forEach(val => {
         val.parts.forEach(part => {
           part.annotations = part.annotations || [];
         });

@@ -11,7 +11,7 @@ class Migration2018120201 {
   async up() {
     await updateAll(this.db.sections, { type: 'credit' }, doc => {
       doc.type = 'annotation';
-      Object.values(doc.content).forEach(val => {
+      Object.values(doc.content || {}).forEach(val => {
         val.title = 'Credits';
       });
     });
@@ -20,7 +20,7 @@ class Migration2018120201 {
   async down() {
     await updateAll(this.db.sections, { type: 'annotation' }, doc => {
       doc.type = 'credit';
-      Object.values(doc.content).forEach(val => {
+      Object.values(doc.content || {}).forEach(val => {
         delete val.title;
       });
     });

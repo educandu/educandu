@@ -11,7 +11,7 @@ class Migration2018120201 {
   async up() {
     await updateAll(this.db.sections, { type: 'youtube-video' }, doc => {
       doc.type = 'video';
-      doc.content = Object.entries(doc.content).reduce((accu, [key, val]) => {
+      doc.content = Object.entries(doc.content || {}).reduce((accu, [key, val]) => {
         accu[key] = {
           type: 'youtube',
           url: `https://www.youtube.com/watch?v=${val.videoId}`,
@@ -27,13 +27,13 @@ class Migration2018120201 {
 
   async down() {
     await updateAll(this.db.sections, { type: 'video' }, doc => {
-      const languages = Object.keys(doc.content);
+      const languages = Object.keys(doc.content || {});
       if (!languages.length || !languages.every(lang => doc.content[lang].type === 'youtube')) {
         return;
       }
 
       doc.type = 'youtube-video';
-      doc.content = Object.entries(doc.content).reduce((accu, [key, val]) => {
+      doc.content = Object.entries(doc.content || {}).reduce((accu, [key, val]) => {
         const matches = (/^https:\/\/www\.youtube\.com\/watch?v=(.+)$/i).exec(val.url);
         accu[key] = {
           videoId: matches && matches[1],

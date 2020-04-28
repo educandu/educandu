@@ -10,7 +10,7 @@ class Migration2018112501 {
 
   async up() {
     await updateAll(this.db.sections, { type: 'quick-tester' }, doc => {
-      Object.values(doc.content).forEach(val => {
+      Object.values(doc.content || {}).forEach(val => {
         val.title = val.name;
         delete val.name;
       });
@@ -19,7 +19,7 @@ class Migration2018112501 {
 
   async down() {
     await updateAll(this.db.sections, { type: 'quick-tester' }, doc => {
-      Object.values(doc.content).forEach(val => {
+      Object.values(doc.content || {}).forEach(val => {
         val.name = val.title;
         delete val.title;
       });
