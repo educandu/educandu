@@ -9,7 +9,7 @@ require('@babel/polyfill');
 const DocumentService = require('../src/services/document-service');
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
-(async function pruneEnv() {
+(async function regenerateDocs() {
 
   const container = await serverBootstrapper.createContainer();
 
