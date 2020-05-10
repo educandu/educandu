@@ -32,7 +32,7 @@ class DocumentController {
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'article', initialState);
     });
 
-    router.get('/revs/articles/:revId', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
+    router.get('/revs/articles/:revId', async (req, res) => {
       const allowedUserFields = privateData.getAllowedUserFields(req.user);
 
       const doc = await this.documentService.getDocumentRevision(req.params.revId);
