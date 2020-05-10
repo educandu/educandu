@@ -1,4 +1,3 @@
-const by = require('thenby');
 const Logger = require('../common/logger');
 const deepEqual = require('fast-deep-equal');
 const UserService = require('./user-service');
@@ -171,9 +170,9 @@ class DocumentService {
   }
 
   async addAllRelevantUsersToDocument(doc) {
-    const allUsers = await this.getAllHistoricalUsersForDocument(doc);
+    const { users, contributors } = await this.getAllHistoricalUsersForDocument(doc);
 
-    const allUsersById = allUsers.reduce((map, user) => {
+    const allUsersById = users.reduce((map, user) => {
       map.set(user._id, user);
       return map;
     }, new Map());
@@ -181,7 +180,7 @@ class DocumentService {
     this.setUserObjectsInDocOrSnapshot(doc, allUsersById);
     doc.sections.forEach(section => this.setUserObjectsInSection(section, allUsersById));
 
-    this.setUserObjectsAsContributorsInDocOrSnapshot(doc, allUsers);
+    this.setUserObjectsAsContributorsInDocOrSnapshot(doc, contributors);
 
     return doc;
   }
@@ -476,15 +475,19 @@ class DocumentService {
     const allSectionKeys = doc.sections.map(section => section.key);
     const allSections = await this.sectionStore.find({
       query: { key: { $in: allSectionKeys } },
-      projection: { createdBy: 1, deletedBy: 1 }
+      sort: { order: 1 },
+      projection: { order: 1, createdBy: 1, deletedBy: 1 }
     });
 
-    const allUserIds = Array.from(new Set([
-      ...this.getAllUserIdsForDocsOrSnapshots(allDocSnapshots),
-      ...this.getAllUserIdsForSections(allSections)
-    ]));
+    const allUserIdsForDocsOrSnapshots = this.getAllUserIdsForDocsOrSnapshots(allDocSnapshots);
+    const allUserIdsForSections = this.getAllUserIdsForSections(allSections);
 
-    return this.userService.getUsersByIds(allUserIds);
+    const allUserIds = Array.from(new Set([...allUserIdsForDocsOrSnapshots, ...allUserIdsForSections]));
+
+    const users = await this.userService.getUsersByIds(allUserIds);
+    const contributors = allUserIdsForSections.map(userId => users.find(user => user._id === userId));
+
+    return { users, contributors };
   }
 
   setUserObjectsInDocOrSnapshot(docOrSnapshot, usersById) {
@@ -509,7 +512,7 @@ class DocumentService {
   }
 
   setUserObjectsAsContributorsInDocOrSnapshot(docOrSnapshot, contributors) {
-    docOrSnapshot.contributors = contributors.slice().sort(by(x => x.username));
+    docOrSnapshot.contributors = contributors.slice();
     return docOrSnapshot;
   }
 }
