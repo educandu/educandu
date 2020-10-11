@@ -66,16 +66,17 @@ class Menu extends React.Component {
       : <span>{doc.title}</span>;
   }
 
-  renderLinkList(title, docs) {
+  renderLinkList(node, documentDictionary, isActive) {
+    const docs = node.documentKeys.map(key => documentDictionary.get(key));
+    const classNames = classnames('MenuPage-detailsItem', { 'MenuPage-detailsItem--active': isActive });
     return (
-      <React.Fragment>
-        <h2 className="MenuPage-linkListTitle">{title}</h2>
+      <div key={node.key} className={classNames}>
+        <h2 className="MenuPage-linkListTitle">{node.title}</h2>
         <ul className="MenuPage-linkList">
-          {docs.map((doc, index) => {
-            const key = `doc-link-${index}`;
+          {docs.map(doc => {
             return (
               <li
-                key={key}
+                key={doc.key}
                 className="MenuPage-linkListItem"
                 >
                 {this.renderLinkListItemContent(doc)}
@@ -83,14 +84,26 @@ class Menu extends React.Component {
             );
           })}
         </ul>
-      </React.Fragment>
+      </div>
     );
   }
 
-  renderDefaultDoc(defaultDocument, language) {
-    return defaultDocument
-      ? <DocView doc={defaultDocument.doc} sections={defaultDocument.sections} language={language} />
-      : <div />;
+  renderLinkLists(nodes, currentActiveNode, documentDictionary) {
+    return nodes.flatMap(node => {
+      const linkLists = [this.renderLinkList(node, documentDictionary, node === currentActiveNode)];
+      return node.children && node.children.length
+        ? linkLists.concat(this.renderLinkLists(node.children, currentActiveNode, documentDictionary))
+        : linkLists;
+    });
+  }
+
+  renderDefaultDoc(defaultDocument, language, isActive) {
+    const classNames = classnames('MenuPage-detailsItem', { 'MenuPage-detailsItem--active': isActive });
+    return (
+      <div className={classNames}>
+        <DocView doc={defaultDocument.doc} sections={defaultDocument.sections} language={language} />
+      </div>
+    );
   }
 
   render() {
@@ -100,9 +113,8 @@ class Menu extends React.Component {
 
     const hasCategories = menu.nodes && menu.nodes.length;
 
-    const article = currentActiveNode && currentActiveNode.documentKeys.length
-      ? this.renderLinkList(currentActiveNode.title, currentActiveNode.documentKeys.map(key => documentDictionary.get(key)))
-      : this.renderDefaultDoc(defaultDocument, language);
+    const defaultDoc = defaultDocument ? this.renderDefaultDoc(defaultDocument, language, !currentActiveNode) : null;
+    const linkLists = this.renderLinkLists(menu.nodes, currentActiveNode, documentDictionary);
 
     const titleMarkup = <h2><a onClick={this.handleMenuTitleClick}>{menu.title}</a></h2>;
 
@@ -116,7 +128,8 @@ class Menu extends React.Component {
     const detailsPanel = (
       <article className="MenuPage-details">
         {menu.title && !hasCategories && titleMarkup}
-        {article}
+        {defaultDoc}
+        {linkLists}
       </article>
     );
 
