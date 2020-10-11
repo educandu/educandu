@@ -1,23 +1,23 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const Input = require('antd/lib/input');
-const Modal = require('antd/lib/modal');
 const PropTypes = require('prop-types');
 const DocView = require('../doc-view.jsx');
 const ElmuLogo = require('../elmu-logo.jsx');
+const { useRequest } = require('../request-context.jsx');
 const { docShape, sectionShape } = require('../../ui/default-prop-types');
 
 const { Search } = Input;
 
-function handleSearchClick() {
-  Modal.error({
-    title: 'Leider, leider ...',
-    content: '... ist ELMU noch nicht so weit, dass Sie hier komfortabel suchen können. Wir arbeiten daran ...'
-  });
-}
-
 function Index({ initialState, language }) {
+  const rq = useRequest();
   const { doc, sections } = initialState;
+
+  const handleSearchClick = searchTerm => {
+    const googleTerm = [`site:${rq.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
+    const link = `https://www.google.com/search?q=${encodeURIComponent(googleTerm)}`;
+    window.open(link, '_blank');
+  };
 
   return (
     <Page fullScreen>
@@ -28,7 +28,7 @@ function Index({ initialState, language }) {
         <div className="IndexPage-search">
           <Search
             placeholder="Suchbegriff"
-            enterButton="Suchen"
+            enterButton="Suchen mit Google"
             size="large"
             onSearch={handleSearchClick}
             />
