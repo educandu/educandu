@@ -92,8 +92,8 @@ jobs:
               deploy-release \
               --server "$OCTO_SERVER" \
               --apiKey "$OCTO_API_KEY" \
-              --project "$OCTO_PROJECT_NAME"
-              --deployTo "$OCTO_ENVIRONMENT_NAME"
+              --project "$OCTO_PROJECT_NAME" \
+              --deployTo "$OCTO_ENVIRONMENT_NAME" \
               --releaseNumber "$RELEASE_NUMBER"
 
 workflows:
