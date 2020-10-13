@@ -1,7 +1,10 @@
-version: 2
+version: 2.1
 
 defaults: &defaults
   working_directory: ~/elmu-web
+
+orbs:
+  docker: circleci/docker@1.0.0
 
 jobs:
   build:
@@ -44,75 +47,51 @@ jobs:
             - dist
   deploy:
     <<: *defaults
-    docker:
-      - image: circleci/buildpack-deps:bionic
+    executor: docker/docker
     environment:
-      - APPLICATION_NAME: elmu-web
-      - AWS_REGION: eu-central-1
-      - AWS_ACCOUNT_ID: "344601915837"
-      - BEANSTALK_ENVIRONMENT_NAME: Staging
-      - BEANSTALK_DOCKERRUN_FILE: Dockerrun.aws.json
-      - BEANSTALK_DEPLOYMENT_PACKAGE: elmu-web-deploy.zip
-      - S3_BUILD_ARTIFACTS_BUCKET: elmu-web-build-artifacts
+      - DOCKER_IMAGE: elmu/elmu-web
+      - OCTO_CLI_IMAGE: octopusdeploy/octo:7.4.2-alpine
+      - OCTO_PROJECT_NAME: elmu-web
+      - OCTO_ENVIRONMENT_NAME: Staging
     steps:
       - setup_remote_docker
       - checkout
       - attach_workspace:
           at: "."
       - run:
-          name: Create application version
+          name: Create release number and release notes
           command: |
-            echo 'export APPLICATION_VERSION="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
-            echo 'export APPLICATION_RELEASE_NOTES="Github: $CIRCLE_COMPARE_URL"' >> $BASH_ENV
-            echo 'export APPLICATION_DOCKER_IMAGE_NAME="$APPLICATION_NAME:0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
-            echo 'export APPLICATION_DOCKER_REPOSITORY_NAME="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"' >> $BASH_ENV
+            echo 'export RELEASE_NUMBER="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            echo 'export RELEASE_NOTES="Github: $CIRCLE_COMPARE_URL"' >> $BASH_ENV
             source $BASH_ENV
+      - docker/check
+      - docker/build:
+          image: $DOCKER_IMAGE
+          tag: "$RELEASE_NUMBER"
+      - docker/push:
+          image: $DOCKER_IMAGE
+          tag: "$RELEASE_NUMBER"
       - run:
-          name: Install AWS CLI
+          name: Pull Octopus CLI
+          command: docker pull "$OCTO_CLI_IMAGE"
+      - run:
+          name: Create release
           command: |
-            sudo apt-get install -y python-pip libyaml-dev python-dev
-            sudo pip install awscli
+            docker run --rm "$OCTO_CLI_IMAGE" \
+              create-release \
+              --project "$OCTO_PROJECT_NAME" \
+              --releaseNumber "$RELEASE_NUMBER" \
+              --releaseNotes "$RELEASE_NOTES"
       - run:
-          name: Login to AWS ECR
-          command: $(aws ecr get-login --no-include-email --region $AWS_REGION)
-      - run:
-          name: Build Docker image
-          command: docker build -t $APPLICATION_DOCKER_IMAGE_NAME .
-      - run:
-          name: Tag Docker image
-          command: docker tag $APPLICATION_DOCKER_IMAGE_NAME $APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME
-      - run:
-          name: Push Docker image
-          command: docker push $APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME
-      - run:
-          name: Replace image name in Dockerrun file
-          command: sed -i'' -e "s;%IMAGE_NAME%;$APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME;g" ./$BEANSTALK_DOCKERRUN_FILE
-      - run:
-          name: Create deployment package
-          command: zip -r ./$BEANSTALK_DEPLOYMENT_PACKAGE ./$BEANSTALK_DOCKERRUN_FILE .ebextensions/
-      - run:
-          name: Upload deployment package
-          command: aws s3 cp ./$BEANSTALK_DEPLOYMENT_PACKAGE s3://$S3_BUILD_ARTIFACTS_BUCKET/$APPLICATION_VERSION/$BEANSTALK_DEPLOYMENT_PACKAGE
-      - run:
-          name: Create Elastic Beanstalk application version
+          name: Deploy release
           command: |
-            aws elasticbeanstalk create-application-version \
-              --region $AWS_REGION \
-              --application-name $APPLICATION_NAME \
-              --version-label $APPLICATION_VERSION \
-              --description "$APPLICATION_RELEASE_NOTES" \
-              --source-bundle S3Bucket=$S3_BUILD_ARTIFACTS_BUCKET,S3Key=$APPLICATION_VERSION/$BEANSTALK_DEPLOYMENT_PACKAGE
-      - run:
-          name: Deploy application version to Staging environment
-          command: |
-            aws elasticbeanstalk update-environment \
-              --region $AWS_REGION \
-              --application-name $APPLICATION_NAME \
-              --environment-name $BEANSTALK_ENVIRONMENT_NAME \
-              --version-label $APPLICATION_VERSION
+            docker run --rm "$OCTO_CLI_IMAGE" \
+              deploy-release \
+              --project "$OCTO_PROJECT_NAME"
+              --deployTo "$OCTO_ENVIRONMENT_NAME"
+              --releaseNumber "$RELEASE_NUMBER"
 
 workflows:
-  version: 2
   build_and_deploy:
     jobs:
       - build

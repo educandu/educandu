@@ -1,0 +1,124 @@
+version: 2
+
+defaults: &defaults
+  working_directory: ~/elmu-web
+
+jobs:
+  build:
+    <<: *defaults
+    docker:
+      - image: circleci/node:10.16.3
+      - image: djfarrelly/maildev:1.0.0-rc2
+      - image: mvertes/alpine-mongo:3.6.5-0
+      - image: minio/minio:RELEASE.2018-07-10T01-42-11Z
+        environment:
+          MINIO_ACCESS_KEY: "UVDXF41PYEAX0PXD8826"
+          MINIO_SECRET_KEY: "SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx"
+          MINIO_BROWSER: "on"
+          MINIO_DOMAIN: "localhost"
+        command: ["server", "/data"]
+    environment:
+      - NODE_ENV: development
+      - ELMU_ENV: test
+      - YARN_CACHE_FOLDER: ~/.cache/yarn
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Node Modules
+          command: yarn install --non-interactive --check-files --frozen-lockfile
+      - save_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run:
+          name: Prepare build
+          command: ./node_modules/.bin/gulp ci:prepare
+      - run:
+          name: Build
+          command: ./node_modules/.bin/gulp ci
+      - persist_to_workspace:
+          root: "."
+          paths:
+            - dist
+  deploy:
+    <<: *defaults
+    docker:
+      - image: circleci/buildpack-deps:bionic
+    environment:
+      - APPLICATION_NAME: elmu-web
+      - AWS_REGION: eu-central-1
+      - AWS_ACCOUNT_ID: "344601915837"
+      - BEANSTALK_ENVIRONMENT_NAME: Staging
+      - BEANSTALK_DOCKERRUN_FILE: Dockerrun.aws.json
+      - BEANSTALK_DEPLOYMENT_PACKAGE: elmu-web-deploy.zip
+      - S3_BUILD_ARTIFACTS_BUCKET: elmu-web-build-artifacts
+    steps:
+      - setup_remote_docker
+      - checkout
+      - attach_workspace:
+          at: "."
+      - run:
+          name: Create application version
+          command: |
+            echo 'export APPLICATION_VERSION="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            echo 'export APPLICATION_RELEASE_NOTES="Github: $CIRCLE_COMPARE_URL"' >> $BASH_ENV
+            echo 'export APPLICATION_DOCKER_IMAGE_NAME="$APPLICATION_NAME:0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
+            echo 'export APPLICATION_DOCKER_REPOSITORY_NAME="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get install -y python-pip libyaml-dev python-dev
+            sudo pip install awscli
+      - run:
+          name: Login to AWS ECR
+          command: $(aws ecr get-login --no-include-email --region $AWS_REGION)
+      - run:
+          name: Build Docker image
+          command: docker build -t $APPLICATION_DOCKER_IMAGE_NAME .
+      - run:
+          name: Tag Docker image
+          command: docker tag $APPLICATION_DOCKER_IMAGE_NAME $APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME
+      - run:
+          name: Push Docker image
+          command: docker push $APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME
+      - run:
+          name: Replace image name in Dockerrun file
+          command: sed -i'' -e "s;%IMAGE_NAME%;$APPLICATION_DOCKER_REPOSITORY_NAME/$APPLICATION_DOCKER_IMAGE_NAME;g" ./$BEANSTALK_DOCKERRUN_FILE
+      - run:
+          name: Create deployment package
+          command: zip -r ./$BEANSTALK_DEPLOYMENT_PACKAGE ./$BEANSTALK_DOCKERRUN_FILE .ebextensions/
+      - run:
+          name: Upload deployment package
+          command: aws s3 cp ./$BEANSTALK_DEPLOYMENT_PACKAGE s3://$S3_BUILD_ARTIFACTS_BUCKET/$APPLICATION_VERSION/$BEANSTALK_DEPLOYMENT_PACKAGE
+      - run:
+          name: Create Elastic Beanstalk application version
+          command: |
+            aws elasticbeanstalk create-application-version \
+              --region $AWS_REGION \
+              --application-name $APPLICATION_NAME \
+              --version-label $APPLICATION_VERSION \
+              --description "$APPLICATION_RELEASE_NOTES" \
+              --source-bundle S3Bucket=$S3_BUILD_ARTIFACTS_BUCKET,S3Key=$APPLICATION_VERSION/$BEANSTALK_DEPLOYMENT_PACKAGE
+      - run:
+          name: Deploy application version to Staging environment
+          command: |
+            aws elasticbeanstalk update-environment \
+              --region $AWS_REGION \
+              --application-name $APPLICATION_NAME \
+              --environment-name $BEANSTALK_ENVIRONMENT_NAME \
+              --version-label $APPLICATION_VERSION
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
