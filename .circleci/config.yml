@@ -54,6 +54,8 @@ jobs:
       - OCTO_PROJECT_NAME: elmu-web
       - OCTO_ENVIRONMENT_NAME: Staging
       - OCTO_SERVER: https://elmu.octopus.app
+      - RELEASE_NUMBER: 0.0.<< pipeline.number >>
+      - CIRCLE_COMPARE_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<<pipeline.git.revision>>
     steps:
       - setup_remote_docker
       - checkout
@@ -62,7 +64,6 @@ jobs:
       - run:
           name: Create release number and release notes
           command: |
-            echo 'export RELEASE_NUMBER="0.0.$CIRCLE_BUILD_NUM"' >> $BASH_ENV
             echo 'export RELEASE_NOTES="Github: $CIRCLE_COMPARE_URL"' >> $BASH_ENV
             source $BASH_ENV
       - docker/check
