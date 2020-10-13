@@ -53,6 +53,7 @@ jobs:
       - OCTO_CLI_IMAGE: octopusdeploy/octo:7.4.2-alpine
       - OCTO_PROJECT_NAME: elmu-web
       - OCTO_ENVIRONMENT_NAME: Staging
+      - OCTO_SERVER: https://elmu.octopus.app
     steps:
       - setup_remote_docker
       - checkout
@@ -79,6 +80,8 @@ jobs:
           command: |
             docker run --rm "$OCTO_CLI_IMAGE" \
               create-release \
+              --server "$OCTO_SERVER" \
+              --apiKey "$OCTO_API_KEY" \
               --project "$OCTO_PROJECT_NAME" \
               --releaseNumber "$RELEASE_NUMBER" \
               --releaseNotes "$RELEASE_NOTES"
@@ -87,6 +90,8 @@ jobs:
           command: |
             docker run --rm "$OCTO_CLI_IMAGE" \
               deploy-release \
+              --server "$OCTO_SERVER" \
+              --apiKey "$OCTO_API_KEY" \
               --project "$OCTO_PROJECT_NAME"
               --deployTo "$OCTO_ENVIRONMENT_NAME"
               --releaseNumber "$RELEASE_NUMBER"
