@@ -2,6 +2,9 @@
 @markdown-blockquote-background-color: @grey-1;
 @markdown-blockquote-shadow-color: @grey-6;
 @markdown-blockquote-quotations-color: @grey-7;
+@markdown-table-border-color: @grey-7;
+@markdown-table-cell-text-color: @global-text-color;
+@markdown-table-header-background-color: fade(@blue-2, 60%);
 
 .Markdown {
   blockquote {
@@ -46,5 +49,28 @@
 
   blockquote > *:last-child {
     margin-bottom: 0;
+  }
+
+  table {
+    border-collapse: collapse;
+    margin: 1em 0;
+  }
+
+  .table-cell {
+    padding: 0.5em 1em;
+    text-align: left;
+    color: @markdown-table-cell-text-color;
+    border: 1px solid @markdown-table-border-color;
+  }
+
+  th {
+    .table-cell();
+    font-weight: bold;
+    background-color: @markdown-table-header-background-color;
+  }
+
+  td {
+    .table-cell();
+    font-weight: normal;
   }
 }
