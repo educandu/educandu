@@ -42,6 +42,14 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
+const addKeyIfNotExists = (arr, key) => {
+  return arr.includes(key) ? arr : arr.concat([key]);
+};
+
+const removeKeyIfExists = (arr, key) => {
+  return arr.includes(key) ? arr.filter(x => x !== key) : arr;
+};
+
 class EditDoc extends React.Component {
   constructor(props) {
     super(props);
@@ -77,7 +85,8 @@ class EditDoc extends React.Component {
       originalSections: sections,
       editedDoc: cloneDeep(doc),
       editedSections: cloneDeep(sections),
-      isDirty: false
+      isDirty: false,
+      invalidSectionKeys: []
     };
   }
 
@@ -90,11 +99,14 @@ class EditDoc extends React.Component {
     });
   }
 
-  handleContentChanged(sectionKey, content) {
+  handleContentChanged(sectionKey, content, isInvalid) {
     this.setState(prevState => {
       return {
         editedSections: prevState.editedSections.map(sec => sec.key === sectionKey ? { ...sec, content } : sec),
-        isDirty: true
+        isDirty: true,
+        invalidSectionKeys: isInvalid
+          ? addKeyIfNotExists(prevState.invalidSectionKeys, sectionKey)
+          : removeKeyIfExists(prevState.invalidSectionKeys, sectionKey)
       };
     });
   }
@@ -117,7 +129,8 @@ class EditDoc extends React.Component {
     this.setState(prevState => {
       return {
         editedSections: prevState.editedSections.filter(sec => sec.key !== sectionKey),
-        isDirty: true
+        isDirty: true,
+        invalidSectionKeys: removeKeyIfExists(prevState.invalidSectionKeys, sectionKey)
       };
     });
   }
@@ -187,7 +200,7 @@ class EditDoc extends React.Component {
 
   render() {
     const { language } = this.props;
-    const { editedDoc, editedSections, isDirty } = this.state;
+    const { editedDoc, editedSections, isDirty, invalidSectionKeys } = this.state;
 
     const newSectionMenu = (
       <Menu>
@@ -206,7 +219,7 @@ class EditDoc extends React.Component {
     );
 
     const headerActions = [];
-    if (isDirty) {
+    if (isDirty && !invalidSectionKeys.length) {
       headerActions.push({
         key: 'save',
         type: 'primary',
@@ -259,6 +272,7 @@ class EditDoc extends React.Component {
                               onSectionDeleted={this.handleSectionDeleted}
                               dragHandleProps={draggableProvided.dragHandleProps}
                               isHighlighted={draggableState.isDragging}
+                              isInvalid={invalidSectionKeys.includes(section.key)}
                               language={language}
                               section={section}
                               doc={editedDoc}

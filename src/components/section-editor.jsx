@@ -54,14 +54,14 @@ class SectionEditor extends React.Component {
     }
   }
 
-  handleContentChange(updatedContent) {
+  handleContentChange(updatedContent, isInvalid = false) {
     const { onContentChanged, section, language } = this.props;
-    onContentChanged(section.key, { ...section.content, [language]: updatedContent });
+    onContentChanged(section.key, { ...section.content, [language]: updatedContent }, isInvalid);
   }
 
   render() {
     const { mode } = this.state;
-    const { doc, section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, language } = this.props;
+    const { doc, section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, isInvalid, language } = this.props;
 
     const hasContent = !!section.content;
 
@@ -95,7 +95,8 @@ class SectionEditor extends React.Component {
 
     const panelClasses = classNames({
       'Panel': true,
-      'is-highlighted': isHighlighted
+      'is-highlighted': !isInvalid && isHighlighted,
+      'is-invalid': isInvalid
     });
 
     const sectionMenu = (
@@ -156,6 +157,7 @@ SectionEditor.propTypes = {
   doc: docShape.isRequired,
   dragHandleProps: PropTypes.object,
   isHighlighted: PropTypes.bool,
+  isInvalid: PropTypes.bool,
   language: PropTypes.string.isRequired,
   onContentChanged: PropTypes.func.isRequired,
   onSectionDeleted: PropTypes.func.isRequired,
@@ -166,7 +168,8 @@ SectionEditor.propTypes = {
 
 SectionEditor.defaultProps = {
   dragHandleProps: {},
-  isHighlighted: false
+  isHighlighted: false,
+  isInvalid: false
 };
 
 module.exports = SectionEditor;

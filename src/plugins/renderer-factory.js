@@ -1,8 +1,9 @@
 const { Container } = require('../common/di');
 const AudioPlugin = require('./audio/renderer');
 const VideoPlugin = require('./video/renderer');
-const AnavisPlugin = require('./anavis/renderer');
 const ImagePlugin = require('./image/renderer');
+const IframePlugin = require('./iframe/renderer');
+const AnavisPlugin = require('./anavis/renderer');
 const MarkdownPlugin = require('./markdown/renderer');
 const H5pPlayerPlugin = require('./h5p-player/renderer');
 const AnnotationPlugin = require('./annotation/renderer');
@@ -18,8 +19,9 @@ const renderers = [
   QuickTesterPlugin,
   AudioPlugin,
   VideoPlugin,
-  AnavisPlugin,
   ImagePlugin,
+  IframePlugin,
+  AnavisPlugin,
   ImageTilePlugin,
   H5pPlayerPlugin,
   AnnotationPlugin,
