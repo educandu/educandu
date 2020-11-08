@@ -44,7 +44,8 @@ class ClientDataMapper {
         ...section,
         createdBy: this._mapUser(section.createdBy, allowedUserFields),
         deletedOn: section.deletedOn || null,
-        deletedBy: this._mapUser(section.deletedBy, allowedUserFields)
+        deletedBy: this._mapUser(section.deletedBy, allowedUserFields),
+        clonedFrom: section.clonedFrom || null
       }))
     };
   }
@@ -71,7 +72,8 @@ class ClientDataMapper {
           ...section,
           createdBy: this._mapUser(section.createdBy, allowedUserFields),
           deletedOn: section.deletedOn || null,
-          deletedBy: this._mapUser(section.deletedBy, allowedUserFields)
+          deletedBy: this._mapUser(section.deletedBy, allowedUserFields),
+          clonedFrom: section.clonedFrom || null
         }))
       }))
     };

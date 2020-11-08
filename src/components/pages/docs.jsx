@@ -35,18 +35,20 @@ class Docs extends React.Component {
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
       filterInput: DEFAULT_FILTER_INPUT,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
+      newDocBlueprintSnapshotId: null,
       isNewDocModalVisible: false,
       isLoading: false
     };
   }
 
-  createNewDocument(title, slug) {
+  createNewDocument(title, slug, blueprintDocSnapshotId) {
     return {
       doc: {
         title: toTrimmedString(title) || DEFAULT_DOCUMENT_TITLE,
         slug: toTrimmedString(slug) || null
       },
-      sections: []
+      sections: [],
+      copySectionsFromRevision: blueprintDocSnapshotId || null
     };
   }
 
@@ -54,6 +56,7 @@ class Docs extends React.Component {
     this.setState({
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
+      newDocBlueprintSnapshotId: null,
       isNewDocModalVisible: true
     });
   }
@@ -77,13 +80,13 @@ class Docs extends React.Component {
   }
 
   async handleOk() {
-    const { newDocTitle, newDocSlug } = this.state;
+    const { newDocTitle, newDocSlug, newDocBlueprintSnapshotId } = this.state;
     const { documentApiClient } = this.props;
 
     try {
       this.setState({ isLoading: true });
 
-      const newDoc = this.createNewDocument(newDocTitle, newDocSlug);
+      const newDoc = this.createNewDocument(newDocTitle, newDocSlug, newDocBlueprintSnapshotId);
       const { doc } = await documentApiClient.saveDocument(newDoc);
 
       this.setState({
@@ -91,7 +94,7 @@ class Docs extends React.Component {
         isLoading: false
       });
 
-      window.location = urls.getDocUrl(doc.key);
+      window.location = urls.getEditDocUrl(doc.key);
     } catch (error) {
       this.setState({ isLoading: false });
       errorHelper.handleApiError(error, logger);
@@ -100,6 +103,15 @@ class Docs extends React.Component {
 
   handleCancel() {
     this.setState({ isNewDocModalVisible: false });
+  }
+
+  handleCloneClick(doc) {
+    this.setState({
+      newDocTitle: doc.title ? `${doc.title} (Kopie)` : DEFAULT_DOCUMENT_TITLE,
+      newDocSlug: doc.slug ? `${doc.slug}-kopie` : DEFAULT_DOCUMENT_SLUG,
+      newDocBlueprintSnapshotId: doc.snapshotId,
+      isNewDocModalVisible: true
+    });
   }
 
   renderTitle(title, doc) {
@@ -115,6 +127,10 @@ class Docs extends React.Component {
     return doc.updatedBy.email
       ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>E-Mail</a></span>
       : <span>{doc.updatedBy.username}</span>;
+  }
+
+  renderActions(title, doc) {
+    return <span><a onClick={() => this.handleCloneClick(doc)}>Klonen</a></span>;
   }
 
   render() {
@@ -142,6 +158,12 @@ class Docs extends React.Component {
         key: 'user',
         render: this.renderUpdatedBy,
         sorter: by(x => x.updatedBy.username)
+      },
+      {
+        title: 'Aktionen',
+        dataIndex: 'actions',
+        key: 'actions',
+        render: this.renderActions
       }
     ];
 

@@ -207,6 +207,7 @@ describe('document-service', () => {
           key: testSectionKey,
           createdOn: testDateNow,
           createdBy: { id: testUserId },
+          clonedFrom: null,
           order: 1,
           type: 'markdown',
           content: testSectionContent
@@ -240,6 +241,7 @@ describe('document-service', () => {
               key: testSectionKey,
               createdOn: testDateNow,
               createdBy: { id: testUserId },
+              clonedFrom: null,
               order: 1,
               type: 'markdown',
               content: testSectionContent
@@ -359,6 +361,7 @@ describe('document-service', () => {
             key: initialResult.sections[0].key,
             createdOn: initialDateNow,
             createdBy: { id: initialTestUserId },
+            clonedFrom: null,
             order: sinon.match.number,
             type: 'markdown',
             content: initialTestSectionContent
@@ -369,6 +372,7 @@ describe('document-service', () => {
             key: initialResult.sections[0].key, // Should be the same as in the initial revision
             createdOn: updatedDateNow,
             createdBy: { id: updatedTestUserId },
+            clonedFrom: null,
             order: sinon.match.number,
             type: 'markdown',
             content: updatedTestSectionContent
@@ -379,6 +383,7 @@ describe('document-service', () => {
             key: sinon.match.string,
             createdOn: updatedDateNow,
             createdBy: { id: updatedTestUserId },
+            clonedFrom: null,
             order: sinon.match.number,
             type: 'markdown',
             content: additionalTestSectionContent
@@ -436,6 +441,7 @@ describe('document-service', () => {
               key: sinon.match.string,
               createdOn: updatedDateNow,
               createdBy: { id: updatedTestUserId },
+              clonedFrom: null,
               order: sinon.match.number,
               type: 'markdown',
               content: updatedTestSectionContent
@@ -446,6 +452,7 @@ describe('document-service', () => {
               key: sinon.match.string,
               createdOn: updatedDateNow,
               createdBy: { id: updatedTestUserId },
+              clonedFrom: null,
               order: sinon.match.number,
               type: 'markdown',
               content: additionalTestSectionContent
