@@ -83,8 +83,8 @@ class DocumentController {
       const allowedUserFields = privateData.getAllowedUserFields(req.user);
 
       const { user } = req;
-      const { doc, sections } = req.body;
-      const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user });
+      const { doc, sections, copySectionsFromRevision } = req.body;
+      const docRevision = await this.documentService.createDocumentRevision({ doc, sections, user, copySectionsFromRevision });
       const initialState = this.clientDataMapper.mapDocToInitialState({ doc: docRevision, allowedUserFields: allowedUserFields });
       return res.send(initialState);
     });

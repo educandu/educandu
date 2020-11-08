@@ -3,6 +3,7 @@ const deepEqual = require('fast-deep-equal');
 const UserService = require('./user-service');
 const dateTime = require('../utils/date-time');
 const uniqueId = require('../utils/unique-id');
+const cloneDeep = require('../utils/clone-deep');
 const SectionStore = require('../stores/section-store');
 const DocumentStore = require('../stores/document-store');
 const HandlerFactory = require('../plugins/handler-factory');
@@ -95,10 +96,7 @@ class DocumentService {
   }
 
   async getDocumentRevision(revisionId) {
-    const snapshot = await this.documentSnapshotStore.findOne({
-      query: { _id: revisionId }
-    });
-
+    const snapshot = await this.getDocumentSnapshotById(revisionId);
     if (!snapshot) {
       return null;
     }
@@ -205,6 +203,14 @@ class DocumentService {
       .filter(section => !!section);
   }
 
+  async getDocumentSnapshotById(revisionId) {
+    const snapshot = await this.documentSnapshotStore.findOne({
+      query: { _id: revisionId }
+    });
+
+    return snapshot || null;
+  }
+
   getInitialDocumentSnapshot(documentKey) {
     return this.documentSnapshotStore.findOne({
       query: { key: documentKey },
@@ -286,7 +292,7 @@ class DocumentService {
     logger.info('Hard-delete completed');
   }
 
-  async createDocumentRevision({ doc, sections, user }) {
+  async createDocumentRevision({ doc, sections, user, copySectionsFromRevision }) {
     if (!user || !user._id) {
       throw new Error('No user specified');
     }
@@ -309,55 +315,87 @@ class DocumentService {
       throw new Error('The user does not have permission to update the document');
     }
 
-    const updatedSections = await Promise.all(sections.map(async section => {
-      logger.info('Processing section with key %s', section.key);
+    let updatedSections;
 
-      // Load potentially existing revision:
-      const existingSection = section.ancestorId ? await this.getSectionById(section.ancestorId) : null;
-      if (existingSection) {
-        logger.info('Found ancestor section with id %s', existingSection._id);
-      } else {
-        logger.info('No ancestor section found');
+    if (copySectionsFromRevision) {
+      const blueprintRevision = await this.getDocumentSnapshotById(copySectionsFromRevision);
+      if (!blueprintRevision) {
+        throw new Error(`Cannot clone document. Revision ${copySectionsFromRevision} does not exist.`);
       }
 
-      if (existingSection && section.type && existingSection.type !== section.type) {
-        throw new Error('Sections cannot change their type');
-      }
 
-      if (existingSection && section.key && existingSection.key !== section.key) {
-        throw new Error('Sections cannot change their key');
-      }
+      const blueprintSections = await this.getSectionsByIds(blueprintRevision.sections.map(section => section.id));
+      updatedSections = await Promise.all(blueprintSections.map(async originalSection => {
+        logger.info('Cloning section with id %s', originalSection._id);
 
-      if (!existingSection && !section.type) {
-        throw new Error('New sections must specify a type');
-      }
+        const newClonedSection = {
+          _id: uniqueId.create(),
+          ancestorId: null,
+          key: uniqueId.create(),
+          createdOn: now,
+          createdBy: { id: user._id },
+          clonedFrom: originalSection._id,
+          order: await this.sectionOrderStore.getNextOrder(),
+          type: originalSection.type,
+          content: cloneDeep(originalSection.content)
+        };
 
-      // If not changed, re-use existing revision:
-      if (existingSection && deepEqual(existingSection.content, section.content)) {
-        logger.info('Section has not changed compared to ancestor section with id %s, using the existing', existingSection._id);
-        return existingSection;
-      }
+        logger.info('Saving new section revision with id %s', newClonedSection._id);
+        await this.sectionStore.save(newClonedSection);
+        return newClonedSection;
+      }));
+    } else {
+      updatedSections = await Promise.all(sections.map(async section => {
+        logger.info('Processing section with key %s', section.key);
 
-      if (!section.content) {
-        throw new Error('Sections must specify a content');
-      }
+        // Load potentially existing revision:
+        const existingSection = section.ancestorId ? await this.getSectionById(section.ancestorId) : null;
+        if (existingSection) {
+          logger.info('Found ancestor section with id %s', existingSection._id);
+        } else {
+          logger.info('No ancestor section found');
+        }
 
-      // Otherwise, create a new one:
-      const newRevision = {
-        _id: uniqueId.create(),
-        ancestorId: section.ancestorId || null,
-        key: existingSection ? existingSection.key : section.key || uniqueId.create(),
-        createdOn: now,
-        createdBy: { id: user._id },
-        order: await this.sectionOrderStore.getNextOrder(),
-        type: existingSection ? existingSection.type : section.type,
-        content: section.content
-      };
+        if (existingSection && section.type && existingSection.type !== section.type) {
+          throw new Error('Sections cannot change their type');
+        }
 
-      logger.info('Saving new section revision with id %s', newRevision._id);
-      await this.sectionStore.save(newRevision);
-      return newRevision;
-    }));
+        if (existingSection && section.key && existingSection.key !== section.key) {
+          throw new Error('Sections cannot change their key');
+        }
+
+        if (!existingSection && !section.type) {
+          throw new Error('New sections must specify a type');
+        }
+
+        // If not changed, re-use existing revision:
+        if (existingSection && deepEqual(existingSection.content, section.content)) {
+          logger.info('Section has not changed compared to ancestor section with id %s, using the existing', existingSection._id);
+          return existingSection;
+        }
+
+        if (!section.content) {
+          throw new Error('Sections must specify a content');
+        }
+
+        // Otherwise, create a new one:
+        const newRevision = {
+          _id: uniqueId.create(),
+          ancestorId: section.ancestorId || null,
+          key: existingSection ? existingSection.key : section.key || uniqueId.create(),
+          createdOn: now,
+          createdBy: { id: user._id },
+          clonedFrom: null,
+          order: await this.sectionOrderStore.getNextOrder(),
+          type: existingSection ? existingSection.type : section.type,
+          content: section.content
+        };
+
+        logger.info('Saving new section revision with id %s', newRevision._id);
+        await this.sectionStore.save(newRevision);
+        return newRevision;
+      }));
+    }
 
     const newSnapshot = {
       _id: uniqueId.create(),
