@@ -4,6 +4,7 @@ const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
 const Switch = require('antd/lib/switch');
+const validation = require('../../../ui/validation');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -87,7 +88,7 @@ class VideoEditor extends React.Component {
             </RadioGroup>
           </FormItem>
           {type === TYPE_EXTERNAL && (
-            <FormItem label="Externe URL" {...formItemLayout}>
+            <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(url)} hasFeedback>
               <Input value={url} onChange={this.handleExternalUrlValueChanged} />
             </FormItem>
           )}
@@ -110,7 +111,7 @@ class VideoEditor extends React.Component {
             </FormItem>
           )}
           {type === TYPE_YOUTUBE && (
-            <FormItem label="Youtube URL" {...formItemLayout}>
+            <FormItem label="Youtube URL" {...formItemLayout} {...validation.validateUrl(url)} hasFeedback>
               <Input value={url} onChange={this.handleYoutubeUrlValueChanged} />
             </FormItem>
           )}

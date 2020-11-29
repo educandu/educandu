@@ -4,6 +4,7 @@ const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Slider = require('antd/lib/slider');
 const Checkbox = require('antd/lib/checkbox');
+const validation = require('../../../ui/validation');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
@@ -57,30 +58,13 @@ class IframeEditor extends React.Component {
       wrapperCol: { span: 14 }
     };
 
-    const isUrlValid = validateUrl(url);
-    let validateStatus;
-    let help;
-    if (isUrlValid) {
-      if (url === '') {
-        validateStatus = 'warning';
-        help = 'Bitte geben Sie eine Adresse an.';
-      } else {
-        validateStatus = 'success';
-        help = null;
-      }
-    } else {
-      validateStatus = 'error';
-      help = 'Sie können nur Seiten mit sicherem Protokoll (https) einbetten.';
-    }
-
     return (
       <div>
         <Form layout="horizontal">
           <FormItem
             {...formItemLayout}
             label="URL"
-            help={help}
-            validateStatus={validateStatus}
+            {...validation.validateUrl(url)}
             hasFeedback
             >
             <Input value={url} onChange={this.handleExternalUrlValueChanged} />

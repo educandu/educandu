@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
 const urls = require('../../../utils/urls');
+const validation = require('../../../ui/validation');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -66,7 +67,7 @@ class TileEditor extends React.Component {
           </RadioGroup>
         </FormItem>
         {image.type === 'external' && (
-          <FormItem label="Externe URL" {...formItemLayout}>
+          <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(image.url)} hasFeedback>
             <Input value={image.url} onChange={this.handleExternalImageUrlValueChanged} />
           </FormItem>
         )}
@@ -99,7 +100,7 @@ class TileEditor extends React.Component {
           </RadioGroup>
         </FormItem>
         {link.type === 'external' && (
-          <FormItem label="Externe URL" {...formItemLayout}>
+          <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(link.url, { allowInsecure: true })} hasFeedback>
             <Input value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}

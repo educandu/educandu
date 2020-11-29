@@ -53,6 +53,7 @@
     "no-implicit-coercion": ["error", { "allow": ["!!", "~"] }],
     "no-inline-comments": ["off"],
     "no-magic-numbers": ["off"],
+    "no-negated-condition": ["off"],
     "no-ternary": ["off"],
     "no-underscore-dangle": ["off"],
     "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
