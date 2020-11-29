@@ -4,6 +4,7 @@ const Form = require('antd/lib/form');
 const Input = require('antd/lib/input');
 const Radio = require('antd/lib/radio');
 const Switch = require('antd/lib/switch');
+const validation = require('../../../ui/validation');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -104,7 +105,7 @@ class ImageEditor extends React.Component {
             </RadioGroup>
           </FormItem>
           {type === 'external' && (
-            <FormItem label="Externe URL" {...formItemLayout}>
+            <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(url)} hasFeedback>
               <Input value={url} onChange={this.handleExternalUrlValueChanged} />
             </FormItem>
           )}
@@ -142,7 +143,7 @@ class ImageEditor extends React.Component {
                   </RadioGroup>
                 </FormItem>
                 {hover.type === 'external' && (
-                  <FormItem label="Externe URL" {...formItemLayout}>
+                  <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(url)} hasFeedback>
                     <Input value={hover.url} onChange={this.handleHoverExternalUrlValueChanged} />
                   </FormItem>
                 )}
