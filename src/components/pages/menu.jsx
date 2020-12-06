@@ -6,7 +6,6 @@ const urls = require('../../utils/urls');
 const classnames = require('classnames');
 const DocView = require('../doc-view.jsx');
 const permissions = require('../../domain/permissions');
-const MenuCategoryItem = require('../menu-category-item.jsx');
 const { menuShape, docMetadataShape, docShape, sectionShape } = require('../../ui/default-prop-types');
 
 const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
@@ -19,7 +18,6 @@ class Menu extends React.Component {
     const { initialState } = this.props;
 
     this.state = {
-      currentActiveNode: null,
       documentDictionary: initialState.docs.reduce((map, doc) => {
         map.set(doc.key, doc);
         return map;
@@ -33,30 +31,61 @@ class Menu extends React.Component {
     window.location = menuEditUrl;
   }
 
-  handleNodeClick(node) {
-    this.setState({ currentActiveNode: node });
+  renderDefaultDoc(defaultDocument, language) {
+    return (
+      <div className="MenuPage-detailsItem">
+        <DocView doc={defaultDocument.doc} sections={defaultDocument.sections} language={language} />
+      </div>
+    );
   }
 
-  handleMenuTitleClick() {
-    this.setState({ currentActiveNode: null });
+  hasNodeAnyDocuments(node) {
+    if (node.documentKeys.length) {
+      return true;
+    }
+
+    if (node.children.length) {
+      return node.children.some(child => this.hasNodeAnyDocuments(child));
+    }
+
+    return false;
   }
 
-  renderCategoryList(nodes, level, activeNode) {
+  renderMenuItemList(nodes, level, documentDictionary) {
     return (
       <ul className="MenuPage-categoryList">
-        {nodes.map(node => (
+        {nodes.filter(node => this.hasNodeAnyDocuments(node)).map(node => (
           <li key={node.key}>
             <div className={classnames(['MenuPage-categoryListItem', `u-level-${level}`])}>
-              <MenuCategoryItem
-                node={node}
-                isActive={node === activeNode}
-                onNodeClick={this.handleNodeClick}
-                />
+              {this.renderLinkList(node, level, documentDictionary)}
             </div>
-            {!!node.children.length && this.renderCategoryList(node.children, level + 1, activeNode)}
+            {!!node.children.length && this.renderMenuItemList(node.children, level + 1, documentDictionary)}
           </li>
         ))}
       </ul>
+    );
+  }
+
+  renderLinkList(node, level, documentDictionary) {
+    const docs = node.documentKeys.map(key => documentDictionary.get(key));
+    return (
+      <div key={node.key} className={classnames(['MenuPage-detailsItem', `u-level-${level}`])}>
+        <h3 className={classnames(['MenuPage-linkListTitle', `u-level-${level}`])}>{node.title}</h3>
+        {!!docs.length && (
+          <ul className="MenuPage-linkList">
+            {docs.map(doc => {
+              return (
+                <li
+                  key={doc.key}
+                  className="MenuPage-linkListItem"
+                  >
+                  {this.renderLinkListItemContent(doc)}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
     );
   }
 
@@ -66,72 +95,10 @@ class Menu extends React.Component {
       : <span>{doc.title}</span>;
   }
 
-  renderLinkList(node, documentDictionary, isActive) {
-    const docs = node.documentKeys.map(key => documentDictionary.get(key));
-    const classNames = classnames('MenuPage-detailsItem', { 'MenuPage-detailsItem--active': isActive });
-    return (
-      <div key={node.key} className={classNames}>
-        <h2 className="MenuPage-linkListTitle">{node.title}</h2>
-        <ul className="MenuPage-linkList">
-          {docs.map(doc => {
-            return (
-              <li
-                key={doc.key}
-                className="MenuPage-linkListItem"
-                >
-                {this.renderLinkListItemContent(doc)}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    );
-  }
-
-  renderLinkLists(nodes, currentActiveNode, documentDictionary) {
-    return nodes.flatMap(node => {
-      const linkLists = [this.renderLinkList(node, documentDictionary, node === currentActiveNode)];
-      return node.children && node.children.length
-        ? linkLists.concat(this.renderLinkLists(node.children, currentActiveNode, documentDictionary))
-        : linkLists;
-    });
-  }
-
-  renderDefaultDoc(defaultDocument, language, isActive) {
-    const classNames = classnames('MenuPage-detailsItem', { 'MenuPage-detailsItem--active': isActive });
-    return (
-      <div className={classNames}>
-        <DocView doc={defaultDocument.doc} sections={defaultDocument.sections} language={language} />
-      </div>
-    );
-  }
-
   render() {
     const { initialState, language } = this.props;
     const { currentActiveNode, documentDictionary } = this.state;
     const { menu, defaultDocument } = initialState;
-
-    const hasCategories = menu.nodes && menu.nodes.length;
-
-    const defaultDoc = defaultDocument ? this.renderDefaultDoc(defaultDocument, language, !currentActiveNode) : null;
-    const linkLists = this.renderLinkLists(menu.nodes, currentActiveNode, documentDictionary);
-
-    const titleMarkup = <h2><a onClick={this.handleMenuTitleClick}>{menu.title}</a></h2>;
-
-    const categoryPanel = hasCategories ? (
-      <aside className="MenuPage-categories">
-        {menu.title && titleMarkup}
-        {this.renderCategoryList(menu.nodes, 0, currentActiveNode)}
-      </aside>
-    ) : null;
-
-    const detailsPanel = (
-      <article className="MenuPage-details">
-        {menu.title && !hasCategories && titleMarkup}
-        {defaultDoc}
-        {linkLists}
-      </article>
-    );
 
     const headerActions = [
       {
@@ -147,8 +114,9 @@ class Menu extends React.Component {
     return (
       <Page headerActions={headerActions}>
         <div className="MenuPage">
-          {categoryPanel}
-          {detailsPanel}
+          <h2>{menu.title}</h2>
+          {defaultDocument ? this.renderDefaultDoc(defaultDocument, language, !currentActiveNode) : null}
+          {this.renderMenuItemList(menu.nodes, 0, documentDictionary)}
         </div>
       </Page>
     );
