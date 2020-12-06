@@ -19,7 +19,7 @@
 .EditMenuPage-editor {
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 2fr @edit-menu-editor-box-gutter 3fr;
+  grid-template-columns: 1fr @edit-menu-editor-box-gutter 1fr;
 }
 
 .EditMenuPage-editorColumn {
@@ -48,8 +48,11 @@
   border-style: solid;
   border-color: @droppable-border-color;
   transition: all 0.3s ease;
+  max-height: 500px;
+  overflow-y: scroll;
 
   &.EditMenuPage-menuRefList--oneLine {
+    overflow-y: hidden;
     min-height: inherit;
     height: @edit-menu-ref-list-item-height + (2 * @edit-menu-ref-list-padding) + (2 * @edit-menu-ref-list-border-width);
   }
