@@ -1,19 +1,27 @@
 .MenuDocRef {
-  flex: 1 0 0%;
   display: flex;
   align-items: center;
 }
 
 .MenuDocRef-titleAndUrl {
-  flex: 1 0 0%;
+  width: 100%;
+  overflow: auto;
 }
 
 .MenuDocRef-title {
   font-weight: bold;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .MenuDocRef-url {
   font-style: italic;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .MenuDocRef-deleteButton {
