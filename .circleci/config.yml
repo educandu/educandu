@@ -62,7 +62,8 @@ jobs:
       - RELEASE_NUMBER: 0.0.<< pipeline.number >>
       - CIRCLE_COMPARE_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<<pipeline.git.revision>>
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 19.03.13
       - checkout
       - attach_workspace:
           at: "."
@@ -111,4 +112,4 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: main
