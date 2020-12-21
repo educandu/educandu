@@ -500,7 +500,7 @@ tasks.serveRestartRaw = series(tasks.bundleJs, tasks.restartServer);
 
 tasks.ciPrepare = series(tasks.mongoUser, tasks.mongoSeed, tasks.minioSeed);
 
-tasks.ci = series(tasks.ciPrepare, tasks.clean, tasks.lint, tasks.test, tasks.build, tasks.verify);
+tasks.ci = series(tasks.clean, tasks.lint, tasks.test, tasks.build, tasks.verify);
 
 tasks.setupWatchers = function setupWatchers(done) {
   watch(['src/**/*.{js,jsx}'], tasks.serveRestart);

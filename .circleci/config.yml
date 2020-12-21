@@ -38,7 +38,7 @@ jobs:
             - ~/.cache/yarn
       - run:
           name: Prepare build
-          command: ./node_modules/.bin/gulp ci:prepare
+          command: ./node_modules/.bin/gulp ciPrepare
       - run:
           name: Build
           command: ./node_modules/.bin/gulp ci
