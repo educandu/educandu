@@ -20,7 +20,7 @@ const playStates = {
 class VideoDisplay extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.playerRef = React.createRef();
     this.state = {
       playState: playStates.INITIALIZING,

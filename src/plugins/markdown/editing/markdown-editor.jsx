@@ -1,6 +1,6 @@
 const React = require('react');
+const { Input } = require('antd');
 const autoBind = require('auto-bind');
-const Input = require('antd/lib/input');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 
 const { TextArea } = Input;
@@ -8,7 +8,7 @@ const { TextArea } = Input;
 class MarkdownEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleCurrentEditorValueChanged(event) {
@@ -26,7 +26,7 @@ class MarkdownEditor extends React.Component {
     const { text } = content;
 
     return (
-      <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
+      <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
     );
   }
 }

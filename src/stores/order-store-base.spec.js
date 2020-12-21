@@ -36,7 +36,7 @@ describe('order-store-base', () => {
         result = await sut.getNextOrder();
       });
       it('should create one', async () => {
-        const count = await collection.count({ _id: testOrderKey });
+        const count = await collection.countDocuments({ _id: testOrderKey });
         expect(count).toBe(1);
       });
       it('should return 1', () => {

@@ -1,6 +1,6 @@
 const React = require('react');
+const { Dropdown } = require('antd');
 const PropTypes = require('prop-types');
-const Dropdown = require('antd/lib/dropdown');
 const { SwatchesPicker } = require('react-color');
 
 function ColorPicker({ color, colors, onChange, placement, width }) {

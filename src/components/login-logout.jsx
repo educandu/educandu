@@ -1,23 +1,24 @@
 const React = require('react');
+const { Avatar } = require('antd');
 const gravatar = require('gravatar');
 const urls = require('../utils/urls');
-const Avatar = require('antd/lib/avatar');
 const { useUser } = require('./user-context.jsx');
 const LinkPopover = require('./link-popover.jsx');
 const { useRequest } = require('./request-context.jsx');
+const { ProfileOutlined, LogoutOutlined } = require('@ant-design/icons');
 
 const gravatarPopoverItems = [
   {
     key: 'profile',
     href: urls.getProfileUrl(),
     text: 'Profil bearbeiten',
-    icon: 'profile',
+    icon: ProfileOutlined,
     permission: null
   }, {
     key: 'logout',
     href: urls.getLogoutUrl(),
     text: 'Abmelden',
-    icon: 'logout',
+    icon: LogoutOutlined,
     permission: null
   }
 ];

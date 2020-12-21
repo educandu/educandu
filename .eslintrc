@@ -74,7 +74,7 @@
     "require-unicode-regexp": ["off"],
     "wrap-iife": ["error", "inside"],
     "react/destructuring-assignment": ["off"],
-    "react/forbid-component-props": ["error", { "forbid": [{ "propName": "style", "allowedFor": ["Icon"] }] }],
+    "react/forbid-component-props": ["off"],
     "react/forbid-prop-types": ["off"],
     "react/jsx-closing-bracket-location": [1, "props-aligned"],
     "react/jsx-fragments": ["error", "element"],

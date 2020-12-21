@@ -1,11 +1,10 @@
 const React = require('react');
-const Icon = require('antd/lib/icon');
-const Menu = require('antd/lib/menu');
 const PropTypes = require('prop-types');
-const Dropdown = require('antd/lib/dropdown');
+const { Menu, Dropdown } = require('antd');
 const { usePermission } = require('../ui/hooks');
 const permissions = require('../domain/permissions');
 const { sectionShape } = require('../ui/default-prop-types');
+const { ThunderboltOutlined } = require('@ant-design/icons');
 const { confirmHardDelete } = require('./section-action-dialogs.jsx');
 const { HARD_DELETE, createHardDelete } = require('../ui/section-actions');
 
@@ -32,7 +31,7 @@ function SectionActionDropdown({ children, section, onAction, onVisibleChange, p
   if (canHardDelete && !section.deletedOn) {
     menuItems.push((
       <MenuItem key={HARD_DELETE}>
-        <Icon type="thunderbolt" style={redIconStyle} />&nbsp;&nbsp;<span>Unwiderruflich löschen</span>
+        <ThunderboltOutlined style={redIconStyle} />&nbsp;&nbsp;<span>Unwiderruflich löschen</span>
       </MenuItem>
     ));
   }

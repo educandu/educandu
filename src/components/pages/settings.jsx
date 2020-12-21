@@ -2,8 +2,7 @@ const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
-const Button = require('antd/lib/button');
+const { Input, Button } = require('antd');
 const Logger = require('../../common/logger');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
@@ -15,7 +14,7 @@ const logger = new Logger(__filename);
 class Settings extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = {
       settings: props.initialState
     };

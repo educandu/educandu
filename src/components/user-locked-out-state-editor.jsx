@@ -1,14 +1,14 @@
 const React = require('react');
+const { Switch } = require('antd');
 const autoBind = require('auto-bind');
-const Icon = require('antd/lib/icon');
 const PropTypes = require('prop-types');
-const Switch = require('antd/lib/switch');
 const { userShape } = require('./../ui/default-prop-types');
+const { CheckOutlined, CloseOutlined } = require('@ant-design/icons');
 
 class UserLockedOutStateEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleLockedOutStateChange(newLockedOutState) {
@@ -20,8 +20,8 @@ class UserLockedOutStateEditor extends React.Component {
     const { user } = this.props;
     return (
       <Switch
-        checkedChildren={<Icon type="check" />}
-        unCheckedChildren={<Icon type="close" />}
+        checkedChildren={<CheckOutlined />}
+        unCheckedChildren={<CloseOutlined />}
         checked={user.lockedOut}
         onChange={this.handleLockedOutStateChange}
         />

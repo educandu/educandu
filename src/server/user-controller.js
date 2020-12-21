@@ -41,7 +41,7 @@ class UserController {
       resave: false,
       saveUninitialized: false, // Don't create session until something stored
       store: new MongoSessionStore({
-        db: this.database._db,
+        client: this.database._mongoClient,
         collection: sessionsStoreSpec.name,
         ttl: this.serverSettings.sessionDurationInMinutes * 60,
         autoRemove: 'disabled', // We use our own index

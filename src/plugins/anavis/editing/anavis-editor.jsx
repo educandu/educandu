@@ -1,22 +1,16 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
-const Radio = require('antd/lib/radio');
-const Modal = require('antd/lib/modal');
-const Table = require('antd/lib/table');
 const classNames = require('classnames');
-const Button = require('antd/lib/button');
-const Switch = require('antd/lib/switch');
 const Dropperx = require('dropperx').default;
-const InputNumber = require('antd/lib/input-number');
 const ColorPicker = require('../../../components/color-picker.jsx');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
 const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
+const { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } = require('antd');
 const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+const { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } = require('@ant-design/icons');
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -55,15 +49,25 @@ const DEFAULT_LENGTH = 1000;
 class AnavisEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.columns = [
       {
         width: 80,
         key: 'upDown',
         render: (upDown, item, index) => (
           <ButtonGroup>
-            <Button data-index={index} disabled={index === 0} icon="arrow-up" onClick={this.handleUpCircleButtonClick} />
-            <Button data-index={index} disabled={index === this.props.content.parts.length - 1} icon="arrow-down" onClick={this.handleDownCircleButtonClick} />
+            <Button
+              data-index={index}
+              disabled={index === 0}
+              icon={<ArrowUpOutlined />}
+              onClick={this.handleUpCircleButtonClick}
+              />
+            <Button
+              data-index={index}
+              disabled={index === this.props.content.parts.length - 1}
+              icon={<ArrowDownOutlined />}
+              onClick={this.handleDownCircleButtonClick}
+              />
           </ButtonGroup>
         )
       }, {
@@ -99,12 +103,12 @@ class AnavisEditor extends React.Component {
         )
       }, {
         title: (
-          <Button type="primary" icon="plus" onClick={this.handleAddPartButtonClick} />
+          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddPartButtonClick} />
         ),
         width: 48,
         key: 'button',
         render: (value, item, index) => (
-          <Button data-index={index} type="danger" icon="delete" onClick={this.handleDeleteButtonClick} />
+          <Button data-index={index} type="danger" icon={<DeleteOutlined />} onClick={this.handleDeleteButtonClick} />
         )
       }
     ];
@@ -297,12 +301,12 @@ class AnavisEditor extends React.Component {
               <Input value={annotation} onChange={event => this.handleAnnotationChange(event, partIndex, annotationIndex)} />
             </div>
             <div style={{ flex: 'none', marginLeft: '8px' }}>
-              <Button type="danger" icon="delete" onClick={() => this.handleDeleteAnnotationButtonClick(annotationIndex)} />
+              <Button type="danger" icon={<DeleteOutlined />} onClick={() => this.handleDeleteAnnotationButtonClick(annotationIndex)} />
             </div>
           </div>
         ))}
         <div style={{ marginTop: part.annotations.length === 0 ? '0' : '4px' }}>
-          <Button type="primary" icon="plus" onClick={this.handleAddAnnotationButtonClick} />
+          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddAnnotationButtonClick} />
         </div>
       </div>
     );
@@ -371,7 +375,7 @@ class AnavisEditor extends React.Component {
             <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={this.handleWidthChanged} />
           </Form.Item>
           <Form.Item label="Copyright Infos" {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleTextChanged} autosize={{ minRows: 3 }} />
+            <TextArea value={text} onChange={this.handleTextChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
         <Dropperx accept="application/json" maxSize={500000} onDrop={this.handleJsonDrop}>

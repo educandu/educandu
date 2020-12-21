@@ -26,7 +26,7 @@ class EarTrainingDisplay extends React.Component {
   constructor(props) {
     super(props);
 
-    autoBind.react(this);
+    autoBind(this);
 
     this.abcContainerRef = React.createRef();
     this.midiContainerRef = React.createRef();

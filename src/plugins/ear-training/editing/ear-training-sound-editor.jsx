@@ -1,8 +1,7 @@
 const React = require('react');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
-const Radio = require('antd/lib/radio');
+const { Input, Radio } = require('antd');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -15,7 +14,7 @@ const RadioButton = Radio.Button;
 class EarTrainingSoundEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   changeSound(newValues) {
@@ -116,7 +115,7 @@ class EarTrainingSoundEditor extends React.Component {
           <td style={{ paddingTop: '8px' }}>
             <TextArea
               value={sound.text}
-              autosize={{ minRows: 3 }}
+              autoSize={{ minRows: 3 }}
               onChange={this.handleTextChanged}
               />
           </td>

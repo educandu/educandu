@@ -1,7 +1,6 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Input = require('antd/lib/input');
-const message = require('antd/lib/message');
+const { Input, message } = require('antd');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 
 const { TextArea } = Input;
@@ -9,7 +8,7 @@ const { TextArea } = Input;
 class IntervalTrainerEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleJSONValueChanged(event) {
@@ -37,7 +36,7 @@ class IntervalTrainerEditor extends React.Component {
 
     return (
       <div>
-        <TextArea value={json} onChange={this.handleJSONValueChanged} autosize={{ minRows: 3 }} />
+        <TextArea value={json} onChange={this.handleJSONValueChanged} autoSize={{ minRows: 3 }} />
       </div>
     );
   }

@@ -1,15 +1,16 @@
 const React = require('react');
+const { Button } = require('antd');
 const autoBind = require('auto-bind');
 const urls = require('../utils/urls');
 const PropTypes = require('prop-types');
-const Button = require('antd/lib/button');
+const { DeleteOutlined } = require('@ant-design/icons');
 const { docMetadataShape } = require('../ui/default-prop-types');
 
 
 class MenuDocRef extends React.PureComponent {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleDeleteButtonClick() {
@@ -27,7 +28,7 @@ class MenuDocRef extends React.PureComponent {
         </div>
         {onDelete && (
           <div className="MenuDocRef-deleteButton">
-            <Button type="danger" size="small" icon="delete" ghost onClick={this.handleDeleteButtonClick} />
+            <Button type="danger" size="small" icon={<DeleteOutlined />} ghost onClick={this.handleDeleteButtonClick} />
           </div>
         )}
       </div>

@@ -2,15 +2,11 @@
 
 const React = require('react');
 const autoBind = require('auto-bind');
-const Icon = require('antd/lib/icon');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
-const Upload = require('antd/lib/upload');
-const Button = require('antd/lib/button');
-const message = require('antd/lib/message');
 const urls = require('../../../utils/urls');
+const { UploadOutlined } = require('@ant-design/icons');
 const HttpClient = require('../../../services/http-client');
+const { Form, Input, Upload, Button, message } = require('antd');
 const { inject } = require('../../../components/container-context.jsx');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
@@ -20,7 +16,7 @@ const FormItem = Form.Item;
 class H5pPlayerEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleMaxWidthValueChanged(value) {
@@ -76,7 +72,7 @@ class H5pPlayerEditor extends React.Component {
                   showUploadList={false}
                   customRequest={this.onCustomUpload}
                   >
-                  <Button><Icon type="upload" /> Datei auswählen</Button>
+                  <Button icon={<UploadOutlined />}>Datei auswählen</Button>
                 </Upload>
               </div>
             </div>

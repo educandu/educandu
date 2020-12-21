@@ -3,8 +3,7 @@ const firstBy = require('thenby');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
-const Table = require('antd/lib/table');
-const Popover = require('antd/lib/popover');
+const { Table, Popover } = require('antd');
 const roles = require('../../domain/roles');
 const Logger = require('../../common/logger');
 const errorHelper = require('../../ui/error-helper');
@@ -13,6 +12,7 @@ const { userShape } = require('../../ui/default-prop-types');
 const UserApiClient = require('../../services/user-api-client');
 const UserRoleTagEditor = require('../user-role-tag-editor.jsx');
 const CountryFlagAndName = require('../country-flag-and-name.jsx');
+const { SaveOutlined, CloseOutlined } = require('@ant-design/icons');
 const UserLockedOutStateEditor = require('../user-locked-out-state-editor.jsx');
 
 const logger = new Logger(__filename);
@@ -27,7 +27,7 @@ const availableRoles = [
 class Users extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = {
       users: props.initialState,
       changedLockOutStates: {},
@@ -213,13 +213,13 @@ class Users extends React.Component {
       headerActions.push({
         key: 'save',
         type: 'primary',
-        icon: 'save',
+        icon: SaveOutlined,
         text: 'Speichern',
         handleClick: this.handleSaveClick
       });
       headerActions.push({
         key: 'close',
-        icon: 'close',
+        icon: CloseOutlined,
         text: 'Abbrechen',
         handleClick: this.handleCancelClick
       });

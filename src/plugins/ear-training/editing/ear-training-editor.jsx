@@ -1,15 +1,13 @@
 const React = require('react');
-const Form = require('antd/lib/form');
 const autoBind = require('auto-bind');
-const Input = require('antd/lib/input');
-const Table = require('antd/lib/table');
-const Button = require('antd/lib/button');
+const { Form, Input, Table, Button } = require('antd');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const EarTrainingSoundEditor = require('./ear-training-sound-editor.jsx');
 const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+const { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } = require('@ant-design/icons');
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -20,7 +18,7 @@ const defaultSound = { type: 'midi', url: null, text: null };
 class EarTrainingEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
 
     this.columns = [
       {
@@ -31,13 +29,13 @@ class EarTrainingEditor extends React.Component {
             <Button
               data-index={index}
               disabled={index === 0}
-              icon="arrow-up"
+              icon={<ArrowUpOutlined />}
               onClick={this.handleUpCircleButtonClick}
               />
             <Button
               data-index={index}
               disabled={index === this.props.content.tests.length - 1}
-              icon="arrow-down"
+              icon={<ArrowDownOutlined />}
               onClick={this.handleDownCircleButtonClick}
               />
           </ButtonGroup>
@@ -95,7 +93,7 @@ class EarTrainingEditor extends React.Component {
         })
       }, {
         title: (
-          <Button type="primary" icon="plus" onClick={this.handleAddButtonClick} />
+          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddButtonClick} />
         ),
         width: 48,
         key: 'button',
@@ -103,7 +101,7 @@ class EarTrainingEditor extends React.Component {
           <Button
             data-index={index}
             type="danger"
-            icon="delete"
+            icon={<DeleteOutlined />}
             disabled={this.props.content.tests.length < 2}
             onClick={this.handleDeletButtonClick}
             />

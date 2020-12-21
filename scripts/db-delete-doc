@@ -4,7 +4,7 @@
 /* eslint no-await-in-loop: 0 */
 
 require('@babel/register')({ extensions: ['.jsx'] });
-require('@babel/polyfill');
+require('core-js');
 
 const DocumentService = require('../src/services/document-service');
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');

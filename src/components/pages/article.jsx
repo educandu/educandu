@@ -3,6 +3,7 @@ const Page = require('../page.jsx');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const DocView = require('../doc-view.jsx');
+const { EditOutlined } = require('@ant-design/icons');
 const permissions = require('../../domain/permissions');
 const ArticleCredits = require('../article-credits.jsx');
 const { docShape, sectionShape } = require('../../ui/default-prop-types');
@@ -17,7 +18,7 @@ function Article({ initialState, language }) {
       handleClick: () => {
         window.location = urls.getEditDocUrl(doc.key);
       },
-      icon: 'edit',
+      icon: EditOutlined,
       key: 'edit',
       permission: permissions.EDIT_DOC,
       text: 'Bearbeiten',

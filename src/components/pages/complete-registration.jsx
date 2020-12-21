@@ -1,8 +1,23 @@
 const React = require('react');
 const Page = require('../page.jsx');
+const urls = require('../../utils/urls');
 const ElmuLogo = require('../elmu-logo.jsx');
+const Countdown = require('../countdown.jsx');
 
 function CompleteRegistration() {
+  const [isCountdownRunning, setIsCountdownRunning] = React.useState(false);
+  React.useEffect(() => setIsCountdownRunning(true), []);
+
+  const countdown = (
+    <Countdown
+      seconds={10}
+      isRunning={isCountdownRunning}
+      onComplete={() => {
+        window.location = urls.getLoginUrl();
+      }}
+      />
+  );
+
   return (
     <Page fullScreen>
       <div className="CompleteRegistrationPage">
@@ -11,7 +26,7 @@ function CompleteRegistration() {
         </div>
         <div className="CompleteRegistrationPage-message">
           <p>Gratulation! Sie sind nun ein elmu-User und haben Ihre Registrierung erfolgreich abgeschlossen.</p>
-          <p>Klicken Sie bitte <a href="/login">hier</a>, wenn Sie sich anmelden möchten.</p>
+          <p>Sie werden in {countdown} auf die <a href={urls.getLoginUrl()}>Anmeldeseite</a> weitergeleitet.</p>
         </div>
       </div>
     </Page>

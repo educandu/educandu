@@ -5,6 +5,7 @@ const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
 const classnames = require('classnames');
 const DocView = require('../doc-view.jsx');
+const { EditOutlined } = require('@ant-design/icons');
 const permissions = require('../../domain/permissions');
 const { menuShape, docMetadataShape, docShape, sectionShape } = require('../../ui/default-prop-types');
 
@@ -13,7 +14,7 @@ const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
 class Menu extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
 
     const { initialState } = this.props;
 
@@ -104,7 +105,7 @@ class Menu extends React.Component {
       {
         key: 'edit',
         type: 'primary',
-        icon: 'edit',
+        icon: EditOutlined,
         text: 'Bearbeiten',
         permission: permissions.EDIT_MENU,
         handleClick: this.handleEditMenuClick

@@ -39,7 +39,7 @@ class Database {
 
   async connect() {
     logger.info('Trying to connect to MongoDB');
-    this._mongoClient = await MongoClient.connect(this._connectionString);
+    this._mongoClient = await MongoClient.connect(this._connectionString, { useUnifiedTopology: true });
     logger.info('Successfully connected to MongoDB');
     this._db = this._mongoClient.db();
   }
@@ -53,8 +53,17 @@ class Database {
     const collectionName = collectionSpec.name;
     const indexes = collectionSpec.indexes || [];
 
-    logger.info('Creating MongoDB collection %s', collectionName);
-    const collection = await this._db.createCollection(collectionName);
+    const existingCollections = await this._db.listCollections().toArray();
+    const collectionExists = existingCollections.map(col => col.name).includes(collectionName);
+
+    if (collectionExists) {
+      logger.info('Collection %s already exists. Skipping creation.', collectionName);
+    } else {
+      logger.info('Creating collection %s on MongoDB.', collectionName);
+      await this._db.createCollection(collectionName);
+    }
+
+    const collection = this._db.collection(collectionName);
 
     if (indexes.length) {
       try {

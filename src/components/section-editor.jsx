@@ -1,15 +1,12 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Icon = require('antd/lib/icon');
-const Menu = require('antd/lib/menu');
 const PropTypes = require('prop-types');
-const Radio = require('antd/lib/radio');
 const classNames = require('classnames');
-const Button = require('antd/lib/button');
-const Dropdown = require('antd/lib/dropdown');
 const DeletedSection = require('./deleted-section.jsx');
+const { Menu, Radio, Button, Dropdown } = require('antd');
 const { confirmDelete } = require('./section-action-dialogs.jsx');
 const { docShape, sectionShape } = require('../ui/default-prop-types');
+const { SettingOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined, EyeOutlined, EditOutlined } = require('@ant-design/icons');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -21,7 +18,7 @@ const SECTION_MENU_KEY_DELETE = 'delete';
 class SectionEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = { mode: 'preview' };
   }
 
@@ -102,13 +99,13 @@ class SectionEditor extends React.Component {
     const sectionMenu = (
       <Menu onClick={this.handleSectionMenuClick}>
         <Menu.Item key={SECTION_MENU_KEY_MOVE_UP}>
-          <Icon type="arrow-up" />&nbsp;&nbsp;<span>Nach oben verschieben</span>
+          <ArrowUpOutlined />&nbsp;&nbsp;<span>Nach oben verschieben</span>
         </Menu.Item>
         <Menu.Item key={SECTION_MENU_KEY_MOVE_DOWN}>
-          <Icon type="arrow-down" />&nbsp;&nbsp;<span>Nach unten verschieben</span>
+          <ArrowDownOutlined />&nbsp;&nbsp;<span>Nach unten verschieben</span>
         </Menu.Item>
         <Menu.Item key={SECTION_MENU_KEY_DELETE}>
-          <Icon type="delete" style={{ color: 'red' }} />&nbsp;&nbsp;<span>Löschen</span>
+          <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>Löschen</span>
         </Menu.Item>
       </Menu>
     );
@@ -129,7 +126,7 @@ class SectionEditor extends React.Component {
           </div>
           <div style={{ flex: 'none' }}>
             <Dropdown key="new-section-dropdown" overlay={sectionMenu} placement="bottomRight">
-              <Button type="ghost" icon="setting" size="small" />
+              <Button type="ghost" icon={<SettingOutlined />} size="small" />
             </Dropdown>
           </div>
         </div>
@@ -139,10 +136,10 @@ class SectionEditor extends React.Component {
         <div className="Panel-footer">
           <RadioGroup size="small" value={hasContent ? mode : 'preview'} onChange={this.handleModeChange}>
             <RadioButton value="preview">
-              <Icon type="eye-o" />&nbsp;Vorschau
+              <EyeOutlined />&nbsp;Vorschau
             </RadioButton>
             <RadioButton value="edit" disabled={!hasContent}>
-              <Icon type="edit" />&nbsp;Bearbeiten
+              <EditOutlined />&nbsp;Bearbeiten
             </RadioButton>
           </RadioGroup>
         </div>

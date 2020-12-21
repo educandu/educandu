@@ -1,8 +1,6 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
-const Radio = require('antd/lib/radio');
+const { Form, Input, Radio } = require('antd');
 const validation = require('../../../ui/validation');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
@@ -17,7 +15,7 @@ const { TextArea } = Input;
 class AudioEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleExternalUrlValueChanged(event) {
@@ -86,7 +84,7 @@ class AudioEditor extends React.Component {
             </FormItem>
           )}
           <Form.Item label="Copyright Infos" {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
+            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
       </div>

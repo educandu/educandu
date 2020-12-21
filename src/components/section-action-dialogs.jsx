@@ -1,7 +1,5 @@
 const React = require('react');
-const Modal = require('antd/lib/modal');
-const Input = require('antd/lib/input');
-const Checkbox = require('antd/lib/checkbox');
+const { Modal, Input, Checkbox } = require('antd');
 
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;

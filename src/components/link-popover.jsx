@@ -1,8 +1,8 @@
 const React = require('react');
-const Icon = require('antd/lib/icon');
+const { Popover } = require('antd');
 const PropTypes = require('prop-types');
-const Popover = require('antd/lib/popover');
 const permissions = require('../domain/permissions');
+const { default: Icon } = require('@ant-design/icons');
 const { useUser } = require('../components/user-context.jsx');
 
 function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger }) {
@@ -21,7 +21,7 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
       {filteredItems.map(item => (
         <li key={item.key} className="LinkPopover-item">
           <a href={item.href} className="LinkPopover-itemLink">
-            {item.icon && <span><Icon type={item.icon} />&nbsp;&nbsp;</span>}
+            {item.icon && <span><Icon component={item.icon} />&nbsp;&nbsp;</span>}
             {item.text}
           </a>
         </li>
@@ -47,7 +47,7 @@ LinkPopover.propTypes = {
     key: PropTypes.string.isRequired,
     href: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
-    icon: PropTypes.string,
+    icon: PropTypes.elementType,
     permission: PropTypes.string
   })),
   placement: PropTypes.oneOf([

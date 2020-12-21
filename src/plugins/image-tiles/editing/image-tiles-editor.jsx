@@ -1,20 +1,15 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Menu = require('antd/lib/menu');
-const Icon = require('antd/lib/icon');
-const Radio = require('antd/lib/radio');
-const Slider = require('antd/lib/slider');
-const Button = require('antd/lib/button');
-const Dropdown = require('antd/lib/dropdown');
-const { confirm } = require('antd/lib/modal');
 const TileEditor = require('./tile-editor.jsx');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
+const { Form, Menu, Radio, Slider, Button, Dropdown, Modal } = require('antd');
 const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
+const { SettingOutlined, PlusOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined } = require('@ant-design/icons');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+const { confirm } = Modal;
 
 const TILE_MENU_KEY_MOVE_UP = 'move-up';
 const TILE_MENU_KEY_MOVE_DOWN = 'move-down';
@@ -32,7 +27,7 @@ const tipFormatter = val => `${val}`;
 class ImageTilesEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   createDefaultTile() {
@@ -132,13 +127,13 @@ class ImageTilesEditor extends React.Component {
     return (
       <Menu onClick={this.handleTileMenuClick}>
         <Menu.Item data-index={index} key={TILE_MENU_KEY_MOVE_UP}>
-          <Icon type="arrow-up" />&nbsp;&nbsp;<span>Nach oben verschieben</span>
+          <ArrowUpOutlined />&nbsp;&nbsp;<span>Nach oben verschieben</span>
         </Menu.Item>
         <Menu.Item data-index={index} key={TILE_MENU_KEY_MOVE_DOWN}>
-          <Icon type="arrow-down" />&nbsp;&nbsp;<span>Nach unten verschieben</span>
+          <ArrowDownOutlined />&nbsp;&nbsp;<span>Nach unten verschieben</span>
         </Menu.Item>
         <Menu.Item data-index={index} key={TILE_MENU_KEY_DELETE}>
-          <Icon type="delete" style={{ color: 'red' }} />&nbsp;&nbsp;<span>Löschen</span>
+          <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>Löschen</span>
         </Menu.Item>
       </Menu>
     );
@@ -185,7 +180,7 @@ class ImageTilesEditor extends React.Component {
                   </div>
                   <div style={{ flex: 'none' }}>
                     <Dropdown overlay={this.createTileMenu(index)} placement="bottomRight">
-                      <Button type="ghost" icon="setting" size="small" />
+                      <Button type="ghost" icon={<SettingOutlined />} size="small" />
                     </Dropdown>
                   </div>
                 </div>
@@ -195,7 +190,7 @@ class ImageTilesEditor extends React.Component {
               </div>
             </div>
           ))}
-          <Button type="primary" icon="plus" onClick={this.handleAddButtonClick}>Kachel hinzufügen</Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddButtonClick}>Kachel hinzufügen</Button>
         </Form>
       </div>
     );

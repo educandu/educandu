@@ -18,7 +18,7 @@ class MinioS3Client {
     this.minioClient = new Client({
       endPoint: endpointUrl.hostname,
       port: Number(endpointUrl.port) || 0,
-      secure: endpointUrl.protocol === 'https:',
+      useSSL: endpointUrl.protocol === 'https:',
       region: region,
       accessKey: accessKey,
       secretKey: secretKey

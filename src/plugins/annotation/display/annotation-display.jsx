@@ -1,5 +1,5 @@
 const React = require('react');
-const Collapse = require('antd/lib/collapse');
+const { Collapse } = require('antd');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const { inject } = require('../../../components/container-context.jsx');
@@ -11,7 +11,7 @@ const { Panel } = Collapse;
 class AnnotationDisplay extends React.PureComponent {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   render() {

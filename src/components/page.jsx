@@ -1,50 +1,50 @@
 const React = require('react');
 const urls = require('../utils/urls');
-const Alert = require('antd/lib/alert');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
-const Button = require('antd/lib/button');
+const { Alert, Button } = require('antd');
 const ElmuLogo = require('./elmu-logo.jsx');
 const Restricted = require('./restricted.jsx');
 const LoginLogout = require('./login-logout.jsx');
 const LinkPopover = require('./link-popover.jsx');
 const permissions = require('../domain/permissions');
 const { useUser } = require('../components/user-context.jsx');
+const { default: Icon, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } = require('@ant-design/icons');
 
 const pageMenuItems = [
   {
     key: 'home',
     href: urls.getHomeUrl(),
     text: 'Home',
-    icon: 'home',
+    icon: HomeOutlined,
     permission: null
   },
   {
     key: 'docs',
     href: urls.getDocsUrl(),
     text: 'Dokumente',
-    icon: 'file',
+    icon: FileOutlined,
     permission: permissions.VIEW_DOCS
   },
   {
     key: 'menus',
     href: urls.getMenusUrl(),
     text: 'Menüs',
-    icon: 'menu-unfold',
+    icon: MenuUnfoldOutlined,
     permission: permissions.VIEW_MENUS
   },
   {
     key: 'users',
     href: urls.getUsersUrl(),
     text: 'Benutzer',
-    icon: 'user',
+    icon: UserOutlined,
     permission: permissions.EDIT_USERS
   },
   {
     key: 'settings',
     href: urls.getSettingsUrl(),
     text: 'Einstellungen',
-    icon: 'setting',
+    icon: SettingOutlined,
     permission: permissions.EDIT_SETTINGS
   }
 ];
@@ -88,7 +88,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions }) {
         <Button
           className="Page-headerButton"
           type={action.type || 'default'}
-          icon={action.icon}
+          icon={<Icon component={action.icon} />}
           onClick={action.handleClick}
           >
           {action.text}
@@ -108,9 +108,9 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions }) {
             {headerActionComponents}
           </div>
           <div className="Page-headerContent Page-headerContent--right">
-            <Button className="Page-headerButton" icon="question" href={urls.getArticleUrl('hilfe')} />
+            <Button className="Page-headerButton" icon={<QuestionOutlined />} href={urls.getArticleUrl('hilfe')} />
             <LinkPopover items={pageMenuItems} trigger="hover" placement="bottom">
-              <Button className="Page-headerButton" icon="menu" />
+              <Button className="Page-headerButton" icon={<MenuOutlined />} />
             </LinkPopover>
             <div className="Page-loginLogoutButton">
               <LoginLogout />
@@ -146,7 +146,7 @@ Page.propTypes = {
   fullScreen: PropTypes.bool,
   headerActions: PropTypes.arrayOf(PropTypes.shape({
     handleClick: PropTypes.func.isRequired,
-    icon: PropTypes.string.isRequired,
+    icon: PropTypes.elementType.isRequired,
     key: PropTypes.string.isRequired,
     permission: PropTypes.string,
     text: PropTypes.string.isRequired,

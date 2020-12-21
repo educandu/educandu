@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 require('@babel/register')({ extensions: ['.jsx'] });
-require('@babel/polyfill');
+require('core-js');
 
 const path = require('path');
-const util = require('util');
 const glob = require('glob');
+const { promisify } = require('util');
 const roles = require('../src/domain/roles');
 const testHelper = require('../src/test-helper');
 const Database = require('../src/stores/database');
@@ -16,7 +16,7 @@ const SettingService = require('../src/services/setting-service');
 const DocumentService = require('../src/services/document-service');
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
 
-const globP = util.promisify(glob);
+const globP = promisify(glob);
 
 const ROLES_USER = [roles.USER];
 const ROLES_EDITOR = [roles.USER, roles.EDITOR];

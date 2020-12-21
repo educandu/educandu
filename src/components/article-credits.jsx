@@ -15,8 +15,10 @@ function ArticleCredits({ doc }) {
   return (
     <div className="ArticleCredits">
       <p className="ArticleCredits-licence">
-        <b>Lizenz:</b> <a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.de">CC BY-SA 3.0 DE</a><br />
-        <b>Quelle:</b> <i>{currentHost}</i>, {citation}<br />
+        <b>Lizenz:</b> <a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.de">CC BY-SA 3.0 DE</a>
+        <br />
+        <b>Quelle:</b> <i>{currentHost}</i>, {citation}
+        <br />
         {!!contributors.length && <span><b>Bearbeitungen durch:</b> <span>{contributors.map(x => x.username).join(', ')}</span></span>}
       </p>
     </div>

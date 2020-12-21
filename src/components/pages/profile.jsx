@@ -3,24 +3,18 @@ const React = require('react');
 const Page = require('../page.jsx');
 const gravatar = require('gravatar');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
-const Alert = require('antd/lib/alert');
 const PropTypes = require('prop-types');
-const { formShape } = require('rc-form');
-const Avatar = require('antd/lib/avatar');
-const Button = require('antd/lib/button');
-const Select = require('antd/lib/select');
-const message = require('antd/lib/message');
 const Logger = require('../../common/logger');
 const localeCompare = require('locale-compare');
 const { withUser } = require('../user-context.jsx');
 const { withData } = require('../data-context.jsx');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
+const { CloseOutlined } = require('@ant-design/icons');
 const UserApiClient = require('../../services/user-api-client');
 const CountryFlagAndName = require('../country-flag-and-name.jsx');
 const { userProps, dataProps } = require('../../ui/default-prop-types');
+const { Form, Input, Alert, Avatar, Button, Select, message } = require('antd');
 
 const logger = new Logger(__filename);
 
@@ -34,7 +28,7 @@ const compareInGerman = localeCompare('de');
 class Profile extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = {
       countryNames: Object.entries(props.data['country-names']).map(([key, name]) => ({ key, name })).sort(by(x => x.name, { cmp: compareInGerman })),
       showAvatarDescription: false
@@ -56,23 +50,15 @@ class Profile extends React.Component {
     window.history.back();
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        const profile = {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          street: values.street,
-          streetSupplement: values.streetSupplement,
-          postalCode: values.postalCode,
-          city: values.city,
-          country: values.country
-        };
-
-        this.saveProfile(profile);
-      }
+  handleFinish(values) {
+    this.saveProfile({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      street: values.street,
+      streetSupplement: values.streetSupplement,
+      postalCode: values.postalCode,
+      city: values.city,
+      country: values.country
     });
   }
 
@@ -86,8 +72,7 @@ class Profile extends React.Component {
 
   render() {
     const { countryNames, showAvatarDescription } = this.state;
-    const { user, form } = this.props;
-    const { getFieldDecorator } = form;
+    const { user } = this.props;
     const profile = user.profile || { country: '' };
     const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
 
@@ -115,16 +100,6 @@ class Profile extends React.Component {
       }
     };
 
-    const countryList = (
-      <Select optionFilterProp="title" firstActiveValue="DE" showSearch allowClear>
-        {countryNames.map(cn => (
-          <Option key={cn.key} value={cn.key} title={cn.name}>
-            <CountryFlagAndName code={cn.key} />
-          </Option>
-        ))}
-      </Select>
-    );
-
     const avatarDescription = (
       <div>
         ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <a href="https://de.gravatar.com/" target="_blank" rel="noopener noreferrer">Gravatar</a>.
@@ -137,7 +112,7 @@ class Profile extends React.Component {
 
     const profileForm = (
       <div className="ProfilePage-form">
-        <Form onSubmit={this.handleSubmit}>
+        <Form onFinish={this.handleFinish} scrollToFirstError>
           <FormItem {...tailFormItemLayout}>
             <h1>Profil</h1>
           </FormItem>
@@ -146,35 +121,43 @@ class Profile extends React.Component {
             <br />
             <a onClick={this.handleShowAvatarDescriptionClick}>Profilbild ändern</a>
             <br />
-            {showAvatarDescription && <Alert
-              message="Wie ändere ich mein Profilbild?"
-              description={avatarDescription}
-              type="info"
-              showIcon
-              closable
-              afterClose={this.handleAvatarDescriptionAfterClose}
-              />}
+            {showAvatarDescription && (
+              <Alert
+                message="Wie ändere ich mein Profilbild?"
+                description={avatarDescription}
+                type="info"
+                showIcon
+                closable
+                afterClose={this.handleAvatarDescriptionAfterClose}
+                />
+            )}
           </FormItem>
-          <FormItem {...formItemLayout} label="Vorname(n)">
-            {getFieldDecorator('firstName', { initialValue: profile.firstName || '' })(<Input type="text" />)}
+          <FormItem {...formItemLayout} label="Vorname(n)" name="firstName" initialValue={profile.firstName || ''}>
+            <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Nachname">
-            {getFieldDecorator('lastName', { initialValue: profile.lastName || '' })(<Input type="text" />)}
+          <FormItem {...formItemLayout} label="Nachname" name="lastName" initialValue={profile.lastName || ''}>
+            <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Straße">
-            {getFieldDecorator('street', { initialValue: profile.street || '' })(<Input type="text" />)}
+          <FormItem {...formItemLayout} label="Straße" name="street" initialValue={profile.street || ''}>
+            <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Straße (Zusatz)">
-            {getFieldDecorator('streetSupplement', { initialValue: profile.streetSupplement || '' })(<Input type="text" />)}
+          <FormItem {...formItemLayout} label="Straße (Zusatz)" name="streetSupplement" initialValue={profile.streetSupplement || ''}>
+            <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Postleitzahl">
-            {getFieldDecorator('postalCode', { initialValue: profile.postalCode || '' })(<Input type="text" />)}
+          <FormItem {...formItemLayout} label="Postleitzahl" name="postalCode" initialValue={profile.postalCode || ''}>
+            <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Ort">
-            {getFieldDecorator('city', { initialValue: profile.city || '' })(<Input type="text" />)}
+          <FormItem {...formItemLayout} label="Ort" name="city" initialValue={profile.city || ''}>
+            <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Land">
-            {getFieldDecorator('country', { initialValue: profile.country || '' })(countryList)}
+          <FormItem {...formItemLayout} label="Land" name="country" initialValue={profile.country || ''}>
+            <Select optionFilterProp="title" showSearch allowClear>
+              {countryNames.map(cn => (
+                <Option key={cn.key} value={cn.key} title={cn.name}>
+                  <CountryFlagAndName code={cn.key} />
+                </Option>
+              ))}
+            </Select>
           </FormItem>
           <FormItem {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">Speichern</Button>
@@ -186,7 +169,7 @@ class Profile extends React.Component {
     const headerActions = [
       {
         handleClick: this.handleBackClick,
-        icon: 'close',
+        icon: CloseOutlined,
         key: 'close',
         text: 'Zurück'
       }
@@ -205,10 +188,9 @@ class Profile extends React.Component {
 Profile.propTypes = {
   ...userProps,
   ...dataProps,
-  form: formShape.isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = Form.create()(withUser(withData(inject({
+module.exports = withUser(withData(inject({
   userApiClient: UserApiClient
-}, Profile))));
+}, Profile)));

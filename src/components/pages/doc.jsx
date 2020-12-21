@@ -4,24 +4,23 @@ const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
-const Button = require('antd/lib/button');
-const Slider = require('antd/lib/slider');
 const DocView = require('../doc-view.jsx');
-const message = require('antd/lib/message');
 const Logger = require('../../common/logger');
 const clipboardCopy = require('clipboard-copy');
+const { Button, Slider, message } = require('antd');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
 const { fullDocShape } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
+const { PaperClipOutlined, EditOutlined } = require('@ant-design/icons');
 
 const logger = new Logger(__filename);
 
 class Doc extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = {
       docs: props.initialState.docs,
       currentDoc: props.initialState.docs[props.initialState.docs.length - 1]
@@ -139,7 +138,7 @@ class Doc extends React.Component {
           <div className="DocPage-revisionPickerResetButton">
             <Button
               type="primary"
-              icon="paper-clip"
+              icon={<PaperClipOutlined />}
               onClick={this.handlePermalinkRequest}
               >
               Permalink
@@ -153,7 +152,7 @@ class Doc extends React.Component {
       {
         key: 'edit',
         type: 'primary',
-        icon: 'edit',
+        icon: EditOutlined,
         text: 'Bearbeiten',
         permission: permissions.EDIT_DOC,
         handleClick: this.handleEditClick

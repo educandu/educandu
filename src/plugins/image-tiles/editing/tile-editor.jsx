@@ -1,10 +1,8 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
 const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
-const Radio = require('antd/lib/radio');
 const urls = require('../../../utils/urls');
+const { Form, Input, Radio } = require('antd');
 const validation = require('../../../ui/validation');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
@@ -18,7 +16,7 @@ const FormItem = Form.Item;
 class TileEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleExternalImageUrlValueChanged(event) {

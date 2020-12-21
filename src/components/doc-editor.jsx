@@ -1,11 +1,10 @@
 const React = require('react');
 const autoBind = require('auto-bind');
 const urls = require('../utils/urls');
-const Icon = require('antd/lib/icon');
-const Input = require('antd/lib/input');
-const Radio = require('antd/lib/radio');
 const PropTypes = require('prop-types');
+const { Input, Radio } = require('antd');
 const { docShape } = require('../ui/default-prop-types');
+const { EyeOutlined, EditOutlined } = require('@ant-design/icons');
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -13,7 +12,7 @@ const RadioGroup = Radio.Group;
 class DocEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = { mode: 'preview' };
   }
 
@@ -79,10 +78,10 @@ class DocEditor extends React.Component {
         <div className="Panel-footer">
           <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
             <RadioButton value="preview">
-              <Icon type="eye-o" />&nbsp;Vorschau
+              <EyeOutlined />&nbsp;Vorschau
             </RadioButton>
             <RadioButton value="edit">
-              <Icon type="edit" />&nbsp;Bearbeiten
+              <EditOutlined />&nbsp;Bearbeiten
             </RadioButton>
           </RadioGroup>
         </div>

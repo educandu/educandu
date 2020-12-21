@@ -1,8 +1,9 @@
 const React = require('react');
+const { Button } = require('antd');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
-const Button = require('antd/lib/button');
 const DeletedSection = require('./deleted-section.jsx');
+const { SettingOutlined } = require('@ant-design/icons');
 const SectionActionDropdown = require('./section-action-dropdown.jsx');
 const { docShape, sectionShape } = require('../ui/default-prop-types');
 
@@ -31,7 +32,7 @@ function SectionDisplay({ DisplayComponent, language, doc, section, onAction }) 
           onAction={action => onAction(action)}
           onVisibleChange={visible => setIsDropDownVisible(visible)}
           >
-          <Button icon="setting" size="small" />
+          <Button icon={<SettingOutlined />} size="small" />
         </SectionActionDropdown>
       </aside>
     );

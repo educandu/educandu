@@ -1,14 +1,11 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
 const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
-const { formShape } = require('rc-form');
 const urls = require('../../utils/urls');
-const Button = require('antd/lib/button');
 const ElmuLogo = require('../elmu-logo.jsx');
 const Logger = require('../../common/logger');
+const { Form, Input, Button } = require('antd');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const { withRequest } = require('../request-context.jsx');
@@ -24,7 +21,8 @@ const GENERIC_LOGIN_ERROR = 'Die Anmeldung ist fehlgeschlagen. Bitte überprüfe
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
+    this.formRef = React.createRef();
     this.state = {
       loginError: null
     };
@@ -32,13 +30,13 @@ class Login extends React.Component {
 
   async login({ username, password }) {
     try {
-      const { form, userApiClient } = this.props;
+      const { userApiClient } = this.props;
       const { user } = await userApiClient.login({ username, password });
 
       if (user) {
         this.redirectAfterLogin();
       } else {
-        form.resetFields();
+        this.formRef.current.resetFields();
         this.showLoginError();
       }
     } catch (error) {
@@ -59,21 +57,14 @@ class Login extends React.Component {
     this.setState({ loginError: GENERIC_LOGIN_ERROR });
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
+  handleFinish(values) {
     this.clearLoginError();
-    const { form } = this.props;
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        const { username, password } = values;
-        this.login({ username, password });
-      }
-    });
+    const { username, password } = values;
+    this.login({ username, password });
   }
 
   render() {
     const { loginError } = this.state;
-    const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
       labelCol: {
@@ -119,12 +110,12 @@ class Login extends React.Component {
       : null;
 
     const loginForm = (
-      <Form onSubmit={this.handleSubmit}>
-        <FormItem {...formItemLayout} label="Benutzername">
-          {getFieldDecorator('username', { rules: usernameValidationRules })(<Input />)}
+      <Form ref={this.formRef} onFinish={this.handleFinish} scrollToFirstError>
+        <FormItem {...formItemLayout} label="Benutzername" name="username" rules={usernameValidationRules}>
+          <Input />
         </FormItem>
-        <FormItem {...formItemLayout} label="Kennwort">
-          {getFieldDecorator('password', { rules: passwordValidationRules })(<Input type="password" />)}
+        <FormItem {...formItemLayout} label="Kennwort" name="password" rules={passwordValidationRules}>
+          <Input type="password" />
         </FormItem>
         <FormItem {...tailFormItemLayout}>
           {errorMessage}
@@ -155,10 +146,9 @@ class Login extends React.Component {
 
 Login.propTypes = {
   ...requestProps,
-  form: formShape.isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = Form.create()(withRequest(inject({
+module.exports = withRequest(inject({
   userApiClient: UserApiClient
-}, Login)));
+}, Login));

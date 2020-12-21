@@ -1,10 +1,7 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
-const Radio = require('antd/lib/radio');
-const Switch = require('antd/lib/switch');
 const validation = require('../../../ui/validation');
+const { Form, Input, Radio, Switch } = require('antd');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -19,7 +16,7 @@ const { TextArea } = Input;
 class ImageEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleExternalUrlValueChanged(event) {
@@ -128,7 +125,7 @@ class ImageEditor extends React.Component {
             </FormItem>
           )}
           <Form.Item label="Copyright Infos" {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
+            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
           <Form.Item label="Hoverbild" {...formItemLayout}>
             <Switch checked={!!hover} onChange={this.handleHoverSwitchChange} />
@@ -166,7 +163,7 @@ class ImageEditor extends React.Component {
                   </FormItem>
                 )}
                 <Form.Item label="Copyright Infos" {...formItemLayout}>
-                  <TextArea value={hover.text} onChange={this.handleCurrentHoverEditorValueChanged} autosize={{ minRows: 3 }} />
+                  <TextArea value={hover.text} onChange={this.handleCurrentHoverEditorValueChanged} autoSize={{ minRows: 3 }} />
                 </Form.Item>
               </div>
             </div>

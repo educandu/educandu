@@ -1,11 +1,11 @@
 /* eslint max-lines: off */
 
 const React = require('react');
+const { Input } = require('antd');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const treeCrawl = require('tree-crawl');
-const Input = require('antd/lib/input');
 const urls = require('../../utils/urls');
 const classnames = require('classnames');
 const MenuTree = require('../menu-tree.jsx');
@@ -18,6 +18,7 @@ const { inject } = require('../container-context.jsx');
 const CheckPermissions = require('../check-permissions.jsx');
 const MenuApiClient = require('../../services/menu-api-client');
 const { EDIT_MENU_STRUCTURE } = require('../../domain/permissions');
+const { SaveOutlined, CloseOutlined } = require('@ant-design/icons');
 const { menuShape, docMetadataShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
 
@@ -65,7 +66,7 @@ class EditMenu extends React.Component {
   constructor(props) {
     super(props);
 
-    autoBind.react(this);
+    autoBind(this);
 
     const { menuApiClient, initialState } = this.props;
     const { menu, docs } = initialState;
@@ -403,7 +404,7 @@ class EditMenu extends React.Component {
       headerActions.push({
         key: 'save',
         type: 'primary',
-        icon: 'save',
+        icon: SaveOutlined,
         text: 'Speichern',
         handleClick: this.handleSaveClick
       });
@@ -411,7 +412,7 @@ class EditMenu extends React.Component {
 
     headerActions.push({
       key: 'close',
-      icon: 'close',
+      icon: CloseOutlined,
       text: 'Zurück',
       handleClick: this.handleBackClick
     });

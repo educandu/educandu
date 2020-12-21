@@ -1,5 +1,5 @@
 const React = require('react');
-const Tag = require('antd/lib/tag');
+const { Tag } = require('antd');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const { userShape } = require('./../ui/default-prop-types');
@@ -11,7 +11,7 @@ const { CheckableTag } = Tag;
 class UserRoleTagEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleRoleChange() {

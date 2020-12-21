@@ -1,8 +1,9 @@
 const React = require('react');
-const Button = require('antd/lib/button');
+const { Button } = require('antd');
 const arrayShuffle = require('array-shuffle');
 const Markdown = require('../../../components/markdown.jsx');
 const { sectionDisplayProps } = require('../../../ui/default-prop-types');
+const { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } = require('@ant-design/icons');
 
 function QuickTesterDisplay({ content }) {
   const [currentIndex, setCurrentIndex] = React.useState(-1);
@@ -76,7 +77,7 @@ function QuickTesterDisplay({ content }) {
             <Markdown inline>{content.title}</Markdown>
           </div>
           <div className="QuickTester-closeButton">
-            <Button size="small" icon="close" onClick={close} ghost />
+            <Button size="small" icon={<CloseOutlined />} onClick={close} ghost />
           </div>
         </div>
         <div className="QuickTester-progress" style={{ width: `${percentDone}%` }} />
@@ -93,20 +94,20 @@ function QuickTesterDisplay({ content }) {
           <Button
             className="QuickTester-button"
             shape="circle"
-            icon="left"
+            icon={<LeftOutlined />}
             disabled={currentIndex === 0}
             onClick={movePrevious}
             />
           <Button
             className="QuickTester-button"
             shape="circle"
-            icon="reload"
+            icon={<ReloadOutlined />}
             onClick={restart}
             />
           <Button
             className="QuickTester-button"
             shape="circle"
-            icon="right"
+            icon={<RightOutlined />}
             disabled={!isAnswerVisible || currentIndex === tests.length - 1}
             onClick={moveNext}
             />

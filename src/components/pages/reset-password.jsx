@@ -1,13 +1,10 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
-const { formShape } = require('rc-form');
-const Button = require('antd/lib/button');
 const ElmuLogo = require('../elmu-logo.jsx');
 const Logger = require('../../common/logger');
+const { Form, Input, Button } = require('antd');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
 const UserApiClient = require('../../services/user-api-client');
@@ -19,7 +16,7 @@ const FormItem = Form.Item;
 class ResetPassword extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = {
       isRequestSent: false
     };
@@ -35,20 +32,13 @@ class ResetPassword extends React.Component {
     }
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        const { email } = values;
-        this.requestPasswordReset({ email });
-      }
-    });
+  handleFinish(values) {
+    const { email } = values;
+    this.requestPasswordReset({ email });
   }
 
   render() {
     const { isRequestSent } = this.state;
-    const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
       labelCol: {
@@ -87,9 +77,9 @@ class ResetPassword extends React.Component {
 
     const resetRequestForm = (
       <div className="ResetPasswordPage-form">
-        <Form onSubmit={this.handleSubmit}>
-          <FormItem {...formItemLayout} label="E-Mail">
-            {getFieldDecorator('email', { rules: emailValidationRules })(<Input />)}
+        <Form onFinish={this.handleFinish} scrollToFirstError>
+          <FormItem {...formItemLayout} label="E-Mail" name="email" rules={emailValidationRules}>
+            <Input />
           </FormItem>
           <FormItem {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">Reset anfordern</Button>
@@ -124,10 +114,9 @@ class ResetPassword extends React.Component {
 }
 
 ResetPassword.propTypes = {
-  form: formShape.isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = Form.create()(inject({
+module.exports = inject({
   userApiClient: UserApiClient
-}, ResetPassword));
+}, ResetPassword);

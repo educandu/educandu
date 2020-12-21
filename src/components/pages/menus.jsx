@@ -2,13 +2,12 @@ const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
-const Modal = require('antd/lib/modal');
 const urls = require('../../utils/urls');
-const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
+const { Input, Modal, Button } = require('antd');
 const errorHelper = require('../../ui/error-helper');
+const { PlusOutlined } = require('@ant-design/icons');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
 const { toTrimmedString } = require('../../utils/sanitize');
@@ -23,7 +22,7 @@ const DEFAULT_MENU_SLUG = '';
 class Menus extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = {
       newMenuTitle: DEFAULT_MENU_TITLE,
       newMenuSlug: DEFAULT_MENU_SLUG,
@@ -99,7 +98,7 @@ class Menus extends React.Component {
           </ul>
           <aside>
             <Restricted to={permissions.EDIT_MENU}>
-              <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewMenuClick} />
+              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewMenuClick} />
             </Restricted>
           </aside>
           <Modal

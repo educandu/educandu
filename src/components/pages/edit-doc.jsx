@@ -1,14 +1,12 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
-const Menu = require('antd/lib/menu');
 const PropTypes = require('prop-types');
 const urls = require('../../utils/urls');
-const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
-const Dropdown = require('antd/lib/dropdown');
 const utils = require('../../utils/unique-id');
 const DocEditor = require('../doc-editor.jsx');
+const { Menu, Button, Dropdown } = require('antd');
 const cloneDeep = require('../../utils/clone-deep');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
@@ -20,6 +18,7 @@ const RendererFactory = require('../../plugins/renderer-factory');
 const DocumentApiClient = require('../../services/document-api-client');
 const { docShape, sectionShape } = require('../../ui/default-prop-types');
 const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
+const { PlusOutlined, SaveOutlined, CloseOutlined } = require('@ant-design/icons');
 
 const logger = new Logger(__filename);
 
@@ -54,7 +53,7 @@ class EditDoc extends React.Component {
   constructor(props) {
     super(props);
 
-    autoBind.react(this);
+    autoBind(this);
 
     const { editorFactory, rendererFactory, documentApiClient, initialState } = this.props;
     const { doc, sections } = initialState;
@@ -214,7 +213,7 @@ class EditDoc extends React.Component {
 
     const newSectionDropdown = (
       <Dropdown key="new-section-dropdown" overlay={newSectionMenu} placement="topCenter">
-        <Button type="primary" shape="circle" icon="plus" size="large" />
+        <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" />
       </Dropdown>
     );
 
@@ -223,7 +222,7 @@ class EditDoc extends React.Component {
       headerActions.push({
         key: 'save',
         type: 'primary',
-        icon: 'save',
+        icon: SaveOutlined,
         text: 'Speichern',
         handleClick: this.handleSaveClick
       });
@@ -231,7 +230,7 @@ class EditDoc extends React.Component {
 
     headerActions.push({
       key: 'close',
-      icon: 'close',
+      icon: CloseOutlined,
       text: 'Zurück',
       handleClick: this.handleBackClick
     });

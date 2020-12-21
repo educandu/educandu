@@ -10,7 +10,7 @@ const AudioContextProvider = require('../../../common/audio-context-provider');
 class SoundfontProvider extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.canReceiveInstrument = false;
     this.state = {
       activeAudioNodes: {},

@@ -6,9 +6,7 @@ const fs = require('fs');
 const del = require('del');
 const path = require('path');
 const glob = require('glob');
-const gulp = require('gulp');
 const jest = require('jest');
-const util = require('util');
 const delay = require('delay');
 const execa = require('execa');
 const acorn = require('acorn');
@@ -18,28 +16,29 @@ const csso = require('gulp-csso');
 const gulpif = require('gulp-if');
 const webpack = require('webpack');
 const eslint = require('gulp-eslint');
+const { promisify } = require('util');
 const plumber = require('gulp-plumber');
 const superagent = require('superagent');
 const { spawn } = require('child_process');
 const { Docker } = require('docker-cli-js');
-const runSequence = require('run-sequence');
 const sourcemaps = require('gulp-sourcemaps');
 const realFavicon = require('gulp-real-favicon');
 const streamToPromise = require('stream-to-promise');
 const LessAutoprefix = require('less-plugin-autoprefix');
+const { src, dest, parallel, series, watch } = require('gulp');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 if (process.env.ELMU_ENV === 'prod') {
   throw new Error('Tasks should not run in production environment!');
 }
 
-const TEST_MAILDEV_IMAGE = 'djfarrelly/maildev:1.0.0-rc2';
+const TEST_MAILDEV_IMAGE = 'maildev/maildev:1.1.0';
 const TEST_MAILDEV_CONTAINER_NAME = 'elmu-maildev';
 
-const TEST_MONGO_IMAGE = 'mvertes/alpine-mongo:3.6.5-0';
+const TEST_MONGO_IMAGE = 'mongo:4.2.11-bionic';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
-const TEST_MINIO_IMAGE = 'minio/minio:RELEASE.2018-07-10T01-42-11Z';
+const TEST_MINIO_IMAGE = 'minio/minio:RELEASE.2020-12-18T03-27-42Z';
 const TEST_MINIO_CONTAINER_NAME = 'elmu-minio';
 
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
@@ -58,27 +57,6 @@ const supportedLanguages = ['en', 'de'];
 
 let server = null;
 process.on('exit', () => server && server.kill());
-const startServer = () => {
-  server = spawn(process.execPath, ['src/index.js'], {
-    env: { ...process.env, NODE_ENV: 'development' },
-    stdio: 'inherit'
-  });
-  server.once('exit', () => {
-    server = null;
-  });
-};
-const restartServer = done => {
-  if (server) {
-    server.once('exit', () => {
-      startServer();
-      done();
-    });
-    server.kill();
-  } else {
-    startServer();
-    done();
-  }
-};
 
 const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () => Promise.resolve() }) => {
   const docker = new Docker();
@@ -112,68 +90,76 @@ const downloadCountryList = lang => {
     .pipe(fs.createWriteStream(`./src/data/country-names/${lang}.json`));
 };
 
-gulp.task('clean', () => {
-  return del(['.tmp', 'dist', 'reports']);
-});
+const tasks = {};
 
-gulp.task('lint', () => {
-  return gulp.src(['*.js', 'src/**/*.{js,jsx}', 'scripts/**'])
+tasks.clean = async function clean() {
+  await del(['.tmp', 'dist', 'reports']);
+};
+
+tasks.lint = function lint() {
+  return src(['*.js', 'src/**/*.{js,jsx}', 'scripts/**'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(gulpif(!server, eslint.failAfterError()));
-});
+};
 
-gulp.task('test', async () => {
+tasks.test = async function test() {
   const { results } = await jest.runCLI({
     testEnvironment: 'node',
+    projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
-    setupTestFrameworkScriptFile: './src/test-setup-after-env.js',
+    setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
     runInBand: true
   }, '.');
   if (!results.success) {
     throw Error(`${results.numFailedTests} test(s) failed`);
   }
-});
+};
 
-gulp.task('test:changed', () => {
-  return jest.runCLI({
+tasks.testChanged = async function testChanged() {
+  await jest.runCLI({
     testEnvironment: 'node',
+    projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
-    setupTestFrameworkScriptFile: './src/test-setup-after-env.js',
+    setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
     onlyChanged: true
   }, '.');
-});
+};
 
-gulp.task('test:watch', () => {
-  return jest.runCLI({
+tasks.testWatch = async function testWatch() {
+  await jest.runCLI({
     testEnvironment: 'node',
+    projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
-    setupTestFrameworkScriptFile: './src/test-setup-after-env.js',
+    setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
     watch: true
   }, '.');
-});
+};
 
-gulp.task('copy:iframeresizer', () => {
-  return gulp.src('./node_modules/iframe-resizer/js/iframeResizer.contentWindow.*')
-    .pipe(gulp.dest('static/scripts'));
-});
+tasks.copyIframeresizer = function copyIframeresizer() {
+  return src('./node_modules/iframe-resizer/js/iframeResizer.contentWindow.*')
+    .pipe(dest('static/scripts'));
+};
 
-gulp.task('bundle:css', () => {
-  return gulp.src('src/styles/main.less')
+tasks.bundleCss = function bundleCss() {
+  return src('src/styles/main.less')
     .pipe(gulpif(!!server, plumber()))
     .pipe(sourcemaps.init())
     .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix(autoprefixOptions)] }))
     .pipe(gulpif(optimize, csso()))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist'));
-});
+    .pipe(dest('dist'));
+};
 
-gulp.task('bundle:js', async () => {
-  const entry = glob.sync('./src/bundles/*.js')
+tasks.bundleJs = async function bundleJs() {
+  const entry = (await promisify(glob)('./src/bundles/*.js'))
     .map(bundleFile => path.basename(bundleFile, '.js'))
-    .reduce((all, name) => ({ ...all, [name]: ['@babel/polyfill', `./src/bundles/${name}.js`] }), {});
+    .reduce((all, name) => ({ ...all, [name]: ['core-js', `./src/bundles/${name}.js`] }), {});
 
-  const plugins = [new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi')];
+  const plugins = [
+    new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi'),
+    new webpack.ProvidePlugin({ process: 'process/browser' })
+  ];
 
   if (optimize) {
     plugins.push(new BundleAnalyzerPlugin({
@@ -186,32 +172,41 @@ gulp.task('bundle:js', async () => {
   const commonChunkModules = new Set([
     '@ant-design',
     '@babel',
-    'core-js',
-    'iconv-lite',
-    'regenerator-runtime',
-    'object-assign',
+    'antd',
     'aurelia-dependency-injection',
     'aurelia-metadata',
     'aurelia-pal',
+    'auto-bind',
+    'core-js',
+    'fbjs',
+    'iconv-lite',
+    'moment',
+    'object-assign',
+    'prop-types',
     'react',
     'react-dom',
-    'fbjs',
-    'prop-types',
-    'auto-bind'
+    'regenerator-runtime'
   ]);
 
   const nonEs5Modules = [
     'acho',
     'ansi-styles',
+    'array-shuffle',
     'aurelia-dependency-injection',
     'auto-bind',
     'chalk',
+    'clipboard-copy',
+    'color-convert',
+    'map-age-cleaner',
     'mem',
     'mimic-fn',
+    'p-defer',
     'p-is-promise',
     'parse-ms',
     'pretty-bytes',
     'pretty-ms',
+    'punycode',
+    'thenby',
     'quick-lru'
   ];
 
@@ -220,8 +215,9 @@ gulp.task('bundle:js', async () => {
     output: {
       filename: '[name].js'
     },
+    target: ['web', 'es5'],
     mode: optimize ? 'production' : 'development',
-    devtool: optimize ? 'source-map' : 'cheap-module-eval-source-map',
+    devtool: optimize ? 'source-map' : 'eval',
     module: {
       rules: [
         {
@@ -240,9 +236,14 @@ gulp.task('bundle:js', async () => {
         }
       ]
     },
+    resolve: {
+      alias: {
+        process: 'process'
+      }
+    },
     optimization: {
       minimize: !!optimize,
-      namedModules: !optimize,
+      moduleIds: 'named',
       splitChunks: {
         cacheGroups: {
           commons: {
@@ -267,7 +268,7 @@ gulp.task('bundle:js', async () => {
     plugins: plugins
   };
 
-  const stats = await util.promisify(webpack)(bundleConfigs);
+  const stats = await promisify(webpack)(bundleConfigs);
 
   const minimalStatsOutput = {
     builtAt: false,
@@ -281,9 +282,9 @@ gulp.task('bundle:js', async () => {
   };
 
   console.log(stats.toString(verbous ? {} : minimalStatsOutput));
-});
+};
 
-gulp.task('favicon:generate', done => {
+tasks.faviconGenerate = function faviconGenerate(done) {
   realFavicon.generateFavicon({
     masterPicture: 'favicon.png',
     dest: 'static',
@@ -353,17 +354,17 @@ gulp.task('favicon:generate', done => {
     },
     markupFile: FAVICON_DATA_FILE
   }, () => done());
-});
+};
 
-gulp.task('favicon:checkupdate', done => {
+tasks.faviconCheckUpdate = function faviconCheckUpdate(done) {
   const currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).version;
   realFavicon.checkForUpdates(currentVersion, done);
-});
+};
 
-gulp.task('build', ['bundle:css', 'bundle:js']);
+tasks.build = parallel(tasks.bundleCss, tasks.bundleJs);
 
-gulp.task('verify:es5compat', () => {
-  const files = glob.sync('dist/**/*.js');
+tasks.verifyEs5compat = async function verifyEs5compat() {
+  const files = await promisify(glob)('dist/**/*.js');
   const errors = [];
 
   for (const file of files) {
@@ -386,31 +387,31 @@ gulp.task('verify:es5compat', () => {
 
     throw new Error(lines.join(EOL));
   }
-});
+};
 
-gulp.task('verify', ['verify:es5compat']);
+tasks.verify = parallel(tasks.verifyEs5compat);
 
-gulp.task('countries:update', () => {
-  return Promise.all(supportedLanguages.map(downloadCountryList).map(streamToPromise));
-});
+tasks.countriesUpdate = async function countriesUpdate() {
+  await Promise.all(supportedLanguages.map(downloadCountryList).map(streamToPromise));
+};
 
-gulp.task('maildev:up', () => {
-  return ensureContainerRunning({
+tasks.maildevUp = async function maildevUp() {
+  await ensureContainerRunning({
     containerName: TEST_MAILDEV_CONTAINER_NAME,
     runArgs: `-d -p 8000:80 -p 8025:25 ${TEST_MAILDEV_IMAGE}`
   });
-});
+};
 
-gulp.task('maildev:down', () => {
-  return ensureContainerRemoved({
+tasks.maildevDown = async function maildevDown() {
+  await ensureContainerRemoved({
     containerName: TEST_MAILDEV_CONTAINER_NAME
   });
-});
+};
 
-gulp.task('maildev:reset', done => runSequence('maildev:down', 'maildev:up', done));
+tasks.maildevReset = series(tasks.maildevDown, tasks.maildevUp);
 
-gulp.task('mongo:up', () => {
-  return ensureContainerRunning({
+tasks.mongoUp = async function mongoUp() {
+  await ensureContainerRunning({
     containerName: TEST_MONGO_CONTAINER_NAME,
     runArgs: `-d -p 27017:27017 ${TEST_MONGO_IMAGE}`,
     afterRun: async () => {
@@ -418,24 +419,30 @@ gulp.task('mongo:up', () => {
       await execa('./scripts/db-seed', { stdio: 'inherit' });
     }
   });
-});
+};
 
-gulp.task('mongo:down', () => {
-  return ensureContainerRemoved({
+tasks.mongoDown = async function mongoDown() {
+  await ensureContainerRemoved({
     containerName: TEST_MONGO_CONTAINER_NAME
   });
-});
+};
 
-gulp.task('mongo:reset', done => runSequence('mongo:down', 'mongo:up', done));
+tasks.mongoReset = series(tasks.mongoDown, tasks.mongoUp);
 
-gulp.task('mongo:user', () => execa('./scripts/db-create-user', { stdio: 'inherit' }));
+tasks.mongoUser = async function mongoUser() {
+  await execa('./scripts/db-create-user', { stdio: 'inherit' });
+};
 
-gulp.task('mongo:seed', () => execa('./scripts/db-seed', { stdio: 'inherit' }));
+tasks.mongoSeed = async function mongoSeed() {
+  await execa('./scripts/db-seed', { stdio: 'inherit' });
+};
 
-gulp.task('mongo:migrate', () => execa('./scripts/db-migrate', { stdio: 'inherit' }));
+tasks.mongoMigrate = async function mongoMigrate() {
+  await execa('./scripts/db-migrate', { stdio: 'inherit' });
+};
 
-gulp.task('minio:up', () => {
-  return ensureContainerRunning({
+tasks.minioUp = async function minioUp() {
+  await ensureContainerRunning({
     containerName: TEST_MINIO_CONTAINER_NAME,
     runArgs: [
       '-d',
@@ -449,42 +456,74 @@ gulp.task('minio:up', () => {
       await execa('./scripts/s3-seed', { stdio: 'inherit' });
     }
   });
-});
+};
 
-gulp.task('minio:down', () => {
-  return ensureContainerRemoved({
+tasks.minioDown = async function minioDown() {
+  await ensureContainerRemoved({
     containerName: TEST_MINIO_CONTAINER_NAME
   });
-});
+};
 
-gulp.task('minio:reset', done => runSequence('minio:down', 'minio:up', done));
+tasks.minioReset = series(tasks.minioDown, tasks.minioUp);
 
-gulp.task('minio:seed', () => execa('./scripts/s3-seed', { stdio: 'inherit' }));
+tasks.minioSeed = async function minioSeed() {
+  await execa('./scripts/s3-seed', { stdio: 'inherit' });
+};
 
-gulp.task('serve', ['maildev:up', 'mongo:up', 'minio:up', 'build'], startServer);
+tasks.startServer = function startServer(done) {
+  server = spawn(process.execPath, ['src/index.js'], {
+    env: { ...process.env, NODE_ENV: 'development' },
+    stdio: 'inherit'
+  });
+  server.once('exit', () => {
+    server = null;
+  });
+  done();
+};
 
-gulp.task('serve:restart', ['lint', 'test:changed', 'bundle:js'], restartServer);
+tasks.restartServer = function restartServer(done) {
+  if (server) {
+    server.once('exit', () => {
+      tasks.startServer(done);
+    });
+    server.kill();
+  } else {
+    tasks.startServer(done);
+  }
+};
 
-gulp.task('serve:restart:raw', ['bundle:js'], restartServer);
+tasks.serve = series(tasks.maildevUp, tasks.mongoUp, tasks.minioUp, tasks.build, tasks.startServer);
 
-gulp.task('ci:prepare', done => runSequence('mongo:user', 'mongo:seed', 'minio:seed', done));
+tasks.serveRestart = series(parallel(tasks.lint, tasks.testChanged, tasks.bundleJs), tasks.restartServer);
 
-gulp.task('ci', done => runSequence('clean', 'lint', 'test', 'build', 'verify', done));
+tasks.serveRestartRaw = series(tasks.bundleJs, tasks.restartServer);
 
-gulp.task('watch', ['serve'], () => {
-  gulp.watch(['src/**/*.{js,jsx}'], ['serve:restart']);
-  gulp.watch(['src/**/*.less'], ['bundle:css']);
-  gulp.watch(['*.js'], ['lint']);
-  gulp.watch(['scripts/**'], ['lint']);
-  gulp.watch(['scripts/db-seed'], ['mongo:seed']);
-  gulp.watch(['scripts/s3-seed'], ['minio:seed']);
-});
+tasks.ciPrepare = series(tasks.mongoUser, tasks.mongoSeed, tasks.minioSeed);
 
-gulp.task('watch:raw', ['serve'], () => {
-  gulp.watch(['src/**/*.{js,jsx}'], ['serve:restart:raw']);
-  gulp.watch(['src/**/*.less'], ['bundle:css']);
-  gulp.watch(['scripts/db-seed'], ['mongo:seed']);
-  gulp.watch(['scripts/s3-seed'], ['minio:seed']);
-});
+tasks.ci = series(tasks.ciPrepare, tasks.clean, tasks.lint, tasks.test, tasks.build, tasks.verify);
 
-gulp.task('default', ['watch']);
+tasks.setupWatchers = function setupWatchers(done) {
+  watch(['src/**/*.{js,jsx}'], tasks.serveRestart);
+  watch(['src/**/*.less'], tasks.bundleCss);
+  watch(['*.js'], tasks.lint);
+  watch(['scripts/**'], tasks.lint);
+  watch(['scripts/db-seed'], tasks.mongoSeed);
+  watch(['scripts/s3-seed'], tasks.minioSeed);
+  done();
+};
+
+tasks.setupWatchersRaw = function setupWatchersRaw(done) {
+  watch(['src/**/*.{js,jsx}'], tasks.serveRestartRaw);
+  watch(['src/**/*.less'], tasks.bundleCss);
+  watch(['scripts/db-seed'], tasks.mongoSeed);
+  watch(['scripts/s3-seed'], tasks.minioSeed);
+  done();
+};
+
+tasks.startWatch = series(tasks.serve, tasks.setupWatchers);
+
+tasks.startWatchRaw = series(tasks.serve, tasks.setupWatchersRaw);
+
+tasks.default = tasks.startWatchRaw;
+
+module.exports = tasks;

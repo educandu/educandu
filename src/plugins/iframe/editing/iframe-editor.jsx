@@ -1,10 +1,7 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
-const Slider = require('antd/lib/slider');
-const Checkbox = require('antd/lib/checkbox');
 const validation = require('../../../ui/validation');
+const { Form, Input, Slider, Checkbox } = require('antd');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider.jsx');
 
@@ -21,7 +18,7 @@ const validateUrl = url => url === '' || url.startsWith('https:');
 class IframeEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleExternalUrlValueChanged(event) {

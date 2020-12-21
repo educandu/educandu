@@ -135,6 +135,10 @@ class UserService {
     return this.passwordResetRequestStore.findOne({ query: { _id: id } });
   }
 
+  deletePasswordResetRequestById(id) {
+    return this.passwordResetRequestStore.deleteOne({ _id: id });
+  }
+
   async createPasswordResetRequest(user) {
     if (user.provider !== PROVIDER_NAME_ELMU) {
       throw new Error('Cannot reset passwords on third party users');
@@ -155,20 +159,22 @@ class UserService {
     logger.info('Completing password reset request %s', passwordResetRequestId);
     const request = await this.getPasswordResetRequestById(passwordResetRequestId);
     if (!request) {
-      logger.info('No password reset request has been found for id %s. Aborting request.', passwordResetRequestId);
+      logger.info('No password reset request has been found for id %s. Aborting request', passwordResetRequestId);
       return false;
     }
 
     const user = await this.getUserById(request.userId);
     if (!user) {
-      logger.info('No user has been found for id %s. Aborting request.', passwordResetRequestId);
+      logger.info('No user has been found for id %s. Aborting request', passwordResetRequestId);
       return false;
     }
 
     user.passwordHash = await this._hashPassword(password);
 
-    logger.info('Updating user %s with new password.', user._id);
+    logger.info('Updating user %s with new password', user._id);
     await this.saveUser(user);
+    logger.info('Deleting password reset request %s', passwordResetRequestId);
+    await this.deletePasswordResetRequestById(passwordResetRequestId);
     return user;
   }
 

@@ -1,10 +1,7 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
-const Radio = require('antd/lib/radio');
-const Switch = require('antd/lib/switch');
 const validation = require('../../../ui/validation');
+const { Form, Input, Radio, Switch } = require('antd');
 const ClientSettings = require('../../../bootstrap/client-settings');
 const { inject } = require('../../../components/container-context.jsx');
 const CdnFilePicker = require('../../../components/cdn-file-picker.jsx');
@@ -23,7 +20,7 @@ const TYPE_YOUTUBE = 'youtube';
 class VideoEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
   }
 
   handleExternalUrlValueChanged(event) {
@@ -128,7 +125,7 @@ class VideoEditor extends React.Component {
             <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={this.handleWidthChanged} />
           </Form.Item>
           <Form.Item label="Copyright Infos" {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autosize={{ minRows: 3 }} />
+            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
       </div>

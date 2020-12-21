@@ -1,11 +1,9 @@
 const React = require('react');
-const Form = require('antd/lib/form');
 const autoBind = require('auto-bind');
-const Input = require('antd/lib/input');
-const Table = require('antd/lib/table');
-const Button = require('antd/lib/button');
+const { Form, Input, Table, Button } = require('antd');
 const { sectionEditorProps } = require('../../../ui/default-prop-types');
 const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
+const { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } = require('@ant-design/icons');
 
 const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
@@ -13,7 +11,7 @@ const ButtonGroup = Button.Group;
 class QuickTesterEditor extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
 
     this.columns = [
       {
@@ -21,8 +19,18 @@ class QuickTesterEditor extends React.Component {
         key: 'upDown',
         render: (upDown, item, index) => (
           <ButtonGroup>
-            <Button data-index={index} disabled={index === 0} icon="arrow-up" onClick={this.handleUpCircleButtonClick} />
-            <Button data-index={index} disabled={index === this.props.content.tests.length - 1} icon="arrow-down" onClick={this.handleDownCircleButtonClick} />
+            <Button
+              data-index={index}
+              disabled={index === 0}
+              icon={<ArrowUpOutlined />}
+              onClick={this.handleUpCircleButtonClick}
+              />
+            <Button
+              data-index={index}
+              disabled={index === this.props.content.tests.length - 1}
+              icon={<ArrowDownOutlined />}
+              onClick={this.handleDownCircleButtonClick}
+              />
           </ButtonGroup>
         )
       }, {
@@ -41,12 +49,12 @@ class QuickTesterEditor extends React.Component {
         )
       }, {
         title: (
-          <Button type="primary" icon="plus" onClick={this.handleAddButtonClick} />
+          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddButtonClick} />
         ),
         width: 48,
         key: 'button',
         render: (value, item, index) => (
-          <Button data-index={index} type="danger" icon="delete" onClick={this.handleDeletButtonClick} />
+          <Button data-index={index} type="danger" icon={<DeleteOutlined />} onClick={this.handleDeletButtonClick} />
         )
       }
     ];

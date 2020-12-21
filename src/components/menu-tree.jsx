@@ -1,17 +1,14 @@
 const React = require('react');
 const autoBind = require('auto-bind');
-const Tree = require('antd/lib/tree');
-const Icon = require('antd/lib/icon');
-const Input = require('antd/lib/input');
-const Modal = require('antd/lib/modal');
 const PropTypes = require('prop-types');
 const treeCrawl = require('tree-crawl');
-const Button = require('antd/lib/button');
 const uniqueId = require('../utils/unique-id');
 const cloneDeep = require('../utils/clone-deep');
 const { inject } = require('./container-context.jsx');
+const { Tree, Input, Modal, Button } = require('antd');
 const MenuApiClient = require('../services/menu-api-client');
 const { menuNodeShape } = require('../ui/default-prop-types');
+const { default: Icon, PlusOutlined, DeleteOutlined, MenuUnfoldOutlined, FileOutlined } = require('@ant-design/icons');
 
 const TreeNode = Tree.TreeNode;
 
@@ -23,7 +20,7 @@ class MenuTree extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    autoBind.react(this);
+    autoBind(this);
 
     this.state = {
       nodes: [],
@@ -252,7 +249,7 @@ class MenuTree extends React.PureComponent {
     return nodes.map(node => (
       <TreeNode
         key={node.key}
-        icon={<Icon type={node.documentKeys.length ? 'menu-unfold' : 'file'} />}
+        icon={<Icon component={node.documentKeys.length ? MenuUnfoldOutlined : FileOutlined} />}
         title={<span>{node.title}</span>}
         >
         {node.children && this.renderNodeList(node.children)}
@@ -280,9 +277,9 @@ class MenuTree extends React.PureComponent {
         </Tree>
         <br />
         <br />
-        <Button type="primary" icon="plus" onClick={this.handleNewNodeClick} disabled={isReadonly}>Neuer Menüeintrag</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={this.handleNewNodeClick} disabled={isReadonly}>Neuer Menüeintrag</Button>
         &nbsp;
-        {selectedKey && <Button type="danger" icon="delete" onClick={this.handleDeleteNodeClick} disabled={isReadonly}>Menüeintrag löschen</Button>}
+        {selectedKey && <Button type="danger" icon={<DeleteOutlined />} onClick={this.handleDeleteNodeClick} disabled={isReadonly}>Menüeintrag löschen</Button>}
         <Modal
           title="Neuer Menüeintrag"
           visible={isNewNodeModalVisible}

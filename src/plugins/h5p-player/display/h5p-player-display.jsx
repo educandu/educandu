@@ -7,7 +7,7 @@ const { sectionDisplayProps } = require('../../../ui/default-prop-types');
 class H5pPlayerDisplay extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.iframeResizer = null;
     this.iframeRef = React.createRef();
     this.lastIframe = this.iframeRef.current;

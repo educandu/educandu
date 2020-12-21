@@ -2,24 +2,18 @@ const React = require('react');
 const moment = require('moment');
 const firstBy = require('thenby');
 const autoBind = require('auto-bind');
-const Icon = require('antd/lib/icon');
-const Input = require('antd/lib/input');
-const Table = require('antd/lib/table');
 const PropTypes = require('prop-types');
 const classNames = require('classnames');
-const Upload = require('antd/lib/upload');
-const Button = require('antd/lib/button');
-const Divider = require('antd/lib/divider');
-const message = require('antd/lib/message');
 const prettyBytes = require('pretty-bytes');
 const selection = require('../ui/selection');
 const pathHelper = require('../ui/path-helper');
 const Highlighter = require('react-highlighter');
-const Breadcrumb = require('antd/lib/breadcrumb');
 const browserHelper = require('../ui/browser-helper');
 const { inject } = require('./container-context.jsx');
 const mimeTypeHelper = require('../ui/mime-type-helper');
 const CdnApiClient = require('../services/cdn-api-client');
+const { Input, Table, Upload, Button, Divider, message, Breadcrumb } = require('antd');
+const { default: Icon, FolderOutlined, FileOutlined, DownOutlined, CloseOutlined, UploadOutlined, HomeOutlined } = require('@ant-design/icons');
 
 const BROWSER_LOCALE = 'de';
 
@@ -46,7 +40,7 @@ class RepositoryBrowser extends React.Component {
   constructor(props) {
     super(props);
 
-    autoBind.react(this);
+    autoBind(this);
 
     this.lastDragElement = null;
     this.browserRef = React.createRef();
@@ -405,8 +399,8 @@ class RepositoryBrowser extends React.Component {
     const { filterText } = this.state;
     const normalizedFilterText = filterText.toLowerCase().trim();
     const icon = record.isDirectory
-      ? <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--folder"><Icon type="folder" /></span>
-      : <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--file"><Icon type="file" /></span>;
+      ? <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--folder"><FolderOutlined /></span>
+      : <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--file"><FileOutlined /></span>;
 
     return (
       <span className="RepositoryBrowser-browserRecordText">
@@ -423,7 +417,7 @@ class RepositoryBrowser extends React.Component {
         <a>Aktion</a>
         <Divider type="vertical" />
         <a className="ant-dropdown-link">
-          Weitere Aktionen <Icon type="down" />
+          Weitere Aktionen <DownOutlined />
         </a>
       </span>
     );
@@ -467,7 +461,7 @@ class RepositoryBrowser extends React.Component {
   renderBreadCrumbItem({ key, text, isEnabled, icon, onClick }) {
     const content = (
       <span>
-        {icon && <Icon type={icon} />}
+        {icon && <Icon component={icon} />}
         {icon && text && ' '}
         {text}
       </span>
@@ -484,7 +478,7 @@ class RepositoryBrowser extends React.Component {
     const rootSegment = this.createBreadcrumbItemData({
       pathSegments: [],
       lockedPathSegmentsCount: lockedPathSegmentsCount,
-      icon: 'home'
+      icon: HomeOutlined
     });
 
     const items = pathSegments.reduce((list, segment) => {
@@ -517,7 +511,7 @@ class RepositoryBrowser extends React.Component {
       'RepositoryBrowser-browser--dropTarget': canUpload && currentDropTarget === currentPrefix
     });
 
-    const suffix = normalizedFilterText ? <Icon className="RepositoryBrowser-filterClearButton" type="close" onClick={this.handleFilterTextClear} /> : null;
+    const suffix = normalizedFilterText ? <CloseOutlined className="RepositoryBrowser-filterClearButton" onClick={this.handleFilterTextClear} /> : null;
     const filterTextInputClassNames = classNames({
       'RepositoryBrowser-filterInput': true,
       'is-active': !!normalizedFilterText
@@ -545,7 +539,7 @@ class RepositoryBrowser extends React.Component {
               customRequest={this.onCustomUpload}
               >
               <Button disabled={!canUpload}>
-                <Icon type="upload" />&nbsp;<span>Dateien hochladen</span>
+                <UploadOutlined />&nbsp;<span>Dateien hochladen</span>
               </Button>
             </Upload>
           </div>

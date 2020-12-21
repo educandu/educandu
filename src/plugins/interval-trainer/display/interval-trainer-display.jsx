@@ -1,8 +1,8 @@
 const React = require('react');
+const { Button } = require('antd');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
 const { Piano } = require('react-piano');
-const Button = require('antd/lib/button');
 const { RadialChart } = require('react-vis');
 const arrayShuffle = require('array-shuffle');
 const SoundfontProvider = require('./soundfont-provider.jsx');
@@ -27,7 +27,7 @@ class IntervalTrainerDisplay extends React.Component {
   constructor(props) {
     super(props);
 
-    autoBind.react(this);
+    autoBind(this);
 
     this.audioContext = props.audioContextProvider.getAudioContext();
 

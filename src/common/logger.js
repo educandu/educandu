@@ -1,24 +1,26 @@
 /* eslint no-process-env: off */
 
-const path = require('path');
 const acho = require('acho');
 const cookie = require('./cookie');
 const formatErrorM = require('format-error');
-const browserHelper = require('../ui/browser-helper');
+const { isBrowser } = require('../ui/browser-helper');
 
 const getServerLevel = () => process.env.ELMU_LOG_LEVEL || 'debug';
 const getBrowserLevel = () => cookie.get('ELMU_LOG_LEVEL') || 'debug';
 const formatError = err => formatErrorM.format(err) || err.stack || err.message || err.toString();
 const explodeError = obj => obj instanceof Error ? formatError(obj) : obj;
-const makeFilenameRelative = filename => path.relative(process.cwd(), filename);
+const makeFilenameRelative = filename => {
+  const index = filename.indexOf('/elmu-web/');
+  return index === -1 ? filename : filename.slice(index + '/elmu-web/'.length);
+};
+
+const logLevel = isBrowser() ? getBrowserLevel() : getServerLevel();
 
 class Logger {
   constructor(name) {
-    const isBrowser = browserHelper.isBrowser();
-    const level = isBrowser ? getBrowserLevel() : getServerLevel();
-    const realName = isBrowser ? name : makeFilenameRelative(name);
+    const realName = isBrowser() ? name : makeFilenameRelative(name);
     this._acho = acho({
-      level: level,
+      level: logLevel,
       outputMessage: message => `[${new Date().toISOString()}] [${realName}] ${message}`
     });
   }

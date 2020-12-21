@@ -45,7 +45,7 @@ function dropDatabase(db) {
 
 async function dropAllCollections(db) {
   const collections = await db._db.collections();
-  await Promise.all(collections.map(col => db._db.dropCollection(col.s.name)));
+  await Promise.all(collections.map(col => db._db.dropCollection(col.collectionName)));
 }
 
 // If `bucketName` is undefined, it uses the

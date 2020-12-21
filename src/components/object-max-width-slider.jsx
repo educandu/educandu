@@ -1,6 +1,6 @@
 const React = require('react');
+const { Slider } = require('antd');
 const PropTypes = require('prop-types');
-const Slider = require('antd/lib/slider');
 const browserHelper = require('../ui/browser-helper');
 
 const possibleValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];

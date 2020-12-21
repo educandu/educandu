@@ -4,16 +4,14 @@ const moment = require('moment');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
 const PropTypes = require('prop-types');
-const Input = require('antd/lib/input');
-const Modal = require('antd/lib/modal');
-const Table = require('antd/lib/table');
 const urls = require('../../utils/urls');
-const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
 const Restricted = require('../restricted.jsx');
 const errorHelper = require('../../ui/error-helper');
+const { PlusOutlined } = require('@ant-design/icons');
 const { inject } = require('../container-context.jsx');
 const permissions = require('../../domain/permissions');
+const { Input, Modal, Table, Button } = require('antd');
 const { toTrimmedString } = require('../../utils/sanitize');
 const { docMetadataShape } = require('../../ui/default-prop-types');
 const DocumentApiClient = require('../../services/document-api-client');
@@ -29,7 +27,7 @@ const DEFAULT_FILTER_INPUT = '';
 class Docs extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
     this.state = {
       filteredDocs: props.initialState.docs.slice(),
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
@@ -182,7 +180,7 @@ class Docs extends React.Component {
           <Table dataSource={filteredDocs} columns={columns} size="middle" />
           <aside>
             <Restricted to={permissions.EDIT_DOC}>
-              <Button type="primary" shape="circle" icon="plus" size="large" onClick={this.handleNewDocumentClick} />
+              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewDocumentClick} />
             </Restricted>
           </aside>
           <Modal

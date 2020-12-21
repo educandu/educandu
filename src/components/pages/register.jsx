@@ -1,17 +1,13 @@
 const React = require('react');
 const Page = require('../page.jsx');
 const autoBind = require('auto-bind');
-const Form = require('antd/lib/form');
-const Input = require('antd/lib/input');
 const PropTypes = require('prop-types');
-const { formShape } = require('rc-form');
 const urls = require('../../utils/urls');
-const Button = require('antd/lib/button');
 const Logger = require('../../common/logger');
 const ElmuLogo = require('../elmu-logo.jsx');
-const Checkbox = require('antd/lib/checkbox');
 const errorHelper = require('../../ui/error-helper');
 const { inject } = require('../container-context.jsx');
+const { Form, Input, Button, Checkbox } = require('antd');
 const UserApiClient = require('../../services/user-api-client');
 const { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } = require('../../domain/user-management');
 
@@ -22,9 +18,9 @@ const FormItem = Form.Item;
 class Register extends React.Component {
   constructor(props) {
     super(props);
-    autoBind.react(this);
+    autoBind(this);
+    this.formRef = React.createRef();
     this.state = {
-      confirmDirty: false,
       user: null,
       forbiddenEmails: [],
       forbiddenUsernames: []
@@ -33,7 +29,7 @@ class Register extends React.Component {
 
   async register({ username, password, email }) {
     try {
-      const { form, userApiClient } = this.props;
+      const { userApiClient } = this.props;
       const { result, user } = await userApiClient.register({ username, password, email });
       switch (result) {
         case CREATE_USER_RESULT_SUCCESS:
@@ -41,11 +37,11 @@ class Register extends React.Component {
           break;
         case CREATE_USER_RESULT_DUPLICATE_EMAIL:
           this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
-          form.validateFields(['email'], { force: true });
+          this.formRef.current.validateFields(['email'], { force: true });
           break;
         case CREATE_USER_RESULT_DUPLICATE_USERNAME:
           this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
-          form.validateFields(['username'], { force: true });
+          this.formRef.current.validateFields(['username'], { force: true });
           break;
         default:
           throw new Error(`Unknown result: ${result}`);
@@ -55,49 +51,13 @@ class Register extends React.Component {
     }
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    const { form } = this.props;
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        const { username, password, email } = values;
-        this.register({ username, password, email });
-      }
-    });
-  }
-
-  handleConfirmBlur(e) {
-    const value = e.target.value;
-    this.setState(prevState => ({ confirmDirty: prevState.confirmDirty || !!value }));
-  }
-
-  compareToFirstPassword(rule, value, cb) {
-    const { form } = this.props;
-    const otherPassword = form.getFieldValue('password');
-    return value && value !== otherPassword ? cb('Die Kennwörter stimmen nicht überein') : cb();
-  }
-
-  validateUniqueEmail(rule, value, cb) {
-    const { forbiddenEmails } = this.state;
-    return value && forbiddenEmails.includes(value.toLowerCase()) ? cb('Diese E-Mail-Adresse ist bereits vergeben') : cb();
-  }
-
-  validateUniqueUsername(rule, value, cb) {
-    const { forbiddenUsernames } = this.state;
-    return value && forbiddenUsernames.includes(value.toLowerCase()) ? cb('Der Benutzername ist bereits vergeben') : cb();
-  }
-
-  validateToNextPassword(rule, value, cb) {
-    const { form } = this.props;
-    if (value && this.state.confirmDirty) {
-      form.validateFields(['confirm'], { force: true });
-    }
-    cb();
+  handleFinish(values) {
+    const { username, password, email } = values;
+    this.register({ username, password, email });
   }
 
   render() {
     const { user } = this.state;
-    const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
       labelCol: {
@@ -130,7 +90,12 @@ class Register extends React.Component {
         whitespace: true
       },
       {
-        validator: this.validateUniqueUsername
+        validator: (rule, value) => {
+          const { forbiddenUsernames } = this.state;
+          return value && forbiddenUsernames.includes(value.toLowerCase())
+            ? Promise.reject(new Error('Der Benutzername ist bereits vergeben'))
+            : Promise.resolve();
+        }
       }
     ];
 
@@ -144,7 +109,12 @@ class Register extends React.Component {
         message: 'Bitte geben Sie Ihre E-Mail-Adresse an'
       },
       {
-        validator: this.validateUniqueEmail
+        validator: (rule, value) => {
+          const { forbiddenEmails } = this.state;
+          return value && forbiddenEmails.includes(value.toLowerCase())
+            ? Promise.reject(new Error('Diese E-Mail-Adresse ist bereits vergeben'))
+            : Promise.resolve();
+        }
       }
     ];
 
@@ -152,9 +122,6 @@ class Register extends React.Component {
       {
         required: true,
         message: 'Bitte geben Sie ein Kennwort an'
-      },
-      {
-        validator: this.validateToNextPassword
       }
     ];
 
@@ -162,9 +129,15 @@ class Register extends React.Component {
       {
         required: true,
         message: 'Bitte bestätigen Sie das Kennwort'
-      }, {
-        validator: this.compareToFirstPassword
-      }
+      },
+      ({ getFieldValue }) => ({
+        validator: (rule, value) => {
+          const otherPassword = getFieldValue('password');
+          return value && value !== otherPassword
+            ? Promise.reject(new Error('Die Kennwörter stimmen nicht überein'))
+            : Promise.resolve();
+        }
+      })
     ];
 
     const agreementValidationRules = [
@@ -174,27 +147,25 @@ class Register extends React.Component {
       }
     ];
 
-    const agreementCheckbox = (
-      <Checkbox>Ich habe die <a href={urls.getArticleUrl('nutzungsvertrag')}>Nutzungsbedingungen</a> gelesen und bin damit einverstanden.</Checkbox>
-    );
-
     const registrationForm = (
       <div className="RegisterPage-form">
-        <Form onSubmit={this.handleSubmit}>
-          <FormItem {...formItemLayout} label="Benutzername">
-            {getFieldDecorator('username', { rules: usernameValidationRules })(<Input />)}
+        <Form ref={this.formRef} onFinish={this.handleFinish} scrollToFirstError>
+          <FormItem {...formItemLayout} label="Benutzername" name="username" rules={usernameValidationRules}>
+            <Input />
           </FormItem>
-          <FormItem {...formItemLayout} label="E-Mail">
-            {getFieldDecorator('email', { rules: emailValidationRules })(<Input />)}
+          <FormItem {...formItemLayout} label="E-Mail" name="email" rules={emailValidationRules}>
+            <Input />
           </FormItem>
-          <FormItem {...formItemLayout} label="Kennwort">
-            {getFieldDecorator('password', { rules: passwordValidationRules })(<Input type="password" />)}
+          <FormItem {...formItemLayout} label="Kennwort" name="password" rules={passwordValidationRules}>
+            <Input type="password" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Kennwortbestätigung">
-            {getFieldDecorator('confirm', { rules: passwordConfirmationValidationRules })(<Input type="password" onBlur={this.handleConfirmBlur} />)}
+          <FormItem {...formItemLayout} label="Kennwortbestätigung" name="confirm" rules={passwordConfirmationValidationRules} dependencies={['password']}>
+            <Input type="password" />
           </FormItem>
-          <FormItem {...tailFormItemLayout}>
-            {getFieldDecorator('agreement', { valuePropName: 'checked', rules: agreementValidationRules })(agreementCheckbox)}
+          <FormItem {...tailFormItemLayout} name="agreement" valuePropName="checked" rules={agreementValidationRules}>
+            <Checkbox>
+              Ich habe die <a href={urls.getArticleUrl('nutzungsvertrag')}>Nutzungsbedingungen</a> gelesen und bin damit einverstanden.
+            </Checkbox>
           </FormItem>
           <FormItem {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">Registrieren</Button>
@@ -224,10 +195,9 @@ class Register extends React.Component {
 }
 
 Register.propTypes = {
-  form: formShape.isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = Form.create()(inject({
+module.exports = inject({
   userApiClient: UserApiClient
-}, Register));
+}, Register);
