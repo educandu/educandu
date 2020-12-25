@@ -1,4 +1,4 @@
-const IntervalTrainerDisplay = require('./display/interval-trainer-display.jsx');
+const IntervalTrainerDisplay = require('./display/interval-trainer-display');
 
 class IntervalTrainer {
   static get typeName() { return 'interval-trainer'; }

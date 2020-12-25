@@ -1,4 +1,4 @@
-const VideoEditor = require('./editing/video-editor.jsx');
+const VideoEditor = require('./editing/video-editor');
 
 class Video {
   static get typeName() { return 'video'; }

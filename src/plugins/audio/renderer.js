@@ -1,4 +1,4 @@
-const AudioDisplay = require('./display/audio-display.jsx');
+const AudioDisplay = require('./display/audio-display');
 
 class Audio {
   static get typeName() { return 'audio'; }

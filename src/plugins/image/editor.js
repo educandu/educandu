@@ -1,4 +1,4 @@
-const ImageEditor = require('./editing/image-editor.jsx');
+const ImageEditor = require('./editing/image-editor');
 
 class Image {
   static get typeName() { return 'image'; }

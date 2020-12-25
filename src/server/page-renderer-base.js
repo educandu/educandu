@@ -2,7 +2,7 @@ const { EOL } = require('os');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const reactBeautifulDnd = require('react-beautiful-dnd');
-const PageTemplate = require('../components/templates/page.jsx');
+const PageTemplate = require('../components/templates/page');
 
 class PageRendererBase {
   renderHtml({ language, title, styles, scripts, ContentRoot, contentProps }) {

@@ -1,7 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 const Logger = require('../common/logger');
-const Root = require('../components/root.jsx');
+const Root = require('../components/root');
 const ClientSettings = require('./client-settings');
 const commonBootstrapper = require('./common-bootstrapper');
 

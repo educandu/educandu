@@ -1,4 +1,4 @@
-const AnavisEditor = require('./editing/anavis-editor.jsx');
+const AnavisEditor = require('./editing/anavis-editor');
 
 class Anavis {
   static get typeName() { return 'anavis'; }

@@ -1,4 +1,4 @@
-const EarTrainingEditor = require('./editing/ear-training-editor.jsx');
+const EarTrainingEditor = require('./editing/ear-training-editor');
 
 class EarTraining {
   static get typeName() { return 'ear-training'; }

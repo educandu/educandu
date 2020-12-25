@@ -1,4 +1,4 @@
-const AnavisDisplay = require('./display/anavis-display.jsx');
+const AnavisDisplay = require('./display/anavis-display');
 
 class Anavis {
   static get typeName() { return 'anavis'; }

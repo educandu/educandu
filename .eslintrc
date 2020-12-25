@@ -77,6 +77,7 @@
     "react/forbid-component-props": ["off"],
     "react/forbid-prop-types": ["off"],
     "react/jsx-closing-bracket-location": [1, "props-aligned"],
+    "react/jsx-filename-extension": ["off"],
     "react/jsx-fragments": ["error", "element"],
     "react/jsx-handler-names": ["error", { eventHandlerPrefix: "(handle)", eventHandlerPropPrefix: "(on|before|after)" }],
     "react/jsx-indent": ["error", 2],

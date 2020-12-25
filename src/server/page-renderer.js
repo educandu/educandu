@@ -1,6 +1,6 @@
 const htmlescape = require('htmlescape');
 const { Container } = require('../common/di');
-const Root = require('../components/root.jsx');
+const Root = require('../components/root');
 const cloneDeep = require('../utils/clone-deep');
 const DataProvider = require('../data/data-provider.js');
 const requestHelper = require('../utils/request-helper');
@@ -10,7 +10,7 @@ const ClientSettings = require('../bootstrap/client-settings');
 const ServerSettings = require('../bootstrap/server-settings');
 
 // eslint-disable-next-line global-require
-const getPageComponent = pageName => require(`../components/pages/${pageName}.jsx`);
+const getPageComponent = pageName => require(`../components/pages/${pageName}.js`);
 
 class PageRenderer extends PageRendererBase {
   static get inject() { return [Container, ServerSettings, ClientSettings, ClientDataMapper, DataProvider]; }

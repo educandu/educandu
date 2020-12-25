@@ -1,4 +1,4 @@
-const MarkdownDisplay = require('./display/markdown-display.jsx');
+const MarkdownDisplay = require('./display/markdown-display');
 
 class Markdown {
   static get typeName() { return 'markdown'; }

@@ -1,4 +1,4 @@
-const AbcNotationDisplay = require('./display/abc-notation-display.jsx');
+const AbcNotationDisplay = require('./display/abc-notation-display');
 
 class AbcNotation {
   static get typeName() { return 'abc-notation'; }

@@ -1,4 +1,4 @@
-const QuickTesterDisplay = require('./display/quick-tester-display.jsx');
+const QuickTesterDisplay = require('./display/quick-tester-display');
 
 class QuickTester {
   static get typeName() { return 'quick-tester'; }

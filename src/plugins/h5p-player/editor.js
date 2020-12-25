@@ -1,4 +1,4 @@
-const H5pPlayerEditor = require('./editing/h5p-player-editor.jsx');
+const H5pPlayerEditor = require('./editing/h5p-player-editor');
 
 class H5pPlayer {
   static get typeName() { return 'h5p-player'; }

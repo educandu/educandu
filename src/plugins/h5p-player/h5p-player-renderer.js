@@ -2,7 +2,7 @@ const React = require('react');
 const h5pHelper = require('./h5p-helper');
 const Cdn = require('../../repositories/cdn');
 const ReactDOMServer = require('react-dom/server');
-const H5pPlayerIframe = require('./h5p-player-iframe.jsx');
+const H5pPlayerIframe = require('./h5p-player-iframe');
 
 class H5pPlayerRenderer {
   static get inject() { return [Cdn]; }

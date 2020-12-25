@@ -1,9 +1,9 @@
-const Docs = require('../components/pages/docs.jsx');
-const Menus = require('../components/pages/menus.jsx');
-const Users = require('../components/pages/users.jsx');
-const EditDoc = require('../components/pages/edit-doc.jsx');
-const Settings = require('../components/pages/settings.jsx');
-const EditMenu = require('../components/pages/edit-menu.jsx');
+const Docs = require('../components/pages/docs');
+const Menus = require('../components/pages/menus');
+const Users = require('../components/pages/users');
+const EditDoc = require('../components/pages/edit-doc');
+const Settings = require('../components/pages/settings');
+const EditMenu = require('../components/pages/edit-menu');
 const { hydrateApp } = require('../bootstrap/client-bootstrapper');
 
 hydrateApp({

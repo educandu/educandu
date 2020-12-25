@@ -1,4 +1,4 @@
-const IframeEditor = require('./editing/iframe-editor.jsx');
+const IframeEditor = require('./editing/iframe-editor');
 
 class Iframe {
   static get typeName() { return 'iframe'; }

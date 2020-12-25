@@ -1,4 +1,4 @@
-const QuickTesterEditor = require('./editing/quick-tester-editor.jsx');
+const QuickTesterEditor = require('./editing/quick-tester-editor');
 
 class QuickTester {
   static get typeName() { return 'quick-tester'; }

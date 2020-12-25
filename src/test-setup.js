@@ -1,6 +1,6 @@
 /* eslint no-process-env: off */
 
-require('@babel/register')({ extensions: ['.jsx'] });
+require('@babel/register');
 require('core-js');
 
 process.env.ELMU_ENV = process.env.ELMU_ENV || 'test';

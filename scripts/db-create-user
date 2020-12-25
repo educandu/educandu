@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-require('@babel/register')({ extensions: ['.jsx'] });
+require('@babel/register');
 require('core-js');
 
 const { MongoClient } = require('mongodb');

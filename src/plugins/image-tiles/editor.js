@@ -1,4 +1,4 @@
-const ImageTilesEditor = require('./editing/image-tiles-editor.jsx');
+const ImageTilesEditor = require('./editing/image-tiles-editor');
 
 class ImageTiles {
   static get typeName() { return 'image-tiles'; }

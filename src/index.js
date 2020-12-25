@@ -1,4 +1,4 @@
-require('@babel/register')({ extensions: ['.jsx'] });
+require('@babel/register');
 require('core-js');
 
 const Graceful = require('node-graceful');

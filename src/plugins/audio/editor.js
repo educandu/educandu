@@ -1,4 +1,4 @@
-const AudioEditor = require('./editing/audio-editor.jsx');
+const AudioEditor = require('./editing/audio-editor');
 
 class Audio {
   static get typeName() { return 'audio'; }

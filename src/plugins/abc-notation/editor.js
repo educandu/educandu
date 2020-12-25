@@ -1,4 +1,4 @@
-const AbcNotationEditor = require('./editing/abc-notation-editor.jsx');
+const AbcNotationEditor = require('./editing/abc-notation-editor');
 
 class AbcNotation {
   static get typeName() { return 'abc-notation'; }

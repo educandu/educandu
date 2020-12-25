@@ -1,4 +1,4 @@
-const VideoDisplay = require('./display/video-display.jsx');
+const VideoDisplay = require('./display/video-display');
 
 class Video {
   static get typeName() { return 'video'; }

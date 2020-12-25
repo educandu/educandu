@@ -3,7 +3,7 @@
 /* eslint no-console: 0 */
 /* eslint no-await-in-loop: 0 */
 
-require('@babel/register')({ extensions: ['.jsx'] });
+require('@babel/register');
 require('core-js');
 
 const DocumentService = require('../src/services/document-service');

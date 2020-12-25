@@ -1,4 +1,4 @@
-const IframeDisplay = require('./display/iframe-display.jsx');
+const IframeDisplay = require('./display/iframe-display');
 
 class Iframe {
   static get typeName() { return 'iframe'; }

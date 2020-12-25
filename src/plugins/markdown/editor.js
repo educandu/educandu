@@ -1,4 +1,4 @@
-const MarkdownEditor = require('./editing/markdown-editor.jsx');
+const MarkdownEditor = require('./editing/markdown-editor');
 
 class Markdown {
   static get typeName() { return 'markdown'; }

@@ -1,4 +1,4 @@
-const AnnotationDisplay = require('./display/annotation-display.jsx');
+const AnnotationDisplay = require('./display/annotation-display');
 
 class Annotation {
   static get typeName() { return 'annotation'; }

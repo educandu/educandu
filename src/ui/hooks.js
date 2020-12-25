@@ -1,6 +1,6 @@
 const { useMemo } = require('react');
 const permissions = require('../domain/permissions');
-const { useUser } = require('../components/user-context.jsx');
+const { useUser } = require('../components/user-context');
 
 function usePermission(permissionToCheck) {
   const user = useUser();

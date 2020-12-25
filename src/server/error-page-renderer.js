@@ -1,5 +1,5 @@
 const PageRendererBase = require('./page-renderer-base');
-const ErrorRoot = require('../components/error-root.jsx');
+const ErrorRoot = require('../components/error-root');
 
 class ErrorPageRenderer extends PageRendererBase {
   sendPage(req, res, error) {

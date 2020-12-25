@@ -97,7 +97,7 @@ tasks.clean = async function clean() {
 };
 
 tasks.lint = function lint() {
-  return src(['*.js', 'src/**/*.{js,jsx}', 'scripts/**'])
+  return src(['*.js', 'src/**/*.js', 'scripts/**'])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(gulpif(!server, eslint.failAfterError()));
@@ -221,7 +221,7 @@ tasks.bundleJs = async function bundleJs() {
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
+          test: /\.js$/,
           exclude: new RegExp(`node_modules[\\/](?!(${nonEs5Modules.join('|')})[\\/]).*`),
           use: {
             loader: 'babel-loader',
@@ -503,7 +503,7 @@ tasks.ciPrepare = series(tasks.mongoUser, tasks.mongoSeed, tasks.minioSeed);
 tasks.ci = series(tasks.clean, tasks.lint, tasks.test, tasks.build, tasks.verify);
 
 tasks.setupWatchers = function setupWatchers(done) {
-  watch(['src/**/*.{js,jsx}'], tasks.serveRestart);
+  watch(['src/**/*.js'], tasks.serveRestart);
   watch(['src/**/*.less'], tasks.bundleCss);
   watch(['*.js'], tasks.lint);
   watch(['scripts/**'], tasks.lint);
@@ -513,7 +513,7 @@ tasks.setupWatchers = function setupWatchers(done) {
 };
 
 tasks.setupWatchersRaw = function setupWatchersRaw(done) {
-  watch(['src/**/*.{js,jsx}'], tasks.serveRestartRaw);
+  watch(['src/**/*.js'], tasks.serveRestartRaw);
   watch(['src/**/*.less'], tasks.bundleCss);
   watch(['scripts/db-seed'], tasks.mongoSeed);
   watch(['scripts/s3-seed'], tasks.minioSeed);

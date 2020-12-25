@@ -1,4 +1,4 @@
-const ImageTilesDisplay = require('./display/image-tiles-display.jsx');
+const ImageTilesDisplay = require('./display/image-tiles-display');
 
 class ImageTiles {
   static get typeName() { return 'image-tiles'; }

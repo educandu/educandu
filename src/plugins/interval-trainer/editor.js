@@ -1,4 +1,4 @@
-const IntervalTrainerEditor = require('./editing/interval-trainer-editor.jsx');
+const IntervalTrainerEditor = require('./editing/interval-trainer-editor');
 
 class IntervalTrainer {
   static get typeName() { return 'interval-trainer'; }

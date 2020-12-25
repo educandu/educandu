@@ -1,4 +1,4 @@
-const ImageDisplay = require('./display/image-display.jsx');
+const ImageDisplay = require('./display/image-display');
 
 class Image {
   static get typeName() { return 'image'; }
