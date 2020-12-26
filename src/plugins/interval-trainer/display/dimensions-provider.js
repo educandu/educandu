@@ -1,6 +1,6 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const dimensions = require('react-dimensions');
+import React from 'react';
+import PropTypes from 'prop-types';
+import dimensions from 'react-dimensions';
 
 /* eslint-disable-next-line react/prefer-stateless-function */
 class DimensionsProvider extends React.Component {
@@ -18,4 +18,4 @@ DimensionsProvider.propTypes = {
   containerWidth: PropTypes.number.isRequired
 };
 
-module.exports = dimensions()(DimensionsProvider);
+export default dimensions()(DimensionsProvider);

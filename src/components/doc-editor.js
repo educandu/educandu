@@ -1,10 +1,10 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const urls = require('../utils/urls');
-const PropTypes = require('prop-types');
-const { Input, Radio } = require('antd');
-const { docShape } = require('../ui/default-prop-types');
-const { EyeOutlined, EditOutlined } = require('@ant-design/icons');
+import React from 'react';
+import autoBind from 'auto-bind';
+import urls from '../utils/urls';
+import PropTypes from 'prop-types';
+import { Input, Radio } from 'antd';
+import { docShape } from '../ui/default-prop-types';
+import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -95,4 +95,4 @@ DocEditor.propTypes = {
   onChanged: PropTypes.func.isRequired
 };
 
-module.exports = DocEditor;
+export default DocEditor;

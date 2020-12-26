@@ -1,17 +1,17 @@
-const Logger = require('../common/logger');
-const { MongoClient } = require('mongodb');
-const menusSpec = require('./collection-specs/menus');
-const usersSpec = require('./collection-specs/users');
-const settingsSpec = require('./collection-specs/settings');
-const sessionsSpec = require('./collection-specs/sessions');
-const sectionsSpec = require('./collection-specs/sections');
-const documentsSpec = require('./collection-specs/documents');
-const menuLocksSpec = require('./collection-specs/menu-locks');
-const documentLocksSpec = require('./collection-specs/document-locks');
-const sectionOrdersSpec = require('./collection-specs/section-orders');
-const documentOrdersSpec = require('./collection-specs/document-orders');
-const documentSnapshotsSpec = require('./collection-specs/document-snapshots');
-const passwordResetRequestsSpec = require('./collection-specs/password-reset-requests');
+import Logger from '../common/logger';
+import { MongoClient } from 'mongodb';
+import menusSpec from './collection-specs/menus';
+import usersSpec from './collection-specs/users';
+import settingsSpec from './collection-specs/settings';
+import sessionsSpec from './collection-specs/sessions';
+import sectionsSpec from './collection-specs/sections';
+import documentsSpec from './collection-specs/documents';
+import menuLocksSpec from './collection-specs/menu-locks';
+import documentLocksSpec from './collection-specs/document-locks';
+import sectionOrdersSpec from './collection-specs/section-orders';
+import documentOrdersSpec from './collection-specs/document-orders';
+import documentSnapshotsSpec from './collection-specs/document-snapshots';
+import passwordResetRequestsSpec from './collection-specs/password-reset-requests';
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 
@@ -97,4 +97,4 @@ class Database {
   }
 }
 
-module.exports = Database;
+export default Database;

@@ -1,8 +1,8 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const { Form, Input, Switch } = require('antd');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
-const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider');
+import React from 'react';
+import autoBind from 'auto-bind';
+import { Form, Input, Switch } from 'antd';
+import { sectionEditorProps } from '../../../ui/default-prop-types';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 
 const { TextArea } = Input;
 
@@ -69,4 +69,4 @@ AbcNotationEditor.propTypes = {
   ...sectionEditorProps
 };
 
-module.exports = AbcNotationEditor;
+export default AbcNotationEditor;

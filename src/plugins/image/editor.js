@@ -1,4 +1,4 @@
-const ImageEditor = require('./editing/image-editor');
+import ImageEditor from './editing/image-editor';
 
 class Image {
   static get typeName() { return 'image'; }
@@ -8,4 +8,4 @@ class Image {
   }
 }
 
-module.exports = Image;
+export default Image;

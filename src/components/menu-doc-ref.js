@@ -1,11 +1,10 @@
-const React = require('react');
-const { Button } = require('antd');
-const autoBind = require('auto-bind');
-const urls = require('../utils/urls');
-const PropTypes = require('prop-types');
-const { DeleteOutlined } = require('@ant-design/icons');
-const { docMetadataShape } = require('../ui/default-prop-types');
-
+import React from 'react';
+import { Button } from 'antd';
+import autoBind from 'auto-bind';
+import urls from '../utils/urls';
+import PropTypes from 'prop-types';
+import { DeleteOutlined } from '@ant-design/icons';
+import { docMetadataShape } from '../ui/default-prop-types';
 
 class MenuDocRef extends React.PureComponent {
   constructor(props) {
@@ -46,4 +45,4 @@ MenuDocRef.defaultProps = {
   onDelete: null
 };
 
-module.exports = MenuDocRef;
+export default MenuDocRef;

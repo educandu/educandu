@@ -1,20 +1,20 @@
-const by = require('thenby');
-const React = require('react');
-const Page = require('../page');
-const gravatar = require('gravatar');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const Logger = require('../../common/logger');
-const localeCompare = require('locale-compare');
-const { withUser } = require('../user-context');
-const { withData } = require('../data-context');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const { CloseOutlined } = require('@ant-design/icons');
-const UserApiClient = require('../../services/user-api-client');
-const CountryFlagAndName = require('../country-flag-and-name');
-const { userProps, dataProps } = require('../../ui/default-prop-types');
-const { Form, Input, Alert, Avatar, Button, Select, message } = require('antd');
+import by from 'thenby';
+import React from 'react';
+import Page from '../page';
+import gravatar from 'gravatar';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import Logger from '../../common/logger';
+import { withUser } from '../user-context';
+import { withData } from '../data-context';
+import localeCompare from 'locale-compare';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import { CloseOutlined } from '@ant-design/icons';
+import CountryFlagAndName from '../country-flag-and-name';
+import UserApiClient from '../../services/user-api-client';
+import { userProps, dataProps } from '../../ui/default-prop-types';
+import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
 
 const logger = new Logger(__filename);
 
@@ -191,6 +191,6 @@ Profile.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = withUser(withData(inject({
+export default withUser(withData(inject({
   userApiClient: UserApiClient
 }, Profile)));

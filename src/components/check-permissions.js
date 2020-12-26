@@ -1,12 +1,12 @@
-const PropTypes = require('prop-types');
-const { withUser } = require('./user-context');
-const { userProps } = require('../ui/default-prop-types');
-const permissionsModule = require('../domain/permissions');
+import PropTypes from 'prop-types';
+import { withUser } from './user-context';
+import { userProps } from '../ui/default-prop-types';
+import { hasUserPermission } from '../domain/permissions';
 
 function CheckPermissions({ permissions, user, children }) {
   return Array.isArray(permissions)
-    ? children(permissions.map(perm => permissionsModule.hasUserPermission(user, perm)))
-    : children(permissionsModule.hasUserPermission(user, permissions));
+    ? children(permissions.map(perm => hasUserPermission(user, perm)))
+    : children(hasUserPermission(user, permissions));
 }
 
 CheckPermissions.propTypes = {
@@ -18,4 +18,4 @@ CheckPermissions.propTypes = {
   ]).isRequired
 };
 
-module.exports = withUser(CheckPermissions);
+export default withUser(CheckPermissions);

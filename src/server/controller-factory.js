@@ -1,13 +1,13 @@
-const { Container } = require('../common/di');
-const CdnController = require('./cdn-controller');
-const UserController = require('./user-controller');
-const MenuController = require('./menu-controller');
-const IndexController = require('./index-controller');
-const ErrorController = require('./error-controller');
-const StaticController = require('./static-controller');
-const PluginController = require('./plugin-controller');
-const SettingController = require('./setting-controller');
-const DocumentController = require('./document-controller');
+import { Container } from '../common/di';
+import CdnController from './cdn-controller';
+import UserController from './user-controller';
+import MenuController from './menu-controller';
+import IndexController from './index-controller';
+import ErrorController from './error-controller';
+import StaticController from './static-controller';
+import PluginController from './plugin-controller';
+import SettingController from './setting-controller';
+import DocumentController from './document-controller';
 
 const controllerTypes = [
   StaticController,
@@ -33,4 +33,4 @@ class ControllerFactory {
   }
 }
 
-module.exports = ControllerFactory;
+export default ControllerFactory;

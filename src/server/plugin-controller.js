@@ -1,6 +1,6 @@
-const express = require('express');
-const urls = require('../utils/urls');
-const ApiFactory = require('../plugins/api-factory');
+import express from 'express';
+import urls from '../utils/urls';
+import ApiFactory from '../plugins/api-factory';
 
 class PluginController {
   static get inject() { return [ApiFactory]; }
@@ -21,4 +21,4 @@ class PluginController {
   }
 }
 
-module.exports = PluginController;
+export default PluginController;

@@ -1,4 +1,4 @@
-const sut = require('./urls');
+import sut from './urls';
 
 describe('order-store-base', () => {
 

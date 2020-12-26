@@ -1,19 +1,19 @@
-const React = require('react');
-const moment = require('moment');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const DocView = require('../doc-view');
-const Logger = require('../../common/logger');
-const clipboardCopy = require('clipboard-copy');
-const { Button, Slider, message } = require('antd');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const permissions = require('../../domain/permissions');
-const { fullDocShape } = require('../../ui/default-prop-types');
-const DocumentApiClient = require('../../services/document-api-client');
-const { PaperClipOutlined, EditOutlined } = require('@ant-design/icons');
+import React from 'react';
+import moment from 'moment';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import DocView from '../doc-view';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import Logger from '../../common/logger';
+import clipboardCopy from 'clipboard-copy';
+import { inject } from '../container-context';
+import { Button, Slider, message } from 'antd';
+import errorHelper from '../../ui/error-helper';
+import permissions from '../../domain/permissions';
+import { fullDocShape } from '../../ui/default-prop-types';
+import DocumentApiClient from '../../services/document-api-client';
+import { PaperClipOutlined, EditOutlined } from '@ant-design/icons';
 
 const logger = new Logger(__filename);
 
@@ -178,6 +178,6 @@ Doc.propTypes = {
   language: PropTypes.string.isRequired
 };
 
-module.exports = inject({
+export default inject({
   documentApiClient: DocumentApiClient
 }, Doc);

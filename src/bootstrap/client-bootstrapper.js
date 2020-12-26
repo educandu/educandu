@@ -1,13 +1,13 @@
-const React = require('react');
-const ReactDOM = require('react-dom');
-const Logger = require('../common/logger');
-const Root = require('../components/root');
-const ClientSettings = require('./client-settings');
-const commonBootstrapper = require('./common-bootstrapper');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Root from '../components/root';
+import Logger from '../common/logger';
+import ClientSettings from './client-settings';
+import commonBootstrapper from './common-bootstrapper';
 
 const logger = new Logger(__filename);
 
-async function createContainer() {
+export async function createContainer() {
   logger.info('Creating container');
   const container = await commonBootstrapper.createContainer();
 
@@ -17,7 +17,7 @@ async function createContainer() {
   return container;
 }
 
-async function hydrateApp(bundleConfig) {
+export async function hydrateApp(bundleConfig) {
   logger.info('Starting application');
   const props = {
     user: window.__user__,
@@ -36,7 +36,7 @@ async function hydrateApp(bundleConfig) {
   );
 }
 
-module.exports = {
+export default {
   createContainer,
   hydrateApp
 };

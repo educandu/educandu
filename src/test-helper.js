@@ -1,18 +1,18 @@
-const fs = require('fs');
-const del = require('del');
-const path = require('path');
-const util = require('util');
-const { URL } = require('url');
-const Cdn = require('./repositories/cdn');
-const Database = require('./stores/database');
-const ServerSettings = require('./bootstrap/server-settings');
-const { CREATE_USER_RESULT_SUCCESS } = require('./domain/user-management');
+import fs from 'fs';
+import del from 'del';
+import path from 'path';
+import util from 'util';
+import { URL } from 'url';
+import Cdn from './repositories/cdn';
+import Database from './stores/database';
+import ServerSettings from './bootstrap/server-settings';
+import { CREATE_USER_RESULT_SUCCESS } from './domain/user-management';
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
 const serverSettings = new ServerSettings();
 
-async function createTestDir() {
+export async function createTestDir() {
   const tempDir = path.join(__dirname, '../.tmp/');
   try {
     await mkdir(tempDir);
@@ -25,32 +25,32 @@ async function createTestDir() {
   return mkdtemp(prefix);
 }
 
-function deleteTestDir(testDir) {
+export function deleteTestDir(testDir) {
   return del(testDir);
 }
 
-function createTestDatabase() {
+export function createTestDatabase() {
   const url = new URL(serverSettings.elmuWebConnectionString);
   url.pathname = `test-elmu-web-${Date.now()}`;
   return Database.create({ connectionString: url.toString() });
 }
 
-function getTestCollection(db, collectionName) {
+export function getTestCollection(db, collectionName) {
   return db._db.collection(collectionName);
 }
 
-function dropDatabase(db) {
+export function dropDatabase(db) {
   return db._db.dropDatabase();
 }
 
-async function dropAllCollections(db) {
+export async function dropAllCollections(db) {
   const collections = await db._db.collections();
   await Promise.all(collections.map(col => db._db.dropCollection(col.collectionName)));
 }
 
 // If `bucketName` is undefined, it uses the
 // bucket associated with `cdn`, same with `region`!
-async function ensurePublicBucketExists(cdn, bucketName, region) {
+export async function ensurePublicBucketExists(cdn, bucketName, region) {
   const bRegion = region || cdn.region;
   const bName = bucketName || cdn.bucketName;
   const bucketPolicy = {
@@ -73,7 +73,7 @@ async function ensurePublicBucketExists(cdn, bucketName, region) {
   return cdn;
 }
 
-async function createTestCdn() {
+export async function createTestCdn() {
   const cdn = await Cdn.create({
     endpoint: serverSettings.cdnEndpoint,
     region: serverSettings.cdnRegion,
@@ -87,7 +87,7 @@ async function createTestCdn() {
 
 // If `bucketName` is undefined, it uses the
 // bucket associated with `cdn`!
-async function purgeBucket(cdn, bucketName) {
+export async function purgeBucket(cdn, bucketName) {
   const s3Client = cdn.s3Client;
   const bName = bucketName || cdn.bucketName;
   const objects = await s3Client.listObjects(bName, '', true);
@@ -96,20 +96,20 @@ async function purgeBucket(cdn, bucketName) {
 
 // If `bucketName` is undefined, it uses the
 // bucket associated with `cdn`!
-async function removeBucket(cdn, bucketName) {
+export async function removeBucket(cdn, bucketName) {
   const s3Client = cdn.s3Client;
   const bName = bucketName || cdn.bucketName;
   await purgeBucket(cdn, bName);
   await s3Client.deleteBucket(bName);
 }
 
-async function removeAllBuckets(cdn) {
+export async function removeAllBuckets(cdn) {
   const s3Client = cdn.s3Client;
   const buckets = await s3Client.listBuckets();
   await Promise.all(buckets.map(b => removeBucket(cdn, b.name)));
 }
 
-async function createAndVerifyUser(userService, username, password, email, roles, profile, lockedOut) {
+export async function createAndVerifyUser(userService, username, password, email, roles, profile, lockedOut) {
   const { result, user } = await userService.createUser(username, password, email);
   if (result !== CREATE_USER_RESULT_SUCCESS) {
     throw new Error(JSON.stringify({ result, username, password, email }));
@@ -122,7 +122,7 @@ async function createAndVerifyUser(userService, username, password, email, roles
   return verifiedUser;
 }
 
-module.exports = {
+export default {
   createTestDir,
   deleteTestDir,
   createTestDatabase,

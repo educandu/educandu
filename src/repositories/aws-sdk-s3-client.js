@@ -1,7 +1,7 @@
-const { EOL } = require('os');
-const splitArray = require('split-array');
-const { S3, Credentials } = require('aws-sdk');
-const PriorityQueue = require('../common/priority-queue');
+import { EOL } from 'os';
+import splitArray from 'split-array';
+import { S3, Credentials } from 'aws-sdk';
+import PriorityQueue from '../common/priority-queue';
 
 const MAX_REQUESTS = 250;
 const PRIORITY_UPLOAD = 2;
@@ -183,4 +183,4 @@ class AwsSdkS3Client {
   }
 }
 
-module.exports = AwsSdkS3Client;
+export default AwsSdkS3Client;

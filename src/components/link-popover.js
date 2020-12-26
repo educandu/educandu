@@ -1,9 +1,9 @@
-const React = require('react');
-const { Popover } = require('antd');
-const PropTypes = require('prop-types');
-const permissions = require('../domain/permissions');
-const { default: Icon } = require('@ant-design/icons');
-const { useUser } = require('../components/user-context');
+import React from 'react';
+import { Popover } from 'antd';
+import PropTypes from 'prop-types';
+import Icon from '@ant-design/icons';
+import permissions from '../domain/permissions';
+import { useUser } from '../components/user-context';
 
 function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger }) {
   const user = useUser();
@@ -78,4 +78,4 @@ LinkPopover.defaultProps = {
   trigger: 'hover'
 };
 
-module.exports = LinkPopover;
+export default LinkPopover;

@@ -2,4 +2,4 @@ function cloneDeep(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-module.exports = cloneDeep;
+export default cloneDeep;

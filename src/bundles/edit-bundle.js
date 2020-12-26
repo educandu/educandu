@@ -1,10 +1,10 @@
-const Docs = require('../components/pages/docs');
-const Menus = require('../components/pages/menus');
-const Users = require('../components/pages/users');
-const EditDoc = require('../components/pages/edit-doc');
-const Settings = require('../components/pages/settings');
-const EditMenu = require('../components/pages/edit-menu');
-const { hydrateApp } = require('../bootstrap/client-bootstrapper');
+import Docs from '../components/pages/docs';
+import Menus from '../components/pages/menus';
+import Users from '../components/pages/users';
+import EditDoc from '../components/pages/edit-doc';
+import Settings from '../components/pages/settings';
+import EditMenu from '../components/pages/edit-menu';
+import { hydrateApp } from '../bootstrap/client-bootstrapper';
 
 hydrateApp({
   'docs': Docs,

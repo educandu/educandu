@@ -1,4 +1,4 @@
-const AnnotationEditor = require('./editing/annotation-editor');
+import AnnotationEditor from './editing/annotation-editor';
 
 class Annotation {
   static get typeName() { return 'annotation'; }
@@ -8,4 +8,4 @@ class Annotation {
   }
 }
 
-module.exports = Annotation;
+export default Annotation;

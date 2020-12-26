@@ -1,4 +1,4 @@
-const AudioEditor = require('./editing/audio-editor');
+import AudioEditor from './editing/audio-editor';
 
 class Audio {
   static get typeName() { return 'audio'; }
@@ -8,4 +8,4 @@ class Audio {
   }
 }
 
-module.exports = Audio;
+export default Audio;

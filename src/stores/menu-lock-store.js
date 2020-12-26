@@ -1,5 +1,5 @@
-const Database = require('../stores/database');
-const LockStoreBase = require('./lock-store-base');
+import Database from '../stores/database';
+import LockStoreBase from './lock-store-base';
 
 class MenuLockStore extends LockStoreBase {
   static get inject() { return [Database]; }
@@ -9,4 +9,4 @@ class MenuLockStore extends LockStoreBase {
   }
 }
 
-module.exports = MenuLockStore;
+export default MenuLockStore;

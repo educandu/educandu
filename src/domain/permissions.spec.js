@@ -1,5 +1,5 @@
-const roles = require('./roles');
-const sut = require('./permissions');
+import roles from './roles';
+import sut from './permissions';
 
 describe('permissions', () => {
 

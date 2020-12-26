@@ -1,6 +1,6 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const ErrorPage = require('./error-page');
+import React from 'react';
+import PropTypes from 'prop-types';
+import ErrorPage from './error-page';
 
 function ErrorRoot({ error }) {
   return (
@@ -19,4 +19,4 @@ ErrorRoot.propTypes = {
   error: PropTypes.object.isRequired
 };
 
-module.exports = ErrorRoot;
+export default ErrorRoot;

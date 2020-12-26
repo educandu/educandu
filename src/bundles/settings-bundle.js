@@ -1,10 +1,10 @@
-const Login = require('../components/pages/login');
-const Profile = require('../components/pages/profile');
-const Register = require('../components/pages/register');
-const { hydrateApp } = require('../bootstrap/client-bootstrapper');
-const ResetPassword = require('../components/pages/reset-password');
-const CompleteRegistration = require('../components/pages/complete-registration');
-const CompletePasswordReset = require('../components/pages/complete-password-reset');
+import Login from '../components/pages/login';
+import Profile from '../components/pages/profile';
+import Register from '../components/pages/register';
+import { hydrateApp } from '../bootstrap/client-bootstrapper';
+import ResetPassword from '../components/pages/reset-password';
+import CompleteRegistration from '../components/pages/complete-registration';
+import CompletePasswordReset from '../components/pages/complete-password-reset';
 
 hydrateApp({
   'login': Login,

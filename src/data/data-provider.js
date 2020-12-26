@@ -1,5 +1,5 @@
-const countryNamesEn = require('./country-names/en.json');
-const countryNamesDe = require('./country-names/de.json');
+import countryNamesEn from './country-names/en.json';
+import countryNamesDe from './country-names/de.json';
 
 const dataDictionaries = {
   'country-names': {
@@ -24,4 +24,4 @@ class DataProvider {
   }
 }
 
-module.exports = DataProvider;
+export default DataProvider;

@@ -1,11 +1,11 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { Container } = require('../common/di');
-const { UserProvider } = require('./user-context');
-const { DataProvider } = require('./data-context');
-const { RequestProvider } = require('./request-context');
-const { ContainerProvider } = require('./container-context');
-const { requestProps, userProps, dataProps } = require('../ui/default-prop-types');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Container } from '../common/di';
+import { UserProvider } from './user-context';
+import { DataProvider } from './data-context';
+import { RequestProvider } from './request-context';
+import { ContainerProvider } from './container-context';
+import { requestProps, userProps, dataProps } from '../ui/default-prop-types';
 
 /* eslint-disable-next-line no-warning-comments */
 // TODO Create LanguageContext instead of injecting it directly into the page component?
@@ -39,4 +39,4 @@ Root.defaultProps = {
   initialState: undefined
 };
 
-module.exports = Root;
+export default Root;

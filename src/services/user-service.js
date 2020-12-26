@@ -1,13 +1,13 @@
-const bcrypt = require('bcrypt');
-const moment = require('moment');
-const roles = require('../domain/roles');
-const Logger = require('../common/logger');
-const uniqueId = require('../utils/unique-id');
-const UserStore = require('../stores/user-store');
-const PasswordResetRequestStore = require('../stores/password-reset-request-store');
-const { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } = require('../domain/user-management');
+import bcrypt from 'bcrypt';
+import moment from 'moment';
+import Logger from '../common/logger';
+import { USER } from '../domain/roles';
+import uniqueId from '../utils/unique-id';
+import UserStore from '../stores/user-store';
+import PasswordResetRequestStore from '../stores/password-reset-request-store';
+import { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } from '../domain/user-management';
 
-const DEFAULT_ROLE_NAME = roles.USER;
+const DEFAULT_ROLE_NAME = USER;
 const PROVIDER_NAME_ELMU = 'elmu';
 const PASSWORD_SALT_ROUNDS = 1024;
 const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
@@ -187,4 +187,4 @@ class UserService {
   }
 }
 
-module.exports = UserService;
+export default UserService;

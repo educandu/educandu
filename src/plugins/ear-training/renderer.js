@@ -1,4 +1,4 @@
-const EarTrainingDisplay = require('./display/ear-training-display');
+import EarTrainingDisplay from './display/ear-training-display';
 
 class EarTraining {
   static get typeName() { return 'ear-training'; }
@@ -8,4 +8,4 @@ class EarTraining {
   }
 }
 
-module.exports = EarTraining;
+export default EarTraining;

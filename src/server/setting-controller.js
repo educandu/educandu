@@ -1,14 +1,14 @@
-const bodyParser = require('body-parser');
-const PageRenderer = require('./page-renderer');
-const Database = require('../stores/database.js');
-const permissions = require('../domain/permissions');
-const SettingService = require('../services/setting-service');
-const MailService = require('../services/mail-service');
-const ClientDataMapper = require('./client-data-mapper');
-const ServerSettings = require('../bootstrap/server-settings');
-const needsPermission = require('../domain/needs-permission-middleware');
+import express from 'express';
+import PageRenderer from './page-renderer';
+import Database from '../stores/database.js';
+import permissions from '../domain/permissions';
+import MailService from '../services/mail-service';
+import ClientDataMapper from './client-data-mapper';
+import SettingService from '../services/setting-service';
+import ServerSettings from '../bootstrap/server-settings';
+import needsPermission from '../domain/needs-permission-middleware';
 
-const jsonParser = bodyParser.json();
+const jsonParser = express.json();
 
 class SettingController {
   static get inject() { return [ServerSettings, Database, SettingService, MailService, ClientDataMapper, PageRenderer]; }
@@ -38,4 +38,4 @@ class SettingController {
   }
 }
 
-module.exports = SettingController;
+export default SettingController;

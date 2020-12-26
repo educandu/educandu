@@ -1,14 +1,14 @@
-const os = require('os');
-const path = require('path');
-const multer = require('multer');
-const express = require('express');
-const urls = require('../../utils/urls');
-const Cdn = require('../../repositories/cdn');
-const permissions = require('../../domain/permissions');
-const H5pFileProcessor = require('./h5p-file-processor');
-const H5pPlayerRenderer = require('./h5p-player-renderer');
-const requestHelper = require('../../utils/request-helper');
-const needsPermission = require('../../domain/needs-permission-middleware');
+import os from 'os';
+import path from 'path';
+import multer from 'multer';
+import express from 'express';
+import urls from '../../utils/urls';
+import Cdn from '../../repositories/cdn';
+import permissions from '../../domain/permissions';
+import H5pFileProcessor from './h5p-file-processor';
+import H5pPlayerRenderer from './h5p-player-renderer';
+import requestHelper from '../../utils/request-helper';
+import needsPermission from '../../domain/needs-permission-middleware';
 
 const DEFAULT_CONTENT_ID = '1';
 
@@ -57,4 +57,4 @@ class H5pPlayer {
   }
 }
 
-module.exports = H5pPlayer;
+export default H5pPlayer;

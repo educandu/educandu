@@ -1,11 +1,11 @@
-const React = require('react');
-const { Avatar } = require('antd');
-const gravatar = require('gravatar');
-const urls = require('../utils/urls');
-const { useUser } = require('./user-context');
-const LinkPopover = require('./link-popover');
-const { useRequest } = require('./request-context');
-const { ProfileOutlined, LogoutOutlined } = require('@ant-design/icons');
+import React from 'react';
+import { Avatar } from 'antd';
+import gravatar from 'gravatar';
+import urls from '../utils/urls';
+import { useUser } from './user-context';
+import LinkPopover from './link-popover';
+import { useRequest } from './request-context';
+import { ProfileOutlined, LogoutOutlined } from '@ant-design/icons';
 
 const gravatarPopoverItems = [
   {
@@ -65,4 +65,4 @@ function LoginLogout() {
   );
 }
 
-module.exports = LoginLogout;
+export default LoginLogout;

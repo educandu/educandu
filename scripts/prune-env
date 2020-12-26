@@ -3,10 +3,10 @@
 require('@babel/register');
 require('core-js');
 
-const Cdn = require('../src/repositories/cdn');
-const testHelper = require('../src/test-helper');
-const Database = require('../src/stores/database');
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+const Cdn = require('../src/repositories/cdn').default;
+const testHelper = require('../src/test-helper').default;
+const Database = require('../src/stores/database').default;
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
 
 (async function pruneEnv() {
 

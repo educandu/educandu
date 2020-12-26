@@ -1,6 +1,6 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { PlayButton, Timer, Progress, VolumeControl } = require('react-soundplayer/components');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { PlayButton, Timer, Progress, VolumeControl } from 'react-soundplayer/components';
 
 function MediaControl({ durationInSeconds, playedSeconds, isPlaying, volume, onTogglePlay, onSeek, onVolumeChange }) {
   const playedPercentage = durationInSeconds ? playedSeconds / durationInSeconds * 100 : 0;
@@ -14,8 +14,6 @@ function MediaControl({ durationInSeconds, playedSeconds, isPlaying, volume, onT
   );
 }
 
-module.exports = MediaControl;
-
 MediaControl.propTypes = {
   durationInSeconds: PropTypes.number.isRequired,
   isPlaying: PropTypes.bool.isRequired,
@@ -25,3 +23,5 @@ MediaControl.propTypes = {
   playedSeconds: PropTypes.number.isRequired,
   volume: PropTypes.number.isRequired
 };
+
+export default MediaControl;

@@ -1,20 +1,20 @@
-const by = require('thenby');
-const React = require('react');
-const moment = require('moment');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const Logger = require('../../common/logger');
-const Restricted = require('../restricted');
-const errorHelper = require('../../ui/error-helper');
-const { PlusOutlined } = require('@ant-design/icons');
-const { inject } = require('../container-context');
-const permissions = require('../../domain/permissions');
-const { Input, Modal, Table, Button } = require('antd');
-const { toTrimmedString } = require('../../utils/sanitize');
-const { docMetadataShape } = require('../../ui/default-prop-types');
-const DocumentApiClient = require('../../services/document-api-client');
+import by from 'thenby';
+import React from 'react';
+import Page from '../page';
+import moment from 'moment';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import Restricted from '../restricted';
+import Logger from '../../common/logger';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import { PlusOutlined } from '@ant-design/icons';
+import permissions from '../../domain/permissions';
+import { Input, Modal, Table, Button } from 'antd';
+import { toTrimmedString } from '../../utils/sanitize';
+import { docMetadataShape } from '../../ui/default-prop-types';
+import DocumentApiClient from '../../services/document-api-client';
 
 const { Search } = Input;
 
@@ -209,6 +209,6 @@ Docs.propTypes = {
   }).isRequired
 };
 
-module.exports = inject({
+export default inject({
   documentApiClient: DocumentApiClient
 }, Docs);

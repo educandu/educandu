@@ -1,5 +1,5 @@
-const PageRendererBase = require('./page-renderer-base');
-const ErrorRoot = require('../components/error-root');
+import ErrorRoot from '../components/error-root';
+import PageRendererBase from './page-renderer-base';
 
 class ErrorPageRenderer extends PageRendererBase {
   sendPage(req, res, error) {
@@ -20,4 +20,4 @@ class ErrorPageRenderer extends PageRendererBase {
   }
 }
 
-module.exports = ErrorPageRenderer;
+export default ErrorPageRenderer;

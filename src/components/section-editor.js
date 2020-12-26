@@ -1,12 +1,12 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const classNames = require('classnames');
-const DeletedSection = require('./deleted-section');
-const { Menu, Radio, Button, Dropdown } = require('antd');
-const { confirmDelete } = require('./section-action-dialogs');
-const { docShape, sectionShape } = require('../ui/default-prop-types');
-const { SettingOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined, EyeOutlined, EditOutlined } = require('@ant-design/icons');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import DeletedSection from './deleted-section';
+import { Menu, Radio, Button, Dropdown } from 'antd';
+import { confirmDelete } from './section-action-dialogs';
+import { docShape, sectionShape } from '../ui/default-prop-types';
+import { SettingOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -169,4 +169,4 @@ SectionEditor.defaultProps = {
   isInvalid: false
 };
 
-module.exports = SectionEditor;
+export default SectionEditor;

@@ -1,4 +1,4 @@
-const MarkdownDisplay = require('./display/markdown-display');
+import MarkdownDisplay from './display/markdown-display';
 
 class Markdown {
   static get typeName() { return 'markdown'; }
@@ -8,4 +8,4 @@ class Markdown {
   }
 }
 
-module.exports = Markdown;
+export default Markdown;

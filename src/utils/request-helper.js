@@ -1,11 +1,11 @@
-function getHostInfo(req) {
+export function getHostInfo(req) {
   const proto = req.protocol;
   const host = req.headers.host;
   const origin = `${proto}://${host}`;
   return { proto, host, origin };
 }
 
-function expressReqToRequest(req) {
+export function expressReqToRequest(req) {
   return {
     ip: req.ip,
     path: req.path,
@@ -16,7 +16,7 @@ function expressReqToRequest(req) {
   };
 }
 
-module.exports = {
+export default {
   getHostInfo,
   expressReqToRequest
 };

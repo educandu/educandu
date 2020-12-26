@@ -1,12 +1,12 @@
-const React = require('react');
-const Page = require('../page');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const DocView = require('../doc-view');
-const { EditOutlined } = require('@ant-design/icons');
-const permissions = require('../../domain/permissions');
-const ArticleCredits = require('../article-credits');
-const { docShape, sectionShape } = require('../../ui/default-prop-types');
+import React from 'react';
+import Page from '../page';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import DocView from '../doc-view';
+import ArticleCredits from '../article-credits';
+import { EditOutlined } from '@ant-design/icons';
+import permissions from '../../domain/permissions';
+import { docShape, sectionShape } from '../../ui/default-prop-types';
 
 const handleBackClick = () => window.history.back();
 
@@ -45,4 +45,4 @@ Article.propTypes = {
   language: PropTypes.string.isRequired
 };
 
-module.exports = Article;
+export default Article;

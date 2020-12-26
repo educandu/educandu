@@ -1,4 +1,4 @@
-const AbcNotationEditor = require('./editing/abc-notation-editor');
+import AbcNotationEditor from './editing/abc-notation-editor';
 
 class AbcNotation {
   static get typeName() { return 'abc-notation'; }
@@ -8,4 +8,4 @@ class AbcNotation {
   }
 }
 
-module.exports = AbcNotation;
+export default AbcNotation;

@@ -1,7 +1,7 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { inject } = require('./container-context');
-const GithubFlavoredMarkdown = require('../common/github-flavored-markdown');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { inject } from './container-context';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown';
 
 function AudioPlayer({ soundUrl, legendHtml, githubFlavoredMarkdown }) {
   return (
@@ -28,6 +28,6 @@ AudioPlayer.defaultProps = {
   soundUrl: ''
 };
 
-module.exports = inject({
+export default inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, AudioPlayer);

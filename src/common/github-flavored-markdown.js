@@ -1,11 +1,11 @@
-const MarkdownIt = require('markdown-it');
-const memoizeLast = require('../utils/memoize-last');
+import MarkdownIt from 'markdown-it';
+import memoizeLast from '../utils/memoize-last';
 
 const gfm = new MarkdownIt();
 const render = memoizeLast(s => gfm.render(s), 1000, s => s);
 const renderInline = memoizeLast(s => gfm.renderInline(s), 1000, s => s);
 
-module.exports = class GithubFlavoredMarkdown {
+class GithubFlavoredMarkdown {
   render(markdown) {
     return render(markdown);
   }
@@ -13,4 +13,6 @@ module.exports = class GithubFlavoredMarkdown {
   renderInline(markdown) {
     return renderInline(markdown);
   }
-};
+}
+
+export default GithubFlavoredMarkdown;

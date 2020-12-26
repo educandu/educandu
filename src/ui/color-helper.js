@@ -1,9 +1,9 @@
-const color = require('color');
+import color from 'color';
 
-function getContrastColor(col) {
+export function getContrastColor(col) {
   return color(col).isLight() ? '#000' : '#FFF';
 }
 
-module.exports = {
+export default {
   getContrastColor
 };

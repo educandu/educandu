@@ -1,8 +1,8 @@
-const { useMemo } = require('react');
-const permissions = require('../domain/permissions');
-const { useUser } = require('../components/user-context');
+import { useMemo } from 'react';
+import permissions from '../domain/permissions';
+import { useUser } from '../components/user-context';
 
-function usePermission(permissionToCheck) {
+export function usePermission(permissionToCheck) {
   const user = useUser();
 
   return useMemo(
@@ -12,6 +12,6 @@ function usePermission(permissionToCheck) {
   );
 }
 
-module.exports = {
+export default {
   usePermission
 };

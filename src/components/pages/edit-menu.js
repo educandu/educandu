@@ -1,26 +1,26 @@
 /* eslint max-lines: off */
 
-const React = require('react');
-const { Input } = require('antd');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const treeCrawl = require('tree-crawl');
-const urls = require('../../utils/urls');
-const classnames = require('classnames');
-const MenuTree = require('../menu-tree');
-const Logger = require('../../common/logger');
-const MenuDocRef = require('../menu-doc-ref');
-const uniqueId = require('../../utils/unique-id');
-const cloneDeep = require('../../utils/clone-deep');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const CheckPermissions = require('../check-permissions');
-const MenuApiClient = require('../../services/menu-api-client');
-const { EDIT_MENU_STRUCTURE } = require('../../domain/permissions');
-const { SaveOutlined, CloseOutlined } = require('@ant-design/icons');
-const { menuShape, docMetadataShape } = require('../../ui/default-prop-types');
-const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
+import React from 'react';
+import Page from '../page';
+import { Input } from 'antd';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import treeCrawl from 'tree-crawl';
+import urls from '../../utils/urls';
+import classnames from 'classnames';
+import MenuTree from '../menu-tree';
+import Logger from '../../common/logger';
+import MenuDocRef from '../menu-doc-ref';
+import uniqueId from '../../utils/unique-id';
+import { inject } from '../container-context';
+import cloneDeep from '../../utils/clone-deep';
+import errorHelper from '../../ui/error-helper';
+import CheckPermissions from '../check-permissions';
+import MenuApiClient from '../../services/menu-api-client';
+import { EDIT_MENU_STRUCTURE } from '../../domain/permissions';
+import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import { menuShape, docMetadataShape } from '../../ui/default-prop-types';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const logger = new Logger(__filename);
 
@@ -612,6 +612,6 @@ EditMenu.propTypes = {
   menuApiClient: PropTypes.instanceOf(MenuApiClient).isRequired
 };
 
-module.exports = inject({
+export default inject({
   menuApiClient: MenuApiClient
 }, EditMenu);

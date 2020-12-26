@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
-const sinon = require('sinon');
-const testHelper = require('../test-helper');
+import fs from 'fs';
+import path from 'path';
+import util from 'util';
+import sinon from 'sinon';
+import testHelper from '../test-helper';
 
 const writeFile = util.promisify(fs.writeFile);
 

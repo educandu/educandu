@@ -1,8 +1,8 @@
-const { URL } = require('url');
-const { Client } = require('minio');
-const readAllStream = require('read-all-stream');
-const streamToArray = require('stream-to-array');
-const PriorityQueue = require('../common/priority-queue');
+import { URL } from 'url';
+import { Client } from 'minio';
+import readAllStream from 'read-all-stream';
+import streamToArray from 'stream-to-array';
+import PriorityQueue from '../common/priority-queue';
 
 const MAX_REQUESTS = 100;
 const PRIORITY_UPLOAD = 2;
@@ -76,4 +76,4 @@ class MinioS3Client {
   }
 }
 
-module.exports = MinioS3Client;
+export default MinioS3Client;

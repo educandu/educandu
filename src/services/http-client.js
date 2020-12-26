@@ -1,4 +1,4 @@
-const superagent = require('superagent');
+import superagent from 'superagent';
 
 class HttpClient {
   get(...args) {
@@ -18,4 +18,4 @@ class HttpClient {
   }
 }
 
-module.exports = HttpClient;
+export default HttpClient;

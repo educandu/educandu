@@ -1,4 +1,4 @@
-const IframeDisplay = require('./display/iframe-display');
+import IframeDisplay from './display/iframe-display';
 
 class Iframe {
   static get typeName() { return 'iframe'; }
@@ -8,4 +8,4 @@ class Iframe {
   }
 }
 
-module.exports = Iframe;
+export default Iframe;

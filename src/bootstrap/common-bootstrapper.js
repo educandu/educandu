@@ -1,11 +1,11 @@
-const { Container } = require('../common/di');
+import { Container } from '../common/di';
 
-function createContainer() {
+export function createContainer() {
   const container = new Container();
   container.registerInstance(Container, container);
   return Promise.resolve(container);
 }
 
-module.exports = {
+export default {
   createContainer
 };

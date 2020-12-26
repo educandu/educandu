@@ -1,19 +1,19 @@
-const React = require('react');
-const firstBy = require('thenby');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const { Table, Popover } = require('antd');
-const roles = require('../../domain/roles');
-const Logger = require('../../common/logger');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const { userShape } = require('../../ui/default-prop-types');
-const UserApiClient = require('../../services/user-api-client');
-const UserRoleTagEditor = require('../user-role-tag-editor');
-const CountryFlagAndName = require('../country-flag-and-name');
-const { SaveOutlined, CloseOutlined } = require('@ant-design/icons');
-const UserLockedOutStateEditor = require('../user-locked-out-state-editor');
+import React from 'react';
+import Page from '../page';
+import firstBy from 'thenby';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import { Table, Popover } from 'antd';
+import roles from '../../domain/roles';
+import Logger from '../../common/logger';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import { userShape } from '../../ui/default-prop-types';
+import UserRoleTagEditor from '../user-role-tag-editor';
+import CountryFlagAndName from '../country-flag-and-name';
+import UserApiClient from '../../services/user-api-client';
+import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import UserLockedOutStateEditor from '../user-locked-out-state-editor';
 
 const logger = new Logger(__filename);
 
@@ -241,6 +241,6 @@ Users.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = inject({
+export default inject({
   userApiClient: UserApiClient
 }, Users);

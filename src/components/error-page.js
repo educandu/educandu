@@ -1,8 +1,8 @@
-const React = require('react');
-const urls = require('../utils/urls');
-const PropTypes = require('prop-types');
+import React from 'react';
+import urls from '../utils/urls';
+import PropTypes from 'prop-types';
 
-function Page({ children }) {
+function ErrorPage({ children }) {
   return (
     <div className="ErrorPage">
       <header className="ErrorPage-headerArea">
@@ -32,12 +32,12 @@ function Page({ children }) {
   );
 }
 
-Page.propTypes = {
+ErrorPage.propTypes = {
   children: PropTypes.node
 };
 
-Page.defaultProps = {
+ErrorPage.defaultProps = {
   children: null
 };
 
-module.exports = Page;
+export default ErrorPage;

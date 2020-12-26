@@ -1,4 +1,4 @@
-const QuickTesterEditor = require('./editing/quick-tester-editor');
+import QuickTesterEditor from './editing/quick-tester-editor';
 
 class QuickTester {
   static get typeName() { return 'quick-tester'; }
@@ -8,4 +8,4 @@ class QuickTester {
   }
 }
 
-module.exports = QuickTester;
+export default QuickTester;

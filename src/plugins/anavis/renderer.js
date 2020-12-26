@@ -1,4 +1,4 @@
-const AnavisDisplay = require('./display/anavis-display');
+import AnavisDisplay from './display/anavis-display';
 
 class Anavis {
   static get typeName() { return 'anavis'; }
@@ -8,4 +8,4 @@ class Anavis {
   }
 }
 
-module.exports = Anavis;
+export default Anavis;

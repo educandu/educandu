@@ -1,8 +1,8 @@
-function getSearchTermIndex(text, searchTerm) {
+export function getSearchTermIndex(text, searchTerm) {
   return text.toLowerCase().indexOf(searchTerm.toLowerCase());
 }
 
-function splitAt(text, ...indices) {
+export function splitAt(text, ...indices) {
   const result = [];
   let lastIndex = 0;
   for (const index of indices) {
@@ -13,7 +13,7 @@ function splitAt(text, ...indices) {
   return result;
 }
 
-module.exports = {
+export default {
   getSearchTermIndex,
   splitAt
 };

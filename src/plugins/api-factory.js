@@ -1,6 +1,6 @@
-const { Container } = require('../common/di');
-const H5pPlayerPlugin = require('./h5p-player/api');
-const PluginFactoryBase = require('./plugin-factory-base');
+import { Container } from '../common/di';
+import H5pPlayerPlugin from './h5p-player/api';
+import PluginFactoryBase from './plugin-factory-base';
 
 const apis = [H5pPlayerPlugin];
 
@@ -16,4 +16,4 @@ class ApiFactory extends PluginFactoryBase {
   }
 }
 
-module.exports = ApiFactory;
+export default ApiFactory;

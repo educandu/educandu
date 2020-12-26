@@ -1,24 +1,24 @@
-const passport = require('passport');
-const urls = require('../utils/urls');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const { NotFound } = require('http-errors');
-const connectMongo = require('connect-mongo');
-const PageRenderer = require('./page-renderer');
-const passportLocal = require('passport-local');
-const Database = require('../stores/database.js');
-const permissions = require('../domain/permissions');
-const UserService = require('../services/user-service');
-const MailService = require('../services/mail-service');
-const requestHelper = require('../utils/request-helper');
-const ClientDataMapper = require('./client-data-mapper');
-const ServerSettings = require('../bootstrap/server-settings');
-const needsPermission = require('../domain/needs-permission-middleware');
-const sessionsStoreSpec = require('../stores/collection-specs/sessions');
-const { CREATE_USER_RESULT_SUCCESS } = require('../domain/user-management');
-const needsAuthentication = require('../domain/needs-authentication-middleware');
+import express from 'express';
+import passport from 'passport';
+import urls from '../utils/urls';
+import session from 'express-session';
+import { NotFound } from 'http-errors';
+import connectMongo from 'connect-mongo';
+import PageRenderer from './page-renderer';
+import passportLocal from 'passport-local';
+import Database from '../stores/database.js';
+import permissions from '../domain/permissions';
+import UserService from '../services/user-service';
+import MailService from '../services/mail-service';
+import requestHelper from '../utils/request-helper';
+import ClientDataMapper from './client-data-mapper';
+import ServerSettings from '../bootstrap/server-settings';
+import needsPermission from '../domain/needs-permission-middleware';
+import sessionsStoreSpec from '../stores/collection-specs/sessions';
+import { CREATE_USER_RESULT_SUCCESS } from '../domain/user-management';
+import needsAuthentication from '../domain/needs-authentication-middleware';
 
-const jsonParser = bodyParser.json();
+const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
 const MongoSessionStore = connectMongo(session);
 
@@ -209,4 +209,4 @@ class UserController {
   }
 }
 
-module.exports = UserController;
+export default UserController;

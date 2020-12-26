@@ -1,6 +1,6 @@
 /* eslint no-process-env: off */
 
-const Logger = require('../common/logger');
+import Logger from '../common/logger';
 
 const logger = new Logger(__filename);
 
@@ -88,4 +88,4 @@ class ServerSettings {
   }
 }
 
-module.exports = ServerSettings;
+export default ServerSettings;

@@ -1,4 +1,4 @@
-const H5pPlayerEditor = require('./editing/h5p-player-editor');
+import H5pPlayerEditor from './editing/h5p-player-editor';
 
 class H5pPlayer {
   static get typeName() { return 'h5p-player'; }
@@ -8,4 +8,4 @@ class H5pPlayer {
   }
 }
 
-module.exports = H5pPlayer;
+export default H5pPlayer;

@@ -1,6 +1,6 @@
-const path = require('path');
-const testHelper = require('../../test-helper');
-const H5pFileProcessor = require('./h5p-file-processor');
+import path from 'path';
+import testHelper from '../../test-helper';
+import H5pFileProcessor from './h5p-file-processor';
 
 jest.setTimeout(15000);
 

@@ -1,5 +1,5 @@
-const path = require('path');
-const express = require('express');
+import path from 'path';
+import express from 'express';
 
 const staticConfig = [
   {
@@ -29,4 +29,4 @@ class StaticController {
   }
 }
 
-module.exports = StaticController;
+export default StaticController;

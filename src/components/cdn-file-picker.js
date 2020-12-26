@@ -1,9 +1,9 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const { Modal, Button } = require('antd');
-const selection = require('../ui/selection');
-const RepositoryBrowser = require('./repository-browser');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import { Modal, Button } from 'antd';
+import selection from '../ui/selection';
+import RepositoryBrowser from './repository-browser';
 
 const localizedStrings = {
   MODAL_TITLE: 'Dateibrowser',
@@ -114,4 +114,4 @@ CdnFilePicker.defaultProps = {
   uploadPrefix: null
 };
 
-module.exports = CdnFilePicker;
+export default CdnFilePicker;

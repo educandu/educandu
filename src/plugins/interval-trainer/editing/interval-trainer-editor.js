@@ -1,7 +1,7 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const { Input, message } = require('antd');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import autoBind from 'auto-bind';
+import { Input, message } from 'antd';
+import { sectionEditorProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 
@@ -46,4 +46,4 @@ IntervalTrainerEditor.propTypes = {
   ...sectionEditorProps
 };
 
-module.exports = IntervalTrainerEditor;
+export default IntervalTrainerEditor;

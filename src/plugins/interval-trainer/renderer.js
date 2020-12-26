@@ -1,4 +1,4 @@
-const IntervalTrainerDisplay = require('./display/interval-trainer-display');
+import IntervalTrainerDisplay from './display/interval-trainer-display';
 
 class IntervalTrainer {
   static get typeName() { return 'interval-trainer'; }
@@ -8,4 +8,4 @@ class IntervalTrainer {
   }
 }
 
-module.exports = IntervalTrainer;
+export default IntervalTrainer;

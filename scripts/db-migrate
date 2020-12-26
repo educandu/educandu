@@ -5,8 +5,8 @@ require('core-js');
 
 const path = require('path');
 const Umzug = require('umzug');
-const Database = require('../src/stores/database');
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+const Database = require('../src/stores/database').default;
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
 
 (async function migrate() {
 
@@ -23,7 +23,7 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
       path: path.join(__dirname, 'migrations'),
       pattern: /^\d{4}-\d{2}-\d{2}-.*\.js$/,
       /* eslint-disable-next-line global-require */
-      customResolver: filePath => container.get(require(filePath))
+      customResolver: filePath => container.get(require(filePath).default)
     }
   });
 

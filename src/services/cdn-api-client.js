@@ -1,4 +1,4 @@
-const HttpClient = require('./http-client');
+import HttpClient from './http-client';
 
 class CdnApiClient {
   static inject() { return [HttpClient]; }
@@ -29,4 +29,4 @@ class CdnApiClient {
   }
 }
 
-module.exports = CdnApiClient;
+export default CdnApiClient;

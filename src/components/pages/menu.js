@@ -1,13 +1,13 @@
-const React = require('react');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const classnames = require('classnames');
-const DocView = require('../doc-view');
-const { EditOutlined } = require('@ant-design/icons');
-const permissions = require('../../domain/permissions');
-const { menuShape, docMetadataShape, docShape, sectionShape } = require('../../ui/default-prop-types');
+import React from 'react';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import DocView from '../doc-view';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import classnames from 'classnames';
+import { EditOutlined } from '@ant-design/icons';
+import permissions from '../../domain/permissions';
+import { menuShape, docMetadataShape, docShape, sectionShape } from '../../ui/default-prop-types';
 
 const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
 
@@ -136,4 +136,4 @@ Menu.propTypes = {
   language: PropTypes.string.isRequired
 };
 
-module.exports = Menu;
+export default Menu;

@@ -43,4 +43,4 @@ class StoreBase {
   }
 }
 
-module.exports = StoreBase;
+export default StoreBase;

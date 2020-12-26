@@ -1,14 +1,14 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const classNames = require('classnames');
-const ReactPlayer = require('react-player').default;
-const colorHelper = require('../../../ui/color-helper');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const MediaControl = require('../../../components/media-control');
-const { inject } = require('../../../components/container-context');
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
-const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import ReactPlayer from 'react-player';
+import colorHelper from '../../../ui/color-helper';
+import ClientSettings from '../../../bootstrap/client-settings';
+import MediaControl from '../../../components/media-control';
+import { inject } from '../../../components/container-context';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
+import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
 
 const playStates = {
   INITIALIZING: 'initializing',
@@ -215,7 +215,7 @@ AnavisDisplay.propTypes = {
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
-module.exports = inject({
+export default inject({
   clientSettings: ClientSettings,
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, AnavisDisplay);

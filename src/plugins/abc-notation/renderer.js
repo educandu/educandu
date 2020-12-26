@@ -1,4 +1,4 @@
-const AbcNotationDisplay = require('./display/abc-notation-display');
+import AbcNotationDisplay from './display/abc-notation-display';
 
 class AbcNotation {
   static get typeName() { return 'abc-notation'; }
@@ -8,4 +8,4 @@ class AbcNotation {
   }
 }
 
-module.exports = AbcNotation;
+export default AbcNotation;

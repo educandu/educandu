@@ -1,8 +1,8 @@
-const Logger = require('../common/logger');
-const uniqueId = require('../utils/unique-id');
-const dateTime = require('../utils/date-time');
-const MenuStore = require('../stores/menu-store');
-const MenuLockStore = require('../stores/menu-lock-store');
+import Logger from '../common/logger';
+import uniqueId from '../utils/unique-id';
+import dateTime from '../utils/date-time';
+import MenuStore from '../stores/menu-store';
+import MenuLockStore from '../stores/menu-lock-store';
 
 const logger = new Logger(__filename);
 
@@ -95,4 +95,4 @@ class MenuService {
   }
 }
 
-module.exports = MenuService;
+export default MenuService;

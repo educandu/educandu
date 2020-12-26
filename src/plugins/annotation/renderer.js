@@ -1,4 +1,4 @@
-const AnnotationDisplay = require('./display/annotation-display');
+import AnnotationDisplay from './display/annotation-display';
 
 class Annotation {
   static get typeName() { return 'annotation'; }
@@ -8,4 +8,4 @@ class Annotation {
   }
 }
 
-module.exports = Annotation;
+export default Annotation;

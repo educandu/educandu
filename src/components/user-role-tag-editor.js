@@ -1,8 +1,8 @@
-const React = require('react');
-const { Tag } = require('antd');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const { userShape } = require('./../ui/default-prop-types');
+import React from 'react';
+import { Tag } from 'antd';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import { userShape } from './../ui/default-prop-types';
 
 const COLOR_RED_10 = '#5c0011';
 
@@ -40,4 +40,4 @@ UserRoleTagEditor.propTypes = {
   user: userShape.isRequired
 };
 
-module.exports = UserRoleTagEditor;
+export default UserRoleTagEditor;

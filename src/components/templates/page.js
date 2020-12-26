@@ -1,7 +1,7 @@
-const React = require('react');
-const parse5 = require('parse5');
-const PropTypes = require('prop-types');
-const faviconData = require('../../../favicon-data.json');
+import React from 'react';
+import parse5 from 'parse5';
+import PropTypes from 'prop-types';
+import faviconData from '../../../favicon-data.json';
 
 const toElementDefinition = ({ tagName, attrs }) => {
   const props = attrs.reduce((accu, { name, value }) => {
@@ -62,4 +62,4 @@ Page.defaultProps = {
   styles: []
 };
 
-module.exports = Page;
+export default Page;

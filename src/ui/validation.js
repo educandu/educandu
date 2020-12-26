@@ -4,7 +4,7 @@ const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|
 
 const URL_SECURE_PROTO_REGEX = /^https:\/\/.+$/;
 
-function validateUrl(url, { allowInsecure = false } = {}) {
+export function validateUrl(url, { allowInsecure = false } = {}) {
   let validateStatus;
   let help;
 
@@ -25,6 +25,6 @@ function validateUrl(url, { allowInsecure = false } = {}) {
   return { validateStatus, help };
 }
 
-module.exports = {
+export default {
   validateUrl
 };

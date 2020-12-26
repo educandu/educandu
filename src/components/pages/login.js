@@ -1,16 +1,16 @@
-const React = require('react');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const ElmuLogo = require('../elmu-logo');
-const Logger = require('../../common/logger');
-const { Form, Input, Button } = require('antd');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const { withRequest } = require('../request-context');
-const UserApiClient = require('../../services/user-api-client');
-const { requestProps } = require('../../ui/default-prop-types');
+import React from 'react';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import ElmuLogo from '../elmu-logo';
+import Logger from '../../common/logger';
+import { Form, Input, Button } from 'antd';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import { withRequest } from '../request-context';
+import UserApiClient from '../../services/user-api-client';
+import { requestProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -149,6 +149,6 @@ Login.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = withRequest(inject({
+export default withRequest(inject({
   userApiClient: UserApiClient
 }, Login));

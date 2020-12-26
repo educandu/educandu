@@ -1,6 +1,6 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { default: ReactCountdown } = require('react-countdown');
+import React from 'react';
+import PropTypes from 'prop-types';
+import ReactCountdown from 'react-countdown';
 
 const formatSeconds = seconds => `${seconds} ${seconds === 1 ? 'Sekunde' : 'Sekunden'}`;
 
@@ -31,4 +31,4 @@ Countdown.defaultProps = {
   onComplete: () => {}
 };
 
-module.exports = Countdown;
+export default Countdown;

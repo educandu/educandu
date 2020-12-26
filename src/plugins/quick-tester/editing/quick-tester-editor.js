@@ -1,9 +1,9 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const { Form, Input, Table, Button } = require('antd');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
-const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
-const { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } = require('@ant-design/icons');
+import React from 'react';
+import autoBind from 'auto-bind';
+import { Form, Input, Table, Button } from 'antd';
+import { sectionEditorProps } from '../../../ui/default-prop-types';
+import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
+import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
@@ -151,4 +151,4 @@ QuickTesterEditor.propTypes = {
   ...sectionEditorProps
 };
 
-module.exports = QuickTesterEditor;
+export default QuickTesterEditor;

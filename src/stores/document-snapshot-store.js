@@ -1,5 +1,5 @@
-const Database = require('./database');
-const StoreBase = require('./store-base');
+import Database from './database';
+import StoreBase from './store-base';
 
 class DocumentSnapshotStore extends StoreBase {
   static get inject() { return [Database]; }
@@ -9,4 +9,4 @@ class DocumentSnapshotStore extends StoreBase {
   }
 }
 
-module.exports = DocumentSnapshotStore;
+export default DocumentSnapshotStore;

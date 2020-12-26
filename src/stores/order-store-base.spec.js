@@ -1,5 +1,5 @@
-const testHelper = require('../test-helper');
-const OrderStoreBase = require('./order-store-base');
+import testHelper from '../test-helper';
+import OrderStoreBase from './order-store-base';
 
 describe('order-store-base', () => {
   let db;

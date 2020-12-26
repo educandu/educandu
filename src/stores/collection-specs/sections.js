@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'sections',
   indexes: [
     {

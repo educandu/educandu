@@ -1,6 +1,6 @@
-const React = require('react');
-const classNames = require('classnames');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import classNames from 'classnames';
+import { sectionDisplayProps } from '../../../ui/default-prop-types';
 
 function IframeDisplay({ content }) {
   return (
@@ -18,4 +18,4 @@ IframeDisplay.propTypes = {
   ...sectionDisplayProps
 };
 
-module.exports = IframeDisplay;
+export default IframeDisplay;

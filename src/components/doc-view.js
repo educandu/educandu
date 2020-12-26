@@ -1,9 +1,9 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const SectionDisplay = require('./section-display');
-const { useService } = require('./container-context');
-const RendererFactory = require('../plugins/renderer-factory');
-const { docShape, sectionShape } = require('../ui/default-prop-types');
+import React from 'react';
+import PropTypes from 'prop-types';
+import SectionDisplay from './section-display';
+import { useService } from './container-context';
+import RendererFactory from '../plugins/renderer-factory';
+import { docShape, sectionShape } from '../ui/default-prop-types';
 
 function DocView({ doc, sections, language, onAction }) {
   const rendererFactory = useService(RendererFactory);
@@ -41,4 +41,4 @@ DocView.defaultProps = {
   onAction: null
 };
 
-module.exports = DocView;
+export default DocView;

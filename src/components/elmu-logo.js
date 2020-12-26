@@ -1,7 +1,7 @@
-const React = require('react');
-const urls = require('../utils/urls');
-const PropTypes = require('prop-types');
-const classNames = require('classnames');
+import React from 'react';
+import urls from '../utils/urls';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 function ElmuLogo({ readonly, size }) {
   const classes = classNames({
@@ -25,4 +25,4 @@ ElmuLogo.defaultProps = {
   size: 'default'
 };
 
-module.exports = ElmuLogo;
+export default ElmuLogo;

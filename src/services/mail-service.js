@@ -1,6 +1,6 @@
-const nodemailer = require('nodemailer');
-const Logger = require('../common/logger');
-const ServerSettings = require('../bootstrap/server-settings');
+import nodemailer from 'nodemailer';
+import Logger from '../common/logger';
+import ServerSettings from '../bootstrap/server-settings';
 
 const logger = new Logger(__filename);
 
@@ -45,4 +45,4 @@ class MailService {
   }
 }
 
-module.exports = MailService;
+export default MailService;

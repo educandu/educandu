@@ -1,5 +1,5 @@
-const permissions = require('./permissions');
-const { Unauthorized, Forbidden } = require('http-errors');
+import permissions from './permissions';
+import { Unauthorized, Forbidden } from 'http-errors';
 
 function evaluatePermission(permission, req, res, next) {
   if (!req.isAuthenticated()) {
@@ -15,6 +15,8 @@ function evaluatePermission(permission, req, res, next) {
   return next();
 }
 
-module.exports = function needsPermission(permission) {
+function needsPermission(permission) {
   return evaluatePermission.bind(null, permission);
-};
+}
+
+export default needsPermission;

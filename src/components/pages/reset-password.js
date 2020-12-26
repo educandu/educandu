@@ -1,13 +1,13 @@
-const React = require('react');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const ElmuLogo = require('../elmu-logo');
-const Logger = require('../../common/logger');
-const { Form, Input, Button } = require('antd');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const UserApiClient = require('../../services/user-api-client');
+import React from 'react';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import ElmuLogo from '../elmu-logo';
+import Logger from '../../common/logger';
+import { Form, Input, Button } from 'antd';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import UserApiClient from '../../services/user-api-client';
 
 const logger = new Logger(__filename);
 
@@ -117,6 +117,6 @@ ResetPassword.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = inject({
+export default inject({
   userApiClient: UserApiClient
 }, ResetPassword);

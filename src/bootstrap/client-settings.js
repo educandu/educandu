@@ -4,5 +4,4 @@ class ClientSettings {
   }
 }
 
-
-module.exports = ClientSettings;
+export default ClientSettings;

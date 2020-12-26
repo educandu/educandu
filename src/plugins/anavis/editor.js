@@ -1,4 +1,4 @@
-const AnavisEditor = require('./editing/anavis-editor');
+import AnavisEditor from './editing/anavis-editor';
 
 class Anavis {
   static get typeName() { return 'anavis'; }
@@ -8,4 +8,4 @@ class Anavis {
   }
 }
 
-module.exports = Anavis;
+export default Anavis;

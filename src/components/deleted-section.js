@@ -1,6 +1,6 @@
-const React = require('react');
-const { CloseCircleFilled } = require('@ant-design/icons');
-const { sectionShape } = require('../ui/default-prop-types');
+import React from 'react';
+import { CloseCircleFilled } from '@ant-design/icons';
+import { sectionShape } from '../ui/default-prop-types';
 
 function DeletedSection({ section }) {
   return (
@@ -16,4 +16,4 @@ DeletedSection.propTypes = {
   section: sectionShape.isRequired
 };
 
-module.exports = DeletedSection;
+export default DeletedSection;

@@ -1,11 +1,11 @@
 // See https://github.com/danigb/soundfont-player
 // for more documentation on prop options.
 
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const Soundfont = require('soundfont-player');
-const AudioContextProvider = require('../../../common/audio-context-provider');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import Soundfont from 'soundfont-player';
+import AudioContextProvider from '../../../common/audio-context-provider';
 
 class SoundfontProvider extends React.Component {
   constructor(props) {
@@ -112,4 +112,4 @@ SoundfontProvider.defaultProps = {
   soundfont: 'MusyngKite'
 };
 
-module.exports = SoundfontProvider;
+export default SoundfontProvider;

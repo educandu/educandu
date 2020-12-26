@@ -7,7 +7,8 @@
     "jest": true
   },
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2020,
+    "sourceType": "module",
     "ecmaFeatures": {
       "impliedStrict": true,
       "jsx": true
@@ -67,6 +68,7 @@
     "prefer-destructuring": ["off"],
     "prefer-named-capture-group": ["off"],
     "require-jsdoc": ["off"],
+    "sort-imports": ["off"],
     "sort-keys": ["off"],
     "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
     "quote-props": ["error", "consistent-as-needed"],

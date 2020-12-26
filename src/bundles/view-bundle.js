@@ -1,8 +1,8 @@
-const Doc = require('../components/pages/doc');
-const Menu = require('../components/pages/menu');
-const Index = require('../components/pages/index');
-const Article = require('../components/pages/article');
-const { hydrateApp } = require('../bootstrap/client-bootstrapper');
+import Doc from '../components/pages/doc';
+import Menu from '../components/pages/menu';
+import Index from '../components/pages/index';
+import Article from '../components/pages/article';
+import { hydrateApp } from '../bootstrap/client-bootstrapper';
 
 hydrateApp({
   doc: Doc,

@@ -1,24 +1,24 @@
-const React = require('react');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const Logger = require('../../common/logger');
-const utils = require('../../utils/unique-id');
-const DocEditor = require('../doc-editor');
-const { Menu, Button, Dropdown } = require('antd');
-const cloneDeep = require('../../utils/clone-deep');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const SectionEditor = require('../section-editor');
-const pluginInfos = require('../../plugins/plugin-infos');
-const EditorFactory = require('../../plugins/editor-factory');
-const ShallowUpdateList = require('../shallow-update-list');
-const RendererFactory = require('../../plugins/renderer-factory');
-const DocumentApiClient = require('../../services/document-api-client');
-const { docShape, sectionShape } = require('../../ui/default-prop-types');
-const { DragDropContext, Droppable, Draggable } = require('react-beautiful-dnd');
-const { PlusOutlined, SaveOutlined, CloseOutlined } = require('@ant-design/icons');
+import React from 'react';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import DocEditor from '../doc-editor';
+import Logger from '../../common/logger';
+import utils from '../../utils/unique-id';
+import { inject } from '../container-context';
+import SectionEditor from '../section-editor';
+import { Menu, Button, Dropdown } from 'antd';
+import cloneDeep from '../../utils/clone-deep';
+import errorHelper from '../../ui/error-helper';
+import pluginInfos from '../../plugins/plugin-infos';
+import ShallowUpdateList from '../shallow-update-list';
+import EditorFactory from '../../plugins/editor-factory';
+import RendererFactory from '../../plugins/renderer-factory';
+import DocumentApiClient from '../../services/document-api-client';
+import { docShape, sectionShape } from '../../ui/default-prop-types';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 
 const logger = new Logger(__filename);
 
@@ -306,7 +306,7 @@ EditDoc.propTypes = {
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
 };
 
-module.exports = inject({
+export default inject({
   documentApiClient: DocumentApiClient,
   rendererFactory: RendererFactory,
   editorFactory: EditorFactory

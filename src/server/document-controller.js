@@ -1,14 +1,14 @@
-const parseBool = require('parseboolean');
-const bodyParser = require('body-parser');
-const { NotFound } = require('http-errors');
-const PageRenderer = require('./page-renderer');
-const permissions = require('../domain/permissions');
-const privateData = require('../domain/private-data');
-const ClientDataMapper = require('./client-data-mapper');
-const DocumentService = require('../services/document-service');
-const needsPermission = require('../domain/needs-permission-middleware');
+import express from 'express';
+import parseBool from 'parseboolean';
+import { NotFound } from 'http-errors';
+import PageRenderer from './page-renderer';
+import permissions from '../domain/permissions';
+import privateData from '../domain/private-data';
+import ClientDataMapper from './client-data-mapper';
+import DocumentService from '../services/document-service';
+import needsPermission from '../domain/needs-permission-middleware';
 
-const jsonParser = bodyParser.json();
+const jsonParser = express.json();
 
 class DocumentController {
   static get inject() { return [DocumentService, ClientDataMapper, PageRenderer]; }
@@ -115,4 +115,4 @@ class DocumentController {
   }
 }
 
-module.exports = DocumentController;
+export default DocumentController;

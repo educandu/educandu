@@ -1,15 +1,15 @@
-const React = require('react');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const Logger = require('../../common/logger');
-const ElmuLogo = require('../elmu-logo');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const { Form, Input, Button, Checkbox } = require('antd');
-const UserApiClient = require('../../services/user-api-client');
-const { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } = require('../../domain/user-management');
+import React from 'react';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import ElmuLogo from '../elmu-logo';
+import Logger from '../../common/logger';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import { Form, Input, Button, Checkbox } from 'antd';
+import UserApiClient from '../../services/user-api-client';
+import { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
 
 const logger = new Logger(__filename);
 
@@ -198,6 +198,6 @@ Register.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-module.exports = inject({
+export default inject({
   userApiClient: UserApiClient
 }, Register);

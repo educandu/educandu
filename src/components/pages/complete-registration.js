@@ -1,8 +1,8 @@
-const React = require('react');
-const Page = require('../page');
-const urls = require('../../utils/urls');
-const ElmuLogo = require('../elmu-logo');
-const Countdown = require('../countdown');
+import React from 'react';
+import Page from '../page';
+import urls from '../../utils/urls';
+import ElmuLogo from '../elmu-logo';
+import Countdown from '../countdown';
 
 function CompleteRegistration() {
   const [isCountdownRunning, setIsCountdownRunning] = React.useState(false);
@@ -33,4 +33,4 @@ function CompleteRegistration() {
   );
 }
 
-module.exports = CompleteRegistration;
+export default CompleteRegistration;

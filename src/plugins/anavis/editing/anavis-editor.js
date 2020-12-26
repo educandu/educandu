@@ -1,16 +1,16 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const classNames = require('classnames');
-const Dropperx = require('dropperx').default;
-const ColorPicker = require('../../../components/color-picker');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context');
-const CdnFilePicker = require('../../../components/cdn-file-picker');
-const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
-const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider');
-const { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } = require('antd');
-const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default-prop-types');
-const { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } = require('@ant-design/icons');
+import React from 'react';
+import Dropperx from 'dropperx';
+import autoBind from 'auto-bind';
+import classNames from 'classnames';
+import ColorPicker from '../../../components/color-picker';
+import ClientSettings from '../../../bootstrap/client-settings';
+import { inject } from '../../../components/container-context';
+import CdnFilePicker from '../../../components/cdn-file-picker';
+import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
+import { sectionEditorProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -400,6 +400,6 @@ AnavisEditor.propTypes = {
   ...clientSettingsProps
 };
 
-module.exports = inject({
+export default inject({
   clientSettings: ClientSettings
 }, AnavisEditor);

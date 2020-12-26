@@ -1,1 +1,1 @@
-module.exports = require('js-cookie');
+export { default } from 'js-cookie';

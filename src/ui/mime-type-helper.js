@@ -1,17 +1,17 @@
-const mime = require('mime');
+import mime from 'mime';
 
-const CATEGORY_TEXT = 'text';
-const CATEGORY_MARKUP = 'markup';
-const CATEGORY_IMAGE = 'image';
-const CATEGORY_VIDEO = 'video';
-const CATEGORY_AUDIO = 'audio';
-const CATEGORY_ARCHIVE = 'archive';
-const CATEGORY_DOCUMENT = 'document';
-const CATEGORY_SPREADSHEET = 'spreadsheet';
-const CATEGORY_PRESENTATION = 'presentation';
-const CATEGORY_PROGRAM = 'program';
-const CATEGORY_FOLDER = 'folder';
-const CATEGORY_UNKNOWN = 'unknown';
+export const CATEGORY_TEXT = 'text';
+export const CATEGORY_MARKUP = 'markup';
+export const CATEGORY_IMAGE = 'image';
+export const CATEGORY_VIDEO = 'video';
+export const CATEGORY_AUDIO = 'audio';
+export const CATEGORY_ARCHIVE = 'archive';
+export const CATEGORY_DOCUMENT = 'document';
+export const CATEGORY_SPREADSHEET = 'spreadsheet';
+export const CATEGORY_PRESENTATION = 'presentation';
+export const CATEGORY_PROGRAM = 'program';
+export const CATEGORY_FOLDER = 'folder';
+export const CATEGORY_UNKNOWN = 'unknown';
 
 const predefinedMappings = {
 
@@ -188,7 +188,7 @@ const predefinedMappings = {
 };
 
 // Never returns CATEGORY_FOLDER
-function getCategory(pathOrExtension) {
+export function getCategory(pathOrExtension) {
   const mimeType = mime.getType(pathOrExtension);
   if (!mimeType) {
     return CATEGORY_UNKNOWN;
@@ -214,7 +214,7 @@ function getCategory(pathOrExtension) {
   }
 }
 
-module.exports = {
+export default {
   CATEGORY_TEXT,
   CATEGORY_MARKUP,
   CATEGORY_IMAGE,

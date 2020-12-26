@@ -2,31 +2,32 @@
 /* eslint no-console: off */
 /* eslint no-process-env: off */
 
-const fs = require('fs');
-const del = require('del');
-const path = require('path');
-const glob = require('glob');
-const jest = require('jest');
-const delay = require('delay');
-const execa = require('execa');
-const acorn = require('acorn');
-const { EOL } = require('os');
-const less = require('gulp-less');
-const csso = require('gulp-csso');
-const gulpif = require('gulp-if');
-const webpack = require('webpack');
-const eslint = require('gulp-eslint');
-const { promisify } = require('util');
-const plumber = require('gulp-plumber');
-const superagent = require('superagent');
-const { spawn } = require('child_process');
-const { Docker } = require('docker-cli-js');
-const sourcemaps = require('gulp-sourcemaps');
-const realFavicon = require('gulp-real-favicon');
-const streamToPromise = require('stream-to-promise');
-const LessAutoprefix = require('less-plugin-autoprefix');
-const { src, dest, parallel, series, watch } = require('gulp');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+import fs from 'fs';
+import del from 'del';
+import path from 'path';
+import glob from 'glob';
+import { EOL } from 'os';
+import delay from 'delay';
+import execa from 'execa';
+import less from 'gulp-less';
+import csso from 'gulp-csso';
+import gulpif from 'gulp-if';
+import webpack from 'webpack';
+import eslint from 'gulp-eslint';
+import { promisify } from 'util';
+import plumber from 'gulp-plumber';
+import superagent from 'superagent';
+import { runCLI } from '@jest/core';
+import { spawn } from 'child_process';
+import { Docker } from 'docker-cli-js';
+import sourcemaps from 'gulp-sourcemaps';
+import { parse as parseEs5 } from 'acorn';
+import realFavicon from 'gulp-real-favicon';
+import streamToPromise from 'stream-to-promise';
+import LessAutoprefix from 'less-plugin-autoprefix';
+import { src, dest, parallel, series, watch } from 'gulp';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import MomentLocalesPlugin from 'moment-locales-webpack-plugin';
 
 if (process.env.ELMU_ENV === 'prod') {
   throw new Error('Tasks should not run in production environment!');
@@ -104,7 +105,7 @@ tasks.lint = function lint() {
 };
 
 tasks.test = async function test() {
-  const { results } = await jest.runCLI({
+  const { results } = await runCLI({
     testEnvironment: 'node',
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
@@ -117,7 +118,7 @@ tasks.test = async function test() {
 };
 
 tasks.testChanged = async function testChanged() {
-  await jest.runCLI({
+  await runCLI({
     testEnvironment: 'node',
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
@@ -127,7 +128,7 @@ tasks.testChanged = async function testChanged() {
 };
 
 tasks.testWatch = async function testWatch() {
-  await jest.runCLI({
+  await runCLI({
     testEnvironment: 'node',
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
@@ -158,7 +159,8 @@ tasks.bundleJs = async function bundleJs() {
 
   const plugins = [
     new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi'),
-    new webpack.ProvidePlugin({ process: 'process/browser' })
+    new webpack.ProvidePlugin({ process: 'process/browser' }),
+    new MomentLocalesPlugin({ localesToKeep: ['en', 'de', 'de-DE'] })
   ];
 
   if (optimize) {
@@ -371,7 +373,7 @@ tasks.verifyEs5compat = async function verifyEs5compat() {
     const content = fs.readFileSync(file, 'utf8');
 
     try {
-      acorn.parse(content, { ecmaVersion: 5 });
+      parseEs5(content, { ecmaVersion: 5 });
     } catch (error) {
       errors.push({ file, error });
     }

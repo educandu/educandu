@@ -1,5 +1,5 @@
-const path = require('path');
-const uniqueId = require('./unique-id');
+import path from 'path';
+import uniqueId from './unique-id';
 
 function insertBeforeExtension(fileName, stringToInsert) {
   const index = fileName.indexOf('.');
@@ -10,7 +10,7 @@ function insertBeforeExtension(fileName, stringToInsert) {
   return fileName.substr(0, index) + stringToInsert + fileName.substr(index);
 }
 
-function makeUnique(fileName) {
+export function makeUnique(fileName) {
   const id = uniqueId.create();
   const baseName = path.basename(fileName);
   const fileNameWithoutBaseName = fileName.substr(0, fileName.length - baseName.length);
@@ -18,6 +18,6 @@ function makeUnique(fileName) {
   return fileNameWithoutBaseName + uniqueBaseName;
 }
 
-module.exports = {
+export default {
   makeUnique
 };

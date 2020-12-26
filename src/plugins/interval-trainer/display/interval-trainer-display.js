@@ -1,15 +1,15 @@
-const React = require('react');
-const { Button } = require('antd');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const { Piano } = require('react-piano');
-const { RadialChart } = require('react-vis');
-const arrayShuffle = require('array-shuffle');
-const SoundfontProvider = require('./soundfont-provider');
-const DimensionsProvider = require('./dimensions-provider');
-const { inject } = require('../../../components/container-context');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
-const AudioContextProvider = require('../../../common/audio-context-provider');
+import React from 'react';
+import { Button } from 'antd';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import { Piano } from 'react-piano';
+import { RadialChart } from 'react-vis';
+import arrayShuffle from 'array-shuffle';
+import SoundfontProvider from './soundfont-provider';
+import DimensionsProvider from './dimensions-provider';
+import { inject } from '../../../components/container-context';
+import { sectionDisplayProps } from '../../../ui/default-prop-types';
+import AudioContextProvider from '../../../common/audio-context-provider';
 
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
@@ -297,6 +297,6 @@ IntervalTrainerDisplay.propTypes = {
   audioContextProvider: PropTypes.instanceOf(AudioContextProvider).isRequired
 };
 
-module.exports = inject({
+export default inject({
   audioContextProvider: AudioContextProvider
 }, IntervalTrainerDisplay);

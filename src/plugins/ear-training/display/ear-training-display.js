@@ -1,13 +1,13 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const arrayShuffle = require('array-shuffle');
-const abcjs = require('../../../common/abcjs-import');
-const memoizeLast = require('../../../utils/memoize-last');
-const AudioPlayer = require('../../../components/audio-player');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context');
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
-const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import autoBind from 'auto-bind';
+import arrayShuffle from 'array-shuffle';
+import abcjs from '../../../common/abcjs-import';
+import memoizeLast from '../../../utils/memoize-last';
+import AudioPlayer from '../../../components/audio-player';
+import ClientSettings from '../../../bootstrap/client-settings';
+import { inject } from '../../../components/container-context';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
+import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
 
 const abcOptions = {
   paddingtop: 0,
@@ -136,7 +136,7 @@ EarTrainingDisplay.propTypes = {
   ...clientSettingsProps
 };
 
-module.exports = inject({
+export default inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown,
   clientSettings: ClientSettings
 }, EarTrainingDisplay);

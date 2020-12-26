@@ -1,8 +1,8 @@
-const React = require('react');
-const AudioPlayer = require('../../../components/audio-player');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context');
-const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import AudioPlayer from '../../../components/audio-player';
+import { inject } from '../../../components/container-context';
+import ClientSettings from '../../../bootstrap/client-settings';
+import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
 
 function AudioDisplay({ content, clientSettings }) {
 
@@ -33,6 +33,6 @@ AudioDisplay.propTypes = {
   ...clientSettingsProps
 };
 
-module.exports = inject({
+export default inject({
   clientSettings: ClientSettings
 }, AudioDisplay);

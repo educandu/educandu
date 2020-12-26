@@ -1,7 +1,7 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { withData } = require('./data-context');
-const { dataProps } = require('../ui/default-prop-types');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withData } from './data-context';
+import { dataProps } from '../ui/default-prop-types';
 
 function CountryFlagAndName({ code, data }) {
   const name = (data && data['country-names'] && data['country-names'][code]) || code;
@@ -19,4 +19,4 @@ CountryFlagAndName.propTypes = {
   code: PropTypes.string.isRequired
 };
 
-module.exports = withData(CountryFlagAndName);
+export default withData(CountryFlagAndName);

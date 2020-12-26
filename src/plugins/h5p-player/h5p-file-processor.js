@@ -1,14 +1,14 @@
-const os = require('os');
-const del = require('del');
-const path = require('path');
-const toposort = require('toposort');
-const decompress = require('decompress');
-const h5pHelper = require('./h5p-helper');
-const Cdn = require('../../repositories/cdn');
-const Logger = require('../../common/logger');
-const uniqueId = require('../../utils/unique-id');
-const recursiveReaddir = require('recursive-readdir');
-const { readJson, writeJson } = require('../../utils/file-helper');
+import os from 'os';
+import del from 'del';
+import path from 'path';
+import toposort from 'toposort';
+import decompress from 'decompress';
+import h5pHelper from './h5p-helper';
+import Cdn from '../../repositories/cdn';
+import Logger from '../../common/logger';
+import uniqueId from '../../utils/unique-id';
+import recursiveReaddir from 'recursive-readdir';
+import { readJson, writeJson } from '../../utils/file-helper';
 
 const logger = new Logger(__filename);
 
@@ -148,4 +148,4 @@ class H5pFileProcessor {
   }
 }
 
-module.exports = H5pFileProcessor;
+export default H5pFileProcessor;

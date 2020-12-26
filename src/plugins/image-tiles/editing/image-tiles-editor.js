@@ -1,11 +1,11 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const TileEditor = require('./tile-editor');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
-const { Form, Menu, Radio, Slider, Button, Dropdown, Modal } = require('antd');
-const { swapItems, removeItem } = require('../../../utils/immutable-array-utils');
-const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider');
-const { SettingOutlined, PlusOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined } = require('@ant-design/icons');
+import React from 'react';
+import autoBind from 'auto-bind';
+import TileEditor from './tile-editor';
+import { sectionEditorProps } from '../../../ui/default-prop-types';
+import { Form, Menu, Radio, Slider, Button, Dropdown, Modal } from 'antd';
+import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { SettingOutlined, PlusOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -201,4 +201,4 @@ ImageTilesEditor.propTypes = {
   ...sectionEditorProps
 };
 
-module.exports = ImageTilesEditor;
+export default ImageTilesEditor;

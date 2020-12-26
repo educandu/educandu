@@ -4,10 +4,10 @@ require('@babel/register');
 require('core-js');
 
 const path = require('path');
-const Cdn = require('../src/repositories/cdn');
-const testHelper = require('../src/test-helper');
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
-const H5pFileProcessor = require('../src/plugins/h5p-player/h5p-file-processor');
+const Cdn = require('../src/repositories/cdn').default;
+const testHelper = require('../src/test-helper').default;
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
+const H5pFileProcessor = require('../src/plugins/h5p-player/h5p-file-processor').default;
 
 (async function seed() {
 

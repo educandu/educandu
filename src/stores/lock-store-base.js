@@ -1,4 +1,4 @@
-const StoreBase = require('./store-base');
+import StoreBase from './store-base';
 
 class LockStoreBase extends StoreBase {
   async takeLock(lockKey) {
@@ -10,4 +10,4 @@ class LockStoreBase extends StoreBase {
   }
 }
 
-module.exports = LockStoreBase;
+export default LockStoreBase;

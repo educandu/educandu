@@ -1,6 +1,6 @@
-const { notification } = require('antd');
+import { notification } from 'antd';
 
-function handleApiError(error, logger) {
+export function handleApiError(error, logger) {
   const err = error.response && error.response.body ? error.response.body : error;
 
   if (logger) {
@@ -14,6 +14,6 @@ function handleApiError(error, logger) {
   });
 }
 
-module.exports = {
+export default {
   handleApiError
 };

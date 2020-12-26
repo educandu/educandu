@@ -1,19 +1,19 @@
-const treeCrawl = require('tree-crawl');
-const bodyParser = require('body-parser');
-const { NotFound } = require('http-errors');
-const PageRenderer = require('./page-renderer');
-const permissions = require('../domain/permissions');
-const privateData = require('../domain/private-data');
-const MenuService = require('../services/menu-service');
-const ClientDataMapper = require('./client-data-mapper');
-const DocumentService = require('../services/document-service');
-const needsPermission = require('../domain/needs-permission-middleware');
+import express from 'express';
+import treeCrawl from 'tree-crawl';
+import { NotFound } from 'http-errors';
+import PageRenderer from './page-renderer';
+import permissions from '../domain/permissions';
+import privateData from '../domain/private-data';
+import MenuService from '../services/menu-service';
+import ClientDataMapper from './client-data-mapper';
+import DocumentService from '../services/document-service';
+import needsPermission from '../domain/needs-permission-middleware';
 
 function visitMenuNodes(nodes, cb) {
   nodes.forEach(rootNode => treeCrawl(rootNode, cb, { getChildren: node => node.children }));
 }
 
-const jsonParser = bodyParser.json();
+const jsonParser = express.json();
 
 class MenuController {
   static get inject() { return [MenuService, DocumentService, ClientDataMapper, PageRenderer]; }
@@ -86,4 +86,4 @@ class MenuController {
   }
 }
 
-module.exports = MenuController;
+export default MenuController;

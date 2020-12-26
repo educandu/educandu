@@ -1,6 +1,6 @@
-const sinon = require('sinon');
-const { Container } = require('../common/di');
-const PluginFactoryBase = require('./plugin-factory-base');
+import sinon from 'sinon';
+import { Container } from '../common/di';
+import PluginFactoryBase from './plugin-factory-base';
 
 describe('document-service', () => {
   const sandbox = sinon.createSandbox();

@@ -1,18 +1,18 @@
-const React = require('react');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../utils/urls');
-const Logger = require('../../common/logger');
-const Restricted = require('../restricted');
-const { Input, Modal, Button } = require('antd');
-const errorHelper = require('../../ui/error-helper');
-const { PlusOutlined } = require('@ant-design/icons');
-const { inject } = require('../container-context');
-const permissions = require('../../domain/permissions');
-const { toTrimmedString } = require('../../utils/sanitize');
-const { menuShape } = require('../../ui/default-prop-types');
-const MenuApiClient = require('../../services/menu-api-client');
+import React from 'react';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
+import Restricted from '../restricted';
+import Logger from '../../common/logger';
+import { Input, Modal, Button } from 'antd';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import { PlusOutlined } from '@ant-design/icons';
+import permissions from '../../domain/permissions';
+import { toTrimmedString } from '../../utils/sanitize';
+import { menuShape } from '../../ui/default-prop-types';
+import MenuApiClient from '../../services/menu-api-client';
 
 const logger = new Logger(__filename);
 
@@ -124,6 +124,6 @@ Menus.propTypes = {
   menuApiClient: PropTypes.instanceOf(MenuApiClient).isRequired
 };
 
-module.exports = inject({
+export default inject({
   menuApiClient: MenuApiClient
 }, Menus);

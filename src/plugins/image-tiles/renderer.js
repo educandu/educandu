@@ -1,4 +1,4 @@
-const ImageTilesDisplay = require('./display/image-tiles-display');
+import ImageTilesDisplay from './display/image-tiles-display';
 
 class ImageTiles {
   static get typeName() { return 'image-tiles'; }
@@ -8,4 +8,4 @@ class ImageTiles {
   }
 }
 
-module.exports = ImageTiles;
+export default ImageTiles;

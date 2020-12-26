@@ -1,14 +1,14 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const treeCrawl = require('tree-crawl');
-const uniqueId = require('../utils/unique-id');
-const cloneDeep = require('../utils/clone-deep');
-const { inject } = require('./container-context');
-const { Tree, Input, Modal, Button } = require('antd');
-const MenuApiClient = require('../services/menu-api-client');
-const { menuNodeShape } = require('../ui/default-prop-types');
-const { default: Icon, PlusOutlined, DeleteOutlined, MenuUnfoldOutlined, FileOutlined } = require('@ant-design/icons');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import treeCrawl from 'tree-crawl';
+import uniqueId from '../utils/unique-id';
+import cloneDeep from '../utils/clone-deep';
+import { inject } from './container-context';
+import { Tree, Input, Modal, Button } from 'antd';
+import MenuApiClient from '../services/menu-api-client';
+import { menuNodeShape } from '../ui/default-prop-types';
+import Icon, { PlusOutlined, DeleteOutlined, MenuUnfoldOutlined, FileOutlined } from '@ant-design/icons';
 
 const TreeNode = Tree.TreeNode;
 
@@ -306,6 +306,6 @@ MenuTree.defaultProps = {
   isReadonly: false
 };
 
-module.exports = inject({
+export default inject({
   menuApiClient: MenuApiClient
 }, MenuTree);

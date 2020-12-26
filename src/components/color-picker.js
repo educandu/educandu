@@ -1,7 +1,7 @@
-const React = require('react');
-const { Dropdown } = require('antd');
-const PropTypes = require('prop-types');
-const { SwatchesPicker } = require('react-color');
+import React from 'react';
+import { Dropdown } from 'antd';
+import PropTypes from 'prop-types';
+import { SwatchesPicker } from 'react-color';
 
 function ColorPicker({ color, colors, onChange, placement, width }) {
   const picker = (
@@ -38,4 +38,4 @@ ColorPicker.defaultProps = {
   width: 320
 };
 
-module.exports = ColorPicker;
+export default ColorPicker;

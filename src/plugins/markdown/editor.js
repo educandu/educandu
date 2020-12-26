@@ -1,4 +1,4 @@
-const MarkdownEditor = require('./editing/markdown-editor');
+import MarkdownEditor from './editing/markdown-editor';
 
 class Markdown {
   static get typeName() { return 'markdown'; }
@@ -8,4 +8,4 @@ class Markdown {
   }
 }
 
-module.exports = Markdown;
+export default Markdown;

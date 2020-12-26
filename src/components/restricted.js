@@ -1,7 +1,7 @@
-const PropTypes = require('prop-types');
-const { withUser } = require('./user-context');
-const permissions = require('../domain/permissions');
-const { userProps } = require('../ui/default-prop-types');
+import PropTypes from 'prop-types';
+import { withUser } from './user-context';
+import permissions from '../domain/permissions';
+import { userProps } from '../ui/default-prop-types';
 
 function Restricted({ to, user, children }) {
   if (!to) {
@@ -26,4 +26,4 @@ Restricted.defaultProps = {
   children: null
 };
 
-module.exports = withUser(Restricted);
+export default withUser(Restricted);

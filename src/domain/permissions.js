@@ -1,24 +1,17 @@
-const roles = require('./roles');
+import { USER, EDITOR, SUPER_USER, SUPER_EDITOR, isUserInRole } from './roles';
 
-const {
-  USER,
-  EDITOR,
-  SUPER_USER,
-  SUPER_EDITOR
-} = roles;
-
-const EDIT_DOC = 'edit-doc';
-const VIEW_DOCS = 'view-docs';
-const EDIT_MENU = 'edit-menu';
-const VIEW_MENUS = 'view-menus';
-const EDIT_FILE = 'edit-file';
-const VIEW_FILES = 'view-files';
-const CREATE_FILE = 'create-file';
-const EDIT_USERS = 'edit-users';
-const EDIT_SETTINGS = 'edit-settings';
-const EDIT_MENU_STRUCTURE = 'edit-menu-structure';
-const HARD_DELETE_SECTION = 'hard-delete-section';
-const SEE_USER_EMAIL = 'see-user-email';
+export const EDIT_DOC = 'edit-doc';
+export const VIEW_DOCS = 'view-docs';
+export const EDIT_MENU = 'edit-menu';
+export const VIEW_MENUS = 'view-menus';
+export const EDIT_FILE = 'edit-file';
+export const VIEW_FILES = 'view-files';
+export const CREATE_FILE = 'create-file';
+export const EDIT_USERS = 'edit-users';
+export const EDIT_SETTINGS = 'edit-settings';
+export const EDIT_MENU_STRUCTURE = 'edit-menu-structure';
+export const HARD_DELETE_SECTION = 'hard-delete-section';
+export const SEE_USER_EMAIL = 'see-user-email';
 
 const rolesForPermission = {
   [EDIT_DOC]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
@@ -35,11 +28,11 @@ const rolesForPermission = {
   [SEE_USER_EMAIL]: [SUPER_USER]
 };
 
-function hasUserPermission(user, permission) {
-  return (rolesForPermission[permission] || []).some(r => roles.isUserInRole(user, r));
+export function hasUserPermission(user, permission) {
+  return (rolesForPermission[permission] || []).some(r => isUserInRole(user, r));
 }
 
-module.exports = {
+export default {
   EDIT_DOC,
   VIEW_DOCS,
   EDIT_MENU,

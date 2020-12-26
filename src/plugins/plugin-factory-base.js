@@ -1,4 +1,4 @@
-const { Factory } = require('../common/di');
+import { Factory } from '../common/di';
 
 class PluginFactoryBase {
   constructor(container, plugins) {
@@ -18,4 +18,4 @@ class PluginFactoryBase {
   }
 }
 
-module.exports = PluginFactoryBase;
+export default PluginFactoryBase;

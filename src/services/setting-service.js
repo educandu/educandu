@@ -1,4 +1,4 @@
-const SettingStore = require('../stores/setting-store');
+import SettingStore from '../stores/setting-store';
 
 class SettingService {
   static get inject() { return [SettingStore]; }
@@ -29,4 +29,4 @@ class SettingService {
   }
 }
 
-module.exports = SettingService;
+export default SettingService;

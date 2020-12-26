@@ -1,15 +1,15 @@
-const React = require('react');
-const urls = require('../utils/urls');
-const PropTypes = require('prop-types');
-const classNames = require('classnames');
-const { Alert, Button } = require('antd');
-const ElmuLogo = require('./elmu-logo');
-const Restricted = require('./restricted');
-const LoginLogout = require('./login-logout');
-const LinkPopover = require('./link-popover');
-const permissions = require('../domain/permissions');
-const { useUser } = require('../components/user-context');
-const { default: Icon, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } = require('@ant-design/icons');
+import React from 'react';
+import urls from '../utils/urls';
+import ElmuLogo from './elmu-logo';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { Alert, Button } from 'antd';
+import Restricted from './restricted';
+import LoginLogout from './login-logout';
+import LinkPopover from './link-popover';
+import permissions from '../domain/permissions';
+import { useUser } from '../components/user-context';
+import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 const pageMenuItems = [
   {
@@ -161,4 +161,4 @@ Page.defaultProps = {
   headerActions: null
 };
 
-module.exports = Page;
+export default Page;

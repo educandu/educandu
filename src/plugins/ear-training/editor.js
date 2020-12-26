@@ -1,4 +1,4 @@
-const EarTrainingEditor = require('./editing/ear-training-editor');
+import EarTrainingEditor from './editing/ear-training-editor';
 
 class EarTraining {
   static get typeName() { return 'ear-training'; }
@@ -8,4 +8,4 @@ class EarTraining {
   }
 }
 
-module.exports = EarTraining;
+export default EarTraining;

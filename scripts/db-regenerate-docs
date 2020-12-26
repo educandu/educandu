@@ -6,8 +6,8 @@
 require('@babel/register');
 require('core-js');
 
-const DocumentService = require('../src/services/document-service');
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+const DocumentService = require('../src/services/document-service').default;
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
 
 (async function regenerateDocs() {
 

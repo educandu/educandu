@@ -1,7 +1,7 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { useService } = require('./container-context');
-const GithubFlavoredMarkdown = require('../common/github-flavored-markdown');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useService } from './container-context';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown';
 
 function Markdown({ children, inline, tag, ...rest }) {
   const gfm = useService(GithubFlavoredMarkdown);
@@ -25,4 +25,4 @@ Markdown.defaultProps = {
   tag: 'div'
 };
 
-module.exports = React.memo(Markdown);
+export default React.memo(Markdown);

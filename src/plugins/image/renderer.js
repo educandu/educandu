@@ -1,4 +1,4 @@
-const ImageDisplay = require('./display/image-display');
+import ImageDisplay from './display/image-display';
 
 class Image {
   static get typeName() { return 'image'; }
@@ -8,4 +8,4 @@ class Image {
   }
 }
 
-module.exports = Image;
+export default Image;

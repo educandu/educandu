@@ -1,4 +1,4 @@
-const H5pPlayerDisplay = require('./display/h5p-player-display');
+import H5pPlayerDisplay from './display/h5p-player-display';
 
 class H5pPlayer {
   static get typeName() { return 'h5p-player'; }
@@ -8,4 +8,4 @@ class H5pPlayer {
   }
 }
 
-module.exports = H5pPlayer;
+export default H5pPlayer;

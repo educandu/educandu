@@ -1,12 +1,12 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const validation = require('../../../ui/validation');
-const { Form, Input, Radio, Switch } = require('antd');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context');
-const CdnFilePicker = require('../../../components/cdn-file-picker');
-const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider');
-const { sectionEditorProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import autoBind from 'auto-bind';
+import validation from '../../../ui/validation';
+import { Form, Input, Radio, Switch } from 'antd';
+import { inject } from '../../../components/container-context';
+import CdnFilePicker from '../../../components/cdn-file-picker';
+import ClientSettings from '../../../bootstrap/client-settings';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { sectionEditorProps, clientSettingsProps } from '../../../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -182,7 +182,7 @@ ImageEditor.propTypes = {
   ...clientSettingsProps
 };
 
-module.exports = inject({
+export default inject({
   clientSettings: ClientSettings
 }, ImageEditor);
 

@@ -1,10 +1,10 @@
-const React = require('react');
-const { Modal, Input, Checkbox } = require('antd');
+import React from 'react';
+import { Modal, Input, Checkbox } from 'antd';
 
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
 
-const confirmDelete = (section, onOk, onCancel = () => {}) => {
+export function confirmDelete(section, onOk, onCancel = () => {}) {
   confirm({
     title: 'Sind Sie sicher?',
     content: <span>Möchten Sie diesen Abschnitt wirklich löschen?</span>,
@@ -14,9 +14,9 @@ const confirmDelete = (section, onOk, onCancel = () => {}) => {
     onOk: onOk,
     onCancel: onCancel
   });
-};
+}
 
-const confirmHardDelete = (section, onOk, onCancel = () => {}) => {
+export function confirmHardDelete(section, onOk, onCancel = () => {}) {
   let dialog = null;
   let deletionReason = '';
   let deleteDescendants = false;
@@ -71,9 +71,9 @@ const confirmHardDelete = (section, onOk, onCancel = () => {}) => {
   });
 
   dialog = confirm(createDialogProps());
-};
+}
 
-module.exports = {
+export default {
   confirmDelete,
   confirmHardDelete
 };

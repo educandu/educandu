@@ -1,5 +1,5 @@
-const { updateAll } = require('./helpers');
-const Database = require('../../src/stores/database');
+import { updateAll } from './helpers';
+import Database from '../../src/stores/database';
 
 class Migration2018120201 {
   static get inject() { return [Database]; }
@@ -27,4 +27,4 @@ class Migration2018120201 {
   }
 }
 
-module.exports = Migration2018120201;
+export default Migration2018120201;

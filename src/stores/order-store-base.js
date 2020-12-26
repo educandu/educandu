@@ -1,4 +1,4 @@
-const StoreBase = require('./store-base');
+import StoreBase from './store-base';
 
 class OrderStoreBase extends StoreBase {
   constructor(collection, orderKey) {
@@ -15,4 +15,4 @@ class OrderStoreBase extends StoreBase {
   }
 }
 
-module.exports = OrderStoreBase;
+export default OrderStoreBase;

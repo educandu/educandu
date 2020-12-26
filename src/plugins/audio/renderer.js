@@ -1,4 +1,4 @@
-const AudioDisplay = require('./display/audio-display');
+import AudioDisplay from './display/audio-display';
 
 class Audio {
   static get typeName() { return 'audio'; }
@@ -8,4 +8,4 @@ class Audio {
   }
 }
 
-module.exports = Audio;
+export default Audio;

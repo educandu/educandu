@@ -1,4 +1,4 @@
-const VideoEditor = require('./editing/video-editor');
+import VideoEditor from './editing/video-editor';
 
 class Video {
   static get typeName() { return 'video'; }
@@ -8,4 +8,4 @@ class Video {
   }
 }
 
-module.exports = Video;
+export default Video;

@@ -1,3 +1,3 @@
-require('core-js/features/reflect/index');
+import 'core-js/features/reflect/index';
 
-module.exports = require('aurelia-dependency-injection');
+export * from 'aurelia-dependency-injection';

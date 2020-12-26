@@ -1,14 +1,14 @@
-const Cdn = require('../repositories/cdn');
-const Logger = require('../common/logger');
-const Database = require('../stores/database');
-const ElmuServer = require('../server/elmu-server');
-const ClientSettings = require('./client-settings');
-const ServerSettings = require('./server-settings');
-const commonBootstrapper = require('./common-bootstrapper');
+import Cdn from '../repositories/cdn';
+import Logger from '../common/logger';
+import Database from '../stores/database';
+import ElmuServer from '../server/elmu-server';
+import ClientSettings from './client-settings';
+import ServerSettings from './server-settings';
+import commonBootstrapper from './common-bootstrapper';
 
 const logger = new Logger(__filename);
 
-async function createContainer() {
+export async function createContainer() {
   logger.info('Creating container');
   const container = await commonBootstrapper.createContainer();
 
@@ -38,7 +38,7 @@ async function createContainer() {
   return container;
 }
 
-function disposeContainer(container) {
+export function disposeContainer(container) {
   logger.info('Disposing container');
   return Promise.all([
     container.get(ElmuServer),
@@ -47,7 +47,7 @@ function disposeContainer(container) {
   ].map(service => service.dispose()));
 }
 
-module.exports = {
+export default {
   createContainer,
   disposeContainer
 };

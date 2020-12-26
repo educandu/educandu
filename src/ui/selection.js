@@ -1,12 +1,12 @@
-const NONE = 'none';
-const SINGLE = 'single';
-const MULTIPLE = 'multiple';
+export const NONE = 'none';
+export const SINGLE = 'single';
+export const MULTIPLE = 'multiple';
 
-function removeInvalidKeys(allKeys, validKeys) {
+export function removeInvalidKeys(allKeys, validKeys) {
   return allKeys.filter(key => validKeys.includes(key));
 }
 
-function addKeyToSelection(selectedKeys, keyToAdd, selectionMode) {
+export function addKeyToSelection(selectedKeys, keyToAdd, selectionMode) {
   switch (selectionMode) {
     case SINGLE:
       return [keyToAdd];
@@ -17,7 +17,7 @@ function addKeyToSelection(selectedKeys, keyToAdd, selectionMode) {
   }
 }
 
-function removeKeyFromSelection(selectedKeys, keyToRemove, selectionMode) {
+export function removeKeyFromSelection(selectedKeys, keyToRemove, selectionMode) {
   switch (selectionMode) {
     case SINGLE:
     case MULTIPLE:
@@ -27,11 +27,11 @@ function removeKeyFromSelection(selectedKeys, keyToRemove, selectionMode) {
   }
 }
 
-module.exports = {
-  removeInvalidKeys,
-  addKeyToSelection,
-  removeKeyFromSelection,
+export default {
   NONE,
   SINGLE,
-  MULTIPLE
+  MULTIPLE,
+  removeInvalidKeys,
+  addKeyToSelection,
+  removeKeyFromSelection
 };

@@ -1,16 +1,16 @@
-const Logger = require('../common/logger');
-const deepEqual = require('fast-deep-equal');
-const UserService = require('./user-service');
-const dateTime = require('../utils/date-time');
-const uniqueId = require('../utils/unique-id');
-const cloneDeep = require('../utils/clone-deep');
-const SectionStore = require('../stores/section-store');
-const DocumentStore = require('../stores/document-store');
-const HandlerFactory = require('../plugins/handler-factory');
-const DocumentLockStore = require('../stores/document-lock-store');
-const SectionOrderStore = require('../stores/section-order-store');
-const DocumentOrderStore = require('../stores/document-order-store');
-const DocumentSnapshotStore = require('../stores/document-snapshot-store');
+import Logger from '../common/logger';
+import deepEqual from 'fast-deep-equal';
+import UserService from './user-service';
+import dateTime from '../utils/date-time';
+import uniqueId from '../utils/unique-id';
+import cloneDeep from '../utils/clone-deep';
+import SectionStore from '../stores/section-store';
+import DocumentStore from '../stores/document-store';
+import HandlerFactory from '../plugins/handler-factory';
+import DocumentLockStore from '../stores/document-lock-store';
+import SectionOrderStore from '../stores/section-order-store';
+import DocumentOrderStore from '../stores/document-order-store';
+import DocumentSnapshotStore from '../stores/document-snapshot-store';
 
 const logger = new Logger(__filename);
 
@@ -555,4 +555,4 @@ class DocumentService {
   }
 }
 
-module.exports = DocumentService;
+export default DocumentService;

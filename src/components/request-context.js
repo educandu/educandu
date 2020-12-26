@@ -1,22 +1,22 @@
-const React = require('react');
-
-const { useContext } = React;
+import React, { useContext } from 'react';
 
 const requestContext = React.createContext();
 
-function useRequest() {
+export const RequestProvider = requestContext.Provider;
+
+export function useRequest() {
   return useContext(requestContext);
 }
 
-function withRequest(Component) {
+export function withRequest(Component) {
   return function RequestInjector(props) {
     const request = useContext(requestContext);
     return <Component {...props} request={request} />;
   };
 }
 
-module.exports = {
-  RequestProvider: requestContext.Provider,
-  withRequest: withRequest,
-  useRequest: useRequest
+export default {
+  RequestProvider,
+  useRequest,
+  withRequest
 };

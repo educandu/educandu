@@ -1,16 +1,48 @@
-const htmlescape = require('htmlescape');
-const { Container } = require('../common/di');
-const Root = require('../components/root');
-const cloneDeep = require('../utils/clone-deep');
-const DataProvider = require('../data/data-provider.js');
-const requestHelper = require('../utils/request-helper');
-const ClientDataMapper = require('./client-data-mapper');
-const PageRendererBase = require('./page-renderer-base');
-const ClientSettings = require('../bootstrap/client-settings');
-const ServerSettings = require('../bootstrap/server-settings');
+import htmlescape from 'htmlescape';
+import Root from '../components/root';
+import { Container } from '../common/di';
+import Doc from '../components/pages/doc';
+import Menu from '../components/pages/menu';
+import Docs from '../components/pages/docs';
+import cloneDeep from '../utils/clone-deep';
+import Index from '../components/pages/index';
+import Login from '../components/pages/login';
+import Menus from '../components/pages/menus';
+import Users from '../components/pages/users';
+import Article from '../components/pages/article';
+import Profile from '../components/pages/profile';
+import EditDoc from '../components/pages/edit-doc';
+import Register from '../components/pages/register';
+import Settings from '../components/pages/settings';
+import DataProvider from '../data/data-provider.js';
+import requestHelper from '../utils/request-helper';
+import ClientDataMapper from './client-data-mapper';
+import PageRendererBase from './page-renderer-base';
+import EditMenu from '../components/pages/edit-menu';
+import ServerSettings from '../bootstrap/server-settings';
+import ClientSettings from '../bootstrap/client-settings';
+import ResetPassword from '../components/pages/reset-password';
+import CompleteRegistration from '../components/pages/complete-registration';
+import CompletePasswordReset from '../components/pages/complete-password-reset';
 
-// eslint-disable-next-line global-require
-const getPageComponent = pageName => require(`../components/pages/${pageName}.js`);
+const pageComponentsByName = {
+  'article': Article,
+  'complete-password-reset': CompletePasswordReset,
+  'complete-registration': CompleteRegistration,
+  'doc': Doc,
+  'docs': Docs,
+  'edit-doc': EditDoc,
+  'edit-menu': EditMenu,
+  'index': Index,
+  'login': Login,
+  'menu': Menu,
+  'menus': Menus,
+  'profile': Profile,
+  'register': Register,
+  'reset-password': ResetPassword,
+  'settings': Settings,
+  'users': Users
+};
 
 class PageRenderer extends PageRendererBase {
   static get inject() { return [Container, ServerSettings, ClientSettings, ClientDataMapper, DataProvider]; }
@@ -44,7 +76,7 @@ class PageRenderer extends PageRendererBase {
       initialState: cloneDeep(initialState),
       language: language,
       data: data,
-      PageComponent: getPageComponent(pageName)
+      PageComponent: pageComponentsByName[pageName]
     };
 
     const inlineScript = [
@@ -78,4 +110,4 @@ class PageRenderer extends PageRendererBase {
   }
 }
 
-module.exports = PageRenderer;
+export default PageRenderer;

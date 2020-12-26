@@ -1,10 +1,10 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const abcjs = require('../../../common/abcjs-import');
-const { inject } = require('../../../components/container-context');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import abcjs from '../../../common/abcjs-import';
+import { inject } from '../../../components/container-context';
+import { sectionDisplayProps } from '../../../ui/default-prop-types';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
 
 const abcOptions = {
   paddingtop: 0,
@@ -55,6 +55,6 @@ AbcNotationDisplay.propTypes = {
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
-module.exports = inject({
+export default inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, AbcNotationDisplay);

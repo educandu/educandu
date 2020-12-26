@@ -1,10 +1,10 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const classNames = require('classnames');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context');
-const GithubFlavoredMarkdown = require('../../../common/github-flavored-markdown');
-const { sectionDisplayProps, clientSettingsProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { inject } from '../../../components/container-context';
+import ClientSettings from '../../../bootstrap/client-settings';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
+import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
@@ -53,7 +53,7 @@ ImageDisplay.propTypes = {
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
-module.exports = inject({
+export default inject({
   clientSettings: ClientSettings,
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, ImageDisplay);

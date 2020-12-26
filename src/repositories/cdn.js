@@ -1,8 +1,8 @@
-const fs = require('fs');
-const mime = require('mime');
-const Stream = require('stream');
-const MinioS3Client = require('./minio-s3-client');
-const AwsSdkS3Client = require('./aws-sdk-s3-client');
+import fs from 'fs';
+import mime from 'mime';
+import Stream from 'stream';
+import MinioS3Client from './minio-s3-client';
+import AwsSdkS3Client from './aws-sdk-s3-client';
 
 const defaultContentType = 'application/octet-stream';
 
@@ -58,4 +58,4 @@ class Cdn {
   }
 }
 
-module.exports = Cdn;
+export default Cdn;

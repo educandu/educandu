@@ -1,4 +1,4 @@
-const VideoDisplay = require('./display/video-display');
+import VideoDisplay from './display/video-display';
 
 class Video {
   static get typeName() { return 'video'; }
@@ -8,4 +8,4 @@ class Video {
   }
 }
 
-module.exports = Video;
+export default Video;

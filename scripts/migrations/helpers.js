@@ -1,4 +1,4 @@
-async function updateAll(collection, query, updateFn) {
+export async function updateAll(collection, query, updateFn) {
   const cursor = collection.find(query);
 
   /* eslint-disable-next-line no-await-in-loop */
@@ -12,6 +12,6 @@ async function updateAll(collection, query, updateFn) {
   }
 }
 
-module.exports = {
+export default {
   updateAll
 };

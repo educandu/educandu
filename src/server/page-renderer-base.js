@@ -1,12 +1,12 @@
-const { EOL } = require('os');
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
-const reactBeautifulDnd = require('react-beautiful-dnd');
-const PageTemplate = require('../components/templates/page');
+import { EOL } from 'os';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import PageTemplate from '../components/templates/page';
+import { resetServerContext } from 'react-beautiful-dnd';
 
 class PageRendererBase {
   renderHtml({ language, title, styles, scripts, ContentRoot, contentProps }) {
-    reactBeautifulDnd.resetServerContext();
+    resetServerContext();
 
     const contentElem = React.createElement(ContentRoot, contentProps);
     const content = ReactDOMServer.renderToString(contentElem);
@@ -19,4 +19,4 @@ class PageRendererBase {
   }
 }
 
-module.exports = PageRendererBase;
+export default PageRendererBase;

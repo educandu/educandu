@@ -1,11 +1,11 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const { Input, Radio } = require('antd');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context');
-const CdnFilePicker = require('../../../components/cdn-file-picker');
-const { clientSettingsProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import { Input, Radio } from 'antd';
+import { inject } from '../../../components/container-context';
+import CdnFilePicker from '../../../components/cdn-file-picker';
+import ClientSettings from '../../../bootstrap/client-settings';
+import { clientSettingsProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
@@ -146,6 +146,6 @@ EarTrainingSoundEditor.propTypes = {
   ...clientSettingsProps
 };
 
-module.exports = inject({
+export default inject({
   clientSettings: ClientSettings
 }, EarTrainingSoundEditor);

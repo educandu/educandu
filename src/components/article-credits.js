@@ -1,7 +1,7 @@
-const React = require('react');
-const moment = require('moment');
-const { useRequest } = require('./request-context');
-const { docShape } = require('../ui/default-prop-types');
+import React from 'react';
+import moment from 'moment';
+import { useRequest } from './request-context';
+import { docShape } from '../ui/default-prop-types';
 
 const locale = 'de-DE';
 
@@ -29,4 +29,4 @@ ArticleCredits.propTypes = {
   doc: docShape.isRequired
 };
 
-module.exports = ArticleCredits;
+export default ArticleCredits;

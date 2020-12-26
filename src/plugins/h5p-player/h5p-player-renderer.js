@@ -1,8 +1,8 @@
-const React = require('react');
-const h5pHelper = require('./h5p-helper');
-const Cdn = require('../../repositories/cdn');
-const ReactDOMServer = require('react-dom/server');
-const H5pPlayerIframe = require('./h5p-player-iframe');
+import React from 'react';
+import h5pHelper from './h5p-helper';
+import Cdn from '../../repositories/cdn';
+import ReactDOMServer from 'react-dom/server';
+import H5pPlayerIframe from './h5p-player-iframe';
 
 class H5pPlayerRenderer {
   static get inject() { return [Cdn]; }
@@ -92,4 +92,4 @@ class H5pPlayerRenderer {
   }
 }
 
-module.exports = H5pPlayerRenderer;
+export default H5pPlayerRenderer;

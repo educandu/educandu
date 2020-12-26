@@ -1,9 +1,9 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const validation = require('../../../ui/validation');
-const { Form, Input, Slider, Checkbox } = require('antd');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
-const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider');
+import React from 'react';
+import autoBind from 'auto-bind';
+import validation from '../../../ui/validation';
+import { Form, Input, Slider, Checkbox } from 'antd';
+import { sectionEditorProps } from '../../../ui/default-prop-types';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 
 const FormItem = Form.Item;
 
@@ -93,4 +93,4 @@ IframeEditor.propTypes = {
   ...sectionEditorProps
 };
 
-module.exports = IframeEditor;
+export default IframeEditor;

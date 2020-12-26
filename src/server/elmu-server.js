@@ -1,10 +1,10 @@
-const util = require('util');
-const express = require('express');
-const Logger = require('../common/logger');
-const ControllerFactory = require('./controller-factory');
-const ServerSettings = require('../bootstrap/server-settings');
+import util from 'util';
+import express from 'express';
+import Logger from '../common/logger';
+import ControllerFactory from './controller-factory';
+import ServerSettings from '../bootstrap/server-settings';
 
-require('express-async-errors');
+import 'express-async-errors';
 
 const logger = new Logger(__filename);
 
@@ -78,4 +78,4 @@ class ElmuServer {
   }
 }
 
-module.exports = ElmuServer;
+export default ElmuServer;

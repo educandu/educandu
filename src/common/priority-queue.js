@@ -1,4 +1,4 @@
-const { priorityQueue } = require('async');
+import { priorityQueue } from 'async';
 
 class PriorityQueue {
   constructor(maxConcurrency) {
@@ -21,4 +21,4 @@ class PriorityQueue {
   }
 }
 
-module.exports = PriorityQueue;
+export default PriorityQueue;

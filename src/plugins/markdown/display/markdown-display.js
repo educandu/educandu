@@ -1,6 +1,6 @@
-const React = require('react');
-const Markdown = require('../../../components/markdown');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import Markdown from '../../../components/markdown';
+import { sectionDisplayProps } from '../../../ui/default-prop-types';
 
 function MarkdownDisplay({ content }) {
   return <Markdown className="Markdown">{content.text}</Markdown>;
@@ -10,4 +10,4 @@ MarkdownDisplay.propTypes = {
   ...sectionDisplayProps
 };
 
-module.exports = MarkdownDisplay;
+export default MarkdownDisplay;

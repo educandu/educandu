@@ -1,11 +1,13 @@
-const anyBase = require('any-base');
-const { v4: uuid } = require('uuid');
+import { v4 } from 'uuid';
+import anyBase from 'any-base';
 
 const flickrBase58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 const hexToFlickrBase58 = anyBase(anyBase.HEX, flickrBase58);
 
-module.exports = {
-  create() {
-    return hexToFlickrBase58(uuid().replace(/-/g, ''));
-  }
+export function create() {
+  return hexToFlickrBase58(v4().replace(/-/g, ''));
+}
+
+export default {
+  create
 };

@@ -1,6 +1,6 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const htmlescape = require('htmlescape');
+import React from 'react';
+import PropTypes from 'prop-types';
+import htmlescape from 'htmlescape';
 
 function H5pPlayerIframe({ integration, h5pLibScripts, h5pLibStyles }) {
   const contentId = Object.values(integration.contents)[0].mainId;
@@ -41,4 +41,4 @@ H5pPlayerIframe.propTypes = {
   integration: PropTypes.object.isRequired
 };
 
-module.exports = H5pPlayerIframe;
+export default H5pPlayerIframe;

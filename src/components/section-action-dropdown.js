@@ -1,12 +1,12 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { Menu, Dropdown } = require('antd');
-const { usePermission } = require('../ui/hooks');
-const permissions = require('../domain/permissions');
-const { sectionShape } = require('../ui/default-prop-types');
-const { ThunderboltOutlined } = require('@ant-design/icons');
-const { confirmHardDelete } = require('./section-action-dialogs');
-const { HARD_DELETE, createHardDelete } = require('../ui/section-actions');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Menu, Dropdown } from 'antd';
+import { usePermission } from '../ui/hooks';
+import permissions from '../domain/permissions';
+import { sectionShape } from '../ui/default-prop-types';
+import { ThunderboltOutlined } from '@ant-design/icons';
+import { confirmHardDelete } from './section-action-dialogs';
+import { HARD_DELETE, createHardDelete } from '../ui/section-actions';
 
 const MenuItem = Menu.Item;
 const redIconStyle = { color: 'red' };
@@ -67,4 +67,4 @@ SectionActionDropdown.defaultProps = {
   placement: 'bottomLeft'
 };
 
-module.exports = SectionActionDropdown;
+export default SectionActionDropdown;

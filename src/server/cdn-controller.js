@@ -1,14 +1,14 @@
-const os = require('os');
-const multer = require('multer');
-const urls = require('../utils/urls');
-const parseBool = require('parseboolean');
-const bodyParser = require('body-parser');
-const Cdn = require('../repositories/cdn');
-const permissions = require('../domain/permissions');
-const fileNameHelper = require('../utils/file-name-helper');
-const needsPermission = require('../domain/needs-permission-middleware');
+import os from 'os';
+import multer from 'multer';
+import express from 'express';
+import urls from '../utils/urls';
+import parseBool from 'parseboolean';
+import Cdn from '../repositories/cdn';
+import permissions from '../domain/permissions';
+import fileNameHelper from '../utils/file-name-helper';
+import needsPermission from '../domain/needs-permission-middleware';
 
-const jsonParser = bodyParser.json();
+const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 class CdnController {
@@ -44,4 +44,4 @@ class CdnController {
   }
 }
 
-module.exports = CdnController;
+export default CdnController;

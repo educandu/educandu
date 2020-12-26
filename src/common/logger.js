@@ -1,9 +1,9 @@
 /* eslint no-process-env: off */
 
-const acho = require('acho');
-const cookie = require('./cookie');
-const formatErrorM = require('format-error');
-const { isBrowser } = require('../ui/browser-helper');
+import acho from 'acho';
+import cookie from './cookie';
+import formatErrorM from 'format-error';
+import { isBrowser } from '../ui/browser-helper';
 
 const getServerLevel = () => process.env.ELMU_LOG_LEVEL || 'debug';
 const getBrowserLevel = () => cookie.get('ELMU_LOG_LEVEL') || 'debug';
@@ -52,4 +52,4 @@ class Logger {
 
 }
 
-module.exports = Logger;
+export default Logger;

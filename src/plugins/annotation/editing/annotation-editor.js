@@ -1,7 +1,7 @@
-const React = require('react');
-const { Input } = require('antd');
-const autoBind = require('auto-bind');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import { Input } from 'antd';
+import autoBind from 'auto-bind';
+import { sectionEditorProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 
@@ -43,4 +43,4 @@ AnnotationEditor.propTypes = {
   ...sectionEditorProps
 };
 
-module.exports = AnnotationEditor;
+export default AnnotationEditor;

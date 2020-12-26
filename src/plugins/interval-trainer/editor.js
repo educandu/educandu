@@ -1,4 +1,4 @@
-const IntervalTrainerEditor = require('./editing/interval-trainer-editor');
+import IntervalTrainerEditor from './editing/interval-trainer-editor';
 
 class IntervalTrainer {
   static get typeName() { return 'interval-trainer'; }
@@ -8,4 +8,4 @@ class IntervalTrainer {
   }
 }
 
-module.exports = IntervalTrainer;
+export default IntervalTrainer;

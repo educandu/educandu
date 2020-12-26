@@ -1,25 +1,25 @@
-const urlencode = require('urlencode');
+import urlencode from 'urlencode';
 
-const homePath = '/';
-const docsPath = '/docs';
-const menusPath = '/menus';
-const usersPath = '/users';
-const settingsPath = '/settings';
-const loginPath = '/login';
-const logoutPath = '/logout';
-const profilePath = '/profile';
-const registerPath = '/register';
-const resetPasswordPath = '/reset-password';
+export const homePath = '/';
+export const docsPath = '/docs';
+export const menusPath = '/menus';
+export const usersPath = '/users';
+export const settingsPath = '/settings';
+export const loginPath = '/login';
+export const logoutPath = '/logout';
+export const profilePath = '/profile';
+export const registerPath = '/register';
+export const resetPasswordPath = '/reset-password';
 
-const docsPrefix = '/docs/';
-const editDocPrefix = '/edit/doc/';
-const menusPrefix = '/menus/';
-const editMenuPrefix = '/edit/menu/';
-const articlesPrefix = '/articles/';
-const articleRevisionPrefix = '/revs/articles/';
-const pluginApiPathPrefix = '/plugins/';
-const completeRegistrationPrefix = '/complete-registration/';
-const completePasswordResetPrefix = '/complete-password-reset/';
+export const docsPrefix = '/docs/';
+export const editDocPrefix = '/edit/doc/';
+export const menusPrefix = '/menus/';
+export const editMenuPrefix = '/edit/menu/';
+export const articlesPrefix = '/articles/';
+export const articleRevisionPrefix = '/revs/articles/';
+export const pluginApiPathPrefix = '/plugins/';
+export const completeRegistrationPrefix = '/complete-registration/';
+export const completePasswordResetPrefix = '/complete-password-reset/';
 
 function removeTrailingSlash(path) {
   return String(path).replace(/\/*$/, '');
@@ -33,101 +33,101 @@ function concatParts(...parts) {
   return parts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
 }
 
-function createRedirectUrl(path, redirect) {
+export function createRedirectUrl(path, redirect) {
   return `${path}?redirect=${urlencode(redirect)}`;
 }
 
-function getDocsUrl() {
+export function getDocsUrl() {
   return docsPath;
 }
 
-function getDocUrl(docKey) {
+export function getDocUrl(docKey) {
   return concatParts(docsPrefix, docKey);
 }
 
-function getEditDocUrl(docKey) {
+export function getEditDocUrl(docKey) {
   return concatParts(editDocPrefix, docKey);
 }
 
-function getMenusUrl() {
+export function getMenusUrl() {
   return menusPath;
 }
 
-function getMenuUrl(slug) {
+export function getMenuUrl(slug) {
   return concatParts(menusPrefix, slug);
 }
 
-function getEditMenuUrl(menuId) {
+export function getEditMenuUrl(menuId) {
   return concatParts(editMenuPrefix, menuId);
 }
 
-function getUsersUrl() {
+export function getUsersUrl() {
   return usersPath;
 }
 
-function getArticleUrl(slug) {
+export function getArticleUrl(slug) {
   return concatParts(articlesPrefix, slug);
 }
 
-function getArticleRevisionUrl(revisionId) {
+export function getArticleRevisionUrl(revisionId) {
   return concatParts(articleRevisionPrefix, revisionId);
 }
 
-function getSettingsUrl() {
+export function getSettingsUrl() {
   return settingsPath;
 }
 
-function getCompleteRegistrationUrl(verificationCode) {
+export function getCompleteRegistrationUrl(verificationCode) {
   return concatParts(completeRegistrationPrefix, verificationCode);
 }
 
-function getCompletePasswordResetUrl(passwordResetRequestId) {
+export function getCompletePasswordResetUrl(passwordResetRequestId) {
   return concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
-function getPluginApiPathPrefix(pluginType) {
+export function getPluginApiPathPrefix(pluginType) {
   return concatParts(pluginApiPathPrefix, pluginType);
 }
 
-function getDefaultLoginRedirectUrl() {
+export function getDefaultLoginRedirectUrl() {
   return homePath;
 }
 
-function getDefaultLogoutRedirectUrl() {
+export function getDefaultLogoutRedirectUrl() {
   return homePath;
 }
 
-function getHomeUrl() {
+export function getHomeUrl() {
   return homePath;
 }
 
-function getLoginUrl(redirect = null) {
+export function getLoginUrl(redirect = null) {
   return redirect ? createRedirectUrl(loginPath, redirect) : loginPath;
 }
 
-function getLogoutUrl() {
+export function getLogoutUrl() {
   return logoutPath;
 }
 
-function getProfileUrl() {
+export function getProfileUrl() {
   return profilePath;
 }
 
-function getRegisterUrl() {
+export function getRegisterUrl() {
   return registerPath;
 }
 
-function getResetPasswordUrl() {
+export function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
-function createFullyQualifiedUrl(pathname) {
+export function createFullyQualifiedUrl(pathname) {
   const url = new URL(document.location);
   url.pathname = pathname;
   return url.href;
 }
 
-module.exports = {
+export default {
   homePath,
   docsPath,
   menusPath,

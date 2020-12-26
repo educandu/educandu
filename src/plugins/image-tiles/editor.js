@@ -1,4 +1,4 @@
-const ImageTilesEditor = require('./editing/image-tiles-editor');
+import ImageTilesEditor from './editing/image-tiles-editor';
 
 class ImageTiles {
   static get typeName() { return 'image-tiles'; }
@@ -8,4 +8,4 @@ class ImageTiles {
   }
 }
 
-module.exports = ImageTiles;
+export default ImageTiles;

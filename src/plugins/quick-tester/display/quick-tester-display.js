@@ -1,9 +1,9 @@
-const React = require('react');
-const { Button } = require('antd');
-const arrayShuffle = require('array-shuffle');
-const Markdown = require('../../../components/markdown');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
-const { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } = require('@ant-design/icons');
+import React from 'react';
+import { Button } from 'antd';
+import arrayShuffle from 'array-shuffle';
+import Markdown from '../../../components/markdown';
+import { sectionDisplayProps } from '../../../ui/default-prop-types';
+import { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 function QuickTesterDisplay({ content }) {
   const [currentIndex, setCurrentIndex] = React.useState(-1);
@@ -121,4 +121,4 @@ QuickTesterDisplay.propTypes = {
   ...sectionDisplayProps
 };
 
-module.exports = QuickTesterDisplay;
+export default QuickTesterDisplay;

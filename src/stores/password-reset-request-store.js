@@ -1,5 +1,5 @@
-const Database = require('./database');
-const StoreBase = require('./store-base');
+import Database from './database';
+import StoreBase from './store-base';
 
 class PasswordResetRequestStore extends StoreBase {
   static get inject() { return [Database]; }
@@ -9,4 +9,4 @@ class PasswordResetRequestStore extends StoreBase {
   }
 }
 
-module.exports = PasswordResetRequestStore;
+export default PasswordResetRequestStore;

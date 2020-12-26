@@ -1,22 +1,22 @@
-const React = require('react');
-
-const { useContext } = React;
+import React, { useContext } from 'react';
 
 const userContext = React.createContext();
 
-function useUser() {
+export const UserProvider = userContext.Provider;
+
+export function useUser() {
   return useContext(userContext);
 }
 
-function withUser(Component) {
+export function withUser(Component) {
   return function UserInjector(props) {
     const user = useContext(userContext);
     return <Component {...props} user={user} />;
   };
 }
 
-module.exports = {
-  UserProvider: userContext.Provider,
-  withUser: withUser,
-  useUser: useUser
+export default {
+  UserProvider,
+  useUser,
+  withUser
 };

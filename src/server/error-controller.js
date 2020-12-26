@@ -1,9 +1,9 @@
-const urls = require('../utils/urls');
-const Logger = require('../common/logger');
-const createError = require('http-errors');
-const requestHelper = require('../utils/request-helper');
-const ErrorPageRenderer = require('./error-page-renderer');
-const ServerSettings = require('../bootstrap/server-settings');
+import urls from '../utils/urls';
+import Logger from '../common/logger';
+import createError from 'http-errors';
+import requestHelper from '../utils/request-helper';
+import ErrorPageRenderer from './error-page-renderer';
+import ServerSettings from '../bootstrap/server-settings';
 
 const logger = new Logger(__filename);
 
@@ -85,4 +85,4 @@ class ErrorController {
   }
 }
 
-module.exports = ErrorController;
+export default ErrorController;

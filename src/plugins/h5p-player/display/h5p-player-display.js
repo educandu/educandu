@@ -1,8 +1,8 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const urls = require('../../../utils/urls');
-const { iframeResizer } = require('iframe-resizer');
-const { sectionDisplayProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import autoBind from 'auto-bind';
+import urls from '../../../utils/urls';
+import { iframeResizer } from 'iframe-resizer';
+import { sectionDisplayProps } from '../../../ui/default-prop-types';
 
 class H5pPlayerDisplay extends React.Component {
   constructor(props) {
@@ -56,4 +56,4 @@ H5pPlayerDisplay.propTypes = {
   ...sectionDisplayProps
 };
 
-module.exports = H5pPlayerDisplay;
+export default H5pPlayerDisplay;

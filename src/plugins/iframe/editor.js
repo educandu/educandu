@@ -1,4 +1,4 @@
-const IframeEditor = require('./editing/iframe-editor');
+import IframeEditor from './editing/iframe-editor';
 
 class Iframe {
   static get typeName() { return 'iframe'; }
@@ -8,4 +8,4 @@ class Iframe {
   }
 }
 
-module.exports = Iframe;
+export default Iframe;

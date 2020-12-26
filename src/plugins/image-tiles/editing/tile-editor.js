@@ -1,13 +1,13 @@
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../../utils/urls');
-const { Form, Input, Radio } = require('antd');
-const validation = require('../../../ui/validation');
-const ClientSettings = require('../../../bootstrap/client-settings');
-const { inject } = require('../../../components/container-context');
-const CdnFilePicker = require('../../../components/cdn-file-picker');
-const { clientSettingsProps } = require('../../../ui/default-prop-types');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import urls from '../../../utils/urls';
+import { Form, Input, Radio } from 'antd';
+import validation from '../../../ui/validation';
+import { inject } from '../../../components/container-context';
+import CdnFilePicker from '../../../components/cdn-file-picker';
+import ClientSettings from '../../../bootstrap/client-settings';
+import { clientSettingsProps } from '../../../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -137,6 +137,6 @@ TileEditor.defaultProps = {
   description: null
 };
 
-module.exports = inject({
+export default inject({
   clientSettings: ClientSettings
 }, TileEditor);

@@ -1,4 +1,4 @@
-const HttpClient = require('./http-client');
+import HttpClient from './http-client';
 
 class MenuApiClient {
   static inject() { return [HttpClient]; }
@@ -17,4 +17,4 @@ class MenuApiClient {
   }
 }
 
-module.exports = MenuApiClient;
+export default MenuApiClient;

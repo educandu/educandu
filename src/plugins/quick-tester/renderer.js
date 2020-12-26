@@ -1,4 +1,4 @@
-const QuickTesterDisplay = require('./display/quick-tester-display');
+import QuickTesterDisplay from './display/quick-tester-display';
 
 class QuickTester {
   static get typeName() { return 'quick-tester'; }
@@ -8,4 +8,4 @@ class QuickTester {
   }
 }
 
-module.exports = QuickTester;
+export default QuickTester;

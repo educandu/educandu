@@ -1,4 +1,4 @@
-const HttpClient = require('./http-client');
+import HttpClient from './http-client';
 
 class SettingApiClient {
   static inject() { return [HttpClient]; }
@@ -17,4 +17,4 @@ class SettingApiClient {
   }
 }
 
-module.exports = SettingApiClient;
+export default SettingApiClient;

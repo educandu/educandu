@@ -6,15 +6,15 @@ require('core-js');
 const path = require('path');
 const glob = require('glob');
 const { promisify } = require('util');
-const roles = require('../src/domain/roles');
-const testHelper = require('../src/test-helper');
-const Database = require('../src/stores/database');
-const fileHelper = require('../src/utils/file-helper');
-const UserService = require('../src/services/user-service');
-const MenuService = require('../src/services/menu-service');
-const SettingService = require('../src/services/setting-service');
-const DocumentService = require('../src/services/document-service');
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper');
+const roles = require('../src/domain/roles').default;
+const testHelper = require('../src/test-helper').default;
+const Database = require('../src/stores/database').default;
+const fileHelper = require('../src/utils/file-helper').default;
+const UserService = require('../src/services/user-service').default;
+const MenuService = require('../src/services/menu-service').default;
+const SettingService = require('../src/services/setting-service').default;
+const DocumentService = require('../src/services/document-service').default;
+const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
 
 const globP = promisify(glob);
 

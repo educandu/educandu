@@ -1,8 +1,8 @@
-const PageRenderer = require('./page-renderer');
-const privateData = require('../domain/private-data');
-const ClientDataMapper = require('./client-data-mapper');
-const SettingService = require('../services/setting-service');
-const DocumentService = require('../services/document-service');
+import PageRenderer from './page-renderer';
+import privateData from '../domain/private-data';
+import ClientDataMapper from './client-data-mapper';
+import SettingService from '../services/setting-service';
+import DocumentService from '../services/document-service';
 
 class IndexController {
   static get inject() { return [SettingService, DocumentService, ClientDataMapper, PageRenderer]; }
@@ -26,4 +26,4 @@ class IndexController {
   }
 }
 
-module.exports = IndexController;
+export default IndexController;

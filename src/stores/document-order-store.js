@@ -1,5 +1,5 @@
-const Database = require('../stores/database');
-const OrderStoreBase = require('../stores/order-store-base');
+import Database from '../stores/database';
+import OrderStoreBase from '../stores/order-store-base';
 
 const DOCUMENT_ORDER_KEY = 'document-order';
 
@@ -11,4 +11,4 @@ class DocumentOrderStore extends OrderStoreBase {
   }
 }
 
-module.exports = DocumentOrderStore;
+export default DocumentOrderStore;

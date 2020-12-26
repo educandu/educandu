@@ -1,4 +1,4 @@
-const { isBrowser } = require('../ui/browser-helper');
+import { isBrowser } from '../ui/browser-helper';
 
 class FakeAudioContext {}
 
@@ -20,4 +20,4 @@ class AudioContextProvider {
   }
 }
 
-module.exports = AudioContextProvider;
+export default AudioContextProvider;

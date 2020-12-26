@@ -1,11 +1,11 @@
-const React = require('react');
-const { Input } = require('antd');
-const Page = require('../page');
-const PropTypes = require('prop-types');
-const DocView = require('../doc-view');
-const ElmuLogo = require('../elmu-logo');
-const { useRequest } = require('../request-context');
-const { docShape, sectionShape } = require('../../ui/default-prop-types');
+import React from 'react';
+import Page from '../page';
+import { Input } from 'antd';
+import DocView from '../doc-view';
+import PropTypes from 'prop-types';
+import ElmuLogo from '../elmu-logo';
+import { useRequest } from '../request-context';
+import { docShape, sectionShape } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 
@@ -47,5 +47,4 @@ Index.propTypes = {
   language: PropTypes.string.isRequired
 };
 
-
-module.exports = Index;
+export default Index;

@@ -1,13 +1,13 @@
-const React = require('react');
-const Page = require('../page');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const { Input, Button } = require('antd');
-const Logger = require('../../common/logger');
-const errorHelper = require('../../ui/error-helper');
-const { inject } = require('../container-context');
-const { settingsShape } = require('../../ui/default-prop-types');
-const SettingApiClient = require('../../services/setting-api-client');
+import React from 'react';
+import Page from '../page';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import { Input, Button } from 'antd';
+import Logger from '../../common/logger';
+import { inject } from '../container-context';
+import errorHelper from '../../ui/error-helper';
+import { settingsShape } from '../../ui/default-prop-types';
+import SettingApiClient from '../../services/setting-api-client';
 
 const logger = new Logger(__filename);
 
@@ -66,6 +66,6 @@ Settings.propTypes = {
   settingApiClient: PropTypes.instanceOf(SettingApiClient).isRequired
 };
 
-module.exports = inject({
+export default inject({
   settingApiClient: SettingApiClient
 }, Settings);

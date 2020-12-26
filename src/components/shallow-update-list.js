@@ -1,6 +1,6 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const shallowEqualArrays = require('shallow-equal/arrays');
+import React from 'react';
+import PropTypes from 'prop-types';
+import shallowEqualArrays from 'shallow-equal/arrays';
 
 /*
 
@@ -31,4 +31,4 @@ ShallowUpdateList.propTypes = {
   items: PropTypes.array.isRequired
 };
 
-module.exports = ShallowUpdateList;
+export default ShallowUpdateList;

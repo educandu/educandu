@@ -1,15 +1,15 @@
 /* eslint react/jsx-max-depth: 0 */
 
-const React = require('react');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const urls = require('../../../utils/urls');
-const { UploadOutlined } = require('@ant-design/icons');
-const HttpClient = require('../../../services/http-client');
-const { Form, Input, Upload, Button, message } = require('antd');
-const { inject } = require('../../../components/container-context');
-const { sectionEditorProps } = require('../../../ui/default-prop-types');
-const ObjectMaxWidthSlider = require('../../../components/object-max-width-slider');
+import React from 'react';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import urls from '../../../utils/urls';
+import { UploadOutlined } from '@ant-design/icons';
+import HttpClient from '../../../services/http-client';
+import { Form, Input, Upload, Button, message } from 'antd';
+import { inject } from '../../../components/container-context';
+import { sectionEditorProps } from '../../../ui/default-prop-types';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 
 const FormItem = Form.Item;
 
@@ -91,7 +91,6 @@ H5pPlayerEditor.propTypes = {
   httpClient: PropTypes.instanceOf(HttpClient).isRequired
 };
 
-
-module.exports = inject({
+export default inject({
   httpClient: HttpClient
 }, H5pPlayerEditor);

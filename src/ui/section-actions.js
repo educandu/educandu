@@ -1,6 +1,6 @@
-const HARD_DELETE = 'hard-delete';
+export const HARD_DELETE = 'hard-delete';
 
-function createHardDelete(section, deletionReason, deleteDescendants) {
+export function createHardDelete(section, deletionReason, deleteDescendants) {
   return {
     name: HARD_DELETE,
     data: {
@@ -13,7 +13,7 @@ function createHardDelete(section, deletionReason, deleteDescendants) {
   };
 }
 
-module.exports = {
-  createHardDelete,
-  HARD_DELETE
+export default {
+  HARD_DELETE,
+  createHardDelete
 };

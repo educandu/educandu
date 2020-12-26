@@ -1,5 +1,7 @@
-module.exports = {
-  now() {
-    return new Date();
-  }
+export function now() {
+  return new Date();
+}
+
+export default {
+  now
 };

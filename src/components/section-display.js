@@ -1,11 +1,11 @@
-const React = require('react');
-const { Button } = require('antd');
-const PropTypes = require('prop-types');
-const classNames = require('classnames');
-const DeletedSection = require('./deleted-section');
-const { SettingOutlined } = require('@ant-design/icons');
-const SectionActionDropdown = require('./section-action-dropdown');
-const { docShape, sectionShape } = require('../ui/default-prop-types');
+import React from 'react';
+import { Button } from 'antd';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import DeletedSection from './deleted-section';
+import { SettingOutlined } from '@ant-design/icons';
+import SectionActionDropdown from './section-action-dropdown';
+import { docShape, sectionShape } from '../ui/default-prop-types';
 
 function SectionDisplay({ DisplayComponent, language, doc, section, onAction }) {
   const [isMouseOver, setIsMouseOver] = React.useState(false);
@@ -79,4 +79,4 @@ SectionDisplay.defaultProps = {
   onAction: null
 };
 
-module.exports = SectionDisplay;
+export default SectionDisplay;

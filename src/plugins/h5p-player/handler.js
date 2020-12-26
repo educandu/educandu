@@ -1,5 +1,5 @@
-const H5pFileProcessor = require('./h5p-file-processor');
-const Logger = require('../../common/logger');
+import Logger from '../../common/logger';
+import H5pFileProcessor from './h5p-file-processor';
 
 const logger = new Logger(__filename);
 
@@ -20,4 +20,4 @@ class H5pPlayer {
   }
 }
 
-module.exports = H5pPlayer;
+export default H5pPlayer;

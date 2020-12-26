@@ -117,4 +117,4 @@ class ClientDataMapper {
   }
 }
 
-module.exports = ClientDataMapper;
+export default ClientDataMapper;

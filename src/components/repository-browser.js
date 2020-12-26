@@ -1,19 +1,19 @@
-const React = require('react');
-const moment = require('moment');
-const firstBy = require('thenby');
-const autoBind = require('auto-bind');
-const PropTypes = require('prop-types');
-const classNames = require('classnames');
-const prettyBytes = require('pretty-bytes');
-const selection = require('../ui/selection');
-const pathHelper = require('../ui/path-helper');
-const Highlighter = require('react-highlighter');
-const browserHelper = require('../ui/browser-helper');
-const { inject } = require('./container-context');
-const mimeTypeHelper = require('../ui/mime-type-helper');
-const CdnApiClient = require('../services/cdn-api-client');
-const { Input, Table, Upload, Button, Divider, message, Breadcrumb } = require('antd');
-const { default: Icon, FolderOutlined, FileOutlined, DownOutlined, CloseOutlined, UploadOutlined, HomeOutlined } = require('@ant-design/icons');
+import React from 'react';
+import moment from 'moment';
+import firstBy from 'thenby';
+import autoBind from 'auto-bind';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import prettyBytes from 'pretty-bytes';
+import selection from '../ui/selection';
+import pathHelper from '../ui/path-helper';
+import Highlighter from 'react-highlighter';
+import { inject } from './container-context';
+import browserHelper from '../ui/browser-helper';
+import mimeTypeHelper from '../ui/mime-type-helper';
+import CdnApiClient from '../services/cdn-api-client';
+import { Input, Table, Upload, Button, Divider, message, Breadcrumb } from 'antd';
+import Icon, { FolderOutlined, FileOutlined, DownOutlined, CloseOutlined, UploadOutlined, HomeOutlined } from '@ant-design/icons';
 
 const BROWSER_LOCALE = 'de';
 
@@ -575,6 +575,6 @@ RepositoryBrowser.defaultProps = {
   uploadPrefix: null
 };
 
-module.exports = inject({
+export default inject({
   cdnApiClient: CdnApiClient
 }, RepositoryBrowser);
