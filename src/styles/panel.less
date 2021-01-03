@@ -1,6 +1,9 @@
 @panel-background-color: @grey-2;
+@panel-proposed-background-color: @blue-1;
 @panel-border-color: @grey-5;
+@panel-proposed-border-color: @blue-5;
 @panel-content-background-color: @grey-1;
+@panel-content-overlay-background-color: fade(white, 50%);
 
 .Panel {
   background-color: @panel-background-color;
@@ -17,10 +20,17 @@
   &.is-invalid {
     border-color: @global-error-color;
   }
+
+  &.is-proposed {
+    background-color: @panel-proposed-background-color;
+    border-color: @panel-proposed-border-color;
+    border-style: dotted;
+  }
 }
 
 .Panel-content {
   background-color: @panel-content-background-color;
+  position: relative;
   padding: 24px;
 
   &.Panel-content--darker {
@@ -34,6 +44,17 @@
   & > *:last-child {
     margin-bottom: 0;
   }
+}
+
+.Panel-contentOverlay {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: not-allowed;
+  background-color: @panel-content-overlay-background-color;
 }
 
 .Panel-header {

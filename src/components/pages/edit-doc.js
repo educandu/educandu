@@ -3,9 +3,8 @@ import Page from '../page';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls';
-import DocEditor from '../doc-editor';
 import Logger from '../../common/logger';
-import utils from '../../utils/unique-id';
+import uniqueId from '../../utils/unique-id';
 import { inject } from '../container-context';
 import SectionEditor from '../section-editor';
 import { Menu, Button, Dropdown } from 'antd';
@@ -15,10 +14,11 @@ import pluginInfos from '../../plugins/plugin-infos';
 import ShallowUpdateList from '../shallow-update-list';
 import EditorFactory from '../../plugins/editor-factory';
 import RendererFactory from '../../plugins/renderer-factory';
+import DocumentMetadataEditor from '../document-metadata-editor';
 import DocumentApiClient from '../../services/document-api-client';
-import { docShape, sectionShape } from '../../ui/default-prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import { documentRevisionShape, sectionShape } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -56,13 +56,13 @@ class EditDoc extends React.Component {
     autoBind(this);
 
     const { editorFactory, rendererFactory, documentApiClient, initialState } = this.props;
-    const { doc, sections } = initialState;
+    const { documentRevision, proposedSections } = initialState;
 
     this.editorFactory = editorFactory;
     this.rendererFactory = rendererFactory;
     this.documentApiClient = documentApiClient;
 
-    this.state = this.createStateFromDoc({ doc, sections });
+    this.state = this.createStateFromDocumentRevision(documentRevision, proposedSections);
 
     this.pluginInfos = pluginInfos.map(t => ({
       ...t,
@@ -78,21 +78,78 @@ class EditDoc extends React.Component {
     return this.rendererFactory.createRenderer(section.type).getDisplayComponent();
   }
 
-  createStateFromDoc({ doc, sections }) {
+  createStateFromDocumentRevision(documentRevision, proposedSections = null) {
+    let proposedSectionKeys;
+    const clonedRevision = cloneDeep(documentRevision);
+
+    if (proposedSections && proposedSections.length) {
+      if (!clonedRevision.sections.length) {
+        clonedRevision.sections = cloneDeep(proposedSections);
+        proposedSectionKeys = clonedRevision.sections.map(s => s.key);
+      } else {
+        throw new Error('Cloning into a non-empty document is not permitted.');
+      }
+    } else {
+      proposedSectionKeys = [];
+    }
+
     return {
-      originalDoc: doc,
-      originalSections: sections,
-      editedDoc: cloneDeep(doc),
-      editedSections: cloneDeep(sections),
+      editedDocumentRevision: clonedRevision,
       isDirty: false,
+      proposedSectionKeys: proposedSectionKeys,
       invalidSectionKeys: []
     };
+  }
+
+  mergeStateFromNewDocumentRevision(prevState, newDocumentRevision) {
+    const updatedRevision = cloneDeep(newDocumentRevision);
+    const updatedSections = updatedRevision.sections;
+    const existingSections = prevState.editedDocumentRevision.sections;
+    const existingSectionKeys = existingSections.map(s => s.key);
+
+    if (updatedSections.some(s => !existingSectionKeys.includes(s.key))) {
+      throw new Error('Updated sections do not match exiting sections');
+    }
+
+    const proposedSectionKeys = [];
+    const mergedSections = existingSections.map(oldSection => {
+      const updatedSection = updatedSections.find(s => s.key === oldSection.key);
+      if (updatedSection) {
+        return updatedSection;
+      }
+
+      proposedSectionKeys.push(oldSection.key);
+      return oldSection;
+    });
+
+    return {
+      editedDocumentRevision: {
+        ...updatedRevision,
+        sections: mergedSections
+      },
+      isDirty: false,
+      proposedSectionKeys: proposedSectionKeys,
+      invalidSectionKeys: []
+    };
+  }
+
+  moveSection(sourceIndex, destinationIndex) {
+    const { editedDocumentRevision } = this.state;
+    if (canReorder(editedDocumentRevision.sections, sourceIndex, destinationIndex)) {
+      this.setState(prevState => ({
+        editedDocumentRevision: {
+          ...prevState.editedDocumentRevision,
+          sections: reorder(prevState.editedDocumentRevision.sections, sourceIndex, destinationIndex)
+        },
+        isDirty: true
+      }));
+    }
   }
 
   handleMetadataChanged(metadata) {
     this.setState(prevState => {
       return {
-        editedDoc: { ...prevState.editedDoc, ...metadata },
+        editedDocumentRevision: { ...prevState.editedDocumentRevision, ...metadata },
         isDirty: true
       };
     });
@@ -101,7 +158,10 @@ class EditDoc extends React.Component {
   handleContentChanged(sectionKey, content, isInvalid) {
     this.setState(prevState => {
       return {
-        editedSections: prevState.editedSections.map(sec => sec.key === sectionKey ? { ...sec, content } : sec),
+        editedDocumentRevision: {
+          ...prevState.editedDocumentRevision,
+          sections: prevState.editedDocumentRevision.sections.map(sec => sec.key === sectionKey ? { ...sec, content } : sec)
+        },
         isDirty: true,
         invalidSectionKeys: isInvalid
           ? addKeyIfNotExists(prevState.invalidSectionKeys, sectionKey)
@@ -111,15 +171,15 @@ class EditDoc extends React.Component {
   }
 
   handleSectionMovedUp(sectionKey) {
-    const { editedSections } = this.state;
-    const sourceIndex = editedSections.findIndex(section => section.key === sectionKey);
+    const { editedDocumentRevision } = this.state;
+    const sourceIndex = editedDocumentRevision.sections.findIndex(section => section.key === sectionKey);
     const destinationIndex = sourceIndex - 1;
     this.moveSection(sourceIndex, destinationIndex);
   }
 
   handleSectionMovedDown(sectionKey) {
-    const { editedSections } = this.state;
-    const sourceIndex = editedSections.findIndex(section => section.key === sectionKey);
+    const { editedDocumentRevision } = this.state;
+    const sourceIndex = editedDocumentRevision.sections.findIndex(section => section.key === sectionKey);
     const destinationIndex = sourceIndex + 1;
     this.moveSection(sourceIndex, destinationIndex);
   }
@@ -127,7 +187,10 @@ class EditDoc extends React.Component {
   handleSectionDeleted(sectionKey) {
     this.setState(prevState => {
       return {
-        editedSections: prevState.editedSections.filter(sec => sec.key !== sectionKey),
+        editedDocumentRevision: {
+          ...prevState.editedDocumentRevision,
+          sections: prevState.editedDocumentRevision.sections.filter(sec => sec.key !== sectionKey)
+        },
         isDirty: true,
         invalidSectionKeys: removeKeyIfExists(prevState.invalidSectionKeys, sectionKey)
       };
@@ -136,49 +199,75 @@ class EditDoc extends React.Component {
 
   handleNewSectionClick(pluginInfo) {
     const newSection = {
-      _id: null,
-      key: utils.create(),
-      order: null,
+      key: uniqueId.create(),
+      revision: null,
       type: pluginInfo.type,
-      content: {
-        de: JSON.parse(JSON.stringify(pluginInfo.defaultContent))
-      }
+      deletedOn: null,
+      deletedBy: null,
+      deletedBecause: null,
+      content: cloneDeep(pluginInfo.defaultContent)
     };
     this.setState(prevState => {
       return {
-        editedSections: [...prevState.editedSections, newSection],
+        editedDocumentRevision: {
+          ...prevState.editedDocumentRevision,
+          sections: [...prevState.editedDocumentRevision.sections, newSection]
+        },
         isDirty: true
       };
     });
   }
 
   async handleSaveClick() {
-    const { editedDoc, editedSections } = this.state;
-    const payload = {
-      doc: {
-        key: editedDoc.key,
-        title: editedDoc.title,
-        slug: editedDoc.slug
-      },
-      sections: editedSections.map(section => ({
-        ancestorId: section._id,
-        key: section.key,
-        type: section.type,
-        content: section.content
-      }))
+    const { editedDocumentRevision, proposedSectionKeys } = this.state;
+    const data = {
+      title: editedDocumentRevision.title,
+      slug: editedDocumentRevision.slug,
+      namespace: editedDocumentRevision.namespace,
+      language: editedDocumentRevision.language,
+      sections: editedDocumentRevision.sections.filter(s => !proposedSectionKeys.includes(s.key)).map(s => ({
+        key: s.key,
+        type: s.type,
+        content: s.content
+      })),
+      appendTo: {
+        key: editedDocumentRevision.key,
+        ancestorId: editedDocumentRevision._id
+      }
     };
 
     try {
-      const { doc, sections } = await this.documentApiClient.saveDocument(payload);
-      this.setState(this.createStateFromDoc({ doc, sections }));
+      const { documentRevision } = await this.documentApiClient.saveDocument(data);
+      this.setState(prevState => this.mergeStateFromNewDocumentRevision(prevState, documentRevision));
     } catch (error) {
       errorHelper.handleApiError(error, logger);
     }
   }
 
+  handleSectionApproved(sectionKey) {
+    this.setState(prevState => ({
+      editedDocumentRevision: {
+        ...prevState.editedDocumentRevision,
+        sections: prevState.editedDocumentRevision.sections.map(sec => sec.key === sectionKey ? cloneDeep(sec) : sec)
+      },
+      proposedSectionKeys: removeKeyIfExists(prevState.proposedSectionKeys, sectionKey),
+      isDirty: true
+    }));
+  }
+
+  handleSectionRefused(sectionKey) {
+    this.setState(prevState => ({
+      editedDocumentRevision: {
+        ...prevState.editedDocumentRevision,
+        sections: prevState.editedDocumentRevision.sections.filter(sec => sec.key !== sectionKey)
+      },
+      proposedSectionKeys: removeKeyIfExists(prevState.proposedSectionKeys, sectionKey)
+    }));
+  }
+
   handleBackClick() {
-    const { originalDoc } = this.state;
-    window.location = urls.getDocUrl(originalDoc.key);
+    const { editedDocumentRevision } = this.state;
+    window.location = urls.getDocUrl(editedDocumentRevision.key);
   }
 
   handleDragEnd({ source, destination }) {
@@ -187,19 +276,9 @@ class EditDoc extends React.Component {
     }
   }
 
-  moveSection(sourceIndex, destinationIndex) {
-    const { editedSections } = this.state;
-    if (canReorder(editedSections, sourceIndex, destinationIndex)) {
-      this.setState({
-        editedSections: reorder(editedSections, sourceIndex, destinationIndex),
-        isDirty: true
-      });
-    }
-  }
-
   render() {
     const { language } = this.props;
-    const { editedDoc, editedSections, isDirty, invalidSectionKeys } = this.state;
+    const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys } = this.state;
 
     const newSectionMenu = (
       <Menu>
@@ -235,20 +314,29 @@ class EditDoc extends React.Component {
       handleClick: this.handleBackClick
     });
 
+    const alerts = [];
+    if (proposedSectionKeys.length) {
+      alerts.push({
+        message: 'Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. '
+          + 'Nicht übernommene Abschnitte sind nur solange sichtbar, bis Sie die Seite verlassen.',
+        type: 'info'
+      });
+    }
+
     return (
-      <Page headerActions={headerActions}>
+      <Page headerActions={headerActions} customAlerts={alerts}>
         <div className="EditDocPage">
           <div className="EditDocPage-docEditor">
-            <DocEditor
+            <DocumentMetadataEditor
+              documentRevision={editedDocumentRevision}
               onChanged={this.handleMetadataChanged}
-              doc={editedDoc}
               />
           </div>
           <DragDropContext onDragEnd={this.handleDragEnd}>
             <Droppable droppableId="droppable" ignoreContainerClipping>
               {droppableProvided => (
                 <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-                  <ShallowUpdateList items={editedSections}>
+                  <ShallowUpdateList items={editedDocumentRevision.sections}>
                     {(section, index) => (
                       <Draggable key={section.key} draggableId={section.key} index={index}>
                         {(draggableProvided, draggableState) => (
@@ -269,12 +357,15 @@ class EditDoc extends React.Component {
                               onSectionMovedUp={this.handleSectionMovedUp}
                               onSectionMovedDown={this.handleSectionMovedDown}
                               onSectionDeleted={this.handleSectionDeleted}
+                              onSectionApproved={this.handleSectionApproved}
+                              onSectionRefused={this.handleSectionRefused}
                               dragHandleProps={draggableProvided.dragHandleProps}
                               isHighlighted={draggableState.isDragging}
                               isInvalid={invalidSectionKeys.includes(section.key)}
+                              isProposed={proposedSectionKeys.includes(section.key)}
                               language={language}
                               section={section}
-                              doc={editedDoc}
+                              documentRevision={editedDocumentRevision}
                               />
                           </section>
                         )}
@@ -299,8 +390,8 @@ EditDoc.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   editorFactory: PropTypes.instanceOf(EditorFactory).isRequired,
   initialState: PropTypes.shape({
-    doc: docShape,
-    sections: PropTypes.arrayOf(sectionShape)
+    documentRevision: documentRevisionShape.isRequired,
+    proposedSections: PropTypes.arrayOf(sectionShape)
   }).isRequired,
   language: PropTypes.string.isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired

@@ -11,7 +11,3 @@ export async function updateAll(collection, query, updateFn) {
     await collection.replaceOne({ _id: doc._id }, doc);
   }
 }
-
-export default {
-  updateAll
-};

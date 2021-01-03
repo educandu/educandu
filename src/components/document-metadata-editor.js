@@ -3,13 +3,13 @@ import autoBind from 'auto-bind';
 import urls from '../utils/urls';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
-import { docShape } from '../ui/default-prop-types';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
+import { documentRevisionShape } from '../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-class DocEditor extends React.Component {
+class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
@@ -29,36 +29,36 @@ class DocEditor extends React.Component {
   }
 
   handleTitleChange(event) {
-    const { onChanged, doc } = this.props;
-    onChanged({ title: event.target.value, slug: doc.slug });
+    const { onChanged, documentRevision } = this.props;
+    onChanged({ title: event.target.value, slug: documentRevision.slug });
   }
 
   handleSlugChange(event) {
-    const { onChanged, doc } = this.props;
-    onChanged({ title: doc.title, slug: event.target.value });
+    const { onChanged, documentRevision } = this.props;
+    onChanged({ title: documentRevision.title, slug: event.target.value });
   }
 
   render() {
     const { mode } = this.state;
-    const { doc } = this.props;
+    const { documentRevision } = this.props;
 
     let componentToShow;
     switch (mode) {
       case 'preview':
         componentToShow = (
           <div>
-            <span>Titel:</span> <span>{doc.title}</span>
+            <span>Titel:</span> <span>{documentRevision.title}</span>
             <br />
-            <span>URL-Pfad:</span> {doc.slug ? <span>{urls.getArticleUrl(doc.slug)}</span> : <i>(nicht zugewiesen)</i>}
+            <span>URL-Pfad:</span> {documentRevision.slug ? <span>{urls.getArticleUrl(documentRevision.slug)}</span> : <i>(nicht zugewiesen)</i>}
           </div>
         );
         break;
       case 'edit':
         componentToShow = (
           <div>
-            <span>Titel:</span> <Input value={doc.title} onChange={this.handleTitleChange} />
+            <span>Titel:</span> <Input value={documentRevision.title} onChange={this.handleTitleChange} />
             <br />
-            <span>URL-Pfad:</span> <Input addonBefore={urls.articlesPrefix} value={doc.slug || ''} onChange={this.handleSlugChange} />
+            <span>URL-Pfad:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
           </div>
         );
         break;
@@ -90,9 +90,9 @@ class DocEditor extends React.Component {
   }
 }
 
-DocEditor.propTypes = {
-  doc: docShape.isRequired,
+DocumentMetadataEditor.propTypes = {
+  documentRevision: documentRevisionShape.isRequired,
   onChanged: PropTypes.func.isRequired
 };
 
-export default DocEditor;
+export default DocumentMetadataEditor;

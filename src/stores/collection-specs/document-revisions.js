@@ -1,5 +1,5 @@
 export default {
-  name: 'sections',
+  name: 'documentRevisions',
   indexes: [
     {
       name: '_idx_key_',

@@ -3,38 +3,31 @@ import PropTypes from 'prop-types';
 import SectionDisplay from './section-display';
 import { useService } from './container-context';
 import RendererFactory from '../plugins/renderer-factory';
-import { docShape, sectionShape } from '../ui/default-prop-types';
+import { documentShape, documentRevisionShape } from '../ui/default-prop-types';
 
-function DocView({ doc, sections, language, onAction }) {
+function DocView({ documentOrRevision, language, onAction }) {
   const rendererFactory = useService(RendererFactory);
-
-  const children = sections.map(section => {
-    const renderer = rendererFactory.createRenderer(section.type);
-    const DisplayComponent = renderer.getDisplayComponent();
-    return (
-      <SectionDisplay
-        key={section.key}
-        doc={doc}
-        section={section}
-        language={language}
-        DisplayComponent={DisplayComponent}
-        onAction={onAction}
-        />
-    );
-  });
 
   return (
     <article className="DocView">
-      {children}
+      {documentOrRevision.sections.map(section => (
+        <SectionDisplay
+          key={section.key}
+          docKey={documentOrRevision.key}
+          section={section}
+          language={language}
+          DisplayComponent={rendererFactory.createRenderer(section.type).getDisplayComponent()}
+          onAction={onAction}
+          />
+      ))}
     </article>
   );
 }
 
 DocView.propTypes = {
-  doc: docShape.isRequired,
+  documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]).isRequired,
   language: PropTypes.string.isRequired,
-  onAction: PropTypes.func,
-  sections: PropTypes.arrayOf(sectionShape).isRequired
+  onAction: PropTypes.func
 };
 
 DocView.defaultProps = {

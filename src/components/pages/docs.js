@@ -13,40 +13,41 @@ import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
 import { Input, Modal, Table, Button } from 'antd';
 import { toTrimmedString } from '../../utils/sanitize';
-import { docMetadataShape } from '../../ui/default-prop-types';
 import DocumentApiClient from '../../services/document-api-client';
+import { documentMetadataShape } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 
 const logger = new Logger(__filename);
 
 const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
-const DEFAULT_DOCUMENT_SLUG = '';
+const DEFAULT_DOCUMENT_NAMESPACE = 'articles';
+const DEFAULT_DOCUMENT_LANGUAGE = 'de';
 const DEFAULT_FILTER_INPUT = '';
+const DEFAULT_DOCUMENT_SLUG = '';
 
 class Docs extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
     this.state = {
-      filteredDocs: props.initialState.docs.slice(),
+      filteredDocs: props.initialState.documents.slice(),
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
       filterInput: DEFAULT_FILTER_INPUT,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
-      newDocBlueprintSnapshotId: null,
+      newDocBlueprintKey: null,
       isNewDocModalVisible: false,
       isLoading: false
     };
   }
 
-  createNewDocument(title, slug, blueprintDocSnapshotId) {
+  createNewDocument(title, slug) {
     return {
-      doc: {
-        title: toTrimmedString(title) || DEFAULT_DOCUMENT_TITLE,
-        slug: toTrimmedString(slug) || null
-      },
-      sections: [],
-      copySectionsFromRevision: blueprintDocSnapshotId || null
+      title: toTrimmedString(title) || DEFAULT_DOCUMENT_TITLE,
+      slug: toTrimmedString(slug) || null,
+      namespace: DEFAULT_DOCUMENT_NAMESPACE,
+      language: DEFAULT_DOCUMENT_LANGUAGE,
+      sections: []
     };
   }
 
@@ -54,7 +55,7 @@ class Docs extends React.Component {
     this.setState({
       newDocTitle: DEFAULT_DOCUMENT_TITLE,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
-      newDocBlueprintSnapshotId: null,
+      newDocBlueprintKey: null,
       isNewDocModalVisible: true
     });
   }
@@ -69,7 +70,7 @@ class Docs extends React.Component {
 
   handleFilterInputChange(event) {
     const filterInput = event.target.value;
-    const docs = this.props.initialState.docs;
+    const docs = this.props.initialState.documents;
     const filteredDocs = docs.filter(doc => {
       return doc.title.toLowerCase().includes(filterInput.toLowerCase())
         || doc.updatedBy.username.toLowerCase().includes(filterInput.toLowerCase());
@@ -78,21 +79,21 @@ class Docs extends React.Component {
   }
 
   async handleOk() {
-    const { newDocTitle, newDocSlug, newDocBlueprintSnapshotId } = this.state;
+    const { newDocTitle, newDocSlug, newDocBlueprintKey } = this.state;
     const { documentApiClient } = this.props;
 
     try {
       this.setState({ isLoading: true });
 
-      const newDoc = this.createNewDocument(newDocTitle, newDocSlug, newDocBlueprintSnapshotId);
-      const { doc } = await documentApiClient.saveDocument(newDoc);
+      const data = this.createNewDocument(newDocTitle, newDocSlug);
+      const { documentRevision } = await documentApiClient.saveDocument(data);
 
       this.setState({
         isNewDocModalVisible: false,
         isLoading: false
       });
 
-      window.location = urls.getEditDocUrl(doc.key);
+      window.location = urls.getEditDocUrl(documentRevision.key, newDocBlueprintKey || null);
     } catch (error) {
       this.setState({ isLoading: false });
       errorHelper.handleApiError(error, logger);
@@ -107,18 +108,18 @@ class Docs extends React.Component {
     this.setState({
       newDocTitle: doc.title ? `${doc.title} (Kopie)` : DEFAULT_DOCUMENT_TITLE,
       newDocSlug: doc.slug ? `${doc.slug}-kopie` : DEFAULT_DOCUMENT_SLUG,
-      newDocBlueprintSnapshotId: doc.snapshotId,
+      newDocBlueprintKey: doc.key,
       isNewDocModalVisible: true
     });
   }
 
   renderTitle(title, doc) {
-    return <a href={urls.getDocUrl(doc._id)}>{doc.title}</a>;
+    return <a href={urls.getDocUrl(doc.key)}>{doc.title}</a>;
   }
 
   renderUpdatedOn(title, doc) {
     const date = moment(doc.updatedOn).locale('de-DE');
-    return <span>{date.format('L')} - {date.format('LT')}</span>;
+    return <span>{date.format('L, LT')}</span>;
   }
 
   renderUpdatedBy(title, doc) {
@@ -205,7 +206,7 @@ class Docs extends React.Component {
 Docs.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
-    docs: PropTypes.arrayOf(docMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired
   }).isRequired
 };
 

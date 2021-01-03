@@ -19,8 +19,8 @@ import CheckPermissions from '../check-permissions';
 import MenuApiClient from '../../services/menu-api-client';
 import { EDIT_MENU_STRUCTURE } from '../../domain/permissions';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import { menuShape, docMetadataShape } from '../../ui/default-prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { menuShape, documentMetadataShape } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -69,7 +69,7 @@ class EditMenu extends React.Component {
     autoBind(this);
 
     const { menuApiClient, initialState } = this.props;
-    const { menu, docs } = initialState;
+    const { menu, documents } = initialState;
 
     this.menuApiClient = menuApiClient;
 
@@ -81,7 +81,7 @@ class EditMenu extends React.Component {
       menuNodes: [],
       selectedNodeKey: null,
       currentCategoryTitle: '',
-      docRefs: docs.map(this.createInitialDocRef),
+      docRefs: documents.map(this.createInitialDocRef),
       currentMenuItemDocRefs: [],
       defaultDocRefs: [],
       isDirty: false
@@ -606,8 +606,8 @@ class EditMenu extends React.Component {
 
 EditMenu.propTypes = {
   initialState: PropTypes.shape({
-    menu: menuShape.isRequired,
-    docs: PropTypes.arrayOf(docMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
+    menu: menuShape.isRequired
   }).isRequired,
   menuApiClient: PropTypes.instanceOf(MenuApiClient).isRequired
 };

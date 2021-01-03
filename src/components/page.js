@@ -51,7 +51,7 @@ const pageMenuItems = [
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
 
-function Page({ children, disableProfileWarning, fullScreen, headerActions }) {
+function Page({ children, disableProfileWarning, fullScreen, headerActions, customAlerts }) {
   const user = useUser();
 
   const pageHeaderAreaClasses = classNames({
@@ -78,7 +78,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions }) {
         um Ihr Profil zu bearbeiten.
       </span>
     );
-    profileWarning = <Alert message={message} banner />;
+    profileWarning = <Alert key="profile-warning" message={message} banner />;
   }
 
   let headerActionComponents = null;
@@ -118,6 +118,9 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions }) {
           </div>
         </div>
         {!fullScreen && profileWarning}
+        {!fullScreen && customAlerts && customAlerts.map((alert, index) => (
+          <Alert key={index.toString()} message={alert.message} type={alert.type || 'info'} banner />
+        ))}
       </header>
       <main className={pageContentAreaClasses}>
         <div className={pageContentClasses}>
@@ -142,6 +145,10 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions }) {
 
 Page.propTypes = {
   children: PropTypes.node,
+  customAlerts: PropTypes.arrayOf(PropTypes.shape({
+    message: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['success', 'info', 'warning', 'error'])
+  })),
   disableProfileWarning: PropTypes.bool,
   fullScreen: PropTypes.bool,
   headerActions: PropTypes.arrayOf(PropTypes.shape({
@@ -156,6 +163,7 @@ Page.propTypes = {
 
 Page.defaultProps = {
   children: null,
+  customAlerts: null,
   disableProfileWarning: false,
   fullScreen: false,
   headerActions: null

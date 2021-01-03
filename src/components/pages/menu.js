@@ -7,7 +7,7 @@ import urls from '../../utils/urls';
 import classnames from 'classnames';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
-import { menuShape, docMetadataShape, docShape, sectionShape } from '../../ui/default-prop-types';
+import { menuShape, documentMetadataShape, documentShape } from '../../ui/default-prop-types';
 
 const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
 
@@ -19,7 +19,7 @@ class Menu extends React.Component {
     const { initialState } = this.props;
 
     this.state = {
-      documentDictionary: initialState.docs.reduce((map, doc) => {
+      documentDictionary: initialState.documents.reduce((map, doc) => {
         map.set(doc.key, doc);
         return map;
       }, new Map())
@@ -35,7 +35,7 @@ class Menu extends React.Component {
   renderDefaultDoc(defaultDocument, language) {
     return (
       <div className="MenuPage-detailsItem">
-        <DocView doc={defaultDocument.doc} sections={defaultDocument.sections} language={language} />
+        <DocView documentOrRevision={defaultDocument} language={language} />
       </div>
     );
   }
@@ -126,12 +126,9 @@ class Menu extends React.Component {
 
 Menu.propTypes = {
   initialState: PropTypes.shape({
-    docs: PropTypes.arrayOf(docMetadataShape).isRequired,
-    menu: menuShape.isRequired,
-    defaultDocument: PropTypes.shape({
-      doc: docShape,
-      sections: PropTypes.arrayOf(sectionShape).isRequired
-    })
+    defaultDocument: documentShape,
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
+    menu: menuShape.isRequired
   }).isRequired,
   language: PropTypes.string.isRequired
 };

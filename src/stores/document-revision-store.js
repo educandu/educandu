@@ -1,12 +1,12 @@
 import Database from './database';
 import StoreBase from './store-base';
 
-class DocumentSnapshotStore extends StoreBase {
+class DocumentRevisionStore extends StoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.documentSnapshots);
+    super(db.documentRevisions);
   }
 }
 
-export default DocumentSnapshotStore;
+export default DocumentRevisionStore;

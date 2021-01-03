@@ -1,13 +1,13 @@
 import React from 'react';
 import moment from 'moment';
 import { useRequest } from './request-context';
-import { docShape } from '../ui/default-prop-types';
+import { documentShape } from '../ui/default-prop-types';
 
 const locale = 'de-DE';
 
 function ArticleCredits({ doc }) {
   const request = useRequest();
-  const contributors = doc.contributors || [];
+  const contributors = doc.contributors;
   const currentHost = request.hostInfo.host;
   const currentUrl = `${request.hostInfo.origin}${request.path}`;
   const citation = `Artikel »${doc.title}«, ${currentUrl}, ${moment().locale(locale).format('L, LT')}`;
@@ -26,7 +26,7 @@ function ArticleCredits({ doc }) {
 }
 
 ArticleCredits.propTypes = {
-  doc: docShape.isRequired
+  doc: documentShape.isRequired
 };
 
 export default ArticleCredits;

@@ -59,18 +59,6 @@ export const userShape = PropTypes.shape({
   profile: userProfileShape
 });
 
-// This should always use the full user in the future
-export const userInDocShape = PropTypes.oneOfType([
-  PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    email: PropTypes.string // This is only visible to super users
-  }),
-  PropTypes.shape({
-    id: PropTypes.string.isRequired
-  })
-]);
-
 export const userProps = {
   user: userShape
 };
@@ -79,63 +67,53 @@ export const dataProps = {
   data: PropTypes.object.isRequired
 };
 
-export const docMetadataShape = PropTypes.shape({
+const userInDocShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
-  snapshotId: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  slug: PropTypes.string,
-  order: PropTypes.number.isRequired,
-  createdOn: PropTypes.string.isRequired,
-  updatedOn: PropTypes.string.isRequired,
-  createdBy: userInDocShape.isRequired,
-  updatedBy: userInDocShape.isRequired,
-  contributors: PropTypes.arrayOf(userInDocShape)
-});
-
-export const docShape = PropTypes.shape({
-  key: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  slug: PropTypes.string,
-  createdOn: PropTypes.string.isRequired,
-  updatedOn: PropTypes.string.isRequired,
-  createdBy: userInDocShape.isRequired,
-  updatedBy: userInDocShape.isRequired,
-  contributors: PropTypes.arrayOf(userInDocShape)
-});
-
-export const fullDocShape = PropTypes.shape({
-  key: PropTypes.string.isRequired,
-  snapshotId: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  slug: PropTypes.string,
-  order: PropTypes.number.isRequired,
-  createdOn: PropTypes.string.isRequired,
-  updatedOn: PropTypes.string.isRequired,
-  createdBy: userInDocShape.isRequired,
-  updatedBy: userInDocShape.isRequired,
-  contributors: PropTypes.arrayOf(userInDocShape),
-  sections: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    ancestorId: PropTypes.string,
-    order: PropTypes.number.isRequired,
-    type: PropTypes.string.isRequired,
-    content: PropTypes.any,
-    createdOn: PropTypes.string.isRequired,
-    createdBy: userInDocShape.isRequired,
-    deletedOn: PropTypes.string,
-    deletedBy: userInDocShape
-  }))
+  username: PropTypes.string.isRequired,
+  email: PropTypes.string // This is only visible to super users
 });
 
 export const sectionShape = PropTypes.shape({
   key: PropTypes.string.isRequired,
-  order: PropTypes.number,
-  type: PropTypes.string.isRequired,
-  content: PropTypes.any,
-  createdOn: PropTypes.string,
-  createdBy: userInDocShape,
+  revision: PropTypes.string, // Not required because it's null for newly created sections
   deletedOn: PropTypes.string,
-  deletedBy: userInDocShape
+  deletedBy: userInDocShape,
+  deletedBecause: PropTypes.string,
+  type: PropTypes.string.isRequired,
+  content: PropTypes.object
+});
+
+const commonDocumentOrRevisionProps = {
+  _id: PropTypes.string.isRequired,
+  key: PropTypes.string.isRequired,
+  order: PropTypes.number.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  namespace: PropTypes.string.isRequired,
+  language: PropTypes.string.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  createdBy: userInDocShape.isRequired
+};
+
+export const documentMetadataShape = PropTypes.shape({
+  ...commonDocumentOrRevisionProps,
+  revision: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: userInDocShape.isRequired
+});
+
+export const documentShape = PropTypes.shape({
+  ...commonDocumentOrRevisionProps,
+  revision: PropTypes.string.isRequired,
+  updatedOn: PropTypes.string.isRequired,
+  updatedBy: userInDocShape.isRequired,
+  sections: PropTypes.arrayOf(sectionShape).isRequired,
+  contributors: PropTypes.arrayOf(userInDocShape).isRequired
+});
+
+export const documentRevisionShape = PropTypes.shape({
+  ...commonDocumentOrRevisionProps,
+  sections: PropTypes.arrayOf(sectionShape).isRequired
 });
 
 export const menuNodeShape = PropTypes.any;
@@ -148,6 +126,10 @@ export const menuShape = PropTypes.shape({
   nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
   createdOn: PropTypes.string.isRequired,
   updatedOn: PropTypes.string.isRequired,
-  createdBy: userInDocShape.isRequired,
-  updatedBy: userInDocShape.isRequired
+  createdBy: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired,
+  updatedBy: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired
 });

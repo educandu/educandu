@@ -4,7 +4,7 @@ import autoBind from 'auto-bind';
 import urls from '../utils/urls';
 import PropTypes from 'prop-types';
 import { DeleteOutlined } from '@ant-design/icons';
-import { docMetadataShape } from '../ui/default-prop-types';
+import { documentMetadataShape } from '../ui/default-prop-types';
 
 class MenuDocRef extends React.PureComponent {
   constructor(props) {
@@ -36,7 +36,7 @@ class MenuDocRef extends React.PureComponent {
 }
 
 MenuDocRef.propTypes = {
-  doc: docMetadataShape.isRequired,
+  doc: documentMetadataShape.isRequired,
   docRefKey: PropTypes.string.isRequired,
   onDelete: PropTypes.func
 };

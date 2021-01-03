@@ -4,554 +4,264 @@ import UserService from './user-service';
 import dateTime from '../utils/date-time';
 import uniqueId from '../utils/unique-id';
 import cloneDeep from '../utils/clone-deep';
-import SectionStore from '../stores/section-store';
 import DocumentStore from '../stores/document-store';
 import HandlerFactory from '../plugins/handler-factory';
 import DocumentLockStore from '../stores/document-lock-store';
-import SectionOrderStore from '../stores/section-order-store';
 import DocumentOrderStore from '../stores/document-order-store';
-import DocumentSnapshotStore from '../stores/document-snapshot-store';
+import DocumentRevisionStore from '../stores/document-revision-store';
+import { validateCreateDocumentRevision } from '../domain/models/create-document-revision-request';
 
 const logger = new Logger(__filename);
 
+const metadataProjection = {
+  _id: 1,
+  key: 1,
+  order: 1,
+  revision: 1,
+  title: 1,
+  slug: 1,
+  namespace: 1,
+  language: 1,
+  createdOn: 1,
+  createdBy: 1,
+  updatedOn: 1,
+  updatedBy: 1
+};
+
+const lastUpdatedFirst = [['updatedOn', -1]];
+
 class DocumentService {
   static get inject() {
-    return [DocumentSnapshotStore, DocumentOrderStore, SectionOrderStore, DocumentLockStore, DocumentStore, SectionStore, UserService, HandlerFactory];
+    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, UserService, HandlerFactory];
   }
 
-  constructor(documentSnapshotStore, documentOrderStore, sectionOrderStore, documentLockStore, documentStore, sectionStore, userService, handlerFactory) {
-    this.documentSnapshotStore = documentSnapshotStore;
+  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, userService, handlerFactory) {
+    this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
-    this.sectionOrderStore = sectionOrderStore;
     this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
-    this.sectionStore = sectionStore;
     this.userService = userService;
     this.handlerFactory = handlerFactory;
   }
 
-  getLastUpdatedDocuments(numberOfDocs = 0) {
-    return this.documentStore.find({
-      sort: [['updatedOn', -1]],
-      limit: numberOfDocs
-    });
+  getAllDocumentsMetadata() {
+    return this.documentStore.find({}, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  async getDocumentsMetadata(documentIds = null) {
-    const query = documentIds ? { _id: { $in: documentIds } } : {};
-    const docs = await this.documentStore.find({
-      query: query,
-      sort: [['updatedOn', -1]],
-      projection: {
-        _id: 1,
-        snapshotId: 1,
-        order: 1,
-        title: 1,
-        slug: 1,
-        createdOn: 1,
-        updatedOn: 1,
-        deletedOn: 1,
-        createdBy: 1,
-        updatedBy: 1,
-        deletedBy: 1
-      }
-    });
-
-    const usersById = new Map();
-
-    docs.forEach(doc => {
-      this.getAllUserIdsForDocOrSnapshot(doc).forEach(userId => usersById.set(userId, null));
-    });
-
-    const users = await this.userService.getUsersByIds(Array.from(usersById.keys()));
-    users.forEach(user => usersById.set(user._id, user));
-
-    for (const [id, user] of usersById.entries()) {
-      if (!user) {
-        throw new Error(`User with ID ${id} is referenced but could not be found in the database.`);
-      }
-    }
-
-    docs.forEach(doc => this.setUserObjectsInDocOrSnapshot(doc, usersById));
-
-    return docs;
+  getDocumentsMetadataByKeys(documentKeys) {
+    return this.documentStore.find({ _id: { $in: documentKeys } }, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  async *getDocumentKeys() {
-    const groups = this.documentSnapshotStore.aggregate({
-      pipeline: [{ $group: { _id: '$key' } }]
-    });
-
-    for await (const group of groups) {
-      yield group._id;
-    }
+  getDocumentByKey(documentKey) {
+    return this.documentStore.findOne({ _id: documentKey });
   }
 
-  async getDocumentById(documentId) {
-    const doc = await this.documentStore.findOne({
-      query: { _id: documentId }
-    });
-
-    return doc ? this.addAllRelevantUsersToDocument(doc) : null;
+  getDocumentByNamespaceAndSlug(namespace, slug) {
+    return this.documentStore.findOne({ namespace, slug });
   }
 
-  async getDocumentRevision(revisionId) {
-    const snapshot = await this.getDocumentSnapshotById(revisionId);
-    if (!snapshot) {
-      return null;
-    }
-
-    const docs = await this.snapshotsToDocs([snapshot]);
-    return docs[0];
+  getAllDocumentRevisionsByKey(documentKey) {
+    return this.documentRevisionStore.find({ key: documentKey }, { sort: [['order', 1]] });
   }
 
-  async getDocumentHistory(documentKey) {
-    const snapshots = await this.documentSnapshotStore.find({
-      query: { key: documentKey },
-      sort: [['order', 1]]
-    });
-
-    return this.snapshotsToDocs(snapshots);
+  getCurrentDocumentRevisionByKey(documentKey) {
+    return this.documentRevisionStore.findOne({ key: documentKey }, { sort: [['order', -1]] });
   }
 
-  async getDocumentBySlug(slug) {
-    const doc = await this.documentStore.findOne({
-      query: { slug }
-    });
-
-    return doc ? this.addAllRelevantUsersToDocument(doc) : null;
+  getDocumentRevisionById(id) {
+    return this.documentRevisionStore.findOne({ _id: id });
   }
 
-  async snapshotsToDocs(snapshots) {
-    if (!snapshots.length) {
-      return [];
-    }
-
-    const sectionsById = new Map();
-    const usersById = new Map();
-
-    snapshots.forEach(snapshot => {
-      this.getAllUserIdsForDocOrSnapshot(snapshot).forEach(userId => usersById.set(userId, null));
-      snapshot.sections.forEach(section => {
-        sectionsById.set(section.id, null);
-        this.getAllUserIdsForSection(section).forEach(userId => usersById.set(userId, null));
-      });
-    });
-
-    const sections = await this.getSectionsByIds(Array.from(sectionsById.keys()));
-    sections.forEach(section => sectionsById.set(section._id, section));
-
-    const users = await this.userService.getUsersByIds(Array.from(usersById.keys()));
-    users.forEach(user => usersById.set(user._id, user));
-
-    for (const [id, section] of sectionsById.entries()) {
-      if (!section) {
-        throw new Error(`Section with ID ${id} is referenced but could not be found in the database.`);
-      }
-    }
-
-    for (const [id, user] of usersById.entries()) {
-      if (!user) {
-        throw new Error(`User with ID ${id} is referenced but could not be found in the database.`);
-      }
-    }
-
-    snapshots.forEach(snapshot => this.setUserObjectsInDocOrSnapshot(snapshot, usersById));
-    sections.forEach(section => this.setUserObjectsInSection(section, usersById));
-
-    const firstSnapshot = snapshots[0];
-    return snapshots.map(lastSnapshot => {
-      const sectionsInLastSnapshot = lastSnapshot.sections.map(section => sectionsById.get(section.id));
-      const latestSnapshot = this.createLatestDocument(firstSnapshot.key, firstSnapshot, lastSnapshot, sectionsInLastSnapshot);
-      return latestSnapshot;
-    });
-  }
-
-  async addAllRelevantUsersToDocument(doc) {
-    const { users, contributors } = await this.getAllHistoricalUsersForDocument(doc);
-
-    const allUsersById = users.reduce((map, user) => {
-      map.set(user._id, user);
-      return map;
-    }, new Map());
-
-    this.setUserObjectsInDocOrSnapshot(doc, allUsersById);
-    doc.sections.forEach(section => this.setUserObjectsInSection(section, allUsersById));
-
-    this.setUserObjectsAsContributorsInDocOrSnapshot(doc, contributors);
-
-    return doc;
-  }
-
-  getSectionById(sectionId) {
-    return this.sectionStore.findOne({
-      query: { _id: sectionId }
-    });
-  }
-
-  async getSectionsByIds(sectionIds) {
-    if (!sectionIds.length) {
-      return [];
-    }
-
-    const sections = await this.sectionStore.find({
-      query: { _id: { $in: sectionIds } }
-    });
-
-    return sectionIds
-      .map(id => sections.find(section => section._id === id))
-      .filter(section => !!section);
-  }
-
-  async getDocumentSnapshotById(revisionId) {
-    const snapshot = await this.documentSnapshotStore.findOne({
-      query: { _id: revisionId }
-    });
-
-    return snapshot || null;
-  }
-
-  getInitialDocumentSnapshot(documentKey) {
-    return this.documentSnapshotStore.findOne({
-      query: { key: documentKey },
-      sort: [['order', 1]]
-    });
-  }
-
-  getLatestDocumentSnapshot(documentKey) {
-    return this.documentSnapshotStore.findOne({
-      query: { key: documentKey },
-      sort: [['order', -1]]
-    });
-  }
-
-  async hardDeleteSection({ key, order, reason, deleteDescendants, user }) {
+  async createDocumentRevision({ data, user }) {
     if (!user || !user._id) {
       throw new Error('No user specified');
     }
 
+    const doc = validateCreateDocumentRevision(data);
+
+    let lock;
     const now = dateTime.now();
+    const userId = user._id;
+    const isAppendedRevision = !!doc.appendTo;
+    const ancestorId = isAppendedRevision ? doc.appendTo.ancestorId : null;
+    const documentKey = isAppendedRevision ? doc.appendTo.key : uniqueId.create();
 
-    const selectByKey = { key };
-    const selectByOrder = deleteDescendants ? { order: { $gte: order } } : { order };
-    const sectionsQuery = { $and: [selectByKey, selectByOrder] };
+    try {
 
-    const fieldsToSet = {
-      content: null,
-      deletedOn: now,
-      deletedBy: { id: user._id },
-      deletedBecause: reason
-    };
+      let existingDocumentRevisions;
+      let ancestorRevision;
 
-    logger.info('Hard-deleting content for sections with key %s and order %s %s', key, deleteDescendants ? '>=' : '=', order);
-    const sections = await this.sectionStore.find({ query: sectionsQuery });
-    if (!sections.length) {
-      logger.info('No sections found with key %s and order %s %s', key, deleteDescendants ? '>=' : '=', order);
-      return;
-    }
+      logger.info('Creating new document revision for document key %s', documentKey);
 
-    const sectionIds = sections.map(section => section._id);
-    const handlersBySectionId = sections.reduce((map, section) => {
-      map.set(section._id, this.handlerFactory.createHandler(section.type));
-      return map;
-    }, new Map());
+      lock = await this.documentLockStore.takeLock(documentKey);
 
-    logger.info('Calling before hard delete plugin handlers');
-    await Promise.all(sections.map(section => {
-      const handler = handlersBySectionId.get(section._id);
-      return handler && handler.handleBeforeHardDelete && handler.handleBeforeHardDelete(section);
-    }));
+      if (isAppendedRevision) {
+        existingDocumentRevisions = await this.getAllDocumentRevisionsByKey(documentKey);
+        if (!existingDocumentRevisions.length) {
+          throw new Error(`Cannot append new revision for key ${documentKey}, because there are no existing revisions`);
+        }
 
-    await this.sectionStore.updateMany({ _id: { $in: sectionIds } }, { $set: fieldsToSet });
-    logger.info('%s sections were hard-deleted', sections.length);
-
-    logger.info('Calling after hard delete plugin handlers');
-    await Promise.all(sections.map(section => {
-      const handler = handlersBySectionId.get(section._id);
-      return handler && handler.handleAfterHardDelete && handler.handleAfterHardDelete(section, { ...section, ...fieldsToSet });
-    }));
-
-    logger.info('Searching for documents referencing hard-deleted sections');
-    const docs = await this.documentStore.find({
-      query: { sections: { $elemMatch: { _id: { $in: sectionIds } } } },
-      projection: { _id: 1 }
-    });
-
-    const docKeys = docs.map(doc => doc._id);
-    logger.info('Found %s documents referencing hard-deleted sections', docKeys.length);
-
-    logger.info('Obtaining document locks');
-    await Promise.all(docKeys.map(docKey => this.documentLockStore.takeLock(docKey)));
-
-    logger.info('Regenerating documents');
-    await Promise.all(docKeys.map(docKey => this.regenerateLatestDocumentUnlocked(docKey)));
-
-    logger.info('Releasing document locks');
-    await Promise.all(docKeys.map(docKey => this.documentLockStore.releaseLock(docKey)));
-
-    logger.info('Hard-delete completed');
-  }
-
-  async createDocumentRevision({ doc, sections, user, copySectionsFromRevision }) {
-    if (!user || !user._id) {
-      throw new Error('No user specified');
-    }
-
-    const now = dateTime.now();
-    const documentKey = doc.key || uniqueId.create();
-
-    logger.info('Creating new document revision for document key %s', documentKey);
-
-    await this.documentLockStore.takeLock(documentKey);
-
-    const latestSnapshot = await this.getLatestDocumentSnapshot(documentKey);
-    if (latestSnapshot) {
-      logger.info('Found existing snapshot with id %s', latestSnapshot._id);
-    } else {
-      logger.info('No existing snapshot found for document key %s', documentKey);
-    }
-
-    if (!this.userCanUpdateDoc(latestSnapshot, doc, user)) {
-      throw new Error('The user does not have permission to update the document');
-    }
-
-    let updatedSections;
-
-    if (copySectionsFromRevision) {
-      const blueprintRevision = await this.getDocumentSnapshotById(copySectionsFromRevision);
-      if (!blueprintRevision) {
-        throw new Error(`Cannot clone document. Revision ${copySectionsFromRevision} does not exist.`);
+        logger.info('Found %d existing revisions for key %s', existingDocumentRevisions.length, documentKey);
+        ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
+        if (ancestorRevision._id !== ancestorId) {
+          throw new Error(`Ancestor id ${ancestorId} is not the latest revision`);
+        }
+      } else {
+        existingDocumentRevisions = [];
+        ancestorRevision = null;
       }
 
+      const newSections = data.sections.map(section => {
+        const sectionKey = section.key;
+        const ancestorSection = ancestorRevision?.sections.find(s => s.key === sectionKey) || null;
 
-      const blueprintSections = await this.getSectionsByIds(blueprintRevision.sections.map(section => section.id));
-      updatedSections = await Promise.all(blueprintSections.map(async originalSection => {
-        logger.info('Cloning section with id %s', originalSection._id);
+        if (ancestorSection) {
+          logger.info('Found ancestor section with key %s', sectionKey);
 
-        const newClonedSection = {
-          _id: uniqueId.create(),
-          ancestorId: null,
-          key: uniqueId.create(),
-          createdOn: now,
-          createdBy: { id: user._id },
-          clonedFrom: originalSection._id,
-          order: await this.sectionOrderStore.getNextOrder(),
-          type: originalSection.type,
-          content: cloneDeep(originalSection.content)
-        };
+          if (ancestorSection.type !== section.type) {
+            throw new Error(`Ancestor section has type ${ancestorSection.type} and cannot be changed to ${section.type}`);
+          }
 
-        logger.info('Saving new section revision with id %s', newClonedSection._id);
-        await this.sectionStore.save(newClonedSection);
-        return newClonedSection;
-      }));
-    } else {
-      updatedSections = await Promise.all(sections.map(async section => {
-        logger.info('Processing section with key %s', section.key);
+          if (ancestorSection.deletedOn && section.content) {
+            throw new Error(`Ancestor section with key ${sectionKey} is deleted and cannot be changed`);
+          }
 
-        // Load potentially existing revision:
-        const existingSection = section.ancestorId ? await this.getSectionById(section.ancestorId) : null;
-        if (existingSection) {
-          logger.info('Found ancestor section with id %s', existingSection._id);
-        } else {
-          logger.info('No ancestor section found');
-        }
-
-        if (existingSection && section.type && existingSection.type !== section.type) {
-          throw new Error('Sections cannot change their type');
-        }
-
-        if (existingSection && section.key && existingSection.key !== section.key) {
-          throw new Error('Sections cannot change their key');
-        }
-
-        if (!existingSection && !section.type) {
-          throw new Error('New sections must specify a type');
-        }
-
-        // If not changed, re-use existing revision:
-        if (existingSection && deepEqual(existingSection.content, section.content)) {
-          logger.info('Section has not changed compared to ancestor section with id %s, using the existing', existingSection._id);
-          return existingSection;
+          // If not changed, re-use existing revision:
+          if (deepEqual(ancestorSection.content, section.content)) {
+            logger.info('Section has not changed compared to ancestor section with id %s, using the existing', ancestorSection._id);
+            return cloneDeep(ancestorSection);
+          }
         }
 
         if (!section.content) {
-          throw new Error('Sections must specify a content');
+          throw new Error('Sections that are not deleted must specify a content');
         }
 
-        // Otherwise, create a new one:
-        const newRevision = {
-          _id: uniqueId.create(),
-          ancestorId: section.ancestorId || null,
-          key: existingSection ? existingSection.key : section.key || uniqueId.create(),
-          createdOn: now,
-          createdBy: { id: user._id },
-          clonedFrom: null,
-          order: await this.sectionOrderStore.getNextOrder(),
-          type: existingSection ? existingSection.type : section.type,
-          content: section.content
+        logger.info('Creating new revision for section key %s', sectionKey);
+
+        // Create a new section revision:
+        return {
+          revision: uniqueId.create(),
+          key: sectionKey,
+          deletedOn: null,
+          deletedBy: null,
+          deletedBecause: null,
+          type: section.type,
+          content: cloneDeep(section.content)
         };
+      });
 
-        logger.info('Saving new section revision with id %s', newRevision._id);
-        await this.sectionStore.save(newRevision);
-        return newRevision;
-      }));
+      const nextOrder = await this.documentOrderStore.getNextOrder();
+
+      logger.info('Creating new revision for document key %s with order %d', documentKey, nextOrder);
+
+      // Create a new document revision:
+      const newDocumentRevision = {
+        _id: uniqueId.create(),
+        key: documentKey,
+        order: nextOrder,
+        createdOn: now,
+        createdBy: userId,
+        title: doc.title || '',
+        slug: doc.slug || '',
+        namespace: doc.namespace,
+        language: doc.language,
+        sections: newSections
+      };
+
+      logger.info('Saving new document revision with id %s', newDocumentRevision._id);
+      await this.documentRevisionStore.save(newDocumentRevision);
+
+      const latestDocument = this._createDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
+
+      logger.info('Saving latest document with revision %s', latestDocument.revision);
+      await this.documentStore.save(latestDocument);
+
+      return newDocumentRevision;
+
+    } finally {
+      if (lock) {
+        await this.documentLockStore.releaseLock(lock);
+      }
     }
-
-    const newSnapshot = {
-      _id: uniqueId.create(),
-      key: documentKey,
-      createdOn: now,
-      createdBy: { id: user._id },
-      order: await this.documentOrderStore.getNextOrder(),
-      title: doc.title || '',
-      slug: doc.slug || null,
-      sections: updatedSections.map(section => ({ id: section._id }))
-    };
-
-    logger.info('Saving new document snapshot with id %s', newSnapshot._id);
-    await this.documentSnapshotStore.save(newSnapshot);
-
-    const firstSnapshot = await this.getInitialDocumentSnapshot(documentKey);
-
-    const latestDocument = this.createLatestDocument(documentKey, firstSnapshot, newSnapshot, updatedSections);
-
-    logger.info('Latest document will have %s', latestDocument._id);
-    await this.documentStore.save(latestDocument);
-
-    await this.documentLockStore.releaseLock(documentKey);
-
-    return latestDocument;
   }
 
-  createLatestDocument(documentKey, firstSnapshot, lastSnapshot, sections) {
+  async hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants, user }) {
+    if (!user || !user._id) {
+      throw new Error('No user specified');
+    }
+
+    let lock;
+    const now = dateTime.now();
+    const userId = user._id;
+
+    try {
+
+      logger.info('Hard deleting sections with section key %s in documents with key %s', sectionKey, documentKey);
+
+      lock = await this.documentLockStore.takeLock(documentKey);
+
+      const allRevisions = await this.documentRevisionStore.find({ key: documentKey }, { sort: [['order', 1]] });
+
+      const revisionsToUpdate = [];
+      let revisionMatchFound = false;
+
+      for (const revision of allRevisions) {
+        for (const section of revision.sections) {
+          if (section.key === sectionKey) {
+            // eslint-disable-next-line max-depth
+            if (section.revision === sectionRevision || (revisionMatchFound && deleteDescendants)) {
+              section.deletedOn = now;
+              section.deletedBy = userId;
+              section.deletedBecause = reason;
+              section.content = null;
+              revisionMatchFound = true;
+              revisionsToUpdate.push(revision);
+            }
+          }
+        }
+      }
+
+      if (revisionsToUpdate.length) {
+        logger.info('Hard deleting %d sections with section key %s in document revisions with key %s', revisionsToUpdate, sectionKey, documentKey);
+        await this.documentRevisionStore.saveMany(revisionsToUpdate);
+      } else {
+        throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
+      }
+
+      const latestDocument = this._createDocumentFromRevisions(allRevisions);
+
+      logger.info('Saving latest document with revision %s', latestDocument.revision);
+      await this.documentStore.save(latestDocument);
+
+    } finally {
+      if (lock) {
+        await this.documentLockStore.releaseLock(lock);
+      }
+    }
+  }
+
+  _createDocumentFromRevisions(revisions) {
+    const firstRevision = revisions[0];
+    const lastRevision = revisions[revisions.length - 1];
+    const contributors = Array.from(new Set(revisions.map(r => r.createdBy)));
+
     return {
-      _id: documentKey,
-      snapshotId: lastSnapshot._id,
-      createdOn: firstSnapshot.createdOn,
-      updatedOn: lastSnapshot.createdOn,
-      createdBy: firstSnapshot.createdBy,
-      updatedBy: lastSnapshot.createdBy,
-      order: lastSnapshot.order,
-      title: lastSnapshot.title,
-      slug: lastSnapshot.slug,
-      sections: sections
+      _id: lastRevision.key,
+      key: lastRevision.key,
+      order: lastRevision.order,
+      revision: lastRevision._id,
+      createdOn: firstRevision.createdOn,
+      createdBy: firstRevision.createdBy,
+      updatedOn: lastRevision.createdOn,
+      updatedBy: lastRevision.createdBy,
+      title: lastRevision.title,
+      slug: lastRevision.slug,
+      namespace: lastRevision.namespace,
+      language: lastRevision.language,
+      sections: lastRevision.sections,
+      contributors: contributors
     };
-  }
-
-  async regenerateLatestDocument(documentKey) {
-    await this.documentLockStore.takeLock(documentKey);
-    await this.regenerateLatestDocumentUnlocked(documentKey);
-    await this.documentLockStore.releaseLock(documentKey);
-  }
-
-  async regenerateLatestDocumentUnlocked(documentKey) {
-    const firstSnapshot = await this.getInitialDocumentSnapshot(documentKey);
-    const lastSnapshot = await this.getLatestDocumentSnapshot(documentKey);
-    const sections = await this.getSectionsByIds(lastSnapshot.sections.map(section => section.id));
-
-    const latestDocument = this.createLatestDocument(documentKey, firstSnapshot, lastSnapshot, sections);
-    await this.documentStore.save(latestDocument);
-  }
-
-  /* eslint-disable-next-line no-unused-vars */
-  userCanUpdateDoc(previousSnapshot, newDoc, user) {
-    return true;
-  }
-
-  async deleteDocument({ documentKey }) {
-    await this.documentLockStore.takeLock(documentKey);
-    await this.documentStore.deleteOne({ _id: documentKey });
-    await this.documentSnapshotStore.deleteMany({ key: documentKey });
-    await this.documentLockStore.releaseLock(documentKey);
-  }
-
-  getAllUserIdsForDocOrSnapshot(docOrSnapshot) {
-    // Note: updatedBy only exists in documents, not in snapshots:
-    const ids = [docOrSnapshot.createdBy, docOrSnapshot.updatedBy].filter(x => x && x.id).map(x => x.id);
-    return Array.from(new Set(ids));
-  }
-
-  getAllUserIdsForDocsOrSnapshots(docsOrSnapshots) {
-    return Array.from(docsOrSnapshots.reduce((set, doc) => {
-      if (doc.createdBy && doc.createdBy.id) {
-        set.add(doc.createdBy.id);
-      }
-
-      if (doc.updatedBy && doc.updatedBy.id) {
-        set.add(doc.updatedBy.id);
-      }
-
-      return set;
-    }, new Set()));
-  }
-
-  getAllUserIdsForSection(section) {
-    const ids = [section.createdBy, section.deletedBy].filter(x => x && x.id).map(x => x.id);
-    return Array.from(new Set(ids));
-  }
-
-  getAllUserIdsForSections(sections) {
-    return Array.from(sections.reduce((set, section) => {
-      if (section.createdBy && section.createdBy.id) {
-        set.add(section.createdBy.id);
-      }
-
-      if (section.deletedBy && section.deletedBy.id) {
-        set.add(section.deletedBy.id);
-      }
-
-      return set;
-    }, new Set()));
-  }
-
-  async getAllHistoricalUsersForDocument(doc) {
-    const allDocSnapshots = await this.documentSnapshotStore.find({
-      query: { key: doc.snapshotId },
-      projection: { createdBy: 1, deletedBy: 1 }
-    });
-
-    const allSectionKeys = doc.sections.map(section => section.key);
-    const allSections = await this.sectionStore.find({
-      query: { key: { $in: allSectionKeys } },
-      sort: { order: 1 },
-      projection: { order: 1, createdBy: 1, deletedBy: 1 }
-    });
-
-    const allUserIdsForDocsOrSnapshots = this.getAllUserIdsForDocsOrSnapshots(allDocSnapshots);
-    const allUserIdsForSections = this.getAllUserIdsForSections(allSections);
-
-    const allUserIds = Array.from(new Set([...allUserIdsForDocsOrSnapshots, ...allUserIdsForSections]));
-
-    const users = await this.userService.getUsersByIds(allUserIds);
-    const contributors = allUserIdsForSections.map(userId => users.find(user => user._id === userId));
-
-    return { users, contributors };
-  }
-
-  setUserObjectsInDocOrSnapshot(docOrSnapshot, usersById) {
-    if (docOrSnapshot.createdBy && docOrSnapshot.createdBy.id) {
-      docOrSnapshot.createdBy = usersById.get(docOrSnapshot.createdBy.id);
-    }
-
-    // Note: updatedBy only exists in documents, not in snapshots:
-    if (docOrSnapshot.updatedBy && docOrSnapshot.updatedBy.id) {
-      docOrSnapshot.updatedBy = usersById.get(docOrSnapshot.updatedBy.id);
-    }
-  }
-
-  setUserObjectsInSection(section, usersById) {
-    if (section.createdBy && section.createdBy.id) {
-      section.createdBy = usersById.get(section.createdBy.id);
-    }
-
-    if (section.deletedBy && section.deletedBy.id) {
-      section.deletedBy = usersById.get(section.deletedBy.id);
-    }
-  }
-
-  setUserObjectsAsContributorsInDocOrSnapshot(docOrSnapshot, contributors) {
-    docOrSnapshot.contributors = contributors.slice();
-    return docOrSnapshot;
   }
 }
 

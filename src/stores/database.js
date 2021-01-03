@@ -4,13 +4,11 @@ import menusSpec from './collection-specs/menus';
 import usersSpec from './collection-specs/users';
 import settingsSpec from './collection-specs/settings';
 import sessionsSpec from './collection-specs/sessions';
-import sectionsSpec from './collection-specs/sections';
 import documentsSpec from './collection-specs/documents';
 import menuLocksSpec from './collection-specs/menu-locks';
 import documentLocksSpec from './collection-specs/document-locks';
-import sectionOrdersSpec from './collection-specs/section-orders';
 import documentOrdersSpec from './collection-specs/document-orders';
-import documentSnapshotsSpec from './collection-specs/document-snapshots';
+import documentRevisionsSpec from './collection-specs/document-revisions';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests';
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
@@ -22,13 +20,11 @@ const collectionSpecs = [
   usersSpec,
   settingsSpec,
   sessionsSpec,
-  sectionsSpec,
   documentsSpec,
   menuLocksSpec,
   documentLocksSpec,
-  sectionOrdersSpec,
   documentOrdersSpec,
-  documentSnapshotsSpec,
+  documentRevisionsSpec,
   passwordResetRequestsSpec
 ];
 

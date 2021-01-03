@@ -118,23 +118,27 @@ tasks.test = async function test() {
 };
 
 tasks.testChanged = async function testChanged() {
-  await runCLI({
+  const { results } = await runCLI({
     testEnvironment: 'node',
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
     setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
     onlyChanged: true
   }, '.');
+  if (!results.success) {
+    throw Error(`${results.numFailedTests} test(s) failed`);
+  }
 };
 
-tasks.testWatch = async function testWatch() {
-  await runCLI({
+tasks.testWatch = function testWatch(done) {
+  runCLI({
     testEnvironment: 'node',
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
     setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
     watch: true
   }, '.');
+  done();
 };
 
 tasks.copyIframeresizer = function copyIframeresizer() {

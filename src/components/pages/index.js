@@ -5,16 +5,16 @@ import DocView from '../doc-view';
 import PropTypes from 'prop-types';
 import ElmuLogo from '../elmu-logo';
 import { useRequest } from '../request-context';
-import { docShape, sectionShape } from '../../ui/default-prop-types';
+import { documentShape } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 
 function Index({ initialState, language }) {
-  const rq = useRequest();
-  const { doc, sections } = initialState;
+  const req = useRequest();
+  const { document: doc } = initialState;
 
   const handleSearchClick = searchTerm => {
-    const googleTerm = [`site:${rq.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
+    const googleTerm = [`site:${req.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
     const link = `https://www.google.com/search?q=${encodeURIComponent(googleTerm)}`;
     window.open(link, '_blank');
   };
@@ -33,7 +33,7 @@ function Index({ initialState, language }) {
             onSearch={handleSearchClick}
             />
         </div>
-        {doc && sections && <DocView doc={doc} sections={sections} language={language} />}
+        {doc && <DocView documentOrRevision={doc} language={language} />}
       </div>
     </Page>
   );
@@ -41,8 +41,7 @@ function Index({ initialState, language }) {
 
 Index.propTypes = {
   initialState: PropTypes.shape({
-    doc: docShape,
-    sections: PropTypes.arrayOf(sectionShape)
+    document: documentShape
   }).isRequired,
   language: PropTypes.string.isRequired
 };

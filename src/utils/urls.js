@@ -16,7 +16,7 @@ export const editDocPrefix = '/edit/doc/';
 export const menusPrefix = '/menus/';
 export const editMenuPrefix = '/edit/menu/';
 export const articlesPrefix = '/articles/';
-export const articleRevisionPrefix = '/revs/articles/';
+export const revisionPrefix = '/revs/';
 export const pluginApiPathPrefix = '/plugins/';
 export const completeRegistrationPrefix = '/complete-registration/';
 export const completePasswordResetPrefix = '/complete-password-reset/';
@@ -45,8 +45,9 @@ export function getDocUrl(docKey) {
   return concatParts(docsPrefix, docKey);
 }
 
-export function getEditDocUrl(docKey) {
-  return concatParts(editDocPrefix, docKey);
+export function getEditDocUrl(docKey, blueprintKey = null) {
+  const url = concatParts(editDocPrefix, docKey);
+  return blueprintKey ? `${url}?blueprintKey=${urlencode(blueprintKey)}` : url;
 }
 
 export function getMenusUrl() {
@@ -69,8 +70,8 @@ export function getArticleUrl(slug) {
   return concatParts(articlesPrefix, slug);
 }
 
-export function getArticleRevisionUrl(revisionId) {
-  return concatParts(articleRevisionPrefix, revisionId);
+export function getDocumentRevisionUrl(revisionId) {
+  return concatParts(revisionPrefix, revisionId);
 }
 
 export function getSettingsUrl() {
@@ -156,7 +157,7 @@ export default {
   getEditMenuUrl,
   getUsersUrl,
   getArticleUrl,
-  getArticleRevisionUrl,
+  getDocumentRevisionUrl,
   getSettingsUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,

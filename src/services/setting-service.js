@@ -8,7 +8,7 @@ class SettingService {
   }
 
   async getAllSettings() {
-    const settings = await this.settingStore.find({});
+    const settings = await this.settingStore.find();
     return settings.reduce((all, { _id, value }) => {
       all[_id] = value;
       return all;
@@ -20,7 +20,7 @@ class SettingService {
   }
 
   async getLandingPageDocumentId() {
-    const setting = await this.settingStore.findOne({ query: { _id: 'landingPageDocumentId' } });
+    const setting = await this.settingStore.findOne({ _id: 'landingPageDocumentId' });
     return setting ? setting.value : null;
   }
 

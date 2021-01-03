@@ -28,21 +28,21 @@ class UserService {
   }
 
   getUserById(id) {
-    return this.userStore.findOne({ query: { _id: id } });
+    return this.userStore.findOne({ _id: id });
   }
 
   getUsersByIds(ids) {
     return ids.length
-      ? this.userStore.find({ query: { _id: { $in: ids } } })
+      ? this.userStore.find({ _id: { $in: ids } })
       : Promise.resolve([]);
   }
 
   getUserByEmailAddress(email, provider = PROVIDER_NAME_ELMU) {
-    return this.userStore.findOne({ query: { email, provider } });
+    return this.userStore.findOne({ email, provider });
   }
 
   findUser(username, provider = PROVIDER_NAME_ELMU) {
-    return this.userStore.findOne({ query: { username, provider } });
+    return this.userStore.findOne({ username, provider });
   }
 
   saveUser(user) {
@@ -77,7 +77,7 @@ class UserService {
   }
 
   async createUser(username, password, email, provider = PROVIDER_NAME_ELMU) {
-    const existingUser = await this.userStore.findOne({ query: { $or: [{ username }, { email }] } });
+    const existingUser = await this.userStore.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       return existingUser.email.toLowerCase() === email.toLowerCase()
         ? { result: CREATE_USER_RESULT_DUPLICATE_EMAIL, user: null }
@@ -105,7 +105,7 @@ class UserService {
     logger.info('Verifying user with verification code %s', verificationCode);
     let user = null;
     try {
-      user = await this.userStore.findOne({ query: { verificationCode, provider } });
+      user = await this.userStore.findOne({ verificationCode, provider });
       if (user) {
         logger.info('Found user with id %s', user._id);
         user.expires = null;
@@ -132,7 +132,7 @@ class UserService {
   }
 
   getPasswordResetRequestById(id) {
-    return this.passwordResetRequestStore.findOne({ query: { _id: id } });
+    return this.passwordResetRequestStore.findOne({ _id: id });
   }
 
   deletePasswordResetRequestById(id) {

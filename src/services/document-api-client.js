@@ -7,31 +7,32 @@ class DocumentApiClient {
     this.httpClient = httpClient;
   }
 
-  saveDocument(doc) {
+  saveDocument(data) {
     return this.httpClient
       .post('/api/v1/docs')
       .accept('json')
       .type('json')
-      .send(doc)
+      .send(data)
       .then(res => res.body);
   }
 
-  getDocumentHistory(docId) {
+  getDocumentRevisions(key) {
     return this.httpClient
-      .get(`/api/v1/docs/${docId}`)
-      .query({ fullHistory: true })
+      .get('/api/v1/docs')
+      .query({ key })
       .accept('json')
       .then(res => res.body);
   }
 
-  hardDeleteSection(key, order, reason, deleteDescendants) {
+  hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants }) {
     return this.httpClient
       .delete('/api/v1/docs/sections')
       .accept('json')
       .type('json')
       .send({
-        key: key,
-        order: order,
+        documentKey: documentKey,
+        sectionKey: sectionKey,
+        sectionRevision: sectionRevision,
         reason: reason,
         deleteDescendants: !!deleteDescendants
       })
