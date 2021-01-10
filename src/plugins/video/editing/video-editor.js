@@ -5,9 +5,9 @@ import { withTranslation } from 'react-i18next';
 import { Form, Input, Radio, Switch } from 'antd';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientSettings from '../../../bootstrap/client-settings';
+import ClientConfig from '../../../bootstrap/client-config';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
+import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -67,7 +67,7 @@ class VideoEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientSettings, t } = this.props;
+    const { docKey, content, clientConfig, t } = this.props;
     const { type, url, text, width, aspectRatio, showVideo } = content;
 
     const formItemLayout = {
@@ -94,7 +94,7 @@ class VideoEditor extends React.Component {
             <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={`${clientSettings.cdnRootUrl}/`}
+                  addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={url}
                   readOnly
                   />
@@ -137,9 +137,9 @@ class VideoEditor extends React.Component {
 VideoEditor.propTypes = {
   ...translationProps,
   ...sectionEditorProps,
-  ...clientSettingsProps
+  ...clientConfigProps
 };
 
 export default withTranslation('video')(inject({
-  clientSettings: ClientSettings
+  clientConfig: ClientConfig
 }, VideoEditor));

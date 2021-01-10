@@ -5,10 +5,10 @@ import urls from '../../../utils/urls';
 import { Form, Input, Radio } from 'antd';
 import validation from '../../../ui/validation';
 import { withTranslation } from 'react-i18next';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientSettings from '../../../bootstrap/client-settings';
-import { clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
+import { clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -50,7 +50,7 @@ class TileEditor extends React.Component {
   }
 
   render() {
-    const { docKey, clientSettings, image, description, link, t } = this.props;
+    const { docKey, clientConfig, image, description, link, t } = this.props;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -74,7 +74,7 @@ class TileEditor extends React.Component {
           <FormItem label={t('internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
-                addonBefore={`${clientSettings.cdnRootUrl}/`}
+                addonBefore={`${clientConfig.cdnRootUrl}/`}
                 value={image.url}
                 readOnly
                 />
@@ -120,7 +120,7 @@ class TileEditor extends React.Component {
 
 TileEditor.propTypes = {
   ...translationProps,
-  ...clientSettingsProps,
+  ...clientConfigProps,
   description: PropTypes.string,
   docKey: PropTypes.string.isRequired,
   image: PropTypes.shape({
@@ -140,5 +140,5 @@ TileEditor.defaultProps = {
 };
 
 export default withTranslation('imageTiles')(inject({
-  clientSettings: ClientSettings
+  clientConfig: ClientConfig
 }, TileEditor));

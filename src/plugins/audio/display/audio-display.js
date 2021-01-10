@@ -1,10 +1,10 @@
 import React from 'react';
 import AudioPlayer from '../../../components/audio-player';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
-import ClientSettings from '../../../bootstrap/client-settings';
-import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
 
-function AudioDisplay({ content, clientSettings }) {
+function AudioDisplay({ content, clientConfig }) {
 
   let soundUrl;
   switch (content.type) {
@@ -12,7 +12,7 @@ function AudioDisplay({ content, clientSettings }) {
       soundUrl = content.url || null;
       break;
     case 'internal':
-      soundUrl = content.url ? `${clientSettings.cdnRootUrl}/${content.url}` : null;
+      soundUrl = content.url ? `${clientConfig.cdnRootUrl}/${content.url}` : null;
       break;
     default:
       soundUrl = null;
@@ -30,9 +30,9 @@ function AudioDisplay({ content, clientSettings }) {
 
 AudioDisplay.propTypes = {
   ...sectionDisplayProps,
-  ...clientSettingsProps
+  ...clientConfigProps
 };
 
 export default inject({
-  clientSettings: ClientSettings
+  clientConfig: ClientConfig
 }, AudioDisplay);

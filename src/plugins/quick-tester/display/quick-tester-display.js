@@ -7,7 +7,7 @@ import { sectionDisplayProps } from '../../../ui/default-prop-types';
 import { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 function QuickTesterDisplay({ content }) {
-  const { t } = useTranslation('quick-tester');
+  const { t } = useTranslation('quickTester');
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [isAnswerVisible, setIsAnswerVisible] = React.useState(false);
   const [tests, setTests] = React.useState(arrayShuffle(content.tests));

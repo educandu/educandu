@@ -3,17 +3,17 @@ import express from 'express';
 import Logger from '../common/logger';
 import cookieParser from 'cookie-parser';
 import ControllerFactory from './controller-factory';
-import ServerSettings from '../bootstrap/server-settings';
+import ServerConfig from '../bootstrap/server-config';
 
 import 'express-async-errors';
 
 const logger = new Logger(__filename);
 
 class ElmuServer {
-  static get inject() { return [ServerSettings, ControllerFactory]; }
+  static get inject() { return [ServerConfig, ControllerFactory]; }
 
-  constructor(serverSettings, controllerFactory) {
-    this.serverSettings = serverSettings;
+  constructor(serverConfig, controllerFactory) {
+    this.serverConfig = serverConfig;
 
     this.server = null;
 
@@ -31,12 +31,12 @@ class ElmuServer {
     logger.info('Registering healthcheck');
     router.use((req, res, next) => req.path === '/healthcheck' ? res.send('OK') : next());
 
-    if (this.serverSettings.redirectToHttps) {
+    if (this.serverConfig.redirectToHttps) {
       logger.info('Registering redirect to HTTPS');
       router.use((req, res, next) => req.secure ? next() : res.redirect(301, `https://${req.headers.host}${req.originalUrl}`));
     }
 
-    if (this.serverSettings.redirectToNonWwwDomain) {
+    if (this.serverConfig.redirectToNonWwwDomain) {
       logger.info('Registering redirect to domain name without www');
       router.use((req, res, next) => (/^www\./).test(req.headers.host) ? res.redirect(301, `${req.protocol}://${req.headers.host.replace(/^www\./, '')}${req.originalUrl}`) : next());
     }
@@ -59,10 +59,10 @@ class ElmuServer {
   listen(cb) {
     if (this.server) {
       logger.info('Cannot start server, it is already listining');
-      Promise.resolve().then(() => cb(null, this.serverSettings.port));
+      Promise.resolve().then(() => cb(null, this.serverConfig.port));
     } else {
       logger.info('Starting server');
-      this.server = this.app.listen(this.serverSettings.port, err => err ? cb(err) : cb(null, this.serverSettings.port));
+      this.server = this.app.listen(this.serverConfig.port, err => err ? cb(err) : cb(null, this.serverConfig.port));
     }
 
     return this.server;

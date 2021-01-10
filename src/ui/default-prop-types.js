@@ -16,8 +16,8 @@ export const sectionEditorProps = {
   onContentChanged: PropTypes.func.isRequired
 };
 
-export const clientSettingsProps = {
-  clientSettings: PropTypes.shape({
+export const clientConfigProps = {
+  clientConfig: PropTypes.shape({
     env: PropTypes.string.isRequired,
     cdnRootUrl: PropTypes.string.isRequired
   }).isRequired
@@ -39,7 +39,7 @@ export const requestProps = {
 };
 
 export const settingsShape = PropTypes.shape({
-  landingPageDocumentId: PropTypes.string
+  landingPage: PropTypes.object
 });
 
 export const userProfileShape = PropTypes.shape({
@@ -70,6 +70,10 @@ export const userProps = {
 export const languageProps = {
   language: PropTypes.string.isRequired,
   locale: PropTypes.string.isRequired
+};
+
+export const settingsProps = {
+  settings: PropTypes.object.isRequired
 };
 
 const userInDocShape = PropTypes.shape({

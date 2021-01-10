@@ -8,8 +8,12 @@ class Migration2021011001 {
     const newSetting = {
       _id: 'landingPage',
       value: {
-        documentKeys: {
-          de: oldSetting.value
+        languages: {
+          de: {
+            documentKey: oldSetting.value,
+            searchFieldButton: 'Suchen mit Google',
+            searchFieldWatermark: 'Suchbegriff'
+          }
         },
         defaultLanguage: 'de'
       }
@@ -23,7 +27,7 @@ class Migration2021011001 {
     const oldSetting = await this.db.collection('settings').findOne({ _id: 'landingPage' });
     const newSetting = {
       _id: 'landingPageDocumentId',
-      value: oldSetting.value.documentKeys.de
+      value: oldSetting.value.languages.de.documentKey
     };
 
     await this.db.collection('settings').replaceOne({ _id: 'landingPageDocumentId' }, newSetting, { upsert: true });

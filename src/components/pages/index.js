@@ -4,16 +4,17 @@ import { Input } from 'antd';
 import DocView from '../doc-view';
 import PropTypes from 'prop-types';
 import ElmuLogo from '../elmu-logo';
-import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context';
+import { useSettings } from '../settings-context';
 import { documentShape } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 
 function Index({ initialState }) {
   const req = useRequest();
-  const { t } = useTranslation('index');
-  const { document: doc } = initialState;
+  const settings = useSettings();
+  const { document: doc, landingPageLanguage } = initialState;
+  const lpSetting = settings.landingPage?.languages?.[landingPageLanguage] || null;
 
   const handleSearchClick = searchTerm => {
     const googleTerm = [`site:${req.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
@@ -27,14 +28,16 @@ function Index({ initialState }) {
         <div className="IndexPage-title">
           <ElmuLogo size="big" readonly />
         </div>
-        <div className="IndexPage-search">
-          <Search
-            placeholder={t('searchTerm')}
-            enterButton={t('searchWithGoogle')}
-            size="large"
-            onSearch={handleSearchClick}
-            />
-        </div>
+        {lpSetting && (
+          <div className="IndexPage-search">
+            <Search
+              placeholder={lpSetting.searchFieldPlaceholder}
+              enterButton={lpSetting.searchFieldButton}
+              size="large"
+              onSearch={handleSearchClick}
+              />
+          </div>
+        )}
         {doc && <DocView documentOrRevision={doc} />}
       </div>
     </Page>
@@ -43,7 +46,8 @@ function Index({ initialState }) {
 
 Index.propTypes = {
   initialState: PropTypes.shape({
-    document: documentShape
+    document: documentShape,
+    landingPageLanguage: PropTypes.string
   }).isRequired
 };
 

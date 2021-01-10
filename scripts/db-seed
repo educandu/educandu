@@ -73,11 +73,17 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
   await Promise.all(menuPayloads.map(payload => menuService.saveMenu(payload)));
 
   const landingPageKey = docs.find(doc => doc.title === 'Landing Page').key;
-  await settingService.setLandingPage({
-    documentKeys: {
-      de: landingPageKey
-    },
-    defaultLanguage: 'de'
+  await settingService.saveSettings({
+    landingPage: {
+      languages: {
+        de: {
+          documentKey: landingPageKey,
+          searchFieldButton: 'Suchen mit Google',
+          searchFieldPlaceholder: 'Suchbegriff'
+        }
+      },
+      defaultLanguage: 'de'
+    }
   });
 
   await serverBootstrapper.disposeContainer(container);

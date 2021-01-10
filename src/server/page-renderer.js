@@ -18,8 +18,8 @@ import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import PageRendererBase from './page-renderer-base';
 import EditMenu from '../components/pages/edit-menu';
-import ServerSettings from '../bootstrap/server-settings';
-import ClientSettings from '../bootstrap/client-settings';
+import ServerConfig from '../bootstrap/server-config';
+import ClientConfig from '../bootstrap/client-config';
 import ResourceManager from '../resources/resource-manager';
 import ResetPassword from '../components/pages/reset-password';
 import CompleteRegistration from '../components/pages/complete-registration';
@@ -45,13 +45,13 @@ const pageComponentsByName = {
 };
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerSettings, ClientSettings, ClientDataMapper, ResourceManager]; }
+  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMapper, ResourceManager]; }
 
-  constructor(container, serverSettings, clientSettings, clientDataMapper, resourceManager) {
+  constructor(container, serverConfig, clientConfig, clientDataMapper, resourceManager) {
     super();
     this.container = container;
-    this.serverSettings = serverSettings;
-    this.clientSettings = clientSettings;
+    this.serverConfig = serverConfig;
+    this.clientConfig = clientConfig;
     this.clientDataMapper = clientDataMapper;
     this.resourceManager = resourceManager;
   }
@@ -59,8 +59,9 @@ class PageRenderer extends PageRendererBase {
   sendPage(req, res, bundleName, pageName, initialState = {}) {
     const title = 'elmu';
     const language = req.language;
+    const settings = req.settings;
     const container = this.container;
-    const clientSettings = this.clientSettings;
+    const clientConfig = this.clientConfig;
     const request = requestHelper.expressReqToRequest(req);
     const user = this.clientDataMapper.dbUserToClientUser(req.user);
     const resources = this.resourceManager.getAllResourceBundles();
@@ -71,6 +72,7 @@ class PageRenderer extends PageRendererBase {
       container: container,
       initialState: cloneDeep(initialState),
       language: language,
+      settings: cloneDeep(settings),
       PageComponent: pageComponentsByName[pageName]
     };
 
@@ -79,9 +81,10 @@ class PageRenderer extends PageRendererBase {
       `window.__request__=${htmlescape(request)};`,
       `window.__pageName__=${htmlescape(pageName)};`,
       `window.__language__=${htmlescape(language)};`,
+      `window.__settings__=${htmlescape(settings)};`,
       `window.__resources__=${htmlescape(resources)};`,
-      `window.__settings__=${htmlescape(clientSettings)};`,
-      `window.__initalState__=${htmlescape(initialState)};`
+      `window.__initalState__=${htmlescape(initialState)};`,
+      `window.__clientconfig__=${htmlescape(clientConfig)};`
     ].join('');
 
     const styles = [{ href: '/main.css' }];

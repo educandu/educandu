@@ -5,10 +5,10 @@ import { withTranslation } from 'react-i18next';
 import abcjs from '../../../common/abcjs-import';
 import memoizeLast from '../../../utils/memoize-last';
 import AudioPlayer from '../../../components/audio-player';
-import ClientSettings from '../../../bootstrap/client-settings';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const abcOptions = {
   paddingtop: 0,
@@ -76,7 +76,7 @@ class EarTrainingDisplay extends React.Component {
   }
 
   render() {
-    const { clientSettings, t } = this.props;
+    const { clientConfig, t } = this.props;
     const { title, maxWidth, tests, currentIndex, showResult } = this.state;
 
     const currentTest = tests[currentIndex];
@@ -86,7 +86,7 @@ class EarTrainingDisplay extends React.Component {
     let legendHtml;
     if (currentTest.sound && currentTest.sound.type === 'internal') {
       soundType = 'internal';
-      soundUrl = currentTest.sound.url ? `${clientSettings.cdnRootUrl}/${currentTest.sound.url}` : null;
+      soundUrl = currentTest.sound.url ? `${clientConfig.cdnRootUrl}/${currentTest.sound.url}` : null;
       legendHtml = currentTest.sound.text || '';
     } else if (currentTest.sound && currentTest.sound.type === 'external') {
       soundType = 'external';
@@ -135,10 +135,10 @@ class EarTrainingDisplay extends React.Component {
 EarTrainingDisplay.propTypes = {
   ...translationProps,
   ...sectionDisplayProps,
-  ...clientSettingsProps
+  ...clientConfigProps
 };
 
 export default withTranslation('earTraining')(inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown,
-  clientSettings: ClientSettings
+  clientConfig: ClientConfig
 }, EarTrainingDisplay));

@@ -5,8 +5,8 @@ import validation from '../../../ui/validation';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientSettings from '../../../bootstrap/client-settings';
-import { sectionEditorProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
+import ClientConfig from '../../../bootstrap/client-config';
+import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -44,7 +44,7 @@ class AudioEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientSettings, t } = this.props;
+    const { docKey, content, clientConfig, t } = this.props;
     const { type, url, text } = content;
 
     const formItemLayout = {
@@ -70,7 +70,7 @@ class AudioEditor extends React.Component {
             <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={`${clientSettings.cdnRootUrl}/`}
+                  addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={url}
                   readOnly
                   />
@@ -96,9 +96,9 @@ class AudioEditor extends React.Component {
 AudioEditor.propTypes = {
   ...translationProps,
   ...sectionEditorProps,
-  ...clientSettingsProps
+  ...clientConfigProps
 };
 
 export default withTranslation('audio')(inject({
-  clientSettings: ClientSettings
+  clientConfig: ClientConfig
 }, AudioEditor));

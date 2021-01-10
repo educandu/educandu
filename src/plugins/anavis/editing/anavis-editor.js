@@ -4,14 +4,14 @@ import autoBind from 'auto-bind';
 import classNames from 'classnames';
 import { withTranslation } from 'react-i18next';
 import ColorPicker from '../../../components/color-picker';
-import ClientSettings from '../../../bootstrap/client-settings';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
 import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { sectionEditorProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
+import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -316,7 +316,7 @@ class AnavisEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientSettings, t } = this.props;
+    const { docKey, content, clientConfig, t } = this.props;
     const { width, parts, media } = content;
     const { kind, type, url, text, aspectRatio } = media;
 
@@ -346,7 +346,7 @@ class AnavisEditor extends React.Component {
             <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={`${clientSettings.cdnRootUrl}/`}
+                  addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={url}
                   readOnly
                   />
@@ -401,9 +401,9 @@ class AnavisEditor extends React.Component {
 AnavisEditor.propTypes = {
   ...translationProps,
   ...sectionEditorProps,
-  ...clientSettingsProps
+  ...clientConfigProps
 };
 
 export default withTranslation('anavis')(inject({
-  clientSettings: ClientSettings
+  clientConfig: ClientConfig
 }, AnavisEditor));

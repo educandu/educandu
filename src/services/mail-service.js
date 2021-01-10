@@ -1,16 +1,16 @@
 import nodemailer from 'nodemailer';
 import Logger from '../common/logger';
-import ServerSettings from '../bootstrap/server-settings';
+import ServerConfig from '../bootstrap/server-config';
 
 const logger = new Logger(__filename);
 
 const ELMU_WEB_EMAIL_ADDRESS = 'website@elmu.online';
 
 class MailService {
-  static get inject() { return [ServerSettings]; }
+  static get inject() { return [ServerConfig]; }
 
-  constructor(serverSettings) {
-    this.transport = nodemailer.createTransport(serverSettings.smtpOptions);
+  constructor(serverConfig) {
+    this.transport = nodemailer.createTransport(serverConfig.smtpOptions);
   }
 
   sendRegistrationVerificationLink(emailAddress, verificationLink) {

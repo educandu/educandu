@@ -2,13 +2,11 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
 import { Form, Input, Table, Button } from 'antd';
-import { inject } from '../../../components/container-context';
-import ClientSettings from '../../../bootstrap/client-settings';
 import EarTrainingSoundEditor from './ear-training-sound-editor';
 import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { sectionEditorProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -201,10 +199,7 @@ class EarTrainingEditor extends React.Component {
 
 EarTrainingEditor.propTypes = {
   ...translationProps,
-  ...sectionEditorProps,
-  ...clientSettingsProps
+  ...sectionEditorProps
 };
 
-export default withTranslation('earTraining')(inject({
-  clientSettings: ClientSettings
-}, EarTrainingEditor));
+export default withTranslation('earTraining')(EarTrainingEditor);

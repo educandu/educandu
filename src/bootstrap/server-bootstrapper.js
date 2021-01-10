@@ -1,9 +1,9 @@
 import Cdn from '../repositories/cdn';
 import Logger from '../common/logger';
 import Database from '../stores/database';
+import ServerConfig from './server-config';
+import ClientConfig from './client-config';
 import ElmuServer from '../server/elmu-server';
-import ClientSettings from './client-settings';
-import ServerSettings from './server-settings';
 import commonBootstrapper from './common-bootstrapper';
 import ResourceManager from '../resources/resource-manager';
 import ServerResourceLoader from '../resources/server-resource-loader';
@@ -14,25 +14,25 @@ export async function createContainer() {
   logger.info('Creating container');
   const container = await commonBootstrapper.createContainer();
 
-  const serverSettings = container.get(ServerSettings);
+  const serverConfig = container.get(ServerConfig);
 
-  const clientSettings = new ClientSettings(serverSettings.exportClientSettingValues());
-  container.registerInstance(ClientSettings, clientSettings);
+  const clientConfig = new ClientConfig(serverConfig.exportClientConfigValues());
+  container.registerInstance(ClientConfig, clientConfig);
 
   logger.info('Establishing database connection');
   const database = await Database.create({
-    connectionString: serverSettings.elmuWebConnectionString
+    connectionString: serverConfig.elmuWebConnectionString
   });
 
   container.registerInstance(Database, database);
 
   const cdn = await Cdn.create({
-    endpoint: serverSettings.cdnEndpoint,
-    region: serverSettings.cdnRegion,
-    accessKey: serverSettings.cdnAccessKey,
-    secretKey: serverSettings.cdnSecretKey,
-    bucketName: serverSettings.cdnBucketName,
-    rootUrl: serverSettings.cdnRootUrl
+    endpoint: serverConfig.cdnEndpoint,
+    region: serverConfig.cdnRegion,
+    accessKey: serverConfig.cdnAccessKey,
+    secretKey: serverConfig.cdnSecretKey,
+    bucketName: serverConfig.cdnBucketName,
+    rootUrl: serverConfig.cdnRootUrl
   });
 
   container.registerInstance(Cdn, cdn);

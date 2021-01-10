@@ -4,26 +4,30 @@ import { Container } from '../common/di';
 import { UserProvider } from './user-context';
 import { RequestProvider } from './request-context';
 import { LanguageProvider } from './language-context';
+import { SettingsProvider } from './settings-context';
 import { ContainerProvider } from './container-context';
-import { requestProps, userProps } from '../ui/default-prop-types';
+import { userProps, requestProps, settingsProps } from '../ui/default-prop-types';
 
-function Root({ request, user, container, initialState, language, PageComponent }) {
+function Root({ request, user, container, initialState, settings, language, PageComponent }) {
   return (
     <ContainerProvider value={container}>
       <LanguageProvider value={language}>
-        <RequestProvider value={request}>
-          <UserProvider value={user}>
-            <PageComponent initialState={initialState} language={language} />
-          </UserProvider>
-        </RequestProvider>
+        <SettingsProvider value={settings}>
+          <RequestProvider value={request}>
+            <UserProvider value={user}>
+              <PageComponent initialState={initialState} />
+            </UserProvider>
+          </RequestProvider>
+        </SettingsProvider>
       </LanguageProvider>
     </ContainerProvider>
   );
 }
 
 Root.propTypes = {
-  ...requestProps,
   ...userProps,
+  ...requestProps,
+  ...settingsProps,
   PageComponent: PropTypes.func.isRequired,
   container: PropTypes.instanceOf(Container).isRequired,
   /* eslint-disable-next-line react/forbid-prop-types */

@@ -3,11 +3,11 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ReactPlayer from 'react-player';
+import ClientConfig from '../../../bootstrap/client-config';
 import MediaControl from '../../../components/media-control';
 import { inject } from '../../../components/container-context';
-import ClientSettings from '../../../bootstrap/client-settings';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
 
 const playStates = {
   INITIALIZING: 'initializing',
@@ -85,7 +85,7 @@ class VideoDisplay extends React.Component {
   }
 
   render() {
-    const { content, clientSettings, githubFlavoredMarkdown } = this.props;
+    const { content, clientConfig, githubFlavoredMarkdown } = this.props;
     const { playState, durationInSeconds, playedSeconds, volume } = this.state;
     const html = githubFlavoredMarkdown.render(content.text || '');
     const aspectRatio = content.aspectRatio || { h: 16, v: 9 };
@@ -95,7 +95,7 @@ class VideoDisplay extends React.Component {
     let url;
     switch (content.type) {
       case 'internal':
-        url = content.url ? `${clientSettings.cdnRootUrl}/${content.url}` : null;
+        url = content.url ? `${clientConfig.cdnRootUrl}/${content.url}` : null;
         break;
       default:
         url = content.url || null;
@@ -176,11 +176,11 @@ class VideoDisplay extends React.Component {
 
 VideoDisplay.propTypes = {
   ...sectionDisplayProps,
-  ...clientSettingsProps,
+  ...clientConfigProps,
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
 export default inject({
-  clientSettings: ClientSettings,
+  clientConfig: ClientConfig,
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, VideoDisplay);

@@ -9,10 +9,12 @@ import StaticController from './static-controller';
 import PluginController from './plugin-controller';
 import SettingController from './setting-controller';
 import DocumentController from './document-controller';
+import SettingsController from './settings-controller';
 
 const controllerTypes = [
   StaticController,
   I18nController,
+  SettingsController,
   IndexController,
   UserController,
   SettingController,

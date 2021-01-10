@@ -4,17 +4,17 @@ import Database from '../stores/database.js';
 import permissions from '../domain/permissions';
 import MailService from '../services/mail-service';
 import ClientDataMapper from './client-data-mapper';
+import ServerConfig from '../bootstrap/server-config';
 import SettingService from '../services/setting-service';
-import ServerSettings from '../bootstrap/server-settings';
 import needsPermission from '../domain/needs-permission-middleware';
 
 const jsonParser = express.json();
 
 class SettingController {
-  static get inject() { return [ServerSettings, Database, SettingService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, Database, SettingService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverSettings, database, settingService, mailService, clientDataMapper, pageRenderer) {
-    this.serverSettings = serverSettings;
+  constructor(serverConfig, database, settingService, mailService, clientDataMapper, pageRenderer) {
+    this.serverConfig = serverConfig;
     this.database = database;
     this.settingService = settingService;
     this.mailService = mailService;

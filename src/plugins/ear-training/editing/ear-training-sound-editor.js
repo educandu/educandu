@@ -3,10 +3,10 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
 import { withTranslation } from 'react-i18next';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientSettings from '../../../bootstrap/client-settings';
-import { clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
+import { clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
@@ -90,7 +90,7 @@ class EarTrainingSoundEditor extends React.Component {
             {sound.type === 'internal' && (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={`${this.props.clientSettings.cdnRootUrl}/`}
+                  addonBefore={`${this.props.clientConfig.cdnRootUrl}/`}
                   value={sound.url}
                   readOnly
                   />
@@ -145,6 +145,7 @@ class EarTrainingSoundEditor extends React.Component {
 
 EarTrainingSoundEditor.propTypes = {
   ...translationProps,
+  ...clientConfigProps,
   docKey: PropTypes.string.isRequired,
   onSoundChanged: PropTypes.func.isRequired,
   sound: PropTypes.shape({
@@ -152,10 +153,9 @@ EarTrainingSoundEditor.propTypes = {
     url: PropTypes.string,
     text: PropTypes.string
   }).isRequired,
-  testIndex: PropTypes.number.isRequired,
-  ...clientSettingsProps
+  testIndex: PropTypes.number.isRequired
 };
 
 export default withTranslation('earTraining')(inject({
-  clientSettings: ClientSettings
+  clientConfig: ClientConfig
 }, EarTrainingSoundEditor));
