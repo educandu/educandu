@@ -1,21 +1,19 @@
 import { EOL } from 'os';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import PageTemplate from '../components/templates/page';
 import { resetServerContext } from 'react-beautiful-dnd';
+import PageTemplate from '../components/templates/page-template';
 
 class PageRendererBase {
   renderHtml({ language, title, styles, scripts, ContentRoot, contentProps }) {
     resetServerContext();
 
-    const contentElem = React.createElement(ContentRoot, contentProps);
-    const content = ReactDOMServer.renderToString(contentElem);
+    const content = ReactDOMServer.renderToString(<ContentRoot {...contentProps} />);
 
     const pageProps = { language, title, content, styles, scripts };
-    const pageElem = React.createElement(PageTemplate, pageProps);
-    const page = ReactDOMServer.renderToStaticMarkup(pageElem);
+    const page = ReactDOMServer.renderToStaticMarkup(<PageTemplate {...pageProps} />);
 
-    return `<!DOCTYPE html>${page}${EOL}`;
+    return `<!DOCTYPE html>${EOL}${page}${EOL}`;
   }
 }
 

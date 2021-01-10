@@ -6,15 +6,17 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger';
 import { withUser } from '../user-context';
-import { withData } from '../data-context';
 import localeCompare from 'locale-compare';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
 import { CloseOutlined } from '@ant-design/icons';
+import { withLanguage } from '../language-context';
+import { Trans, withTranslation } from 'react-i18next';
 import CountryFlagAndName from '../country-flag-and-name';
 import UserApiClient from '../../services/user-api-client';
-import { userProps, dataProps } from '../../ui/default-prop-types';
+import CountryNameProvider from '../../data/country-name-provider';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
+import { userProps, languageProps, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -23,24 +25,25 @@ const Option = Select.Option;
 
 const AVATAR_SIZE = 256;
 
-const compareInGerman = localeCompare('de');
-
 class Profile extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
+    const { countryNameProvider, language } = this.props;
     this.state = {
-      countryNames: Object.entries(props.data['country-names']).map(([key, name]) => ({ key, name })).sort(by(x => x.name, { cmp: compareInGerman })),
+      countryNames: Object.entries(countryNameProvider.getData(language))
+        .map(([key, name]) => ({ key, name }))
+        .sort(by(x => x.name, { cmp: localeCompare(language) })),
       showAvatarDescription: false
     };
   }
 
   async saveProfile(profileToSave) {
     try {
-      const { user, userApiClient } = this.props;
+      const { user, userApiClient, t } = this.props;
       const { profile } = await userApiClient.saveUserProfile({ profile: profileToSave });
       user.profile = profile;
-      message.success('Das Profil wurde erfolgreich aktualisiert.');
+      message.success(t('updateSuccessMessage'));
     } catch (error) {
       errorHelper.handleApiError(error, logger);
     }
@@ -72,7 +75,7 @@ class Profile extends React.Component {
 
   render() {
     const { countryNames, showAvatarDescription } = this.state;
-    const { user } = this.props;
+    const { user, language, t } = this.props;
     const profile = user.profile || { country: '' };
     const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
 
@@ -100,13 +103,15 @@ class Profile extends React.Component {
       }
     };
 
+    const gravatarRagistrationUrl = `https://${language}.gravatar.com/`;
+
     const avatarDescription = (
       <div>
-        ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <a href="https://de.gravatar.com/" target="_blank" rel="noopener noreferrer">Gravatar</a>.
-        Ein Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.
-        Dieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.
-        Beachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.
-        Wenn Sie damit einverstanden sind, können Sie <a href="https://de.gravatar.com/" target="_blank" rel="noopener noreferrer">hier</a> ein Profil erstellen.
+        <Trans
+          t={t}
+          i18nKey="avatarDescription"
+          components={[<a key="gravatar-link" href={gravatarRagistrationUrl} target="_blank" rel="noopener noreferrer" />]}
+          />
       </div>
     );
 
@@ -114,16 +119,16 @@ class Profile extends React.Component {
       <div className="ProfilePage-form">
         <Form onFinish={this.handleFinish} scrollToFirstError>
           <FormItem {...tailFormItemLayout}>
-            <h1>Profil</h1>
+            <h1>{t('pageNames:profile')}</h1>
           </FormItem>
           <FormItem {...tailFormItemLayout}>
             <Avatar shape="square" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
             <br />
-            <a onClick={this.handleShowAvatarDescriptionClick}>Profilbild ändern</a>
+            <a onClick={this.handleShowAvatarDescriptionClick}>{t('changeProfilePicture')}</a>
             <br />
             {showAvatarDescription && (
               <Alert
-                message="Wie ändere ich mein Profilbild?"
+                message={t('howToChangeProfilePicture')}
                 description={avatarDescription}
                 type="info"
                 showIcon
@@ -132,25 +137,25 @@ class Profile extends React.Component {
                 />
             )}
           </FormItem>
-          <FormItem {...formItemLayout} label="Vorname(n)" name="firstName" initialValue={profile.firstName || ''}>
+          <FormItem {...formItemLayout} label={t('firstName')} name="firstName" initialValue={profile.firstName || ''}>
             <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Nachname" name="lastName" initialValue={profile.lastName || ''}>
+          <FormItem {...formItemLayout} label={t('lastName')} name="lastName" initialValue={profile.lastName || ''}>
             <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Straße" name="street" initialValue={profile.street || ''}>
+          <FormItem {...formItemLayout} label={t('street')} name="street" initialValue={profile.street || ''}>
             <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Straße (Zusatz)" name="streetSupplement" initialValue={profile.streetSupplement || ''}>
+          <FormItem {...formItemLayout} label={t('streetSupplement')} name="streetSupplement" initialValue={profile.streetSupplement || ''}>
             <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Postleitzahl" name="postalCode" initialValue={profile.postalCode || ''}>
+          <FormItem {...formItemLayout} label={t('postalCode')} name="postalCode" initialValue={profile.postalCode || ''}>
             <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Ort" name="city" initialValue={profile.city || ''}>
+          <FormItem {...formItemLayout} label={t('city')} name="city" initialValue={profile.city || ''}>
             <Input type="text" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Land" name="country" initialValue={profile.country || ''}>
+          <FormItem {...formItemLayout} label={t('country')} name="country" initialValue={profile.country || ''}>
             <Select optionFilterProp="title" showSearch allowClear>
               {countryNames.map(cn => (
                 <Option key={cn.key} value={cn.key} title={cn.name}>
@@ -160,7 +165,7 @@ class Profile extends React.Component {
             </Select>
           </FormItem>
           <FormItem {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">Speichern</Button>
+            <Button type="primary" htmlType="submit">{t('common:save')}</Button>
           </FormItem>
         </Form>
       </div>
@@ -171,7 +176,7 @@ class Profile extends React.Component {
         handleClick: this.handleBackClick,
         icon: CloseOutlined,
         key: 'close',
-        text: 'Zurück'
+        text: t('common:back')
       }
     ];
 
@@ -187,10 +192,13 @@ class Profile extends React.Component {
 
 Profile.propTypes = {
   ...userProps,
-  ...dataProps,
+  ...languageProps,
+  ...translationProps,
+  countryNameProvider: PropTypes.instanceOf(CountryNameProvider).isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withUser(withData(inject({
+export default withTranslation('profile')(withLanguage(withUser(inject({
+  countryNameProvider: CountryNameProvider,
   userApiClient: UserApiClient
-}, Profile)));
+}, Profile))));

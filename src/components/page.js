@@ -9,50 +9,14 @@ import LoginLogout from './login-logout';
 import LinkPopover from './link-popover';
 import permissions from '../domain/permissions';
 import { useUser } from '../components/user-context';
+import { Trans, useTranslation } from 'react-i18next';
 import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
-
-const pageMenuItems = [
-  {
-    key: 'home',
-    href: urls.getHomeUrl(),
-    text: 'Home',
-    icon: HomeOutlined,
-    permission: null
-  },
-  {
-    key: 'docs',
-    href: urls.getDocsUrl(),
-    text: 'Dokumente',
-    icon: FileOutlined,
-    permission: permissions.VIEW_DOCS
-  },
-  {
-    key: 'menus',
-    href: urls.getMenusUrl(),
-    text: 'Menüs',
-    icon: MenuUnfoldOutlined,
-    permission: permissions.VIEW_MENUS
-  },
-  {
-    key: 'users',
-    href: urls.getUsersUrl(),
-    text: 'Benutzer',
-    icon: UserOutlined,
-    permission: permissions.EDIT_USERS
-  },
-  {
-    key: 'settings',
-    href: urls.getSettingsUrl(),
-    text: 'Einstellungen',
-    icon: SettingOutlined,
-    permission: permissions.EDIT_SETTINGS
-  }
-];
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
 
 function Page({ children, disableProfileWarning, fullScreen, headerActions, customAlerts }) {
   const user = useUser();
+  const { t, i18n } = useTranslation('page');
 
   const pageHeaderAreaClasses = classNames({
     'Page-headerArea': true,
@@ -73,9 +37,11 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
   if (!disableProfileWarning && user && !userHasSufficientProfile(user)) {
     const message = (
       <span>
-        Ihr Benutzerprofil ist noch nicht vollständig.
-        Klicken Sie <a href={urls.getProfileUrl()}>hier</a>,
-        um Ihr Profil zu bearbeiten.
+        <Trans
+          t={t}
+          i18nKey="profileWarning"
+          components={[<a key="profile-warning" href={urls.getProfileUrl()} />]}
+          />
       </span>
     );
     profileWarning = <Alert key="profile-warning" message={message} banner />;
@@ -97,6 +63,44 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
     ));
   }
 
+  const pageMenuItems = [
+    {
+      key: 'home',
+      href: urls.getHomeUrl(),
+      text: t('pageNames:home'),
+      icon: HomeOutlined,
+      permission: null
+    },
+    {
+      key: 'docs',
+      href: urls.getDocsUrl(),
+      text: t('pageNames:docs'),
+      icon: FileOutlined,
+      permission: permissions.VIEW_DOCS
+    },
+    {
+      key: 'menus',
+      href: urls.getMenusUrl(),
+      text: t('pageNames:menus'),
+      icon: MenuUnfoldOutlined,
+      permission: permissions.VIEW_MENUS
+    },
+    {
+      key: 'users',
+      href: urls.getUsersUrl(),
+      text: t('pageNames:users'),
+      icon: UserOutlined,
+      permission: permissions.EDIT_USERS
+    },
+    {
+      key: 'settings',
+      href: urls.getSettingsUrl(),
+      text: t('pageNames:settings'),
+      icon: SettingOutlined,
+      permission: permissions.EDIT_SETTINGS
+    }
+  ];
+
   return (
     <div className="Page">
       <header className={pageHeaderAreaClasses}>
@@ -108,6 +112,15 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
             {headerActionComponents}
           </div>
           <div className="Page-headerContent Page-headerContent--right">
+            <div>
+              <Button type="link" onClick={() => i18n.changeLanguage('de')}>
+                <span className="flag-icon flag-icon-de" />
+              </Button>
+              /
+              <Button type="link" onClick={() => i18n.changeLanguage('en')}>
+                <span className="flag-icon flag-icon-us" />
+              </Button>
+            </div>
             <Button className="Page-headerButton" icon={<QuestionOutlined />} href={urls.getArticleUrl('hilfe')} />
             <LinkPopover items={pageMenuItems} trigger="hover" placement="bottom">
               <Button className="Page-headerButton" icon={<MenuOutlined />} />

@@ -6,8 +6,9 @@ import { Input, Button } from 'antd';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
-import { settingsShape } from '../../ui/default-prop-types';
+import { withTranslation } from 'react-i18next';
 import SettingApiClient from '../../services/setting-api-client';
+import { settingsShape, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -42,18 +43,19 @@ class Settings extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     const { settings } = this.state;
 
     return (
       <Page>
         <div className="SettingsPage">
-          <h1>Einstellungen</h1>
+          <h1>{t('pageNames:settings')}</h1>
           <div className="SettingsPage-formItem">
-            <label className="SettingsPage-formItemLabel">Landing-Page-ID</label>
+            <label className="SettingsPage-formItemLabel">{t('landingPageKey')}</label>
             <Input className="SettingsPage-formItemInput" value={settings.landingPageDocumentId || ''} onChange={this.handleLandingPageDocumentIdChange} />
           </div>
           <div className="SettingsPage-submitButton">
-            <Button onClick={this.handleSaveClick} type="primary">Speichern</Button>
+            <Button onClick={this.handleSaveClick} type="primary">{t('common:save')}</Button>
           </div>
         </div>
       </Page>
@@ -62,10 +64,11 @@ class Settings extends React.Component {
 }
 
 Settings.propTypes = {
+  ...translationProps,
   initialState: settingsShape.isRequired,
   settingApiClient: PropTypes.instanceOf(SettingApiClient).isRequired
 };
 
-export default inject({
+export default withTranslation('settings')(inject({
   settingApiClient: SettingApiClient
-}, Settings);
+}, Settings));

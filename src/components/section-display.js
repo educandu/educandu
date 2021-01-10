@@ -7,7 +7,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { sectionShape } from '../ui/default-prop-types';
 import SectionActionDropdown from './section-action-dropdown';
 
-function SectionDisplay({ DisplayComponent, language, docKey, section, onAction }) {
+function SectionDisplay({ DisplayComponent, docKey, section, onAction }) {
   const [isMouseOver, setIsMouseOver] = React.useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = React.useState(false);
 
@@ -45,7 +45,6 @@ function SectionDisplay({ DisplayComponent, language, docKey, section, onAction 
         docKey={docKey}
         sectionKey={section.key}
         content={section.content}
-        language={language}
         />
     );
   } else {
@@ -70,7 +69,6 @@ function SectionDisplay({ DisplayComponent, language, docKey, section, onAction 
 SectionDisplay.propTypes = {
   DisplayComponent: PropTypes.func.isRequired,
   docKey: PropTypes.string.isRequired,
-  language: PropTypes.string.isRequired,
   onAction: PropTypes.func,
   section: sectionShape.isRequired
 };

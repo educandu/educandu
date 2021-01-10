@@ -1,6 +1,7 @@
 import util from 'util';
 import express from 'express';
 import Logger from '../common/logger';
+import cookieParser from 'cookie-parser';
 import ControllerFactory from './controller-factory';
 import ServerSettings from '../bootstrap/server-settings';
 
@@ -21,6 +22,8 @@ class ElmuServer {
     this.app.on('error', err => logger.error(err));
 
     this.app.enable('trust proxy');
+
+    this.app.use(cookieParser());
 
     const router = express.Router();
     this.app.use('/', router);

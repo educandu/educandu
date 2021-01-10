@@ -5,6 +5,8 @@ import ElmuServer from '../server/elmu-server';
 import ClientSettings from './client-settings';
 import ServerSettings from './server-settings';
 import commonBootstrapper from './common-bootstrapper';
+import ResourceManager from '../resources/resource-manager';
+import ServerResourceLoader from '../resources/server-resource-loader';
 
 const logger = new Logger(__filename);
 
@@ -34,6 +36,12 @@ export async function createContainer() {
   });
 
   container.registerInstance(Cdn, cdn);
+
+  const resourceLoader = new ServerResourceLoader();
+  const resourceBundles = await resourceLoader.loadResourceBundles();
+  const resourceManager = new ResourceManager(resourceBundles);
+
+  container.registerInstance(ResourceManager, resourceManager);
 
   return container;
 }

@@ -1,8 +1,9 @@
 import React from 'react';
 import Page from '../page';
+import DocView from '../doc-view';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls';
-import DocView from '../doc-view';
+import { useTranslation } from 'react-i18next';
 import ArticleCredits from '../article-credits';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
@@ -10,7 +11,8 @@ import { documentShape, documentRevisionShape } from '../../ui/default-prop-type
 
 const handleBackClick = () => window.history.back();
 
-function Article({ initialState, language }) {
+function Article({ initialState }) {
+  const { t } = useTranslation();
   const { documentOrRevision, type } = initialState;
 
   const headerActions = React.useMemo(() => {
@@ -26,20 +28,20 @@ function Article({ initialState, language }) {
         icon: EditOutlined,
         key: 'edit',
         permission: permissions.EDIT_DOC,
-        text: 'Bearbeiten',
+        text: t('common:edit'),
         type: 'primary'
       }
     ];
-  }, [type, documentOrRevision.key]);
+  }, [t, type, documentOrRevision.key]);
 
   return (
     <Page headerActions={headerActions}>
       {type === 'document' && (
         <aside className="Content">
-          <a onClick={handleBackClick}>Zurück</a>
+          <a onClick={handleBackClick}>{t('common:back')}</a>
         </aside>
       )}
-      <DocView documentOrRevision={documentOrRevision} language={language} />
+      <DocView documentOrRevision={documentOrRevision} />
       {type === 'document' && (
         <aside className="Content">
           <ArticleCredits doc={documentOrRevision} />
@@ -53,8 +55,7 @@ Article.propTypes = {
   initialState: PropTypes.shape({
     documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]),
     type: PropTypes.oneOf(['document', 'revision'])
-  }).isRequired,
-  language: PropTypes.string.isRequired
+  }).isRequired
 };
 
 export default Article;

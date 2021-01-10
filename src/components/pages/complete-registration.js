@@ -1,22 +1,14 @@
-import React from 'react';
 import Page from '../page';
 import urls from '../../utils/urls';
 import ElmuLogo from '../elmu-logo';
 import Countdown from '../countdown';
+import React, { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 
 function CompleteRegistration() {
-  const [isCountdownRunning, setIsCountdownRunning] = React.useState(false);
-  React.useEffect(() => setIsCountdownRunning(true), []);
-
-  const countdown = (
-    <Countdown
-      seconds={10}
-      isRunning={isCountdownRunning}
-      onComplete={() => {
-        window.location = urls.getLoginUrl();
-      }}
-      />
-  );
+  const { t } = useTranslation('completeRegistration');
+  const [isCountdownRunning, setIsCountdownRunning] = useState(false);
+  useEffect(() => setIsCountdownRunning(true), []);
 
   return (
     <Page fullScreen>
@@ -25,8 +17,23 @@ function CompleteRegistration() {
           <ElmuLogo size="big" readonly />
         </div>
         <div className="CompleteRegistrationPage-message">
-          <p>Gratulation! Sie sind nun ein elmu-User und haben Ihre Registrierung erfolgreich abgeschlossen.</p>
-          <p>Sie werden in {countdown} auf die <a href={urls.getLoginUrl()}>Anmeldeseite</a> weitergeleitet.</p>
+          <p>{t('registrationSuccess')}</p>
+          <Countdown
+            seconds={10}
+            isRunning={isCountdownRunning}
+            onComplete={() => {
+              window.location = urls.getLoginUrl();
+            }}
+            >
+            {seconds => (
+              <Trans
+                t={t}
+                i18nKey="redirectMessage"
+                values={{ seconds }}
+                components={[<a key="login-link" href={urls.getLoginUrl()} />]}
+                />
+            )}
+          </Countdown>
         </div>
       </div>
     </Page>

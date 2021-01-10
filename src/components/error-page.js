@@ -2,7 +2,7 @@ import React from 'react';
 import urls from '../utils/urls';
 import PropTypes from 'prop-types';
 
-function ErrorPage({ children }) {
+function ErrorPage({ error, i18n }) {
   return (
     <div className="ErrorPage">
       <header className="ErrorPage-headerArea">
@@ -13,8 +13,13 @@ function ErrorPage({ children }) {
         </div>
       </header>
       <main className="ErrorPage-contentArea">
-        <div className="ErrorPage-content">
-          {children}
+        <div className="ErrorPage-contentContainer">
+          <div className="ErrorPage-content">
+            <h1 className="ErrorPage-status">{error.status}</h1>
+            <h1 className="ErrorPage-message">{error.displayMessage || error.message}</h1>
+            <div className="ErrorPage-back" dangerouslySetInnerHTML={{ __html: `<a onclick="window.history.back();">${i18n.t('common:back')}</a>` }} />
+            {error.expose && error.stack && <pre className="ErrorPage-stack">{error.stack}</pre>}
+          </div>
         </div>
       </main>
       <footer className="ErrorPage-footer">
@@ -33,11 +38,8 @@ function ErrorPage({ children }) {
 }
 
 ErrorPage.propTypes = {
-  children: PropTypes.node
-};
-
-ErrorPage.defaultProps = {
-  children: null
+  error: PropTypes.object.isRequired,
+  i18n: PropTypes.object.isRequired
 };
 
 export default ErrorPage;

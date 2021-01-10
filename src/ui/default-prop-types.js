@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 
+export const translationProps = {
+  i18n: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired
+};
+
 export const sectionDisplayProps = {
   docKey: PropTypes.string.isRequired,
   sectionKey: PropTypes.string.isRequired,
-  content: PropTypes.any,
-  language: PropTypes.string.isRequired
+  content: PropTypes.any
 };
 
 export const sectionEditorProps = {
@@ -63,8 +67,9 @@ export const userProps = {
   user: userShape
 };
 
-export const dataProps = {
-  data: PropTypes.object.isRequired
+export const languageProps = {
+  language: PropTypes.string.isRequired,
+  locale: PropTypes.string.isRequired
 };
 
 const userInDocShape = PropTypes.shape({

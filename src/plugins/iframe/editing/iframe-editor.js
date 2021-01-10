@@ -1,9 +1,10 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import validation from '../../../ui/validation';
+import { withTranslation } from 'react-i18next';
 import { Form, Input, Slider, Checkbox } from 'antd';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 
@@ -12,8 +13,6 @@ const marks = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].reduce((all, v
   const node = <span>{`${val}px`}</span>;
   return { ...all, [val]: node };
 }, {});
-
-const validateUrl = url => url === '' || url.startsWith('https:');
 
 class IframeEditor extends React.Component {
   constructor(props) {
@@ -40,14 +39,14 @@ class IframeEditor extends React.Component {
   }
 
   changeContent(newContentValues) {
-    const { content, onContentChanged } = this.props;
+    const { content, onContentChanged, t } = this.props;
     const newContent = { ...content, ...newContentValues };
-    const isValid = validateUrl(newContent.url);
+    const isValid = validation.validateUrl(newContent.url, t).validateStatus === 'success';
     onContentChanged(newContent, !isValid);
   }
 
   render() {
-    const { content } = this.props;
+    const { content, t } = this.props;
     const { url, width } = content;
 
     const formItemLayout = {
@@ -60,16 +59,16 @@ class IframeEditor extends React.Component {
         <Form layout="horizontal">
           <FormItem
             {...formItemLayout}
-            label="URL"
-            {...validation.validateUrl(url)}
+            label={t('url')}
+            {...validation.validateUrl(url, t)}
             hasFeedback
             >
             <Input value={url} onChange={this.handleExternalUrlValueChanged} />
           </FormItem>
-          <Form.Item label="Breite" {...formItemLayout}>
+          <Form.Item label={t('width')} {...formItemLayout}>
             <ObjectMaxWidthSlider value={width} onChange={this.handleWidthValueChanged} />
           </Form.Item>
-          <Form.Item label="Höhe" {...formItemLayout}>
+          <Form.Item label={t('height')} {...formItemLayout}>
             <Slider
               min={100}
               max={1000}
@@ -80,7 +79,7 @@ class IframeEditor extends React.Component {
               tipFormatter={tipFormatter}
               />
           </Form.Item>
-          <Form.Item label="Rahmen" {...formItemLayout}>
+          <Form.Item label={t('frame')} {...formItemLayout}>
             <Checkbox checked={content.isBorderVisible} onChange={this.handleIsBorderVisibleValueChanged} />
           </Form.Item>
         </Form>
@@ -90,7 +89,8 @@ class IframeEditor extends React.Component {
 }
 
 IframeEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps
 };
 
-export default IframeEditor;
+export default withTranslation('iframe')(IframeEditor);

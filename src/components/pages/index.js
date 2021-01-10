@@ -4,13 +4,15 @@ import { Input } from 'antd';
 import DocView from '../doc-view';
 import PropTypes from 'prop-types';
 import ElmuLogo from '../elmu-logo';
+import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context';
 import { documentShape } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 
-function Index({ initialState, language }) {
+function Index({ initialState }) {
   const req = useRequest();
+  const { t } = useTranslation('index');
   const { document: doc } = initialState;
 
   const handleSearchClick = searchTerm => {
@@ -27,13 +29,13 @@ function Index({ initialState, language }) {
         </div>
         <div className="IndexPage-search">
           <Search
-            placeholder="Suchbegriff"
-            enterButton="Suchen mit Google"
+            placeholder={t('searchTerm')}
+            enterButton={t('searchWithGoogle')}
             size="large"
             onSearch={handleSearchClick}
             />
         </div>
-        {doc && <DocView documentOrRevision={doc} language={language} />}
+        {doc && <DocView documentOrRevision={doc} />}
       </div>
     </Page>
   );
@@ -42,8 +44,7 @@ function Index({ initialState, language }) {
 Index.propTypes = {
   initialState: PropTypes.shape({
     document: documentShape
-  }).isRequired,
-  language: PropTypes.string.isRequired
+  }).isRequired
 };
 
 export default Index;

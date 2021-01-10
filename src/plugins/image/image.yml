@@ -1,0 +1,24 @@
+source:
+  en: Source
+  de: Quelle
+externalLink:
+  en: External link
+  de: Externer Link
+elmuCdn:
+  en: Elmu CDN
+  de: Elmu CDN
+externalUrl:
+  en: External URL
+  de: Externe URL
+internalUrl:
+  en: Internal URL
+  de: Interne URL
+copyrightInfos:
+  en: Copyright infos
+  de: Copyright Infos
+maximumWidth:
+  en: Maximum width
+  de: Maximale Breite
+hoverImage:
+  en: Hover image
+  de: Hover-Bild

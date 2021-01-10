@@ -8,15 +8,15 @@ import Logger from '../../common/logger';
 import { Input, Modal, Button } from 'antd';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
 import { toTrimmedString } from '../../utils/sanitize';
-import { menuShape } from '../../ui/default-prop-types';
 import MenuApiClient from '../../services/menu-api-client';
+import { menuShape, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
-const DEFAULT_MENU_TITLE = 'Neues Menü';
 const DEFAULT_MENU_SLUG = '';
 
 class Menus extends React.Component {
@@ -24,7 +24,7 @@ class Menus extends React.Component {
     super(props);
     autoBind(this);
     this.state = {
-      newMenuTitle: DEFAULT_MENU_TITLE,
+      newMenuTitle: this.props.t('defaultMenuTitle'),
       newMenuSlug: DEFAULT_MENU_SLUG,
       isNewMenuModalVisible: false,
       isLoading: false
@@ -32,8 +32,9 @@ class Menus extends React.Component {
   }
 
   createNewMenu(title, slug) {
+    const { t } = this.props;
     return {
-      title: toTrimmedString(title) || DEFAULT_MENU_TITLE,
+      title: toTrimmedString(title) || t('defaultMenuTitle'),
       slug: toTrimmedString(slug) || null,
       defaultDocumentKey: null,
       nodes: []
@@ -41,8 +42,9 @@ class Menus extends React.Component {
   }
 
   handleNewMenuClick() {
+    const { t } = this.props;
     this.setState({
-      newMenuTitle: DEFAULT_MENU_TITLE,
+      newMenuTitle: t('defaultMenuTitle'),
       newMenuSlug: DEFAULT_MENU_SLUG,
       isNewMenuModalVisible: true
     });
@@ -82,13 +84,13 @@ class Menus extends React.Component {
   }
 
   render() {
-    const { initialState } = this.props;
+    const { initialState, t } = this.props;
     const { newMenuTitle, newMenuSlug, isNewMenuModalVisible, isLoading } = this.state;
 
     return (
       <Page>
         <div className="MenusPage">
-          <h1>Menüs</h1>
+          <h1>{t('pageNames:menus')}</h1>
           <ul>
             {initialState.map(menu => (
               <li key={menu._id}>
@@ -102,16 +104,16 @@ class Menus extends React.Component {
             </Restricted>
           </aside>
           <Modal
-            title="Neues Menü"
+            title={t('newMenu')}
             visible={isNewMenuModalVisible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
             >
-            <p>Titel</p>
+            <p>{t('title')}</p>
             <p><Input value={newMenuTitle} onChange={this.handleNewMenuTitleChange} /></p>
-            <p>URL-Pfad</p>
+            <p>{t('slug')}</p>
             <p><Input addonBefore={urls.menusPrefix} value={newMenuSlug} onChange={this.handleNewMenuSlugChange} /></p>
-            {isLoading && <p>Wird erstellt ...</p>}
+            {isLoading && <p>{t('newMenuProgress')}</p>}
           </Modal>
         </div>
       </Page>
@@ -120,10 +122,11 @@ class Menus extends React.Component {
 }
 
 Menus.propTypes = {
+  ...translationProps,
   initialState: PropTypes.arrayOf(menuShape).isRequired,
   menuApiClient: PropTypes.instanceOf(MenuApiClient).isRequired
 };
 
-export default inject({
+export default withTranslation('menus')(inject({
   menuApiClient: MenuApiClient
-}, Menus);
+}, Menus));

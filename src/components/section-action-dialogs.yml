@@ -1,0 +1,15 @@
+areYouSure:
+  en: Are you sure?
+  de: Sind Sie sicher?
+deleteSectionConfirmation:
+  en: Do you really want do delete the section?
+  de: Möchten Sie den Abschnitt wirklich löschen?
+thisActionIsIrreversible:
+  en: This Action is irreversible
+  de: Diese Aktion ist unwiderrufbar!
+pleaseSpecifyAReason:
+  en: Please specify a reason
+  de: Bitte geben Sie einen Grund an
+deleteAllDescendantRevisions:
+  en: Also delete all descendant revisions
+  de: Auch alle nachfolgenden Revisionen löschen

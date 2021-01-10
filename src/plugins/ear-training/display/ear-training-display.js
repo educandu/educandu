@@ -1,13 +1,14 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import arrayShuffle from 'array-shuffle';
+import { withTranslation } from 'react-i18next';
 import abcjs from '../../../common/abcjs-import';
 import memoizeLast from '../../../utils/memoize-last';
 import AudioPlayer from '../../../components/audio-player';
 import ClientSettings from '../../../bootstrap/client-settings';
 import { inject } from '../../../components/container-context';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
 
 const abcOptions = {
   paddingtop: 0,
@@ -75,7 +76,7 @@ class EarTrainingDisplay extends React.Component {
   }
 
   render() {
-    const { clientSettings } = this.props;
+    const { clientSettings, t } = this.props;
     const { title, maxWidth, tests, currentIndex, showResult } = this.state;
 
     const currentTest = tests[currentIndex];
@@ -104,14 +105,14 @@ class EarTrainingDisplay extends React.Component {
     const buttons = [];
 
     if (showResult && currentIndex < tests.length - 1) {
-      buttons.push(<button key="next" type="button" onClick={this.handleNextClick}>Nächste Übung</button>);
+      buttons.push(<button key="next" type="button" onClick={this.handleNextClick}>{t('nextExercise')}</button>);
     }
 
     if (currentTest && !showResult) {
-      buttons.push(<button key="result" type="button" onClick={this.handleResultClick}>Auflösen</button>);
+      buttons.push(<button key="result" type="button" onClick={this.handleResultClick}>{t('solve')}</button>);
     }
 
-    buttons.push(<button key="reset" type="button" onClick={this.handleResetClick}>Zurücksetzen</button>);
+    buttons.push(<button key="reset" type="button" onClick={this.handleResetClick}>{t('reset')}</button>);
 
     return (
       <div className="EarTraining fa5">
@@ -132,11 +133,12 @@ class EarTrainingDisplay extends React.Component {
 }
 
 EarTrainingDisplay.propTypes = {
+  ...translationProps,
   ...sectionDisplayProps,
   ...clientSettingsProps
 };
 
-export default inject({
+export default withTranslation('earTraining')(inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown,
   clientSettings: ClientSettings
-}, EarTrainingDisplay);
+}, EarTrainingDisplay));

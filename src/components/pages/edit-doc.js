@@ -10,6 +10,7 @@ import SectionEditor from '../section-editor';
 import { Menu, Button, Dropdown } from 'antd';
 import cloneDeep from '../../utils/clone-deep';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation } from 'react-i18next';
 import pluginInfos from '../../plugins/plugin-infos';
 import ShallowUpdateList from '../shallow-update-list';
 import EditorFactory from '../../plugins/editor-factory';
@@ -18,7 +19,7 @@ import DocumentMetadataEditor from '../document-metadata-editor';
 import DocumentApiClient from '../../services/document-api-client';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import { documentRevisionShape, sectionShape } from '../../ui/default-prop-types';
+import { documentRevisionShape, sectionShape, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -277,7 +278,7 @@ class EditDoc extends React.Component {
   }
 
   render() {
-    const { language } = this.props;
+    const { t } = this.props;
     const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys } = this.state;
 
     const newSectionMenu = (
@@ -302,23 +303,22 @@ class EditDoc extends React.Component {
         key: 'save',
         type: 'primary',
         icon: SaveOutlined,
-        text: 'Speichern',
+        text: t('common:save'),
         handleClick: this.handleSaveClick
       });
     }
 
     headerActions.push({
-      key: 'close',
+      key: 'back',
       icon: CloseOutlined,
-      text: 'Zurück',
+      text: t('common:back'),
       handleClick: this.handleBackClick
     });
 
     const alerts = [];
     if (proposedSectionKeys.length) {
       alerts.push({
-        message: 'Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. '
-          + 'Nicht übernommene Abschnitte sind nur solange sichtbar, bis Sie die Seite verlassen.',
+        message: t('proposedSectionsAlert'),
         type: 'info'
       });
     }
@@ -363,7 +363,6 @@ class EditDoc extends React.Component {
                               isHighlighted={draggableState.isDragging}
                               isInvalid={invalidSectionKeys.includes(section.key)}
                               isProposed={proposedSectionKeys.includes(section.key)}
-                              language={language}
                               section={section}
                               documentRevision={editedDocumentRevision}
                               />
@@ -387,18 +386,18 @@ class EditDoc extends React.Component {
 }
 
 EditDoc.propTypes = {
+  ...translationProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   editorFactory: PropTypes.instanceOf(EditorFactory).isRequired,
   initialState: PropTypes.shape({
     documentRevision: documentRevisionShape.isRequired,
     proposedSections: PropTypes.arrayOf(sectionShape)
   }).isRequired,
-  language: PropTypes.string.isRequired,
   rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
 };
 
-export default inject({
+export default withTranslation('editDoc')(inject({
   documentApiClient: DocumentApiClient,
   rendererFactory: RendererFactory,
   editorFactory: EditorFactory
-}, EditDoc);
+}, EditDoc));

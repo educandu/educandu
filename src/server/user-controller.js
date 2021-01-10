@@ -100,7 +100,7 @@ class UserController {
     });
 
     router.get('/profile', needsAuthentication(), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {}, ['country-names']);
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {});
     });
 
     router.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
@@ -115,7 +115,7 @@ class UserController {
 
     router.get('/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
       const initialState = await this.userService.getAllUsers();
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState, ['country-names']);
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState);
     });
   }
 

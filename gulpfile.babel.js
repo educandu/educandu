@@ -509,7 +509,7 @@ tasks.ciPrepare = series(tasks.mongoUser, tasks.mongoSeed, tasks.minioSeed);
 tasks.ci = series(tasks.clean, tasks.lint, tasks.test, tasks.build, tasks.verify);
 
 tasks.setupWatchers = function setupWatchers(done) {
-  watch(['src/**/*.js'], tasks.serveRestart);
+  watch(['src/**/*.{js,yml,json}'], tasks.serveRestart);
   watch(['src/**/*.less'], tasks.bundleCss);
   watch(['*.js'], tasks.lint);
   watch(['scripts/**'], tasks.lint);
@@ -519,7 +519,7 @@ tasks.setupWatchers = function setupWatchers(done) {
 };
 
 tasks.setupWatchersRaw = function setupWatchersRaw(done) {
-  watch(['src/**/*.js'], tasks.serveRestartRaw);
+  watch(['src/**/*.{js,yml,json}'], tasks.serveRestartRaw);
   watch(['src/**/*.less'], tasks.bundleCss);
   watch(['scripts/db-seed'], tasks.mongoSeed);
   watch(['scripts/s3-seed'], tasks.minioSeed);

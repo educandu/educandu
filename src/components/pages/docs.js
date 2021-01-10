@@ -9,18 +9,19 @@ import Restricted from '../restricted';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
+import { withLanguage } from '../language-context';
 import { Input, Modal, Table, Button } from 'antd';
 import { toTrimmedString } from '../../utils/sanitize';
 import DocumentApiClient from '../../services/document-api-client';
-import { documentMetadataShape } from '../../ui/default-prop-types';
+import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 
 const logger = new Logger(__filename);
 
-const DEFAULT_DOCUMENT_TITLE = 'Neues Dokument';
 const DEFAULT_DOCUMENT_NAMESPACE = 'articles';
 const DEFAULT_DOCUMENT_LANGUAGE = 'de';
 const DEFAULT_FILTER_INPUT = '';
@@ -32,7 +33,7 @@ class Docs extends React.Component {
     autoBind(this);
     this.state = {
       filteredDocs: props.initialState.documents.slice(),
-      newDocTitle: DEFAULT_DOCUMENT_TITLE,
+      newDocTitle: this.props.t('defaultDocumentTitle'),
       filterInput: DEFAULT_FILTER_INPUT,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
       newDocBlueprintKey: null,
@@ -42,9 +43,10 @@ class Docs extends React.Component {
   }
 
   createNewDocument(title, slug) {
+    const { t } = this.props;
     return {
-      title: toTrimmedString(title) || DEFAULT_DOCUMENT_TITLE,
-      slug: toTrimmedString(slug) || null,
+      title: toTrimmedString(title) || t('defaultDocumentTitle'),
+      slug: toTrimmedString(slug) || '',
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
       language: DEFAULT_DOCUMENT_LANGUAGE,
       sections: []
@@ -52,8 +54,9 @@ class Docs extends React.Component {
   }
 
   handleNewDocumentClick() {
+    const { t } = this.props;
     this.setState({
-      newDocTitle: DEFAULT_DOCUMENT_TITLE,
+      newDocTitle: t('defaultDocumentTitle'),
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
       newDocBlueprintKey: null,
       isNewDocModalVisible: true
@@ -105,61 +108,66 @@ class Docs extends React.Component {
   }
 
   handleCloneClick(doc) {
+    const { t } = this.props;
     this.setState({
-      newDocTitle: doc.title ? `${doc.title} (Kopie)` : DEFAULT_DOCUMENT_TITLE,
-      newDocSlug: doc.slug ? `${doc.slug}-kopie` : DEFAULT_DOCUMENT_SLUG,
+      newDocTitle: doc.title ? `${doc.title} ${t('copyTitleSuffix')}` : t('defaultDocumentTitle'),
+      newDocSlug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : DEFAULT_DOCUMENT_SLUG,
       newDocBlueprintKey: doc.key,
       isNewDocModalVisible: true
     });
   }
 
-  renderTitle(title, doc) {
+  renderTitle(value, doc) {
     return <a href={urls.getDocUrl(doc.key)}>{doc.title}</a>;
   }
 
-  renderUpdatedOn(title, doc) {
-    const date = moment(doc.updatedOn).locale('de-DE');
+  renderUpdatedOn(value, doc) {
+    const { locale } = this.props;
+    const date = moment(doc.updatedOn).locale(locale);
     return <span>{date.format('L, LT')}</span>;
   }
 
-  renderUpdatedBy(title, doc) {
+  renderUpdatedBy(value, doc) {
+    const { t } = this.props;
     return doc.updatedBy.email
-      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>E-Mail</a></span>
+      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>{t('email')}</a></span>
       : <span>{doc.updatedBy.username}</span>;
   }
 
-  renderActions(title, doc) {
-    return <span><a onClick={() => this.handleCloneClick(doc)}>Klonen</a></span>;
+  renderActions(value, doc) {
+    const { t } = this.props;
+    return <span><a onClick={() => this.handleCloneClick(doc)}>{t('clone')}</a></span>;
   }
 
   render() {
+    const { t } = this.props;
     const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading, filterInput, filteredDocs } = this.state;
 
     const columns = [
       {
-        title: 'Name',
+        title: t('title'),
         dataIndex: 'title',
         key: 'title',
         render: this.renderTitle,
         sorter: by(x => x.title)
       },
       {
-        title: 'Update-Datum',
-        dataIndex: 'udate',
-        key: 'udate',
+        title: t('udateDate'),
+        dataIndex: 'udateDate',
+        key: 'udateDate',
         render: this.renderUpdatedOn,
         defaultSortOrder: 'descend',
         sorter: by(x => x.updatedOn)
       },
       {
-        title: 'User-Info',
+        title: t('user'),
         dataIndex: 'user',
         key: 'user',
         render: this.renderUpdatedBy,
         sorter: by(x => x.updatedBy.username)
       },
       {
-        title: 'Aktionen',
+        title: t('actions'),
         dataIndex: 'actions',
         key: 'actions',
         render: this.renderActions
@@ -169,13 +177,13 @@ class Docs extends React.Component {
     return (
       <Page>
         <div className="DocsPage">
-          <h1>Dokumente</h1>
+          <h1>{t('pageNames:docs')}</h1>
           <div className="DocsPage-search">
             <Search
               className="DocsPage-searchField"
               value={filterInput}
               onChange={this.handleFilterInputChange}
-              placeholder="Suchbegriff eingeben"
+              placeholder={t('enterSearchTerm')}
               />
           </div>
           <Table dataSource={filteredDocs} columns={columns} size="middle" />
@@ -185,17 +193,17 @@ class Docs extends React.Component {
             </Restricted>
           </aside>
           <Modal
-            title="Neues Dokument"
+            title={t('newDocument')}
             visible={isNewDocModalVisible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
             maskClosable={false}
             >
-            <p>Titel</p>
+            <p>{t('title')}</p>
             <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
-            <p>URL-Pfad</p>
+            <p>{t('slug')}</p>
             <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
-            {isLoading && <p>Wird erstellt ...</p>}
+            {isLoading && <p>{t('newDocumentProgress')}</p>}
           </Modal>
         </div>
       </Page>
@@ -204,12 +212,14 @@ class Docs extends React.Component {
 }
 
 Docs.propTypes = {
+  ...translationProps,
+  ...languageProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired
   }).isRequired
 };
 
-export default inject({
+export default withTranslation('docs')(withLanguage(inject({
   documentApiClient: DocumentApiClient
-}, Docs);
+}, Docs)));

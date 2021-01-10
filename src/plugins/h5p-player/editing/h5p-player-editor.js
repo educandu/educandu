@@ -4,12 +4,13 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../../utils/urls';
+import { withTranslation } from 'react-i18next';
 import { UploadOutlined } from '@ant-design/icons';
 import HttpClient from '../../../services/http-client';
 import { Form, Input, Upload, Button, message } from 'antd';
 import { inject } from '../../../components/container-context';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 
@@ -50,7 +51,7 @@ class H5pPlayerEditor extends React.Component {
   }
 
   render() {
-    const { content } = this.props;
+    const { content, t } = this.props;
     const { applicationId, maxWidth } = content;
 
     const formItemLayout = {
@@ -61,7 +62,7 @@ class H5pPlayerEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label="Content-ID" {...formItemLayout}>
+          <FormItem label={t('contentId')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
                 value={applicationId}
@@ -72,12 +73,12 @@ class H5pPlayerEditor extends React.Component {
                   showUploadList={false}
                   customRequest={this.onCustomUpload}
                   >
-                  <Button icon={<UploadOutlined />}>Datei auswählen</Button>
+                  <Button icon={<UploadOutlined />}>{t('chooseFile')}</Button>
                 </Upload>
               </div>
             </div>
           </FormItem>
-          <Form.Item label="Maximale Breite" {...formItemLayout}>
+          <Form.Item label={t('maximumWidth')} {...formItemLayout}>
             <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthValueChanged} />
           </Form.Item>
         </Form>
@@ -87,10 +88,11 @@ class H5pPlayerEditor extends React.Component {
 }
 
 H5pPlayerEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps,
   httpClient: PropTypes.instanceOf(HttpClient).isRequired
 };
 
-export default inject({
+export default withTranslation('h5pPlayer')(inject({
   httpClient: HttpClient
-}, H5pPlayerEditor);
+}, H5pPlayerEditor));

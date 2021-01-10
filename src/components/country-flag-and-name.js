@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withData } from './data-context';
-import { dataProps } from '../ui/default-prop-types';
+import { useService } from './container-context';
+import { useLanguage } from './language-context';
+import CountryNameProvider from '../data/country-name-provider';
 
-function CountryFlagAndName({ code, data }) {
-  const name = (data && data['country-names'] && data['country-names'][code]) || code;
+function CountryFlagAndName({ code }) {
+  const { language } = useLanguage();
+  const countryNameProvider = useService(CountryNameProvider);
+  const data = countryNameProvider.getData(language);
+  const name = data[code] || code;
   return (
     <span className="CountryFlagAndName">
       <span className={`flag-icon flag-icon-${code.toLowerCase()}`} />
@@ -15,8 +19,7 @@ function CountryFlagAndName({ code, data }) {
 }
 
 CountryFlagAndName.propTypes = {
-  ...dataProps,
   code: PropTypes.string.isRequired
 };
 
-export default withData(CountryFlagAndName);
+export default CountryFlagAndName;

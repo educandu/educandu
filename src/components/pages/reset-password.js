@@ -2,12 +2,16 @@ import React from 'react';
 import Page from '../page';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
 import ElmuLogo from '../elmu-logo';
+import Countdown from '../countdown';
 import Logger from '../../common/logger';
 import { Form, Input, Button } from 'antd';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
+import { translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -38,6 +42,7 @@ class ResetPassword extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     const { isRequestSent } = this.state;
 
     const formItemLayout = {
@@ -66,23 +71,23 @@ class ResetPassword extends React.Component {
 
     const emailValidationRules = [
       {
-        type: 'email',
-        message: 'Ihre Eingabe ist keine gültige E-Mail-Adresse'
+        required: true,
+        message: t('enterEmail')
       },
       {
-        required: true,
-        message: 'Bitte geben Sie Ihre E-Mail-Adresse an'
+        type: 'email',
+        message: t('emailIsInvalid')
       }
     ];
 
     const resetRequestForm = (
       <div className="ResetPasswordPage-form">
         <Form onFinish={this.handleFinish} scrollToFirstError>
-          <FormItem {...formItemLayout} label="E-Mail" name="email" rules={emailValidationRules}>
+          <FormItem {...formItemLayout} label={t('email')} name="email" rules={emailValidationRules}>
             <Input />
           </FormItem>
           <FormItem {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">Reset anfordern</Button>
+            <Button type="primary" htmlType="submit">{t('requestReset')}</Button>
           </FormItem>
         </Form>
       </div>
@@ -90,13 +95,24 @@ class ResetPassword extends React.Component {
 
     const resetRequestConfirmation = (
       <div className="ResetPasswordPage-confirmation">
-        <p>Ihre Anfrage wurde ist bei uns eingegangen.</p>
-        <p>
-          Falls die von Ihnen angegebene E-Mail-Adresse bei uns registriert ist,
-          werden Sie in Kürze eine Nachricht von uns erhalten mit den nächsten Schritte,
-          um ein neues Kennwort zu generieren.
-        </p>
-        <p>Zurück zur <a href="/">Startseite</a></p>
+        <p>{t('resetInProgressConfirmation')}</p>
+        <p>{t('resetInProgressNextSteps')}</p>
+        <Countdown
+          seconds={15}
+          isRunning={!!isRequestSent}
+          onComplete={() => {
+            window.location = urls.getHomeUrl();
+          }}
+          >
+          {seconds => (
+            <Trans
+              t={t}
+              i18nKey="redirectMessage"
+              values={{ seconds }}
+              components={[<a key="home-link" href={urls.getHomeUrl()} />]}
+              />
+          )}
+        </Countdown>
       </div>
     );
 
@@ -114,9 +130,10 @@ class ResetPassword extends React.Component {
 }
 
 ResetPassword.propTypes = {
+  ...translationProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default inject({
+export default withTranslation('resetPassword')(inject({
   userApiClient: UserApiClient
-}, ResetPassword);
+}, ResetPassword));

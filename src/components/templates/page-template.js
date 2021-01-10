@@ -15,7 +15,7 @@ const toElementDefinition = ({ tagName, attrs }) => {
 const headElem = parse5.parse(faviconData.favicon.html_code).childNodes[0].childNodes[0];
 const faviconDefs = headElem.childNodes.filter(({ nodeName }) => !nodeName.startsWith('#')).map(toElementDefinition);
 
-function Page({ language, title, content, styles, scripts }) {
+function PageTemplate({ language, title, content, styles, scripts }) {
   const faviconElements = faviconDefs.map(({ tagName, props }, index) => {
     return React.createElement(tagName, { key: index.toString(), ...props });
   });
@@ -49,7 +49,7 @@ function Page({ language, title, content, styles, scripts }) {
   );
 }
 
-Page.propTypes = {
+PageTemplate.propTypes = {
   content: PropTypes.string.isRequired,
   language: PropTypes.string.isRequired,
   scripts: PropTypes.array,
@@ -57,9 +57,9 @@ Page.propTypes = {
   title: PropTypes.string.isRequired
 };
 
-Page.defaultProps = {
+PageTemplate.defaultProps = {
   scripts: [],
   styles: []
 };
 
-export default Page;
+export default PageTemplate;

@@ -9,7 +9,9 @@ import Logger from '../../common/logger';
 import { Form, Input, Button } from 'antd';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
+import { translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -42,6 +44,7 @@ class CompletePasswordReset extends React.Component {
 
 
   render() {
+    const { t } = this.props;
     const { user } = this.state;
 
     const formItemLayout = {
@@ -71,20 +74,20 @@ class CompletePasswordReset extends React.Component {
     const passwordValidationRules = [
       {
         required: true,
-        message: 'Bitte geben Sie hier ein Kennwort an'
+        message: t('enterPassword')
       }
     ];
 
     const passwordConfirmationValidationRules = [
       {
         required: true,
-        message: 'Bitte bestätigen Sie Ihr Kennwort'
+        message: t('confirmPassword')
       },
       ({ getFieldValue }) => ({
         validator: (rule, value) => {
           const otherPassword = getFieldValue('password');
           return value && value !== otherPassword
-            ? Promise.reject(new Error('Die Kennwörter stimmen nicht überein'))
+            ? Promise.reject(new Error(t('passwordsDoNotMatch')))
             : Promise.resolve();
         }
       })
@@ -93,33 +96,38 @@ class CompletePasswordReset extends React.Component {
     const completionForm = (
       <div className="CompletePasswordResetPage-form">
         <Form onFinish={this.handleFinish} scrollToFirstError>
-          <FormItem {...formItemLayout} label="Kennwort" name="password" rules={passwordValidationRules}>
+          <FormItem {...formItemLayout} label={t('password')} name="password" rules={passwordValidationRules}>
             <Input type="password" />
           </FormItem>
-          <FormItem {...formItemLayout} label="Kennwortbestätigung" name="confirm" rules={passwordConfirmationValidationRules} dependencies={['password']}>
+          <FormItem {...formItemLayout} label={t('passwordConfirmation')} name="confirm" rules={passwordConfirmationValidationRules} dependencies={['password']}>
             <Input type="password" />
           </FormItem>
           <FormItem {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">Passwort speichern</Button>
+            <Button type="primary" htmlType="submit">{t('savePassword')}</Button>
           </FormItem>
         </Form>
       </div>
     );
 
-    const countdown = (
-      <Countdown
-        seconds={10}
-        isRunning={!!user}
-        onComplete={() => {
-          window.location = urls.getLoginUrl();
-        }}
-        />
-    );
-
     const completionConfirmation = (
       <div className="CompletePasswordResetPage-confirmation">
-        <p>Ihr Kennwort wurde erfolgreich geändert.</p>
-        <p>Sie werden in {countdown} auf die <a href={urls.getLoginUrl()}>Anmeldeseite</a> weitergeleitet.</p>
+        <p>{t('passwordChangedSuccessfully')}</p>
+        <Countdown
+          seconds={10}
+          isRunning={!!user}
+          onComplete={() => {
+            window.location = urls.getLoginUrl();
+          }}
+          >
+          {seconds => (
+            <Trans
+              t={t}
+              i18nKey="redirectMessage"
+              values={{ seconds }}
+              components={[<a key="login-link" href={urls.getLoginUrl()} />]}
+              />
+          )}
+        </Countdown>
       </div>
     );
 
@@ -137,12 +145,13 @@ class CompletePasswordReset extends React.Component {
 }
 
 CompletePasswordReset.propTypes = {
+  ...translationProps,
   initialState: PropTypes.shape({
     passwordResetRequestId: PropTypes.string.isRequired
   }).isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default inject({
+export default withTranslation('completePasswordReset')(inject({
   userApiClient: UserApiClient
-}, CompletePasswordReset);
+}, CompletePasswordReset));

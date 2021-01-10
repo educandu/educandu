@@ -1,0 +1,45 @@
+"yes":
+  en: "Yes"
+  de: Ja
+"no":
+  en: "No"
+  de: Nein
+save:
+  en: Save
+  de: Speichern
+cancel:
+  en: Cancel
+  de: Abbrechen
+select:
+  en: Select
+  de: Auswählen
+back:
+  en: Back
+  de: Zurück
+preview:
+  en: Preview
+  de: Vorschau
+edit:
+  en: Edit
+  de: Bearbeiten
+apply:
+  en: Apply
+  de: Übernehmen
+discard:
+  en: Discard
+  de: Verwerfen
+delete:
+  en: Delete
+  de: Löschen
+hardDelete:
+  en: Delete irreversibly
+  de: Unwiderruflich löschen
+moveUp:
+  en: Move up
+  de: Nach oben verschieben
+moveDown:
+  en: Move down
+  de: Nach unten verschieben
+error:
+  en: Error
+  de: Fehler

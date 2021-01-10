@@ -1,0 +1,43 @@
+changeProfilePicture:
+  en: Change profile picture
+  de: Profilbild ändern
+howToChangeProfilePicture:
+  en: How can I change my profile picture?
+  de: Wie ändere ich mein Profilbild?
+avatarDescription:
+  en: |
+    ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.
+    A Gravatar is a globally recognized avatar, which is linked to your email address.
+    This service can then be used by other websites to display a profile picture for a given email address.
+    Please note that ELMU has no influence on the use of your data by this service.
+    If you agree, you can create a profile <0>here</0>.
+  de: |
+    ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <0>Gravatar</0>.
+    Ein Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.
+    Dieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.
+    Beachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.
+    Wenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.
+firstName:
+  en: First name(s)
+  de: Vorname(n)
+lastName:
+  en: Last name
+  de: Nachname
+street:
+  en: Street
+  de: Straße
+streetSupplement:
+  en: Street supplement
+  de: Straße (Zusatz)
+postalCode:
+  en: Postal code
+  de: Postleitzahl
+city:
+  en: City
+  de: Ort
+country:
+  en: Country
+  de: Land
+updateSuccessMessage:
+  en: Your profile was updated successfully.
+  de: Ihr Profil wurde erfolgreich aktualisiert.

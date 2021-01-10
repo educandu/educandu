@@ -5,30 +5,38 @@ import urls from '../utils/urls';
 import { useUser } from './user-context';
 import LinkPopover from './link-popover';
 import { useRequest } from './request-context';
+import { Trans, useTranslation } from 'react-i18next';
 import { ProfileOutlined, LogoutOutlined } from '@ant-design/icons';
 
-const gravatarPopoverItems = [
-  {
-    key: 'profile',
-    href: urls.getProfileUrl(),
-    text: 'Profil bearbeiten',
-    icon: ProfileOutlined,
-    permission: null
-  }, {
-    key: 'logout',
-    href: urls.getLogoutUrl(),
-    text: 'Abmelden',
-    icon: LogoutOutlined,
-    permission: null
-  }
-];
-
-function createAuthenticatedUserHeader(user) {
+function createAuthenticatedUserHeader(user, t) {
   const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
 
   const popoverTitle = (
-    <span>Sie sind angemeldet als <b>{user.username}</b></span>
+    <span>
+      <Trans
+        t={t}
+        i18nKey="logonState"
+        components={[<b key="username" />]}
+        values={{ username: user.username }}
+        />
+    </span>
   );
+
+  const gravatarPopoverItems = [
+    {
+      key: 'profile',
+      href: urls.getProfileUrl(),
+      text: t('editProfile'),
+      icon: ProfileOutlined,
+      permission: null
+    }, {
+      key: 'logout',
+      href: urls.getLogoutUrl(),
+      text: t('logoff'),
+      icon: LogoutOutlined,
+      permission: null
+    }
+  ];
 
   return (
     <div>
@@ -44,12 +52,12 @@ function createAuthenticatedUserHeader(user) {
   );
 }
 
-function createAnonymousUserHeader(redirectUrl) {
+function createAnonymousUserHeader(redirectUrl, t) {
   return (
     <div>
-      <a href={urls.getLoginUrl(redirectUrl)}>Anmelden</a>
+      <a href={urls.getLoginUrl(redirectUrl)}>{t('logon')}</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href={urls.getRegisterUrl()}>Registrieren</a>
+      <a href={urls.getRegisterUrl()}>{t('register')}</a>
     </div>
   );
 }
@@ -57,10 +65,11 @@ function createAnonymousUserHeader(redirectUrl) {
 function LoginLogout() {
   const user = useUser();
   const request = useRequest();
+  const { t } = useTranslation('loginLogout');
 
   return (
     <span className="LoginLogout">
-      {user ? createAuthenticatedUserHeader(user) : createAnonymousUserHeader(request.originalUrl)}
+      {user ? createAuthenticatedUserHeader(user, t) : createAnonymousUserHeader(request.originalUrl, t)}
     </span>
   );
 }

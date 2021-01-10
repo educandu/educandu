@@ -1,0 +1,9 @@
+urlRequired:
+  en: Please specify a URL
+  de: Bitte geben Sie eine Adresse an
+urlInvalid:
+  en: Please specify a URL with a valid format
+  de: Bitte geben Sie eine Adresse im gültigen Format an
+urlInsecure:
+  en: Please specify a URL with a secure protocol (HTTPS)
+  de: Bitte geben Sie eine Adresse mit sicherem Protokoll (HTTPS) an

@@ -1,12 +1,13 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import validation from '../../../ui/validation';
+import { withTranslation } from 'react-i18next';
 import { Form, Input, Radio, Switch } from 'antd';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
 import ClientSettings from '../../../bootstrap/client-settings';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionEditorProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -23,21 +24,21 @@ class VideoEditor extends React.Component {
     autoBind(this);
   }
 
-  handleExternalUrlValueChanged(event) {
+  handleExternalUrlChanged(event) {
     const { value } = event.target;
     this.changeContent({ url: value });
   }
 
-  handleYoutubeUrlValueChanged(event) {
+  handleYoutubeUrlChanged(event) {
     const { value } = event.target;
     this.changeContent({ url: value });
   }
 
-  handleInternalUrlValueChanged(value) {
+  handleInternalUrlChanged(value) {
     this.changeContent({ url: value });
   }
 
-  handleTypeValueChanged(event) {
+  handleTypeChanged(event) {
     const { value } = event.target;
     this.changeContent({ type: value, url: '', showVideo: true });
   }
@@ -51,7 +52,7 @@ class VideoEditor extends React.Component {
     this.changeContent({ showVideo });
   }
 
-  handleCurrentEditorValueChanged(event) {
+  handleCopyrightInfoChanged(event) {
     const newValue = event.target.value;
     this.changeContent({ text: newValue });
   }
@@ -66,7 +67,7 @@ class VideoEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientSettings } = this.props;
+    const { docKey, content, clientSettings, t } = this.props;
     const { type, url, text, width, aspectRatio, showVideo } = content;
 
     const formItemLayout = {
@@ -77,20 +78,20 @@ class VideoEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label="Quelle" {...formItemLayout}>
-            <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
-              <RadioButton value="external">Externer Link</RadioButton>
-              <RadioButton value="internal">Elmu CDN</RadioButton>
-              <RadioButton value="youtube">Youtube</RadioButton>
+          <FormItem label={t('source')} {...formItemLayout}>
+            <RadioGroup value={type} onChange={this.handleTypeChanged}>
+              <RadioButton value="external">{t('externalLink')}</RadioButton>
+              <RadioButton value="internal">{t('internalLink')}</RadioButton>
+              <RadioButton value="youtube">{t('youtube')}</RadioButton>
             </RadioGroup>
           </FormItem>
           {type === TYPE_EXTERNAL && (
-            <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(url)} hasFeedback>
-              <Input value={url} onChange={this.handleExternalUrlValueChanged} />
+            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
+              <Input value={url} onChange={this.handleExternalUrlChanged} />
             </FormItem>
           )}
           {type === TYPE_INTERNAL && (
-            <FormItem label="Interne URL" {...formItemLayout}>
+            <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
                   addonBefore={`${clientSettings.cdnRootUrl}/`}
@@ -102,30 +103,30 @@ class VideoEditor extends React.Component {
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={url}
-                  onFileNameChanged={this.handleInternalUrlValueChanged}
+                  onFileNameChanged={this.handleInternalUrlChanged}
                   />
               </div>
             </FormItem>
           )}
           {type === TYPE_YOUTUBE && (
-            <FormItem label="Youtube URL" {...formItemLayout} {...validation.validateUrl(url)} hasFeedback>
-              <Input value={url} onChange={this.handleYoutubeUrlValueChanged} />
+            <FormItem label={t('youtubeUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
+              <Input value={url} onChange={this.handleYoutubeUrlChanged} />
             </FormItem>
           )}
-          <Form.Item label="Seitenverhältnis" {...formItemLayout}>
+          <Form.Item label={t('aspectRatio')} {...formItemLayout}>
             <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={this.handleAspectRatioChanged}>
               <RadioButton value="16:9">16:9</RadioButton>
               <RadioButton value="4:3">4:3</RadioButton>
             </RadioGroup>
           </Form.Item>
-          <Form.Item label="Videoanzeige" {...formItemLayout}>
+          <Form.Item label={t('videoDisplay')} {...formItemLayout}>
             <Switch size="small" defaultChecked checked={showVideo} onChange={this.handleShowVideoChanged} />
           </Form.Item>
-          <Form.Item label="Breite" {...formItemLayout}>
+          <Form.Item label={t('width')} {...formItemLayout}>
             <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={this.handleWidthChanged} />
           </Form.Item>
-          <Form.Item label="Copyright Infos" {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
+          <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+            <TextArea value={text} onChange={this.handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
       </div>
@@ -134,10 +135,11 @@ class VideoEditor extends React.Component {
 }
 
 VideoEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps,
   ...clientSettingsProps
 };
 
-export default inject({
+export default withTranslation('video')(inject({
   clientSettings: ClientSettings
-}, VideoEditor);
+}, VideoEditor));

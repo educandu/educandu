@@ -3,25 +3,29 @@ import autoBind from 'auto-bind';
 import urls from '../utils/urls';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
+import { withTranslation } from 'react-i18next';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import { documentRevisionShape } from '../ui/default-prop-types';
+import { documentRevisionShape, translationProps } from '../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+
+const MODE_EDIT = 'edit';
+const MODE_PREVIEW = 'preview';
 
 class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
-    this.state = { mode: 'preview' };
+    this.state = { mode: MODE_PREVIEW };
   }
 
   handleEditClick() {
-    this.setState({ mode: 'edit' });
+    this.setState({ mode: MODE_EDIT });
   }
 
   handlePreviewClick() {
-    this.setState({ mode: 'preview' });
+    this.setState({ mode: MODE_PREVIEW });
   }
 
   handleModeChange(event) {
@@ -40,25 +44,25 @@ class DocumentMetadataEditor extends React.Component {
 
   render() {
     const { mode } = this.state;
-    const { documentRevision } = this.props;
+    const { documentRevision, t } = this.props;
 
     let componentToShow;
     switch (mode) {
-      case 'preview':
+      case MODE_PREVIEW:
         componentToShow = (
           <div>
-            <span>Titel:</span> <span>{documentRevision.title}</span>
+            <span>{t('title')}:</span> <span>{documentRevision.title}</span>
             <br />
-            <span>URL-Pfad:</span> {documentRevision.slug ? <span>{urls.getArticleUrl(documentRevision.slug)}</span> : <i>(nicht zugewiesen)</i>}
+            <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getArticleUrl(documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
           </div>
         );
         break;
-      case 'edit':
+      case MODE_EDIT:
         componentToShow = (
           <div>
-            <span>Titel:</span> <Input value={documentRevision.title} onChange={this.handleTitleChange} />
+            <span>{t('title')}:</span> <Input value={documentRevision.title} onChange={this.handleTitleChange} />
             <br />
-            <span>URL-Pfad:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
+            <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
           </div>
         );
         break;
@@ -70,18 +74,18 @@ class DocumentMetadataEditor extends React.Component {
     return (
       <div className="Panel">
         <div className="Panel-header">
-          Metadaten
+          {t('header')}
         </div>
         <div className="Panel-content">
           {componentToShow}
         </div>
         <div className="Panel-footer">
           <RadioGroup size="small" value={mode} onChange={this.handleModeChange}>
-            <RadioButton value="preview">
-              <EyeOutlined />&nbsp;Vorschau
+            <RadioButton value={MODE_PREVIEW}>
+              <EyeOutlined />&nbsp;{t('common:preview')}
             </RadioButton>
-            <RadioButton value="edit">
-              <EditOutlined />&nbsp;Bearbeiten
+            <RadioButton value={MODE_EDIT}>
+              <EditOutlined />&nbsp;{t('common:edit')}
             </RadioButton>
           </RadioGroup>
         </div>
@@ -91,8 +95,9 @@ class DocumentMetadataEditor extends React.Component {
 }
 
 DocumentMetadataEditor.propTypes = {
+  ...translationProps,
   documentRevision: documentRevisionShape.isRequired,
   onChanged: PropTypes.func.isRequired
 };
 
-export default DocumentMetadataEditor;
+export default withTranslation('documentMetadataEditor')(DocumentMetadataEditor);

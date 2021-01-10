@@ -104,19 +104,21 @@ class VideoDisplay extends React.Component {
 
     const mediaControlContainerClasses = classNames(['VideoDisplay-mediaControlContainer', `u-width-${width}`]);
 
-    const mediaControl = url && !content.showVideo ? (
-      <div className={mediaControlContainerClasses}>
-        <MediaControl
-          isPlaying={playState === playStates.PLAYING}
-          durationInSeconds={durationInSeconds}
-          playedSeconds={playedSeconds}
-          volume={volume}
-          onSeek={this.handleMediaControlSeek}
-          onTogglePlay={this.handleMediaControlTogglePlay}
-          onVolumeChange={this.handleVolumeChange}
-          />
-      </div>
-    ) : null;
+    const mediaControl = url && !content.showVideo
+      ? (
+        <div className={mediaControlContainerClasses}>
+          <MediaControl
+            isPlaying={playState === playStates.PLAYING}
+            durationInSeconds={durationInSeconds}
+            playedSeconds={playedSeconds}
+            volume={volume}
+            onSeek={this.handleMediaControlSeek}
+            onTogglePlay={this.handleMediaControlTogglePlay}
+            onVolumeChange={this.handleVolumeChange}
+            />
+        </div>
+      )
+      : null;
 
     const containerInnerClasses = classNames({
       'Video-mainPlayerContainer': true,
@@ -150,16 +152,18 @@ class VideoDisplay extends React.Component {
       </div>
     );
 
-    const players = url ? (
-      <div className="Video-players">
-        {mainPlayer}
-        {mediaControl}
-      </div>
-    ) : null;
+    const players = url
+      ? (
+        <div className="Video-players">
+          {mainPlayer}
+          {mediaControl}
+        </div>
+      )
+      : null;
 
-    const text = html ? (
-      <div className="Video-text" dangerouslySetInnerHTML={{ __html: html }} />
-    ) : null;
+    const text = html
+      ? <div className="Video-text" dangerouslySetInnerHTML={{ __html: html }} />
+      : null;
 
     return (
       <div className="Video">

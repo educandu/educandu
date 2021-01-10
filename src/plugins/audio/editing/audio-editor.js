@@ -2,10 +2,11 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import { Form, Input, Radio } from 'antd';
 import validation from '../../../ui/validation';
+import { withTranslation } from 'react-i18next';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
 import ClientSettings from '../../../bootstrap/client-settings';
-import { sectionEditorProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionEditorProps, clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -43,7 +44,7 @@ class AudioEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientSettings } = this.props;
+    const { docKey, content, clientSettings, t } = this.props;
     const { type, url, text } = content;
 
     const formItemLayout = {
@@ -54,19 +55,19 @@ class AudioEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label="Quelle" {...formItemLayout}>
+          <FormItem label={t('source')} {...formItemLayout}>
             <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
-              <RadioButton value="external">Externer Link</RadioButton>
-              <RadioButton value="internal">Elmu CDN</RadioButton>
+              <RadioButton value="external">{t('externalLink')}</RadioButton>
+              <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
             </RadioGroup>
           </FormItem>
           {type === 'external' && (
-            <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(url)} hasFeedback>
+            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
               <Input value={url} onChange={this.handleExternalUrlValueChanged} />
             </FormItem>
           )}
           {type === 'internal' && (
-            <FormItem label="Interne URL" {...formItemLayout}>
+            <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
                   addonBefore={`${clientSettings.cdnRootUrl}/`}
@@ -83,7 +84,7 @@ class AudioEditor extends React.Component {
               </div>
             </FormItem>
           )}
-          <Form.Item label="Copyright Infos" {...formItemLayout}>
+          <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
             <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
@@ -93,10 +94,11 @@ class AudioEditor extends React.Component {
 }
 
 AudioEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps,
   ...clientSettingsProps
 };
 
-export default inject({
+export default withTranslation('audio')(inject({
   clientSettings: ClientSettings
-}, AudioEditor);
+}, AudioEditor));

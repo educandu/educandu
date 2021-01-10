@@ -15,12 +15,13 @@ import uniqueId from '../../utils/unique-id';
 import { inject } from '../container-context';
 import cloneDeep from '../../utils/clone-deep';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation } from 'react-i18next';
 import CheckPermissions from '../check-permissions';
 import MenuApiClient from '../../services/menu-api-client';
 import { EDIT_MENU_STRUCTURE } from '../../domain/permissions';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { menuShape, documentMetadataShape } from '../../ui/default-prop-types';
+import { menuShape, documentMetadataShape, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -387,6 +388,7 @@ class EditMenu extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     const {
       menuNodes,
       menuTitle,
@@ -405,15 +407,15 @@ class EditMenu extends React.Component {
         key: 'save',
         type: 'primary',
         icon: SaveOutlined,
-        text: 'Speichern',
+        text: t('common:save'),
         handleClick: this.handleSaveClick
       });
     }
 
     headerActions.push({
-      key: 'close',
+      key: 'back',
       icon: CloseOutlined,
-      text: 'Zurück',
+      text: t('common:back'),
       handleClick: this.handleBackClick
     });
 
@@ -427,11 +429,9 @@ class EditMenu extends React.Component {
                   <div className="EditMenuPage-editorColumn EditMenuPage-editorColumn--left">
                     <div className="EditMenuPage-editorBox">
                       <div className="Panel">
-                        <div className="Panel-header">
-                          Metadaten
-                        </div>
+                        <div className="Panel-header">{t('metadata')}</div>
                         <div className="Panel-content">
-                          <div>Titel</div>
+                          <div>{t('title')}</div>
                           <div>
                             <Input
                               value={menuTitle}
@@ -440,7 +440,7 @@ class EditMenu extends React.Component {
                               />
                           </div>
                           <br />
-                          <div>URL-Pfad</div>
+                          <div>{t('slug')}</div>
                           <div>
                             <Input
                               addonBefore={urls.menusPrefix}
@@ -450,7 +450,7 @@ class EditMenu extends React.Component {
                               />
                           </div>
                           <br />
-                          <div>Standard-Dokument</div>
+                          <div>{t('defaultDocument')}</div>
                           <div>
                             <Droppable droppableId={DEFAULT_DOCS_DROPPABLE_ID} isDropDisabled={!canEditMenuStructure}>
                               {(droppableProvided, droppableState) => (
@@ -480,9 +480,7 @@ class EditMenu extends React.Component {
                     </div>
                     <div className="EditMenuPage-editorBox">
                       <div className="Panel">
-                        <div className="Panel-header">
-                          Kategorien
-                        </div>
+                        <div className="Panel-header">{t('categories')}</div>
                         <div className="Panel-content">
                           <MenuTree
                             nodes={menuNodes}
@@ -497,11 +495,9 @@ class EditMenu extends React.Component {
                   <div className="EditMenuPage-editorColumn EditMenuPage-editorColumn--right">
                     <div className="EditMenuPage-editorBox">
                       <div className="Panel">
-                        <div className="Panel-header">
-                          Eigenschaften der Kategorie
-                        </div>
+                        <div className="Panel-header">{t('categoryProperties')}</div>
                         <div className="Panel-content">
-                          <div>Titel</div>
+                          <div>{t('title')}</div>
                           <div>
                             <Input
                               value={currentCategoryTitle}
@@ -514,9 +510,7 @@ class EditMenu extends React.Component {
                     </div>
                     <div className="EditMenuPage-editorBox">
                       <div className="Panel">
-                        <div className="Panel-header">
-                          Verlinkte Dokumente in Kategorie
-                        </div>
+                        <div className="Panel-header">{t('linkedDocumentsInCategory')}</div>
                         <div className="Panel-content">
                           <Droppable droppableId={CURRENT_MENU_ITEM_DOC_DROPPABLE_ID} isDropDisabled={!selectedNodeKey}>
                             {(droppableProvided, droppableState) => (
@@ -555,9 +549,7 @@ class EditMenu extends React.Component {
                     </div>
                     <div className="EditMenuPage-editorBox">
                       <div className="Panel">
-                        <div className="Panel-header">
-                          Verfügbare Dokumente
-                        </div>
+                        <div className="Panel-header">{t('availableDocuments')}</div>
                         <div className="Panel-content">
                           <Droppable droppableId={DOCS_DROPPABLE_ID} isDropDisabled>
                             {(droppableProvided, droppableState) => (
@@ -605,6 +597,7 @@ class EditMenu extends React.Component {
 }
 
 EditMenu.propTypes = {
+  ...translationProps,
   initialState: PropTypes.shape({
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
     menu: menuShape.isRequired
@@ -612,6 +605,6 @@ EditMenu.propTypes = {
   menuApiClient: PropTypes.instanceOf(MenuApiClient).isRequired
 };
 
-export default inject({
+export default withTranslation('editMenu')(inject({
   menuApiClient: MenuApiClient
-}, EditMenu);
+}, EditMenu));

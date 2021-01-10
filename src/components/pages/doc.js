@@ -10,11 +10,13 @@ import clipboardCopy from 'clipboard-copy';
 import { inject } from '../container-context';
 import { Button, Slider, message } from 'antd';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation } from 'react-i18next';
 import permissions from '../../domain/permissions';
+import { withLanguage } from '../language-context';
 import { HARD_DELETE } from '../../ui/section-actions';
 import DocumentApiClient from '../../services/document-api-client';
-import { documentRevisionShape } from '../../ui/default-prop-types';
 import { PaperClipOutlined, EditOutlined } from '@ant-design/icons';
+import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -39,15 +41,16 @@ class Doc extends React.Component {
   }
 
   formatRevisionTooltip(index) {
+    const { locale, t } = this.props;
     const revision = this.state.revisions[index];
-    const date = moment(revision.updatedOn).locale('de-DE');
+    const date = moment(revision.updatedOn).locale(locale);
 
     return (
       <div>
-        <div>Revision: <b>{index + 1}</b></div>
-        <div>Datum: <b>{date.format('L')} {date.format('LT')}</b></div>
-        <div>Benutzer: <b>{revision.createdBy.username}</b></div>
-        <div>ID: <b>{revision._id}</b></div>
+        <div>{t('revision')}: <b>{index + 1}</b></div>
+        <div>{t('date')}: <b>{date.format('L, LT')}</b></div>
+        <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
+        <div>{t('id')}: <b>{revision._id}</b></div>
       </div>
     );
   }
@@ -57,15 +60,16 @@ class Doc extends React.Component {
   }
 
   async handlePermalinkRequest() {
+    const { t } = this.props;
     const { currentRevision } = this.state;
     const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(currentRevision._id));
     try {
       await clipboardCopy(permalinkUrl);
-      message.success('Der Permalink wurde in die Zwischenablage kopiert');
+      message.success(t('permalinkCopied'));
     } catch (error) {
       const msg = (
         <span>
-          <span>Der Permalink konnte nicht in die Zwischenablage kopiert werden:</span>
+          <span>{t('permalinkCouldNotBeCopied')}:</span>
           <br />
           <a href={permalinkUrl}>{permalinkUrl}</a>
         </span>
@@ -101,7 +105,7 @@ class Doc extends React.Component {
   }
 
   render() {
-    const { language } = this.props;
+    const { t } = this.props;
     const { revisions, currentRevision } = this.state;
 
     let revisionPicker = null;
@@ -114,7 +118,7 @@ class Doc extends React.Component {
 
       revisionPicker = (
         <div className="DocPage-revisionPicker">
-          <div className="DocPage-revisionPickerLabel">Revision:</div>
+          <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
           <div className="DocPage-revisionPickerSlider">
             <Slider
               min={0}
@@ -132,7 +136,7 @@ class Doc extends React.Component {
               icon={<PaperClipOutlined />}
               onClick={this.handlePermalinkRequest}
               >
-              Permalink
+              {t('permalink')}
             </Button>
           </div>
         </div>
@@ -144,7 +148,7 @@ class Doc extends React.Component {
         key: 'edit',
         type: 'primary',
         icon: EditOutlined,
-        text: 'Bearbeiten',
+        text: t('common:edit'),
         permission: permissions.EDIT_DOC,
         handleClick: this.handleEditClick
       }
@@ -156,7 +160,6 @@ class Doc extends React.Component {
           {revisionPicker}
           <DocView
             documentOrRevision={currentRevision}
-            language={language}
             onAction={this.handleAction}
             />
         </div>
@@ -166,13 +169,14 @@ class Doc extends React.Component {
 }
 
 Doc.propTypes = {
+  ...translationProps,
+  ...languageProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documentRevisions: PropTypes.arrayOf(documentRevisionShape)
-  }).isRequired,
-  language: PropTypes.string.isRequired
+  }).isRequired
 };
 
-export default inject({
+export default withTranslation('doc')(withLanguage(inject({
   documentApiClient: DocumentApiClient
-}, Doc);
+}, Doc)));

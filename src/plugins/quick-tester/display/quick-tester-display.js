@@ -1,11 +1,13 @@
 import React from 'react';
 import { Button } from 'antd';
 import arrayShuffle from 'array-shuffle';
+import { useTranslation } from 'react-i18next';
 import Markdown from '../../../components/markdown';
 import { sectionDisplayProps } from '../../../ui/default-prop-types';
 import { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 function QuickTesterDisplay({ content }) {
+  const { t } = useTranslation('quick-tester');
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [isAnswerVisible, setIsAnswerVisible] = React.useState(false);
   const [tests, setTests] = React.useState(arrayShuffle(content.tests));
@@ -67,7 +69,7 @@ function QuickTesterDisplay({ content }) {
 
   const answerDisplay = isAnswerVisible
     ? <Markdown inline>{tests[currentIndex].answer}</Markdown>
-    : <Button type="primary" size="large" onClick={showAnswer}>Antwort anzeigen</Button>;
+    : <Button type="primary" size="large" onClick={showAnswer}>{t('showAnswer')}</Button>;
 
   return (
     <div className="QuickTester">
@@ -83,7 +85,9 @@ function QuickTesterDisplay({ content }) {
         <div className="QuickTester-progress" style={{ width: `${percentDone}%` }} />
         <div className="QuickTester-test">
           <div className="QuickTester-question">
-            <div className="QuickTester-questionHeader">Frage {currentIndex + 1} von {tests.length}</div>
+            <div className="QuickTester-questionHeader">
+              {t('questionHeader', { currentTest: currentIndex + 1, testsLength: tests.length })}
+            </div>
             <Markdown>{tests[currentIndex].question}</Markdown>
           </div>
           <div className="QuickTester-answer">

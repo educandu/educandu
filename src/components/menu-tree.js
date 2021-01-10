@@ -5,9 +5,10 @@ import treeCrawl from 'tree-crawl';
 import uniqueId from '../utils/unique-id';
 import cloneDeep from '../utils/clone-deep';
 import { inject } from './container-context';
+import { withTranslation } from 'react-i18next';
 import { Tree, Input, Modal, Button } from 'antd';
 import MenuApiClient from '../services/menu-api-client';
-import { menuNodeShape } from '../ui/default-prop-types';
+import { menuNodeShape, translationProps } from '../ui/default-prop-types';
 import Icon, { PlusOutlined, DeleteOutlined, MenuUnfoldOutlined, FileOutlined } from '@ant-design/icons';
 
 const visitMenuNodes = (nodes, cb) => {
@@ -235,7 +236,7 @@ class MenuTree extends React.PureComponent {
   }
 
   render() {
-    const { isReadonly } = this.props;
+    const { isReadonly, t } = this.props;
     const { selectedKey, nodes, isNewNodeModalVisible, newNodeTitle } = this.state;
     return (
       <div>
@@ -250,16 +251,16 @@ class MenuTree extends React.PureComponent {
           />
         <br />
         <br />
-        <Button type="primary" icon={<PlusOutlined />} onClick={this.handleNewNodeClick} disabled={isReadonly}>Neuer Menüeintrag</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={this.handleNewNodeClick} disabled={isReadonly}>{t('newMenuEntry')}</Button>
         &nbsp;
-        {selectedKey && <Button type="danger" icon={<DeleteOutlined />} onClick={this.handleDeleteNodeClick} disabled={isReadonly}>Menüeintrag löschen</Button>}
+        {selectedKey && <Button type="danger" icon={<DeleteOutlined />} onClick={this.handleDeleteNodeClick} disabled={isReadonly}>{t('deleteMenuEntry')}</Button>}
         <Modal
-          title="Neuer Menüeintrag"
+          title={t('newMenuEntry')}
           visible={isNewNodeModalVisible}
           onOk={this.handleNewNodeOk}
           onCancel={this.handleNewNodeCancel}
           >
-          <p>Titel</p>
+          <p>{t('title')}</p>
           <p><Input value={newNodeTitle} onChange={this.handleNewNodeTitleChange} /></p>
         </Modal>
       </div>
@@ -268,6 +269,7 @@ class MenuTree extends React.PureComponent {
 }
 
 MenuTree.propTypes = {
+  ...translationProps,
   isReadonly: PropTypes.bool,
   nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
   onNodesChanged: PropTypes.func.isRequired,
@@ -278,6 +280,6 @@ MenuTree.defaultProps = {
   isReadonly: false
 };
 
-export default inject({
+export default withTranslation('menuTree')(inject({
   menuApiClient: MenuApiClient
-}, MenuTree);
+}, MenuTree));

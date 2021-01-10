@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import urls from '../../../utils/urls';
 import { Form, Input, Radio } from 'antd';
 import validation from '../../../ui/validation';
+import { withTranslation } from 'react-i18next';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
 import ClientSettings from '../../../bootstrap/client-settings';
-import { clientSettingsProps } from '../../../ui/default-prop-types';
+import { clientSettingsProps, translationProps } from '../../../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -49,7 +50,7 @@ class TileEditor extends React.Component {
   }
 
   render() {
-    const { docKey, clientSettings, image, description, link } = this.props;
+    const { docKey, clientSettings, image, description, link, t } = this.props;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -58,19 +59,19 @@ class TileEditor extends React.Component {
 
     return (
       <React.Fragment>
-        <FormItem label="Bildquelle" {...formItemLayout}>
+        <FormItem label={t('imageSource')} {...formItemLayout}>
           <RadioGroup value={image.type} onChange={this.handleImageTypeValueChanged}>
-            <RadioButton value="external">Externer Link</RadioButton>
-            <RadioButton value="internal">Elmu CDN</RadioButton>
+            <RadioButton value="external">{t('externalLink')}</RadioButton>
+            <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {image.type === 'external' && (
-          <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(image.url)} hasFeedback>
+          <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(image.url, t)} hasFeedback>
             <Input value={image.url} onChange={this.handleExternalImageUrlValueChanged} />
           </FormItem>
         )}
         {image.type === 'internal' && (
-          <FormItem label="Interne URL" {...formItemLayout}>
+          <FormItem label={t('internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
                 addonBefore={`${clientSettings.cdnRootUrl}/`}
@@ -87,28 +88,28 @@ class TileEditor extends React.Component {
             </div>
           </FormItem>
         )}
-        <FormItem label="Bildunterschrift" {...formItemLayout}>
+        <FormItem label={t('imageDescription')} {...formItemLayout}>
           <Input value={description} onChange={this.handleDescriptionValueChanged} />
         </FormItem>
-        <FormItem label="Linkquelle" {...formItemLayout}>
+        <FormItem label={t('linkSource')} {...formItemLayout}>
           <RadioGroup value={link.type} onChange={this.handleLinkTypeValueChanged}>
-            <RadioButton value="external">Externer Link</RadioButton>
-            <RadioButton value="menu">Menü-Link</RadioButton>
-            <RadioButton value="article">Artikel-Link</RadioButton>
+            <RadioButton value="external">{t('externalLink')}</RadioButton>
+            <RadioButton value="menu">{t('menuLink')}</RadioButton>
+            <RadioButton value="article">{t('articleLink')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {link.type === 'external' && (
-          <FormItem label="Externe URL" {...formItemLayout} {...validation.validateUrl(link.url, { allowInsecure: true })} hasFeedback>
+          <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(link.url, t, { allowInsecure: true })} hasFeedback>
             <Input value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}
         {link.type === 'menu' && (
-          <FormItem label="Externe URL" {...formItemLayout}>
+          <FormItem label={t('externalUrl')} {...formItemLayout}>
             <Input addonBefore={urls.menusPrefix} value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}
         {link.type === 'article' && (
-          <FormItem label="Externe URL" {...formItemLayout}>
+          <FormItem label={t('externalUrl')} {...formItemLayout}>
             <Input addonBefore={urls.articlesPrefix} value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}
@@ -118,6 +119,7 @@ class TileEditor extends React.Component {
 }
 
 TileEditor.propTypes = {
+  ...translationProps,
   ...clientSettingsProps,
   description: PropTypes.string,
   docKey: PropTypes.string.isRequired,
@@ -137,6 +139,6 @@ TileEditor.defaultProps = {
   description: null
 };
 
-export default inject({
+export default withTranslation('imageTiles')(inject({
   clientSettings: ClientSettings
-}, TileEditor);
+}, TileEditor));

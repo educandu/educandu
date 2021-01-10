@@ -1,5 +1,6 @@
 import { Container } from '../common/di';
 import CdnController from './cdn-controller';
+import I18nController from './i18n-controller';
 import UserController from './user-controller';
 import MenuController from './menu-controller';
 import IndexController from './index-controller';
@@ -11,6 +12,7 @@ import DocumentController from './document-controller';
 
 const controllerTypes = [
   StaticController,
+  I18nController,
   IndexController,
   UserController,
   SettingController,
