@@ -17,6 +17,7 @@ import { HARD_DELETE } from '../../ui/section-actions';
 import DocumentApiClient from '../../services/document-api-client';
 import { PaperClipOutlined, EditOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
+import LanguageNameProvider from '../../data/language-name-provider';
 
 const logger = new Logger(__filename);
 
@@ -41,14 +42,16 @@ class Doc extends React.Component {
   }
 
   formatRevisionTooltip(index) {
-    const { locale, t } = this.props;
+    const { languageNameProvider, language, locale, t } = this.props;
     const revision = this.state.revisions[index];
     const date = moment(revision.updatedOn).locale(locale);
+    const languageName = languageNameProvider.getData(language)[revision.language].name;
 
     return (
       <div>
         <div>{t('revision')}: <b>{index + 1}</b></div>
         <div>{t('date')}: <b>{date.format('L, LT')}</b></div>
+        <div>{t('language')}: <b>{languageName}</b></div>
         <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
         <div>{t('id')}: <b>{revision._id}</b></div>
       </div>
@@ -174,9 +177,11 @@ Doc.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documentRevisions: PropTypes.arrayOf(documentRevisionShape)
-  }).isRequired
+  }).isRequired,
+  languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
 export default withTranslation('doc')(withLanguage(inject({
-  documentApiClient: DocumentApiClient
+  documentApiClient: DocumentApiClient,
+  languageNameProvider: LanguageNameProvider
 }, Doc)));

@@ -9,6 +9,7 @@ import Restricted from '../restricted';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
+import LanguageSelect from '../language-select';
 import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
@@ -17,15 +18,23 @@ import { Input, Modal, Table, Button } from 'antd';
 import { toTrimmedString } from '../../utils/sanitize';
 import DocumentApiClient from '../../services/document-api-client';
 import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types';
+import CountryFlagAndName from '../country-flag-and-name';
+import LanguageNameProvider from '../../data/language-name-provider';
 
 const { Search } = Input;
 
 const logger = new Logger(__filename);
 
 const DEFAULT_DOCUMENT_NAMESPACE = 'articles';
-const DEFAULT_DOCUMENT_LANGUAGE = 'de';
 const DEFAULT_FILTER_INPUT = '';
 const DEFAULT_DOCUMENT_SLUG = '';
+
+function getNewDocLanguageFromUiLanguage(uiLanguage) {
+  switch (uiLanguage) {
+    case 'de': return 'de';
+    default: return 'en';
+  }
+}
 
 class Docs extends React.Component {
   constructor(props) {
@@ -34,6 +43,7 @@ class Docs extends React.Component {
     this.state = {
       filteredDocs: props.initialState.documents.slice(),
       newDocTitle: this.props.t('defaultDocumentTitle'),
+      newDocLanguage: getNewDocLanguageFromUiLanguage(this.props.langauge),
       filterInput: DEFAULT_FILTER_INPUT,
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
       newDocBlueprintKey: null,
@@ -42,21 +52,22 @@ class Docs extends React.Component {
     };
   }
 
-  createNewDocument(title, slug) {
+  createNewDocument(title, language, slug) {
     const { t } = this.props;
     return {
       title: toTrimmedString(title) || t('defaultDocumentTitle'),
       slug: toTrimmedString(slug) || '',
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
-      language: DEFAULT_DOCUMENT_LANGUAGE,
+      language: language,
       sections: []
     };
   }
 
   handleNewDocumentClick() {
-    const { t } = this.props;
+    const { language, t } = this.props;
     this.setState({
       newDocTitle: t('defaultDocumentTitle'),
+      newDocLanguage: getNewDocLanguageFromUiLanguage(language),
       newDocSlug: DEFAULT_DOCUMENT_SLUG,
       newDocBlueprintKey: null,
       isNewDocModalVisible: true
@@ -65,6 +76,10 @@ class Docs extends React.Component {
 
   handleNewDocTitleChange(event) {
     this.setState({ newDocTitle: event.target.value });
+  }
+
+  handleNewDocLanguageChange(value) {
+    this.setState({ newDocLanguage: value });
   }
 
   handleNewDocSlugChange(event) {
@@ -82,13 +97,13 @@ class Docs extends React.Component {
   }
 
   async handleOk() {
-    const { newDocTitle, newDocSlug, newDocBlueprintKey } = this.state;
+    const { newDocTitle, newDocLanguage, newDocSlug, newDocBlueprintKey } = this.state;
     const { documentApiClient } = this.props;
 
     try {
       this.setState({ isLoading: true });
 
-      const data = this.createNewDocument(newDocTitle, newDocSlug);
+      const data = this.createNewDocument(newDocTitle, newDocLanguage, newDocSlug);
       const { documentRevision } = await documentApiClient.saveDocument(data);
 
       this.setState({
@@ -111,6 +126,7 @@ class Docs extends React.Component {
     const { t } = this.props;
     this.setState({
       newDocTitle: doc.title ? `${doc.title} ${t('copyTitleSuffix')}` : t('defaultDocumentTitle'),
+      newDocLanguage: doc.language,
       newDocSlug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : DEFAULT_DOCUMENT_SLUG,
       newDocBlueprintKey: doc.key,
       isNewDocModalVisible: true
@@ -127,6 +143,12 @@ class Docs extends React.Component {
     return <span>{date.format('L, LT')}</span>;
   }
 
+  renderLanguage(value, doc) {
+    const { languageNameProvider, language } = this.props;
+    const lang = languageNameProvider.getData(language)[doc.language];
+    return <CountryFlagAndName code={lang.flag} name={`${doc.language} (${lang.name})`} flagOnly />;
+  }
+
   renderUpdatedBy(value, doc) {
     const { t } = this.props;
     return doc.updatedBy.email
@@ -141,7 +163,7 @@ class Docs extends React.Component {
 
   render() {
     const { t } = this.props;
-    const { newDocTitle, newDocSlug, isNewDocModalVisible, isLoading, filterInput, filteredDocs } = this.state;
+    const { newDocTitle, newDocLanguage, newDocSlug, isNewDocModalVisible, isLoading, filterInput, filteredDocs } = this.state;
 
     const columns = [
       {
@@ -150,6 +172,13 @@ class Docs extends React.Component {
         key: 'title',
         render: this.renderTitle,
         sorter: by(x => x.title)
+      },
+      {
+        title: t('language'),
+        dataIndex: 'language',
+        key: 'language',
+        render: this.renderLanguage,
+        sorter: by(x => x.language)
       },
       {
         title: t('udateDate'),
@@ -201,6 +230,8 @@ class Docs extends React.Component {
             >
             <p>{t('title')}</p>
             <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
+            <p>{t('language')}</p>
+            <p><LanguageSelect value={newDocLanguage} onChange={this.handleNewDocLanguageChange} /></p>
             <p>{t('slug')}</p>
             <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
             {isLoading && <p>{t('newDocumentProgress')}</p>}
@@ -217,9 +248,11 @@ Docs.propTypes = {
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired
-  }).isRequired
+  }).isRequired,
+  languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
 export default withTranslation('docs')(withLanguage(inject({
-  documentApiClient: DocumentApiClient
+  documentApiClient: DocumentApiClient,
+  languageNameProvider: LanguageNameProvider
 }, Docs)));

@@ -7,6 +7,9 @@ date:
 user:
   en: User
   de: Benutzer
+language:
+  en: Language
+  de: Sprache
 id:
   en: ID
   de: ID

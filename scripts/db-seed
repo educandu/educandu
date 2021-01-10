@@ -71,7 +71,14 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
 
   const docs = await Promise.all(docPayloads.map(payload => documentService.createDocumentRevision(payload)));
   await Promise.all(menuPayloads.map(payload => menuService.saveMenu(payload)));
-  await settingService.setLandingPageDocumentId(docs.find(doc => doc.title === 'Landing Page').key);
+
+  const landingPageKey = docs.find(doc => doc.title === 'Landing Page').key;
+  await settingService.setLandingPage({
+    documentKeys: {
+      de: landingPageKey
+    },
+    defaultLanguage: 'de'
+  });
 
   await serverBootstrapper.disposeContainer(container);
 

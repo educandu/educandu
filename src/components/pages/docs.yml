@@ -16,6 +16,9 @@ clone:
 title:
   en: Title
   de: Titel
+language:
+  en: Language
+  de: Sprache
 slug:
   en: URL path
   de: URL-Pfad

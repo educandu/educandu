@@ -4,6 +4,7 @@ import Page from '../page';
 import gravatar from 'gravatar';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
+import memoizeOne from 'memoize-one';
 import Logger from '../../common/logger';
 import { withUser } from '../user-context';
 import localeCompare from 'locale-compare';
@@ -29,13 +30,17 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
-    const { countryNameProvider, language } = this.props;
+    this.createCountryNames = memoizeOne(this.createCountryNames);
+
     this.state = {
-      countryNames: Object.entries(countryNameProvider.getData(language))
-        .map(([key, name]) => ({ key, name }))
-        .sort(by(x => x.name, { cmp: localeCompare(language) })),
       showAvatarDescription: false
     };
+  }
+
+  createCountryNames(countryNameProvider, language) {
+    return Object.entries(countryNameProvider.getData(language))
+      .map(([key, name]) => ({ key, name }))
+      .sort(by(x => x.name, { cmp: localeCompare(language) }));
   }
 
   async saveProfile(profileToSave) {
@@ -74,8 +79,8 @@ class Profile extends React.Component {
   }
 
   render() {
-    const { countryNames, showAvatarDescription } = this.state;
-    const { user, language, t } = this.props;
+    const { showAvatarDescription } = this.state;
+    const { countryNameProvider, user, language, t } = this.props;
     const profile = user.profile || { country: '' };
     const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
 
@@ -157,9 +162,9 @@ class Profile extends React.Component {
           </FormItem>
           <FormItem {...formItemLayout} label={t('country')} name="country" initialValue={profile.country || ''}>
             <Select optionFilterProp="title" showSearch allowClear>
-              {countryNames.map(cn => (
+              {this.createCountryNames(countryNameProvider, language).map(cn => (
                 <Option key={cn.key} value={cn.key} title={cn.name}>
-                  <CountryFlagAndName code={cn.key} />
+                  <CountryFlagAndName code={cn.key} name={cn.name} />
                 </Option>
               ))}
             </Select>

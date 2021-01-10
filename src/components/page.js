@@ -1,4 +1,3 @@
-import React from 'react';
 import urls from '../utils/urls';
 import ElmuLogo from './elmu-logo';
 import PropTypes from 'prop-types';
@@ -8,15 +7,32 @@ import Restricted from './restricted';
 import LoginLogout from './login-logout';
 import LinkPopover from './link-popover';
 import permissions from '../domain/permissions';
+import { useService } from './container-context';
+import { useLanguage } from './language-context';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../components/user-context';
 import { Trans, useTranslation } from 'react-i18next';
+import CountryFlagAndName from './country-flag-and-name';
+import LanguageNameProvider from '../data/language-name-provider';
 import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
 
+function createLanguagesToChoose(languageNameProvider, supportedLanguages, language) {
+  const data = languageNameProvider.getData(language);
+  return supportedLanguages.map(lang => ({ ...data[lang], code: lang }));
+}
+
 function Page({ children, disableProfileWarning, fullScreen, headerActions, customAlerts }) {
   const user = useUser();
+  const languageNameProvider = useService(LanguageNameProvider);
+  const { supportedLanguages, language } = useLanguage();
+  const [languagesToChoose, setLanguagesToChoose] = useState(createLanguagesToChoose(languageNameProvider, supportedLanguages, language));
   const { t, i18n } = useTranslation('page');
+
+  useEffect(() => {
+    setLanguagesToChoose(createLanguagesToChoose(languageNameProvider, supportedLanguages, language));
+  }, [languageNameProvider, supportedLanguages, language]);
 
   const pageHeaderAreaClasses = classNames({
     'Page-headerArea': true,
@@ -113,13 +129,14 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
           </div>
           <div className="Page-headerContent Page-headerContent--right">
             <div>
-              <Button type="link" onClick={() => i18n.changeLanguage('de')}>
-                <span className="flag-icon flag-icon-de" />
-              </Button>
-              /
-              <Button type="link" onClick={() => i18n.changeLanguage('en')}>
-                <span className="flag-icon flag-icon-us" />
-              </Button>
+              {languagesToChoose.map((lang, index) => (
+                <React.Fragment key={lang.code}>
+                  {index !== 0 && <span>/</span>}
+                  <Button type="link" size="small" onClick={() => i18n.changeLanguage(lang.code)}>
+                    <CountryFlagAndName code={lang.flag} name={lang.name} flagOnly />
+                  </Button>
+                </React.Fragment>
+              ))}
             </div>
             <Button className="Page-headerButton" icon={<QuestionOutlined />} href={urls.getArticleUrl('hilfe')} />
             <LinkPopover items={pageMenuItems} trigger="hover" placement="bottom">

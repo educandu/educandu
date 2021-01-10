@@ -2,8 +2,11 @@ header:
   en: Metadata
   de: Metadaten
 title:
-  en: Titel
+  en: Title
   de: Titel
+language:
+  en: Language
+  de: Sprache
 slug:
   en: URL path
   de: URL-Pfad

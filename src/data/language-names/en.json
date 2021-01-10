@@ -1,0 +1,178 @@
+{
+  "be": {
+    "name": "Belarusian",
+    "flag": "BY"
+  },
+  "bg": {
+    "name": "Bulgarian",
+    "flag": "BG"
+  },
+  "bs": {
+    "name": "Bosnian",
+    "flag": "BA"
+  },
+  "cs": {
+    "name": "Czech",
+    "flag": "CZ"
+  },
+  "da": {
+    "name": "Danish",
+    "flag": "DK"
+  },
+  "de": {
+    "name": "German",
+    "flag": "DE"
+  },
+  "el": {
+    "name": "Greek",
+    "flag": "GR"
+  },
+  "en": {
+    "name": "English",
+    "flag": "US"
+  },
+  "es": {
+    "name": "Spanish",
+    "flag": "ES"
+  },
+  "et": {
+    "name": "Estonian",
+    "flag": "EE"
+  },
+  "fi": {
+    "name": "Finnish",
+    "flag": "FI"
+  },
+  "fr": {
+    "name": "French",
+    "flag": "FR"
+  },
+  "ga": {
+    "name": "Irish",
+    "flag": "IE"
+  },
+  "hr": {
+    "name": "Croatian",
+    "flag": "HR"
+  },
+  "hu": {
+    "name": "Hungarian",
+    "flag": "HU"
+  },
+  "hy": {
+    "name": "Armenian",
+    "flag": "AM"
+  },
+  "is": {
+    "name": "Icelandic",
+    "flag": "IS"
+  },
+  "it": {
+    "name": "Italian",
+    "flag": "IT"
+  },
+  "ja": {
+    "name": "Japanese",
+    "flag": "JP"
+  },
+  "ka": {
+    "name": "Georgian",
+    "flag": "GE"
+  },
+  "kk": {
+    "name": "Kazakh",
+    "flag": "KZ"
+  },
+  "ko": {
+    "name": "Korean",
+    "flag": "KR"
+  },
+  "lb": {
+    "name": "Luxembourgish",
+    "flag": "LU"
+  },
+  "lt": {
+    "name": "Lithuanian",
+    "flag": "LT"
+  },
+  "lv": {
+    "name": "Latvian",
+    "flag": "LV"
+  },
+  "mk": {
+    "name": "Macedonian",
+    "flag": "MK"
+  },
+  "mt": {
+    "name": "Maltese",
+    "flag": "MT"
+  },
+  "nl": {
+    "name": "Dutch",
+    "flag": "NL"
+  },
+  "no": {
+    "name": "Norwegian",
+    "flag": "NO"
+  },
+  "pl": {
+    "name": "Polish",
+    "flag": "PL"
+  },
+  "pt": {
+    "name": "Portuguese",
+    "flag": "PT"
+  },
+  "ro": {
+    "name": "Romanian",
+    "flag": "RO"
+  },
+  "ru": {
+    "name": "Russian",
+    "flag": "RU"
+  },
+  "sk": {
+    "name": "Slovak",
+    "flag": "SK"
+  },
+  "sl": {
+    "name": "Slovenian",
+    "flag": "SI"
+  },
+  "sq": {
+    "name": "Albanian",
+    "flag": "AL"
+  },
+  "sr": {
+    "name": "Serbian",
+    "flag": "RS"
+  },
+  "sv": {
+    "name": "Swedish",
+    "flag": "SE"
+  },
+  "sw": {
+    "name": "Swahili",
+    "flag": "TZ"
+  },
+  "th": {
+    "name": "Thai",
+    "flag": "TH"
+  },
+  "tr": {
+    "name": "Turkish",
+    "flag": "TR"
+  },
+  "uk": {
+    "name": "Ukrainian",
+    "flag": "UA"
+  },
+  "vi": {
+    "name": "Vietnamese",
+    "flag": "VN"
+  },
+  "zh": {
+    "name": "Chinese",
+    "flag": "CN"
+  }
+}

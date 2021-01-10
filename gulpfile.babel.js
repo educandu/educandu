@@ -2,7 +2,6 @@
 /* eslint no-console: off */
 /* eslint no-process-env: off */
 
-import fs from 'fs';
 import del from 'del';
 import path from 'path';
 import glob from 'glob';
@@ -18,12 +17,12 @@ import { promisify } from 'util';
 import plumber from 'gulp-plumber';
 import superagent from 'superagent';
 import { runCLI } from '@jest/core';
+import { promises as fs } from 'fs';
 import { spawn } from 'child_process';
 import { Docker } from 'docker-cli-js';
 import sourcemaps from 'gulp-sourcemaps';
 import { parse as parseEs5 } from 'acorn';
 import realFavicon from 'gulp-real-favicon';
-import streamToPromise from 'stream-to-promise';
 import LessAutoprefix from 'less-plugin-autoprefix';
 import { src, dest, parallel, series, watch } from 'gulp';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
@@ -85,10 +84,9 @@ const ensureContainerRemoved = async ({ containerName }) => {
   }
 };
 
-const downloadCountryList = lang => {
-  return superagent
-    .get(`https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`)
-    .pipe(fs.createWriteStream(`./src/data/country-names/${lang}.json`));
+const downloadCountryList = async lang => {
+  const res = await superagent.get(`https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`);
+  await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(JSON.parse(res.text), null, 2), 'utf8');
 };
 
 const tasks = {};
@@ -359,11 +357,17 @@ tasks.faviconGenerate = function faviconGenerate(done) {
       paramValue: 'cakfaagb'
     },
     markupFile: FAVICON_DATA_FILE
-  }, () => done());
+  }, async () => {
+    const faviconData = await fs.readFile(FAVICON_DATA_FILE, 'utf8');
+    const faviconDataPrettified = JSON.stringify(JSON.parse(faviconData), null, 2);
+    await fs.writeFile(FAVICON_DATA_FILE, faviconDataPrettified, 'utf8');
+    done();
+  });
 };
 
-tasks.faviconCheckUpdate = function faviconCheckUpdate(done) {
-  const currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).version;
+tasks.faviconCheckUpdate = async function faviconCheckUpdate(done) {
+  const faviconData = await fs.readFile(FAVICON_DATA_FILE, 'utf8');
+  const currentVersion = JSON.parse(faviconData).version;
   realFavicon.checkForUpdates(currentVersion, done);
 };
 
@@ -374,7 +378,8 @@ tasks.verifyEs5compat = async function verifyEs5compat() {
   const errors = [];
 
   for (const file of files) {
-    const content = fs.readFileSync(file, 'utf8');
+    // eslint-disable-next-line no-await-in-loop
+    const content = await fs.readFile(file, 'utf8');
 
     try {
       parseEs5(content, { ecmaVersion: 5 });
@@ -398,7 +403,7 @@ tasks.verifyEs5compat = async function verifyEs5compat() {
 tasks.verify = parallel(tasks.verifyEs5compat);
 
 tasks.countriesUpdate = async function countriesUpdate() {
-  await Promise.all(supportedLanguages.map(downloadCountryList).map(streamToPromise));
+  await Promise.all(supportedLanguages.map(downloadCountryList));
 };
 
 tasks.maildevUp = async function maildevUp() {

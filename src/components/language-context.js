@@ -37,8 +37,9 @@ function setLanguageCookie(language) {
 }
 
 const createLanguageAndLocale = mem(language => {
+  const supportedLanguages = SUPPORTED_UI_LANGUAGES;
   const locale = getLocale(language);
-  return { language, locale };
+  return { supportedLanguages, language, locale };
 });
 
 export function LanguageProvider({ value, children }) {

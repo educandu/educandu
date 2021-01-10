@@ -1,25 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useService } from './container-context';
-import { useLanguage } from './language-context';
-import CountryNameProvider from '../data/country-name-provider';
 
-function CountryFlagAndName({ code }) {
-  const { language } = useLanguage();
-  const countryNameProvider = useService(CountryNameProvider);
-  const data = countryNameProvider.getData(language);
-  const name = data[code] || code;
+function CountryFlagAndName({ code, name, flagOnly }) {
   return (
     <span className="CountryFlagAndName">
-      <span className={`flag-icon flag-icon-${code.toLowerCase()}`} />
-      &nbsp;&nbsp;
-      <span>{name}</span>
+      <span className={`flag-icon flag-icon-${code.toLowerCase()}`} title={name} />
+      {!flagOnly && <span>&nbsp;&nbsp;{name}</span>}
     </span>
   );
 }
 
 CountryFlagAndName.propTypes = {
-  code: PropTypes.string.isRequired
+  code: PropTypes.string.isRequired,
+  flagOnly: PropTypes.bool,
+  name: PropTypes.string.isRequired
+};
+
+CountryFlagAndName.defaultProps = {
+  flagOnly: false
 };
 
 export default CountryFlagAndName;

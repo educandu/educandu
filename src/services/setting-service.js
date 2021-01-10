@@ -19,13 +19,13 @@ class SettingService {
     return Promise.all(Object.keys(settings).map(key => this.settingStore.save({ _id: key, value: settings[key] })));
   }
 
-  async getLandingPageDocumentId() {
-    const setting = await this.settingStore.findOne({ _id: 'landingPageDocumentId' });
+  async getLandingPage() {
+    const setting = await this.settingStore.findOne({ _id: 'landingPage' });
     return setting ? setting.value : null;
   }
 
-  async setLandingPageDocumentId(docId) {
-    await this.settingStore.save({ _id: 'landingPageDocumentId', value: docId });
+  async setLandingPage(value) {
+    await this.settingStore.save({ _id: 'landingPage', value: value });
   }
 }
 

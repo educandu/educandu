@@ -15,7 +15,8 @@ class IndexController {
 
   registerPages(router) {
     router.get('/', async (req, res) => {
-      const lpDocId = await this.settingService.getLandingPageDocumentId();
+      const setting = await this.settingService.getLandingPage();
+      const lpDocId = setting ? setting.documentKeys[setting.defaultLanguage] : null;
       const doc = lpDocId ? await this.documentService.getDocumentByKey(lpDocId) : null;
       const mappedDoc = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'index', { document: mappedDoc });

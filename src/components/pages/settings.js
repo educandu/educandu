@@ -12,6 +12,13 @@ import { settingsShape, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
+const defaultLandingPageSettings = {
+  documentKeys: {
+    de: ''
+  },
+  defaultLanguage: 'de'
+};
+
 class Settings extends React.Component {
   constructor(props) {
     super(props);
@@ -21,13 +28,18 @@ class Settings extends React.Component {
     };
   }
 
-  handleLandingPageDocumentIdChange(event) {
-    const value = event.target.value || null;
+  handleLandingPageDocumentKeyChange(event) {
+    const value = event.target.value || '';
     this.setState(prevState => ({
       ...prevState,
       settings: {
         ...prevState.settings,
-        landingPageDocumentId: value
+        landingPage: {
+          ...prevState.settings.landingPage,
+          documentKeys: {
+            de: value
+          }
+        }
       }
     }));
   }
@@ -52,7 +64,11 @@ class Settings extends React.Component {
           <h1>{t('pageNames:settings')}</h1>
           <div className="SettingsPage-formItem">
             <label className="SettingsPage-formItemLabel">{t('landingPageKey')}</label>
-            <Input className="SettingsPage-formItemInput" value={settings.landingPageDocumentId || ''} onChange={this.handleLandingPageDocumentIdChange} />
+            <Input
+              className="SettingsPage-formItemInput"
+              value={settings.landingPage || defaultLandingPageSettings}
+              onChange={this.handleLandingPageDocumentKeyChange}
+              />
           </div>
           <div className="SettingsPage-submitButton">
             <Button onClick={this.handleSaveClick} type="primary">{t('common:save')}</Button>

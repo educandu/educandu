@@ -3,9 +3,14 @@ import autoBind from 'auto-bind';
 import urls from '../utils/urls';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
+import { inject } from './container-context';
+import LanguageSelect from './language-select';
 import { withTranslation } from 'react-i18next';
+import { withLanguage } from './language-context';
+import CountryFlagAndName from './country-flag-and-name';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import { documentRevisionShape, translationProps } from '../ui/default-prop-types';
+import LanguageNameProvider from '../data/language-name-provider';
+import { documentRevisionShape, translationProps, languageProps } from '../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -34,41 +39,52 @@ class DocumentMetadataEditor extends React.Component {
 
   handleTitleChange(event) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ title: event.target.value, slug: documentRevision.slug });
+    onChanged({ ...documentRevision, title: event.target.value });
+  }
+
+  handleLanguageChange(value) {
+    const { onChanged, documentRevision } = this.props;
+    onChanged({ ...documentRevision, language: value });
   }
 
   handleSlugChange(event) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ title: documentRevision.title, slug: event.target.value });
+    onChanged({ ...documentRevision, slug: event.target.value });
   }
 
   render() {
     const { mode } = this.state;
-    const { documentRevision, t } = this.props;
+    const { documentRevision, languageNameProvider, language, t } = this.props;
 
+    let docLanguage;
     let componentToShow;
     switch (mode) {
       case MODE_PREVIEW:
+        docLanguage = languageNameProvider.getData(language)[documentRevision.language];
         componentToShow = (
           <div>
             <span>{t('title')}:</span> <span>{documentRevision.title}</span>
+            <br />
+            <span>{t('language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
             <br />
             <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getArticleUrl(documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
           </div>
         );
         break;
       case MODE_EDIT:
+        docLanguage = null;
         componentToShow = (
           <div>
             <span>{t('title')}:</span> <Input value={documentRevision.title} onChange={this.handleTitleChange} />
+            <br />
+            <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={this.handleLanguageChange} />
             <br />
             <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
           </div>
         );
         break;
       default:
-        componentToShow = null;
-        break;
+        throw new Error(`Unsupported mode '${mode}'`);
     }
 
     return (
@@ -96,8 +112,12 @@ class DocumentMetadataEditor extends React.Component {
 
 DocumentMetadataEditor.propTypes = {
   ...translationProps,
+  ...languageProps,
   documentRevision: documentRevisionShape.isRequired,
+  languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired,
   onChanged: PropTypes.func.isRequired
 };
 
-export default withTranslation('documentMetadataEditor')(DocumentMetadataEditor);
+export default withTranslation('documentMetadataEditor')(withLanguage(inject({
+  languageNameProvider: LanguageNameProvider
+}, DocumentMetadataEditor)));
