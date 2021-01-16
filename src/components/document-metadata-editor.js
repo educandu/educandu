@@ -1,15 +1,15 @@
 import React from 'react';
-import autoBind from 'auto-bind';
 import urls from '../utils/urls';
+import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
 import { inject } from './container-context';
-import LanguageSelect from './language-select';
 import { withTranslation } from 'react-i18next';
 import { withLanguage } from './language-context';
-import CountryFlagAndName from './country-flag-and-name';
+import LanguageSelect from './localization/language-select';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import LanguageNameProvider from '../data/language-name-provider';
+import CountryFlagAndName from './localization/country-flag-and-name';
 import { documentRevisionShape, translationProps, languageProps } from '../ui/default-prop-types';
 
 const RadioButton = Radio.Button;

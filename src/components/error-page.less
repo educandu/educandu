@@ -95,3 +95,11 @@
   justify-content: center;
   padding: @global-content-padding;
 }
+
+.ErrorPage-footerLink {
+  display: inline-block;
+
+  &:not(:last-child)::after {
+    content: "\00A0\00A0|\00A0\00A0";
+  }
+}

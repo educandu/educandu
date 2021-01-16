@@ -10,9 +10,9 @@ import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
 import { withTranslation } from 'react-i18next';
 import UserRoleTagEditor from '../user-role-tag-editor';
-import CountryFlagAndName from '../country-flag-and-name';
 import UserApiClient from '../../services/user-api-client';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import CountryFlagAndName from '../localization/country-flag-and-name';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor';
 import { userShape, translationProps } from '../../ui/default-prop-types';
 

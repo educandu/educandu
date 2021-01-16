@@ -9,11 +9,12 @@ import LinkPopover from './link-popover';
 import permissions from '../domain/permissions';
 import { useService } from './container-context';
 import { useLanguage } from './language-context';
+import { useSettings } from './settings-context';
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../components/user-context';
 import { Trans, useTranslation } from 'react-i18next';
-import CountryFlagAndName from './country-flag-and-name';
 import LanguageNameProvider from '../data/language-name-provider';
+import CountryFlagAndName from './localization/country-flag-and-name';
 import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
@@ -25,10 +26,11 @@ function createLanguagesToChoose(languageNameProvider, supportedLanguages, langu
 
 function Page({ children, disableProfileWarning, fullScreen, headerActions, customAlerts }) {
   const user = useUser();
-  const languageNameProvider = useService(LanguageNameProvider);
-  const { supportedLanguages, language } = useLanguage();
-  const [languagesToChoose, setLanguagesToChoose] = useState(createLanguagesToChoose(languageNameProvider, supportedLanguages, language));
+  const settings = useSettings();
   const { t, i18n } = useTranslation('page');
+  const { supportedLanguages, language } = useLanguage();
+  const languageNameProvider = useService(LanguageNameProvider);
+  const [languagesToChoose, setLanguagesToChoose] = useState(createLanguagesToChoose(languageNameProvider, supportedLanguages, language));
 
   useEffect(() => {
     setLanguagesToChoose(createLanguagesToChoose(languageNameProvider, supportedLanguages, language));
@@ -70,6 +72,8 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
         <Button
           className="Page-headerButton"
           type={action.type || 'default'}
+          loading={!!action.loading}
+          disabled={!!action.disabled}
           icon={<Icon component={action.icon} />}
           onClick={action.handleClick}
           >
@@ -138,7 +142,14 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
                 </React.Fragment>
               ))}
             </div>
-            <Button className="Page-headerButton" icon={<QuestionOutlined />} href={urls.getArticleUrl('hilfe')} />
+            {settings.helpPage[language] && (
+              <Button
+                className="Page-headerButton"
+                icon={<QuestionOutlined />}
+                title={settings.helpPage[language].linkTitle}
+                href={urls.getArticleUrl(settings.helpPage[language].documentSlug)}
+                />
+            )}
             <LinkPopover items={pageMenuItems} trigger="hover" placement="bottom">
               <Button className="Page-headerButton" icon={<MenuOutlined />} />
             </LinkPopover>
@@ -159,14 +170,11 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       </main>
       <footer className="Page-footer">
         <div className="Page-footerContent">
-          <span className="Page-footerLine">
-            <span className="Page-footerLink"><a href={urls.getArticleUrl('ueber-elmu')}>Über ELMU</a></span>
-            <span className="Page-footerLink"><a href={urls.getArticleUrl('organisation')}>Organisation</a></span>
-          </span>
-          <span className="Page-footerLine">
-            <span className="Page-footerLink"><a href={urls.getArticleUrl('nutzungsvertrag')}>Nutzungsvertrag</a></span>
-            <span className="Page-footerLink"><a href={urls.getArticleUrl('datenschutz')}>Datenschutz</a></span>
-          </span>
+          {(settings.footerLinks?.[language] || []).map((fl, index) => (
+            <span key={index.toString()} className="Page-footerLink">
+              <a href={urls.getArticleUrl(fl.documentSlug)}>{fl.linkTitle}</a>
+            </span>
+          ))}
         </div>
       </footer>
     </div>
@@ -187,7 +195,8 @@ Page.propTypes = {
     key: PropTypes.string.isRequired,
     permission: PropTypes.string,
     text: PropTypes.string.isRequired,
-    type: PropTypes.string
+    type: PropTypes.string,
+    loading: PropTypes.bool
   }))
 };
 

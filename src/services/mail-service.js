@@ -18,9 +18,15 @@ class MailService {
     const message = {
       from: ELMU_WEB_EMAIL_ADDRESS,
       to: emailAddress,
-      subject: 'Willkommen auf elmu!',
-      text: `Willkommen! Sie haben sich erfolgreich auf elmu registriert. Bitte bestätigen Sie Ihre Registrierung hier: ${verificationLink}`,
-      html: `<p>Willkommen! Sie haben sich erfolgreich auf elmu registriert. Bitte bestätigen Sie Ihre Registrierung hier: <a href="${verificationLink}">Registrierung bestätigen</a></p>`
+      subject: 'Willkommen auf ELMU! / Welcome to ELMU!',
+      text: [
+        `Willkommen! Sie haben sich erfolgreich auf ELMU registriert. Bitte bestätigen Sie Ihre Registrierung hier: ${verificationLink}`,
+        `Welcome! You have registered successfully with ELMU. Please confirm your registration here: ${verificationLink}`
+      ].join('\n\n'),
+      html: [
+        `<p>Willkommen! Sie haben sich erfolgreich auf ELMU registriert. Bitte bestätigen Sie Ihre Registrierung hier: <a href="${verificationLink}">Registrierung bestätigen</a></p>`,
+        `<p>Welcome! You have registered successfully with ELMU. Please confirm your registration here: <a href="${verificationLink}">confirm registration</a></p>`
+      ].join('\n')
     };
 
     return this._sendMail(message);
@@ -31,9 +37,15 @@ class MailService {
     const message = {
       from: ELMU_WEB_EMAIL_ADDRESS,
       to: emailAddress,
-      subject: 'Ihr Kennwort auf ELMU',
-      text: `Sie möchten Ihr Kennwort auf elmu ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: ${completionLink}`,
-      html: `<p>Sie möchten Ihr Kennwort auf elmu ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: <a href="${completionLink}">Kennwort ändern</a>.</p>`
+      subject: 'Ihr Kennwort auf ELMU / Your password for ELMU',
+      text: [
+        `Sie möchten Ihr Kennwort auf ELMU ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: ${completionLink}`,
+        `You want to change your password for ELMU? Please click here in order to change your password: ${completionLink}`
+      ].join('\n\n'),
+      html: [
+        `<p>Sie möchten Ihr Kennwort auf ELMU ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: <a href="${completionLink}">Kennwort ändern</a>.</p>`,
+        `<p>You want to change your password for ELMU? Please click here in order to change your password: <a href="${completionLink}">change password</a>.</p>`
+      ].join('\n')
     };
 
     return this._sendMail(message);

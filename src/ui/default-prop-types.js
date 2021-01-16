@@ -38,9 +38,33 @@ export const requestProps = {
   }).isRequired
 };
 
+export const homeLanguageSettingProps = {
+  language: PropTypes.string.isRequired,
+  documentKey: PropTypes.string.isRequired,
+  searchFieldButton: PropTypes.string.isRequired,
+  searchFieldPlaceholder: PropTypes.string.isRequired
+};
+
+export const homeLanguageShape = PropTypes.shape(homeLanguageSettingProps);
+
+const settingsDocumentProps = {
+  linkTitle: PropTypes.string.isRequired,
+  documentNamespace: PropTypes.string.isRequired,
+  documentSlug: PropTypes.string.isRequired
+};
+
+export const settingsDocumentShape = PropTypes.shape(settingsDocumentProps);
+
 export const settingsShape = PropTypes.shape({
-  landingPage: PropTypes.object
+  homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,
+  helpPage: PropTypes.objectOf(settingsDocumentShape).isRequired,
+  termsPage: PropTypes.objectOf(settingsDocumentShape).isRequired,
+  footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)).isRequired
 });
+
+export const settingsProps = {
+  settings: settingsShape.isRequired
+};
 
 export const userProfileShape = PropTypes.shape({
   city: PropTypes.string,
@@ -70,10 +94,6 @@ export const userProps = {
 export const languageProps = {
   language: PropTypes.string.isRequired,
   locale: PropTypes.string.isRequired
-};
-
-export const settingsProps = {
-  settings: PropTypes.object.isRequired
 };
 
 const userInDocShape = PropTypes.shape({

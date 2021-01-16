@@ -98,8 +98,8 @@ export function getDefaultLogoutRedirectUrl() {
   return homePath;
 }
 
-export function getHomeUrl() {
-  return homePath;
+export function getHomeUrl(language = null) {
+  return language ? `${homePath}?language=${urlencode(language)}` : homePath;
 }
 
 export function getLoginUrl(redirect = null) {

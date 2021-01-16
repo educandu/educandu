@@ -9,17 +9,17 @@ import Restricted from '../restricted';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
-import LanguageSelect from '../language-select';
 import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
 import { withLanguage } from '../language-context';
 import { Input, Modal, Table, Button } from 'antd';
 import { toTrimmedString } from '../../utils/sanitize';
+import LanguageSelect from '../localization/language-select';
 import DocumentApiClient from '../../services/document-api-client';
-import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types';
-import CountryFlagAndName from '../country-flag-and-name';
 import LanguageNameProvider from '../../data/language-name-provider';
+import CountryFlagAndName from '../localization/country-flag-and-name';
+import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 

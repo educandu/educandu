@@ -6,17 +6,19 @@ import MailService from '../services/mail-service';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
 import SettingService from '../services/setting-service';
+import DocumentService from '../services/document-service';
 import needsPermission from '../domain/needs-permission-middleware';
 
 const jsonParser = express.json();
 
 class SettingController {
-  static get inject() { return [ServerConfig, Database, SettingService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, Database, SettingService, DocumentService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, database, settingService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, database, settingService, documentService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.database = database;
     this.settingService = settingService;
+    this.documentService = documentService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
@@ -24,7 +26,12 @@ class SettingController {
 
   registerPages(app) {
     app.get('/settings', needsPermission(permissions.EDIT_SETTINGS), async (req, res) => {
-      const initialState = await this.settingService.getAllSettings();
+      const [settings, docs] = await Promise.all([
+        this.settingService.getAllSettings(),
+        this.documentService.getAllDocumentsMetadata()
+      ]);
+      const documents = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
+      const initialState = { settings, documents };
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'settings', initialState);
     });
   }

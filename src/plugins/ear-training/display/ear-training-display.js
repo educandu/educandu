@@ -3,7 +3,6 @@ import autoBind from 'auto-bind';
 import arrayShuffle from 'array-shuffle';
 import { withTranslation } from 'react-i18next';
 import abcjs from '../../../common/abcjs-import';
-import memoizeLast from '../../../utils/memoize-last';
 import AudioPlayer from '../../../components/audio-player';
 import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
@@ -32,9 +31,7 @@ class EarTrainingDisplay extends React.Component {
     this.abcContainerRef = React.createRef();
     this.midiContainerRef = React.createRef();
 
-    const { githubFlavoredMarkdown, content } = this.props;
-
-    this.renderMarkdown = memoizeLast(s => githubFlavoredMarkdown.render(s), 100, s => s);
+    const { content } = this.props;
 
     this.state = {
       title: content.title,
@@ -76,7 +73,7 @@ class EarTrainingDisplay extends React.Component {
   }
 
   render() {
-    const { clientConfig, t } = this.props;
+    const { clientConfig, githubFlavoredMarkdown, t } = this.props;
     const { title, maxWidth, tests, currentIndex, showResult } = this.state;
 
     const currentTest = tests[currentIndex];
@@ -119,7 +116,7 @@ class EarTrainingDisplay extends React.Component {
         <div className={`EarTraining-testWrapper u-max-width-${maxWidth || 100}`}>
           <h3
             className="EarTraining-header"
-            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(title) }}
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(title) }}
             />
           <div ref={this.abcContainerRef} />
           {soundPlayer}

@@ -8,10 +8,12 @@ import Countdown from '../countdown';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
+import { withSettings } from '../settings-context';
+import { withLanguage } from '../language-context';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
-import { translationProps } from '../../ui/default-prop-types';
+import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
 import { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
 
 const logger = new Logger(__filename);
@@ -60,7 +62,7 @@ class Register extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { settings, language, t } = this.props;
     const { user } = this.state;
 
     const formItemLayout = {
@@ -171,7 +173,13 @@ class Register extends React.Component {
               <Trans
                 t={t}
                 i18nKey="termsAndConditionsConfirmation"
-                components={[<a key="terms-link" href={urls.getArticleUrl('nutzungsvertrag')} />]}
+                components={[
+                  <a
+                    key="terms-link"
+                    title={settings.termsPage?.[language]?.linkTitle || null}
+                    href={settings.termsPage?.[language]?.documentSlug ? urls.getArticleUrl(settings.termsPage[language].documentSlug) : '#'}
+                    />
+                ]}
                 />
             </Checkbox>
           </FormItem>
@@ -218,10 +226,12 @@ class Register extends React.Component {
 }
 
 Register.propTypes = {
+  ...settingsProps,
+  ...languageProps,
   ...translationProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('register')(inject({
+export default withTranslation('register')(withSettings(withLanguage(inject({
   userApiClient: UserApiClient
-}, Register));
+}, Register))));

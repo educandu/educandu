@@ -16,8 +16,8 @@ import { withLanguage } from '../language-context';
 import { HARD_DELETE } from '../../ui/section-actions';
 import DocumentApiClient from '../../services/document-api-client';
 import { PaperClipOutlined, EditOutlined } from '@ant-design/icons';
-import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
 import LanguageNameProvider from '../../data/language-name-provider';
+import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 

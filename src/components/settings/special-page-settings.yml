@@ -1,0 +1,15 @@
+rank:
+  en: Rank
+  de: Rang
+language:
+  en: Language
+  de: Sprache
+linkTitle:
+  en: Link title
+  de: Link-Titel
+urlPath:
+  en: URL path
+  de: URL-Pfad
+unknown:
+  en: Unknown
+  de: Unbekannt

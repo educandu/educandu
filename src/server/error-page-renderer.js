@@ -12,9 +12,10 @@ class ErrorPageRenderer extends PageRendererBase {
 
   sendPage(req, res, error) {
     const title = 'elmu';
+    const settings = req.settings;
     const language = req.language;
     const i18n = this.resourceManager.createI18n(language);
-    const props = { error, i18n };
+    const props = { error, settings, language, i18n };
     const styles = [{ href: '/main.css' }];
 
     const html = this.renderHtml({

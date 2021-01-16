@@ -3,22 +3,12 @@ import ClientDataMapper from './client-data-mapper';
 import SettingService from '../services/setting-service';
 import DocumentService from '../services/document-service';
 
-function findLandingPageLanguage(req) {
-  const setting = req.settings.landingPage;
-
-  if (!setting || !setting.languages) {
-    return null;
+function findHomeLanguageIndexForRequest(homeLanguages, languageFromQuerystring) {
+  if (languageFromQuerystring) {
+    return homeLanguages.findIndex(l => l.language === languageFromQuerystring);
   }
 
-  if (setting.languages[req.language]) {
-    return req.language;
-  }
-
-  if (setting.languages[setting.defaultLanguage]) {
-    return setting.defaultLanguage;
-  }
-
-  return null;
+  return homeLanguages.length ? 0 : -1;
 }
 
 class IndexController {
@@ -33,11 +23,17 @@ class IndexController {
 
   registerPages(router) {
     router.get('/', async (req, res) => {
-      const lpLanguage = findLandingPageLanguage(req) || null;
-      const documentKey = lpLanguage ? req.settings.landingPage.languages[lpLanguage].documentKey : null;
+      const { language } = req.query;
+      const { homeLanguages } = req.settings;
+      const currentHomeLanguageIndex = findHomeLanguageIndexForRequest(homeLanguages, language);
+      if (currentHomeLanguageIndex === 0 && language) {
+        return res.redirect(302, '/');
+      }
+
+      const documentKey = req.settings.homeLanguages[currentHomeLanguageIndex]?.documentKey || null;
       const doc = documentKey ? await this.documentService.getDocumentByKey(documentKey) : null;
-      const mappedDoc = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
-      const initialState = { document: mappedDoc, landingPageLanguage: lpLanguage };
+      const document = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
+      const initialState = { document, homeLanguages, currentHomeLanguageIndex };
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'index', initialState);
     });
   }

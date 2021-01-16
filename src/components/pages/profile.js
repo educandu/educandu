@@ -13,9 +13,9 @@ import errorHelper from '../../ui/error-helper';
 import { CloseOutlined } from '@ant-design/icons';
 import { withLanguage } from '../language-context';
 import { Trans, withTranslation } from 'react-i18next';
-import CountryFlagAndName from '../country-flag-and-name';
 import UserApiClient from '../../services/user-api-client';
 import CountryNameProvider from '../../data/country-name-provider';
+import CountryFlagAndName from '../localization/country-flag-and-name';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
 import { userProps, languageProps, translationProps } from '../../ui/default-prop-types';
 
