@@ -3,14 +3,9 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
 import selection from '../ui/selection';
+import { withTranslation } from 'react-i18next';
 import RepositoryBrowser from './repository-browser';
-
-const localizedStrings = {
-  MODAL_TITLE: 'Dateibrowser',
-  BTN_LABEL_SELECT: 'Auswählen',
-  BTN_LABEL_CANCEL: 'Abbrechen',
-  BTN_LABEL_APPLY: 'Übernehmen'
-};
+import { translationProps } from '../ui/default-prop-types';
 
 class CdnFilePicker extends React.Component {
   constructor(props) {
@@ -54,7 +49,7 @@ class CdnFilePicker extends React.Component {
   }
 
   render() {
-    const { rootPrefix, uploadPrefix, initialPrefix } = this.props;
+    const { rootPrefix, uploadPrefix, initialPrefix, t } = this.props;
     const { isModalVisible, currentSelectedFile } = this.state;
 
     return (
@@ -63,12 +58,12 @@ class CdnFilePicker extends React.Component {
           type="primary"
           onClick={this.handleSelectButtonClick}
           >
-          {localizedStrings.BTN_LABEL_SELECT}
+          {t('common:select')}
         </Button>
         <Modal
           width="80%"
           visible={isModalVisible}
-          title={localizedStrings.MODAL_TITLE}
+          title={t('modalTitle')}
           onOk={this.handleApply}
           onCancel={this.handleCancel}
           footer={[
@@ -76,7 +71,7 @@ class CdnFilePicker extends React.Component {
               key="back"
               onClick={this.handleCancel}
               >
-              {localizedStrings.BTN_LABEL_CANCEL}
+              {t('common:cancel')}
             </Button>,
             <Button
               key="submit"
@@ -84,7 +79,7 @@ class CdnFilePicker extends React.Component {
               onClick={this.handleApply}
               disabled={!currentSelectedFile}
               >
-              {localizedStrings.BTN_LABEL_APPLY}
+              {t('common:apply')}
             </Button>
           ]}
           >
@@ -102,6 +97,7 @@ class CdnFilePicker extends React.Component {
 }
 
 CdnFilePicker.propTypes = {
+  ...translationProps,
   initialPrefix: PropTypes.string,
   onFileNameChanged: PropTypes.func,
   rootPrefix: PropTypes.string.isRequired,
@@ -114,4 +110,4 @@ CdnFilePicker.defaultProps = {
   uploadPrefix: null
 };
 
-export default CdnFilePicker;
+export default withTranslation('cdnFilePicker')(CdnFilePicker);

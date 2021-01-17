@@ -1,0 +1,48 @@
+maximumWidth:
+  en: Maximum width
+  de: Maximale Breite
+tilesPerRow:
+  en: Tiles per row
+  de: Kacheln pro Zeile
+hoverEffect:
+  en: Hover effect
+  de: Hover-Effekt
+noEffect:
+  en: No effect
+  de: Kein Effekt
+colorAndZoom:
+  en: Color and zoom
+  de: Färben und Zoomen
+tileNumber:
+  en: Tile {number}
+  de: Kachel {number}
+addTile:
+  en: Add tile
+  de: Kachel hinzufügen
+imageSource:
+  en: Image source
+  de: Bild-Quelle
+linkSource:
+  en: Link source
+  de: Link-Quelle
+externalLink:
+  en: External link
+  de: Externer Link
+menuLink:
+  en: Menu link
+  de: Menü-Link
+articleLink:
+  en: Article link
+  de: Artikel-Link
+elmuCdn:
+  en: Elmu CDN
+  de: Elmu CDN
+externalUrl:
+  en: External URL
+  de: Externe URL
+internalUrl:
+  en: Internal URL
+  de: Interne URL
+imageDescription:
+  en: Image description
+  de: Bildunterschrift

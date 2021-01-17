@@ -3,7 +3,6 @@ import treeCrawl from 'tree-crawl';
 import { NotFound } from 'http-errors';
 import PageRenderer from './page-renderer';
 import permissions from '../domain/permissions';
-import privateData from '../domain/private-data';
 import MenuService from '../services/menu-service';
 import ClientDataMapper from './client-data-mapper';
 import DocumentService from '../services/document-service';
@@ -27,27 +26,35 @@ class MenuController {
 
   registerPages(router) {
     router.get('/menus/:slug', async (req, res) => {
-      const allowedUserFields = privateData.getAllowedUserFields(req.user);
-
       const menu = await this.menuService.getMenuBySlug(req.params.slug);
       if (!menu) {
         throw new NotFound();
       }
 
       const defaultDocument = menu.defaultDocumentKey
-        ? await this.documentService.getDocumentById(menu.defaultDocumentKey)
+        ? await this.documentService.getDocumentByKey(menu.defaultDocumentKey)
         : null;
 
       const docKeys = new Set();
       docKeys.add(menu.defaultDocumentKey);
       visitMenuNodes(menu.nodes, node => (node.documentKeys || []).forEach(key => docKeys.add(key)));
 
-      const docs = await this.documentService.getDocumentsMetadata(Array.from(docKeys));
+      const docs = await this.documentService.getDocumentsMetadataByKeys(Array.from(docKeys));
+
+      let mappedDefaultDocument;
+      let mappedDocuments;
+
+      if (defaultDocument) {
+        [mappedDefaultDocument, ...mappedDocuments] = await this.clientDataMapper.mapDocsOrRevisions([defaultDocument, ...docs], req.user);
+      } else {
+        mappedDefaultDocument = null;
+        mappedDocuments = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
+      }
 
       const initialState = {
-        ...this.clientDataMapper.mapMenuToInitialState({ menu }),
-        ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs, allowedUserFields }),
-        defaultDocument: defaultDocument ? this.clientDataMapper.mapDocToInitialState({ doc: defaultDocument, allowedUserFields: allowedUserFields }) : null
+        menu: menu,
+        documents: mappedDocuments,
+        defaultDocument: mappedDefaultDocument
       };
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'menu', initialState);
     });
@@ -58,18 +65,17 @@ class MenuController {
     });
 
     router.get('/edit/menu/:menuId', needsPermission(permissions.EDIT_MENU), async (req, res) => {
-      const allowedUserFields = privateData.getAllowedUserFields(req.user);
-
       const menu = await this.menuService.getMenuById(req.params.menuId);
       if (!menu) {
         throw new NotFound();
       }
 
-      const docs = await this.documentService.getDocumentsMetadata();
+      const docs = await this.documentService.getAllDocumentsMetadata();
+      const mappedDocuments = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
 
       const initialState = {
-        ...this.clientDataMapper.mapMenuToInitialState({ menu }),
-        ...this.clientDataMapper.mapDocsMetadataToInitialState({ docs, allowedUserFields })
+        menu: menu,
+        documents: mappedDocuments
       };
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-menu', initialState);
     });
@@ -77,11 +83,8 @@ class MenuController {
 
   registerApi(router) {
     router.post('/api/v1/menus', [needsPermission(permissions.EDIT_MENU), jsonParser], async (req, res) => {
-      const user = req.user;
-      const menu = req.body;
-      const updatedMenu = await this.menuService.saveMenu({ menu, user });
-      const initialState = this.clientDataMapper.mapMenuToInitialState({ menu: updatedMenu });
-      return res.send(initialState);
+      const menu = await this.menuService.saveMenu({ menu: req.body, user: req.user });
+      return res.send({ menu });
     });
   }
 }

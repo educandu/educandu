@@ -1,23 +1,33 @@
 import React from 'react';
 import Page from '../page';
-import { Input } from 'antd';
 import DocView from '../doc-view';
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls';
 import ElmuLogo from '../elmu-logo';
+import { Button, Input } from 'antd';
 import { useRequest } from '../request-context';
-import { docShape, sectionShape } from '../../ui/default-prop-types';
+import { useService } from '../container-context';
+import { useLanguage } from '../language-context';
+import LanguageNameProvider from '../../data/language-name-provider';
+import CountryFlagAndName from '../localization/country-flag-and-name';
+import { documentShape, homeLanguageShape } from '../../ui/default-prop-types';
 
 const { Search } = Input;
 
-function Index({ initialState, language }) {
-  const rq = useRequest();
-  const { doc, sections } = initialState;
+function Index({ initialState }) {
+  const req = useRequest();
+  const { language } = useLanguage();
+  const languageNameProvider = useService(LanguageNameProvider);
+  const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
+  const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
   const handleSearchClick = searchTerm => {
-    const googleTerm = [`site:${rq.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
+    const googleTerm = [`site:${req.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
     const link = `https://www.google.com/search?q=${encodeURIComponent(googleTerm)}`;
     window.open(link, '_blank');
   };
+
+  const languageNames = languageNameProvider.getData(language);
 
   return (
     <Page fullScreen>
@@ -25,15 +35,28 @@ function Index({ initialState, language }) {
         <div className="IndexPage-title">
           <ElmuLogo size="big" readonly />
         </div>
-        <div className="IndexPage-search">
-          <Search
-            placeholder="Suchbegriff"
-            enterButton="Suchen mit Google"
-            size="large"
-            onSearch={handleSearchClick}
-            />
+        <div className="IndexPage-languageLinks">
+          {homeLanguages.map((hl, index) => (
+            <Button key={index.toString()} type="link" href={urls.getHomeUrl(index === 0 ? null : hl.language)}>
+              <CountryFlagAndName
+                code={languageNames[hl.language]?.flag || null}
+                name={languageNames[hl.language]?.name || null}
+                flagOnly
+                />
+            </Button>
+          ))}
         </div>
-        {doc && sections && <DocView doc={doc} sections={sections} language={language} />}
+        {currentHomeLanguage && (
+          <div className="IndexPage-search">
+            <Search
+              placeholder={currentHomeLanguage.searchFieldPlaceholder}
+              enterButton={currentHomeLanguage.searchFieldButton}
+              size="large"
+              onSearch={handleSearchClick}
+              />
+          </div>
+        )}
+        {doc && <DocView documentOrRevision={doc} />}
       </div>
     </Page>
   );
@@ -41,10 +64,10 @@ function Index({ initialState, language }) {
 
 Index.propTypes = {
   initialState: PropTypes.shape({
-    doc: docShape,
-    sections: PropTypes.arrayOf(sectionShape)
-  }).isRequired,
-  language: PropTypes.string.isRequired
+    document: documentShape,
+    homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,
+    currentHomeLanguageIndex: PropTypes.number.isRequired
+  }).isRequired
 };
 
 export default Index;

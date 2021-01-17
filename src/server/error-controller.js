@@ -2,17 +2,17 @@ import urls from '../utils/urls';
 import Logger from '../common/logger';
 import createError from 'http-errors';
 import requestHelper from '../utils/request-helper';
+import ServerConfig from '../bootstrap/server-config';
 import ErrorPageRenderer from './error-page-renderer';
-import ServerSettings from '../bootstrap/server-settings';
 
 const logger = new Logger(__filename);
 
 class ErrorController {
-  static get inject() { return [ServerSettings, ErrorPageRenderer]; }
+  static get inject() { return [ServerConfig, ErrorPageRenderer]; }
 
-  constructor(serverSettings, errorPageRenderer) {
+  constructor(serverConfig, errorPageRenderer) {
     this.errorPageRenderer = errorPageRenderer;
-    this.serverSettings = serverSettings;
+    this.serverConfig = serverConfig;
   }
 
   registerErrorHandler(router) {
@@ -43,7 +43,7 @@ class ErrorController {
 
   consolidateError(err, req) {
     const consolidatedErr = err.status ? err : createError(500, err);
-    consolidatedErr.expose = this.serverSettings.exposeErrorDetails;
+    consolidatedErr.expose = this.serverConfig.exposeErrorDetails;
     consolidatedErr.request = requestHelper.expressReqToRequest(req);
     return consolidatedErr;
   }

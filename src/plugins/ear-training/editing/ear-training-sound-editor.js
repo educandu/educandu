@@ -2,10 +2,11 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
+import { withTranslation } from 'react-i18next';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientSettings from '../../../bootstrap/client-settings';
-import { clientSettingsProps } from '../../../ui/default-prop-types';
+import { clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
@@ -50,23 +51,23 @@ class EarTrainingSoundEditor extends React.Component {
   }
 
   render() {
-    const { docKey, sound } = this.props;
+    const { docKey, sound, t } = this.props;
 
     const sourceRow = (
       <tr>
-        <td style={{ paddingTop: '8px' }}>
-          Audio-Quelle:
-        </td>
-        <td style={{ paddingTop: '8px' }}>
+        <td style={{ padding: 8 }}>&nbsp;</td>
+        <td style={{ padding: 8 }}>{t('audioSource')}:</td>
+        <td style={{ padding: 8 }}>
           <RadioGroup
             value={sound.type}
             onChange={this.handleSoundTypeChanged}
             >
-            <RadioButton value="midi">MIDI (auto)</RadioButton>
-            <RadioButton value="external">Externer Link</RadioButton>
-            <RadioButton value="internal">Elmu CDN</RadioButton>
+            <RadioButton value="midi">{t('midi')}</RadioButton>
+            <RadioButton value="external">{t('externalLink')}</RadioButton>
+            <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
           </RadioGroup>
         </td>
+        <td style={{ padding: 8 }}>&nbsp;</td>
       </tr>
     );
 
@@ -74,11 +75,12 @@ class EarTrainingSoundEditor extends React.Component {
       ? null
       : (
         <tr>
-          <td style={{ paddingTop: '8px' }}>
-            {sound.type === 'external' && 'Externe URL:'}
-            {sound.type === 'internal' && 'Interne URL:'}
+          <td style={{ padding: 8 }}>&nbsp;</td>
+          <td style={{ padding: 8 }}>
+            {sound.type === 'external' && `${t('externalUrl')}:`}
+            {sound.type === 'internal' && `${t('internalUrl')}:`}
           </td>
-          <td style={{ paddingTop: '8px' }}>
+          <td style={{ padding: 8 }}>
             {sound.type === 'external' && (
               <Input
                 value={sound.url}
@@ -88,7 +90,7 @@ class EarTrainingSoundEditor extends React.Component {
             {sound.type === 'internal' && (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={`${this.props.clientSettings.cdnRootUrl}/`}
+                  addonBefore={`${this.props.clientConfig.cdnRootUrl}/`}
                   value={sound.url}
                   readOnly
                   />
@@ -102,6 +104,7 @@ class EarTrainingSoundEditor extends React.Component {
               </div>
             )}
           </td>
+          <td style={{ padding: 8 }}>&nbsp;</td>
         </tr>
       );
 
@@ -109,21 +112,27 @@ class EarTrainingSoundEditor extends React.Component {
       ? null
       : (
         <tr>
-          <td style={{ paddingTop: '8px' }}>
-            Copyright Infos:
-          </td>
-          <td style={{ paddingTop: '8px' }}>
+          <td style={{ padding: 8 }}>&nbsp;</td>
+          <td style={{ padding: 8 }}>{t('copyrightInfos')}:</td>
+          <td style={{ padding: 8 }}>
             <TextArea
               value={sound.text}
               autoSize={{ minRows: 3 }}
               onChange={this.handleTextChanged}
               />
           </td>
+          <td style={{ padding: 8 }}>&nbsp;</td>
         </tr>
       );
 
     return (
       <table style={{ width: '100%' }}>
+        <colgroup>
+          <col style={{ width: 80, minWidth: 80 }} />
+          <col style={{ width: 168, minWidth: 168 }} />
+          <col />
+          <col style={{ width: 48, minWidth: 48 }} />
+        </colgroup>
         <tbody>
           {sourceRow}
           {urlRow}
@@ -135,6 +144,8 @@ class EarTrainingSoundEditor extends React.Component {
 }
 
 EarTrainingSoundEditor.propTypes = {
+  ...translationProps,
+  ...clientConfigProps,
   docKey: PropTypes.string.isRequired,
   onSoundChanged: PropTypes.func.isRequired,
   sound: PropTypes.shape({
@@ -142,10 +153,9 @@ EarTrainingSoundEditor.propTypes = {
     url: PropTypes.string,
     text: PropTypes.string
   }).isRequired,
-  testIndex: PropTypes.number.isRequired,
-  ...clientSettingsProps
+  testIndex: PropTypes.number.isRequired
 };
 
-export default inject({
-  clientSettings: ClientSettings
-}, EarTrainingSoundEditor);
+export default withTranslation('earTraining')(inject({
+  clientConfig: ClientConfig
+}, EarTrainingSoundEditor));

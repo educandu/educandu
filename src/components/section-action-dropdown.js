@@ -2,22 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Dropdown } from 'antd';
 import { usePermission } from '../ui/hooks';
+import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions';
 import { sectionShape } from '../ui/default-prop-types';
 import { ThunderboltOutlined } from '@ant-design/icons';
-import { confirmHardDelete } from './section-action-dialogs';
+import { confirmSectionHardDelete } from './section-action-dialogs';
 import { HARD_DELETE, createHardDelete } from '../ui/section-actions';
 
 const MenuItem = Menu.Item;
 const redIconStyle = { color: 'red' };
 
 function SectionActionDropdown({ children, section, onAction, onVisibleChange, placement }) {
+  const { t } = useTranslation();
   const canHardDelete = usePermission(permissions.HARD_DELETE_SECTION);
 
   const handleSectionMenuClick = ({ key }) => {
     switch (key) {
       case HARD_DELETE:
-        confirmHardDelete(section, ({ deleteDescendants, deletionReason }) => onAction(createHardDelete(section, deletionReason, deleteDescendants)));
+        confirmSectionHardDelete(t, section, ({ deleteDescendants, deletionReason }) => onAction(createHardDelete(section, deletionReason, deleteDescendants)));
         break;
       default:
         throw new Error(`Invalid menu key: ${key}`);
@@ -31,7 +33,7 @@ function SectionActionDropdown({ children, section, onAction, onVisibleChange, p
   if (canHardDelete && !section.deletedOn) {
     menuItems.push((
       <MenuItem key={HARD_DELETE}>
-        <ThunderboltOutlined style={redIconStyle} />&nbsp;&nbsp;<span>Unwiderruflich löschen</span>
+        <ThunderboltOutlined style={redIconStyle} />&nbsp;&nbsp;<span>{t('common:hardDelete')}</span>
       </MenuItem>
     ));
   }

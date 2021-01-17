@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import DeletedSection from './deleted-section';
 import { SettingOutlined } from '@ant-design/icons';
+import { sectionShape } from '../ui/default-prop-types';
 import SectionActionDropdown from './section-action-dropdown';
-import { docShape, sectionShape } from '../ui/default-prop-types';
 
-function SectionDisplay({ DisplayComponent, language, doc, section, onAction }) {
+function SectionDisplay({ DisplayComponent, docKey, section, onAction }) {
   const [isMouseOver, setIsMouseOver] = React.useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = React.useState(false);
 
@@ -42,10 +42,9 @@ function SectionDisplay({ DisplayComponent, language, doc, section, onAction }) 
   if (section.content) {
     displayComponent = (
       <DisplayComponent
-        docKey={doc.key}
+        docKey={docKey}
         sectionKey={section.key}
-        content={section.content[language]}
-        language={language}
+        content={section.content}
         />
     );
   } else {
@@ -69,8 +68,7 @@ function SectionDisplay({ DisplayComponent, language, doc, section, onAction }) 
 
 SectionDisplay.propTypes = {
   DisplayComponent: PropTypes.func.isRequired,
-  doc: docShape.isRequired,
-  language: PropTypes.string.isRequired,
+  docKey: PropTypes.string.isRequired,
   onAction: PropTypes.func,
   section: sectionShape.isRequired
 };

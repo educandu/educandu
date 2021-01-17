@@ -5,12 +5,11 @@ import treeCrawl from 'tree-crawl';
 import uniqueId from '../utils/unique-id';
 import cloneDeep from '../utils/clone-deep';
 import { inject } from './container-context';
+import { withTranslation } from 'react-i18next';
 import { Tree, Input, Modal, Button } from 'antd';
 import MenuApiClient from '../services/menu-api-client';
-import { menuNodeShape } from '../ui/default-prop-types';
+import { menuNodeShape, translationProps } from '../ui/default-prop-types';
 import Icon, { PlusOutlined, DeleteOutlined, MenuUnfoldOutlined, FileOutlined } from '@ant-design/icons';
-
-const TreeNode = Tree.TreeNode;
 
 const visitMenuNodes = (nodes, cb) => {
   nodes.forEach(rootNode => treeCrawl(rootNode, cb, { getChildren: node => node.children }));
@@ -25,23 +24,15 @@ class MenuTree extends React.PureComponent {
     this.state = {
       nodes: [],
       selectedKey: null,
-      expandedKeys: [],
-      autoExpandParent: true,
       isNewNodeModalVisible: false,
       newNodeTitle: ''
     };
   }
 
-  static getDerivedStateFromProps({ nodes }, { selectedKey, expandedKeys }) {
-    const proposedExpandedKeys = expandedKeys || [];
-    const validExpandedKeys = [];
+  static getDerivedStateFromProps({ nodes }, { selectedKey }) {
     let validSelectedKey = null;
 
     visitMenuNodes(nodes, node => {
-      if (proposedExpandedKeys.includes(node.key)) {
-        validExpandedKeys.push(node.key);
-      }
-
       if (node.key === selectedKey) {
         validSelectedKey = node.key;
       }
@@ -49,9 +40,7 @@ class MenuTree extends React.PureComponent {
 
     return {
       nodes: cloneDeep(nodes),
-      selectedKey: validSelectedKey || null,
-      expandedKeys: validExpandedKeys,
-      autoExpandParent: true
+      selectedKey: validSelectedKey || null
     };
   }
 
@@ -78,15 +67,13 @@ class MenuTree extends React.PureComponent {
 
   handleNewNodeOk() {
     const { onNodesChanged, onSelectedNodeChanged } = this.props;
-    const { nodes, selectedKey, expandedKeys, newNodeTitle } = this.state;
+    const { nodes, selectedKey, newNodeTitle } = this.state;
     const updatedNodes = cloneDeep(nodes);
-    let nodeKeyToExpand;
     let nodeList;
 
     if (selectedKey) {
       const foundNode = this.findNodeByKey(updatedNodes, selectedKey);
       if (foundNode) {
-        nodeKeyToExpand = foundNode.key;
         if (!foundNode.children) {
           foundNode.children = [];
         }
@@ -108,17 +95,11 @@ class MenuTree extends React.PureComponent {
 
     nodeList.push(newNode);
 
-    const newExpandedKeys = expandedKeys.slice();
-    if (nodeKeyToExpand && !newExpandedKeys.includes(nodeKeyToExpand)) {
-      newExpandedKeys.push(nodeKeyToExpand);
-    }
-
     this.setState({
       newNodeTitle: '',
       isNewNodeModalVisible: false,
       nodes: updatedNodes,
-      selectedKey: newNode.key,
-      expandedKeys: newExpandedKeys
+      selectedKey: newNode.key
     });
 
     onNodesChanged(updatedNodes);
@@ -134,7 +115,7 @@ class MenuTree extends React.PureComponent {
 
   handleDeleteNodeClick() {
     const { onNodesChanged, onSelectedNodeChanged } = this.props;
-    const { nodes, selectedKey, expandedKeys } = this.state;
+    const { nodes, selectedKey } = this.state;
     let updatedNodes = cloneDeep(nodes);
 
     const foundNode = this.findParentNodeByKey(updatedNodes, selectedKey);
@@ -144,17 +125,9 @@ class MenuTree extends React.PureComponent {
       updatedNodes = updatedNodes.filter(x => x.key !== selectedKey);
     }
 
-    const newExpandedKeys = [];
-    visitMenuNodes(updatedNodes, node => {
-      if (expandedKeys.includes(node.key)) {
-        newExpandedKeys.push(node.key);
-      }
-    });
-
     this.setState({
       nodes: updatedNodes,
-      selectedKey: null,
-      expandedKeys: newExpandedKeys
+      selectedKey: null
     });
 
     onNodesChanged(updatedNodes);
@@ -183,11 +156,14 @@ class MenuTree extends React.PureComponent {
     return foundNode || null;
   }
 
-  handleExpand(newExpandedKeys) {
+  handleDragStart(info) {
+    const { onSelectedNodeChanged } = this.props;
+
     this.setState({
-      expandedKeys: newExpandedKeys,
-      autoExpandParent: false
+      selectedKey: info.node.key
     });
+
+    onSelectedNodeChanged(info.node.key);
   }
 
   handleDrop(info) {
@@ -211,18 +187,28 @@ class MenuTree extends React.PureComponent {
       });
     };
 
-    const newNodes = cloneDeep(nodes);
+    const data = cloneDeep(nodes);
     let dragObj;
 
-    loop(newNodes, dragKey, (item, index, arr) => {
+    loop(data, dragKey, (item, index, arr) => {
       arr.splice(index, 1);
       dragObj = item;
     });
 
-    if (info.dropToGap) {
+    if (!info.dropToGap) {
+      loop(data, dropKey, item => {
+        item.children = item.children || [];
+        item.children.unshift(dragObj);
+      });
+    } else if ((info.node.props.children || []).length !== 0 && info.node.props.expanded && dropPosition === 1) {
+      loop(data, dropKey, item => {
+        item.children = item.children || [];
+        item.children.unshift(dragObj);
+      });
+    } else {
       let ar;
       let i;
-      loop(newNodes, dropKey, (item, index, arr) => {
+      loop(data, dropKey, (item, index, arr) => {
         ar = arr;
         i = index;
       });
@@ -231,62 +217,50 @@ class MenuTree extends React.PureComponent {
       } else {
         ar.splice(i + 1, 0, dragObj);
       }
-    } else {
-      loop(newNodes, dropKey, item => {
-        item.children = item.children || [];
-        item.children.push(dragObj);
-      });
     }
 
     this.setState({
-      nodes: newNodes
+      nodes: data
     });
 
-    onNodesChanged(newNodes);
+    onNodesChanged(data);
   }
 
-  renderNodeList(nodes) {
-    return nodes.map(node => (
-      <TreeNode
-        key={node.key}
-        icon={<Icon component={node.documentKeys.length ? MenuUnfoldOutlined : FileOutlined} />}
-        title={<span>{node.title}</span>}
-        >
-        {node.children && this.renderNodeList(node.children)}
-      </TreeNode>
-    ));
+  getTreeData(nodes) {
+    return nodes.map(node => ({
+      key: node.key,
+      title: node.title,
+      icon: <Icon component={node.documentKeys.length ? MenuUnfoldOutlined : FileOutlined} />,
+      children: this.getTreeData(node.children)
+    }));
   }
 
   render() {
-    const { isReadonly } = this.props;
-    const { expandedKeys, selectedKey, autoExpandParent, nodes, isNewNodeModalVisible, newNodeTitle } = this.state;
+    const { isReadonly, t } = this.props;
+    const { selectedKey, nodes, isNewNodeModalVisible, newNodeTitle } = this.state;
     return (
       <div>
         <Tree
           showIcon
           draggable={!isReadonly}
           onDrop={this.handleDrop}
-          expandedKeys={expandedKeys}
-          onExpand={this.handleExpand}
           onSelect={this.handleSelect}
-          autoExpandParent={autoExpandParent}
+          onDragStart={this.handleDragStart}
+          treeData={this.getTreeData(nodes)}
           selectedKeys={[selectedKey].filter(x => x)}
-          defaultExpandedKeys={this.state.expandedKeys}
-          >
-          {this.renderNodeList(nodes)}
-        </Tree>
+          />
         <br />
         <br />
-        <Button type="primary" icon={<PlusOutlined />} onClick={this.handleNewNodeClick} disabled={isReadonly}>Neuer Menüeintrag</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={this.handleNewNodeClick} disabled={isReadonly}>{t('newMenuEntry')}</Button>
         &nbsp;
-        {selectedKey && <Button type="danger" icon={<DeleteOutlined />} onClick={this.handleDeleteNodeClick} disabled={isReadonly}>Menüeintrag löschen</Button>}
+        {selectedKey && <Button type="danger" icon={<DeleteOutlined />} onClick={this.handleDeleteNodeClick} disabled={isReadonly}>{t('deleteMenuEntry')}</Button>}
         <Modal
-          title="Neuer Menüeintrag"
+          title={t('newMenuEntry')}
           visible={isNewNodeModalVisible}
           onOk={this.handleNewNodeOk}
           onCancel={this.handleNewNodeCancel}
           >
-          <p>Titel</p>
+          <p>{t('title')}</p>
           <p><Input value={newNodeTitle} onChange={this.handleNewNodeTitleChange} /></p>
         </Modal>
       </div>
@@ -295,8 +269,8 @@ class MenuTree extends React.PureComponent {
 }
 
 MenuTree.propTypes = {
+  ...translationProps,
   isReadonly: PropTypes.bool,
-  /* eslint-disable-next-line react/no-unused-prop-types */ // It is used in getDerivedStateFromProps !!!
   nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
   onNodesChanged: PropTypes.func.isRequired,
   onSelectedNodeChanged: PropTypes.func.isRequired
@@ -306,6 +280,6 @@ MenuTree.defaultProps = {
   isReadonly: false
 };
 
-export default inject({
+export default withTranslation('menuTree')(inject({
   menuApiClient: MenuApiClient
-}, MenuTree);
+}, MenuTree));

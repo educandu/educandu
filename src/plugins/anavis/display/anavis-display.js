@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ReactPlayer from 'react-player';
 import colorHelper from '../../../ui/color-helper';
-import ClientSettings from '../../../bootstrap/client-settings';
+import ClientConfig from '../../../bootstrap/client-config';
 import MediaControl from '../../../components/media-control';
 import { inject } from '../../../components/container-context';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
 
 const playStates = {
   INITIALIZING: 'initializing',
@@ -86,7 +86,7 @@ class AnavisDisplay extends React.Component {
   }
 
   render() {
-    const { content, clientSettings, githubFlavoredMarkdown } = this.props;
+    const { content, clientConfig, githubFlavoredMarkdown } = this.props;
     const { playState, durationInSeconds, playedSeconds, volume } = this.state;
     const { parts, media } = content;
     const html = githubFlavoredMarkdown.render(media.text || '');
@@ -97,7 +97,7 @@ class AnavisDisplay extends React.Component {
     let url;
     switch (media.type) {
       case 'internal':
-        url = media.url ? `${clientSettings.cdnRootUrl}/${media.url}` : null;
+        url = media.url ? `${clientConfig.cdnRootUrl}/${media.url}` : null;
         break;
       default:
         url = media.url || null;
@@ -211,11 +211,11 @@ class AnavisDisplay extends React.Component {
 
 AnavisDisplay.propTypes = {
   ...sectionDisplayProps,
-  ...clientSettingsProps,
+  ...clientConfigProps,
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
 export default inject({
-  clientSettings: ClientSettings,
+  clientConfig: ClientConfig,
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, AnavisDisplay);

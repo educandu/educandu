@@ -1,0 +1,18 @@
+showAnswer:
+  en: Show answer
+  de: Antwort anzeigen
+questionHeader:
+  en: Question {currentTest} of {testsLength}
+  de: Frage {currentTest} von {testsLength}
+question:
+  en: Question
+  de: Frage
+answer:
+  en: Answer
+  de: Antwort
+teaserLabel:
+  en: Link text
+  de: Link-Text
+titleLabel:
+  en: Title
+  de: Titel

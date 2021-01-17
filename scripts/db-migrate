@@ -1,41 +1,49 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-process-exit, no-process-env, no-console, global-require */
+
 require('@babel/register');
 require('core-js');
 
 const path = require('path');
 const Umzug = require('umzug');
-const Database = require('../src/stores/database').default;
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
+const { MongoClient } = require('mongodb');
 
 (async function migrate() {
 
-  const container = await serverBootstrapper.createContainer();
+  const connectionString = process.env.ELMU_WEB_CONNECTION_STRING;
+  if (!connectionString) {
+    throw new Error('Environement variable ELMU_WEB_CONNECTION_STRING is not  set');
+  }
 
-  const db = container.get(Database);
+  const mongoClient = await MongoClient.connect(connectionString, { useUnifiedTopology: true });
+  const db = mongoClient.db();
 
   const umzug = new Umzug({
     storage: 'mongodb',
     storageOptions: {
-      collection: db._db.collection('migrations')
+      collection: db.collection('migrations')
     },
     migrations: {
       path: path.join(__dirname, 'migrations'),
       pattern: /^\d{4}-\d{2}-\d{2}-.*\.js$/,
-      /* eslint-disable-next-line global-require */
-      customResolver: filePath => container.get(require(filePath).default)
+      customResolver: filePath => {
+        const Migration = require(filePath).default;
+        return new Migration(db, mongoClient);
+      }
     }
   });
 
   try {
     const result = await umzug.up();
-    /* eslint-disable-next-line no-console */
     console.log(result);
-  } catch (err) {
-    /* eslint-disable-next-line no-console */
-    console.error(err);
+  } finally {
+    await mongoClient.close();
   }
 
-  await serverBootstrapper.disposeContainer(container);
+})().catch(error => {
 
-})();
+  console.error(error);
+  process.exit(-1);
+
+});

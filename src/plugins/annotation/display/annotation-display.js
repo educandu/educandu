@@ -20,7 +20,7 @@ class AnnotationDisplay extends React.PureComponent {
 
     return (
       <Collapse accordion>
-        <Panel header={content.title} key="1">
+        <Panel header={content.title || '\u00A0'} key="1">
           <p className="Annotation" dangerouslySetInnerHTML={{ __html: html }} />
         </Panel>
       </Collapse>

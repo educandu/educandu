@@ -1,13 +1,13 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import arrayShuffle from 'array-shuffle';
+import { withTranslation } from 'react-i18next';
 import abcjs from '../../../common/abcjs-import';
-import memoizeLast from '../../../utils/memoize-last';
 import AudioPlayer from '../../../components/audio-player';
-import ClientSettings from '../../../bootstrap/client-settings';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const abcOptions = {
   paddingtop: 0,
@@ -31,9 +31,7 @@ class EarTrainingDisplay extends React.Component {
     this.abcContainerRef = React.createRef();
     this.midiContainerRef = React.createRef();
 
-    const { githubFlavoredMarkdown, content } = this.props;
-
-    this.renderMarkdown = memoizeLast(s => githubFlavoredMarkdown.render(s), 100, s => s);
+    const { content } = this.props;
 
     this.state = {
       title: content.title,
@@ -75,7 +73,7 @@ class EarTrainingDisplay extends React.Component {
   }
 
   render() {
-    const { clientSettings } = this.props;
+    const { clientConfig, githubFlavoredMarkdown, t } = this.props;
     const { title, maxWidth, tests, currentIndex, showResult } = this.state;
 
     const currentTest = tests[currentIndex];
@@ -85,7 +83,7 @@ class EarTrainingDisplay extends React.Component {
     let legendHtml;
     if (currentTest.sound && currentTest.sound.type === 'internal') {
       soundType = 'internal';
-      soundUrl = currentTest.sound.url ? `${clientSettings.cdnRootUrl}/${currentTest.sound.url}` : null;
+      soundUrl = currentTest.sound.url ? `${clientConfig.cdnRootUrl}/${currentTest.sound.url}` : null;
       legendHtml = currentTest.sound.text || '';
     } else if (currentTest.sound && currentTest.sound.type === 'external') {
       soundType = 'external';
@@ -104,21 +102,21 @@ class EarTrainingDisplay extends React.Component {
     const buttons = [];
 
     if (showResult && currentIndex < tests.length - 1) {
-      buttons.push(<button key="next" type="button" onClick={this.handleNextClick}>Nächste Übung</button>);
+      buttons.push(<button key="next" type="button" onClick={this.handleNextClick}>{t('nextExercise')}</button>);
     }
 
     if (currentTest && !showResult) {
-      buttons.push(<button key="result" type="button" onClick={this.handleResultClick}>Auflösen</button>);
+      buttons.push(<button key="result" type="button" onClick={this.handleResultClick}>{t('solve')}</button>);
     }
 
-    buttons.push(<button key="reset" type="button" onClick={this.handleResetClick}>Zurücksetzen</button>);
+    buttons.push(<button key="reset" type="button" onClick={this.handleResetClick}>{t('reset')}</button>);
 
     return (
       <div className="EarTraining fa5">
         <div className={`EarTraining-testWrapper u-max-width-${maxWidth || 100}`}>
           <h3
             className="EarTraining-header"
-            dangerouslySetInnerHTML={{ __html: this.renderMarkdown(title) }}
+            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(title) }}
             />
           <div ref={this.abcContainerRef} />
           {soundPlayer}
@@ -132,11 +130,12 @@ class EarTrainingDisplay extends React.Component {
 }
 
 EarTrainingDisplay.propTypes = {
+  ...translationProps,
   ...sectionDisplayProps,
-  ...clientSettingsProps
+  ...clientConfigProps
 };
 
-export default inject({
+export default withTranslation('earTraining')(inject({
   githubFlavoredMarkdown: GithubFlavoredMarkdown,
-  clientSettings: ClientSettings
-}, EarTrainingDisplay);
+  clientConfig: ClientConfig
+}, EarTrainingDisplay));

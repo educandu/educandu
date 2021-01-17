@@ -1,0 +1,42 @@
+defaultDocumentTitle:
+  en: New document
+  de: Neues Dokument
+email:
+  en: Email
+  de: E-Mail
+copyTitleSuffix:
+  en: (copy)
+  de: (Kopie)
+copySlugSuffix:
+  en: copy
+  de: kopie
+clone:
+  en: Clone
+  de: Klonen
+title:
+  en: Title
+  de: Titel
+language:
+  en: Language
+  de: Sprache
+slug:
+  en: URL path
+  de: URL-Pfad
+udateDate:
+  en: Udate date
+  de: Update-Datum
+user:
+  en: User info
+  de: User-Info
+actions:
+  en: Actions
+  de: Aktionen
+enterSearchTerm:
+  en: Enter search term
+  de: Suchbegriff eingeben
+newDocument:
+  en: New document
+  de: Neues Dokument
+newDocumentProgress:
+  en: Creating new document ...
+  de: Neues Dokument wird erstellt ...

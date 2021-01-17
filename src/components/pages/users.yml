@@ -1,0 +1,42 @@
+username:
+  en: Username
+  de: Benutzername
+email:
+  en: Email
+  de: E-Mail
+id:
+  en: ID
+  de: ID
+expires:
+  en: Expires
+  de: Verfallsdatum
+lockedOut:
+  en: Locked Out
+  de: Ausgesperrt
+roles:
+  en: Roles
+  de: Rollen
+firstName:
+  en: First name(s)
+  de: Vorname(n)
+lastName:
+  en: Last name
+  de: Nachname
+street:
+  en: Street
+  de: Straße
+streetSupplement:
+  en: Street supplement
+  de: Straße (Zusatz)
+postalCode:
+  en: Postal code
+  de: Postleitzahl
+city:
+  en: City
+  de: Ort
+country:
+  en: Country
+  de: Land
+profile:
+  en: Profile
+  de: Profil

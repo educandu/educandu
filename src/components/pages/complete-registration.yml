@@ -1,0 +1,6 @@
+registrationSuccess:
+  en: Congratulations! You are now a successfully registered elmu user.
+  de: Gratulation! Sie sind nun ein elmu-User und haben Ihre Registrierung erfolgreich abgeschlossen.
+redirectMessage:
+  en: You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}.
+  de: Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.

@@ -1,7 +1,8 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { Input, message } from 'antd';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
+import { withTranslation } from 'react-i18next';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 
@@ -12,13 +13,14 @@ class IntervalTrainerEditor extends React.Component {
   }
 
   handleJSONValueChanged(event) {
+    const { t } = this.props;
     const { value } = event.target;
 
     let newContent;
     try {
       newContent = JSON.parse(value);
     } catch (err) {
-      message.error('Kein gültiges JSON');
+      message.error(t('invalidJson'));
       return;
     }
 
@@ -43,7 +45,8 @@ class IntervalTrainerEditor extends React.Component {
 }
 
 IntervalTrainerEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps
 };
 
-export default IntervalTrainerEditor;
+export default withTranslation('intervalTrainer')(IntervalTrainerEditor);

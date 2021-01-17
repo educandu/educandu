@@ -1,8 +1,15 @@
 import PageRenderer from './page-renderer';
-import privateData from '../domain/private-data';
 import ClientDataMapper from './client-data-mapper';
 import SettingService from '../services/setting-service';
 import DocumentService from '../services/document-service';
+
+function findHomeLanguageIndexForRequest(homeLanguages, languageFromQuerystring) {
+  if (languageFromQuerystring) {
+    return homeLanguages.findIndex(l => l.language === languageFromQuerystring);
+  }
+
+  return homeLanguages.length ? 0 : -1;
+}
 
 class IndexController {
   static get inject() { return [SettingService, DocumentService, ClientDataMapper, PageRenderer]; }
@@ -16,11 +23,17 @@ class IndexController {
 
   registerPages(router) {
     router.get('/', async (req, res) => {
-      const allowedUserFields = privateData.getAllowedUserFields(req.user);
+      const { language } = req.query;
+      const { homeLanguages } = req.settings;
+      const currentHomeLanguageIndex = findHomeLanguageIndexForRequest(homeLanguages, language);
+      if (currentHomeLanguageIndex === 0 && language) {
+        return res.redirect(302, '/');
+      }
 
-      const lpDocId = await this.settingService.getLandingPageDocumentId();
-      const doc = lpDocId ? await this.documentService.getDocumentById(lpDocId) : null;
-      const initialState = this.clientDataMapper.mapDocToInitialState({ doc, allowedUserFields });
+      const documentKey = req.settings.homeLanguages[currentHomeLanguageIndex]?.documentKey || null;
+      const doc = documentKey ? await this.documentService.getDocumentByKey(documentKey) : null;
+      const document = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
+      const initialState = { document, homeLanguages, currentHomeLanguageIndex };
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'index', initialState);
     });
   }

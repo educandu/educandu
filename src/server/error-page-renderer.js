@@ -1,18 +1,28 @@
-import ErrorRoot from '../components/error-root';
+import ErrorPage from '../components/error-page';
 import PageRendererBase from './page-renderer-base';
+import ResourceManager from '../resources/resource-manager';
 
 class ErrorPageRenderer extends PageRendererBase {
+  static get inject() { return [ResourceManager]; }
+
+  constructor(resourceManager) {
+    super();
+    this.resourceManager = resourceManager;
+  }
+
   sendPage(req, res, error) {
     const title = 'elmu';
-    const language = 'de';
-    const props = { error };
+    const settings = req.settings;
+    const language = req.language;
+    const i18n = this.resourceManager.createI18n(language);
+    const props = { error, settings, language, i18n };
     const styles = [{ href: '/main.css' }];
 
     const html = this.renderHtml({
       language: language,
       title: title,
       styles: styles,
-      ContentRoot: ErrorRoot,
+      ContentRoot: ErrorPage,
       contentProps: props
     });
 

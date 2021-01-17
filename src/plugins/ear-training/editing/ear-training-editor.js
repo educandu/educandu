@@ -1,12 +1,11 @@
 import React from 'react';
 import autoBind from 'auto-bind';
+import { withTranslation } from 'react-i18next';
 import { Form, Input, Table, Button } from 'antd';
-import { inject } from '../../../components/container-context';
-import ClientSettings from '../../../bootstrap/client-settings';
 import EarTrainingSoundEditor from './ear-training-sound-editor';
 import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
@@ -41,59 +40,34 @@ class EarTrainingEditor extends React.Component {
           </ButtonGroup>
         )
       }, {
-        title: 'Vorgabe-ABC-Code',
+        title: () => this.props.t('startAbcCode'),
         key: 'startAbcCode',
-        render: (val, item, index) => ({
-          children: (
-            <table style={{ width: '100%' }}>
-              <tbody>
-                <tr>
-                  <td>
-                    <TextArea
-                      data-index={index}
-                      value={item.startAbcCode}
-                      onChange={this.handleStartAbcCodeChanged}
-                      rows={6}
-                      />
-                  </td>
-                  <td>
-                    <TextArea
-                      data-index={index}
-                      value={item.fullAbcCode}
-                      onChange={this.handleFullAbcCodeChanged}
-                      rows={6}
-                      />
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan="2">
-                    <EarTrainingSoundEditor
-                      testIndex={index}
-                      docKey={this.props.docKey}
-                      sound={item.sound || { ...defaultSound }}
-                      onSoundChanged={this.handleSoundChanged}
-                      />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ),
-          props: {
-            colSpan: 2
-          }
-        })
+        render: (val, item, index) => (
+          <TextArea
+            data-index={index}
+            value={item.startAbcCode}
+            onChange={this.handleStartAbcCodeChanged}
+            rows={6}
+            />
+        )
       }, {
-        title: 'Lösungs-ABC-Code',
+        title: () => this.props.t('fullAbcCode'),
         key: 'fullAbcCode',
-        render: () => ({
-          children: null,
-          props: {
-            colSpan: 0
-          }
-        })
+        render: (val, item, index) => (
+          <TextArea
+            data-index={index}
+            value={item.fullAbcCode}
+            onChange={this.handleFullAbcCodeChanged}
+            rows={6}
+            />
+        )
       }, {
         title: (
-          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddButtonClick} />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={this.handleAddButtonClick}
+            />
         ),
         width: 48,
         key: 'button',
@@ -108,6 +82,15 @@ class EarTrainingEditor extends React.Component {
         )
       }
     ];
+
+    this.expandedRowRender = (record, index) => (
+      <EarTrainingSoundEditor
+        testIndex={index}
+        docKey={this.props.docKey}
+        sound={record.sound || { ...defaultSound }}
+        onSoundChanged={this.handleSoundChanged}
+        />
+    );
   }
 
   changeContent(newContentValues) {
@@ -161,14 +144,14 @@ class EarTrainingEditor extends React.Component {
   }
 
   handleUpCircleButtonClick(event) {
-    const { dataset } = event.target;
+    const { dataset } = event.currentTarget;
     const index = Number.parseInt(dataset.index, 10);
     const newTests = swapItems(this.props.content.tests, index, index - 1);
     this.changeContent({ tests: newTests });
   }
 
   handleDownCircleButtonClick(event) {
-    const { dataset } = event.target;
+    const { dataset } = event.currentTarget;
     const index = Number.parseInt(dataset.index, 10);
     const newTests = swapItems(this.props.content.tests, index, index + 1);
     this.changeContent({ tests: newTests });
@@ -179,7 +162,7 @@ class EarTrainingEditor extends React.Component {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 }
     };
-    const { content } = this.props;
+    const { content, t } = this.props;
     const dataSource = content.tests.map((test, i) => ({
       key: i,
       startAbcCode: test.startAbcCode,
@@ -190,24 +173,33 @@ class EarTrainingEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label="Titel:" {...formItemLayout}>
+          <FormItem label={t('title')} {...formItemLayout}>
             <Input value={content.title} onChange={this.handleTitleChanged} />
           </FormItem>
-          <Form.Item label="Maximale Breite" {...formItemLayout}>
+          <Form.Item label={t('maximumWidth')} {...formItemLayout}>
             <ObjectMaxWidthSlider defaultValue={100} value={content.maxWidth} onChange={this.handleMaxWidthChanged} />
           </Form.Item>
         </Form>
-        <Table dataSource={dataSource} columns={this.columns} pagination={false} size="small" />
+        <Table
+          dataSource={dataSource}
+          columns={this.columns}
+          expandable={{
+            expandIconColumnIndex: -1,
+            expandedRowClassName: () => 'EarTraining-expandedEditorRow',
+            expandedRowRender: this.expandedRowRender,
+            expandedRowKeys: dataSource.map(record => record.key)
+          }}
+          pagination={false}
+          size="small"
+          />
       </div>
     );
   }
 }
 
 EarTrainingEditor.propTypes = {
-  ...sectionEditorProps,
-  ...clientSettingsProps
+  ...translationProps,
+  ...sectionEditorProps
 };
 
-export default inject({
-  clientSettings: ClientSettings
-}, EarTrainingEditor);
+export default withTranslation('earTraining')(EarTrainingEditor);

@@ -4,19 +4,19 @@ import { Modal, Input, Checkbox } from 'antd';
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
 
-export function confirmDelete(section, onOk, onCancel = () => {}) {
+export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
   confirm({
-    title: 'Sind Sie sicher?',
-    content: <span>Möchten Sie diesen Abschnitt wirklich löschen?</span>,
-    okText: 'Ja',
+    title: t('sectionActionDialogs:areYouSure'),
+    content: t('sectionActionDialogs:deleteSectionConfirmation'),
+    okText: t('common:yes'),
     okType: 'danger',
-    cancelText: 'Nein',
+    cancelText: t('common:no'),
     onOk: onOk,
     onCancel: onCancel
   });
 }
 
-export function confirmHardDelete(section, onOk, onCancel = () => {}) {
+export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) {
   let dialog = null;
   let deletionReason = '';
   let deleteDescendants = false;
@@ -37,12 +37,12 @@ export function confirmHardDelete(section, onOk, onCancel = () => {}) {
   function createContent() {
     return (
       <div>
-        <span>Möchten Sie den Abschnitt wirklich löschen?</span>
+        {t('sectionActionDialogs:deleteSectionConfirmation')}
         <br />
-        <b className="u-danger">Diese Aktion ist unwiderrufbar!</b>
+        <b className="u-danger">{t('thisActionIsIrreversible')}</b>
         <br />
         <br />
-        <span>Bitte geben Sie einen Grund an:</span>
+        <span>{t('pleaseSpecifyAReason')}:</span>
         <br />
         <TextArea value={deletionReason} onChange={handleDeletionReasonChange} />
         <br />
@@ -51,18 +51,18 @@ export function confirmHardDelete(section, onOk, onCancel = () => {}) {
           value={deleteDescendants}
           onChange={handleDeleteDescendantsChange}
           >
-          Auch alle nachfolgenden Revisionen löschen
+          {t('deleteAllDescendantRevisions')}
         </Checkbox>
       </div>
     );
   }
 
   createDialogProps = () => ({
-    title: 'Sind Sie sicher?',
+    title: t('sectionActionDialogs:areYouSure'),
     content: createContent(),
-    okText: 'Ja',
+    okText: t('common:yes'),
     okType: 'danger',
-    cancelText: 'Nein',
+    cancelText: t('common:no'),
     onOk: () => onOk({ deleteDescendants, deletionReason }),
     onCancel: onCancel,
     okButtonProps: {
@@ -74,6 +74,6 @@ export function confirmHardDelete(section, onOk, onCancel = () => {}) {
 }
 
 export default {
-  confirmDelete,
-  confirmHardDelete
+  confirmSectionDelete,
+  confirmSectionHardDelete
 };

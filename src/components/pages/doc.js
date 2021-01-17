@@ -10,10 +10,14 @@ import clipboardCopy from 'clipboard-copy';
 import { inject } from '../container-context';
 import { Button, Slider, message } from 'antd';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation } from 'react-i18next';
 import permissions from '../../domain/permissions';
-import { fullDocShape } from '../../ui/default-prop-types';
+import { withLanguage } from '../language-context';
+import { HARD_DELETE } from '../../ui/section-actions';
 import DocumentApiClient from '../../services/document-api-client';
 import { PaperClipOutlined, EditOutlined } from '@ant-design/icons';
+import LanguageNameProvider from '../../data/language-name-provider';
+import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -22,49 +26,53 @@ class Doc extends React.Component {
     super(props);
     autoBind(this);
     this.state = {
-      docs: props.initialState.docs,
-      currentDoc: props.initialState.docs[props.initialState.docs.length - 1]
+      revisions: props.initialState.documentRevisions,
+      currentRevision: props.initialState.documentRevisions[props.initialState.documentRevisions.length - 1]
     };
   }
 
   handleEditClick() {
-    const { currentDoc } = this.state;
-    window.location = urls.getEditDocUrl(currentDoc.key);
+    const { currentRevision } = this.state;
+    window.location = urls.getEditDocUrl(currentRevision.key);
   }
 
   handleRevisionChanged(value) {
-    const { docs } = this.state;
-    this.setState({ currentDoc: docs.find(doc => doc.snapshotId === value) });
+    const { revisions } = this.state;
+    this.setState({ currentRevision: revisions.find(revision => revision._id === value) });
   }
 
   formatRevisionTooltip(index) {
-    const doc = this.state.docs[index];
-    const date = moment(doc.updatedOn).locale('de-DE');
+    const { languageNameProvider, language, locale, t } = this.props;
+    const revision = this.state.revisions[index];
+    const date = moment(revision.updatedOn).locale(locale);
+    const languageName = languageNameProvider.getData(language)[revision.language].name;
 
     return (
       <div>
-        <div>Revision: <b>{index + 1}</b></div>
-        <div>Datum: <b>{date.format('L')} {date.format('LT')}</b></div>
-        <div>Benutzer: <b>{doc.updatedBy.username}</b></div>
-        <div>ID: <b>{doc.snapshotId}</b></div>
+        <div>{t('revision')}: <b>{index + 1}</b></div>
+        <div>{t('date')}: <b>{date.format('L, LT')}</b></div>
+        <div>{t('language')}: <b>{languageName}</b></div>
+        <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
+        <div>{t('id')}: <b>{revision._id}</b></div>
       </div>
     );
   }
 
   handleIndexChanged(index) {
-    this.setState(prevState => ({ currentDoc: prevState.docs[index] }));
+    this.setState(prevState => ({ currentRevision: prevState.revisions[index] }));
   }
 
   async handlePermalinkRequest() {
-    const { currentDoc } = this.state;
-    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getArticleRevisionUrl(currentDoc.snapshotId));
+    const { t } = this.props;
+    const { currentRevision } = this.state;
+    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(currentRevision._id));
     try {
       await clipboardCopy(permalinkUrl);
-      message.success('Der Permalink wurde in die Zwischenablage kopiert');
+      message.success(t('permalinkCopied'));
     } catch (error) {
       const msg = (
         <span>
-          <span>Der Permalink konnte nicht in die Zwischenablage kopiert werden:</span>
+          <span>{t('permalinkCouldNotBeCopied')}:</span>
           <br />
           <a href={permalinkUrl}>{permalinkUrl}</a>
         </span>
@@ -75,64 +83,54 @@ class Doc extends React.Component {
 
   handleAction({ name, data }) {
     switch (name) {
-      case 'hard-delete':
+      case HARD_DELETE:
         return this.hardDelete(data);
       default:
         throw new Error(`Unknown action ${name}`);
     }
   }
 
-  async hardDelete({ sectionKey, sectionOrder, deletionReason, deleteDescendants }) {
+  async hardDelete({ sectionKey, sectionRevision, reason, deleteDescendants }) {
     const { documentApiClient } = this.props;
-    const { currentDoc } = this.state;
-    const docKey = currentDoc.key;
-
+    const { currentRevision } = this.state;
+    const documentKey = currentRevision.key;
     try {
-      await documentApiClient.hardDeleteSection(sectionKey, sectionOrder, deletionReason, deleteDescendants);
+      await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants });
     } catch (error) {
       errorHelper.handleApiError(error, logger);
     }
 
-    const { docs } = await documentApiClient.getDocumentHistory(docKey);
+    const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);
     this.setState(prevState => ({
-      docs: docs,
-      currentDoc: docs.find(doc => doc.snapshotId === prevState.currentDoc.snapshotId) || docs[docs.length - 1]
+      revisions: documentRevisions,
+      currentRevision: documentRevisions.find(revision => revision._id === prevState.currentRevision._id) || documentRevisions[documentRevisions.length - 1]
     }));
   }
 
   render() {
-    const { language } = this.props;
-    const { docs, currentDoc } = this.state;
+    const { t } = this.props;
+    const { revisions, currentRevision } = this.state;
 
     let revisionPicker = null;
 
-    if (docs.length > 1) {
-      const marks = docs.reduce((accu, item, index) => {
-        let text;
-        if (index === 0) {
-          text = 'erste';
-        } else if (index === docs.length - 1) {
-          text = 'aktuelle';
-        } else {
-          text = '';
-        }
-        accu[index] = text;
+    if (revisions.length > 1) {
+      const marks = revisions.reduce((accu, item, index) => {
+        accu[index] = index === 0 || index === revisions.length - 1 ? (index + 1).toString() : '';
         return accu;
       }, {});
 
       revisionPicker = (
         <div className="DocPage-revisionPicker">
-          <div className="DocPage-revisionPickerLabel">Revision:</div>
+          <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
           <div className="DocPage-revisionPickerSlider">
             <Slider
               min={0}
-              max={docs.length - 1}
-              value={docs.indexOf(currentDoc)}
+              max={revisions.length - 1}
+              value={revisions.indexOf(currentRevision)}
               step={null}
               marks={marks}
               onChange={this.handleIndexChanged}
               tipFormatter={this.formatRevisionTooltip}
-              tooltipVisible
               />
           </div>
           <div className="DocPage-revisionPickerResetButton">
@@ -141,7 +139,7 @@ class Doc extends React.Component {
               icon={<PaperClipOutlined />}
               onClick={this.handlePermalinkRequest}
               >
-              Permalink
+              {t('permalink')}
             </Button>
           </div>
         </div>
@@ -153,7 +151,7 @@ class Doc extends React.Component {
         key: 'edit',
         type: 'primary',
         icon: EditOutlined,
-        text: 'Bearbeiten',
+        text: t('common:edit'),
         permission: permissions.EDIT_DOC,
         handleClick: this.handleEditClick
       }
@@ -163,7 +161,10 @@ class Doc extends React.Component {
       <Page headerActions={headerActions}>
         <div className="DocPage">
           {revisionPicker}
-          <DocView doc={currentDoc} sections={currentDoc.sections} language={language} onAction={this.handleAction} />
+          <DocView
+            documentOrRevision={currentRevision}
+            onAction={this.handleAction}
+            />
         </div>
       </Page>
     );
@@ -171,13 +172,16 @@ class Doc extends React.Component {
 }
 
 Doc.propTypes = {
+  ...translationProps,
+  ...languageProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
-    docs: PropTypes.arrayOf(fullDocShape)
+    documentRevisions: PropTypes.arrayOf(documentRevisionShape)
   }).isRequired,
-  language: PropTypes.string.isRequired
+  languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
-export default inject({
-  documentApiClient: DocumentApiClient
-}, Doc);
+export default withTranslation('doc')(withLanguage(inject({
+  documentApiClient: DocumentApiClient,
+  languageNameProvider: LanguageNameProvider
+}, Doc)));

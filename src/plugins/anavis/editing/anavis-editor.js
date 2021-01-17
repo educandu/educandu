@@ -2,15 +2,16 @@ import React from 'react';
 import Dropperx from 'dropperx';
 import autoBind from 'auto-bind';
 import classNames from 'classnames';
+import { withTranslation } from 'react-i18next';
 import ColorPicker from '../../../components/color-picker';
-import ClientSettings from '../../../bootstrap/client-settings';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
 import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
-import { sectionEditorProps, clientSettingsProps } from '../../../ui/default-prop-types';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -71,21 +72,21 @@ class AnavisEditor extends React.Component {
           </ButtonGroup>
         )
       }, {
-        title: 'Name',
+        title: () => this.props.t('name'),
         dataIndex: 'name',
         key: 'name',
         render: (name, item, index) => (
           <Input data-index={index} value={name} onChange={this.handleNameInputChanged} />
         )
       }, {
-        title: 'Farbe',
+        title: () => this.props.t('color'),
         dataIndex: 'color',
         key: 'color',
         render: (color, item, index) => (
           <ColorPicker width={382} colors={COLOR_SWATCHES} color={color} onChange={value => this.handleColorInputChanged(value, index)} />
         )
       }, {
-        title: 'Länge',
+        title: () => this.props.t('length'),
         dataIndex: 'length',
         key: 'length',
         render: (length, item, index) => (
@@ -264,10 +265,12 @@ class AnavisEditor extends React.Component {
   }
 
   handleJsonDrop(files) {
+    const { t } = this.props;
     try {
       const ejected = JSON.parse(files[0].content);
       if (ejected.version !== '2') {
-        throw new Error('Nicht unterstütztes Dateiformat');
+        Modal.error({ title: t('common:error'), content: t('unsupportedFileFormat') });
+        return;
       }
 
       const newParts = ejected.parts.map((ejectedPart, index) => ({
@@ -279,7 +282,7 @@ class AnavisEditor extends React.Component {
 
       this.changeContent({ parts: newParts });
     } catch (error) {
-      Modal.error({ title: 'Fehler', content: error.message });
+      Modal.error({ title: t('common:error'), content: error.message });
     }
   }
 
@@ -313,7 +316,7 @@ class AnavisEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientSettings } = this.props;
+    const { docKey, content, clientConfig, t } = this.props;
     const { width, parts, media } = content;
     const { kind, type, url, text, aspectRatio } = media;
 
@@ -327,23 +330,23 @@ class AnavisEditor extends React.Component {
     return (
       <div className="AnavisEditor">
         <Form layout="horizontal">
-          <FormItem label="Quelle" {...formItemLayout}>
+          <FormItem label={t('source')} {...formItemLayout}>
             <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
-              <RadioButton value="external">Externer Link</RadioButton>
-              <RadioButton value="internal">Elmu CDN</RadioButton>
-              <RadioButton value="youtube">Youtube</RadioButton>
+              <RadioButton value="external">{t('externalLink')}</RadioButton>
+              <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
+              <RadioButton value="youtube">{t('youtube')}</RadioButton>
             </RadioGroup>
           </FormItem>
           {type === TYPE_EXTERNAL && (
-            <FormItem label="Externe URL" {...formItemLayout}>
+            <FormItem label={t('externalUrl')} {...formItemLayout}>
               <Input value={url} onChange={this.handleExternalUrlValueChanged} />
             </FormItem>
           )}
           {type === TYPE_INTERNAL && (
-            <FormItem label="Interne URL" {...formItemLayout}>
+            <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
-                  addonBefore={`${clientSettings.cdnRootUrl}/`}
+                  addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={url}
                   readOnly
                   />
@@ -358,23 +361,23 @@ class AnavisEditor extends React.Component {
             </FormItem>
           )}
           {type === TYPE_YOUTUBE && (
-            <FormItem label="Youtube URL" {...formItemLayout}>
+            <FormItem label={t('youtubeUrl')} {...formItemLayout}>
               <Input value={url} onChange={this.handleYoutubeUrlValueChanged} />
             </FormItem>
           )}
-          <Form.Item label="Seitenverhältnis" {...formItemLayout}>
+          <Form.Item label={t('aspectRatio')} {...formItemLayout}>
             <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={this.handleAspectRatioChanged}>
               <RadioButton value="16:9">16:9</RadioButton>
               <RadioButton value="4:3">4:3</RadioButton>
             </RadioGroup>
           </Form.Item>
-          <Form.Item label="Videoanzeige" {...formItemLayout}>
+          <Form.Item label={t('videoDisplay')} {...formItemLayout}>
             <Switch size="small" defaultChecked checked={kind === KIND_VIDEO} onChange={this.handleShowVideoChanged} />
           </Form.Item>
-          <Form.Item label="Breite" {...formItemLayout}>
+          <Form.Item label={t('widthUrl')} {...formItemLayout}>
             <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={this.handleWidthChanged} />
           </Form.Item>
-          <Form.Item label="Copyright Infos" {...formItemLayout}>
+          <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
             <TextArea value={text} onChange={this.handleTextChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
@@ -396,10 +399,11 @@ class AnavisEditor extends React.Component {
 }
 
 AnavisEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps,
-  ...clientSettingsProps
+  ...clientConfigProps
 };
 
-export default inject({
-  clientSettings: ClientSettings
-}, AnavisEditor);
+export default withTranslation('anavis')(inject({
+  clientConfig: ClientConfig
+}, AnavisEditor));

@@ -5,11 +5,12 @@ import PropTypes from 'prop-types';
 import { Piano } from 'react-piano';
 import { RadialChart } from 'react-vis';
 import arrayShuffle from 'array-shuffle';
+import { withTranslation } from 'react-i18next';
 import SoundfontProvider from './soundfont-provider';
 import DimensionsProvider from './dimensions-provider';
 import { inject } from '../../../components/container-context';
-import { sectionDisplayProps } from '../../../ui/default-prop-types';
 import AudioContextProvider from '../../../common/audio-context-provider';
+import { sectionDisplayProps, translationProps } from '../../../ui/default-prop-types';
 
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
@@ -161,6 +162,7 @@ class IntervalTrainerDisplay extends React.Component {
   }
 
   renderStatElement(tests) {
+    const { t } = this.props;
     const results = tests.reduce((stats, test) => {
       if (test.cancelled) {
         stats.failures += 1;
@@ -176,17 +178,17 @@ class IntervalTrainerDisplay extends React.Component {
     const data = [
       {
         value: results.oneAttemptSuccesses,
-        label: 'Aufgaben gelöst nach nur einem Versuch',
+        label: t('oneAttemptSuccesses'),
         pieItemClassName: 'IntervalTrainer-pieItem IntervalTrainer-pieItem--green',
         squareClassName: 'IntervalTrainer-legendSquare IntervalTrainer-legendSquare--green'
       }, {
         value: results.multipleAttemptSuccesses,
-        label: 'Aufgaben gelöst nach mehreren Versuchen',
+        label: t('multipleAttemptSuccesses'),
         pieItemClassName: 'IntervalTrainer-pieItem IntervalTrainer-pieItem--yellow',
         squareClassName: 'IntervalTrainer-legendSquare IntervalTrainer-legendSquare--yellow'
       }, {
         value: results.failures,
-        label: 'Nicht gelöste Aufgaben',
+        label: t('failures'),
         pieItemClassName: 'IntervalTrainer-pieItem IntervalTrainer-pieItem--red',
         squareClassName: 'IntervalTrainer-legendSquare IntervalTrainer-legendSquare--red'
       }
@@ -216,9 +218,10 @@ class IntervalTrainerDisplay extends React.Component {
   }
 
   renderQuestionElement(currentTestIndex, currentTest) {
+    const { t } = this.props;
     return (
       <div className="IntervalTrainer-question">
-        <span>Aufgabe&nbsp;{currentTestIndex + 1}:</span>
+        <span>{t('taskNumber', { number: currentTestIndex + 1 })}:</span>
         <br />
         <i>{currentTest.question}</i>
       </div>
@@ -258,15 +261,15 @@ class IntervalTrainerDisplay extends React.Component {
   }
 
   render() {
+    const { content, t } = this.props;
     const { tests, showStats, currentTestIndex, keyboardShortcuts } = this.state;
-    const { content } = this.props;
     const { keyboardStart, keyboardEnd, keyboardOffset, title } = content;
 
     const test = tests[currentTestIndex];
     if (!test) {
       return (
         <div className="IntervalTrainer">
-          Keine Tests vorhanden
+          {t('noTests')}
         </div>
       );
     }
@@ -282,10 +285,10 @@ class IntervalTrainerDisplay extends React.Component {
         {!showStats && this.renderKeyboardElement(keyboardStart, keyboardEnd, keyboardOffset, keyboardShortcuts)}
         {showStats && this.renderStatElement(tests)}
         <div className="IntervalTrainer-footer">
-          {showNextButton && <Button type="ghost" onClick={this.handleNextClick}>weiter</Button>}
-          {showResolveButton && <Button type="ghost" onClick={this.handleResolveClick}>auflösen</Button>}
-          {showStatsButton && <Button type="ghost" onClick={this.handleStatsClick}>Auswertung</Button>}
-          {showStats && <Button type="ghost" onClick={this.handleResetClick}>Nochmal üben</Button>}
+          {showNextButton && <Button type="ghost" onClick={this.handleNextClick}>{t('next')}</Button>}
+          {showResolveButton && <Button type="ghost" onClick={this.handleResolveClick}>{t('solve')}</Button>}
+          {showStatsButton && <Button type="ghost" onClick={this.handleStatsClick}>{t('statistics')}</Button>}
+          {showStats && <Button type="ghost" onClick={this.handleResetClick}>{t('restart')}</Button>}
         </div>
       </div>
     );
@@ -293,10 +296,11 @@ class IntervalTrainerDisplay extends React.Component {
 }
 
 IntervalTrainerDisplay.propTypes = {
+  ...translationProps,
   ...sectionDisplayProps,
   audioContextProvider: PropTypes.instanceOf(AudioContextProvider).isRequired
 };
 
-export default inject({
+export default withTranslation('intervalTrainer')(inject({
   audioContextProvider: AudioContextProvider
-}, IntervalTrainerDisplay);
+}, IntervalTrainerDisplay));

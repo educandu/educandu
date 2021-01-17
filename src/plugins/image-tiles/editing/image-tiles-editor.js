@@ -1,10 +1,11 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import TileEditor from './tile-editor';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
+import { withTranslation } from 'react-i18next';
 import { Form, Menu, Radio, Slider, Button, Dropdown, Modal } from 'antd';
 import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 import { SettingOutlined, PlusOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
@@ -124,23 +125,24 @@ class ImageTilesEditor extends React.Component {
   }
 
   createTileMenu(index) {
+    const { t } = this.props;
     return (
       <Menu onClick={this.handleTileMenuClick}>
         <Menu.Item data-index={index} key={TILE_MENU_KEY_MOVE_UP}>
-          <ArrowUpOutlined />&nbsp;&nbsp;<span>Nach oben verschieben</span>
+          <ArrowUpOutlined />&nbsp;&nbsp;<span>{t('common:moveUp')}</span>
         </Menu.Item>
         <Menu.Item data-index={index} key={TILE_MENU_KEY_MOVE_DOWN}>
-          <ArrowDownOutlined />&nbsp;&nbsp;<span>Nach unten verschieben</span>
+          <ArrowDownOutlined />&nbsp;&nbsp;<span>{t('common:moveDown')}</span>
         </Menu.Item>
         <Menu.Item data-index={index} key={TILE_MENU_KEY_DELETE}>
-          <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>Löschen</span>
+          <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>{t('common:delete')}</span>
         </Menu.Item>
       </Menu>
     );
   }
 
   render() {
-    const { docKey, content } = this.props;
+    const { docKey, content, t } = this.props;
     const { tiles, maxWidth, maxTilesPerRow, hoverEffect } = content;
 
     const formItemLayout = {
@@ -151,10 +153,10 @@ class ImageTilesEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <Form.Item label="Maximale Breite" {...formItemLayout}>
+          <Form.Item label={t('maximumWidth')} {...formItemLayout}>
             <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthValueChanged} />
           </Form.Item>
-          <Form.Item label="Kacheln pro Zeile" {...formItemLayout}>
+          <Form.Item label={t('tilesPerRow')} {...formItemLayout}>
             <Slider
               step={null}
               marks={marks}
@@ -165,10 +167,10 @@ class ImageTilesEditor extends React.Component {
               onChange={this.handleMaxTilesPerRowChanged}
               />
           </Form.Item>
-          <Form.Item label="Hovereffekt" {...formItemLayout}>
+          <Form.Item label={t('hoverEffect')} {...formItemLayout}>
             <RadioGroup value={hoverEffect} onChange={this.handleHoverEffectValueChanged}>
-              <RadioButton value="none">kein Effekt</RadioButton>
-              <RadioButton value="colorize-zoom">Färben und Zoomen</RadioButton>
+              <RadioButton value="none">{t('noEffect')}</RadioButton>
+              <RadioButton value="colorize-zoom">{t('colorAndZoom')}</RadioButton>
             </RadioGroup>
           </Form.Item>
           {tiles.map((tile, index) => (
@@ -176,7 +178,7 @@ class ImageTilesEditor extends React.Component {
               <div className="Panel">
                 <div className="Panel-header" style={{ display: 'flex' }}>
                   <div style={{ flex: '1 0 0%' }}>
-                    Kachel {index + 1}
+                    {t('tileNumber', { number: index + 1 })}
                   </div>
                   <div style={{ flex: 'none' }}>
                     <Dropdown overlay={this.createTileMenu(index)} placement="bottomRight">
@@ -190,7 +192,7 @@ class ImageTilesEditor extends React.Component {
               </div>
             </div>
           ))}
-          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddButtonClick}>Kachel hinzufügen</Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={this.handleAddButtonClick}>{t('addTile')}</Button>
         </Form>
       </div>
     );
@@ -198,7 +200,8 @@ class ImageTilesEditor extends React.Component {
 }
 
 ImageTilesEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps
 };
 
-export default ImageTilesEditor;
+export default withTranslation('imageTiles')(ImageTilesEditor);

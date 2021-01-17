@@ -1,16 +1,17 @@
 {
-  "doc": {
+  "data": {
     "title": "Landing Page",
-    "slug": ""
-  },
-  "sections": [
-    {
-      "type": "markdown",
-      "content": {
-        "de": {
+    "slug": "",
+    "namespace": "articles",
+    "language": "de",
+    "sections": [
+      {
+        "key": "7cr6p9FikWyhny1GkmqwuW",
+        "type": "markdown",
+        "content": {
           "text": "## Hello World"
         }
       }
-    }
-  ]
+    ]
+  }
 }

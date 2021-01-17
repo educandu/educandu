@@ -3,11 +3,11 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ReactPlayer from 'react-player';
+import ClientConfig from '../../../bootstrap/client-config';
 import MediaControl from '../../../components/media-control';
 import { inject } from '../../../components/container-context';
-import ClientSettings from '../../../bootstrap/client-settings';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
 
 const playStates = {
   INITIALIZING: 'initializing',
@@ -85,7 +85,7 @@ class VideoDisplay extends React.Component {
   }
 
   render() {
-    const { content, clientSettings, githubFlavoredMarkdown } = this.props;
+    const { content, clientConfig, githubFlavoredMarkdown } = this.props;
     const { playState, durationInSeconds, playedSeconds, volume } = this.state;
     const html = githubFlavoredMarkdown.render(content.text || '');
     const aspectRatio = content.aspectRatio || { h: 16, v: 9 };
@@ -95,7 +95,7 @@ class VideoDisplay extends React.Component {
     let url;
     switch (content.type) {
       case 'internal':
-        url = content.url ? `${clientSettings.cdnRootUrl}/${content.url}` : null;
+        url = content.url ? `${clientConfig.cdnRootUrl}/${content.url}` : null;
         break;
       default:
         url = content.url || null;
@@ -104,19 +104,21 @@ class VideoDisplay extends React.Component {
 
     const mediaControlContainerClasses = classNames(['VideoDisplay-mediaControlContainer', `u-width-${width}`]);
 
-    const mediaControl = url && !content.showVideo ? (
-      <div className={mediaControlContainerClasses}>
-        <MediaControl
-          isPlaying={playState === playStates.PLAYING}
-          durationInSeconds={durationInSeconds}
-          playedSeconds={playedSeconds}
-          volume={volume}
-          onSeek={this.handleMediaControlSeek}
-          onTogglePlay={this.handleMediaControlTogglePlay}
-          onVolumeChange={this.handleVolumeChange}
-          />
-      </div>
-    ) : null;
+    const mediaControl = url && !content.showVideo
+      ? (
+        <div className={mediaControlContainerClasses}>
+          <MediaControl
+            isPlaying={playState === playStates.PLAYING}
+            durationInSeconds={durationInSeconds}
+            playedSeconds={playedSeconds}
+            volume={volume}
+            onSeek={this.handleMediaControlSeek}
+            onTogglePlay={this.handleMediaControlTogglePlay}
+            onVolumeChange={this.handleVolumeChange}
+            />
+        </div>
+      )
+      : null;
 
     const containerInnerClasses = classNames({
       'Video-mainPlayerContainer': true,
@@ -150,16 +152,18 @@ class VideoDisplay extends React.Component {
       </div>
     );
 
-    const players = url ? (
-      <div className="Video-players">
-        {mainPlayer}
-        {mediaControl}
-      </div>
-    ) : null;
+    const players = url
+      ? (
+        <div className="Video-players">
+          {mainPlayer}
+          {mediaControl}
+        </div>
+      )
+      : null;
 
-    const text = html ? (
-      <div className="Video-text" dangerouslySetInnerHTML={{ __html: html }} />
-    ) : null;
+    const text = html
+      ? <div className="Video-text" dangerouslySetInnerHTML={{ __html: html }} />
+      : null;
 
     return (
       <div className="Video">
@@ -172,11 +176,11 @@ class VideoDisplay extends React.Component {
 
 VideoDisplay.propTypes = {
   ...sectionDisplayProps,
-  ...clientSettingsProps,
+  ...clientConfigProps,
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
 export default inject({
-  clientSettings: ClientSettings,
+  clientConfig: ClientConfig,
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, VideoDisplay);

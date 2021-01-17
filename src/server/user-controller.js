@@ -12,7 +12,7 @@ import UserService from '../services/user-service';
 import MailService from '../services/mail-service';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
-import ServerSettings from '../bootstrap/server-settings';
+import ServerConfig from '../bootstrap/server-config';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
 import { CREATE_USER_RESULT_SUCCESS } from '../domain/user-management';
@@ -23,10 +23,10 @@ const LocalStrategy = passportLocal.Strategy;
 const MongoSessionStore = connectMongo(session);
 
 class UserController {
-  static get inject() { return [ServerSettings, Database, UserService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, Database, UserService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverSettings, database, userService, mailService, clientDataMapper, pageRenderer) {
-    this.serverSettings = serverSettings;
+  constructor(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer) {
+    this.serverConfig = serverConfig;
     this.database = database;
     this.userService = userService;
     this.mailService = mailService;
@@ -37,13 +37,13 @@ class UserController {
   registerMiddleware(router) {
     router.use(session({
       name: 'SID',
-      secret: this.serverSettings.sessionSecret,
+      secret: this.serverConfig.sessionSecret,
       resave: false,
       saveUninitialized: false, // Don't create session until something stored
       store: new MongoSessionStore({
         client: this.database._mongoClient,
         collection: sessionsStoreSpec.name,
-        ttl: this.serverSettings.sessionDurationInMinutes * 60,
+        ttl: this.serverConfig.sessionDurationInMinutes * 60,
         autoRemove: 'disabled', // We use our own index
         stringify: false // Do not serialize session data
       })
@@ -100,7 +100,7 @@ class UserController {
     });
 
     router.get('/profile', needsAuthentication(), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {}, ['country-names']);
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {});
     });
 
     router.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
@@ -115,7 +115,7 @@ class UserController {
 
     router.get('/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
       const initialState = await this.userService.getAllUsers();
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState, ['country-names']);
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState);
     });
   }
 

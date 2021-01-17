@@ -1,8 +1,9 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { Form, Input, Switch } from 'antd';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
+import { withTranslation } from 'react-i18next';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 
@@ -36,7 +37,7 @@ class AbcNotationEditor extends React.Component {
   }
 
   render() {
-    const { content } = this.props;
+    const { content, t } = this.props;
     const { abcCode, maxWidth, displayMidi, text } = content;
 
     const formItemLayout = {
@@ -47,16 +48,16 @@ class AbcNotationEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <Form.Item label="ABC-Code" {...formItemLayout}>
+          <Form.Item label={t('abcCode')} {...formItemLayout}>
             <TextArea value={abcCode} onChange={this.handleCurrentAbcCodeChanged} autoSize={{ minRows: 5 }} />
           </Form.Item>
-          <Form.Item label="MIDI-Sound" {...formItemLayout}>
+          <Form.Item label={t('midiSound')} {...formItemLayout}>
             <Switch checked={!!displayMidi} onChange={this.handleDisplayMidiChanged} />
           </Form.Item>
-          <Form.Item label="Maximale Breite" {...formItemLayout}>
+          <Form.Item label={t('maximumWidth')} {...formItemLayout}>
             <ObjectMaxWidthSlider defaultValue={100} value={maxWidth} onChange={this.handleMaxWidthChanged} />
           </Form.Item>
-          <Form.Item label="Copyright Infos" {...formItemLayout}>
+          <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
             <TextArea value={text} onChange={this.handleCurrentTextChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
         </Form>
@@ -66,7 +67,8 @@ class AbcNotationEditor extends React.Component {
 }
 
 AbcNotationEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps
 };
 
-export default AbcNotationEditor;
+export default withTranslation('abcNotation')(AbcNotationEditor);

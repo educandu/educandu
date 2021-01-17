@@ -5,11 +5,10 @@ import DocView from '../doc-view';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls';
 import classnames from 'classnames';
+import { withTranslation } from 'react-i18next';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
-import { menuShape, docMetadataShape, docShape, sectionShape } from '../../ui/default-prop-types';
-
-const UNKNOWN_DOC_TITLE = 'Unbekanntes Dokument';
+import { menuShape, documentMetadataShape, documentShape, translationProps } from '../../ui/default-prop-types';
 
 class Menu extends React.Component {
   constructor(props) {
@@ -19,7 +18,7 @@ class Menu extends React.Component {
     const { initialState } = this.props;
 
     this.state = {
-      documentDictionary: initialState.docs.reduce((map, doc) => {
+      documentDictionary: initialState.documents.reduce((map, doc) => {
         map.set(doc.key, doc);
         return map;
       }, new Map())
@@ -32,10 +31,10 @@ class Menu extends React.Component {
     window.location = menuEditUrl;
   }
 
-  renderDefaultDoc(defaultDocument, language) {
+  renderDefaultDoc(defaultDocument) {
     return (
       <div className="MenuPage-detailsItem">
-        <DocView doc={defaultDocument.doc} sections={defaultDocument.sections} language={language} />
+        <DocView documentOrRevision={defaultDocument} />
       </div>
     );
   }
@@ -90,15 +89,17 @@ class Menu extends React.Component {
     );
   }
 
-  renderLinkListItemContent(doc = { title: UNKNOWN_DOC_TITLE }) {
+  renderLinkListItemContent(doc) {
+    const { t } = this.props;
+    const title = doc.title || t('unknownDocumentTitle');
     return doc.slug
-      ? <a href={urls.getArticleUrl(doc.slug)}>{doc.title}</a>
-      : <span>{doc.title}</span>;
+      ? <a href={urls.getArticleUrl(doc.slug)}>{title}</a>
+      : <span>{title}</span>;
   }
 
   render() {
-    const { initialState, language } = this.props;
-    const { currentActiveNode, documentDictionary } = this.state;
+    const { initialState, t } = this.props;
+    const { documentDictionary } = this.state;
     const { menu, defaultDocument } = initialState;
 
     const headerActions = [
@@ -106,7 +107,7 @@ class Menu extends React.Component {
         key: 'edit',
         type: 'primary',
         icon: EditOutlined,
-        text: 'Bearbeiten',
+        text: t('common:edit'),
         permission: permissions.EDIT_MENU,
         handleClick: this.handleEditMenuClick
       }
@@ -116,7 +117,7 @@ class Menu extends React.Component {
       <Page headerActions={headerActions}>
         <div className="MenuPage">
           <h2>{menu.title}</h2>
-          {defaultDocument ? this.renderDefaultDoc(defaultDocument, language, !currentActiveNode) : null}
+          {defaultDocument ? this.renderDefaultDoc(defaultDocument) : null}
           {this.renderMenuItemList(menu.nodes, 0, documentDictionary)}
         </div>
       </Page>
@@ -125,15 +126,12 @@ class Menu extends React.Component {
 }
 
 Menu.propTypes = {
+  ...translationProps,
   initialState: PropTypes.shape({
-    docs: PropTypes.arrayOf(docMetadataShape).isRequired,
-    menu: menuShape.isRequired,
-    defaultDocument: PropTypes.shape({
-      doc: docShape,
-      sections: PropTypes.arrayOf(sectionShape).isRequired
-    })
-  }).isRequired,
-  language: PropTypes.string.isRequired
+    defaultDocument: documentShape,
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
+    menu: menuShape.isRequired
+  }).isRequired
 };
 
-export default Menu;
+export default withTranslation('menu')(Menu);

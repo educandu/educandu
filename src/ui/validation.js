@@ -4,19 +4,19 @@ const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|
 
 const URL_SECURE_PROTO_REGEX = /^https:\/\/.+$/;
 
-export function validateUrl(url, { allowInsecure = false } = {}) {
+export function validateUrl(url, t, { allowInsecure = false } = {}) {
   let validateStatus;
   let help;
 
   if (!url) {
     validateStatus = 'warning';
-    help = 'Bitte geben Sie eine Adresse an.';
+    help = t('validation:urlRequired');
   } else if (!URL_REGEX.test(url)) {
     validateStatus = 'error';
-    help = 'Bitte geben Sie eine Adresse im gültigen Format an.';
+    help = t('validation:urlInvalid');
   } else if (!allowInsecure && !URL_SECURE_PROTO_REGEX.test(url)) {
     validateStatus = 'error';
-    help = 'Bitte geben Sie eine Adresse mit sicherem Protokoll (https) an.';
+    help = t('validation:urlInsecure');
   } else {
     validateStatus = 'success';
     help = null;

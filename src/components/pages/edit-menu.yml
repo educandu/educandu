@@ -1,0 +1,24 @@
+metadata:
+  en: Metadata
+  de: Metadaten
+title:
+  en: Title
+  de: Titel
+slug:
+  en: URL path
+  de: URL-Pfad
+defaultDocument:
+  en: Default document
+  de: Standard-Dokument
+categories:
+  en: Categories
+  de: Kategorien
+categoryProperties:
+  en: Category properties
+  de: Eigenschaften der Kategorie
+linkedDocumentsInCategory:
+  en: Linked documents in category
+  de: Verlinkte Dokumente in Kategorie
+availableDocuments:
+  en: Available document
+  de: Verfügbare Dokumente

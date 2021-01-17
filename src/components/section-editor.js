@@ -3,10 +3,20 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import DeletedSection from './deleted-section';
+import { withTranslation } from 'react-i18next';
 import { Menu, Radio, Button, Dropdown } from 'antd';
-import { confirmDelete } from './section-action-dialogs';
-import { docShape, sectionShape } from '../ui/default-prop-types';
-import { SettingOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
+import { confirmSectionDelete } from './section-action-dialogs';
+import { documentRevisionShape, sectionShape, translationProps } from '../ui/default-prop-types';
+import {
+  SettingOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  EditOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined
+} from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -35,7 +45,7 @@ class SectionEditor extends React.Component {
   }
 
   handleSectionMenuClick({ key }) {
-    const { section, onSectionMovedUp, onSectionMovedDown, onSectionDeleted } = this.props;
+    const { t, section, onSectionMovedUp, onSectionMovedDown, onSectionDeleted } = this.props;
     switch (key) {
       case SECTION_MENU_KEY_MOVE_UP:
         onSectionMovedUp(section.key);
@@ -44,7 +54,7 @@ class SectionEditor extends React.Component {
         onSectionMovedDown(section.key);
         break;
       case SECTION_MENU_KEY_DELETE:
-        confirmDelete(section, () => onSectionDeleted(section.key));
+        confirmSectionDelete(t, section, () => onSectionDeleted(section.key));
         break;
       default:
         break;
@@ -52,13 +62,23 @@ class SectionEditor extends React.Component {
   }
 
   handleContentChange(updatedContent, isInvalid = false) {
-    const { onContentChanged, section, language } = this.props;
-    onContentChanged(section.key, { ...section.content, [language]: updatedContent }, isInvalid);
+    const { onContentChanged, section } = this.props;
+    onContentChanged(section.key, { ...section.content, ...updatedContent }, isInvalid);
+  }
+
+  handleApproved() {
+    const { onSectionApproved, section } = this.props;
+    onSectionApproved(section.key);
+  }
+
+  handleRefused() {
+    const { onSectionRefused, section } = this.props;
+    onSectionRefused(section.key);
   }
 
   render() {
     const { mode } = this.state;
-    const { doc, section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, isInvalid, language } = this.props;
+    const { documentRevision, section, EditorComponent, DisplayComponent, dragHandleProps, isHighlighted, isProposed, isInvalid, t } = this.props;
 
     const hasContent = !!section.content;
 
@@ -67,23 +87,21 @@ class SectionEditor extends React.Component {
       componentToShow = (
         <DeletedSection section={section} />
       );
-    } else if (mode === 'preview') {
+    } else if (mode === 'preview' || isProposed) {
       componentToShow = (
         <DisplayComponent
-          docKey={doc.key}
+          docKey={documentRevision.key}
           sectionKey={section.key}
-          content={section.content[language]}
-          language={language}
+          content={section.content}
           />
       );
     } else if (mode === 'edit') {
       componentToShow = (
         <EditorComponent
-          docKey={doc.key}
+          docKey={documentRevision.key}
           sectionKey={section.key}
-          content={section.content[language]}
+          content={section.content}
           onContentChanged={this.handleContentChange}
-          language={language}
           />
       );
     } else {
@@ -92,6 +110,7 @@ class SectionEditor extends React.Component {
 
     const panelClasses = classNames({
       'Panel': true,
+      'is-proposed': isProposed,
       'is-highlighted': !isInvalid && isHighlighted,
       'is-invalid': isInvalid
     });
@@ -99,13 +118,13 @@ class SectionEditor extends React.Component {
     const sectionMenu = (
       <Menu onClick={this.handleSectionMenuClick}>
         <Menu.Item key={SECTION_MENU_KEY_MOVE_UP}>
-          <ArrowUpOutlined />&nbsp;&nbsp;<span>Nach oben verschieben</span>
+          <ArrowUpOutlined />&nbsp;&nbsp;<span>{t('common:moveUp')}</span>
         </Menu.Item>
         <Menu.Item key={SECTION_MENU_KEY_MOVE_DOWN}>
-          <ArrowDownOutlined />&nbsp;&nbsp;<span>Nach unten verschieben</span>
+          <ArrowDownOutlined />&nbsp;&nbsp;<span>{t('common:moveDown')}</span>
         </Menu.Item>
         <Menu.Item key={SECTION_MENU_KEY_DELETE}>
-          <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>Löschen</span>
+          <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>{t('common:delete')}</span>
         </Menu.Item>
       </Menu>
     );
@@ -115,33 +134,60 @@ class SectionEditor extends React.Component {
         <div className="Panel-header" style={{ display: 'flex' }} {...dragHandleProps}>
           <div style={{ flex: '1 0 0%' }}>
             <span style={{ display: 'inline-block', marginRight: '1em' }}>
-              <span>Typ:</span>&nbsp;<b>{section.type}</b>
+              <span>{t('type')}:</span>&nbsp;<b>{section.type}</b>
             </span>
             <span style={{ display: 'inline-block', marginRight: '1em' }}>
-              <span>Key:</span>&nbsp;<b>{section.key}</b>
+              <span>{t('key')}:</span>&nbsp;<b>{section.key}</b>
             </span>
             <span style={{ display: 'inline-block', marginRight: '1em' }}>
-              <span>Revision:</span>&nbsp;<b>{section._id}</b>
+              <span>{t('revision')}:</span>&nbsp;<b>{section.revision || 'N/A'}</b>
             </span>
           </div>
           <div style={{ flex: 'none' }}>
-            <Dropdown key="new-section-dropdown" overlay={sectionMenu} placement="bottomRight">
-              <Button type="ghost" icon={<SettingOutlined />} size="small" />
+            <Dropdown key="new-section-dropdown" overlay={sectionMenu} placement="bottomRight" disabled={isProposed}>
+              <Button type="ghost" icon={<SettingOutlined />} size="small" disabled={isProposed} />
             </Dropdown>
           </div>
         </div>
         <div className="Panel-content">
           {componentToShow}
+          {isProposed && <div className="Panel-contentOverlay" />}
         </div>
         <div className="Panel-footer">
-          <RadioGroup size="small" value={hasContent ? mode : 'preview'} onChange={this.handleModeChange}>
-            <RadioButton value="preview">
-              <EyeOutlined />&nbsp;Vorschau
-            </RadioButton>
-            <RadioButton value="edit" disabled={!hasContent}>
-              <EditOutlined />&nbsp;Bearbeiten
-            </RadioButton>
-          </RadioGroup>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ flex: 'none' }}>
+              <RadioGroup size="small" value={hasContent ? mode : 'preview'} onChange={this.handleModeChange} disabled={isProposed}>
+                <RadioButton value="preview">
+                  <EyeOutlined />&nbsp;{t('common:preview')}
+                </RadioButton>
+                <RadioButton value="edit" disabled={!hasContent}>
+                  <EditOutlined />&nbsp;{t('common:edit')}
+                </RadioButton>
+              </RadioGroup>
+            </div>
+            {isProposed && (
+              <div style={{ flex: 'none' }}>
+                <Button
+                  size="small"
+                  type="primary"
+                  icon={<CheckCircleOutlined />}
+                  onClick={this.handleApproved}
+                  >
+                  {t('common:apply')}
+                </Button>
+                &nbsp;&nbsp;
+                <Button
+                  size="small"
+                  type="primary"
+                  icon={<CloseCircleOutlined />}
+                  onClick={this.handleRefused}
+                  danger
+                  >
+                  {t('common:discard')}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -149,24 +195,28 @@ class SectionEditor extends React.Component {
 }
 
 SectionEditor.propTypes = {
+  ...translationProps,
   DisplayComponent: PropTypes.func.isRequired,
   EditorComponent: PropTypes.func.isRequired,
-  doc: docShape.isRequired,
+  documentRevision: documentRevisionShape.isRequired,
   dragHandleProps: PropTypes.object,
   isHighlighted: PropTypes.bool,
   isInvalid: PropTypes.bool,
-  language: PropTypes.string.isRequired,
+  isProposed: PropTypes.bool,
   onContentChanged: PropTypes.func.isRequired,
+  onSectionApproved: PropTypes.func.isRequired,
   onSectionDeleted: PropTypes.func.isRequired,
   onSectionMovedDown: PropTypes.func.isRequired,
   onSectionMovedUp: PropTypes.func.isRequired,
+  onSectionRefused: PropTypes.func.isRequired,
   section: sectionShape.isRequired
 };
 
 SectionEditor.defaultProps = {
   dragHandleProps: {},
   isHighlighted: false,
-  isInvalid: false
+  isInvalid: false,
+  isProposed: false
 };
 
-export default SectionEditor;
+export default withTranslation('sectionEditor')(SectionEditor);

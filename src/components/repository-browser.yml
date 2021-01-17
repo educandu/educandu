@@ -1,0 +1,63 @@
+mimeTypeCategoryText:
+  en: Text
+  de: Text
+mimeTypeCategoryMarkup:
+  en: Markup
+  de: Markup
+mimeTypeCategoryImage:
+  en: Image
+  de: Bild
+mimeTypeCategoryVideo:
+  en: Video
+  de: Video
+mimeTypeCategoryAudio:
+  en: Audio
+  de: Audio
+mimeTypeCategoryArchive:
+  en: Archive
+  de: Archiv
+mimeTypeCategoryDocument:
+  en: Document
+  de: Dokument
+mimeTypeCategorySpreadsheet:
+  en: Spreadsheet
+  de: Tabellenkalkulation
+mimeTypeCategoryPresentation:
+  en: Presentation
+  de: Präsentation
+mimeTypeCategoryProgram:
+  en: Program
+  de: Programm
+mimeTypeCategoryFolder:
+  en: Folder
+  de: Verzeichnis
+mimeTypeCategoryUnknown:
+  en: Unknown
+  de: Unbekannt
+fileUpload:
+  en: File upload
+  de: Datei-Upload
+searchFilter:
+  en: Search filter
+  de: Suchfilter
+displayNameText:
+  en: Name
+  de: Name
+categoryText:
+  en: Type
+  de: Typ
+sizeText:
+  en: Size
+  de: Größe
+lastModifiedText:
+  en: Date
+  de: Datum
+action:
+  en: Action
+  de: Aktion
+moreActions:
+  en: More Actions
+  de: Weitere Aktionen
+uploadFiles:
+  en: Upload files
+  de: Dateien hochladen

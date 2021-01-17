@@ -5,12 +5,12 @@ import util from 'util';
 import { URL } from 'url';
 import Cdn from './repositories/cdn';
 import Database from './stores/database';
-import ServerSettings from './bootstrap/server-settings';
+import ServerConfig from './bootstrap/server-config';
 import { CREATE_USER_RESULT_SUCCESS } from './domain/user-management';
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
-const serverSettings = new ServerSettings();
+const serverConfig = new ServerConfig();
 
 export async function createTestDir() {
   const tempDir = path.join(__dirname, '../.tmp/');
@@ -30,7 +30,7 @@ export function deleteTestDir(testDir) {
 }
 
 export function createTestDatabase() {
-  const url = new URL(serverSettings.elmuWebConnectionString);
+  const url = new URL(serverConfig.elmuWebConnectionString);
   url.pathname = `test-elmu-web-${Date.now()}`;
   return Database.create({ connectionString: url.toString() });
 }
@@ -75,10 +75,10 @@ export async function ensurePublicBucketExists(cdn, bucketName, region) {
 
 export async function createTestCdn() {
   const cdn = await Cdn.create({
-    endpoint: serverSettings.cdnEndpoint,
-    region: serverSettings.cdnRegion,
-    accessKey: serverSettings.cdnAccessKey,
-    secretKey: serverSettings.cdnSecretKey,
+    endpoint: serverConfig.cdnEndpoint,
+    region: serverConfig.cdnRegion,
+    accessKey: serverConfig.cdnAccessKey,
+    secretKey: serverConfig.cdnSecretKey,
     bucketName: `test-elmu-cdn-${Date.now()}`
   });
 

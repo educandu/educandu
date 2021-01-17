@@ -16,7 +16,17 @@ export function removeItem(items, index) {
   return items.filter((t, i) => i !== index);
 }
 
+export function ensureIsIncluded(items, item) {
+  return items.includes(item) ? items : [...items, item];
+}
+
+export function ensureIsExcluded(items, item) {
+  return items.includes(item) ? items.filter(i => i !== item) : items;
+}
+
 export default {
   swapItems,
-  removeItem
+  removeItem,
+  ensureIsIncluded,
+  ensureIsExcluded
 };

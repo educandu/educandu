@@ -9,39 +9,36 @@ import selection from '../ui/selection';
 import pathHelper from '../ui/path-helper';
 import Highlighter from 'react-highlighter';
 import { inject } from './container-context';
+import { withTranslation } from 'react-i18next';
 import browserHelper from '../ui/browser-helper';
+import { withLanguage } from './language-context';
 import mimeTypeHelper from '../ui/mime-type-helper';
 import CdnApiClient from '../services/cdn-api-client';
+import { translationProps, languageProps } from '../ui/default-prop-types';
 import { Input, Table, Upload, Button, Divider, message, Breadcrumb } from 'antd';
 import Icon, { FolderOutlined, FileOutlined, DownOutlined, CloseOutlined, UploadOutlined, HomeOutlined } from '@ant-design/icons';
 
-const BROWSER_LOCALE = 'de';
-
-const mappingsDe = {
-  [mimeTypeHelper.CATEGORY_TEXT]: 'Text',
-  [mimeTypeHelper.CATEGORY_MARKUP]: 'Markup',
-  [mimeTypeHelper.CATEGORY_IMAGE]: 'Bild',
-  [mimeTypeHelper.CATEGORY_VIDEO]: 'Video',
-  [mimeTypeHelper.CATEGORY_AUDIO]: 'Audio',
-  [mimeTypeHelper.CATEGORY_ARCHIVE]: 'Archiv',
-  [mimeTypeHelper.CATEGORY_DOCUMENT]: 'Dokument',
-  [mimeTypeHelper.CATEGORY_SPREADSHEET]: 'Tabellenkalkulation',
-  [mimeTypeHelper.CATEGORY_PRESENTATION]: 'Präsentation',
-  [mimeTypeHelper.CATEGORY_PROGRAM]: 'Programm',
-  [mimeTypeHelper.CATEGORY_FOLDER]: 'Verzeichnis',
-  [mimeTypeHelper.CATEGORY_UNKNOWN]: 'Unbekannt'
+const resourceKeyMap = {
+  [mimeTypeHelper.CATEGORY_TEXT]: 'mimeTypeCategoryText',
+  [mimeTypeHelper.CATEGORY_MARKUP]: 'mimeTypeCategoryMarkup',
+  [mimeTypeHelper.CATEGORY_IMAGE]: 'mimeTypeCategoryImage',
+  [mimeTypeHelper.CATEGORY_VIDEO]: 'mimeTypeCategoryVideo',
+  [mimeTypeHelper.CATEGORY_AUDIO]: 'mimeTypeCategoryAudio',
+  [mimeTypeHelper.CATEGORY_ARCHIVE]: 'mimeTypeCategoryArchive',
+  [mimeTypeHelper.CATEGORY_DOCUMENT]: 'mimeTypeCategoryDocument',
+  [mimeTypeHelper.CATEGORY_SPREADSHEET]: 'mimeTypeCategorySpreadsheet',
+  [mimeTypeHelper.CATEGORY_PRESENTATION]: 'mimeTypeCategoryPresentation',
+  [mimeTypeHelper.CATEGORY_PROGRAM]: 'mimeTypeCategoryProgram',
+  [mimeTypeHelper.CATEGORY_FOLDER]: 'mimeTypeCategoryFolder',
+  [mimeTypeHelper.CATEGORY_UNKNOWN]: 'mimeTypeCategoryUnknown'
 };
 
-function localizeCategory(cat) {
-  return mappingsDe[cat];
-}
+const localizeCategory = (cat, t) => t(resourceKeyMap[cat]);
 
 class RepositoryBrowser extends React.Component {
   constructor(props) {
     super(props);
-
     autoBind(this);
-
     this.lastDragElement = null;
     this.browserRef = React.createRef();
     this.filterTextInputRef = React.createRef();
@@ -74,7 +71,7 @@ class RepositoryBrowser extends React.Component {
 
     this.columns = [
       {
-        title: 'Name',
+        title: () => this.props.t('displayName'),
         dataIndex: 'displayName',
         key: 'displayName',
         align: 'left',
@@ -85,7 +82,7 @@ class RepositoryBrowser extends React.Component {
         defaultSortOrder: 'ascend'
       },
       {
-        title: 'Typ',
+        title: () => this.props.t('categoryText'),
         dataIndex: 'categoryText',
         key: 'categoryText',
         align: 'left',
@@ -93,7 +90,7 @@ class RepositoryBrowser extends React.Component {
         sorter: firstBy('categoryText', { ignoreCase: false })
       },
       {
-        title: 'Größe',
+        title: () => this.props.t('sizeText'),
         dataIndex: 'sizeText',
         key: 'sizeText',
         align: 'right',
@@ -101,7 +98,7 @@ class RepositoryBrowser extends React.Component {
         sorter: firstBy('size')
       },
       {
-        title: 'Datum',
+        title: () => this.props.t('lastModifiedText'),
         dataIndex: 'lastModifiedText',
         key: 'lastModifiedText',
         align: 'right',
@@ -116,7 +113,14 @@ class RepositoryBrowser extends React.Component {
     window.addEventListener('dragover', this.handleWindowDragOverOrDrop);
     window.addEventListener('drop', this.handleWindowDragOverOrDrop);
     const { currentPathSegments, selectedRowKeys } = this.state;
-    return this.refreshFiles(currentPathSegments, selectedRowKeys);
+    this.refreshFiles(currentPathSegments, selectedRowKeys);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.language !== prevProps.language) {
+      const { currentPathSegments, selectedRowKeys } = this.state;
+      this.refreshFiles(currentPathSegments, selectedRowKeys);
+    }
   }
 
   componentWillUnmount() {
@@ -125,14 +129,15 @@ class RepositoryBrowser extends React.Component {
   }
 
   increaseCurrentUploadCount() {
+    const { t } = this.props;
     const { currentUploadCount, currentUploadMessage } = this.state;
-
     const newUploadCount = currentUploadCount + 1;
     let newUploadMessage;
+
     if (currentUploadMessage) {
       newUploadMessage = currentUploadMessage;
     } else {
-      const hide = message.loading('Datei-Upload', 0);
+      const hide = message.loading(t('fileUpload'), 0);
       newUploadMessage = { hide };
     }
 
@@ -144,7 +149,6 @@ class RepositoryBrowser extends React.Component {
 
   decreaseCurrentUploadCount() {
     const { currentUploadCount, currentUploadMessage } = this.state;
-
     const newUploadCount = currentUploadCount - 1;
     let newUploadMessage;
 
@@ -198,11 +202,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   handleFrameDrag(event) {
-    if (!this.eventHasFiles(event)) {
-      return;
-    }
-
-    if (event.target === this.lastDragElement) {
+    if (!this.eventHasFiles(event) || event.target === this.lastDragElement) {
       return;
     }
 
@@ -292,6 +292,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   convertObjectsToRecords(objects) {
+    const { t, locale } = this.props;
     return objects.map(obj => {
       const path = `${obj.prefix || ''}${obj.name || ''}`;
       const segments = pathHelper.getPathSegments(path);
@@ -301,13 +302,13 @@ class RepositoryBrowser extends React.Component {
         key: path,
         path: path,
         size: obj.size,
-        sizeText: Number.isFinite(obj.size) && !isDirectory ? prettyBytes(obj.size, { locale: BROWSER_LOCALE }) : '---',
+        sizeText: Number.isFinite(obj.size) && !isDirectory ? prettyBytes(obj.size, { locale }) : '---',
         lastModified: obj.lastModified,
-        lastModifiedText: obj.lastModified && !isDirectory ? moment(obj.lastModified).locale(BROWSER_LOCALE).format('lll') : '---',
+        lastModifiedText: obj.lastModified && !isDirectory ? moment(obj.lastModified).locale(locale).format('lll') : '---',
         displayName: segments[segments.length - 1] || '',
         isDirectory: isDirectory,
         category: category,
-        categoryText: localizeCategory(category),
+        categoryText: localizeCategory(category, t),
         originalObject: obj,
         segments: segments,
         rowProps: {}
@@ -412,12 +413,13 @@ class RepositoryBrowser extends React.Component {
   }
 
   renderActionsColumn() {
+    const { t } = this.props;
     return (
       <span>
-        <a>Aktion</a>
+        <a>{t('action')}</a>
         <Divider type="vertical" />
         <a className="ant-dropdown-link">
-          Weitere Aktionen <DownOutlined />
+          {t('moreActions')} <DownOutlined />
         </a>
       </span>
     );
@@ -498,6 +500,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     const { records, currentPathSegments, uploadPathSegments, lockedPathSegmentsCount, currentDropTarget, filterText } = this.state;
 
     const normalizedFilterText = filterText.toLowerCase().trim();
@@ -527,7 +530,7 @@ class RepositoryBrowser extends React.Component {
             <Input
               suffix={suffix}
               value={filterText}
-              placeholder="Suchfilter"
+              placeholder={t('searchFilter')}
               ref={this.filterTextInputRef}
               onChange={this.handleFilterTextChange}
               className={filterTextInputClassNames}
@@ -539,7 +542,7 @@ class RepositoryBrowser extends React.Component {
               customRequest={this.onCustomUpload}
               >
               <Button disabled={!canUpload}>
-                <UploadOutlined />&nbsp;<span>Dateien hochladen</span>
+                <UploadOutlined />&nbsp;<span>{t('uploadFiles')}</span>
               </Button>
             </Upload>
           </div>
@@ -560,6 +563,8 @@ class RepositoryBrowser extends React.Component {
 }
 
 RepositoryBrowser.propTypes = {
+  ...languageProps,
+  ...translationProps,
   cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
   initialPrefix: PropTypes.string,
   onSelectionChanged: PropTypes.func,
@@ -575,6 +580,6 @@ RepositoryBrowser.defaultProps = {
   uploadPrefix: null
 };
 
-export default inject({
+export default withTranslation('repositoryBrowser')(withLanguage(inject({
   cdnApiClient: CdnApiClient
-}, RepositoryBrowser);
+}, RepositoryBrowser)));

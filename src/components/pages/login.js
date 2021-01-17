@@ -8,15 +8,14 @@ import Logger from '../../common/logger';
 import { Form, Input, Button } from 'antd';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
+import { withTranslation } from 'react-i18next';
 import { withRequest } from '../request-context';
 import UserApiClient from '../../services/user-api-client';
-import { requestProps } from '../../ui/default-prop-types';
+import { requestProps, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
 const FormItem = Form.Item;
-
-const GENERIC_LOGIN_ERROR = 'Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.';
 
 class Login extends React.Component {
   constructor(props) {
@@ -54,7 +53,8 @@ class Login extends React.Component {
   }
 
   showLoginError() {
-    this.setState({ loginError: GENERIC_LOGIN_ERROR });
+    const { t } = this.props;
+    this.setState({ loginError: t('logonFailed') });
   }
 
   handleFinish(values) {
@@ -64,6 +64,7 @@ class Login extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     const { loginError } = this.state;
 
     const formItemLayout = {
@@ -93,7 +94,7 @@ class Login extends React.Component {
     const usernameValidationRules = [
       {
         required: true,
-        message: 'Bitte geben Sie Ihren Benutzernamen an',
+        message: t('enterUsername'),
         whitespace: true
       }
     ];
@@ -101,7 +102,7 @@ class Login extends React.Component {
     const passwordValidationRules = [
       {
         required: true,
-        message: 'Bitte geben Sie Ihr Kennwort an'
+        message: t('enterPassword')
       }
     ];
 
@@ -111,20 +112,20 @@ class Login extends React.Component {
 
     const loginForm = (
       <Form ref={this.formRef} onFinish={this.handleFinish} scrollToFirstError>
-        <FormItem {...formItemLayout} label="Benutzername" name="username" rules={usernameValidationRules}>
+        <FormItem {...formItemLayout} label={t('username')} name="username" rules={usernameValidationRules}>
           <Input />
         </FormItem>
-        <FormItem {...formItemLayout} label="Kennwort" name="password" rules={passwordValidationRules}>
+        <FormItem {...formItemLayout} label={t('password')} name="password" rules={passwordValidationRules}>
           <Input type="password" />
         </FormItem>
         <FormItem {...tailFormItemLayout}>
           {errorMessage}
         </FormItem>
         <FormItem {...tailFormItemLayout}>
-          <a href={urls.getResetPasswordUrl()}>Kennwort vergessen?</a>
+          <a href={urls.getResetPasswordUrl()}>{t('forgotPassword')}</a>
         </FormItem>
         <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">Anmelden</Button>
+          <Button type="primary" htmlType="submit">{t('logon')}</Button>
         </FormItem>
       </Form>
     );
@@ -145,10 +146,11 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
+  ...translationProps,
   ...requestProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withRequest(inject({
+export default withTranslation('login')(withRequest(inject({
   userApiClient: UserApiClient
-}, Login));
+}, Login)));

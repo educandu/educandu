@@ -1,0 +1,24 @@
+revision:
+  en: Revision
+  de: Revision
+date:
+  en: Date
+  de: Datum
+user:
+  en: User
+  de: Benutzer
+language:
+  en: Language
+  de: Sprache
+id:
+  en: ID
+  de: ID
+permalink:
+  en: Permalink
+  de: Permalink
+permalinkCopied:
+  en: The permalink was copied to the clipboard
+  de: Der Permalink wurde in die Zwischenablage kopiert
+permalinkCouldNotBeCopied:
+  en: The permalink could not be copied to the clipboard
+  de: Der Permalink konnte nicht in die Zwischenablage kopiert werden

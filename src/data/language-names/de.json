@@ -1,0 +1,178 @@
+{
+  "be": {
+    "name": "Weißrussisch",
+    "flag": "BY"
+  },
+  "bg": {
+    "name": "Bulgarisch",
+    "flag": "BG"
+  },
+  "bs": {
+    "name": "Bosnisch",
+    "flag": "BA"
+  },
+  "cs": {
+    "name": "Tschechisch",
+    "flag": "CZ"
+  },
+  "da": {
+    "name": "Dänisch",
+    "flag": "DK"
+  },
+  "de": {
+    "name": "Deutsch",
+    "flag": "DE"
+  },
+  "el": {
+    "name": "Griechisch",
+    "flag": "GR"
+  },
+  "en": {
+    "name": "Englisch",
+    "flag": "US"
+  },
+  "es": {
+    "name": "Spanisch",
+    "flag": "ES"
+  },
+  "et": {
+    "name": "Estnisch",
+    "flag": "EE"
+  },
+  "fi": {
+    "name": "Finnisch",
+    "flag": "FI"
+  },
+  "fr": {
+    "name": "Französisch",
+    "flag": "FR"
+  },
+  "ga": {
+    "name": "Irisch",
+    "flag": "IE"
+  },
+  "hr": {
+    "name": "Kroatisch",
+    "flag": "HR"
+  },
+  "hu": {
+    "name": "Ungarisch",
+    "flag": "HU"
+  },
+  "hy": {
+    "name": "Armenisch",
+    "flag": "AM"
+  },
+  "is": {
+    "name": "Isländisch",
+    "flag": "IS"
+  },
+  "it": {
+    "name": "Italienisch",
+    "flag": "IT"
+  },
+  "ja": {
+    "name": "Japanisch",
+    "flag": "JP"
+  },
+  "ka": {
+    "name": "Georgisch",
+    "flag": "GE"
+  },
+  "kk": {
+    "name": "Kasachisch",
+    "flag": "KZ"
+  },
+  "ko": {
+    "name": "Koreanisch",
+    "flag": "KR"
+  },
+  "lb": {
+    "name": "Luxemburgisch",
+    "flag": "LU"
+  },
+  "lt": {
+    "name": "Litauisch",
+    "flag": "LT"
+  },
+  "lv": {
+    "name": "Lettisch",
+    "flag": "LV"
+  },
+  "mk": {
+    "name": "Mazedonisch",
+    "flag": "MK"
+  },
+  "mt": {
+    "name": "Maltesisch",
+    "flag": "MT"
+  },
+  "nl": {
+    "name": "Niederländisch",
+    "flag": "NL"
+  },
+  "no": {
+    "name": "Norwegisch",
+    "flag": "NO"
+  },
+  "pl": {
+    "name": "Polnisch",
+    "flag": "PL"
+  },
+  "pt": {
+    "name": "Portugiesisch",
+    "flag": "PT"
+  },
+  "ro": {
+    "name": "Rumänisch",
+    "flag": "RO"
+  },
+  "ru": {
+    "name": "Russisch",
+    "flag": "RU"
+  },
+  "sk": {
+    "name": "Slowakisch",
+    "flag": "SK"
+  },
+  "sl": {
+    "name": "Slowenisch",
+    "flag": "SI"
+  },
+  "sq": {
+    "name": "Albanisch",
+    "flag": "AL"
+  },
+  "sr": {
+    "name": "Serbisch",
+    "flag": "RS"
+  },
+  "sv": {
+    "name": "Schwedisch",
+    "flag": "SE"
+  },
+  "sw": {
+    "name": "Swahili",
+    "flag": "TZ"
+  },
+  "th": {
+    "name": "Thai",
+    "flag": "TH"
+  },
+  "tr": {
+    "name": "Türkisch",
+    "flag": "TR"
+  },
+  "uk": {
+    "name": "Ukrainisch",
+    "flag": "UA"
+  },
+  "vi": {
+    "name": "Vietnamesisch",
+    "flag": "VN"
+  },
+  "zh": {
+    "name": "Chinesisch",
+    "flag": "CN"
+  }
+}

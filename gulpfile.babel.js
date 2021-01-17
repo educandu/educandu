@@ -2,7 +2,6 @@
 /* eslint no-console: off */
 /* eslint no-process-env: off */
 
-import fs from 'fs';
 import del from 'del';
 import path from 'path';
 import glob from 'glob';
@@ -18,12 +17,12 @@ import { promisify } from 'util';
 import plumber from 'gulp-plumber';
 import superagent from 'superagent';
 import { runCLI } from '@jest/core';
+import { promises as fs } from 'fs';
 import { spawn } from 'child_process';
 import { Docker } from 'docker-cli-js';
 import sourcemaps from 'gulp-sourcemaps';
 import { parse as parseEs5 } from 'acorn';
 import realFavicon from 'gulp-real-favicon';
-import streamToPromise from 'stream-to-promise';
 import LessAutoprefix from 'less-plugin-autoprefix';
 import { src, dest, parallel, series, watch } from 'gulp';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
@@ -85,10 +84,9 @@ const ensureContainerRemoved = async ({ containerName }) => {
   }
 };
 
-const downloadCountryList = lang => {
-  return superagent
-    .get(`https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`)
-    .pipe(fs.createWriteStream(`./src/data/country-names/${lang}.json`));
+const downloadCountryList = async lang => {
+  const res = await superagent.get(`https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`);
+  await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(JSON.parse(res.text), null, 2), 'utf8');
 };
 
 const tasks = {};
@@ -118,23 +116,27 @@ tasks.test = async function test() {
 };
 
 tasks.testChanged = async function testChanged() {
-  await runCLI({
+  const { results } = await runCLI({
     testEnvironment: 'node',
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
     setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
     onlyChanged: true
   }, '.');
+  if (!results.success) {
+    throw Error(`${results.numFailedTests} test(s) failed`);
+  }
 };
 
-tasks.testWatch = async function testWatch() {
-  await runCLI({
+tasks.testWatch = function testWatch(done) {
+  runCLI({
     testEnvironment: 'node',
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
     setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
     watch: true
   }, '.');
+  done();
 };
 
 tasks.copyIframeresizer = function copyIframeresizer() {
@@ -355,11 +357,17 @@ tasks.faviconGenerate = function faviconGenerate(done) {
       paramValue: 'cakfaagb'
     },
     markupFile: FAVICON_DATA_FILE
-  }, () => done());
+  }, async () => {
+    const faviconData = await fs.readFile(FAVICON_DATA_FILE, 'utf8');
+    const faviconDataPrettified = JSON.stringify(JSON.parse(faviconData), null, 2);
+    await fs.writeFile(FAVICON_DATA_FILE, faviconDataPrettified, 'utf8');
+    done();
+  });
 };
 
-tasks.faviconCheckUpdate = function faviconCheckUpdate(done) {
-  const currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).version;
+tasks.faviconCheckUpdate = async function faviconCheckUpdate(done) {
+  const faviconData = await fs.readFile(FAVICON_DATA_FILE, 'utf8');
+  const currentVersion = JSON.parse(faviconData).version;
   realFavicon.checkForUpdates(currentVersion, done);
 };
 
@@ -370,7 +378,8 @@ tasks.verifyEs5compat = async function verifyEs5compat() {
   const errors = [];
 
   for (const file of files) {
-    const content = fs.readFileSync(file, 'utf8');
+    // eslint-disable-next-line no-await-in-loop
+    const content = await fs.readFile(file, 'utf8');
 
     try {
       parseEs5(content, { ecmaVersion: 5 });
@@ -394,7 +403,7 @@ tasks.verifyEs5compat = async function verifyEs5compat() {
 tasks.verify = parallel(tasks.verifyEs5compat);
 
 tasks.countriesUpdate = async function countriesUpdate() {
-  await Promise.all(supportedLanguages.map(downloadCountryList).map(streamToPromise));
+  await Promise.all(supportedLanguages.map(downloadCountryList));
 };
 
 tasks.maildevUp = async function maildevUp() {
@@ -505,7 +514,7 @@ tasks.ciPrepare = series(tasks.mongoUser, tasks.mongoSeed, tasks.minioSeed);
 tasks.ci = series(tasks.clean, tasks.lint, tasks.test, tasks.build, tasks.verify);
 
 tasks.setupWatchers = function setupWatchers(done) {
-  watch(['src/**/*.js'], tasks.serveRestart);
+  watch(['src/**/*.{js,yml,json}'], tasks.serveRestart);
   watch(['src/**/*.less'], tasks.bundleCss);
   watch(['*.js'], tasks.lint);
   watch(['scripts/**'], tasks.lint);
@@ -515,7 +524,7 @@ tasks.setupWatchers = function setupWatchers(done) {
 };
 
 tasks.setupWatchersRaw = function setupWatchersRaw(done) {
-  watch(['src/**/*.js'], tasks.serveRestartRaw);
+  watch(['src/**/*.{js,yml,json}'], tasks.serveRestartRaw);
   watch(['src/**/*.less'], tasks.bundleCss);
   watch(['scripts/db-seed'], tasks.mongoSeed);
   watch(['scripts/s3-seed'], tasks.minioSeed);

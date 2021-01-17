@@ -51,11 +51,40 @@
   align-items: center;
 }
 
-.ErrorPage-content {
+.ErrorPage-contentContainer {
   margin: 0 auto;
   width: 100%;
   min-width: @global-min-page-width;
   max-width: @global-content-width-narrow;
+}
+
+.ErrorPage-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 20vh;
+}
+
+.ErrorPage-status {
+  font-family: 'Dancing Script';
+  font-size: 72px;
+  text-align: center;
+  color: @global-elmu-blue;
+  margin: 32px 0;
+}
+
+.ErrorPage-message {
+  text-align: center;
+}
+
+.ErrorPage-back {
+  text-align: center;
+}
+
+.ErrorPage-stack {
+  margin-top: 180px;
+  font-family: monospace;
+  text-align: left;
 }
 
 .ErrorPage-footer {
@@ -65,4 +94,12 @@
   align-items: center;
   justify-content: center;
   padding: @global-content-padding;
+}
+
+.ErrorPage-footerLink {
+  display: inline-block;
+
+  &:not(:last-child)::after {
+    content: "\00A0\00A0|\00A0\00A0";
+  }
 }

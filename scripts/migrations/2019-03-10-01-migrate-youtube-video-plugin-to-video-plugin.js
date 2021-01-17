@@ -1,15 +1,12 @@
 import { updateAll } from './helpers';
-import Database from '../../src/stores/database';
 
 class Migration2018120201 {
-  static get inject() { return [Database]; }
-
   constructor(db) {
     this.db = db;
   }
 
   async up() {
-    await updateAll(this.db.sections, { type: 'youtube-video' }, doc => {
+    await updateAll(this.db.collection('sections'), { type: 'youtube-video' }, doc => {
       doc.type = 'video';
       doc.content = Object.entries(doc.content || {}).reduce((accu, [key, val]) => {
         accu[key] = {
@@ -26,7 +23,7 @@ class Migration2018120201 {
   }
 
   async down() {
-    await updateAll(this.db.sections, { type: 'video' }, doc => {
+    await updateAll(this.db.collection('sections'), { type: 'video' }, doc => {
       const languages = Object.keys(doc.content || {});
       if (!languages.length || !languages.every(lang => doc.content[lang].type === 'youtube')) {
         return;

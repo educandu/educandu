@@ -1,0 +1,12 @@
+citation:
+  en: Article “{title}”, {url}, {date}
+  de: Artikel »{title}«, {url}, {date}
+license:
+  en: License
+  de: Lizenz
+source:
+  en: Source
+  de: Quelle
+contributionsBy:
+  en: Contributions by
+  de: Bearbeitungen durch

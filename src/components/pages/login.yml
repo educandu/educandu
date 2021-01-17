@@ -1,0 +1,21 @@
+username:
+  en: User name
+  de: Benutzername
+password:
+  en: Password
+  de: Kennwort
+logon:
+  en: Log on
+  de: Anmelden
+forgotPassword:
+  en: Forgot your password?
+  de: Kennwort vergessen?
+enterUsername:
+  en: Please enter your user name
+  de: Bitte geben Sie Ihren Benutzernamen an
+enterPassword:
+  en: Please enter your password
+  de: Bitte geben Sie Ihr Kennwort an
+logonFailed:
+  en: Logon failed. Please check your input.
+  de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.

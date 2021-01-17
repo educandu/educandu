@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import splitArray from 'split-array';
 import urls from '../../../utils/urls';
+import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
-import ClientSettings from '../../../bootstrap/client-settings';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientSettingsProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
@@ -33,7 +33,7 @@ function createTileUrl(tile) {
   }
 }
 
-function createTile(index, tile, hoverEffect, clientSettings, githubFlavoredMarkdown) {
+function createTile(index, tile, hoverEffect, clientConfig, githubFlavoredMarkdown) {
   const containerClasses = classNames({
     'ImageTiles-tilesContainer': true,
     'u-img-color-flip': hoverEffect === 'colorize-zoom'
@@ -47,7 +47,7 @@ function createTile(index, tile, hoverEffect, clientSettings, githubFlavoredMark
     <a key={index.toString()} className={containerClasses} href={createTileUrl(tile)}>
       <img
         className="ImageTiles-img"
-        src={getSource(tile.image.type, tile.image.url, clientSettings.cdnRootUrl)}
+        src={getSource(tile.image.type, tile.image.url, clientConfig.cdnRootUrl)}
         />
       <div
         className="ImageTiles-description"
@@ -57,15 +57,15 @@ function createTile(index, tile, hoverEffect, clientSettings, githubFlavoredMark
   );
 }
 
-function createRow(rowIndex, row, content, clientSettings, githubFlavoredMarkdown) {
+function createRow(rowIndex, row, content, clientConfig, githubFlavoredMarkdown) {
   return (
     <div key={rowIndex.toString()} className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
-      {row.map((tile, tileIndex) => createTile(tileIndex, tile, content.hoverEffect, clientSettings, githubFlavoredMarkdown))}
+      {row.map((tile, tileIndex) => createTile(tileIndex, tile, content.hoverEffect, clientConfig, githubFlavoredMarkdown))}
     </div>
   );
 }
 
-function ImageTilesDisplay({ content, clientSettings, githubFlavoredMarkdown }) {
+function ImageTilesDisplay({ content, clientConfig, githubFlavoredMarkdown }) {
   const rows = splitArray(content.tiles, content.maxTilesPerRow);
   if (rows.length) {
     const tilesOfLastRow = rows[rows.length - 1];
@@ -77,18 +77,18 @@ function ImageTilesDisplay({ content, clientSettings, githubFlavoredMarkdown }) 
 
   return (
     <div className={classNames('ImageTiles')}>
-      {rows.map((row, index) => createRow(index, row, content, clientSettings, githubFlavoredMarkdown))}
+      {rows.map((row, index) => createRow(index, row, content, clientConfig, githubFlavoredMarkdown))}
     </div>
   );
 }
 
 ImageTilesDisplay.propTypes = {
   ...sectionDisplayProps,
-  ...clientSettingsProps,
+  ...clientConfigProps,
   githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
 };
 
 export default inject({
-  clientSettings: ClientSettings,
+  clientConfig: ClientConfig,
   githubFlavoredMarkdown: GithubFlavoredMarkdown
 }, ImageTilesDisplay);

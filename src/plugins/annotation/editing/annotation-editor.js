@@ -1,7 +1,8 @@
 import React from 'react';
-import { Input } from 'antd';
 import autoBind from 'auto-bind';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
+import { Input, Form } from 'antd';
+import { withTranslation } from 'react-i18next';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 
 const { TextArea } = Input;
 
@@ -27,20 +28,32 @@ class AnnotationEditor extends React.Component {
   }
 
   render() {
-    const { content } = this.props;
+    const { content, t } = this.props;
     const { text, title } = content;
+
+    const formItemLayout = {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 }
+    };
 
     return (
       <div>
-        <Input value={title} placeholder="Geben Sie hier einen Anzeigetext ein..." onChange={this.handleTitleChange} />
-        <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
+        <Form layout="horizontal">
+          <Form.Item label={t('title')} {...formItemLayout}>
+            <Input value={title} onChange={this.handleTitleChange} />
+          </Form.Item>
+          <Form.Item label={t('text')} {...formItemLayout}>
+            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
+          </Form.Item>
+        </Form>
       </div>
     );
   }
 }
 
 AnnotationEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps
 };
 
-export default AnnotationEditor;
+export default withTranslation('annotation')(AnnotationEditor);

@@ -14,13 +14,13 @@ import Profile from '../components/pages/profile';
 import EditDoc from '../components/pages/edit-doc';
 import Register from '../components/pages/register';
 import Settings from '../components/pages/settings';
-import DataProvider from '../data/data-provider.js';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import PageRendererBase from './page-renderer-base';
 import EditMenu from '../components/pages/edit-menu';
-import ServerSettings from '../bootstrap/server-settings';
-import ClientSettings from '../bootstrap/client-settings';
+import ServerConfig from '../bootstrap/server-config';
+import ClientConfig from '../bootstrap/client-config';
+import ResourceManager from '../resources/resource-manager';
 import ResetPassword from '../components/pages/reset-password';
 import CompleteRegistration from '../components/pages/complete-registration';
 import CompletePasswordReset from '../components/pages/complete-password-reset';
@@ -45,29 +45,26 @@ const pageComponentsByName = {
 };
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerSettings, ClientSettings, ClientDataMapper, DataProvider]; }
+  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMapper, ResourceManager]; }
 
-  constructor(container, serverSettings, clientSettings, clientDataMapper, dataProvider) {
+  constructor(container, serverConfig, clientConfig, clientDataMapper, resourceManager) {
     super();
     this.container = container;
-    this.serverSettings = serverSettings;
-    this.clientSettings = clientSettings;
+    this.serverConfig = serverConfig;
+    this.clientConfig = clientConfig;
     this.clientDataMapper = clientDataMapper;
-    this.dataProvider = dataProvider;
+    this.resourceManager = resourceManager;
   }
 
-  sendPage(req, res, bundleName, pageName, initialState = {}, dataKeys = []) {
+  sendPage(req, res, bundleName, pageName, initialState = {}) {
     const title = 'elmu';
-    const language = 'de';
+    const language = req.language;
+    const settings = req.settings;
     const container = this.container;
-    const clientSettings = this.clientSettings;
+    const clientConfig = this.clientConfig;
     const request = requestHelper.expressReqToRequest(req);
     const user = this.clientDataMapper.dbUserToClientUser(req.user);
-
-    const data = dataKeys.reduce((d, key) => {
-      d[key] = this.dataProvider.getData(key, language);
-      return d;
-    }, {});
+    const resources = this.resourceManager.getAllResourceBundles();
 
     const props = {
       request: cloneDeep(request),
@@ -75,18 +72,19 @@ class PageRenderer extends PageRendererBase {
       container: container,
       initialState: cloneDeep(initialState),
       language: language,
-      data: data,
+      settings: cloneDeep(settings),
       PageComponent: pageComponentsByName[pageName]
     };
 
     const inlineScript = [
       `window.__user__=${htmlescape(user)};`,
-      `window.__data__=${htmlescape(data)};`,
       `window.__request__=${htmlescape(request)};`,
       `window.__pageName__=${htmlescape(pageName)};`,
       `window.__language__=${htmlescape(language)};`,
-      `window.__settings__=${htmlescape(clientSettings)};`,
-      `window.__initalState__=${htmlescape(initialState)};`
+      `window.__settings__=${htmlescape(settings)};`,
+      `window.__resources__=${htmlescape(resources)};`,
+      `window.__initalState__=${htmlescape(initialState)};`,
+      `window.__clientconfig__=${htmlescape(clientConfig)};`
     ].join('');
 
     const styles = [{ href: '/main.css' }];

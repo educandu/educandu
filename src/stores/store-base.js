@@ -3,8 +3,8 @@ class StoreBase {
     this.collection = collection;
   }
 
-  async *aggregate({ pipeline }) {
-    const cursor = this.collection.aggregate(pipeline);
+  async *aggregate(...args) {
+    const cursor = this.collection.aggregate(...args);
     /* eslint-disable-next-line no-await-in-loop */
     while (await cursor.hasNext()) {
       /* eslint-disable-next-line no-await-in-loop */
@@ -12,12 +12,12 @@ class StoreBase {
     }
   }
 
-  find({ query = {}, sort = null, projection = null, limit = 0 } = {}) {
-    return this.collection.find(query, { sort, limit, projection }).toArray();
+  find(...args) {
+    return this.collection.find(...args).toArray();
   }
 
-  findOne({ query = {}, sort = null, projection = null, limit = 0 }) {
-    return this.collection.findOne(query, { sort, limit, projection });
+  findOne(...args) {
+    return this.collection.findOne(...args);
   }
 
   save(item) {
@@ -26,20 +26,24 @@ class StoreBase {
     return this.collection.replaceOne(query, item, options);
   }
 
-  updateOne(query = {}, update = {}) {
-    return this.collection.updateOne(query, update);
+  saveMany(items) {
+    return Promise.all(items.map(item => this.save(item)));
   }
 
-  updateMany(query = {}, update = {}) {
-    return this.collection.updateMany(query, update);
+  updateOne(...args) {
+    return this.collection.updateOne(...args);
   }
 
-  deleteOne(query = {}) {
-    return this.collection.deleteOne(query);
+  updateMany(...args) {
+    return this.collection.updateMany(...args);
   }
 
-  deleteMany(query = {}) {
-    return this.collection.deleteMany(query);
+  deleteOne(...args) {
+    return this.collection.deleteOne(...args);
+  }
+
+  deleteMany(...args) {
+    return this.collection.deleteMany(...args);
   }
 }
 

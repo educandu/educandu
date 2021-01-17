@@ -71,7 +71,58 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
 
   const docs = await Promise.all(docPayloads.map(payload => documentService.createDocumentRevision(payload)));
   await Promise.all(menuPayloads.map(payload => menuService.saveMenu(payload)));
-  await settingService.setLandingPageDocumentId(docs.find(doc => doc.title === 'Landing Page')._id);
+
+  const homePageKey = docs.find(doc => doc.title === 'Landing Page').key;
+  await settingService.saveSettings({
+    homeLanguages: [
+      {
+        language: 'de',
+        documentKey: homePageKey,
+        searchFieldButton: 'Suchen mit Google',
+        searchFieldPlaceholder: 'Suchbegriff'
+      },
+      {
+        language: 'en',
+        documentKey: homePageKey,
+        searchFieldButton: 'Search with Google',
+        searchFieldPlaceholder: 'Search term'
+      },
+      {
+        language: 'it',
+        documentKey: homePageKey,
+        searchFieldButton: 'Ricercare con Google',
+        searchFieldPlaceholder: 'Termine di ricerca'
+      },
+      {
+        language: 'fr',
+        documentKey: homePageKey,
+        searchFieldButton: 'Rechercher par Google',
+        searchFieldPlaceholder: 'Terme de recherche'
+      }
+    ],
+    helpPage: {
+      de: { linkTitle: 'Hilfe', documentNamespace: 'articles', documentSlug: 'hilfe' },
+      en: { linkTitle: 'Help', documentNamespace: 'articles', documentSlug: 'help' }
+    },
+    termsPage: {
+      de: { linkTitle: 'Nutzungsvertrag', documentNamespace: 'articles', documentSlug: 'nutzungsvertrag' },
+      en: { linkTitle: 'Terms of usage', documentNamespace: 'articles', documentSlug: 'terms' }
+    },
+    footerLinks: {
+      de: [
+        { linkTitle: 'Über ELMU', documentNamespace: 'articles', documentSlug: 'ueber-elmu' },
+        { linkTitle: 'Organisation', documentNamespace: 'articles', documentSlug: 'organisation' },
+        { linkTitle: 'Nutzungsvertrag', documentNamespace: 'articles', documentSlug: 'nutzungsvertrag' },
+        { linkTitle: 'Datenschutz', documentNamespace: 'articles', documentSlug: 'datenschutz' }
+      ],
+      en: [
+        { linkTitle: 'About ELMU', documentNamespace: 'articles', documentSlug: 'about-elmu' },
+        { linkTitle: 'Organization', documentNamespace: 'articles', documentSlug: 'organization' },
+        { linkTitle: 'Terms of usage', documentNamespace: 'articles', documentSlug: 'terms' },
+        { linkTitle: 'Data protection', documentNamespace: 'articles', documentSlug: 'data-protection' }
+      ]
+    }
+  });
 
   await serverBootstrapper.disposeContainer(container);
 

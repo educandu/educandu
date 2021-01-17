@@ -1,8 +1,9 @@
 import React from 'react';
 import autoBind from 'auto-bind';
+import { withTranslation } from 'react-i18next';
 import { Form, Input, Table, Button } from 'antd';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
 import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
@@ -34,14 +35,14 @@ class QuickTesterEditor extends React.Component {
           </ButtonGroup>
         )
       }, {
-        title: 'Frage',
+        title: () => this.props.t('question'),
         dataIndex: 'question',
         key: 'question',
         render: (question, item, index) => (
           <Input data-index={index} value={question} onChange={this.handleInputQuestionChanged} />
         )
       }, {
-        title: 'Antwort',
+        title: () => this.props.t('answer'),
         dataIndex: 'answer',
         key: 'answer',
         render: (answer, item, index) => (
@@ -124,20 +125,20 @@ class QuickTesterEditor extends React.Component {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 }
     };
-    const { content } = this.props;
-    const dataSource = content.tests.map((t, i) => ({
+    const { content, t } = this.props;
+    const dataSource = content.tests.map((test, i) => ({
       key: i,
-      question: t.question,
-      answer: t.answer
+      question: test.question,
+      answer: test.answer
     }));
 
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label="Link-Text:" {...formItemLayout}>
+          <FormItem label={`${t('teaserLabel')}:`} {...formItemLayout}>
             <Input value={content.teaser} onChange={this.handleTeaserValueChanged} />
           </FormItem>
-          <FormItem label="Titel:" {...formItemLayout}>
+          <FormItem label={`${t('titleLabel')}:`} {...formItemLayout}>
             <Input value={content.title} onChange={this.handleTitleValueChanged} />
           </FormItem>
         </Form>
@@ -148,7 +149,8 @@ class QuickTesterEditor extends React.Component {
 }
 
 QuickTesterEditor.propTypes = {
-  ...sectionEditorProps
+  ...sectionEditorProps,
+  ...translationProps
 };
 
-export default QuickTesterEditor;
+export default withTranslation('quick-tester')(QuickTesterEditor);

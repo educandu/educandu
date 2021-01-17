@@ -15,21 +15,15 @@ class MenuService {
   }
 
   getMenus() {
-    return this.menuStore.find({
-      sort: [['createdOn', 1]]
-    });
+    return this.menuStore.find({}, { sort: [['createdOn', 1]] });
   }
 
   getMenuById(menuId) {
-    return this.menuStore.findOne({
-      query: { _id: menuId }
-    });
+    return this.menuStore.findOne({ _id: menuId });
   }
 
   getMenuBySlug(slug) {
-    return this.menuStore.findOne({
-      query: { slug }
-    });
+    return this.menuStore.findOne({ slug });
   }
 
   async saveMenu({ menu, user }) {
@@ -37,61 +31,53 @@ class MenuService {
       throw new Error('No user specified');
     }
 
+    let lock;
     const now = dateTime.now();
     const menuId = menu._id || uniqueId.create();
 
-    logger.info('Creating new menu with id %s', menuId);
+    try {
 
-    await this.menuLockStore.takeLock(menuId);
+      logger.info('Creating new menu with id %s', menuId);
 
-    let existingMenu = await this.getMenuById(menuId);
-    if (existingMenu) {
-      logger.info('Found existing menu with id %s', menuId);
-    } else {
-      logger.info('No existing menu found with id %s', menuId);
-    }
+      lock = await this.menuLockStore.takeLock(menuId);
 
-    if (!this.userCanUpdateMenu(existingMenu, menu, user)) {
-      throw new Error('The user does not have permission to update the menu');
-    }
+      let existingMenu = await this.getMenuById(menuId);
+      if (existingMenu) {
+        logger.info('Found existing menu with id %s', menuId);
+      } else {
+        logger.info('No existing menu found with id %s', menuId);
+      }
 
-    if (!existingMenu) {
-      existingMenu = {
+      if (!existingMenu) {
+        existingMenu = {
+          _id: menuId,
+          createdOn: now,
+          createdBy: { id: user._id }
+        };
+      }
+
+      const updatedMenu = {
         _id: menuId,
-        createdOn: now,
-        createdBy: { id: user._id }
+        title: menu.title || '',
+        slug: menu.slug || null,
+        createdOn: existingMenu ? existingMenu.createdOn : now,
+        updatedOn: now,
+        createdBy: existingMenu ? existingMenu.createdBy : { id: user._id },
+        updatedBy: { id: user._id },
+        defaultDocumentKey: menu.defaultDocumentKey || null,
+        nodes: menu.nodes || []
       };
+
+      logger.info('Saving menu with id %s', updatedMenu._id);
+      await this.menuStore.save(updatedMenu);
+
+      return updatedMenu;
+
+    } finally {
+      if (lock) {
+        await this.menuLockStore.releaseLock(lock);
+      }
     }
-
-    const updatedMenu = {
-      _id: menuId,
-      title: menu.title || '',
-      slug: menu.slug || null,
-      createdOn: existingMenu ? existingMenu.createdOn : now,
-      updatedOn: now,
-      createdBy: existingMenu ? existingMenu.createdBy : { id: user._id },
-      updatedBy: { id: user._id },
-      defaultDocumentKey: menu.defaultDocumentKey || null,
-      nodes: menu.nodes || []
-    };
-
-    logger.info('Saving menu with id %s', updatedMenu._id);
-    await this.menuStore.save(updatedMenu);
-
-    await this.menuLockStore.releaseLock(menuId);
-
-    return updatedMenu;
-  }
-
-  /* eslint-disable-next-line no-unused-vars */
-  userCanUpdateMenu(existingMenu, newMenu, user) {
-    return true;
-  }
-
-  async deleteMenu({ menuId }) {
-    await this.menuLockStore.takeLock(menuId);
-    await this.menuStore.deleteOne({ _id: menuId });
-    await this.menuLockStore.releaseLock(menuId);
   }
 }
 
