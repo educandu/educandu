@@ -153,4 +153,4 @@ QuickTesterEditor.propTypes = {
   ...translationProps
 };
 
-export default withTranslation('quick-tester')(QuickTesterEditor);
+export default withTranslation('quickTester')(QuickTesterEditor);
