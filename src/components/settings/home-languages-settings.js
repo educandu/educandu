@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Input, Button, Table } from 'antd';
-import React, { useState, useEffect } from 'react';
 import DocumentSelector from '../document-selector';
 import LanguageSelect from '../localization/language-select';
 import { swapItems, removeItem } from '../../utils/immutable-array-utils';
@@ -18,11 +18,6 @@ const newHomeLanguage = { language: '', documentKey: '', searchFieldButton: '', 
 
 function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
   const { t } = useTranslation('homeLanguagesSettings');
-  const [data, setData] = useState(homeLanguages.map((hl, idx) => ({ key: idx, value: hl })));
-
-  useEffect(() => {
-    setData(prev => homeLanguages.map((hl, idx) => prev[idx] === hl ? prev[idx] : { key: idx, value: hl }));
-  }, [homeLanguages]);
 
   const fireOnChange = updatedHomeLanguages => {
     onChange(updatedHomeLanguages, { isValid: updatedHomeLanguages.every(hl => Object.values(hl).every(hasValue)) });
@@ -40,8 +35,8 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
     fireOnChange(removeItem(homeLanguages, index));
   };
 
-  const handleChange = (record, key, value) => {
-    fireOnChange(homeLanguages.map(hl => hl !== record ? hl : { ...hl, [key]: value }));
+  const handleChange = (index, key, value) => {
+    fireOnChange(homeLanguages.map((hl, idx) => idx !== index ? hl : { ...hl, [key]: value }));
   };
 
   const renderRank = (text, record, index) => (
@@ -51,35 +46,35 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
     </span>
   );
 
-  const renderLanguage = (text, record) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.value.language)} style={{ marginBottom: 0 }}>
+  const renderLanguage = (text, record, index) => (
+    <FormItem validateStatus={getRequiredValidateStatus(record.language)} style={{ marginBottom: 0 }}>
       <LanguageSelect
-        value={record.value.language}
-        onChange={value => handleChange(record.value, 'language', value)}
+        value={record.language}
+        onChange={value => handleChange(index, 'language', value)}
         />
     </FormItem>
   );
 
-  const renderDocumentKey = (text, record) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.value.documentKey)} style={{ marginBottom: 0 }}>
+  const renderDocumentKey = (text, record, index) => (
+    <FormItem validateStatus={getRequiredValidateStatus(record.documentKey)} style={{ marginBottom: 0 }}>
       <DocumentSelector
         by="key"
         documents={documents}
-        value={record.value.documentKey}
-        onChange={value => handleChange(record.value, 'documentKey', value)}
+        value={record.documentKey}
+        onChange={value => handleChange(index, 'documentKey', value)}
         />
     </FormItem>
   );
 
-  const renderSearchFieldButton = (text, record) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.value.searchFieldButton)} style={{ marginBottom: 0 }}>
-      <Input value={record.value.searchFieldButton} onChange={event => handleChange(record.value, 'searchFieldButton', event.target.value)} />
+  const renderSearchFieldButton = (text, record, index) => (
+    <FormItem validateStatus={getRequiredValidateStatus(record.searchFieldButton)} style={{ marginBottom: 0 }}>
+      <Input value={text} onChange={event => handleChange(index, 'searchFieldButton', event.target.value)} />
     </FormItem>
   );
 
-  const renderSearchFieldPlaceholder = (text, record) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.value.searchFieldPlaceholder)} style={{ marginBottom: 0 }}>
-      <Input value={record.value.searchFieldPlaceholder} onChange={event => handleChange(record.value, 'searchFieldPlaceholder', event.target.value)} />
+  const renderSearchFieldPlaceholder = (text, record, index) => (
+    <FormItem validateStatus={getRequiredValidateStatus(record.searchFieldPlaceholder)} style={{ marginBottom: 0 }}>
+      <Input value={record.searchFieldPlaceholder} onChange={event => handleChange(index, 'searchFieldPlaceholder', event.target.value)} />
     </FormItem>
   );
 
@@ -93,12 +88,20 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
 
   const columns = [
     { title: t('rank'), key: 'rank', width: '64px', render: renderRank },
-    { title: t('language'), key: 'language', dataIndex: ['value', 'language'], width: '180px', render: renderLanguage },
-    { title: t('documentKey'), key: 'documentKey', dataIndex: ['value', 'documentKey'], ellipsis: true, render: renderDocumentKey },
-    { title: t('searchFieldButton'), key: 'searchFieldButton', dataIndex: ['value', 'searchFieldButton'], width: '224px', render: renderSearchFieldButton },
-    { title: t('searchFieldPlaceholder'), key: 'searchFieldPlaceholder', dataIndex: ['value', 'searchFieldPlaceholder'], width: '224px', render: renderSearchFieldPlaceholder },
+    { title: t('language'), key: 'language', dataIndex: 'language', width: '180px', render: renderLanguage },
+    { title: t('documentKey'), key: 'documentKey', dataIndex: 'documentKey', ellipsis: true, render: renderDocumentKey },
+    { title: t('searchFieldButton'), key: 'searchFieldButton', dataIndex: 'searchFieldButton', width: '224px', render: renderSearchFieldButton },
+    { title: t('searchFieldPlaceholder'), key: 'searchFieldPlaceholder', dataIndex: 'searchFieldPlaceholder', width: '224px', render: renderSearchFieldPlaceholder },
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }
   ];
+
+  const data = homeLanguages.map((record, index) => ({
+    key: index,
+    language: record.language,
+    documentKey: record.documentKey,
+    searchFieldButton: record.searchFieldButton,
+    searchFieldPlaceholder: record.searchFieldPlaceholder
+  }));
 
   return (
     <Form>
@@ -123,4 +126,4 @@ HomeLanguagesSettings.propTypes = {
   onChange: PropTypes.func.isRequired
 };
 
-export default HomeLanguagesSettings;
+export default memo(HomeLanguagesSettings);

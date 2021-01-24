@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Form, Table, Button, Input } from 'antd';
-import React, { useState, useEffect } from 'react';
 import DocumentSelector from '../document-selector';
+import React, { useState, useEffect, memo } from 'react';
 import { swapItems, removeItem } from '../../utils/immutable-array-utils';
 import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types';
@@ -38,53 +38,52 @@ const linkListToSettingsDocuments = linkList => {
 
 function SettingsDocumentTable({ settingsDocuments, documents, onChange }) {
   const { t } = useTranslation('settingsDocumentTable');
-  const [linkList, setLinkList] = useState(settingsDocumentsToLinkList(settingsDocuments));
-
-  useEffect(() => {
-    setLinkList(settingsDocumentsToLinkList(settingsDocuments));
-  }, [settingsDocuments]);
 
   const fireOnChange = updatedLinkList => {
     onChange(linkListToSettingsDocuments(updatedLinkList), { isValid: updatedLinkList.every(isValidLinkListItem) });
   };
 
   const handleMoveClick = (index, offset) => {
+    const linkList = settingsDocumentsToLinkList(settingsDocuments);
     fireOnChange(swapItems(linkList, index, index + offset));
   };
 
   const handleAddClick = () => {
+    const linkList = settingsDocumentsToLinkList(settingsDocuments);
     fireOnChange([...linkList, { ...newLinkListItem }]);
   };
 
   const handleDeleteClick = index => {
+    const linkList = settingsDocumentsToLinkList(settingsDocuments);
     fireOnChange(removeItem(linkList, index));
   };
 
-  const handleChange = (record, key, value) => {
-    const updatedLinkList = linkList.map(item => item !== record ? item : { ...item, [key]: value });
+  const handleChange = (index, key, value) => {
+    const linkList = settingsDocumentsToLinkList(settingsDocuments);
+    const updatedLinkList = linkList.map((item, idx) => idx !== index ? item : { ...item, [key]: value });
     fireOnChange(updatedLinkList);
   };
 
   const renderRank = (text, record, index) => (
     <span style={{ whiteSpace: 'nowrap' }}>
       <Button size="small" icon={<UpOutlined />} disabled={index === 0} onClick={() => handleMoveClick(index, -1)} />
-      <Button size="small" icon={<DownOutlined />} disabled={index === linkList.length - 1} onClick={() => handleMoveClick(index, +1)} />
+      <Button size="small" icon={<DownOutlined />} disabled={index === settingsDocuments.length - 1} onClick={() => handleMoveClick(index, +1)} />
     </span>
   );
 
-  const renderLinkTitle = (text, record) => (
+  const renderLinkTitle = (text, record, index) => (
     <FormItem validateStatus={getRequiredValidateStatus(record.linkTitle)} style={{ marginBottom: 0 }}>
-      <Input value={record.linkTitle} onChange={event => handleChange(record, 'linkTitle', event.target.value)} />
+      <Input value={record.linkTitle} onChange={event => handleChange(index, 'linkTitle', event.target.value)} />
     </FormItem>
   );
 
-  const renderUrlPath = (text, record) => (
+  const renderUrlPath = (text, record, index) => (
     <FormItem validateStatus={getRequiredValidateStatus(record.urlPath)} style={{ marginBottom: 0 }}>
       <DocumentSelector
         by="url"
         documents={documents}
         value={record.urlPath}
-        onChange={value => handleChange(record, 'urlPath', value)}
+        onChange={value => handleChange(index, 'urlPath', value)}
         />
     </FormItem>
   );
@@ -104,12 +103,14 @@ function SettingsDocumentTable({ settingsDocuments, documents, onChange }) {
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }
   ];
 
+  const data = settingsDocumentsToLinkList(settingsDocuments);
+
   return (
     <Form>
       <Table
         size="small"
         columns={columns}
-        dataSource={linkList}
+        dataSource={data}
         pagination={false}
         bordered
         />
@@ -127,4 +128,4 @@ SettingsDocumentTable.propTypes = {
   settingsDocuments: PropTypes.arrayOf(settingsDocumentShape).isRequired
 };
 
-export default SettingsDocumentTable;
+export default memo(SettingsDocumentTable);

@@ -1,6 +1,6 @@
 import Page from '../page';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Logger from '../../common/logger';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper';
@@ -25,11 +25,27 @@ function Settings({ initialState }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastSavedSettings, setLastSavedSettings] = useState(initialState.settings);
 
-  const handleChange = (key, value, isValid) => {
+  const handleChange = useCallback((key, value, isValid) => {
     setSettings(prev => ({ ...prev, [key]: value }));
     setDirtyKeys(prev => ensureIsIncluded(prev, key));
     setInvalidKeys(prev => isValid ? ensureIsExcluded(prev, key) : ensureIsIncluded(prev, key));
-  };
+  }, [setSettings, setDirtyKeys, setInvalidKeys]);
+
+  const handleHomeLanguagesChanged = useCallback((value, { isValid }) => {
+    handleChange('homeLanguages', value, isValid);
+  }, [handleChange]);
+
+  const handleHelpPageChanged = useCallback((value, { isValid }) => {
+    handleChange('helpPage', value, isValid);
+  }, [handleChange]);
+
+  const handleTermsPageChanged = useCallback((value, { isValid }) => {
+    handleChange('termsPage', value, isValid);
+  }, [handleChange]);
+
+  const handleFooterLinksChanged = useCallback((value, { isValid }) => {
+    handleChange('footerLinks', value, isValid);
+  }, [handleChange]);
 
   const handleSaveClick = async () => {
     const changedSettings = dirtyKeys.reduce((map, key) => ({ ...map, [key]: settings[key] }), {});
@@ -83,25 +99,25 @@ function Settings({ initialState }) {
         <HomeLanguagesSettings
           homeLanguages={settings.homeLanguages}
           documents={initialState.documents}
-          onChange={(value, { isValid }) => handleChange('homeLanguages', value, isValid)}
+          onChange={handleHomeLanguagesChanged}
           />
         <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
         <SpecialPageSettings
           settings={settings.helpPage}
           documents={initialState.documents}
-          onChange={(value, { isValid }) => handleChange('helpPage', value, isValid)}
+          onChange={handleHelpPageChanged}
           />
         <h2 className="SettingsPage-sectionHeader">{t('termsPageHeader')}</h2>
         <SpecialPageSettings
           settings={settings.termsPage}
           documents={initialState.documents}
-          onChange={(value, { isValid }) => handleChange('termsPage', value, isValid)}
+          onChange={handleTermsPageChanged}
           />
         <h2 className="SettingsPage-sectionHeader">{t('footerLinksHeader')}</h2>
         <FooterLinksSettings
           footerLinks={settings.footerLinks}
           documents={initialState.documents}
-          onChange={(value, { isValid }) => handleChange('footerLinks', value, isValid)}
+          onChange={handleFooterLinksChanged}
           />
       </div>
     </Page>

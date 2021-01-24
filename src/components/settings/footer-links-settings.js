@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context';
 import { useLanguage } from '../language-context';
@@ -62,4 +62,4 @@ FooterLinksSettings.propTypes = {
   onChange: PropTypes.func.isRequired
 };
 
-export default FooterLinksSettings;
+export default memo(FooterLinksSettings);

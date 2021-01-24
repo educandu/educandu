@@ -3,8 +3,8 @@ import { Form, Input, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context';
 import { useLanguage } from '../language-context';
-import React, { useState, useEffect } from 'react';
 import DocumentSelector from '../document-selector';
+import React, { useState, useEffect, memo } from 'react';
 import LanguageNameProvider from '../../data/language-name-provider';
 import CountryFlagAndName from '../localization/country-flag-and-name';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types';
@@ -45,16 +45,12 @@ function SpecialPageSettings({ settings, documents, onChange }) {
   const { t } = useTranslation('specialPageSettings');
   const { language, supportedLanguages } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
-  const [pageList, setPageList] = useState(settingsToPageList(supportedLanguages, settings));
 
   const languageNames = languageNameProvider.getData(language);
 
-  useEffect(() => {
-    setPageList(settingsToPageList(supportedLanguages, settings));
-  }, [supportedLanguages, settings]);
-
-  const handleChange = (record, key, value) => {
-    const updatedPageList = pageList.map(item => item !== record ? item : { ...item, [key]: value });
+  const handleChange = (index, key, value) => {
+    const pageList = settingsToPageList(supportedLanguages, settings);
+    const updatedPageList = pageList.map((item, idx) => idx !== index ? item : { ...item, [key]: value });
     onChange(pageListToSettings(updatedPageList), { isValid: updatedPageList.every(isValidPageListItem) });
   };
 
@@ -62,19 +58,19 @@ function SpecialPageSettings({ settings, documents, onChange }) {
     <CountryFlagAndName code={languageNames[record.language]?.flag} name={languageNames[record.language]?.name || t('unknown')} />
   );
 
-  const renderLinkTitle = (text, record) => (
+  const renderLinkTitle = (text, record, index) => (
     <FormItem validateStatus={getRequiredValidateStatus(record.linkTitle)} style={{ marginBottom: 0 }}>
-      <Input value={record.linkTitle} onChange={event => handleChange(record, 'linkTitle', event.target.value)} />
+      <Input value={record.linkTitle} onChange={event => handleChange(index, 'linkTitle', event.target.value)} />
     </FormItem>
   );
 
-  const renderUrlPath = (text, record) => (
+  const renderUrlPath = (text, record, index) => (
     <FormItem validateStatus={getRequiredValidateStatus(record.urlPath)} style={{ marginBottom: 0 }}>
       <DocumentSelector
         by="url"
         documents={documents}
         value={record.urlPath}
-        onChange={value => handleChange(record, 'urlPath', value)}
+        onChange={value => handleChange(index, 'urlPath', value)}
         />
     </FormItem>
   );
@@ -85,12 +81,14 @@ function SpecialPageSettings({ settings, documents, onChange }) {
     { title: t('urlPath'), key: 'urlPath', dataIndex: 'urlPath', ellipsis: true, render: renderUrlPath }
   ];
 
+  const data = settingsToPageList(supportedLanguages, settings);
+
   return (
     <Form>
       <Table
         size="small"
         columns={columns}
-        dataSource={pageList}
+        dataSource={data}
         pagination={false}
         bordered
         />
@@ -108,4 +106,4 @@ SpecialPageSettings.propTypes = {
   settings: PropTypes.objectOf(settingsDocumentShape).isRequired
 };
 
-export default SpecialPageSettings;
+export default memo(SpecialPageSettings);
