@@ -19,8 +19,9 @@ class DocumentController {
   }
 
   registerPages(router) {
-    router.get('/articles/:slug', async (req, res) => {
-      const doc = await this.documentService.getDocumentByNamespaceAndSlug('articles', req.params.slug);
+    router.get('/articles/*', async (req, res) => {
+      const slug = req.params[0] || '';
+      const doc = await this.documentService.getDocumentByNamespaceAndSlug('articles', slug);
       if (!doc) {
         throw new NotFound();
       }
