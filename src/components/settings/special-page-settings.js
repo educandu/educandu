@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
+import React, { memo } from 'react';
 import { Form, Input, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context';
 import { useLanguage } from '../language-context';
 import DocumentSelector from '../document-selector';
-import React, { useState, useEffect, memo } from 'react';
 import LanguageNameProvider from '../../data/language-name-provider';
 import CountryFlagAndName from '../localization/country-flag-and-name';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types';

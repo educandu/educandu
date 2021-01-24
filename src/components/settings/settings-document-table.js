@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Table, Button, Input } from 'antd';
 import DocumentSelector from '../document-selector';
-import React, { useState, useEffect, memo } from 'react';
 import { swapItems, removeItem } from '../../utils/immutable-array-utils';
 import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types';
