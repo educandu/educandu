@@ -53,16 +53,18 @@ class Menu extends React.Component {
 
   renderMenuItemList(nodes, level, documentDictionary) {
     return (
-      <ul className="MenuPage-categoryList">
-        {nodes.filter(node => this.hasNodeAnyDocuments(node)).map(node => (
-          <li key={node.key}>
-            <div className={classnames(['MenuPage-categoryListItem', `u-level-${level}`])}>
-              {this.renderLinkList(node, level, documentDictionary)}
-            </div>
-            {!!node.children.length && this.renderMenuItemList(node.children, level + 1, documentDictionary)}
-          </li>
-        ))}
-      </ul>
+      <div className="Content">
+        <ul className="MenuPage-categoryList">
+          {nodes.filter(node => this.hasNodeAnyDocuments(node)).map(node => (
+            <li key={node.key}>
+              <div className={classnames(['MenuPage-categoryListItem', `u-level-${level}`])}>
+                {this.renderLinkList(node, level, documentDictionary)}
+              </div>
+              {!!node.children.length && this.renderMenuItemList(node.children, level + 1, documentDictionary)}
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   }
 
@@ -116,7 +118,9 @@ class Menu extends React.Component {
     return (
       <Page headerActions={headerActions}>
         <div className="MenuPage">
-          <h2>{menu.title}</h2>
+          <div className="Content">
+            <h2>{menu.title}</h2>
+          </div>
           {defaultDocument ? this.renderDefaultDoc(defaultDocument) : null}
           {this.renderMenuItemList(menu.nodes, 0, documentDictionary)}
         </div>
