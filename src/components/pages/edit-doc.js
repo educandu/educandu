@@ -65,9 +65,9 @@ class EditDoc extends React.Component {
 
     this.state = this.createStateFromDocumentRevision(documentRevision, proposedSections);
 
-    this.pluginInfos = pluginInfos.map(t => ({
-      ...t,
-      handleNew: this.handleNewSectionClick.bind(this, t)
+    this.availablePlugins = pluginInfos.map(info => ({
+      info: info,
+      handleNew: this.handleNewSectionClick.bind(this, info)
     }));
   }
 
@@ -199,6 +199,7 @@ class EditDoc extends React.Component {
   }
 
   handleNewSectionClick(pluginInfo) {
+    const { t } = this.props;
     const newSection = {
       key: uniqueId.create(),
       revision: null,
@@ -206,7 +207,7 @@ class EditDoc extends React.Component {
       deletedOn: null,
       deletedBy: null,
       deletedBecause: null,
-      content: cloneDeep(pluginInfo.defaultContent)
+      content: pluginInfo.getDefaultContent(t)
     };
     this.setState(prevState => {
       return {
@@ -283,9 +284,9 @@ class EditDoc extends React.Component {
 
     const newSectionMenu = (
       <Menu>
-        {this.pluginInfos.map(pt => (
-          <Menu.Item key={pt.type}>
-            <a rel="noopener noreferrer" onClick={pt.handleNew}>{pt.name}</a>
+        {this.availablePlugins.map(({ info, handleNew }) => (
+          <Menu.Item key={info.type}>
+            <a rel="noopener noreferrer" onClick={handleNew}>{info.getName(t)}</a>
           </Menu.Item>
         ))}
       </Menu>

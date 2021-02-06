@@ -1,4 +1,10 @@
 name:
+  en: Anavis
+  de: Anavis
+defaultPartName:
+  en: Unnamed
+  de: Unbenannt
+nameLabel:
   en: Name
   de: Name
 color:

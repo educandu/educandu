@@ -43,7 +43,6 @@ const COLOR_SWATCHES = [
   ['#ffffff', '#fafafa', '#f5f5f5', '#e8e8e8', '#d9d9d9', '#bfbfbf', '#8c8c8c', '#595959', '#262626', '#000000']
 ];
 
-const DEFAULT_NAME = 'Unbenannt';
 const DEFAULT_COLOR = '#4582b4';
 const DEFAULT_LENGTH = 1000;
 
@@ -72,7 +71,7 @@ class AnavisEditor extends React.Component {
           </ButtonGroup>
         )
       }, {
-        title: () => this.props.t('name'),
+        title: () => this.props.t('nameLabel'),
         dataIndex: 'name',
         key: 'name',
         render: (name, item, index) => (
@@ -236,8 +235,9 @@ class AnavisEditor extends React.Component {
   }
 
   handleAddPartButtonClick() {
+    const { t } = this.props;
     const newParts = this.props.content.parts.slice();
-    newParts.push({ name: DEFAULT_NAME, color: DEFAULT_COLOR, length: DEFAULT_LENGTH, annotations: [] });
+    newParts.push({ name: t('defaultPartName'), color: DEFAULT_COLOR, length: DEFAULT_LENGTH, annotations: [] });
     this.changeContent({ parts: newParts });
   }
 

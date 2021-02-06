@@ -7,6 +7,7 @@ import AnavisPlugin from './anavis/editor';
 import MarkdownPlugin from './markdown/editor';
 import H5pPlayerPlugin from './h5p-player/editor';
 import AnnotationPlugin from './annotation/editor';
+import DiagramNetPlugin from './diagram-net/editor';
 import ImageTilePlugin from './image-tiles/editor.js';
 import PluginFactoryBase from './plugin-factory-base';
 import QuickTesterPlugin from './quick-tester/editor';
@@ -25,6 +26,7 @@ const editors = [
   ImageTilePlugin,
   H5pPlayerPlugin,
   AnnotationPlugin,
+  DiagramNetPlugin,
   AbcNotationPlugin,
   EarTrainingPlugin,
   IntervalTrainerPlugin

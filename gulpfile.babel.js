@@ -161,7 +161,7 @@ tasks.bundleJs = async function bundleJs() {
 
   const plugins = [
     new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi'),
-    new webpack.ProvidePlugin({ process: 'process/browser' }),
+    new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'], process: 'process/browser' }),
     new MomentLocalesPlugin({ localesToKeep: ['en', 'de', 'de-DE'] })
   ];
 

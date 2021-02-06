@@ -8,6 +8,7 @@ import MarkdownPlugin from './markdown/renderer';
 import H5pPlayerPlugin from './h5p-player/renderer';
 import AnnotationPlugin from './annotation/renderer';
 import ImageTilePlugin from './image-tiles/renderer';
+import DiagramNetPlugin from './diagram-net/renderer';
 import PluginFactoryBase from './plugin-factory-base';
 import QuickTesterPlugin from './quick-tester/renderer';
 import AbcNotationPlugin from './abc-notation/renderer';
@@ -23,6 +24,7 @@ const renderers = [
   IframePlugin,
   AnavisPlugin,
   ImageTilePlugin,
+  DiagramNetPlugin,
   H5pPlayerPlugin,
   AnnotationPlugin,
   AbcNotationPlugin,
