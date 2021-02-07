@@ -8,6 +8,7 @@ import DocumentService from '../services/document-service';
 import needsPermission from '../domain/needs-permission-middleware';
 
 const jsonParser = express.json();
+const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class DocumentController {
   static get inject() { return [DocumentService, ClientDataMapper, PageRenderer]; }
@@ -88,7 +89,7 @@ class DocumentController {
   }
 
   registerApi(router) {
-    router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
+    router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload], async (req, res) => {
       const revision = await this.documentService.createDocumentRevision({ data: req.body, user: req.user });
       if (!revision) {
         throw new NotFound();

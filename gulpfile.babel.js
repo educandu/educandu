@@ -161,7 +161,7 @@ tasks.bundleJs = async function bundleJs() {
 
   const plugins = [
     new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi'),
-    new webpack.ProvidePlugin({ Buffer: ['buffer', 'Buffer'], process: 'process/browser' }),
+    new webpack.ProvidePlugin({ process: 'process/browser' }),
     new MomentLocalesPlugin({ localesToKeep: ['en', 'de', 'de-DE'] })
   ];
 
@@ -198,11 +198,9 @@ tasks.bundleJs = async function bundleJs() {
     'array-shuffle',
     'aurelia-dependency-injection',
     'auto-bind',
-    'buffer',
     'chalk',
     'clipboard-copy',
     'color-convert',
-    'dauria',
     'map-age-cleaner',
     'mem',
     'mimic-fn',

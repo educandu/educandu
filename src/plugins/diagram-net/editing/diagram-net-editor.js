@@ -1,8 +1,7 @@
-import React from 'react';
-import dauria from 'dauria';
 import autoBind from 'auto-bind';
-import { Form, Button } from 'antd';
 import { withTranslation } from 'react-i18next';
+import { Form, Button, Modal, Spin } from 'antd';
+import React, { Fragment, createRef } from 'react';
 import { withLanguage } from '../../../components/language-context';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 import { sectionEditorProps, translationProps, languageProps } from '../../../ui/default-prop-types';
@@ -11,32 +10,52 @@ const createEmbeddedEditorUrl = lang => [
   'https://embed.diagrams.net/',
   '?embed=1',
   '&ui=atlas',
-  '&spin=1',
   '&modified=unsavedChanges',
   '&noSaveBtn=1',
   '&proto=json',
   `&lang=${lang}`
 ].join('');
 
-const embeddedEditorStyle = [
-  'background-color: #fff;',
-  'border: 0;',
-  'position: absolute;',
-  'top: 0;',
-  'left: 0;',
-  'right: 0;',
-  'bottom: 0;',
-  'width: 100%;',
-  'height: 100%;',
-  'z-index: 9999;'
-].join(' ');
+const modalBodyStyle = {
+  position: 'relative',
+  height: 'calc(100vh - 120px)',
+  width: 'calc(100vw - 120px)',
+  overflow: 'hidden',
+  margin: 0,
+  padding: 0
+};
+
+const iframeStyle = {
+  position: 'absolute',
+  height: '100%',
+  width: '100%',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0
+};
+
+const iframeOverlayStyle = {
+  ...iframeStyle,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: '#fff'
+};
+
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 14 }
+};
 
 class DiagramNetEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
+    this.iframeRef = createRef();
     this.state = {
-      drawIoFrame: null
+      iframeUrl: null,
+      isEditorReady: false
     };
   }
 
@@ -50,38 +69,37 @@ class DiagramNetEditor extends React.Component {
 
   handleMessage(event) {
     const { content } = this.props;
-    const { drawIoFrame } = this.state;
+    const currentIframe = this.iframeRef.current;
 
-    if (!drawIoFrame || event.source !== drawIoFrame.contentWindow || !event.data.length) {
+    if (!currentIframe || event.source !== currentIframe.contentWindow || !event.data.length) {
       return;
     }
 
     const message = JSON.parse(event.data);
+    const receiver = currentIframe.contentWindow;
 
-    let svgXml;
     switch (message.event) {
       case 'init':
-        // Received if the editor is ready
-        // Sends the data URI with embedded XML to editor
-        drawIoFrame.contentWindow.postMessage(JSON.stringify({ action: 'load', xml: content.svgXml }), '*');
+        // Received when the editor is ready
+        receiver.postMessage(JSON.stringify({ action: 'load', xml: content.xml }), '*');
+        this.setState({ isEditorReady: true });
+        break;
+      case 'load':
+        // Received when the document is loaded
+        this.setState({ isEditorReady: true });
         break;
       case 'save':
-        // Received if the user clicks save
-        // Sends a request to export the diagram as XML with embedded PNG
-        drawIoFrame.contentWindow.postMessage(JSON.stringify({ action: 'export', format: 'xmlsvg' }), '*');
+        // Received when the user clicks save
+        receiver.postMessage(JSON.stringify({ action: 'export', format: 'svg' }), '*');
         break;
       case 'export':
-        // Received if the export request was processed
-        // Contains the data URI of the image SVG
-        svgXml = dauria.parseDataURI(message.data).buffer.toString('utf8');
-        this.handleSvgXmlChanged(svgXml);
-        this.setState({ drawIoFrame: null });
-        document.body.removeChild(drawIoFrame);
+        // Received when the export request was processed
+        this.handleDiagramChanged(message.xml, message.data);
+        this.setState({ iframeUrl: null, isEditorReady: false });
         break;
       case 'exit':
-        // Received if the user clicks exit or after export
-        this.setState({ drawIoFrame: null });
-        document.body.removeChild(drawIoFrame);
+        // Received when the user clicks exit or after export
+        this.setState({ iframeUrl: null, isEditorReady: false });
         break;
       default:
         break;
@@ -90,21 +108,14 @@ class DiagramNetEditor extends React.Component {
 
   handleEditClick() {
     const { language } = this.props;
-    const { drawIoFrame } = this.state;
-    if (!drawIoFrame || drawIoFrame.closed) {
-      const iframe = document.createElement('iframe');
-      iframe.setAttribute('frameborder', '0');
-      iframe.setAttribute('src', createEmbeddedEditorUrl(language));
-      iframe.setAttribute('style', embeddedEditorStyle);
-      document.body.appendChild(iframe);
-      this.setState({ drawIoFrame: iframe });
-    } else {
-      drawIoFrame.focus();
-    }
+    this.setState({
+      iframeUrl: createEmbeddedEditorUrl(language),
+      isEditorReady: false
+    });
   }
 
-  handleSvgXmlChanged(value) {
-    this.changeContent({ svgXml: value });
+  handleDiagramChanged(xml, image) {
+    this.changeContent({ xml, image });
   }
 
   handleMaxWidthChanged(value) {
@@ -117,23 +128,41 @@ class DiagramNetEditor extends React.Component {
   }
 
   render() {
+    const { iframeUrl, isEditorReady } = this.state;
     const { content, t } = this.props;
-
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14 }
-    };
-
+    const { image, maxWidth } = content;
     return (
       <div>
         <Form layout="horizontal">
-          <Form.Item label={t('name')} {...formItemLayout}>
-            <Button type="primary" onClick={this.handleEditClick}>{t('editExternally')}</Button>
+          {image && (
+            <Form.Item label={t('name')} {...formItemLayout}>
+              <img style={{ maxHeight: '80px', maxWidth: '400px', border: '1px solid #d9d9d9' }} src={image} />
+            </Form.Item>
+          )}
+          <Form.Item label={image ? '\u00A0' : t('name')} {...formItemLayout} colon={!image}>
+            <Button type="primary" size="small" onClick={this.handleEditClick}>{t('editExternally')}</Button>
           </Form.Item>
           <Form.Item label={t('maximumWidth')} {...formItemLayout}>
-            <ObjectMaxWidthSlider value={content.maxWidth} onChange={this.handleMaxWidthChanged} />
+            <ObjectMaxWidthSlider value={maxWidth} onChange={this.handleMaxWidthChanged} />
           </Form.Item>
         </Form>
+        <Modal
+          title={null}
+          footer={null}
+          closable={false}
+          visible={!!iframeUrl}
+          width={modalBodyStyle.width}
+          bodyStyle={modalBodyStyle}
+          destroyOnClose
+          centered
+          >
+          {iframeUrl && (
+            <Fragment>
+              <iframe ref={this.iframeRef} src={iframeUrl} frameBorder={0} style={iframeStyle} />
+              {isEditorReady || <div style={iframeOverlayStyle}><Spin size="large" /></div>}
+            </Fragment>
+          )}
+        </Modal>
       </div>
     );
   }
@@ -146,4 +175,3 @@ DiagramNetEditor.propTypes = {
 };
 
 export default withTranslation('diagramNet')(withLanguage(DiagramNetEditor));
-
