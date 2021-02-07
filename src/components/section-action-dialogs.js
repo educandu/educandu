@@ -39,10 +39,10 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
       <div>
         {t('sectionActionDialogs:deleteSectionConfirmation')}
         <br />
-        <b className="u-danger">{t('thisActionIsIrreversible')}</b>
+        <b className="u-danger">{t('sectionActionDialogs:thisActionIsIrreversible')}</b>
         <br />
         <br />
-        <span>{t('pleaseSpecifyAReason')}:</span>
+        <span>{t('sectionActionDialogs:pleaseSpecifyAReason')}:</span>
         <br />
         <TextArea value={deletionReason} onChange={handleDeletionReasonChange} />
         <br />
@@ -51,7 +51,7 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
           value={deleteDescendants}
           onChange={handleDeleteDescendantsChange}
           >
-          {t('deleteAllDescendantRevisions')}
+          {t('sectionActionDialogs:deleteAllDescendantRevisions')}
         </Checkbox>
       </div>
     );
