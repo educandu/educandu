@@ -1,3 +1,5 @@
+import cloneDeep from '../../utils/clone-deep';
+
 export default {
   type: 'anavis',
   getName: t => t('anavis:name'),
@@ -21,5 +23,6 @@ export default {
         v: 9
       }
     }
-  })
+  }),
+  cloneContent: content => cloneDeep(content)
 };

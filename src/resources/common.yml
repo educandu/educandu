@@ -28,6 +28,9 @@ apply:
 discard:
   en: Discard
   de: Verwerfen
+duplicate:
+  en: Duplicate
+  de: Duplizieren
 delete:
   en: Delete
   de: Löschen
