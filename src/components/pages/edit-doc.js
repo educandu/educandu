@@ -124,6 +124,7 @@ class EditDoc extends React.Component {
     });
 
     return {
+      ...prevState,
       editedDocumentRevision: {
         ...updatedRevision,
         sections: mergedSections
@@ -138,6 +139,7 @@ class EditDoc extends React.Component {
     const { editedDocumentRevision } = this.state;
     if (canReorder(editedDocumentRevision.sections, sourceIndex, destinationIndex)) {
       this.setState(prevState => ({
+        ...prevState,
         editedDocumentRevision: {
           ...prevState.editedDocumentRevision,
           sections: reorder(prevState.editedDocumentRevision.sections, sourceIndex, destinationIndex)
@@ -150,6 +152,7 @@ class EditDoc extends React.Component {
   handleMetadataChanged(metadata) {
     this.setState(prevState => {
       return {
+        ...prevState,
         editedDocumentRevision: { ...prevState.editedDocumentRevision, ...metadata },
         isDirty: true
       };
@@ -159,6 +162,7 @@ class EditDoc extends React.Component {
   handleContentChanged(sectionKey, content, isInvalid) {
     this.setState(prevState => {
       return {
+        ...prevState,
         editedDocumentRevision: {
           ...prevState.editedDocumentRevision,
           sections: prevState.editedDocumentRevision.sections.map(sec => sec.key === sectionKey ? { ...sec, content } : sec)
@@ -188,9 +192,49 @@ class EditDoc extends React.Component {
   handleSectionDeleted(sectionKey) {
     this.setState(prevState => {
       return {
+        ...prevState,
         editedDocumentRevision: {
           ...prevState.editedDocumentRevision,
           sections: prevState.editedDocumentRevision.sections.filter(sec => sec.key !== sectionKey)
+        },
+        isDirty: true,
+        invalidSectionKeys: removeKeyIfExists(prevState.invalidSectionKeys, sectionKey)
+      };
+    });
+  }
+
+  cloneSection(section) {
+    const info = pluginInfos.find(i => i.type === section.type);
+    return {
+      key: uniqueId.create(),
+      revision: null,
+      type: info.type,
+      deletedOn: null,
+      deletedBy: null,
+      deletedBecause: null,
+      content: info.cloneContent(section.content)
+    };
+  }
+
+  duplicateSectionInCollection(allSections, sectionKey) {
+    return allSections.reduce((all, current) => {
+      all.push(current);
+      if (current.key === sectionKey) {
+        all.push(this.cloneSection(current));
+      }
+      return all;
+    }, []);
+  }
+
+  handleSectionDuplicated(sectionKey) {
+    this.setState(prevState => {
+      const newSections = this.duplicateSectionInCollection(prevState.editedDocumentRevision.sections, sectionKey);
+
+      return {
+        ...prevState,
+        editedDocumentRevision: {
+          ...prevState.editedDocumentRevision,
+          sections: newSections
         },
         isDirty: true,
         invalidSectionKeys: removeKeyIfExists(prevState.invalidSectionKeys, sectionKey)
@@ -211,6 +255,7 @@ class EditDoc extends React.Component {
     };
     this.setState(prevState => {
       return {
+        ...prevState,
         editedDocumentRevision: {
           ...prevState.editedDocumentRevision,
           sections: [...prevState.editedDocumentRevision.sections, newSection]
@@ -248,6 +293,7 @@ class EditDoc extends React.Component {
 
   handleSectionApproved(sectionKey) {
     this.setState(prevState => ({
+      ...prevState,
       editedDocumentRevision: {
         ...prevState.editedDocumentRevision,
         sections: prevState.editedDocumentRevision.sections.map(sec => sec.key === sectionKey ? cloneDeep(sec) : sec)
@@ -259,6 +305,7 @@ class EditDoc extends React.Component {
 
   handleSectionRefused(sectionKey) {
     this.setState(prevState => ({
+      ...prevState,
       editedDocumentRevision: {
         ...prevState.editedDocumentRevision,
         sections: prevState.editedDocumentRevision.sections.filter(sec => sec.key !== sectionKey)
@@ -358,6 +405,7 @@ class EditDoc extends React.Component {
                               onSectionMovedUp={this.handleSectionMovedUp}
                               onSectionMovedDown={this.handleSectionMovedDown}
                               onSectionDeleted={this.handleSectionDeleted}
+                              onSectionDuplicated={this.handleSectionDuplicated}
                               onSectionApproved={this.handleSectionApproved}
                               onSectionRefused={this.handleSectionRefused}
                               dragHandleProps={draggableProvided.dragHandleProps}

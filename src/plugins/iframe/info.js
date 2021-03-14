@@ -1,3 +1,5 @@
+import cloneDeep from '../../utils/clone-deep';
+
 export default {
   type: 'iframe',
   getName: t => t('iframe:name'),
@@ -6,5 +8,6 @@ export default {
     width: 100,
     height: 150,
     isBorderVisible: true
-  })
+  }),
+  cloneContent: content => cloneDeep(content)
 };

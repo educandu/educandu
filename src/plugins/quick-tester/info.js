@@ -1,3 +1,5 @@
+import cloneDeep from '../../utils/clone-deep';
+
 export default {
   type: 'quick-tester',
   getName: t => t('quickTester:name'),
@@ -10,5 +12,6 @@ export default {
         answer: `[${t('quickTester:answer')}}`
       }
     ]
-  })
+  }),
+  cloneContent: content => cloneDeep(content)
 };

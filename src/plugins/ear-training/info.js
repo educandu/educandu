@@ -1,3 +1,5 @@
+import cloneDeep from '../../utils/clone-deep';
+
 export default {
   type: 'ear-training',
   getName: t => t('earTraining:name'),
@@ -15,5 +17,6 @@ export default {
         }
       }
     ]
-  })
+  }),
+  cloneContent: content => cloneDeep(content)
 };

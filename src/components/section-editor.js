@@ -15,7 +15,8 @@ import {
   EyeOutlined,
   EditOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
+  SnippetsOutlined
 } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
@@ -24,6 +25,7 @@ const RadioGroup = Radio.Group;
 const SECTION_MENU_KEY_MOVE_UP = 'move-up';
 const SECTION_MENU_KEY_MOVE_DOWN = 'move-down';
 const SECTION_MENU_KEY_DELETE = 'delete';
+const SECTION_MENU_KEY_DUPLICATE = 'duplicate';
 
 class SectionEditor extends React.Component {
   constructor(props) {
@@ -45,7 +47,7 @@ class SectionEditor extends React.Component {
   }
 
   handleSectionMenuClick({ key }) {
-    const { t, section, onSectionMovedUp, onSectionMovedDown, onSectionDeleted } = this.props;
+    const { t, section, onSectionMovedUp, onSectionMovedDown, onSectionDeleted, onSectionDuplicated } = this.props;
     switch (key) {
       case SECTION_MENU_KEY_MOVE_UP:
         onSectionMovedUp(section.key);
@@ -55,6 +57,9 @@ class SectionEditor extends React.Component {
         break;
       case SECTION_MENU_KEY_DELETE:
         confirmSectionDelete(t, section, () => onSectionDeleted(section.key));
+        break;
+      case SECTION_MENU_KEY_DUPLICATE:
+        onSectionDuplicated(section.key);
         break;
       default:
         break;
@@ -122,6 +127,9 @@ class SectionEditor extends React.Component {
         </Menu.Item>
         <Menu.Item key={SECTION_MENU_KEY_MOVE_DOWN}>
           <ArrowDownOutlined />&nbsp;&nbsp;<span>{t('common:moveDown')}</span>
+        </Menu.Item>
+        <Menu.Item key={SECTION_MENU_KEY_DUPLICATE}>
+          <SnippetsOutlined />&nbsp;&nbsp;<span>{t('common:duplicate')}</span>
         </Menu.Item>
         <Menu.Item key={SECTION_MENU_KEY_DELETE}>
           <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>{t('common:delete')}</span>
@@ -206,6 +214,7 @@ SectionEditor.propTypes = {
   onContentChanged: PropTypes.func.isRequired,
   onSectionApproved: PropTypes.func.isRequired,
   onSectionDeleted: PropTypes.func.isRequired,
+  onSectionDuplicated: PropTypes.func.isRequired,
   onSectionMovedDown: PropTypes.func.isRequired,
   onSectionMovedUp: PropTypes.func.isRequired,
   onSectionRefused: PropTypes.func.isRequired,

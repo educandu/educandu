@@ -1,3 +1,5 @@
+import cloneDeep from '../../utils/clone-deep';
+
 export default {
   type: 'video',
   getName: t => t('video:name'),
@@ -11,5 +13,6 @@ export default {
       v: 9
     },
     showVideo: true
-  })
+  }),
+  cloneContent: content => cloneDeep(content)
 };

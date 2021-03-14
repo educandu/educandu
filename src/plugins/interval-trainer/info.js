@@ -1,3 +1,5 @@
+import cloneDeep from '../../utils/clone-deep';
+
 export default {
   type: 'interval-trainer',
   getName: t => t('intervalTrainer:name'),
@@ -8,5 +10,6 @@ export default {
     keyboardEnd: 24,
     keyboardOffset: 48,
     tests: []
-  })
+  }),
+  cloneContent: content => cloneDeep(content)
 };
