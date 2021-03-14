@@ -31,7 +31,7 @@ class Cdn {
   uploadObject(objectName, filePath, metadata) {
     const stream = fs.createReadStream(filePath);
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
-    const contentType = mime.getType(filePath) || defaultContentType;
+    const contentType = mime.getType(sanitizedObjectName) || defaultContentType;
     return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, metadata);
   }
 
