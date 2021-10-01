@@ -3,3 +3,4 @@ reports/
 dist/
 .tmp/
 *.log
+.DS_Store
