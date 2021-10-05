@@ -10,6 +10,9 @@ emailIsInvalid:
 emailIsInUse:
   en: The email address is already registered
   de: Die E-Mail-Adresse ist bereits vergeben
+usernameIsTooShort:
+  en: The user name should be at least {length} characters long
+  de: Der Benutzername muss mindestens {length} Zeichen lang sein
 usernameIsInUse:
   en: The user name is already registered
   de: Der Benutzername ist bereits vergeben
