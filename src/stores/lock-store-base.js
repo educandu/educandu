@@ -4,7 +4,7 @@ import uniqueId from '../utils/unique-id';
 class LockStoreBase extends StoreBase {
   async takeLock(lockKey) {
     const sessionKey = uniqueId.create();
-    await this.collection.insertOne({ _id: lockKey, sessionKey: sessionKey });
+    await this.collection.insertOne({ _id: lockKey, sessionKey });
     return { lockKey, sessionKey };
   }
 

@@ -97,14 +97,14 @@ class EditMenu extends React.Component {
   createInitialDocRef(doc) {
     return {
       key: doc.key,
-      doc: doc
+      doc
     };
   }
 
   createNewDocRef(doc) {
     return {
       key: uniqueId.create(),
-      doc: doc
+      doc
     };
   }
 
