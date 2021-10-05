@@ -3,8 +3,8 @@ import Page from '../page';
 import DocView from '../doc-view';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls';
+import CreditsFooter from '../credits-footer';
 import { useTranslation } from 'react-i18next';
-import ArticleCredits from '../article-credits';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
 import { documentShape, documentRevisionShape } from '../../ui/default-prop-types';
@@ -42,11 +42,9 @@ function Article({ initialState }) {
         </aside>
       )}
       <DocView documentOrRevision={documentOrRevision} />
-      {type === 'document' && (
-        <aside className="Content">
-          <ArticleCredits doc={documentOrRevision} />
-        </aside>
-      )}
+      <aside className="Content">
+        <CreditsFooter documentOrRevision={documentOrRevision} type={type} />
+      </aside>
     </Page>
   );
 }
