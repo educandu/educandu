@@ -1,6 +1,6 @@
 import sut from './input-validators';
 
-describe('input-validators', () => {
+describe.only('input-validators', () => {
 
   describe('isValidPassword', () => {
     let result;
@@ -9,9 +9,12 @@ describe('input-validators', () => {
       { password: null, minLength: 4, expectedResult: false },
       { password: 'abc', minLength: 4, expectedResult: false },
       { password: 'abcd', minLength: 4, expectedResult: false },
+      { password: '1234', minLength: 4, expectedResult: false },
       { password: 'abc1', expectedResult: false },
       { password: 'abc1', minLength: 4, expectedResult: true },
-      { password: '__a1', minLength: 4, expectedResult: true },
+      { password: 'abc1d', minLength: 4, expectedResult: true },
+      { password: 'a__1', minLength: 4, expectedResult: true },
+      { password: '!!ä1', minLength: 4, expectedResult: false },
       { password: 'abcd123', expectedResult: false },
       { password: 'abcd1234', expectedResult: true }
     ];
