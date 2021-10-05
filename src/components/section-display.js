@@ -57,6 +57,7 @@ function SectionDisplay({ DisplayComponent, docKey, section, onAction }) {
     <section
       key={section.key}
       className={sectionClasses}
+      data-section-key={section.key}
       onMouseEnter={() => setIsMouseOver(true)}
       onMouseLeave={() => setIsMouseOver(false)}
       >
