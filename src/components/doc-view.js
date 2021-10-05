@@ -9,7 +9,7 @@ function DocView({ documentOrRevision, onAction }) {
   const rendererFactory = useService(RendererFactory);
 
   return (
-    <article className="DocView">
+    <article className="DocView" data-document-key={documentOrRevision.key}>
       {documentOrRevision.sections.map(section => (
         <SectionDisplay
           key={section.key}
