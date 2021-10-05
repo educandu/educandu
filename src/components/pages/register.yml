@@ -11,7 +11,7 @@ emailIsInUse:
   en: The email address is already registered
   de: Die E-Mail-Adresse ist bereits vergeben
 usernameIsTooShort:
-  en: The user name should be at least {length} characters long
+  en: The user name must be at least {length} characters long
   de: Der Benutzername muss mindestens {length} Zeichen lang sein
 usernameIsInUse:
   en: The user name is already registered
@@ -19,6 +19,9 @@ usernameIsInUse:
 enterPassword:
   en: Please enter a password
   de: Bitte geben Sie ein Kennwort an
+passwordIsInvalid:
+  en: The password must be at least {length} characters long and contain at least one letter and one number
+  de: Das Kennwort muss mindestens {length} Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten
 confirmPassword:
   en: Please confirm your password
   de: Bitte bestätigen Sie Ihr Kennwort
