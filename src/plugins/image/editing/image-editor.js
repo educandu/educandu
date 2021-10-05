@@ -149,7 +149,7 @@ class ImageEditor extends React.Component {
                   <FormItem label={t('internalUrl')} {...formItemLayout}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Input
-                        addonBefore={`${ClientConfig.cdnRootUrl}/`}
+                        addonBefore={`${clientConfig.cdnRootUrl}/`}
                         value={hover.url}
                         readOnly
                         />
