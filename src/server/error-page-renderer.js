@@ -19,9 +19,9 @@ class ErrorPageRenderer extends PageRendererBase {
     const styles = [{ href: '/main.css' }];
 
     const html = this.renderHtml({
-      language: language,
-      title: title,
-      styles: styles,
+      language,
+      title,
+      styles,
       ContentRoot: ErrorPage,
       contentProps: props
     });

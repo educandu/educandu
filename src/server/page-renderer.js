@@ -69,9 +69,9 @@ class PageRenderer extends PageRendererBase {
     const props = {
       request: cloneDeep(request),
       user: cloneDeep(user),
-      container: container,
+      container,
       initialState: cloneDeep(initialState),
-      language: language,
+      language,
       settings: cloneDeep(settings),
       PageComponent: pageComponentsByName[pageName]
     };
@@ -96,10 +96,10 @@ class PageRenderer extends PageRendererBase {
     ];
 
     const html = this.renderHtml({
-      language: language,
-      title: title,
-      styles: styles,
-      scripts: scripts,
+      language,
+      title,
+      styles,
+      scripts,
       ContentRoot: Root,
       contentProps: props
     });

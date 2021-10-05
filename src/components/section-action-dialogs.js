@@ -11,8 +11,8 @@ export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
-    onOk: onOk,
-    onCancel: onCancel
+    onOk,
+    onCancel
   });
 }
 
@@ -64,7 +64,7 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
     okType: 'danger',
     cancelText: t('common:no'),
     onOk: () => onOk({ deleteDescendants, deletionReason }),
-    onCancel: onCancel,
+    onCancel,
     okButtonProps: {
       disabled: deletionReason.length < 3
     }

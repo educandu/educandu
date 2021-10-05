@@ -86,8 +86,8 @@ class UserService {
 
     const user = {
       _id: uniqueId.create(),
-      provider: provider,
-      username: username,
+      provider,
+      username,
       passwordHash: await this._hashPassword(password),
       email: email.toLowerCase(),
       roles: [DEFAULT_ROLE_NAME],
@@ -98,7 +98,7 @@ class UserService {
 
     logger.info('Creating new user with id %s', user._id);
     await this.saveUser(user);
-    return { result: CREATE_USER_RESULT_SUCCESS, user: user };
+    return { result: CREATE_USER_RESULT_SUCCESS, user };
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME_ELMU) {

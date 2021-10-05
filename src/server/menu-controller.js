@@ -52,7 +52,7 @@ class MenuController {
       }
 
       const initialState = {
-        menu: menu,
+        menu,
         documents: mappedDocuments,
         defaultDocument: mappedDefaultDocument
       };
@@ -74,7 +74,7 @@ class MenuController {
       const mappedDocuments = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
 
       const initialState = {
-        menu: menu,
+        menu,
         documents: mappedDocuments
       };
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-menu', initialState);
