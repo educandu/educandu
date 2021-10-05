@@ -97,6 +97,14 @@ class Register extends React.Component {
       },
       {
         validator: (rule, value) => {
+          const minLength = 4;
+          return value && value.trim().length < minLength
+            ? Promise.reject(new Error(t('usernameIsTooShort', { length: minLength })))
+            : Promise.resolve();
+        }
+      },
+      {
+        validator: (rule, value) => {
           const { forbiddenUsernames } = this.state;
           return value && forbiddenUsernames.includes(value.toLowerCase())
             ? Promise.reject(new Error(t('usernameIsInUse')))
