@@ -25,8 +25,8 @@ class AwsSdkS3Client {
     this.tasks = new PriorityQueue(MAX_REQUESTS);
     this.awsSdkS3Client = new S3({
       apiVersion: '2006-03-01',
-      endpoint: endpoint,
-      region: region,
+      endpoint,
+      region,
       credentials: new Credentials(accessKey, secretKey)
     });
   }

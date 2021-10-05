@@ -30,10 +30,10 @@ class DocumentApiClient {
       .accept('json')
       .type('json')
       .send({
-        documentKey: documentKey,
-        sectionKey: sectionKey,
-        sectionRevision: sectionRevision,
-        reason: reason,
+        documentKey,
+        sectionKey,
+        sectionRevision,
+        reason,
         deleteDescendants: !!deleteDescendants
       })
       .then(res => res.body);

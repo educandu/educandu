@@ -260,7 +260,7 @@ class DocumentService {
       namespace: lastRevision.namespace,
       language: lastRevision.language,
       sections: lastRevision.sections,
-      contributors: contributors
+      contributors
     };
   }
 }

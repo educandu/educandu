@@ -176,12 +176,12 @@ class Users extends React.Component {
     try {
       for (const [userId, newLockedOut] of Object.entries(changedLockOutStates)) {
         /* eslint-disable-next-line no-await-in-loop */
-        await userApiClient.saveUserLockedOutState({ userId: userId, lockedOut: newLockedOut });
+        await userApiClient.saveUserLockedOutState({ userId, lockedOut: newLockedOut });
       }
 
       for (const [userId, newRoles] of Object.entries(changedRoles)) {
         /* eslint-disable-next-line no-await-in-loop */
-        await userApiClient.saveUserRoles({ userId: userId, roles: newRoles });
+        await userApiClient.saveUserRoles({ userId, roles: newRoles });
       }
     } catch (error) {
       errorHelper.handleApiError(error, logger);
@@ -200,7 +200,7 @@ class Users extends React.Component {
     const { users } = await userApiClient.getUsers();
 
     this.setState({
-      users: users,
+      users,
       changedLockOutStates: {},
       changedRoles: {},
       isDirty: false

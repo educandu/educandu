@@ -41,7 +41,7 @@ class H5pPlayerRenderer {
     const { dependencies, content, manifest } = elmuInfo;
 
     return {
-      baseUrl: baseUrl, // No trailing slash
+      baseUrl, // No trailing slash
       url: applicationRootUrl, // Relative to web root
       siteUrl: `${baseUrl}/`, // Only if NOT logged in!
       postUserStatistics: false,

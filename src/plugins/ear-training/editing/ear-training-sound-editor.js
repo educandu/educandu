@@ -21,7 +21,7 @@ class EarTrainingSoundEditor extends React.Component {
   changeSound(newValues) {
     const { sound, testIndex, onSoundChanged } = this.props;
     onSoundChanged({
-      testIndex: testIndex,
+      testIndex,
       sound: { ...sound, ...newValues }
     });
   }

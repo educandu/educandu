@@ -135,7 +135,7 @@ class UserController {
         await this.mailService.sendRegistrationVerificationLink(email, verificationLink);
       }
 
-      res.send({ result: result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
+      res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
     });
 
     router.post('/api/v1/users/request-password-reset', jsonParser, async (req, res) => {

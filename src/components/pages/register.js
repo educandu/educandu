@@ -141,7 +141,7 @@ class Register extends React.Component {
       {
         validator: (rule, value) => {
           const minLength = 8;
-          return value && !inputValidators.isValidPassword({ password: value, minLength: minLength })
+          return value && !inputValidators.isValidPassword({ password: value, minLength })
             ? Promise.reject(new Error(t('passwordIsInvalid', { length: minLength })))
             : Promise.resolve();
         }

@@ -215,7 +215,7 @@ tasks.bundleJs = async function bundleJs() {
   ];
 
   const bundleConfigs = {
-    entry: entry,
+    entry,
     output: {
       filename: '[name].js'
     },
@@ -269,7 +269,7 @@ tasks.bundleJs = async function bundleJs() {
     node: {
       __filename: true
     },
-    plugins: plugins
+    plugins
   };
 
   const stats = await promisify(webpack)(bundleConfigs);

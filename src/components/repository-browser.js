@@ -65,8 +65,8 @@ class RepositoryBrowser extends React.Component {
       currentUploadMessage: null,
       currentPathSegments: initialPathSegments,
       lockedPathSegmentsCount: rootPathSegments.length,
-      initialPathSegments: initialPathSegments,
-      uploadPathSegments: uploadPathSegments
+      initialPathSegments,
+      uploadPathSegments
     };
 
     this.columns = [
@@ -258,7 +258,7 @@ class RepositoryBrowser extends React.Component {
 
     this.setState({
       records: recordsWithVirtualPaths,
-      selectedRowKeys: selectedRowKeys,
+      selectedRowKeys,
       currentPathSegments: pathSegments,
       isRefreshing: false
     });
@@ -300,17 +300,17 @@ class RepositoryBrowser extends React.Component {
       const category = isDirectory ? mimeTypeHelper.CATEGORY_FOLDER : mimeTypeHelper.getCategory(obj.name);
       const record = {
         key: path,
-        path: path,
+        path,
         size: obj.size,
         sizeText: Number.isFinite(obj.size) && !isDirectory ? prettyBytes(obj.size, { locale }) : '---',
         lastModified: obj.lastModified,
         lastModifiedText: obj.lastModified && !isDirectory ? moment(obj.lastModified).locale(locale).format('lll') : '---',
         displayName: segments[segments.length - 1] || '',
-        isDirectory: isDirectory,
-        category: category,
+        isDirectory,
+        category,
         categoryText: localizeCategory(category, t),
         originalObject: obj,
-        segments: segments,
+        segments,
         rowProps: {}
       };
 
@@ -449,8 +449,8 @@ class RepositoryBrowser extends React.Component {
       key: pathHelper.getPrefix(pathSegments),
       text: pathSegments[pathSegments.length - 1] || '',
       segments: pathSegments,
-      isEnabled: isEnabled,
-      icon: icon
+      isEnabled,
+      icon
     };
 
     if (isEnabled) {
@@ -479,7 +479,7 @@ class RepositoryBrowser extends React.Component {
   renderBreadCrumbs(pathSegments, lockedPathSegmentsCount) {
     const rootSegment = this.createBreadcrumbItemData({
       pathSegments: [],
-      lockedPathSegmentsCount: lockedPathSegmentsCount,
+      lockedPathSegmentsCount,
       icon: HomeOutlined
     });
 
@@ -487,7 +487,7 @@ class RepositoryBrowser extends React.Component {
       const prevItemSegments = list[list.length - 1].segments;
       const newItemData = this.createBreadcrumbItemData({
         pathSegments: [...prevItemSegments, segment],
-        lockedPathSegmentsCount: lockedPathSegmentsCount
+        lockedPathSegmentsCount
       });
       return [...list, newItemData];
     }, [rootSegment]);
