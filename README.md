@@ -6,7 +6,7 @@ The elmu website
 
 ## Local development:
 
-### linting commands
+### Linting commands
 
 gulp lint //will run lint
 gulp lint --fix //Will run lint and fix any linting rules that are easily solvable. ATTENTION: commit your work before running this command.
