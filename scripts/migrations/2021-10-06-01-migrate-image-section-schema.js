@@ -15,9 +15,10 @@ const updateToNewContentStructure = content => {
       sourceUrl: content.hover.url
     };
 
-    delete content.hover;
     delete content.effect.url;
   }
+
+  delete content.hover;
 };
 
 const updateToOldContentStructure = content => {
@@ -28,7 +29,7 @@ const updateToOldContentStructure = content => {
   delete content.sourceUrl;
   content.hover = null;
 
-  if (content.effect && content.effect.type === 'hover') {
+  if (content.effect?.type === 'hover') {
     content.hover = {
       ...content.effect,
       type: content.effect.sourceType,
@@ -48,7 +49,7 @@ class Migration2021100601 {
   }
 
   async up() {
-    await updateAll(this.db.getCollection('documents'), { 'sections.type': 'image' }, doc => {
+    await updateAll(this.db.collection('documents'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
         if (section.type !== 'image') {
           return;
@@ -57,7 +58,7 @@ class Migration2021100601 {
       });
     });
 
-    await updateAll(this.db.getCollection('documentRevisions'), { 'sections.type': 'image' }, doc => {
+    await updateAll(this.db.collection('documentRevisions'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
         if (section.type !== 'image') {
           return;
@@ -68,7 +69,7 @@ class Migration2021100601 {
   }
 
   async down() {
-    await updateAll(this.db.getCollection('documents'), { 'sections.type': 'image' }, doc => {
+    await updateAll(this.db.collection('documents'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
         if (section.type !== 'image') {
           return;
@@ -77,7 +78,7 @@ class Migration2021100601 {
       });
     });
 
-    await updateAll(this.db.getCollection('documentRevisions'), { 'sections.type': 'image' }, doc => {
+    await updateAll(this.db.collection('documentRevisions'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
         if (section.type !== 'image') {
           return;
