@@ -1,8 +1,9 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import validation from '../../../ui/validation';
+import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION } from '../constants';
 import { withTranslation } from 'react-i18next';
-import { Form, Input, Radio, Switch } from 'antd';
+import { Form, Input, Radio, InputNumber } from 'antd';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
 import ClientConfig from '../../../bootstrap/client-config';
@@ -20,39 +21,38 @@ class ImageEditor extends React.Component {
     autoBind(this);
   }
 
-  handleExternalUrlValueChanged(event) {
+  handleExternalSourceUrlValueChanged(event) {
     const { value } = event.target;
-    this.changeContent({ url: value });
+    this.changeContent({ sourceUrl: value });
   }
 
-  handleHoverExternalUrlValueChanged(event) {
+  handleEffectExternalSourceUrlValueChanged(event) {
     const { value } = event.target;
-    const hover = { ...this.props.content.hover };
-    hover.url = value;
-    this.changeContent({ hover });
+    const effect = { ...this.props.content.effect };
+    effect.sourceUrl = value;
+    this.changeContent({ effect });
   }
 
-  handleInternalUrlValueChanged(value) {
-    this.changeContent({ url: value });
+  handleInternalSourceUrlValueChanged(value) {
+    this.changeContent({ sourceUrl: value });
   }
 
-  handleHoverInternalUrlValueChanged(value) {
-    const hover = { ...this.props.content.hover };
-    hover.url = value;
-    this.changeContent({ hover });
+  handleEffectInternalSourceUrlValueChanged(value) {
+    const effect = { ...this.props.content.effect, sourceUrl: value };
+    this.changeContent({ effect });
   }
 
-  handleTypeValueChanged(event) {
+  handleSourceTypeValueChanged(event) {
     const { value } = event.target;
-    this.changeContent({ type: value, url: '' });
+    this.changeContent({ sourceType: value, sourceUrl: '' });
   }
 
-  handleHoverTypeValueChanged(event) {
+  handleEffectSourceTypeValueChanged(event) {
     const { value } = event.target;
-    const hover = { ...this.props.content.hover };
-    hover.type = value;
-    hover.url = '';
-    this.changeContent({ hover });
+    const effect = { ...this.props.content.effect };
+    effect.sourceType = value;
+    effect.sourceUrl = '';
+    this.changeContent({ effect });
   }
 
   handleMaxWidthValueChanged(value) {
@@ -69,24 +69,67 @@ class ImageEditor extends React.Component {
     this.changeContent({ text: newValue });
   }
 
-  handleHoverCopyrightInfoValueChanged(event) {
-    const newValue = event.target.value;
-    const hover = { ...this.props.content.hover };
-    hover.text = newValue;
-    this.changeContent({ hover });
+  handleOrientationValueChanged(e) {
+    const effect = {
+      ...this.props.content.effect, orientation: e.target.value
+    };
+
+    this.changeContent({ effect });
   }
 
-  handleHoverSwitchChange(checked) {
-    if (checked) {
-      this.changeContent({ hover: { type: 'internal', url: '', text: '' } });
-    } else {
-      this.changeContent({ hover: null });
+  handleEffectOptionChange(e) {
+    const baseProps = {
+      sourceType: SOURCE_TYPE.internal,
+      sourceUrl: '',
+      text: ''
+    };
+
+    switch (e.target.value) {
+      case EFFECT_TYPE.reveal:
+        this.changeContent({
+          effect: {
+            ...baseProps,
+            type: EFFECT_TYPE.reveal,
+            startPosition: 10,
+            orientation: ORIENTATION.horizontal
+          }
+        });
+        break;
+      case EFFECT_TYPE.hover:
+        this.changeContent({
+          effect: {
+            ...baseProps,
+            type: EFFECT_TYPE.hover
+          }
+        });
+        break;
+      case EFFECT_TYPE.none:
+        this.changeContent({ effect: null });
+        break;
+      default:
+        this.changeContent({ effect: null });
+
     }
+  }
+
+  handleEffectCopyrightInfoValueChanged(event) {
+    const newValue = event.target.value;
+    const effect = { ...this.props.content.effect };
+    effect.text = newValue;
+    this.changeContent({ effect });
+  }
+
+  handleStartPositionValueChanged(newPosition) {
+    const effect = { ...this.props.content.effect };
+    effect.startPosition = Math.max(0, Math.min(100, newPosition));
+    this.changeContent({ effect });
   }
 
   render() {
     const { docKey, content, clientConfig, t } = this.props;
-    const { type, url, maxWidth, text, hover } = content;
+    const { sourceType, sourceUrl, maxWidth, text, effect } = content;
+
+    const effectType = (effect && effect.type) || EFFECT_TYPE.none;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -97,75 +140,99 @@ class ImageEditor extends React.Component {
       <div>
         <Form layout="horizontal">
           <FormItem label={t('source')} {...formItemLayout}>
-            <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
-              <RadioButton value="external">{t('externalLink')}</RadioButton>
-              <RadioButton value="internal">{t('internalLink')}</RadioButton>
+            <RadioGroup value={sourceType} onChange={this.handleSourceTypeValueChanged}>
+              <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.internal}>{t('internalLink')}</RadioButton>
             </RadioGroup>
           </FormItem>
-          {type === 'external' && (
-            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
-              <Input value={url} onChange={this.handleExternalUrlValueChanged} />
+          {sourceType === SOURCE_TYPE.external && (
+            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+              <Input value={sourceUrl} onChange={this.handleExternalSourceUrlValueChanged} />
             </FormItem>
           )}
-          {type === 'internal' && (
+          {sourceType === SOURCE_TYPE.internal && (
             <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
-                  value={url}
+                  value={sourceUrl}
                   readOnly
-                  />
+                />
                 <CdnFilePicker
                   rootPrefix="media"
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
-                  fileName={url}
-                  onFileNameChanged={this.handleInternalUrlValueChanged}
-                  />
+                  fileName={sourceUrl}
+                  onFileNameChanged={this.handleInternalSourceUrlValueChanged}
+                />
               </div>
             </FormItem>
           )}
           <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
             <TextArea value={text} onChange={this.handleCopyrightInfoValueChanged} autoSize={{ minRows: 3 }} />
           </Form.Item>
-          <Form.Item label={t('hoverImage')} {...formItemLayout}>
-            <Switch checked={!!hover} onChange={this.handleHoverSwitchChange} />
+          <Form.Item label={t('effectTypeLabel')} {...formItemLayout}>
+            <RadioGroup value={effectType} onChange={this.handleEffectOptionChange}>
+              <RadioButton value={EFFECT_TYPE.none}>{t('noneOption')}</RadioButton>
+              <RadioButton value={EFFECT_TYPE.hover}>{t('hoverOption')}</RadioButton>
+              <RadioButton value={EFFECT_TYPE.reveal}>{t('revealOption')}</RadioButton>
+            </RadioGroup>
           </Form.Item>
-          {hover && (
+          {effect && (
             <div className="Panel">
               <div className="Panel-content Panel-content--darker">
                 <FormItem label={t('source')} {...formItemLayout}>
-                  <RadioGroup value={hover.type} onChange={this.handleHoverTypeValueChanged}>
+                  <RadioGroup value={effect.sourceType} onChange={this.handleEffectSourceTypeValueChanged}>
                     <RadioButton value="external">{t('externalLink')}</RadioButton>
                     <RadioButton value="internal">{t('internalLink')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
-                {hover.type === 'external' && (
-                  <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
-                    <Input value={hover.url} onChange={this.handleHoverExternalUrlValueChanged} />
+                {effect.sourceType === 'external' && (
+                  <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+                    <Input value={effect.sourceUrl} onChange={this.handleEffectExternalSourceUrlValueChanged} />
                   </FormItem>
                 )}
-                {hover.type === 'internal' && (
+                {effect.sourceType === SOURCE_TYPE.internal && (
                   <FormItem label={t('internalUrl')} {...formItemLayout}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Input
                         addonBefore={`${clientConfig.cdnRootUrl}/`}
-                        value={hover.url}
+                        value={effect.sourceUrl}
                         readOnly
-                        />
+                      />
                       <CdnFilePicker
                         rootPrefix="media"
                         uploadPrefix={`media/${docKey}`}
                         initialPrefix={`media/${docKey}`}
-                        fileName={hover.url}
-                        onFileNameChanged={this.handleHoverInternalUrlValueChanged}
-                        />
+                        fileName={effect.sourceUrl}
+                        onFileNameChanged={this.handleEffectInternalSourceUrlValueChanged}
+                      />
                     </div>
                   </FormItem>
                 )}
                 <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
-                  <TextArea value={hover.text} onChange={this.handleHoverCopyrightInfoValueChanged} autoSize={{ minRows: 3 }} />
+                  <TextArea value={effect.text} onChange={this.handleEffectCopyrightInfoValueChanged} autoSize={{ minRows: 3 }} />
                 </Form.Item>
+                {effect.type === EFFECT_TYPE.reveal && (
+                  <div>
+                    <FormItem label={t('startPosition')} {...formItemLayout}>
+                      <InputNumber
+                        defaultValue={effect.startPosition}
+                        min={0}
+                        max={100}
+                        formatter={value => `${value}%`}
+                        parser={value => value.replace('%', '')}
+                        onChange={this.handleStartPositionValueChanged}
+                      />
+                    </FormItem>
+                    <FormItem label={t('orientationLabel')} {...formItemLayout}>
+                      <RadioGroup value={effect.orientation} onChange={this.handleOrientationValueChanged}>
+                        <RadioButton value={ORIENTATION.horizontal}>{t('orientationOptionHorizontal')}</RadioButton>
+                        <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
+                      </RadioGroup>
+                    </FormItem>
+                  </div>
+                )}
               </div>
             </div>
           )}

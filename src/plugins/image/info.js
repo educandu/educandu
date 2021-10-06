@@ -4,11 +4,11 @@ export default {
   type: 'image',
   getName: t => t('image:name'),
   getDefaultContent: () => ({
-    type: 'internal',
-    url: '',
+    sourceType: 'internal',
+    sourceUrl: '',
     maxWidth: 100,
     text: '',
-    hover: null
+    effect: null
   }),
   cloneContent: content => cloneDeep(content)
 };

@@ -10,6 +10,15 @@ externalLink:
 internalLink:
   en: Internal link
   de: Interner Link
+noneOption:
+  en: None
+  de: Kein Effekt
+hoverOption:
+  en: Hover
+  de: Hover
+revealOption:
+  en: Reveal
+  de: Auflösung
 elmuCdn:
   en: Elmu CDN
   de: Elmu CDN
@@ -25,6 +34,18 @@ copyrightInfos:
 maximumWidth:
   en: Maximum width
   de: Maximale Breite
-hoverImage:
-  en: Hover image
-  de: Hover-Bild
+effectTypeLabel:
+  en: Effect
+  de: Effekt
+startPosition:
+  en: Start Position
+  de: Startposition
+orientationLabel:
+  en: Orientation
+  de: Richtung
+orientationOptionVertical:
+  en: Vertical
+  de: Vertikal
+orientationOptionHorizontal:
+  en: Horizontal
+  de: Horizontal
