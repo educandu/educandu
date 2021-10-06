@@ -217,7 +217,8 @@ tasks.bundleJs = async function bundleJs() {
     'pretty-ms',
     'punycode',
     'thenby',
-    'quick-lru'
+    'quick-lru',
+    'react-compare-slider'
   ];
 
   const bundleConfigs = {
