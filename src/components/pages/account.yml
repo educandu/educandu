@@ -1,10 +1,49 @@
-changeProfilePicture:
+account.headline:
+  en: Account
+  de: Konto
+account.username:
+  en: Username
+  de: Benutzername
+account.email:
+  en: Email
+  de: E-Mail
+account.updateSuccessMessage:
+  en: Your account was updated successfully.
+  de: Ihr Konto wurde erfolgreich aktualisiert.
+profile.headline:
+  en: Profile
+  de: Profil
+profile.changePicture:
   en: Change profile picture
   de: Profilbild ändern
-howToChangeProfilePicture:
+profile.howToChangePicture:
   en: How can I change my profile picture?
   de: Wie ändere ich mein Profilbild?
-avatarDescription:
+profile.firstName:
+  en: First name(s)
+  de: Vorname(n)
+profile.lastName:
+  en: Last name
+  de: Nachname
+profile.street:
+  en: Street
+  de: Straße
+profile.streetSupplement:
+  en: Street supplement
+  de: Straße (Zusatz)
+profile.postalCode:
+  en: Postal code
+  de: Postleitzahl
+profile.city:
+  en: City
+  de: Ort
+profile.country:
+  en: Country
+  de: Land
+profile.updateSuccessMessage:
+  en: Your profile was updated successfully.
+  de: Ihr Profil wurde erfolgreich aktualisiert.
+profile.avatarDescription:
   en: |
     ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.
     A Gravatar is a globally recognized avatar, which is linked to your email address.
@@ -17,27 +56,4 @@ avatarDescription:
     Dieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.
     Beachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.
     Wenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.
-firstName:
-  en: First name(s)
-  de: Vorname(n)
-lastName:
-  en: Last name
-  de: Nachname
-street:
-  en: Street
-  de: Straße
-streetSupplement:
-  en: Street supplement
-  de: Straße (Zusatz)
-postalCode:
-  en: Postal code
-  de: Postleitzahl
-city:
-  en: City
-  de: Ort
-country:
-  en: Country
-  de: Land
-updateSuccessMessage:
-  en: Your profile was updated successfully.
-  de: Ihr Profil wurde erfolgreich aktualisiert.
+

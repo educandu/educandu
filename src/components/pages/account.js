@@ -43,12 +43,21 @@ class Account extends React.Component {
       .sort(by(x => x.name, { cmp: localeCompare(language) }));
   }
 
+  async saveAccountData() {
+    try {
+      const { t } = this.props;
+      await message.success(t('account.updateSuccessMessage'));
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
+    }
+  }
+
   async saveProfile(profileToSave) {
     try {
       const { user, userApiClient, t } = this.props;
       const { profile } = await userApiClient.saveUserProfile({ profile: profileToSave });
       user.profile = profile;
-      message.success(t('updateSuccessMessage'));
+      message.success(t('profile.updateSuccessMessage'));
     } catch (error) {
       errorHelper.handleApiError(error, logger);
     }
@@ -58,7 +67,14 @@ class Account extends React.Component {
     window.history.back();
   }
 
-  handleFinish(values) {
+  handleAccountFinish(values) {
+    this.saveAccountData({
+      username: values.username,
+      email: values.email
+    });
+  }
+
+  handleProfileFinish(values) {
     this.saveProfile({
       firstName: values.firstName,
       lastName: values.lastName,
@@ -114,66 +130,81 @@ class Account extends React.Component {
       <div>
         <Trans
           t={t}
-          i18nKey="avatarDescription"
+          i18nKey="profile.avatarDescription"
           components={[<a key="gravatar-link" href={gravatarRagistrationUrl} target="_blank" rel="noopener noreferrer" />]}
           />
       </div>
     );
 
+    const accountForm = (
+      <Form onFinish={this.handleAccountFinish} scrollToFirstError>
+        <FormItem {...tailFormItemLayout}>
+          <h2>{t('account.headline')}</h2>
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('account.username')} name="username" initialValue={user.username || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('account.email')} name="email" initialValue={user.email || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">{t('common:save')}</Button>
+        </FormItem>
+      </Form>
+    );
+
     const profileForm = (
-      <div className="AccountPage-profileForm">
-        <Form onFinish={this.handleFinish} scrollToFirstError>
-          <FormItem {...tailFormItemLayout}>
-            <h1>{t('pageNames:account')}</h1>
-          </FormItem>
-          <FormItem {...tailFormItemLayout}>
-            <Avatar shape="square" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
-            <br />
-            <a onClick={this.handleShowAvatarDescriptionClick}>{t('changeProfilePicture')}</a>
-            <br />
-            {showAvatarDescription && (
-              <Alert
-                message={t('howToChangeProfilePicture')}
-                description={avatarDescription}
-                type="info"
-                showIcon
-                closable
-                afterClose={this.handleAvatarDescriptionAfterClose}
-                />
-            )}
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('firstName')} name="firstName" initialValue={profile.firstName || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('lastName')} name="lastName" initialValue={profile.lastName || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('street')} name="street" initialValue={profile.street || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('streetSupplement')} name="streetSupplement" initialValue={profile.streetSupplement || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('postalCode')} name="postalCode" initialValue={profile.postalCode || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('city')} name="city" initialValue={profile.city || ''}>
-            <Input type="text" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('country')} name="country" initialValue={profile.country || ''}>
-            <Select optionFilterProp="title" showSearch allowClear>
-              {this.createCountryNames(countryNameProvider, language).map(cn => (
-                <Option key={cn.key} value={cn.key} title={cn.name}>
-                  <CountryFlagAndName code={cn.key} name={cn.name} />
-                </Option>
-              ))}
-            </Select>
-          </FormItem>
-          <FormItem {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">{t('common:save')}</Button>
-          </FormItem>
-        </Form>
-      </div>
+      <Form onFinish={this.handleProfileFinish} scrollToFirstError>
+        <FormItem {...tailFormItemLayout}>
+          <h2>{t('profile.headline')}</h2>
+        </FormItem>
+        <FormItem {...tailFormItemLayout}>
+          <Avatar shape="square" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
+          <br />
+          <a onClick={this.handleShowAvatarDescriptionClick}>{t('profile.changePicture')}</a>
+          <br />
+          {showAvatarDescription && (
+            <Alert
+              message={t('profile.howToChangePicture')}
+              description={avatarDescription}
+              type="info"
+              showIcon
+              closable
+              afterClose={this.handleAvatarDescriptionAfterClose}
+              />
+          )}
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('profile.firstName')} name="firstName" initialValue={profile.firstName || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('profile.lastName')} name="lastName" initialValue={profile.lastName || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('profile.street')} name="street" initialValue={profile.street || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('profile.streetSupplement')} name="streetSupplement" initialValue={profile.streetSupplement || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('profile.postalCode')} name="postalCode" initialValue={profile.postalCode || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('profile.city')} name="city" initialValue={profile.city || ''}>
+          <Input type="text" />
+        </FormItem>
+        <FormItem {...formItemLayout} label={t('profile.country')} name="country" initialValue={profile.country || ''}>
+          <Select optionFilterProp="title" showSearch allowClear>
+            {this.createCountryNames(countryNameProvider, language).map(cn => (
+              <Option key={cn.key} value={cn.key} title={cn.name}>
+                <CountryFlagAndName code={cn.key} name={cn.name} />
+              </Option>
+            ))}
+          </Select>
+        </FormItem>
+        <FormItem {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">{t('common:save')}</Button>
+        </FormItem>
+      </Form>
     );
 
     const headerActions = [
@@ -188,7 +219,11 @@ class Account extends React.Component {
     return (
       <Page headerActions={headerActions} disableProfileWarning>
         <div className="AccountPage">
-          {profileForm}
+          <div className="AccountPage-forms">
+            <h1>{t('pageNames:account')}</h1>
+            <section>{accountForm}</section>
+            <section>{profileForm}</section>
+          </div>
         </div>
       </Page>
     );
