@@ -48,6 +48,7 @@ const FAVICON_DATA_FILE = 'favicon-data.json';
 
 const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimized');
 const verbous = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbous');
+const fix = process.argv.includes('--fix');
 
 const autoprefixOptions = {
   browsers: ['last 3 versions', 'Firefox ESR', 'IE 11']
@@ -95,10 +96,15 @@ tasks.clean = async function clean() {
   await del(['.tmp', 'dist', 'reports']);
 };
 
+function isFixed(file) {
+  return fix && file.eslint?.fixed;
+}
+
 tasks.lint = function lint() {
-  return src(['*.js', 'src/**/*.js', 'scripts/**'])
-    .pipe(eslint())
+  return src(['*.js', 'src/**/*.js', 'scripts/**'], { base: './' })
+    .pipe(eslint({ fix }))
     .pipe(eslint.format())
+    .pipe(gulpif(isFixed, dest('./')))
     .pipe(gulpif(!server, eslint.failAfterError()));
 };
 
