@@ -114,8 +114,8 @@ class ImageTilesEditor extends React.Component {
       okText: 'Ja',
       okType: 'danger',
       cancelText: 'Nein',
-      onOk: onOk,
-      onCancel: onCancel
+      onOk,
+      onCancel
     });
   }
 

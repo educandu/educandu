@@ -66,7 +66,7 @@ class EditDoc extends React.Component {
     this.state = this.createStateFromDocumentRevision(documentRevision, proposedSections);
 
     this.availablePlugins = pluginInfos.map(info => ({
-      info: info,
+      info,
       handleNew: this.handleNewSectionClick.bind(this, info)
     }));
   }
@@ -97,7 +97,7 @@ class EditDoc extends React.Component {
     return {
       editedDocumentRevision: clonedRevision,
       isDirty: false,
-      proposedSectionKeys: proposedSectionKeys,
+      proposedSectionKeys,
       invalidSectionKeys: []
     };
   }
@@ -130,7 +130,7 @@ class EditDoc extends React.Component {
         sections: mergedSections
       },
       isDirty: false,
-      proposedSectionKeys: proposedSectionKeys,
+      proposedSectionKeys,
       invalidSectionKeys: []
     };
   }

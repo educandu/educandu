@@ -12,6 +12,7 @@ import { withSettings } from '../settings-context';
 import { withLanguage } from '../language-context';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { withTranslation, Trans } from 'react-i18next';
+import inputValidators from '../../utils/input-validators';
 import UserApiClient from '../../services/user-api-client';
 import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
 import { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
@@ -97,6 +98,14 @@ class Register extends React.Component {
       },
       {
         validator: (rule, value) => {
+          const minLength = 6;
+          return value && value.trim().length < minLength
+            ? Promise.reject(new Error(t('usernameIsTooShort', { length: minLength })))
+            : Promise.resolve();
+        }
+      },
+      {
+        validator: (rule, value) => {
           const { forbiddenUsernames } = this.state;
           return value && forbiddenUsernames.includes(value.toLowerCase())
             ? Promise.reject(new Error(t('usernameIsInUse')))
@@ -128,6 +137,14 @@ class Register extends React.Component {
       {
         required: true,
         message: t('enterPassword')
+      },
+      {
+        validator: (rule, value) => {
+          const minLength = 8;
+          return value && !inputValidators.isValidPassword({ password: value, minLength })
+            ? Promise.reject(new Error(t('passwordIsInvalid', { length: minLength })))
+            : Promise.resolve();
+        }
       }
     ];
 

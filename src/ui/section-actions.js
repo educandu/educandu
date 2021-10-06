@@ -6,8 +6,8 @@ export function createHardDelete(section, reason, deleteDescendants) {
     data: {
       sectionKey: section.key,
       sectionRevision: section.revision,
-      reason: reason,
-      deleteDescendants: deleteDescendants
+      reason,
+      deleteDescendants
     }
   };
 }

@@ -44,8 +44,8 @@ class ResourceLoader {
         let languageBundle = bundlesByLanguage[language];
         if (!languageBundle) {
           languageBundle = {
-            namespace: namespace,
-            language: language,
+            namespace,
+            language,
             resources: {}
           };
           bundlesByLanguage[language] = languageBundle;

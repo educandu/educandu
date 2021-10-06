@@ -58,7 +58,7 @@ class Docs extends React.Component {
       title: toTrimmedString(title) || t('defaultDocumentTitle'),
       slug: toTrimmedString(slug) || '',
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
-      language: language,
+      language,
       sections: []
     };
   }
