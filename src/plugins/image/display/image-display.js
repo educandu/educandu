@@ -24,11 +24,11 @@ const hoverEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => (
     <img
       className={`Image-img u-max-width-${content.maxWidth || 100}`}
       src={getSource(content.effect.sourceType, content.effect.sourceUrl, clientConfig.cdnRootUrl)}
-    />
+      />
     <div
       className="Image-copyrightInfo"
       dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.effect.text || '') }}
-    />
+      />
   </div>
 );
 
@@ -41,7 +41,7 @@ const revealEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => {
         portrait={effect.orientation === ORIENTATION.vertical}
         itemOne={<ReactCompareSliderImage src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)} />}
         itemTwo={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl, clientConfig.cdnRootUrl)} />}
-      />
+        />
       <div className="Image-copyrightInfo">
         <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }} />
         <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.effect.text || '') }} />
@@ -63,11 +63,11 @@ function ImageDisplay({ content, clientConfig, githubFlavoredMarkdown }) {
         <img
           className={`Image-img u-max-width-${content.maxWidth || 100}`}
           src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)}
-        />
+          />
         <div
           className="Image-copyrightInfo"
           dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }}
-        />
+          />
       </div>
       {content.effect && hoverEffect(configs)}
     </div>

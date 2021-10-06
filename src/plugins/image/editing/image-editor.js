@@ -153,14 +153,14 @@ class ImageEditor extends React.Component {
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={sourceUrl}
                   readOnly
-                />
+                  />
                 <CdnFilePicker
                   rootPrefix="media"
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={sourceUrl}
                   onFileNameChanged={this.handleInternalSourceUrlValueChanged}
-                />
+                  />
               </div>
             </FormItem>
           )}
@@ -195,14 +195,14 @@ class ImageEditor extends React.Component {
                         addonBefore={`${clientConfig.cdnRootUrl}/`}
                         value={effect.sourceUrl}
                         readOnly
-                      />
+                        />
                       <CdnFilePicker
                         rootPrefix="media"
                         uploadPrefix={`media/${docKey}`}
                         initialPrefix={`media/${docKey}`}
                         fileName={effect.sourceUrl}
                         onFileNameChanged={this.handleEffectInternalSourceUrlValueChanged}
-                      />
+                        />
                     </div>
                   </FormItem>
                 )}
@@ -219,7 +219,7 @@ class ImageEditor extends React.Component {
                         formatter={value => `${value}%`}
                         parser={value => value.replace('%', '')}
                         onChange={this.handleStartPositionValueChanged}
-                      />
+                        />
                     </FormItem>
                     <FormItem label={t('orientationLabel')} {...formItemLayout}>
                       <RadioGroup value={effect.orientation} onChange={this.handleOrientationValueChanged}>
