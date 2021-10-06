@@ -13,6 +13,7 @@
           "Data": "./src/data/",
           "Plugins": "./src/plugins/",
           "Repositories": "./src/repositories/",
+          "Resources": "./src/resources/",
           "Server": "./src/server/",
           "Services": "./src/services/",
           "Stores": "./src/stores/",

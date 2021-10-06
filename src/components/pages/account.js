@@ -1,23 +1,23 @@
 import by from 'thenby';
 import React from 'react';
-import Page from '../page';
 import gravatar from 'gravatar';
 import autoBind from 'auto-bind';
+import Page from 'Components/page';
+import Logger from 'Common/logger';
 import PropTypes from 'prop-types';
 import memoizeOne from 'memoize-one';
-import Logger from '../../common/logger';
-import { withUser } from '../user-context';
+import errorHelper from 'UI/error-helper';
 import localeCompare from 'locale-compare';
-import { inject } from '../container-context';
-import errorHelper from '../../ui/error-helper';
 import { CloseOutlined } from '@ant-design/icons';
-import { withLanguage } from '../language-context';
+import { withUser } from 'Components/user-context';
+import { inject } from 'Components/container-context';
+import UserApiClient from 'Services/user-api-client';
 import { Trans, withTranslation } from 'react-i18next';
-import UserApiClient from '../../services/user-api-client';
-import CountryNameProvider from '../../data/country-name-provider';
-import CountryFlagAndName from '../localization/country-flag-and-name';
+import { withLanguage } from 'Components/language-context';
+import CountryNameProvider from 'Data/country-name-provider';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
-import { userProps, languageProps, translationProps } from '../../ui/default-prop-types';
+import CountryFlagAndName from 'Components/localization/country-flag-and-name';
+import { userProps, languageProps, translationProps } from 'UI/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -26,7 +26,7 @@ const Option = Select.Option;
 
 const AVATAR_SIZE = 256;
 
-class Profile extends React.Component {
+class Account extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
@@ -121,10 +121,10 @@ class Profile extends React.Component {
     );
 
     const profileForm = (
-      <div className="ProfilePage-form">
+      <div className="AccountPage-profileForm">
         <Form onFinish={this.handleFinish} scrollToFirstError>
           <FormItem {...tailFormItemLayout}>
-            <h1>{t('pageNames:profile')}</h1>
+            <h1>{t('pageNames:account')}</h1>
           </FormItem>
           <FormItem {...tailFormItemLayout}>
             <Avatar shape="square" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
@@ -187,7 +187,7 @@ class Profile extends React.Component {
 
     return (
       <Page headerActions={headerActions} disableProfileWarning>
-        <div className="ProfilePage">
+        <div className="AccountPage">
           {profileForm}
         </div>
       </Page>
@@ -195,7 +195,7 @@ class Profile extends React.Component {
   }
 }
 
-Profile.propTypes = {
+Account.propTypes = {
   ...userProps,
   ...languageProps,
   ...translationProps,
@@ -203,7 +203,7 @@ Profile.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('profile')(withLanguage(withUser(inject({
+export default withTranslation('account')(withLanguage(withUser(inject({
   countryNameProvider: CountryNameProvider,
   userApiClient: UserApiClient
-}, Profile))));
+}, Account))));

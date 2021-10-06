@@ -1,22 +1,22 @@
 import express from 'express';
 import passport from 'passport';
-import urls from '../utils/urls';
+import urls from 'Utils/urls';
 import session from 'express-session';
 import { NotFound } from 'http-errors';
 import connectMongo from 'connect-mongo';
-import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
-import Database from '../stores/database.js';
-import permissions from '../domain/permissions';
-import UserService from '../services/user-service';
-import MailService from '../services/mail-service';
-import requestHelper from '../utils/request-helper';
-import ClientDataMapper from './client-data-mapper';
-import ServerConfig from '../bootstrap/server-config';
-import needsPermission from '../domain/needs-permission-middleware';
-import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import { CREATE_USER_RESULT_SUCCESS } from '../domain/user-management';
-import needsAuthentication from '../domain/needs-authentication-middleware';
+import Database from 'Stores/database.js';
+import permissions from 'Domain/permissions';
+import UserService from 'Services/user-service';
+import MailService from 'Services/mail-service';
+import PageRenderer from 'Server/page-renderer';
+import requestHelper from 'Utils/request-helper';
+import ServerConfig from 'Bootstrap/server-config';
+import ClientDataMapper from 'Server/client-data-mapper';
+import needsPermission from 'Domain/needs-permission-middleware';
+import sessionsStoreSpec from 'Stores/collection-specs/sessions';
+import { CREATE_USER_RESULT_SUCCESS } from 'Domain/user-management';
+import needsAuthentication from 'Domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -99,8 +99,8 @@ class UserController {
       return res.redirect(urls.getDefaultLogoutRedirectUrl());
     });
 
-    router.get('/profile', needsAuthentication(), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {});
+    router.get('/account', needsAuthentication(), (req, res) => {
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'account', {});
     });
 
     router.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {

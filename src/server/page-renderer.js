@@ -1,29 +1,29 @@
 import htmlescape from 'htmlescape';
-import Root from '../components/root';
-import { Container } from '../common/di';
-import Doc from '../components/pages/doc';
-import Menu from '../components/pages/menu';
-import Docs from '../components/pages/docs';
-import cloneDeep from '../utils/clone-deep';
-import Index from '../components/pages/index';
-import Login from '../components/pages/login';
-import Menus from '../components/pages/menus';
-import Users from '../components/pages/users';
-import Article from '../components/pages/article';
-import Profile from '../components/pages/profile';
-import EditDoc from '../components/pages/edit-doc';
-import Register from '../components/pages/register';
-import Settings from '../components/pages/settings';
-import requestHelper from '../utils/request-helper';
-import ClientDataMapper from './client-data-mapper';
-import PageRendererBase from './page-renderer-base';
-import EditMenu from '../components/pages/edit-menu';
-import ServerConfig from '../bootstrap/server-config';
-import ClientConfig from '../bootstrap/client-config';
-import ResourceManager from '../resources/resource-manager';
-import ResetPassword from '../components/pages/reset-password';
-import CompleteRegistration from '../components/pages/complete-registration';
-import CompletePasswordReset from '../components/pages/complete-password-reset';
+import Root from 'Components/root';
+import { Container } from 'Common/di';
+import Doc from 'Components/pages/doc';
+import Menu from 'Components/pages/menu';
+import Docs from 'Components/pages/docs';
+import cloneDeep from 'Utils/clone-deep';
+import Index from 'Components/pages/index';
+import Login from 'Components/pages/login';
+import Menus from 'Components/pages/menus';
+import Users from 'Components/pages/users';
+import Article from 'Components/pages/article';
+import Account from 'Components/pages/account';
+import EditDoc from 'Components/pages/edit-doc';
+import Register from 'Components/pages/register';
+import Settings from 'Components/pages/settings';
+import requestHelper from 'Utils/request-helper';
+import EditMenu from 'Components/pages/edit-menu';
+import ServerConfig from 'Bootstrap/server-config';
+import ClientConfig from 'Bootstrap/client-config';
+import ResourceManager from 'Resources/resource-manager';
+import ClientDataMapper from 'Server/client-data-mapper';
+import PageRendererBase from 'Server/page-renderer-base';
+import ResetPassword from 'Components/pages/reset-password';
+import CompleteRegistration from 'Components/pages/complete-registration';
+import CompletePasswordReset from 'Components/pages/complete-password-reset';
 
 const pageComponentsByName = {
   'article': Article,
@@ -37,7 +37,7 @@ const pageComponentsByName = {
   'login': Login,
   'menu': Menu,
   'menus': Menus,
-  'profile': Profile,
+  'account': Account,
   'register': Register,
   'reset-password': ResetPassword,
   'settings': Settings,

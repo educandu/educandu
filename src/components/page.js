@@ -1,20 +1,20 @@
-import urls from '../utils/urls';
-import ElmuLogo from './elmu-logo';
+import urls from 'Utils/urls';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Alert, Button } from 'antd';
-import Restricted from './restricted';
-import LoginLogout from './login-logout';
-import LinkPopover from './link-popover';
-import permissions from '../domain/permissions';
-import { useService } from './container-context';
-import { useLanguage } from './language-context';
-import { useSettings } from './settings-context';
+import ElmuLogo from 'Components/elmu-logo';
+import permissions from 'Domain/permissions';
+import Restricted from 'Components/restricted';
+import LoginLogout from 'Components/login-logout';
+import LinkPopover from 'Components/link-popover';
+import { useUser } from 'Components/user-context';
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../components/user-context';
 import { Trans, useTranslation } from 'react-i18next';
-import LanguageNameProvider from '../data/language-name-provider';
-import CountryFlagAndName from './localization/country-flag-and-name';
+import { useService } from 'Components/container-context';
+import { useLanguage } from 'Components/language-context';
+import { useSettings } from 'Components/settings-context';
+import LanguageNameProvider from 'Data/language-name-provider';
+import CountryFlagAndName from 'Components/localization/country-flag-and-name';
 import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
@@ -58,7 +58,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
         <Trans
           t={t}
           i18nKey="profileWarning"
-          components={[<a key="profile-warning" href={urls.getProfileUrl()} />]}
+          components={[<a key="profile-warning" href={urls.getAccountUrl()} />]}
           />
       </span>
     );
