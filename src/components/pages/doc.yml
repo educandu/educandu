@@ -22,3 +22,6 @@ permalinkCopied:
 permalinkCouldNotBeCopied:
   en: The permalink could not be copied to the clipboard
   de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
+restore:
+  en: Restore
+  de: Wiederherstellen

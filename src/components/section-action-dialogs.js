@@ -73,7 +73,40 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
   dialog = confirm(createDialogProps());
 }
 
+export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel = () => {}) {
+  let dialog = null;
+  let isRestoring = false;
+  let createDialogProps = null;
+
+  const handleOkClick = async () => {
+    isRestoring = true;
+    dialog.update(createDialogProps());
+    try {
+      await onOk();
+    } finally {
+      isRestoring = false;
+      dialog.update(createDialogProps());
+    }
+  };
+
+  createDialogProps = () => ({
+    title: t('sectionActionDialogs:areYouSure'),
+    content: t('sectionActionDialogs:restoreDocumentRevisionConfirmation', { revisionId: revision._id }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk: handleOkClick,
+    onCancel,
+    okButtonProps: {
+      loading: isRestoring
+    }
+  });
+
+  dialog = confirm(createDialogProps());
+}
+
 export default {
   confirmSectionDelete,
-  confirmSectionHardDelete
+  confirmSectionHardDelete,
+  confirmDocumentRevisionRestoration
 };

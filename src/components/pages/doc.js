@@ -15,8 +15,9 @@ import permissions from '../../domain/permissions';
 import { withLanguage } from '../language-context';
 import { HARD_DELETE } from '../../ui/section-actions';
 import DocumentApiClient from '../../services/document-api-client';
-import { PaperClipOutlined, EditOutlined } from '@ant-design/icons';
 import LanguageNameProvider from '../../data/language-name-provider';
+import { confirmDocumentRevisionRestoration } from '../section-action-dialogs';
+import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
@@ -81,6 +82,26 @@ class Doc extends React.Component {
     }
   }
 
+  handleRestoreButtonClick() {
+    const { t } = this.props;
+    const { currentRevision } = this.state;
+
+    confirmDocumentRevisionRestoration(
+      t,
+      currentRevision,
+      async () => {
+        try {
+          await new Promise((resolve, reject) => {
+            setTimeout(Math.random() > 0.5 ? resolve : () => reject(new Error('Error restoring revision')), 2000);
+          });
+        } catch (error) {
+          message.error(error.message, 10);
+          throw error;
+        }
+      }
+    );
+  }
+
   handleAction({ name, data }) {
     switch (name) {
       case HARD_DELETE:
@@ -119,6 +140,9 @@ class Doc extends React.Component {
         return accu;
       }, {});
 
+      const currentRevisionIndex = revisions.indexOf(currentRevision);
+      const isCurrentRevisionLatestRevision = currentRevisionIndex === revisions.length - 1;
+
       revisionPicker = (
         <div className="DocPage-revisionPicker">
           <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
@@ -126,20 +150,30 @@ class Doc extends React.Component {
             <Slider
               min={0}
               max={revisions.length - 1}
-              value={revisions.indexOf(currentRevision)}
+              value={currentRevisionIndex}
               step={null}
               marks={marks}
               onChange={this.handleIndexChanged}
               tipFormatter={this.formatRevisionTooltip}
               />
           </div>
-          <div className="DocPage-revisionPickerResetButton">
+          <div className="DocPage-revisionPickerButtons">
             <Button
+              className="DocPage-revisionPickerButton"
               type="primary"
               icon={<PaperClipOutlined />}
               onClick={this.handlePermalinkRequest}
               >
               {t('permalink')}
+            </Button>
+            <Button
+              className="DocPage-revisionPickerButton"
+              type="primary"
+              icon={<ReloadOutlined />}
+              onClick={this.handleRestoreButtonClick}
+              disabled={isCurrentRevisionLatestRevision}
+              >
+              {t('restore')}
             </Button>
           </div>
         </div>

@@ -5,7 +5,6 @@
   display: flex;
   align-items: center;
   margin-bottom: 25px;
-  padding-right: 2.5 * @global-content-padding;
 }
 
 .DocPage-revisionPickerLabel {
@@ -18,8 +17,22 @@
   flex: 1 0 0%;
 }
 
-.DocPage-revisionPickerResetButton {
+.DocPage-revisionPickerButtons {
   flex: none;
   padding-left: 2em;
   padding-bottom: 1em;
+}
+
+.DocPage-revisionPickerButton {
+  margin-right: 6px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &.ant-btn > span {
+    @media @phone {
+      display: none;
+    }
+  }
 }
