@@ -1,4 +1,3 @@
-import { EFFECT_TYPE } from '../../src/plugins/image/constants';
 import { updateAll } from './helpers';
 
 const updateToNewContentStructure = content => {
@@ -6,12 +5,13 @@ const updateToNewContentStructure = content => {
   delete content.type;
   content.sourceUrl = content.url;
   delete content.url;
+  content.effect = null;
 
   if (content.hover) {
     content.effect = {
       ...content.hover,
       sourceType: content.hover.type,
-      type: EFFECT_TYPE.hover,
+      type: 'hover',
       sourceUrl: content.hover.url
     };
 
@@ -26,8 +26,9 @@ const updateToOldContentStructure = content => {
 
   content.url = content.sourceUrl;
   delete content.sourceUrl;
+  content.hover = null;
 
-  if (content.effect && content.effect.type === EFFECT_TYPE.hover) {
+  if (content.effect && content.effect.type === 'hover') {
     content.hover = {
       ...content.effect,
       type: content.effect.sourceType,
