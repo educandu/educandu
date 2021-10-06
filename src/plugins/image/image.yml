@@ -7,9 +7,6 @@ source:
 externalLink:
   en: External link
   de: Externer Link
-internalLink:
-  en: Internal link
-  de: Interner Link
 noneOption:
   en: None
   de: Kein Effekt

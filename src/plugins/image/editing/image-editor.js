@@ -28,8 +28,7 @@ class ImageEditor extends React.Component {
 
   handleEffectExternalSourceUrlValueChanged(event) {
     const { value } = event.target;
-    const effect = { ...this.props.content.effect };
-    effect.sourceUrl = value;
+    const effect = { ...this.props.content.effect, sourceUrl: value };
     this.changeContent({ effect });
   }
 
@@ -104,11 +103,8 @@ class ImageEditor extends React.Component {
         });
         break;
       case EFFECT_TYPE.none:
-        this.changeContent({ effect: null });
-        break;
       default:
         this.changeContent({ effect: null });
-
     }
   }
 
@@ -129,7 +125,7 @@ class ImageEditor extends React.Component {
     const { docKey, content, clientConfig, t } = this.props;
     const { sourceType, sourceUrl, maxWidth, text, effect } = content;
 
-    const effectType = (effect && effect.type) || EFFECT_TYPE.none;
+    const effectType = effect?.type || EFFECT_TYPE.none;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -142,7 +138,7 @@ class ImageEditor extends React.Component {
           <FormItem label={t('source')} {...formItemLayout}>
             <RadioGroup value={sourceType} onChange={this.handleSourceTypeValueChanged}>
               <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
-              <RadioButton value={SOURCE_TYPE.internal}>{t('internalLink')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.internal}>{t('elmuCdn')}</RadioButton>
             </RadioGroup>
           </FormItem>
           {sourceType === SOURCE_TYPE.external && (
@@ -184,7 +180,7 @@ class ImageEditor extends React.Component {
                 <FormItem label={t('source')} {...formItemLayout}>
                   <RadioGroup value={effect.sourceType} onChange={this.handleEffectSourceTypeValueChanged}>
                     <RadioButton value="external">{t('externalLink')}</RadioButton>
-                    <RadioButton value="internal">{t('internalLink')}</RadioButton>
+                    <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
                 {effect.sourceType === 'external' && (

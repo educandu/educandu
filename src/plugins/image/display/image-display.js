@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 import classNames from 'classnames';
@@ -19,7 +19,7 @@ function getSource(sourceType, url, cdnRootUrl) {
   }
 }
 
-const hoverEffect = (content, githubFlavoredMarkdown, clientConfig) => (
+const hoverEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => (
   <div className="Image-secondary">
     <img
       className={`Image-img u-max-width-${content.maxWidth || 100}`}
@@ -32,22 +32,29 @@ const hoverEffect = (content, githubFlavoredMarkdown, clientConfig) => (
   </div>
 );
 
-
-const revealEffect = (content, clientConfig) => {
+const revealEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => {
   const { effect } = content;
   return (
-    <ReactCompareSlider
-      position={effect.startPosition}
-      portrait={effect.orientation === ORIENTATION.vertical}
-      itemOne={<ReactCompareSliderImage src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)} alt="Image one" />}
-      itemTwo={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl, clientConfig.cdnRootUrl)} alt="Image two" />}
-    />
+    <Fragment>
+      <ReactCompareSlider
+        position={effect.startPosition}
+        portrait={effect.orientation === ORIENTATION.vertical}
+        itemOne={<ReactCompareSliderImage src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)} />}
+        itemTwo={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl, clientConfig.cdnRootUrl)} />}
+      />
+      <div className="Image-copyrightInfo">
+        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }} />
+        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.effect.text || '') }} />
+      </div>
+    </Fragment>
   );
 };
 
 function ImageDisplay({ content, clientConfig, githubFlavoredMarkdown }) {
-  if (content.effect && content.effect.type === EFFECT_TYPE.reveal) {
-    return revealEffect(content, clientConfig);
+  const configs = { content, githubFlavoredMarkdown, clientConfig };
+
+  if (content.effect?.type === EFFECT_TYPE.reveal) {
+    return revealEffect(configs);
   }
 
   return (
@@ -62,7 +69,7 @@ function ImageDisplay({ content, clientConfig, githubFlavoredMarkdown }) {
           dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }}
         />
       </div>
-      {content.effect && hoverEffect(content, githubFlavoredMarkdown, clientConfig)}
+      {content.effect && hoverEffect(configs)}
     </div>
   );
 }
