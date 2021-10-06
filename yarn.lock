@@ -8652,6 +8652,11 @@ react-color@~2.19.3:
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
 
+react-compare-slider@~2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-compare-slider/-/react-compare-slider-2.1.0.tgz#a77a88ef2825b21b1b001c913339f591c3657272"
+  integrity sha512-cBB9Ih5SHYWXjgH4SXHywvfLJVN0x+8WXdNRTipmt47ju0oxlcCJzuS0XLJ9oC6zwKPD7KZS2sS1/QcnrjZkbw==
+
 react-countdown@~2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/react-countdown/-/react-countdown-2.3.1.tgz#6914538705075c74ac8f97fd8c31b29eadf44cbd"
