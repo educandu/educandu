@@ -1,5 +1,6 @@
 import by from 'thenby';
 import React from 'react';
+import urls from 'Utils/urls';
 import gravatar from 'gravatar';
 import autoBind from 'auto-bind';
 import Page from 'Components/page';
@@ -167,6 +168,9 @@ class Account extends React.Component {
         <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={this.state.forbiddenUsernames} />
         <EmailInput formItemLayout={formItemLayout} forbiddenEmails={this.state.forbiddenEmails} />
         <FormItem {...tailFormItemLayout}>
+          <a href={urls.getResetPasswordUrl()}>{t('account.resetPassword')}</a>
+        </FormItem>
+        <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">{t('common:save')}</Button>
         </FormItem>
       </Form>
@@ -241,6 +245,8 @@ class Account extends React.Component {
           <div className="AccountPage-forms">
             <h1>{t('pageNames:account')}</h1>
             <section>{accountForm}</section>
+            <br />
+            <br />
             <section>{profileForm}</section>
           </div>
         </div>

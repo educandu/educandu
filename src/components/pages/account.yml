@@ -1,6 +1,9 @@
 account.headline:
   en: Account
   de: Konto
+account.resetPassword:
+  en: Reset password
+  de: Kennwort wiedereinsetzen
 account.updateSuccessMessage:
   en: Your account was updated successfully.
   de: Ihr Konto wurde erfolgreich aktualisiert.
