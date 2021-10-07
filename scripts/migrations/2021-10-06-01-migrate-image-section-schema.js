@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop, no-console */
 import { updateAll } from './helpers';
 
 const updateToNewContentStructure = content => {
@@ -51,19 +52,21 @@ class Migration2021100601 {
   async up() {
     await updateAll(this.db.collection('documents'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
-        if (section.type !== 'image') {
+        if (section.type !== 'image' || !section.content) {
           return;
         }
         updateToNewContentStructure(section.content);
+        console.log(`Updated document with id: ${doc._id}`);
       });
     });
 
     await updateAll(this.db.collection('documentRevisions'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
-        if (section.type !== 'image') {
+        if (section.type !== 'image' || !section.content) {
           return;
         }
         updateToNewContentStructure(section.content);
+        console.log(`Updated document revision with id: ${doc._id}`);
       });
     });
   }
@@ -71,19 +74,21 @@ class Migration2021100601 {
   async down() {
     await updateAll(this.db.collection('documents'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
-        if (section.type !== 'image') {
+        if (section.type !== 'image' || !section.content) {
           return;
         }
         updateToOldContentStructure(section.content);
+        console.log(`Updated document with id: ${doc._id}`);
       });
     });
 
     await updateAll(this.db.collection('documentRevisions'), { 'sections.type': 'image' }, doc => {
       doc.sections.forEach(section => {
-        if (section.type !== 'image') {
+        if (section.type !== 'image' || !section.content) {
           return;
         }
         updateToOldContentStructure(section.content);
+        console.log(`Updated document revision with id: ${doc._id}`);
       });
     });
   }
