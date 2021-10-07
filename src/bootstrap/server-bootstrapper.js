@@ -10,11 +10,11 @@ import ServerResourceLoader from '../resources/server-resource-loader';
 
 const logger = new Logger(__filename);
 
-export async function createContainer() {
+export async function createContainer(config = null) {
   logger.info('Creating container');
   const container = await commonBootstrapper.createContainer();
 
-  const serverConfig = container.get(ServerConfig);
+  const serverConfig = config || container.get(ServerConfig);
 
   const clientConfig = new ClientConfig(serverConfig.exportClientConfigValues());
   container.registerInstance(ClientConfig, clientConfig);

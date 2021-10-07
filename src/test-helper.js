@@ -5,8 +5,13 @@ import util from 'util';
 import { URL } from 'url';
 import Cdn from './repositories/cdn';
 import Database from './stores/database';
+import uniqueId from './utils/unique-id';
+import applicationRoles from './domain/roles';
+import UserService from './services/user-service';
 import ServerConfig from './bootstrap/server-config';
+import DocumentService from './services/document-service';
 import { CREATE_USER_RESULT_SUCCESS } from './domain/user-management';
+import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper';
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
@@ -46,6 +51,11 @@ export function dropDatabase(db) {
 export async function dropAllCollections(db) {
   const collections = await db._db.collections();
   await Promise.all(collections.map(col => db._db.dropCollection(col.collectionName)));
+}
+
+export async function purgeDatabase(db) {
+  const collections = await db._db.collections();
+  await Promise.all(collections.map(col => col.deleteMany({})));
 }
 
 // If `bucketName` is undefined, it uses the
@@ -115,11 +125,98 @@ export async function createAndVerifyUser(userService, username, password, email
     throw new Error(JSON.stringify({ result, username, password, email }));
   }
   const verifiedUser = await userService.verifyUser(user.verificationCode);
-  verifiedUser.roles = roles;
+  verifiedUser.roles = roles || [applicationRoles.USER];
   verifiedUser.profile = profile || null;
   verifiedUser.lockedOut = lockedOut || false;
   await userService.saveUser(verifiedUser);
   return verifiedUser;
+}
+
+export async function setupTestEnvironment() {
+  const timestamp = Date.now().toString();
+
+  const config = new ServerConfig({ env: 'test' });
+
+  // Configure temp DB parameters:
+  const dbUrl = new URL(config.elmuWebConnectionString);
+  dbUrl.pathname = `test-elmu-web-${timestamp}`;
+  config.elmuWebConnectionString = dbUrl.toString();
+
+  // Configure temp CDN parameters:
+  const cdnUrl = new URL(config.cdnRootUrl);
+  cdnUrl.pathname = `test-elmu-cdn-${timestamp}`;
+  config.cdnRootUrl = cdnUrl.toString();
+  config.cdnBucketName = `test-elmu-cdn-${timestamp}`;
+
+  // Fire everything up:
+  const container = await createContainer(config);
+
+  // Make bucket publicly accessible:
+  await ensurePublicBucketExists(container.get(Cdn));
+
+  return container;
+}
+
+export async function pruneTestEnvironment(container) {
+  return Promise.all([
+    await purgeBucket(container.get(Cdn)),
+    await purgeDatabase(container.get(Database))
+  ]);
+}
+
+export async function destroyTestEnvironment(container) {
+  const cdn = container.get(Cdn);
+  const db = container.get(Database);
+
+  await Promise.all([
+    await removeBucket(cdn),
+    await dropDatabase(db)
+  ]);
+
+  await disposeContainer(container);
+}
+
+export function setupTestUser(container, user) {
+  return createAndVerifyUser(
+    container.get(UserService),
+    user?.username || 'test',
+    user?.password || 'test',
+    user?.email || 'test@test@com',
+    user?.roles || [applicationRoles.USER],
+    user?.profile || null,
+    user?.lockedOut || false
+  );
+}
+
+export async function createTestRevisions(container, user, revisions) {
+  const documentService = container.get(DocumentService);
+  const createdRevisions = [];
+
+  for (let index = 0; index < revisions.length; index += 1) {
+    const revision = revisions[index];
+    const lastCreatedRevision = createdRevisions[createdRevisions.length - 1] || null;
+
+    // eslint-disable-next-line no-await-in-loop
+    createdRevisions.push(await documentService.createDocumentRevision({
+      doc: {
+        title: revision.title ?? lastCreatedRevision?.title ?? 'Title',
+        slug: revision.slug ?? lastCreatedRevision?.slug ?? 'my-doc',
+        namespace: revision.namespace ?? lastCreatedRevision?.namespace ?? 'articles',
+        language: revision.language ?? lastCreatedRevision?.language ?? 'en',
+        sections: (revision.sections ?? lastCreatedRevision?.sections ?? []).map(s => ({
+          key: s.key ?? uniqueId.create(),
+          type: s.type ?? 'markdown',
+          content: s.content ?? {}
+        })),
+        appendTo: lastCreatedRevision
+          ? { key: lastCreatedRevision.key, ancestorId: lastCreatedRevision._id }
+          : null
+      },
+      user
+    }));
+  }
+
+  return createdRevisions;
 }
 
 export default {

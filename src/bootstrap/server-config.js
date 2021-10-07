@@ -76,8 +76,8 @@ switch (env) {
 }
 
 class ServerConfig {
-  constructor() {
-    Object.assign(this, config);
+  constructor(values = {}) {
+    Object.assign(this, values, config);
   }
 
   exportClientConfigValues() {
