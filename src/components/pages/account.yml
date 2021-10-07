@@ -1,12 +1,6 @@
 account.headline:
   en: Account
   de: Konto
-account.username:
-  en: Username
-  de: Benutzername
-account.email:
-  en: Email
-  de: E-Mail
 account.updateSuccessMessage:
   en: Your account was updated successfully.
   de: Ihr Konto wurde erfolgreich aktualisiert.

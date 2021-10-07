@@ -8,16 +8,19 @@ import PropTypes from 'prop-types';
 import memoizeOne from 'memoize-one';
 import errorHelper from 'UI/error-helper';
 import localeCompare from 'locale-compare';
+import EmailInput from 'Components/email-input';
 import { CloseOutlined } from '@ant-design/icons';
 import { withUser } from 'Components/user-context';
-import { inject } from 'Components/container-context';
 import UserApiClient from 'Services/user-api-client';
+import { inject } from 'Components/container-context';
+import UsernameInput from 'Components/username-input';
 import { Trans, withTranslation } from 'react-i18next';
 import { withLanguage } from 'Components/language-context';
 import CountryNameProvider from 'Data/country-name-provider';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
 import CountryFlagAndName from 'Components/localization/country-flag-and-name';
 import { userProps, languageProps, translationProps } from 'UI/default-prop-types';
+import { SAVE_USER_RESULT_SUCCESS, SAVE_USER_RESULT_DUPLICATE_EMAIL, SAVE_USER_RESULT_DUPLICATE_USERNAME } from 'Domain/user-management';
 
 const logger = new Logger(__filename);
 
@@ -30,10 +33,13 @@ class Account extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
+    this.accountFormRef = React.createRef();
     this.createCountryNames = memoizeOne(this.createCountryNames);
 
     this.state = {
-      showAvatarDescription: false
+      showAvatarDescription: false,
+      forbiddenEmails: [],
+      forbiddenUsernames: []
     };
   }
 
@@ -43,10 +49,27 @@ class Account extends React.Component {
       .sort(by(x => x.name, { cmp: localeCompare(language) }));
   }
 
-  async saveAccountData() {
+  async saveAccountData({ username, email }) {
     try {
       const { t } = this.props;
-      await message.success(t('account.updateSuccessMessage'));
+      const { userApiClient } = this.props;
+      const { result, user } = await userApiClient.saveUserAccount({ username, email });
+      switch (result) {
+        case SAVE_USER_RESULT_SUCCESS:
+          this.setState(prevState => ({ user: { ...prevState.user, username: user.username, email: user.email } }));
+          await message.success(t('account.updateSuccessMessage'));
+          break;
+        case SAVE_USER_RESULT_DUPLICATE_EMAIL:
+          this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
+          this.accountFormRef.current.validateFields(['email'], { force: true });
+          break;
+        case SAVE_USER_RESULT_DUPLICATE_USERNAME:
+          this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
+          this.accountFormRef.current.validateFields(['username'], { force: true });
+          break;
+        default:
+          throw new Error(`Unknown result: ${result}`);
+      }
     } catch (error) {
       errorHelper.handleApiError(error, logger);
     }
@@ -137,16 +160,12 @@ class Account extends React.Component {
     );
 
     const accountForm = (
-      <Form onFinish={this.handleAccountFinish} scrollToFirstError>
+      <Form ref={this.accountFormRef} onFinish={this.handleAccountFinish} scrollToFirstError>
         <FormItem {...tailFormItemLayout}>
           <h2>{t('account.headline')}</h2>
         </FormItem>
-        <FormItem {...formItemLayout} label={t('account.username')} name="username" initialValue={user.username || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('account.email')} name="email" initialValue={user.email || ''}>
-          <Input type="text" />
-        </FormItem>
+        <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={this.state.forbiddenUsernames} />
+        <EmailInput formItemLayout={formItemLayout} forbiddenEmails={this.state.forbiddenEmails} />
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">{t('common:save')}</Button>
         </FormItem>

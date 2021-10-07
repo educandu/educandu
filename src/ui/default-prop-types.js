@@ -162,3 +162,18 @@ export const menuShape = PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired
 });
+
+const formItemDimensionShape = PropTypes.shape({
+  span: PropTypes.number.isRequired
+});
+
+export const formItemLayoutShape = PropTypes.shape({
+  labelCol: PropTypes.shape({
+    xs: formItemDimensionShape.isRequired,
+    sm: formItemDimensionShape.isRequired
+  }).isRequired,
+  wrapperCol: PropTypes.shape({
+    xs: formItemDimensionShape.isRequired,
+    sm: formItemDimensionShape.isRequired
+  }).isRequired
+});

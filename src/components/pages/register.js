@@ -1,21 +1,23 @@
 import React from 'react';
-import Page from '../page';
+import urls from 'Utils/urls';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import ElmuLogo from '../elmu-logo';
-import Countdown from '../countdown';
-import Logger from '../../common/logger';
-import { inject } from '../container-context';
-import errorHelper from '../../ui/error-helper';
-import { withSettings } from '../settings-context';
-import { withLanguage } from '../language-context';
+import Page from 'Components/page';
+import Logger from 'Common/logger';
+import errorHelper from 'UI/error-helper';
+import ElmuLogo from 'Components/elmu-logo';
+import Countdown from 'Components/countdown';
+import EmailInput from 'Components/email-input';
+import UserApiClient from 'Services/user-api-client';
+import inputValidators from 'Utils/input-validators';
 import { Form, Input, Button, Checkbox } from 'antd';
+import { inject } from 'Components/container-context';
+import UsernameInput from 'Components/username-input';
 import { withTranslation, Trans } from 'react-i18next';
-import inputValidators from '../../utils/input-validators';
-import UserApiClient from '../../services/user-api-client';
-import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
-import { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
+import { withSettings } from 'Components/settings-context';
+import { withLanguage } from 'Components/language-context';
+import { languageProps, settingsProps, translationProps } from 'UI/default-prop-types';
+import { SAVE_USER_RESULT_SUCCESS, SAVE_USER_RESULT_DUPLICATE_EMAIL, SAVE_USER_RESULT_DUPLICATE_USERNAME } from 'Domain/user-management';
 
 const logger = new Logger(__filename);
 
@@ -38,14 +40,14 @@ class Register extends React.Component {
       const { userApiClient } = this.props;
       const { result, user } = await userApiClient.register({ username, password, email });
       switch (result) {
-        case CREATE_USER_RESULT_SUCCESS:
+        case SAVE_USER_RESULT_SUCCESS:
           this.setState({ user });
           break;
-        case CREATE_USER_RESULT_DUPLICATE_EMAIL:
+        case SAVE_USER_RESULT_DUPLICATE_EMAIL:
           this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
           this.formRef.current.validateFields(['email'], { force: true });
           break;
-        case CREATE_USER_RESULT_DUPLICATE_USERNAME:
+        case SAVE_USER_RESULT_DUPLICATE_USERNAME:
           this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
           this.formRef.current.validateFields(['username'], { force: true });
           break;
@@ -90,49 +92,6 @@ class Register extends React.Component {
       }
     };
 
-    const usernameValidationRules = [
-      {
-        required: true,
-        message: t('enterUsername'),
-        whitespace: true
-      },
-      {
-        validator: (rule, value) => {
-          const minLength = 6;
-          return value && value.trim().length < minLength
-            ? Promise.reject(new Error(t('usernameIsTooShort', { length: minLength })))
-            : Promise.resolve();
-        }
-      },
-      {
-        validator: (rule, value) => {
-          const { forbiddenUsernames } = this.state;
-          return value && forbiddenUsernames.includes(value.toLowerCase())
-            ? Promise.reject(new Error(t('usernameIsInUse')))
-            : Promise.resolve();
-        }
-      }
-    ];
-
-    const emailValidationRules = [
-      {
-        required: true,
-        message: t('enterEmail')
-      },
-      {
-        type: 'email',
-        message: t('emailIsInvalid')
-      },
-      {
-        validator: (rule, value) => {
-          const { forbiddenEmails } = this.state;
-          return value && forbiddenEmails.includes(value.toLowerCase())
-            ? Promise.reject(new Error(t('emailIsInUse')))
-            : Promise.resolve();
-        }
-      }
-    ];
-
     const passwordValidationRules = [
       {
         required: true,
@@ -173,12 +132,8 @@ class Register extends React.Component {
     const registrationForm = (
       <div className="RegisterPage-form">
         <Form ref={this.formRef} onFinish={this.handleFinish} scrollToFirstError>
-          <FormItem {...formItemLayout} label={t('userName')} name="username" rules={usernameValidationRules}>
-            <Input />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('email')} name="email" rules={emailValidationRules}>
-            <Input />
-          </FormItem>
+          <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={this.state.forbiddenUsernames} />
+          <EmailInput formItemLayout={formItemLayout} forbiddenEmails={this.state.forbiddenEmails} />
           <FormItem {...formItemLayout} label={t('password')} name="password" rules={passwordValidationRules}>
             <Input type="password" />
           </FormItem>

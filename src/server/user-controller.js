@@ -15,7 +15,7 @@ import ServerConfig from 'Bootstrap/server-config';
 import ClientDataMapper from 'Server/client-data-mapper';
 import needsPermission from 'Domain/needs-permission-middleware';
 import sessionsStoreSpec from 'Stores/collection-specs/sessions';
-import { CREATE_USER_RESULT_SUCCESS } from 'Domain/user-management';
+import { SAVE_USER_RESULT_SUCCESS } from 'Domain/user-management';
 import needsAuthentication from 'Domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
@@ -129,7 +129,7 @@ class UserController {
       const { username, password, email } = req.body;
       const { result, user } = await this.userService.createUser(username, password, email);
 
-      if (result === CREATE_USER_RESULT_SUCCESS) {
+      if (result === SAVE_USER_RESULT_SUCCESS) {
         const { origin } = requestHelper.getHostInfo(req);
         const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
         await this.mailService.sendRegistrationVerificationLink(email, verificationLink);
@@ -160,6 +160,16 @@ class UserController {
       }
 
       return res.send({ user });
+    });
+
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], async (req, res) => {
+      const { result, user } = await this.userService.updateUserAccount({
+        userId: req.user._id,
+        username: req.body.username,
+        email: req.body.email
+      });
+
+      res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
     });
 
     router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], async (req, res) => {
