@@ -21,7 +21,7 @@ import CountryNameProvider from '../../data/country-name-provider';
 import CountryFlagAndName from '../localization/country-flag-and-name';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
 import { userProps, languageProps, translationProps } from '../../ui/default-prop-types';
-import { SAVE_USER_RESULT_SUCCESS, SAVE_USER_RESULT_DUPLICATE_EMAIL, SAVE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
+import { SAVE_USER_RESULT } from '../../domain/user-management';
 
 const logger = new Logger(__filename);
 
@@ -52,19 +52,18 @@ class Account extends React.Component {
 
   async saveAccountData({ username, email }) {
     try {
-      const { t } = this.props;
-      const { userApiClient } = this.props;
+      const { t, userApiClient } = this.props;
       const { result, user } = await userApiClient.saveUserAccount({ username, email });
       switch (result) {
-        case SAVE_USER_RESULT_SUCCESS:
+        case SAVE_USER_RESULT.success:
           this.setState(prevState => ({ user: { ...prevState.user, username: user.username, email: user.email } }));
           await message.success(t('account.updateSuccessMessage'));
           break;
-        case SAVE_USER_RESULT_DUPLICATE_EMAIL:
+        case SAVE_USER_RESULT.duplicateEmail:
           this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
           this.accountFormRef.current.validateFields(['email'], { force: true });
           break;
-        case SAVE_USER_RESULT_DUPLICATE_USERNAME:
+        case SAVE_USER_RESULT.duplicateUsername:
           this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
           this.accountFormRef.current.validateFields(['username'], { force: true });
           break;

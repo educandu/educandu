@@ -17,7 +17,7 @@ import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
 import inputValidators from '../../utils/input-validators';
 import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
-import { SAVE_USER_RESULT_SUCCESS, SAVE_USER_RESULT_DUPLICATE_EMAIL, SAVE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
+import { SAVE_USER_RESULT } from '../../domain/user-management';
 
 const logger = new Logger(__filename);
 
@@ -40,14 +40,14 @@ class Register extends React.Component {
       const { userApiClient } = this.props;
       const { result, user } = await userApiClient.register({ username, password, email });
       switch (result) {
-        case SAVE_USER_RESULT_SUCCESS:
+        case SAVE_USER_RESULT.success:
           this.setState({ user });
           break;
-        case SAVE_USER_RESULT_DUPLICATE_EMAIL:
+        case SAVE_USER_RESULT.duplicateEmail:
           this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
           this.formRef.current.validateFields(['email'], { force: true });
           break;
-        case SAVE_USER_RESULT_DUPLICATE_USERNAME:
+        case SAVE_USER_RESULT.duplicateUsername:
           this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
           this.formRef.current.validateFields(['username'], { force: true });
           break;

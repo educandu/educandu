@@ -15,7 +15,7 @@ import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import { SAVE_USER_RESULT_SUCCESS } from '../domain/user-management';
+import { SAVE_USER_RESULT } from '../domain/user-management';
 import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
@@ -129,7 +129,7 @@ class UserController {
       const { username, password, email } = req.body;
       const { result, user } = await this.userService.createUser(username, password, email);
 
-      if (result === SAVE_USER_RESULT_SUCCESS) {
+      if (result === SAVE_USER_RESULT.success) {
         const { origin } = requestHelper.getHostInfo(req);
         const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
         await this.mailService.sendRegistrationVerificationLink(email, verificationLink);

@@ -5,7 +5,7 @@ import { USER } from '../domain/roles';
 import uniqueId from '../utils/unique-id';
 import UserStore from '../stores/user-store';
 import PasswordResetRequestStore from '../stores/password-reset-request-store';
-import { SAVE_USER_RESULT_SUCCESS, SAVE_USER_RESULT_DUPLICATE_EMAIL, SAVE_USER_RESULT_DUPLICATE_USERNAME } from '../domain/user-management';
+import { SAVE_USER_RESULT } from '../domain/user-management';
 
 const DEFAULT_ROLE_NAME = USER;
 const PROVIDER_NAME_ELMU = 'elmu';
@@ -62,15 +62,15 @@ class UserService {
 
     if (otherExistingUser) {
       return otherExistingUser.email.toLowerCase() === email.toLowerCase()
-        ? { result: SAVE_USER_RESULT_DUPLICATE_EMAIL, user: null }
-        : { result: SAVE_USER_RESULT_DUPLICATE_USERNAME, user: null };
+        ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
+        : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
     }
 
     const user = await this.getUserById(userId);
     const updatedUser = { ...user, username, email };
 
     await this.saveUser(updatedUser);
-    return { result: SAVE_USER_RESULT_SUCCESS, user: updatedUser };
+    return { result: SAVE_USER_RESULT.success, user: updatedUser };
   }
 
   async updateUserProfile(userId, newProfile) {
@@ -103,8 +103,8 @@ class UserService {
     const existingUser = await this.userStore.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       return existingUser.email.toLowerCase() === email.toLowerCase()
-        ? { result: SAVE_USER_RESULT_DUPLICATE_EMAIL, user: null }
-        : { result: SAVE_USER_RESULT_DUPLICATE_USERNAME, user: null };
+        ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
+        : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
     }
 
     const user = {
@@ -121,7 +121,7 @@ class UserService {
 
     logger.info('Creating new user with id %s', user._id);
     await this.saveUser(user);
-    return { result: SAVE_USER_RESULT_SUCCESS, user };
+    return { result: SAVE_USER_RESULT.success, user };
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME_ELMU) {
