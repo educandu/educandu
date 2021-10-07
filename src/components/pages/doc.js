@@ -83,7 +83,7 @@ class Doc extends React.Component {
   }
 
   handleRestoreButtonClick() {
-    const { t } = this.props;
+    const { documentApiClient, t } = this.props;
     const { currentRevision } = this.state;
 
     confirmDocumentRevisionRestoration(
@@ -91,8 +91,14 @@ class Doc extends React.Component {
       currentRevision,
       async () => {
         try {
-          await new Promise((resolve, reject) => {
-            setTimeout(Math.random() > 0.5 ? resolve : () => reject(new Error('Error restoring revision')), 2000);
+          const { documentRevisions } = await documentApiClient.restoreDocumentRevision({
+            documentKey: currentRevision.key,
+            revisionId: currentRevision._id
+          });
+
+          this.setState({
+            revisions: documentRevisions,
+            currentRevision: documentRevisions[documentRevisions.length - 1]
           });
         } catch (error) {
           message.error(error.message, 10);

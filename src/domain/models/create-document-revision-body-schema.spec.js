@@ -1,4 +1,5 @@
-import { validateCreateDocumentRevision } from './create-document-revision-request';
+import { validate } from '../validation';
+import { createDocumentRevisionBodySchema } from './create-document-revision-body-schema';
 
 const happyPathData = {
   title: 'My Title',
@@ -85,9 +86,9 @@ describe('create-document-revision-request', () => {
       describe(description, () => {
         it(expectToPass ? 'should pass' : 'should fail', () => {
           if (expectToPass) {
-            expect(() => validateCreateDocumentRevision(data)).not.toThrow();
+            expect(() => validate(data, createDocumentRevisionBodySchema)).not.toThrow();
           } else {
-            expect(() => validateCreateDocumentRevision(data)).toThrow();
+            expect(() => validate(data, createDocumentRevisionBodySchema)).toThrow();
           }
         });
       });

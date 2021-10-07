@@ -5,7 +5,10 @@ import PageRenderer from './page-renderer';
 import permissions from '../domain/permissions';
 import ClientDataMapper from './client-data-mapper';
 import DocumentService from '../services/document-service';
+import { validateBody } from '../domain/validation-middleware';
 import needsPermission from '../domain/needs-permission-middleware';
+import { restoreRevisionBodySchema } from '../domain/models/restore-revision-body-schema';
+import { createDocumentRevisionBodySchema } from '../domain/models/create-document-revision-body-schema';
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
@@ -89,14 +92,27 @@ class DocumentController {
   }
 
   registerApi(router) {
-    router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload], async (req, res) => {
-      const revision = await this.documentService.createDocumentRevision({ data: req.body, user: req.user });
+    router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload, validateBody(createDocumentRevisionBodySchema)], async (req, res) => {
+      const revision = await this.documentService.createDocumentRevision({ doc: req.body, user: req.user });
       if (!revision) {
         throw new NotFound();
       }
 
       const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
       return res.send({ documentRevision });
+    });
+
+    router.post('/api/v1/docs/restore-revision', [needsPermission(permissions.EDIT_DOC), jsonParser, validateBody(restoreRevisionBodySchema)], async (req, res) => {
+      const { user } = req;
+      const { documentKey, revisionId } = req.body;
+
+      const revisions = await this.documentService.restoreDocumentRevision({ documentKey, revisionId, user });
+      if (!revisions.length) {
+        throw new NotFound();
+      }
+
+      const documentRevisions = await this.clientDataMapper.mapDocsOrRevisions(revisions, user);
+      return res.send({ documentRevisions });
     });
 
     router.get('/api/v1/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {

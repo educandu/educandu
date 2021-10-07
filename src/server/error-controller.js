@@ -41,8 +41,20 @@ class ErrorController {
     logger.fatal(err);
   }
 
+  transformToErrorObject(err) {
+    const isValidationError = err.error?.isJoi;
+    if (isValidationError) {
+      const message = `${err.error.name}: ${err.error.message}`;
+      const props = { ...err, details: err.error.details };
+      delete props.error;
+      return createError(400, message, props);
+    }
+
+    return createError(500, err);
+  }
+
   consolidateError(err, req) {
-    const consolidatedErr = err.status ? err : createError(500, err);
+    const consolidatedErr = err.status ? err : this.transformToErrorObject(err);
     consolidatedErr.expose = this.serverConfig.exposeErrorDetails;
     consolidatedErr.request = requestHelper.expressReqToRequest(req);
     return consolidatedErr;
