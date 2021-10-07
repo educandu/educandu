@@ -1,10 +1,10 @@
-import Login from 'Components/pages/login';
-import Account from 'Components/pages/account';
-import Register from 'Components/pages/register';
+import Login from '../components/pages/login';
+import Account from '../components/pages/account';
+import Register from '../components/pages/register';
 import { hydrateApp } from '../bootstrap/client-bootstrapper';
-import ResetPassword from 'Components/pages/reset-password';
-import CompleteRegistration from 'Components/pages/complete-registration';
-import CompletePasswordReset from 'Components/pages/complete-password-reset';
+import ResetPassword from '../components/pages/reset-password';
+import CompleteRegistration from '../components/pages/complete-registration';
+import CompletePasswordReset from '../components/pages/complete-password-reset';
 
 hydrateApp({
   'login': Login,

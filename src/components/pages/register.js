@@ -1,23 +1,23 @@
 import React from 'react';
-import urls from 'Utils/urls';
+import Page from '../page';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import Page from 'Components/page';
-import Logger from 'Common/logger';
-import errorHelper from 'UI/error-helper';
-import ElmuLogo from 'Components/elmu-logo';
-import Countdown from 'Components/countdown';
-import EmailInput from 'Components/email-input';
-import UserApiClient from 'Services/user-api-client';
-import inputValidators from 'Utils/input-validators';
+import urls from '../../utils/urls';
+import ElmuLogo from '../elmu-logo';
+import Countdown from '../countdown';
+import EmailInput from '../email-input';
+import Logger from '../../common/logger';
+import { inject } from '../container-context';
+import UsernameInput from '../username-input';
+import errorHelper from '../../ui/error-helper';
+import { withSettings } from '../settings-context';
+import { withLanguage } from '../language-context';
 import { Form, Input, Button, Checkbox } from 'antd';
-import { inject } from 'Components/container-context';
-import UsernameInput from 'Components/username-input';
 import { withTranslation, Trans } from 'react-i18next';
-import { withSettings } from 'Components/settings-context';
-import { withLanguage } from 'Components/language-context';
-import { languageProps, settingsProps, translationProps } from 'UI/default-prop-types';
-import { SAVE_USER_RESULT_SUCCESS, SAVE_USER_RESULT_DUPLICATE_EMAIL, SAVE_USER_RESULT_DUPLICATE_USERNAME } from 'Domain/user-management';
+import UserApiClient from '../../services/user-api-client';
+import inputValidators from '../../utils/input-validators';
+import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
+import { SAVE_USER_RESULT_SUCCESS, SAVE_USER_RESULT_DUPLICATE_EMAIL, SAVE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
 
 const logger = new Logger(__filename);
 

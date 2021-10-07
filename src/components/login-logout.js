@@ -1,11 +1,11 @@
 import React from 'react';
-import urls from 'Utils/urls';
 import { Avatar } from 'antd';
 import gravatar from 'gravatar';
-import { useUser } from 'Components/user-context';
-import LinkPopover from 'Components/link-popover';
+import urls from '../utils/urls';
+import { useUser } from './user-context';
+import LinkPopover from './link-popover';
+import { useRequest } from './request-context';
 import { Trans, useTranslation } from 'react-i18next';
-import { useRequest } from 'Components/request-context';
 import { ProfileOutlined, LogoutOutlined } from '@ant-design/icons';
 
 function createAuthenticatedUserHeader(user, t) {

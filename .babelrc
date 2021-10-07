@@ -1,28 +1,4 @@
 {
-  "plugins": [
-    [
-      "module-resolver", {
-        "root": [
-          "./src"
-        ],
-        "alias": {
-          "Bootstrap": "./src/bootstrap/",
-          "Common": "./src/common/",
-          "Components": "./src/components/",
-          "Domain": "./src/domain/",
-          "Data": "./src/data/",
-          "Plugins": "./src/plugins/",
-          "Repositories": "./src/repositories/",
-          "Resources": "./src/resources/",
-          "Server": "./src/server/",
-          "Services": "./src/services/",
-          "Stores": "./src/stores/",
-          "UI": "./src/ui/",
-          "Utils": "./src/utils"
-        }
-      }
-    ]
-  ],
   "presets": [
     ["@babel/preset-env", { "targets": { "node": "current" } }],
     "@babel/preset-react"
