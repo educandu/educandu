@@ -38,7 +38,7 @@ class UserService {
   }
 
   getUserByEmailAddress(email, provider = PROVIDER_NAME_ELMU) {
-    return this.userStore.findOne({ email, provider });
+    return this.userStore.findOne({ email: email.toLowerCase(), provider });
   }
 
   findUser(username, provider = PROVIDER_NAME_ELMU) {
@@ -52,22 +52,23 @@ class UserService {
 
   async updateUserAccount({ userId, username, email }) {
     logger.info('Updating account data for user with id %s', userId);
+    const lowerCasedEmail = email.toLowerCase();
 
     const otherExistingUser = await this.userStore.findOne({
       $and: [
         { _id: { $ne: userId } },
-        { $or: [{ username }, { email }] }
+        { $or: [{ username }, { email: lowerCasedEmail }] }
       ]
     });
 
     if (otherExistingUser) {
-      return otherExistingUser.email.toLowerCase() === email.toLowerCase()
+      return otherExistingUser.email === lowerCasedEmail
         ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
         : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
     }
 
     const user = await this.getUserById(userId);
-    const updatedUser = { ...user, username, email };
+    const updatedUser = { ...user, username, email: lowerCasedEmail };
 
     await this.saveUser(updatedUser);
     return { result: SAVE_USER_RESULT.success, user: updatedUser };
@@ -100,9 +101,11 @@ class UserService {
   }
 
   async createUser(username, password, email, provider = PROVIDER_NAME_ELMU) {
-    const existingUser = await this.userStore.findOne({ $or: [{ username }, { email }] });
+    const lowerCasedEmail = email.toLowerCase();
+
+    const existingUser = await this.userStore.findOne({ $or: [{ username }, { email: lowerCasedEmail }] });
     if (existingUser) {
-      return existingUser.email.toLowerCase() === email.toLowerCase()
+      return existingUser.email === lowerCasedEmail
         ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
         : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
     }
@@ -112,7 +115,7 @@ class UserService {
       provider,
       username,
       passwordHash: await this._hashPassword(password),
-      email: email.toLowerCase(),
+      email: lowerCasedEmail,
       roles: [DEFAULT_ROLE_NAME],
       expires: moment.utc().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
       verificationCode: uniqueId.create(),
