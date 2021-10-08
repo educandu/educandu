@@ -16,6 +16,15 @@ class DocumentApiClient {
       .then(res => res.body);
   }
 
+  restoreDocumentRevision({ documentKey, revisionId }) {
+    return this.httpClient
+      .post('/api/v1/docs/restore-revision')
+      .accept('json')
+      .type('json')
+      .send({ documentKey, revisionId })
+      .then(res => res.body);
+  }
+
   getDocumentRevisions(key) {
     return this.httpClient
       .get('/api/v1/docs')

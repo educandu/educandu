@@ -13,6 +13,9 @@ language:
 id:
   en: ID
   de: ID
+restoredFrom:
+  en: Restored from
+  de: Wiederhergestellt aus
 permalink:
   en: Permalink
   de: Permalink
@@ -22,3 +25,6 @@ permalinkCopied:
 permalinkCouldNotBeCopied:
   en: The permalink could not be copied to the clipboard
   de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
+restore:
+  en: Restore
+  de: Wiederherstellen

@@ -132,7 +132,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
             {headerActionComponents}
           </div>
           <div className="Page-headerContent Page-headerContent--right">
-            <div>
+            <div className="Page-languageSwitch">
               {languagesToChoose.map((lang, index) => (
                 <React.Fragment key={lang.code}>
                   {index !== 0 && <span>/</span>}

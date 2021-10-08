@@ -4262,6 +4262,11 @@ express-async-errors@~3.1.1:
   resolved "https://registry.yarnpkg.com/express-async-errors/-/express-async-errors-3.1.1.tgz#6053236d61d21ddef4892d6bd1d736889fc9da41"
   integrity sha512-h6aK1da4tpqWSbyCa3FxB/V6Ehd4EEB15zyQq9qe75OZBp0krinNKuH4rAY+S/U/2I36vdLAUFSjQJ+TFmODng==
 
+express-joi-validation@~5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/express-joi-validation/-/express-joi-validation-5.0.0.tgz#c23e1714cb9c770db212b810908aba6a778ad174"
+  integrity sha512-R+jV2SYjoYCGqXRJkHHrCQ5mibwmdqqP04rgOFiCAfXJ21DfFKD8YxdONKimnFo95n83Au344Qq8jkzIxdsaPw==
+
 express-session@~1.17.1:
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/express-session/-/express-session-1.17.1.tgz#36ecbc7034566d38c8509885c044d461c11bf357"

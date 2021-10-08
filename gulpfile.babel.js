@@ -114,7 +114,8 @@ tasks.test = async function test() {
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
     setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
-    runInBand: true
+    runInBand: true,
+    coverage: true
   }, '.');
   if (!results.success) {
     throw Error(`${results.numFailedTests} test(s) failed`);

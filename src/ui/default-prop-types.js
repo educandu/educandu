@@ -142,7 +142,8 @@ export const documentShape = PropTypes.shape({
 
 export const documentRevisionShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
-  sections: PropTypes.arrayOf(sectionShape).isRequired
+  sections: PropTypes.arrayOf(sectionShape).isRequired,
+  restoredFrom: PropTypes.string
 });
 
 export const menuNodeShape = PropTypes.any;

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions';
 import { sectionShape } from '../ui/default-prop-types';
 import { ThunderboltOutlined } from '@ant-design/icons';
-import { confirmSectionHardDelete } from './section-action-dialogs';
+import { confirmSectionHardDelete } from './confirmation-dialogs';
 import { HARD_DELETE, createHardDelete } from '../ui/section-actions';
 
 const MenuItem = Menu.Item;

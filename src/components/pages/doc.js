@@ -15,8 +15,9 @@ import permissions from '../../domain/permissions';
 import { withLanguage } from '../language-context';
 import { HARD_DELETE } from '../../ui/section-actions';
 import DocumentApiClient from '../../services/document-api-client';
-import { PaperClipOutlined, EditOutlined } from '@ant-design/icons';
 import LanguageNameProvider from '../../data/language-name-provider';
+import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs';
+import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
@@ -54,6 +55,7 @@ class Doc extends React.Component {
         <div>{t('language')}: <b>{languageName}</b></div>
         <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
         <div>{t('id')}: <b>{revision._id}</b></div>
+        {revision.restoredFrom && <div style={{ whiteSpace: 'nowrap' }}>{t('restoredFrom')}: <b>{revision.restoredFrom}</b></div>}
       </div>
     );
   }
@@ -79,6 +81,32 @@ class Doc extends React.Component {
       );
       message.error(msg, 10);
     }
+  }
+
+  handleRestoreButtonClick() {
+    const { documentApiClient, t } = this.props;
+    const { currentRevision } = this.state;
+
+    confirmDocumentRevisionRestoration(
+      t,
+      currentRevision,
+      async () => {
+        try {
+          const { documentRevisions } = await documentApiClient.restoreDocumentRevision({
+            documentKey: currentRevision.key,
+            revisionId: currentRevision._id
+          });
+
+          this.setState({
+            revisions: documentRevisions,
+            currentRevision: documentRevisions[documentRevisions.length - 1]
+          });
+        } catch (error) {
+          errorHelper.handleApiError(error, logger);
+          throw error;
+        }
+      }
+    );
   }
 
   handleAction({ name, data }) {
@@ -119,6 +147,9 @@ class Doc extends React.Component {
         return accu;
       }, {});
 
+      const currentRevisionIndex = revisions.indexOf(currentRevision);
+      const isCurrentRevisionLatestRevision = currentRevisionIndex === revisions.length - 1;
+
       revisionPicker = (
         <div className="DocPage-revisionPicker">
           <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
@@ -126,20 +157,30 @@ class Doc extends React.Component {
             <Slider
               min={0}
               max={revisions.length - 1}
-              value={revisions.indexOf(currentRevision)}
+              value={currentRevisionIndex}
               step={null}
               marks={marks}
               onChange={this.handleIndexChanged}
               tipFormatter={this.formatRevisionTooltip}
               />
           </div>
-          <div className="DocPage-revisionPickerResetButton">
+          <div className="DocPage-revisionPickerButtons">
             <Button
+              className="DocPage-revisionPickerButton"
               type="primary"
               icon={<PaperClipOutlined />}
               onClick={this.handlePermalinkRequest}
               >
               {t('permalink')}
+            </Button>
+            <Button
+              className="DocPage-revisionPickerButton"
+              type="primary"
+              icon={<ReloadOutlined />}
+              onClick={this.handleRestoreButtonClick}
+              disabled={isCurrentRevisionLatestRevision}
+              >
+              {t('restore')}
             </Button>
           </div>
         </div>
