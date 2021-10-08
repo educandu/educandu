@@ -83,11 +83,8 @@ class UserController {
 
     router.get('/complete-registration/:verificationCode', async (req, res) => {
       const user = await this.userService.verifyUser(req.params.verificationCode);
-      if (!user) {
-        throw new NotFound();
-      }
-
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', {});
+      const initialState = { user };
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', initialState);
     });
 
     router.get('/login', (req, res) => {
