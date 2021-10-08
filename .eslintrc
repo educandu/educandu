@@ -54,6 +54,7 @@
     "no-implicit-coercion": ["error", { "allow": ["!!", "~"] }],
     "no-inline-comments": ["off"],
     "no-magic-numbers": ["off"],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
     "no-negated-condition": ["off"],
     "no-ternary": ["off"],
     "no-underscore-dangle": ["off"],

@@ -15,7 +15,7 @@ import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import { CREATE_USER_RESULT_SUCCESS } from '../domain/user-management';
+import { SAVE_USER_RESULT } from '../domain/user-management';
 import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
@@ -99,8 +99,8 @@ class UserController {
       return res.redirect(urls.getDefaultLogoutRedirectUrl());
     });
 
-    router.get('/profile', needsAuthentication(), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {});
+    router.get('/account', needsAuthentication(), (req, res) => {
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'account', {});
     });
 
     router.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
@@ -129,7 +129,7 @@ class UserController {
       const { username, password, email } = req.body;
       const { result, user } = await this.userService.createUser(username, password, email);
 
-      if (result === CREATE_USER_RESULT_SUCCESS) {
+      if (result === SAVE_USER_RESULT.success) {
         const { origin } = requestHelper.getHostInfo(req);
         const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
         await this.mailService.sendRegistrationVerificationLink(email, verificationLink);
@@ -160,6 +160,16 @@ class UserController {
       }
 
       return res.send({ user });
+    });
+
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], async (req, res) => {
+      const { result, user } = await this.userService.updateUserAccount({
+        userId: req.user._id,
+        username: req.body.username,
+        email: req.body.email
+      });
+
+      res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
     });
 
     router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], async (req, res) => {

@@ -22,109 +22,73 @@
               "name": "Ritornell",
               "color": "#FFD700",
               "length": 138075.36947451317,
-              "annotations": [
-                "a → e",
-                "I → V"
-              ]
+              "annotations": ["a → e", "I → V"]
             },
             {
               "name": "Episode 1",
               "color": "#228B22",
               "length": 86140.80682682843,
-              "annotations": [
-                "a",
-                "I"
-              ]
+              "annotations": ["a", "I"]
             },
             {
               "name": "Ritornell",
               "color": "#FFD700",
               "length": 20273.757642262502,
-              "annotations": [
-                "a",
-                "I"
-              ]
+              "annotations": ["a", "I"]
             },
             {
               "name": "Episode 2",
               "color": "#32CD32",
               "length": 47004.571206404165,
-              "annotations": [
-                "a → C",
-                "I → III"
-              ]
+              "annotations": ["a → C", "I → III"]
             },
             {
               "name": "Ritornell",
               "color": "#FFD700",
               "length": 187703.227246042,
-              "annotations": [
-                "C → e",
-                "III → V"
-              ]
+              "annotations": ["C → e", "III → V"]
             },
             {
               "name": "Episode 1",
               "color": "#228B22",
               "length": 97841.03562023539,
-              "annotations": [
-                "e → d",
-                "V → IV"
-              ]
+              "annotations": ["e → d", "V → IV"]
             },
             {
               "name": "Ritornell",
               "color": "#FFD700",
               "length": 22248.312841285166,
-              "annotations": [
-                "d",
-                "IV"
-              ]
+              "annotations": ["d", "IV"]
             },
             {
               "name": "Episode 3",
               "color": "#90EE90",
               "length": 98184.63916805788,
-              "annotations": [
-                "d → a",
-                "IV → I"
-              ]
+              "annotations": ["d → a", "IV → I"]
             },
             {
               "name": "Ritornell",
               "color": "#FFD700",
               "length": 22935.519471268875,
-              "annotations": [
-                "a",
-                "I"
-              ]
+              "annotations": ["a", "I"]
             },
             {
               "name": "Episode 3",
               "color": "#90EE90",
               "length": 46111.284776642584,
-              "annotations": [
-                "a → f",
-                "I → VI"
-              ]
+              "annotations": ["a → f", "I → VI"]
             },
             {
               "name": "Episode 2",
               "color": "#32CD32",
               "length": 45666.84507097436,
-              "annotations": [
-                "f → a",
-                "IV → I"
-              ]
+              "annotations": ["f → a", "IV → I"]
             },
             {
               "name": "Ritornell",
               "color": "#FFD700",
               "length": 187814.6306554855,
-              "annotations": [
-                "a",
-                "I"
-              ]
+              "annotations": ["a", "I"]
             }
           ],
           "media": {
@@ -183,17 +147,11 @@
           "tests": [
             {
               "question": "Spielen Sie eine kleine Terz aufwärts vom Ton c aus.",
-              "interval": [
-                0,
-                3
-              ]
+              "interval": [0, 3]
             },
             {
               "question": "Spielen Sie eine kleine Terz abwärts vom Ton as aus.",
-              "interval": [
-                8,
-                5
-              ]
+              "interval": [8, 5]
             }
           ]
         }
@@ -325,6 +283,24 @@
           "maxTilesPerRow": 2,
           "maxWidth": 100,
           "hoverEffect": "colorize-zoom"
+        }
+      },
+      {
+        "key": "4PvuC9ZqbG9Kv5CNvouUPB",
+        "type": "image",
+        "content": {
+          "sourceType": "external",
+          "sourceUrl": "https://cdn.pixabay.com/photo/2018/03/27/17/25/cat-3266673_1280.jpg",
+          "maxWidth": 100,
+          "text": "",
+          "effect": {
+            "sourceType": "external",
+            "sourceUrl": "https://cdn.pixabay.com/photo/2016/03/28/10/05/kitten-1285341_1280.jpg",
+            "text": "",
+            "type": "reveal",
+            "startPosition": 10,
+            "orientation": "horizontal"
+          }
         }
       }
     ]

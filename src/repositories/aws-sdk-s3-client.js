@@ -96,7 +96,6 @@ class AwsSdkS3Client {
 
     } while (marker);
 
-
     const transformedObjects = objects.map(obj => ({
       name: obj.Key,
       lastModified: new Date(obj.LastModified),

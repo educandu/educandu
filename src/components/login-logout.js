@@ -25,8 +25,8 @@ function createAuthenticatedUserHeader(user, t) {
   const gravatarPopoverItems = [
     {
       key: 'profile',
-      href: urls.getProfileUrl(),
-      text: t('editProfile'),
+      href: urls.getAccountUrl(),
+      text: t('account'),
       icon: ProfileOutlined,
       permission: null
     }, {

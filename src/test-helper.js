@@ -10,7 +10,7 @@ import applicationRoles from './domain/roles';
 import UserService from './services/user-service';
 import ServerConfig from './bootstrap/server-config';
 import DocumentService from './services/document-service';
-import { CREATE_USER_RESULT_SUCCESS } from './domain/user-management';
+import { SAVE_USER_RESULT } from './domain/user-management';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper';
 
 const mkdir = util.promisify(fs.mkdir);
@@ -121,11 +121,11 @@ export async function removeAllBuckets(cdn) {
 
 export async function createAndVerifyUser(userService, username, password, email, roles, profile, lockedOut) {
   const { result, user } = await userService.createUser(username, password, email);
-  if (result !== CREATE_USER_RESULT_SUCCESS) {
+  if (result !== SAVE_USER_RESULT.success) {
     throw new Error(JSON.stringify({ result, username, password, email }));
   }
   const verifiedUser = await userService.verifyUser(user.verificationCode);
-  verifiedUser.roles = roles || [applicationRoles.USER];
+  verifiedUser.roles = roles;
   verifiedUser.profile = profile || null;
   verifiedUser.lockedOut = lockedOut || false;
   await userService.saveUser(verifiedUser);
