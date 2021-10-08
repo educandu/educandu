@@ -4,7 +4,6 @@ import Page from '../page';
 import gravatar from 'gravatar';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
 import memoizeOne from 'memoize-one';
 import EmailInput from '../email-input';
 import Logger from '../../common/logger';
@@ -117,6 +116,17 @@ class Account extends React.Component {
     this.setState({ showAvatarDescription: false });
   }
 
+  async handleResetPasswordClick() {
+    const { t, userApiClient, user } = this.props;
+
+    try {
+      await userApiClient.requestPasswordReset({ email: user.email });
+      message.success(t('account.passwordResetEmailSent', { email: user.email }));
+    } catch (error) {
+      errorHelper.handleApiError(error, logger);
+    }
+  }
+
   render() {
     const { showAvatarDescription } = this.state;
     const { countryNameProvider, user, language, t } = this.props;
@@ -167,7 +177,7 @@ class Account extends React.Component {
         <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={this.state.forbiddenUsernames} />
         <EmailInput formItemLayout={formItemLayout} forbiddenEmails={this.state.forbiddenEmails} />
         <FormItem {...tailFormItemLayout}>
-          <a href={urls.getResetPasswordUrl()}>{t('account.resetPassword')}</a>
+          <Button type="link" size="small" onClick={this.handleResetPasswordClick}>{t('account.resetPassword')}</Button>
         </FormItem>
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">{t('common:save')}</Button>
