@@ -42,7 +42,6 @@ class CompletePasswordReset extends React.Component {
     this.completePasswordReset(password);
   }
 
-
   render() {
     const { t } = this.props;
     const { user } = this.state;

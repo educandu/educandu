@@ -59,6 +59,15 @@ class UserApiClient {
       .then(res => res.body);
   }
 
+  saveUserAccount({ username, email }) {
+    return this.httpClient
+      .post('/api/v1/users/account')
+      .type('json')
+      .accept('json')
+      .send({ username, email })
+      .then(res => res.body);
+  }
+
   saveUserProfile({ profile }) {
     return this.httpClient
       .post('/api/v1/users/profile')

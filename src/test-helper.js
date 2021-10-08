@@ -6,7 +6,7 @@ import { URL } from 'url';
 import Cdn from './repositories/cdn';
 import Database from './stores/database';
 import ServerConfig from './bootstrap/server-config';
-import { CREATE_USER_RESULT_SUCCESS } from './domain/user-management';
+import { SAVE_USER_RESULT } from './domain/user-management';
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
@@ -111,7 +111,7 @@ export async function removeAllBuckets(cdn) {
 
 export async function createAndVerifyUser(userService, username, password, email, roles, profile, lockedOut) {
   const { result, user } = await userService.createUser(username, password, email);
-  if (result !== CREATE_USER_RESULT_SUCCESS) {
+  if (result !== SAVE_USER_RESULT.success) {
     throw new Error(JSON.stringify({ result, username, password, email }));
   }
   const verifiedUser = await userService.verifyUser(user.verificationCode);

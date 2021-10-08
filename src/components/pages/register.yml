@@ -1,21 +1,3 @@
-enterUsername:
-  en: Please enter a user name
-  de: Bitte geben Sie einen Benutzernamen an
-enterEmail:
-  en: Please enter an email address
-  de: Bitte geben Sie eine E-Mail-Adresse an
-emailIsInvalid:
-  en: The value you provided is not a valid email address
-  de: Ihre Eingabe ist keine gültige E-Mail-Adresse
-emailIsInUse:
-  en: The email address is already registered
-  de: Die E-Mail-Adresse ist bereits vergeben
-usernameIsTooShort:
-  en: The user name must be at least {length} characters long
-  de: Der Benutzername muss mindestens {length} Zeichen lang sein
-usernameIsInUse:
-  en: The user name is already registered
-  de: Der Benutzername ist bereits vergeben
 enterPassword:
   en: Please enter a password
   de: Bitte geben Sie ein Kennwort an
@@ -31,12 +13,6 @@ passwordsDoNotMatch:
 confirmTerms:
   en: Please confirm your agreement with the terms and conditions
   de: Bitte erklären Sie sich mit den Nutzungsbedingungen einverstanden
-userName:
-  en: User name
-  de: Benutzername
-email:
-  en: Email address
-  de: E-Mail-Adresse
 password:
   en: Passsword
   de: Kennwort

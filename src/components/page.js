@@ -6,12 +6,12 @@ import { Alert, Button } from 'antd';
 import Restricted from './restricted';
 import LoginLogout from './login-logout';
 import LinkPopover from './link-popover';
+import { useUser } from './user-context';
 import permissions from '../domain/permissions';
 import { useService } from './container-context';
 import { useLanguage } from './language-context';
 import { useSettings } from './settings-context';
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../components/user-context';
 import { Trans, useTranslation } from 'react-i18next';
 import LanguageNameProvider from '../data/language-name-provider';
 import CountryFlagAndName from './localization/country-flag-and-name';
@@ -58,7 +58,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
         <Trans
           t={t}
           i18nKey="profileWarning"
-          components={[<a key="profile-warning" href={urls.getProfileUrl()} />]}
+          components={[<a key="profile-warning" href={urls.getAccountUrl()} />]}
           />
       </span>
     );

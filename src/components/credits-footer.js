@@ -36,7 +36,6 @@ function CreditsFooter({ documentOrRevision, type }) {
   const url = `${request.hostInfo.origin}${request.path}`;
   const citation = t('citation', { title: documentOrRevision.title, url, date: moment().locale(locale).format('L, LT') });
 
-
   return (
     <div className="CreditsFooter">
       <p>

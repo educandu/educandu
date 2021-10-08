@@ -10,7 +10,7 @@ import Login from '../components/pages/login';
 import Menus from '../components/pages/menus';
 import Users from '../components/pages/users';
 import Article from '../components/pages/article';
-import Profile from '../components/pages/profile';
+import Account from '../components/pages/account';
 import EditDoc from '../components/pages/edit-doc';
 import Register from '../components/pages/register';
 import Settings from '../components/pages/settings';
@@ -37,7 +37,7 @@ const pageComponentsByName = {
   'login': Login,
   'menu': Menu,
   'menus': Menus,
-  'profile': Profile,
+  'account': Account,
   'register': Register,
   'reset-password': ResetPassword,
   'settings': Settings,
