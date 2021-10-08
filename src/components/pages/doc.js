@@ -16,7 +16,7 @@ import { withLanguage } from '../language-context';
 import { HARD_DELETE } from '../../ui/section-actions';
 import DocumentApiClient from '../../services/document-api-client';
 import LanguageNameProvider from '../../data/language-name-provider';
-import { confirmDocumentRevisionRestoration } from '../section-action-dialogs';
+import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
 

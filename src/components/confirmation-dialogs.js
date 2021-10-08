@@ -6,8 +6,8 @@ const TextArea = Input.TextArea;
 
 export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
   confirm({
-    title: t('sectionActionDialogs:areYouSure'),
-    content: t('sectionActionDialogs:deleteSectionConfirmation'),
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteSectionConfirmation'),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
@@ -37,12 +37,12 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
   function createContent() {
     return (
       <div>
-        {t('sectionActionDialogs:deleteSectionConfirmation')}
+        {t('confirmationDialogs:deleteSectionConfirmation')}
         <br />
-        <b className="u-danger">{t('sectionActionDialogs:thisActionIsIrreversible')}</b>
+        <b className="u-danger">{t('confirmationDialogs:thisActionIsIrreversible')}</b>
         <br />
         <br />
-        <span>{t('sectionActionDialogs:pleaseSpecifyAReason')}:</span>
+        <span>{t('confirmationDialogs:pleaseSpecifyAReason')}:</span>
         <br />
         <TextArea value={deletionReason} onChange={handleDeletionReasonChange} />
         <br />
@@ -51,14 +51,14 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
           value={deleteDescendants}
           onChange={handleDeleteDescendantsChange}
           >
-          {t('sectionActionDialogs:deleteAllDescendantRevisions')}
+          {t('confirmationDialogs:deleteAllDescendantRevisions')}
         </Checkbox>
       </div>
     );
   }
 
   createDialogProps = () => ({
-    title: t('sectionActionDialogs:areYouSure'),
+    title: t('confirmationDialogs:areYouSure'),
     content: createContent(),
     okText: t('common:yes'),
     okType: 'danger',
@@ -90,8 +90,8 @@ export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel =
   };
 
   createDialogProps = () => ({
-    title: t('sectionActionDialogs:areYouSure'),
-    content: t('sectionActionDialogs:restoreDocumentRevisionConfirmation', { revisionId: revision._id }),
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:restoreDocumentRevisionConfirmation', { revisionId: revision._id }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
@@ -104,9 +104,3 @@ export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel =
 
   dialog = confirm(createDialogProps());
 }
-
-export default {
-  confirmSectionDelete,
-  confirmSectionHardDelete,
-  confirmDocumentRevisionRestoration
-};
