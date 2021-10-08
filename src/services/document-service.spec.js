@@ -86,6 +86,10 @@ describe('document-service', () => {
           expect(result[3].slug).toBe(initialRevisions[1].slug);
         });
 
+        it('should set "restoredFrom" to the restored revision ID', () => {
+          expect(result[3].restoredFrom).toBe(initialRevisions[1]._id);
+        });
+
         it('should preserve section keys', () => {
           expect(result[3].sections[0].key).toBe(initialRevisions[1].sections[0].key);
           expect(result[3].sections[1].key).toBe(initialRevisions[1].sections[1].key);

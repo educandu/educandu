@@ -1,5 +1,4 @@
 @page-header-content-min-height: 32px;
-@page-header-button-spacing: 6px;
 @page-header-z-index: 1;
 @page-content-z-index: 0;
 @page-footer-z-index: 0;
@@ -63,23 +62,18 @@
   }
 }
 
+.Page-languageSwitch {
+  white-space: nowrap;
+}
+
 .Page-headerButton {
-  margin-right: @page-header-button-spacing;
-
-  &:last-child {
-    margin-right: 0;
-  }
-
-  &.ant-btn > span {
-    @media @phone {
-      display: none;
-    }
-  }
+  .m-icon-button;
+  .m-grouped-button;
 }
 
 .Page-loginLogoutButton {
   cursor: pointer;
-  margin-left: (2.5 * @page-header-button-spacing);
+  margin-left: (2.5 * @global-button-spacing);
 }
 
 .Page-contentArea {

@@ -55,6 +55,7 @@ class Doc extends React.Component {
         <div>{t('language')}: <b>{languageName}</b></div>
         <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
         <div>{t('id')}: <b>{revision._id}</b></div>
+        {revision.restoredFrom && <div style={{ whiteSpace: 'nowrap' }}>{t('restoredFrom')}: <b>{revision.restoredFrom}</b></div>}
       </div>
     );
   }

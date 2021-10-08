@@ -71,7 +71,7 @@ class DocumentService {
     return this.documentRevisionStore.findOne({ _id: id });
   }
 
-  async createDocumentRevision({ doc, user }) {
+  async createDocumentRevision({ doc, user, restoredFrom = null }) {
     if (!user || !user._id) {
       throw new Error('No user specified');
     }
@@ -157,6 +157,7 @@ class DocumentService {
         _id: uniqueId.create(),
         key: documentKey,
         order: nextOrder,
+        restoredFrom,
         createdOn: now,
         createdBy: userId,
         title: doc.title || '',
@@ -210,7 +211,7 @@ class DocumentService {
       }
     };
 
-    await this.createDocumentRevision({ doc, user });
+    await this.createDocumentRevision({ doc, user, restoredFrom: revisionToRestore._id });
 
     return this.getAllDocumentRevisionsByKey(documentKey);
   }

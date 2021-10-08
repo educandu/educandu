@@ -10,3 +10,19 @@
   .m-content;
   .m-fullscreen
 }
+
+.m-icon-button {
+  &.ant-btn > span:not([role="img"]) {
+    @media @phone {
+      display: none;
+    }
+  }
+}
+
+.m-grouped-button {
+  margin-right: @global-button-spacing;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
