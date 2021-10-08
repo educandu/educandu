@@ -102,7 +102,7 @@ class Doc extends React.Component {
             currentRevision: documentRevisions[documentRevisions.length - 1]
           });
         } catch (error) {
-          message.error(error.message, 10);
+          errorHelper.handleApiError(error, logger);
           throw error;
         }
       }
