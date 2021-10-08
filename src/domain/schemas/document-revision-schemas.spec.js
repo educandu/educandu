@@ -1,5 +1,5 @@
 import { validate } from '../validation';
-import { createDocumentRevisionBodySchema } from './create-document-revision-body-schema';
+import { createDocumentRevisionBodySchema } from './document-revision-schemas';
 
 const happyPathData = {
   title: 'My Title',
@@ -17,13 +17,12 @@ const happyPathData = {
   ]
 };
 
-const testCases = [
+const validTestCases = [
   {
     description: 'Happy path (new doc)',
     data: {
       ...happyPathData
-    },
-    expectToPass: true
+    }
   },
   {
     description: 'Happy path (updated doc)',
@@ -33,48 +32,45 @@ const testCases = [
         key: 'ftg31hf714zmcmhWTUILD89z3',
         ancestorId: '9znDNV9HFNDELEUjnhjji4409uki8'
       }
-    },
-    expectToPass: true
+    }
   },
   {
     description: 'Empty slug',
     data: {
       ...happyPathData,
       slug: ''
-    },
-    expectToPass: true
-  },
+    }
+  }
+];
+
+const invalidTestCases = [
   {
     description: 'Invalid namespace',
     data: {
       ...happyPathData,
       namespace: 'something-wrong'
-    },
-    expectToPass: false
+    }
   },
   {
     description: 'Invalid slug',
     data: {
       ...happyPathData,
       slug: 'trailing-slash/'
-    },
-    expectToPass: false
+    }
   },
   {
     description: 'Invalid title',
     data: {
       ...happyPathData,
       title: ''
-    },
-    expectToPass: false
+    }
   },
   {
     description: 'Unknown section key',
     data: {
       ...happyPathData,
       sections: happyPathData.sections.map(s => ({ ...s, ancestorId: 'gh83z4g9hg9ztewioghuisghd' }))
-    },
-    expectToPass: false
+    }
   }
 ];
 
@@ -82,15 +78,15 @@ describe('create-document-revision-request', () => {
 
   describe('validateCreateDocumentRevision', () => {
 
-    testCases.forEach(({ description, data, expectToPass }) => {
+    validTestCases.forEach(({ description, data }) => {
       describe(description, () => {
-        it(expectToPass ? 'should pass' : 'should fail', () => {
-          if (expectToPass) {
-            expect(() => validate(data, createDocumentRevisionBodySchema)).not.toThrow();
-          } else {
-            expect(() => validate(data, createDocumentRevisionBodySchema)).toThrow();
-          }
-        });
+        it('should pass', () => expect(() => validate(data, createDocumentRevisionBodySchema)).not.toThrow());
+      });
+    });
+
+    invalidTestCases.forEach(({ description, data }) => {
+      describe(description, () => {
+        it('should fail', () => expect(() => validate(data, createDocumentRevisionBodySchema)).toThrow());
       });
     });
 

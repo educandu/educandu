@@ -24,3 +24,8 @@ export const createDocumentRevisionBodySchema = joi.object({
   sections: joi.array().items(sectionSchema).required(),
   appendTo: documentRevisionAppendToSchema.optional()
 });
+
+export const restoreRevisionBodySchema = joi.object({
+  documentKey: idOrKeySchema.required(),
+  revisionId: idOrKeySchema.required()
+});

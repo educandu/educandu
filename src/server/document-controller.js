@@ -7,8 +7,7 @@ import ClientDataMapper from './client-data-mapper';
 import DocumentService from '../services/document-service';
 import { validateBody } from '../domain/validation-middleware';
 import needsPermission from '../domain/needs-permission-middleware';
-import { restoreRevisionBodySchema } from '../domain/models/restore-revision-body-schema';
-import { createDocumentRevisionBodySchema } from '../domain/models/create-document-revision-body-schema';
+import { createDocumentRevisionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-revision-schemas';
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
