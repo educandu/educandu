@@ -72,7 +72,7 @@ class DocumentService {
   }
 
   async createDocumentRevision({ doc, user, restoredFrom = null }) {
-    if (!user || !user._id) {
+    if (!user?._id) {
       throw new Error('No user specified');
     }
 
@@ -185,7 +185,7 @@ class DocumentService {
   }
 
   async restoreDocumentRevision({ documentKey, revisionId, user }) {
-    if (!user || !user._id) {
+    if (!user?._id) {
       throw new Error('No user specified');
     }
 
