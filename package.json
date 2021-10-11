@@ -4,7 +4,7 @@
   "description": "The elmu website",
   "main": "src/index.js",
   "engines": {
-    "node": "14.x.x"
+    "node": "16.x.x"
   },
   "scripts": {
     "ci:prepare": "gulp ci:prepare",
