@@ -77,10 +77,12 @@ class ImageEditor extends React.Component {
   }
 
   handleEffectOptionChange(e) {
+    const currentEffect = this.props.content.effect;
+
     const baseProps = {
-      sourceType: SOURCE_TYPE.internal,
-      sourceUrl: '',
-      text: ''
+      sourceType: currentEffect?.sourceType || SOURCE_TYPE.internal,
+      sourceUrl: currentEffect?.sourceUrl || '',
+      text: currentEffect?.text || ''
     };
 
     switch (e.target.value) {
