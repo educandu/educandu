@@ -210,6 +210,7 @@ tasks.bundleJs = async function bundleJs() {
     'color-convert',
     'map-age-cleaner',
     'mem',
+    'mime',
     'mimic-fn',
     'p-defer',
     'p-is-promise',
