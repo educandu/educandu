@@ -2,7 +2,6 @@ import express from 'express';
 import passport from 'passport';
 import urls from '../utils/urls';
 import session from 'express-session';
-import { NotFound, BadRequest } from 'http-errors';
 import connectMongo from 'connect-mongo';
 import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
@@ -10,12 +9,13 @@ import Database from '../stores/database.js';
 import permissions from '../domain/permissions';
 import UserService from '../services/user-service';
 import MailService from '../services/mail-service';
+import { NotFound, BadRequest } from 'http-errors';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
+import userRequestHandlers from './user-request-handlers';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import { SAVE_USER_RESULT } from '../domain/user-management';
 import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
@@ -123,21 +123,13 @@ class UserController {
     });
 
     router.post('/api/v1/users', jsonParser, async (req, res) => {
-      const { username, password, email } = req.body;
-
-      if (email !== email.toLowerCase()) {
-        throw new BadRequest('The \'email\' field is expected to be in lower case.');
-      }
-
-      const { result, user } = await this.userService.createUser(username, password, email);
-
-      if (result === SAVE_USER_RESULT.success) {
-        const { origin } = requestHelper.getHostInfo(req);
-        const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
-        await this.mailService.sendRegistrationVerificationLink(email, verificationLink);
-      }
-
-      res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
+      await userRequestHandlers.handlePostUser({
+        req,
+        res,
+        userService: this.userService,
+        clientDataMapper: this.clientDataMapper,
+        mailService: this.mailService
+      });
     });
 
     router.post('/api/v1/users/request-password-reset', jsonParser, async (req, res) => {
