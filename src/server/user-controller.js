@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import urls from '../utils/urls';
 import session from 'express-session';
-import { NotFound } from 'http-errors';
+import { NotFound, BadRequest } from 'http-errors';
 import connectMongo from 'connect-mongo';
 import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
@@ -124,6 +124,11 @@ class UserController {
 
     router.post('/api/v1/users', jsonParser, async (req, res) => {
       const { username, password, email } = req.body;
+
+      if (email !== email.toLowerCase()) {
+        throw new BadRequest('The \'email\' field is expected to be in lower case.');
+      }
+
       const { result, user } = await this.userService.createUser(username, password, email);
 
       if (result === SAVE_USER_RESULT.success) {
@@ -160,11 +165,14 @@ class UserController {
     });
 
     router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], async (req, res) => {
-      const { result, user } = await this.userService.updateUserAccount({
-        userId: req.user._id,
-        username: req.body.username,
-        email: req.body.email
-      });
+      const userId = req.user._id;
+      const { username, email } = req.body;
+
+      if (email !== email.toLowerCase()) {
+        throw new BadRequest('The \'email\' field is expected to be in lower case.');
+      }
+
+      const { result, user } = await this.userService.updateUserAccount({ userId, username, email });
 
       res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
     });
