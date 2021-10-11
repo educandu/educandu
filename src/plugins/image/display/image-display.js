@@ -39,6 +39,7 @@ const revealEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => {
       <ReactCompareSlider
         position={effect.startPosition}
         portrait={effect.orientation === ORIENTATION.vertical}
+        className={`Image-img u-max-width-${content.maxWidth || 100}`}
         itemOne={<ReactCompareSliderImage src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)} />}
         itemTwo={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl, clientConfig.cdnRootUrl)} />}
         />
