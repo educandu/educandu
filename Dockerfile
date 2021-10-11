@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package.json yarn.lock /app/
 
-RUN apk --no-cache --virtual build-dependencies add git python make g++ \
+RUN apk --no-cache --virtual build-dependencies add git \
     && yarn install --non-interactive --frozen-lockfile --check-files --production=true \
     && apk del build-dependencies
 
