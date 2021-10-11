@@ -2,6 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import urls from '../utils/urls';
 import session from 'express-session';
+import { NotFound } from 'http-errors';
 import connectMongo from 'connect-mongo';
 import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
@@ -9,11 +10,10 @@ import Database from '../stores/database.js';
 import permissions from '../domain/permissions';
 import UserService from '../services/user-service';
 import MailService from '../services/mail-service';
-import { NotFound, BadRequest } from 'http-errors';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
-import userRequestHandlers from './user-request-handlers';
+import UserRequestHandler from './user-request-handler';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
 import needsAuthentication from '../domain/needs-authentication-middleware';
@@ -23,11 +23,12 @@ const LocalStrategy = passportLocal.Strategy;
 const MongoSessionStore = connectMongo(session);
 
 class UserController {
-  static get inject() { return [ServerConfig, Database, UserService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, Database, UserRequestHandler, UserService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, database, userRequestHandler, userService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.database = database;
+    this.userRequestHandler = userRequestHandler;
     this.userService = userService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
@@ -122,15 +123,7 @@ class UserController {
       res.send({ users: result });
     });
 
-    router.post('/api/v1/users', jsonParser, async (req, res) => {
-      await userRequestHandlers.handlePostUser({
-        req,
-        res,
-        userService: this.userService,
-        clientDataMapper: this.clientDataMapper,
-        mailService: this.mailService
-      });
-    });
+    router.post('/api/v1/users', jsonParser, (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
     router.post('/api/v1/users/request-password-reset', jsonParser, async (req, res) => {
       const { email } = req.body;
@@ -156,29 +149,9 @@ class UserController {
       return res.send({ user });
     });
 
-    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], async (req, res) => {
-      const userId = req.user._id;
-      const { username, email } = req.body;
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserAccount(req, res));
 
-      if (email !== email.toLowerCase()) {
-        throw new BadRequest('The \'email\' field is expected to be in lower case.');
-      }
-
-      const { result, user } = await this.userService.updateUserAccount({ userId, username, email });
-
-      res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
-    });
-
-    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], async (req, res) => {
-      const userId = req.user._id;
-      const { profile } = req.body;
-      const savedProfile = await this.userService.updateUserProfile(userId, profile);
-      if (!savedProfile) {
-        throw new NotFound();
-      }
-
-      return res.send({ profile: savedProfile });
-    });
+    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserProfile(req, res));
 
     router.post('/api/v1/users/login', jsonParser, (req, res, next) => {
       passport.authenticate('local', (err, user) => {
