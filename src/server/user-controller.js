@@ -13,9 +13,9 @@ import MailService from '../services/mail-service';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
+import UserRequestHandler from './user-request-handler';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import { SAVE_USER_RESULT } from '../domain/user-management';
 import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
@@ -23,11 +23,12 @@ const LocalStrategy = passportLocal.Strategy;
 const MongoSessionStore = connectMongo(session);
 
 class UserController {
-  static get inject() { return [ServerConfig, Database, UserService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, Database, UserRequestHandler, UserService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, database, userRequestHandler, userService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.database = database;
+    this.userRequestHandler = userRequestHandler;
     this.userService = userService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
@@ -122,18 +123,7 @@ class UserController {
       res.send({ users: result });
     });
 
-    router.post('/api/v1/users', jsonParser, async (req, res) => {
-      const { username, password, email } = req.body;
-      const { result, user } = await this.userService.createUser(username, password, email);
-
-      if (result === SAVE_USER_RESULT.success) {
-        const { origin } = requestHelper.getHostInfo(req);
-        const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
-        await this.mailService.sendRegistrationVerificationLink(email, verificationLink);
-      }
-
-      res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
-    });
+    router.post('/api/v1/users', jsonParser, (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
     router.post('/api/v1/users/request-password-reset', jsonParser, async (req, res) => {
       const { email } = req.body;
@@ -159,26 +149,9 @@ class UserController {
       return res.send({ user });
     });
 
-    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], async (req, res) => {
-      const { result, user } = await this.userService.updateUserAccount({
-        userId: req.user._id,
-        username: req.body.username,
-        email: req.body.email
-      });
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserAccount(req, res));
 
-      res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
-    });
-
-    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], async (req, res) => {
-      const userId = req.user._id;
-      const { profile } = req.body;
-      const savedProfile = await this.userService.updateUserProfile(userId, profile);
-      if (!savedProfile) {
-        throw new NotFound();
-      }
-
-      return res.send({ profile: savedProfile });
-    });
+    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserProfile(req, res));
 
     router.post('/api/v1/users/login', jsonParser, (req, res, next) => {
       passport.authenticate('local', (err, user) => {
