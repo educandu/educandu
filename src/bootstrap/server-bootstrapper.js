@@ -10,11 +10,11 @@ import ServerResourceLoader from '../resources/server-resource-loader';
 
 const logger = new Logger(__filename);
 
-export async function createContainer() {
+export async function createContainer(config = null) {
   logger.info('Creating container');
   const container = await commonBootstrapper.createContainer();
 
-  const serverConfig = container.get(ServerConfig);
+  const serverConfig = config || container.get(ServerConfig);
 
   const clientConfig = new ClientConfig(serverConfig.exportClientConfigValues());
   container.registerInstance(ClientConfig, clientConfig);
@@ -26,6 +26,7 @@ export async function createContainer() {
 
   container.registerInstance(Database, database);
 
+  logger.info('Creating Cdn');
   const cdn = await Cdn.create({
     endpoint: serverConfig.cdnEndpoint,
     region: serverConfig.cdnRegion,
@@ -35,6 +36,7 @@ export async function createContainer() {
     rootUrl: serverConfig.cdnRootUrl
   });
 
+  logger.info('Registering Cdn');
   container.registerInstance(Cdn, cdn);
 
   const resourceLoader = new ServerResourceLoader();

@@ -7,7 +7,7 @@ export const usersPath = '/users';
 export const settingsPath = '/settings';
 export const loginPath = '/login';
 export const logoutPath = '/logout';
-export const profilePath = '/profile';
+export const accountPath = '/account';
 export const registerPath = '/register';
 export const resetPasswordPath = '/reset-password';
 
@@ -110,8 +110,8 @@ export function getLogoutUrl() {
   return logoutPath;
 }
 
-export function getProfileUrl() {
-  return profilePath;
+export function getAccountUrl() {
+  return accountPath;
 }
 
 export function getRegisterUrl() {
@@ -167,7 +167,7 @@ export default {
   getHomeUrl,
   getLoginUrl,
   getLogoutUrl,
-  getProfileUrl,
+  getAccountUrl,
   getRegisterUrl,
   getResetPasswordUrl,
   createFullyQualifiedUrl

@@ -9,7 +9,6 @@ import HandlerFactory from '../plugins/handler-factory';
 import DocumentLockStore from '../stores/document-lock-store';
 import DocumentOrderStore from '../stores/document-order-store';
 import DocumentRevisionStore from '../stores/document-revision-store';
-import { validateCreateDocumentRevision } from '../domain/models/create-document-revision-request';
 
 const logger = new Logger(__filename);
 
@@ -72,12 +71,10 @@ class DocumentService {
     return this.documentRevisionStore.findOne({ _id: id });
   }
 
-  async createDocumentRevision({ data, user }) {
-    if (!user || !user._id) {
+  async createDocumentRevision({ doc, user, restoredFrom = null }) {
+    if (!user?._id) {
       throw new Error('No user specified');
     }
-
-    const doc = validateCreateDocumentRevision(data);
 
     let lock;
     const now = dateTime.now();
@@ -111,7 +108,7 @@ class DocumentService {
         ancestorRevision = null;
       }
 
-      const newSections = data.sections.map(section => {
+      const newSections = doc.sections.map(section => {
         const sectionKey = section.key;
         const ancestorSection = ancestorRevision?.sections.find(s => s.key === sectionKey) || null;
 
@@ -160,6 +157,7 @@ class DocumentService {
         _id: uniqueId.create(),
         key: documentKey,
         order: nextOrder,
+        restoredFrom,
         createdOn: now,
         createdBy: userId,
         title: doc.title || '',
@@ -184,6 +182,38 @@ class DocumentService {
         await this.documentLockStore.releaseLock(lock);
       }
     }
+  }
+
+  async restoreDocumentRevision({ documentKey, revisionId, user }) {
+    if (!user?._id) {
+      throw new Error('No user specified');
+    }
+
+    const revisionToRestore = await this.getDocumentRevisionById(revisionId);
+    if (revisionToRestore?.key !== documentKey) {
+      throw new Error(`Revision ${revisionId} is not valid`);
+    }
+
+    const latestRevision = await this.getCurrentDocumentRevisionByKey(documentKey);
+    if (revisionToRestore._id === latestRevision._id) {
+      throw new Error(`Revision ${revisionId} cannot be restored, it is the latest revision`);
+    }
+
+    const doc = {
+      title: revisionToRestore.title,
+      slug: revisionToRestore.slug,
+      namespace: revisionToRestore.namespace,
+      language: revisionToRestore.language,
+      sections: cloneDeep(revisionToRestore.sections),
+      appendTo: {
+        key: documentKey,
+        ancestorId: latestRevision._id
+      }
+    };
+
+    await this.createDocumentRevision({ doc, user, restoredFrom: revisionToRestore._id });
+
+    return this.getAllDocumentRevisionsByKey(documentKey);
   }
 
   async hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants, user }) {
@@ -260,7 +290,7 @@ class DocumentService {
       namespace: lastRevision.namespace,
       language: lastRevision.language,
       sections: lastRevision.sections,
-      contributors: contributors
+      contributors
     };
   }
 }

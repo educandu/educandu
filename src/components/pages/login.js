@@ -21,7 +21,6 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
-    this.formRef = React.createRef();
     this.state = {
       loginError: null
     };
@@ -35,7 +34,6 @@ class Login extends React.Component {
       if (user) {
         this.redirectAfterLogin();
       } else {
-        this.formRef.current.resetFields();
         this.showLoginError();
       }
     } catch (error) {
@@ -111,7 +109,7 @@ class Login extends React.Component {
       : null;
 
     const loginForm = (
-      <Form ref={this.formRef} onFinish={this.handleFinish} scrollToFirstError>
+      <Form onFinish={this.handleFinish} scrollToFirstError>
         <FormItem {...formItemLayout} label={t('username')} name="username" rules={usernameValidationRules}>
           <Input />
         </FormItem>

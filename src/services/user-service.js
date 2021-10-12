@@ -5,7 +5,7 @@ import { USER } from '../domain/roles';
 import uniqueId from '../utils/unique-id';
 import UserStore from '../stores/user-store';
 import PasswordResetRequestStore from '../stores/password-reset-request-store';
-import { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } from '../domain/user-management';
+import { SAVE_USER_RESULT } from '../domain/user-management';
 
 const DEFAULT_ROLE_NAME = USER;
 const PROVIDER_NAME_ELMU = 'elmu';
@@ -38,7 +38,7 @@ class UserService {
   }
 
   getUserByEmailAddress(email, provider = PROVIDER_NAME_ELMU) {
-    return this.userStore.findOne({ email, provider });
+    return this.userStore.findOne({ email: email.toLowerCase(), provider });
   }
 
   findUser(username, provider = PROVIDER_NAME_ELMU) {
@@ -48,6 +48,30 @@ class UserService {
   saveUser(user) {
     logger.info('Saving user with id %s', user._id);
     return this.userStore.save(user);
+  }
+
+  async updateUserAccount({ userId, username, email }) {
+    logger.info('Updating account data for user with id %s', userId);
+    const lowerCasedEmail = email.toLowerCase();
+
+    const otherExistingUser = await this.userStore.findOne({
+      $and: [
+        { _id: { $ne: userId } },
+        { $or: [{ username }, { email: lowerCasedEmail }] }
+      ]
+    });
+
+    if (otherExistingUser) {
+      return otherExistingUser.email === lowerCasedEmail
+        ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
+        : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
+    }
+
+    const user = await this.getUserById(userId);
+    const updatedUser = { ...user, username, email: lowerCasedEmail };
+
+    await this.saveUser(updatedUser);
+    return { result: SAVE_USER_RESULT.success, user: updatedUser };
   }
 
   async updateUserProfile(userId, newProfile) {
@@ -77,19 +101,21 @@ class UserService {
   }
 
   async createUser(username, password, email, provider = PROVIDER_NAME_ELMU) {
-    const existingUser = await this.userStore.findOne({ $or: [{ username }, { email }] });
+    const lowerCasedEmail = email.toLowerCase();
+
+    const existingUser = await this.userStore.findOne({ $or: [{ username }, { email: lowerCasedEmail }] });
     if (existingUser) {
-      return existingUser.email.toLowerCase() === email.toLowerCase()
-        ? { result: CREATE_USER_RESULT_DUPLICATE_EMAIL, user: null }
-        : { result: CREATE_USER_RESULT_DUPLICATE_USERNAME, user: null };
+      return existingUser.email === lowerCasedEmail
+        ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
+        : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
     }
 
     const user = {
       _id: uniqueId.create(),
-      provider: provider,
-      username: username,
+      provider,
+      username,
       passwordHash: await this._hashPassword(password),
-      email: email.toLowerCase(),
+      email: lowerCasedEmail,
       roles: [DEFAULT_ROLE_NAME],
       expires: moment.utc().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
       verificationCode: uniqueId.create(),
@@ -98,7 +124,7 @@ class UserService {
 
     logger.info('Creating new user with id %s', user._id);
     await this.saveUser(user);
-    return { result: CREATE_USER_RESULT_SUCCESS, user: user };
+    return { result: SAVE_USER_RESULT.success, user };
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME_ELMU) {

@@ -1,5 +1,5 @@
 import Login from '../components/pages/login';
-import Profile from '../components/pages/profile';
+import Account from '../components/pages/account';
 import Register from '../components/pages/register';
 import { hydrateApp } from '../bootstrap/client-bootstrapper';
 import ResetPassword from '../components/pages/reset-password';
@@ -8,7 +8,7 @@ import CompletePasswordReset from '../components/pages/complete-password-reset';
 
 hydrateApp({
   'login': Login,
-  'profile': Profile,
+  'account': Account,
   'register': Register,
   'reset-password': ResetPassword,
   'complete-registration': CompleteRegistration,

@@ -1,0 +1,99 @@
+name: Build Commit
+on: [push]
+jobs:
+  build-elmu:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development
+      ELMU_ENV: test
+    services:
+      minio:
+        image: bitnami/minio:2020.12.18
+        ports:
+          - 9000:9000
+        env:
+          MINIO_ACCESS_KEY: "UVDXF41PYEAX0PXD8826"
+          MINIO_SECRET_KEY: "SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx"
+          MINIO_BROWSER: "on"
+          MINIO_DOMAIN: "localhost"
+      mongo:
+        image: mongo:4.2.11-bionic
+        ports:
+          - 27017:27017
+      maildev:
+        image: maildev/maildev:1.1.0
+        ports:
+          - 8000:8000
+    steps:
+      - name: Change user
+        run: sudo chown -R $USER:$USER ${{ github.workspace }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install node modules
+        run: yarn install --non-interactive --check-files --frozen-lockfile
+      - name: Prepare build
+        run: ./node_modules/.bin/gulp ciPrepare || echo "Failed"
+      - name: Build
+        run: ./node_modules/.bin/gulp ci
+      - name: Create release info
+        run: |
+          echo "Release Number: 0.1.$GITHUB_RUN_NUMBER" > ./dist/release.txt
+      - name: Upload workspace
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
+      - name: Working working_directory
+        run: pwd
+      - name: File structure
+        run: ls
+  deploy-release:
+    runs-on: ubuntu-latest
+    needs: [build-elmu]
+    if: github.ref == 'refs/heads/main'
+    env:
+      DOCKER_IMAGE: elmu/elmu-web
+      OCTO_PROJECT_NAME: elmu-web
+      OCTO_ENVIRONMENT_NAME: Staging
+      OCTO_SERVER: https://elmu.octopus.app
+    steps:
+      - name: Set RELEASE_NUMBER
+        run: echo "RELEASE_NUMBER=$(echo 0.1.$GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
+      - name: Create release notes
+        run: echo "RELEASE_NOTES=$(echo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)" >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: .
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.RELEASE_NUMBER }}
+      - name: Install Octopus CLI
+        uses: OctopusDeploy/install-octopus-cli-action@v1.1.1
+        with:
+          version: latest
+      - name: Create a release in Octopus Deploy 🐙
+        uses: OctopusDeploy/create-release-action@v1.1.1
+        with:
+          api_key: ${{ secrets.OCTO_API_KEY }}
+          project: ${{ env.OCTO_PROJECT_NAME }}
+          server: ${{ env.OCTO_SERVER }}
+          release_notes: ${{ env.RELEASE_NOTES }}
+          release_number: ${{ env.RELEASE_NUMBER }}
+          deploy_to: ${{ env.OCTO_ENVIRONMENT_NAME }}

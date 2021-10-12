@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import DeletedSection from './deleted-section';
 import { withTranslation } from 'react-i18next';
 import { Menu, Radio, Button, Dropdown } from 'antd';
-import { confirmSectionDelete } from './section-action-dialogs';
+import { confirmSectionDelete } from './confirmation-dialogs';
 import { documentRevisionShape, sectionShape, translationProps } from '../ui/default-prop-types';
 import {
   SettingOutlined,

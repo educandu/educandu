@@ -5,16 +5,19 @@ import PropTypes from 'prop-types';
 import urls from '../../utils/urls';
 import ElmuLogo from '../elmu-logo';
 import Countdown from '../countdown';
+import EmailInput from '../email-input';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
+import UsernameInput from '../username-input';
 import errorHelper from '../../ui/error-helper';
 import { withSettings } from '../settings-context';
 import { withLanguage } from '../language-context';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
+import inputValidators from '../../utils/input-validators';
 import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
-import { CREATE_USER_RESULT_SUCCESS, CREATE_USER_RESULT_DUPLICATE_EMAIL, CREATE_USER_RESULT_DUPLICATE_USERNAME } from '../../domain/user-management';
+import { SAVE_USER_RESULT } from '../../domain/user-management';
 
 const logger = new Logger(__filename);
 
@@ -37,14 +40,14 @@ class Register extends React.Component {
       const { userApiClient } = this.props;
       const { result, user } = await userApiClient.register({ username, password, email });
       switch (result) {
-        case CREATE_USER_RESULT_SUCCESS:
+        case SAVE_USER_RESULT.success:
           this.setState({ user });
           break;
-        case CREATE_USER_RESULT_DUPLICATE_EMAIL:
+        case SAVE_USER_RESULT.duplicateEmail:
           this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
           this.formRef.current.validateFields(['email'], { force: true });
           break;
-        case CREATE_USER_RESULT_DUPLICATE_USERNAME:
+        case SAVE_USER_RESULT.duplicateUsername:
           this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
           this.formRef.current.validateFields(['username'], { force: true });
           break;
@@ -89,45 +92,18 @@ class Register extends React.Component {
       }
     };
 
-    const usernameValidationRules = [
-      {
-        required: true,
-        message: t('enterUsername'),
-        whitespace: true
-      },
-      {
-        validator: (rule, value) => {
-          const { forbiddenUsernames } = this.state;
-          return value && forbiddenUsernames.includes(value.toLowerCase())
-            ? Promise.reject(new Error(t('usernameIsInUse')))
-            : Promise.resolve();
-        }
-      }
-    ];
-
-    const emailValidationRules = [
-      {
-        required: true,
-        message: t('enterEmail')
-      },
-      {
-        type: 'email',
-        message: t('emailIsInvalid')
-      },
-      {
-        validator: (rule, value) => {
-          const { forbiddenEmails } = this.state;
-          return value && forbiddenEmails.includes(value.toLowerCase())
-            ? Promise.reject(new Error(t('emailIsInUse')))
-            : Promise.resolve();
-        }
-      }
-    ];
-
     const passwordValidationRules = [
       {
         required: true,
         message: t('enterPassword')
+      },
+      {
+        validator: (rule, value) => {
+          const minLength = 8;
+          return value && !inputValidators.isValidPassword({ password: value, minLength })
+            ? Promise.reject(new Error(t('passwordIsInvalid', { length: minLength })))
+            : Promise.resolve();
+        }
       }
     ];
 
@@ -156,12 +132,8 @@ class Register extends React.Component {
     const registrationForm = (
       <div className="RegisterPage-form">
         <Form ref={this.formRef} onFinish={this.handleFinish} scrollToFirstError>
-          <FormItem {...formItemLayout} label={t('userName')} name="username" rules={usernameValidationRules}>
-            <Input />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('email')} name="email" rules={emailValidationRules}>
-            <Input />
-          </FormItem>
+          <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={this.state.forbiddenUsernames} />
+          <EmailInput formItemLayout={formItemLayout} forbiddenEmails={this.state.forbiddenEmails} />
           <FormItem {...formItemLayout} label={t('password')} name="password" rules={passwordValidationRules}>
             <Input type="password" />
           </FormItem>

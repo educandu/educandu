@@ -38,7 +38,7 @@ const TEST_MAILDEV_CONTAINER_NAME = 'elmu-maildev';
 const TEST_MONGO_IMAGE = 'mongo:4.2.11-bionic';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
-const TEST_MINIO_IMAGE = 'minio/minio:RELEASE.2020-12-18T03-27-42Z';
+const TEST_MINIO_IMAGE = 'bitnami/minio:2020.12.18';
 const TEST_MINIO_CONTAINER_NAME = 'elmu-minio';
 
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
@@ -48,6 +48,7 @@ const FAVICON_DATA_FILE = 'favicon-data.json';
 
 const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimized');
 const verbous = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbous');
+const fix = process.argv.includes('--fix');
 
 const autoprefixOptions = {
   browsers: ['last 3 versions', 'Firefox ESR', 'IE 11']
@@ -95,10 +96,15 @@ tasks.clean = async function clean() {
   await del(['.tmp', 'dist', 'reports']);
 };
 
+function isFixed(file) {
+  return fix && file.eslint?.fixed;
+}
+
 tasks.lint = function lint() {
-  return src(['*.js', 'src/**/*.js', 'scripts/**'])
-    .pipe(eslint())
+  return src(['*.js', 'src/**/*.js', 'scripts/**'], { base: './' })
+    .pipe(eslint({ fix }))
     .pipe(eslint.format())
+    .pipe(gulpif(isFixed, dest('./')))
     .pipe(gulpif(!server, eslint.failAfterError()));
 };
 
@@ -108,7 +114,8 @@ tasks.test = async function test() {
     projects: [__dirname],
     setupFiles: ['./src/test-setup.js'],
     setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
-    runInBand: true
+    runInBand: true,
+    coverage: true
   }, '.');
   if (!results.success) {
     throw Error(`${results.numFailedTests} test(s) failed`);
@@ -211,11 +218,12 @@ tasks.bundleJs = async function bundleJs() {
     'pretty-ms',
     'punycode',
     'thenby',
-    'quick-lru'
+    'quick-lru',
+    'react-compare-slider'
   ];
 
   const bundleConfigs = {
-    entry: entry,
+    entry,
     output: {
       filename: '[name].js'
     },
@@ -269,7 +277,7 @@ tasks.bundleJs = async function bundleJs() {
     node: {
       __filename: true
     },
-    plugins: plugins
+    plugins
   };
 
   const stats = await promisify(webpack)(bundleConfigs);
@@ -461,7 +469,7 @@ tasks.minioUp = async function minioUp() {
       `-e MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}`,
       `-e MINIO_SECRET_KEY=${MINIO_SECRET_KEY}`,
       '-e MINIO_BROWSER=on',
-      `${TEST_MINIO_IMAGE} server /data`
+      `${TEST_MINIO_IMAGE}`
     ].join(' '),
     afterRun: async () => {
       await execa('./scripts/s3-seed', { stdio: 'inherit' });

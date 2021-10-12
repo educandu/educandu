@@ -13,9 +13,9 @@ import MailService from '../services/mail-service';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
+import UserRequestHandler from './user-request-handler';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import { CREATE_USER_RESULT_SUCCESS } from '../domain/user-management';
 import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
@@ -23,11 +23,12 @@ const LocalStrategy = passportLocal.Strategy;
 const MongoSessionStore = connectMongo(session);
 
 class UserController {
-  static get inject() { return [ServerConfig, Database, UserService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, Database, UserRequestHandler, UserService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, database, userRequestHandler, userService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.database = database;
+    this.userRequestHandler = userRequestHandler;
     this.userService = userService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
@@ -83,11 +84,8 @@ class UserController {
 
     router.get('/complete-registration/:verificationCode', async (req, res) => {
       const user = await this.userService.verifyUser(req.params.verificationCode);
-      if (!user) {
-        throw new NotFound();
-      }
-
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', {});
+      const initialState = { user };
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', initialState);
     });
 
     router.get('/login', (req, res) => {
@@ -99,8 +97,8 @@ class UserController {
       return res.redirect(urls.getDefaultLogoutRedirectUrl());
     });
 
-    router.get('/profile', needsAuthentication(), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'profile', {});
+    router.get('/account', needsAuthentication(), (req, res) => {
+      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'account', {});
     });
 
     router.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
@@ -125,18 +123,7 @@ class UserController {
       res.send({ users: result });
     });
 
-    router.post('/api/v1/users', jsonParser, async (req, res) => {
-      const { username, password, email } = req.body;
-      const { result, user } = await this.userService.createUser(username, password, email);
-
-      if (result === CREATE_USER_RESULT_SUCCESS) {
-        const { origin } = requestHelper.getHostInfo(req);
-        const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
-        await this.mailService.sendRegistrationVerificationLink(email, verificationLink);
-      }
-
-      res.send({ result: result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
-    });
+    router.post('/api/v1/users', jsonParser, (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
     router.post('/api/v1/users/request-password-reset', jsonParser, async (req, res) => {
       const { email } = req.body;
@@ -162,16 +149,9 @@ class UserController {
       return res.send({ user });
     });
 
-    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], async (req, res) => {
-      const userId = req.user._id;
-      const { profile } = req.body;
-      const savedProfile = await this.userService.updateUserProfile(userId, profile);
-      if (!savedProfile) {
-        throw new NotFound();
-      }
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserAccount(req, res));
 
-      return res.send({ profile: savedProfile });
-    });
+    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserProfile(req, res));
 
     router.post('/api/v1/users/login', jsonParser, (req, res, next) => {
       passport.authenticate('local', (err, user) => {

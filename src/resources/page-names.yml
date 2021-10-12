@@ -4,9 +4,9 @@ home:
 users:
   en: Users
   de: Benutzer
-profile:
-  en: Profile
-  de: Profil
+account:
+  en: My account
+  de: Mein Konto
 settings:
   en: Settings
   de: Einstellungen

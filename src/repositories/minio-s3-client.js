@@ -19,9 +19,9 @@ class MinioS3Client {
       endPoint: endpointUrl.hostname,
       port: Number(endpointUrl.port) || 0,
       useSSL: endpointUrl.protocol === 'https:',
-      region: region,
-      accessKey: accessKey,
-      secretKey: secretKey
+      region,
+      accessKey,
+      secretKey
     });
   }
 
@@ -67,7 +67,7 @@ class MinioS3Client {
     const etag = await this.tasks.push(cb => this.minioClient.putObject(bucketName, objectName, stream, null, { ...metadata, 'Content-Type': contentType }, cb), PRIORITY_UPLOAD);
     return {
       name: objectName,
-      etag: etag
+      etag
     };
   }
 
