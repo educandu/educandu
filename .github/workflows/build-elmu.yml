@@ -52,7 +52,7 @@ jobs:
   deploy-release:
     runs-on: ubuntu-20.04
     needs: [build-elmu]
-    ##if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     env:
       DOCKER_IMAGE: elmu/elmu-web
       OCTO_PROJECT_NAME: elmu-web
