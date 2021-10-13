@@ -149,11 +149,6 @@ tasks.testWatch = function testWatch(done) {
   done();
 };
 
-tasks.copyIframeresizer = function copyIframeresizer() {
-  return src('./node_modules/iframe-resizer/js/iframeResizer.contentWindow.*')
-    .pipe(dest('static/scripts'));
-};
-
 tasks.bundleCss = function bundleCss() {
   return src('src/styles/main.less')
     .pipe(gulpif(!!server, plumber()))
