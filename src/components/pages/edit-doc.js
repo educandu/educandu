@@ -13,8 +13,6 @@ import errorHelper from '../../ui/error-helper';
 import { withTranslation } from 'react-i18next';
 import pluginInfos from '../../plugins/plugin-infos';
 import ShallowUpdateList from '../shallow-update-list';
-import EditorFactory from '../../plugins/editor-factory';
-import RendererFactory from '../../plugins/renderer-factory';
 import DocumentMetadataEditor from '../document-metadata-editor';
 import DocumentApiClient from '../../services/document-api-client';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -399,8 +397,6 @@ class EditDoc extends React.Component {
                             }}
                             >
                             <SectionEditor
-                              EditorComponent={this.getEditorComponentForSection(section)}
-                              DisplayComponent={this.getDisplayComponentForSection(section)}
                               onContentChanged={this.handleContentChanged}
                               onSectionMovedUp={this.handleSectionMovedUp}
                               onSectionMovedDown={this.handleSectionMovedDown}
@@ -437,16 +433,12 @@ class EditDoc extends React.Component {
 EditDoc.propTypes = {
   ...translationProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
-  editorFactory: PropTypes.instanceOf(EditorFactory).isRequired,
   initialState: PropTypes.shape({
     documentRevision: documentRevisionShape.isRequired,
     proposedSections: PropTypes.arrayOf(sectionShape)
-  }).isRequired,
-  rendererFactory: PropTypes.instanceOf(RendererFactory).isRequired
+  }).isRequired
 };
 
 export default withTranslation('editDoc')(inject({
-  documentApiClient: DocumentApiClient,
-  rendererFactory: RendererFactory,
-  editorFactory: EditorFactory
+  documentApiClient: DocumentApiClient
 }, EditDoc));

@@ -1,7 +1,6 @@
 import { Container } from '../common/di';
 import PluginFactoryBase from './plugin-factory-base';
 
-// Kann weg?
 const apis = [];
 
 class HandlerFactory extends PluginFactoryBase {
