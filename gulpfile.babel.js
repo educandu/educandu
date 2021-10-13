@@ -38,7 +38,7 @@ const TEST_MAILDEV_CONTAINER_NAME = 'elmu-maildev';
 const TEST_MONGO_IMAGE = 'mongo:4.2.11-bionic';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
-const TEST_MINIO_IMAGE = 'minio/minio:RELEASE.2020-12-18T03-27-42Z';
+const TEST_MINIO_IMAGE = 'bitnami/minio:2020.12.18';
 const TEST_MINIO_CONTAINER_NAME = 'elmu-minio';
 
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
@@ -469,7 +469,7 @@ tasks.minioUp = async function minioUp() {
       `-e MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}`,
       `-e MINIO_SECRET_KEY=${MINIO_SECRET_KEY}`,
       '-e MINIO_BROWSER=on',
-      `${TEST_MINIO_IMAGE} server /data`
+      `${TEST_MINIO_IMAGE}`
     ].join(' '),
     afterRun: async () => {
       await execa('./scripts/s3-seed', { stdio: 'inherit' });

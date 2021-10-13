@@ -1,29 +1,25 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 require('@babel/register');
 require('core-js');
 
-const path = require('path');
 const Cdn = require('../src/repositories/cdn').default;
 const testHelper = require('../src/test-helper').default;
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
-const H5pFileProcessor = require('../src/plugins/h5p-player/h5p-file-processor').default;
 
 (async function seed() {
-
   const container = await serverBootstrapper.createContainer();
 
+  console.log('Getting cdn');
   const cdn = container.get(Cdn);
-  const h5pFileProcessor = container.get(H5pFileProcessor);
 
+  console.log('Removing cdn buckets');
   await testHelper.removeAllBuckets(cdn);
 
+  console.log('Ensuring cdn buckets exist');
   await testHelper.ensurePublicBucketExists(cdn);
 
-  const h5pTestFile = path.join(__dirname, '../test/h5p-test-files/interactive-video-2-618.h5p');
-
-  await h5pFileProcessor.install(h5pTestFile, '1', 'rkN0Hrnb7');
-
+  console.log('Disposing container');
   await serverBootstrapper.disposeContainer(container);
-
 })();
