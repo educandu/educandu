@@ -77,10 +77,12 @@ class ImageEditor extends React.Component {
   }
 
   handleEffectOptionChange(e) {
+    const currentEffect = this.props.content.effect;
+
     const baseProps = {
-      sourceType: SOURCE_TYPE.internal,
-      sourceUrl: '',
-      text: ''
+      sourceType: currentEffect?.sourceType || SOURCE_TYPE.internal,
+      sourceUrl: currentEffect?.sourceUrl || '',
+      text: currentEffect?.text || ''
     };
 
     switch (e.target.value) {
@@ -184,7 +186,7 @@ class ImageEditor extends React.Component {
                   </RadioGroup>
                 </FormItem>
                 {effect.sourceType === 'external' && (
-                  <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+                  <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(effect.sourceUrl, t)} hasFeedback>
                     <Input value={effect.sourceUrl} onChange={this.handleEffectExternalSourceUrlValueChanged} />
                   </FormItem>
                 )}

@@ -115,7 +115,13 @@ export async function removeBucket(cdn, bucketName) {
 
 export async function removeAllBuckets(cdn) {
   const s3Client = cdn.s3Client;
+
+  // eslint-disable-next-line no-console
+  console.log('Listing buckets');
   const buckets = await s3Client.listBuckets();
+
+  // eslint-disable-next-line no-console
+  console.log(`Found ${buckets.length}`);
   await Promise.all(buckets.map(b => removeBucket(cdn, b.name)));
 }
 

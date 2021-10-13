@@ -14,6 +14,19 @@ class EmailInput extends React.Component {
     autoBind(this);
   }
 
+  normalize(email) {
+    return email ? email.toLowerCase() : email;
+  }
+
+  handleOnChange(event) {
+    const element = event.target;
+    const caret = element.selectionStart;
+    window.requestAnimationFrame(() => {
+      element.selectionStart = caret;
+      element.selectionEnd = caret;
+    });
+  }
+
   render() {
     const { forbiddenEmails, formItemLayout, user, t } = this.props;
 
@@ -36,8 +49,8 @@ class EmailInput extends React.Component {
     ];
 
     return (
-      <FormItem {...formItemLayout} label={t('email')} name="email" initialValue={user?.email || ''} rules={validationRules}>
-        <Input />
+      <FormItem {...formItemLayout} label={t('email')} name="email" initialValue={user?.email || ''} normalize={this.normalize} rules={validationRules}>
+        <Input onChange={this.handleOnChange} />
       </FormItem>
     );
   }

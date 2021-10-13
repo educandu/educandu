@@ -26,6 +26,7 @@ export async function createContainer(config = null) {
 
   container.registerInstance(Database, database);
 
+  logger.info('Creating Cdn');
   const cdn = await Cdn.create({
     endpoint: serverConfig.cdnEndpoint,
     region: serverConfig.cdnRegion,
@@ -35,6 +36,7 @@ export async function createContainer(config = null) {
     rootUrl: serverConfig.cdnRootUrl
   });
 
+  logger.info('Registering Cdn');
   container.registerInstance(Cdn, cdn);
 
   const resourceLoader = new ServerResourceLoader();

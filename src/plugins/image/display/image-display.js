@@ -40,8 +40,8 @@ const revealEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => {
         position={effect.startPosition}
         portrait={effect.orientation === ORIENTATION.vertical}
         className={`Image-img u-max-width-${content.maxWidth || 100}`}
-        itemOne={<ReactCompareSliderImage src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)} />}
-        itemTwo={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl, clientConfig.cdnRootUrl)} />}
+        itemOne={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl, clientConfig.cdnRootUrl)} />}
+        itemTwo={<ReactCompareSliderImage src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)} />}
         />
       <div className="Image-copyrightInfo">
         <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }} />
