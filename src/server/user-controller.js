@@ -3,7 +3,7 @@ import passport from 'passport';
 import urls from '../utils/urls';
 import session from 'express-session';
 import { NotFound } from 'http-errors';
-import connectMongo from 'connect-mongo';
+import MongoStore from 'connect-mongo';
 import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
@@ -13,14 +13,13 @@ import MailService from '../services/mail-service';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
+import { SAVE_USER_RESULT } from '../domain/user-management';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import { SAVE_USER_RESULT } from '../domain/user-management';
 import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
-const MongoSessionStore = connectMongo(session);
 
 class UserController {
   static get inject() { return [ServerConfig, Database, UserService, MailService, ClientDataMapper, PageRenderer]; }
@@ -40,9 +39,9 @@ class UserController {
       secret: this.serverConfig.sessionSecret,
       resave: false,
       saveUninitialized: false, // Don't create session until something stored
-      store: new MongoSessionStore({
+      store: MongoStore.create({
         client: this.database._mongoClient,
-        collection: sessionsStoreSpec.name,
+        collectionName: sessionsStoreSpec.name,
         ttl: this.serverConfig.sessionDurationInMinutes * 60,
         autoRemove: 'disabled', // We use our own index
         stringify: false // Do not serialize session data

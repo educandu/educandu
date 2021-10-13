@@ -207,6 +207,7 @@ tasks.bundleJs = async function bundleJs() {
     'auto-bind',
     'chalk',
     'clipboard-copy',
+    'color',
     'color-convert',
     'map-age-cleaner',
     'mem',
