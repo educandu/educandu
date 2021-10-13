@@ -66,7 +66,7 @@ jobs:
       OCTO_SERVER: https://elmu.octopus.app
     steps:
       - name: Set RELEASE_NUMBER
-        run: echo "RELEASE_NUMBER="$(cat ./dist/release.txt | tr -d '\n')" >> $GITHUB_ENV
+        run: echo "RELEASE_NUMBER="$(cat ./dist/release.txt | tr -d '\n')"" >> $GITHUB_ENV
       - name: Create release notes
         run: echo "RELEASE_NOTES=$(echo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)" >> $GITHUB_ENV
       - uses: actions/checkout@v2
