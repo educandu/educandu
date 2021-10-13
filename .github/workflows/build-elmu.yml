@@ -30,14 +30,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: "16"
-      - uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          node-version: "16.10.0"
+          cache: "yarn"
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Prepare build
@@ -65,12 +59,12 @@ jobs:
       OCTO_ENVIRONMENT_NAME: Staging
       OCTO_SERVER: https://elmu.octopus.app
     steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
       - name: Set RELEASE_NUMBER
         run: echo "RELEASE_NUMBER="$(cat ./dist/release.txt | tr -d '\n')"" >> $GITHUB_ENV
       - name: Create release notes
         run: echo "RELEASE_NOTES=$(echo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)" >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
