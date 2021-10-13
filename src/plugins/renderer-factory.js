@@ -5,7 +5,6 @@ import ImagePlugin from './image/renderer';
 import IframePlugin from './iframe/renderer';
 import AnavisPlugin from './anavis/renderer';
 import MarkdownPlugin from './markdown/renderer';
-import H5pPlayerPlugin from './h5p-player/renderer';
 import AnnotationPlugin from './annotation/renderer';
 import ImageTilePlugin from './image-tiles/renderer';
 import DiagramNetPlugin from './diagram-net/renderer';
@@ -25,7 +24,6 @@ const renderers = [
   AnavisPlugin,
   ImageTilePlugin,
   DiagramNetPlugin,
-  H5pPlayerPlugin,
   AnnotationPlugin,
   AbcNotationPlugin,
   EarTrainingPlugin,

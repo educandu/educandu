@@ -1,8 +1,7 @@
 import { Container } from '../common/di';
-import H5pPlayerPlugin from './h5p-player/api';
 import PluginFactoryBase from './plugin-factory-base';
 
-const apis = [H5pPlayerPlugin];
+const apis = [];
 
 class ApiFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }
