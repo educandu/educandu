@@ -12,7 +12,7 @@ import earTraining from './ear-training/info';
 import abcNotation from './abc-notation/info';
 import diagramNet from './diagram-net/info';
 
-export default [
+const pluginInfos = [
   markdown,
   anavis,
   image,
@@ -27,3 +27,7 @@ export default [
   abcNotation,
   diagramNet
 ];
+
+export const pluginTypes = pluginInfos.map(info => info.type);
+
+export default pluginInfos;
