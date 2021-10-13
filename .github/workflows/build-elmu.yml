@@ -49,7 +49,7 @@ jobs:
         id: current-time
       - name: Create release info
         run: |
-          echo "Release Number: ${{ steps.current-time.outputs.year }}.${{ steps.current-time.outputs.month }}.${{ steps.current-time.outputs.day }}.$GITHUB_RUN_NUMBER" > ./dist/release.txt
+          echo "${{ steps.current-time.outputs.year }}.${{ steps.current-time.outputs.month }}.${{ steps.current-time.outputs.day }}.$GITHUB_RUN_NUMBER" > ./dist/release.txt
       - name: Upload workspace
         uses: actions/upload-artifact@v2
         with:
@@ -65,11 +65,8 @@ jobs:
       OCTO_ENVIRONMENT_NAME: Staging
       OCTO_SERVER: https://elmu.octopus.app
     steps:
-      - name: Get current time
-        uses: 1466587594/get-current-time@v2
-        id: current-time
       - name: Set RELEASE_NUMBER
-        run: echo "RELEASE_NUMBER=$(echo ${{ steps.current-time.outputs.year }}.${{ steps.current-time.outputs.month }}.${{ steps.current-time.outputs.day }}.$GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
+        run: echo "RELEASE_NUMBER="$(cat ./dist/release.txt | tr -d '\n')" >> $GITHUB_ENV
       - name: Create release notes
         run: echo "RELEASE_NOTES=$(echo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)" >> $GITHUB_ENV
       - uses: actions/checkout@v2
