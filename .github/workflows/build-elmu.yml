@@ -41,7 +41,7 @@ jobs:
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Prepare build
-        run: ./node_modules/.bin/gulp ciPrepare || echo "Failed"
+        run: ./node_modules/.bin/gulp ciPrepare
       - name: Build
         run: ./node_modules/.bin/gulp ci
       - name: Get current time
@@ -56,17 +56,20 @@ jobs:
           name: dist
           path: dist
   deploy-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [build-elmu]
-    if: github.ref == 'refs/heads/main'
+    ##if: github.ref == 'refs/heads/main'
     env:
       DOCKER_IMAGE: elmu/elmu-web
       OCTO_PROJECT_NAME: elmu-web
       OCTO_ENVIRONMENT_NAME: Staging
       OCTO_SERVER: https://elmu.octopus.app
     steps:
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
       - name: Set RELEASE_NUMBER
-        run: echo "RELEASE_NUMBER=$(echo 0.1.$GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
+        run: echo "RELEASE_NUMBER=$(echo ${{ steps.current-time.outputs.year }}.${{ steps.current-time.outputs.month }}.${{ steps.current-time.outputs.day }}.$GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
       - name: Create release notes
         run: echo "RELEASE_NOTES=$(echo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)" >> $GITHUB_ENV
       - uses: actions/checkout@v2
