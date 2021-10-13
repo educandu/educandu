@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button } from 'antd';
-import arrayShuffle from 'array-shuffle';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../../components/markdown';
+import shuffleArray from '../../../utils/shuffle-array';
 import { sectionDisplayProps } from '../../../ui/default-prop-types';
 import { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
@@ -10,12 +10,12 @@ function QuickTesterDisplay({ content }) {
   const { t } = useTranslation('quickTester');
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [isAnswerVisible, setIsAnswerVisible] = React.useState(false);
-  const [tests, setTests] = React.useState(arrayShuffle(content.tests));
+  const [tests, setTests] = React.useState(shuffleArray(content.tests));
 
   React.useEffect(() => {
     setCurrentIndex(-1);
     setIsAnswerVisible(false);
-    setTests(arrayShuffle(content.tests));
+    setTests(shuffleArray(content.tests));
   }, [content.tests]);
 
   const showAnswer = React.useCallback(() => {
@@ -40,7 +40,7 @@ function QuickTesterDisplay({ content }) {
   }, [moveToIndex]);
 
   const restart = React.useCallback(() => {
-    setTests(arrayShuffle(content.tests));
+    setTests(shuffleArray(content.tests));
     moveToIndex(content.tests.length ? 0 : -1);
   }, [setTests, content.tests, moveToIndex]);
 

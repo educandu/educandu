@@ -4,10 +4,10 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Piano } from 'react-piano';
 import { RadialChart } from 'react-vis';
-import arrayShuffle from 'array-shuffle';
 import { withTranslation } from 'react-i18next';
 import SoundfontProvider from './soundfont-provider';
 import DimensionsProvider from './dimensions-provider';
+import shuffleArray from '../../../utils/shuffle-array';
 import { inject } from '../../../components/container-context';
 import AudioContextProvider from '../../../common/audio-context-provider';
 import { sectionDisplayProps, translationProps } from '../../../ui/default-prop-types';
@@ -44,7 +44,7 @@ class IntervalTrainerDisplay extends React.Component {
   createTestStateFromProps(props, shuffle) {
     const { tests } = props.content;
     return {
-      tests: (shuffle ? arrayShuffle(tests) : tests).map(test => ({
+      tests: (shuffle ? shuffleArray(tests) : tests).map(test => ({
         ...test,
         inputs: [],
         cancelled: false,
