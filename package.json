@@ -52,7 +52,6 @@
     "express-joi-validation": "~5.0.0",
     "express-session": "~1.17.2",
     "fast-deep-equal": "~3.1.3",
-    "flag-icon-css": "~3.5.0",
     "format-error": "~1.0.0",
     "gravatar": "~1.8.2",
     "htmlescape": "~1.1.1",
