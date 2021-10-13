@@ -44,9 +44,12 @@ jobs:
         run: ./node_modules/.bin/gulp ciPrepare || echo "Failed"
       - name: Build
         run: ./node_modules/.bin/gulp ci
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
       - name: Create release info
         run: |
-          echo "Release Number: 0.1.$GITHUB_RUN_NUMBER" > ./dist/release.txt
+          echo "Release Number: ${{ steps.current-time.outputs.year }}.${{ steps.current-time.outputs.month }}.${{ steps.current-time.outputs.day }}.$GITHUB_RUN_NUMBER" > ./dist/release.txt
       - name: Upload workspace
         uses: actions/upload-artifact@v2
         with:
