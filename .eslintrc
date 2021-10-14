@@ -86,6 +86,7 @@
     "react/jsx-indent-props": ["error", 2],
     "react/jsx-max-depth": ["off"],
     "react/jsx-max-props-per-line": ["error", { "maximum": 1, "when": "multiline" }],
+    "react/jsx-newline": ["off"],
     "react/jsx-no-bind": ["error", { "allowArrowFunctions": true }],
     "react/jsx-no-literals": ["off"],
     "react/jsx-one-expression-per-line": ["off"],

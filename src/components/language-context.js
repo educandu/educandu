@@ -1,4 +1,4 @@
-import mem from 'mem';
+import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import { ConfigProvider } from 'antd';
 import enUS from 'antd/lib/locale/en_US';
@@ -36,7 +36,7 @@ function setLanguageCookie(language) {
   document.cookie = `${UI_LANGUAGE_COOKIE_NAME}=${encodeURIComponent(language)}; expires=${UI_LANGUAGE_COOKIE_EXPIRES}`;
 }
 
-const createLanguageAndLocale = mem(language => {
+const createLanguageAndLocale = memoizee(language => {
   const supportedLanguages = SUPPORTED_UI_LANGUAGES;
   const locale = getLocale(language);
   return { supportedLanguages, language, locale };

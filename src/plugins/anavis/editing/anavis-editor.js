@@ -7,7 +7,7 @@ import ColorPicker from '../../../components/color-picker';
 import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
 import CdnFilePicker from '../../../components/cdn-file-picker';
-import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
+import { swapItemsAt, removeItemAt } from '../../../utils/array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -212,7 +212,7 @@ class AnavisEditor extends React.Component {
     const { dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldParts = this.props.content.parts;
-    const newParts = removeItem(oldParts, index);
+    const newParts = removeItemAt(oldParts, index);
     this.changeContent({ parts: newParts });
   }
 
@@ -244,14 +244,14 @@ class AnavisEditor extends React.Component {
   handleUpCircleButtonClick(event) {
     const { dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
-    const newParts = swapItems(this.props.content.parts, index, index - 1);
+    const newParts = swapItemsAt(this.props.content.parts, index, index - 1);
     this.changeContent({ parts: newParts });
   }
 
   handleDownCircleButtonClick(event) {
     const { dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
-    const newParts = swapItems(this.props.content.parts, index, index + 1);
+    const newParts = swapItemsAt(this.props.content.parts, index, index + 1);
     this.changeContent({ parts: newParts });
   }
 

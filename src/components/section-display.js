@@ -3,13 +3,18 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import DeletedSection from './deleted-section';
+import { useService } from './container-context';
 import { SettingOutlined } from '@ant-design/icons';
+import { pluginTypes } from '../plugins/plugin-infos';
 import { sectionShape } from '../ui/default-prop-types';
+import RendererFactory from '../plugins/renderer-factory';
+import NotSupportedSection from './not-supported-section';
 import SectionActionDropdown from './section-action-dropdown';
 
-function SectionDisplay({ DisplayComponent, docKey, section, onAction }) {
+function SectionDisplay({ docKey, section, onAction }) {
   const [isMouseOver, setIsMouseOver] = React.useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = React.useState(false);
+  const rendererFactory = useService(RendererFactory);
 
   const sectionClasses = classNames({
     'Section': true,
@@ -38,19 +43,24 @@ function SectionDisplay({ DisplayComponent, docKey, section, onAction }) {
     );
   }
 
-  let displayComponent;
-  if (section.content) {
-    displayComponent = (
+  const getDisplayComponent = () => {
+    const DisplayComponent = rendererFactory.createRenderer(section.type).getDisplayComponent();
+
+    return (
       <DisplayComponent
         docKey={docKey}
         sectionKey={section.key}
         content={section.content}
         />
     );
+  };
+
+  let displayComponent;
+  if (section.content) {
+    const isSupportedPlugin = pluginTypes.includes(section.type);
+    displayComponent = isSupportedPlugin ? getDisplayComponent() : (<NotSupportedSection />);
   } else {
-    displayComponent = (
-      <DeletedSection section={section} />
-    );
+    displayComponent = (<DeletedSection section={section} />);
   }
 
   return (
@@ -68,7 +78,6 @@ function SectionDisplay({ DisplayComponent, docKey, section, onAction }) {
 }
 
 SectionDisplay.propTypes = {
-  DisplayComponent: PropTypes.func.isRequired,
   docKey: PropTypes.string.isRequired,
   onAction: PropTypes.func,
   section: sectionShape.isRequired

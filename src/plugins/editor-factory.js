@@ -5,7 +5,6 @@ import ImagePlugin from './image/editor';
 import IframePlugin from './iframe/editor';
 import AnavisPlugin from './anavis/editor';
 import MarkdownPlugin from './markdown/editor';
-import H5pPlayerPlugin from './h5p-player/editor';
 import AnnotationPlugin from './annotation/editor';
 import DiagramNetPlugin from './diagram-net/editor';
 import ImageTilePlugin from './image-tiles/editor.js';
@@ -24,7 +23,6 @@ const editors = [
   IframePlugin,
   AnavisPlugin,
   ImageTilePlugin,
-  H5pPlayerPlugin,
   AnnotationPlugin,
   DiagramNetPlugin,
   AbcNotationPlugin,

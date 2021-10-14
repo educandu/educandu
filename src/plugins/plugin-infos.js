@@ -6,14 +6,13 @@ import imageTiles from './image-tiles/info';
 import audio from './audio/info';
 import video from './video/info';
 import quickTester from './quick-tester/info';
-import h5pPlayer from './h5p-player/info';
 import annotation from './annotation/info';
 import intervalTrainer from './interval-trainer/info';
 import earTraining from './ear-training/info';
 import abcNotation from './abc-notation/info';
 import diagramNet from './diagram-net/info';
 
-export default [
+const pluginInfos = [
   markdown,
   anavis,
   image,
@@ -22,10 +21,13 @@ export default [
   audio,
   video,
   quickTester,
-  h5pPlayer,
   annotation,
   intervalTrainer,
   earTraining,
   abcNotation,
   diagramNet
 ];
+
+export const pluginTypes = pluginInfos.map(info => info.type);
+
+export default pluginInfos;

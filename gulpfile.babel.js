@@ -6,7 +6,6 @@ import del from 'del';
 import path from 'path';
 import glob from 'glob';
 import { EOL } from 'os';
-import delay from 'delay';
 import execa from 'execa';
 import less from 'gulp-less';
 import csso from 'gulp-csso';
@@ -58,6 +57,10 @@ const supportedLanguages = ['en', 'de'];
 
 let server = null;
 process.on('exit', () => server && server.kill());
+
+const delay = ms => new Promise(resolve => {
+  setTimeout(resolve, ms);
+});
 
 const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () => Promise.resolve() }) => {
   const docker = new Docker();
@@ -146,11 +149,6 @@ tasks.testWatch = function testWatch(done) {
   done();
 };
 
-tasks.copyIframeresizer = function copyIframeresizer() {
-  return src('./node_modules/iframe-resizer/js/iframeResizer.contentWindow.*')
-    .pipe(dest('static/scripts'));
-};
-
 tasks.bundleCss = function bundleCss() {
   return src('src/styles/main.less')
     .pipe(gulpif(!!server, plumber()))
@@ -207,9 +205,11 @@ tasks.bundleJs = async function bundleJs() {
     'auto-bind',
     'chalk',
     'clipboard-copy',
+    'color',
     'color-convert',
     'map-age-cleaner',
     'mem',
+    'mime',
     'mimic-fn',
     'p-defer',
     'p-is-promise',

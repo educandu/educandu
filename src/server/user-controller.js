@@ -3,14 +3,13 @@ import passport from 'passport';
 import urls from '../utils/urls';
 import session from 'express-session';
 import { NotFound } from 'http-errors';
-import connectMongo from 'connect-mongo';
+import MongoStore from 'connect-mongo';
 import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
 import permissions from '../domain/permissions';
 import UserService from '../services/user-service';
 import MailService from '../services/mail-service';
-import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
 import UserRequestHandler from './user-request-handler';
@@ -20,7 +19,6 @@ import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
-const MongoSessionStore = connectMongo(session);
 
 class UserController {
   static get inject() { return [ServerConfig, Database, UserRequestHandler, UserService, MailService, ClientDataMapper, PageRenderer]; }
@@ -41,9 +39,9 @@ class UserController {
       secret: this.serverConfig.sessionSecret,
       resave: false,
       saveUninitialized: false, // Don't create session until something stored
-      store: new MongoSessionStore({
+      store: MongoStore.create({
         client: this.database._mongoClient,
-        collection: sessionsStoreSpec.name,
+        collectionName: sessionsStoreSpec.name,
         ttl: this.serverConfig.sessionDurationInMinutes * 60,
         autoRemove: 'disabled', // We use our own index
         stringify: false // Do not serialize session data
@@ -125,29 +123,9 @@ class UserController {
 
     router.post('/api/v1/users', jsonParser, (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
-    router.post('/api/v1/users/request-password-reset', jsonParser, async (req, res) => {
-      const { email } = req.body;
-      const user = await this.userService.getUserByEmailAddress(email);
+    router.post('/api/v1/users/request-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlePostUserPasswordResetRequest(req, res));
 
-      if (user) {
-        const resetRequest = await this.userService.createPasswordResetRequest(user);
-        const { origin } = requestHelper.getHostInfo(req);
-        const resetCompletionLink = urls.concatParts(origin, urls.getCompletePasswordResetUrl(resetRequest._id));
-        await this.mailService.sendPasswordResetRequestCompletionLink(user.email, resetCompletionLink);
-      }
-
-      return res.send({});
-    });
-
-    router.post('/api/v1/users/complete-password-reset', jsonParser, async (req, res) => {
-      const { passwordResetRequestId, password } = req.body;
-      const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, password);
-      if (!user) {
-        throw new NotFound();
-      }
-
-      return res.send({ user });
-    });
+    router.post('/api/v1/users/complete-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlerPostUserPasswordResetCompletion(req, res));
 
     router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserAccount(req, res));
 

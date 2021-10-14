@@ -1,19 +1,9 @@
 import i18next from 'i18next';
 import icu from 'i18next-icu';
-import en from 'i18next-icu/locale-data/en';
-import de from 'i18next-icu/locale-data/de';
 import { initReactI18next } from 'react-i18next';
-import { SUPPORTED_UI_LANGUAGES, UI_LANGUAGE_EN, UI_LANGUAGE_DE } from './ui-language';
+import { SUPPORTED_UI_LANGUAGES } from './ui-language';
 
 const DEFAULT_NAMESPACE = 'default';
-
-const mapLocaleData = language => {
-  switch (language) {
-    case UI_LANGUAGE_EN: return en;
-    case UI_LANGUAGE_DE: return de;
-    default: throw new Error(`No locale data for language ${language}!`);
-  }
-};
 
 class ResourceManager {
   constructor(resourceBundles) {
@@ -41,10 +31,7 @@ class ResourceManager {
       interpolation: {
         escapeValue: false
       },
-      initImmediate: true,
-      i18nFormat: {
-        localeData: SUPPORTED_UI_LANGUAGES.map(mapLocaleData)
-      }
+      initImmediate: true
     });
     this._resourceBundles.forEach(bundle => {
       instance.addResourceBundle(bundle.language, bundle.namespace, bundle.resources);

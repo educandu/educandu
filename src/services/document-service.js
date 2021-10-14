@@ -5,7 +5,6 @@ import dateTime from '../utils/date-time';
 import uniqueId from '../utils/unique-id';
 import cloneDeep from '../utils/clone-deep';
 import DocumentStore from '../stores/document-store';
-import HandlerFactory from '../plugins/handler-factory';
 import DocumentLockStore from '../stores/document-lock-store';
 import DocumentOrderStore from '../stores/document-order-store';
 import DocumentRevisionStore from '../stores/document-revision-store';
@@ -31,16 +30,15 @@ const lastUpdatedFirst = [['updatedOn', -1]];
 
 class DocumentService {
   static get inject() {
-    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, UserService, HandlerFactory];
+    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, UserService];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, userService, handlerFactory) {
+  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, userService) {
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
     this.userService = userService;
-    this.handlerFactory = handlerFactory;
   }
 
   getAllDocumentsMetadata() {

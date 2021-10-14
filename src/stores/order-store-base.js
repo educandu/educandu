@@ -9,7 +9,7 @@ class OrderStoreBase extends StoreBase {
   async getNextOrder() {
     const query = { _id: this.orderKey };
     const update = { $inc: { seq: 1 } };
-    const options = { upsert: true, returnOriginal: false };
+    const options = { upsert: true, returnDocument: 'after' };
     const result = await this.collection.findOneAndUpdate(query, update, options);
     return result.value.seq;
   }

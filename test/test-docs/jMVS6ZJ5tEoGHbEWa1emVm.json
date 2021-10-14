@@ -128,14 +128,6 @@
         }
       },
       {
-        "key": "4dr5UFYSeRrKcfX3SBgWeQ",
-        "type": "h5p-player",
-        "content": {
-          "applicationId": "rkN0Hrnb7",
-          "maxWidth": 70
-        }
-      },
-      {
         "key": "8qKbGjht9NHof8bFaohkU",
         "type": "interval-trainer",
         "content": {
