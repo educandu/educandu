@@ -34,8 +34,8 @@ describe('cdn', () => {
       actualResult = await sut.uploadObject(targetFileName, testFileName, metadata);
     });
 
-    it('should return an object containing the etag', () => {
-      const expectedResult = { etag: sinon.match.string };
+    it('should return an object containing the name and etag', () => {
+      const expectedResult = { name: sinon.match.string, etag: { etag: sinon.match.string } };
       sinon.assert.match(actualResult, expectedResult);
     });
 

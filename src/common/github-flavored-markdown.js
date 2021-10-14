@@ -1,9 +1,11 @@
+import memoizee from 'memoizee';
 import MarkdownIt from 'markdown-it';
-import memoizeLast from '../utils/memoize-last';
+
+const MAX_MEMOIZED_VALUES = 1000;
 
 const gfm = new MarkdownIt();
-const render = memoizeLast(s => gfm.render(s), 1000, s => s);
-const renderInline = memoizeLast(s => gfm.renderInline(s), 1000, s => s);
+const render = memoizee(gfm.render.bind(gfm), { max: MAX_MEMOIZED_VALUES });
+const renderInline = memoizee(gfm.renderInline.bind(gfm), { max: MAX_MEMOIZED_VALUES });
 
 class GithubFlavoredMarkdown {
   render(markdown) {

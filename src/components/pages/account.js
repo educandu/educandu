@@ -2,9 +2,9 @@ import by from 'thenby';
 import React from 'react';
 import Page from '../page';
 import gravatar from 'gravatar';
+import memoizee from 'memoizee';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import memoizeOne from 'memoize-one';
 import EmailInput from '../email-input';
 import Logger from '../../common/logger';
 import localeCompare from 'locale-compare';
@@ -16,11 +16,11 @@ import { CloseOutlined } from '@ant-design/icons';
 import { withLanguage } from '../language-context';
 import { Trans, withTranslation } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
+import { SAVE_USER_RESULT } from '../../domain/user-management';
 import CountryNameProvider from '../../data/country-name-provider';
 import CountryFlagAndName from '../localization/country-flag-and-name';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
 import { userProps, languageProps, translationProps } from '../../ui/default-prop-types';
-import { SAVE_USER_RESULT } from '../../domain/user-management';
 
 const logger = new Logger(__filename);
 
@@ -29,24 +29,23 @@ const Option = Select.Option;
 
 const AVATAR_SIZE = 256;
 
+const createCountryNames = memoizee((countryNameProvider, language) => {
+  return Object.entries(countryNameProvider.getData(language))
+    .map(([key, name]) => ({ key, name }))
+    .sort(by(x => x.name, { cmp: localeCompare(language) }));
+}, { max: 1 });
+
 class Account extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
     this.accountFormRef = React.createRef();
-    this.createCountryNames = memoizeOne(this.createCountryNames);
 
     this.state = {
       showAvatarDescription: false,
       forbiddenEmails: [],
       forbiddenUsernames: []
     };
-  }
-
-  createCountryNames(countryNameProvider, language) {
-    return Object.entries(countryNameProvider.getData(language))
-      .map(([key, name]) => ({ key, name }))
-      .sort(by(x => x.name, { cmp: localeCompare(language) }));
   }
 
   async saveAccountData({ username, email }) {
@@ -226,7 +225,7 @@ class Account extends React.Component {
         </FormItem>
         <FormItem {...formItemLayout} label={t('profile.country')} name="country" initialValue={profile.country || ''}>
           <Select optionFilterProp="title" showSearch allowClear>
-            {this.createCountryNames(countryNameProvider, language).map(cn => (
+            {createCountryNames(countryNameProvider, language).map(cn => (
               <Option key={cn.key} value={cn.key} title={cn.name}>
                 <CountryFlagAndName code={cn.key} name={cn.name} />
               </Option>

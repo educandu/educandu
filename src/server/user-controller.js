@@ -3,7 +3,7 @@ import passport from 'passport';
 import urls from '../utils/urls';
 import session from 'express-session';
 import { NotFound } from 'http-errors';
-import connectMongo from 'connect-mongo';
+import MongoStore from 'connect-mongo';
 import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
@@ -20,7 +20,6 @@ import needsAuthentication from '../domain/needs-authentication-middleware';
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
-const MongoSessionStore = connectMongo(session);
 
 class UserController {
   static get inject() { return [ServerConfig, Database, UserRequestHandler, UserService, MailService, ClientDataMapper, PageRenderer]; }
@@ -41,9 +40,9 @@ class UserController {
       secret: this.serverConfig.sessionSecret,
       resave: false,
       saveUninitialized: false, // Don't create session until something stored
-      store: new MongoSessionStore({
+      store: MongoStore.create({
         client: this.database._mongoClient,
-        collection: sessionsStoreSpec.name,
+        collectionName: sessionsStoreSpec.name,
         ttl: this.serverConfig.sessionDurationInMinutes * 60,
         autoRemove: 'disabled', // We use our own index
         stringify: false // Do not serialize session data
@@ -149,9 +148,9 @@ class UserController {
       return res.send({ user });
     });
 
-    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserAccount(req, res));
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserAccount(req, res));
 
-    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserProfile(req, res));
+    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserProfile(req, res));
 
     router.post('/api/v1/users/login', jsonParser, (req, res, next) => {
       passport.authenticate('local', (err, user) => {

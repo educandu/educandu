@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Form, Input, Button, Table } from 'antd';
 import DocumentSelector from '../document-selector';
 import LanguageSelect from '../localization/language-select';
-import { swapItems, removeItem } from '../../utils/immutable-array-utils';
+import { swapItemsAt, removeItemAt } from '../../utils/array-utils';
 import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
 import { documentMetadataShape, documentRevisionShape, documentShape, homeLanguageShape } from '../../ui/default-prop-types';
 
@@ -24,7 +24,7 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
   };
 
   const handleMoveClick = (index, offset) => {
-    fireOnChange(swapItems(homeLanguages, index, index + offset));
+    fireOnChange(swapItemsAt(homeLanguages, index, index + offset));
   };
 
   const handleAddClick = () => {
@@ -32,7 +32,7 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
   };
 
   const handleDeleteClick = index => {
-    fireOnChange(removeItem(homeLanguages, index));
+    fireOnChange(removeItemAt(homeLanguages, index));
   };
 
   const handleChange = (index, key, value) => {

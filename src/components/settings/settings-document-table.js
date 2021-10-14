@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Table, Button, Input } from 'antd';
 import DocumentSelector from '../document-selector';
-import { swapItems, removeItem } from '../../utils/immutable-array-utils';
+import { swapItemsAt, removeItemAt } from '../../utils/array-utils';
 import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types';
 
@@ -45,7 +45,7 @@ function SettingsDocumentTable({ settingsDocuments, documents, onChange }) {
 
   const handleMoveClick = (index, offset) => {
     const linkList = settingsDocumentsToLinkList(settingsDocuments);
-    fireOnChange(swapItems(linkList, index, index + offset));
+    fireOnChange(swapItemsAt(linkList, index, index + offset));
   };
 
   const handleAddClick = () => {
@@ -55,7 +55,7 @@ function SettingsDocumentTable({ settingsDocuments, documents, onChange }) {
 
   const handleDeleteClick = index => {
     const linkList = settingsDocumentsToLinkList(settingsDocuments);
-    fireOnChange(removeItem(linkList, index));
+    fireOnChange(removeItemAt(linkList, index));
   };
 
   const handleChange = (index, key, value) => {
