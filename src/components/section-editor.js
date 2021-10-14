@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import DeletedSection from './deleted-section';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useService } from './container-context';
 import { Menu, Radio, Button, Dropdown } from 'antd';
 import EditorFactory from '../plugins/editor-factory';
@@ -10,7 +10,7 @@ import { pluginTypes } from '../plugins/plugin-infos';
 import RendererFactory from '../plugins/renderer-factory';
 import NotSupportedSection from './not-supported-section';
 import { confirmSectionDelete } from './confirmation-dialogs';
-import { documentRevisionShape, sectionShape, translationProps } from '../ui/default-prop-types';
+import { documentRevisionShape, sectionShape } from '../ui/default-prop-types';
 import {
   SettingOutlined,
   ArrowUpOutlined,
@@ -32,7 +32,6 @@ const SECTION_MENU_KEY_DELETE = 'delete';
 const SECTION_MENU_KEY_DUPLICATE = 'duplicate';
 
 function SectionEditor({
-  t,
   section,
   onSectionMovedUp,
   onSectionMovedDown,
@@ -50,6 +49,7 @@ function SectionEditor({
   const [mode, setMode] = React.useState('preview');
   const rendererFactory = useService(RendererFactory);
   const editorFactory = useService(EditorFactory);
+  const { t } = useTranslation('sectionEditor');
 
   const handleModeChange = event => {
     setMode(event.target.value);
@@ -215,7 +215,6 @@ function SectionEditor({
 }
 
 SectionEditor.propTypes = {
-  ...translationProps,
   documentRevision: documentRevisionShape.isRequired,
   dragHandleProps: PropTypes.object,
   isHighlighted: PropTypes.bool,
@@ -236,4 +235,4 @@ SectionEditor.defaultProps = {
   isHighlighted: false
 };
 
-export default withTranslation('sectionEditor')(SectionEditor);
+export default SectionEditor;
