@@ -6,7 +6,6 @@ import MenuController from './menu-controller';
 import IndexController from './index-controller';
 import ErrorController from './error-controller';
 import StaticController from './static-controller';
-import PluginController from './plugin-controller';
 import SettingController from './setting-controller';
 import DocumentController from './document-controller';
 import SettingsController from './settings-controller';
@@ -21,7 +20,6 @@ const controllerTypes = [
   DocumentController,
   MenuController,
   CdnController,
-  PluginController,
   ErrorController
 ];
 
