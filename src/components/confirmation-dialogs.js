@@ -161,6 +161,18 @@ export function confirmIdentityWithPassword({
     dialog.update(createDialogProps());
   };
 
+  const handleKeyUp = e => {
+    if (e.key !== 'Enter' || passwordValue === '') {
+      return;
+    }
+
+    errorMessage = '';
+    validationStatus = '';
+    dialog.update(createDialogProps());
+    handleConfirmPassword(passwordValue)
+      .then(isConfirmed => isConfirmed && dialog.destroy());
+  };
+
   const createContent = () => (
     <Form>
       <FormItem
@@ -168,7 +180,12 @@ export function confirmIdentityWithPassword({
         validateStatus={validationStatus}
         help={errorMessage}
         >
-        <Input type="password" onChange={handlePasswordChanged} />
+        <Input
+          autoFocus
+          type="password"
+          onChange={handlePasswordChanged}
+          onKeyUp={handleKeyUp}
+          />
       </FormItem>
     </Form>
   );
