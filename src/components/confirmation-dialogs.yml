@@ -27,4 +27,4 @@ password:
   de: Kennwort
 wrongPasswordProvided:
   en: The wrong password was provided
-  de: Falsches Passwort
+  de: Das Kennwort ist ungültig

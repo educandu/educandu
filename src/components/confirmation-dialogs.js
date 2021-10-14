@@ -5,7 +5,7 @@ const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 
-export function confirmSectionDelete(t, section, onOk, onCancel = () => { }) {
+export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
     content: t('confirmationDialogs:deleteSectionConfirmation'),
@@ -17,7 +17,7 @@ export function confirmSectionDelete(t, section, onOk, onCancel = () => { }) {
   });
 }
 
-export function confirmSectionHardDelete(t, section, onOk, onCancel = () => { }) {
+export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) {
   let dialog = null;
   let deletionReason = '';
   let deleteDescendants = false;
@@ -74,7 +74,7 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => { })
   dialog = confirm(createDialogProps());
 }
 
-export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel = () => { }) {
+export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel = () => {}) {
   let dialog = null;
   let isRestoring = false;
   let createDialogProps = null;
@@ -106,7 +106,7 @@ export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel =
   dialog = confirm(createDialogProps());
 }
 
-export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, onCancel = () => { } }) {
+export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, onCancel = () => {} }) {
   let dialog = null;
   let createDialogProps = null;
   let passwordValue = '';
@@ -114,22 +114,27 @@ export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, 
   let errorMessage = '';
 
   const handleConfirmPassword = async password => {
+    const wrongPasswordMessage = 'Wrong password';
+
     try {
       const { user } = await userApiClient.login({ username, password });
       if (user) {
         validationStatus = 'success';
         errorMessage = '';
         onOk();
-        return Promise.resolve();
+        return;
       }
 
       validationStatus = 'error';
       errorMessage = t('confirmationDialogs:wrongPasswordProvided');
       dialog.update(createDialogProps());
-      return Promise.reject(new Error('Wrong password'));
+      throw new Error(wrongPasswordMessage);
     } catch (error) {
+      if (error.message === wrongPasswordMessage) {
+        throw error;
+      }
+
       Modal.error({ title: t('common:error'), content: error.message });
-      return Promise.resolve();
     }
   };
 
@@ -155,7 +160,7 @@ export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, 
     onOk: close => {
       handleConfirmPassword(passwordValue)
         .then(close)
-        .catch(() => { });
+        .catch(() => {});
       return true;
     },
     okText: t('common:yes'),
