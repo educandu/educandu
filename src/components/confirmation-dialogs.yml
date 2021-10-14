@@ -16,3 +16,15 @@ deleteAllDescendantRevisions:
 restoreDocumentRevisionConfirmation:
   en: Do you really want to restore the content of revision {revisionId}?
   de: Möchten Sie den Inhalt der Revision {revisionId} wirklich wiederherstellen?
+confirmPassword:
+  en: Confirm password
+  de: Kennwortbestätigung
+enterPassword:
+  en: Please enter a password
+  de: Bitte geben Sie ein Kennwort an
+password:
+  en: Passsword
+  de: Kennwort
+wrongPasswordProvided:
+  en: The wrong password was provided
+  de: Falsches Passwort

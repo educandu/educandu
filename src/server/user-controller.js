@@ -149,9 +149,9 @@ class UserController {
       return res.send({ user });
     });
 
-    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserAccount(req, res));
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserAccount(req, res));
 
-    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => UserRequestHandler.handlePostUserProfile(req, res));
+    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserProfile(req, res));
 
     router.post('/api/v1/users/login', jsonParser, (req, res, next) => {
       passport.authenticate('local', (err, user) => {

@@ -21,6 +21,7 @@ import CountryFlagAndName from '../localization/country-flag-and-name';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
 import { userProps, languageProps, translationProps } from '../../ui/default-prop-types';
 import { SAVE_USER_RESULT } from '../../domain/user-management';
+import { confirmIdentityWithPassword } from '../confirmation-dialogs';
 
 const logger = new Logger(__filename);
 
@@ -89,10 +90,17 @@ class Account extends React.Component {
     window.history.back();
   }
 
-  handleAccountFinish(values) {
-    this.saveAccountData({
-      username: values.username,
-      email: values.email
+  handleAccountFinish({ username, email }) {
+    const { t, userApiClient, user } = this.props;
+
+    confirmIdentityWithPassword({
+      t,
+      username: user.username,
+      onOk: () => this.saveAccountData({
+        username,
+        email
+      }),
+      userApiClient
     });
   }
 
