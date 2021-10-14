@@ -13,39 +13,69 @@ class MailService {
     this.transport = nodemailer.createTransport(serverConfig.smtpOptions);
   }
 
-  sendRegistrationVerificationLink(emailAddress, verificationLink) {
+  sendRegistrationVerificationLink({ username, email, verificationLink }) {
     logger.info('Creating email with registration verification link %s', verificationLink);
+
+    const germanText
+      = 'Willkommen!\n\n'
+      + `Sie haben sich erfolgreich als ${username} auf ELMU registriert.\n`
+      + `Bitte bestätigen Sie Ihre Registrierung hier: ${verificationLink}`;
+
+    const germanHtml
+      = '<p>Willkommen!<br/><br/>'
+      + `Sie haben sich erfolgreich als ${username} auf ELMU registriert.<br/>`
+      + `Bitte bestätigen Sie Ihre Registrierung hier: <a href="${verificationLink}">Registrierung bestätigen</a></p>`;
+
+    const englishText
+      = 'Welcome!\n\n'
+      + `You have registered successfully with ELMU as ${username}.\n`
+      + `Please confirm your registration here: ${verificationLink}`;
+
+    const englishHtml
+      = '<p>Welcome!<br/><br/>'
+      + `You have registered successfully with ELMU as ${username}.<br/>`
+      + `Please confirm your registration here: <a href="${verificationLink}">confirm registration</a></p>`;
+
     const message = {
       from: ELMU_WEB_EMAIL_ADDRESS,
-      to: emailAddress,
+      to: email,
       subject: 'Willkommen auf ELMU! / Welcome to ELMU!',
-      text: [
-        `Willkommen! Sie haben sich erfolgreich auf ELMU registriert. Bitte bestätigen Sie Ihre Registrierung hier: ${verificationLink}`,
-        `Welcome! You have registered successfully with ELMU. Please confirm your registration here: ${verificationLink}`
-      ].join('\n\n'),
-      html: [
-        `<p>Willkommen! Sie haben sich erfolgreich auf ELMU registriert. Bitte bestätigen Sie Ihre Registrierung hier: <a href="${verificationLink}">Registrierung bestätigen</a></p>`,
-        `<p>Welcome! You have registered successfully with ELMU. Please confirm your registration here: <a href="${verificationLink}">confirm registration</a></p>`
-      ].join('\n')
+      text: `${germanText}\n\n${englishText}`,
+      html: `${germanHtml}\n${englishHtml}`
     };
 
     return this._sendMail(message);
   }
 
-  sendPasswordResetRequestCompletionLink(emailAddress, completionLink) {
+  sendPasswordResetRequestCompletionLink({ username, email, completionLink }) {
     logger.info('Creating email with password reset request completion link %s', completionLink);
+
+    const germanText
+      = `Hallo ${username}!\n\n`
+      + 'Sie möchten Ihr Kennwort auf ELMU ändern?\n'
+      + `Zum Ändern Ihres Kennworts klicken Sie bitte hier: ${completionLink}`;
+
+    const germanHtml
+      = `<p>Hallo ${username}!<br/><br/>`
+      + 'Sie möchten Ihr Kennwort auf ELMU ändern?<br/>'
+      + `Zum Ändern Ihres Kennworts klicken Sie bitte hier: <a href="${completionLink}">Kennwort ändern</a>.</p>`;
+
+    const englishText
+      = `Hello ${username}!\n\n`
+      + 'You want to change your password for ELMU?\n'
+      + `Please click here in order to change your password: ${completionLink}`;
+
+    const englishHtml
+      = `<p>Hello ${username}!<br/><br/>`
+      + 'You want to change your password for ELMU?<br/>'
+      + `Please click here in order to change your password: <a href="${completionLink}">change password</a>.</p>`;
+
     const message = {
       from: ELMU_WEB_EMAIL_ADDRESS,
-      to: emailAddress,
-      subject: 'Ihr Kennwort auf ELMU / Your password for ELMU',
-      text: [
-        `Sie möchten Ihr Kennwort auf ELMU ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: ${completionLink}`,
-        `You want to change your password for ELMU? Please click here in order to change your password: ${completionLink}`
-      ].join('\n\n'),
-      html: [
-        `<p>Sie möchten Ihr Kennwort auf ELMU ändern? Zum Ändern Ihres Kennworts klicken Sie bitte hier: <a href="${completionLink}">Kennwort ändern</a>.</p>`,
-        `<p>You want to change your password for ELMU? Please click here in order to change your password: <a href="${completionLink}">change password</a>.</p>`
-      ].join('\n')
+      to: email,
+      subject: 'Ihr Kennwort auf ELMU/ Your password for ELMU',
+      text: `${germanText}\n\n${englishText}`,
+      html: `${germanHtml}\n${englishHtml}`
     };
 
     return this._sendMail(message);
