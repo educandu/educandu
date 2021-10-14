@@ -128,7 +128,7 @@ class DocumentService {
           }
         }
 
-        if (!section.content) {
+        if (!section.content && !restoredFrom) {
           throw new Error('Sections that are not deleted must specify a content');
         }
 
@@ -142,7 +142,7 @@ class DocumentService {
           deletedBy: null,
           deletedBecause: null,
           type: section.type,
-          content: cloneDeep(section.content)
+          content: section.content && cloneDeep(section.content)
         };
       });
 
