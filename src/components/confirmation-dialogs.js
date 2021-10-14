@@ -17,7 +17,12 @@ export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
   });
 }
 
-export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) {
+export function confirmSectionHardDelete(
+  t,
+  section,
+  onOk,
+  onCancel = () => {}
+) {
   let dialog = null;
   let deletionReason = '';
   let deleteDescendants = false;
@@ -40,12 +45,17 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
       <div>
         {t('confirmationDialogs:deleteSectionConfirmation')}
         <br />
-        <b className="u-danger">{t('confirmationDialogs:thisActionIsIrreversible')}</b>
+        <b className="u-danger">
+          {t('confirmationDialogs:thisActionIsIrreversible')}
+        </b>
         <br />
         <br />
         <span>{t('confirmationDialogs:pleaseSpecifyAReason')}:</span>
         <br />
-        <TextArea value={deletionReason} onChange={handleDeletionReasonChange} />
+        <TextArea
+          value={deletionReason}
+          onChange={handleDeletionReasonChange}
+          />
         <br />
         <br />
         <Checkbox
@@ -74,7 +84,12 @@ export function confirmSectionHardDelete(t, section, onOk, onCancel = () => {}) 
   dialog = confirm(createDialogProps());
 }
 
-export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel = () => {}) {
+export function confirmDocumentRevisionRestoration(
+  t,
+  revision,
+  onOk,
+  onCancel = () => {}
+) {
   let dialog = null;
   let isRestoring = false;
   let createDialogProps = null;
@@ -92,7 +107,9 @@ export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel =
 
   createDialogProps = () => ({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:restoreDocumentRevisionConfirmation', { revisionId: revision._id }),
+    content: t('confirmationDialogs:restoreDocumentRevisionConfirmation', {
+      revisionId: revision._id
+    }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
@@ -106,7 +123,13 @@ export function confirmDocumentRevisionRestoration(t, revision, onOk, onCancel =
   dialog = confirm(createDialogProps());
 }
 
-export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, onCancel = () => {} }) {
+export function confirmIdentityWithPassword({
+  t,
+  username,
+  userApiClient,
+  onOk,
+  onCancel = () => {}
+}) {
   let dialog = null;
   let createDialogProps = null;
   let passwordValue = '';
@@ -114,28 +137,23 @@ export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, 
   let errorMessage = '';
 
   const handleConfirmPassword = async password => {
-    const wrongPasswordMessage = 'Wrong password';
-
     try {
       const { user } = await userApiClient.login({ username, password });
       if (user) {
         validationStatus = 'success';
         errorMessage = '';
         onOk();
-        return;
+        return true;
       }
-
-      validationStatus = 'error';
-      errorMessage = t('confirmationDialogs:wrongPasswordProvided');
-      dialog.update(createDialogProps());
-      throw new Error(wrongPasswordMessage);
     } catch (error) {
-      if (error.message === wrongPasswordMessage) {
-        throw error;
-      }
-
       Modal.error({ title: t('common:error'), content: error.message });
+      return false;
     }
+
+    validationStatus = 'error';
+    errorMessage = t('confirmationDialogs:wrongPasswordProvided');
+    dialog.update(createDialogProps());
+    return false;
   };
 
   const handlePasswordChanged = e => {
@@ -145,7 +163,11 @@ export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, 
 
   const createContent = () => (
     <Form>
-      <FormItem label={t('confirmationDialogs:confirmPassword')} validateStatus={validationStatus} help={errorMessage} >
+      <FormItem
+        label={t('confirmationDialogs:confirmPassword')}
+        validateStatus={validationStatus}
+        help={errorMessage}
+        >
         <Input type="password" onChange={handlePasswordChanged} />
       </FormItem>
     </Form>
@@ -158,9 +180,7 @@ export function confirmIdentityWithPassword({ t, username, userApiClient, onOk, 
     cancelText: t('common:no'),
     onCancel,
     onOk: close => {
-      handleConfirmPassword(passwordValue)
-        .then(close)
-        .catch(() => {});
+      handleConfirmPassword(passwordValue).then(isConfirmed => isConfirmed && close());
       return true;
     },
     okText: t('common:yes'),
