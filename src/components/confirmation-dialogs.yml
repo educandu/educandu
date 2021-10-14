@@ -17,7 +17,7 @@ restoreDocumentRevisionConfirmation:
   en: Do you really want to restore the content of revision {revisionId}?
   de: Möchten Sie den Inhalt der Revision {revisionId} wirklich wiederherstellen?
 confirmPassword:
-  en: Confirm password
+  en: Password confirmation
   de: Kennwortbestätigung
 enterPassword:
   en: Please enter a password
