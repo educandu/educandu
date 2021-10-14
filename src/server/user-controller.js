@@ -10,7 +10,6 @@ import Database from '../stores/database.js';
 import permissions from '../domain/permissions';
 import UserService from '../services/user-service';
 import MailService from '../services/mail-service';
-import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
 import UserRequestHandler from './user-request-handler';
@@ -124,29 +123,9 @@ class UserController {
 
     router.post('/api/v1/users', jsonParser, (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
-    router.post('/api/v1/users/request-password-reset', jsonParser, async (req, res) => {
-      const { email } = req.body;
-      const user = await this.userService.getUserByEmailAddress(email);
+    router.post('/api/v1/users/request-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlePostUserPasswordResetRequest(req, res));
 
-      if (user) {
-        const resetRequest = await this.userService.createPasswordResetRequest(user);
-        const { origin } = requestHelper.getHostInfo(req);
-        const resetCompletionLink = urls.concatParts(origin, urls.getCompletePasswordResetUrl(resetRequest._id));
-        await this.mailService.sendPasswordResetRequestCompletionLink(user.email, resetCompletionLink);
-      }
-
-      return res.send({});
-    });
-
-    router.post('/api/v1/users/complete-password-reset', jsonParser, async (req, res) => {
-      const { passwordResetRequestId, password } = req.body;
-      const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, password);
-      if (!user) {
-        throw new NotFound();
-      }
-
-      return res.send({ user });
-    });
+    router.post('/api/v1/users/complete-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlerPostUserPasswordResetCompletion(req, res));
 
     router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserAccount(req, res));
 

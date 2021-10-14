@@ -16,10 +16,13 @@ describe('user-request-handler', () => {
     userService = {
       createUser: sandbox.stub(),
       updateUserAccount: sandbox.stub(),
-      updateUserProfile: sandbox.stub()
+      updateUserProfile: sandbox.stub(),
+      getUserByEmailAddress: sandbox.stub(),
+      createPasswordResetRequest: sandbox.stub()
     };
     mailService = {
-      sendRegistrationVerificationLink: sandbox.stub()
+      sendRegistrationVerificationLink: sandbox.stub(),
+      sendPasswordResetRequestCompletionLink: sandbox.stub()
     };
     clientDataMapper = {
       dbUserToClientUser: sandbox.stub()
@@ -58,7 +61,11 @@ describe('user-request-handler', () => {
       });
 
       it('should call sendRegistrationVerificationLink', () => {
-        sinon.assert.calledWith(mailService.sendRegistrationVerificationLink, 'test@test.com', 'https://localhost/complete-registration/verificationCode');
+        sinon.assert.calledWith(mailService.sendRegistrationVerificationLink, {
+          username: 'test1234',
+          email: 'test@test.com',
+          verificationLink: 'https://localhost/complete-registration/verificationCode'
+        });
       });
 
       it('should return the result object', () => {
@@ -317,4 +324,87 @@ describe('user-request-handler', () => {
     });
   });
 
+  describe('handlePostUserPasswordResetRequest', () => {
+    let req;
+    let res;
+
+    describe('with known email', () => {
+      const user = {
+        username: 'johndoe',
+        email: 'john.doe@gmail.com'
+      };
+
+      beforeEach(done => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          user: { _id: 1234 },
+          body: { email: 'john.doe@gmail.com' }
+        });
+        res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+        res.on('end', done);
+
+        userService.getUserByEmailAddress.resolves(user);
+        userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId' });
+
+        sut.handlePostUserPasswordResetRequest(req, res);
+      });
+
+      it('should call userService.createPasswordResetRequest', () => {
+        sinon.assert.calledWith(userService.createPasswordResetRequest, user);
+      });
+
+      it('should call mailService.sendPasswordResetRequestCompletionLink', () => {
+        sinon.assert.calledWith(mailService.sendPasswordResetRequestCompletionLink, { username: user.username,
+          email: user.email,
+          completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
+      });
+
+      it('should set the status code on the response to 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the result object', () => {
+        const response = res._getData();
+        expect(response).toEqual({});
+      });
+    });
+
+    describe('with unknown email', () => {
+
+      beforeEach(done => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'localhost' },
+          user: { _id: 1234 },
+          body: { email: 'john.doe@gmail.com' }
+        });
+        res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+        res.on('end', done);
+
+        userService.getUserByEmailAddress.resolves(null);
+
+        sut.handlePostUserPasswordResetRequest(req, res);
+      });
+
+      it('should not call userService.createPasswordResetRequest', () => {
+        sinon.assert.notCalled(userService.createPasswordResetRequest);
+      });
+
+      it('should not call mailService.sendPasswordResetRequestCompletionLink', () => {
+        sinon.assert.notCalled(mailService.sendPasswordResetRequestCompletionLink);
+      });
+
+      it('should set the status code on the response to 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the result object', () => {
+        const response = res._getData();
+        expect(response).toEqual({});
+      });
+    });
+  });
 });
