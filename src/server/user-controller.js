@@ -125,7 +125,7 @@ class UserController {
 
     router.post('/api/v1/users/request-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlePostUserPasswordResetRequest(req, res));
 
-    router.post('/api/v1/users/complete-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlerPostUserPasswordResetCompletion(req, res));
+    router.post('/api/v1/users/complete-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlePostUserPasswordResetCompletion(req, res));
 
     router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserAccount(req, res));
 
