@@ -3,7 +3,7 @@ import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
 import { Form, Input, Table, Button } from 'antd';
 import EarTrainingSoundEditor from './ear-training-sound-editor';
-import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
+import { swapItemsAt, removeItemAt } from '../../../utils/array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -133,7 +133,7 @@ class EarTrainingEditor extends React.Component {
     const { dataset } = event.target;
     const index = Number.parseInt(dataset.index, 10);
     const oldTests = this.props.content.tests;
-    const newTests = removeItem(oldTests, index);
+    const newTests = removeItemAt(oldTests, index);
     this.changeContent({ tests: newTests });
   }
 
@@ -146,14 +146,14 @@ class EarTrainingEditor extends React.Component {
   handleUpCircleButtonClick(event) {
     const { dataset } = event.currentTarget;
     const index = Number.parseInt(dataset.index, 10);
-    const newTests = swapItems(this.props.content.tests, index, index - 1);
+    const newTests = swapItemsAt(this.props.content.tests, index, index - 1);
     this.changeContent({ tests: newTests });
   }
 
   handleDownCircleButtonClick(event) {
     const { dataset } = event.currentTarget;
     const index = Number.parseInt(dataset.index, 10);
-    const newTests = swapItems(this.props.content.tests, index, index + 1);
+    const newTests = swapItemsAt(this.props.content.tests, index, index + 1);
     this.changeContent({ tests: newTests });
   }
 

@@ -2,8 +2,8 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import TileEditor from './tile-editor';
 import { withTranslation } from 'react-i18next';
+import { swapItemsAt, removeItemAt } from '../../../utils/array-utils';
 import { Form, Menu, Radio, Slider, Button, Dropdown, Modal } from 'antd';
-import { swapItems, removeItem } from '../../../utils/immutable-array-utils';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
 import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 import { SettingOutlined, PlusOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -94,17 +94,17 @@ class ImageTilesEditor extends React.Component {
 
   moveUpTile(index) {
     const { tiles } = this.props.content;
-    this.changeContent({ tiles: swapItems(tiles, index, index - 1) });
+    this.changeContent({ tiles: swapItemsAt(tiles, index, index - 1) });
   }
 
   moveDownTile(index) {
     const { tiles } = this.props.content;
-    this.changeContent({ tiles: swapItems(tiles, index, index + 1) });
+    this.changeContent({ tiles: swapItemsAt(tiles, index, index + 1) });
   }
 
   deleteTile(index) {
     const { tiles } = this.props.content;
-    this.changeContent({ tiles: removeItem(tiles, index) });
+    this.changeContent({ tiles: removeItemAt(tiles, index) });
   }
 
   confirmDelete(onOk, onCancel = () => {}) {

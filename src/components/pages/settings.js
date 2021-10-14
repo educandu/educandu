@@ -1,18 +1,18 @@
 import Page from '../page';
 import PropTypes from 'prop-types';
-import React, { useState, useCallback } from 'react';
 import Logger from '../../common/logger';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper';
 import { useService } from '../container-context';
 import permissions from '../../domain/permissions';
+import React, { useState, useCallback } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import SettingApiClient from '../../services/setting-api-client';
 import SpecialPageSettings from '../settings/special-page-settings';
-import HomeLanguagesSettings from '../settings/home-languages-settings';
-import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types';
-import { ensureIsExcluded, ensureIsIncluded } from '../../utils/immutable-array-utils';
 import FooterLinksSettings from '../settings/footer-links-settings';
+import HomeLanguagesSettings from '../settings/home-languages-settings';
+import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils';
+import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 

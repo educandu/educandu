@@ -2,7 +2,7 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
 import abcjs from '../../../common/abcjs-import';
-import shuffleArray from '../../../utils/shuffle-array';
+import { shuffleItems } from '../../../utils/array-utils';
 import AudioPlayer from '../../../components/audio-player';
 import ClientConfig from '../../../bootstrap/client-config';
 import { inject } from '../../../components/container-context';
@@ -36,7 +36,7 @@ class EarTrainingDisplay extends React.Component {
     this.state = {
       title: content.title,
       maxWidth: content.maxWidth,
-      tests: shuffleArray(content.tests),
+      tests: shuffleItems(content.tests),
       currentIndex: 0,
       showResult: false
     };
@@ -69,7 +69,7 @@ class EarTrainingDisplay extends React.Component {
 
   handleResetClick() {
     const { tests } = this.state;
-    this.setState({ tests: shuffleArray(tests), currentIndex: 0, showResult: false });
+    this.setState({ tests: shuffleItems(tests), currentIndex: 0, showResult: false });
   }
 
   render() {

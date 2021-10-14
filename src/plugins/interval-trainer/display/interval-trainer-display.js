@@ -7,7 +7,7 @@ import { RadialChart } from 'react-vis';
 import { withTranslation } from 'react-i18next';
 import SoundfontProvider from './soundfont-provider';
 import DimensionsProvider from './dimensions-provider';
-import shuffleArray from '../../../utils/shuffle-array';
+import { shuffleItems } from '../../../utils/array-utils';
 import { inject } from '../../../components/container-context';
 import AudioContextProvider from '../../../common/audio-context-provider';
 import { sectionDisplayProps, translationProps } from '../../../ui/default-prop-types';
@@ -44,7 +44,7 @@ class IntervalTrainerDisplay extends React.Component {
   createTestStateFromProps(props, shuffle) {
     const { tests } = props.content;
     return {
-      tests: (shuffle ? shuffleArray(tests) : tests).map(test => ({
+      tests: (shuffle ? shuffleItems(tests) : tests).map(test => ({
         ...test,
         inputs: [],
         cancelled: false,
