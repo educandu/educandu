@@ -100,7 +100,7 @@ class Menus extends React.Component {
           </ul>
           <aside>
             <Restricted to={permissions.EDIT_MENU}>
-              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewMenuClick} />
+              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewMenuClick} disabled />
             </Restricted>
           </aside>
           <Modal
