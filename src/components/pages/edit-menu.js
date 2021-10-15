@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Page from '../page';
-import { Input } from 'antd';
+import { Input, message } from 'antd';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import treeCrawl from 'tree-crawl';
@@ -180,16 +180,20 @@ class EditMenu extends React.Component {
   }
 
   async handleSaveClick() {
-    const payload = this.mapStateToMenu();
+    if (this.props.allowSave) {
+      const payload = this.mapStateToMenu();
 
-    try {
-      const { menu } = await this.menuApiClient.saveMenu(payload);
-      this.setState(prevState => ({
-        ...this.mapMenuToState(menu, prevState),
-        isDirty: false
-      }));
-    } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      try {
+        const { menu } = await this.menuApiClient.saveMenu(payload);
+        this.setState(prevState => ({
+          ...this.mapMenuToState(menu, prevState),
+          isDirty: false
+        }));
+      } catch (error) {
+        errorHelper.handleApiError(error, logger);
+      }
+    } else {
+      message.error('Menus will be deprecated soon, you cannot save anymore');
     }
   }
 
@@ -598,11 +602,16 @@ class EditMenu extends React.Component {
 
 EditMenu.propTypes = {
   ...translationProps,
+  allowSave: PropTypes.bool,
   initialState: PropTypes.shape({
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
     menu: menuShape.isRequired
   }).isRequired,
   menuApiClient: PropTypes.instanceOf(MenuApiClient).isRequired
+};
+
+EditMenu.defaultProps = {
+  allowSave: false
 };
 
 export default withTranslation('editMenu')(inject({
