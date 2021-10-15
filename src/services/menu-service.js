@@ -1,17 +1,20 @@
+/* eslint-disable no-await-in-loop */
 import Logger from '../common/logger';
 import uniqueId from '../utils/unique-id';
 import dateTime from '../utils/date-time';
 import MenuStore from '../stores/menu-store';
+import DocumentService from './document-service';
 import MenuLockStore from '../stores/menu-lock-store';
 
 const logger = new Logger(__filename);
 
 class MenuService {
-  static get inject() { return [MenuStore, MenuLockStore]; }
+  static get inject() { return [MenuStore, MenuLockStore, DocumentService]; }
 
-  constructor(menuStore, menuLockStore) {
+  constructor(menuStore, menuLockStore, documentService) {
     this.menuStore = menuStore;
     this.menuLockStore = menuLockStore;
+    this.documentService = documentService;
   }
 
   getMenus() {
@@ -78,6 +81,101 @@ class MenuService {
         await this.menuLockStore.releaseLock(lock);
       }
     }
+  }
+
+  async createMarkdownContentFromNodes(nodes, level, lines = []) {
+    for (const node of nodes) {
+      if (node.title) {
+        lines.push(`###${'#'.repeat(level)} ${node.title}`);
+        lines.push('');
+      }
+
+      if (node.documentKeys.length) {
+        for (const documentKey of node.documentKeys) {
+          const document = await this.documentService.getDocumentByKey(documentKey);
+          const documentUrl = `/${document.namespace}/${encodeURIComponent(document.slug)}`;
+          lines.push(`* [${document.title}](${documentUrl})`);
+        }
+        lines.push('');
+      }
+
+      if (node.children.length) {
+        await this.createMarkdownContentFromNodes(node.children, level + 1, lines);
+      }
+    }
+
+    return lines.join('\n').trimEnd();
+  }
+
+  async deleteMenus({ user }) {
+    if (!user || !user._id) {
+      throw new Error('No user specified');
+    }
+
+    try {
+      const menus = await this.menuStore.find({});
+      for (const menu of menus) {
+        logger.info(`-----Migrating menu ${menu._id} titled '${menu.title}'-----`);
+        let latestDocumentRevision;
+
+        if (menu.defaultDocumentKey) {
+          logger.info(`Case 1: has document ${menu.defaultDocumentKey}`);
+          latestDocumentRevision = await this.documentService.getCurrentDocumentRevisionByKey(menu.defaultDocumentKey);
+        } else {
+          const firstDoc = {
+            title: '',
+            slug: '',
+            namespace: 'articles',
+            language: 'de',
+            sections: []
+          };
+          latestDocumentRevision = await this.documentService.createDocumentRevision({ doc: firstDoc, user });
+          logger.info(`Case 2: new document created ${latestDocumentRevision.key}`);
+        }
+
+        const newDoc = {
+          title: menu.title,
+          slug: `menu-${menu.slug}`,
+          namespace: latestDocumentRevision.namespace,
+          language: latestDocumentRevision.language,
+          sections: latestDocumentRevision.sections,
+          appendTo: {
+            key: latestDocumentRevision.key,
+            ancestorId: latestDocumentRevision._id
+          }
+        };
+
+        if (menu.title) {
+          const newTopSection = {
+            key: uniqueId.create(),
+            type: 'markdown',
+            content: {
+              text: `## ${menu.title}`
+            }
+          };
+
+          newDoc.sections = [newTopSection, ...newDoc.sections];
+        }
+
+        if (menu.nodes.length) {
+          logger.info(`Migrating ${menu.nodes.length} nodes`);
+          const markdownText = await this.createMarkdownContentFromNodes(menu.nodes, 0);
+          newDoc.sections.push({
+            key: uniqueId.create(),
+            type: 'markdown',
+            content: {
+              text: markdownText
+            }
+          });
+        }
+        const newDocumentRevision = await this.documentService.createDocumentRevision({ doc: newDoc, user });
+        logger.info(`New revision ${newDocumentRevision._id} for document ${newDocumentRevision.key}`);
+        logger.info('Done');
+      }
+    } catch (error) {
+      logger.error('Something went terribly wrong', error);
+    }
+
   }
 }
 

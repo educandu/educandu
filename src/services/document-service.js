@@ -123,7 +123,7 @@ class DocumentService {
 
           // If not changed, re-use existing revision:
           if (deepEqual(ancestorSection.content, section.content)) {
-            logger.info('Section has not changed compared to ancestor section with id %s, using the existing', ancestorSection._id);
+            logger.info('Section has not changed compared to ancestor section with revision %s, using the existing', ancestorSection.revision);
             return cloneDeep(ancestorSection);
           }
         }
