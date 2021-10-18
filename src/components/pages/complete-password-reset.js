@@ -108,8 +108,8 @@ class CompletePasswordReset extends React.Component {
       </div>
     );
 
-    const completionConfirmation = (
-      <div className="CompletePasswordResetPage-confirmation">
+    const completionSuccessConfirmation = (
+      <div className="CompletePasswordResetPage-message">
         <p>{t('passwordChangedSuccessfully')}</p>
         <Countdown
           seconds={10}
@@ -130,13 +130,24 @@ class CompletePasswordReset extends React.Component {
       </div>
     );
 
+    const completionFailureNotice = (
+      <div className="CompletePasswordResetPage-message">
+        <p>{t('passwordResetFailure')}</p>
+        <a href={urls.getHomeUrl()}>{t('homeLink')}</a>
+      </div>
+    );
+
+    const isValidRequest = !!this.props.initialState.passwordResetRequestId;
+
     return (
       <Page fullScreen>
         <div className="CompletePasswordResetPage">
           <div className="CompletePasswordResetPage-title">
             <ElmuLogo size="big" readonly />
           </div>
-          {user ? completionConfirmation : completionForm}
+          {!isValidRequest && completionFailureNotice}
+          {isValidRequest && !user && completionForm}
+          {isValidRequest && user && completionSuccessConfirmation}
         </div>
       </Page>
     );
@@ -146,7 +157,7 @@ class CompletePasswordReset extends React.Component {
 CompletePasswordReset.propTypes = {
   ...translationProps,
   initialState: PropTypes.shape({
-    passwordResetRequestId: PropTypes.string.isRequired
+    passwordResetRequestId: PropTypes.string
   }).isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };

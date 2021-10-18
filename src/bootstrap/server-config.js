@@ -21,7 +21,7 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/dev-elmu-web?authSource=admin';
+    config.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/dev-elmu-web?replicaSet=elmurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';
@@ -40,7 +40,7 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/test-elmu-web?authSource=admin';
+    config.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/test-elmu-web?replicaSet=elmurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';

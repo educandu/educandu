@@ -17,9 +17,15 @@ jobs:
           MINIO_BROWSER: "on"
           MINIO_DOMAIN: "localhost"
       mongo:
-        image: mongo:4.2.11-bionic
+        image: bitnami/mongodb:4.2.17-debian-10-r23
         ports:
           - 27017:27017
+        env:
+          MONGODB_ROOT_USER: root
+          MONGODB_ROOT_PASSWORD: rootpw
+          MONGODB_REPLICA_SET_KEY: elmurs
+          MONGODB_REPLICA_SET_NAME: elmurs
+          MONGODB_REPLICA_SET_MODE: primary
       maildev:
         image: maildev/maildev:1.1.0
         ports:

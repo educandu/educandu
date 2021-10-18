@@ -2,7 +2,6 @@ import express from 'express';
 import passport from 'passport';
 import urls from '../utils/urls';
 import session from 'express-session';
-import { NotFound } from 'http-errors';
 import MongoStore from 'connect-mongo';
 import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
@@ -101,11 +100,8 @@ class UserController {
 
     router.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
       const resetRequest = await this.userService.getPasswordResetRequestById(req.params.passwordResetRequestId);
-      if (!resetRequest) {
-        throw new NotFound();
-      }
-
-      const initialState = { passwordResetRequestId: resetRequest._id };
+      const passwordResetRequestId = (resetRequest || {})._id;
+      const initialState = { passwordResetRequestId };
       return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-password-reset', initialState);
     });
 
