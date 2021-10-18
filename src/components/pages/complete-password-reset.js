@@ -132,7 +132,7 @@ class CompletePasswordReset extends React.Component {
 
     const completionFailureNotice = (
       <div className="CompletePasswordResetPage-message">
-        <p>{t('passwordChangeFailure')}</p>
+        <p>{t('passwordResetFailure')}</p>
         <a href={urls.getHomeUrl()}>{t('homeLink')}</a>
       </div>
     );
