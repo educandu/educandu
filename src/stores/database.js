@@ -1,5 +1,6 @@
-import Logger from '../common/logger';
+import Graceful from 'node-graceful';
 import { MongoClient } from 'mongodb';
+import Logger from '../common/logger';
 import menusSpec from './collection-specs/menus';
 import usersSpec from './collection-specs/users';
 import settingsSpec from './collection-specs/settings';
@@ -10,6 +11,7 @@ import documentLocksSpec from './collection-specs/document-locks';
 import documentOrdersSpec from './collection-specs/document-orders';
 import documentRevisionsSpec from './collection-specs/document-revisions';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests';
+import { migrate } from './db-migrate';
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 
@@ -86,8 +88,16 @@ class Database {
   }
 
   static async create({ connectionString }) {
+    try {
+      await migrate(connectionString);
+    } catch (error) {
+      logger.error(error);
+      Graceful.exit(1);
+    }
+
     const database = new Database(connectionString);
     await database.connect();
+
     await database.createCollections();
     return database;
   }
