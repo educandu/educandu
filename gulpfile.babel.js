@@ -34,7 +34,7 @@ if (process.env.ELMU_ENV === 'prod') {
 const TEST_MAILDEV_IMAGE = 'maildev/maildev:1.1.0';
 const TEST_MAILDEV_CONTAINER_NAME = 'elmu-maildev';
 
-const TEST_MONGO_IMAGE = 'mongo:4.2.11-bionic';
+const TEST_MONGO_IMAGE = 'bitnami/mongodb:4.2.17-debian-10-r23';
 const TEST_MONGO_CONTAINER_NAME = 'elmu-mongo';
 
 const TEST_MINIO_IMAGE = 'bitnami/minio:2020.12.18';
@@ -432,10 +432,20 @@ tasks.maildevReset = series(tasks.maildevDown, tasks.maildevUp);
 tasks.mongoUp = async function mongoUp() {
   await ensureContainerRunning({
     containerName: TEST_MONGO_CONTAINER_NAME,
-    runArgs: `-d -p 27017:27017 ${TEST_MONGO_IMAGE}`,
+    runArgs: [
+      '-d',
+      '-p 27017:27017',
+      '-e MONGODB_ROOT_USER=root',
+      '-e MONGODB_ROOT_PASSWORD=rootpw',
+      '-e MONGODB_REPLICA_SET_KEY=elmurs',
+      '-e MONGODB_REPLICA_SET_NAME=elmurs',
+      '-e MONGODB_REPLICA_SET_MODE=primary',
+      '-e MONGODB_ADVERTISED_HOSTNAME=localhost',
+      TEST_MONGO_IMAGE
+    ].join(' '),
     afterRun: async () => {
-      await execa('./scripts/db-create-user', { stdio: 'inherit' });
-      await execa('./scripts/db-seed', { stdio: 'inherit' });
+      await tasks.mongoUser();
+      await tasks.mongoSeed();
     }
   });
 };
@@ -469,7 +479,7 @@ tasks.minioUp = async function minioUp() {
       `-e MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}`,
       `-e MINIO_SECRET_KEY=${MINIO_SECRET_KEY}`,
       '-e MINIO_BROWSER=on',
-      `${TEST_MINIO_IMAGE}`
+      TEST_MINIO_IMAGE
     ].join(' '),
     afterRun: async () => {
       await execa('./scripts/s3-seed', { stdio: 'inherit' });
