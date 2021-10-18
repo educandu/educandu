@@ -232,7 +232,12 @@ class Account extends React.Component {
           <Input type="text" />
         </FormItem>
         <FormItem {...formItemLayout} label={t('profile.country')} name="country" initialValue={profile.country || ''}>
-          <Select optionFilterProp="title" showSearch allowClear>
+          <Select
+            optionFilterProp="title"
+            showSearch
+            allowClear
+            autoComplete="none"
+            >
             {createCountryNames(countryNameProvider, language).map(cn => (
               <Option key={cn.key} value={cn.key} title={cn.name}>
                 <CountryFlagAndName code={cn.key} name={cn.name} />
