@@ -30,7 +30,15 @@ function LanguageSelect({ size, value, languages, onChange }) {
   }, [languageNameProvider, language, languages]);
 
   return (
-    <Select size={size} value={value} onChange={onChange} optionFilterProp="title" style={{ width: '100%' }} showSearch>
+    <Select
+      size={size}
+      value={value}
+      onChange={onChange}
+      optionFilterProp="title"
+      style={{ width: '100%' }}
+      showSearch
+      autoComplete="none"
+      >
       {languageList.map(ln => (
         <Option key={ln.code} value={ln.code} title={ln.name}>
           <CountryFlagAndName code={ln.flag} name={ln.name} />

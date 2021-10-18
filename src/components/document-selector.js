@@ -28,7 +28,15 @@ function DocumentSelector({ size, documents, value, by, onChange }) {
   }, [documents, by]);
 
   return (
-    <Select size={size} value={value} onChange={onChange} optionFilterProp="title" style={{ width: '100%' }} showSearch>
+    <Select
+      size={size}
+      value={value}
+      onChange={onChange}
+      optionFilterProp="title"
+      style={{ width: '100%' }}
+      showSearch
+      autoComplete="none"
+      >
       {filteredOptions.map(option => (
         <Option key={option.key} value={option.value} title={option.title}>{option.title}</Option>
       ))}
