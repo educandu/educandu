@@ -29,3 +29,11 @@ export const restoreRevisionBodySchema = joi.object({
   documentKey: idOrKeySchema.required(),
   revisionId: idOrKeySchema.required()
 });
+
+export const hardDeleteSectionBodySchema = joi.object({
+  documentKey: idOrKeySchema.required(),
+  sectionKey: idOrKeySchema.required(),
+  sectionRevision: idOrKeySchema.required(),
+  reason: joi.string().min(3).required(),
+  deleteAllRevisions: joi.boolean().required()
+});

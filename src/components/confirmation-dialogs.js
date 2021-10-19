@@ -19,24 +19,21 @@ export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
 
 export function confirmSectionHardDelete(
   t,
-  section,
   onOk,
   onCancel = () => {}
 ) {
   let dialog = null;
-  let deletionReason = '';
-  let deleteDescendants = false;
-  let handleDeletionReasonChange = null;
-  let handleDeleteDescendantsChange = null;
+  let reason = '';
+  let deleteAllRevisions = false;
   let createDialogProps = null;
 
-  handleDeletionReasonChange = event => {
-    deletionReason = event.target.value;
+  const handleReasonChange = event => {
+    reason = event.target.value;
     dialog.update(createDialogProps());
   };
 
-  handleDeleteDescendantsChange = event => {
-    deleteDescendants = event.target.checked;
+  const handleDeleteAllRevisionsChange = event => {
+    deleteAllRevisions = event.target.checked;
     dialog.update(createDialogProps());
   };
 
@@ -53,16 +50,16 @@ export function confirmSectionHardDelete(
         <span>{t('confirmationDialogs:pleaseSpecifyAReason')}:</span>
         <br />
         <TextArea
-          value={deletionReason}
-          onChange={handleDeletionReasonChange}
+          value={reason}
+          onChange={handleReasonChange}
           />
         <br />
         <br />
         <Checkbox
-          value={deleteDescendants}
-          onChange={handleDeleteDescendantsChange}
+          checked={deleteAllRevisions}
+          onChange={handleDeleteAllRevisionsChange}
           >
-          {t('confirmationDialogs:deleteAllDescendantRevisions')}
+          {t('confirmationDialogs:deleteAllRevisions')}
         </Checkbox>
       </div>
     );
@@ -74,10 +71,10 @@ export function confirmSectionHardDelete(
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),
-    onOk: () => onOk({ deleteDescendants, deletionReason }),
+    onOk: () => onOk({ reason, deleteAllRevisions }),
     onCancel,
     okButtonProps: {
-      disabled: deletionReason.length < 3
+      disabled: reason.length < 3
     }
   });
 

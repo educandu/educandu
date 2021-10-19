@@ -37,6 +37,6 @@ enterSearchTerm:
 newDocument:
   en: New document
   de: Neues Dokument
-newDocumentProgress:
-  en: Creating new document ...
-  de: Neues Dokument wird erstellt ...
+notAssigned:
+  en: (not assigned)
+  de: (nicht zugewiesen)

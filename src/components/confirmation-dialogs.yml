@@ -10,9 +10,9 @@ thisActionIsIrreversible:
 pleaseSpecifyAReason:
   en: Please specify a reason
   de: Bitte geben Sie einen Grund an
-deleteAllDescendantRevisions:
-  en: Also delete all descendant revisions
-  de: Auch alle nachfolgenden Revisionen löschen
+deleteAllRevisions:
+  en: Delete all existing revisions of this section
+  de: Alle existierenden Revisionen dieses Abschnitts löschen
 restoreDocumentRevisionConfirmation:
   en: Do you really want to restore the content of revision {revisionId}?
   de: Möchten Sie den Inhalt der Revision {revisionId} wirklich wiederherstellen?
