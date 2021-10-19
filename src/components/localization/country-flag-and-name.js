@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function countryCodeToFlagEmoji(country) {
-  return String.fromCodePoint(...[...country].map(c => c.charCodeAt() + 0x1F1A5));
-}
-
 function CountryFlagAndName({ code, name, flagOnly }) {
   return (
     <span className="CountryFlagAndName">
-      <span>{countryCodeToFlagEmoji(code)}</span>
+      <span className={`flag-icon flag-icon-${code.toLowerCase()}`} title={name} />
       {!flagOnly && <span>&nbsp;&nbsp;{name}</span>}
     </span>
   );
