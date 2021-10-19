@@ -1,8 +1,8 @@
 [
   {
-    "username": "user1234",
-    "password": "user1234",
-    "email": "user1234@domain.com",
+    "username": "user",
+    "password": "user",
+    "email": "user@domain.com",
     "roles": [
       "user"
     ],
@@ -18,9 +18,9 @@
     }
   },
   {
-    "username": "editor1234",
-    "password": "editor1234",
-    "email": "editor1234@domain.com",
+    "username": "editor",
+    "password": "editor",
+    "email": "editor@domain.com",
     "roles": [
       "user",
       "editor"
@@ -37,9 +37,9 @@
     }
   },
   {
-    "username": "supereditor1234",
-    "password": "supereditor1234",
-    "email": "supereditor1234@domain.com",
+    "username": "supereditor",
+    "password": "supereditor",
+    "email": "supereditor@domain.com",
     "roles": [
       "user",
       "editor",
@@ -57,16 +57,16 @@
     }
   },
   {
-    "username": "superuser1234",
-    "password": "superuser1234",
-    "email": "superuser1234@domain.com",
+    "username": "superuser",
+    "password": "superuser",
+    "email": "superuser@domain.com",
     "roles": [
       "user",
       "editor",
       "super-editor",
       "super-user"
     ],
-    "lockedOut": true,
+    "lockedOut": false,
     "profile": {
       "firstName": "Sigismund",
       "lastName": "Trevain",
@@ -75,6 +75,27 @@
       "postalCode": "91821 CEDEX",
       "city": "Longjumeau",
       "country": "FR"
+    }
+  },
+  {
+    "username": "admin",
+    "password": "#smBW8#7aiFWKBA",
+    "email": "admin@domain.com",
+    "roles": [
+      "user",
+      "editor",
+      "super-editor",
+      "super-user"
+    ],
+    "lockedOut": false,
+    "profile": {
+      "firstName": "",
+      "lastName": "",
+      "street": "",
+      "streetSupplement": "",
+      "postalCode": "",
+      "city": "",
+      "country": ""
     }
   }
 ]
