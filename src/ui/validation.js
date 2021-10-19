@@ -4,7 +4,7 @@ const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|
 
 const URL_SECURE_PROTO_REGEX = /^https:\/\/.+$/;
 
-const MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS = /^[#]+\s*[_*]+.+[_*]+\s*[#]*\s*$/m;
+export const MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS = /^[#]+\s*[_*]+.+[_*]+\s*[#]*\s*$/m;
 
 export function validateUrl(url, t, { allowInsecure = false } = {}) {
   let validateStatus;
