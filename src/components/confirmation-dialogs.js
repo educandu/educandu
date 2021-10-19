@@ -25,16 +25,14 @@ export function confirmSectionHardDelete(
   let dialog = null;
   let reason = '';
   let deleteAllRevisions = false;
-  let handleReasonChange = null;
-  let handleDeleteAllRevisionsChange = null;
   let createDialogProps = null;
 
-  handleReasonChange = event => {
+  const handleReasonChange = event => {
     reason = event.target.value;
     dialog.update(createDialogProps());
   };
 
-  handleDeleteAllRevisionsChange = event => {
+  const handleDeleteAllRevisionsChange = event => {
     deleteAllRevisions = event.target.checked;
     dialog.update(createDialogProps());
   };

@@ -180,7 +180,7 @@ describe('document-service', () => {
         ]);
       });
 
-      describe('and only the second revision is hard-deleted', () => {
+      describe('and only the revision in the middle is hard-deleted', () => {
         let documentRevisionsAfterDeletion;
 
         beforeEach(async () => {
@@ -231,6 +231,12 @@ describe('document-service', () => {
             content: { text: 'Doomed section C' }
           });
         });
+
+        it('does not modify unrelated sections', () => {
+          [0, 1, 2, 3, 4].forEach(index => {
+            expect(documentRevisionsBeforeDeletion[index].sections[0]).toEqual(documentRevisionsAfterDeletion[index].sections[0]);
+          });
+        });
       });
 
       describe('and all revisions are hard-deleted', () => {
@@ -260,6 +266,11 @@ describe('document-service', () => {
           });
         });
 
+        it('does not modify unrelated sections', () => {
+          [0, 1, 2, 3, 4].forEach(index => {
+            expect(documentRevisionsBeforeDeletion[index].sections[0]).toEqual(documentRevisionsAfterDeletion[index].sections[0]);
+          });
+        });
       });
 
       describe('and the section already contains hard-deleted revisions', () => {

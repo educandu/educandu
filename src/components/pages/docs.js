@@ -13,8 +13,8 @@ import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions';
 import { withLanguage } from '../language-context';
-import { Input, Modal, Table, Button } from 'antd';
 import { toTrimmedString } from '../../utils/sanitize';
+import { Form, Input, Modal, Table, Button } from 'antd';
 import LanguageSelect from '../localization/language-select';
 import DocumentApiClient from '../../services/document-api-client';
 import LanguageNameProvider from '../../data/language-name-provider';
@@ -22,6 +22,7 @@ import CountryFlagAndName from '../localization/country-flag-and-name';
 import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types';
 
 const { Search } = Input;
+const FormItem = Form.Item;
 
 const logger = new Logger(__filename);
 
@@ -133,11 +134,11 @@ class Docs extends React.Component {
     });
   }
 
-  renderTitle(value, doc) {
+  renderTitle(_value, doc) {
     return <a href={urls.getDocUrl(doc.key)}>{doc.title}</a>;
   }
 
-  renderSlug(value, doc) {
+  renderSlug(_value, doc) {
     if (!doc.slug) {
       const { t } = this.props;
       return t('notAssigned');
@@ -147,26 +148,26 @@ class Docs extends React.Component {
     return <a href={url}>{url}</a>;
   }
 
-  renderUpdatedOn(value, doc) {
+  renderUpdatedOn(_value, doc) {
     const { locale } = this.props;
     const date = moment(doc.updatedOn).locale(locale);
     return <span>{date.format('L, LT')}</span>;
   }
 
-  renderLanguage(value, doc) {
+  renderLanguage(_value, doc) {
     const { languageNameProvider, language } = this.props;
     const lang = languageNameProvider.getData(language)[doc.language];
     return <CountryFlagAndName code={lang.flag} name={`${doc.language} (${lang.name})`} flagOnly />;
   }
 
-  renderUpdatedBy(value, doc) {
+  renderUpdatedBy(_value, doc) {
     const { t } = this.props;
     return doc.updatedBy.email
       ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>{t('email')}</a></span>
       : <span>{doc.updatedBy.username}</span>;
   }
 
-  renderActions(value, doc) {
+  renderActions(_value, doc) {
     const { t } = this.props;
     return <span><a onClick={() => this.handleCloneClick(doc)}>{t('clone')}</a></span>;
   }
@@ -246,12 +247,17 @@ class Docs extends React.Component {
             maskClosable={false}
             okButtonProps={{ loading: isLoading }}
             >
-            <div>{t('title')}</div>
-            <div><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></div>
-            <div style={{ marginTop: '0.75em' }}>{t('language')}</div>
-            <div><LanguageSelect value={newDocLanguage} onChange={this.handleNewDocLanguageChange} /></div>
-            <div style={{ marginTop: '0.75em' }}>{t('slug')}</div>
-            <div><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></div>
+            <Form name="new-document-form" layout="vertical">
+              <FormItem label={t('title')}>
+                <Input value={newDocTitle} onChange={this.handleNewDocTitleChange} />
+              </FormItem>
+              <FormItem label={t('language')}>
+                <LanguageSelect value={newDocLanguage} onChange={this.handleNewDocLanguageChange} />
+              </FormItem>
+              <FormItem label={t('slug')}>
+                <Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} />
+              </FormItem>
+            </Form>
           </Modal>
         </div>
       </Page>
