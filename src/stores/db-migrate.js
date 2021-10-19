@@ -12,6 +12,7 @@ export async function migrate(mongoClient) {
       path: path.join(__dirname, 'migrations'),
       pattern: /^\d{4}-\d{2}-\d{2}-.*\.js$/,
       customResolver: filePath => {
+        // eslint-disable-next-line global-require
         const Migration = require(filePath).default;
         return new Migration(db, mongoClient);
       }
