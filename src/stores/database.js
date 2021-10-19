@@ -87,16 +87,21 @@ class Database {
     await this._mongoClient.close();
   }
 
-  static async create({ connectionString }) {
-    try {
-      await migrate(connectionString);
-    } catch (error) {
-      logger.error(error);
-      Graceful.exit(1);
-    }
+  static async create({ connectionString, skipDbMigration }) {
 
     const database = new Database(connectionString);
     await database.connect();
+
+    if (!skipDbMigration) {
+      try {
+        logger.info('Starting migrations');
+        await migrate(database._mongoClient);
+        logger.info('Finished migrations successfully');
+      } catch (error) {
+        logger.error(error);
+        Graceful.exit(1);
+      }
+    }
 
     await database.createCollections();
     return database;

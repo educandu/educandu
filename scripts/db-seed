@@ -25,7 +25,7 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
 
 (async function seed() {
 
-  const container = await serverBootstrapper.createContainer();
+  const container = await serverBootstrapper.createContainer(null, true);
 
   const db = container.get(Database);
   const userService = container.get(UserService);

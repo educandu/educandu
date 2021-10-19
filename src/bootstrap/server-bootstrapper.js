@@ -10,7 +10,7 @@ import ServerResourceLoader from '../resources/server-resource-loader';
 
 const logger = new Logger(__filename);
 
-export async function createContainer(config = null) {
+export async function createContainer(config = null, skipDbMigration = false) {
   logger.info('Creating container');
   const container = await commonBootstrapper.createContainer();
 
@@ -21,7 +21,8 @@ export async function createContainer(config = null) {
 
   logger.info('Establishing database connection');
   const database = await Database.create({
-    connectionString: serverConfig.elmuWebConnectionString
+    connectionString: serverConfig.elmuWebConnectionString,
+    skipDbMigration
   });
 
   container.registerInstance(Database, database);
