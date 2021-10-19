@@ -4,6 +4,8 @@ const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|
 
 const URL_SECURE_PROTO_REGEX = /^https:\/\/.+$/;
 
+const MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS = /^[#]+\s*[_*]+.+[_*]+\s*[#]*\s*$/m;
+
 export function validateUrl(url, t, { allowInsecure = false } = {}) {
   let validateStatus;
   let help;
@@ -25,6 +27,22 @@ export function validateUrl(url, t, { allowInsecure = false } = {}) {
   return { validateStatus, help };
 }
 
+export function validateMarkdown(markdown, t) {
+  let validateStatus;
+  let help;
+
+  if (MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS.test(markdown)) {
+    validateStatus = 'warning';
+    help = t('validation:markdownBoldOrItalicWithinHeaders');
+  } else {
+    validateStatus = 'success';
+    help = null;
+  }
+
+  return { validateStatus, help };
+}
+
 export default {
-  validateUrl
+  validateUrl,
+  validateMarkdown
 };
