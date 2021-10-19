@@ -1,7 +1,7 @@
 import Umzug from 'umzug';
 import path from 'path';
 
-export async function migrate(mongoClient) {
+export async function runMigrationScripts(mongoClient) {
   const db = mongoClient.db();
   const umzug = new Umzug({
     storage: 'mongodb',

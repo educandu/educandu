@@ -10,7 +10,7 @@ import documentLocksSpec from './collection-specs/document-locks';
 import documentOrdersSpec from './collection-specs/document-orders';
 import documentRevisionsSpec from './collection-specs/document-revisions';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests';
-import { migrate } from './db-migrate';
+import { runMigrationScripts } from './db-migrate';
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 
@@ -94,7 +94,7 @@ class Database {
     if (!skipDbMigration) {
       try {
         logger.info('Starting migrations');
-        await migrate(database._mongoClient);
+        await runMigrationScripts(database._mongoClient);
         logger.info('Finished migrations successfully');
       } catch (error) {
         logger.error(error);
