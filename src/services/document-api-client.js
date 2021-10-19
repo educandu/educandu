@@ -33,7 +33,7 @@ class DocumentApiClient {
       .then(res => res.body);
   }
 
-  hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants }) {
+  hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions }) {
     return this.httpClient
       .delete('/api/v1/docs/sections')
       .accept('json')
@@ -43,7 +43,7 @@ class DocumentApiClient {
         sectionKey,
         sectionRevision,
         reason,
-        deleteDescendants: !!deleteDescendants
+        deleteAllRevisions: !!deleteAllRevisions
       })
       .then(res => res.body);
   }

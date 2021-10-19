@@ -25,7 +25,7 @@ describe('document-service', () => {
   describe('restoreDocumentRevision', () => {
 
     describe('when a document has 3 initial revisions', () => {
-      let initialRevisions;
+      let initialDocumentRevisions;
 
       beforeEach(async () => {
         const section1 = {
@@ -44,7 +44,7 @@ describe('document-service', () => {
           }
         };
 
-        initialRevisions = await createTestRevisions(container, user, [
+        initialDocumentRevisions = await createTestRevisions(container, user, [
           {
             title: 'Revision 1',
             slug: 'rev-1',
@@ -68,8 +68,8 @@ describe('document-service', () => {
 
         beforeEach(async () => {
           result = await sut.restoreDocumentRevision({
-            documentKey: initialRevisions[1].key,
-            revisionId: initialRevisions[1]._id,
+            documentKey: initialDocumentRevisions[1].key,
+            revisionId: initialDocumentRevisions[1]._id,
             user
           });
         });
@@ -79,35 +79,222 @@ describe('document-service', () => {
         });
 
         it('should restore the title', () => {
-          expect(result[3].title).toBe(initialRevisions[1].title);
+          expect(result[3].title).toBe(initialDocumentRevisions[1].title);
         });
 
         it('should restore the slug', () => {
-          expect(result[3].slug).toBe(initialRevisions[1].slug);
+          expect(result[3].slug).toBe(initialDocumentRevisions[1].slug);
         });
 
         it('should set "restoredFrom" to the restored revision ID', () => {
-          expect(result[3].restoredFrom).toBe(initialRevisions[1]._id);
+          expect(result[3].restoredFrom).toBe(initialDocumentRevisions[1]._id);
         });
 
         it('should preserve section keys', () => {
-          expect(result[3].sections[0].key).toBe(initialRevisions[1].sections[0].key);
-          expect(result[3].sections[1].key).toBe(initialRevisions[1].sections[1].key);
+          expect(result[3].sections[0].key).toBe(initialDocumentRevisions[1].sections[0].key);
+          expect(result[3].sections[1].key).toBe(initialDocumentRevisions[1].sections[1].key);
         });
 
         it('should restore the section content', () => {
-          expect(result[3].sections[0].content).toEqual(initialRevisions[1].sections[0].content);
-          expect(result[3].sections[1].content).toEqual(initialRevisions[1].sections[1].content);
+          expect(result[3].sections[0].content).toEqual(initialDocumentRevisions[1].sections[0].content);
+          expect(result[3].sections[1].content).toEqual(initialDocumentRevisions[1].sections[1].content);
         });
 
         it('should keep the section revision if the content has not changed in between', () => {
-          expect(result[3].sections[0].revision).toBe(initialRevisions[1].sections[0].revision);
+          expect(result[3].sections[0].revision).toBe(initialDocumentRevisions[1].sections[0].revision);
         });
 
         it('should assign a new section revision if the content has changed in between', () => {
-          expect(result[3].sections[1].revision).not.toBe(initialRevisions[1].sections[1].revision);
+          expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
         });
 
+      });
+
+    });
+
+  });
+
+  describe('hardDeleteSection', () => {
+
+    describe('when a section has 3 revisions', () => {
+      let documentRevisionsBeforeDeletion;
+
+      beforeEach(async () => {
+        const unrelatedSection = {
+          key: uniqueId.create(),
+          type: 'markdown',
+          content: {
+            text: 'Unmodified text'
+          }
+        };
+
+        const sectionToBeDeleted = {
+          key: uniqueId.create(),
+          type: 'markdown',
+          content: {
+            text: 'Initial text'
+          }
+        };
+
+        documentRevisionsBeforeDeletion = await createTestRevisions(container, user, [
+          {
+            title: 'Revision 1',
+            slug: 'rev-1',
+            sections: [
+              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated A' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section A' } }
+            ]
+          },
+          {
+            title: 'Revision 2',
+            slug: 'rev-2',
+            sections: [
+              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated B' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section B' } }
+            ]
+          },
+          {
+            title: 'Revision 3',
+            slug: 'rev-3',
+            sections: [
+              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated C' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section B' } }
+            ]
+          },
+          {
+            title: 'Revision 4',
+            slug: 'rev-4',
+            sections: [
+              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated D' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section B' } }
+            ]
+          },
+          {
+            title: 'Revision 5',
+            slug: 'rev-5',
+            sections: [
+              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated E' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section C' } }
+            ]
+          }
+        ]);
+      });
+
+      describe('and only the second revision is hard-deleted', () => {
+        let documentRevisionsAfterDeletion;
+
+        beforeEach(async () => {
+          await sut.hardDeleteSection({
+            documentKey: documentRevisionsBeforeDeletion[2].key,
+            sectionKey: documentRevisionsBeforeDeletion[2].sections[1].key,
+            sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
+            reason: 'My reason',
+            deleteAllRevisions: false,
+            user
+          });
+
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+        });
+
+        it('deletes all earlier and later occurrences of that section revision', () => {
+          expect(documentRevisionsAfterDeletion[1].sections[1]).toMatchObject({
+            deletedOn: expect.any(Date),
+            deletedBy: user._id,
+            deletedBecause: 'My reason',
+            content: null
+          });
+          expect(documentRevisionsAfterDeletion[2].sections[1]).toMatchObject({
+            deletedOn: expect.any(Date),
+            deletedBy: user._id,
+            deletedBecause: 'My reason',
+            content: null
+          });
+          expect(documentRevisionsAfterDeletion[3].sections[1]).toMatchObject({
+            deletedOn: expect.any(Date),
+            deletedBy: user._id,
+            deletedBecause: 'My reason',
+            content: null
+          });
+        });
+
+        it('does not delete any other revision of that section', () => {
+          expect(documentRevisionsAfterDeletion[0].sections[1]).toMatchObject({
+            deletedOn: null,
+            deletedBy: null,
+            deletedBecause: null,
+            content: { text: 'Doomed section A' }
+          });
+          expect(documentRevisionsAfterDeletion[4].sections[1]).toMatchObject({
+            deletedOn: null,
+            deletedBy: null,
+            deletedBecause: null,
+            content: { text: 'Doomed section C' }
+          });
+        });
+      });
+
+      describe('and all revisions are hard-deleted', () => {
+        let documentRevisionsAfterDeletion;
+
+        beforeEach(async () => {
+          await sut.hardDeleteSection({
+            documentKey: documentRevisionsBeforeDeletion[2].key,
+            sectionKey: documentRevisionsBeforeDeletion[2].sections[1].key,
+            sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
+            reason: 'My reason',
+            deleteAllRevisions: true,
+            user
+          });
+
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+        });
+
+        it('deletes all occurrences of that section', () => {
+          documentRevisionsAfterDeletion.forEach(revision => {
+            expect(revision.sections[1]).toMatchObject({
+              deletedOn: expect.any(Date),
+              deletedBy: user._id,
+              deletedBecause: 'My reason',
+              content: null
+            });
+          });
+        });
+
+      });
+
+      describe('and the section already contains hard-deleted revisions', () => {
+        let documentRevisionsAfterDeletion;
+
+        beforeEach(async () => {
+          await sut.hardDeleteSection({
+            documentKey: documentRevisionsBeforeDeletion[4].key,
+            sectionKey: documentRevisionsBeforeDeletion[4].sections[1].key,
+            sectionRevision: documentRevisionsBeforeDeletion[4].sections[1].revision,
+            reason: 'My old reason',
+            deleteAllRevisions: false,
+            user
+          });
+
+          await sut.hardDeleteSection({
+            documentKey: documentRevisionsBeforeDeletion[2].key,
+            sectionKey: documentRevisionsBeforeDeletion[2].sections[1].key,
+            sectionRevision: documentRevisionsBeforeDeletion[2].sections[1].revision,
+            reason: 'My reason',
+            deleteAllRevisions: true,
+            user
+          });
+
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+        });
+
+        it('does not modify the already hard-deleted revision', () => {
+          expect(documentRevisionsAfterDeletion[4].sections[1]).toMatchObject({
+            deletedOn: expect.any(Date),
+            deletedBy: user._id,
+            deletedBecause: 'My old reason',
+            content: null
+          });
+        });
       });
 
     });

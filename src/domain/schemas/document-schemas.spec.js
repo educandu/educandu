@@ -1,5 +1,5 @@
 import { validate } from '../validation';
-import { createDocumentRevisionBodySchema } from './document-revision-schemas';
+import { createDocumentRevisionBodySchema } from './document-schemas';
 
 const happyPathData = {
   title: 'My Title',

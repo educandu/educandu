@@ -19,7 +19,7 @@ function SectionActionDropdown({ children, section, onAction, onVisibleChange, p
   const handleSectionMenuClick = ({ key }) => {
     switch (key) {
       case HARD_DELETE:
-        confirmSectionHardDelete(t, section, ({ deleteDescendants, deletionReason }) => onAction(createHardDelete(section, deletionReason, deleteDescendants)));
+        confirmSectionHardDelete(t, ({ reason, deleteAllRevisions }) => onAction(createHardDelete(section, reason, deleteAllRevisions)));
         break;
       default:
         throw new Error(`Invalid menu key: ${key}`);

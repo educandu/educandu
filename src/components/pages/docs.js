@@ -137,6 +137,16 @@ class Docs extends React.Component {
     return <a href={urls.getDocUrl(doc.key)}>{doc.title}</a>;
   }
 
+  renderSlug(value, doc) {
+    if (!doc.slug) {
+      const { t } = this.props;
+      return t('notAssigned');
+    }
+
+    const url = urls.getArticleUrl(doc.slug);
+    return <a href={url}>{url}</a>;
+  }
+
   renderUpdatedOn(value, doc) {
     const { locale } = this.props;
     const date = moment(doc.updatedOn).locale(locale);
@@ -172,6 +182,13 @@ class Docs extends React.Component {
         key: 'title',
         render: this.renderTitle,
         sorter: by(x => x.title)
+      },
+      {
+        title: t('slug'),
+        dataIndex: 'slug',
+        key: 'slug',
+        render: this.renderSlug,
+        sorter: by(x => x.slug)
       },
       {
         title: t('language'),
@@ -227,14 +244,14 @@ class Docs extends React.Component {
             onOk={this.handleOk}
             onCancel={this.handleCancel}
             maskClosable={false}
+            okButtonProps={{ loading: isLoading }}
             >
-            <p>{t('title')}</p>
-            <p><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></p>
-            <p>{t('language')}</p>
-            <p><LanguageSelect value={newDocLanguage} onChange={this.handleNewDocLanguageChange} /></p>
-            <p>{t('slug')}</p>
-            <p><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></p>
-            {isLoading && <p>{t('newDocumentProgress')}</p>}
+            <div>{t('title')}</div>
+            <div><Input value={newDocTitle} onChange={this.handleNewDocTitleChange} /></div>
+            <div style={{ marginTop: '0.75em' }}>{t('language')}</div>
+            <div><LanguageSelect value={newDocLanguage} onChange={this.handleNewDocLanguageChange} /></div>
+            <div style={{ marginTop: '0.75em' }}>{t('slug')}</div>
+            <div><Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} /></div>
           </Modal>
         </div>
       </Page>
