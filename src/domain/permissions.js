@@ -12,6 +12,7 @@ export const EDIT_SETTINGS = 'edit-settings';
 export const EDIT_MENU_STRUCTURE = 'edit-menu-structure';
 export const HARD_DELETE_SECTION = 'hard-delete-section';
 export const SEE_USER_EMAIL = 'see-user-email';
+export const MIGRATE_DATA = 'migrate-data';
 
 const rolesForPermission = {
   [EDIT_DOC]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
@@ -25,7 +26,8 @@ const rolesForPermission = {
   [EDIT_SETTINGS]: [SUPER_USER],
   [EDIT_USERS]: [SUPER_USER],
   [HARD_DELETE_SECTION]: [SUPER_USER],
-  [SEE_USER_EMAIL]: [SUPER_USER]
+  [SEE_USER_EMAIL]: [SUPER_USER],
+  [MIGRATE_DATA]: [SUPER_USER]
 };
 
 export function hasUserPermission(user, permission) {
@@ -45,5 +47,6 @@ export default {
   EDIT_MENU_STRUCTURE,
   HARD_DELETE_SECTION,
   SEE_USER_EMAIL,
+  MIGRATE_DATA,
   hasUserPermission
 };
