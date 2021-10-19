@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context';
 import { useLanguage } from '../language-context';
-import SettingsDocumentTable from './settings-document-table';
+import SettingsDocumentsTable from './settings-documents-table';
 import LanguageNameProvider from '../../data/language-name-provider';
 import CountryFlagAndName from '../localization/country-flag-and-name';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types';
@@ -41,7 +41,7 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
               name={languageNames[lang]?.name || t('unknown')}
               />
           </h3>
-          <SettingsDocumentTable
+          <SettingsDocumentsTable
             documents={documents}
             settingsDocuments={footerLinks[lang] || []}
             onChange={items => handleChange(lang, items)}
