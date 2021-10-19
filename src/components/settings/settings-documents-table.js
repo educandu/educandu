@@ -36,8 +36,8 @@ const linkListToSettingsDocuments = linkList => {
   });
 };
 
-function SettingsDocumentTable({ settingsDocuments, documents, onChange }) {
-  const { t } = useTranslation('settingsDocumentTable');
+function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
+  const { t } = useTranslation('settingsDocumentsTable');
 
   const fireOnChange = updatedLinkList => {
     onChange(linkListToSettingsDocuments(updatedLinkList), { isValid: updatedLinkList.every(isValidLinkListItem) });
@@ -118,7 +118,7 @@ function SettingsDocumentTable({ settingsDocuments, documents, onChange }) {
   );
 }
 
-SettingsDocumentTable.propTypes = {
+SettingsDocumentsTable.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.oneOfType([
     documentMetadataShape,
     documentRevisionShape,
@@ -128,4 +128,4 @@ SettingsDocumentTable.propTypes = {
   settingsDocuments: PropTypes.arrayOf(settingsDocumentShape).isRequired
 };
 
-export default memo(SettingsDocumentTable);
+export default memo(SettingsDocumentsTable);
