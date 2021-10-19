@@ -1,4 +1,6 @@
 import { MongoClient } from 'mongodb';
+import Umzug from 'umzug';
+import path from 'path';
 import Logger from '../common/logger';
 import menusSpec from './collection-specs/menus';
 import usersSpec from './collection-specs/users';
@@ -10,7 +12,6 @@ import documentLocksSpec from './collection-specs/document-locks';
 import documentOrdersSpec from './collection-specs/document-orders';
 import documentRevisionsSpec from './collection-specs/document-revisions';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests';
-import { runMigrationScripts } from './db-migrate';
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 
@@ -86,6 +87,29 @@ class Database {
     await this._mongoClient.close();
   }
 
+  async runMigrationScripts(mongoClient) {
+    const db = mongoClient.db();
+    const umzug = new Umzug({
+      storage: 'mongodb',
+      storageOptions: {
+        collection: db.collection('migrations')
+      },
+      migrations: {
+        path: path.resolve(__dirname, '../../migrations'),
+        pattern: /^\d{4}-\d{2}-\d{2}-.*\.js$/,
+        customResolver: filePath => {
+          // eslint-disable-next-line global-require
+          const Migration = require(filePath).default;
+          return new Migration(db, mongoClient);
+        }
+      }
+    });
+
+    umzug.addListener('migrated', name => logger.info(`Finished migrating ${name}`));
+
+    await umzug.up();
+  }
+
   static async create({ connectionString, runDbMigration }) {
 
     const database = new Database(connectionString);
@@ -94,7 +118,7 @@ class Database {
     if (runDbMigration) {
       try {
         logger.info('Starting migrations');
-        await runMigrationScripts(database._mongoClient);
+        await database.runMigrationScripts(database._mongoClient);
         logger.info('Finished migrations successfully');
       } catch (error) {
         logger.error(error);
