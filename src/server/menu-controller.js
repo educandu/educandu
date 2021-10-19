@@ -4,7 +4,6 @@ import { NotFound } from 'http-errors';
 import PageRenderer from './page-renderer';
 import permissions from '../domain/permissions';
 import MenuService from '../services/menu-service';
-import UserService from '../services/user-service';
 import ClientDataMapper from './client-data-mapper';
 import DocumentService from '../services/document-service';
 import needsPermission from '../domain/needs-permission-middleware';
@@ -16,12 +15,11 @@ function visitMenuNodes(nodes, cb) {
 const jsonParser = express.json();
 
 class MenuController {
-  static get inject() { return [MenuService, DocumentService, UserService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [MenuService, DocumentService, ClientDataMapper, PageRenderer]; }
 
-  constructor(menuService, documentService, userService, clientDataMapper, pageRenderer) {
+  constructor(menuService, documentService, clientDataMapper, pageRenderer) {
     this.menuService = menuService;
     this.documentService = documentService;
-    this.userService = userService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
   }
