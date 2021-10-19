@@ -40,26 +40,13 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
   await testHelper.createAndVerifyUser(userService, 'test-editor', 'test-editor', 'test-editor@test.com', ROLES_EDITOR);
   await testHelper.createAndVerifyUser(userService, 'test-super-editor', 'test-super-editor', 'test-super-editor@test.com', ROLES_SUPER_EDITOR);
   await testHelper.createAndVerifyUser(userService, 'test-super-user', 'test-super-user', 'test-super-user@test.com', ROLES_SUPER_USER);
+  await testHelper.createAndVerifyUser(userService, 'admin', '#smBW8#7aiFWKBA', 'admin@test.com', ROLES_SUPER_USER);
 
-  const userFile = path.join(__dirname, '../test/test-users.json');
   const docFiles = await globP(path.join(__dirname, '../test/test-docs/*.json'));
   const menuFiles = await globP(path.join(__dirname, '../test/test-menus/*.json'));
 
-  const userPayloads = await fileHelper.readJson(userFile);
   const docPayloads = await Promise.all(docFiles.map(file => fileHelper.readJson(file)));
   const menuPayloads = await Promise.all(menuFiles.map(file => fileHelper.readJson(file)));
-
-  Promise.all(userPayloads.map(payload => {
-    return testHelper.createAndVerifyUser(
-      userService,
-      payload.username,
-      payload.password,
-      payload.email,
-      payload.roles,
-      payload.profile,
-      payload.lockedOut
-    );
-  }));
 
   docPayloads.forEach(payload => {
     payload.user = user;
