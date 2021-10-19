@@ -181,17 +181,15 @@ class MenuService {
       documentRevisions.forEach(documentRevision => {
         documentRevision.sections
           .filter(section => section.content?.tiles)
-          .forEach(section => {
-            section.content?.tiles
-              .filter(tile => tile.link?.type === 'menu')
-              .forEach(tile => {
-                logHistory.push(`Document ${documentKey}, document revision ${documentRevision._id}, section ${section.key}, section revision ${section.revision} updated.`);
-                tile.link.type = 'article';
-                if (tile.link.url) {
-                  tile.link.url = `menu-${tile.link.url}`;
-                }
-              });
-          });
+          .forEach(section => section.content?.tiles
+            .filter(tile => tile.link?.type === 'menu')
+            .forEach(tile => {
+              logHistory.push(`Document ${documentKey}, document revision ${documentRevision._id}, section ${section.key}, section revision ${section.revision} updated.`);
+              tile.link.type = 'article';
+              if (tile.link.url) {
+                tile.link.url = `menu-${tile.link.url}`;
+              }
+            }));
       });
 
       await this.documentRevisionStore.saveMany(documentRevisions);

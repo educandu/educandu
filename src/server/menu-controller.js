@@ -88,9 +88,8 @@ class MenuController {
       const menu = await this.menuService.saveMenu({ menu: req.body, user: req.user });
       return res.send({ menu });
     });
-    router.delete('/api/v1/menus', async (req, res) => {
-      const user = await this.userService.getUserById(req.query.userId);
-      const logHistory = await this.menuService.deleteMenus({ user });
+    router.delete('/api/v1/menus', needsPermission(permissions.MIGRATE_DATA), async (req, res) => {
+      const logHistory = await this.menuService.deleteMenus({ user: req.user });
       return res.send({ logHistory });
     });
   }
