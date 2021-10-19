@@ -113,12 +113,12 @@ class MenuService {
     return lines.join('\n').trimEnd();
   }
 
-  async migrateMenu(menu, user) {
-    logger.info(`-----Migrating menu ${menu._id} titled '${menu.title}'-----`);
+  async migrateMenu(menu, user, logHistory) {
+    logHistory.push(`-----Migrating menu ${menu._id} titled '${menu.title}'-----`);
     let latestDocumentRevision;
 
     if (menu.defaultDocumentKey) {
-      logger.info(`Case 1: has document ${menu.defaultDocumentKey}`);
+      logHistory.push(`Case 1: has document ${menu.defaultDocumentKey}`);
       latestDocumentRevision = await this.documentService.getCurrentDocumentRevisionByKey(menu.defaultDocumentKey);
     } else {
       const firstDoc = {
@@ -129,7 +129,7 @@ class MenuService {
         sections: []
       };
       latestDocumentRevision = await this.documentService.createDocumentRevision({ doc: firstDoc, user });
-      logger.info(`Case 2: new document created ${latestDocumentRevision.key}`);
+      logHistory.push(`Case 2: new document created ${latestDocumentRevision.key}`);
     }
 
     const newDoc = {
@@ -157,7 +157,7 @@ class MenuService {
     }
 
     if (menu.nodes.length) {
-      logger.info(`Migrating ${menu.nodes.length} nodes`);
+      logHistory.push(`Migrating ${menu.nodes.length} nodes`);
       const markdownText = await this.createMarkdownContentFromNodes(menu.nodes, 0);
       newDoc.sections.push({
         key: uniqueId.create(),
@@ -168,10 +168,10 @@ class MenuService {
       });
     }
     const newDocumentRevision = await this.documentService.createDocumentRevision({ doc: newDoc, user });
-    logger.info(`New revision ${newDocumentRevision._id} for document ${newDocumentRevision.key}`);
+    logHistory.push(`New revision ${newDocumentRevision._id} for document ${newDocumentRevision.key}`);
   }
 
-  async updateDocumentRevisions(documentKey) {
+  async updateDocumentRevisions(documentKey, logHistory) {
     let lock;
 
     try {
@@ -185,7 +185,7 @@ class MenuService {
             section.content?.tiles
               .filter(tile => tile.link?.type === 'menu')
               .forEach(tile => {
-                logger.info(`Document ${documentKey}, document revision ${documentRevision._id}, section ${section.key}, section revision ${section.revision} updated.`);
+                logHistory.push(`Document ${documentKey}, document revision ${documentRevision._id}, section ${section.key}, section revision ${section.revision} updated.`);
                 tile.link.type = 'article';
                 if (tile.link.url) {
                   tile.link.url = `menu-${tile.link.url}`;
@@ -197,10 +197,11 @@ class MenuService {
       await this.documentRevisionStore.saveMany(documentRevisions);
       const latestDocument = this.documentService._createDocumentFromRevisions(documentRevisions);
 
-      logger.info(`Document ${latestDocument.key}, document revision ${latestDocument.revision} - SAVED`);
+      logHistory.push(`Document ${latestDocument.key}, document revision ${latestDocument.revision} - SAVED`);
       await this.documentStore.save(latestDocument);
     } catch (error) {
       logger.error(error);
+      logHistory.push(error);
     } finally {
       if (lock) {
         await this.documentLockStore.releaseLock(lock);
@@ -209,18 +210,19 @@ class MenuService {
   }
 
   async deleteMenus({ user }) {
+    const logHistory = [];
     if (!user || !user._id) {
-      throw new Error('No user specified');
+      logHistory.push('No user specified');
+      return logHistory;
     }
 
     try {
-      logger.info('Starting menus migration');
       const menus = await this.menuStore.find({});
+
       for (const menu of menus) {
-        await this.migrateMenu(menu, user);
+        await this.migrateMenu(menu, user, logHistory);
       }
 
-      logger.info('Starting documents update');
       const filteredDocumentRevisions = await this.documentRevisionStore.find({ 'sections.content.tiles.link.type': 'menu' });
       const documentKeys = filteredDocumentRevisions.reduce((accu, currentRevision) => {
         accu.add(currentRevision.key);
@@ -228,14 +230,15 @@ class MenuService {
       }, new Set());
 
       for (const documentKey of documentKeys) {
-        await this.updateDocumentRevisions(documentKey);
+        await this.updateDocumentRevisions(documentKey, logHistory);
       }
 
-      logger.info('Done');
+      logHistory.push('Done');
     } catch (error) {
-      logger.error('Something went terribly wrong', error);
+      logHistory.push('Something went terribly wrong', error);
     }
 
+    return logHistory;
   }
 }
 

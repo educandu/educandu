@@ -90,8 +90,8 @@ class MenuController {
     });
     router.delete('/api/v1/menus', async (req, res) => {
       const user = await this.userService.getUserById(req.query.userId);
-      await this.menuService.deleteMenus({ user });
-      return res.send({});
+      const logHistory = await this.menuService.deleteMenus({ user });
+      return res.send({ logHistory });
     });
   }
 }
