@@ -11,6 +11,10 @@ const staticConfig = [
     destination: '../../static'
   },
   {
+    root: '/images/flags',
+    destination: '../../node_modules/flag-icon-css/flags'
+  },
+  {
     root: '/fonts/fontawesome',
     destination: '../../node_modules/@fortawesome/fontawesome-free/webfonts'
   }
