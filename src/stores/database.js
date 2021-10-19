@@ -1,4 +1,3 @@
-import Graceful from 'node-graceful';
 import { MongoClient } from 'mongodb';
 import Logger from '../common/logger';
 import menusSpec from './collection-specs/menus';
@@ -99,7 +98,7 @@ class Database {
         logger.info('Finished migrations successfully');
       } catch (error) {
         logger.error(error);
-        Graceful.exit(1);
+        throw error;
       }
     }
 

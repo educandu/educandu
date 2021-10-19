@@ -9,7 +9,7 @@ export async function migrate(mongoClient) {
       collection: db.collection('migrations')
     },
     migrations: {
-      path: path.join(__dirname, 'migrations'),
+      path: path.resolve(__dirname, '../../migrations'),
       pattern: /^\d{4}-\d{2}-\d{2}-.*\.js$/,
       customResolver: filePath => {
         // eslint-disable-next-line global-require
