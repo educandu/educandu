@@ -86,12 +86,12 @@ class Database {
     await this._mongoClient.close();
   }
 
-  static async create({ connectionString, skipDbMigration }) {
+  static async create({ connectionString, runDbMigration }) {
 
     const database = new Database(connectionString);
     await database.connect();
 
-    if (!skipDbMigration) {
+    if (runDbMigration) {
       try {
         logger.info('Starting migrations');
         await runMigrationScripts(database._mongoClient);

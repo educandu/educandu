@@ -37,7 +37,7 @@ export function deleteTestDir(testDir) {
 export function createTestDatabase() {
   const url = new URL(serverConfig.elmuWebConnectionString);
   url.pathname = `test-elmu-web-${Date.now()}`;
-  return Database.create({ connectionString: url.toString(), skipDbMigration: true });
+  return Database.create({ connectionString: url.toString(), runDbMigration: false });
 }
 
 export function getTestCollection(db, collectionName) {
@@ -155,7 +155,7 @@ export async function setupTestEnvironment() {
   config.cdnBucketName = `test-elmu-cdn-${timestamp}`;
 
   // Fire everything up:
-  const container = await createContainer(config, true);
+  const container = await createContainer();
 
   // Make bucket publicly accessible:
   await ensurePublicBucketExists(container.get(Cdn));

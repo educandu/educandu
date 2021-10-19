@@ -9,7 +9,7 @@ const testHelper = require('../src/test-helper').default;
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
 
 (async function seed() {
-  const container = await serverBootstrapper.createContainer(null, true);
+  const container = await serverBootstrapper.createContainer();
 
   console.log('Getting cdn');
   const cdn = container.get(Cdn);

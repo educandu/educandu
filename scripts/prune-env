@@ -10,7 +10,7 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').defau
 
 (async function pruneEnv() {
 
-  const container = await serverBootstrapper.createContainer(null, true);
+  const container = await serverBootstrapper.createContainer();
 
   // CDN
   const cdn = container.get(Cdn);
