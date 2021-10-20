@@ -16,7 +16,11 @@ const documentRevisionAppendToSchema = joi.object({
   ancestorId: idOrKeySchema.required()
 });
 
-export const createDocumentRevisionBodySchema = joi.object({
+export const getRevisionsByKeyQuerySchema = joi.object({
+  key: idOrKeySchema.required()
+});
+
+export const createRevisionBodySchema = joi.object({
   title: joi.string().required(),
   slug: joi.string().pattern(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/).allow('').required(),
   namespace: joi.any().valid('articles').required(),
