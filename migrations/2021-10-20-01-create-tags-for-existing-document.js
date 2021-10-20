@@ -16,7 +16,7 @@ class Migration2021110201 {
 
     const splitByRegex = revisionOrDocument.slug.split(/(?:[-_.\\/\s]|$)/);
 
-    const stopWords = [...isInGerman ? deStopWords : []];
+    const stopWords = isInGerman ? deStopWords : [];
 
     const tags = splitByRegex
       .filter(tag => tag.length > 2)
