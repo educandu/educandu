@@ -91,13 +91,13 @@ describe('createRevisionBodySchema', () => {
 
   validTestCases.forEach(({ description, data }) => {
     describe(description, () => {
-      it('should pass', () => expect(() => validate(data, createRevisionBodySchema)).not.toThrow());
+      it('should pass validation', () => expect(() => validate(data, createRevisionBodySchema)).not.toThrow());
     });
   });
 
   invalidTestCases.forEach(({ description, data }) => {
     describe(description, () => {
-      it('should fail', () => expect(() => validate(data, createRevisionBodySchema)).toThrow());
+      it('should fail validation', () => expect(() => validate(data, createRevisionBodySchema)).toThrow());
     });
   });
 });
