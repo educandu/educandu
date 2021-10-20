@@ -14,13 +14,11 @@ class Migration2021110201 {
       return defaultTags;
     }
 
-    const splitByRegex = revisionOrDocument.slug.split(/(?:[_.\\/\s]|$)/);
-
-    const splitByDash = splitByRegex.reduce((acc, curr) => [...acc, ...curr.split('-')], []);
+    const splitByRegex = revisionOrDocument.slug.split(/(?:[-_.\\/\s]|$)/);
 
     const stopWords = [...isInGerman ? deStopWords : []];
 
-    const tags = splitByDash
+    const tags = splitByRegex
       .filter(tag => tag.length > 2)
       .map(tag => tag.toLowerCase().trim())
       .filter(tag => !stopWords.some(x => x === tag));
