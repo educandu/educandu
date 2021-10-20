@@ -1,7 +1,7 @@
 import { updateAll } from './helpers';
 import { deStopWords } from './de-stopwords';
 
-class Migration2021110201 {
+class Migration2021102001 {
   constructor(db) {
     this.db = db;
   }
@@ -53,4 +53,4 @@ class Migration2021110201 {
   }
 }
 
-export default Migration2021110201;
+export default Migration2021102001;
