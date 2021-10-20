@@ -1,8 +1,11 @@
 import React from 'react';
-import { Input } from 'antd';
 import autoBind from 'auto-bind';
-import { sectionEditorProps } from '../../../ui/default-prop-types';
+import { Form, Input } from 'antd';
+import validation from '../../../ui/validation';
+import { withTranslation } from 'react-i18next';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
 
+const FormItem = Form.Item;
 const { TextArea } = Input;
 
 class MarkdownEditor extends React.Component {
@@ -22,17 +25,20 @@ class MarkdownEditor extends React.Component {
   }
 
   render() {
-    const { content } = this.props;
+    const { content, t } = this.props;
     const { text } = content;
 
     return (
-      <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
+      <FormItem {...validation.validateMarkdown(text, t)}>
+        <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
+      </FormItem>
     );
   }
 }
 
 MarkdownEditor.propTypes = {
+  ...translationProps,
   ...sectionEditorProps
 };
 
-export default MarkdownEditor;
+export default withTranslation()(MarkdownEditor);
