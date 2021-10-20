@@ -5,9 +5,9 @@ import PageRenderer from './page-renderer';
 import permissions from '../domain/permissions';
 import ClientDataMapper from './client-data-mapper';
 import DocumentService from '../services/document-service';
-import { validateBody } from '../domain/validation-middleware';
 import needsPermission from '../domain/needs-permission-middleware';
-import { createDocumentRevisionBodySchema, hardDeleteSectionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-schemas';
+import { validateBody, validateQuery } from '../domain/validation-middleware';
+import { createRevisionBodySchema, getRevisionsByKeyQuerySchema, hardDeleteSectionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-schemas';
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
@@ -91,7 +91,7 @@ class DocumentController {
   }
 
   registerApi(router) {
-    router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload, validateBody(createDocumentRevisionBodySchema)], async (req, res) => {
+    router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload, validateBody(createRevisionBodySchema)], async (req, res) => {
       const revision = await this.documentService.createDocumentRevision({ doc: req.body, user: req.user });
       if (!revision) {
         throw new NotFound();
@@ -114,13 +114,9 @@ class DocumentController {
       return res.send({ documentRevisions });
     });
 
-    router.get('/api/v1/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
+    router.get('/api/v1/docs', [needsPermission(permissions.VIEW_DOCS), validateQuery(getRevisionsByKeyQuerySchema)], async (req, res) => {
       const { user } = req;
-
       const { key } = req.query;
-      if (!key) {
-        throw new NotFound();
-      }
 
       const revisions = await this.documentService.getAllDocumentRevisionsByKey(key);
       if (!revisions.length) {
