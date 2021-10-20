@@ -4,9 +4,12 @@ import express from 'express';
 import urls from '../utils/urls';
 import parseBool from 'parseboolean';
 import Cdn from '../repositories/cdn';
+import createHttpError from 'http-errors';
 import permissions from '../domain/permissions';
 import fileNameHelper from '../utils/file-name-helper';
 import needsPermission from '../domain/needs-permission-middleware';
+import { validateBody, validateQuery } from '../domain/validation-middleware';
+import { getObjectsQuerySchema, postObjectsBodySchema } from '../domain/schemas/cdn-schemas';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
@@ -19,24 +22,26 @@ class CdnController {
   }
 
   registerApi(router) {
-    router.get('/api/v1/cdn/objects', [needsPermission(permissions.VIEW_FILES), jsonParser], async (req, res) => {
+    router.get('/api/v1/cdn/objects', [needsPermission(permissions.VIEW_FILES), jsonParser, validateQuery(getObjectsQuerySchema)], async (req, res) => {
       const prefix = req.query.prefix;
       const recursive = parseBool(req.query.recursive);
       const objects = await this.cdn.listObjects({ prefix, recursive });
       return res.send({ objects });
     });
 
-    router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files')], async (req, res) => {
+    router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)], async (req, res) => {
       if (req.files && req.files.length) {
-        const uploads = req.files.map(file => {
-          const fileName = urls.concatParts(req.body.prefix, file.originalname);
+        const uploads = req.files.map(async file => {
+          const fileName = req.body.prefix ? urls.concatParts(req.body.prefix, file.originalname) : file.originalname;
           const uniqueFileName = fileNameHelper.makeUnique(fileName);
-          return this.cdn.uploadObject(uniqueFileName, file.path, {});
+          await this.cdn.uploadObject(uniqueFileName, file.path, {});
         });
         await Promise.all(uploads);
       } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
         // If no file but a prefix ending with `/` is provided, create a folder instead of a file:
-        this.cdn.uploadEmptyObject(req.body.prefix, {});
+        await this.cdn.uploadEmptyObject(req.body.prefix, {});
+      } else {
+        createHttpError(400);
       }
 
       return res.send({});
