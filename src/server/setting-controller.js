@@ -7,7 +7,9 @@ import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
 import SettingService from '../services/setting-service';
 import DocumentService from '../services/document-service';
+import { validateBody } from '../domain/validation-middleware';
 import needsPermission from '../domain/needs-permission-middleware';
+import { saveSettingsBodySchema } from '../domain/schemas/settings-schemas';
 
 const jsonParser = express.json();
 
@@ -37,7 +39,7 @@ class SettingController {
   }
 
   registerApi(app) {
-    app.post('/api/v1/settings', [needsPermission(permissions.EDIT_SETTINGS), jsonParser], async (req, res) => {
+    app.post('/api/v1/settings', [needsPermission(permissions.EDIT_SETTINGS), jsonParser, validateBody(saveSettingsBodySchema)], async (req, res) => {
       const { settings } = req.body;
       await this.settingService.saveSettings(settings);
       return res.send({ settings });
