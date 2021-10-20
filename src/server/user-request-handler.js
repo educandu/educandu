@@ -1,5 +1,6 @@
-
+import passport from 'passport';
 import urls from '../utils/urls';
+import PageRenderer from '../server/page-renderer';
 import UserService from '../services/user-service';
 import MailService from '../services/mail-service';
 import requestHelper from '../utils/request-helper';
@@ -7,12 +8,57 @@ import ClientDataMapper from './client-data-mapper';
 import { SAVE_USER_RESULT } from '../domain/user-management';
 
 class UserRequestHandler {
-  static get inject() { return [UserService, MailService, ClientDataMapper]; }
+  static get inject() { return [UserService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(userService, mailService, clientDataMapper) {
+  constructor(userService, mailService, clientDataMapper, pageRenderer) {
     this.userService = userService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
+    this.pageRenderer = pageRenderer;
+  }
+
+  handleGetRegisterPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'register', {});
+  }
+
+  handleGetResetPasswordPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'reset-password', {});
+  }
+
+  async handleCompleteRegistrationPage(req, res) {
+    const user = await this.userService.verifyUser(req.params.verificationCode);
+    const initialState = { user };
+    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', initialState);
+  }
+
+  handleGetLoginPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'login', {});
+  }
+
+  handleGetLogoutPage(req, res) {
+    req.logout();
+    return res.redirect(urls.getDefaultLogoutRedirectUrl());
+  }
+
+  handleGetAccountPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'account', {});
+  }
+
+  async handleGetCompletePasswordResetPage(req, res) {
+    const resetRequest = await this.userService.getPasswordResetRequestById(req.params.passwordResetRequestId);
+    const passwordResetRequestId = (resetRequest || {})._id;
+    const initialState = { passwordResetRequestId };
+    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-password-reset', initialState);
+  }
+
+  async handleGetUsersPage(req, res) {
+    const initialState = await this.userService.getAllUsers();
+    return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState);
+  }
+
+  async handleGetUsers(req, res) {
+    const result = await this.userService.getAllUsers();
+    res.send({ users: result });
   }
 
   async handlePostUser(req, res) {
@@ -60,6 +106,26 @@ class UserRequestHandler {
     res.send({ profile: savedProfile });
   }
 
+  handlePostUserLogin(req, res, next) {
+    passport.authenticate('local', (err, user) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        return res.send({ user: null });
+      }
+
+      return req.login(user, loginError => {
+        if (loginError) {
+          return next(loginError);
+        }
+
+        return res.send({ user: this.clientDataMapper.dbUserToClientUser(user) });
+      });
+    })(req, res, next);
+  }
+
   async handlePostUserPasswordResetRequest(req, res) {
     const { email } = req.body;
     const user = await this.userService.getUserByEmailAddress(email);
@@ -84,6 +150,20 @@ class UserRequestHandler {
 
     res.send({ user });
 
+  }
+
+  async handlePostUserRoles(req, res) {
+    const { userId } = req.params;
+    const { roles } = req.body;
+    const newRoles = await this.userService.updateUserRoles(userId, roles);
+    return res.send({ roles: newRoles });
+  }
+
+  async handlePostUserLockedOut(req, res) {
+    const { userId } = req.params;
+    const { lockedOut } = req.body;
+    const newLockedOutState = await this.userService.updateUserLockedOutState(userId, lockedOut);
+    return res.send({ lockedOut: newLockedOutState });
   }
 }
 

@@ -1,15 +1,11 @@
 import express from 'express';
 import passport from 'passport';
-import urls from '../utils/urls';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-import PageRenderer from './page-renderer';
 import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
 import permissions from '../domain/permissions';
 import UserService from '../services/user-service';
-import MailService from '../services/mail-service';
-import ClientDataMapper from './client-data-mapper';
 import ServerConfig from '../bootstrap/server-config';
 import UserRequestHandler from './user-request-handler';
 import needsPermission from '../domain/needs-permission-middleware';
@@ -20,16 +16,13 @@ const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
 
 class UserController {
-  static get inject() { return [ServerConfig, Database, UserRequestHandler, UserService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, Database, UserService, UserRequestHandler]; }
 
-  constructor(serverConfig, database, userRequestHandler, userService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, database, userService, userRequestHandler) {
     this.serverConfig = serverConfig;
     this.database = database;
-    this.userRequestHandler = userRequestHandler;
     this.userService = userService;
-    this.mailService = mailService;
-    this.clientDataMapper = clientDataMapper;
-    this.pageRenderer = pageRenderer;
+    this.userRequestHandler = userRequestHandler;
   }
 
   registerMiddleware(router) {
@@ -71,51 +64,25 @@ class UserController {
   }
 
   registerPages(router) {
-    router.get('/register', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'register', {});
-    });
+    router.get('/register', (req, res) => this.userRequestHandler.handleGetRegisterPage(req, res));
 
-    router.get('/reset-password', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'reset-password', {});
-    });
+    router.get('/reset-password', (req, res) => this.userRequestHandler.handleGetResetPasswordPage(req, res));
 
-    router.get('/complete-registration/:verificationCode', async (req, res) => {
-      const user = await this.userService.verifyUser(req.params.verificationCode);
-      const initialState = { user };
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', initialState);
-    });
+    router.get('/complete-registration/:verificationCode', (req, res) => this.userRequestHandler.handleCompleteRegistrationPage(req, res));
 
-    router.get('/login', (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'login', {});
-    });
+    router.get('/login', (req, res) => this.userRequestHandler.handleGetLoginPage(req, res));
 
-    router.get('/logout', (req, res) => {
-      req.logout();
-      return res.redirect(urls.getDefaultLogoutRedirectUrl());
-    });
+    router.get('/logout', (req, res) => this.userRequestHandler.handleGetLogoutPage(req, res));
 
-    router.get('/account', needsAuthentication(), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'account', {});
-    });
+    router.get('/account', needsAuthentication(), (req, res) => this.userRequestHandler.handleGetAccountPage(req, res));
 
-    router.get('/complete-password-reset/:passwordResetRequestId', async (req, res) => {
-      const resetRequest = await this.userService.getPasswordResetRequestById(req.params.passwordResetRequestId);
-      const passwordResetRequestId = (resetRequest || {})._id;
-      const initialState = { passwordResetRequestId };
-      return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-password-reset', initialState);
-    });
+    router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.userRequestHandler.handleGetCompletePasswordResetPage(req, res));
 
-    router.get('/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
-      const initialState = await this.userService.getAllUsers();
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState);
-    });
+    router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.userRequestHandler.handleGetUsersPage(req, res));
   }
 
   registerApi(router) {
-    router.get('/api/v1/users', needsPermission(permissions.EDIT_USERS), async (req, res) => {
-      const result = await this.userService.getAllUsers();
-      res.send({ users: result });
-    });
+    router.get('/api/v1/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsers(req, res));
 
     router.post('/api/v1/users', jsonParser, (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
@@ -127,39 +94,11 @@ class UserController {
 
     router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserProfile(req, res));
 
-    router.post('/api/v1/users/login', jsonParser, (req, res, next) => {
-      passport.authenticate('local', (err, user) => {
-        if (err) {
-          return next(err);
-        }
+    router.post('/api/v1/users/login', jsonParser, (req, res, next) => this.userRequestHandler.handlePostUserLogin(req, res, next));
 
-        if (!user) {
-          return res.send({ user: null });
-        }
+    router.post('/api/v1/users/:userId/roles', [needsPermission(permissions.EDIT_USERS), jsonParser], (req, res) => this.userRequestHandler.handlePostUserRoles(req, res));
 
-        return req.login(user, loginError => {
-          if (loginError) {
-            return next(loginError);
-          }
-
-          return res.send({ user: this.clientDataMapper.dbUserToClientUser(user) });
-        });
-      })(req, res, next);
-    });
-
-    router.post('/api/v1/users/:userId/roles', [needsPermission(permissions.EDIT_USERS), jsonParser], async (req, res) => {
-      const { userId } = req.params;
-      const { roles } = req.body;
-      const newRoles = await this.userService.updateUserRoles(userId, roles);
-      return res.send({ roles: newRoles });
-    });
-
-    router.post('/api/v1/users/:userId/lockedOut', [needsPermission(permissions.EDIT_USERS), jsonParser], async (req, res) => {
-      const { userId } = req.params;
-      const { lockedOut } = req.body;
-      const newLockedOutState = await this.userService.updateUserLockedOutState(userId, lockedOut);
-      return res.send({ lockedOut: newLockedOutState });
-    });
+    router.post('/api/v1/users/:userId/lockedOut', [needsPermission(permissions.EDIT_USERS), jsonParser], (req, res) => this.userRequestHandler.handlePostUserLockedOut(req, res));
   }
 }
 
