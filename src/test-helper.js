@@ -155,7 +155,7 @@ export async function setupTestEnvironment() {
   config.cdnBucketName = `test-elmu-cdn-${timestamp}`;
 
   // Fire everything up:
-  const container = await createContainer();
+  const container = await createContainer(config);
 
   // Make bucket publicly accessible:
   await ensurePublicBucketExists(container.get(Cdn));
