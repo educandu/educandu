@@ -6,7 +6,6 @@ import MenuController from './menu-controller';
 import IndexController from './index-controller';
 import ErrorController from './error-controller';
 import StaticController from './static-controller';
-import SettingController from './setting-controller';
 import DocumentController from './document-controller';
 import SettingsController from './settings-controller';
 
@@ -16,7 +15,6 @@ const controllerTypes = [
   SettingsController,
   IndexController,
   UserController,
-  SettingController,
   DocumentController,
   MenuController,
   CdnController,
