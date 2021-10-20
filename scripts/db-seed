@@ -107,7 +107,8 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
         { linkTitle: 'Terms of usage', documentNamespace: 'articles', documentSlug: 'terms' },
         { linkTitle: 'Data protection', documentNamespace: 'articles', documentSlug: 'data-protection' }
       ]
-    }
+    },
+    defaultTags: 'hilfe,hochschule,musiktheorie'
   });
 
   await serverBootstrapper.disposeContainer(container);

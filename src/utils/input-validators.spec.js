@@ -31,4 +31,34 @@ describe.only('input-validators', () => {
     });
   });
 
+  describe('isValidTag', () => {
+    let result;
+    const allOtherTags = ['tag1', 'tag2', 'tag3'];
+
+    const testCases = [
+      { tag: null, expectedResult: false },
+      { tag: 'ta', expectedResult: false },
+      { tag: 'tag', expectedResult: true },
+      { tag: ' tag ', expectedResult: true },
+      { tag: 't a g', expectedResult: false },
+      { tag: 't\tag', expectedResult: false },
+      { tag: 'tag2', expectedResult: false },
+      { tag: '  ', expectedResult: false },
+      { tag: 'aPrettyLongTagToConsiderValid?', expectedResult: true },
+      { tag: 'anEvenLongerTagToConsiderValid?', expectedResult: false }
+    ];
+
+    testCases.forEach(({ tag, expectedResult }) => {
+      describe(`when validating tag='${tag}'`, () => {
+        beforeEach(() => {
+          const allTags = [...allOtherTags, tag];
+          result = sut.isValidTag(allTags, tag);
+        });
+        it(`should return ${expectedResult}`, () => {
+          expect(result).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
 });

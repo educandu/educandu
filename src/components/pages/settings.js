@@ -8,6 +8,7 @@ import permissions from '../../domain/permissions';
 import React, { useState, useCallback } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import SettingApiClient from '../../services/setting-api-client';
+import DefaultTagsSettings from '../settings/default-tags-settings';
 import SpecialPageSettings from '../settings/special-page-settings';
 import FooterLinksSettings from '../settings/footer-links-settings';
 import HomeLanguagesSettings from '../settings/home-languages-settings';
@@ -45,6 +46,10 @@ function Settings({ initialState }) {
 
   const handleFooterLinksChanged = useCallback((value, { isValid }) => {
     handleChange('footerLinks', value, isValid);
+  }, [handleChange]);
+
+  const handleDefaultTagsChanged = useCallback((value, { isValid }) => {
+    handleChange('defaultTags', value, isValid);
   }, [handleChange]);
 
   const handleSaveClick = async () => {
@@ -118,6 +123,11 @@ function Settings({ initialState }) {
           footerLinks={settings.footerLinks}
           documents={initialState.documents}
           onChange={handleFooterLinksChanged}
+          />
+        <h2 className="SettingsPage-sectionHeader">{t('defaultTagsHeader')}</h2>
+        <DefaultTagsSettings
+          defaultTags={settings.defaultTags || []}
+          onChange={handleDefaultTagsChanged}
           />
       </div>
     </Page>
