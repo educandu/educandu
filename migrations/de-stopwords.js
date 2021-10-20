@@ -137,11 +137,13 @@ export const deStopWords = [
   'zum',
   'zur'
 ].reduce((acc, current) => {
-  let umlautFree = null;
+  const umlautFree = current.toLowerCase()
+    .replaceAll('ö', 'oe')
+    .replaceAll('ä', 'ae')
+    .replaceAll('ü', 'ue')
+    .replaceAll('ß', 'ss');
+
   const result = [...acc, current];
-  for (const c of current) {
-    umlautFree = umlautMap[c] ? `${umlautFree}${umlautMap[c]}` : `${umlautFree || ''}${c}`;
-  }
 
   if (umlautFree !== current) {
     result.push(umlautFree);
