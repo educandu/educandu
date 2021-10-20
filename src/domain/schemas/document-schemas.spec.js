@@ -46,6 +46,13 @@ describe('createRevisionBodySchema', () => {
 
   const invalidTestCases = [
     {
+      description: 'Invalid language',
+      data: {
+        ...happyPathData,
+        language: 'DE'
+      }
+    },
+    {
       description: 'Invalid namespace',
       data: {
         ...happyPathData,
@@ -64,6 +71,13 @@ describe('createRevisionBodySchema', () => {
       data: {
         ...happyPathData,
         title: ''
+      }
+    },
+    {
+      description: 'Missing sections',
+      data: {
+        ...happyPathData,
+        sections: null
       }
     },
     {
