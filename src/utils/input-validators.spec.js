@@ -41,10 +41,11 @@ describe.only('input-validators', () => {
       { tag: 'tag', expectedResult: true },
       { tag: ' tag ', expectedResult: true },
       { tag: 't a g', expectedResult: false },
+      { tag: 't\tag', expectedResult: false },
       { tag: 'tag2', expectedResult: false },
       { tag: '  ', expectedResult: false },
-      { tag: 'aPrettyLongTagToConsider?', expectedResult: true },
-      { tag: 'anEvenLongerTagToConsider?', expectedResult: false }
+      { tag: 'aPrettyLongTagToConsiderValid?', expectedResult: true },
+      { tag: 'anEvenLongerTagToConsiderValid?', expectedResult: false }
     ];
 
     testCases.forEach(({ tag, expectedResult }) => {

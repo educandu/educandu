@@ -8,7 +8,7 @@ function isValidPassword({ password, minLength = 8 }) {
 function isValidTag(allTags, tag) {
   const trimmedTag = (tag || '').trim();
 
-  if (trimmedTag.length < 3 || trimmedTag.length > 25 || trimmedTag.includes(' ')) {
+  if (trimmedTag.length < 3 || trimmedTag.length > 30 || (/\s/).test(trimmedTag)) {
     return false;
   }
 
