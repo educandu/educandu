@@ -22,6 +22,17 @@ export function removeItemAt(items, index) {
   return items.filter((t, i) => i !== index);
 }
 
+export function replaceItemAt(items, index, newItem) {
+  if (!items || index < 0 || index > (items.length - 1)) {
+    return items;
+  }
+
+  const result = items.slice();
+  result[index] = newItem;
+
+  return result;
+}
+
 export function ensureIsIncluded(items, item) {
   return items.includes(item) ? items : [...items, item];
 }

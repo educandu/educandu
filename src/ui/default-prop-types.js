@@ -59,7 +59,8 @@ export const settingsShape = PropTypes.shape({
   homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,
   helpPage: PropTypes.objectOf(settingsDocumentShape).isRequired,
   termsPage: PropTypes.objectOf(settingsDocumentShape).isRequired,
-  footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)).isRequired
+  footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)).isRequired,
+  defaultTags: PropTypes.arrayOf(PropTypes.string)
 });
 
 export const settingsProps = {

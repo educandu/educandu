@@ -5,6 +5,21 @@ function isValidPassword({ password, minLength = 8 }) {
   return sanitizedPassword.length >= minLength && minOneLetterAndOneDigitPattern.test(sanitizedPassword);
 }
 
+function isValidTag(allTags, tag) {
+  const trimmedTag = (tag || '').trim();
+
+  if (trimmedTag.length < 3 || trimmedTag.length > 25 || trimmedTag.includes(' ')) {
+    return false;
+  }
+
+  if (allTags.filter(t => t === trimmedTag).length > 1) {
+    return false;
+  }
+
+  return true;
+}
+
 export default {
-  isValidPassword
+  isValidPassword,
+  isValidTag
 };
