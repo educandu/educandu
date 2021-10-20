@@ -8,9 +8,19 @@ import permissions from '../domain/permissions';
 import UserService from '../services/user-service';
 import ServerConfig from '../bootstrap/server-config';
 import UserRequestHandler from './user-request-handler';
+import { validateBody } from '../domain/validation-middleware';
 import needsPermission from '../domain/needs-permission-middleware';
 import sessionsStoreSpec from '../stores/collection-specs/sessions';
 import needsAuthentication from '../domain/needs-authentication-middleware';
+import {
+  postUserBodySchema,
+  postUserAccountBodySchema,
+  postUserProfileBodySchema,
+  postUserPasswordResetRequestBodySchema,
+  postUserPasswordResetCompletionBodySchema,
+  postUserRolesBodySchema,
+  postUserLockedOutBodySchema
+} from '../domain/schemas/user-schemas';
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -84,21 +94,21 @@ class UserController {
   registerApi(router) {
     router.get('/api/v1/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsers(req, res));
 
-    router.post('/api/v1/users', jsonParser, (req, res) => this.userRequestHandler.handlePostUser(req, res));
+    router.post('/api/v1/users', [jsonParser, validateBody(postUserBodySchema)], (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
-    router.post('/api/v1/users/request-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlePostUserPasswordResetRequest(req, res));
+    router.post('/api/v1/users/request-password-reset', [jsonParser, validateBody(postUserPasswordResetRequestBodySchema)], (req, res) => this.userRequestHandler.handlePostUserPasswordResetRequest(req, res));
 
-    router.post('/api/v1/users/complete-password-reset', jsonParser, (req, res) => this.userRequestHandler.handlePostUserPasswordResetCompletion(req, res));
+    router.post('/api/v1/users/complete-password-reset', [jsonParser, validateBody(postUserPasswordResetCompletionBodySchema)], (req, res) => this.userRequestHandler.handlePostUserPasswordResetCompletion(req, res));
 
-    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserAccount(req, res));
+    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser, validateBody(postUserAccountBodySchema)], (req, res) => this.userRequestHandler.handlePostUserAccount(req, res));
 
-    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser], (req, res) => this.userRequestHandler.handlePostUserProfile(req, res));
+    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser, validateBody(postUserProfileBodySchema)], (req, res) => this.userRequestHandler.handlePostUserProfile(req, res));
 
     router.post('/api/v1/users/login', jsonParser, (req, res, next) => this.userRequestHandler.handlePostUserLogin(req, res, next));
 
-    router.post('/api/v1/users/:userId/roles', [needsPermission(permissions.EDIT_USERS), jsonParser], (req, res) => this.userRequestHandler.handlePostUserRoles(req, res));
+    router.post('/api/v1/users/:userId/roles', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserRolesBodySchema)], (req, res) => this.userRequestHandler.handlePostUserRoles(req, res));
 
-    router.post('/api/v1/users/:userId/lockedOut', [needsPermission(permissions.EDIT_USERS), jsonParser], (req, res) => this.userRequestHandler.handlePostUserLockedOut(req, res));
+    router.post('/api/v1/users/:userId/lockedOut', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserLockedOutBodySchema)], (req, res) => this.userRequestHandler.handlePostUserLockedOut(req, res));
   }
 }
 

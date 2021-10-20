@@ -64,11 +64,6 @@ class UserRequestHandler {
   async handlePostUser(req, res) {
     const { username, password, email } = req.body;
 
-    if (email !== email.toLowerCase()) {
-      res.status(400).send('The \'email\' field is expected to be in lower case.');
-      return;
-    }
-
     const { result, user } = await this.userService.createUser(username, password, email);
 
     if (result === SAVE_USER_RESULT.success) {
@@ -83,11 +78,6 @@ class UserRequestHandler {
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
     const { username, email } = req.body;
-
-    if (email !== email.toLowerCase()) {
-      res.status(400).send('The \'email\' field is expected to be in lower case.');
-      return;
-    }
 
     const { result, user } = await this.userService.updateUserAccount({ userId, username, email });
 
