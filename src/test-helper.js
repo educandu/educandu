@@ -37,7 +37,7 @@ export function deleteTestDir(testDir) {
 export function createTestDatabase() {
   const url = new URL(serverConfig.elmuWebConnectionString);
   url.pathname = `test-elmu-web-${Date.now()}`;
-  return Database.create({ connectionString: url.toString() });
+  return Database.create({ connectionString: url.toString(), runDbMigration: false });
 }
 
 export function getTestCollection(db, collectionName) {

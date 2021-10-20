@@ -1,5 +1,7 @@
-import Logger from '../common/logger';
 import { MongoClient } from 'mongodb';
+import Umzug from 'umzug';
+import path from 'path';
+import Logger from '../common/logger';
 import menusSpec from './collection-specs/menus';
 import usersSpec from './collection-specs/users';
 import settingsSpec from './collection-specs/settings';
@@ -85,9 +87,45 @@ class Database {
     await this._mongoClient.close();
   }
 
-  static async create({ connectionString }) {
+  async runMigrationScripts(mongoClient) {
+    const db = mongoClient.db();
+    const umzug = new Umzug({
+      storage: 'mongodb',
+      storageOptions: {
+        collection: db.collection('migrations')
+      },
+      migrations: {
+        path: path.resolve(__dirname, '../../migrations'),
+        pattern: /^\d{4}-\d{2}-\d{2}-.*\.js$/,
+        customResolver: filePath => {
+          // eslint-disable-next-line global-require
+          const Migration = require(filePath).default;
+          return new Migration(db, mongoClient);
+        }
+      }
+    });
+
+    umzug.addListener('migrated', name => logger.info(`Finished migrating ${name}`));
+
+    await umzug.up();
+  }
+
+  static async create({ connectionString, runDbMigration }) {
+
     const database = new Database(connectionString);
     await database.connect();
+
+    if (runDbMigration) {
+      try {
+        logger.info('Starting migrations');
+        await database.runMigrationScripts(database._mongoClient);
+        logger.info('Finished migrations successfully');
+      } catch (error) {
+        logger.error(error);
+        throw error;
+      }
+    }
+
     await database.createCollections();
     return database;
   }

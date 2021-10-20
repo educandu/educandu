@@ -21,7 +21,8 @@ export async function createContainer(config = null) {
 
   logger.info('Establishing database connection');
   const database = await Database.create({
-    connectionString: serverConfig.elmuWebConnectionString
+    connectionString: serverConfig.elmuWebConnectionString,
+    runDbMigration: serverConfig.runDbMigration
   });
 
   container.registerInstance(Database, database);

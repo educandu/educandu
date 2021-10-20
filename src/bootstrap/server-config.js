@@ -34,6 +34,7 @@ switch (env) {
       port: 8025,
       ignoreTLS: true
     };
+    config.runDbMigration = false;
     break;
 
   case 'test':
@@ -53,9 +54,24 @@ switch (env) {
       port: 25,
       ignoreTLS: true
     };
+    config.runDbMigration = false;
     break;
 
   case 'stag':
+    config.redirectToHttps = true;
+    config.redirectToNonWwwDomain = true;
+    config.exposeErrorDetails = false;
+    config.elmuWebConnectionString = process.env.ELMU_WEB_CONNECTION_STRING;
+    config.cdnEndpoint = process.env.ELMU_CDN_ENDPOINT;
+    config.cdnRegion = process.env.ELMU_CDN_REGION;
+    config.cdnAccessKey = process.env.ELMU_CDN_ACCESS_KEY;
+    config.cdnSecretKey = process.env.ELMU_CDN_SECRET_KEY;
+    config.cdnBucketName = process.env.ELMU_CDN_BUCKET_NAME;
+    config.cdnRootUrl = process.env.ELMU_CDN_ROOT_URL;
+    config.sessionSecret = process.env.ELMU_SESSION_SECRET;
+    config.smtpOptions = JSON.parse(process.env.ELMU_SMTP_OPTIONS);
+    config.runDbMigration = true;
+    break;
   case 'prod':
     config.redirectToHttps = true;
     config.redirectToNonWwwDomain = true;
@@ -69,8 +85,8 @@ switch (env) {
     config.cdnRootUrl = process.env.ELMU_CDN_ROOT_URL;
     config.sessionSecret = process.env.ELMU_SESSION_SECRET;
     config.smtpOptions = JSON.parse(process.env.ELMU_SMTP_OPTIONS);
+    config.runDbMigration = false;
     break;
-
   default:
     throw new Error(`ELMU_ENV has invalid value ${env}.`);
 }
