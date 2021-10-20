@@ -14,7 +14,7 @@ class Migration2021110201 {
       return defaultTags;
     }
 
-    const splitByRegex = revisionOrDocument.slug.split(/(?:[_.\\/]|$)/);
+    const splitByRegex = revisionOrDocument.slug.split(/(?:[_.\\/\s]|$)/);
 
     const splitByDash = splitByRegex.reduce((acc, curr) => [...acc, ...curr.split('-')], []);
 
