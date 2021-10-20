@@ -7,7 +7,7 @@ import ClientDataMapper from './client-data-mapper';
 import DocumentService from '../services/document-service';
 import { validateBody } from '../domain/validation-middleware';
 import needsPermission from '../domain/needs-permission-middleware';
-import { createDocumentRevisionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-revision-schemas';
+import { createDocumentRevisionBodySchema, hardDeleteSectionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-schemas';
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
@@ -131,10 +131,10 @@ class DocumentController {
       return res.send({ documentRevisions });
     });
 
-    router.delete('/api/v1/docs/sections', [needsPermission(permissions.EDIT_DOC), jsonParser], async (req, res) => {
+    router.delete('/api/v1/docs/sections', [needsPermission(permissions.HARD_DELETE_SECTION), jsonParser, validateBody(hardDeleteSectionBodySchema)], async (req, res) => {
       const { user } = req;
-      const { documentKey, sectionKey, sectionRevision, reason, deleteDescendants } = req.body;
-      const result = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants, user });
+      const { documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
+      const result = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
       return res.send(result);
     });
   }

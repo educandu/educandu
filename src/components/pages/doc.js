@@ -118,12 +118,12 @@ class Doc extends React.Component {
     }
   }
 
-  async hardDelete({ sectionKey, sectionRevision, reason, deleteDescendants }) {
+  async hardDelete({ sectionKey, sectionRevision, reason, deleteAllRevisions }) {
     const { documentApiClient } = this.props;
     const { currentRevision } = this.state;
     const documentKey = currentRevision.key;
     try {
-      await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants });
+      await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
     } catch (error) {
       errorHelper.handleApiError(error, logger);
     }
@@ -131,7 +131,7 @@ class Doc extends React.Component {
     const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);
     this.setState(prevState => ({
       revisions: documentRevisions,
-      currentRevision: documentRevisions.find(revision => revision._id === prevState.currentRevision._id) || documentRevisions[documentRevisions.length - 1]
+      currentRevision: documentRevisions.find(revision => revision._id === prevState.currentRevision._id)
     }));
   }
 

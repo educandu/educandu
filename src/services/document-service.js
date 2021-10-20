@@ -123,7 +123,7 @@ class DocumentService {
 
           // If not changed, re-use existing revision:
           if (deepEqual(ancestorSection.content, section.content)) {
-            logger.info('Section has not changed compared to ancestor section with id %s, using the existing', ancestorSection._id);
+            logger.info('Section has not changed compared to ancestor section with revision %s, using the existing', ancestorSection.revision);
             return cloneDeep(ancestorSection);
           }
         }
@@ -214,7 +214,7 @@ class DocumentService {
     return this.getAllDocumentRevisionsByKey(documentKey);
   }
 
-  async hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteDescendants, user }) {
+  async hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
     if (!user || !user._id) {
       throw new Error('No user specified');
     }
@@ -229,21 +229,19 @@ class DocumentService {
 
       lock = await this.documentLockStore.takeLock(documentKey);
 
-      const allRevisions = await this.documentRevisionStore.find({ key: documentKey }, { sort: [['order', 1]] });
+      const allRevisions = await this.getAllDocumentRevisionsByKey(documentKey);
 
       const revisionsToUpdate = [];
-      let revisionMatchFound = false;
 
       for (const revision of allRevisions) {
         for (const section of revision.sections) {
-          if (section.key === sectionKey) {
+          if (section.key === sectionKey && !section.deletedOn) {
             // eslint-disable-next-line max-depth
-            if (section.revision === sectionRevision || (revisionMatchFound && deleteDescendants)) {
+            if (section.revision === sectionRevision || deleteAllRevisions) {
               section.deletedOn = now;
               section.deletedBy = userId;
               section.deletedBecause = reason;
               section.content = null;
-              revisionMatchFound = true;
               revisionsToUpdate.push(revision);
             }
           }
