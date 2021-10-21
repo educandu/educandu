@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { ROLE } from '../roles';
 
 const usernameSchema = joi.string().min(6);
 const passwordSchema = joi.string().min(8).pattern(/^(?=.*[A-Za-z])(?=.*\d).*$/);
@@ -24,7 +25,7 @@ export const postUserProfileBodySchema = joi.object({
     postalCode: joi.string().allow(''),
     street: joi.string().allow(''),
     streetSupplement: joi.string().allow('')
-  })
+  }).required()
 });
 
 export const postUserPasswordResetRequestBodySchema = joi.object({
@@ -37,7 +38,7 @@ export const postUserPasswordResetCompletionBodySchema = joi.object({
 });
 
 export const postUserRolesBodySchema = joi.object({
-  roles: joi.array().items(joi.string()).min(1).required()
+  roles: joi.array().items(joi.string().valid(...Object.values(ROLE))).min(1).required()
 });
 
 export const postUserLockedOutBodySchema = joi.object({
