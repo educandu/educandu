@@ -278,7 +278,8 @@ class EditDoc extends React.Component {
       appendTo: {
         key: editedDocumentRevision.key,
         ancestorId: editedDocumentRevision._id
-      }
+      },
+      tags: editedDocumentRevision.tags
     };
 
     try {

@@ -23,7 +23,8 @@ const metadataProjection = {
   createdOn: 1,
   createdBy: 1,
   updatedOn: 1,
-  updatedBy: 1
+  updatedBy: 1,
+  tags: 1
 };
 
 const lastUpdatedFirst = [['updatedOn', -1]];
@@ -162,7 +163,8 @@ class DocumentService {
         slug: doc.slug || '',
         namespace: doc.namespace,
         language: doc.language,
-        sections: newSections
+        sections: newSections,
+        tags: doc.tags
       };
 
       logger.info('Saving new document revision with id %s', newDocumentRevision._id);
