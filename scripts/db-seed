@@ -99,7 +99,7 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
         { linkTitle: 'Data protection', documentNamespace: 'articles', documentSlug: 'data-protection' }
       ]
     },
-    defaultTags: ['hilfe', 'hochschule', 'musiktheorie']
+    defaultTags: ['Hilfe', 'Hochschule', 'Musiktheorie']
   });
 
   await serverBootstrapper.disposeContainer(container);
