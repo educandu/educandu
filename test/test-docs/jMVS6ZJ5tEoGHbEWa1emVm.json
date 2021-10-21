@@ -234,8 +234,8 @@
               },
               "description": "Katze 1",
               "link": {
-                "type": "menu",
-                "url": "test-menu"
+                "type": "external",
+                "url": "https://google.com"
               }
             },
             {
@@ -245,8 +245,8 @@
               },
               "description": "Katze 2",
               "link": {
-                "type": "menu",
-                "url": "test-menu"
+                "type": "external",
+                "url": "https://google.com"
               }
             },
             {
@@ -256,8 +256,8 @@
               },
               "description": "Katze 3",
               "link": {
-                "type": "menu",
-                "url": "test-menu"
+                "type": "external",
+                "url": "https://google.com"
               }
             },
             {
@@ -267,8 +267,8 @@
               },
               "description": "Katze 4",
               "link": {
-                "type": "menu",
-                "url": "test-menu"
+                "type": "external",
+                "url": "https://google.com"
               }
             }
           ],
@@ -295,6 +295,7 @@
           }
         }
       }
-    ]
+    ],
+    "tags": ["Musik"]
   }
 }

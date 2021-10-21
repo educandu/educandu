@@ -94,18 +94,12 @@ class TileEditor extends React.Component {
         <FormItem label={t('linkSource')} {...formItemLayout}>
           <RadioGroup value={link.type} onChange={this.handleLinkTypeValueChanged}>
             <RadioButton value="external">{t('externalLink')}</RadioButton>
-            <RadioButton value="menu" disabled>{t('menuLink')}</RadioButton>
             <RadioButton value="article">{t('articleLink')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {link.type === 'external' && (
           <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(link.url, t, { allowInsecure: true })} hasFeedback>
             <Input value={link.url} onChange={this.handleLinkUrlValueChanged} />
-          </FormItem>
-        )}
-        {link.type === 'menu' && (
-          <FormItem label={t('externalUrl')} {...formItemLayout}>
-            <Input addonBefore={urls.menusPrefix} value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}
         {link.type === 'article' && (
