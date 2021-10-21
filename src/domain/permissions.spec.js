@@ -1,11 +1,11 @@
-import roles from './roles';
+import { ROLE } from './roles';
 import sut from './permissions';
 
 describe('permissions', () => {
 
   describe('hasUserPermission', () => {
     const user = {
-      roles: [roles.SUPER_USER]
+      roles: [ROLE.superUser]
     };
 
     const permissions = Object.entries(sut)
@@ -17,7 +17,7 @@ describe('permissions', () => {
       beforeEach(() => {
         result = sut.hasUserPermission(user, permission);
       });
-      it(`should be true for user in role '${roles.SUPER_USER}' and permission '${permission}'`, () => {
+      it(`should be true for user in role '${ROLE.superUser}' and permission '${permission}'`, () => {
         expect(result).toBe(true);
       });
     });
