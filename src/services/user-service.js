@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import moment from 'moment';
 import Logger from '../common/logger';
-import { ROLE } from '../domain/roles';
+import { ROLE } from '../domain/role';
 import uniqueId from '../utils/unique-id';
 import UserStore from '../stores/user-store';
 import PasswordResetRequestStore from '../stores/password-reset-request-store';

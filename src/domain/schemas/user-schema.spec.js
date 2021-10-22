@@ -1,4 +1,4 @@
-import { ROLE } from '../roles';
+import { ROLE } from '../role';
 import { validate } from '../validation';
 import {
   postUserBodySchema,

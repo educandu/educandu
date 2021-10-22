@@ -1,4 +1,4 @@
-import { ROLE } from './roles';
+import { ROLE } from './role';
 import sut from './permissions';
 
 describe('permissions', () => {

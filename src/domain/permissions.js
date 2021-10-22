@@ -1,4 +1,4 @@
-import { ROLE, isUserInRole } from './roles';
+import { ROLE } from './role';
 
 export const EDIT_DOC = 'edit-doc';
 export const VIEW_DOCS = 'view-docs';
@@ -31,7 +31,7 @@ const rolesForPermission = {
 };
 
 export function hasUserPermission(user, permission) {
-  return (rolesForPermission[permission] || []).some(r => isUserInRole(user, r));
+  return (rolesForPermission[permission] || []).some(role => user?.roles?.includes(role));
 }
 
 export default {

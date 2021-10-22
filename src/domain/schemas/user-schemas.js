@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { ROLE } from '../roles';
+import { ROLE } from '../role';
 
 const usernameSchema = joi.string().min(6);
 const passwordSchema = joi.string().min(8).pattern(/^(?=.*[A-Za-z])(?=.*\d).*$/);

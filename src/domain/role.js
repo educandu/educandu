@@ -1,7 +1,3 @@
-export function isUserInRole(user, role) {
-  return user && user.roles && user.roles.includes(role);
-}
-
 export const ROLE = {
   user: 'user',
   editor: 'editor',
@@ -10,6 +6,5 @@ export const ROLE = {
 };
 
 export default {
-  ROLE,
-  isUserInRole
+  ROLE
 };

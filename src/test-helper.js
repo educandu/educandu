@@ -4,7 +4,7 @@ import path from 'path';
 import util from 'util';
 import { URL } from 'url';
 import Cdn from './repositories/cdn';
-import { ROLE } from './domain/roles';
+import { ROLE } from './domain/role';
 import Database from './stores/database';
 import uniqueId from './utils/unique-id';
 import UserService from './services/user-service';

@@ -6,7 +6,7 @@ require('core-js');
 const path = require('path');
 const glob = require('glob');
 const { promisify } = require('util');
-const { ROLE } = require('../src/domain/roles');
+const { ROLE } = require('../src/domain/role');
 const testHelper = require('../src/test-helper').default;
 const Database = require('../src/stores/database').default;
 const fileHelper = require('../src/utils/file-helper').default;

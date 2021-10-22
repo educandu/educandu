@@ -4,7 +4,7 @@ import firstBy from 'thenby';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Table, Popover } from 'antd';
-import { ROLE } from '../../domain/roles';
+import { ROLE } from '../../domain/role';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
