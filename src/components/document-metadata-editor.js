@@ -100,7 +100,6 @@ class DocumentMetadataEditor extends React.Component {
                 tokenSeparators={[' ', '  ']}
                 value={documentRevision.tags}
                 style={{ width: '100%' }}
-                placeholder="Tags Mode"
                 onChange={selectedValue => this.handleTagsChange(selectedValue)}
                 options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
