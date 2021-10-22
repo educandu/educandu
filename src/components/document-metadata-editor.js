@@ -19,6 +19,8 @@ const RadioGroup = Radio.Group;
 const MODE_EDIT = 'edit';
 const MODE_PREVIEW = 'preview';
 
+const toGermanTag = tag => `${tag.slice(0, 1).toUpperCase()}${tag.slice(1).toLowerCase()}`;
+
 class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -40,24 +42,27 @@ class DocumentMetadataEditor extends React.Component {
 
   handleTitleChange(event) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ ...documentRevision, title: event.target.value });
+    onChanged({ metadata: { ...documentRevision, title: event.target.value } });
   }
 
   handleLanguageChange(value) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ ...documentRevision, language: value });
+    onChanged({ metadata: { ...documentRevision, language: value } });
   }
 
   handleSlugChange(event) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ ...documentRevision, slug: event.target.value });
+    onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
   }
 
-  handleTagsChange(selectedValue) {
+  handleTagsChange(selectedValue, language) {
     const { onChanged, documentRevision } = this.props;
     const invalidMetadata = selectedValue.length === 0 || selectedValue.some(tag => tag.length < 3 || tag.length > 30);
     this.setState({ tagsValidationStatus: invalidMetadata ? 'error' : '' });
-    onChanged({ metadata: { ...documentRevision, tags: selectedValue }, invalidMetadata });
+
+    const languageMapper = language === 'de' ? toGermanTag : word => word;
+
+    onChanged({ metadata: { ...documentRevision, tags: selectedValue.map(languageMapper) }, invalidMetadata });
   }
 
   render() {
@@ -97,11 +102,11 @@ class DocumentMetadataEditor extends React.Component {
             <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
               <Select
                 mode="tags"
-                tokenSeparators={[' ', '  ', '\n']}
-                defaultValue={documentRevision.tags}
+                tokenSeparators={[' ', '  ']}
+                value={documentRevision.tags}
                 style={{ width: '100%' }}
                 placeholder="Tags Mode"
-                onChange={this.handleTagsChange}
+                onChange={selectedValue => this.handleTagsChange(selectedValue, documentRevision.language)}
                 options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
             </Form.Item>
