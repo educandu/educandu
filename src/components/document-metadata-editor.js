@@ -97,7 +97,7 @@ class DocumentMetadataEditor extends React.Component {
             <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
               <Select
                 mode="tags"
-                tokenSeparators={[' ', '  ']}
+                tokenSeparators={[' ', '\t']}
                 value={documentRevision.tags}
                 style={{ width: '100%' }}
                 onChange={selectedValue => this.handleTagsChange(selectedValue)}
