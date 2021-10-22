@@ -2,7 +2,7 @@ import React from 'react';
 import urls from '../utils/urls';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { Input, Radio, Tag, Space, Select } from 'antd';
+import { Input, Radio, Tag, Space, Select, Form } from 'antd';
 import { inject } from './container-context';
 import { withTranslation } from 'react-i18next';
 import { withSettings } from './settings-context';
@@ -23,7 +23,7 @@ class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
-    this.state = { mode: MODE_PREVIEW };
+    this.state = { mode: MODE_PREVIEW, tagsValidationStatus: '' };
   }
 
   handleEditClick() {
@@ -55,11 +55,13 @@ class DocumentMetadataEditor extends React.Component {
 
   handleTagsChange(selectedValue) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ ...documentRevision, tags: selectedValue });
+    const invalidMetadata = selectedValue.length === 0 || selectedValue.some(tag => tag.length < 3 || tag.length > 30);
+    this.setState({ tagsValidationStatus: invalidMetadata ? 'error' : '' });
+    onChanged({ metadata: { ...documentRevision, tags: selectedValue }, invalidMetadata });
   }
 
   render() {
-    const { mode } = this.state;
+    const { mode, tagsValidationStatus } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
     const mergedTags = new Set(settings.defaultTags);
@@ -92,15 +94,17 @@ class DocumentMetadataEditor extends React.Component {
             <br />
             <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
             <span>{t('tags')}</span>:
-            <Select
-              mode="tags"
-              tokenSeparators={[' ', '  ', '\n']}
-              defaultValue={documentRevision.tags}
-              style={{ width: '100%' }}
-              placeholder="Tags Mode"
-              onChange={this.handleTagsChange}
-              options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
-              />
+            <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
+              <Select
+                mode="tags"
+                tokenSeparators={[' ', '  ', '\n']}
+                defaultValue={documentRevision.tags}
+                style={{ width: '100%' }}
+                placeholder="Tags Mode"
+                onChange={this.handleTagsChange}
+                options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
+                />
+            </Form.Item>
           </div>
         );
         break;

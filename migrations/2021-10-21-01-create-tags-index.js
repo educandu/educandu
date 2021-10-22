@@ -4,7 +4,7 @@ class Migration2021102101 {
   }
 
   async up() {
-    await this.db.collection('documents').createIndex({ tags: 1 }, { unique: true, name: 'tagsIndex' });
+    await this.db.collection('documents').createIndex({ tags: 1 }, { unique: false, name: 'tagsIndex' });
   }
 
   async down() {
