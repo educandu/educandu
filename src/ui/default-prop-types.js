@@ -147,24 +147,6 @@ export const documentRevisionShape = PropTypes.shape({
   restoredFrom: PropTypes.string
 });
 
-export const menuNodeShape = PropTypes.any;
-
-export const menuShape = PropTypes.shape({
-  _id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  slug: PropTypes.string,
-  defaultDocumentKey: PropTypes.string,
-  nodes: PropTypes.arrayOf(menuNodeShape).isRequired,
-  createdOn: PropTypes.string.isRequired,
-  updatedOn: PropTypes.string.isRequired,
-  createdBy: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired,
-  updatedBy: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  }).isRequired
-});
-
 const formItemDimensionShape = PropTypes.shape({
   span: PropTypes.number.isRequired
 });
