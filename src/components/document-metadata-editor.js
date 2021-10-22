@@ -19,8 +19,6 @@ const RadioGroup = Radio.Group;
 const MODE_EDIT = 'edit';
 const MODE_PREVIEW = 'preview';
 
-const toGermanTag = tag => `${tag.slice(0, 1).toUpperCase()}${tag.slice(1).toLowerCase()}`;
-
 class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -55,14 +53,11 @@ class DocumentMetadataEditor extends React.Component {
     onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
   }
 
-  handleTagsChange(selectedValue, language) {
+  handleTagsChange(selectedValue) {
     const { onChanged, documentRevision } = this.props;
     const invalidMetadata = selectedValue.length === 0 || selectedValue.some(tag => tag.length < 3 || tag.length > 30);
     this.setState({ tagsValidationStatus: invalidMetadata ? 'error' : '' });
-
-    const languageMapper = language === 'de' ? toGermanTag : word => word;
-
-    onChanged({ metadata: { ...documentRevision, tags: selectedValue.map(languageMapper) }, invalidMetadata });
+    onChanged({ metadata: { ...documentRevision, tags: selectedValue }, invalidMetadata });
   }
 
   render() {
@@ -106,7 +101,7 @@ class DocumentMetadataEditor extends React.Component {
                 value={documentRevision.tags}
                 style={{ width: '100%' }}
                 placeholder="Tags Mode"
-                onChange={selectedValue => this.handleTagsChange(selectedValue, documentRevision.language)}
+                onChange={selectedValue => this.handleTagsChange(selectedValue)}
                 options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
             </Form.Item>
