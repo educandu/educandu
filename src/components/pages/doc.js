@@ -45,7 +45,7 @@ class Doc extends React.Component {
   formatRevisionTooltip(index) {
     const { languageNameProvider, language, locale, t } = this.props;
     const revision = this.state.revisions[index];
-    const date = moment(revision.updatedOn).locale(locale);
+    const date = moment(revision.createdOn).locale(locale);
     const languageName = languageNameProvider.getData(language)[revision.language].name;
 
     return (
