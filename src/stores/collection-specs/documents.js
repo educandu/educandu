@@ -8,6 +8,10 @@ export default {
     {
       name: '_idx_namespace_slug_',
       key: { namespace: 1, slug: 1 }
+    },
+    {
+      name: 'tagsIndex',
+      key: { tags: 1 }
     }
   ]
 };

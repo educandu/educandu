@@ -33,7 +33,6 @@ describe.only('input-validators', () => {
 
   describe('isValidTag', () => {
     let result;
-    const allOtherTags = ['tag1', 'tag2', 'tag3'];
 
     const testCases = [
       { tag: null, expectedResult: false },
@@ -42,17 +41,17 @@ describe.only('input-validators', () => {
       { tag: ' tag ', expectedResult: true },
       { tag: 't a g', expectedResult: false },
       { tag: 't\tag', expectedResult: false },
-      { tag: 'tag2', expectedResult: false },
       { tag: '  ', expectedResult: false },
+      { tag: 'tag2', allTags: ['tag1', 'tag2'], expectedResult: true },
+      { tag: 'tag2', allTags: ['tag1', 'tag2', 'tag2'], expectedResult: false },
       { tag: 'aPrettyLongTagToConsiderValid?', expectedResult: true },
       { tag: 'anEvenLongerTagToConsiderValid?', expectedResult: false }
     ];
 
-    testCases.forEach(({ tag, expectedResult }) => {
+    testCases.forEach(({ tag, allTags, expectedResult }) => {
       describe(`when validating tag='${tag}'`, () => {
         beforeEach(() => {
-          const allTags = [...allOtherTags, tag];
-          result = sut.isValidTag(allTags, tag);
+          result = sut.isValidTag({ tag, allTags });
         });
         it(`should return ${expectedResult}`, () => {
           expect(result).toBe(expectedResult);

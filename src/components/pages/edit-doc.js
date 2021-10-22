@@ -96,7 +96,8 @@ class EditDoc extends React.Component {
       editedDocumentRevision: clonedRevision,
       isDirty: false,
       proposedSectionKeys,
-      invalidSectionKeys: []
+      invalidSectionKeys: [],
+      invalidMetadata: false
     };
   }
 
@@ -147,10 +148,11 @@ class EditDoc extends React.Component {
     }
   }
 
-  handleMetadataChanged(metadata) {
+  handleMetadataChanged({ metadata, invalidMetadata }) {
     this.setState(prevState => {
       return {
         ...prevState,
+        invalidMetadata,
         editedDocumentRevision: { ...prevState.editedDocumentRevision, ...metadata },
         isDirty: true
       };
@@ -326,7 +328,7 @@ class EditDoc extends React.Component {
 
   render() {
     const { t } = this.props;
-    const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys } = this.state;
+    const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys, invalidMetadata } = this.state;
 
     const newSectionMenu = (
       <Menu>
@@ -345,7 +347,7 @@ class EditDoc extends React.Component {
     );
 
     const headerActions = [];
-    if (isDirty && !invalidSectionKeys.length) {
+    if (isDirty && !invalidSectionKeys.length && !invalidMetadata) {
       headerActions.push({
         key: 'save',
         type: 'primary',

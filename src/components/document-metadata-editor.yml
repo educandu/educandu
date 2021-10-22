@@ -13,3 +13,9 @@ slug:
 unassigned:
   en: unassigned
   de: nicht zugewiesen
+tags:
+  en: Tags
+  de: Tags
+invalidTags:
+  en: At least one tag must be provided and all tags must be between 3 and 30 characters
+  de: Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein

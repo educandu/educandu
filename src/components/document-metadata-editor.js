@@ -2,15 +2,17 @@ import React from 'react';
 import urls from '../utils/urls';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { Input, Radio } from 'antd';
+import { Input, Radio, Tag, Space, Select, Form } from 'antd';
 import { inject } from './container-context';
 import { withTranslation } from 'react-i18next';
+import { withSettings } from './settings-context';
 import { withLanguage } from './language-context';
 import LanguageSelect from './localization/language-select';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
+import validators from '../utils/input-validators';
 import LanguageNameProvider from '../data/language-name-provider';
 import CountryFlagAndName from './localization/country-flag-and-name';
-import { documentRevisionShape, translationProps, languageProps } from '../ui/default-prop-types';
+import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -18,11 +20,13 @@ const RadioGroup = Radio.Group;
 const MODE_EDIT = 'edit';
 const MODE_PREVIEW = 'preview';
 
+const { isValidTag } = validators;
+
 class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
-    this.state = { mode: MODE_PREVIEW };
+    this.state = { mode: MODE_PREVIEW, tagsValidationStatus: '' };
   }
 
   handleEditClick() {
@@ -39,22 +43,31 @@ class DocumentMetadataEditor extends React.Component {
 
   handleTitleChange(event) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ ...documentRevision, title: event.target.value });
+    onChanged({ metadata: { ...documentRevision, title: event.target.value } });
   }
 
   handleLanguageChange(value) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ ...documentRevision, language: value });
+    onChanged({ metadata: { ...documentRevision, language: value } });
   }
 
   handleSlugChange(event) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ ...documentRevision, slug: event.target.value });
+    onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
+  }
+
+  handleTagsChange(selectedValues) {
+    const { onChanged, documentRevision } = this.props;
+    const areTagsValid = selectedValues.length > 0 && selectedValues.every(tag => isValidTag({ tag }));
+    this.setState({ tagsValidationStatus: areTagsValid ? '' : 'error' });
+    onChanged({ metadata: { ...documentRevision, tags: selectedValues }, invalidMetadata: !areTagsValid });
   }
 
   render() {
-    const { mode } = this.state;
-    const { documentRevision, languageNameProvider, language, t } = this.props;
+    const { mode, tagsValidationStatus } = this.state;
+    const { documentRevision, languageNameProvider, language, t, settings } = this.props;
+
+    const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags]);
 
     let docLanguage;
     let componentToShow;
@@ -68,6 +81,8 @@ class DocumentMetadataEditor extends React.Component {
             <span>{t('language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
             <br />
             <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getArticleUrl(documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
+            <br />
+            <span>{t('tags')}</span>: {documentRevision.tags.map(item => (<Space key={item}><Tag key={item}>{item}</Tag></Space>))}
           </div>
         );
         break;
@@ -80,6 +95,17 @@ class DocumentMetadataEditor extends React.Component {
             <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={this.handleLanguageChange} />
             <br />
             <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
+            <span>{t('tags')}</span>:
+            <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
+              <Select
+                mode="tags"
+                tokenSeparators={[' ', '\t']}
+                value={documentRevision.tags}
+                style={{ width: '100%' }}
+                onChange={selectedValue => this.handleTagsChange(selectedValue)}
+                options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
+                />
+            </Form.Item>
           </div>
         );
         break;
@@ -113,11 +139,12 @@ class DocumentMetadataEditor extends React.Component {
 DocumentMetadataEditor.propTypes = {
   ...translationProps,
   ...languageProps,
+  ...settingsProps,
   documentRevision: documentRevisionShape.isRequired,
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired,
   onChanged: PropTypes.func.isRequired
 };
 
-export default withTranslation('documentMetadataEditor')(withLanguage(inject({
+export default withTranslation('documentMetadataEditor')(withSettings(withLanguage(inject({
   languageNameProvider: LanguageNameProvider
-}, DocumentMetadataEditor)));
+}, DocumentMetadataEditor))));
