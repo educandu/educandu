@@ -19,7 +19,7 @@ function DefaultTagsSettings({ defaultTags, onChange }) {
 
   const fireOnChange = rows => {
     const tags = mapTableRowsToTags(rows);
-    onChange(tags, { isValid: tags.every(tag => inputValidators.isValidTag({ tag, tags })) });
+    onChange(tags, { isValid: tags.every(tag => inputValidators.isValidTag({ tag, allTags: tags })) });
   };
 
   const handleMoveClick = (index, offset) => {
