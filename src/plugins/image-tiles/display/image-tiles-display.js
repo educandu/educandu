@@ -24,8 +24,6 @@ function createTileUrl(tile) {
   switch (link.type) {
     case 'external':
       return link.url;
-    case 'menu':
-      throw new Error('menus should not exist anymore!');
     case 'article':
       return urls.getArticleUrl(link.url);
     default:

@@ -2,12 +2,10 @@ import htmlescape from 'htmlescape';
 import Root from '../components/root';
 import { Container } from '../common/di';
 import Doc from '../components/pages/doc';
-import Menu from '../components/pages/menu';
 import Docs from '../components/pages/docs';
 import cloneDeep from '../utils/clone-deep';
 import Index from '../components/pages/index';
 import Login from '../components/pages/login';
-import Menus from '../components/pages/menus';
 import Users from '../components/pages/users';
 import Article from '../components/pages/article';
 import Account from '../components/pages/account';
@@ -17,7 +15,6 @@ import Settings from '../components/pages/settings';
 import requestHelper from '../utils/request-helper';
 import ClientDataMapper from './client-data-mapper';
 import PageRendererBase from './page-renderer-base';
-import EditMenu from '../components/pages/edit-menu';
 import ServerConfig from '../bootstrap/server-config';
 import ClientConfig from '../bootstrap/client-config';
 import ResourceManager from '../resources/resource-manager';
@@ -32,11 +29,8 @@ const pageComponentsByName = {
   'doc': Doc,
   'docs': Docs,
   'edit-doc': EditDoc,
-  'edit-menu': EditMenu,
   'index': Index,
   'login': Login,
-  'menu': Menu,
-  'menus': Menus,
   'account': Account,
   'register': Register,
   'reset-password': ResetPassword,

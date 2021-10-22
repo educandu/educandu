@@ -2,12 +2,10 @@ import { MongoClient } from 'mongodb';
 import Umzug from 'umzug';
 import path from 'path';
 import Logger from '../common/logger';
-import menusSpec from './collection-specs/menus';
 import usersSpec from './collection-specs/users';
 import settingsSpec from './collection-specs/settings';
 import sessionsSpec from './collection-specs/sessions';
 import documentsSpec from './collection-specs/documents';
-import menuLocksSpec from './collection-specs/menu-locks';
 import documentLocksSpec from './collection-specs/document-locks';
 import documentOrdersSpec from './collection-specs/document-orders';
 import documentRevisionsSpec from './collection-specs/document-revisions';
@@ -18,12 +16,10 @@ const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 const logger = new Logger(__filename);
 
 const collectionSpecs = [
-  menusSpec,
   usersSpec,
   settingsSpec,
   sessionsSpec,
   documentsSpec,
-  menuLocksSpec,
   documentLocksSpec,
   documentOrdersSpec,
   documentRevisionsSpec,

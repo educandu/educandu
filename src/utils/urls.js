@@ -2,7 +2,6 @@ import urlencode from 'urlencode';
 
 export const homePath = '/';
 export const docsPath = '/docs';
-export const menusPath = '/menus';
 export const usersPath = '/users';
 export const settingsPath = '/settings';
 export const loginPath = '/login';
@@ -13,8 +12,6 @@ export const resetPasswordPath = '/reset-password';
 
 export const docsPrefix = '/docs/';
 export const editDocPrefix = '/edit/doc/';
-export const menusPrefix = '/menus/';
-export const editMenuPrefix = '/edit/menu/';
 export const articlesPrefix = '/articles/';
 export const revisionPrefix = '/revs/';
 export const pluginApiPathPrefix = '/plugins/';
@@ -48,18 +45,6 @@ export function getDocUrl(docKey) {
 export function getEditDocUrl(docKey, blueprintKey = null) {
   const url = concatParts(editDocPrefix, docKey);
   return blueprintKey ? `${url}?blueprintKey=${urlencode(blueprintKey)}` : url;
-}
-
-export function getMenusUrl() {
-  return menusPath;
-}
-
-export function getMenuUrl(slug) {
-  return concatParts(menusPrefix, slug);
-}
-
-export function getEditMenuUrl(menuId) {
-  return concatParts(editMenuPrefix, menuId);
 }
 
 export function getUsersUrl() {
@@ -131,7 +116,6 @@ export function createFullyQualifiedUrl(pathname) {
 export default {
   homePath,
   docsPath,
-  menusPath,
   usersPath,
   loginPath,
   logoutPath,
@@ -139,8 +123,6 @@ export default {
   resetPasswordPath,
   docsPrefix,
   editDocPrefix,
-  menusPrefix,
-  editMenuPrefix,
   articlesPrefix,
   pluginApiPathPrefix,
   completeRegistrationPrefix,
@@ -149,12 +131,9 @@ export default {
   removeTrailingSlash,
   removeLeadingSlash,
   concatParts,
-  getMenuUrl,
   getDocsUrl,
   getDocUrl,
   getEditDocUrl,
-  getMenusUrl,
-  getEditMenuUrl,
   getUsersUrl,
   getArticleUrl,
   getDocumentRevisionUrl,
