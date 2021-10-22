@@ -9,6 +9,7 @@ import { withSettings } from './settings-context';
 import { withLanguage } from './language-context';
 import LanguageSelect from './localization/language-select';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
+import validators from '../utils/input-validators';
 import LanguageNameProvider from '../data/language-name-provider';
 import CountryFlagAndName from './localization/country-flag-and-name';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types';
@@ -18,6 +19,8 @@ const RadioGroup = Radio.Group;
 
 const MODE_EDIT = 'edit';
 const MODE_PREVIEW = 'preview';
+
+const { isValidTag } = validators;
 
 class DocumentMetadataEditor extends React.Component {
   constructor(props) {
@@ -55,17 +58,16 @@ class DocumentMetadataEditor extends React.Component {
 
   handleTagsChange(selectedValue) {
     const { onChanged, documentRevision } = this.props;
-    const invalidMetadata = selectedValue.length === 0 || selectedValue.some(tag => tag.length < 3 || tag.length > 30);
-    this.setState({ tagsValidationStatus: invalidMetadata ? 'error' : '' });
-    onChanged({ metadata: { ...documentRevision, tags: selectedValue }, invalidMetadata });
+    const areTagsValid = selectedValue.every(tag => isValidTag({ tag }));
+    this.setState({ tagsValidationStatus: areTagsValid ? '' : 'error' });
+    onChanged({ metadata: { ...documentRevision, tags: selectedValue }, invalidMetadata: !areTagsValid });
   }
 
   render() {
     const { mode, tagsValidationStatus } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
-    const mergedTags = new Set(settings.defaultTags);
-    documentRevision.tags.forEach(tag => mergedTags.add(tag));
+    const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags]);
 
     let docLanguage;
     let componentToShow;

@@ -5,7 +5,7 @@ function isValidPassword({ password, minLength = 8 }) {
   return sanitizedPassword.length >= minLength && minOneLetterAndOneDigitPattern.test(sanitizedPassword);
 }
 
-function isValidTag(allTags, tag) {
+function isValidTag({ tag, allTags = [] }) {
   const trimmedTag = (tag || '').trim();
 
   if (trimmedTag.length < 3 || trimmedTag.length > 30 || (/\s/).test(trimmedTag)) {

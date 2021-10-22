@@ -8,7 +8,7 @@ import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-des
 
 const FormItem = Form.Item;
 
-const getRequiredValidateStatus = (allTags, tag) => inputValidators.isValidTag(allTags, tag) ? 'success' : 'error';
+const getRequiredValidateStatus = (allTags, tag) => inputValidators.isValidTag({ allTags, tag }) ? 'success' : 'error';
 
 const mapTableRowsToTags = rows => rows.map(row => row.tag);
 
@@ -19,7 +19,7 @@ function DefaultTagsSettings({ defaultTags, onChange }) {
 
   const fireOnChange = rows => {
     const tags = mapTableRowsToTags(rows);
-    onChange(tags, { isValid: tags.every(tag => inputValidators.isValidTag(tags, tag)) });
+    onChange(tags, { isValid: tags.every(tag => inputValidators.isValidTag({ tag, tags })) });
   };
 
   const handleMoveClick = (index, offset) => {
