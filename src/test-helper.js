@@ -4,9 +4,9 @@ import path from 'path';
 import util from 'util';
 import { URL } from 'url';
 import Cdn from './repositories/cdn';
+import { ROLE } from './domain/role';
 import Database from './stores/database';
 import uniqueId from './utils/unique-id';
-import applicationRoles from './domain/roles';
 import UserService from './services/user-service';
 import ServerConfig from './bootstrap/server-config';
 import DocumentService from './services/document-service';
@@ -188,7 +188,7 @@ export function setupTestUser(container, user) {
     user?.username || 'test',
     user?.password || 'test',
     user?.email || 'test@test@com',
-    user?.roles || [applicationRoles.USER],
+    user?.roles || [ROLE.user],
     user?.profile || null,
     user?.lockedOut || false
   );

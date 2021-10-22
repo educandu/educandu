@@ -6,7 +6,7 @@ require('core-js');
 const path = require('path');
 const glob = require('glob');
 const { promisify } = require('util');
-const roles = require('../src/domain/roles').default;
+const { ROLE } = require('../src/domain/role');
 const testHelper = require('../src/test-helper').default;
 const Database = require('../src/stores/database').default;
 const fileHelper = require('../src/utils/file-helper').default;
@@ -17,10 +17,10 @@ const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').defau
 
 const globP = promisify(glob);
 
-const ROLES_USER = [roles.USER];
-const ROLES_EDITOR = [roles.USER, roles.EDITOR];
-const ROLES_SUPER_EDITOR = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR];
-const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SUPER_USER];
+const ROLES_USER = [ROLE.user];
+const ROLES_EDITOR = [ROLE.user, ROLE.editor];
+const ROLES_SUPER_EDITOR = [ROLE.user, ROLE.editor, ROLE.superEditor];
+const ROLES_SUPER_USER = [ROLE.user, ROLE.editor, ROLE.superEditor, ROLE.superUser];
 
 (async function seed() {
 

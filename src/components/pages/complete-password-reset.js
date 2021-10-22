@@ -4,10 +4,11 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls';
 import ElmuLogo from '../elmu-logo';
+import { Form, Button } from 'antd';
 import Countdown from '../countdown';
 import Logger from '../../common/logger';
-import { Form, Input, Button } from 'antd';
 import { inject } from '../container-context';
+import PasswordInput from '../password-input';
 import errorHelper from '../../ui/error-helper';
 import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
@@ -70,37 +71,10 @@ class CompletePasswordReset extends React.Component {
       }
     };
 
-    const passwordValidationRules = [
-      {
-        required: true,
-        message: t('enterPassword')
-      }
-    ];
-
-    const passwordConfirmationValidationRules = [
-      {
-        required: true,
-        message: t('confirmPassword')
-      },
-      ({ getFieldValue }) => ({
-        validator: (rule, value) => {
-          const otherPassword = getFieldValue('password');
-          return value && value !== otherPassword
-            ? Promise.reject(new Error(t('passwordsDoNotMatch')))
-            : Promise.resolve();
-        }
-      })
-    ];
-
     const completionForm = (
       <div className="CompletePasswordResetPage-form">
         <Form onFinish={this.handleFinish} scrollToFirstError>
-          <FormItem {...formItemLayout} label={t('password')} name="password" rules={passwordValidationRules}>
-            <Input type="password" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('passwordConfirmation')} name="confirm" rules={passwordConfirmationValidationRules} dependencies={['password']}>
-            <Input type="password" />
-          </FormItem>
+          <PasswordInput formItemLayout={formItemLayout} />
           <FormItem {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">{t('savePassword')}</Button>
           </FormItem>

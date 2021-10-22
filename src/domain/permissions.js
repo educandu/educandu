@@ -1,4 +1,4 @@
-import { USER, EDITOR, SUPER_USER, SUPER_EDITOR, isUserInRole } from './roles';
+import { ROLE } from './role';
 
 export const EDIT_DOC = 'edit-doc';
 export const VIEW_DOCS = 'view-docs';
@@ -15,23 +15,23 @@ export const SEE_USER_EMAIL = 'see-user-email';
 export const MIGRATE_DATA = 'migrate-data';
 
 const rolesForPermission = {
-  [EDIT_DOC]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
-  [VIEW_DOCS]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
-  [VIEW_MENUS]: [SUPER_USER, SUPER_EDITOR, EDITOR],
-  [EDIT_MENU]: [SUPER_USER, SUPER_EDITOR, EDITOR],
-  [EDIT_MENU_STRUCTURE]: [SUPER_USER, SUPER_EDITOR],
-  [EDIT_FILE]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
-  [VIEW_FILES]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
-  [CREATE_FILE]: [SUPER_USER, SUPER_EDITOR, EDITOR, USER],
-  [EDIT_SETTINGS]: [SUPER_USER],
-  [EDIT_USERS]: [SUPER_USER],
-  [HARD_DELETE_SECTION]: [SUPER_USER],
-  [SEE_USER_EMAIL]: [SUPER_USER],
-  [MIGRATE_DATA]: [SUPER_USER]
+  [EDIT_DOC]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
+  [VIEW_DOCS]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
+  [VIEW_MENUS]: [ROLE.superUser, ROLE.superEditor, ROLE.editor],
+  [EDIT_MENU]: [ROLE.superUser, ROLE.superEditor, ROLE.editor],
+  [EDIT_MENU_STRUCTURE]: [ROLE.superUser, ROLE.superEditor],
+  [EDIT_FILE]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
+  [VIEW_FILES]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
+  [CREATE_FILE]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
+  [EDIT_SETTINGS]: [ROLE.superUser],
+  [EDIT_USERS]: [ROLE.superUser],
+  [HARD_DELETE_SECTION]: [ROLE.superUser],
+  [SEE_USER_EMAIL]: [ROLE.superUser],
+  [MIGRATE_DATA]: [ROLE.superUser]
 };
 
 export function hasUserPermission(user, permission) {
-  return (rolesForPermission[permission] || []).some(r => isUserInRole(user, r));
+  return (rolesForPermission[permission] || []).some(role => user?.roles?.includes(role));
 }
 
 export default {
