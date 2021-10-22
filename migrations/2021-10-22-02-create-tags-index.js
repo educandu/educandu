@@ -1,4 +1,4 @@
-class Migration2021102101 {
+class Migration2021102202 {
   constructor(db) {
     this.db = db;
   }
@@ -12,4 +12,4 @@ class Migration2021102101 {
   }
 }
 
-export default Migration2021102101;
+export default Migration2021102202;
