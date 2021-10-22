@@ -25,7 +25,7 @@ function createTileUrl(tile) {
     case 'external':
       return link.url;
     case 'menu':
-      return urls.getMenuUrl(link.url);
+      throw new Error('menus should not exist anymore!');
     case 'article':
       return urls.getArticleUrl(link.url);
     default:

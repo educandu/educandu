@@ -6,29 +6,27 @@ require('core-js');
 const path = require('path');
 const glob = require('glob');
 const { promisify } = require('util');
-const roles = require('../src/domain/roles').default;
+const { ROLE } = require('../src/domain/role');
 const testHelper = require('../src/test-helper').default;
 const Database = require('../src/stores/database').default;
 const fileHelper = require('../src/utils/file-helper').default;
 const UserService = require('../src/services/user-service').default;
-const MenuService = require('../src/services/menu-service').default;
 const SettingService = require('../src/services/setting-service').default;
 const DocumentService = require('../src/services/document-service').default;
 const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
 
 const globP = promisify(glob);
 
-const ROLES_USER = [roles.USER];
-const ROLES_EDITOR = [roles.USER, roles.EDITOR];
-const ROLES_SUPER_EDITOR = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR];
-const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SUPER_USER];
+const ROLES_USER = [ROLE.user];
+const ROLES_EDITOR = [ROLE.user, ROLE.editor];
+const ROLES_SUPER_EDITOR = [ROLE.user, ROLE.editor, ROLE.superEditor];
+const ROLES_SUPER_USER = [ROLE.user, ROLE.editor, ROLE.superEditor, ROLE.superUser];
 
 (async function seed() {
 
   const container = await serverBootstrapper.createContainer();
   const db = container.get(Database);
   const userService = container.get(UserService);
-  const menuService = container.get(MenuService);
   const settingService = container.get(SettingService);
   const documentService = container.get(DocumentService);
 
@@ -42,21 +40,14 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
   await testHelper.createAndVerifyUser(userService, 'admin', '#smBW8#7aiFWKBA', 'admin@test.com', ROLES_SUPER_USER);
 
   const docFiles = await globP(path.join(__dirname, '../test/test-docs/*.json'));
-  const menuFiles = await globP(path.join(__dirname, '../test/test-menus/*.json'));
 
   const docPayloads = await Promise.all(docFiles.map(file => fileHelper.readJson(file)));
-  const menuPayloads = await Promise.all(menuFiles.map(file => fileHelper.readJson(file)));
 
   docPayloads.forEach(payload => {
     payload.user = user;
   });
 
-  menuPayloads.forEach(payload => {
-    payload.user = user;
-  });
-
   const docs = await Promise.all(docPayloads.map(payload => documentService.createDocumentRevision(payload)));
-  await Promise.all(menuPayloads.map(payload => menuService.saveMenu(payload)));
 
   const homePageKey = docs.find(doc => doc.title === 'Landing Page').key;
   await settingService.saveSettings({
@@ -108,7 +99,7 @@ const ROLES_SUPER_USER = [roles.USER, roles.EDITOR, roles.SUPER_EDITOR, roles.SU
         { linkTitle: 'Data protection', documentNamespace: 'articles', documentSlug: 'data-protection' }
       ]
     },
-    defaultTags: 'hilfe,hochschule,musiktheorie'
+    defaultTags: ['Hilfe', 'Hochschule', 'Musiktheorie']
   });
 
   await serverBootstrapper.disposeContainer(container);

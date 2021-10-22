@@ -8,16 +8,16 @@ import Countdown from '../countdown';
 import EmailInput from '../email-input';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
+import PasswordInput from '../password-input';
 import UsernameInput from '../username-input';
+import { Form, Button, Checkbox } from 'antd';
 import errorHelper from '../../ui/error-helper';
 import { withSettings } from '../settings-context';
 import { withLanguage } from '../language-context';
-import { Form, Input, Button, Checkbox } from 'antd';
 import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client';
-import inputValidators from '../../utils/input-validators';
-import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
 import { SAVE_USER_RESULT } from '../../domain/user-management';
+import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
 
 const logger = new Logger(__filename);
 
@@ -92,36 +92,6 @@ class Register extends React.Component {
       }
     };
 
-    const passwordValidationRules = [
-      {
-        required: true,
-        message: t('enterPassword')
-      },
-      {
-        validator: (rule, value) => {
-          const minLength = 8;
-          return value && !inputValidators.isValidPassword({ password: value, minLength })
-            ? Promise.reject(new Error(t('passwordIsInvalid', { length: minLength })))
-            : Promise.resolve();
-        }
-      }
-    ];
-
-    const passwordConfirmationValidationRules = [
-      {
-        required: true,
-        message: t('confirmPassword')
-      },
-      ({ getFieldValue }) => ({
-        validator: (rule, value) => {
-          const otherPassword = getFieldValue('password');
-          return value && value !== otherPassword
-            ? Promise.reject(new Error(t('passwordsDoNotMatch')))
-            : Promise.resolve();
-        }
-      })
-    ];
-
     const agreementValidationRules = [
       {
         required: true,
@@ -134,12 +104,7 @@ class Register extends React.Component {
         <Form ref={this.formRef} onFinish={this.handleFinish} scrollToFirstError>
           <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={this.state.forbiddenUsernames} />
           <EmailInput formItemLayout={formItemLayout} forbiddenEmails={this.state.forbiddenEmails} />
-          <FormItem {...formItemLayout} label={t('password')} name="password" rules={passwordValidationRules}>
-            <Input type="password" />
-          </FormItem>
-          <FormItem {...formItemLayout} label={t('passwordConfirmation')} name="confirm" rules={passwordConfirmationValidationRules} dependencies={['password']}>
-            <Input type="password" />
-          </FormItem>
+          <PasswordInput formItemLayout={formItemLayout} />
           <FormItem {...tailFormItemLayout} name="agreement" valuePropName="checked" rules={agreementValidationRules}>
             <Checkbox>
               <Trans

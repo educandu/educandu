@@ -4,7 +4,7 @@ import firstBy from 'thenby';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Table, Popover } from 'antd';
-import roles from '../../domain/roles';
+import { ROLE } from '../../domain/role';
 import Logger from '../../common/logger';
 import { inject } from '../container-context';
 import errorHelper from '../../ui/error-helper';
@@ -19,10 +19,10 @@ import { userShape, translationProps } from '../../ui/default-prop-types';
 const logger = new Logger(__filename);
 
 const availableRoles = [
-  { name: roles.USER, isReadonly: false },
-  { name: roles.EDITOR, isReadonly: false },
-  { name: roles.SUPER_EDITOR, isReadonly: false },
-  { name: roles.SUPER_USER, isReadonly: true }
+  { name: ROLE.user, isReadonly: false },
+  { name: ROLE.editor, isReadonly: false },
+  { name: ROLE.superEditor, isReadonly: false },
+  { name: ROLE.superUser, isReadonly: true }
 ];
 
 class Users extends React.Component {

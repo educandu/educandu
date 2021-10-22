@@ -15,7 +15,7 @@ import React, { useState, useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import LanguageNameProvider from '../data/language-name-provider';
 import CountryFlagAndName from './localization/country-flag-and-name';
-import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, MenuUnfoldOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
+import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
 
@@ -97,13 +97,6 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       text: t('pageNames:docs'),
       icon: FileOutlined,
       permission: permissions.VIEW_DOCS
-    },
-    {
-      key: 'menus',
-      href: urls.getMenusUrl(),
-      text: t('pageNames:menus'),
-      icon: MenuUnfoldOutlined,
-      permission: permissions.VIEW_MENUS
     },
     {
       key: 'users',
