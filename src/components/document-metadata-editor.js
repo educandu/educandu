@@ -56,11 +56,11 @@ class DocumentMetadataEditor extends React.Component {
     onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
   }
 
-  handleTagsChange(selectedValue) {
+  handleTagsChange(selectedValues) {
     const { onChanged, documentRevision } = this.props;
-    const areTagsValid = selectedValue.every(tag => isValidTag({ tag }));
+    const areTagsValid = selectedValues.length > 0 && selectedValues.every(tag => isValidTag({ tag }));
     this.setState({ tagsValidationStatus: areTagsValid ? '' : 'error' });
-    onChanged({ metadata: { ...documentRevision, tags: selectedValue }, invalidMetadata: !areTagsValid });
+    onChanged({ metadata: { ...documentRevision, tags: selectedValues }, invalidMetadata: !areTagsValid });
   }
 
   render() {
