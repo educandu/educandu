@@ -5,7 +5,7 @@ describe('permissions', () => {
 
   describe('hasUserPermission', () => {
     const user = {
-      roles: [ROLE.superUser]
+      roles: [ROLE.admin]
     };
 
     const permissions = Object.entries(sut)
@@ -17,7 +17,7 @@ describe('permissions', () => {
       beforeEach(() => {
         result = sut.hasUserPermission(user, permission);
       });
-      it(`should be true for user in role '${ROLE.superUser}' and permission '${permission}'`, () => {
+      it(`should be true for user in role '${ROLE.admin}' and permission '${permission}'`, () => {
         expect(result).toBe(true);
       });
     });

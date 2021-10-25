@@ -1,8 +1,6 @@
 export const ROLE = {
   user: 'user',
-  editor: 'editor',
-  superUser: 'super-user',
-  superEditor: 'super-editor'
+  admin: 'admin'
 };
 
 export default {
