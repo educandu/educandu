@@ -27,6 +27,29 @@ const metadataProjection = {
   tags: 1
 };
 
+const getTagsQuery = searchString => [
+  { $unwind: '$tags' },
+  { $match: { tags: { $regex: `.*${searchString}.*` } } },
+  { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
+  {
+    $project: {
+      _id: 0,
+      uniqueTags: {
+        $reduce: {
+          input: '$uniqueTags',
+          initialValue: [],
+          in: {
+            $let: {
+              vars: { elem: { $concatArrays: [['$$this'], '$$value'] } },
+              in: { $setUnion: '$$elem' }
+            }
+          }
+        }
+      }
+    }
+  }
+];
+
 const lastUpdatedFirst = [['updatedOn', -1]];
 
 class DocumentService {
@@ -68,6 +91,14 @@ class DocumentService {
 
   getDocumentRevisionById(id) {
     return this.documentRevisionStore.findOne({ _id: id });
+  }
+
+  getRevisionTagsContainingString(searchString) {
+    return this.documentRevisionStore.aggregate(getTagsQuery(searchString));
+  }
+
+  getDocumentTagsContainingString(searchString) {
+    return this.documentStore.aggregate(getTagsQuery(searchString));
   }
 
   async createDocumentRevision({ doc, user, restoredFrom = null }) {

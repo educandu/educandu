@@ -133,6 +133,28 @@ class DocumentController {
       const result = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
       return res.send(result);
     });
+
+    router.get('/api/v1/docs-revision/tags/*', async (req, res) => {
+      const query = req.params[0] || '';
+      let result = [];
+
+      for await (const { uniqueTags } of this.documentService.getRevisionTagsContainingString(query)) {
+        result = [...result, ...uniqueTags];
+      }
+
+      return res.send(result);
+    });
+
+    router.get('/api/v1/docs/tags/*', async (req, res) => {
+      const query = req.params[0] || '';
+      let result = [];
+
+      for await (const { uniqueTags } of this.documentService.getDocumentTagsContainingString(query)) {
+        result = [...result, ...uniqueTags];
+      }
+
+      return res.send(result);
+    });
   }
 }
 
