@@ -94,11 +94,11 @@ class DocumentService {
   }
 
   getRevisionTagsContainingString(searchString) {
-    return this.documentRevisionStore.aggregate(getTagsQuery(searchString));
+    return this.documentRevisionStore.toAggregateArray(getTagsQuery(searchString));
   }
 
   getDocumentTagsContainingString(searchString) {
-    return this.documentStore.aggregate(getTagsQuery(searchString));
+    return this.documentStore.toAggregateArray(getTagsQuery(searchString));
   }
 
   async createDocumentRevision({ doc, user, restoredFrom = null }) {

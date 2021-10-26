@@ -136,24 +136,14 @@ class DocumentController {
 
     router.get('/api/v1/docs-revision/tags/*', async (req, res) => {
       const query = req.params[0] || '';
-      let result = [];
-
-      for await (const { uniqueTags } of this.documentService.getRevisionTagsContainingString(query)) {
-        result = [...result, ...uniqueTags];
-      }
-
-      return res.send(result);
+      const result = await this.documentService.getRevisionTagsContainingString(query);
+      return res.send(result[0].uniqueTags);
     });
 
     router.get('/api/v1/docs/tags/*', async (req, res) => {
       const query = req.params[0] || '';
-      let result = [];
-
-      for await (const { uniqueTags } of this.documentService.getDocumentTagsContainingString(query)) {
-        result = [...result, ...uniqueTags];
-      }
-
-      return res.send(result);
+      const result = await this.documentService.getDocumentTagsContainingString(query);
+      return res.send(result[0].uniqueTags);
     });
   }
 }

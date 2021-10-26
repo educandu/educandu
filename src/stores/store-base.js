@@ -12,6 +12,10 @@ class StoreBase {
     }
   }
 
+  toAggregateArray(...args) {
+    return this.collection.aggregate(...args).toArray();
+  }
+
   find(...args) {
     return this.collection.find(...args).toArray();
   }
