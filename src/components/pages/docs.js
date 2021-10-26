@@ -61,7 +61,7 @@ class Docs extends React.Component {
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
       language,
       sections: [],
-      tags: language === 'de' ? ['Musik'] : ['music']
+      tags: []
     };
   }
 
