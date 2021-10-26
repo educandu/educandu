@@ -3,6 +3,7 @@ import Root from '../components/root';
 import { Container } from '../common/di';
 import Doc from '../components/pages/doc';
 import Docs from '../components/pages/docs';
+import Search from '../components/pages/search';
 import cloneDeep from '../utils/clone-deep';
 import Index from '../components/pages/index';
 import Login from '../components/pages/login';
@@ -35,7 +36,8 @@ const pageComponentsByName = {
   'register': Register,
   'reset-password': ResetPassword,
   'settings': Settings,
-  'users': Users
+  'users': Users,
+  'search': Search
 };
 
 class PageRenderer extends PageRendererBase {

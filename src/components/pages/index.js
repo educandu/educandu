@@ -2,10 +2,9 @@ import React, { useState, useCallback } from 'react';
 import Page from '../page';
 import DocView from '../doc-view';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
+import { getHomeUrl, getSearchPath } from '../../utils/urls';
 import ElmuLogo from '../elmu-logo';
 import { Button, Select } from 'antd';
-import { useRequest } from '../request-context';
 import { useService, inject } from '../container-context';
 import { useLanguage } from '../language-context';
 import LanguageNameProvider from '../../data/language-name-provider';
@@ -17,15 +16,13 @@ function Index({ initialState, documentApiClient }) {
   const [tagSuggestions, setTagSuggestions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
 
-  const req = useRequest();
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
   const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
-  const handleSearchClick = searchTerm => {
-    const googleTerm = [`site:${req.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
-    const link = `https://www.google.com/search?q=${encodeURIComponent(googleTerm)}`;
+  const handleSearchClick = tags => {
+    const link = getSearchPath(tags);
     window.open(link, '_blank');
   };
 
@@ -43,7 +40,7 @@ function Index({ initialState, documentApiClient }) {
         </div>
         <div className="IndexPage-languageLinks">
           {homeLanguages.map((hl, index) => (
-            <Button key={index.toString()} type="link" href={urls.getHomeUrl(index === 0 ? null : hl.language)}>
+            <Button key={index.toString()} type="link" href={getHomeUrl(index === 0 ? null : hl.language)}>
               <CountryFlagAndName
                 code={languageNames[hl.language]?.flag || null}
                 name={languageNames[hl.language]?.name || null}
@@ -70,7 +67,7 @@ function Index({ initialState, documentApiClient }) {
               />
             <Button
               size="large"
-              onClick={handleSearchClick}
+              onClick={() => handleSearchClick(selectedTags)}
               type="primary"
               >
               {currentHomeLanguage.searchFieldPlaceholder}

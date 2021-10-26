@@ -9,6 +9,7 @@ export const logoutPath = '/logout';
 export const accountPath = '/account';
 export const registerPath = '/register';
 export const resetPasswordPath = '/reset-password';
+export const searchPath = '/search';
 
 export const docsPrefix = '/docs/';
 export const editDocPrefix = '/edit/doc/';
@@ -113,6 +114,10 @@ export function createFullyQualifiedUrl(pathname) {
   return url.href;
 }
 
+export function getSearchPath(tags) {
+  return `${createFullyQualifiedUrl(searchPath)}?tags=${tags.map(tag => urlencode(tag)).join('&tags=')}`;
+}
+
 export default {
   homePath,
   docsPath,
@@ -149,5 +154,6 @@ export default {
   getAccountUrl,
   getRegisterUrl,
   getResetPasswordUrl,
-  createFullyQualifiedUrl
+  createFullyQualifiedUrl,
+  getSearchPath
 };

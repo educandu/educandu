@@ -88,6 +88,17 @@ class DocumentController {
       const proposedSections = blueprintRevision ? this.clientDataMapper.createProposedSections(blueprintRevision) : null;
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-doc', { documentRevision, proposedSections });
     });
+
+    router.get('/search', async (req, res) => {
+      const slug = req.params[0] || '';
+      const doc = await this.documentService.getDocumentByNamespaceAndSlug('articles', slug);
+      if (!doc) {
+        throw new NotFound();
+      }
+
+      const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
+      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { documentOrRevision: mappedDoc, type: 'document' });
+    });
   }
 
   registerApi(router) {
