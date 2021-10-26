@@ -47,6 +47,13 @@ class DocumentApiClient {
       })
       .then(res => res.body);
   }
+
+  getRevisionTagSuggestions(tagsSuggestionQuery) {
+    return this.httpClient
+      .get(`/api/v1/docs/revisions/tags/${tagsSuggestionQuery}`)
+      .accept('json')
+      .then(res => res.body);
+  }
 }
 
 export default DocumentApiClient;
