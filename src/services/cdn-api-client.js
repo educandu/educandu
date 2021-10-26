@@ -1,4 +1,4 @@
-import HttpClient from './http-client';
+import HttpClient from './http-client.js';
 
 class CdnApiClient {
   static inject() { return [HttpClient]; }

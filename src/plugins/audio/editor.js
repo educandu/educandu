@@ -1,4 +1,4 @@
-import AudioEditor from './editing/audio-editor';
+import AudioEditor from './editing/audio-editor.js';
 
 class Audio {
   static get typeName() { return 'audio'; }

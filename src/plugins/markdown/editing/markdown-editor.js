@@ -1,9 +1,9 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { Form, Input } from 'antd';
-import validation from '../../../ui/validation';
 import { withTranslation } from 'react-i18next';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
+import validation from '../../../ui/validation.js';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;

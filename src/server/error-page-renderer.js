@@ -1,6 +1,6 @@
-import ErrorPage from '../components/error-page';
-import PageRendererBase from './page-renderer-base';
-import ResourceManager from '../resources/resource-manager';
+import ErrorPage from '../components/error-page.js';
+import PageRendererBase from './page-renderer-base.js';
+import ResourceManager from '../resources/resource-manager.js';
 
 class ErrorPageRenderer extends PageRendererBase {
   static get inject() { return [ResourceManager]; }

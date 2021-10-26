@@ -1,30 +1,30 @@
 import by from 'thenby';
 import React from 'react';
-import Page from '../page';
 import moment from 'moment';
+import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import Restricted from '../restricted';
-import Logger from '../../common/logger';
-import { inject } from '../container-context';
-import errorHelper from '../../ui/error-helper';
+import urls from '../../utils/urls.js';
+import Restricted from '../restricted.js';
+import Logger from '../../common/logger.js';
 import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
-import permissions from '../../domain/permissions';
-import { withLanguage } from '../language-context';
-import { toTrimmedString } from '../../utils/sanitize';
+import { inject } from '../container-context.js';
+import errorHelper from '../../ui/error-helper.js';
+import permissions from '../../domain/permissions.js';
+import { withLanguage } from '../language-context.js';
 import { Form, Input, Modal, Table, Button } from 'antd';
-import LanguageSelect from '../localization/language-select';
-import DocumentApiClient from '../../services/document-api-client';
-import LanguageNameProvider from '../../data/language-name-provider';
-import CountryFlagAndName from '../localization/country-flag-and-name';
-import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types';
+import { toTrimmedString } from '../../utils/sanitize.js';
+import LanguageSelect from '../localization/language-select.js';
+import DocumentApiClient from '../../services/document-api-client.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
 
 const { Search } = Input;
 const FormItem = Form.Item;
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const DEFAULT_DOCUMENT_NAMESPACE = 'articles';
 const DEFAULT_FILTER_INPUT = '';

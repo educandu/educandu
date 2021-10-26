@@ -1,18 +1,18 @@
 import React from 'react';
-import urls from '../utils/urls';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { Input, Radio, Tag, Space, Select, Form } from 'antd';
-import { inject } from './container-context';
+import urls from '../utils/urls.js';
+import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
-import { withSettings } from './settings-context';
-import { withLanguage } from './language-context';
-import LanguageSelect from './localization/language-select';
+import { withSettings } from './settings-context.js';
+import { withLanguage } from './language-context.js';
+import validators from '../utils/input-validators.js';
+import { Input, Radio, Tag, Space, Select, Form } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import validators from '../utils/input-validators';
-import LanguageNameProvider from '../data/language-name-provider';
-import CountryFlagAndName from './localization/country-flag-and-name';
-import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types';
+import LanguageSelect from './localization/language-select.js';
+import LanguageNameProvider from '../data/language-name-provider.js';
+import CountryFlagAndName from './localization/country-flag-and-name.js';
+import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;

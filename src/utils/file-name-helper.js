@@ -1,5 +1,5 @@
 import path from 'path';
-import uniqueId from './unique-id';
+import uniqueId from './unique-id.js';
 
 function insertBeforeExtension(fileName, stringToInsert) {
   const index = fileName.indexOf('.');

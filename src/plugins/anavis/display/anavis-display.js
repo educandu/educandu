@@ -2,13 +2,15 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import ReactPlayer from 'react-player';
-import colorHelper from '../../../ui/color-helper';
-import ClientConfig from '../../../bootstrap/client-config';
-import MediaControl from '../../../components/media-control';
-import { inject } from '../../../components/container-context';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
+import reactPlayerNs from 'react-player';
+import colorHelper from '../../../ui/color-helper.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import MediaControl from '../../../components/media-control.js';
+import { inject } from '../../../components/container-context.js';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
+
+const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 const playStates = {
   INITIALIZING: 'initializing',
@@ -106,19 +108,21 @@ class AnavisDisplay extends React.Component {
 
     const mediaControlContainerClasses = classNames(['AnavisDisplay-mediaControlContainer', `u-width-${width}`]);
 
-    const mediaControl = url && !(media.kind === 'video') ? (
-      <div className={mediaControlContainerClasses}>
-        <MediaControl
-          isPlaying={playState === playStates.PLAYING}
-          durationInSeconds={durationInSeconds}
-          playedSeconds={playedSeconds}
-          volume={volume}
-          onSeek={this.handleMediaControlSeek}
-          onTogglePlay={this.handleMediaControlTogglePlay}
-          onVolumeChange={this.handleVolumeChange}
-          />
-      </div>
-    ) : null;
+    const mediaControl = url && !(media.kind === 'video')
+      ? (
+        <div className={mediaControlContainerClasses}>
+          <MediaControl
+            isPlaying={playState === playStates.PLAYING}
+            durationInSeconds={durationInSeconds}
+            playedSeconds={playedSeconds}
+            volume={volume}
+            onSeek={this.handleMediaControlSeek}
+            onTogglePlay={this.handleMediaControlTogglePlay}
+            onVolumeChange={this.handleVolumeChange}
+            />
+        </div>
+      )
+      : null;
 
     const containerInnerClasses = classNames({
       'Anavis-mainPlayerContainer': true,
@@ -152,16 +156,20 @@ class AnavisDisplay extends React.Component {
       </div>
     );
 
-    const players = url ? (
-      <div className="Anavis-players">
-        {mainPlayer}
-        {mediaControl}
-      </div>
-    ) : null;
+    const players = url
+      ? (
+        <div className="Anavis-players">
+          {mainPlayer}
+          {mediaControl}
+        </div>
+      )
+      : null;
 
-    const text = html ? (
-      <div className="Anavis-text" dangerouslySetInnerHTML={{ __html: html }} />
-    ) : null;
+    const text = html
+      ? (
+        <div className="Anavis-text" dangerouslySetInnerHTML={{ __html: html }} />
+      )
+      : null;
 
     const partsComponents = parts.map((part, index) => (
       <div key={index.toString()} className="Anavis-partOuter" style={{ flex: `${part.length} 0 0%` }}>

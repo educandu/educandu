@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import DeletedSection from './deleted-section';
 import { useTranslation } from 'react-i18next';
-import { useService } from './container-context';
+import DeletedSection from './deleted-section.js';
+import { useService } from './container-context.js';
 import { Menu, Radio, Button, Dropdown } from 'antd';
-import EditorFactory from '../plugins/editor-factory';
-import { pluginTypes } from '../plugins/plugin-infos';
-import RendererFactory from '../plugins/renderer-factory';
-import NotSupportedSection from './not-supported-section';
-import { confirmSectionDelete } from './confirmation-dialogs';
-import { documentRevisionShape, sectionShape } from '../ui/default-prop-types';
+import EditorFactory from '../plugins/editor-factory.js';
+import { pluginTypes } from '../plugins/plugin-infos.js';
+import RendererFactory from '../plugins/renderer-factory.js';
+import NotSupportedSection from './not-supported-section.js';
+import { confirmSectionDelete } from './confirmation-dialogs.js';
+import { documentRevisionShape, sectionShape } from '../ui/default-prop-types.js';
 import {
   SettingOutlined,
   ArrowUpOutlined,

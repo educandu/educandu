@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Input, Button, Table } from 'antd';
-import DocumentSelector from '../document-selector';
-import LanguageSelect from '../localization/language-select';
-import { swapItemsAt, removeItemAt } from '../../utils/array-utils';
+import DocumentSelector from '../document-selector.js';
+import LanguageSelect from '../localization/language-select.js';
+import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
-import { documentMetadataShape, documentRevisionShape, documentShape, homeLanguageShape } from '../../ui/default-prop-types';
+import { documentMetadataShape, documentRevisionShape, documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 

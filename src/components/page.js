@@ -1,21 +1,23 @@
-import urls from '../utils/urls';
-import ElmuLogo from './elmu-logo';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import urls from '../utils/urls.js';
 import { Alert, Button } from 'antd';
-import Restricted from './restricted';
-import LoginLogout from './login-logout';
-import LinkPopover from './link-popover';
-import { useUser } from './user-context';
-import permissions from '../domain/permissions';
-import { useService } from './container-context';
-import { useLanguage } from './language-context';
-import { useSettings } from './settings-context';
+import ElmuLogo from './elmu-logo.js';
+import Restricted from './restricted.js';
+import LoginLogout from './login-logout.js';
+import LinkPopover from './link-popover.js';
+import { useUser } from './user-context.js';
+import permissions from '../domain/permissions.js';
 import React, { useState, useEffect } from 'react';
+import { useService } from './container-context.js';
+import { useLanguage } from './language-context.js';
+import { useSettings } from './settings-context.js';
 import { Trans, useTranslation } from 'react-i18next';
-import LanguageNameProvider from '../data/language-name-provider';
-import CountryFlagAndName from './localization/country-flag-and-name';
-import Icon, { QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
+import LanguageNameProvider from '../data/language-name-provider.js';
+import CountryFlagAndName from './localization/country-flag-and-name.js';
+import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
+
+const Icon = iconsNs.default || iconsNs;
 
 const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
 

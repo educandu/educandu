@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PlayButton, Timer, Progress, VolumeControl } from 'react-soundplayer/components';
+import { PlayButton, Timer, Progress, VolumeControl } from 'react-soundplayer/components.js';
 
 function MediaControl({ durationInSeconds, playedSeconds, isPlaying, volume, onTogglePlay, onSeek, onVolumeChange }) {
   const playedPercentage = durationInSeconds ? playedSeconds / durationInSeconds * 100 : 0;

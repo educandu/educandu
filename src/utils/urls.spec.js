@@ -1,4 +1,4 @@
-import sut from './urls';
+import sut from './urls.js';
 
 describe('order-store-base', () => {
 

@@ -1,22 +1,22 @@
 import React from 'react';
-import Page from '../page';
 import firstBy from 'thenby';
+import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Table, Popover } from 'antd';
-import { ROLE } from '../../domain/role';
-import Logger from '../../common/logger';
-import { inject } from '../container-context';
-import errorHelper from '../../ui/error-helper';
+import { ROLE } from '../../domain/role.js';
+import Logger from '../../common/logger.js';
 import { withTranslation } from 'react-i18next';
-import UserRoleTagEditor from '../user-role-tag-editor';
-import UserApiClient from '../../services/user-api-client';
+import { inject } from '../container-context.js';
+import errorHelper from '../../ui/error-helper.js';
+import UserRoleTagEditor from '../user-role-tag-editor.js';
+import UserApiClient from '../../services/user-api-client.js';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import CountryFlagAndName from '../localization/country-flag-and-name';
-import UserLockedOutStateEditor from '../user-locked-out-state-editor';
-import { userShape, translationProps } from '../../ui/default-prop-types';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
+import { userShape, translationProps } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const availableRoles = [
   { name: ROLE.user, isReadonly: false },

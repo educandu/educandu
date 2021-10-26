@@ -1,18 +1,18 @@
-import { Container } from '../common/di';
-import AudioPlugin from './audio/renderer';
-import VideoPlugin from './video/renderer';
-import ImagePlugin from './image/renderer';
-import IframePlugin from './iframe/renderer';
-import AnavisPlugin from './anavis/renderer';
-import MarkdownPlugin from './markdown/renderer';
-import AnnotationPlugin from './annotation/renderer';
-import ImageTilePlugin from './image-tiles/renderer';
-import DiagramNetPlugin from './diagram-net/renderer';
-import PluginFactoryBase from './plugin-factory-base';
-import QuickTesterPlugin from './quick-tester/renderer';
-import AbcNotationPlugin from './abc-notation/renderer';
-import EarTrainingPlugin from './ear-training/renderer';
-import IntervalTrainerPlugin from './interval-trainer/renderer';
+import { Container } from '../common/di.js';
+import AudioPlugin from './audio/renderer.js';
+import VideoPlugin from './video/renderer.js';
+import ImagePlugin from './image/renderer.js';
+import IframePlugin from './iframe/renderer.js';
+import AnavisPlugin from './anavis/renderer.js';
+import MarkdownPlugin from './markdown/renderer.js';
+import AnnotationPlugin from './annotation/renderer.js';
+import ImageTilePlugin from './image-tiles/renderer.js';
+import DiagramNetPlugin from './diagram-net/renderer.js';
+import PluginFactoryBase from './plugin-factory-base.js';
+import QuickTesterPlugin from './quick-tester/renderer.js';
+import AbcNotationPlugin from './abc-notation/renderer.js';
+import EarTrainingPlugin from './ear-training/renderer.js';
+import IntervalTrainerPlugin from './interval-trainer/renderer.js';
 
 const renderers = [
   MarkdownPlugin,

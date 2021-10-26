@@ -1,25 +1,25 @@
 import React from 'react';
-import Page from '../page';
+import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import Logger from '../../common/logger';
-import uniqueId from '../../utils/unique-id';
-import { inject } from '../container-context';
-import SectionEditor from '../section-editor';
+import urls from '../../utils/urls.js';
+import Logger from '../../common/logger.js';
 import { Menu, Button, Dropdown } from 'antd';
-import cloneDeep from '../../utils/clone-deep';
-import errorHelper from '../../ui/error-helper';
+import uniqueId from '../../utils/unique-id.js';
 import { withTranslation } from 'react-i18next';
-import pluginInfos from '../../plugins/plugin-infos';
-import ShallowUpdateList from '../shallow-update-list';
-import DocumentMetadataEditor from '../document-metadata-editor';
-import DocumentApiClient from '../../services/document-api-client';
+import { inject } from '../container-context.js';
+import SectionEditor from '../section-editor.js';
+import cloneDeep from '../../utils/clone-deep.js';
+import errorHelper from '../../ui/error-helper.js';
+import pluginInfos from '../../plugins/plugin-infos.js';
+import ShallowUpdateList from '../shallow-update-list.js';
+import DocumentMetadataEditor from '../document-metadata-editor.js';
+import DocumentApiClient from '../../services/document-api-client.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import { documentRevisionShape, sectionShape, translationProps } from '../../ui/default-prop-types';
+import { documentRevisionShape, sectionShape, translationProps } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const canReorder = (list, startIndex, endIndex) => {
   return typeof startIndex === 'number'

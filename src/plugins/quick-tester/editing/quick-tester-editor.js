@@ -2,8 +2,8 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
 import { Form, Input, Table, Button } from 'antd';
-import { swapItemsAt, removeItemAt } from '../../../utils/array-utils';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
+import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;

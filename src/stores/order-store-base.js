@@ -1,4 +1,4 @@
-import StoreBase from './store-base';
+import StoreBase from './store-base.js';
 
 class OrderStoreBase extends StoreBase {
   constructor(collection, orderKey) {

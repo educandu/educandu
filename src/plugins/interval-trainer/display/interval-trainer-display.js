@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import { Piano } from 'react-piano';
 import { RadialChart } from 'react-vis';
 import { withTranslation } from 'react-i18next';
-import SoundfontProvider from './soundfont-provider';
-import DimensionsProvider from './dimensions-provider';
-import { shuffleItems } from '../../../utils/array-utils';
-import { inject } from '../../../components/container-context';
-import AudioContextProvider from '../../../common/audio-context-provider';
-import { sectionDisplayProps, translationProps } from '../../../ui/default-prop-types';
+import SoundfontProvider from './soundfont-provider.js';
+import DimensionsProvider from './dimensions-provider.js';
+import { shuffleItems } from '../../../utils/array-utils.js';
+import { inject } from '../../../components/container-context.js';
+import AudioContextProvider from '../../../common/audio-context-provider.js';
+import { sectionDisplayProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 

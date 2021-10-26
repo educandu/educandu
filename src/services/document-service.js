@@ -1,15 +1,15 @@
-import Logger from '../common/logger';
 import deepEqual from 'fast-deep-equal';
-import UserService from './user-service';
-import dateTime from '../utils/date-time';
-import uniqueId from '../utils/unique-id';
-import cloneDeep from '../utils/clone-deep';
-import DocumentStore from '../stores/document-store';
-import DocumentLockStore from '../stores/document-lock-store';
-import DocumentOrderStore from '../stores/document-order-store';
-import DocumentRevisionStore from '../stores/document-revision-store';
+import Logger from '../common/logger.js';
+import UserService from './user-service.js';
+import dateTime from '../utils/date-time.js';
+import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
+import DocumentStore from '../stores/document-store.js';
+import DocumentLockStore from '../stores/document-lock-store.js';
+import DocumentOrderStore from '../stores/document-order-store.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const metadataProjection = {
   _id: 1,

@@ -1,7 +1,9 @@
 import { EOL } from 'os';
+import awsSdk from 'aws-sdk';
 import splitArray from 'split-array';
-import { S3, Credentials } from 'aws-sdk';
-import PriorityQueue from '../common/priority-queue';
+import PriorityQueue from '../common/priority-queue.js';
+
+const { S3, Credentials } = awsSdk;
 
 const MAX_REQUESTS = 250;
 const PRIORITY_UPLOAD = 2;

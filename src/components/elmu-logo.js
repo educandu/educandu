@@ -1,7 +1,7 @@
 import React from 'react';
-import urls from '../utils/urls';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import urls from '../utils/urls.js';
 
 function ElmuLogo({ readonly, size }) {
   const classes = classNames({

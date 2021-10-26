@@ -1,4 +1,4 @@
-import { MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS } from './validation';
+import { MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS } from './validation.js';
 
 describe('MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS', () => {
   const nonMatchingCases = [

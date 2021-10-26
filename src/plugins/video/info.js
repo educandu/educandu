@@ -1,4 +1,4 @@
-import cloneDeep from '../../utils/clone-deep';
+import cloneDeep from '../../utils/clone-deep.js';
 
 export default {
   type: 'video',

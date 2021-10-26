@@ -1,12 +1,5 @@
 /* eslint-disable max-lines */
 
-const umlautMap = {
-  ä: 'ae',
-  ö: 'oe',
-  ü: 'ue',
-  ß: 'ss'
-};
-
 export const deStopWords = [
   'aber',
   'als',

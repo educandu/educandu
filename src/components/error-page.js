@@ -1,7 +1,7 @@
 import React from 'react';
-import urls from '../utils/urls';
 import PropTypes from 'prop-types';
-import { settingsProps } from '../ui/default-prop-types';
+import urls from '../utils/urls.js';
+import { settingsProps } from '../ui/default-prop-types.js';
 
 function ErrorPage({ error, settings, language, i18n }) {
   const backHtml = `<a onclick="window.history.back();">${i18n.t('common:back')}</a>`;

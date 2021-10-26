@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { withUser } from './user-context';
-import { userProps } from '../ui/default-prop-types';
-import { hasUserPermission } from '../domain/permissions';
+import { withUser } from './user-context.js';
+import { userProps } from '../ui/default-prop-types.js';
+import { hasUserPermission } from '../domain/permissions.js';
 
 function CheckPermissions({ permissions, user, children }) {
   return Array.isArray(permissions)

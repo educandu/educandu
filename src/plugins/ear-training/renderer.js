@@ -1,4 +1,4 @@
-import EarTrainingDisplay from './display/ear-training-display';
+import EarTrainingDisplay from './display/ear-training-display.js';
 
 class EarTraining {
   static get typeName() { return 'ear-training'; }

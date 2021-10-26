@@ -2,12 +2,14 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import ReactPlayer from 'react-player';
-import ClientConfig from '../../../bootstrap/client-config';
-import MediaControl from '../../../components/media-control';
-import { inject } from '../../../components/container-context';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
+import reactPlayerNs from 'react-player';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import MediaControl from '../../../components/media-control.js';
+import { inject } from '../../../components/container-context.js';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
+
+const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 const playStates = {
   INITIALIZING: 'initializing',

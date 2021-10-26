@@ -1,4 +1,4 @@
-import { swapItemsAt, removeItemAt, ensureIsIncluded, ensureIsExcluded, shuffleItems } from './array-utils';
+import { swapItemsAt, removeItemAt, ensureIsIncluded, ensureIsExcluded, shuffleItems } from './array-utils.js';
 
 describe('array-utils', () => {
 

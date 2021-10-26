@@ -1,10 +1,10 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { Form, Input } from 'antd';
-import { withUser } from './user-context';
+import { withUser } from './user-context.js';
 import { withTranslation } from 'react-i18next';
-import inputValidators from '../utils/input-validators';
-import { translationProps, formItemLayoutShape } from '../ui/default-prop-types';
+import inputValidators from '../utils/input-validators.js';
+import { translationProps, formItemLayoutShape } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 

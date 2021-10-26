@@ -4,14 +4,14 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
-import permissions from '../domain/permissions';
-import UserService from '../services/user-service';
-import ServerConfig from '../bootstrap/server-config';
-import UserRequestHandler from './user-request-handler';
-import { validateBody } from '../domain/validation-middleware';
-import needsPermission from '../domain/needs-permission-middleware';
-import sessionsStoreSpec from '../stores/collection-specs/sessions';
-import needsAuthentication from '../domain/needs-authentication-middleware';
+import permissions from '../domain/permissions.js';
+import UserService from '../services/user-service.js';
+import ServerConfig from '../bootstrap/server-config.js';
+import UserRequestHandler from './user-request-handler.js';
+import { validateBody } from '../domain/validation-middleware.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
+import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
+import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -20,7 +20,7 @@ import {
   postUserPasswordResetCompletionBodySchema,
   postUserRolesBodySchema,
   postUserLockedOutBodySchema
-} from '../domain/schemas/user-schemas';
+} from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;

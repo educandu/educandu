@@ -1,4 +1,4 @@
-import BaseDataProvider from './base-data-provider';
+import BaseDataProvider from './base-data-provider.js';
 import languageNamesEn from './language-names/en.json';
 import languageNamesDe from './language-names/de.json';
 

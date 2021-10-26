@@ -1,4 +1,4 @@
-import EarTrainingEditor from './editing/ear-training-editor';
+import EarTrainingEditor from './editing/ear-training-editor.js';
 
 class EarTraining {
   static get typeName() { return 'ear-training'; }

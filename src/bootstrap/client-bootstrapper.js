@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Root from '../components/root';
-import Logger from '../common/logger';
-import ClientConfig from './client-config';
-import commonBootstrapper from './common-bootstrapper';
-import ResourceManager from '../resources/resource-manager';
+import Root from '../components/root.js';
+import Logger from '../common/logger.js';
+import ClientConfig from './client-config.js';
+import commonBootstrapper from './common-bootstrapper.js';
+import ResourceManager from '../resources/resource-manager.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 export async function createContainer() {
   logger.info('Creating container');

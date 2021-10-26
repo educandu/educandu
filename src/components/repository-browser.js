@@ -5,18 +5,20 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
-import selection from '../ui/selection';
-import pathHelper from '../ui/path-helper';
+import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
-import { inject } from './container-context';
+import pathHelper from '../ui/path-helper.js';
+import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
-import browserHelper from '../ui/browser-helper';
-import { withLanguage } from './language-context';
-import mimeTypeHelper from '../ui/mime-type-helper';
-import CdnApiClient from '../services/cdn-api-client';
-import { translationProps, languageProps } from '../ui/default-prop-types';
+import browserHelper from '../ui/browser-helper.js';
+import { withLanguage } from './language-context.js';
+import mimeTypeHelper from '../ui/mime-type-helper.js';
+import CdnApiClient from '../services/cdn-api-client.js';
+import { translationProps, languageProps } from '../ui/default-prop-types.js';
 import { Input, Table, Upload, Button, Divider, message, Breadcrumb } from 'antd';
-import Icon, { FolderOutlined, FileOutlined, DownOutlined, CloseOutlined, UploadOutlined, HomeOutlined } from '@ant-design/icons';
+import { default as iconsNs, FolderOutlined, FileOutlined, DownOutlined, CloseOutlined, UploadOutlined, HomeOutlined } from '@ant-design/icons';
+
+const Icon = iconsNs.default || iconsNs;
 
 const resourceKeyMap = {
   [mimeTypeHelper.CATEGORY_TEXT]: 'mimeTypeCategoryText',

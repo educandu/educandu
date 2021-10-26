@@ -1,4 +1,4 @@
-import VideoDisplay from './display/video-display';
+import VideoDisplay from './display/video-display.js';
 
 class Video {
   static get typeName() { return 'video'; }

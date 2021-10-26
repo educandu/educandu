@@ -5,7 +5,7 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import Soundfont from 'soundfont-player';
-import AudioContextProvider from '../../../common/audio-context-provider';
+import AudioContextProvider from '../../../common/audio-context-provider.js';
 
 class SoundfontProvider extends React.Component {
   constructor(props) {

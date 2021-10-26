@@ -1,25 +1,10 @@
-#!/usr/bin/env node
+#!/usr/bin/env sh
 
-require('@babel/register');
-require('core-js');
+ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/../" && pwd)
 
-const Cdn = require('../src/repositories/cdn').default;
-const testHelper = require('../src/test-helper').default;
-const Database = require('../src/stores/database').default;
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
-
-(async function pruneEnv() {
-
-  const container = await serverBootstrapper.createContainer();
-
-  // CDN
-  const cdn = container.get(Cdn);
-  await testHelper.purgeBucket(cdn);
-
-  // DB
-  const db = container.get(Database);
-  await testHelper.dropAllCollections(db);
-
-  await serverBootstrapper.disposeContainer(container);
-
-})();
+node \
+  --experimental-json-modules \
+  --experimental-loader \
+  @educandu/node-jsx-loader \
+  --enable-source-maps \
+  $ROOT_DIR/scripts/prune-env.js

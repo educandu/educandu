@@ -1,7 +1,7 @@
 import React from 'react';
 import { Slider } from 'antd';
 import PropTypes from 'prop-types';
-import { isBrowser } from '../ui/browser-helper';
+import { isBrowser } from '../ui/browser-helper.js';
 
 const possibleValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 const maxValue = possibleValues[possibleValues.length - 1];

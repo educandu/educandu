@@ -1,4 +1,4 @@
-import IntervalTrainerEditor from './editing/interval-trainer-editor';
+import IntervalTrainerEditor from './editing/interval-trainer-editor.js';
 
 class IntervalTrainer {
   static get typeName() { return 'interval-trainer'; }

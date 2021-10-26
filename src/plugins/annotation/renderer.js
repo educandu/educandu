@@ -1,4 +1,4 @@
-import AnnotationDisplay from './display/annotation-display';
+import AnnotationDisplay from './display/annotation-display.js';
 
 class Annotation {
   static get typeName() { return 'annotation'; }

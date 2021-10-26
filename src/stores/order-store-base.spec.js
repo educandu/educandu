@@ -1,5 +1,5 @@
-import testHelper from '../test-helper';
-import OrderStoreBase from './order-store-base';
+import testHelper from '../test-helper.js';
+import OrderStoreBase from './order-store-base.js';
 
 describe('order-store-base', () => {
   let db;

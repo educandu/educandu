@@ -1,7 +1,7 @@
-import PageRenderer from './page-renderer';
-import ClientDataMapper from './client-data-mapper';
-import SettingService from '../services/setting-service';
-import DocumentService from '../services/document-service';
+import PageRenderer from './page-renderer.js';
+import ClientDataMapper from './client-data-mapper.js';
+import SettingService from '../services/setting-service.js';
+import DocumentService from '../services/document-service.js';
 
 function findHomeLanguageIndexForRequest(homeLanguages, languageFromQuerystring) {
   if (languageFromQuerystring) {

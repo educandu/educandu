@@ -1,24 +1,24 @@
 import fs from 'fs';
 import del from 'del';
+import url from 'url';
 import path from 'path';
 import util from 'util';
-import { URL } from 'url';
-import Cdn from './repositories/cdn';
-import { ROLE } from './domain/role';
-import Database from './stores/database';
-import uniqueId from './utils/unique-id';
-import UserService from './services/user-service';
-import ServerConfig from './bootstrap/server-config';
-import DocumentService from './services/document-service';
-import { SAVE_USER_RESULT } from './domain/user-management';
-import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper';
+import Cdn from './repositories/cdn.js';
+import { ROLE } from './domain/role.js';
+import Database from './stores/database.js';
+import uniqueId from './utils/unique-id.js';
+import UserService from './services/user-service.js';
+import ServerConfig from './bootstrap/server-config.js';
+import DocumentService from './services/document-service.js';
+import { SAVE_USER_RESULT } from './domain/user-management.js';
+import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
 const serverConfig = new ServerConfig();
 
 export async function createTestDir() {
-  const tempDir = path.join(__dirname, '../.tmp/');
+  const tempDir = url.fileURLToPath(new URL('../.tmp/', import.meta.url).href);
   try {
     await mkdir(tempDir);
   } catch (err) {
@@ -35,9 +35,9 @@ export function deleteTestDir(testDir) {
 }
 
 export function createTestDatabase() {
-  const url = new URL(serverConfig.elmuWebConnectionString);
-  url.pathname = `test-elmu-web-${Date.now()}`;
-  return Database.create({ connectionString: url.toString(), runDbMigration: false });
+  const dbUrl = new URL(serverConfig.elmuWebConnectionString);
+  dbUrl.pathname = `test-elmu-web-${Date.now()}`;
+  return Database.create({ connectionString: dbUrl.toString(), runDbMigration: false });
 }
 
 export function getTestCollection(db, collectionName) {
