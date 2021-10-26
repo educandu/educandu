@@ -1,15 +1,16 @@
 # elmu-web
 
-[![CircleCI](https://circleci.com/gh/elmu/elmu-web.svg?style=svg)](https://circleci.com/gh/elmu/elmu-web)
-
 The elmu website
 
 ## Local development:
 
 ### Linting commands
 
-gulp lint //will run lint
-gulp lint --fix //Will run lint and fix any linting rules that are easily solvable. ATTENTION: commit your work before running this command.
+~~~
+gulp lint // Will run eslint
+gulp fix  // Will run eslint and fix any linting rules that are easily solvable.
+          // ATTENTION: commit your work before running this command.
+~~~
 
 ## License
 

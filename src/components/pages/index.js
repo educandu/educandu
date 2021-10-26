@@ -1,16 +1,16 @@
 import React from 'react';
-import Page from '../page';
-import DocView from '../doc-view';
+import Page from '../page.js';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import ElmuLogo from '../elmu-logo';
+import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
-import { useRequest } from '../request-context';
-import { useService } from '../container-context';
-import { useLanguage } from '../language-context';
-import LanguageNameProvider from '../../data/language-name-provider';
-import CountryFlagAndName from '../localization/country-flag-and-name';
-import { documentShape, homeLanguageShape } from '../../ui/default-prop-types';
+import urls from '../../utils/urls.js';
+import ElmuLogo from '../elmu-logo.js';
+import { useRequest } from '../request-context.js';
+import { useService } from '../container-context.js';
+import { useLanguage } from '../language-context.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 
 const { Search } = Input;
 

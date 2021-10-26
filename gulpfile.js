@@ -1,9 +1,9 @@
-/* eslint no-sync: off */
-/* eslint no-console: off */
-/* eslint no-process-env: off */
+/* eslint-disable no-console, no-process-env */
 
+import url from 'url';
 import del from 'del';
 import path from 'path';
+import gulp from 'gulp';
 import glob from 'glob';
 import { EOL } from 'os';
 import execa from 'execa';
@@ -15,7 +15,6 @@ import eslint from 'gulp-eslint';
 import { promisify } from 'util';
 import plumber from 'gulp-plumber';
 import superagent from 'superagent';
-import { runCLI } from '@jest/core';
 import { promises as fs } from 'fs';
 import { spawn } from 'child_process';
 import { Docker } from 'docker-cli-js';
@@ -23,13 +22,14 @@ import sourcemaps from 'gulp-sourcemaps';
 import { parse as parseEs5 } from 'acorn';
 import realFavicon from 'gulp-real-favicon';
 import LessAutoprefix from 'less-plugin-autoprefix';
-import { src, dest, parallel, series, watch } from 'gulp';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import MomentLocalesPlugin from 'moment-locales-webpack-plugin';
 
 if (process.env.ELMU_ENV === 'prod') {
   throw new Error('Tasks should not run in production environment!');
 }
+
+const ROOT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
 
 const TEST_MAILDEV_IMAGE = 'maildev/maildev:1.1.0';
 const TEST_MAILDEV_CONTAINER_NAME = 'elmu-maildev';
@@ -46,8 +46,7 @@ const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
 const FAVICON_DATA_FILE = 'favicon-data.json';
 
 const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimized');
-const verbous = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbous');
-const fix = process.argv.includes('--fix');
+const verbose = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbose');
 
 const autoprefixOptions = {
   browsers: ['last 3 versions', 'Firefox ESR', 'IE 11']
@@ -88,85 +87,81 @@ const ensureContainerRemoved = async ({ containerName }) => {
   }
 };
 
+function runJest(...flags) {
+  return execa(process.execPath, [
+    '--experimental-json-modules',
+    '--experimental-vm-modules',
+    '--experimental-loader',
+    '@educandu/node-jsx-loader',
+    '--enable-source-maps',
+    `${ROOT_DIR}/node_modules/jest/bin/jest.js`,
+    '--env',
+    'node',
+    `--roots',
+    '${ROOT_DIR}`,
+    '--setupFiles',
+    `${ROOT_DIR}/src/test-setup.js`,
+    '--setupFilesAfterEnv',
+    `${ROOT_DIR}/src/test-setup-after-env.js`,
+    '--runInBand',
+    ...flags.map(flag => `--${flag}`)
+  ], { stdio: 'inherit' });
+}
+
 const downloadCountryList = async lang => {
   const res = await superagent.get(`https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`);
   await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(JSON.parse(res.text), null, 2), 'utf8');
 };
 
-const tasks = {};
-
-tasks.clean = async function clean() {
-  await del(['.tmp', 'dist', 'reports']);
-};
-
-function isFixed(file) {
-  return fix && file.eslint?.fixed;
+export async function clean() {
+  await del(['.tmp', 'dist', 'coverage', 'reports']);
 }
 
-tasks.lint = function lint() {
-  return src(['*.js', 'src/**/*.js', 'scripts/**'], { base: './' })
-    .pipe(eslint({ fix }))
+export function lint() {
+  return gulp.src(['*.js', 'src/**/*.js', 'scripts/**/*.js'], { base: './' })
+    .pipe(eslint())
     .pipe(eslint.format())
-    .pipe(gulpif(isFixed, dest('./')))
     .pipe(gulpif(!server, eslint.failAfterError()));
-};
+}
 
-tasks.test = async function test() {
-  const { results } = await runCLI({
-    testEnvironment: 'node',
-    projects: [__dirname],
-    setupFiles: ['./src/test-setup.js'],
-    setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
-    runInBand: true,
-    coverage: true
-  }, '.');
-  if (!results.success) {
-    throw Error(`${results.numFailedTests} test(s) failed`);
-  }
-};
+export function fix() {
+  return gulp.src(['*.js', 'src/**/*.js', 'scripts/**/*.js'], { base: './' })
+    .pipe(eslint({ fix: true }))
+    .pipe(eslint.format())
+    .pipe(gulpif(file => file.eslint?.fixed, gulp.dest('./')))
+    .pipe(eslint.failAfterError());
+}
 
-tasks.testChanged = async function testChanged() {
-  const { results } = await runCLI({
-    testEnvironment: 'node',
-    projects: [__dirname],
-    setupFiles: ['./src/test-setup.js'],
-    setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
-    onlyChanged: true
-  }, '.');
-  if (!results.success) {
-    throw Error(`${results.numFailedTests} test(s) failed`);
-  }
-};
+export function test() {
+  return runJest('coverage');
+}
 
-tasks.testWatch = function testWatch(done) {
-  runCLI({
-    testEnvironment: 'node',
-    projects: [__dirname],
-    setupFiles: ['./src/test-setup.js'],
-    setupFilesAfterEnv: ['./src/test-setup-after-env.js'],
-    watch: true
-  }, '.');
-  done();
-};
+export function testChanged() {
+  return runJest('onlyChanged');
+}
 
-tasks.bundleCss = function bundleCss() {
-  return src('src/styles/main.less')
+export function testWatch() {
+  return runJest('watch');
+}
+
+export function bundleCss() {
+  return gulp.src('src/styles/main.less')
     .pipe(gulpif(!!server, plumber()))
     .pipe(sourcemaps.init())
     .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix(autoprefixOptions)] }))
     .pipe(gulpif(optimize, csso()))
     .pipe(sourcemaps.write('.'))
-    .pipe(dest('dist'));
-};
+    .pipe(gulp.dest('dist'));
+}
 
-tasks.bundleJs = async function bundleJs() {
+export async function bundleJs() {
   const entry = (await promisify(glob)('./src/bundles/*.js'))
     .map(bundleFile => path.basename(bundleFile, '.js'))
     .reduce((all, name) => ({ ...all, [name]: ['core-js', `./src/bundles/${name}.js`] }), {});
 
   const plugins = [
-    new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi'),
-    new webpack.ProvidePlugin({ process: 'process/browser' }),
+    new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi.js'),
+    new webpack.ProvidePlugin({ process: 'process/browser.js' }),
     new MomentLocalesPlugin({ localesToKeep: ['en', 'de', 'de-DE'] })
   ];
 
@@ -260,7 +255,7 @@ tasks.bundleJs = async function bundleJs() {
         cacheGroups: {
           commons: {
             test: ({ resource }) => {
-              const segments = path.relative(__dirname, resource || './').split(path.sep);
+              const segments = path.relative(ROOT_DIR, resource || './').split(path.sep);
               return segments[0] === 'node_modules' && commonChunkModules.has(segments[1]);
             },
             name: 'commons',
@@ -274,9 +269,7 @@ tasks.bundleJs = async function bundleJs() {
       maxAssetSize: 500000,
       maxEntrypointSize: 500000
     },
-    node: {
-      __filename: true
-    },
+    node: {},
     plugins
   };
 
@@ -293,10 +286,10 @@ tasks.bundleJs = async function bundleJs() {
     version: false
   };
 
-  console.log(stats.toString(verbous ? {} : minimalStatsOutput));
-};
+  console.log(stats.toString(verbose ? {} : minimalStatsOutput));
+}
 
-tasks.faviconGenerate = function faviconGenerate(done) {
+export function faviconGenerate(done) {
   realFavicon.generateFavicon({
     masterPicture: 'favicon.png',
     dest: 'static',
@@ -371,17 +364,17 @@ tasks.faviconGenerate = function faviconGenerate(done) {
     await fs.writeFile(FAVICON_DATA_FILE, faviconDataPrettified, 'utf8');
     done();
   });
-};
+}
 
-tasks.faviconCheckUpdate = async function faviconCheckUpdate(done) {
+export async function faviconCheckUpdate(done) {
   const faviconData = await fs.readFile(FAVICON_DATA_FILE, 'utf8');
   const currentVersion = JSON.parse(faviconData).version;
   realFavicon.checkForUpdates(currentVersion, done);
-};
+}
 
-tasks.build = parallel(tasks.bundleCss, tasks.bundleJs);
+export const build = gulp.parallel(bundleCss, bundleJs);
 
-tasks.verifyEs5compat = async function verifyEs5compat() {
+export async function verifyEs5compat() {
   const files = await promisify(glob)('dist/**/*.js');
   const errors = [];
 
@@ -406,30 +399,38 @@ tasks.verifyEs5compat = async function verifyEs5compat() {
 
     throw new Error(lines.join(EOL));
   }
-};
+}
 
-tasks.verify = parallel(tasks.verifyEs5compat);
+export const verify = gulp.parallel(verifyEs5compat);
 
-tasks.countriesUpdate = async function countriesUpdate() {
+export async function countriesUpdate() {
   await Promise.all(supportedLanguages.map(downloadCountryList));
-};
+}
 
-tasks.maildevUp = async function maildevUp() {
+export async function maildevUp() {
   await ensureContainerRunning({
     containerName: TEST_MAILDEV_CONTAINER_NAME,
     runArgs: `-d -p 8000:80 -p 8025:25 ${TEST_MAILDEV_IMAGE}`
   });
-};
+}
 
-tasks.maildevDown = async function maildevDown() {
+export async function maildevDown() {
   await ensureContainerRemoved({
     containerName: TEST_MAILDEV_CONTAINER_NAME
   });
-};
+}
 
-tasks.maildevReset = series(tasks.maildevDown, tasks.maildevUp);
+export const maildevReset = gulp.series(maildevDown, maildevUp);
 
-tasks.mongoUp = async function mongoUp() {
+export async function mongoUser() {
+  await execa('./scripts/db-create-user', { stdio: 'inherit' });
+}
+
+export async function mongoSeed() {
+  await execa('./scripts/db-seed', { stdio: 'inherit' });
+}
+
+export async function mongoUp() {
   await ensureContainerRunning({
     containerName: TEST_MONGO_CONTAINER_NAME,
     runArgs: [
@@ -444,33 +445,21 @@ tasks.mongoUp = async function mongoUp() {
       TEST_MONGO_IMAGE
     ].join(' '),
     afterRun: async () => {
-      await tasks.mongoUser();
-      await tasks.mongoSeed();
+      await mongoUser();
+      await mongoSeed();
     }
   });
-};
+}
 
-tasks.mongoDown = async function mongoDown() {
+export async function mongoDown() {
   await ensureContainerRemoved({
     containerName: TEST_MONGO_CONTAINER_NAME
   });
-};
+}
 
-tasks.mongoReset = series(tasks.mongoDown, tasks.mongoUp);
+export const mongoReset = gulp.series(mongoDown, mongoUp);
 
-tasks.mongoUser = async function mongoUser() {
-  await execa('./scripts/db-create-user', { stdio: 'inherit' });
-};
-
-tasks.mongoSeed = async function mongoSeed() {
-  await execa('./scripts/db-seed', { stdio: 'inherit' });
-};
-
-tasks.mongoMigrate = async function mongoMigrate() {
-  await execa('./scripts/db-migrate', { stdio: 'inherit' });
-};
-
-tasks.minioUp = async function minioUp() {
+export async function minioUp() {
   await ensureContainerRunning({
     containerName: TEST_MINIO_CONTAINER_NAME,
     runArgs: [
@@ -485,74 +474,82 @@ tasks.minioUp = async function minioUp() {
       await execa('./scripts/s3-seed', { stdio: 'inherit' });
     }
   });
-};
+}
 
-tasks.minioDown = async function minioDown() {
+export async function minioDown() {
   await ensureContainerRemoved({
     containerName: TEST_MINIO_CONTAINER_NAME
   });
-};
+}
 
-tasks.minioReset = series(tasks.minioDown, tasks.minioUp);
+export const minioReset = gulp.series(minioDown, minioUp);
 
-tasks.minioSeed = async function minioSeed() {
+export async function minioSeed() {
   await execa('./scripts/s3-seed', { stdio: 'inherit' });
-};
+}
 
-tasks.startServer = function startServer(done) {
-  server = spawn(process.execPath, ['src/index.js'], {
-    env: { ...process.env, NODE_ENV: 'development' },
-    stdio: 'inherit'
-  });
+export function startServer(done) {
+  server = spawn(
+    process.execPath,
+    [
+      '--experimental-json-modules',
+      '--experimental-loader',
+      '@educandu/node-jsx-loader',
+      '--enable-source-maps',
+      'src/index.js'
+    ],
+    {
+      env: { ...process.env, NODE_ENV: 'development' },
+      stdio: 'inherit'
+    }
+  );
   server.once('exit', () => {
     server = null;
   });
   done();
-};
+}
 
-tasks.restartServer = function restartServer(done) {
+export function restartServer(done) {
   if (server) {
     server.once('exit', () => {
-      tasks.startServer(done);
+      startServer(done);
     });
     server.kill();
   } else {
-    tasks.startServer(done);
+    startServer(done);
   }
-};
+}
 
-tasks.serve = series(tasks.maildevUp, tasks.mongoUp, tasks.minioUp, tasks.build, tasks.startServer);
+export const serve = gulp.series(maildevUp, mongoUp, minioUp, build, startServer);
 
-tasks.serveRestart = series(parallel(tasks.lint, tasks.testChanged, tasks.bundleJs), tasks.restartServer);
+export const serveRestart = gulp.series(gulp.parallel(lint, testChanged, bundleJs), restartServer);
 
-tasks.serveRestartRaw = series(tasks.bundleJs, tasks.restartServer);
+export const serveRestartRaw = gulp.series(bundleJs, restartServer);
 
-tasks.ciPrepare = series(tasks.mongoUser, tasks.mongoSeed, tasks.minioSeed);
+export const ciPrepare = gulp.series(mongoUser, mongoSeed, minioSeed);
 
-tasks.ci = series(tasks.clean, tasks.lint, tasks.test, tasks.build, tasks.verify);
+export const ci = gulp.series(clean, lint, test, build, verify);
 
-tasks.setupWatchers = function setupWatchers(done) {
-  watch(['src/**/*.{js,yml,json}'], tasks.serveRestart);
-  watch(['src/**/*.less'], tasks.bundleCss);
-  watch(['*.js'], tasks.lint);
-  watch(['scripts/**'], tasks.lint);
-  watch(['scripts/db-seed'], tasks.mongoSeed);
-  watch(['scripts/s3-seed'], tasks.minioSeed);
+export function setupWatchers(done) {
+  gulp.watch(['src/**/*.{js,yml,json}'], serveRestart);
+  gulp.watch(['src/**/*.less'], bundleCss);
+  gulp.watch(['*.js'], lint);
+  gulp.watch(['scripts/**/*.js'], lint);
+  gulp.watch(['scripts/db-seed.js'], mongoSeed);
+  gulp.watch(['scripts/s3-seed.js'], minioSeed);
   done();
-};
+}
 
-tasks.setupWatchersRaw = function setupWatchersRaw(done) {
-  watch(['src/**/*.{js,yml,json}'], tasks.serveRestartRaw);
-  watch(['src/**/*.less'], tasks.bundleCss);
-  watch(['scripts/db-seed'], tasks.mongoSeed);
-  watch(['scripts/s3-seed'], tasks.minioSeed);
+export function setupWatchersRaw(done) {
+  gulp.watch(['src/**/*.{js,yml,json}'], serveRestartRaw);
+  gulp.watch(['src/**/*.less'], bundleCss);
+  gulp.watch(['scripts/db-seed.js'], mongoSeed);
+  gulp.watch(['scripts/s3-seed.js'], minioSeed);
   done();
-};
+}
 
-tasks.startWatch = series(tasks.serve, tasks.setupWatchers);
+export const startWatch = gulp.series(serve, setupWatchers);
 
-tasks.startWatchRaw = series(tasks.serve, tasks.setupWatchersRaw);
+export const startWatchRaw = gulp.series(serve, setupWatchersRaw);
 
-tasks.default = tasks.startWatchRaw;
-
-module.exports = tasks;
+export default startWatchRaw;

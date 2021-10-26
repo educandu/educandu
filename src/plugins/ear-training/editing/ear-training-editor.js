@@ -2,10 +2,10 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
 import { Form, Input, Table, Button } from 'antd';
-import EarTrainingSoundEditor from './ear-training-sound-editor';
-import { swapItemsAt, removeItemAt } from '../../../utils/array-utils';
-import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
+import EarTrainingSoundEditor from './ear-training-sound-editor.js';
+import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;

@@ -1,11 +1,11 @@
-import Page from '../page';
+import Page from '../page.js';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import ElmuLogo from '../elmu-logo';
-import Countdown from '../countdown';
+import urls from '../../utils/urls.js';
+import ElmuLogo from '../elmu-logo.js';
+import Countdown from '../countdown.js';
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { userShape } from '../../ui/default-prop-types';
+import { userShape } from '../../ui/default-prop-types.js';
 
 function CompleteRegistration({ initialState }) {
   const { t } = useTranslation('completeRegistration');

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Popover } from 'antd';
 import PropTypes from 'prop-types';
-import Icon from '@ant-design/icons';
-import permissions from '../domain/permissions';
-import { useUser } from '../components/user-context';
+import permissions from '../domain/permissions.js';
+import { default as iconsNs } from '@ant-design/icons';
+import { useUser } from '../components/user-context.js';
+
+const Icon = iconsNs.default || iconsNs;
 
 function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger }) {
   const user = useUser();

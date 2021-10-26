@@ -1,26 +1,26 @@
 import React from 'react';
 import moment from 'moment';
-import Page from '../page';
+import Page from '../page.js';
 import autoBind from 'auto-bind';
-import DocView from '../doc-view';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import Logger from '../../common/logger';
+import DocView from '../doc-view.js';
+import urls from '../../utils/urls.js';
 import clipboardCopy from 'clipboard-copy';
-import { inject } from '../container-context';
+import Logger from '../../common/logger.js';
 import { Button, Slider, message } from 'antd';
-import errorHelper from '../../ui/error-helper';
 import { withTranslation } from 'react-i18next';
-import permissions from '../../domain/permissions';
-import { withLanguage } from '../language-context';
-import { HARD_DELETE } from '../../ui/section-actions';
-import DocumentApiClient from '../../services/document-api-client';
-import LanguageNameProvider from '../../data/language-name-provider';
-import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs';
+import { inject } from '../container-context.js';
+import errorHelper from '../../ui/error-helper.js';
+import permissions from '../../domain/permissions.js';
+import { withLanguage } from '../language-context.js';
+import { HARD_DELETE } from '../../ui/section-actions.js';
+import DocumentApiClient from '../../services/document-api-client.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
-import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types';
+import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 class Doc extends React.Component {
   constructor(props) {

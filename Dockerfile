@@ -12,4 +12,4 @@ RUN apk --no-cache --virtual build-dependencies add git \
 
 COPY . /app/
 
-CMD ["node", "src/index.js"]
+CMD ["node", "--experimental-json-modules", "--experimental-loader", "@educandu/node-jsx-loader", "--enable-source-maps", "src/index.js"]

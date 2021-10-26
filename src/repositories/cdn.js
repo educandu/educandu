@@ -1,8 +1,8 @@
 import fs from 'fs';
 import mime from 'mime';
 import Stream from 'stream';
-import MinioS3Client from './minio-s3-client';
-import AwsSdkS3Client from './aws-sdk-s3-client';
+import MinioS3Client from './minio-s3-client.js';
+import AwsSdkS3Client from './aws-sdk-s3-client.js';
 
 const defaultContentType = 'application/octet-stream';
 

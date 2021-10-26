@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useService } from './container-context';
-import GithubFlavoredMarkdown from '../common/github-flavored-markdown';
+import { useService } from './container-context.js';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 
 function Markdown({ children, inline, tag, ...rest }) {
   const gfm = useService(GithubFlavoredMarkdown);

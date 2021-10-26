@@ -1,5 +1,7 @@
-import permissions from './permissions';
-import { Unauthorized, Forbidden } from 'http-errors';
+import httpErrors from 'http-errors';
+import permissions from './permissions.js';
+
+const { Unauthorized, Forbidden } = httpErrors;
 
 function evaluatePermission(permission, req, res, next) {
   if (!req.isAuthenticated()) {

@@ -1,12 +1,12 @@
-import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 import classNames from 'classnames';
-import ClientConfig from '../../../bootstrap/client-config';
-import { EFFECT_TYPE, ORIENTATION, SOURCE_TYPE } from '../constants';
-import { inject } from '../../../components/container-context';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
+import React, { Fragment } from 'react';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import { EFFECT_TYPE, ORIENTATION, SOURCE_TYPE } from '../constants.js';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
 
 function getSource(sourceType, url, cdnRootUrl) {
   switch (sourceType) {

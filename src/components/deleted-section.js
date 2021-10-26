@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CloseCircleFilled } from '@ant-design/icons';
-import { sectionShape } from '../ui/default-prop-types';
+import { sectionShape } from '../ui/default-prop-types.js';
 
 function DeletedSection({ section }) {
   const { t } = useTranslation('deletedSection');

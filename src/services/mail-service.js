@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
-import Logger from '../common/logger';
-import ServerConfig from '../bootstrap/server-config';
+import Logger from '../common/logger.js';
+import ServerConfig from '../bootstrap/server-config.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const ELMU_WEB_EMAIL_ADDRESS = 'website@elmu.online';
 

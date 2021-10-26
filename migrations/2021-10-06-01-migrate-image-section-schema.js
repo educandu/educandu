@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop, no-console */
-import { updateAll } from './helpers';
+import { updateAll } from './helpers.js';
 
 const updateToNewContentStructure = content => {
   content.sourceType = content.type;

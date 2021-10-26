@@ -1,25 +1,10 @@
-#!/usr/bin/env node
-/* eslint-disable no-console */
+#!/usr/bin/env sh
 
-require('@babel/register');
-require('core-js');
+ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/../" && pwd)
 
-const Cdn = require('../src/repositories/cdn').default;
-const testHelper = require('../src/test-helper').default;
-const serverBootstrapper = require('../src/bootstrap/server-bootstrapper').default;
-
-(async function seed() {
-  const container = await serverBootstrapper.createContainer();
-
-  console.log('Getting cdn');
-  const cdn = container.get(Cdn);
-
-  console.log('Removing cdn buckets');
-  await testHelper.removeAllBuckets(cdn);
-
-  console.log('Ensuring cdn buckets exist');
-  await testHelper.ensurePublicBucketExists(cdn);
-
-  console.log('Disposing container');
-  await serverBootstrapper.disposeContainer(container);
-})();
+node \
+  --experimental-json-modules \
+  --experimental-loader \
+  @educandu/node-jsx-loader \
+  --enable-source-maps \
+  $ROOT_DIR/scripts/s3-seed.js

@@ -1,5 +1,5 @@
-import Database from '../stores/database';
-import OrderStoreBase from '../stores/order-store-base';
+import Database from '../stores/database.js';
+import OrderStoreBase from '../stores/order-store-base.js';
 
 const DOCUMENT_ORDER_KEY = 'document-order';
 

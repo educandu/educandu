@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 import sinon from 'sinon';
-import testHelper from '../test-helper';
+import testHelper from '../test-helper.js';
 
 const writeFile = util.promisify(fs.writeFile);
 

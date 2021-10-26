@@ -1,4 +1,4 @@
-import ImageDisplay from './display/image-display';
+import ImageDisplay from './display/image-display.js';
 
 class Image {
   static get typeName() { return 'image'; }

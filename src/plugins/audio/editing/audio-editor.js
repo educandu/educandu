@@ -1,12 +1,12 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { Form, Input, Radio } from 'antd';
-import validation from '../../../ui/validation';
 import { withTranslation } from 'react-i18next';
-import { inject } from '../../../components/container-context';
-import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientConfig from '../../../bootstrap/client-config';
-import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
+import validation from '../../../ui/validation.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import CdnFilePicker from '../../../components/cdn-file-picker.js';
+import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;

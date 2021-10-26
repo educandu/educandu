@@ -1,8 +1,8 @@
 /* eslint no-process-env: off */
 
-import Logger from '../common/logger';
+import Logger from '../common/logger.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const env = process.env.ELMU_ENV || 'dev';
 const port = Number(process.env.ELMU_PORT) || 3000;

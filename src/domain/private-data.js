@@ -1,4 +1,4 @@
-import permissions from './permissions';
+import permissions from './permissions.js';
 
 const basicFields = ['_id', 'username'];
 const extendedFields = [...basicFields, 'email'];

@@ -1,18 +1,18 @@
-import { Container } from '../common/di';
-import AudioPlugin from './audio/editor';
-import VideoPlugin from './video/editor';
-import ImagePlugin from './image/editor';
-import IframePlugin from './iframe/editor';
-import AnavisPlugin from './anavis/editor';
-import MarkdownPlugin from './markdown/editor';
-import AnnotationPlugin from './annotation/editor';
-import DiagramNetPlugin from './diagram-net/editor';
+import { Container } from '../common/di.js';
+import AudioPlugin from './audio/editor.js';
+import VideoPlugin from './video/editor.js';
+import ImagePlugin from './image/editor.js';
+import IframePlugin from './iframe/editor.js';
+import AnavisPlugin from './anavis/editor.js';
+import MarkdownPlugin from './markdown/editor.js';
 import ImageTilePlugin from './image-tiles/editor.js';
-import PluginFactoryBase from './plugin-factory-base';
-import QuickTesterPlugin from './quick-tester/editor';
-import AbcNotationPlugin from './abc-notation/editor';
-import EarTrainingPlugin from './ear-training/editor';
-import IntervalTrainerPlugin from './interval-trainer/editor';
+import AnnotationPlugin from './annotation/editor.js';
+import DiagramNetPlugin from './diagram-net/editor.js';
+import PluginFactoryBase from './plugin-factory-base.js';
+import QuickTesterPlugin from './quick-tester/editor.js';
+import AbcNotationPlugin from './abc-notation/editor.js';
+import EarTrainingPlugin from './ear-training/editor.js';
+import IntervalTrainerPlugin from './interval-trainer/editor.js';
 
 const editors = [
   MarkdownPlugin,

@@ -2,7 +2,7 @@ import React from 'react';
 import { Tag } from 'antd';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { userShape } from './../ui/default-prop-types';
+import { userShape } from './../ui/default-prop-types.js';
 
 const COLOR_RED_10 = '#5c0011';
 

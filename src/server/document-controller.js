@@ -1,13 +1,15 @@
 import express from 'express';
-import urls from '../utils/urls';
-import { NotFound } from 'http-errors';
-import PageRenderer from './page-renderer';
-import permissions from '../domain/permissions';
-import ClientDataMapper from './client-data-mapper';
-import DocumentService from '../services/document-service';
-import needsPermission from '../domain/needs-permission-middleware';
-import { validateBody, validateQuery } from '../domain/validation-middleware';
-import { createRevisionBodySchema, getRevisionsByKeyQuerySchema, hardDeleteSectionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-schemas';
+import urls from '../utils/urls.js';
+import httpErrors from 'http-errors';
+import PageRenderer from './page-renderer.js';
+import permissions from '../domain/permissions.js';
+import ClientDataMapper from './client-data-mapper.js';
+import DocumentService from '../services/document-service.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
+import { validateBody, validateQuery } from '../domain/validation-middleware.js';
+import { getRevisionsByKeyQuerySchema, createRevisionBodySchema, hardDeleteSectionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-schemas.js';
+
+const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });

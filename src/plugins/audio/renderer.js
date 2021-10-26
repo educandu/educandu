@@ -1,4 +1,4 @@
-import AudioDisplay from './display/audio-display';
+import AudioDisplay from './display/audio-display.js';
 
 class Audio {
   static get typeName() { return 'audio'; }

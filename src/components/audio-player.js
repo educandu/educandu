@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { inject } from './container-context';
-import GithubFlavoredMarkdown from '../common/github-flavored-markdown';
+import { inject } from './container-context.js';
+import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 
 function AudioPlayer({ soundUrl, legendHtml, githubFlavoredMarkdown }) {
   return (

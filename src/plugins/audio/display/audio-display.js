@@ -1,8 +1,8 @@
 import React from 'react';
-import AudioPlayer from '../../../components/audio-player';
-import ClientConfig from '../../../bootstrap/client-config';
-import { inject } from '../../../components/container-context';
-import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
+import AudioPlayer from '../../../components/audio-player.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
 
 function AudioDisplay({ content, clientConfig }) {
 

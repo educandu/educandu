@@ -2,14 +2,14 @@ import React from 'react';
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import DeletedSection from './deleted-section';
-import { useService } from './container-context';
+import DeletedSection from './deleted-section.js';
+import { useService } from './container-context.js';
 import { SettingOutlined } from '@ant-design/icons';
-import { pluginTypes } from '../plugins/plugin-infos';
-import { sectionShape } from '../ui/default-prop-types';
-import RendererFactory from '../plugins/renderer-factory';
-import NotSupportedSection from './not-supported-section';
-import SectionActionDropdown from './section-action-dropdown';
+import { pluginTypes } from '../plugins/plugin-infos.js';
+import { sectionShape } from '../ui/default-prop-types.js';
+import RendererFactory from '../plugins/renderer-factory.js';
+import NotSupportedSection from './not-supported-section.js';
+import SectionActionDropdown from './section-action-dropdown.js';
 
 function SectionDisplay({ docKey, section, onAction }) {
   const [isMouseOver, setIsMouseOver] = React.useState(false);

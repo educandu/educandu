@@ -1,7 +1,7 @@
-import uniqueId from '../utils/unique-id';
-import cloneDeep from '../utils/clone-deep';
-import DocumentService from './document-service';
-import { createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper';
+import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
+import DocumentService from './document-service.js';
+import { createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('document-service', () => {
   let container;

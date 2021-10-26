@@ -1,4 +1,4 @@
-import IframeDisplay from './display/iframe-display';
+import IframeDisplay from './display/iframe-display.js';
 
 class Iframe {
   static get typeName() { return 'iframe'; }

@@ -1,4 +1,4 @@
-import { isBrowser } from '../ui/browser-helper';
+import { isBrowser } from '../ui/browser-helper.js';
 
 class FakeAudioContext {}
 

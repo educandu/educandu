@@ -1,4 +1,4 @@
-import AnavisDisplay from './display/anavis-display';
+import AnavisDisplay from './display/anavis-display.js';
 
 class Anavis {
   static get typeName() { return 'anavis'; }

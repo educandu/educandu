@@ -3,10 +3,10 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
 import { withTranslation } from 'react-i18next';
-import ClientConfig from '../../../bootstrap/client-config';
-import { inject } from '../../../components/container-context';
-import CdnFilePicker from '../../../components/cdn-file-picker';
-import { clientConfigProps, translationProps } from '../../../ui/default-prop-types';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import CdnFilePicker from '../../../components/cdn-file-picker.js';
+import { clientConfigProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;

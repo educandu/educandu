@@ -1,5 +1,5 @@
-import { validate } from '../validation';
-import { createRevisionBodySchema } from './document-schemas';
+import { validate } from '../validation.js';
+import { createRevisionBodySchema } from './document-schemas.js';
 
 describe('createRevisionBodySchema', () => {
   const happyPathData = {

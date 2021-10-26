@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SectionDisplay from './section-display';
-import { documentShape, documentRevisionShape } from '../ui/default-prop-types';
+import SectionDisplay from './section-display.js';
+import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function DocView({ documentOrRevision, onAction }) {
   return (

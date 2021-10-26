@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch } from 'antd';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { userShape } from './../ui/default-prop-types';
+import { userShape } from './../ui/default-prop-types.js';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 class UserLockedOutStateEditor extends React.Component {

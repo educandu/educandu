@@ -1,5 +1,5 @@
 {
-  "extends": ["eslint:all", "plugin:react/all"],
+  "extends": ["eslint:all", "plugin:import/recommended", "plugin:react/all"],
   "env": {
     "es6": true,
     "browser": true,
@@ -20,6 +20,7 @@
     }
   },
   "plugins": [
+    "import",
     "react-hooks"
   ],
   "rules": {
@@ -75,6 +76,8 @@
     "quotes": ["error", "single"],
     "require-unicode-regexp": ["off"],
     "wrap-iife": ["error", "inside"],
+    "import/extensions": ["error", "ignorePackages"],
+    "import/no-named-as-default-member": ["off"],
     "react/destructuring-assignment": ["off"],
     "react/forbid-component-props": ["off"],
     "react/forbid-prop-types": ["off"],

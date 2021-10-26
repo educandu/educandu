@@ -1,4 +1,4 @@
-import path from 'path';
+import url from 'url';
 import express from 'express';
 
 const staticConfig = [
@@ -23,7 +23,7 @@ const staticConfig = [
 class StaticController {
   registerMiddleware(router) {
     staticConfig.forEach(({ root, destination }) => {
-      const dir = path.join(__dirname, destination);
+      const dir = url.fileURLToPath(new URL(destination, import.meta.url));
       router.use(root, express.static(dir));
     });
   }

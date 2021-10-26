@@ -1,13 +1,13 @@
 import React from 'react';
-import Page from '../page';
-import DocView from '../doc-view';
+import Page from '../page.js';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import CreditsFooter from '../credits-footer';
+import DocView from '../doc-view.js';
+import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
+import CreditsFooter from '../credits-footer.js';
 import { EditOutlined } from '@ant-design/icons';
-import permissions from '../../domain/permissions';
-import { documentShape, documentRevisionShape } from '../../ui/default-prop-types';
+import permissions from '../../domain/permissions.js';
+import { documentShape, documentRevisionShape } from '../../ui/default-prop-types.js';
 
 const handleBackClick = () => window.history.back();
 

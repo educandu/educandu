@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import splitArray from 'split-array';
-import urls from '../../../utils/urls';
-import ClientConfig from '../../../bootstrap/client-config';
-import { inject } from '../../../components/container-context';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types';
+import urls from '../../../utils/urls.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
+import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {

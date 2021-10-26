@@ -1,4 +1,6 @@
-import { Unauthorized } from 'http-errors';
+import httpErrors from 'http-errors';
+
+const { Unauthorized } = httpErrors;
 
 function requestHandler(req, res, next) {
   return req.isAuthenticated() ? next() : next(new Unauthorized());

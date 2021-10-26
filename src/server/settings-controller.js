@@ -1,15 +1,15 @@
 import express from 'express';
-import PageRenderer from './page-renderer';
 import Database from '../stores/database.js';
-import permissions from '../domain/permissions';
-import MailService from '../services/mail-service';
-import ClientDataMapper from './client-data-mapper';
-import ServerConfig from '../bootstrap/server-config';
-import SettingService from '../services/setting-service';
-import DocumentService from '../services/document-service';
-import { validateBody } from '../domain/validation-middleware';
-import needsPermission from '../domain/needs-permission-middleware';
-import { saveSettingsBodySchema } from '../domain/schemas/settings-schemas';
+import PageRenderer from './page-renderer.js';
+import permissions from '../domain/permissions.js';
+import MailService from '../services/mail-service.js';
+import ClientDataMapper from './client-data-mapper.js';
+import ServerConfig from '../bootstrap/server-config.js';
+import SettingService from '../services/setting-service.js';
+import DocumentService from '../services/document-service.js';
+import { validateBody } from '../domain/validation-middleware.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
+import { saveSettingsBodySchema } from '../domain/schemas/settings-schemas.js';
 
 const jsonParser = express.json();
 

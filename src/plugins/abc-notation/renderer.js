@@ -1,4 +1,4 @@
-import AbcNotationDisplay from './display/abc-notation-display';
+import AbcNotationDisplay from './display/abc-notation-display.js';
 
 class AbcNotation {
   static get typeName() { return 'abc-notation'; }

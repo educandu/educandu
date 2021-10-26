@@ -1,13 +1,13 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
-import abcjs from '../../../common/abcjs-import';
-import { shuffleItems } from '../../../utils/array-utils';
-import AudioPlayer from '../../../components/audio-player';
-import ClientConfig from '../../../bootstrap/client-config';
-import { inject } from '../../../components/container-context';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
-import { sectionDisplayProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
+import abcjs from '../../../common/abcjs-import.js';
+import { shuffleItems } from '../../../utils/array-utils.js';
+import AudioPlayer from '../../../components/audio-player.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
+import { sectionDisplayProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const abcOptions = {
   paddingtop: 0,

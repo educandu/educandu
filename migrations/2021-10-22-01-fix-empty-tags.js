@@ -1,5 +1,5 @@
-import { updateAll } from './helpers';
-import { deStopWords } from './de-stopwords';
+import { updateAll } from './helpers.js';
+import { deStopWords } from './de-stopwords.js';
 
 class Migration2021102201 {
   constructor(db) {

@@ -1,6 +1,6 @@
 import joi from 'joi';
 import validator from 'express-joi-validation';
-import { defaultValidationOptions } from './validation';
+import { defaultValidationOptions } from './validation.js';
 
 const baseValidator = validator.createValidator({
   statusCode: 400,

@@ -1,4 +1,4 @@
-import { ROLE } from './role';
+import { ROLE } from './role.js';
 
 export const EDIT_DOC = 'edit-doc';
 export const VIEW_DOCS = 'view-docs';

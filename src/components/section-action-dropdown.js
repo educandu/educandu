@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Menu, Dropdown } from 'antd';
-import { usePermission } from '../ui/hooks';
+import { usePermission } from '../ui/hooks.js';
 import { useTranslation } from 'react-i18next';
-import permissions from '../domain/permissions';
-import { sectionShape } from '../ui/default-prop-types';
+import permissions from '../domain/permissions.js';
 import { ThunderboltOutlined } from '@ant-design/icons';
-import { confirmSectionHardDelete } from './confirmation-dialogs';
-import { HARD_DELETE, createHardDelete } from '../ui/section-actions';
+import { sectionShape } from '../ui/default-prop-types.js';
+import { confirmSectionHardDelete } from './confirmation-dialogs.js';
+import { HARD_DELETE, createHardDelete } from '../ui/section-actions.js';
 
 const MenuItem = Menu.Item;
 const redIconStyle = { color: 'red' };
