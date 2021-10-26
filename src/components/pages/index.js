@@ -22,8 +22,7 @@ function Index({ initialState, documentApiClient }) {
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
   const handleSearchClick = tags => {
-    const link = getSearchPath(tags);
-    window.open(link, '_blank');
+    window.location = getSearchPath(tags);
   };
 
   const getTagSuggestions = useCallback(async tagSuggestionsQuery => {
