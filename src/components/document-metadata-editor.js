@@ -2,7 +2,7 @@ import React from 'react';
 import urls from '../utils/urls';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { Input, Radio, Tag, Space, Form } from 'antd';
+import { Input, Radio, Tag, Space, Form, Select } from 'antd';
 import { inject } from './container-context';
 import { withTranslation } from 'react-i18next';
 import { withSettings } from './settings-context';
@@ -14,7 +14,6 @@ import LanguageNameProvider from '../data/language-name-provider';
 import CountryFlagAndName from './localization/country-flag-and-name';
 import DocumentApiClient from '../services/document-api-client';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types';
-import { TagSelect } from './tag-select';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -63,8 +62,7 @@ class DocumentMetadataEditor extends React.Component {
     onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
   }
 
-  async handleTagSuggestionsRefresh() {
-    const { tagSuggestionsQuery } = this.state;
+  async handleTagSuggestionsRefresh(tagSuggestionsQuery) {
     const tagSuggestions = await this.documentApiClient.getRevisionTagSuggestions(tagSuggestionsQuery);
     this.setState({ tagSuggestions });
   }
@@ -74,14 +72,13 @@ class DocumentMetadataEditor extends React.Component {
     const areTagsValid = selectedValues.length > 0 && selectedValues.every(tag => isValidTag({ tag }));
     this.setState({
       tagsValidationStatus: areTagsValid ? '' : 'error',
-      tagSuggestionsQuery: '',
       tagSuggestions: []
     });
     onChanged({ metadata: { ...documentRevision, tags: selectedValues }, invalidMetadata: !areTagsValid });
   }
 
   render() {
-    const { mode, tagsValidationStatus, tagSuggestionsQuery, tagSuggestions } = this.state;
+    const { mode, tagsValidationStatus, tagSuggestions } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
     const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags, ...tagSuggestions]);
@@ -114,14 +111,17 @@ class DocumentMetadataEditor extends React.Component {
             <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
             <span>{t('tags')}</span>:
             <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
-              <TagSelect
+              <Select
+                mode="tags"
+                tokenSeparators={[' ', '\t']}
                 value={documentRevision.tags}
-                tagSuggestionsQuery={tagSuggestionsQuery}
-                options={Array.from(mergedTags)}
-                onTagsChange={selectedValue => this.handleTagsChange(selectedValue)}
-                onSuggestionQueryChanged={newTagSuggestionQuery => this.setState({ tagSuggestionsQuery: newTagSuggestionQuery })}
-                onTagSuggestionsRefresh={newTagSuggestionQuery => this.handleTagSuggestionsRefresh(newTagSuggestionQuery)}
-                style={{ width: '100%' }}
+                onSearch={value => {
+                  if (value.length === 3) {
+                    this.handleTagSuggestionsRefresh(value);
+                  }
+                }}
+                onChange={selectedValue => this.handleTagsChange(selectedValue)}
+                options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
             </Form.Item>
           </div>
