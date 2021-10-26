@@ -2,7 +2,7 @@ import React from 'react';
 import urls from '../utils/urls';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { Input, Radio, Tag, Space, Select, Form } from 'antd';
+import { Input, Radio, Tag, Space, Form } from 'antd';
 import { inject } from './container-context';
 import { withTranslation } from 'react-i18next';
 import { withSettings } from './settings-context';
@@ -14,6 +14,7 @@ import LanguageNameProvider from '../data/language-name-provider';
 import CountryFlagAndName from './localization/country-flag-and-name';
 import DocumentApiClient from '../services/document-api-client';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types';
+import { TagSelect } from './tag-select';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -113,26 +114,14 @@ class DocumentMetadataEditor extends React.Component {
             <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
             <span>{t('tags')}</span>:
             <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
-              <Select
-                mode="tags"
-                tokenSeparators={[' ', '\t']}
+              <TagSelect
                 value={documentRevision.tags}
+                tagSuggestionsQuery={tagSuggestionsQuery}
+                options={Array.from(mergedTags)}
+                onTagsChange={selectedValue => this.handleTagsChange(selectedValue)}
+                onSuggestionQueryChanged={newTagSuggestionQuery => this.setState({ tagSuggestionsQuery: newTagSuggestionQuery })}
+                onTagSuggestionsRefresh={newTagSuggestionQuery => this.handleTagSuggestionsRefresh(newTagSuggestionQuery)}
                 style={{ width: '100%' }}
-                onKeyUp={e => {
-                  if (e.key === 'Backspace') {
-                    this.setState({
-                      tagSuggestionsQuery: tagSuggestionsQuery.slice(0, tagSuggestionsQuery.length - 1)
-                    });
-                    return;
-                  }
-                  const newTagsSuggesionQuery = `${tagSuggestionsQuery}${e.key}`;
-                  this.setState({ tagSuggestionsQuery: newTagsSuggesionQuery });
-                  if (newTagsSuggesionQuery.length === 3) {
-                    this.handleTagSuggestionsRefresh(newTagsSuggesionQuery);
-                  }
-                }}
-                onChange={selectedValue => this.handleTagsChange(selectedValue)}
-                options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
             </Form.Item>
           </div>
