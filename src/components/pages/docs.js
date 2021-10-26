@@ -60,7 +60,8 @@ class Docs extends React.Component {
       slug: toTrimmedString(slug) || '',
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
       language,
-      sections: []
+      sections: [],
+      tags: []
     };
   }
 

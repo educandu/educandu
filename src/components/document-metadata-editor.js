@@ -28,7 +28,11 @@ class DocumentMetadataEditor extends React.Component {
     super(props);
     autoBind(this);
     this.documentApiClient = props.documentApiClient;
-    this.state = { mode: MODE_PREVIEW, tagsValidationStatus: '', tagSuggestionsQuery: '', tagSuggestions: [] };
+    const { documentRevision } = props;
+    this.state = { mode: MODE_PREVIEW,
+      tagsValidationStatus: documentRevision.tags.length ? '' : 'error',
+      tagSuggestionsQuery: '',
+      tagSuggestions: [] };
   }
 
   handleEditClick() {
