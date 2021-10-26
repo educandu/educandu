@@ -134,7 +134,7 @@ class DocumentController {
       return res.send(result);
     });
 
-    router.get('/api/v1/docs-revision/tags/*', async (req, res) => {
+    router.get('/api/v1/docs/revisions/tags/*', async (req, res) => {
       const query = req.params[0] || '';
       const result = await this.documentService.getRevisionTagsContainingString(query);
       return res.send(result.length ? result[0].uniqueTags : []);
