@@ -31,7 +31,6 @@ class DocumentMetadataEditor extends React.Component {
     const { documentRevision } = props;
     this.state = { mode: MODE_PREVIEW,
       tagsValidationStatus: documentRevision.tags.length ? '' : 'error',
-      tagSuggestionsQuery: '',
       tagSuggestions: [] };
   }
 
@@ -120,7 +119,7 @@ class DocumentMetadataEditor extends React.Component {
                     this.handleTagSuggestionsRefresh(value);
                   }
                 }}
-                onChange={selectedValue => this.handleTagsChange(selectedValue)}
+                onChange={selectedValues => this.handleTagsChange(selectedValues)}
                 options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
             </Form.Item>

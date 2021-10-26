@@ -54,6 +54,13 @@ class DocumentApiClient {
       .accept('json')
       .then(res => res.body);
   }
+
+  getDocumentTagSuggestions(tagsSuggestionQuery) {
+    return this.httpClient
+      .get(`/api/v1/docs/tags/${tagsSuggestionQuery}`)
+      .accept('json')
+      .then(res => res.body);
+  }
 }
 
 export default DocumentApiClient;
