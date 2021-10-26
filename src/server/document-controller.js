@@ -137,13 +137,13 @@ class DocumentController {
     router.get('/api/v1/docs-revision/tags/*', async (req, res) => {
       const query = req.params[0] || '';
       const result = await this.documentService.getRevisionTagsContainingString(query);
-      return res.send(result[0].uniqueTags);
+      return res.send(result.length ? result[0].uniqueTags : []);
     });
 
     router.get('/api/v1/docs/tags/*', async (req, res) => {
       const query = req.params[0] || '';
       const result = await this.documentService.getDocumentTagsContainingString(query);
-      return res.send(result[0].uniqueTags);
+      return res.send(result.length ? result[0].uniqueTags : []);
     });
   }
 }
