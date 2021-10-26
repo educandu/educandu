@@ -26,7 +26,8 @@ class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
-    this.state = { mode: MODE_PREVIEW, tagsValidationStatus: '' };
+    const { documentRevision } = props;
+    this.state = { mode: MODE_PREVIEW, tagsValidationStatus: documentRevision.tags.length ? '' : 'error' };
   }
 
   handleEditClick() {
