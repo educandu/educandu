@@ -89,21 +89,8 @@ const ensureContainerRemoved = async ({ containerName }) => {
 
 function runJest(...flags) {
   return execa(process.execPath, [
-    '--experimental-json-modules',
     '--experimental-vm-modules',
-    '--experimental-loader',
-    '@educandu/node-jsx-loader',
-    '--enable-source-maps',
     `${ROOT_DIR}/node_modules/jest/bin/jest.js`,
-    '--env',
-    'node',
-    `--roots',
-    '${ROOT_DIR}`,
-    '--setupFiles',
-    `${ROOT_DIR}/src/test-setup.js`,
-    '--setupFilesAfterEnv',
-    `${ROOT_DIR}/src/test-setup-after-env.js`,
-    '--runInBand',
     ...flags.map(flag => `--${flag}`)
   ], { stdio: 'inherit' });
 }
@@ -133,7 +120,7 @@ export function fix() {
 }
 
 export function test() {
-  return runJest('coverage');
+  return runJest('coverage', 'runInBand');
 }
 
 export function testChanged() {
