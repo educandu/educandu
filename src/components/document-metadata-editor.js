@@ -14,6 +14,7 @@ import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
 import DocumentApiClient from '../services/document-api-client.js';
+import { handleApiError } from '../ui/error-helper.js'
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -59,8 +60,12 @@ class DocumentMetadataEditor extends React.Component {
   }
 
   handleSlugChange(event) {
-    const { onChanged, documentRevision } = this.props;
-    onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
+    try {
+      const { onChanged, documentRevision } = this.props;
+      onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
+    } catch (e) {
+      handleApiError(e);
+    }
   }
 
   async handleTagSuggestionsRefresh(tagSuggestionsQuery) {
