@@ -45,7 +45,7 @@ function Index({ initialState }) {
                 code={languageNames[hl.language]?.flag || null}
                 name={languageNames[hl.language]?.name || null}
                 flagOnly
-              />
+                />
             </Button>
           ))}
         </div>
@@ -64,12 +64,12 @@ function Index({ initialState }) {
               }}
               onChange={selectedValues => { setSelectedTags(selectedValues); }}
               options={tagSuggestions.map(tag => ({ value: tag, key: tag }))}
-            />
+              />
             <Button
               size="large"
               onClick={() => handleSearchClick(selectedTags)}
               type="primary"
-            >
+              >
               {currentHomeLanguage.searchFieldPlaceholder}
             </Button>
           </div>
@@ -81,7 +81,6 @@ function Index({ initialState }) {
 }
 
 Index.propTypes = {
-  documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     document: documentShape,
     homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,

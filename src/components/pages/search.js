@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -14,6 +14,12 @@ function Search({ initialState }) {
   const { t } = useTranslation('search');
   const { locale } = useLanguage();
   const { docs } = initialState;
+  const sortedDocs = useMemo(
+    () => docs.sort(firstBy(doc => doc.contributors)
+      .thenBy(doc => doc.updatedOn, 'desc')),
+    [docs]
+  );
+
   const renderContributorsCount = value => (<div>{value?.length}</div>);
 
   const renderUpdatedOn = (_value, doc) => {
@@ -57,8 +63,7 @@ function Search({ initialState }) {
         pagination={false}
         size="middle"
         columns={columns}
-        dataSource={docs.sort(firstBy(doc => doc.contributors)
-          .thenBy(doc => doc.updatedOn, 'desc'))}
+        dataSource={sortedDocs}
         />
     </Page>
   );
