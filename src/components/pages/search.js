@@ -14,7 +14,7 @@ function Search({ initialState }) {
   const { t } = useTranslation('search');
   const { locale } = useLanguage();
   const { docs } = initialState;
-  const renderContributors = value => (<div>{value?.length}</div>);
+  const renderContributorsCount = value => (<div>{value?.length}</div>);
 
   const renderUpdatedOn = (_value, doc) => {
     const date = moment(doc.updatedOn).locale(locale);
@@ -36,7 +36,7 @@ function Search({ initialState }) {
     {
       title: t('numberOfContributors'),
       dataIndex: 'contributors',
-      render: renderContributors
+      render: renderContributorsCount
     },
     {
       title: t('tags'),
