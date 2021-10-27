@@ -2,7 +2,7 @@ import React from 'react';
 import Page from '../page';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import firtBy, { firstBy } from 'thenby';
+import { firstBy } from 'thenby';
 
 import { Table, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
