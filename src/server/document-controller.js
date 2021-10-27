@@ -7,7 +7,13 @@ import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery } from '../domain/validation-middleware.js';
-import { getRevisionsByKeyQuerySchema, createRevisionBodySchema, hardDeleteSectionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-schemas.js';
+import { 
+  getRevisionsByKeyQuerySchema,
+  createRevisionBodySchema,
+  hardDeleteSectionBodySchema,
+  restoreRevisionBodySchema,
+  getSearchDocumentsByTagsSchema 
+} from '../domain/schemas/document-schemas.js';
 
 const { NotFound } = httpErrors;
 
@@ -91,7 +97,7 @@ class DocumentController {
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-doc', { documentRevision, proposedSections });
     });
 
-    router.get('/search', async (req, res) => {
+    router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
       const { tags } = req.query;
       const searchTags = Array.isArray(tags) ? tags : [tags];
       const docs = await this.documentService.getDocumentsByTags(searchTags);

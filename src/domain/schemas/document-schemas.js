@@ -16,6 +16,12 @@ const documentRevisionAppendToSchema = joi.object({
   ancestorId: idOrKeySchema.required()
 });
 
+
+const tagSchema = joi.string().min(3).max(30);
+export const getSearchDocumentsByTagsSchema = joi.object({
+  tags: [tagSchema, joi.array().min(1).items(tagSchema)]
+});
+
 export const getRevisionsByKeyQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });
