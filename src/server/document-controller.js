@@ -7,12 +7,12 @@ import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery } from '../domain/validation-middleware.js';
-import { 
+import {
   getRevisionsByKeyQuerySchema,
   createRevisionBodySchema,
   hardDeleteSectionBodySchema,
   restoreRevisionBodySchema,
-  getSearchDocumentsByTagsSchema 
+  getSearchDocumentsByTagsSchema
 } from '../domain/schemas/document-schemas.js';
 
 const { NotFound } = httpErrors;
@@ -156,13 +156,13 @@ class DocumentController {
 
     router.get('/api/v1/docs/revisions/tags/*', async (req, res) => {
       const query = req.params[0] || '';
-      const result = await this.documentService.getRevisionTagsContainingString(query);
+      const result = await this.documentService.findRevisionTags(query);
       return res.send(result.length ? result[0].uniqueTags : []);
     });
 
     router.get('/api/v1/docs/tags/*', async (req, res) => {
       const query = req.params[0] || '';
-      const result = await this.documentService.getDocumentTagsContainingString(query);
+      const result = await this.documentService.findDocumentTags(query);
       return res.send(result.length ? result[0].uniqueTags : []);
     });
   }

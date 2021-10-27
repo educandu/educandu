@@ -113,11 +113,11 @@ class DocumentService {
     return this.documentRevisionStore.findOne({ _id: id });
   }
 
-  getRevisionTagsContainingString(searchString) {
+  findRevisionTags(searchString) {
     return this.documentRevisionStore.toAggregateArray(getTagsQuery(searchString));
   }
 
-  getDocumentTagsContainingString(searchString) {
+  findDocumentTags(searchString) {
     return this.documentStore.toAggregateArray(getTagsQuery(searchString));
   }
 
