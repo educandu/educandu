@@ -20,9 +20,7 @@ const logger = new Logger(import.meta.url);
 
 const availableRoles = [
   { name: ROLE.user, isReadonly: false },
-  { name: ROLE.editor, isReadonly: false },
-  { name: ROLE.superEditor, isReadonly: false },
-  { name: ROLE.superUser, isReadonly: true }
+  { name: ROLE.admin, isReadonly: true }
 ];
 
 class Users extends React.Component {

@@ -13,9 +13,7 @@ import serverBootstrapper from '../src/bootstrap/server-bootstrapper.js';
 const globP = promisify(glob);
 
 const ROLES_USER = [ROLE.user];
-const ROLES_EDITOR = [ROLE.user, ROLE.editor];
-const ROLES_SUPER_EDITOR = [ROLE.user, ROLE.editor, ROLE.superEditor];
-const ROLES_SUPER_USER = [ROLE.user, ROLE.editor, ROLE.superEditor, ROLE.superUser];
+const ROLES_ADMIN = [ROLE.user, ROLE.admin];
 
 (async function seed() {
 
@@ -27,12 +25,9 @@ const ROLES_SUPER_USER = [ROLE.user, ROLE.editor, ROLE.superEditor, ROLE.superUs
 
   await testHelper.dropAllCollections(db);
 
-  const user = await testHelper.createAndVerifyUser(userService, 'test', 'test', 'test@test.com', ROLES_SUPER_USER);
+  const user = await testHelper.createAndVerifyUser(userService, 'test', 'test', 'test@test.com', ROLES_ADMIN);
   await testHelper.createAndVerifyUser(userService, 'test-user', 'test-user', 'test-user@test.com', ROLES_USER);
-  await testHelper.createAndVerifyUser(userService, 'test-editor', 'test-editor', 'test-editor@test.com', ROLES_EDITOR);
-  await testHelper.createAndVerifyUser(userService, 'test-super-editor', 'test-super-editor', 'test-super-editor@test.com', ROLES_SUPER_EDITOR);
-  await testHelper.createAndVerifyUser(userService, 'test-super-user', 'test-super-user', 'test-super-user@test.com', ROLES_SUPER_USER);
-  await testHelper.createAndVerifyUser(userService, 'admin', '#smBW8#7aiFWKBA', 'admin@test.com', ROLES_SUPER_USER);
+  await testHelper.createAndVerifyUser(userService, 'admin', '#smBW8#7aiFWKBA', 'admin@test.com', ROLES_ADMIN);
 
   const docFiles = await globP(url.fileURLToPath(new URL('../test/test-docs/*.json', import.meta.url).href));
 
