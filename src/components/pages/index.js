@@ -62,7 +62,7 @@ function Index({ initialState }) {
             <Select
               mode="multiple"
               size="large"
-              style={{ width: '100%' }}
+              className="IndexPage-searchInput"
               tokenSeparators={[' ', '\t']}
               value={selectedTags}
               onSearch={getTagSuggestions}
@@ -73,6 +73,8 @@ function Index({ initialState }) {
               size="large"
               onClick={() => handleSearchClick(selectedTags)}
               type="primary"
+              disabled={!selectedTags.length}
+              className="IndexPage-searchButton"
               >
               {currentHomeLanguage.searchFieldPlaceholder}
             </Button>
