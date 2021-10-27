@@ -90,8 +90,9 @@ class DocumentService {
     return this.documentStore.find({ _id: { $in: documentKeys } }, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  getDocumentsByTags(searchTags) {
-    return this.documentStore.find({ tags: { $all: searchTags } }, { projection: searchResultsProjection });
+  async getDocumentsByTags(searchTags) {
+    const result = await this.documentStore.find({ tags: { $all: searchTags } }, { projection: searchResultsProjection });
+    return result || [];
   }
 
   getDocumentByKey(documentKey) {

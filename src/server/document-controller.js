@@ -101,11 +101,6 @@ class DocumentController {
       const { tags } = req.query;
       const searchTags = Array.isArray(tags) ? tags : [tags];
       const docs = await this.documentService.getDocumentsByTags(searchTags);
-
-      if (!docs) {
-        res.send([]);
-      }
-
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
     });
   }
