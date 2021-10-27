@@ -11,6 +11,7 @@ import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../services/document-api-client.js';
+import { handleApiError } from '../../ui/error-helper.js';
 
 function Index({ initialState }) {
   const [tagSuggestions, setTagSuggestions] = useState([]);
@@ -27,7 +28,14 @@ function Index({ initialState }) {
   };
 
   const getTagSuggestions = useCallback(async tagSuggestionsQuery => {
-    setTagSuggestions(await documentApiClient.getDocumentTagSuggestions(tagSuggestionsQuery));
+    if (tagSuggestionsQuery.length !== 3) {
+      return;
+    }
+    try {
+      setTagSuggestions(await documentApiClient.getDocumentTagSuggestions(tagSuggestionsQuery));
+    } catch (e) {
+      handleApiError(e);
+    }
   }, [documentApiClient]);
 
   const languageNames = languageNameProvider.getData(language);
@@ -57,11 +65,7 @@ function Index({ initialState }) {
               style={{ width: '100%' }}
               tokenSeparators={[' ', '\t']}
               value={selectedTags}
-              onSearch={value => {
-                if (value.length === 3) {
-                  getTagSuggestions(value);
-                }
-              }}
+              onSearch={getTagSuggestions}
               onChange={selectedValues => { setSelectedTags(selectedValues); }}
               options={tagSuggestions.map(tag => ({ value: tag, key: tag }))}
               />

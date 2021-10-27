@@ -14,7 +14,7 @@ import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
 import DocumentApiClient from '../services/document-api-client.js';
-import { handleApiError } from '../ui/error-helper.js'
+import { handleApiError } from '../ui/error-helper.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -69,8 +69,15 @@ class DocumentMetadataEditor extends React.Component {
   }
 
   async handleTagSuggestionsRefresh(tagSuggestionsQuery) {
-    const tagSuggestions = await this.documentApiClient.getRevisionTagSuggestions(tagSuggestionsQuery);
-    this.setState({ tagSuggestions });
+    try {
+      if (tagSuggestionsQuery.length !== 3) {
+        return;
+      }
+      const tagSuggestions = await this.documentApiClient.getRevisionTagSuggestions(tagSuggestionsQuery);
+      this.setState({ tagSuggestions });
+    } catch (e) {
+      handleApiError(e);
+    }
   }
 
   handleTagsChange(selectedValues) {
@@ -121,11 +128,7 @@ class DocumentMetadataEditor extends React.Component {
                 mode="tags"
                 tokenSeparators={[' ', '\t']}
                 value={documentRevision.tags}
-                onSearch={value => {
-                  if (value.length === 3) {
-                    this.handleTagSuggestionsRefresh(value);
-                  }
-                }}
+                onSearch={this.handleTagSuggestionsRefresh}
                 onChange={selectedValues => this.handleTagsChange(selectedValues)}
                 options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
