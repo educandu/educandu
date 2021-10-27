@@ -1,4 +1,4 @@
-import { updateAll } from './helpers';
+import { updateAll } from './helpers.js';
 
 class Migration2018112501 {
   constructor(db) {

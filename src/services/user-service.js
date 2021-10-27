@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import moment from 'moment';
-import Logger from '../common/logger';
-import { ROLE } from '../domain/role';
-import uniqueId from '../utils/unique-id';
-import UserStore from '../stores/user-store';
-import PasswordResetRequestStore from '../stores/password-reset-request-store';
-import { SAVE_USER_RESULT } from '../domain/user-management';
+import { ROLE } from '../domain/role.js';
+import Logger from '../common/logger.js';
+import uniqueId from '../utils/unique-id.js';
+import UserStore from '../stores/user-store.js';
+import { SAVE_USER_RESULT } from '../domain/user-management.js';
+import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 
 const DEFAULT_ROLE_NAME = ROLE.user;
 const PROVIDER_NAME_ELMU = 'elmu';
@@ -13,7 +13,7 @@ const PASSWORD_SALT_ROUNDS = 1024;
 const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
 const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 class UserService {
   static get inject() { return [UserStore, PasswordResetRequestStore]; }

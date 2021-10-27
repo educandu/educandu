@@ -1,21 +1,21 @@
-import Page from '../page';
+import Page from '../page.js';
 import PropTypes from 'prop-types';
-import Logger from '../../common/logger';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../../ui/error-helper';
-import { useService } from '../container-context';
-import permissions from '../../domain/permissions';
+import errorHelper from '../../ui/error-helper.js';
 import React, { useState, useCallback } from 'react';
+import { useService } from '../container-context.js';
+import permissions from '../../domain/permissions.js';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
-import SettingApiClient from '../../services/setting-api-client';
-import DefaultTagsSettings from '../settings/default-tags-settings';
-import SpecialPageSettings from '../settings/special-page-settings';
-import FooterLinksSettings from '../settings/footer-links-settings';
-import HomeLanguagesSettings from '../settings/home-languages-settings';
-import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils';
-import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types';
+import SettingApiClient from '../../services/setting-api-client.js';
+import DefaultTagsSettings from '../settings/default-tags-settings.js';
+import SpecialPageSettings from '../settings/special-page-settings.js';
+import FooterLinksSettings from '../settings/footer-links-settings.js';
+import HomeLanguagesSettings from '../settings/home-languages-settings.js';
+import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
+import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 function Settings({ initialState }) {
   const { t } = useTranslation('settings');

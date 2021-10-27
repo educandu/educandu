@@ -1,13 +1,13 @@
 import util from 'util';
 import express from 'express';
-import Logger from '../common/logger';
+import Logger from '../common/logger.js';
 import cookieParser from 'cookie-parser';
-import ControllerFactory from './controller-factory';
-import ServerConfig from '../bootstrap/server-config';
+import ControllerFactory from './controller-factory.js';
+import ServerConfig from '../bootstrap/server-config.js';
 
 import 'express-async-errors';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 class ElmuServer {
   static get inject() { return [ServerConfig, ControllerFactory]; }

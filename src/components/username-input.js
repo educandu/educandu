@@ -2,9 +2,9 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
-import { withUser } from './user-context';
+import { withUser } from './user-context.js';
 import { withTranslation } from 'react-i18next';
-import { userProps, translationProps, formItemLayoutShape } from '../ui/default-prop-types';
+import { userProps, translationProps, formItemLayoutShape } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 

@@ -1,4 +1,4 @@
-import SettingStore from '../stores/setting-store';
+import SettingStore from '../stores/setting-store.js';
 
 class SettingService {
   static get inject() { return [SettingStore]; }

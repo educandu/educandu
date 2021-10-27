@@ -2,9 +2,9 @@ import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
 import { Form, Button, Modal, Spin } from 'antd';
 import React, { Fragment, createRef } from 'react';
-import { withLanguage } from '../../../components/language-context';
-import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, translationProps, languageProps } from '../../../ui/default-prop-types';
+import { withLanguage } from '../../../components/language-context.js';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
+import { sectionEditorProps, translationProps, languageProps } from '../../../ui/default-prop-types.js';
 
 const createEmbeddedEditorUrl = lang => [
   'https://embed.diagrams.net/',

@@ -1,16 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import Page from '../page';
-import DocView from '../doc-view';
+import Page from '../page.js';
+import DocView from '../doc-view.js';
 import PropTypes from 'prop-types';
-import { getHomeUrl, getSearchPath } from '../../utils/urls';
-import ElmuLogo from '../elmu-logo';
+import { getHomeUrl, getSearchPath } from '../../utils/urls.js';
+import ElmuLogo from '../elmu-logo.js';
 import { Button, Select } from 'antd';
-import { useService, inject } from '../container-context';
-import { useLanguage } from '../language-context';
-import LanguageNameProvider from '../../data/language-name-provider';
-import CountryFlagAndName from '../localization/country-flag-and-name';
-import { documentShape, homeLanguageShape } from '../../ui/default-prop-types';
-import DocumentApiClient from '../../services/document-api-client';
+import { useService, inject } from '../container-context.js';
+import { useLanguage } from '../language-context.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
+import DocumentApiClient from '../../services/document-api-client.js';
 
 function Index({ initialState, documentApiClient }) {
   const [tagSuggestions, setTagSuggestions] = useState([]);
@@ -44,7 +44,7 @@ function Index({ initialState, documentApiClient }) {
                 code={languageNames[hl.language]?.flag || null}
                 name={languageNames[hl.language]?.name || null}
                 flagOnly
-                />
+              />
             </Button>
           ))}
         </div>
@@ -63,12 +63,12 @@ function Index({ initialState, documentApiClient }) {
               }}
               onChange={selectedValues => { setSelectedTags(selectedValues); }}
               options={tagSuggestions.map(tag => ({ value: tag, key: tag }))}
-              />
+            />
             <Button
               size="large"
               onClick={() => handleSearchClick(selectedTags)}
               type="primary"
-              >
+            >
               {currentHomeLanguage.searchFieldPlaceholder}
             </Button>
           </div>

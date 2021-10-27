@@ -2,8 +2,8 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import { Form, Input, Switch } from 'antd';
 import { withTranslation } from 'react-i18next';
-import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const { TextArea } = Input;
 

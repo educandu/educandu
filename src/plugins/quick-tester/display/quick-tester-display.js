@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
-import Markdown from '../../../components/markdown';
-import { shuffleItems } from '../../../utils/array-utils';
-import { sectionDisplayProps } from '../../../ui/default-prop-types';
+import Markdown from '../../../components/markdown.js';
+import { shuffleItems } from '../../../utils/array-utils.js';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 function QuickTesterDisplay({ content }) {

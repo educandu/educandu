@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import { sectionDisplayProps } from '../../../ui/default-prop-types';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 
 function IframeDisplay({ content }) {
   return (

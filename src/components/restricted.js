@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { withUser } from './user-context';
-import permissions from '../domain/permissions';
-import { userProps } from '../ui/default-prop-types';
+import { withUser } from './user-context.js';
+import permissions from '../domain/permissions.js';
+import { userProps } from '../ui/default-prop-types.js';
 
 function Restricted({ to, user, children }) {
   if (!to) {

@@ -1,14 +1,14 @@
 import React from 'react';
 import autoBind from 'auto-bind';
-import validation from '../../../ui/validation';
-import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION } from '../constants';
 import { withTranslation } from 'react-i18next';
+import validation from '../../../ui/validation.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
-import { inject } from '../../../components/container-context';
-import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientConfig from '../../../bootstrap/client-config';
-import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import CdnFilePicker from '../../../components/cdn-file-picker.js';
+import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION } from '../constants.js';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
+import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;

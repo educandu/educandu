@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import shallowEqualArrays from 'shallow-equal/arrays';
+import shallowEqualArrays from 'shallow-equal/arrays/index.js';
 
 /*
 

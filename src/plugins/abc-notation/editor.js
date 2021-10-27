@@ -1,4 +1,4 @@
-import AbcNotationEditor from './editing/abc-notation-editor';
+import AbcNotationEditor from './editing/abc-notation-editor.js';
 
 class AbcNotation {
   static get typeName() { return 'abc-notation'; }

@@ -1,25 +1,25 @@
 import React from 'react';
-import Page from '../page';
+import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import ElmuLogo from '../elmu-logo';
-import Countdown from '../countdown';
-import EmailInput from '../email-input';
-import Logger from '../../common/logger';
-import { inject } from '../container-context';
-import PasswordInput from '../password-input';
-import UsernameInput from '../username-input';
+import urls from '../../utils/urls.js';
+import ElmuLogo from '../elmu-logo.js';
+import Countdown from '../countdown.js';
+import EmailInput from '../email-input.js';
+import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
-import errorHelper from '../../ui/error-helper';
-import { withSettings } from '../settings-context';
-import { withLanguage } from '../language-context';
+import { inject } from '../container-context.js';
+import PasswordInput from '../password-input.js';
+import UsernameInput from '../username-input.js';
+import errorHelper from '../../ui/error-helper.js';
+import { withSettings } from '../settings-context.js';
+import { withLanguage } from '../language-context.js';
 import { withTranslation, Trans } from 'react-i18next';
-import UserApiClient from '../../services/user-api-client';
-import { SAVE_USER_RESULT } from '../../domain/user-management';
-import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types';
+import UserApiClient from '../../services/user-api-client.js';
+import { SAVE_USER_RESULT } from '../../domain/user-management.js';
+import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
 

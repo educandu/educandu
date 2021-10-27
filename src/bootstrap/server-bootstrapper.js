@@ -1,14 +1,14 @@
-import Cdn from '../repositories/cdn';
-import Logger from '../common/logger';
-import Database from '../stores/database';
-import ServerConfig from './server-config';
-import ClientConfig from './client-config';
-import ElmuServer from '../server/elmu-server';
-import commonBootstrapper from './common-bootstrapper';
-import ResourceManager from '../resources/resource-manager';
-import ServerResourceLoader from '../resources/server-resource-loader';
+import Cdn from '../repositories/cdn.js';
+import Logger from '../common/logger.js';
+import Database from '../stores/database.js';
+import ServerConfig from './server-config.js';
+import ClientConfig from './client-config.js';
+import ElmuServer from '../server/elmu-server.js';
+import commonBootstrapper from './common-bootstrapper.js';
+import ResourceManager from '../resources/resource-manager.js';
+import ServerResourceLoader from '../resources/server-resource-loader.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 export async function createContainer(config = null) {
   logger.info('Creating container');

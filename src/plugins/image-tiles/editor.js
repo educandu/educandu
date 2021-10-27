@@ -1,4 +1,4 @@
-import ImageTilesEditor from './editing/image-tiles-editor';
+import ImageTilesEditor from './editing/image-tiles-editor.js';
 
 class ImageTiles {
   static get typeName() { return 'image-tiles'; }

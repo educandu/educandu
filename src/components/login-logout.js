@@ -1,10 +1,10 @@
 import React from 'react';
 import { Avatar } from 'antd';
 import gravatar from 'gravatar';
-import urls from '../utils/urls';
-import { useUser } from './user-context';
-import LinkPopover from './link-popover';
-import { useRequest } from './request-context';
+import urls from '../utils/urls.js';
+import { useUser } from './user-context.js';
+import LinkPopover from './link-popover.js';
+import { useRequest } from './request-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { ProfileOutlined, LogoutOutlined } from '@ant-design/icons';
 

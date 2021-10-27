@@ -2,10 +2,10 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
-import selection from '../ui/selection';
+import selection from '../ui/selection.js';
 import { withTranslation } from 'react-i18next';
-import RepositoryBrowser from './repository-browser';
-import { translationProps } from '../ui/default-prop-types';
+import RepositoryBrowser from './repository-browser.js';
+import { translationProps } from '../ui/default-prop-types.js';
 
 class CdnFilePicker extends React.Component {
   constructor(props) {

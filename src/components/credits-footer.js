@@ -2,9 +2,9 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRequest } from './request-context';
-import { useLanguage } from './language-context';
-import { documentShape, documentRevisionShape } from '../ui/default-prop-types';
+import { useRequest } from './request-context.js';
+import { useLanguage } from './language-context.js';
+import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function renderUser(user) {
   return user.email

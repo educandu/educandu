@@ -1,8 +1,8 @@
 import { EOL } from 'os';
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
+import ReactDOMServer from 'react-dom/server.js';
 import { resetServerContext } from 'react-beautiful-dnd';
-import PageTemplate from '../components/templates/page-template';
+import PageTemplate from '../components/templates/page-template.js';
 
 class PageRendererBase {
   renderHtml({ language, title, styles, scripts, ContentRoot, contentProps }) {

@@ -1,5 +1,5 @@
-import StoreBase from './store-base';
-import uniqueId from '../utils/unique-id';
+import StoreBase from './store-base.js';
+import uniqueId from '../utils/unique-id.js';
 
 class LockStoreBase extends StoreBase {
   async takeLock(lockKey) {

@@ -1,13 +1,14 @@
+import url from 'url';
 import glob from 'glob';
 import path from 'path';
 import yaml from 'yaml';
 import { promisify } from 'util';
 import { promises as fs } from 'fs';
-import Logger from '../common/logger';
+import Logger from '../common/logger.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
-const RESOURCES_SEARCH_PATTERN = path.join(__dirname, '../**/*.yml');
+const RESOURCES_SEARCH_PATTERN = url.fileURLToPath(new URL('../**/*.yml', import.meta.url));
 
 const kebabToCamel = str => str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
 

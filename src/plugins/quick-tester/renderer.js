@@ -1,4 +1,4 @@
-import QuickTesterDisplay from './display/quick-tester-display';
+import QuickTesterDisplay from './display/quick-tester-display.js';
 
 class QuickTester {
   static get typeName() { return 'quick-tester'; }

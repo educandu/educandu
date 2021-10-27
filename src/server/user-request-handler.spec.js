@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import events from 'events';
 import httpMocks from 'node-mocks-http';
-import UserRequestHandler from './user-request-handler';
-import { SAVE_USER_RESULT } from '../domain/user-management';
+import UserRequestHandler from './user-request-handler.js';
+import { SAVE_USER_RESULT } from '../domain/user-management.js';
 
 describe('user-request-handler', () => {
 

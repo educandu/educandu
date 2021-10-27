@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import icu from 'i18next-icu';
 import { initReactI18next } from 'react-i18next';
-import { SUPPORTED_UI_LANGUAGES } from './ui-language';
+import { SUPPORTED_UI_LANGUAGES } from './ui-language.js';
 
 const DEFAULT_NAMESPACE = 'default';
 

@@ -1,4 +1,4 @@
-import VideoEditor from './editing/video-editor';
+import VideoEditor from './editing/video-editor.js';
 
 class Video {
   static get typeName() { return 'video'; }

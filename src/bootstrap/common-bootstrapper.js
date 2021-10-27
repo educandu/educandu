@@ -1,4 +1,4 @@
-import { Container } from '../common/di';
+import { Container } from '../common/di.js';
 
 export function createContainer() {
   const container = new Container();

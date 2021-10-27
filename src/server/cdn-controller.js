@@ -1,15 +1,15 @@
 import os from 'os';
 import multer from 'multer';
 import express from 'express';
-import urls from '../utils/urls';
+import urls from '../utils/urls.js';
 import parseBool from 'parseboolean';
-import Cdn from '../repositories/cdn';
+import Cdn from '../repositories/cdn.js';
 import createHttpError from 'http-errors';
-import permissions from '../domain/permissions';
-import fileNameHelper from '../utils/file-name-helper';
-import needsPermission from '../domain/needs-permission-middleware';
-import { validateBody, validateQuery } from '../domain/validation-middleware';
-import { getObjectsQuerySchema, postObjectsBodySchema } from '../domain/schemas/cdn-schemas';
+import permissions from '../domain/permissions.js';
+import fileNameHelper from '../utils/file-name-helper.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
+import { validateBody, validateQuery } from '../domain/validation-middleware.js';
+import { getObjectsQuerySchema, postObjectsBodySchema } from '../domain/schemas/cdn-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });

@@ -1,4 +1,4 @@
-import IframeEditor from './editing/iframe-editor';
+import IframeEditor from './editing/iframe-editor.js';
 
 class Iframe {
   static get typeName() { return 'iframe'; }

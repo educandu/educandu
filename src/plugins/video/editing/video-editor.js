@@ -1,13 +1,13 @@
 import React from 'react';
 import autoBind from 'auto-bind';
-import validation from '../../../ui/validation';
 import { withTranslation } from 'react-i18next';
 import { Form, Input, Radio, Switch } from 'antd';
-import { inject } from '../../../components/container-context';
-import CdnFilePicker from '../../../components/cdn-file-picker';
-import ClientConfig from '../../../bootstrap/client-config';
-import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types';
+import validation from '../../../ui/validation.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { inject } from '../../../components/container-context.js';
+import CdnFilePicker from '../../../components/cdn-file-picker.js';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
+import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;

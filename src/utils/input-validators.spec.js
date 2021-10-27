@@ -1,4 +1,4 @@
-import sut from './input-validators';
+import sut from './input-validators.js';
 
 describe.only('input-validators', () => {
 

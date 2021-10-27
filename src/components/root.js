@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container } from '../common/di';
-import { UserProvider } from './user-context';
-import { RequestProvider } from './request-context';
-import { LanguageProvider } from './language-context';
-import { SettingsProvider } from './settings-context';
-import { ContainerProvider } from './container-context';
-import { userProps, requestProps, settingsProps } from '../ui/default-prop-types';
+import { Container } from '../common/di.js';
+import { UserProvider } from './user-context.js';
+import { RequestProvider } from './request-context.js';
+import { LanguageProvider } from './language-context.js';
+import { SettingsProvider } from './settings-context.js';
+import { ContainerProvider } from './container-context.js';
+import { userProps, requestProps, settingsProps } from '../ui/default-prop-types.js';
 
 function Root({ request, user, container, initialState, settings, language, PageComponent }) {
   return (

@@ -1,19 +1,19 @@
 import React from 'react';
-import Page from '../page';
+import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls';
-import ElmuLogo from '../elmu-logo';
-import Countdown from '../countdown';
-import Logger from '../../common/logger';
+import urls from '../../utils/urls.js';
+import ElmuLogo from '../elmu-logo.js';
+import Countdown from '../countdown.js';
 import { Form, Input, Button } from 'antd';
-import { inject } from '../container-context';
-import errorHelper from '../../ui/error-helper';
+import Logger from '../../common/logger.js';
+import { inject } from '../container-context.js';
+import errorHelper from '../../ui/error-helper.js';
 import { withTranslation, Trans } from 'react-i18next';
-import UserApiClient from '../../services/user-api-client';
-import { translationProps } from '../../ui/default-prop-types';
+import UserApiClient from '../../services/user-api-client.js';
+import { translationProps } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
 

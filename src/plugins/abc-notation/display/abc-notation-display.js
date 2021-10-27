@@ -1,10 +1,10 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import abcjs from '../../../common/abcjs-import';
-import { inject } from '../../../components/container-context';
-import { sectionDisplayProps } from '../../../ui/default-prop-types';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
+import abcjs from '../../../common/abcjs-import.js';
+import { inject } from '../../../components/container-context.js';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 const abcOptions = {
   paddingtop: 0,

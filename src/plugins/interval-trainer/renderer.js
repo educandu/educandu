@@ -1,4 +1,4 @@
-import IntervalTrainerDisplay from './display/interval-trainer-display';
+import IntervalTrainerDisplay from './display/interval-trainer-display.js';
 
 class IntervalTrainer {
   static get typeName() { return 'interval-trainer'; }

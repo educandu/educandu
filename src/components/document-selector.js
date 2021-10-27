@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import thenby from 'thenby';
 import { Select } from 'antd';
-import { firstBy } from 'thenby';
 import PropTypes from 'prop-types';
 import memoizeOne from 'memoize-one';
-import { documentMetadataShape, documentRevisionShape, documentShape } from '../ui/default-prop-types';
+import React, { useEffect, useState } from 'react';
+import { documentMetadataShape, documentRevisionShape, documentShape } from '../ui/default-prop-types.js';
 
 const { Option } = Select;
 
 const createKeyOptions = memoizeOne(documents => {
   return documents
     .map(doc => ({ key: doc.key, value: doc.key, title: `${doc.key} - ${doc.title}` }))
-    .sort(firstBy(x => x.title));
+    .sort(thenby(x => x.title));
 });
 
 const createUrlOptions = memoizeOne(documents => {
   return documents
     .filter(doc => doc.slug)
     .map(doc => ({ key: doc.key, value: `${doc.namespace}/${doc.slug}`, title: `${doc.namespace}/${doc.slug}` }))
-    .sort(firstBy(x => x.title));
+    .sort(thenby(x => x.title));
 });
 
 function DocumentSelector({ size, documents, value, by, onChange }) {

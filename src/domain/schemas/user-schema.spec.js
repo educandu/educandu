@@ -1,5 +1,5 @@
-import { ROLE } from '../role';
-import { validate } from '../validation';
+import { ROLE } from '../role.js';
+import { validate } from '../validation.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -7,7 +7,7 @@ import {
   postUserPasswordResetCompletionBodySchema,
   postUserRolesBodySchema,
   postUserProfileBodySchema
-} from './user-schemas';
+} from './user-schemas.js';
 
 const username = 'joedoe';
 const password = 'joedoe78';

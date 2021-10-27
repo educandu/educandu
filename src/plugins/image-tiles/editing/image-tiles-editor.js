@@ -1,11 +1,11 @@
 import React from 'react';
 import autoBind from 'auto-bind';
-import TileEditor from './tile-editor';
+import TileEditor from './tile-editor.js';
 import { withTranslation } from 'react-i18next';
-import { swapItemsAt, removeItemAt } from '../../../utils/array-utils';
+import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
 import { Form, Menu, Radio, Slider, Button, Dropdown, Modal } from 'antd';
-import ObjectMaxWidthSlider from '../../../components/object-max-width-slider';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
+import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 import { SettingOutlined, PlusOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;

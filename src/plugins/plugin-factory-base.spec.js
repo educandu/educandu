@@ -1,6 +1,6 @@
 import sinon from 'sinon';
-import { Container } from '../common/di';
-import PluginFactoryBase from './plugin-factory-base';
+import { Container } from '../common/di.js';
+import PluginFactoryBase from './plugin-factory-base.js';
 
 describe('document-service', () => {
   const sandbox = sinon.createSandbox();

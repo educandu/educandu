@@ -1,11 +1,11 @@
-import urls from '../utils/urls';
-import Logger from '../common/logger';
+import urls from '../utils/urls.js';
 import createError from 'http-errors';
-import requestHelper from '../utils/request-helper';
-import ServerConfig from '../bootstrap/server-config';
-import ErrorPageRenderer from './error-page-renderer';
+import Logger from '../common/logger.js';
+import requestHelper from '../utils/request-helper.js';
+import ServerConfig from '../bootstrap/server-config.js';
+import ErrorPageRenderer from './error-page-renderer.js';
 
-const logger = new Logger(__filename);
+const logger = new Logger(import.meta.url);
 
 class ErrorController {
   static get inject() { return [ServerConfig, ErrorPageRenderer]; }

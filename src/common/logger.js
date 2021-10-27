@@ -1,9 +1,9 @@
 /* eslint no-process-env: off */
 
 import acho from 'acho';
-import cookie from './cookie';
+import cookie from './cookie.js';
 import formatErrorM from 'format-error';
-import { isBrowser } from '../ui/browser-helper';
+import { isBrowser } from '../ui/browser-helper.js';
 
 const getServerLevel = () => process.env.ELMU_LOG_LEVEL || 'debug';
 const getBrowserLevel = () => cookie.get('ELMU_LOG_LEVEL') || 'debug';

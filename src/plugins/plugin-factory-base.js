@@ -1,4 +1,4 @@
-import { Factory } from '../common/di';
+import { Factory } from '../common/di.js';
 
 class PluginFactoryBase {
   constructor(container, plugins) {

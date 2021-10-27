@@ -2,9 +2,9 @@ import React from 'react';
 import { Collapse } from 'antd';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { inject } from '../../../components/container-context';
-import { sectionDisplayProps } from '../../../ui/default-prop-types';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown';
+import { inject } from '../../../components/container-context.js';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
+import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 const { Panel } = Collapse;
 

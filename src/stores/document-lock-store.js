@@ -1,5 +1,5 @@
-import Database from '../stores/database';
-import LockStoreBase from './lock-store-base';
+import Database from '../stores/database.js';
+import LockStoreBase from './lock-store-base.js';
 
 class DocumentLockStore extends LockStoreBase {
   static get inject() { return [Database]; }

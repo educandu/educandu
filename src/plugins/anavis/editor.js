@@ -1,4 +1,4 @@
-import AnavisEditor from './editing/anavis-editor';
+import AnavisEditor from './editing/anavis-editor.js';
 
 class Anavis {
   static get typeName() { return 'anavis'; }

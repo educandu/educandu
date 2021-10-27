@@ -1,14 +1,14 @@
 import React from 'react';
-import Page from '../page';
+import Page from '../page.js';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { firstBy } from 'thenby';
+import firstBy from 'thenby';
 
 import { Table, Tag } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { searchResultShape } from '../../ui/default-prop-types';
-import { useLanguage } from '../language-context';
-import urls from '../../utils/urls';
+import { searchResultShape } from '../../ui/default-prop-types.js';
+import { useLanguage } from '../language-context.js';
+import urls from '../../utils/urls.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');

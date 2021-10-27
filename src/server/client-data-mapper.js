@@ -1,6 +1,6 @@
-import uniqueId from '../utils/unique-id';
-import privateData from '../domain/private-data';
-import UserService from '../services/user-service';
+import uniqueId from '../utils/unique-id.js';
+import privateData from '../domain/private-data.js';
+import UserService from '../services/user-service.js';
 
 function isProposableSection(section) {
   return !section.deletedOn

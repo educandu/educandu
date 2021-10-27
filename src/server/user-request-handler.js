@@ -1,11 +1,11 @@
 import passport from 'passport';
-import urls from '../utils/urls';
-import PageRenderer from '../server/page-renderer';
-import UserService from '../services/user-service';
-import MailService from '../services/mail-service';
-import requestHelper from '../utils/request-helper';
-import ClientDataMapper from './client-data-mapper';
-import { SAVE_USER_RESULT } from '../domain/user-management';
+import urls from '../utils/urls.js';
+import PageRenderer from '../server/page-renderer.js';
+import UserService from '../services/user-service.js';
+import MailService from '../services/mail-service.js';
+import requestHelper from '../utils/request-helper.js';
+import ClientDataMapper from './client-data-mapper.js';
+import { SAVE_USER_RESULT } from '../domain/user-management.js';
 
 class UserRequestHandler {
   static get inject() { return [UserService, MailService, ClientDataMapper, PageRenderer]; }

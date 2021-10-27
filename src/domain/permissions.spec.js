@@ -1,5 +1,5 @@
-import { ROLE } from './role';
-import sut from './permissions';
+import { ROLE } from './role.js';
+import sut from './permissions.js';
 
 describe('permissions', () => {
 

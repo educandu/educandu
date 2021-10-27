@@ -1,11 +1,11 @@
 import by from 'thenby';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
-import { useService } from '../container-context';
-import { useLanguage } from '../language-context';
+import { useService } from '../container-context.js';
+import { useLanguage } from '../language-context.js';
 import React, { useState, useEffect } from 'react';
-import CountryFlagAndName from './country-flag-and-name';
-import LanguageNameProvider from '../../data/language-name-provider';
+import CountryFlagAndName from './country-flag-and-name.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
 
 const Option = Select.Option;
 

@@ -2,7 +2,7 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import { Input, Form } from 'antd';
 import { withTranslation } from 'react-i18next';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types';
+import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const { TextArea } = Input;
 

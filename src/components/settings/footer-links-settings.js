@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useService } from '../container-context';
-import { useLanguage } from '../language-context';
-import SettingsDocumentsTable from './settings-documents-table';
-import LanguageNameProvider from '../../data/language-name-provider';
-import CountryFlagAndName from '../localization/country-flag-and-name';
-import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types';
+import { useService } from '../container-context.js';
+import { useLanguage } from '../language-context.js';
+import SettingsDocumentsTable from './settings-documents-table.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const hasValue = value => value && String(value).trim();
 
