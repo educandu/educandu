@@ -38,14 +38,15 @@ const searchResultsProjection = {
 
 const getTagsQuery = searchString => [
   { $unwind: '$tags' },
-  { $match:
-    { $and: [
-      {
-        tags: { $regex: `.*${searchString}.*`, $options: 'i' }
-      }, {
-        slug: { $ne: null }
-      }
-    ] } },
+  {
+    $match:
+    {
+      $and: [
+        { tags: { $regex: `.*${searchString}.*`, $options: 'i' } },
+        { slug: { $ne: null } }
+      ]
+    }
+  },
   { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
   {
     $project: {
