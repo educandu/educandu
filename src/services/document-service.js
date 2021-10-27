@@ -27,9 +27,18 @@ const metadataProjection = {
   tags: 1
 };
 
+const searchResultsProjection = {
+  title: 1,
+  key: 1,
+  slug: 1,
+  contributors: 1,
+  updatedOn: 1,
+  tags: 1
+};
+
 const getTagsQuery = searchString => [
   { $unwind: '$tags' },
-  { $match: { tags: { $regex: `.*${searchString}.*` } } },
+  { $match: { tags: { $regex: `.*${searchString}.*`, $options: 'i' } } },
   { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
   {
     $project: {
@@ -71,6 +80,10 @@ class DocumentService {
 
   getDocumentsMetadataByKeys(documentKeys) {
     return this.documentStore.find({ _id: { $in: documentKeys } }, { sort: lastUpdatedFirst, projection: metadataProjection });
+  }
+
+  getDocumentsByTags(searchTags) {
+    return this.documentStore.find({ tags: { $all: searchTags } }, { projection: searchResultsProjection });
   }
 
   getDocumentByKey(documentKey) {

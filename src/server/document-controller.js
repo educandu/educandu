@@ -90,14 +90,15 @@ class DocumentController {
     });
 
     router.get('/search', async (req, res) => {
-      const slug = req.params[0] || '';
-      const doc = await this.documentService.getDocumentByNamespaceAndSlug('articles', slug);
-      if (!doc) {
-        throw new NotFound();
+      const { tags } = req.query;
+      const searchTags = Array.isArray(tags) ? tags : [tags];
+      const docs = await this.documentService.getDocumentsByTags(searchTags);
+
+      if (!docs) {
+        res.send([]);
       }
 
-      const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
-      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { documentOrRevision: mappedDoc, type: 'document' });
+      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
     });
   }
 

@@ -51,7 +51,7 @@ function Index({ initialState, documentApiClient }) {
         {currentHomeLanguage && (
           <div className="IndexPage-search">
             <Select
-              mode="tags"
+              mode="multiple"
               size="large"
               style={{ width: '100%' }}
               tokenSeparators={[' ', '\t']}
