@@ -1069,10 +1069,10 @@
   resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.4.0.tgz#c3c5ae543c897caa9c2a68630bed355be5f9990f"
   integrity sha512-JZButFdZ1+/xAfpguQHoabIXkcqRRKpMrWKBkpEZZyxfY9C1DpADFB8PEqGSTeFr135SaTRfKqGKx5xSCLI7ZQ==
 
-"@educandu/node-jsx-loader@~2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@educandu/node-jsx-loader/-/node-jsx-loader-2.0.0.tgz#23b56ab36aae1ebdee65116f9d56c8299a73bba5"
-  integrity sha512-DJijD1Fp9C3tsS2nEDerokfXc75Jo4i3ldHlbzYoTmg+voeUW7UEHqQJKP+KpFHCuRMDa8xk2QulMkmhLEbXdQ==
+"@educandu/node-jsx-loader@~2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@educandu/node-jsx-loader/-/node-jsx-loader-2.1.0.tgz#5bfc45f66694969a89be379fe678b883e9c6f331"
+  integrity sha512-r9VsMj8uLCmIe+lP+qyfRwDbNnzpaXpKEVeDVyAt9/b4VlRazF37Z5vObXGNxMoLm8V6sxodzfQuNIWnY2clfg==
   dependencies:
     esbuild "^0.13.9"
 
