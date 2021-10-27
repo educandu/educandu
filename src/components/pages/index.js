@@ -38,6 +38,10 @@ function Index({ initialState }) {
     }
   }, [documentApiClient]);
 
+  const handleSelectedTagsChanged = selectedValues => {
+    setSelectedTags(selectedValues);
+  };
+
   const languageNames = languageNameProvider.getData(language);
 
   return (
@@ -66,7 +70,7 @@ function Index({ initialState }) {
               tokenSeparators={[' ', '\t']}
               value={selectedTags}
               onSearch={getTagSuggestions}
-              onChange={selectedValues => { setSelectedTags(selectedValues); }}
+              onChange={handleSelectedTagsChanged}
               options={tagSuggestions.map(tag => ({ value: tag, key: tag }))}
               />
             <Button
