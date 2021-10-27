@@ -5,16 +5,17 @@ import PropTypes from 'prop-types';
 import { getHomeUrl, getSearchPath } from '../../utils/urls.js';
 import ElmuLogo from '../elmu-logo.js';
 import { Button, Select } from 'antd';
-import { useService, inject } from '../container-context.js';
+import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 
-function Index({ initialState, documentApiClient }) {
+function Index({ initialState }) {
   const [tagSuggestions, setTagSuggestions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const documentApiClient = useService(DocumentApiClient);
 
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
@@ -88,6 +89,4 @@ Index.propTypes = {
   }).isRequired
 };
 
-export default inject({
-  documentApiClient: DocumentApiClient
-}, Index);
+export default Index;
