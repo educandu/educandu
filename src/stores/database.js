@@ -44,9 +44,8 @@ class Database {
     this._db = this._mongoClient.db();
   }
 
-  async createCollections() {
-    const promises = collectionSpecs.map(collectionSpec => this.createCollection(collectionSpec));
-    await Promise.all(promises);
+  async checkDb() {
+    await Promise.all(collectionSpecs.map(collectionSpec => this.createCollection(collectionSpec)));
   }
 
   async createCollection(collectionSpec) {
@@ -89,9 +88,7 @@ class Database {
     await this._mongoClient.close();
   }
 
-  async runMigrationScripts(mongoClient) {
-    const db = mongoClient.db();
-
+  async runMigrationScripts() {
     const migrationsDirectory = url.fileURLToPath(new URL('../../migrations', import.meta.url));
     const allFilesInMigrationDirectory = await pGlob(path.resolve(migrationsDirectory, './*.js'));
     const migrationFileNames = allFilesInMigrationDirectory
@@ -100,15 +97,15 @@ class Database {
 
     const migrations = await Promise.all(migrationFileNames.map(async fileName => {
       const Migration = (await import(url.pathToFileURL(fileName).href)).default;
-      const instance = new Migration(db, mongoClient);
+      const instance = new Migration(this._db, this._mongoClient);
       instance.name = path.basename(fileName);
       return instance;
     }));
 
     const umzug = new Umzug({
       migrations,
-      storage: new MongoDBStorage({ collection: db.collection('migrations') }),
-      logger: console
+      storage: new MongoDBStorage({ collection: this._db.collection('migrations') }),
+      logger
     });
 
     umzug.on('migrated', ({ name }) => logger.info(`Finished migrating ${name}`));
@@ -116,23 +113,9 @@ class Database {
     await umzug.up();
   }
 
-  static async create({ connectionString, runDbMigration }) {
-
+  static async create({ connectionString }) {
     const database = new Database(connectionString);
     await database.connect();
-
-    if (runDbMigration) {
-      try {
-        logger.info('Starting migrations');
-        await database.runMigrationScripts(database._mongoClient);
-        logger.info('Finished migrations successfully');
-      } catch (error) {
-        logger.error(error);
-        throw error;
-      }
-    }
-
-    await database.createCollections();
     return database;
   }
 }

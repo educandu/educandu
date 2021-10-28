@@ -1,19 +1,20 @@
 /* eslint no-process-env: off */
 
+import parseBool from 'parseboolean';
 import Logger from '../common/logger.js';
 
 const logger = new Logger(import.meta.url);
 
 const env = process.env.ELMU_ENV || 'dev';
-const port = Number(process.env.ELMU_PORT) || 3000;
-const sessionDurationInMinutes = 60;
 
 logger.info('Environment is set to %s', env);
 
 const config = {
   env,
-  port,
-  sessionDurationInMinutes
+  port: Number(process.env.ELMU_PORT) || 3000,
+  sessionDurationInMinutes: Number(process.env.ELMU_SESSION_DURATION_IN_MINUTES) ?? 60,
+  skipDbMigrations: parseBool(process.env.ELMU_SKIP_DB_MIGRATIONS || false.toString()),
+  skipDbChecks: parseBool(process.env.ELMU_SKIP_DB_CHECKS || false.toString())
 };
 
 switch (env) {
@@ -34,7 +35,6 @@ switch (env) {
       port: 8025,
       ignoreTLS: true
     };
-    config.runDbMigration = false;
     break;
 
   case 'test':
@@ -54,7 +54,6 @@ switch (env) {
       port: 25,
       ignoreTLS: true
     };
-    config.runDbMigration = false;
     break;
 
   case 'stag':
@@ -71,7 +70,6 @@ switch (env) {
     config.cdnRootUrl = process.env.ELMU_CDN_ROOT_URL;
     config.sessionSecret = process.env.ELMU_SESSION_SECRET;
     config.smtpOptions = JSON.parse(process.env.ELMU_SMTP_OPTIONS);
-    config.runDbMigration = true;
     break;
   default:
     throw new Error(`ELMU_ENV has invalid value ${env}.`);
@@ -79,7 +77,7 @@ switch (env) {
 
 class ServerConfig {
   constructor(values = {}) {
-    Object.assign(this, values, config);
+    Object.assign(this, { ...config, ...values });
   }
 
   exportClientConfigValues() {
