@@ -115,7 +115,15 @@ export function createFullyQualifiedUrl(pathname) {
 }
 
 export function getSearchPath(tags) {
-  return `${createFullyQualifiedUrl(searchPath)}?tags=${tags.map(tag => urlencode(tag)).join('&tags=')}`;
+  const url = new URL(document.location);
+  url.searchParams.delete('language');
+  url.pathname = searchPath;
+
+  tags.forEach(tag => {
+    url.searchParams.append('tags', tag);
+  });
+
+  return url.href;
 }
 
 export default {
