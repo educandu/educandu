@@ -12,16 +12,16 @@ export const SEE_USER_EMAIL = 'see-user-email';
 export const MIGRATE_DATA = 'migrate-data';
 
 const rolesForPermission = {
-  [EDIT_DOC]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
-  [VIEW_DOCS]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
-  [EDIT_FILE]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
-  [VIEW_FILES]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
-  [CREATE_FILE]: [ROLE.superUser, ROLE.superEditor, ROLE.editor, ROLE.user],
-  [EDIT_SETTINGS]: [ROLE.superUser],
-  [EDIT_USERS]: [ROLE.superUser],
-  [HARD_DELETE_SECTION]: [ROLE.superUser],
-  [SEE_USER_EMAIL]: [ROLE.superUser],
-  [MIGRATE_DATA]: [ROLE.superUser]
+  [EDIT_DOC]: [ROLE.admin, ROLE.user],
+  [VIEW_DOCS]: [ROLE.admin, ROLE.user],
+  [EDIT_FILE]: [ROLE.admin, ROLE.user],
+  [VIEW_FILES]: [ROLE.admin, ROLE.user],
+  [CREATE_FILE]: [ROLE.admin, ROLE.user],
+  [EDIT_SETTINGS]: [ROLE.admin],
+  [EDIT_USERS]: [ROLE.admin],
+  [HARD_DELETE_SECTION]: [ROLE.admin],
+  [SEE_USER_EMAIL]: [ROLE.admin],
+  [MIGRATE_DATA]: [ROLE.admin]
 };
 
 export function hasUserPermission(user, permission) {
