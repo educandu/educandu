@@ -1,7 +1,6 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import abcjs from '../../../common/abcjs-import.js';
 import { inject } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
@@ -23,14 +22,26 @@ class AbcNotationDisplay extends React.PureComponent {
   constructor(props) {
     super(props);
     autoBind(this);
+    this.abcjs = null;
+    this.canRenderAbc = false;
     this.abcContainerRef = React.createRef();
     this.midiContainerRef = React.createRef();
   }
 
-  componentDidMount() {
-    const { content } = this.props;
-    abcjs.renderAbc(this.abcContainerRef.current, content.abcCode, abcOptions);
-    abcjs.renderMidi(this.midiContainerRef.current, content.abcCode, midiOptions);
+  async componentDidMount() {
+    this.canRenderAbc = true;
+    const { default: abcjs } = await import('abcjs/midi.js');
+    this.abcjs = abcjs;
+
+    if (this.canRenderAbc) {
+      const { content } = this.props;
+      this.abcjs.renderAbc(this.abcContainerRef.current, content.abcCode, abcOptions);
+      this.abcjs.renderMidi(this.midiContainerRef.current, content.abcCode, midiOptions);
+    }
+  }
+
+  componentWillUnmount() {
+    this.canRenderAbc = false;
   }
 
   render() {

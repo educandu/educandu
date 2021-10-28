@@ -1,8 +1,8 @@
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import { ConfigProvider } from 'antd';
-import enUS from 'antd/lib/locale/en_US.js';
-import deDE from 'antd/lib/locale/de_DE.js';
+import enUSNs from 'antd/lib/locale/en_US.js';
+import deDENs from 'antd/lib/locale/de_DE.js';
 import { I18nextProvider } from 'react-i18next';
 import { useService } from './container-context.js';
 import ResourceManager from '../resources/resource-manager.js';
@@ -15,6 +15,12 @@ import {
   UI_LANGUAGE_COOKIE_EXPIRES,
   getLocale
 } from '../resources/ui-language.js';
+
+import 'moment';
+import 'moment/locale/de.js';
+
+const enUS = enUSNs.default || enUSNs;
+const deDE = deDENs.default || deDENs;
 
 const languageContext = React.createContext();
 

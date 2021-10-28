@@ -28,8 +28,8 @@ function PageTemplate({ language, title, content, styles, scripts }) {
 
   const scriptElements = scripts.map((script, index) => {
     return script.src
-      ? (<script key={index.toString()} src={script.src} />)
-      : (<script key={index.toString()} dangerouslySetInnerHTML={{ __html: script.content }} />);
+      ? (<script key={index.toString()} type="module" src={script.src} />)
+      : (<script key={index.toString()} type="module" dangerouslySetInnerHTML={{ __html: script.content }} />);
   });
 
   return (

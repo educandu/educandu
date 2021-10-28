@@ -85,7 +85,6 @@ class PageRenderer extends PageRendererBase {
 
     const scripts = [
       { content: inlineScript },
-      { src: '/commons.js' },
       { src: `/${bundleName}.js` }
     ];
 
