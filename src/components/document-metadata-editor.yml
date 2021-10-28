@@ -19,3 +19,6 @@ tags:
 invalidTags:
   en: At least one tag must be provided and all tags must be between 3 and 30 characters
   de: Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein
+invalidSlug:
+  en: The URL path must contain only lower case letters, hyphons, slashes and digits. Each slash or hyphon must be followed at least one letter or digit
+  de: Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten. Auf jeden Schrägstrich oder Bindestrich muss mindestens ein Buchstabe oder eine Ziffer folgen

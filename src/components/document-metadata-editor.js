@@ -13,6 +13,7 @@ import LanguageSelect from './localization/language-select.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
+import { slugValidationPattern } from '../common/validation-patterns.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -26,8 +27,25 @@ class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
-    const { documentRevision } = props;
-    this.state = { mode: MODE_PREVIEW, tagsValidationStatus: documentRevision.tags.length ? '' : 'error' };
+    this.state = {
+      mode: MODE_PREVIEW,
+      tagsValidationStatus: '',
+      slugValidationStatus: ''
+    };
+  }
+
+  componentDidMount() {
+    this.validateMetadata(this.props.documentRevision);
+  }
+
+  validateMetadata(metadata) {
+    const isValidSlug = slugValidationPattern.test(metadata.slug);
+    this.setState({ slugValidationStatus: isValidSlug ? '' : 'error' });
+
+    const areValidTags = metadata.tags.length > 0 && metadata.tags.every(tag => isValidTag({ tag }));
+    this.setState({ tagsValidationStatus: areValidTags ? '' : 'error' });
+
+    return isValidSlug && areValidTags;
   }
 
   handleEditClick() {
@@ -54,18 +72,18 @@ class DocumentMetadataEditor extends React.Component {
 
   handleSlugChange(event) {
     const { onChanged, documentRevision } = this.props;
-    onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
+    const metadata = { ...documentRevision, slug: event.target.value };
+    onChanged({ metadata, invalidMetadata: !this.validateMetadata(metadata) });
   }
 
   handleTagsChange(selectedValues) {
     const { onChanged, documentRevision } = this.props;
-    const areTagsValid = selectedValues.length > 0 && selectedValues.every(tag => isValidTag({ tag }));
-    this.setState({ tagsValidationStatus: areTagsValid ? '' : 'error' });
-    onChanged({ metadata: { ...documentRevision, tags: selectedValues }, invalidMetadata: !areTagsValid });
+    const metadata = { ...documentRevision, tags: selectedValues };
+    onChanged({ metadata, invalidMetadata: !this.validateMetadata(metadata) });
   }
 
   render() {
-    const { mode, tagsValidationStatus } = this.state;
+    const { mode, tagsValidationStatus, slugValidationStatus } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
     const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags]);
@@ -95,7 +113,10 @@ class DocumentMetadataEditor extends React.Component {
             <br />
             <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={this.handleLanguageChange} />
             <br />
-            <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
+            <span>{t('slug')}:</span>
+            <Form.Item validateStatus={slugValidationStatus} help={slugValidationStatus && t('invalidSlug')}>
+              <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
+            </Form.Item>
             <span>{t('tags')}</span>:
             <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
               <Select

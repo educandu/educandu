@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { slugValidationPattern } from '../../common/validation-patterns.js';
 
 const idOrKeySchema = joi.string().alphanum().min(15).max(30);
 
@@ -20,9 +21,11 @@ export const getRevisionsByKeyQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });
 
+export const slugSchema = joi.string().pattern(slugValidationPattern).allow('').required();
+
 export const createRevisionBodySchema = joi.object({
   title: joi.string().required(),
-  slug: joi.string().pattern(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/).allow('').required(),
+  slug: slugSchema,
   namespace: joi.any().valid('articles').required(),
   language: joi.string().case('lower').required(),
   sections: joi.array().items(sectionSchema).required(),
