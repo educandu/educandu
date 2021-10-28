@@ -37,7 +37,7 @@ class Login extends React.Component {
         this.showLoginError();
       }
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
   }
 

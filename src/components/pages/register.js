@@ -55,7 +55,7 @@ class Register extends React.Component {
           throw new Error(`Unknown result: ${result}`);
       }
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
   }
 

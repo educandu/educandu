@@ -70,7 +70,7 @@ class Account extends React.Component {
           throw new Error(`Unknown result: ${result}`);
       }
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
   }
 
@@ -81,7 +81,7 @@ class Account extends React.Component {
       user.profile = profile;
       message.success(t('profile.updateSuccessMessage'));
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
   }
 
@@ -130,7 +130,7 @@ class Account extends React.Component {
       await userApiClient.requestPasswordReset({ email: user.email });
       message.success(t('account.passwordResetEmailSent', { email: user.email }));
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
   }
 

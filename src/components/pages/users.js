@@ -182,7 +182,7 @@ class Users extends React.Component {
         await userApiClient.saveUserRoles({ userId, roles: newRoles });
       }
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
 
     this.setState({

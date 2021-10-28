@@ -32,7 +32,7 @@ class ResetPassword extends React.Component {
       await userApiClient.requestPasswordReset({ email });
       this.setState({ isRequestSent: true });
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
   }
 

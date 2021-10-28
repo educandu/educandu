@@ -102,7 +102,7 @@ class Doc extends React.Component {
             currentRevision: documentRevisions[documentRevisions.length - 1]
           });
         } catch (error) {
-          errorHelper.handleApiError(error, logger);
+          errorHelper.handleApiError({ error, logger, t });
           throw error;
         }
       }
@@ -125,7 +125,7 @@ class Doc extends React.Component {
     try {
       await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
 
     const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);

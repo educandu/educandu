@@ -34,7 +34,7 @@ class CompletePasswordReset extends React.Component {
       const { user } = await userApiClient.completePasswordReset({ passwordResetRequestId, password });
       this.setState({ user });
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger });
     }
   }
 

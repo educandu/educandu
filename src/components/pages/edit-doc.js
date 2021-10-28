@@ -266,6 +266,7 @@ class EditDoc extends React.Component {
   }
 
   async handleSaveClick() {
+    const { t } = this.props;
     const { editedDocumentRevision, proposedSectionKeys } = this.state;
     const data = {
       title: editedDocumentRevision.title,
@@ -288,7 +289,7 @@ class EditDoc extends React.Component {
       const { documentRevision } = await this.documentApiClient.saveDocument(data);
       this.setState(prevState => this.mergeStateFromNewDocumentRevision(prevState, documentRevision));
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 

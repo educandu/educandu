@@ -1,11 +1,20 @@
 import { notification } from 'antd';
 
-export function handleApiError(error, logger) {
+const tryToTranslateMessage = (error, t) => {
+  if (error.status !== 400 && !!t) {
+    return null;
+  }
+
+  const isSlugInvalid = error.details.findIndex(detail => detail.context?.key === 'slug') !== -1;
+  return isSlugInvalid ? t('common:invalidSlug') : null;
+};
+
+export function handleApiError({ error, logger, t }) {
   const err = error.response && error.response.body ? error.response.body : error;
 
   notification.error({
     message: `${err.name || 'Fehler'}`,
-    description: err.message,
+    description: tryToTranslateMessage(err, t) || err.message,
     duration: 10
   });
 
