@@ -21,6 +21,7 @@ import ResourceManager from '../resources/resource-manager.js';
 import ResetPassword from '../components/pages/reset-password.js';
 import CompleteRegistration from '../components/pages/complete-registration.js';
 import CompletePasswordReset from '../components/pages/complete-password-reset.js';
+import Search from '../components/pages/search.js';
 
 const pageComponentsByName = {
   'article': Article,
@@ -35,7 +36,8 @@ const pageComponentsByName = {
   'register': Register,
   'reset-password': ResetPassword,
   'settings': Settings,
-  'users': Users
+  'users': Users,
+  'search': Search
 };
 
 class PageRenderer extends PageRendererBase {

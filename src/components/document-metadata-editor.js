@@ -13,6 +13,8 @@ import LanguageSelect from './localization/language-select.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
+import DocumentApiClient from '../services/document-api-client.js';
+import { handleApiError } from '../ui/error-helper.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -26,8 +28,13 @@ class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
+    this.documentApiClient = props.documentApiClient;
     const { documentRevision } = props;
-    this.state = { mode: MODE_PREVIEW, tagsValidationStatus: documentRevision.tags.length ? '' : 'error' };
+    this.state = {
+      mode: MODE_PREVIEW,
+      tagsValidationStatus: documentRevision.tags.length ? '' : 'error',
+      tagSuggestions: []
+    };
   }
 
   handleEditClick() {
@@ -53,22 +60,41 @@ class DocumentMetadataEditor extends React.Component {
   }
 
   handleSlugChange(event) {
-    const { onChanged, documentRevision } = this.props;
-    onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
+    try {
+      const { onChanged, documentRevision } = this.props;
+      onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
+    } catch (e) {
+      handleApiError(e);
+    }
+  }
+
+  async handleTagSuggestionsRefresh(tagSuggestionsQuery) {
+    try {
+      if (tagSuggestionsQuery.length !== 3) {
+        return;
+      }
+      const tagSuggestions = await this.documentApiClient.getRevisionTagSuggestions(tagSuggestionsQuery);
+      this.setState({ tagSuggestions });
+    } catch (e) {
+      handleApiError(e);
+    }
   }
 
   handleTagsChange(selectedValues) {
     const { onChanged, documentRevision } = this.props;
     const areTagsValid = selectedValues.length > 0 && selectedValues.every(tag => isValidTag({ tag }));
-    this.setState({ tagsValidationStatus: areTagsValid ? '' : 'error' });
+    this.setState({
+      tagsValidationStatus: areTagsValid ? '' : 'error',
+      tagSuggestions: []
+    });
     onChanged({ metadata: { ...documentRevision, tags: selectedValues }, invalidMetadata: !areTagsValid });
   }
 
   render() {
-    const { mode, tagsValidationStatus } = this.state;
+    const { mode, tagsValidationStatus, tagSuggestions } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
-    const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags]);
+    const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags, ...tagSuggestions]);
 
     let docLanguage;
     let componentToShow;
@@ -102,8 +128,8 @@ class DocumentMetadataEditor extends React.Component {
                 mode="tags"
                 tokenSeparators={[' ', '\t']}
                 value={documentRevision.tags}
-                style={{ width: '100%' }}
-                onChange={selectedValue => this.handleTagsChange(selectedValue)}
+                onSearch={this.handleTagSuggestionsRefresh}
+                onChange={selectedValues => this.handleTagsChange(selectedValues)}
                 options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
             </Form.Item>
@@ -141,11 +167,13 @@ DocumentMetadataEditor.propTypes = {
   ...translationProps,
   ...languageProps,
   ...settingsProps,
+  documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   documentRevision: documentRevisionShape.isRequired,
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired,
   onChanged: PropTypes.func.isRequired
 };
 
 export default withTranslation('documentMetadataEditor')(withSettings(withLanguage(inject({
-  languageNameProvider: LanguageNameProvider
+  languageNameProvider: LanguageNameProvider,
+  documentApiClient: DocumentApiClient
 }, DocumentMetadataEditor))));

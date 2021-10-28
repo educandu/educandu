@@ -1,30 +1,45 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import Page from '../page.js';
-import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
-import { Button, Input } from 'antd';
-import urls from '../../utils/urls.js';
+import PropTypes from 'prop-types';
+import { getHomeUrl, getSearchPath } from '../../utils/urls.js';
 import ElmuLogo from '../elmu-logo.js';
-import { useRequest } from '../request-context.js';
+import { Button, Select } from 'antd';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
-
-const { Search } = Input;
+import DocumentApiClient from '../../services/document-api-client.js';
+import { handleApiError } from '../../ui/error-helper.js';
 
 function Index({ initialState }) {
-  const req = useRequest();
+  const [tagSuggestions, setTagSuggestions] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const documentApiClient = useService(DocumentApiClient);
+
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
   const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
-  const handleSearchClick = searchTerm => {
-    const googleTerm = [`site:${req.hostInfo.host}`, searchTerm].filter(x => x).join(' ');
-    const link = `https://www.google.com/search?q=${encodeURIComponent(googleTerm)}`;
-    window.open(link, '_blank');
+  const handleSearchClick = tags => {
+    window.location = getSearchPath(tags);
+  };
+
+  const getTagSuggestions = useCallback(async tagSuggestionsQuery => {
+    if (tagSuggestionsQuery.length !== 3) {
+      return;
+    }
+    try {
+      setTagSuggestions(await documentApiClient.getDocumentTagSuggestions(tagSuggestionsQuery));
+    } catch (e) {
+      handleApiError(e);
+    }
+  }, [documentApiClient]);
+
+  const handleSelectedTagsChanged = selectedValues => {
+    setSelectedTags(selectedValues);
   };
 
   const languageNames = languageNameProvider.getData(language);
@@ -37,7 +52,7 @@ function Index({ initialState }) {
         </div>
         <div className="IndexPage-languageLinks">
           {homeLanguages.map((hl, index) => (
-            <Button key={index.toString()} type="link" href={urls.getHomeUrl(index === 0 ? null : hl.language)}>
+            <Button key={index.toString()} type="link" href={getHomeUrl(index === 0 ? null : hl.language)}>
               <CountryFlagAndName
                 code={languageNames[hl.language]?.flag || null}
                 name={languageNames[hl.language]?.name || null}
@@ -48,12 +63,25 @@ function Index({ initialState }) {
         </div>
         {currentHomeLanguage && (
           <div className="IndexPage-search">
-            <Search
-              placeholder={currentHomeLanguage.searchFieldPlaceholder}
-              enterButton={currentHomeLanguage.searchFieldButton}
+            <Select
+              mode="multiple"
               size="large"
-              onSearch={handleSearchClick}
+              className="IndexPage-searchInput"
+              tokenSeparators={[' ', '\t']}
+              value={selectedTags}
+              onSearch={getTagSuggestions}
+              onChange={handleSelectedTagsChanged}
+              options={tagSuggestions.map(tag => ({ value: tag, key: tag }))}
               />
+            <Button
+              size="large"
+              onClick={() => handleSearchClick(selectedTags)}
+              type="primary"
+              disabled={!selectedTags.length}
+              className="IndexPage-searchButton"
+              >
+              {currentHomeLanguage.searchFieldPlaceholder}
+            </Button>
           </div>
         )}
         {doc && <DocView documentOrRevision={doc} />}

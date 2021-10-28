@@ -113,6 +113,14 @@ export const sectionShape = PropTypes.shape({
   content: PropTypes.object
 });
 
+export const searchResultShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  updatedOn: PropTypes.string.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired
+});
+
 const commonDocumentOrRevisionProps = {
   _id: PropTypes.string.isRequired,
   key: PropTypes.string.isRequired,
@@ -144,7 +152,8 @@ export const documentShape = PropTypes.shape({
 export const documentRevisionShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
   sections: PropTypes.arrayOf(sectionShape).isRequired,
-  restoredFrom: PropTypes.string
+  restoredFrom: PropTypes.string,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired
 });
 
 const formItemDimensionShape = PropTypes.shape({

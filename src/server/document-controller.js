@@ -7,7 +7,13 @@ import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery } from '../domain/validation-middleware.js';
-import { getRevisionsByKeyQuerySchema, createRevisionBodySchema, hardDeleteSectionBodySchema, restoreRevisionBodySchema } from '../domain/schemas/document-schemas.js';
+import {
+  getRevisionsByKeyQuerySchema,
+  createRevisionBodySchema,
+  hardDeleteSectionBodySchema,
+  restoreRevisionBodySchema,
+  getSearchDocumentsByTagsSchema
+} from '../domain/schemas/document-schemas.js';
 
 const { NotFound } = httpErrors;
 
@@ -90,6 +96,13 @@ class DocumentController {
       const proposedSections = blueprintRevision ? this.clientDataMapper.createProposedSections(blueprintRevision) : null;
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-doc', { documentRevision, proposedSections });
     });
+
+    router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
+      const { tags } = req.query;
+      const searchTags = Array.isArray(tags) ? tags : [tags];
+      const docs = await this.documentService.getDocumentsByTags(searchTags);
+      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
+    });
   }
 
   registerApi(router) {
@@ -134,6 +147,18 @@ class DocumentController {
       const { documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
       const result = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
       return res.send(result);
+    });
+
+    router.get('/api/v1/docs/revisions/tags/*', async (req, res) => {
+      const query = req.params[0] || '';
+      const result = await this.documentService.findRevisionTags(query);
+      return res.send(result.length ? result[0].uniqueTags : []);
+    });
+
+    router.get('/api/v1/docs/tags/*', async (req, res) => {
+      const query = req.params[0] || '';
+      const result = await this.documentService.findDocumentTags(query);
+      return res.send(result.length ? result[0].uniqueTags : []);
     });
   }
 }
