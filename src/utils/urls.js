@@ -114,7 +114,7 @@ export function createFullyQualifiedUrl(pathname) {
   return url.href;
 }
 
-export function getSearchPath(tags) {
+export function getSearchUrl(tags) {
   const url = new URL(document.location);
   url.searchParams.delete('language');
   url.pathname = searchPath;
@@ -163,5 +163,5 @@ export default {
   getRegisterUrl,
   getResetPasswordUrl,
   createFullyQualifiedUrl,
-  getSearchPath
+  getSearchUrl
 };
