@@ -27,12 +27,12 @@ class ResetPassword extends React.Component {
   }
 
   async requestPasswordReset({ email }) {
+    const { userApiClient, t } = this.props;
     try {
-      const { userApiClient } = this.props;
       await userApiClient.requestPasswordReset({ email });
       this.setState({ isRequestSent: true });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger });
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 

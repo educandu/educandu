@@ -36,8 +36,9 @@ class Register extends React.Component {
   }
 
   async register({ username, password, email }) {
+    const { userApiClient, t } = this.props;
+
     try {
-      const { userApiClient } = this.props;
       const { result, user } = await userApiClient.register({ username, password, email });
       switch (result) {
         case SAVE_USER_RESULT.success:
@@ -55,7 +56,7 @@ class Register extends React.Component {
           throw new Error(`Unknown result: ${result}`);
       }
     } catch (error) {
-      errorHelper.handleApiError({ error, logger });
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 

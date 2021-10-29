@@ -60,7 +60,7 @@ function Settings({ initialState }) {
       setLastSavedSettings({ ...initialState.settings, ...changedSettings });
       setDirtyKeys([]);
     } catch (error) {
-      errorHelper.handleApiError({ error, logger });
+      errorHelper.handleApiError({ error, logger, t });
     } finally {
       setIsUpdating(false);
     }
