@@ -42,6 +42,9 @@ class Database {
     this._mongoClient = await MongoClient.connect(this._connectionString, { useUnifiedTopology: true });
     logger.info('Successfully connected to MongoDB');
     this._db = this._mongoClient.db();
+    collectionSpecs.forEach(spec => {
+      this[spec.name] = this._db.collection(spec.name);
+    });
   }
 
   async checkDb() {
@@ -79,8 +82,6 @@ class Database {
         }
       }
     }
-
-    this[collectionName] = collection;
   }
 
   async dispose() {

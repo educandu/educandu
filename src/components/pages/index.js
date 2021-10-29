@@ -13,9 +13,12 @@ import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js
 import DocumentApiClient from '../../services/document-api-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useTranslation } from 'react-i18next';
+import { useSettings } from '../settings-context.js';
 
 function Index({ initialState }) {
-  const [tagSuggestions, setTagSuggestions] = useState([]);
+  const settings = useSettings();
+
+  const [tagSuggestions, setTagSuggestions] = useState(settings.defaultTags || []);
   const [selectedTags, setSelectedTags] = useState([]);
   const documentApiClient = useService(DocumentApiClient);
   const { t } = useTranslation();
@@ -42,6 +45,7 @@ function Index({ initialState }) {
 
   const handleSelectedTagsChanged = selectedValues => {
     setSelectedTags(selectedValues);
+    setTagSuggestions(settings.defaultTags || []);
   };
 
   const languageNames = languageNameProvider.getData(language);
@@ -69,7 +73,8 @@ function Index({ initialState }) {
               mode="multiple"
               size="large"
               className="IndexPage-searchInput"
-              tokenSeparators={[' ', '\t']}
+              tokenSeparators={[' ']}
+              placeholder={currentHomeLanguage.searchFieldPlaceholder}
               value={selectedTags}
               onSearch={getTagSuggestions}
               onChange={handleSelectedTagsChanged}
@@ -82,7 +87,7 @@ function Index({ initialState }) {
               disabled={!selectedTags.length}
               className="IndexPage-searchButton"
               >
-              {currentHomeLanguage.searchFieldPlaceholder}
+              {currentHomeLanguage.searchFieldButton}
             </Button>
           </div>
         )}
