@@ -4,9 +4,9 @@ import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
 import ElmuServer from '../server/elmu-server.js';
+import resources from '../resources/resources.json';
 import commonBootstrapper from './common-bootstrapper.js';
 import ResourceManager from '../resources/resource-manager.js';
-import ServerResourceLoader from '../resources/server-resource-loader.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -62,9 +62,7 @@ export async function createContainer(configValues = {}) {
   logger.info('Registering CDN');
   container.registerInstance(Cdn, cdn);
 
-  const resourceLoader = new ServerResourceLoader();
-  const resourceBundles = await resourceLoader.loadResourceBundles();
-  const resourceManager = new ResourceManager(resourceBundles);
+  const resourceManager = new ResourceManager(resources);
 
   logger.info('Registering resource manager');
   container.registerInstance(ResourceManager, resourceManager);

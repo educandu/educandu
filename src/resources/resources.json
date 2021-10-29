@@ -1,0 +1,1198 @@
+[
+  {
+    "namespace": "cdnFilePicker",
+    "language": "en",
+    "resources": {
+      "modalTitle": "File browser"
+    }
+  },
+  {
+    "namespace": "cdnFilePicker",
+    "language": "de",
+    "resources": {
+      "modalTitle": "Dateibrowser"
+    }
+  },
+  {
+    "namespace": "confirmationDialogs",
+    "language": "en",
+    "resources": {
+      "areYouSure": "Are you sure?",
+      "deleteSectionConfirmation": "Do you really want to delete the section?",
+      "thisActionIsIrreversible": "This Action is irreversible!",
+      "pleaseSpecifyAReason": "Please specify a reason",
+      "deleteAllRevisions": "Delete all existing revisions of this section",
+      "restoreDocumentRevisionConfirmation": "Do you really want to restore the content of revision {revisionId}?",
+      "confirmPassword": "Password confirmation",
+      "enterPassword": "Please enter a password",
+      "password": "Passsword",
+      "wrongPasswordProvided": "The wrong password was provided"
+    }
+  },
+  {
+    "namespace": "confirmationDialogs",
+    "language": "de",
+    "resources": {
+      "areYouSure": "Sind Sie sicher?",
+      "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
+      "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
+      "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",
+      "deleteAllRevisions": "Alle existierenden Revisionen dieses Abschnitts löschen",
+      "restoreDocumentRevisionConfirmation": "Möchten Sie den Inhalt der Revision {revisionId} wirklich wiederherstellen?",
+      "confirmPassword": "Kennwortbestätigung",
+      "enterPassword": "Bitte geben Sie ein Kennwort an",
+      "password": "Kennwort",
+      "wrongPasswordProvided": "Das Kennwort ist ungültig"
+    }
+  },
+  {
+    "namespace": "creditsFooter",
+    "language": "en",
+    "resources": {
+      "citation": "Article “{title}”, {url}, {date}",
+      "license": "License",
+      "source": "Source",
+      "contributionsBy": "Contributions by",
+      "revisionBy": "Revision created by"
+    }
+  },
+  {
+    "namespace": "creditsFooter",
+    "language": "de",
+    "resources": {
+      "citation": "Artikel »{title}«, {url}, {date}",
+      "license": "Lizenz",
+      "source": "Quelle",
+      "contributionsBy": "Bearbeitungen durch",
+      "revisionBy": "Revision erstellt von"
+    }
+  },
+  {
+    "namespace": "deletedSection",
+    "language": "en",
+    "resources": {
+      "messageTitle": "This content has been deleted"
+    }
+  },
+  {
+    "namespace": "deletedSection",
+    "language": "de",
+    "resources": {
+      "messageTitle": "Dieser Inhalt wurde gelöscht"
+    }
+  },
+  {
+    "namespace": "documentMetadataEditor",
+    "language": "en",
+    "resources": {
+      "header": "Metadata",
+      "title": "Title",
+      "language": "Language",
+      "slug": "URL path",
+      "unassigned": "unassigned",
+      "tags": "Tags",
+      "invalidTags": "At least one tag must be provided and all tags must be between 3 and 30 characters"
+    }
+  },
+  {
+    "namespace": "documentMetadataEditor",
+    "language": "de",
+    "resources": {
+      "header": "Metadaten",
+      "title": "Titel",
+      "language": "Sprache",
+      "slug": "URL-Pfad",
+      "unassigned": "nicht zugewiesen",
+      "tags": "Tags",
+      "invalidTags": "Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein"
+    }
+  },
+  {
+    "namespace": "emailInput",
+    "language": "en",
+    "resources": {
+      "email": "Email address",
+      "enterEmail": "Please enter an email address",
+      "emailIsInvalid": "The value you provided is not a valid email address",
+      "emailIsInUse": "The email address is already registered"
+    }
+  },
+  {
+    "namespace": "emailInput",
+    "language": "de",
+    "resources": {
+      "email": "E-Mail-Adresse",
+      "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
+      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
+      "emailIsInUse": "Die E-Mail-Adresse ist bereits vergeben"
+    }
+  },
+  {
+    "namespace": "loginLogout",
+    "language": "en",
+    "resources": {
+      "logon": "Log on",
+      "logoff": "Log off",
+      "register": "Register",
+      "account": "My account",
+      "logonState": "You are logged on as <0>{username}</0>"
+    }
+  },
+  {
+    "namespace": "loginLogout",
+    "language": "de",
+    "resources": {
+      "logon": "Anmelden",
+      "logoff": "Abmelden",
+      "register": "Registrieren",
+      "account": "Mein Konto",
+      "logonState": "Sie sind angemeldet als <0>{username}</0>"
+    }
+  },
+  {
+    "namespace": "notSupportedSection",
+    "language": "en",
+    "resources": {
+      "messageTitle": "This content is not supported"
+    }
+  },
+  {
+    "namespace": "notSupportedSection",
+    "language": "de",
+    "resources": {
+      "messageTitle": "Dieser Inhalt wird nicht unterstützt"
+    }
+  },
+  {
+    "namespace": "page",
+    "language": "en",
+    "resources": {
+      "profileWarning": "Your user profile is not complete yet.\nClick <0>here</0> in order to edit your profile.\n"
+    }
+  },
+  {
+    "namespace": "page",
+    "language": "de",
+    "resources": {
+      "profileWarning": "Ihr Benutzerprofil ist noch nicht vollständig.\nKlicken Sie <0>hier</0>, um Ihr Profil zu bearbeiten.\n"
+    }
+  },
+  {
+    "namespace": "account",
+    "language": "en",
+    "resources": {
+      "account.headline": "Account",
+      "account.resetPassword": "Reset password",
+      "account.updateSuccessMessage": "Your account was updated successfully.",
+      "account.passwordResetEmailSent": "The password reset link has been sent to {email}",
+      "profile.headline": "Profile",
+      "profile.changePicture": "Change profile picture",
+      "profile.howToChangePicture": "How can I change my profile picture?",
+      "profile.firstName": "First name(s)",
+      "profile.lastName": "Last name",
+      "profile.street": "Street",
+      "profile.streetSupplement": "Street supplement",
+      "profile.postalCode": "Postal code",
+      "profile.city": "City",
+      "profile.country": "Country",
+      "profile.updateSuccessMessage": "Your profile was updated successfully.",
+      "profile.avatarDescription": "ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that ELMU has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
+    }
+  },
+  {
+    "namespace": "account",
+    "language": "de",
+    "resources": {
+      "account.headline": "Konto",
+      "account.resetPassword": "Kennwort wiederherstellen",
+      "account.updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
+      "account.passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
+      "profile.headline": "Profil",
+      "profile.changePicture": "Profilbild ändern",
+      "profile.howToChangePicture": "Wie ändere ich mein Profilbild?",
+      "profile.firstName": "Vorname(n)",
+      "profile.lastName": "Nachname",
+      "profile.street": "Straße",
+      "profile.streetSupplement": "Straße (Zusatz)",
+      "profile.postalCode": "Postleitzahl",
+      "profile.city": "Ort",
+      "profile.country": "Land",
+      "profile.updateSuccessMessage": "Ihr Profil wurde erfolgreich aktualisiert.",
+      "profile.avatarDescription": "ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <0>Gravatar</0>.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
+    }
+  },
+  {
+    "namespace": "completePasswordReset",
+    "language": "en",
+    "resources": {
+      "savePassword": "Save password",
+      "passwordChangedSuccessfully": "Your password was changed successfully.",
+      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}.",
+      "passwordResetFailure": "The password reset code is invalid or expired.",
+      "homeLink": "Home"
+    }
+  },
+  {
+    "namespace": "completePasswordReset",
+    "language": "de",
+    "resources": {
+      "savePassword": "Kennwort speichern",
+      "passwordChangedSuccessfully": "Ihr Kennwort wurde erfolgreich geändert.",
+      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.",
+      "passwordResetFailure": "Der Kennwortänderungs-Code ist ungültig oder abgelaufen.",
+      "homeLink": "Home"
+    }
+  },
+  {
+    "namespace": "completeRegistration",
+    "language": "en",
+    "resources": {
+      "registrationSuccess": "Congratulations! You are now a successfully registered elmu user.",
+      "registrationFailure": "The confirmation code is invalid or expired.",
+      "homeLink": "Home",
+      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
+    }
+  },
+  {
+    "namespace": "completeRegistration",
+    "language": "de",
+    "resources": {
+      "registrationSuccess": "Gratulation! Sie sind nun ein elmu-User und haben Ihre Registrierung erfolgreich abgeschlossen.",
+      "registrationFailure": "Der Registrierungs-Code ist ungültig oder abgelaufen.",
+      "homeLink": "Home",
+      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+    }
+  },
+  {
+    "namespace": "doc",
+    "language": "en",
+    "resources": {
+      "revision": "Revision",
+      "date": "Date",
+      "user": "User",
+      "language": "Language",
+      "id": "ID",
+      "restoredFrom": "Restored from",
+      "permalink": "Permalink",
+      "permalinkCopied": "The permalink was copied to the clipboard",
+      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
+      "restore": "Restore"
+    }
+  },
+  {
+    "namespace": "doc",
+    "language": "de",
+    "resources": {
+      "revision": "Revision",
+      "date": "Datum",
+      "user": "Benutzer",
+      "language": "Sprache",
+      "id": "ID",
+      "restoredFrom": "Wiederhergestellt aus",
+      "permalink": "Permalink",
+      "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
+      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
+      "restore": "Wiederherstellen"
+    }
+  },
+  {
+    "namespace": "docs",
+    "language": "en",
+    "resources": {
+      "defaultDocumentTitle": "New document",
+      "email": "Email",
+      "copyTitleSuffix": "(copy)",
+      "copySlugSuffix": "copy",
+      "clone": "Clone",
+      "title": "Title",
+      "language": "Language",
+      "slug": "URL path",
+      "udateDate": "Udate date",
+      "user": "User info",
+      "actions": "Actions",
+      "enterSearchTerm": "Enter search term",
+      "newDocument": "New document",
+      "notAssigned": "(not assigned)"
+    }
+  },
+  {
+    "namespace": "docs",
+    "language": "de",
+    "resources": {
+      "defaultDocumentTitle": "Neues Dokument",
+      "email": "E-Mail",
+      "copyTitleSuffix": "(Kopie)",
+      "copySlugSuffix": "kopie",
+      "clone": "Klonen",
+      "title": "Titel",
+      "language": "Sprache",
+      "slug": "URL-Pfad",
+      "udateDate": "Update-Datum",
+      "user": "User-Info",
+      "actions": "Aktionen",
+      "enterSearchTerm": "Suchbegriff eingeben",
+      "newDocument": "Neues Dokument",
+      "notAssigned": "(nicht zugewiesen)"
+    }
+  },
+  {
+    "namespace": "editDoc",
+    "language": "en",
+    "resources": {
+      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the page.\n"
+    }
+  },
+  {
+    "namespace": "editDoc",
+    "language": "de",
+    "resources": {
+      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Seite verlassen.\n"
+    }
+  },
+  {
+    "namespace": "login",
+    "language": "en",
+    "resources": {
+      "username": "User name",
+      "password": "Password",
+      "logon": "Log on",
+      "forgotPassword": "Forgot your password?",
+      "enterUsername": "Please enter your user name",
+      "enterPassword": "Please enter your password",
+      "logonFailed": "Logon failed. Please check your input."
+    }
+  },
+  {
+    "namespace": "login",
+    "language": "de",
+    "resources": {
+      "username": "Benutzername",
+      "password": "Kennwort",
+      "logon": "Anmelden",
+      "forgotPassword": "Kennwort vergessen?",
+      "enterUsername": "Bitte geben Sie Ihren Benutzernamen an",
+      "enterPassword": "Bitte geben Sie Ihr Kennwort an",
+      "logonFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
+    }
+  },
+  {
+    "namespace": "register",
+    "language": "en",
+    "resources": {
+      "confirmTerms": "Please confirm your agreement with the terms and conditions",
+      "termsAndConditionsConfirmation": "I have read the <0>terms and conditions</0> and agree to them.",
+      "register": "Register",
+      "registrationInProgress": "We have sent you an email. There you will find the next steps in order to complete the registration.",
+      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
+    }
+  },
+  {
+    "namespace": "register",
+    "language": "de",
+    "resources": {
+      "confirmTerms": "Bitte erklären Sie sich mit den Nutzungsbedingungen einverstanden",
+      "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
+      "register": "Registrieren",
+      "registrationInProgress": "Wir haben Ihnen eine E-Mail geschickt. Dort finden Sie die nächsten Schritte, um Ihre Registrierung abzuschließen.",
+      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+    }
+  },
+  {
+    "namespace": "resetPassword",
+    "language": "en",
+    "resources": {
+      "enterEmail": "Please enter an email address",
+      "emailIsInvalid": "The value you provided is not a valid email address",
+      "email": "Email address",
+      "requestReset": "Request reset",
+      "resetInProgressConfirmation": "We have received your request.",
+      "resetInProgressNextSteps": "In case the provided email address is registered with our website, you will receive a\nmessage containing the next steps in order to generate a new password within the next minutes.\n",
+      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
+    }
+  },
+  {
+    "namespace": "resetPassword",
+    "language": "de",
+    "resources": {
+      "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
+      "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
+      "email": "E-Mail-Adresse",
+      "requestReset": "Reset anfordern",
+      "resetInProgressConfirmation": "Ihre Anfrage wurde ist bei uns eingegangen.",
+      "resetInProgressNextSteps": "Falls die von Ihnen angegebene E-Mail-Adresse bei uns registriert ist, werden Sie in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n",
+      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+    }
+  },
+  {
+    "namespace": "search",
+    "language": "en",
+    "resources": {
+      "title": "Title",
+      "udateDate": "Udate date",
+      "tags": "Tags",
+      "numberOfContributors": "Contributor count"
+    }
+  },
+  {
+    "namespace": "search",
+    "language": "de",
+    "resources": {
+      "title": "Titel",
+      "udateDate": "Update-Datum",
+      "tags": "Tags",
+      "numberOfContributors": "Anzahl Mitwirkender"
+    }
+  },
+  {
+    "namespace": "settings",
+    "language": "en",
+    "resources": {
+      "homeLanguagesHeader": "Landing page languages",
+      "homeLanguagesSubHeader": "The top most entry will be used as default",
+      "helpPageHeader": "Help page",
+      "termsPageHeader": "Terms of usage page",
+      "footerLinksHeader": "Footer links",
+      "defaultTagsHeader": "Default tags"
+    }
+  },
+  {
+    "namespace": "settings",
+    "language": "de",
+    "resources": {
+      "homeLanguagesHeader": "Sprachen auf der Startseite",
+      "homeLanguagesSubHeader": "Der oberste Eintrag wird als Standard benutzt",
+      "helpPageHeader": "Hilfe-Seite",
+      "termsPageHeader": "Nutzungsbedingungen-Seite",
+      "footerLinksHeader": "Footer-Links",
+      "defaultTagsHeader": "Vordefinierte Tags"
+    }
+  },
+  {
+    "namespace": "users",
+    "language": "en",
+    "resources": {
+      "username": "Username",
+      "email": "Email",
+      "id": "ID",
+      "expires": "Expires",
+      "lockedOut": "Locked Out",
+      "roles": "Roles",
+      "firstName": "First name(s)",
+      "lastName": "Last name",
+      "street": "Street",
+      "streetSupplement": "Street supplement",
+      "postalCode": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "profile": "Profile"
+    }
+  },
+  {
+    "namespace": "users",
+    "language": "de",
+    "resources": {
+      "username": "Benutzername",
+      "email": "E-Mail",
+      "id": "ID",
+      "expires": "Verfallsdatum",
+      "lockedOut": "Ausgesperrt",
+      "roles": "Rollen",
+      "firstName": "Vorname(n)",
+      "lastName": "Nachname",
+      "street": "Straße",
+      "streetSupplement": "Straße (Zusatz)",
+      "postalCode": "Postleitzahl",
+      "city": "Ort",
+      "country": "Land",
+      "profile": "Profil"
+    }
+  },
+  {
+    "namespace": "passwordInput",
+    "language": "en",
+    "resources": {
+      "password": "Passsword",
+      "passwordConfirmation": "Password confirmation",
+      "enterPassword": "Please enter a password",
+      "passwordIsInvalid": "The password must be at least {length} characters long and contain at least one letter and one number",
+      "confirmPassword": "Please confirm your password",
+      "passwordsDoNotMatch": "The passwords do not match"
+    }
+  },
+  {
+    "namespace": "passwordInput",
+    "language": "de",
+    "resources": {
+      "password": "Kennwort",
+      "passwordConfirmation": "Kennwortbestätigung",
+      "enterPassword": "Bitte geben Sie ein Kennwort an",
+      "passwordIsInvalid": "Das Kennwort muss mindestens {length} Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten",
+      "confirmPassword": "Bitte bestätigen Sie Ihr Kennwort",
+      "passwordsDoNotMatch": "Die Kennwörter stimmen nicht überein"
+    }
+  },
+  {
+    "namespace": "repositoryBrowser",
+    "language": "en",
+    "resources": {
+      "mimeTypeCategoryText": "Text",
+      "mimeTypeCategoryMarkup": "Markup",
+      "mimeTypeCategoryImage": "Image",
+      "mimeTypeCategoryVideo": "Video",
+      "mimeTypeCategoryAudio": "Audio",
+      "mimeTypeCategoryArchive": "Archive",
+      "mimeTypeCategoryDocument": "Document",
+      "mimeTypeCategorySpreadsheet": "Spreadsheet",
+      "mimeTypeCategoryPresentation": "Presentation",
+      "mimeTypeCategoryProgram": "Program",
+      "mimeTypeCategoryFolder": "Folder",
+      "mimeTypeCategoryUnknown": "Unknown",
+      "fileUpload": "File upload",
+      "searchFilter": "Search filter",
+      "displayNameText": "Name",
+      "categoryText": "Type",
+      "sizeText": "Size",
+      "lastModifiedText": "Date",
+      "action": "Action",
+      "moreActions": "More Actions",
+      "uploadFiles": "Upload files"
+    }
+  },
+  {
+    "namespace": "repositoryBrowser",
+    "language": "de",
+    "resources": {
+      "mimeTypeCategoryText": "Text",
+      "mimeTypeCategoryMarkup": "Markup",
+      "mimeTypeCategoryImage": "Bild",
+      "mimeTypeCategoryVideo": "Video",
+      "mimeTypeCategoryAudio": "Audio",
+      "mimeTypeCategoryArchive": "Archiv",
+      "mimeTypeCategoryDocument": "Dokument",
+      "mimeTypeCategorySpreadsheet": "Tabellenkalkulation",
+      "mimeTypeCategoryPresentation": "Präsentation",
+      "mimeTypeCategoryProgram": "Programm",
+      "mimeTypeCategoryFolder": "Verzeichnis",
+      "mimeTypeCategoryUnknown": "Unbekannt",
+      "fileUpload": "Datei-Upload",
+      "searchFilter": "Suchfilter",
+      "displayNameText": "Name",
+      "categoryText": "Typ",
+      "sizeText": "Größe",
+      "lastModifiedText": "Datum",
+      "action": "Aktion",
+      "moreActions": "Weitere Aktionen",
+      "uploadFiles": "Dateien hochladen"
+    }
+  },
+  {
+    "namespace": "sectionEditor",
+    "language": "en",
+    "resources": {
+      "type": "Type",
+      "key": "Key",
+      "revision": "Revision"
+    }
+  },
+  {
+    "namespace": "sectionEditor",
+    "language": "de",
+    "resources": {
+      "type": "Typ",
+      "key": "Schlüssel",
+      "revision": "Revision"
+    }
+  },
+  {
+    "namespace": "defaultTagsSettings",
+    "language": "en",
+    "resources": {
+      "rank": "Rank",
+      "tag": "Tag"
+    }
+  },
+  {
+    "namespace": "defaultTagsSettings",
+    "language": "de",
+    "resources": {
+      "rank": "Rang",
+      "tag": "Tag"
+    }
+  },
+  {
+    "namespace": "footerLinksSettings",
+    "language": "en",
+    "resources": {
+      "unknown": "Unknown"
+    }
+  },
+  {
+    "namespace": "footerLinksSettings",
+    "language": "de",
+    "resources": {
+      "unknown": "Unbekannt"
+    }
+  },
+  {
+    "namespace": "homeLanguagesSettings",
+    "language": "en",
+    "resources": {
+      "rank": "Rank",
+      "language": "Language",
+      "documentKey": "Document key",
+      "searchFieldButton": "Search field button",
+      "searchFieldPlaceholder": "Search field placeholder"
+    }
+  },
+  {
+    "namespace": "homeLanguagesSettings",
+    "language": "de",
+    "resources": {
+      "rank": "Rang",
+      "language": "Sprache",
+      "documentKey": "Dokument-Schlüssel",
+      "searchFieldButton": "Suchfeld-Button",
+      "searchFieldPlaceholder": "Suchfeld-Platzhalter"
+    }
+  },
+  {
+    "namespace": "settingsDocumentsTable",
+    "language": "en",
+    "resources": {
+      "rank": "Rank",
+      "linkTitle": "Link title",
+      "urlPath": "URL path"
+    }
+  },
+  {
+    "namespace": "settingsDocumentsTable",
+    "language": "de",
+    "resources": {
+      "rank": "Rang",
+      "linkTitle": "Link-Titel",
+      "urlPath": "URL-Pfad"
+    }
+  },
+  {
+    "namespace": "specialPageSettings",
+    "language": "en",
+    "resources": {
+      "rank": "Rank",
+      "language": "Language",
+      "linkTitle": "Link title",
+      "urlPath": "URL path",
+      "unknown": "Unknown"
+    }
+  },
+  {
+    "namespace": "specialPageSettings",
+    "language": "de",
+    "resources": {
+      "rank": "Rang",
+      "language": "Sprache",
+      "linkTitle": "Link-Titel",
+      "urlPath": "URL-Pfad",
+      "unknown": "Unbekannt"
+    }
+  },
+  {
+    "namespace": "usernameInput",
+    "language": "en",
+    "resources": {
+      "username": "User name",
+      "enterUsername": "Please enter a user name",
+      "usernameIsTooShort": "The user name must be at least {length} characters long",
+      "usernameIsInUse": "The user name is already registered"
+    }
+  },
+  {
+    "namespace": "usernameInput",
+    "language": "de",
+    "resources": {
+      "username": "Benutzername",
+      "enterUsername": "Bitte geben Sie einen Benutzernamen an",
+      "usernameIsTooShort": "Der Benutzername muss mindestens {length} Zeichen lang sein",
+      "usernameIsInUse": "Der Benutzername ist bereits vergeben"
+    }
+  },
+  {
+    "namespace": "abcNotation",
+    "language": "en",
+    "resources": {
+      "name": "ABC notation",
+      "abcCode": "ABC code",
+      "midiSound": "MIDI sound",
+      "maximumWidth": "Maximum width",
+      "copyrightInfos": "Copyright infos"
+    }
+  },
+  {
+    "namespace": "abcNotation",
+    "language": "de",
+    "resources": {
+      "name": "ABC-Notation",
+      "abcCode": "ABC-Code",
+      "midiSound": "MIDI-Sound",
+      "maximumWidth": "Maximale Breite",
+      "copyrightInfos": "Copyright Infos"
+    }
+  },
+  {
+    "namespace": "anavis",
+    "language": "en",
+    "resources": {
+      "name": "Anavis",
+      "defaultPartName": "Unnamed",
+      "nameLabel": "Name",
+      "color": "Color",
+      "length": "Length",
+      "unsupportedFileFormat": "Unsupported file format",
+      "source": "Source",
+      "externalLink": "External link",
+      "elmuCdn": "Elmu CDN",
+      "youtube": "Youtube",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "youtubeUrl": "Youtube URL",
+      "aspectRatio": "Aspect ratio",
+      "videoDisplay": "Video display",
+      "width": "Width",
+      "copyrightInfos": "Copyright infos"
+    }
+  },
+  {
+    "namespace": "anavis",
+    "language": "de",
+    "resources": {
+      "name": "Anavis",
+      "defaultPartName": "Unbenannt",
+      "nameLabel": "Name",
+      "color": "Farbe",
+      "length": "Länge",
+      "unsupportedFileFormat": "Nicht unterstütztes Dateiformat",
+      "source": "Quelle",
+      "externalLink": "Externer Link",
+      "elmuCdn": "Elmu CDN",
+      "youtube": "Youtube",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "youtubeUrl": "Youtube URL",
+      "aspectRatio": "Seitenverhältnis",
+      "videoDisplay": "Videoanzeige",
+      "width": "Breite",
+      "copyrightInfos": "Copyright Infos"
+    }
+  },
+  {
+    "namespace": "annotation",
+    "language": "en",
+    "resources": {
+      "name": "Annotation",
+      "title": "Title",
+      "text": "Text"
+    }
+  },
+  {
+    "namespace": "annotation",
+    "language": "de",
+    "resources": {
+      "name": "Anmerkung",
+      "title": "Titel",
+      "text": "Text"
+    }
+  },
+  {
+    "namespace": "audio",
+    "language": "en",
+    "resources": {
+      "name": "Audio",
+      "source": "Source",
+      "externalLink": "External link",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "copyrightInfos": "Copyright infos"
+    }
+  },
+  {
+    "namespace": "audio",
+    "language": "de",
+    "resources": {
+      "name": "Audio",
+      "source": "Quelle",
+      "externalLink": "Externer Link",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "copyrightInfos": "Copyright Infos"
+    }
+  },
+  {
+    "namespace": "diagramNet",
+    "language": "en",
+    "resources": {
+      "name": "Diagram",
+      "maximumWidth": "Maximum width",
+      "editExternally": "Edit (opens external editor)"
+    }
+  },
+  {
+    "namespace": "diagramNet",
+    "language": "de",
+    "resources": {
+      "name": "Diagramm",
+      "maximumWidth": "Maximale Breite",
+      "editExternally": "Bearbeiten (öffnet externen Editor)"
+    }
+  },
+  {
+    "namespace": "earTraining",
+    "language": "en",
+    "resources": {
+      "name": "Ear training exercise",
+      "nextExercise": "Next exercise",
+      "solve": "Solve",
+      "reset": "Reset",
+      "startAbcCode": "Start ABC code",
+      "fullAbcCode": "Full ABC code",
+      "title": "Title",
+      "maximumWidth": "Maximum width",
+      "audioSource": "Audio source",
+      "midi": "MIDI (auto)",
+      "externalLink": "External link",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "copyrightInfos": "Copyright infos"
+    }
+  },
+  {
+    "namespace": "earTraining",
+    "language": "de",
+    "resources": {
+      "name": "Gehörbildungsübung",
+      "nextExercise": "Nächste Übung",
+      "solve": "Auflösen",
+      "reset": "Zurücksetzen",
+      "startAbcCode": "Vorgabe-ABC-Code",
+      "fullAbcCode": "Lösungs-ABC-Code",
+      "title": "Titel",
+      "maximumWidth": "Maximale Breite",
+      "audioSource": "Audio-Quelle",
+      "midi": "MIDI (auto)",
+      "externalLink": "Externer Link",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "copyrightInfos": "Copyright Infos"
+    }
+  },
+  {
+    "namespace": "iframe",
+    "language": "en",
+    "resources": {
+      "name": "Iframe",
+      "url": "URL",
+      "width": "Width",
+      "height": "Height",
+      "frame": "Frame"
+    }
+  },
+  {
+    "namespace": "iframe",
+    "language": "de",
+    "resources": {
+      "name": "Iframe",
+      "url": "URL",
+      "width": "Breite",
+      "height": "Höhe",
+      "frame": "Rahmen"
+    }
+  },
+  {
+    "namespace": "imageTiles",
+    "language": "en",
+    "resources": {
+      "name": "Image tiles",
+      "maximumWidth": "Maximum width",
+      "tilesPerRow": "Tiles per row",
+      "hoverEffect": "Hover effect",
+      "noEffect": "No effect",
+      "colorAndZoom": "Color and zoom",
+      "tileNumber": "Tile {number}",
+      "addTile": "Add tile",
+      "imageSource": "Image source",
+      "linkSource": "Link source",
+      "externalLink": "External link",
+      "articleLink": "Article link",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "imageDescription": "Image description"
+    }
+  },
+  {
+    "namespace": "imageTiles",
+    "language": "de",
+    "resources": {
+      "name": "Bildkacheln",
+      "maximumWidth": "Maximale Breite",
+      "tilesPerRow": "Kacheln pro Zeile",
+      "hoverEffect": "Hover-Effekt",
+      "noEffect": "Kein Effekt",
+      "colorAndZoom": "Färben und Zoomen",
+      "tileNumber": "Kachel {number}",
+      "addTile": "Kachel hinzufügen",
+      "imageSource": "Bild-Quelle",
+      "linkSource": "Link-Quelle",
+      "externalLink": "Externer Link",
+      "articleLink": "Artikel-Link",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "imageDescription": "Bildunterschrift"
+    }
+  },
+  {
+    "namespace": "image",
+    "language": "en",
+    "resources": {
+      "name": "Image",
+      "source": "Source",
+      "externalLink": "External link",
+      "noneOption": "None",
+      "hoverOption": "Hover",
+      "revealOption": "Reveal",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "copyrightInfos": "Copyright infos",
+      "maximumWidth": "Maximum width",
+      "effectTypeLabel": "Effect",
+      "startPosition": "Start Position",
+      "orientationLabel": "Orientation",
+      "orientationOptionVertical": "Vertical",
+      "orientationOptionHorizontal": "Horizontal"
+    }
+  },
+  {
+    "namespace": "image",
+    "language": "de",
+    "resources": {
+      "name": "Bild",
+      "source": "Quelle",
+      "externalLink": "Externer Link",
+      "noneOption": "Kein Effekt",
+      "hoverOption": "Hover",
+      "revealOption": "Auflösung",
+      "elmuCdn": "Elmu CDN",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "copyrightInfos": "Copyright Infos",
+      "maximumWidth": "Maximale Breite",
+      "effectTypeLabel": "Effekt",
+      "startPosition": "Startposition",
+      "orientationLabel": "Richtung",
+      "orientationOptionVertical": "Vertikal",
+      "orientationOptionHorizontal": "Horizontal"
+    }
+  },
+  {
+    "namespace": "intervalTrainer",
+    "language": "en",
+    "resources": {
+      "name": "Interval trainer",
+      "oneAttemptSuccesses": "Tasks solved on the first attempt",
+      "multipleAttemptSuccesses": "Tasks solved after multiple attempts",
+      "failures": "Unsolved tasks",
+      "taskNumber": "Task {number}",
+      "noTests": "There are no tests",
+      "next": "Next",
+      "solve": "Solve",
+      "statistics": "Statistics",
+      "restart": "Restart",
+      "invalidJson": "Invalid JSON"
+    }
+  },
+  {
+    "namespace": "intervalTrainer",
+    "language": "de",
+    "resources": {
+      "name": "Intervall-Trainer",
+      "oneAttemptSuccesses": "Aufgaben gelöst nach nur einem Versuch",
+      "multipleAttemptSuccesses": "Aufgaben gelöst nach mehreren Versuchen",
+      "failures": "Nicht gelöste Aufgaben",
+      "taskNumber": "Aufgabe {number}",
+      "noTests": "Keine Tests vorhanden",
+      "next": "Weiter",
+      "solve": "Auflösen",
+      "statistics": "Auswertung",
+      "restart": "Nochmal üben",
+      "invalidJson": "Ungültiges JSON"
+    }
+  },
+  {
+    "namespace": "markdown",
+    "language": "en",
+    "resources": {
+      "name": "Markdown"
+    }
+  },
+  {
+    "namespace": "markdown",
+    "language": "de",
+    "resources": {
+      "name": "Markdown"
+    }
+  },
+  {
+    "namespace": "quickTester",
+    "language": "en",
+    "resources": {
+      "name": "Quick tester",
+      "showAnswer": "Show answer",
+      "questionHeader": "Question {currentTest} of {testsLength}",
+      "question": "Question",
+      "answer": "Answer",
+      "teaserLabel": "Link text",
+      "titleLabel": "Title"
+    }
+  },
+  {
+    "namespace": "quickTester",
+    "language": "de",
+    "resources": {
+      "name": "Schnelltester",
+      "showAnswer": "Antwort anzeigen",
+      "questionHeader": "Frage {currentTest} von {testsLength}",
+      "question": "Frage",
+      "answer": "Antwort",
+      "teaserLabel": "Link-Text",
+      "titleLabel": "Titel"
+    }
+  },
+  {
+    "namespace": "video",
+    "language": "en",
+    "resources": {
+      "name": "Video",
+      "source": "Source",
+      "externalLink": "External link",
+      "internalLink": "Internal link",
+      "elmuCdn": "Elmu CDN",
+      "youtube": "Youtube",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "youtubeUrl": "Youtube URL",
+      "aspectRatio": "Aspect ratio",
+      "videoDisplay": "Video display",
+      "width": "Width",
+      "copyrightInfos": "Copyright infos"
+    }
+  },
+  {
+    "namespace": "video",
+    "language": "de",
+    "resources": {
+      "name": "Video",
+      "source": "Quelle",
+      "externalLink": "Externer Link",
+      "internalLink": "Interner Link",
+      "elmuCdn": "Elmu CDN",
+      "youtube": "Youtube",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "youtubeUrl": "Youtube URL",
+      "aspectRatio": "Seitenverhältnis",
+      "videoDisplay": "Videoanzeige",
+      "width": "Breite",
+      "copyrightInfos": "Copyright Infos"
+    }
+  },
+  {
+    "namespace": "common",
+    "language": "en",
+    "resources": {
+      "yes": "Yes",
+      "no": "No",
+      "save": "Save",
+      "cancel": "Cancel",
+      "select": "Select",
+      "back": "Back",
+      "preview": "Preview",
+      "edit": "Edit",
+      "apply": "Apply",
+      "discard": "Discard",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "hardDelete": "Delete irreversibly",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "error": "Error"
+    }
+  },
+  {
+    "namespace": "common",
+    "language": "de",
+    "resources": {
+      "yes": "Ja",
+      "no": "Nein",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "select": "Auswählen",
+      "back": "Zurück",
+      "preview": "Vorschau",
+      "edit": "Bearbeiten",
+      "apply": "Übernehmen",
+      "discard": "Verwerfen",
+      "duplicate": "Duplizieren",
+      "delete": "Löschen",
+      "hardDelete": "Unwiderruflich löschen",
+      "moveUp": "Nach oben verschieben",
+      "moveDown": "Nach unten verschieben",
+      "error": "Fehler"
+    }
+  },
+  {
+    "namespace": "pageNames",
+    "language": "en",
+    "resources": {
+      "home": "Home",
+      "users": "Users",
+      "account": "My account",
+      "settings": "Settings",
+      "docs": "Documents"
+    }
+  },
+  {
+    "namespace": "pageNames",
+    "language": "de",
+    "resources": {
+      "home": "Home",
+      "users": "Benutzer",
+      "account": "Mein Konto",
+      "settings": "Einstellungen",
+      "docs": "Dokumente"
+    }
+  },
+  {
+    "namespace": "validation",
+    "language": "en",
+    "resources": {
+      "urlRequired": "Please specify a URL",
+      "urlInvalid": "Please specify a URL with a valid format",
+      "urlInsecure": "Please specify a URL with a secure protocol (HTTPS)",
+      "markdownBoldOrItalicWithinHeaders": "Bold or italic should not be used within headers"
+    }
+  },
+  {
+    "namespace": "validation",
+    "language": "de",
+    "resources": {
+      "urlRequired": "Bitte geben Sie eine Adresse an",
+      "urlInvalid": "Bitte geben Sie eine Adresse im gültigen Format an",
+      "urlInsecure": "Bitte geben Sie eine Adresse mit sicherem Protokoll (HTTPS) an",
+      "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten"
+    }
+  }
+]

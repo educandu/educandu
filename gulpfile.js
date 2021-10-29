@@ -224,8 +224,7 @@ export async function bundleTranslations() {
 
   const result = bundleGroups.flatMap(x => x);
 
-  await fse.ensureDir('./dist');
-  await fs.writeFile('./dist/resources.json', JSON.stringify(result, null, 2), 'utf8');
+  await fs.writeFile('./src/resources/resources.json', JSON.stringify(result, null, 2), 'utf8');
 }
 
 export function faviconGenerate(done) {
