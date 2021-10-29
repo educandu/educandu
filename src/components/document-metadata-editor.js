@@ -14,6 +14,8 @@ import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
 import { slugValidationPattern } from '../common/validation-patterns.js';
+import DocumentApiClient from '../services/document-api-client.js';
+import { handleApiError } from '../ui/error-helper.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -27,10 +29,12 @@ class DocumentMetadataEditor extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
+    this.documentApiClient = props.documentApiClient;
     this.state = {
       mode: MODE_PREVIEW,
       tagsValidationStatus: '',
-      slugValidationStatus: ''
+      slugValidationStatus: '',
+      tagSuggestions: []
     };
   }
 
@@ -76,6 +80,19 @@ class DocumentMetadataEditor extends React.Component {
     onChanged({ metadata, invalidMetadata: !this.validateMetadata(metadata) });
   }
 
+  async handleTagSuggestionsRefresh(tagSuggestionsQuery) {
+    try {
+      if (tagSuggestionsQuery.length !== 3) {
+        return;
+      }
+      const tagSuggestions = await this.documentApiClient.getRevisionTagSuggestions(tagSuggestionsQuery);
+      this.setState({ tagSuggestions });
+    } catch (error) {
+      const { t } = this.props;
+      handleApiError({ error, t });
+    }
+  }
+
   handleTagsChange(selectedValues) {
     const { onChanged, documentRevision } = this.props;
     const metadata = { ...documentRevision, tags: selectedValues };
@@ -83,10 +100,10 @@ class DocumentMetadataEditor extends React.Component {
   }
 
   render() {
-    const { mode, tagsValidationStatus, slugValidationStatus } = this.state;
+    const { mode, tagsValidationStatus, slugValidationStatus, tagSuggestions } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
-    const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags]);
+    const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags, ...tagSuggestions]);
 
     let docLanguage;
     let componentToShow;
@@ -123,8 +140,8 @@ class DocumentMetadataEditor extends React.Component {
                 mode="tags"
                 tokenSeparators={[' ', '\t']}
                 value={documentRevision.tags}
-                style={{ width: '100%' }}
-                onChange={selectedValue => this.handleTagsChange(selectedValue)}
+                onSearch={this.handleTagSuggestionsRefresh}
+                onChange={selectedValues => this.handleTagsChange(selectedValues)}
                 options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
                 />
             </Form.Item>
@@ -162,11 +179,13 @@ DocumentMetadataEditor.propTypes = {
   ...translationProps,
   ...languageProps,
   ...settingsProps,
+  documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   documentRevision: documentRevisionShape.isRequired,
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired,
   onChanged: PropTypes.func.isRequired
 };
 
 export default withTranslation('documentMetadataEditor')(withSettings(withLanguage(inject({
-  languageNameProvider: LanguageNameProvider
+  languageNameProvider: LanguageNameProvider,
+  documentApiClient: DocumentApiClient
 }, DocumentMetadataEditor))));

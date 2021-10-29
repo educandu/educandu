@@ -1,29 +1,30 @@
-/* eslint-disable no-console, no-process-env */
-
+/* eslint-disable no-console, no-process-env, require-atomic-updates */
 import url from 'url';
 import del from 'del';
 import path from 'path';
 import gulp from 'gulp';
 import glob from 'glob';
+import yaml from 'yaml';
 import { EOL } from 'os';
 import execa from 'execa';
+import fse from 'fs-extra';
 import less from 'gulp-less';
 import csso from 'gulp-csso';
 import gulpif from 'gulp-if';
-import webpack from 'webpack';
+import esbuild from 'esbuild';
 import eslint from 'gulp-eslint';
 import { promisify } from 'util';
 import plumber from 'gulp-plumber';
+import EasyTable from 'easy-table';
 import superagent from 'superagent';
 import { promises as fs } from 'fs';
+import Graceful from 'node-graceful';
 import { spawn } from 'child_process';
 import { Docker } from 'docker-cli-js';
+import prettyBytes from 'pretty-bytes';
 import sourcemaps from 'gulp-sourcemaps';
-import { parse as parseEs5 } from 'acorn';
 import realFavicon from 'gulp-real-favicon';
 import LessAutoprefix from 'less-plugin-autoprefix';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import MomentLocalesPlugin from 'moment-locales-webpack-plugin';
 
 if (process.env.ELMU_ENV === 'prod') {
   throw new Error('Tasks should not run in production environment!');
@@ -45,21 +46,28 @@ const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
 
 const FAVICON_DATA_FILE = 'favicon-data.json';
 
-const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimized');
+const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimize');
 const verbose = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--verbose');
 
 const autoprefixOptions = {
-  browsers: ['last 3 versions', 'Firefox ESR', 'IE 11']
+  browsers: ['last 2 versions']
 };
 
 const supportedLanguages = ['en', 'de'];
 
 let server = null;
-process.on('exit', () => server && server.kill());
+let buildResult = null;
+
+Graceful.on('exit', () => {
+  server?.kill();
+  buildResult?.rebuild?.dispose();
+});
 
 const delay = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
 });
+
+const kebabToCamel = str => str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
 
 const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () => Promise.resolve() }) => {
   const docker = new Docker();
@@ -142,138 +150,81 @@ export function bundleCss() {
 }
 
 export async function bundleJs() {
-  const entry = (await promisify(glob)('./src/bundles/*.js'))
-    .map(bundleFile => path.basename(bundleFile, '.js'))
-    .reduce((all, name) => ({ ...all, [name]: ['core-js', `./src/bundles/${name}.js`] }), {});
-
-  const plugins = [
-    new webpack.NormalModuleReplacementPlugin(/abcjs-import/, 'abcjs/midi.js'),
-    new webpack.ProvidePlugin({ process: 'process/browser.js' }),
-    new MomentLocalesPlugin({ localesToKeep: ['en', 'de', 'de-DE'] })
-  ];
-
-  if (optimize) {
-    plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      reportFilename: '../reports/bundles.html',
-      openAnalyzer: false
-    }));
+  if (buildResult && buildResult.rebuild) {
+    await buildResult.rebuild();
+  } else {
+    buildResult = await esbuild.build({
+      entryPoints: await promisify(glob)('./src/bundles/*.js'),
+      target: ['esnext', 'chrome95', 'firefox93', 'safari15', 'edge95'],
+      format: 'esm',
+      bundle: true,
+      splitting: true,
+      incremental: !!server,
+      metafile: verbose,
+      minify: optimize,
+      loader: { '.js': 'jsx' },
+      inject: ['./src/polyfills.js'],
+      sourcemap: true,
+      sourcesContent: true,
+      outdir: './dist'
+    });
   }
 
-  const commonChunkModules = new Set([
-    '@ant-design',
-    '@babel',
-    'antd',
-    'aurelia-dependency-injection',
-    'aurelia-metadata',
-    'aurelia-pal',
-    'auto-bind',
-    'core-js',
-    'fbjs',
-    'iconv-lite',
-    'moment',
-    'object-assign',
-    'prop-types',
-    'react',
-    'react-dom',
-    'regenerator-runtime'
-  ]);
+  if (buildResult.metafile) {
+    await fse.ensureDir('./reports');
+    await fs.writeFile('./reports/bundles.json', JSON.stringify(buildResult.metafile, null, 2), 'utf8');
 
-  const nonEs5Modules = [
-    'acho',
-    'ansi-styles',
-    'array-shuffle',
-    'aurelia-dependency-injection',
-    'auto-bind',
-    'chalk',
-    'clipboard-copy',
-    'color',
-    'color-convert',
-    'map-age-cleaner',
-    'mem',
-    'mime',
-    'mimic-fn',
-    'p-defer',
-    'p-is-promise',
-    'parse-ms',
-    'pretty-bytes',
-    'pretty-ms',
-    'punycode',
-    'thenby',
-    'quick-lru',
-    'react-compare-slider'
-  ];
+    const t = new EasyTable();
 
-  const bundleConfigs = {
-    entry,
-    output: {
-      filename: '[name].js'
-    },
-    target: ['web', 'es5'],
-    mode: optimize ? 'production' : 'development',
-    devtool: optimize ? 'source-map' : 'eval',
-    module: {
-      rules: [
-        {
-          test: /\.js$/,
-          exclude: new RegExp(`node_modules[\\/](?!(${nonEs5Modules.join('|')})[\\/]).*`),
-          use: {
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true,
-              presets: [
-                ['@babel/preset-env', { forceAllTransforms: true }],
-                '@babel/preset-react'
-              ]
-            }
-          }
+    Object.entries(buildResult.metafile.outputs)
+      .filter(([key]) => !key.endsWith('.map'))
+      .forEach(([key, value]) => {
+        t.cell('Bundle', key);
+        t.cell('Size', prettyBytes(value.bytes), EasyTable.leftPadder(' '));
+        t.newRow();
+      });
+
+    console.log(EOL + t.toString());
+  }
+}
+
+export async function bundleTranslations() {
+  const filePaths = await promisify(glob)('./src/**/*.yml');
+
+  const bundleGroups = await Promise.all(filePaths.map(async filePath => {
+    const namespace = kebabToCamel(path.basename(filePath, '.yml'));
+    const content = await fs.readFile(filePath, 'utf8');
+    const resources = yaml.parse(content);
+
+    if (!resources) {
+      return [];
+    }
+
+    const bundlesByLanguage = {};
+    const resourceKeys = Object.keys(resources);
+
+    resourceKeys.forEach(resourceKey => {
+      const languages = Object.keys(resources[resourceKey]);
+      languages.forEach(language => {
+        let languageBundle = bundlesByLanguage[language];
+        if (!languageBundle) {
+          languageBundle = {
+            namespace,
+            language,
+            resources: {}
+          };
+          bundlesByLanguage[language] = languageBundle;
         }
-      ]
-    },
-    resolve: {
-      alias: {
-        process: 'process'
-      }
-    },
-    optimization: {
-      minimize: !!optimize,
-      moduleIds: 'named',
-      splitChunks: {
-        cacheGroups: {
-          commons: {
-            test: ({ resource }) => {
-              const segments = path.relative(ROOT_DIR, resource || './').split(path.sep);
-              return segments[0] === 'node_modules' && commonChunkModules.has(segments[1]);
-            },
-            name: 'commons',
-            chunks: 'all'
-          }
-        }
-      }
-    },
-    performance: {
-      hints: optimize && 'warning',
-      maxAssetSize: 500000,
-      maxEntrypointSize: 500000
-    },
-    node: {},
-    plugins
-  };
+        languageBundle.resources[resourceKey] = resources[resourceKey][language];
+      });
+    });
 
-  const stats = await promisify(webpack)(bundleConfigs);
+    return Object.values(bundlesByLanguage);
+  }));
 
-  const minimalStatsOutput = {
-    builtAt: false,
-    chunks: false,
-    colors: true,
-    entrypoints: false,
-    hash: false,
-    modules: false,
-    timings: false,
-    version: false
-  };
+  const result = bundleGroups.flatMap(x => x);
 
-  console.log(stats.toString(verbose ? {} : minimalStatsOutput));
+  await fs.writeFile('./src/resources/resources.json', JSON.stringify(result, null, 2), 'utf8');
 }
 
 export function faviconGenerate(done) {
@@ -359,36 +310,7 @@ export async function faviconCheckUpdate(done) {
   realFavicon.checkForUpdates(currentVersion, done);
 }
 
-export const build = gulp.parallel(bundleCss, bundleJs);
-
-export async function verifyEs5compat() {
-  const files = await promisify(glob)('dist/**/*.js');
-  const errors = [];
-
-  for (const file of files) {
-    // eslint-disable-next-line no-await-in-loop
-    const content = await fs.readFile(file, 'utf8');
-
-    try {
-      parseEs5(content, { ecmaVersion: 5 });
-    } catch (error) {
-      errors.push({ file, error });
-    }
-  }
-
-  if (errors.length) {
-    const lines = [];
-    lines.push('Verification error, ES5 compatibility is broken:');
-    for (const err of errors) {
-      lines.push(err.error.message);
-      lines.push(`  --> in: ${err.file}`);
-    }
-
-    throw new Error(lines.join(EOL));
-  }
-}
-
-export const verify = gulp.parallel(verifyEs5compat);
+export const build = gulp.parallel(bundleCss, bundleTranslations, bundleJs);
 
 export async function countriesUpdate() {
   await Promise.all(supportedLanguages.map(downloadCountryList));
@@ -475,7 +397,7 @@ export async function minioSeed() {
   await execa('./scripts/s3-seed', { stdio: 'inherit' });
 }
 
-export function startServer(done) {
+function spawnServer({ skipDbChecks }) {
   server = spawn(
     process.execPath,
     [
@@ -486,49 +408,51 @@ export function startServer(done) {
       'src/index.js'
     ],
     {
-      env: { ...process.env, NODE_ENV: 'development' },
+      env: {
+        ...process.env,
+        NODE_ENV: 'development',
+        ELMU_SKIP_DB_MIGRATIONS: true.toString(),
+        ELMU_SKIP_DB_CHECKS: (!!skipDbChecks).toString()
+      },
       stdio: 'inherit'
     }
   );
   server.once('exit', () => {
     server = null;
   });
+}
+
+export function startServer(done) {
+  spawnServer({ skipDbChecks: false });
   done();
 }
 
 export function restartServer(done) {
   if (server) {
     server.once('exit', () => {
-      startServer(done);
+      spawnServer({ skipDbChecks: true });
+      done();
     });
     server.kill();
   } else {
-    startServer(done);
+    spawnServer({ skipDbChecks: false });
+    done();
   }
 }
 
-export const serve = gulp.series(maildevUp, mongoUp, minioUp, build, startServer);
+export const up = gulp.series(mongoUp, minioUp, maildevUp);
 
-export const serveRestart = gulp.series(gulp.parallel(lint, testChanged, bundleJs), restartServer);
+export const down = gulp.parallel(mongoDown, minioDown, maildevDown);
 
-export const serveRestartRaw = gulp.series(bundleJs, restartServer);
+export const serve = gulp.series(gulp.parallel(up, build), startServer);
 
-export const ciPrepare = gulp.series(mongoUser, mongoSeed, minioSeed);
+export const ciPrepare = gulp.series(mongoUser, gulp.parallel(mongoSeed, minioSeed));
 
-export const ci = gulp.series(clean, lint, test, build, verify);
+export const ci = gulp.series(clean, lint, test, build);
 
 export function setupWatchers(done) {
-  gulp.watch(['src/**/*.{js,yml,json}'], serveRestart);
-  gulp.watch(['src/**/*.less'], bundleCss);
-  gulp.watch(['*.js'], lint);
-  gulp.watch(['scripts/**/*.js'], lint);
-  gulp.watch(['scripts/db-seed.js'], mongoSeed);
-  gulp.watch(['scripts/s3-seed.js'], minioSeed);
-  done();
-}
-
-export function setupWatchersRaw(done) {
-  gulp.watch(['src/**/*.{js,yml,json}'], serveRestartRaw);
+  gulp.watch(['src/**/*.{js,json}'], gulp.series(bundleJs, restartServer));
+  gulp.watch(['src/**/*.yml'], gulp.series(bundleTranslations, restartServer));
   gulp.watch(['src/**/*.less'], bundleCss);
   gulp.watch(['scripts/db-seed.js'], mongoSeed);
   gulp.watch(['scripts/s3-seed.js'], minioSeed);
@@ -537,6 +461,4 @@ export function setupWatchersRaw(done) {
 
 export const startWatch = gulp.series(serve, setupWatchers);
 
-export const startWatchRaw = gulp.series(serve, setupWatchersRaw);
-
-export default startWatchRaw;
+export default startWatch;

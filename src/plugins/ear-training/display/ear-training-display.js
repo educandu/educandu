@@ -1,7 +1,6 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
-import abcjs from '../../../common/abcjs-import.js';
 import { shuffleItems } from '../../../utils/array-utils.js';
 import AudioPlayer from '../../../components/audio-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
@@ -28,6 +27,8 @@ class EarTrainingDisplay extends React.Component {
 
     autoBind(this);
 
+    this.abcjs = null;
+    this.canRenderAbc = false;
     this.abcContainerRef = React.createRef();
     this.midiContainerRef = React.createRef();
 
@@ -42,20 +43,32 @@ class EarTrainingDisplay extends React.Component {
     };
   }
 
-  componentDidMount() {
-    const { tests, currentIndex, showResult } = this.state;
-    const currentTest = tests[currentIndex];
-    abcjs.renderAbc(this.abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
-    abcjs.renderMidi(this.midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
+  async componentDidMount() {
+    this.canRenderAbc = true;
+    const { default: abcjs } = await import('abcjs/midi.js');
+    this.abcjs = abcjs;
+
+    if (this.canRenderAbc) {
+      const { tests, currentIndex, showResult } = this.state;
+      const currentTest = tests[currentIndex];
+      this.abcjs.renderAbc(this.abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
+      this.abcjs.renderMidi(this.midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { tests, currentIndex, showResult } = this.state;
-    const currentTest = tests[currentIndex];
-    abcjs.renderAbc(this.abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
-    if (tests !== prevState.tests || currentIndex !== prevState.currentIndex) {
-      abcjs.renderMidi(this.midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
+    if (this.abcjs) {
+      const { tests, currentIndex, showResult } = this.state;
+      const currentTest = tests[currentIndex];
+      this.abcjs.renderAbc(this.abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
+      if (tests !== prevState.tests || currentIndex !== prevState.currentIndex) {
+        this.abcjs.renderMidi(this.midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
+      }
     }
+  }
+
+  componentWillUnmount() {
+    this.canRenderAbc = false;
   }
 
   handleResultClick() {

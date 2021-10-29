@@ -27,6 +27,46 @@ const metadataProjection = {
   tags: 1
 };
 
+const searchResultsProjection = {
+  title: 1,
+  key: 1,
+  slug: 1,
+  contributors: 1,
+  updatedOn: 1,
+  tags: 1
+};
+
+const getTagsQuery = searchString => [
+  { $unwind: '$tags' },
+  {
+    $match:
+    {
+      $and: [
+        { tags: { $regex: `.*${searchString}.*`, $options: 'i' } },
+        { slug: { $ne: null } }
+      ]
+    }
+  },
+  { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
+  {
+    $project: {
+      _id: 0,
+      uniqueTags: {
+        $reduce: {
+          input: '$uniqueTags',
+          initialValue: [],
+          in: {
+            $let: {
+              vars: { elem: { $concatArrays: [['$$this'], '$$value'] } },
+              in: { $setUnion: '$$elem' }
+            }
+          }
+        }
+      }
+    }
+  }
+];
+
 const lastUpdatedFirst = [['updatedOn', -1]];
 
 class DocumentService {
@@ -50,6 +90,11 @@ class DocumentService {
     return this.documentStore.find({ _id: { $in: documentKeys } }, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
+  async getDocumentsByTags(searchTags) {
+    const result = await this.documentStore.find({ tags: { $all: searchTags } }, { projection: searchResultsProjection });
+    return result || [];
+  }
+
   getDocumentByKey(documentKey) {
     return this.documentStore.findOne({ _id: documentKey });
   }
@@ -68,6 +113,14 @@ class DocumentService {
 
   getDocumentRevisionById(id) {
     return this.documentRevisionStore.findOne({ _id: id });
+  }
+
+  findRevisionTags(searchString) {
+    return this.documentRevisionStore.toAggregateArray(getTagsQuery(searchString));
+  }
+
+  findDocumentTags(searchString) {
+    return this.documentStore.toAggregateArray(getTagsQuery(searchString));
   }
 
   async createDocumentRevision({ doc, user, restoredFrom = null }) {
