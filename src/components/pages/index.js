@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import Page from '../page.js';
 import DocView from '../doc-view.js';
 import PropTypes from 'prop-types';
-import { getHomeUrl, getSearchPath } from '../../utils/urls.js';
+import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
 import ElmuLogo from '../elmu-logo.js';
 import { Button, Select } from 'antd';
 import { useService } from '../container-context.js';
@@ -24,7 +24,7 @@ function Index({ initialState }) {
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
   const handleSearchClick = tags => {
-    window.location = getSearchPath(tags);
+    window.location = getSearchUrl(tags);
   };
 
   const getTagSuggestions = useCallback(async tagSuggestionsQuery => {
