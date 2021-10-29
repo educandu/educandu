@@ -1,7 +1,7 @@
 import { notification } from 'antd';
 
 const tryToTranslateMessage = (error, t) => {
-  if (error.status !== 400 && !!t) {
+  if (error.status !== 400) {
     return null;
   }
 
