@@ -10,7 +10,7 @@ export default {
       key: { namespace: 1, slug: 1 }
     },
     {
-      name: 'tagsIndex',
+      name: '_idx_tags_',
       key: { tags: 1 }
     }
   ]
