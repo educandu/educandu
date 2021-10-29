@@ -87,7 +87,7 @@ function Index({ initialState }) {
               disabled={!selectedTags.length}
               className="IndexPage-searchButton"
               >
-              {currentHomeLanguage.searchFieldPlaceholder}
+              {currentHomeLanguage.searchFieldButton}
             </Button>
           </div>
         )}
