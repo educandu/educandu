@@ -92,7 +92,7 @@ class UserController {
   }
 
   registerApi(router) {
-    router.get('/api/v1/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsers(req, res));
+    router.get('/api/v1/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.userRequestHandler.handleGetUsers(req, res));
 
     router.post('/api/v1/users', [jsonParser, validateBody(postUserBodySchema)], (req, res) => this.userRequestHandler.handlePostUser(req, res));
 
