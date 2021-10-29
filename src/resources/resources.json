@@ -1128,7 +1128,8 @@
       "hardDelete": "Delete irreversibly",
       "moveUp": "Move up",
       "moveDown": "Move down",
-      "error": "Error"
+      "error": "Error",
+      "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits"
     }
   },
   {
@@ -1150,7 +1151,8 @@
       "hardDelete": "Unwiderruflich löschen",
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
-      "error": "Fehler"
+      "error": "Fehler",
+      "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten"
     }
   },
   {
