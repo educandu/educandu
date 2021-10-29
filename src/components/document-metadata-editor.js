@@ -131,7 +131,7 @@ class DocumentMetadataEditor extends React.Component {
             <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={this.handleLanguageChange} />
             <br />
             <span>{t('slug')}:</span>
-            <Form.Item validateStatus={slugValidationStatus} help={slugValidationStatus && t('invalidSlug')}>
+            <Form.Item validateStatus={slugValidationStatus} help={slugValidationStatus && t('common:invalidSlug')}>
               <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
             </Form.Item>
             <span>{t('tags')}</span>:
