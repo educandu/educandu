@@ -5,7 +5,7 @@ const tryToTranslateMessage = (error, t) => {
     return null;
   }
 
-  const isSlugInvalid = error.details?.findIndex(detail => detail.context?.key === 'slug') !== -1;
+  const isSlugInvalid = error.details?.find(detail => detail.context?.key === 'slug');
   return isSlugInvalid ? t('common:invalidSlug') : null;
 };
 
