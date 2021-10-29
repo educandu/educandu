@@ -116,9 +116,16 @@ export function createFullyQualifiedUrl(pathname) {
 
 export function getSearchUrl(tags) {
   const url = new URL(document.location);
-  url.searchParams.delete('language');
-  url.pathname = searchPath;
+  const keys = [];
+  for (const key of url.searchParams.keys()) {
+    keys.push(key);
+  }
 
+  for (const key of keys) {
+    url.searchParams.delete(key);
+  }
+
+  url.pathname = searchPath;
   tags.forEach(tag => {
     url.searchParams.append('tags', tag);
   });
