@@ -46,3 +46,6 @@ moveDown:
 error:
   en: Error
   de: Fehler
+invalidSlug:
+  en: The URL path must contain only lower case letters, hyphons, slashes and digits
+  de: Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten

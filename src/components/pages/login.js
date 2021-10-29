@@ -27,8 +27,8 @@ class Login extends React.Component {
   }
 
   async login({ username, password }) {
+    const { userApiClient, t } = this.props;
     try {
-      const { userApiClient } = this.props;
       const { user } = await userApiClient.login({ username, password });
 
       if (user) {
@@ -37,7 +37,7 @@ class Login extends React.Component {
         this.showLoginError();
       }
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 

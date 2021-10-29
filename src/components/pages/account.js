@@ -50,8 +50,9 @@ class Account extends React.Component {
   }
 
   async saveAccountData({ username, email }) {
+    const { t, userApiClient } = this.props;
+
     try {
-      const { t, userApiClient } = this.props;
       const { result, user } = await userApiClient.saveUserAccount({ username, email });
       switch (result) {
         case SAVE_USER_RESULT.success:
@@ -70,18 +71,19 @@ class Account extends React.Component {
           throw new Error(`Unknown result: ${result}`);
       }
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 
   async saveProfile(profileToSave) {
+    const { user, userApiClient, t } = this.props;
+
     try {
-      const { user, userApiClient, t } = this.props;
       const { profile } = await userApiClient.saveUserProfile({ profile: profileToSave });
       user.profile = profile;
       message.success(t('profile.updateSuccessMessage'));
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 
@@ -130,7 +132,7 @@ class Account extends React.Component {
       await userApiClient.requestPasswordReset({ email: user.email });
       message.success(t('account.passwordResetEmailSent', { email: user.email }));
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 

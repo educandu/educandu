@@ -100,7 +100,7 @@ class Docs extends React.Component {
 
   async handleOk() {
     const { newDocTitle, newDocLanguage, newDocSlug, newDocBlueprintKey } = this.state;
-    const { documentApiClient } = this.props;
+    const { documentApiClient, t } = this.props;
 
     try {
       this.setState({ isLoading: true });
@@ -116,7 +116,7 @@ class Docs extends React.Component {
       window.location = urls.getEditDocUrl(documentRevision.key, newDocBlueprintKey || null);
     } catch (error) {
       this.setState({ isLoading: false });
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 

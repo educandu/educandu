@@ -28,13 +28,14 @@ class CompletePasswordReset extends React.Component {
   }
 
   async completePasswordReset(password) {
+    const { userApiClient, initialState, t } = this.props;
+
     try {
-      const { userApiClient, initialState } = this.props;
       const { passwordResetRequestId } = initialState;
       const { user } = await userApiClient.completePasswordReset({ passwordResetRequestId, password });
       this.setState({ user });
     } catch (error) {
-      errorHelper.handleApiError(error, logger);
+      errorHelper.handleApiError({ error, logger, t });
     }
   }
 

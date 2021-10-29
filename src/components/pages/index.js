@@ -12,11 +12,13 @@ import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { useTranslation } from 'react-i18next';
 
 function Index({ initialState }) {
   const [tagSuggestions, setTagSuggestions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const documentApiClient = useService(DocumentApiClient);
+  const { t } = useTranslation();
 
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
@@ -33,10 +35,10 @@ function Index({ initialState }) {
     }
     try {
       setTagSuggestions(await documentApiClient.getDocumentTagSuggestions(tagSuggestionsQuery));
-    } catch (e) {
-      handleApiError(e);
+    } catch (error) {
+      handleApiError({ error, t });
     }
-  }, [documentApiClient]);
+  }, [documentApiClient, t]);
 
   const handleSelectedTagsChanged = selectedValues => {
     setSelectedTags(selectedValues);

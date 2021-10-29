@@ -13,6 +13,7 @@ import LanguageSelect from './localization/language-select.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
+import { slugValidationPattern } from '../common/validation-patterns.js';
 import DocumentApiClient from '../services/document-api-client.js';
 import { handleApiError } from '../ui/error-helper.js';
 
@@ -29,12 +30,26 @@ class DocumentMetadataEditor extends React.Component {
     super(props);
     autoBind(this);
     this.documentApiClient = props.documentApiClient;
-    const { documentRevision } = props;
     this.state = {
       mode: MODE_PREVIEW,
-      tagsValidationStatus: documentRevision.tags.length ? '' : 'error',
+      tagsValidationStatus: '',
+      slugValidationStatus: '',
       tagSuggestions: []
     };
+  }
+
+  componentDidMount() {
+    this.validateMetadata(this.props.documentRevision);
+  }
+
+  validateMetadata(metadata) {
+    const isValidSlug = slugValidationPattern.test(metadata.slug);
+    this.setState({ slugValidationStatus: isValidSlug ? '' : 'error' });
+
+    const areValidTags = metadata.tags.length > 0 && metadata.tags.every(tag => isValidTag({ tag }));
+    this.setState({ tagsValidationStatus: areValidTags ? '' : 'error' });
+
+    return isValidSlug && areValidTags;
   }
 
   handleEditClick() {
@@ -60,12 +75,9 @@ class DocumentMetadataEditor extends React.Component {
   }
 
   handleSlugChange(event) {
-    try {
-      const { onChanged, documentRevision } = this.props;
-      onChanged({ metadata: { ...documentRevision, slug: event.target.value } });
-    } catch (e) {
-      handleApiError(e);
-    }
+    const { onChanged, documentRevision } = this.props;
+    const metadata = { ...documentRevision, slug: event.target.value };
+    onChanged({ metadata, invalidMetadata: !this.validateMetadata(metadata) });
   }
 
   async handleTagSuggestionsRefresh(tagSuggestionsQuery) {
@@ -75,23 +87,20 @@ class DocumentMetadataEditor extends React.Component {
       }
       const tagSuggestions = await this.documentApiClient.getRevisionTagSuggestions(tagSuggestionsQuery);
       this.setState({ tagSuggestions });
-    } catch (e) {
-      handleApiError(e);
+    } catch (error) {
+      const { t } = this.props;
+      handleApiError({ error, t });
     }
   }
 
   handleTagsChange(selectedValues) {
     const { onChanged, documentRevision } = this.props;
-    const areTagsValid = selectedValues.length > 0 && selectedValues.every(tag => isValidTag({ tag }));
-    this.setState({
-      tagsValidationStatus: areTagsValid ? '' : 'error',
-      tagSuggestions: []
-    });
-    onChanged({ metadata: { ...documentRevision, tags: selectedValues }, invalidMetadata: !areTagsValid });
+    const metadata = { ...documentRevision, tags: selectedValues };
+    onChanged({ metadata, invalidMetadata: !this.validateMetadata(metadata) });
   }
 
   render() {
-    const { mode, tagsValidationStatus, tagSuggestions } = this.state;
+    const { mode, tagsValidationStatus, slugValidationStatus, tagSuggestions } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
     const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags, ...tagSuggestions]);
@@ -121,7 +130,10 @@ class DocumentMetadataEditor extends React.Component {
             <br />
             <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={this.handleLanguageChange} />
             <br />
-            <span>{t('slug')}:</span> <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
+            <span>{t('slug')}:</span>
+            <Form.Item validateStatus={slugValidationStatus} help={slugValidationStatus && t('common:invalidSlug')}>
+              <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={this.handleSlugChange} />
+            </Form.Item>
             <span>{t('tags')}</span>:
             <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
               <Select
