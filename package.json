@@ -103,14 +103,13 @@
     "toposort": "~2.0.2",
     "umzug": "~v3.0.0-beta.16",
     "urlencode": "~1.1.0",
-    "uuid": "~8.3.2",
-    "yaml": "~1.10.2"
+    "uuid": "~8.3.2"
   },
   "devDependencies": {
     "@jest/globals": "~27.3.1",
     "docker-cli-js": "~2.8.0",
     "easy-table": "~1.2.0",
-    "eslint": "~7.32.0",
+    "eslint": "~8.1.0",
     "eslint-plugin-import": "~2.25.2",
     "eslint-plugin-react": "~7.26.1",
     "eslint-plugin-react-hooks": "~4.2.0",
@@ -128,6 +127,7 @@
     "less-plugin-autoprefix": "~2.0.0",
     "node-mocks-http": "~1.11.0",
     "process": "~0.11.10",
-    "sinon": "~11.1.2"
+    "sinon": "~11.1.2",
+    "yaml": "~1.10.2"
   }
 }

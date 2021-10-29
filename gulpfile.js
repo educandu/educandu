@@ -4,6 +4,7 @@ import del from 'del';
 import path from 'path';
 import gulp from 'gulp';
 import glob from 'glob';
+import yaml from 'yaml';
 import { EOL } from 'os';
 import execa from 'execa';
 import fse from 'fs-extra';
@@ -58,17 +59,15 @@ let server = null;
 let buildResult = null;
 
 Graceful.on('exit', () => {
-  if (server) {
-    server.kill();
-  }
-  if (buildResult) {
-    buildResult.rebuild.dispose();
-  }
+  server?.kill();
+  buildResult?.rebuild?.dispose();
 });
 
 const delay = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
 });
+
+const kebabToCamel = str => str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
 
 const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () => Promise.resolve() }) => {
   const docker = new Docker();
@@ -172,7 +171,7 @@ export async function bundleJs() {
   }
 
   if (buildResult.metafile) {
-    await fse.mkdirp('./reports');
+    await fse.ensureDir('./reports');
     await fs.writeFile('./reports/bundles.json', JSON.stringify(buildResult.metafile, null, 2), 'utf8');
 
     const t = new EasyTable();
@@ -187,6 +186,45 @@ export async function bundleJs() {
 
     console.log(EOL + t.toString());
   }
+}
+
+export async function bundleTranslations() {
+  const filePaths = await promisify(glob)('./src/**/*.yml');
+
+  const bundleGroups = await Promise.all(filePaths.map(async filePath => {
+    const namespace = kebabToCamel(path.basename(filePath, '.yml'));
+    const content = await fs.readFile(filePath, 'utf8');
+    const resources = yaml.parse(content);
+
+    if (!resources) {
+      return [];
+    }
+
+    const bundlesByLanguage = {};
+    const resourceKeys = Object.keys(resources);
+
+    resourceKeys.forEach(resourceKey => {
+      const languages = Object.keys(resources[resourceKey]);
+      languages.forEach(language => {
+        let languageBundle = bundlesByLanguage[language];
+        if (!languageBundle) {
+          languageBundle = {
+            namespace,
+            language,
+            resources: {}
+          };
+          bundlesByLanguage[language] = languageBundle;
+        }
+        languageBundle.resources[resourceKey] = resources[resourceKey][language];
+      });
+    });
+
+    return Object.values(bundlesByLanguage);
+  }));
+
+  const result = bundleGroups.flatMap(x => x);
+
+  await fs.writeFile('./src/resources/resources.json', JSON.stringify(result, null, 2), 'utf8');
 }
 
 export function faviconGenerate(done) {
@@ -272,7 +310,7 @@ export async function faviconCheckUpdate(done) {
   realFavicon.checkForUpdates(currentVersion, done);
 }
 
-export const build = gulp.parallel(bundleCss, bundleJs);
+export const build = gulp.parallel(bundleCss, bundleTranslations, bundleJs);
 
 export async function countriesUpdate() {
   await Promise.all(supportedLanguages.map(downloadCountryList));
@@ -359,7 +397,7 @@ export async function minioSeed() {
   await execa('./scripts/s3-seed', { stdio: 'inherit' });
 }
 
-export function startServer(done) {
+function spawnServer({ skipDbChecks }) {
   server = spawn(
     process.execPath,
     [
@@ -370,49 +408,51 @@ export function startServer(done) {
       'src/index.js'
     ],
     {
-      env: { ...process.env, NODE_ENV: 'development' },
+      env: {
+        ...process.env,
+        NODE_ENV: 'development',
+        ELMU_SKIP_DB_MIGRATIONS: true.toString(),
+        ELMU_SKIP_DB_CHECKS: (!!skipDbChecks).toString()
+      },
       stdio: 'inherit'
     }
   );
   server.once('exit', () => {
     server = null;
   });
+}
+
+export function startServer(done) {
+  spawnServer({ skipDbChecks: false });
   done();
 }
 
 export function restartServer(done) {
   if (server) {
     server.once('exit', () => {
-      startServer(done);
+      spawnServer({ skipDbChecks: true });
+      done();
     });
     server.kill();
   } else {
-    startServer(done);
+    spawnServer({ skipDbChecks: false });
+    done();
   }
 }
 
-export const serve = gulp.series(maildevUp, mongoUp, minioUp, build, startServer);
+export const up = gulp.series(mongoUp, minioUp, maildevUp);
 
-export const serveRestart = gulp.series(gulp.parallel(lint, testChanged, bundleJs), restartServer);
+export const down = gulp.parallel(mongoDown, minioDown, maildevDown);
 
-export const serveRestartRaw = gulp.series(bundleJs, restartServer);
+export const serve = gulp.series(gulp.parallel(up, build), startServer);
 
-export const ciPrepare = gulp.series(mongoUser, mongoSeed, minioSeed);
+export const ciPrepare = gulp.series(mongoUser, gulp.parallel(mongoSeed, minioSeed));
 
 export const ci = gulp.series(clean, lint, test, build);
 
 export function setupWatchers(done) {
-  gulp.watch(['src/**/*.{js,yml,json}'], serveRestart);
-  gulp.watch(['src/**/*.less'], bundleCss);
-  gulp.watch(['*.js'], lint);
-  gulp.watch(['scripts/**/*.js'], lint);
-  gulp.watch(['scripts/db-seed.js'], mongoSeed);
-  gulp.watch(['scripts/s3-seed.js'], minioSeed);
-  done();
-}
-
-export function setupWatchersRaw(done) {
-  gulp.watch(['src/**/*.{js,yml,json}'], serveRestartRaw);
+  gulp.watch(['src/**/*.{js,json}'], gulp.series(bundleJs, restartServer));
+  gulp.watch(['src/**/*.yml'], gulp.series(bundleTranslations, restartServer));
   gulp.watch(['src/**/*.less'], bundleCss);
   gulp.watch(['scripts/db-seed.js'], mongoSeed);
   gulp.watch(['scripts/s3-seed.js'], minioSeed);
@@ -421,6 +461,4 @@ export function setupWatchersRaw(done) {
 
 export const startWatch = gulp.series(serve, setupWatchers);
 
-export const startWatchRaw = gulp.series(serve, setupWatchersRaw);
-
-export default startWatchRaw;
+export default startWatch;

@@ -17,7 +17,8 @@ const ROLES_ADMIN = [ROLE.user, ROLE.admin];
 
 (async function seed() {
 
-  const container = await serverBootstrapper.createContainer();
+  const config = { skipDbMigrations: true, skipDbChecks: false };
+  const container = await serverBootstrapper.createContainer(config);
   const db = container.get(Database);
   const userService = container.get(UserService);
   const settingService = container.get(SettingService);

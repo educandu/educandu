@@ -15,7 +15,7 @@ import { createContainer, disposeContainer } from './bootstrap/server-bootstrapp
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
-const serverConfig = new ServerConfig();
+const serverConfig = new ServerConfig({ skipDbMigrations: true, skipDbChecks: false });
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.tmp/', import.meta.url).href);
@@ -37,7 +37,7 @@ export function deleteTestDir(testDir) {
 export function createTestDatabase() {
   const dbUrl = new URL(serverConfig.elmuWebConnectionString);
   dbUrl.pathname = `test-elmu-web-${Date.now()}`;
-  return Database.create({ connectionString: dbUrl.toString(), runDbMigration: false });
+  return Database.create({ connectionString: dbUrl.toString() });
 }
 
 export function getTestCollection(db, collectionName) {
@@ -141,7 +141,7 @@ export async function createAndVerifyUser(userService, username, password, email
 export async function setupTestEnvironment() {
   const timestamp = Date.now().toString();
 
-  const config = new ServerConfig({ env: 'test' });
+  const config = new ServerConfig({ env: 'test', skipDbMigrations: true, skipDbChecks: false });
 
   // Configure temp DB parameters:
   const dbUrl = new URL(config.elmuWebConnectionString);

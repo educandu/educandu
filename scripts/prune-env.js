@@ -5,7 +5,8 @@ import serverBootstrapper from '../src/bootstrap/server-bootstrapper.js';
 
 (async function pruneEnv() {
 
-  const container = await serverBootstrapper.createContainer();
+  const config = { skipDbMigrations: true, skipDbChecks: true };
+  const container = await serverBootstrapper.createContainer(config);
 
   // CDN
   const cdn = container.get(Cdn);
