@@ -29,7 +29,14 @@ class ElmuServer {
     this.app.use('/', router);
 
     logger.info('Registering healthcheck');
-    router.use((req, res, next) => req.path === '/healthcheck' ? res.send('OK') : next());
+    router.use((req, res, next) => {
+      if (req.path === '/healthcheck') {
+        logger.info('Healthcheck was hit', req.headers);
+        res.json({ status: 'OK' });
+      } else {
+        next();
+      }
+    });
 
     if (this.serverConfig.redirectToHttps) {
       logger.info('Registering redirect to HTTPS');
