@@ -133,7 +133,7 @@ class AnavisEditor extends React.Component {
   }
 
   handleInternalUrlValueChanged(e) {
-    this.handleMediaUrlChanged(e.target?.value);
+    this.handleMediaUrlChanged(e.target.value);
   }
 
   handleInternalUrlFileNameChanged(value) {
