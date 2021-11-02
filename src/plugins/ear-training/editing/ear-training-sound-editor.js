@@ -45,7 +45,7 @@ class EarTrainingSoundEditor extends React.Component {
     this.changeSound({ url: e.target.value });
   }
 
-  handleFileNameChanged(value) {
+  handleInternalUrlFileNameChanged(value) {
     this.changeSound({ url: value });
   }
 
@@ -103,7 +103,7 @@ class EarTrainingSoundEditor extends React.Component {
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={sound.url}
-                  onFileNameChanged={this.handleFileNameChanged}
+                  onFileNameChanged={this.handleInternalUrlFileNameChanged}
                   />
               </div>
             )}

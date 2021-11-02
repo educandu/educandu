@@ -28,7 +28,7 @@ class AudioEditor extends React.Component {
     this.changeContent({ url: e.target.value });
   }
 
-  handleFileNameChanged(value) {
+  handleInternalUrlFileNameChanged(value) {
     this.changeContent({ url: value });
   }
 
@@ -83,7 +83,7 @@ class AudioEditor extends React.Component {
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={url}
-                  onFileNameChanged={this.handleFileNameChanged}
+                  onFileNameChanged={this.handleInternalUrlFileNameChanged}
                   />
               </div>
             </FormItem>

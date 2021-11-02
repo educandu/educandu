@@ -136,7 +136,7 @@ class AnavisEditor extends React.Component {
     this.handleMediaUrlChanged(e.target?.value);
   }
 
-  handleFileNameChanged(value) {
+  handleInternalUrlFileNameChanged(value) {
     this.handleMediaUrlChanged(value);
   }
 
@@ -359,7 +359,7 @@ class AnavisEditor extends React.Component {
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={url}
-                  onFileNameChanged={this.handleFileNameChanged}
+                  onFileNameChanged={this.handleInternalUrlFileNameChanged}
                   />
               </div>
             </FormItem>
