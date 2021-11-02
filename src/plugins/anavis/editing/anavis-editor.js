@@ -132,7 +132,11 @@ class AnavisEditor extends React.Component {
     this.handleMediaUrlChanged(event.target.value);
   }
 
-  handleInternalUrlValueChanged(value) {
+  handleInternalUrlValueChanged(e) {
+    this.handleMediaUrlChanged(e.target?.value);
+  }
+
+  handleFileNameChanged(value) {
     this.handleMediaUrlChanged(value);
   }
 
@@ -348,14 +352,14 @@ class AnavisEditor extends React.Component {
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={url}
-                  readOnly
+                  onChange={this.handleInternalUrlValueChanged}
                   />
                 <CdnFilePicker
                   rootPrefix="media"
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={url}
-                  onFileNameChanged={this.handleInternalUrlValueChanged}
+                  onFileNameChanged={this.handleFileNameChanged}
                   />
               </div>
             </FormItem>
