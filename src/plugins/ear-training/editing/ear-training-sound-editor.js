@@ -41,7 +41,11 @@ class EarTrainingSoundEditor extends React.Component {
     this.changeSound({ url: value });
   }
 
-  handleInternalUrlChanged(value) {
+  handleInternalUrlChanged(e) {
+    this.changeSound({ url: e.target.value });
+  }
+
+  handleFileNameChanged(value) {
     this.changeSound({ url: value });
   }
 
@@ -92,14 +96,14 @@ class EarTrainingSoundEditor extends React.Component {
                 <Input
                   addonBefore={`${this.props.clientConfig.cdnRootUrl}/`}
                   value={sound.url}
-                  readOnly
+                  onChange={this.handleInternalUrlChanged}
                   />
                 <CdnFilePicker
                   rootPrefix="media"
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={sound.url}
-                  onFileNameChanged={this.handleInternalUrlChanged}
+                  onFileNameChanged={this.handleFileNameChanged}
                   />
               </div>
             )}
