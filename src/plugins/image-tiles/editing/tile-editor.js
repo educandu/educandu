@@ -25,7 +25,11 @@ class TileEditor extends React.Component {
     this.props.onChange(this.props.index, { image: { url: value, type: this.props.image.type } });
   }
 
-  handleInternalImageUrlValueChanged(value) {
+  handleInternalImageUrlValueChanged(e) {
+    this.props.onChange(this.props.index, { image: { url: e.target.value, type: this.props.image.type } });
+  }
+
+  handleInternalImageUrlFileNameChanged(value) {
     this.props.onChange(this.props.index, { image: { url: value, type: this.props.image.type } });
   }
 
@@ -76,14 +80,14 @@ class TileEditor extends React.Component {
               <Input
                 addonBefore={`${clientConfig.cdnRootUrl}/`}
                 value={image.url}
-                readOnly
+                onChange={this.handleInternalImageUrlValueChanged}
                 />
               <CdnFilePicker
                 rootPrefix="media"
                 uploadPrefix={`media/${docKey}`}
                 initialPrefix={`media/${docKey}`}
                 fileName={image.url}
-                onFileNameChanged={this.handleInternalImageUrlValueChanged}
+                onFileNameChanged={this.handleInternalImageUrlFileNameChanged}
                 />
             </div>
           </FormItem>
