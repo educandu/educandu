@@ -75,6 +75,7 @@ function Index({ initialState }) {
               className="IndexPage-searchInput"
               tokenSeparators={[' ']}
               placeholder={currentHomeLanguage.searchFieldPlaceholder}
+              autoFocus
               value={selectedTags}
               onSearch={getTagSuggestions}
               onChange={handleSelectedTagsChanged}
