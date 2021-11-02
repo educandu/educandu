@@ -24,7 +24,11 @@ class AudioEditor extends React.Component {
     this.changeContent({ url: value });
   }
 
-  handleInternalUrlValueChanged(value) {
+  handleInternalUrlValueChanged(e) {
+    this.changeContent({ url: e.target.value });
+  }
+
+  handleInternalUrlFileNameChanged(value) {
     this.changeContent({ url: value });
   }
 
@@ -72,14 +76,14 @@ class AudioEditor extends React.Component {
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={url}
-                  readOnly
+                  onChange={this.handleInternalUrlValueChanged}
                   />
                 <CdnFilePicker
                   rootPrefix="media"
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={url}
-                  onFileNameChanged={this.handleInternalUrlValueChanged}
+                  onFileNameChanged={this.handleInternalUrlFileNameChanged}
                   />
               </div>
             </FormItem>

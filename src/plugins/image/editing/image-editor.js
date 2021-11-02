@@ -32,11 +32,20 @@ class ImageEditor extends React.Component {
     this.changeContent({ effect });
   }
 
-  handleInternalSourceUrlValueChanged(value) {
+  handleInternalSourceUrlValueChanged(e) {
+    this.changeContent({ sourceUrl: e.target.value });
+  }
+
+  handleEffectInternalSourceUrlValueChanged(e) {
+    const effect = { ...this.props.content.effect, sourceUrl: e.target.value };
+    this.changeContent({ effect });
+  }
+
+  handleInternalSourceUrlFileNameChanged(value) {
     this.changeContent({ sourceUrl: value });
   }
 
-  handleEffectInternalSourceUrlValueChanged(value) {
+  handleEffectInternalSourceUrlFileNameChanged(value) {
     const effect = { ...this.props.content.effect, sourceUrl: value };
     this.changeContent({ effect });
   }
@@ -154,14 +163,14 @@ class ImageEditor extends React.Component {
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={sourceUrl}
-                  readOnly
+                  onChange={this.handleInternalSourceUrlValueChanged}
                   />
                 <CdnFilePicker
                   rootPrefix="media"
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={sourceUrl}
-                  onFileNameChanged={this.handleInternalSourceUrlValueChanged}
+                  onFileNameChanged={this.handleInternalSourceUrlFileNameChanged}
                   />
               </div>
             </FormItem>
@@ -196,14 +205,14 @@ class ImageEditor extends React.Component {
                       <Input
                         addonBefore={`${clientConfig.cdnRootUrl}/`}
                         value={effect.sourceUrl}
-                        readOnly
+                        onChange={this.handleEffectInternalSourceUrlValueChanged}
                         />
                       <CdnFilePicker
                         rootPrefix="media"
                         uploadPrefix={`media/${docKey}`}
                         initialPrefix={`media/${docKey}`}
                         fileName={effect.sourceUrl}
-                        onFileNameChanged={this.handleEffectInternalSourceUrlValueChanged}
+                        onFileNameChanged={this.handleEffectInternalSourceUrlFileNameChanged}
                         />
                     </div>
                   </FormItem>

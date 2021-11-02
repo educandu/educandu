@@ -34,7 +34,11 @@ class VideoEditor extends React.Component {
     this.changeContent({ url: value });
   }
 
-  handleInternalUrlChanged(value) {
+  handleInternalUrlChanged(e) {
+    this.changeContent({ url: e.target.value });
+  }
+
+  handleInternalUrlFileNameChanged(value) {
     this.changeContent({ url: value });
   }
 
@@ -96,14 +100,14 @@ class VideoEditor extends React.Component {
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={url}
-                  readOnly
+                  onChange={this.handleInternalUrlChanged}
                   />
                 <CdnFilePicker
                   rootPrefix="media"
                   uploadPrefix={`media/${docKey}`}
                   initialPrefix={`media/${docKey}`}
                   fileName={url}
-                  onFileNameChanged={this.handleInternalUrlChanged}
+                  onFileNameChanged={this.handleInternalUrlFileNameChanged}
                   />
               </div>
             </FormItem>
