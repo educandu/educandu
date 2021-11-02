@@ -32,10 +32,10 @@ class ElmuServer {
     router.use((req, res, next) => {
       if (req.path === '/healthcheck') {
         logger.info('Healthcheck was hit', req.headers);
-        res.json({ status: 'OK' });
-      } else {
-        next();
+        return res.json({ status: 'OK' });
       }
+
+      return next();
     });
 
     if (this.serverConfig.redirectToHttps) {
