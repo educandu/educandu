@@ -108,6 +108,28 @@ const downloadCountryList = async lang => {
   await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(JSON.parse(res.text), null, 2), 'utf8');
 };
 
+export async function educanduBuildJs() {
+  const jsFiles = await promisify(glob)('src/**/*.js', { ignore: 'src/**/*.spec.js' });
+  Promise.all(jsFiles.map(jsFile => {
+    return esbuild.build({
+      entryPoints: [jsFile],
+      target: ['esnext'],
+      format: 'esm',
+      loader: { '.js': 'jsx' },
+      sourcemap: true,
+      sourcesContent: true,
+      outfile: path.resolve('./dist', path.relative('src', jsFile))
+    });
+  }));
+}
+
+export function educanduCopyToDist() {
+  return gulp.src(['src/**', '!src/**/*.{js,yml}'], { base: 'src' })
+    .pipe(gulp.dest('dist'));
+}
+
+export const educanduBuild = gulp.parallel(educanduCopyToDist, educanduBuildJs);
+
 export async function clean() {
   await del(['.tmp', 'dist', 'coverage', 'reports']);
 }

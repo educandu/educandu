@@ -8,11 +8,11 @@ const logger = new Logger(import.meta.url);
 Graceful.exitOnDouble = true;
 Graceful.timeout = 10000;
 
-(async function index() {
+export default async function educandu(options) {
 
   let container = null;
 
-  Graceful.on('exit', async (event, signal) => {
+  Graceful.on('exit', async (_event, signal) => {
     logger.info(`Received ${signal} - Starting graceful exit process`);
 
     let hasError = false;
@@ -42,7 +42,23 @@ Graceful.timeout = 10000;
 
     logger.info('Starting application');
 
-    container = await bootstrapper.createContainer();
+    const mappedValues = {
+      port: options.port,
+      elmuWebConnectionString: options.mongoConnectionString,
+      skipDbMigrations: options.skipMongoMigrations,
+      skipDbChecks: options.skipMongoChecks,
+      cdnEndpoint: options.cdnEndpoint,
+      cdnRegion: options.cdnRegion,
+      cdnAccessKey: options.cdnAccessKey,
+      cdnSecretKey: options.cdnSecretKey,
+      cdnBucketName: options.cdnBucketName,
+      cdnRootUrl: options.cdnRootUrl,
+      sessionSecret: options.sessionSecret,
+      sessionDurationInMinutes: options.sessionDurationInMinutes,
+      smtpOptions: options.smtpOptions
+    };
+
+    container = await bootstrapper.createContainer(mappedValues);
     const elmuServer = container.get(ElmuServer);
 
     logger.info('Starting server');
@@ -62,4 +78,4 @@ Graceful.timeout = 10000;
 
   }
 
-})();
+}

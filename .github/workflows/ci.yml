@@ -1,7 +1,7 @@
 name: CI
 on: [push]
 jobs:
-  build-elmu:
+  verify:
     runs-on: ubuntu-20.04
     env:
       NODE_ENV: development
@@ -40,18 +40,58 @@ jobs:
           cache: "yarn"
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
-      - name: Prepare build
+      - name: Prepare
         run: ./node_modules/.bin/gulp ciPrepare
-      - name: Build
-        run: ./node_modules/.bin/gulp ci
-      - name: Get current time
-        uses: 1466587594/get-current-time@v2
-        id: current-time
-      - name: Create release info
-        run: |
-          echo "${{ steps.current-time.outputs.year }}.${{ steps.current-time.outputs.month }}.${{ steps.current-time.outputs.day }}.$GITHUB_RUN_NUMBER" > ./dist/release.txt
-      - name: Upload workspace
-        uses: actions/upload-artifact@v2
+      - name: Lint
+        run: ./node_modules/.bin/gulp lint
+      - name: Test
+        run: ./node_modules/.bin/gulp test
+  publish-main:
+    runs-on: ubuntu-20.04
+    needs: [verify]
+    if: github.ref == 'refs/heads/main'
+    env:
+      NODE_ENV: development
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          name: dist
-          path: dist
+          node-version: "16.10.0"
+          cache: "yarn"
+      - name: Install node modules
+        run: yarn install --non-interactive --check-files --frozen-lockfile
+      - name: Build library
+        run: ./node_modules/.bin/gulp educanduBuild
+      - name: Authenticate with npm
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+      - name: npm version
+        run: npm version --allow-same-version --git-tag-version=false "0.0.0-pre.$GITHUB_SHA"
+      - name: npm publish
+        run: npm publish
+  publish-tag:
+    runs-on: ubuntu-20.04
+    needs: [verify]
+    if: startsWith(github.ref, 'refs/tags/')
+    env:
+      NODE_ENV: development
+    steps:
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        with:
+          strip_v: true
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.10.0"
+          cache: "yarn"
+      - name: Install node modules
+        run: yarn install --non-interactive --check-files --frozen-lockfile
+      - name: Build library
+        run: ./node_modules/.bin/gulp educanduBuild
+      - name: Authenticate with npm
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+      - name: npm version
+        run: npm version --allow-same-version --git-tag-version=false ${{ steps.tag.outputs.tag }}
+      - name: npm publish
+        run: npm publish

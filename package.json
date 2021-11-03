@@ -1,9 +1,12 @@
 {
-  "name": "educandu",
+  "name": "@educandu/educandu",
   "version": "0.0.0",
   "description": "The educandu framework",
   "type": "module",
-  "main": "src/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*"
+  },
   "engines": {
     "node": "16.x.x"
   },
@@ -19,7 +22,6 @@
     "type": "git",
     "url": "https://github.com/educandu/educandu"
   },
-  "private": true,
   "dependencies": {
     "@ant-design/icons": "~4.7.0",
     "@educandu/node-jsx-loader": "~2.1.0",
