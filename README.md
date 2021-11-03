@@ -1,6 +1,6 @@
-# elmu-web
+# educandu
 
-The elmu website
+The educandu framework
 
 ## Local development:
 
@@ -14,4 +14,4 @@ gulp fix  // Will run eslint and fix any linting rules that are easily solvable.
 
 ## License
 
-ELMU is released under the MIT License. See the bundled LICENSE file for details.
+Educandu is released under the MIT License. See the bundled LICENSE file for details.

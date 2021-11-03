@@ -1,7 +1,7 @@
 {
-  "name": "elmu-web",
+  "name": "educandu",
   "version": "0.0.0",
-  "description": "The elmu website",
+  "description": "The educandu framework",
   "type": "module",
   "main": "src/index.js",
   "engines": {
@@ -13,11 +13,11 @@
   },
   "keywords": [],
   "license": "MIT",
-  "author": "ELMU Team <admin@elmu.online>",
-  "homepage": "https://github.com/elmu/elmu-web",
+  "author": "Educandu Team <team@educandu.dev>",
+  "homepage": "https://github.com/educandu/educandu",
   "repository": {
     "type": "git",
-    "url": "https://github.com/elmu/elmu-web"
+    "url": "https://github.com/educandu/educandu"
   },
   "private": true,
   "dependencies": {

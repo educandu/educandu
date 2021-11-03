@@ -1,4 +1,4 @@
-name: Build Commit
+name: CI
 on: [push]
 jobs:
   build-elmu:
@@ -55,44 +55,3 @@ jobs:
         with:
           name: dist
           path: dist
-  deploy-release:
-    runs-on: ubuntu-20.04
-    needs: [build-elmu]
-    if: github.ref == 'refs/heads/main'
-    env:
-      DOCKER_IMAGE: elmu/elmu-web
-      OCTO_PROJECT_NAME: elmu-web
-      OCTO_ENVIRONMENT_NAME: Staging
-      OCTO_SERVER: https://elmu.octopus.app
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-      - name: Set RELEASE_NUMBER
-        run: echo "RELEASE_NUMBER="$(cat ./dist/release.txt | tr -d '\n')"" >> $GITHUB_ENV
-      - name: Create release notes
-        run: echo "RELEASE_NOTES=$(echo $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA)" >> $GITHUB_ENV
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          context: .
-          tags: ${{ env.DOCKER_IMAGE }}:${{ env.RELEASE_NUMBER }}
-      - name: Install Octopus CLI
-        uses: OctopusDeploy/install-octopus-cli-action@v1.1.1
-        with:
-          version: latest
-      - name: Create a release in Octopus Deploy 🐙
-        uses: OctopusDeploy/create-release-action@v1.1.1
-        with:
-          api_key: ${{ secrets.OCTO_API_KEY }}
-          project: ${{ env.OCTO_PROJECT_NAME }}
-          server: ${{ env.OCTO_SERVER }}
-          release_notes: ${{ env.RELEASE_NOTES }}
-          release_number: ${{ env.RELEASE_NUMBER }}
-          deploy_to: ${{ env.OCTO_ENVIRONMENT_NAME }}
