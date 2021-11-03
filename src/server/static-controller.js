@@ -1,14 +1,15 @@
 import express from 'express';
 import ServerConfig from '../bootstrap/server-config.js';
+import { resolvePathWithinPackage } from '../utils/file-helper.js';
 
 const staticConfig = [
   {
     root: '/images/flags',
-    destination: '../../node_modules/flag-icon-css/flags'
+    destination: resolvePathWithinPackage('flag-icon-css', './flags')
   },
   {
     root: '/fonts/fontawesome',
-    destination: '../../node_modules/@fortawesome/fontawesome-free/webfonts'
+    destination: resolvePathWithinPackage('@fortawesome/fontawesome-free', './webfonts')
   }
 ];
 
