@@ -137,7 +137,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
                 </React.Fragment>
               ))}
             </div>
-            {settings.helpPage[language] && (
+            {settings?.helpPage?.[language] && (
               <Button
                 className="Page-headerButton"
                 icon={<QuestionOutlined />}
@@ -165,7 +165,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       </main>
       <footer className="Page-footer">
         <div className="Page-footerContent">
-          {(settings.footerLinks?.[language] || []).map((fl, index) => (
+          {(settings?.footerLinks?.[language] || []).map((fl, index) => (
             <span key={index.toString()} className="Page-footerLink">
               <a href={urls.getArticleUrl(fl.documentSlug)}>{fl.linkTitle}</a>
             </span>

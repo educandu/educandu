@@ -55,7 +55,8 @@ export default async function educandu(options) {
       cdnRootUrl: options.cdnRootUrl,
       sessionSecret: options.sessionSecret,
       sessionDurationInMinutes: options.sessionDurationInMinutes,
-      smtpOptions: options.smtpOptions
+      smtpOptions: options.smtpOptions,
+      publicFolders: options.publicFolders
     };
 
     container = await bootstrapper.createContainer(mappedValues);

@@ -162,13 +162,13 @@ export function testWatch() {
 }
 
 export function bundleCss() {
-  return gulp.src('src/styles/main.less')
+  return gulp.src('test-app/main.less')
     .pipe(gulpif(!!server, plumber()))
     .pipe(sourcemaps.init())
     .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix(autoprefixOptions)] }))
     .pipe(gulpif(optimize, csso()))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('test-app/dist'));
 }
 
 export async function bundleJs() {
@@ -188,7 +188,7 @@ export async function bundleJs() {
       inject: ['./src/polyfills.js'],
       sourcemap: true,
       sourcesContent: true,
-      outdir: './dist'
+      outdir: './test-app/dist'
     });
   }
 
@@ -209,6 +209,13 @@ export async function bundleJs() {
     console.log(EOL + t.toString());
   }
 }
+
+export const runNewEducanduTestApp = gulp.series(
+  clean,
+  educanduBuild,
+  bundleCss,
+  () => execa(process.execPath, ['--experimental-json-modules', './test-app/index.js'], { stdio: 'inherit' })
+);
 
 export async function bundleTranslations() {
   const filePaths = await promisify(glob)('./src/**/*.yml');
