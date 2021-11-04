@@ -11,8 +11,8 @@ logger.info('Environment is set to %s', env);
 const config = {
   env,
   port: Number(process.env.EDUCANDU_PORT) || 3000,
-  skipMongoMigrations: parseBool(process.env.EDUCANDU_SKIP_DB_MIGRATIONS || false.toString()),
-  skipMongoChecks: parseBool(process.env.EDUCANDU_SKIP_DB_CHECKS || false.toString()),
+  skipMongoMigrations: parseBool(process.env.EDUCANDU_SKIP_MONGO_MIGRATIONS || false.toString()),
+  skipMongoChecks: parseBool(process.env.EDUCANDU_SKIP_MONGO_CHECKS || false.toString()),
   publicFolders: [],
   initialUser: null
 };
