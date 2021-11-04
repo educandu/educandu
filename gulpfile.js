@@ -304,8 +304,8 @@ function startTestApp({ skipMongoChecks }) {
       env: {
         ...process.env,
         NODE_ENV: 'development',
-        ELMU_SKIP_DB_MIGRATIONS: true.toString(),
-        ELMU_SKIP_DB_CHECKS: (!!skipMongoChecks).toString()
+        EDUCANDU_SKIP_DB_MIGRATIONS: true.toString(),
+        EDUCANDU_SKIP_DB_CHECKS: (!!skipMongoChecks).toString()
       },
       stdio: 'inherit'
     }
