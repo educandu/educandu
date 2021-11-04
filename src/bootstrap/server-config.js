@@ -23,13 +23,13 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/dev-elmu-web?replicaSet=elmurs&authSource=admin';
+    config.elmuWebConnectionString = 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';
     config.cdnSecretKey = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
-    config.cdnBucketName = 'dev-elmu-cdn';
-    config.cdnRootUrl = 'http://localhost:9000/dev-elmu-cdn';
+    config.cdnBucketName = 'dev-educandu-cdn';
+    config.cdnRootUrl = 'http://localhost:9000/dev-educandu-cdn';
     config.sessionSecret = 'd4340515fa834498b3ab1aba1e4d9013';
     config.smtpOptions = {
       host: 'localhost',
@@ -42,13 +42,13 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://elmu:elmu@localhost:27017/test-elmu-web?replicaSet=elmurs&authSource=admin';
+    config.elmuWebConnectionString = 'mongodb://root:rootpw@localhost:27017/test-educandu-db?replicaSet=educandurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';
     config.cdnSecretKey = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
-    config.cdnBucketName = 'test-elmu-cdn';
-    config.cdnRootUrl = 'http://localhost:9000/test-elmu-cdn';
+    config.cdnBucketName = 'test-educandu-cdn';
+    config.cdnRootUrl = 'http://localhost:9000/test-educandu-cdn';
     config.sessionSecret = 'd4340515fa834498b3ab1aba1e4d9013';
     config.smtpOptions = {
       host: 'localhost',

@@ -23,8 +23,8 @@ jobs:
         env:
           MONGODB_ROOT_USER: root
           MONGODB_ROOT_PASSWORD: rootpw
-          MONGODB_REPLICA_SET_KEY: elmurs
-          MONGODB_REPLICA_SET_NAME: elmurs
+          MONGODB_REPLICA_SET_KEY: educandurs
+          MONGODB_REPLICA_SET_NAME: educandurs
           MONGODB_REPLICA_SET_MODE: primary
       maildev:
         image: maildev/maildev:1.1.0
@@ -40,8 +40,6 @@ jobs:
           cache: "yarn"
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
-      - name: Prepare
-        run: ./node_modules/.bin/gulp ciPrepare
       - name: Lint
         run: ./node_modules/.bin/gulp lint
       - name: Test
@@ -60,7 +58,7 @@ jobs:
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Build library
-        run: ./node_modules/.bin/gulp educanduBuild
+        run: ./node_modules/.bin/gulp build
       - name: Authenticate with npm
         run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
       - name: npm version
@@ -87,7 +85,7 @@ jobs:
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Build library
-        run: ./node_modules/.bin/gulp educanduBuild
+        run: ./node_modules/.bin/gulp build
       - name: Authenticate with npm
         run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
       - name: npm version

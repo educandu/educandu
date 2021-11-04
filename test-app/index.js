@@ -1,17 +1,17 @@
 import path from 'path';
-import educandu from '@educandu/educandu';
+import educandu from '../src/index.js';
 
 educandu({
   port: 3000,
-  mongoConnectionString: 'mongodb://elmu:elmu@localhost:27017/dev-elmu-web?replicaSet=elmurs&authSource=admin',
+  mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   skipMongoMigrations: true,
   skipMongoChecks: false,
   cdnEndpoint: 'http://localhost:9000',
   cdnRegion: 'eu-central-1',
   cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
   cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
-  cdnBucketName: 'dev-elmu-cdn',
-  cdnRootUrl: 'http://localhost:9000/dev-elmu-cdn',
+  cdnBucketName: 'dev-educandu-cdn',
+  cdnRootUrl: 'http://localhost:9000/dev-educandu-cdn',
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
   sessionDurationInMinutes: 60,
   smtpOptions: {
