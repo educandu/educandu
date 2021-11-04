@@ -1,8 +1,8 @@
-import Doc from '@educandu/educandu/components/pages/doc.js';
-import Index from '@educandu/educandu/components/pages/index.js';
-import Article from '@educandu/educandu/components/pages/article.js';
-import Search from '@educandu/educandu/components/pages/search.js';
-import { hydrateApp } from '@educandu/educandu/bootstrap/client-bootstrapper.js';
+import Doc from '../../src/components/pages/doc.js';
+import Index from '../../src/components/pages/index.js';
+import Article from '../../src/components/pages/article.js';
+import Search from '../../src/components/pages/search.js';
+import { hydrateApp } from '../../src/bootstrap/client-bootstrapper.js';
 
 hydrateApp({
   doc: Doc,
