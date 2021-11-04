@@ -126,7 +126,7 @@ export async function removeAllBuckets(cdn) {
 }
 
 export async function createAndVerifyUser(userService, username, password, email, roles, profile, lockedOut) {
-  const { result, user } = await userService.createUser(username, password, email);
+  const { result, user } = await userService.createUser({ username, password, email });
   if (result !== SAVE_USER_RESULT.success) {
     throw new Error(JSON.stringify({ result, username, password, email }));
   }

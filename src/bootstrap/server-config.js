@@ -15,7 +15,8 @@ const config = {
   sessionDurationInMinutes: Number(process.env.ELMU_SESSION_DURATION_IN_MINUTES) || 60,
   skipDbMigrations: parseBool(process.env.ELMU_SKIP_DB_MIGRATIONS || false.toString()),
   skipDbChecks: parseBool(process.env.ELMU_SKIP_DB_CHECKS || false.toString()),
-  publicFolders: []
+  publicFolders: [],
+  initialUser: null
 };
 
 switch (env) {

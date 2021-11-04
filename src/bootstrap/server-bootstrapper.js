@@ -1,10 +1,12 @@
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
+import { ROLE } from '../domain/role.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
 import ElmuServer from '../server/elmu-server.js';
 import resources from '../resources/resources.json';
+import UserService from '../services/user-service.js';
 import commonBootstrapper from './common-bootstrapper.js';
 import ResourceManager from '../resources/resource-manager.js';
 
@@ -66,6 +68,18 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Registering resource manager');
   container.registerInstance(ResourceManager, resourceManager);
+
+  if (serverConfig.initialUser) {
+    const userService = container.get(UserService);
+    const existingUser = await userService.getUserByEmailAddress(serverConfig.initialUser.email);
+    if (existingUser) {
+      logger.info('User with initial user email address already exists, skipping creation');
+    } else {
+      logger.info('Creating initial user');
+      await userService.createUser({ ...serverConfig.initialUser, roles: [ROLE.user, ROLE.admin], verified: true });
+      logger.info('Initial user sucessfully created');
+    }
+  }
 
   return container;
 }

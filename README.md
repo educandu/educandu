@@ -30,6 +30,12 @@ educandu({
     host: 'localhost',
     port: 8025,
     ignoreTLS: true
+  },
+  publicFolders: [path.resolve('./assets')],
+  initialUser: {
+    username: 'test',
+    password: 'test',
+    email: 'test@test.com'
   }
 });
 ~~~
