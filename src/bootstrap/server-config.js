@@ -61,15 +61,6 @@ switch (env) {
     config.redirectToHttps = true;
     config.redirectToNonWwwDomain = true;
     config.exposeErrorDetails = false;
-    config.mongoConnectionString = process.env.ELMU_WEB_CONNECTION_STRING;
-    config.cdnEndpoint = process.env.ELMU_CDN_ENDPOINT;
-    config.cdnRegion = process.env.ELMU_CDN_REGION;
-    config.cdnAccessKey = process.env.ELMU_CDN_ACCESS_KEY;
-    config.cdnSecretKey = process.env.ELMU_CDN_SECRET_KEY;
-    config.cdnBucketName = process.env.ELMU_CDN_BUCKET_NAME;
-    config.cdnRootUrl = process.env.ELMU_CDN_ROOT_URL;
-    config.sessionSecret = process.env.ELMU_SESSION_SECRET;
-    config.smtpOptions = JSON.parse(process.env.ELMU_SMTP_OPTIONS);
     break;
   default:
     throw new Error(`EDUCANDU_ENV has invalid value ${env}.`);
