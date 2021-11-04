@@ -1,30 +1,32 @@
-import url from 'url';
 import express from 'express';
+import ServerConfig from '../bootstrap/server-config.js';
+import { resolvePathWithinPackage } from '../utils/file-helper.js';
 
 const staticConfig = [
   {
-    root: '/',
-    destination: '../../dist'
-  },
-  {
-    root: '/',
-    destination: '../../static'
-  },
-  {
     root: '/images/flags',
-    destination: '../../node_modules/flag-icon-css/flags'
+    destination: resolvePathWithinPackage('flag-icon-css', './flags')
   },
   {
     root: '/fonts/fontawesome',
-    destination: '../../node_modules/@fortawesome/fontawesome-free/webfonts'
+    destination: resolvePathWithinPackage('@fortawesome/fontawesome-free', './webfonts')
   }
 ];
 
 class StaticController {
+  static get inject() { return [ServerConfig]; }
+
+  constructor(serverConfig) {
+    this.serverConfig = serverConfig;
+  }
+
   registerMiddleware(router) {
-    staticConfig.forEach(({ root, destination }) => {
-      const dir = url.fileURLToPath(new URL(destination, import.meta.url));
-      router.use(root, express.static(dir));
+    const mergedConfig = [
+      ...staticConfig,
+      ...this.serverConfig.publicFolders.map(x => ({ root: '/', destination: x }))
+    ];
+    mergedConfig.forEach(({ root, destination }) => {
+      router.use(root, express.static(destination));
     });
   }
 }

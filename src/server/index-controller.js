@@ -24,13 +24,13 @@ class IndexController {
   registerPages(router) {
     router.get('/', async (req, res) => {
       const { language } = req.query;
-      const { homeLanguages } = req.settings;
+      const homeLanguages = req.settings?.homeLanguages || [];
       const currentHomeLanguageIndex = findHomeLanguageIndexForRequest(homeLanguages, language);
-      if (currentHomeLanguageIndex === 0 && language) {
+      if (currentHomeLanguageIndex <= 0 && language) {
         return res.redirect(302, '/');
       }
 
-      const documentKey = req.settings.homeLanguages[currentHomeLanguageIndex]?.documentKey || null;
+      const documentKey = req.settings?.homeLanguages?.[currentHomeLanguageIndex]?.documentKey || null;
       const doc = documentKey ? await this.documentService.getDocumentByKey(documentKey) : null;
       const document = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
       const initialState = { document, homeLanguages, currentHomeLanguageIndex };

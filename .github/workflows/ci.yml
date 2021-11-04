@@ -46,10 +46,9 @@ jobs:
         run: ./node_modules/.bin/gulp lint
       - name: Test
         run: ./node_modules/.bin/gulp test
-  publish-main:
+  publish-prerelease:
     runs-on: ubuntu-20.04
     needs: [verify]
-    if: github.ref == 'refs/heads/main'
     env:
       NODE_ENV: development
     steps:
