@@ -103,7 +103,8 @@ class DocumentMetadataEditor extends React.Component {
     const { mode, tagsValidationStatus, slugValidationStatus, tagSuggestions } = this.state;
     const { documentRevision, languageNameProvider, language, t, settings } = this.props;
 
-    const mergedTags = new Set([...settings.defaultTags, ...documentRevision.tags, ...tagSuggestions]);
+    const defaultTags = settings?.defaultTags || [];
+    const mergedTags = new Set([...defaultTags, ...documentRevision.tags, ...tagSuggestions]);
 
     let docLanguage;
     let componentToShow;

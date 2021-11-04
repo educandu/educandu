@@ -28,7 +28,7 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
   };
 
   const handleAddClick = () => {
-    fireOnChange([...homeLanguages, { ...newHomeLanguage }]);
+    fireOnChange([...homeLanguages || [], { ...newHomeLanguage }]);
   };
 
   const handleDeleteClick = index => {
@@ -95,7 +95,7 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }
   ];
 
-  const data = homeLanguages.map((record, index) => ({
+  const data = (homeLanguages || []).map((record, index) => ({
     key: index,
     language: record.language,
     documentKey: record.documentKey,

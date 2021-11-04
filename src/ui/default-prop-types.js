@@ -56,11 +56,11 @@ const settingsDocumentProps = {
 export const settingsDocumentShape = PropTypes.shape(settingsDocumentProps);
 
 export const settingsShape = PropTypes.shape({
-  homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,
-  helpPage: PropTypes.objectOf(settingsDocumentShape).isRequired,
-  termsPage: PropTypes.objectOf(settingsDocumentShape).isRequired,
-  footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)).isRequired,
-  defaultTags: PropTypes.arrayOf(PropTypes.string).isRequired
+  homeLanguages: PropTypes.arrayOf(homeLanguageShape),
+  helpPage: PropTypes.objectOf(settingsDocumentShape),
+  termsPage: PropTypes.objectOf(settingsDocumentShape),
+  footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
+  defaultTags: PropTypes.arrayOf(PropTypes.string)
 });
 
 export const settingsProps = {
