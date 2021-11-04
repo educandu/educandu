@@ -15,7 +15,7 @@ import { createContainer, disposeContainer } from './bootstrap/server-bootstrapp
 
 const mkdir = util.promisify(fs.mkdir);
 const mkdtemp = util.promisify(fs.mkdtemp);
-const serverConfig = new ServerConfig({ skipDbMigrations: true, skipDbChecks: false });
+const serverConfig = new ServerConfig({ skipMongoMigrations: true, skipMongoChecks: false });
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.tmp/', import.meta.url).href);
@@ -141,7 +141,7 @@ export async function createAndVerifyUser(userService, username, password, email
 export async function setupTestEnvironment() {
   const timestamp = Date.now().toString();
 
-  const config = new ServerConfig({ env: 'test', skipDbMigrations: true, skipDbChecks: false });
+  const config = new ServerConfig({ env: 'test', skipMongoMigrations: true, skipMongoChecks: false });
 
   // Configure temp DB parameters:
   const dbUrl = new URL(config.mongoConnectionString);

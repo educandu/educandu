@@ -1,6 +1,5 @@
 /* eslint no-process-env: off */
 
-import parseBool from 'parseboolean';
 import Logger from '../common/logger.js';
 
 const logger = new Logger(import.meta.url);
@@ -12,9 +11,6 @@ logger.info('Environment is set to %s', env);
 const config = {
   env,
   port: Number(process.env.ELMU_PORT) || 3000,
-  sessionDurationInMinutes: Number(process.env.ELMU_SESSION_DURATION_IN_MINUTES) || 60,
-  skipDbMigrations: parseBool(process.env.ELMU_SKIP_DB_MIGRATIONS || false.toString()),
-  skipDbChecks: parseBool(process.env.ELMU_SKIP_DB_CHECKS || false.toString()),
   publicFolders: [],
   initialUser: null
 };

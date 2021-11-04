@@ -290,7 +290,7 @@ export async function minioDown() {
 
 export const minioReset = gulp.series(minioDown, minioUp);
 
-function startTestApp({ skipDbChecks }) {
+function startTestApp({ skipMongoChecks }) {
   testAppServer = spawn(
     process.execPath,
     [
@@ -305,7 +305,7 @@ function startTestApp({ skipDbChecks }) {
         ...process.env,
         NODE_ENV: 'development',
         ELMU_SKIP_DB_MIGRATIONS: true.toString(),
-        ELMU_SKIP_DB_CHECKS: (!!skipDbChecks).toString()
+        ELMU_SKIP_DB_CHECKS: (!!skipMongoChecks).toString()
       },
       stdio: 'inherit'
     }
@@ -316,19 +316,19 @@ function startTestApp({ skipDbChecks }) {
 }
 
 export function startServer(done) {
-  startTestApp({ skipDbChecks: false });
+  startTestApp({ skipMongoChecks: false });
   done();
 }
 
 export function restartServer(done) {
   if (testAppServer) {
     testAppServer.once('exit', () => {
-      startTestApp({ skipDbChecks: true });
+      startTestApp({ skipMongoChecks: true });
       done();
     });
     testAppServer.kill();
   } else {
-    startTestApp({ skipDbChecks: false });
+    startTestApp({ skipMongoChecks: false });
     done();
   }
 }

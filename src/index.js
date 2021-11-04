@@ -44,9 +44,9 @@ export default async function educandu(options) {
 
     const mappedValues = {
       port: options.port,
-      elmuWebConnectionString: options.mongoConnectionString,
-      skipDbMigrations: options.skipMongoMigrations,
-      skipDbChecks: options.skipMongoChecks,
+      mongoConnectionString: options.mongoConnectionString,
+      skipMongoMigrations: options.skipMongoMigrations,
+      skipMongoChecks: options.skipMongoChecks,
       cdnEndpoint: options.cdnEndpoint,
       cdnRegion: options.cdnRegion,
       cdnAccessKey: options.cdnAccessKey,
