@@ -24,7 +24,7 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Establishing database connection');
   const database = await Database.create({
-    connectionString: serverConfig.elmuWebConnectionString
+    connectionString: serverConfig.mongoConnectionString
   });
 
   if (serverConfig.skipDbMigrations) {

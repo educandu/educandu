@@ -24,7 +24,7 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin';
+    config.mongoConnectionString = 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';
@@ -43,7 +43,7 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://root:rootpw@localhost:27017/test-educandu-db?replicaSet=educandurs&authSource=admin';
+    config.mongoConnectionString = 'mongodb://root:rootpw@localhost:27017/test-educandu-db?replicaSet=educandurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';
@@ -63,7 +63,7 @@ switch (env) {
     config.redirectToHttps = true;
     config.redirectToNonWwwDomain = true;
     config.exposeErrorDetails = false;
-    config.elmuWebConnectionString = process.env.ELMU_WEB_CONNECTION_STRING;
+    config.mongoConnectionString = process.env.ELMU_WEB_CONNECTION_STRING;
     config.cdnEndpoint = process.env.ELMU_CDN_ENDPOINT;
     config.cdnRegion = process.env.ELMU_CDN_REGION;
     config.cdnAccessKey = process.env.ELMU_CDN_ACCESS_KEY;

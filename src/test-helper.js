@@ -35,7 +35,7 @@ export function deleteTestDir(testDir) {
 }
 
 export function createTestDatabase() {
-  const dbUrl = new URL(serverConfig.elmuWebConnectionString);
+  const dbUrl = new URL(serverConfig.mongoConnectionString);
   dbUrl.pathname = `test-elmu-web-${Date.now()}`;
   return Database.create({ connectionString: dbUrl.toString() });
 }
@@ -144,9 +144,9 @@ export async function setupTestEnvironment() {
   const config = new ServerConfig({ env: 'test', skipDbMigrations: true, skipDbChecks: false });
 
   // Configure temp DB parameters:
-  const dbUrl = new URL(config.elmuWebConnectionString);
+  const dbUrl = new URL(config.mongoConnectionString);
   dbUrl.pathname = `test-elmu-web-${timestamp}`;
-  config.elmuWebConnectionString = dbUrl.toString();
+  config.mongoConnectionString = dbUrl.toString();
 
   // Configure temp CDN parameters:
   const cdnUrl = new URL(config.cdnRootUrl);
