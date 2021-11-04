@@ -100,7 +100,7 @@ class UserService {
     return user.lockedOut;
   }
 
-  async createUser(username, password, email, provider = PROVIDER_NAME_ELMU) {
+  async createUser({ username, password, email, provider = PROVIDER_NAME_ELMU, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
     const existingUser = await this.userStore.findOne({ $or: [{ username }, { email: lowerCasedEmail }] });
@@ -116,9 +116,9 @@ class UserService {
       username,
       passwordHash: await this._hashPassword(password),
       email: lowerCasedEmail,
-      roles: [DEFAULT_ROLE_NAME],
-      expires: moment.utc().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
-      verificationCode: uniqueId.create(),
+      roles,
+      expires: verified ? null : moment.utc().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate(),
+      verificationCode: verified ? null : uniqueId.create(),
       lockedOut: false
     };
 

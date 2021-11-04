@@ -64,7 +64,7 @@ class UserRequestHandler {
   async handlePostUser(req, res) {
     const { username, password, email } = req.body;
 
-    const { result, user } = await this.userService.createUser(username, password, email);
+    const { result, user } = await this.userService.createUser({ username, password, email });
 
     if (result === SAVE_USER_RESULT.success) {
       const { origin } = requestHelper.getHostInfo(req);

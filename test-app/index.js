@@ -19,5 +19,10 @@ educandu({
     port: 8025,
     ignoreTLS: true
   },
-  publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x))
+  publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
+  initialUser: {
+    username: 'test',
+    password: 'test',
+    email: 'test@test.com'
+  }
 });
