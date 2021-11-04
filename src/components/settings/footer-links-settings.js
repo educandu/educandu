@@ -21,7 +21,7 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
 
   const handleChange = (lang, items) => {
     const updatedFooterLinks = supportedLanguages.reduce((map, sl) => {
-      map[sl] = sl !== lang ? footerLinks[sl] || [] : items;
+      map[sl] = sl !== lang ? footerLinks?.[sl] || [] : items;
       return map;
     }, {});
     const isInvalid = Object.values(updatedFooterLinks).some(fl => {
@@ -43,7 +43,7 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
           </h3>
           <SettingsDocumentsTable
             documents={documents}
-            settingsDocuments={footerLinks[lang] || []}
+            settingsDocuments={footerLinks?.[lang] || []}
             onChange={items => handleChange(lang, items)}
             />
         </React.Fragment>

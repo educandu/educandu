@@ -9,7 +9,6 @@ class SettingService {
 
   async getAllSettings() {
     const settings = await this.settingStore.find();
-
     return settings.reduce((all, { _id, value }) => {
       all[_id] = value;
       return all;

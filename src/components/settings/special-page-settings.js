@@ -17,7 +17,7 @@ const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error'
 
 const isValidPageListItem = item => [item.language, item.linkTitle, item.urlPath].every(hasValue);
 
-const settingsToPageList = (supportedLanguages, settings) => {
+const settingsToPageList = (supportedLanguages, settings = {}) => {
   return supportedLanguages.map(supportedLanguage => {
     const setting = settings[supportedLanguage];
     return {
