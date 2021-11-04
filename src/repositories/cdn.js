@@ -1,5 +1,6 @@
 import fs from 'fs';
 import mime from 'mime';
+import moment from 'moment';
 import Stream from 'stream';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
@@ -29,15 +30,17 @@ class Cdn {
   }
 
   uploadObject(objectName, filePath, metadata) {
+    const defaultMetadata = this._getDefaultMetadata();
     const stream = fs.createReadStream(filePath);
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
     const contentType = mime.getType(sanitizedObjectName) || defaultContentType;
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, metadata);
+    return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, { ...defaultMetadata, ...metadata });
   }
 
   uploadEmptyObject(objectName, metadata) {
+    const defaultMetadata = this._getDefaultMetadata();
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, new Stream(), defaultContentType, metadata);
+    return this.s3Client.upload(this.bucketName, sanitizedObjectName, new Stream(), defaultContentType, { ...defaultMetadata, ...metadata });
   }
 
   async deleteObjects(objectNames) {
@@ -47,6 +50,10 @@ class Cdn {
   dispose() {
     this.s3Client = null;
     return Promise.resolve();
+  }
+
+  _getDefaultMetadata() {
+    return { createdon: moment.utc().toISOString() };
   }
 
   static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {

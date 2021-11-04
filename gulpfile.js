@@ -19,18 +19,19 @@ import Graceful from 'node-graceful';
 import { spawn } from 'child_process';
 import { Docker } from 'docker-cli-js';
 import sourcemaps from 'gulp-sourcemaps';
+import { Client as MinioClient } from 'minio';
 import LessAutoprefix from 'less-plugin-autoprefix';
 
 const ROOT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
 
 const TEST_MAILDEV_IMAGE = 'maildev/maildev:1.1.0';
-const TEST_MAILDEV_CONTAINER_NAME = 'educandu-maildev';
+const TEST_MAILDEV_CONTAINER_NAME = 'maildev';
 
 const TEST_MONGO_IMAGE = 'bitnami/mongodb:4.2.17-debian-10-r23';
-const TEST_MONGO_CONTAINER_NAME = 'educandu-mongo';
+const TEST_MONGO_CONTAINER_NAME = 'mongo';
 
 const TEST_MINIO_IMAGE = 'bitnami/minio:2020.12.18';
-const TEST_MINIO_CONTAINER_NAME = 'educandu-minio';
+const TEST_MINIO_CONTAINER_NAME = 'minio';
 
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
 const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
@@ -78,6 +79,40 @@ const ensureContainerRemoved = async ({ containerName }) => {
     }
   }
 };
+
+async function ensureBucketExists() {
+  const region = 'eu-central-1';
+  const bucketName = 'dev-educandu-cdn';
+
+  const minioClient = new MinioClient({
+    endPoint: 'localhost',
+    port: 9000,
+    useSSL: false,
+    region,
+    accessKey: MINIO_ACCESS_KEY,
+    secretKey: MINIO_SECRET_KEY
+  });
+
+  const bucketPolicy = {
+    Version: '2012-10-17',
+    Statement: [
+      {
+        Sid: 'PublicReadGetObject',
+        Effect: 'Allow',
+        Principal: '*',
+        Action: 's3:GetObject',
+        Resource: `arn:aws:s3:::${bucketName}/*`
+      }
+    ]
+  };
+
+  const buckets = await minioClient.listBuckets();
+
+  if (!buckets.find(x => x.name === 'dev-educandu-cdn')) {
+    await minioClient.makeBucket(bucketName, region);
+    await minioClient.setBucketPolicy(bucketName, JSON.stringify(bucketPolicy));
+  }
+}
 
 function runJest(...flags) {
   return execa(process.execPath, [
@@ -278,7 +313,8 @@ export async function minioUp() {
       `-e MINIO_SECRET_KEY=${MINIO_SECRET_KEY}`,
       '-e MINIO_BROWSER=on',
       TEST_MINIO_IMAGE
-    ].join(' ')
+    ].join(' '),
+    afterRun: ensureBucketExists
   });
 }
 
