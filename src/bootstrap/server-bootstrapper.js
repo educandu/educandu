@@ -24,10 +24,10 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Establishing database connection');
   const database = await Database.create({
-    connectionString: serverConfig.elmuWebConnectionString
+    connectionString: serverConfig.mongoConnectionString
   });
 
-  if (serverConfig.skipDbMigrations) {
+  if (serverConfig.skipMongoMigrations) {
     logger.info('Skipping database migrations');
   } else {
     try {
@@ -40,7 +40,7 @@ export async function createContainer(configValues = {}) {
     }
   }
 
-  if (serverConfig.skipDbChecks) {
+  if (serverConfig.skipMongoChecks) {
     logger.info('Skipping database checks');
   } else {
     logger.info('Starting database checks');

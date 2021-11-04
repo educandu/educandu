@@ -1,20 +1,18 @@
 /* eslint no-process-env: off */
-
 import parseBool from 'parseboolean';
 import Logger from '../common/logger.js';
 
 const logger = new Logger(import.meta.url);
 
-const env = process.env.ELMU_ENV || 'dev';
+const env = process.env.EDUCANDU_ENV || 'dev';
 
 logger.info('Environment is set to %s', env);
 
 const config = {
   env,
-  port: Number(process.env.ELMU_PORT) || 3000,
-  sessionDurationInMinutes: Number(process.env.ELMU_SESSION_DURATION_IN_MINUTES) || 60,
-  skipDbMigrations: parseBool(process.env.ELMU_SKIP_DB_MIGRATIONS || false.toString()),
-  skipDbChecks: parseBool(process.env.ELMU_SKIP_DB_CHECKS || false.toString()),
+  port: Number(process.env.EDUCANDU_PORT) || 3000,
+  skipMongoMigrations: parseBool(process.env.EDUCANDU_SKIP_MONGO_MIGRATIONS || false.toString()),
+  skipMongoChecks: parseBool(process.env.EDUCANDU_SKIP_MONGO_CHECKS || false.toString()),
   publicFolders: [],
   initialUser: null
 };
@@ -24,7 +22,7 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin';
+    config.mongoConnectionString = 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';
@@ -43,7 +41,7 @@ switch (env) {
     config.redirectToHttps = false;
     config.redirectToNonWwwDomain = false;
     config.exposeErrorDetails = true;
-    config.elmuWebConnectionString = 'mongodb://root:rootpw@localhost:27017/test-educandu-db?replicaSet=educandurs&authSource=admin';
+    config.mongoConnectionString = 'mongodb://root:rootpw@localhost:27017/test-educandu-db?replicaSet=educandurs&authSource=admin';
     config.cdnEndpoint = 'http://localhost:9000';
     config.cdnRegion = 'eu-central-1';
     config.cdnAccessKey = 'UVDXF41PYEAX0PXD8826';
@@ -63,18 +61,9 @@ switch (env) {
     config.redirectToHttps = true;
     config.redirectToNonWwwDomain = true;
     config.exposeErrorDetails = false;
-    config.elmuWebConnectionString = process.env.ELMU_WEB_CONNECTION_STRING;
-    config.cdnEndpoint = process.env.ELMU_CDN_ENDPOINT;
-    config.cdnRegion = process.env.ELMU_CDN_REGION;
-    config.cdnAccessKey = process.env.ELMU_CDN_ACCESS_KEY;
-    config.cdnSecretKey = process.env.ELMU_CDN_SECRET_KEY;
-    config.cdnBucketName = process.env.ELMU_CDN_BUCKET_NAME;
-    config.cdnRootUrl = process.env.ELMU_CDN_ROOT_URL;
-    config.sessionSecret = process.env.ELMU_SESSION_SECRET;
-    config.smtpOptions = JSON.parse(process.env.ELMU_SMTP_OPTIONS);
     break;
   default:
-    throw new Error(`ELMU_ENV has invalid value ${env}.`);
+    throw new Error(`EDUCANDU_ENV has invalid value ${env}.`);
 }
 
 class ServerConfig {

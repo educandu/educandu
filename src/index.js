@@ -39,28 +39,9 @@ export default async function educandu(options) {
   });
 
   try {
-
     logger.info('Starting application');
 
-    const mappedValues = {
-      port: options.port,
-      elmuWebConnectionString: options.mongoConnectionString,
-      skipDbMigrations: options.skipMongoMigrations,
-      skipDbChecks: options.skipMongoChecks,
-      cdnEndpoint: options.cdnEndpoint,
-      cdnRegion: options.cdnRegion,
-      cdnAccessKey: options.cdnAccessKey,
-      cdnSecretKey: options.cdnSecretKey,
-      cdnBucketName: options.cdnBucketName,
-      cdnRootUrl: options.cdnRootUrl,
-      sessionSecret: options.sessionSecret,
-      sessionDurationInMinutes: options.sessionDurationInMinutes,
-      smtpOptions: options.smtpOptions,
-      publicFolders: options.publicFolders,
-      initialUser: options.initialUser
-    };
-
-    container = await bootstrapper.createContainer(mappedValues);
+    container = await bootstrapper.createContainer(options);
     const elmuServer = container.get(ElmuServer);
 
     logger.info('Starting server');

@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       NODE_ENV: development
-      ELMU_ENV: test
+      EDUCANDU_ENV: test
     services:
       minio:
         image: bitnami/minio:2020.12.18
