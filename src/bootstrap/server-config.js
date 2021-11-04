@@ -72,7 +72,7 @@ switch (env) {
     config.smtpOptions = JSON.parse(process.env.ELMU_SMTP_OPTIONS);
     break;
   default:
-    throw new Error(`ELMU_ENV has invalid value ${env}.`);
+    throw new Error(`EDUCANDU_ENV has invalid value ${env}.`);
 }
 
 class ServerConfig {
