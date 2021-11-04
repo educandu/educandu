@@ -5,10 +5,29 @@ class SettingService {
 
   constructor(settingStore) {
     this.settingStore = settingStore;
+    this.defaultSettings = {
+      homeLanguages: [],
+      helpPage: {
+        linkTitle: '',
+        documentNamespace: '',
+        documentSlug: ''
+      },
+      termsPage: {
+        linkTitle: '',
+        documentNamespace: '',
+        documentSlug: ''
+      },
+      footerLinks: [],
+      defaultTags: []
+    };
   }
 
   async getAllSettings() {
     const settings = await this.settingStore.find();
+    if (!settings.length) {
+      return this.defaultSettings;
+    }
+
     return settings.reduce((all, { _id, value }) => {
       all[_id] = value;
       return all;
