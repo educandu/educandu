@@ -3,7 +3,7 @@ import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import ElmuLogo from '../elmu-logo.js';
+import SiteLogo from '../site-logo.js';
 import { Form, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
 import { withTranslation } from 'react-i18next';
@@ -132,7 +132,7 @@ class Login extends React.Component {
       <Page fullScreen>
         <div className="LoginPage">
           <div className="LoginPage-title">
-            <ElmuLogo size="big" readonly />
+            <SiteLogo size="big" readonly />
           </div>
           <div className="LoginPage-form">
             {loginForm}

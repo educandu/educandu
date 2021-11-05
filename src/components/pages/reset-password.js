@@ -3,7 +3,7 @@ import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import ElmuLogo from '../elmu-logo.js';
+import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import { Form, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
@@ -120,7 +120,7 @@ class ResetPassword extends React.Component {
       <Page fullScreen>
         <div className="ResetPasswordPage">
           <div className="ResetPasswordPage-title">
-            <ElmuLogo size="big" readonly />
+            <SiteLogo size="big" readonly />
           </div>
           {isRequestSent ? resetRequestConfirmation : resetRequestForm}
         </div>

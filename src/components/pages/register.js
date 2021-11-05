@@ -3,7 +3,7 @@ import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import ElmuLogo from '../elmu-logo.js';
+import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import EmailInput from '../email-input.js';
 import Logger from '../../common/logger.js';
@@ -154,7 +154,7 @@ class Register extends React.Component {
       <Page fullScreen>
         <div className="RegisterPage">
           <div className="RegisterPage-title">
-            <ElmuLogo size="big" readonly />
+            <SiteLogo size="big" readonly />
           </div>
           {user ? registrationConfirmation : registrationForm}
         </div>

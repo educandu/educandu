@@ -22,9 +22,9 @@ source:
 externalLink:
   en: External link
   de: Externer Link
-elmuCdn:
-  en: Elmu CDN
-  de: Elmu CDN
+internalCdn:
+  en: Internal CDN
+  de: Internes CDN
 youtube:
   en: Youtube
   de: Youtube

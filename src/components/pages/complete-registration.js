@@ -1,7 +1,7 @@
 import Page from '../page.js';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import ElmuLogo from '../elmu-logo.js';
+import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
@@ -45,7 +45,7 @@ function CompleteRegistration({ initialState }) {
     <Page fullScreen>
       <div className="CompleteRegistrationPage">
         <div className="CompleteRegistrationPage-title">
-          <ElmuLogo size="big" readonly />
+          <SiteLogo size="big" readonly />
         </div>
         <div className="CompleteRegistrationPage-message">
           {initialState.user
