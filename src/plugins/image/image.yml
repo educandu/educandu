@@ -17,8 +17,8 @@ revealOption:
   en: Reveal
   de: Auflösung
 internalCdn:
-  en: Elmu CDN
-  de: Elmu CDN
+  en: Internal CDN
+  de: Internes CDN
 externalUrl:
   en: External URL
   de: Externe URL
