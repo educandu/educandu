@@ -44,7 +44,9 @@ function Index({ initialState }) {
   }, [documentApiClient, t]);
 
   const handleSelectedTagsChanged = selectedValues => {
-    setSelectedTags(selectedValues);
+    const newValues = selectedValues.flatMap(value => value.trim().split(' '));
+
+    setSelectedTags(newValues);
     setTagSuggestions(settings.defaultTags || []);
   };
 
@@ -70,7 +72,7 @@ function Index({ initialState }) {
         {currentHomeLanguage && (
           <div className="IndexPage-search">
             <Select
-              mode="multiple"
+              mode="tags"
               size="large"
               className="IndexPage-searchInput"
               tokenSeparators={[' ']}

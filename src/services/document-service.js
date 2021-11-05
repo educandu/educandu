@@ -91,7 +91,12 @@ class DocumentService {
   }
 
   async getDocumentsByTags(searchTags) {
-    const result = await this.documentStore.find({ tags: { $all: searchTags } }, { projection: searchResultsProjection });
+    const query = {
+      $or: searchTags.map(tag => ({ tags: { $regex: `.*${tag}.*`, $options: 'i' } }))
+    };
+
+    const result = await this.documentStore.find(query, { projection: searchResultsProjection });
+
     return result || [];
   }
 
