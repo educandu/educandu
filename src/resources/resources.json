@@ -310,6 +310,7 @@
       "udateDate": "Udate date",
       "user": "User info",
       "actions": "Actions",
+      "archived": "Archived",
       "enterSearchTerm": "Enter search term",
       "newDocument": "New document",
       "notAssigned": "(not assigned)"
@@ -330,6 +331,7 @@
       "udateDate": "Update-Datum",
       "user": "User-Info",
       "actions": "Aktionen",
+      "archived": "Archiviert",
       "enterSearchTerm": "Suchbegriff eingeben",
       "newDocument": "Neues Dokument",
       "notAssigned": "(nicht zugewiesen)"
