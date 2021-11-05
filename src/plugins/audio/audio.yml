@@ -7,7 +7,7 @@ source:
 externalLink:
   en: External link
   de: Externer Link
-elmuCdn:
+internalCdn:
   en: Elmu CDN
   de: Elmu CDN
 externalUrl:

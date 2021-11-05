@@ -4,7 +4,7 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Form, Button } from 'antd';
 import urls from '../../utils/urls.js';
-import ElmuLogo from '../elmu-logo.js';
+import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import Logger from '../../common/logger.js';
 import { inject } from '../container-context.js';
@@ -118,7 +118,7 @@ class CompletePasswordReset extends React.Component {
       <Page fullScreen>
         <div className="CompletePasswordResetPage">
           <div className="CompletePasswordResetPage-title">
-            <ElmuLogo size="big" readonly />
+            <SiteLogo size="big" readonly />
           </div>
           {!isValidRequest && completionFailureNotice}
           {isValidRequest && !user && completionForm}

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import urls from '../utils/urls.js';
 import { Alert, Button } from 'antd';
-import ElmuLogo from './elmu-logo.js';
+import SiteLogo from './site-logo.js';
 import Restricted from './restricted.js';
 import LoginLogout from './login-logout.js';
 import LinkPopover from './link-popover.js';
@@ -121,7 +121,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       <header className={pageHeaderAreaClasses}>
         <div className="Page-header">
           <div className="Page-headerContent Page-headerContent--left">
-            {!fullScreen && <ElmuLogo />}
+            {!fullScreen && <SiteLogo />}
           </div>
           <div className="Page-headerContent Page-headerContent--center">
             {headerActionComponents}

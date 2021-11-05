@@ -36,7 +36,7 @@ export function deleteTestDir(testDir) {
 
 export function createTestDatabase() {
   const dbUrl = new URL(serverConfig.mongoConnectionString);
-  dbUrl.pathname = `test-elmu-web-${Date.now()}`;
+  dbUrl.pathname = `test-educandu-web-${Date.now()}`;
   return Database.create({ connectionString: dbUrl.toString() });
 }
 
@@ -89,7 +89,7 @@ export async function createTestCdn() {
     region: serverConfig.cdnRegion,
     accessKey: serverConfig.cdnAccessKey,
     secretKey: serverConfig.cdnSecretKey,
-    bucketName: `test-elmu-cdn-${Date.now()}`
+    bucketName: `test-educandu-cdn-${Date.now()}`
   });
 
   return ensurePublicBucketExists(cdn);
@@ -145,14 +145,14 @@ export async function setupTestEnvironment() {
 
   // Configure temp DB parameters:
   const dbUrl = new URL(config.mongoConnectionString);
-  dbUrl.pathname = `test-elmu-web-${timestamp}`;
+  dbUrl.pathname = `test-educandu-web-${timestamp}`;
   config.mongoConnectionString = dbUrl.toString();
 
   // Configure temp CDN parameters:
   const cdnUrl = new URL(config.cdnRootUrl);
-  cdnUrl.pathname = `test-elmu-cdn-${timestamp}`;
+  cdnUrl.pathname = `test-educandu-cdn-${timestamp}`;
   config.cdnRootUrl = cdnUrl.toString();
-  config.cdnBucketName = `test-elmu-cdn-${timestamp}`;
+  config.cdnBucketName = `test-educandu-cdn-${timestamp}`;
 
   // Fire everything up:
   const container = await createContainer(config);

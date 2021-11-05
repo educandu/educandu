@@ -1,6 +1,6 @@
 import Graceful from 'node-graceful';
 import Logger from './common/logger.js';
-import ElmuServer from './server/elmu-server.js';
+import EducanduServer from './server/educandu-server.js';
 import bootstrapper from './bootstrap/server-bootstrapper.js';
 
 const logger = new Logger(import.meta.url);
@@ -42,10 +42,10 @@ export default async function educandu(options) {
     logger.info('Starting application');
 
     container = await bootstrapper.createContainer(options);
-    const elmuServer = container.get(ElmuServer);
+    const educanduServer = container.get(EducanduServer);
 
     logger.info('Starting server');
-    elmuServer.listen((err, port) => {
+    educanduServer.listen((err, port) => {
       if (err) {
         logger.fatal(err);
         Graceful.exit(1);

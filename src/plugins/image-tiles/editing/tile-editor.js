@@ -66,7 +66,7 @@ class TileEditor extends React.Component {
         <FormItem label={t('imageSource')} {...formItemLayout}>
           <RadioGroup value={image.type} onChange={this.handleImageTypeValueChanged}>
             <RadioButton value="external">{t('externalLink')}</RadioButton>
-            <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
+            <RadioButton value="internal">{t('internalCdn')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {image.type === 'external' && (

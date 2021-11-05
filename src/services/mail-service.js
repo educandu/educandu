@@ -4,7 +4,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 
 const logger = new Logger(import.meta.url);
 
-const ELMU_WEB_EMAIL_ADDRESS = 'website@elmu.online';
+const EDUCANDU_WEB_EMAIL_ADDRESS = 'website@elmu.online';
 
 class MailService {
   static get inject() { return [ServerConfig]; }
@@ -37,7 +37,7 @@ class MailService {
       + `Please confirm your registration here: <a href="${verificationLink}">confirm registration</a></p>`;
 
     const message = {
-      from: ELMU_WEB_EMAIL_ADDRESS,
+      from: EDUCANDU_WEB_EMAIL_ADDRESS,
       to: email,
       subject: 'Willkommen auf ELMU! / Welcome to ELMU!',
       text: `${germanText}\n\n${englishText}`,
@@ -71,7 +71,7 @@ class MailService {
       + `Please click here in order to change your password: <a href="${completionLink}">change password</a>.</p>`;
 
     const message = {
-      from: ELMU_WEB_EMAIL_ADDRESS,
+      from: EDUCANDU_WEB_EMAIL_ADDRESS,
       to: email,
       subject: 'Ihr Kennwort auf ELMU/ Your password for ELMU',
       text: `${germanText}\n\n${englishText}`,

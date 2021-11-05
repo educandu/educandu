@@ -149,7 +149,7 @@ class ImageEditor extends React.Component {
           <FormItem label={t('source')} {...formItemLayout}>
             <RadioGroup value={sourceType} onChange={this.handleSourceTypeValueChanged}>
               <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
-              <RadioButton value={SOURCE_TYPE.internal}>{t('elmuCdn')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
             </RadioGroup>
           </FormItem>
           {sourceType === SOURCE_TYPE.external && (
@@ -191,7 +191,7 @@ class ImageEditor extends React.Component {
                 <FormItem label={t('source')} {...formItemLayout}>
                   <RadioGroup value={effect.sourceType} onChange={this.handleEffectSourceTypeValueChanged}>
                     <RadioButton value="external">{t('externalLink')}</RadioButton>
-                    <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
+                    <RadioButton value="internal">{t('internalCdn')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
                 {effect.sourceType === 'external' && (
