@@ -7,9 +7,9 @@ udateDate:
 tags:
   en: Tags
   de: Tags
-numberOfContributors:
-  en: Contributor count
-  de: Anzahl Mitwirkender
+tagHitCount:
+  en: Tag hit count
+  de: Tag-Trefferzahl
 refineSearch:
   en: Filter by tags
   de: Nach Tags filtern

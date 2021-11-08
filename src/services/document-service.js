@@ -91,16 +91,27 @@ class DocumentService {
   }
 
   async getDocumentsByTags(searchQuery) {
-    const searchTags = searchQuery.trim().split(/\s+/)
-      .filter(tag => (/^\w{3,30}$/).test(tag));
+    const searchTags = new Set(searchQuery.trim()
+      .split(/\s+/)
+      .map(tag => tag.toLowerCase())
+      .filter(tag => (/^\w{3,30}$/).test(tag)));
 
     const query = {
-      $or: searchTags.map(tag => ({ tags: { $regex: `.*${tag}.*`, $options: 'i' } }))
+      $or: Array.from(searchTags).map(tag => ({
+        tags: {
+          $regex: `.*${tag}.*`, $options: 'i'
+        }
+      }))
     };
 
-    const result = await this.documentStore.find(query, { projection: searchResultsProjection });
+    const documents = await this.documentStore
+      .find(query, { projection: searchResultsProjection }) || [];
 
-    return result || [];
+    return documents.map(result => ({
+      ...result,
+      tagHitCount: result.tags
+        .reduce((count, tag) => searchTags.has(tag.toLowerCase()) ? count + 1 : count, 0)
+    }));
   }
 
   getDocumentByKey(documentKey) {

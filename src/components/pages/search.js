@@ -23,7 +23,7 @@ function Search({ initialState }) {
         ...doc,
         tagsSet: new Set(doc.tags)
       }))
-      .sort(firstBy(doc => doc.contributors)
+      .sort(firstBy(doc => doc.tagHitCount, 'desc')
         .thenBy(doc => doc.updatedOn, 'desc')),
     [docs]
   );
@@ -44,8 +44,6 @@ function Search({ initialState }) {
     setFilteredDocs(newFilteredDocs);
     setSelectedTags(selectedValues);
   };
-
-  const renderContributorsCount = value => (<div>{value?.length}</div>);
 
   const renderUpdatedOn = (_value, doc) => {
     const date = moment(doc.updatedOn).locale(locale);
@@ -71,9 +69,8 @@ function Search({ initialState }) {
       render: renderTitle
     },
     {
-      title: t('numberOfContributors'),
-      dataIndex: 'contributors',
-      render: renderContributorsCount
+      title: t('tagHitCount'),
+      dataIndex: 'tagHitCount'
     },
     {
       title: t('tags'),

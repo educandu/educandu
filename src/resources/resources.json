@@ -430,7 +430,7 @@
       "title": "Title",
       "udateDate": "Udate date",
       "tags": "Tags",
-      "numberOfContributors": "Contributor count",
+      "tagHitCount": "Tag hit count",
       "refineSearch": "Filter by tags",
       "searchResultPrefix": "Results for"
     }
@@ -442,7 +442,7 @@
       "title": "Titel",
       "udateDate": "Update-Datum",
       "tags": "Tags",
-      "numberOfContributors": "Anzahl Mitwirkender",
+      "tagHitCount": "Tag-Trefferzahl",
       "refineSearch": "Nach Tags filtern",
       "searchResultPrefix": "Ergibnise für"
     }
