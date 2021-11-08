@@ -330,7 +330,7 @@ class DocumentService {
     }
   }
 
-  async toggleDocumentArchived({ documentKey, user, archived }) {
+  async setArchivedState({ documentKey, user, archived }) {
     if (!user?._id) {
       throw new Error('No user specified');
     }

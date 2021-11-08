@@ -131,7 +131,7 @@ class DocumentController {
     });
 
     router.post('/api/v1/docs/:key/archive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
-      const revision = await this.documentService.toggleDocumentArchived({ documentKey: req.params.key, user: req.user, archived: true });
+      const revision = await this.documentService.setArchivedState({ documentKey: req.params.key, user: req.user, archived: true });
       if (!revision) {
         throw new NotFound();
       }
@@ -141,7 +141,7 @@ class DocumentController {
     });
 
     router.post('/api/v1/docs/:key/unarchive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
-      const revision = await this.documentService.toggleDocumentArchived({ documentKey: req.params.key, user: req.user, archived: false });
+      const revision = await this.documentService.setArchivedState({ documentKey: req.params.key, user: req.user, archived: false });
       if (!revision) {
         throw new NotFound();
       }
