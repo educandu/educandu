@@ -31,7 +31,6 @@ const searchResultsProjection = {
   title: 1,
   key: 1,
   slug: 1,
-  contributors: 1,
   updatedOn: 1,
   tags: 1
 };
