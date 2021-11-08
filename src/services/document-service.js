@@ -262,7 +262,8 @@ class DocumentService {
       appendTo: {
         key: documentKey,
         ancestorId: latestRevision._id
-      }
+      },
+      tags: revisionToRestore.tags
     };
 
     await this.createDocumentRevision({ doc, user, restoredFrom: revisionToRestore._id });
