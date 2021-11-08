@@ -1,13 +1,12 @@
 import express from 'express';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
-import { ROLE } from '../domain/role.js';
 import PageRenderer from './page-renderer.js';
-import permissions from '../domain/permissions.js';
 import ClientDataMapper from './client-data-mapper.js';
 import { ensureIsArray } from '../utils/array-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { validateBody, validateQuery } from '../domain/validation-middleware.js';
 import {
   getRevisionsByKeyQuerySchema,
@@ -21,11 +20,7 @@ const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
-const getDocumentsQueryFilter = user => {
-  return {
-    includeArchived: user.roles.includes(ROLE.admin)
-  };
-};
+const getDocumentsQueryFilter = user => ({ includeArchived: hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS) });
 
 class DocumentController {
   static get inject() { return [DocumentService, ClientDataMapper, PageRenderer]; }
@@ -135,7 +130,7 @@ class DocumentController {
       return res.send({ documentRevisions });
     });
 
-    router.post('/api/v1/docs/:key/archive', needsPermission(permissions.ARCHIVE_DOC), async (req, res) => {
+    router.post('/api/v1/docs/:key/archive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
       const revision = await this.documentService.toggleDocumentArchived({ documentKey: req.params.key, user: req.user, archived: true });
       if (!revision) {
         throw new NotFound();
@@ -145,7 +140,7 @@ class DocumentController {
       return res.send({ documentRevision });
     });
 
-    router.post('/api/v1/docs/:key/unarchive', needsPermission(permissions.ARCHIVE_DOC), async (req, res) => {
+    router.post('/api/v1/docs/:key/unarchive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
       const revision = await this.documentService.toggleDocumentArchived({ documentKey: req.params.key, user: req.user, archived: false });
       if (!revision) {
         throw new NotFound();

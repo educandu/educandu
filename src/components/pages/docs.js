@@ -7,13 +7,11 @@ import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
-import { ROLE } from '../../domain/role.js';
 import { withUser } from '../user-context.js';
 import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
-import permissions from '../../domain/permissions.js';
 import { withLanguage } from '../language-context.js';
 import { toTrimmedString } from '../../utils/sanitize.js';
 import LanguageSelect from '../localization/language-select.js';
@@ -21,6 +19,7 @@ import { Form, Input, Modal, Table, Button, Switch } from 'antd';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
 
 const { Search } = Input;
@@ -255,12 +254,13 @@ class Docs extends React.Component {
       }
     ];
 
-    if (user.roles.includes(ROLE.admin)) {
+    if (hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS)) {
       columns.push({
         title: t('archived'),
         dataIndex: 'archived',
         key: 'archived',
-        render: this.renderArchived
+        render: this.renderArchived,
+        sorter: by(x => x.archived)
       });
     }
 

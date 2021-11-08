@@ -187,19 +187,29 @@ class Doc extends React.Component {
       );
     }
 
-    const headerActions = [
-      {
+    const customAlerts = [];
+    const headerActions = [];
+
+    if (currentRevision.archived) {
+      customAlerts.push({
+        message: t('common:archivedAlert'),
+        type: 'warning'
+      });
+    }
+
+    if (!currentRevision.archived) {
+      headerActions.push({
         key: 'edit',
         type: 'primary',
         icon: EditOutlined,
         text: t('common:edit'),
         permission: permissions.EDIT_DOC,
         handleClick: this.handleEditClick
-      }
-    ];
+      });
+    }
 
     return (
-      <Page headerActions={headerActions}>
+      <Page headerActions={headerActions} customAlerts={customAlerts}>
         <div className="DocPage">
           {revisionPicker}
           <DocView
