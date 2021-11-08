@@ -430,7 +430,8 @@
       "title": "Title",
       "udateDate": "Udate date",
       "tags": "Tags",
-      "numberOfContributors": "Contributor count"
+      "numberOfContributors": "Contributor count",
+      "refineSearch": "Refine search by selecting specific tags"
     }
   },
   {
@@ -440,7 +441,8 @@
       "title": "Titel",
       "udateDate": "Update-Datum",
       "tags": "Tags",
-      "numberOfContributors": "Anzahl Mitwirkender"
+      "numberOfContributors": "Anzahl Mitwirkender",
+      "refineSearch": "Andreas Helmberger"
     }
   },
   {

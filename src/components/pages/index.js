@@ -20,7 +20,7 @@ function Index({ initialState }) {
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
   const handleSearchClick = () => {
-    window.location = getSearchUrl(searchText.trim().split(' '));
+    window.location = getSearchUrl(searchText.trim());
   };
 
   const handleSearchTextChanged = event => {

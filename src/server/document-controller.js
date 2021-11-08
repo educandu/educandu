@@ -98,9 +98,8 @@ class DocumentController {
     });
 
     router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
-      const { tags } = req.query;
-      const searchTags = Array.isArray(tags) ? tags : [tags];
-      const docs = await this.documentService.getDocumentsByTags(searchTags);
+      const { query } = req.query;
+      const docs = await this.documentService.getDocumentsByTags(urls.decodeUrl(query));
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
     });
   }

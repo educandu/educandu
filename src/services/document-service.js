@@ -90,7 +90,10 @@ class DocumentService {
     return this.documentStore.find({ _id: { $in: documentKeys } }, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  async getDocumentsByTags(searchTags) {
+  async getDocumentsByTags(searchQuery) {
+    const searchTags = searchQuery.trim().split(/\s+/)
+      .filter(tag => (/^\w{3,30}$/).test(tag));
+
     const query = {
       $or: searchTags.map(tag => ({ tags: { $regex: `.*${tag}.*`, $options: 'i' } }))
     };
