@@ -1,9 +1,11 @@
 import express from 'express';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
+import { ROLE } from '../domain/role.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import ClientDataMapper from './client-data-mapper.js';
+import { ensureIsArray } from '../utils/array-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery } from '../domain/validation-middleware.js';
@@ -19,6 +21,11 @@ const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
+const getDocumentsQueryFilter = user => {
+  return {
+    includeArchived: user.roles.includes(ROLE.admin)
+  };
+};
 
 class DocumentController {
   static get inject() { return [DocumentService, ClientDataMapper, PageRenderer]; }
@@ -56,7 +63,7 @@ class DocumentController {
     });
 
     router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
-      const allDocs = await this.documentService.getAllDocumentsMetadata();
+      const allDocs = await this.documentService.getAllDocumentsMetadata(getDocumentsQueryFilter(req.user));
       const documents = await this.clientDataMapper.mapDocsOrRevisions(allDocs, req.user);
 
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'docs', { documents });
@@ -98,9 +105,8 @@ class DocumentController {
     });
 
     router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
-      const { tags } = req.query;
-      const searchTags = Array.isArray(tags) ? tags : [tags];
-      const docs = await this.documentService.getDocumentsByTags(searchTags);
+      const tags = ensureIsArray(req.query.tags);
+      const docs = await this.documentService.getDocumentsByTags(tags, getDocumentsQueryFilter(req.user));
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
     });
   }
@@ -129,6 +135,26 @@ class DocumentController {
       return res.send({ documentRevisions });
     });
 
+    router.post('/api/v1/docs/:key/archive', needsPermission(permissions.ARCHIVE_DOC), async (req, res) => {
+      const revision = await this.documentService.toggleDocumentArchived({ documentKey: req.params.key, user: req.user, archived: true });
+      if (!revision) {
+        throw new NotFound();
+      }
+
+      const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
+      return res.send({ documentRevision });
+    });
+
+    router.post('/api/v1/docs/:key/unarchive', needsPermission(permissions.ARCHIVE_DOC), async (req, res) => {
+      const revision = await this.documentService.toggleDocumentArchived({ documentKey: req.params.key, user: req.user, archived: false });
+      if (!revision) {
+        throw new NotFound();
+      }
+
+      const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
+      return res.send({ documentRevision });
+    });
+
     router.get('/api/v1/docs', [needsPermission(permissions.VIEW_DOCS), validateQuery(getRevisionsByKeyQuerySchema)], async (req, res) => {
       const { user } = req;
       const { key } = req.query;
@@ -151,6 +177,7 @@ class DocumentController {
 
     router.get('/api/v1/docs/revisions/tags/*', async (req, res) => {
       const query = req.params[0] || '';
+
       const result = await this.documentService.findRevisionTags(query);
       return res.send(result.length ? result[0].uniqueTags : []);
     });

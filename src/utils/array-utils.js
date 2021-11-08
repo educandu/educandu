@@ -51,3 +51,7 @@ export function shuffleItems(items) {
 
   return result;
 }
+
+export function ensureIsArray(items) {
+  return Array.isArray(items) ? items : [items];
+}

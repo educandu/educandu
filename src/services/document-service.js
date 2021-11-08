@@ -24,7 +24,8 @@ const metadataProjection = {
   createdBy: 1,
   updatedOn: 1,
   updatedBy: 1,
-  tags: 1
+  tags: 1,
+  archived: 1
 };
 
 const searchResultsProjection = {
@@ -33,7 +34,8 @@ const searchResultsProjection = {
   slug: 1,
   contributors: 1,
   updatedOn: 1,
-  tags: 1
+  tags: 1,
+  archived: 1
 };
 
 const getTagsQuery = searchString => [
@@ -82,16 +84,20 @@ class DocumentService {
     this.userService = userService;
   }
 
-  getAllDocumentsMetadata() {
-    return this.documentStore.find({}, { sort: lastUpdatedFirst, projection: metadataProjection });
+  getAllDocumentsMetadata({ includeArchived } = {}) {
+    const filter = {};
+    if (!includeArchived) {
+      filter.archived = false;
+    }
+    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  getDocumentsMetadataByKeys(documentKeys) {
-    return this.documentStore.find({ _id: { $in: documentKeys } }, { sort: lastUpdatedFirst, projection: metadataProjection });
-  }
-
-  async getDocumentsByTags(searchTags) {
-    const result = await this.documentStore.find({ tags: { $all: searchTags } }, { projection: searchResultsProjection });
+  async getDocumentsByTags(tags, { includeArchived } = {}) {
+    let filter = { tags: { $all: tags } };
+    if (!includeArchived) {
+      filter = { $and: [filter, { archived: false }] };
+    }
+    const result = await this.documentStore.find(filter, { projection: searchResultsProjection });
     return result || [];
   }
 
@@ -218,7 +224,7 @@ class DocumentService {
         language: doc.language,
         sections: newSections,
         tags: doc.tags,
-        archived: false
+        archived: doc.archived
       };
 
       logger.info('Saving new document revision with id %s', newDocumentRevision._id);
@@ -322,6 +328,23 @@ class DocumentService {
         await this.documentLockStore.releaseLock(lock);
       }
     }
+  }
+
+  async toggleDocumentArchived({ documentKey, user, archived }) {
+    if (!user?._id) {
+      throw new Error('No user specified');
+    }
+
+    const latestRevision = await this.getCurrentDocumentRevisionByKey(documentKey);
+    const newRevision = cloneDeep(latestRevision);
+
+    newRevision.appendTo = {
+      key: documentKey,
+      ancestorId: latestRevision._id
+    };
+    newRevision.archived = archived;
+
+    return this.createDocumentRevision({ doc: newRevision, user });
   }
 
   _createDocumentFromRevisions(revisions) {

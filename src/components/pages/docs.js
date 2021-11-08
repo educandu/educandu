@@ -7,15 +7,17 @@ import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
+import { ROLE } from '../../domain/role.js';
+import { withUser } from '../user-context.js';
 import { withTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import permissions from '../../domain/permissions.js';
 import { withLanguage } from '../language-context.js';
-import { Form, Input, Modal, Table, Button } from 'antd';
 import { toTrimmedString } from '../../utils/sanitize.js';
 import LanguageSelect from '../localization/language-select.js';
+import { Form, Input, Modal, Table, Button, Switch } from 'antd';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
@@ -136,6 +138,32 @@ class Docs extends React.Component {
     });
   }
 
+  async handleArchivedSwitchChange(archived, doc) {
+    const { t } = this.props;
+    const { filteredDocs } = this.state;
+
+    try {
+      this.setState({ isLoading: true });
+
+      const { documentApiClient } = this.props;
+
+      const { documentRevision } = archived
+        ? await documentApiClient.unarchiveDocument(doc.key)
+        : await documentApiClient.archiveDocument(doc.key);
+
+      filteredDocs
+        .filter(document => document.key === documentRevision.key)
+        .forEach(document => {
+          document.archived = documentRevision.archived;
+        });
+
+      this.setState({ filteredDocs, isLoading: false });
+    } catch (error) {
+      this.setState({ isLoading: false });
+      errorHelper.handleApiError({ error, logger, t });
+    }
+  }
+
   renderTitle(_value, doc) {
     return <a href={urls.getDocUrl(doc.key)}>{doc.title}</a>;
   }
@@ -174,8 +202,12 @@ class Docs extends React.Component {
     return <span><a onClick={() => this.handleCloneClick(doc)}>{t('clone')}</a></span>;
   }
 
+  renderArchived(value, doc) {
+    return <Switch size="small" checked={doc.archived} onChange={() => this.handleArchivedSwitchChange(value, doc)} />;
+  }
+
   render() {
-    const { t } = this.props;
+    const { t, user } = this.props;
     const { newDocTitle, newDocLanguage, newDocSlug, isNewDocModalVisible, isLoading, filterInput, filteredDocs } = this.state;
 
     const columns = [
@@ -222,6 +254,15 @@ class Docs extends React.Component {
         render: this.renderActions
       }
     ];
+
+    if (user.roles.includes(ROLE.admin)) {
+      columns.push({
+        title: t('archived'),
+        dataIndex: 'archived',
+        key: 'archived',
+        render: this.renderArchived
+      });
+    }
 
     return (
       <Page>
@@ -277,7 +318,7 @@ Docs.propTypes = {
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
-export default withTranslation('docs')(withLanguage(inject({
+export default withTranslation('docs')(withLanguage(withUser(inject({
   documentApiClient: DocumentApiClient,
   languageNameProvider: LanguageNameProvider
-}, Docs)));
+}, Docs))));

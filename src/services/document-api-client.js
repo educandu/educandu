@@ -61,6 +61,24 @@ class DocumentApiClient {
       .accept('json')
       .then(res => res.body);
   }
+
+  archiveDocument(documentKey) {
+    return this.httpClient
+      .post(`/api/v1/docs/${documentKey}/archive`)
+      .accept('json')
+      .type('json')
+      .send()
+      .then(res => res.body);
+  }
+
+  unarchiveDocument(documentKey) {
+    return this.httpClient
+      .post(`/api/v1/docs/${documentKey}/unarchive`)
+      .accept('json')
+      .type('json')
+      .send()
+      .then(res => res.body);
+  }
 }
 
 export default DocumentApiClient;
