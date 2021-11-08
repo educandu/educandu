@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import firstBy from 'thenby';
 import { SearchOutlined } from '@ant-design/icons';
-import { Table, Tag, Select } from 'antd';
+import { Table, Tag, Select, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { searchResultShape } from '../../ui/default-prop-types.js';
 import { useLanguage } from '../language-context.js';
@@ -58,9 +58,9 @@ function Search({ initialState }) {
   };
 
   const searchPlaceholder = () => (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div className="Search-placeholderContainer">
       {t('refineSearch')}
-      <SearchOutlined style={{ alignSelf: 'center' }} />
+      <SearchOutlined className="Search-placeholderContainerIcon" />
     </div>);
 
   const columns = [
@@ -93,15 +93,18 @@ function Search({ initialState }) {
         <span>{`${t('searchResultPrefix')}: ${urls.decodeUrl(query.query)}`} </span>
       </div>
 
-      <Select
-        mode="multiple"
-        tokenSeparators={[' ']}
-        value={selectedTags}
-        style={{ width: '100%', marginBottom: '16px' }}
-        onChange={selectedValues => handleTagsChanged(selectedValues)}
-        placeholder={searchPlaceholder()}
-        options={Array.from(allTags).map(tag => ({ value: tag, key: tag }))}
-        />
+      <div className="Search-searchSelectContainer">
+        <Form.Item label={t('refineSearch')} >
+          <Select
+            mode="multiple"
+            tokenSeparators={[' ']}
+            value={selectedTags}
+            onChange={selectedValues => handleTagsChanged(selectedValues)}
+            placeholder={searchPlaceholder()}
+            options={Array.from(allTags).map(tag => ({ value: tag, key: tag }))}
+            />
+        </Form.Item>
+      </div>
 
       <Table
         bordered={false}

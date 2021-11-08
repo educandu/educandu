@@ -431,7 +431,7 @@
       "udateDate": "Udate date",
       "tags": "Tags",
       "numberOfContributors": "Contributor count",
-      "refineSearch": "Refine search by selecting specific tags",
+      "refineSearch": "Filter by tags",
       "searchResultPrefix": "Results for"
     }
   },
@@ -443,7 +443,7 @@
       "udateDate": "Update-Datum",
       "tags": "Tags",
       "numberOfContributors": "Anzahl Mitwirkender",
-      "refineSearch": "Andreas Helmberger",
+      "refineSearch": "Nach Tags filtern",
       "searchResultPrefix": "Ergibnise für"
     }
   },

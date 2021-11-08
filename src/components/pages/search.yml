@@ -11,8 +11,8 @@ numberOfContributors:
   en: Contributor count
   de: Anzahl Mitwirkender
 refineSearch:
-  en: Refine search by selecting specific tags
-  de: Andreas Helmberger
+  en: Filter by tags
+  de: Nach Tags filtern
 searchResultPrefix:
   en: Results for
   de: Ergibnise für
