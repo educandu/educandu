@@ -61,7 +61,8 @@ class Docs extends React.Component {
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
       language,
       sections: [],
-      tags: []
+      tags: [],
+      archived: false
     };
   }
 

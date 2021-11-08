@@ -35,7 +35,8 @@ export const createRevisionBodySchema = joi.object({
   language: joi.string().case('lower').required(),
   sections: joi.array().items(sectionSchema).required(),
   appendTo: documentRevisionAppendToSchema.optional(),
-  tags: joi.array()
+  tags: joi.array(),
+  archived: joi.boolean()
 });
 
 export const restoreRevisionBodySchema = joi.object({

@@ -2,7 +2,7 @@
 
 The educandu framework
 
-## How to use:
+## How to use
 
 ~~~
 $ yarn add @educandu/educandu
@@ -39,6 +39,15 @@ educandu({
   }
 });
 ~~~
+
+## How to run and develop locally
+
+~~~
+$ yarn
+$ gulp
+~~~
+
+This will build and start up the TestApp (in watch mode), which is set up to use educandu.
 
 ## License
 
