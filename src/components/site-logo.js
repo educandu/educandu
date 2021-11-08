@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import urls from '../utils/urls.js';
 
-function ElmuLogo({ readonly, size }) {
+function SiteLogo({ readonly, size }) {
   const classes = classNames({
-    'ElmuLogo': true,
-    'ElmuLogo--readonly': readonly,
-    'ElmuLogo--big': size === 'big'
+    'SiteLogo': true,
+    'SiteLogo--readonly': readonly,
+    'SiteLogo--big': size === 'big'
   });
 
   return readonly
@@ -15,14 +15,14 @@ function ElmuLogo({ readonly, size }) {
     : <a className={classes} href={urls.getHomeUrl()}>elmu</a>;
 }
 
-ElmuLogo.propTypes = {
+SiteLogo.propTypes = {
   readonly: PropTypes.bool,
   size: PropTypes.oneOf(['default', 'big'])
 };
 
-ElmuLogo.defaultProps = {
+SiteLogo.defaultProps = {
   readonly: false,
   size: 'default'
 };
 
-export default ElmuLogo;
+export default SiteLogo;

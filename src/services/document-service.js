@@ -225,7 +225,8 @@ class DocumentService {
         namespace: doc.namespace,
         language: doc.language,
         sections: newSections,
-        tags: doc.tags
+        tags: doc.tags,
+        archived: false
       };
 
       logger.info('Saving new document revision with id %s', newDocumentRevision._id);
@@ -269,7 +270,8 @@ class DocumentService {
       appendTo: {
         key: documentKey,
         ancestorId: latestRevision._id
-      }
+      },
+      tags: revisionToRestore.tags
     };
 
     await this.createDocumentRevision({ doc, user, restoredFrom: revisionToRestore._id });
@@ -350,7 +352,8 @@ class DocumentService {
       language: lastRevision.language,
       sections: lastRevision.sections,
       contributors,
-      tags: lastRevision.tags
+      tags: lastRevision.tags,
+      archived: lastRevision.archived
     };
   }
 }

@@ -68,7 +68,7 @@ class EarTrainingSoundEditor extends React.Component {
             >
             <RadioButton value="midi">{t('midi')}</RadioButton>
             <RadioButton value="external">{t('externalLink')}</RadioButton>
-            <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
+            <RadioButton value="internal">{t('internalCdn')}</RadioButton>
           </RadioGroup>
         </td>
         <td style={{ padding: 8 }}>&nbsp;</td>

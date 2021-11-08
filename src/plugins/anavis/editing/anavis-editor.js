@@ -337,7 +337,7 @@ class AnavisEditor extends React.Component {
           <FormItem label={t('source')} {...formItemLayout}>
             <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
               <RadioButton value="external">{t('externalLink')}</RadioButton>
-              <RadioButton value="internal">{t('elmuCdn')}</RadioButton>
+              <RadioButton value="internal">{t('internalCdn')}</RadioButton>
               <RadioButton value="youtube">{t('youtube')}</RadioButton>
             </RadioGroup>
           </FormItem>

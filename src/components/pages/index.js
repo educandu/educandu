@@ -3,8 +3,8 @@ import Page from '../page.js';
 import DocView from '../doc-view.js';
 import PropTypes from 'prop-types';
 import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
-import ElmuLogo from '../elmu-logo.js';
 import { Button, Input } from 'antd';
+import SiteLogo from '../site-logo.js';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
@@ -33,7 +33,7 @@ function Index({ initialState }) {
     <Page fullScreen>
       <div className="IndexPage">
         <div className="IndexPage-title">
-          <ElmuLogo size="big" readonly />
+          <SiteLogo size="big" readonly />
         </div>
         <div className="IndexPage-languageLinks">
           {homeLanguages.map((hl, index) => (

@@ -9,7 +9,7 @@ import 'express-async-errors';
 
 const logger = new Logger(import.meta.url);
 
-class ElmuServer {
+class EducanduServer {
   static get inject() { return [ServerConfig, ControllerFactory]; }
 
   constructor(serverConfig, controllerFactory) {
@@ -88,4 +88,4 @@ class ElmuServer {
   }
 }
 
-export default ElmuServer;
+export default EducanduServer;

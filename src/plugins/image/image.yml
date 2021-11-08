@@ -16,9 +16,9 @@ hoverOption:
 revealOption:
   en: Reveal
   de: Auflösung
-elmuCdn:
-  en: Elmu CDN
-  de: Elmu CDN
+internalCdn:
+  en: Internal CDN
+  de: Internes CDN
 externalUrl:
   en: External URL
   de: Externe URL

@@ -5,8 +5,8 @@ import cookie from './cookie.js';
 import formatErrorM from 'format-error';
 import { isBrowser } from '../ui/browser-helper.js';
 
-const getServerLevel = () => process.env.ELMU_LOG_LEVEL || 'debug';
-const getBrowserLevel = () => cookie.get('ELMU_LOG_LEVEL') || 'debug';
+const getServerLevel = () => process.env.EDUCANDU_LOG_LEVEL || 'debug';
+const getBrowserLevel = () => cookie.get('EDUCANDU_LOG_LEVEL') || 'debug';
 const formatError = err => formatErrorM.format(err) || err.stack || err.message || err.toString();
 const explodeError = obj => obj instanceof Error ? formatError(obj) : obj;
 const shortenNodeUrl = url => {

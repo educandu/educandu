@@ -4,7 +4,7 @@ import { ROLE } from '../domain/role.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
-import ElmuServer from '../server/elmu-server.js';
+import EducanduServer from '../server/educandu-server.js';
 import resources from '../resources/resources.json';
 import UserService from '../services/user-service.js';
 import commonBootstrapper from './common-bootstrapper.js';
@@ -87,7 +87,7 @@ export async function createContainer(configValues = {}) {
 export function disposeContainer(container) {
   logger.info('Disposing container');
   return Promise.all([
-    container.get(ElmuServer),
+    container.get(EducanduServer),
     container.get(Database),
     container.get(Cdn)
   ].map(service => service.dispose()));
