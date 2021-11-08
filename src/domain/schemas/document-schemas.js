@@ -18,7 +18,7 @@ const documentRevisionAppendToSchema = joi.object({
 });
 
 export const getSearchDocumentsByTagsSchema = joi.object({
-  query: joi.string()
+  query: joi.string().required()
 });
 
 export const getRevisionsByKeyQuerySchema = joi.object({
