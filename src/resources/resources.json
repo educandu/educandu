@@ -307,7 +307,7 @@
       "title": "Title",
       "language": "Language",
       "slug": "URL path",
-      "udateDate": "Update date",
+      "updateDate": "Update date",
       "user": "User info",
       "actions": "Actions",
       "archived": "Archived",
@@ -328,7 +328,7 @@
       "title": "Titel",
       "language": "Sprache",
       "slug": "URL-Pfad",
-      "udateDate": "Update-Datum",
+      "updateDate": "Update-Datum",
       "user": "User-Info",
       "actions": "Aktionen",
       "archived": "Archiviert",
@@ -430,7 +430,7 @@
     "language": "en",
     "resources": {
       "title": "Title",
-      "udateDate": "Update date",
+      "updateDate": "Update date",
       "tags": "Tags",
       "numberOfContributors": "Contributor count"
     }
@@ -440,7 +440,7 @@
     "language": "de",
     "resources": {
       "title": "Titel",
-      "udateDate": "Update-Datum",
+      "updateDate": "Update-Datum",
       "tags": "Tags",
       "numberOfContributors": "Anzahl Mitwirkender"
     }

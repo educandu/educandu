@@ -233,9 +233,9 @@ class Docs extends React.Component {
         sorter: by(x => x.language)
       },
       {
-        title: t('udateDate'),
-        dataIndex: 'udateDate',
-        key: 'udateDate',
+        title: t('updateDate'),
+        dataIndex: 'updateDate',
+        key: 'updateDate',
         render: this.renderUpdatedOn,
         defaultSortOrder: 'descend',
         sorter: by(x => x.updatedOn)
