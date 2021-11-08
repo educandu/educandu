@@ -13,3 +13,6 @@ numberOfContributors:
 refineSearch:
   en: Refine search by selecting specific tags
   de: Andreas Helmberger
+searchResultPrefix:
+  en: Results for
+  de: Ergibnise für

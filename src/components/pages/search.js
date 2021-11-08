@@ -3,17 +3,19 @@ import Page from '../page.js';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import firstBy from 'thenby';
-
+import { SearchOutlined } from '@ant-design/icons';
 import { Table, Tag, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { searchResultShape } from '../../ui/default-prop-types.js';
 import { useLanguage } from '../language-context.js';
+import { useRequest } from '../request-context.js';
 import urls from '../../utils/urls.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');
   const { locale } = useLanguage();
   const { docs } = initialState;
+  const { query } = useRequest();
 
   const sortedDocs = useMemo(
     () => docs
@@ -55,6 +57,12 @@ function Search({ initialState }) {
     return <a href={url}>{title}</a>;
   };
 
+  const searchPlaceholder = () => (
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      {t('refineSearch')}
+      <SearchOutlined style={{ alignSelf: 'center' }} />
+    </div>);
+
   const columns = [
     {
       title: t('title'),
@@ -81,15 +89,20 @@ function Search({ initialState }) {
 
   return (
     <Page headerActions={[]}>
+      <div className="Search-headerContainer">
+        <span>{`${t('searchResultPrefix')}: ${urls.decodeUrl(query.query)}`} </span>
+      </div>
+
       <Select
         mode="multiple"
         tokenSeparators={[' ']}
         value={selectedTags}
-        style={{ width: '100%' }}
+        style={{ width: '100%', marginBottom: '16px' }}
         onChange={selectedValues => handleTagsChanged(selectedValues)}
-        placeholder={t('refineSearch')}
+        placeholder={searchPlaceholder()}
         options={Array.from(allTags).map(tag => ({ value: tag, key: tag }))}
         />
+
       <Table
         bordered={false}
         pagination={false}
@@ -97,6 +110,7 @@ function Search({ initialState }) {
         columns={columns}
         dataSource={filteredDocs}
         />
+
     </Page>
   );
 }
