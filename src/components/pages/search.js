@@ -86,9 +86,7 @@ function Search({ initialState }) {
 
   return (
     <Page headerActions={[]}>
-      <div className="Search-headerContainer">
-        <span>{`${t('searchResultPrefix')}: ${urls.decodeUrl(query.query)}`} </span>
-      </div>
+      <h1>{`${t('searchResultPrefix')}: ${urls.decodeUrl(query.query)}`} </h1>
 
       <div className="Search-searchSelectContainer">
         <Form.Item label={t('refineSearch')} >
