@@ -430,7 +430,6 @@
       "title": "Title",
       "udateDate": "Udate date",
       "tags": "Tags",
-      "tagHitCount": "Tag hit count",
       "refineSearch": "Filter by tags",
       "searchResultPrefix": "Results for"
     }
@@ -442,7 +441,6 @@
       "title": "Titel",
       "udateDate": "Update-Datum",
       "tags": "Tags",
-      "tagHitCount": "Tag-Trefferzahl",
       "refineSearch": "Nach Tags filtern",
       "searchResultPrefix": "Ergibnise für"
     }

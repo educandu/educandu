@@ -23,7 +23,7 @@ function Search({ initialState }) {
         ...doc,
         tagsSet: new Set(doc.tags)
       }))
-      .sort(firstBy(doc => doc.tagHitCount, 'desc')
+      .sort(firstBy(doc => doc.tagMatchCount, 'desc')
         .thenBy(doc => doc.updatedOn, 'desc')),
     [docs]
   );
@@ -67,10 +67,6 @@ function Search({ initialState }) {
       dataIndex: 'title',
       key: 'title',
       render: renderTitle
-    },
-    {
-      title: t('tagHitCount'),
-      dataIndex: 'tagHitCount'
     },
     {
       title: t('tags'),

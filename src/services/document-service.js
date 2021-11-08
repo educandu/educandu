@@ -109,7 +109,7 @@ class DocumentService {
 
     return documents.map(result => ({
       ...result,
-      tagHitCount: result.tags
+      tagMatchCount: result.tags
         .reduce((count, tag) => searchTags.has(tag.toLowerCase()) ? count + 1 : count, 0)
     }));
   }
