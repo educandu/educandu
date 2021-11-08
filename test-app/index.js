@@ -4,8 +4,8 @@ import educandu from '../src/index.js';
 educandu({
   port: 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
-  skipMongoMigrations: true,
-  skipMongoChecks: false,
+  skipMongoMigrations: process.env.TEST_APP_SKIP_MONGO_MIGRATIONS === true.toString(),
+  skipMongoChecks: process.env.TEST_APP_SKIP_MONGO_CHECKS === true.toString(),
   cdnEndpoint: 'http://localhost:9000',
   cdnRegion: 'eu-central-1',
   cdnAccessKey: 'UVDXF41PYEAX0PXD8826',

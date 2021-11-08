@@ -1,31 +1,23 @@
-import testHelper from '../test-helper.js';
-import OrderStoreBase from './order-store-base.js';
+import DocumentOrderStore from './document-order-store.js';
+import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
-describe('order-store-base', () => {
-  let db;
+describe('document-order-store', () => {
   let sut;
-  let collection;
+  let container;
   let testOrderKey;
-  let testOrderCollectionName;
 
   beforeAll(async () => {
-    db = await testHelper.createTestDatabase();
+    container = await setupTestEnvironment();
+    sut = container.get(DocumentOrderStore);
+    testOrderKey = 'document-order';
   });
 
   afterAll(async () => {
-    await testHelper.dropDatabase(db);
-    await db.dispose();
-  });
-
-  beforeEach(() => {
-    testOrderKey = 'test-order-name';
-    testOrderCollectionName = 'test-orders';
-    collection = testHelper.getTestCollection(db, testOrderCollectionName);
-    sut = new OrderStoreBase(collection, testOrderKey);
+    await destroyTestEnvironment(container);
   });
 
   afterEach(async () => {
-    await testHelper.dropAllCollections(db);
+    await pruneTestEnvironment(container);
   });
 
   describe('getNextOrder', () => {
@@ -36,7 +28,7 @@ describe('order-store-base', () => {
         result = await sut.getNextOrder();
       });
       it('should create one', async () => {
-        const count = await collection.countDocuments({ _id: testOrderKey });
+        const count = await sut.collection.countDocuments({ _id: testOrderKey });
         expect(count).toBe(1);
       });
       it('should return 1', () => {
@@ -47,7 +39,7 @@ describe('order-store-base', () => {
     describe('when there is an existing order entry', () => {
       let result;
       beforeEach(async () => {
-        await collection.insertOne({ _id: testOrderKey, seq: 5 });
+        await sut.collection.insertOne({ _id: testOrderKey, seq: 5 });
         result = await sut.getNextOrder();
       });
       it('should increase the sequential number by 1', () => {
@@ -55,9 +47,10 @@ describe('order-store-base', () => {
       });
     });
 
-    describe('when it is called multiple times', () => {
+    describe('when it is called multiple times at the same time', () => {
       let result;
       beforeEach(async () => {
+        await sut.collection.insertOne({ _id: testOrderKey, seq: 0 });
         result = await Promise.all([
           sut.getNextOrder(),
           sut.getNextOrder(),

@@ -17,7 +17,7 @@ import passwordResetRequestsSpec from './collection-specs/password-reset-request
 const pGlob = promisify(glob);
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
-const MIGRATION_FILE_NAME_PATTERN = /^\d{4}-\d{2}-\d{2}-.*\.js$/;
+const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*\.js$/;
 
 const logger = new Logger(import.meta.url);
 
@@ -99,7 +99,7 @@ class Database {
     const migrations = await Promise.all(migrationFileNames.map(async fileName => {
       const Migration = (await import(url.pathToFileURL(fileName).href)).default;
       const instance = new Migration(this._db, this._mongoClient);
-      instance.name = path.basename(fileName);
+      instance.name = path.basename(fileName, '.js');
       return instance;
     }));
 
