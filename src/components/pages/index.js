@@ -19,12 +19,18 @@ function Index({ initialState }) {
   const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
-  const handleSearchClick = () => {
+  const handleSearch = () => {
     window.location = getSearchUrl(searchText.trim());
   };
 
   const handleSearchTextChanged = event => {
     setSearchText(event.target.value);
+  };
+
+  const handleSearchInputKeyUp = e => {
+    if (e.key === 'Enter' && searchText.trim().length > 2) {
+      handleSearch();
+    }
   };
 
   const languageNames = languageNameProvider.getData(language);
@@ -54,13 +60,14 @@ function Index({ initialState }) {
               placeholder={currentHomeLanguage.searchFieldPlaceholder}
               autoFocus
               value={searchText}
+              onKeyUp={handleSearchInputKeyUp}
               onChange={handleSearchTextChanged}
               />
             <Button
               size="large"
-              onClick={handleSearchClick}
+              onClick={handleSearch}
               type="primary"
-              disabled={!searchText || !searchText.trim()}
+              disabled={!searchText || searchText.trim().length < 3}
               className="IndexPage-searchButton"
               >
               {currentHomeLanguage.searchFieldButton}
