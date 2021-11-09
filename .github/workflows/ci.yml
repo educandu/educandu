@@ -44,6 +44,8 @@ jobs:
         run: ./node_modules/.bin/gulp lint
       - name: Test
         run: ./node_modules/.bin/gulp test
+      - name: Codecov
+        uses: codecov/codecov-action@v2
   publish-prerelease:
     runs-on: ubuntu-20.04
     needs: [verify]

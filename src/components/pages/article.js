@@ -15,27 +15,31 @@ function Article({ initialState }) {
   const { t } = useTranslation();
   const { documentOrRevision, type } = initialState;
 
-  const headerActions = React.useMemo(() => {
-    if (type === 'revision') {
-      return [];
-    }
+  const customAlerts = [];
+  const headerActions = [];
 
-    return [
-      {
-        handleClick: () => {
-          window.location = urls.getEditDocUrl(documentOrRevision.key);
-        },
-        icon: EditOutlined,
-        key: 'edit',
-        permission: permissions.EDIT_DOC,
-        text: t('common:edit'),
-        type: 'primary'
-      }
-    ];
-  }, [t, type, documentOrRevision.key]);
+  if (documentOrRevision.archived) {
+    customAlerts.push({
+      message: t('common:archivedAlert'),
+      type: 'warning'
+    });
+  }
+
+  if (!documentOrRevision.archived && type !== 'revision') {
+    headerActions.push({
+      handleClick: () => {
+        window.location = urls.getEditDocUrl(documentOrRevision.key);
+      },
+      icon: EditOutlined,
+      key: 'edit',
+      permission: permissions.EDIT_DOC,
+      text: t('common:edit'),
+      type: 'primary'
+    });
+  }
 
   return (
-    <Page headerActions={headerActions}>
+    <Page headerActions={headerActions} customAlerts={customAlerts}>
       {type === 'document' && (
         <aside className="Content">
           <a onClick={handleBackClick}>{t('common:back')}</a>

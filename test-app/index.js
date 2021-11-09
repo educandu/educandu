@@ -20,6 +20,7 @@ educandu({
     ignoreTLS: true
   },
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
+  resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
   initialUser: {
     username: 'test',
     password: 'test',

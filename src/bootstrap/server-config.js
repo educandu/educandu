@@ -41,6 +41,7 @@ const configDefaults = {
   sessionDurationInMinutes: 60,
   smtpOptions: null,
   publicFolders: [],
+  resources: [],
   initialUser: null
 };
 

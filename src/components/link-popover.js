@@ -18,14 +18,18 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
     return null;
   }
 
+  const renderLinkItem = item => (
+    <a href={item.href} className="LinkPopover-itemLink">
+      {item.icon && <span><Icon component={item.icon} />&nbsp;&nbsp;</span>}
+      {item.text}
+    </a>);
+
   const content = (
     <ul className="LinkPopover">
       {filteredItems.map(item => (
         <li key={item.key} className="LinkPopover-item">
-          <a href={item.href} className="LinkPopover-itemLink">
-            {item.icon && <span><Icon component={item.icon} />&nbsp;&nbsp;</span>}
-            {item.text}
-          </a>
+          {!!item.href && renderLinkItem(item)}
+          {!!item.node && item.node}
         </li>
       ))}
     </ul>

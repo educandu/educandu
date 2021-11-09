@@ -1,12 +1,15 @@
 title:
   en: Title
   de: Titel
-udateDate:
-  en: Udate date
+updateDate:
+  en: Update date
   de: Update-Datum
 tags:
   en: Tags
   de: Tags
-numberOfContributors:
-  en: Contributor count
-  de: Anzahl Mitwirkender
+refineSearch:
+  en: Filter by tags
+  de: Nach Tags filtern
+searchResultPrefix:
+  en: Results for
+  de: Ergebnisse für

@@ -135,6 +135,24 @@ export async function setupTestUser(container, userValues) {
   return verifiedUser;
 }
 
+export function createTestDocument(container, user, document) {
+  const documentService = container.get(DocumentService);
+
+  return documentService.createDocumentRevision({
+    doc: {
+      title: document.title ?? 'Title',
+      slug: document.slug ?? 'my-doc',
+      namespace: document.namespace ?? 'articles',
+      language: document.language ?? 'en',
+      sections: document.sections ?? [],
+      tags: document.tags || [],
+      appendTo: null,
+      archived: document.archived
+    },
+    user
+  });
+}
+
 export async function createTestRevisions(container, user, revisions) {
   const documentService = container.get(DocumentService);
   const createdRevisions = [];

@@ -307,9 +307,10 @@
       "title": "Title",
       "language": "Language",
       "slug": "URL path",
-      "udateDate": "Udate date",
+      "updateDate": "Update date",
       "user": "User info",
       "actions": "Actions",
+      "archived": "Archived",
       "enterSearchTerm": "Enter search term",
       "newDocument": "New document",
       "notAssigned": "(not assigned)"
@@ -327,9 +328,10 @@
       "title": "Titel",
       "language": "Sprache",
       "slug": "URL-Pfad",
-      "udateDate": "Update-Datum",
+      "updateDate": "Update-Datum",
       "user": "User-Info",
       "actions": "Aktionen",
+      "archived": "Archiviert",
       "enterSearchTerm": "Suchbegriff eingeben",
       "newDocument": "Neues Dokument",
       "notAssigned": "(nicht zugewiesen)"
@@ -428,9 +430,10 @@
     "language": "en",
     "resources": {
       "title": "Title",
-      "udateDate": "Udate date",
+      "updateDate": "Update date",
       "tags": "Tags",
-      "numberOfContributors": "Contributor count"
+      "refineSearch": "Filter by tags",
+      "searchResultPrefix": "Results for"
     }
   },
   {
@@ -438,9 +441,10 @@
     "language": "de",
     "resources": {
       "title": "Titel",
-      "udateDate": "Update-Datum",
+      "updateDate": "Update-Datum",
       "tags": "Tags",
-      "numberOfContributors": "Anzahl Mitwirkender"
+      "refineSearch": "Nach Tags filtern",
+      "searchResultPrefix": "Ergebnisse für"
     }
   },
   {
@@ -749,7 +753,7 @@
       "unsupportedFileFormat": "Unsupported file format",
       "source": "Source",
       "externalLink": "External link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internal CDN",
       "youtube": "Youtube",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
@@ -772,7 +776,7 @@
       "unsupportedFileFormat": "Nicht unterstütztes Dateiformat",
       "source": "Quelle",
       "externalLink": "Externer Link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internes CDN",
       "youtube": "Youtube",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
@@ -808,7 +812,7 @@
       "name": "Audio",
       "source": "Source",
       "externalLink": "External link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internal CDN",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
       "copyrightInfos": "Copyright infos"
@@ -821,7 +825,7 @@
       "name": "Audio",
       "source": "Quelle",
       "externalLink": "Externer Link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internes CDN",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
       "copyrightInfos": "Copyright Infos"
@@ -860,7 +864,7 @@
       "audioSource": "Audio source",
       "midi": "MIDI (auto)",
       "externalLink": "External link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internal CDN",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
       "copyrightInfos": "Copyright infos"
@@ -881,7 +885,7 @@
       "audioSource": "Audio-Quelle",
       "midi": "MIDI (auto)",
       "externalLink": "Externer Link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internes CDN",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
       "copyrightInfos": "Copyright Infos"
@@ -925,7 +929,7 @@
       "linkSource": "Link source",
       "externalLink": "External link",
       "articleLink": "Article link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internal CDN",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
       "imageDescription": "Image description"
@@ -947,7 +951,7 @@
       "linkSource": "Link-Quelle",
       "externalLink": "Externer Link",
       "articleLink": "Artikel-Link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internes CDN",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
       "imageDescription": "Bildunterschrift"
@@ -963,7 +967,7 @@
       "noneOption": "None",
       "hoverOption": "Hover",
       "revealOption": "Reveal",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internal CDN",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
       "copyrightInfos": "Copyright infos",
@@ -985,7 +989,7 @@
       "noneOption": "Kein Effekt",
       "hoverOption": "Hover",
       "revealOption": "Auflösung",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internes CDN",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
       "copyrightInfos": "Copyright Infos",
@@ -1079,7 +1083,7 @@
       "source": "Source",
       "externalLink": "External link",
       "internalLink": "Internal link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internal CDN",
       "youtube": "Youtube",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
@@ -1098,7 +1102,7 @@
       "source": "Quelle",
       "externalLink": "Externer Link",
       "internalLink": "Interner Link",
-      "internalCdn": "Elmu CDN",
+      "internalCdn": "Internes CDN",
       "youtube": "Youtube",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
@@ -1129,7 +1133,8 @@
       "moveUp": "Move up",
       "moveDown": "Move down",
       "error": "Error",
-      "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits"
+      "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits",
+      "archivedAlert": "This document is archived and cannot be edited"
     }
   },
   {
@@ -1152,7 +1157,8 @@
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
       "error": "Fehler",
-      "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten"
+      "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
+      "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden"
     }
   },
   {

@@ -64,7 +64,13 @@ export async function createContainer(configValues = {}) {
   logger.info('Registering CDN');
   container.registerInstance(Cdn, cdn);
 
-  const resourceManager = new ResourceManager(resources);
+  logger.info('Loading resources');
+  const additionalResources = await Promise.all(serverConfig.resources.map(async moduleUrl => {
+    const module = await import(moduleUrl);
+    return module.default;
+  }));
+
+  const resourceManager = new ResourceManager(resources, ...additionalResources);
 
   logger.info('Registering resource manager');
   container.registerInstance(ResourceManager, resourceManager);
