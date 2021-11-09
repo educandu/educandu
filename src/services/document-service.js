@@ -85,7 +85,7 @@ const createNewDocumentRevision = ({ doc, documentKey, userId, nextOrder, restor
     slug: doc.slug || '',
     namespace: doc.namespace,
     language: doc.language,
-    sections: sections?.length ? sections : doc.sections,
+    sections: sections || doc.sections,
     tags: doc.tags,
     archived: doc.archived || false
   };
