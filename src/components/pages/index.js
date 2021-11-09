@@ -18,7 +18,8 @@ function Index({ initialState }) {
 
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
-  const { document: doc, homeLanguages } = initialState;
+  const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
+  const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
   const handleSearch = () => {
     window.location = getSearchUrl(searchText.trim());
@@ -42,17 +43,6 @@ function Index({ initialState }) {
         <div className="IndexPage-title">
           <SiteLogo size="big" readonly />
         </div>
-        <div className="IndexPage-languageLinks">
-          {homeLanguages.map((hl, index) => (
-            <Button key={index.toString()} type="link" href={getHomeUrl(index === 0 ? null : hl.language)}>
-              <CountryFlagAndName
-                code={languageNames[hl.language]?.flag || null}
-                name={languageNames[hl.language]?.name || null}
-                flagOnly
-                />
-            </Button>
-          ))}
-        </div>
         <div className="IndexPage-search">
           <Input
             size="large"
@@ -73,7 +63,19 @@ function Index({ initialState }) {
             {t('searchButton')}
           </Button>
         </div>
-        )
+        {currentHomeLanguage && (
+          <div className="IndexPage-languageLinks">
+            {homeLanguages.map((hl, index) => (
+              <Button key={index.toString()} type="link" href={getHomeUrl(index === 0 ? null : hl.language)}>
+                <CountryFlagAndName
+                  code={languageNames[hl.language]?.flag || null}
+                  name={languageNames[hl.language]?.name || null}
+                  flagOnly
+                  />
+              </Button>
+            ))}
+          </div>
+        )}
         {doc && <DocView documentOrRevision={doc} />}
       </div>
     </Page>

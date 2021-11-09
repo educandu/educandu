@@ -659,9 +659,7 @@
     "resources": {
       "rank": "Rank",
       "language": "Language",
-      "documentKey": "Document key",
-      "searchFieldButton": "Search field button",
-      "searchFieldPlaceholder": "Search field placeholder"
+      "documentKey": "Document key"
     }
   },
   {
@@ -670,9 +668,7 @@
     "resources": {
       "rank": "Rang",
       "language": "Sprache",
-      "documentKey": "Dokument-Schlüssel",
-      "searchFieldButton": "Suchfeld-Button",
-      "searchFieldPlaceholder": "Suchfeld-Platzhalter"
+      "documentKey": "Dokument-Schlüssel"
     }
   },
   {
