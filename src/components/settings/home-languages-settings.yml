@@ -7,9 +7,3 @@ language:
 documentKey:
   en: Document key
   de: Dokument-Schlüssel
-searchFieldButton:
-  en: Search field button
-  de: Suchfeld-Button
-searchFieldPlaceholder:
-  en: Search field placeholder
-  de: Suchfeld-Platzhalter
