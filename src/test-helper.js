@@ -205,7 +205,8 @@ export function createTestDocument(container, user, document) {
       language: document.language ?? 'en',
       sections: document.sections ?? [],
       tags: document.tags || [],
-      appendTo: null
+      appendTo: null,
+      archived: document.archived
     },
     user
   });

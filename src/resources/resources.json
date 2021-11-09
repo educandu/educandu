@@ -307,9 +307,10 @@
       "title": "Title",
       "language": "Language",
       "slug": "URL path",
-      "udateDate": "Udate date",
+      "updateDate": "Update date",
       "user": "User info",
       "actions": "Actions",
+      "archived": "Archived",
       "enterSearchTerm": "Enter search term",
       "newDocument": "New document",
       "notAssigned": "(not assigned)"
@@ -327,9 +328,10 @@
       "title": "Titel",
       "language": "Sprache",
       "slug": "URL-Pfad",
-      "udateDate": "Update-Datum",
+      "updateDate": "Update-Datum",
       "user": "User-Info",
       "actions": "Aktionen",
+      "archived": "Archiviert",
       "enterSearchTerm": "Suchbegriff eingeben",
       "newDocument": "Neues Dokument",
       "notAssigned": "(nicht zugewiesen)"
@@ -428,7 +430,7 @@
     "language": "en",
     "resources": {
       "title": "Title",
-      "udateDate": "Udate date",
+      "updateDate": "Update date",
       "tags": "Tags",
       "refineSearch": "Filter by tags",
       "searchResultPrefix": "Results for"
@@ -439,7 +441,7 @@
     "language": "de",
     "resources": {
       "title": "Titel",
-      "udateDate": "Update-Datum",
+      "updateDate": "Update-Datum",
       "tags": "Tags",
       "refineSearch": "Nach Tags filtern",
       "searchResultPrefix": "Ergebnisse für"
@@ -1131,7 +1133,8 @@
       "moveUp": "Move up",
       "moveDown": "Move down",
       "error": "Error",
-      "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits"
+      "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits",
+      "archivedAlert": "This document is archived and cannot be edited"
     }
   },
   {
@@ -1154,7 +1157,8 @@
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
       "error": "Fehler",
-      "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten"
+      "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
+      "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden"
     }
   },
   {
