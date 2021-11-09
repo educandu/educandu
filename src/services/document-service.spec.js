@@ -371,7 +371,7 @@ describe('document-service', () => {
 
     describe('when I search with a query that returns a single document', () => {
       it('should project the data correctly', async () => {
-        const results = await sut.getDocumentsByTags('Wolf gang beat Oven');
+        const results = await sut.getDocumentsByTags('Wolf   gang \t beat Oven');
 
         expect(results).toHaveLength(1);
         const result = results[0];
