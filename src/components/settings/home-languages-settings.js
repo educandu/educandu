@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
+import { Form, Button, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { Form, Input, Button, Table } from 'antd';
 import DocumentSelector from '../document-selector.js';
 import LanguageSelect from '../localization/language-select.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -14,7 +14,7 @@ const hasValue = value => value && String(value).trim();
 
 const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error';
 
-const newHomeLanguage = { language: '', documentKey: '', searchFieldButton: '', searchFieldPlaceholder: '' };
+const newHomeLanguage = { language: '', documentKey: '' };
 
 function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
   const { t } = useTranslation('homeLanguagesSettings');
@@ -66,18 +66,6 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
     </FormItem>
   );
 
-  const renderSearchFieldButton = (text, record, index) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.searchFieldButton)} style={{ marginBottom: 0 }}>
-      <Input value={text} onChange={event => handleChange(index, 'searchFieldButton', event.target.value)} />
-    </FormItem>
-  );
-
-  const renderSearchFieldPlaceholder = (text, record, index) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.searchFieldPlaceholder)} style={{ marginBottom: 0 }}>
-      <Input value={record.searchFieldPlaceholder} onChange={event => handleChange(index, 'searchFieldPlaceholder', event.target.value)} />
-    </FormItem>
-  );
-
   const renderActions = (text, record, index) => (
     <Button size="small" icon={<DeleteOutlined style={{ color: 'red' }} />} onClick={() => handleDeleteClick(index)} danger />
   );
@@ -90,17 +78,13 @@ function HomeLanguagesSettings({ homeLanguages, documents, onChange }) {
     { title: t('rank'), key: 'rank', width: '64px', render: renderRank },
     { title: t('language'), key: 'language', dataIndex: 'language', width: '180px', render: renderLanguage },
     { title: t('documentKey'), key: 'documentKey', dataIndex: 'documentKey', ellipsis: true, render: renderDocumentKey },
-    { title: t('searchFieldButton'), key: 'searchFieldButton', dataIndex: 'searchFieldButton', width: '224px', render: renderSearchFieldButton },
-    { title: t('searchFieldPlaceholder'), key: 'searchFieldPlaceholder', dataIndex: 'searchFieldPlaceholder', width: '224px', render: renderSearchFieldPlaceholder },
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }
   ];
 
   const data = (homeLanguages || []).map((record, index) => ({
     key: index,
     language: record.language,
-    documentKey: record.documentKey,
-    searchFieldButton: record.searchFieldButton,
-    searchFieldPlaceholder: record.searchFieldPlaceholder
+    documentKey: record.documentKey
   }));
 
   return (
