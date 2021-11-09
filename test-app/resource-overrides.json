@@ -1,0 +1,16 @@
+[
+  {
+    "namespace": "loginLogout",
+    "language": "en",
+    "resources": {
+      "logonState": "G'day <0>{username}</0>"
+    }
+  },
+  {
+    "namespace": "loginLogout",
+    "language": "de",
+    "resources": {
+      "logon": "Reinspaziert"
+    }
+  }
+]
