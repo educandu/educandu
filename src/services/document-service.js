@@ -224,7 +224,7 @@ class DocumentService {
         language: doc.language,
         sections: newSections,
         tags: doc.tags,
-        archived: doc.archived
+        archived: doc.archived || false
       };
 
       logger.info('Saving new document revision with id %s', newDocumentRevision._id);
