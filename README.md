@@ -1,5 +1,7 @@
 # educandu
 
+[![codecov](https://codecov.io/gh/educandu/educandu/branch/main/graph/badge.svg?token=SM7ANNBT3A)](https://codecov.io/gh/educandu/educandu)
+
 The educandu framework
 
 ## How to use
