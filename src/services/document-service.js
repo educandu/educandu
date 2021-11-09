@@ -71,6 +71,26 @@ const getTagsQuery = searchString => [
 
 const lastUpdatedFirst = [['updatedOn', -1]];
 
+const createNewDocumentRevision = ({ doc, documentKey, userId, nextOrder, restoredFrom, sections }) => {
+  logger.info('Creating new revision for document key %s with order %d', documentKey, nextOrder);
+
+  return {
+    _id: uniqueId.create(),
+    key: documentKey,
+    order: nextOrder,
+    restoredFrom,
+    createdOn: dateTime.now(),
+    createdBy: userId,
+    title: doc.title || '',
+    slug: doc.slug || '',
+    namespace: doc.namespace,
+    language: doc.language,
+    sections: sections?.length ? sections : doc.sections,
+    tags: doc.tags,
+    archived: doc.archived || false
+  };
+};
+
 class DocumentService {
   static get inject() {
     return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, UserService];
@@ -135,7 +155,6 @@ class DocumentService {
     }
 
     let lock;
-    const now = dateTime.now();
     const userId = user._id;
     const isAppendedRevision = !!doc.appendTo;
     const ancestorId = isAppendedRevision ? doc.appendTo.ancestorId : null;
@@ -207,25 +226,7 @@ class DocumentService {
       });
 
       const nextOrder = await this.documentOrderStore.getNextOrder();
-
-      logger.info('Creating new revision for document key %s with order %d', documentKey, nextOrder);
-
-      // Create a new document revision:
-      const newDocumentRevision = {
-        _id: uniqueId.create(),
-        key: documentKey,
-        order: nextOrder,
-        restoredFrom,
-        createdOn: now,
-        createdBy: userId,
-        title: doc.title || '',
-        slug: doc.slug || '',
-        namespace: doc.namespace,
-        language: doc.language,
-        sections: newSections,
-        tags: doc.tags,
-        archived: doc.archived || false
-      };
+      const newDocumentRevision = createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
 
       logger.info('Saving new document revision with id %s', newDocumentRevision._id);
       await this.documentRevisionStore.save(newDocumentRevision);
@@ -336,7 +337,9 @@ class DocumentService {
     }
 
     const latestRevision = await this.getCurrentDocumentRevisionByKey(documentKey);
-    const newRevision = cloneDeep(latestRevision);
+    const nextOrder = await this.documentOrderStore.getNextOrder();
+
+    const newRevision = createNewDocumentRevision({ doc: latestRevision, documentKey, userId: user._id, nextOrder });
 
     newRevision.appendTo = {
       key: documentKey,
