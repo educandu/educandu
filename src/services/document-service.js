@@ -8,6 +8,7 @@ import DocumentStore from '../stores/document-store.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import escapeStringRegexp from 'escape-string-regexp';
 
 const logger = new Logger(import.meta.url);
 
@@ -92,9 +93,7 @@ class DocumentService {
   async getDocumentsByTags(searchQuery) {
     const searchTags = new Set(searchQuery.trim()
       .split(/\s+/)
-      .map(tag => tag.toLowerCase()
-        .replaceAll('*', '\\*')
-        .replaceAll('.', '\\.'))
+      .map(tag => escapeStringRegexp(tag.toLowerCase()))
       .filter(tag => tag.length > 2));
 
     if (!searchTags.size) {
