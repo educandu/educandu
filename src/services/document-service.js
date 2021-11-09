@@ -8,6 +8,7 @@ import DocumentStore from '../stores/document-store.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import escapeStringRegexp from 'escape-string-regexp';
 
 const logger = new Logger(import.meta.url);
 
@@ -32,7 +33,6 @@ const searchResultsProjection = {
   title: 1,
   key: 1,
   slug: 1,
-  contributors: 1,
   updatedOn: 1,
   tags: 1,
   archived: 1
@@ -112,13 +112,36 @@ class DocumentService {
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  async getDocumentsByTags(tags, { includeArchived } = {}) {
-    let filter = { tags: { $all: tags } };
-    if (!includeArchived) {
-      filter = { $and: [filter, { archived: false }] };
+  async getDocumentsByTags(searchQuery, { includeArchived } = {}) {
+    const searchTags = new Set(searchQuery.trim()
+      .split(/\s+/)
+      .map(tag => escapeStringRegexp(tag.toLowerCase()))
+      .filter(tag => tag.length > 2));
+
+    if (!searchTags.size) {
+      return [];
     }
-    const result = await this.documentStore.find(filter, { projection: searchResultsProjection });
-    return result || [];
+
+    let query = {
+      $or: Array.from(searchTags).map(tag => ({
+        tags: {
+          $regex: `.*${tag}.*`, $options: 'i'
+        }
+      }))
+    };
+
+    if (!includeArchived) {
+      query = { $and: [query, { archived: false }] };
+    }
+
+    const documents = await this.documentStore
+      .find(query, { projection: searchResultsProjection }) || [];
+
+    return documents.map(result => ({
+      ...result,
+      tagMatchCount: result.tags
+        .filter(tag => searchTags.has(tag.toLowerCase())).length
+    }));
   }
 
   getDocumentByKey(documentKey) {

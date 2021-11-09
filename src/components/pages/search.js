@@ -1,26 +1,51 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import firstBy from 'thenby';
-
-import { Table, Tag } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Table, Tag, Select, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { searchResultShape } from '../../ui/default-prop-types.js';
 import { useLanguage } from '../language-context.js';
+import { useRequest } from '../request-context.js';
 import urls from '../../utils/urls.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');
   const { locale } = useLanguage();
   const { docs } = initialState;
+  const { query } = useRequest();
+
   const sortedDocs = useMemo(
-    () => docs.sort(firstBy(doc => doc.contributors)
-      .thenBy(doc => doc.updatedOn, 'desc')),
+    () => docs
+      .map(doc => ({
+        ...doc,
+        tagsSet: new Set(doc.tags)
+      }))
+      .sort(firstBy(doc => doc.tagMatchCount, 'desc')
+        .thenBy(doc => doc.updatedOn, 'desc')),
     [docs]
   );
 
-  const renderContributorsCount = value => (<div>{value?.length}</div>);
+  const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]);
+
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const allTags = docs.reduce((acc, doc) => {
+    doc.tags.forEach(tag => acc.add(tag));
+    return acc;
+  }, new Set());
+
+  const tagOptions = Array.from(allTags).map(tag => ({ value: tag, key: tag }));
+
+  const handleTagsChanged = selectedValues => {
+    const newFilteredDocs = sortedDocs
+      .filter(doc => selectedValues.every(tag => doc.tagsSet.has(tag)));
+
+    setFilteredDocs(newFilteredDocs);
+    setSelectedTags(selectedValues);
+  };
 
   const renderUpdatedOn = (_value, doc) => {
     const date = moment(doc.updatedOn).locale(locale);
@@ -32,17 +57,18 @@ function Search({ initialState }) {
     return <a href={url}>{title}</a>;
   };
 
+  const searchPlaceholder = () => (
+    <div className="Search-placeholderContainer">
+      {t('refineSearch')}
+      <SearchOutlined className="Search-placeholderContainerIcon" />
+    </div>);
+
   const columns = [
     {
       title: t('title'),
       dataIndex: 'title',
       key: 'title',
       render: renderTitle
-    },
-    {
-      title: t('numberOfContributors'),
-      dataIndex: 'contributors',
-      render: renderContributorsCount
     },
     {
       title: t('tags'),
@@ -58,13 +84,29 @@ function Search({ initialState }) {
 
   return (
     <Page headerActions={[]}>
+      <h1>{`${t('searchResultPrefix')}: ${urls.decodeUrl(query.query)}`} </h1>
+
+      <div className="Search-searchSelectContainer">
+        <Form.Item label={t('refineSearch')} >
+          <Select
+            mode="multiple"
+            tokenSeparators={[' ']}
+            value={selectedTags}
+            onChange={selectedValues => handleTagsChanged(selectedValues)}
+            placeholder={searchPlaceholder()}
+            options={tagOptions}
+            />
+        </Form.Item>
+      </div>
+
       <Table
         bordered={false}
         pagination={false}
         size="middle"
         columns={columns}
-        dataSource={sortedDocs}
+        dataSource={filteredDocs}
         />
+
     </Page>
   );
 }

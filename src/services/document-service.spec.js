@@ -1,7 +1,7 @@
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import DocumentService from './document-service.js';
-import { createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('document-service', () => {
   let container;
@@ -312,4 +312,113 @@ describe('document-service', () => {
 
   });
 
+  describe('whenSearchingByTags', () => {
+    let doc1 = null;
+    let doc2 = null;
+    let doc3 = null;
+
+    beforeEach(async () => {
+      doc1 = await createTestDocument(container, user, {
+        title: 'Doc 1',
+        slug: 'doc-1',
+        sections: [],
+        tags: ['music', 'instructor', 'Dj.D', 'Cretu'],
+        archived: false
+      });
+
+      doc2 = await createTestDocument(container, user, {
+        title: 'Doc 2',
+        slug: 'doc-2',
+        sections: [],
+        tags: ['Music', 'Instructor', 'Goga'],
+        archived: false
+      });
+
+      doc3 = await createTestDocument(container, user, {
+        title: 'Doc 3',
+        slug: 'doc-3',
+        sections: [],
+        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        archived: false
+      });
+
+      await createTestDocument(container, user, {
+        title: 'Doc 4',
+        slug: 'doc-43',
+        sections: [],
+        tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
+        archived: true
+      });
+    });
+
+    describe('when I search for something that should not match', () => {
+      it('should return an empty array', async () => {
+        const results = await sut.getDocumentsByTags('I can not find anything in this db');
+        expect(results).toHaveLength(0);
+      });
+    });
+
+    describe('when I search for something that should be escaped', () => {
+      const testCases = [
+        { query: 'Dj.', resultLength: 1 },
+        { query: '...', resultLength: 0 },
+        { query: 'Dj*', resultLength: 0 }
+      ];
+
+      testCases.forEach(test => {
+        it(`should return ${test.resultLength} documents for ${test.query} `, async () => {
+          const results = await sut.getDocumentsByTags(test.query);
+          expect(results).toHaveLength(test.resultLength);
+        });
+      });
+
+    });
+
+    describe('when I search for a string that leads no valid tags', () => {
+      it('should return an empty array', async () => {
+        const results = await sut.getDocumentsByTags('to o sh or t');
+        expect(results).toHaveLength(0);
+      });
+    });
+
+    describe('when I search with a query that returns a single document', () => {
+      it('should project the data correctly', async () => {
+        const results = await sut.getDocumentsByTags('Wolf   gang \t beat Oven');
+
+        expect(results).toHaveLength(1);
+        const result = results[0];
+        expect(result.title).toEqual(doc3.title);
+        expect(result.slug).toEqual(doc3.slug);
+        expect(result.tags).toEqual(doc3.tags);
+        expect(result.tagMatchCount).toEqual(4);
+        expect(result.updatedOn).not.toBeNull();
+        expect(result.sections).toBeUndefined();
+      });
+    });
+
+    describe('when I search with a query that returns multiple documents', () => {
+      it('contain all documents with the corect tag match count', async () => {
+        const results = await sut.getDocumentsByTags('music instructor goga');
+
+        expect(results).toHaveLength(3);
+
+        const resultMap = results.reduce((acc, doc) => {
+          acc[doc.title] = { ...doc };
+          return acc;
+        }, {});
+
+        expect(resultMap[doc1.title].tagMatchCount).toEqual(2);
+        expect(resultMap[doc2.title].tagMatchCount).toEqual(3);
+        expect(resultMap[doc3.title].tagMatchCount).toEqual(1);
+      });
+    });
+
+    describe('when I search for archived documents', () => {
+      it('contain archived documents', async () => {
+        const results = await sut.getDocumentsByTags('Beat oven', { includeArchived: true });
+
+        expect(results).toHaveLength(2);
+      });
+    });
+  });
 });

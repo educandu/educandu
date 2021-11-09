@@ -3,7 +3,6 @@ import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import ClientDataMapper from './client-data-mapper.js';
-import { ensureIsArray } from '../utils/array-utils.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -100,8 +99,8 @@ class DocumentController {
     });
 
     router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
-      const tags = ensureIsArray(req.query.tags);
-      const docs = await this.documentService.getDocumentsByTags(tags, getDocumentsQueryFilter(req.user));
+      const { query } = req.query;
+      const docs = await this.documentService.getDocumentsByTags(urls.decodeUrl(query), getDocumentsQueryFilter(req.user));
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
     });
   }

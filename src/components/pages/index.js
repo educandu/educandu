@@ -1,51 +1,36 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import Page from '../page.js';
 import DocView from '../doc-view.js';
 import PropTypes from 'prop-types';
 import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
+import { Button, Input } from 'antd';
 import SiteLogo from '../site-logo.js';
-import { Button, Select } from 'antd';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
-import DocumentApiClient from '../../services/document-api-client.js';
-import { handleApiError } from '../../ui/error-helper.js';
-import { useTranslation } from 'react-i18next';
-import { useSettings } from '../settings-context.js';
 
 function Index({ initialState }) {
-  const settings = useSettings();
-
-  const [tagSuggestions, setTagSuggestions] = useState(settings.defaultTags || []);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const documentApiClient = useService(DocumentApiClient);
-  const { t } = useTranslation();
+  const [searchText, setSearchText] = useState('');
 
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
   const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
 
-  const handleSearchClick = tags => {
-    window.location = getSearchUrl(tags);
+  const handleSearch = () => {
+    window.location = getSearchUrl(searchText.trim());
   };
 
-  const getTagSuggestions = useCallback(async tagSuggestionsQuery => {
-    if (tagSuggestionsQuery.length !== 3) {
-      return;
-    }
-    try {
-      setTagSuggestions(await documentApiClient.getDocumentTagSuggestions(tagSuggestionsQuery));
-    } catch (error) {
-      handleApiError({ error, t });
-    }
-  }, [documentApiClient, t]);
+  const handleSearchTextChanged = event => {
+    setSearchText(event.target.value);
+  };
 
-  const handleSelectedTagsChanged = selectedValues => {
-    setSelectedTags(selectedValues);
-    setTagSuggestions(settings.defaultTags || []);
+  const handleSearchInputKeyUp = e => {
+    if (e.key === 'Enter' && searchText.trim().length > 2) {
+      handleSearch();
+    }
   };
 
   const languageNames = languageNameProvider.getData(language);
@@ -69,23 +54,20 @@ function Index({ initialState }) {
         </div>
         {currentHomeLanguage && (
           <div className="IndexPage-search">
-            <Select
-              mode="multiple"
+            <Input
               size="large"
               className="IndexPage-searchInput"
-              tokenSeparators={[' ']}
               placeholder={currentHomeLanguage.searchFieldPlaceholder}
               autoFocus
-              value={selectedTags}
-              onSearch={getTagSuggestions}
-              onChange={handleSelectedTagsChanged}
-              options={tagSuggestions.map(tag => ({ value: tag, key: tag }))}
+              value={searchText}
+              onKeyUp={handleSearchInputKeyUp}
+              onChange={handleSearchTextChanged}
               />
             <Button
               size="large"
-              onClick={() => handleSearchClick(selectedTags)}
+              onClick={handleSearch}
               type="primary"
-              disabled={!selectedTags.length}
+              disabled={!searchText || searchText.trim().length < 3}
               className="IndexPage-searchButton"
               >
               {currentHomeLanguage.searchFieldButton}

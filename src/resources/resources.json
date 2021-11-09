@@ -432,7 +432,8 @@
       "title": "Title",
       "updateDate": "Update date",
       "tags": "Tags",
-      "numberOfContributors": "Contributor count"
+      "refineSearch": "Filter by tags",
+      "searchResultPrefix": "Results for"
     }
   },
   {
@@ -442,7 +443,8 @@
       "title": "Titel",
       "updateDate": "Update-Datum",
       "tags": "Tags",
-      "numberOfContributors": "Anzahl Mitwirkender"
+      "refineSearch": "Nach Tags filtern",
+      "searchResultPrefix": "Ergebnisse für"
     }
   },
   {

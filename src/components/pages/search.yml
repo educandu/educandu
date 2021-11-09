@@ -7,6 +7,9 @@ updateDate:
 tags:
   en: Tags
   de: Tags
-numberOfContributors:
-  en: Contributor count
-  de: Anzahl Mitwirkender
+refineSearch:
+  en: Filter by tags
+  de: Nach Tags filtern
+searchResultPrefix:
+  en: Results for
+  de: Ergebnisse für

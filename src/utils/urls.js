@@ -114,7 +114,7 @@ export function createFullyQualifiedUrl(pathname) {
   return url.href;
 }
 
-export function getSearchUrl(tags) {
+export function getSearchUrl(query) {
   const url = new URL(document.location);
   const keys = [];
   for (const key of url.searchParams.keys()) {
@@ -126,9 +126,7 @@ export function getSearchUrl(tags) {
   }
 
   url.pathname = searchPath;
-  tags.forEach(tag => {
-    url.searchParams.append('tags', tag);
-  });
+  url.searchParams.append('query', urlencode.encode(query));
 
   return url.href;
 }
@@ -170,5 +168,6 @@ export default {
   getRegisterUrl,
   getResetPasswordUrl,
   createFullyQualifiedUrl,
-  getSearchUrl
+  getSearchUrl,
+  decodeUrl: urlencode.decode
 };
