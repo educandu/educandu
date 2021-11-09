@@ -13,6 +13,10 @@ class HttpClient {
     return superagent.post(...args);
   }
 
+  patch(...args) {
+    return superagent.patch(...args);
+  }
+
   delete(...args) {
     return superagent.delete(...args);
   }

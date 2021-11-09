@@ -10,6 +10,8 @@ export const EDIT_SETTINGS = 'edit-settings';
 export const HARD_DELETE_SECTION = 'hard-delete-section';
 export const SEE_USER_EMAIL = 'see-user-email';
 export const MIGRATE_DATA = 'migrate-data';
+export const MANAGE_DOC_REVISIONS = 'manage-doc-revisions';
+export const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -21,7 +23,9 @@ const rolesForPermission = {
   [EDIT_USERS]: [ROLE.admin],
   [HARD_DELETE_SECTION]: [ROLE.admin],
   [SEE_USER_EMAIL]: [ROLE.admin],
-  [MIGRATE_DATA]: [ROLE.admin]
+  [MIGRATE_DATA]: [ROLE.admin],
+  [MANAGE_DOC_REVISIONS]: [ROLE.admin],
+  [MANAGE_ARCHIVED_DOCS]: [ROLE.admin]
 };
 
 export function hasUserPermission(user, permission) {
@@ -39,5 +43,7 @@ export default {
   HARD_DELETE_SECTION,
   SEE_USER_EMAIL,
   MIGRATE_DATA,
+  MANAGE_ARCHIVED_DOCS,
+  MANAGE_DOC_REVISIONS,
   hasUserPermission
 };

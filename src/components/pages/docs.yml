@@ -22,8 +22,8 @@ language:
 slug:
   en: URL path
   de: URL-Pfad
-udateDate:
-  en: Udate date
+updateDate:
+  en: Update date
   de: Update-Datum
 user:
   en: User info
@@ -31,6 +31,9 @@ user:
 actions:
   en: Actions
   de: Aktionen
+archived:
+  en: Archived
+  de: Archiviert
 enterSearchTerm:
   en: Enter search term
   de: Suchbegriff eingeben

@@ -50,7 +50,7 @@ function Search({ initialState }) {
       render: (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>))
     },
     {
-      title: t('udateDate'),
+      title: t('updateDate'),
       dataIndex: 'updatedOn',
       render: renderUpdatedOn
     }
