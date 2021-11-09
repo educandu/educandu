@@ -44,5 +44,6 @@ export default {
   SEE_USER_EMAIL,
   MIGRATE_DATA,
   MANAGE_ARCHIVED_DOCS,
+  MANAGE_DOC_REVISIONS,
   hasUserPermission
 };
