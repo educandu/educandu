@@ -20,8 +20,10 @@ function Index({ initialState }) {
   const languageNameProvider = useService(LanguageNameProvider);
   const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = () => {
+    setIsSearching(true);
     window.location = getSearchUrl(searchText.trim());
   };
 
@@ -30,7 +32,7 @@ function Index({ initialState }) {
   };
 
   const handleSearchInputKeyUp = e => {
-    if (e.key === 'Enter' && searchText.trim().length > 2) {
+    if (!isSearching && e.key === 'Enter' && searchText.trim().length > 2) {
       handleSearch();
     }
   };
@@ -57,6 +59,7 @@ function Index({ initialState }) {
             size="large"
             onClick={handleSearch}
             type="primary"
+            loading={isSearching}
             disabled={!searchText || searchText.trim().length < 3}
             className="IndexPage-searchButton"
             >
