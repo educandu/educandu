@@ -17,7 +17,7 @@ class Migration2021110901 {
       .collection('settings')
       .updateMany(
         { _id: 'homeLanguages' },
-        { $set: { 'value.$[].searchFieldButton': 'Search', 'value.$[].searchFieldPlaceholder': 'Search' } }
+        { $set: { 'value.$[].searchFieldButton': 'Search', 'value.$[].searchFieldPlaceholder': 'Search terms' } }
       );
   }
 }

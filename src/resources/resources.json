@@ -355,7 +355,7 @@
     "namespace": "index",
     "language": "en",
     "resources": {
-      "searchInputPlaceholder": "Text",
+      "searchInputPlaceholder": "Search terms",
       "searchButton": "Search"
     }
   },
@@ -363,7 +363,7 @@
     "namespace": "index",
     "language": "de",
     "resources": {
-      "searchInputPlaceholder": "Text",
+      "searchInputPlaceholder": "Suchbegriffe",
       "searchButton": "Suchen"
     }
   },
