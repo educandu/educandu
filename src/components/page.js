@@ -116,6 +116,32 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
     }
   ];
 
+  if (settings?.helpPage?.[language]) {
+    pageMenuItems.push({
+      key: 'help',
+      href: urls.getArticleUrl(settings.helpPage[language].documentSlug),
+      text: settings.helpPage[language].linkTitle,
+      icon: QuestionOutlined,
+      permission: permissions.EDIT_SETTINGS
+    });
+  }
+
+  pageMenuItems.push({
+    key: 'language',
+    node: (
+      <div className="Page-languageSwitch">
+        {languagesToChoose.map((lang, index) => (
+          <React.Fragment key={lang.code}>
+            {index !== 0 && <span>/</span>}
+            <Button type="link" size="small" onClick={() => i18n.changeLanguage(lang.code)}>
+              <CountryFlagAndName code={lang.flag} name={lang.name} flagOnly />
+            </Button>
+          </React.Fragment>
+        ))}
+      </div>),
+    permission: null
+  });
+
   return (
     <div className="Page">
       <header className={pageHeaderAreaClasses}>
@@ -127,30 +153,12 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
             {headerActionComponents}
           </div>
           <div className="Page-headerContent Page-headerContent--right">
-            <div className="Page-languageSwitch">
-              {languagesToChoose.map((lang, index) => (
-                <React.Fragment key={lang.code}>
-                  {index !== 0 && <span>/</span>}
-                  <Button type="link" size="small" onClick={() => i18n.changeLanguage(lang.code)}>
-                    <CountryFlagAndName code={lang.flag} name={lang.name} flagOnly />
-                  </Button>
-                </React.Fragment>
-              ))}
-            </div>
-            {settings?.helpPage?.[language] && (
-              <Button
-                className="Page-headerButton"
-                icon={<QuestionOutlined />}
-                title={settings.helpPage[language].linkTitle}
-                href={urls.getArticleUrl(settings.helpPage[language].documentSlug)}
-                />
-            )}
-            <LinkPopover items={pageMenuItems} trigger="hover" placement="bottom">
-              <Button className="Page-headerButton" icon={<MenuOutlined />} />
-            </LinkPopover>
             <div className="Page-loginLogoutButton">
               <LoginLogout />
             </div>
+            <LinkPopover items={pageMenuItems} trigger="hover" placement="bottomRight">
+              <Button className="Page-headerButton" icon={<MenuOutlined />} />
+            </LinkPopover>
           </div>
         </div>
         {!fullScreen && profileWarning}
