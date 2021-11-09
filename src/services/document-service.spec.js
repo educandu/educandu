@@ -316,7 +316,6 @@ describe('document-service', () => {
     let doc1 = null;
     let doc2 = null;
     let doc3 = null;
-    let doc4 = null;
 
     beforeEach(async () => {
       doc1 = await createTestDocument(container, user, {
@@ -343,7 +342,7 @@ describe('document-service', () => {
         archived: false
       });
 
-      doc4 = await createTestDocument(container, user, {
+      await createTestDocument(container, user, {
         title: 'Doc 4',
         slug: 'doc-43',
         sections: [],
