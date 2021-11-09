@@ -109,7 +109,7 @@ class Docs extends React.Component {
 
       const data = this.createNewDocument(newDocTitle, newDocLanguage, newDocSlug);
 
-      const { documentRevision } = await documentApiClient.archiveDocument(data);
+      const { documentRevision } = await documentApiClient.saveDocument(data);
 
       this.setState({
         isNewDocModalVisible: false,
