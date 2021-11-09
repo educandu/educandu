@@ -37,6 +37,8 @@ function Search({ initialState }) {
     return acc;
   }, new Set());
 
+  const tagOptions = Array.from(allTags).map(tag => ({ value: tag, key: tag }));
+
   const handleTagsChanged = selectedValues => {
     const newFilteredDocs = sortedDocs
       .filter(doc => selectedValues.every(tag => doc.tagsSet.has(tag)));
@@ -92,7 +94,7 @@ function Search({ initialState }) {
             value={selectedTags}
             onChange={selectedValues => handleTagsChanged(selectedValues)}
             placeholder={searchPlaceholder()}
-            options={Array.from(allTags).map(tag => ({ value: tag, key: tag }))}
+            options={tagOptions}
             />
         </Form.Item>
       </div>
