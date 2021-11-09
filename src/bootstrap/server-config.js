@@ -18,6 +18,7 @@ const configSchema = joi.object({
   sessionDurationInMinutes: joi.number().min(1),
   smtpOptions: joi.any(),
   publicFolders: joi.array().items(joi.string()),
+  resources: joi.array().items(joi.string()),
   initialUser: joi.object({
     username: joi.string().required(),
     password: joi.string().required(),
