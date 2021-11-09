@@ -130,7 +130,7 @@ class DocumentController {
       return res.send({ documentRevisions });
     });
 
-    router.post('/api/v1/docs/:key/archive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
+    router.patch('/api/v1/docs/:key/archive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
       const revision = await this.documentService.setArchivedState({ documentKey: req.params.key, user: req.user, archived: true });
       if (!revision) {
         throw new NotFound();
@@ -140,7 +140,7 @@ class DocumentController {
       return res.send({ documentRevision });
     });
 
-    router.post('/api/v1/docs/:key/unarchive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
+    router.patch('/api/v1/docs/:key/unarchive', needsPermission(permissions.MANAGE_ARCHIVED_DOCS), async (req, res) => {
       const revision = await this.documentService.setArchivedState({ documentKey: req.params.key, user: req.user, archived: false });
       if (!revision) {
         throw new NotFound();

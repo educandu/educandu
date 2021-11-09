@@ -64,18 +64,16 @@ class DocumentApiClient {
 
   archiveDocument(documentKey) {
     return this.httpClient
-      .post(`/api/v1/docs/${documentKey}/archive`)
+      .patch(`/api/v1/docs/${documentKey}/archive`)
       .accept('json')
-      .type('json')
       .send()
       .then(res => res.body);
   }
 
   unarchiveDocument(documentKey) {
     return this.httpClient
-      .post(`/api/v1/docs/${documentKey}/unarchive`)
+      .patch(`/api/v1/docs/${documentKey}/unarchive`)
       .accept('json')
-      .type('json')
       .send()
       .then(res => res.body);
   }
