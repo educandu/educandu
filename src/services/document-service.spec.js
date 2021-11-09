@@ -321,7 +321,7 @@ describe('document-service', () => {
         title: 'Doc 1',
         slug: 'doc-1',
         sections: [],
-        tags: ['music', 'instructor', 'Dj', 'Cretu']
+        tags: ['music', 'instructor', 'Dj.D', 'Cretu']
       });
 
       doc2 = await createTestDocument(container, user, {
@@ -344,6 +344,22 @@ describe('document-service', () => {
         const results = await sut.getDocumentsByTags('I can not find anything in this db');
         expect(results).toHaveLength(0);
       });
+    });
+
+    describe('when I search for something that should be escaped', () => {
+      const testCases = [
+        { query: 'Dj.', resultLength: 1 },
+        { query: '...', resultLength: 0 },
+        { query: 'Dj*', resultLength: 0 }
+      ];
+
+      testCases.forEach(test => {
+        it(`should return ${test.resultLength} documents for ${test.query} `, async () => {
+          const results = await sut.getDocumentsByTags(test.query);
+          expect(results).toHaveLength(test.resultLength);
+        });
+      });
+
     });
 
     describe('when I search with a query that returns a single document', () => {

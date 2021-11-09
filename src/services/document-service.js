@@ -92,8 +92,10 @@ class DocumentService {
   async getDocumentsByTags(searchQuery) {
     const searchTags = new Set(searchQuery.trim()
       .split(/\s+/)
-      .map(tag => tag.toLowerCase())
-      .filter(tag => (/^\w{3,30}$/).test(tag)));
+      .map(tag => tag.toLowerCase()
+        .replaceAll('*', '\\*')
+        .replaceAll('.', '\\.'))
+      .filter(tag => tag.length > 2));
 
     const query = {
       $or: Array.from(searchTags).map(tag => ({
