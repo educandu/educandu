@@ -2,23 +2,29 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 import sinon from 'sinon';
-import testHelper from '../test-helper.js';
+import Cdn from './cdn.js';
+import { createTestDir, deleteTestDir, setupTestEnvironment, destroyTestEnvironment, pruneTestEnvironment } from '../test-helper.js';
 
 const writeFile = util.promisify(fs.writeFile);
 
 describe('cdn', () => {
+  let container;
   let sut;
   let testDir;
 
-  beforeEach(async () => {
-    sut = await testHelper.createTestCdn();
-    testDir = await testHelper.createTestDir();
+  beforeAll(async () => {
+    container = await setupTestEnvironment();
+    sut = container.get(Cdn);
+    testDir = await createTestDir();
+  });
+
+  afterAll(async () => {
+    await destroyTestEnvironment(container);
+    await deleteTestDir(testDir);
   });
 
   afterEach(async () => {
-    await testHelper.deleteTestDir(testDir);
-    await testHelper.removeBucket(sut);
-    await sut.dispose();
+    await pruneTestEnvironment(container);
   });
 
   describe('uploadObject', () => {

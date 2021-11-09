@@ -211,13 +211,6 @@ export async function buildTestAppJs() {
   }
 }
 
-export const runNewEducanduTestApp = gulp.series(
-  clean,
-  build,
-  buildTestAppCss,
-  () => execa(process.execPath, ['--experimental-json-modules', './test-app/index.js'], { stdio: 'inherit' })
-);
-
 export async function buildTranslations() {
   const filePaths = await promisify(glob)('./src/**/*.yml');
 
@@ -326,7 +319,7 @@ export async function minioDown() {
 
 export const minioReset = gulp.series(minioDown, minioUp);
 
-function startTestApp({ skipMongoChecks }) {
+function startTestApp({ skipMigrationsAndChecks }) {
   testAppServer = spawn(
     process.execPath,
     [
@@ -340,8 +333,8 @@ function startTestApp({ skipMongoChecks }) {
       env: {
         ...process.env,
         NODE_ENV: 'development',
-        EDUCANDU_SKIP_MONGO_MIGRATIONS: true.toString(),
-        EDUCANDU_SKIP_MONGO_CHECKS: (!!skipMongoChecks).toString()
+        TEST_APP_SKIP_MONGO_MIGRATIONS: (!!skipMigrationsAndChecks).toString(),
+        TEST_APP_SKIP_MONGO_CHECKS: (!!skipMigrationsAndChecks).toString()
       },
       stdio: 'inherit'
     }
@@ -352,19 +345,19 @@ function startTestApp({ skipMongoChecks }) {
 }
 
 export function startServer(done) {
-  startTestApp({ skipMongoChecks: false });
+  startTestApp({ skipMigrationsAndChecks: false });
   done();
 }
 
 export function restartServer(done) {
   if (testAppServer) {
     testAppServer.once('exit', () => {
-      startTestApp({ skipMongoChecks: true });
+      startTestApp({ skipMigrationsAndChecks: true });
       done();
     });
     testAppServer.kill();
   } else {
-    startTestApp({ skipMongoChecks: false });
+    startTestApp({ skipMigrationsAndChecks: true });
     done();
   }
 }

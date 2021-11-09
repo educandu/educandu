@@ -1,69 +1,84 @@
-import fs from 'fs';
 import del from 'del';
 import url from 'url';
 import path from 'path';
-import util from 'util';
+import { promises as fs } from 'fs';
 import Cdn from './repositories/cdn.js';
 import { ROLE } from './domain/role.js';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
 import UserService from './services/user-service.js';
-import ServerConfig from './bootstrap/server-config.js';
 import DocumentService from './services/document-service.js';
 import { SAVE_USER_RESULT } from './domain/user-management.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
-const mkdir = util.promisify(fs.mkdir);
-const mkdtemp = util.promisify(fs.mkdtemp);
-const serverConfig = new ServerConfig({ skipMongoMigrations: true, skipMongoChecks: false });
-
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.tmp/', import.meta.url).href);
   try {
-    await mkdir(tempDir);
+    await fs.mkdir(tempDir);
   } catch (err) {
     if (err.code !== 'EEXIST') {
       throw err;
     }
   }
   const prefix = path.join(tempDir, './test-');
-  return mkdtemp(prefix);
+  return fs.mkdtemp(prefix);
 }
 
 export function deleteTestDir(testDir) {
   return del(testDir);
 }
 
-export function createTestDatabase() {
-  const dbUrl = new URL(serverConfig.mongoConnectionString);
-  dbUrl.pathname = `test-educandu-web-${Date.now()}`;
-  return Database.create({ connectionString: dbUrl.toString() });
-}
-
-export function getTestCollection(db, collectionName) {
-  return db._db.collection(collectionName);
-}
-
-export function dropDatabase(db) {
-  return db._db.dropDatabase();
-}
-
-export async function dropAllCollections(db) {
-  const collections = await db._db.collections();
-  await Promise.all(collections.map(col => db._db.dropCollection(col.collectionName)));
-}
-
-export async function purgeDatabase(db) {
+async function purgeDatabase(db) {
   const collections = await db._db.collections();
   await Promise.all(collections.map(col => col.deleteMany({})));
 }
 
 // If `bucketName` is undefined, it uses the
-// bucket associated with `cdn`, same with `region`!
-export async function ensurePublicBucketExists(cdn, bucketName, region) {
-  const bRegion = region || cdn.region;
+// bucket associated with `cdn`!
+async function purgeBucket(cdn, bucketName) {
+  const s3Client = cdn.s3Client;
   const bName = bucketName || cdn.bucketName;
-  const bucketPolicy = {
+  const objects = await s3Client.listObjects(bName, '', true);
+  await s3Client.deleteObjects(bName, objects.map(obj => obj.name));
+}
+
+async function removeBucket(cdn) {
+  const s3Client = cdn.s3Client;
+  await purgeBucket(cdn, cdn.bucketName);
+  await s3Client.deleteBucket(cdn.bucketName);
+}
+
+export async function setupTestEnvironment() {
+  const randomId = uniqueId.create().toLowerCase();
+
+  const region = 'eu-central-1';
+  const bucketName = `test-elmu-cdn-${randomId}`;
+
+  const container = await createContainer({
+    env: 'test',
+    mongoConnectionString: `mongodb://root:rootpw@localhost:27017/test-educandu-db-${randomId}?replicaSet=educandurs&authSource=admin`,
+    skipMongoMigrations: false,
+    skipMongoChecks: false,
+    cdnEndpoint: 'http://localhost:9000',
+    cdnRegion: region,
+    cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
+    cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
+    cdnBucketName: bucketName,
+    cdnRootUrl: `http://localhost:9000/${bucketName}`,
+    sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
+    sessionDurationInMinutes: 60,
+    smtpOptions: {
+      host: 'localhost',
+      port: 8025,
+      ignoreTLS: true
+    }
+  });
+
+  // Make bucket publicly accessible:
+  const cdn = container.get(Cdn);
+  const s3Client = cdn.s3Client;
+  await s3Client.createBucket(bucketName, region);
+  await s3Client.putBucketPolicy(bucketName, JSON.stringify({
     Version: '2012-10-17',
     Statement: [
       {
@@ -71,94 +86,10 @@ export async function ensurePublicBucketExists(cdn, bucketName, region) {
         Effect: 'Allow',
         Principal: '*',
         Action: 's3:GetObject',
-        Resource: `arn:aws:s3:::${bName}/*`
+        Resource: `arn:aws:s3:::${bucketName}/*`
       }
     ]
-  };
-
-  const s3Client = cdn.s3Client;
-  await s3Client.createBucket(bName, bRegion);
-  await s3Client.putBucketPolicy(bName, JSON.stringify(bucketPolicy));
-
-  return cdn;
-}
-
-export async function createTestCdn() {
-  const cdn = await Cdn.create({
-    endpoint: serverConfig.cdnEndpoint,
-    region: serverConfig.cdnRegion,
-    accessKey: serverConfig.cdnAccessKey,
-    secretKey: serverConfig.cdnSecretKey,
-    bucketName: `test-educandu-cdn-${Date.now()}`
-  });
-
-  return ensurePublicBucketExists(cdn);
-}
-
-// If `bucketName` is undefined, it uses the
-// bucket associated with `cdn`!
-export async function purgeBucket(cdn, bucketName) {
-  const s3Client = cdn.s3Client;
-  const bName = bucketName || cdn.bucketName;
-  const objects = await s3Client.listObjects(bName, '', true);
-  await s3Client.deleteObjects(bName, objects.map(obj => obj.name));
-}
-
-// If `bucketName` is undefined, it uses the
-// bucket associated with `cdn`!
-export async function removeBucket(cdn, bucketName) {
-  const s3Client = cdn.s3Client;
-  const bName = bucketName || cdn.bucketName;
-  await purgeBucket(cdn, bName);
-  await s3Client.deleteBucket(bName);
-}
-
-export async function removeAllBuckets(cdn) {
-  const s3Client = cdn.s3Client;
-
-  // eslint-disable-next-line no-console
-  console.log('Listing buckets');
-  const buckets = await s3Client.listBuckets();
-
-  // eslint-disable-next-line no-console
-  console.log(`Found ${buckets.length}`);
-  await Promise.all(buckets.map(b => removeBucket(cdn, b.name)));
-}
-
-export async function createAndVerifyUser(userService, username, password, email, roles, profile, lockedOut) {
-  const { result, user } = await userService.createUser({ username, password, email });
-  if (result !== SAVE_USER_RESULT.success) {
-    throw new Error(JSON.stringify({ result, username, password, email }));
-  }
-  const verifiedUser = await userService.verifyUser(user.verificationCode);
-  verifiedUser.roles = roles;
-  verifiedUser.profile = profile || null;
-  verifiedUser.lockedOut = lockedOut || false;
-  await userService.saveUser(verifiedUser);
-  return verifiedUser;
-}
-
-export async function setupTestEnvironment() {
-  const timestamp = Date.now().toString();
-
-  const config = new ServerConfig({ env: 'test', skipMongoMigrations: true, skipMongoChecks: false });
-
-  // Configure temp DB parameters:
-  const dbUrl = new URL(config.mongoConnectionString);
-  dbUrl.pathname = `test-educandu-web-${timestamp}`;
-  config.mongoConnectionString = dbUrl.toString();
-
-  // Configure temp CDN parameters:
-  const cdnUrl = new URL(config.cdnRootUrl);
-  cdnUrl.pathname = `test-educandu-cdn-${timestamp}`;
-  config.cdnRootUrl = cdnUrl.toString();
-  config.cdnBucketName = `test-educandu-cdn-${timestamp}`;
-
-  // Fire everything up:
-  const container = await createContainer(config);
-
-  // Make bucket publicly accessible:
-  await ensurePublicBucketExists(container.get(Cdn));
+  }));
 
   return container;
 }
@@ -176,22 +107,32 @@ export async function destroyTestEnvironment(container) {
 
   await Promise.all([
     await removeBucket(cdn),
-    await dropDatabase(db)
+    await db._db.dropDatabase()
   ]);
 
   await disposeContainer(container);
 }
 
-export function setupTestUser(container, user) {
-  return createAndVerifyUser(
-    container.get(UserService),
-    user?.username || 'test',
-    user?.password || 'test',
-    user?.email || 'test@test@com',
-    user?.roles || [ROLE.user],
-    user?.profile || null,
-    user?.lockedOut || false
-  );
+export async function setupTestUser(container, userValues) {
+  const userService = container.get(UserService);
+
+  const username = userValues?.username || 'test';
+  const password = userValues?.password || 'test';
+  const email = userValues?.email || 'test@test@com';
+  const roles = userValues?.roles || [ROLE.user];
+  const profile = userValues?.profile || null;
+  const lockedOut = userValues?.lockedOut || false;
+
+  const { result, user } = await userService.createUser({ username, password, email });
+  if (result !== SAVE_USER_RESULT.success) {
+    throw new Error(JSON.stringify({ result, username, password, email }));
+  }
+  const verifiedUser = await userService.verifyUser(user.verificationCode);
+  verifiedUser.roles = roles;
+  verifiedUser.profile = profile || null;
+  verifiedUser.lockedOut = lockedOut || false;
+  await userService.saveUser(verifiedUser);
+  return verifiedUser;
 }
 
 export function createTestDocument(container, user, document) {
@@ -242,18 +183,3 @@ export async function createTestRevisions(container, user, revisions) {
 
   return createdRevisions;
 }
-
-export default {
-  createTestDir,
-  deleteTestDir,
-  createTestDatabase,
-  getTestCollection,
-  dropDatabase,
-  dropAllCollections,
-  ensurePublicBucketExists,
-  createTestCdn,
-  purgeBucket,
-  removeBucket,
-  removeAllBuckets,
-  createAndVerifyUser
-};

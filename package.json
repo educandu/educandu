@@ -8,7 +8,7 @@
     "./*": "./dist/*"
   },
   "engines": {
-    "node": "16.x.x"
+    "node": "^16.11.0"
   },
   "scripts": {
     "start": "gulp",
