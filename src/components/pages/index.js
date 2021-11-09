@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
 import Page from '../page.js';
-import DocView from '../doc-view.js';
 import PropTypes from 'prop-types';
-import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
+import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
 import SiteLogo from '../site-logo.js';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
+import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 
 function Index({ initialState }) {
   const [searchText, setSearchText] = useState('');
+  const { t } = useTranslation('index');
 
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
-  const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
-  const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
+  const { document: doc, homeLanguages } = initialState;
 
   const handleSearch = () => {
     window.location = getSearchUrl(searchText.trim());
@@ -52,28 +53,27 @@ function Index({ initialState }) {
             </Button>
           ))}
         </div>
-        {currentHomeLanguage && (
-          <div className="IndexPage-search">
-            <Input
-              size="large"
-              className="IndexPage-searchInput"
-              placeholder={currentHomeLanguage.searchFieldPlaceholder}
-              autoFocus
-              value={searchText}
-              onKeyUp={handleSearchInputKeyUp}
-              onChange={handleSearchTextChanged}
-              />
-            <Button
-              size="large"
-              onClick={handleSearch}
-              type="primary"
-              disabled={!searchText || searchText.trim().length < 3}
-              className="IndexPage-searchButton"
-              >
-              {currentHomeLanguage.searchFieldButton}
-            </Button>
-          </div>
-        )}
+        <div className="IndexPage-search">
+          <Input
+            size="large"
+            className="IndexPage-searchInput"
+            placeholder={t('searchInputPlaceholder')}
+            autoFocus
+            value={searchText}
+            onKeyUp={handleSearchInputKeyUp}
+            onChange={handleSearchTextChanged}
+            />
+          <Button
+            size="large"
+            onClick={handleSearch}
+            type="primary"
+            disabled={!searchText || searchText.trim().length < 3}
+            className="IndexPage-searchButton"
+            >
+            {t('searchButton')}
+          </Button>
+        </div>
+        )
         {doc && <DocView documentOrRevision={doc} />}
       </div>
     </Page>
