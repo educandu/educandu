@@ -362,6 +362,13 @@ describe('document-service', () => {
 
     });
 
+    describe('when I search for a string that leads no valid tags', () => {
+      it('should return an empty array', async () => {
+        const results = await sut.getDocumentsByTags('to o sh or t');
+        expect(results).toHaveLength(0);
+      });
+    });
+
     describe('when I search with a query that returns a single document', () => {
       it('should project the data correctly', async () => {
         const results = await sut.getDocumentsByTags('Wolf gang beat Oven');

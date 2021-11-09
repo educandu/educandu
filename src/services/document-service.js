@@ -97,6 +97,10 @@ class DocumentService {
         .replaceAll('.', '\\.'))
       .filter(tag => tag.length > 2));
 
+    if (!searchTags.size) {
+      return [];
+    }
+
     const query = {
       $or: Array.from(searchTags).map(tag => ({
         tags: {
