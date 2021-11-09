@@ -49,13 +49,20 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
 
 LinkPopover.propTypes = {
   children: PropTypes.node,
-  items: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    href: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
-    icon: PropTypes.elementType,
-    permission: PropTypes.string
-  })),
+  items: PropTypes.arrayOf(PropTypes.oneOfType([
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      href: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+      icon: PropTypes.elementType,
+      permission: PropTypes.string
+    }),
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      node: PropTypes.node.isRequired,
+      permission: PropTypes.string
+    })
+  ])),
   placement: PropTypes.oneOf([
     'top',
     'left',

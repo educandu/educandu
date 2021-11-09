@@ -40,9 +40,7 @@ export const requestProps = {
 
 export const homeLanguageSettingProps = {
   language: PropTypes.string.isRequired,
-  documentKey: PropTypes.string.isRequired,
-  searchFieldButton: PropTypes.string.isRequired,
-  searchFieldPlaceholder: PropTypes.string.isRequired
+  documentKey: PropTypes.string.isRequired
 };
 
 export const homeLanguageShape = PropTypes.shape(homeLanguageSettingProps);
