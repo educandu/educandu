@@ -13,14 +13,12 @@ class ResourceManager {
 
   _mergeResourceBundles(bundles) {
     const result = [];
-    for (const bundle of bundles) {
-      for (const entry of bundle) {
-        const existing = result.find(x => x.namespace === entry.namespace && x.language === entry.language);
-        if (existing) {
-          existing.resources = { ...existing.resources, ...entry.resources };
-        } else {
-          result.push(cloneDeep(entry));
-        }
+    for (const entry of bundles.flat()) {
+      const existingEntry = result.find(x => x.namespace === entry.namespace && x.language === entry.language);
+      if (existingEntry) {
+        existingEntry.resources = { ...existingEntry.resources, ...entry.resources };
+      } else {
+        result.push(cloneDeep(entry));
       }
     }
 
