@@ -69,7 +69,7 @@ class Docs extends React.Component {
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
       language: newDocState.language,
       sections: [],
-      tags: newDocState.tags,
+      tags: newDocState.tags ? [...newDocState.tags] : [],
       archived: false
     };
   }
@@ -142,7 +142,7 @@ class Docs extends React.Component {
         title: doc.title ? `${doc.title} ${t('copyTitleSuffix')}` : t('defaultDocumentTitle'),
         language: doc.language,
         slug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : DEFAULT_DOCUMENT_SLUG,
-        tags: doc.tags || [],
+        tags: doc.tags ? [...doc.tags] : [],
         blueprintKey: doc.key
       },
       isNewDocModalVisible: true
