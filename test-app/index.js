@@ -25,5 +25,6 @@ educandu({
     username: 'test',
     password: 'test',
     email: 'test@test.com'
-  }
+  },
+  exposeErrorDetails: true
 });

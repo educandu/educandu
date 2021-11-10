@@ -38,16 +38,6 @@ class EducanduServer {
       return next();
     });
 
-    if (this.serverConfig.redirectToHttps) {
-      logger.info('Registering redirect to HTTPS');
-      router.use((req, res, next) => req.secure ? next() : res.redirect(301, `https://${req.headers.host}${req.originalUrl}`));
-    }
-
-    if (this.serverConfig.redirectToNonWwwDomain) {
-      logger.info('Registering redirect to domain name without www');
-      router.use((req, res, next) => (/^www\./).test(req.headers.host) ? res.redirect(301, `${req.protocol}://${req.headers.host.replace(/^www\./, '')}${req.originalUrl}`) : next());
-    }
-
     const controllers = controllerFactory.getAllControllers();
 
     logger.info('Registering middlewares');
