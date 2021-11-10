@@ -95,8 +95,10 @@ class Register extends React.Component {
 
     const agreementValidationRules = [
       {
-        required: true,
-        message: t('confirmTerms')
+        message: t('confirmTerms'),
+        validator: (_, value) => value
+          ? Promise.resolve()
+          : Promise.reject(new Error(t('confirmTerms')))
       }
     ];
 
