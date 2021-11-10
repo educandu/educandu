@@ -44,56 +44,63 @@ class Docs extends React.Component {
     autoBind(this);
     this.state = {
       filteredDocs: props.initialState.documents.slice(),
-      newDocTitle: this.props.t('defaultDocumentTitle'),
-      newDocLanguage: getNewDocLanguageFromUiLanguage(this.props.langauge),
+      newDoc: this.createNewDocumentState(this.props.langauge),
       filterInput: DEFAULT_FILTER_INPUT,
-      newDocSlug: DEFAULT_DOCUMENT_SLUG,
-      newDocBlueprintKey: null,
       isNewDocModalVisible: false,
       isLoading: false
     };
   }
 
-  createNewDocument(title, language, slug) {
+  createNewDocumentState(uiLanguage) {
+    return {
+      title: this.props.t('defaultDocumentTitle'),
+      slug: DEFAULT_DOCUMENT_SLUG,
+      language: getNewDocLanguageFromUiLanguage(uiLanguage),
+      blueprintKey: null,
+      tags: []
+    };
+  }
+
+  mapToDocumentModel(newDocState) {
     const { t } = this.props;
     return {
-      title: toTrimmedString(title) || t('defaultDocumentTitle'),
-      slug: toTrimmedString(slug) || '',
+      title: toTrimmedString(newDocState.title) || t('defaultDocumentTitle'),
+      slug: toTrimmedString(newDocState.slug) || '',
       namespace: DEFAULT_DOCUMENT_NAMESPACE,
-      language,
+      language: newDocState.language,
       sections: [],
-      tags: [],
+      tags: newDocState.tags ? [...newDocState.tags] : [],
       archived: false
     };
   }
 
   handleNewDocumentClick() {
-    const { language, t } = this.props;
+    const { language } = this.props;
     this.setState({
-      newDocTitle: t('defaultDocumentTitle'),
-      newDocLanguage: getNewDocLanguageFromUiLanguage(language),
-      newDocSlug: DEFAULT_DOCUMENT_SLUG,
-      newDocBlueprintKey: null,
+      newDoc: this.createNewDocumentState(language),
       isNewDocModalVisible: true
     });
   }
 
   handleNewDocTitleChange(event) {
-    this.setState({ newDocTitle: event.target.value });
+    const { value } = event.target;
+    this.setState(prevState => ({ newDoc: { ...prevState.newDoc, title: value } }));
   }
 
   handleNewDocLanguageChange(value) {
-    this.setState({ newDocLanguage: value });
+    this.setState(prevState => ({ newDoc: { ...prevState.newDoc, language: value } }));
   }
 
   handleNewDocSlugChange(event) {
-    this.setState({ newDocSlug: event.target.value });
+    const { value } = event.target;
+    this.setState(prevState => ({ newDoc: { ...prevState.newDoc, slug: value } }));
   }
 
   handleFilterInputChange(event) {
     const filterInput = event.target.value;
     const docs = this.props.initialState.documents;
     const filteredDocs = docs.filter(doc => {
+
       return doc.title.toLowerCase().includes(filterInput.toLowerCase())
         || doc.updatedBy.username.toLowerCase().includes(filterInput.toLowerCase());
     });
@@ -101,13 +108,13 @@ class Docs extends React.Component {
   }
 
   async handleOk() {
-    const { newDocTitle, newDocLanguage, newDocSlug, newDocBlueprintKey } = this.state;
+    const { newDoc } = this.state;
     const { documentApiClient, t } = this.props;
 
     try {
       this.setState({ isLoading: true });
 
-      const data = this.createNewDocument(newDocTitle, newDocLanguage, newDocSlug);
+      const data = this.mapToDocumentModel(newDoc);
 
       const { documentRevision } = await documentApiClient.saveDocument(data);
 
@@ -116,7 +123,7 @@ class Docs extends React.Component {
         isLoading: false
       });
 
-      window.location = urls.getEditDocUrl(documentRevision.key, newDocBlueprintKey || null);
+      window.location = urls.getEditDocUrl(documentRevision.key, newDoc.blueprintKey || null);
     } catch (error) {
       this.setState({ isLoading: false });
       errorHelper.handleApiError({ error, logger, t });
@@ -129,13 +136,17 @@ class Docs extends React.Component {
 
   handleCloneClick(doc) {
     const { t } = this.props;
-    this.setState({
-      newDocTitle: doc.title ? `${doc.title} ${t('copyTitleSuffix')}` : t('defaultDocumentTitle'),
-      newDocLanguage: doc.language,
-      newDocSlug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : DEFAULT_DOCUMENT_SLUG,
-      newDocBlueprintKey: doc.key,
+    this.setState(prevState => ({
+      newDoc: {
+        ...prevState.newDoc,
+        title: doc.title ? `${doc.title} ${t('copyTitleSuffix')}` : t('defaultDocumentTitle'),
+        language: doc.language,
+        slug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : DEFAULT_DOCUMENT_SLUG,
+        tags: doc.tags ? [...doc.tags] : [],
+        blueprintKey: doc.key
+      },
       isNewDocModalVisible: true
-    });
+    }));
   }
 
   async handleArchivedSwitchChange(archived, doc) {
@@ -208,7 +219,7 @@ class Docs extends React.Component {
 
   render() {
     const { t, user } = this.props;
-    const { newDocTitle, newDocLanguage, newDocSlug, isNewDocModalVisible, isLoading, filterInput, filteredDocs } = this.state;
+    const { filteredDocs, filterInput, newDoc, isNewDocModalVisible, isLoading } = this.state;
 
     const columns = [
       {
@@ -293,13 +304,13 @@ class Docs extends React.Component {
             >
             <Form name="new-document-form" layout="vertical">
               <FormItem label={t('title')}>
-                <Input value={newDocTitle} onChange={this.handleNewDocTitleChange} />
+                <Input value={newDoc.title} onChange={this.handleNewDocTitleChange} />
               </FormItem>
               <FormItem label={t('language')}>
-                <LanguageSelect value={newDocLanguage} onChange={this.handleNewDocLanguageChange} />
+                <LanguageSelect value={newDoc.language} onChange={this.handleNewDocLanguageChange} />
               </FormItem>
               <FormItem label={t('slug')}>
-                <Input addonBefore={urls.articlesPrefix} value={newDocSlug} onChange={this.handleNewDocSlugChange} />
+                <Input addonBefore={urls.articlesPrefix} value={newDoc.slug} onChange={this.handleNewDocSlugChange} />
               </FormItem>
             </Form>
           </Modal>

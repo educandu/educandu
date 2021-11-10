@@ -42,6 +42,7 @@ const supportedLanguages = ['en', 'de'];
 
 let testAppServer = null;
 let testAppBuildResult = null;
+const containerCommandTimeoutMs = 2000;
 
 Graceful.on('exit', () => {
   testAppServer?.kill();
@@ -60,11 +61,11 @@ const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () =>
   const container = data.containerList.find(c => c.names === containerName);
   if (!container) {
     await docker.command(`run --name ${containerName} ${runArgs}`);
-    await delay(1000);
+    await delay(containerCommandTimeoutMs);
     await afterRun();
   } else if (!container.status.startsWith('Up')) {
     await docker.command(`restart ${containerName}`);
-    await delay(1000);
+    await delay(containerCommandTimeoutMs);
   }
 };
 
@@ -72,7 +73,7 @@ const ensureContainerRemoved = async ({ containerName }) => {
   const docker = new Docker();
   try {
     await docker.command(`rm -f ${containerName}`);
-    await delay(1000);
+    await delay(containerCommandTimeoutMs);
   } catch (err) {
     if (!err.toString().includes('No such container')) {
       throw err;
