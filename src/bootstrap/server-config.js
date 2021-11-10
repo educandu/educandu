@@ -23,7 +23,8 @@ const configSchema = joi.object({
     username: joi.string().required(),
     password: joi.string().required(),
     email: joi.string().required()
-  }).allow(null)
+  }).allow(null),
+  exposeErrorDetails: joi.boolean().required()
 });
 
 const configDefaults = {
@@ -43,7 +44,8 @@ const configDefaults = {
   smtpOptions: null,
   publicFolders: [],
   resources: [],
-  initialUser: null
+  initialUser: null,
+  exposeErrorDetails: false
 };
 
 class ServerConfig {
