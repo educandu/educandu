@@ -14,11 +14,8 @@ educandu({
   cdnRootUrl: 'http://localhost:9000/dev-educandu-cdn',
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
   sessionDurationInMinutes: 60,
-  smtpOptions: {
-    host: 'localhost',
-    port: 8025,
-    ignoreTLS: true
-  },
+  emailSenderAddress: 'educandu-test-app@test.com',
+  smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
   initialUser: {
