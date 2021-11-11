@@ -17,6 +17,7 @@ const configSchema = joi.object({
   sessionSecret: joi.string(),
   sessionDurationInMinutes: joi.number().min(1),
   smtpOptions: joi.any(),
+  emailSenderAddress: joi.string(),
   publicFolders: joi.array().items(joi.string()),
   resources: joi.array().items(joi.string()),
   initialUser: joi.object({
@@ -41,6 +42,7 @@ const configDefaults = {
   cdnRootUrl: null,
   sessionSecret: uniqueId.create(),
   sessionDurationInMinutes: 60,
+  emailSenderAddress: null,
   smtpOptions: null,
   publicFolders: [],
   resources: [],

@@ -3,13 +3,11 @@ import Logger from '../common/logger.js';
 import ServerConfig from '../bootstrap/server-config.js';
 
 const logger = new Logger(import.meta.url);
-
-const EDUCANDU_WEB_EMAIL_ADDRESS = 'website@elmu.online';
-
 class MailService {
   static get inject() { return [ServerConfig]; }
 
   constructor(serverConfig) {
+    this.emailSenderAddress = serverConfig.emailSenderAddress;
     this.transport = nodemailer.createTransport(serverConfig.smtpOptions);
   }
 
@@ -37,7 +35,7 @@ class MailService {
       + `Please confirm your registration here: <a href="${verificationLink}">confirm registration</a></p>`;
 
     const message = {
-      from: EDUCANDU_WEB_EMAIL_ADDRESS,
+      from: this.emailSenderAddress,
       to: email,
       subject: 'Willkommen auf ELMU! / Welcome to ELMU!',
       text: `${germanText}\n\n${englishText}`,
@@ -71,7 +69,7 @@ class MailService {
       + `Please click here in order to change your password: <a href="${completionLink}">change password</a>.</p>`;
 
     const message = {
-      from: EDUCANDU_WEB_EMAIL_ADDRESS,
+      from: this.emailSenderAddress,
       to: email,
       subject: 'Ihr Kennwort auf ELMU/ Your password for ELMU',
       text: `${germanText}\n\n${englishText}`,
