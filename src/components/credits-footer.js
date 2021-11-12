@@ -29,10 +29,11 @@ function renderRevisionAuthor(revision, t) {
 function CreditsFooter({ documentOrRevision, type }) {
   const request = useRequest();
   const { t } = useTranslation('creditsFooter');
+  const { formatDate } = useDateFormat();
 
   const currentHost = request.hostInfo.host;
   const url = `${request.hostInfo.origin}${request.path}`;
-  const citation = t('citation', { title: documentOrRevision.title, url, date: useDateFormat(new Date()) });
+  const citation = t('citation', { title: documentOrRevision.title, url, date: formatDate(new Date().toISOString()) });
 
   return (
     <div className="CreditsFooter">

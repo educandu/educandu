@@ -1,6 +1,5 @@
 import fs from 'fs';
 import mime from 'mime';
-import moment from 'moment';
 import Stream from 'stream';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
@@ -53,7 +52,7 @@ class Cdn {
   }
 
   _getDefaultMetadata() {
-    return { createdon: moment.utc().toISOString() };
+    return { createdon: new Date().toISOString() };
   }
 
   static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {

@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import firstBy from 'thenby';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
@@ -294,7 +293,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   convertObjectsToRecords(objects) {
-    const { t, locale } = this.props;
+    const { t, locale, formatDate } = this.props;
     return objects.map(obj => {
       const path = `${obj.prefix || ''}${obj.name || ''}`;
       const segments = pathHelper.getPathSegments(path);
@@ -306,7 +305,7 @@ class RepositoryBrowser extends React.Component {
         size: obj.size,
         sizeText: Number.isFinite(obj.size) && !isDirectory ? prettyBytes(obj.size, { locale }) : '---',
         lastModified: obj.lastModified,
-        lastModifiedText: obj.lastModified && !isDirectory ? moment(obj.lastModified).locale(locale).format('lll') : '---',
+        lastModifiedText: obj.lastModified && !isDirectory ? formatDate(obj.lastModified, 'PPp') : '---',
         displayName: segments[segments.length - 1] || '',
         isDirectory,
         category,

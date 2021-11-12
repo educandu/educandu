@@ -47,7 +47,7 @@ function Search({ initialState }) {
 
   const renderUpdatedOn = (_value, doc) => {
     const date = formatDate(doc.updatedOn);
-    return <span>{date.format('L, LT')}</span>;
+    return <span>{date}</span>;
   };
 
   const renderTitle = (title, doc) => {

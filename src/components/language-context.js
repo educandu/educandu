@@ -98,8 +98,10 @@ export function useDateFormat() {
   const { locale } = useLanguage();
 
   const dateLocale = locale === 'de-DE' ? deDeLocale : enUsLocale;
-  const pattern = 'P p';
-  const formatDate = date => date ? format(parseISO(date), pattern, { locale: dateLocale }) : '';
+  const localePattern = 'P p';
+  const formatDate = (date, pattern) => date
+    ? format(parseISO(date), pattern || localePattern, { locale: dateLocale })
+    : '';
 
   return {
     formatDate
