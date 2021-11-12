@@ -43,6 +43,7 @@
     "connect-mongo": "~4.6.0",
     "cookie-parser": "~1.4.5",
     "core-js": "~3.18.3",
+    "date-fns": "~2.25.0",
     "decompress": "~4.2.1",
     "del": "~6.0.0",
     "dropperx": "~1.0.1",

@@ -1,10 +1,9 @@
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
-import { useLanguage } from './language-context.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
+import { useDateFormat } from './language-context.js';
 
 function renderUser(user) {
   return user.email
@@ -29,12 +28,11 @@ function renderRevisionAuthor(revision, t) {
 
 function CreditsFooter({ documentOrRevision, type }) {
   const request = useRequest();
-  const { locale } = useLanguage();
   const { t } = useTranslation('creditsFooter');
 
   const currentHost = request.hostInfo.host;
   const url = `${request.hostInfo.origin}${request.path}`;
-  const citation = t('citation', { title: documentOrRevision.title, url, date: moment().locale(locale).format('L, LT') });
+  const citation = t('citation', { title: documentOrRevision.title, url, date: useDateFormat(new Date()) });
 
   return (
     <div className="CreditsFooter">

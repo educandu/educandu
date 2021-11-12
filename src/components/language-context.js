@@ -15,9 +15,9 @@ import {
   UI_LANGUAGE_COOKIE_EXPIRES,
   getLocale
 } from '../resources/ui-language.js';
-
-import 'moment';
-import 'moment/locale/de.js';
+import { format, parseISO } from 'date-fns';
+import deDeLocale from 'date-fns/locale/de/index.js';
+import enUsLocale from 'date-fns/locale/en-US/index.js';
 
 const enUS = enUSNs.default || enUSNs;
 const deDE = deDENs.default || deDENs;
@@ -94,15 +94,29 @@ export function useLanguage() {
   return createLanguageAndLocale(useContext(languageContext));
 }
 
+export function useDateFormat() {
+  const { locale } = useLanguage();
+
+  const dateLocale = locale === 'de-DE' ? deDeLocale : enUsLocale;
+  const pattern = 'P p';
+  const formatDate = date => date ? format(parseISO(date), pattern, { locale: dateLocale }) : '';
+
+  return {
+    formatDate
+  };
+}
+
 export function withLanguage(Component) {
   return function UserInjector(props) {
     const { language, locale } = useLanguage();
-    return <Component {...props} language={language} locale={locale} />;
+    const { formatDate } = useDateFormat();
+    return <Component {...props} language={language} locale={locale} formatDate={formatDate} />;
   };
 }
 
 export default {
   LanguageProvider,
   withLanguage,
-  useLanguage
+  useLanguage,
+  useDateFormat
 };

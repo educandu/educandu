@@ -1,22 +1,20 @@
 import React, { useMemo, useState } from 'react';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import firstBy from 'thenby';
 import { SearchOutlined } from '@ant-design/icons';
 import { Table, Tag, Select, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { searchResultShape } from '../../ui/default-prop-types.js';
-import { useLanguage } from '../language-context.js';
 import { useRequest } from '../request-context.js';
 import urls from '../../utils/urls.js';
+import { useDateFormat } from '../language-context.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');
-  const { locale } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
-
+  const { formatDate } = useDateFormat();
   const sortedDocs = useMemo(
     () => docs
       .map(doc => ({
@@ -48,7 +46,7 @@ function Search({ initialState }) {
   };
 
   const renderUpdatedOn = (_value, doc) => {
-    const date = moment(doc.updatedOn).locale(locale);
+    const date = formatDate(doc.updatedOn);
     return <span>{date.format('L, LT')}</span>;
   };
 
