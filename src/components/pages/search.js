@@ -8,13 +8,20 @@ import { useTranslation } from 'react-i18next';
 import { searchResultShape } from '../../ui/default-prop-types.js';
 import { useRequest } from '../request-context.js';
 import urls from '../../utils/urls.js';
-import { useDateFormat } from '../language-context.js';
+import { useService } from '../container-context.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import { useDateFormat, useLanguage } from '../language-context.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');
+  const { language } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
+  const languageNameProvider = useService(LanguageNameProvider);
+  const languageData = languageNameProvider.getData(language);
   const { formatDate } = useDateFormat();
+
   const sortedDocs = useMemo(
     () => docs
       .map(doc => ({
@@ -55,6 +62,10 @@ function Search({ initialState }) {
     return <a href={url}>{title}</a>;
   };
 
+  const renderTags = (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>));
+
+  const renderLanguage = lang => <CountryFlagAndName code={languageData[lang]?.flag} name={languageData[lang]?.name || lang} />;
+
   const searchPlaceholder = () => (
     <div className="Search-placeholderContainer">
       {t('refineSearch')}
@@ -71,12 +82,18 @@ function Search({ initialState }) {
     {
       title: t('tags'),
       dataIndex: 'tags',
-      render: (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>))
+      render: renderTags
     },
     {
       title: t('updateDate'),
       dataIndex: 'updatedOn',
       render: renderUpdatedOn
+    },
+    {
+      title: t('language'),
+      className: 'Search-searchTableLanguageColumn',
+      dataIndex: 'language',
+      render: renderLanguage
     }
   ];
 
