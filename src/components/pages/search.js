@@ -52,14 +52,18 @@ function Search({ initialState }) {
     setSelectedTags(selectedValues);
   };
 
-  const renderUpdatedOn = (_value, doc) => {
-    const date = moment(doc.updatedOn).locale(locale);
-    return <span>{date.format('L, LT')}</span>;
-  };
-
   const renderTitle = (title, doc) => {
     const url = urls.getArticleUrl(doc.slug);
     return <a href={url}>{title}</a>;
+  };
+
+  const renderTags = (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>));
+
+  const renderLanguage = lang => <CountryFlagAndName code={languageData[lang]?.flag} name={languageData[lang]?.name || lang} />;
+
+  const renderUpdatedOn = (_value, doc) => {
+    const date = moment(doc.updatedOn).locale(locale);
+    return <span>{date.format('L, LT')}</span>;
   };
 
   const searchPlaceholder = () => (
@@ -78,7 +82,7 @@ function Search({ initialState }) {
     {
       title: t('tags'),
       dataIndex: 'tags',
-      render: (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>))
+      render: renderTags
     },
     {
       title: t('updateDate'),
@@ -87,8 +91,9 @@ function Search({ initialState }) {
     },
     {
       title: t('language'),
+      className: 'Search-searchTableLanguageColumn',
       dataIndex: 'language',
-      render: lang => <CountryFlagAndName code={languageData[lang]?.flag} name={languageData[lang]?.name || lang} />
+      render: renderLanguage
     }
   ];
 
