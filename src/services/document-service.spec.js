@@ -323,7 +323,8 @@ describe('document-service', () => {
         slug: 'doc-1',
         sections: [],
         tags: ['music', 'instructor', 'Dj.D', 'Cretu'],
-        archived: false
+        archived: false,
+        language: 'en'
       });
 
       doc2 = await createTestDocument(container, user, {
@@ -331,7 +332,8 @@ describe('document-service', () => {
         slug: 'doc-2',
         sections: [],
         tags: ['Music', 'Instructor', 'Goga'],
-        archived: false
+        archived: false,
+        language: 'en'
       });
 
       doc3 = await createTestDocument(container, user, {
@@ -339,7 +341,8 @@ describe('document-service', () => {
         slug: 'doc-3',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
-        archived: false
+        archived: false,
+        language: 'en'
       });
 
       await createTestDocument(container, user, {
@@ -347,7 +350,8 @@ describe('document-service', () => {
         slug: 'doc-43',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
-        archived: true
+        archived: true,
+        language: 'en'
       });
     });
 
@@ -390,6 +394,7 @@ describe('document-service', () => {
         expect(result.title).toEqual(doc3.title);
         expect(result.slug).toEqual(doc3.slug);
         expect(result.tags).toEqual(doc3.tags);
+        expect(result.language).toEqual(doc3.language);
         expect(result.tagMatchCount).toEqual(4);
         expect(result.updatedOn).not.toBeNull();
         expect(result.sections).toBeUndefined();

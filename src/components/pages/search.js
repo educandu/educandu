@@ -10,12 +10,17 @@ import { searchResultShape } from '../../ui/default-prop-types.js';
 import { useLanguage } from '../language-context.js';
 import { useRequest } from '../request-context.js';
 import urls from '../../utils/urls.js';
+import { useService } from '../container-context.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');
-  const { locale } = useLanguage();
+  const { locale, language } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
+  const languageNameProvider = useService(LanguageNameProvider);
+  const languageData = languageNameProvider.getData(language);
 
   const sortedDocs = useMemo(
     () => docs
@@ -47,14 +52,18 @@ function Search({ initialState }) {
     setSelectedTags(selectedValues);
   };
 
-  const renderUpdatedOn = (_value, doc) => {
-    const date = moment(doc.updatedOn).locale(locale);
-    return <span>{date.format('L, LT')}</span>;
-  };
-
   const renderTitle = (title, doc) => {
     const url = urls.getArticleUrl(doc.slug);
     return <a href={url}>{title}</a>;
+  };
+
+  const renderTags = (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>));
+
+  const renderLanguage = lang => <CountryFlagAndName code={languageData[lang]?.flag} name={languageData[lang]?.name || lang} />;
+
+  const renderUpdatedOn = (_value, doc) => {
+    const date = moment(doc.updatedOn).locale(locale);
+    return <span>{date.format('L, LT')}</span>;
   };
 
   const searchPlaceholder = () => (
@@ -73,12 +82,18 @@ function Search({ initialState }) {
     {
       title: t('tags'),
       dataIndex: 'tags',
-      render: (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>))
+      render: renderTags
     },
     {
       title: t('updateDate'),
       dataIndex: 'updatedOn',
       render: renderUpdatedOn
+    },
+    {
+      title: t('language'),
+      className: 'Search-searchTableLanguageColumn',
+      dataIndex: 'language',
+      render: renderLanguage
     }
   ];
 

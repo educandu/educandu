@@ -35,7 +35,8 @@ const searchResultsProjection = {
   slug: 1,
   updatedOn: 1,
   tags: 1,
-  archived: 1
+  archived: 1,
+  language: 1
 };
 
 const getTagsQuery = searchString => [

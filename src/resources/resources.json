@@ -449,7 +449,8 @@
       "updateDate": "Update date",
       "tags": "Tags",
       "refineSearch": "Filter by tags",
-      "searchResultPrefix": "Results for"
+      "searchResultPrefix": "Results for",
+      "language": "Language"
     }
   },
   {
@@ -460,7 +461,8 @@
       "updateDate": "Update-Datum",
       "tags": "Tags",
       "refineSearch": "Nach Tags filtern",
-      "searchResultPrefix": "Ergebnisse für"
+      "searchResultPrefix": "Ergebnisse für",
+      "language": "Sprache"
     }
   },
   {
