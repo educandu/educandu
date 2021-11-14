@@ -54,12 +54,8 @@ class EditDoc extends React.Component {
 
     autoBind(this);
 
-    const { editorFactory, rendererFactory, documentApiClient, initialState } = this.props;
+    const { initialState } = this.props;
     const { documentRevision, proposedSections } = initialState;
-
-    this.editorFactory = editorFactory;
-    this.rendererFactory = rendererFactory;
-    this.documentApiClient = documentApiClient;
 
     this.state = this.createStateFromDocumentRevision(documentRevision, proposedSections);
 
@@ -67,14 +63,6 @@ class EditDoc extends React.Component {
       info,
       handleNew: this.handleNewSectionClick.bind(this, info)
     }));
-  }
-
-  getEditorComponentForSection(section) {
-    return this.editorFactory.createEditor(section.type).getEditorComponent();
-  }
-
-  getDisplayComponentForSection(section) {
-    return this.rendererFactory.createRenderer(section.type).getDisplayComponent();
   }
 
   createStateFromDocumentRevision(documentRevision, proposedSections = null) {
@@ -286,7 +274,8 @@ class EditDoc extends React.Component {
     };
 
     try {
-      const { documentRevision } = await this.documentApiClient.saveDocument(data);
+      const { documentApiClient } = this.props;
+      const { documentRevision } = await documentApiClient.saveDocument(data);
       this.setState(prevState => this.mergeStateFromNewDocumentRevision(prevState, documentRevision));
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });

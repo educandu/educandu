@@ -49,11 +49,6 @@ class ImageTilesEditor extends React.Component {
     this.changeContent({ maxWidth: value });
   }
 
-  handleCurrentEditorValueChanged(event) {
-    const newValue = event.target.value;
-    this.changeContent({ text: newValue });
-  }
-
   handleMaxTilesPerRowChanged(value) {
     this.changeContent({ maxTilesPerRow: value });
   }
