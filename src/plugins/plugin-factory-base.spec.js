@@ -16,7 +16,7 @@ describe('document-service', () => {
     sandbox.restore();
   });
 
-  describe('_createInstance', () => {
+  describe('_getInstance', () => {
     let result;
 
     describe('when called once', () => {
@@ -25,7 +25,7 @@ describe('document-service', () => {
       beforeEach(() => {
         const container = new Container();
         const sut = new PluginFactoryBase(container, [Plugin]);
-        result = sut._createInstance(Plugin.typeName);
+        result = sut._getInstance(Plugin.typeName);
       });
 
       it('returns a new instance of the required plugin', () => {
@@ -39,11 +39,11 @@ describe('document-service', () => {
       beforeEach(() => {
         const container = new Container();
         const sut = new PluginFactoryBase(container, [Plugin]);
-        result = [sut._createInstance(Plugin.typeName), sut._createInstance(Plugin.typeName)];
+        result = [sut._getInstance(Plugin.typeName), sut._getInstance(Plugin.typeName)];
       });
 
-      it('returns a fresh instance for each call', () => {
-        expect(result[0]).not.toBe(result[1]);
+      it('returns the same instance for each call', () => {
+        expect(result[0]).toBe(result[1]);
       });
     });
 
@@ -54,7 +54,7 @@ describe('document-service', () => {
       beforeEach(() => {
         const container = new Container();
         const sut = new PluginFactoryBase(container, [Plugin1]);
-        result = sut._createInstance(Plugin2.typeName);
+        result = sut._getInstance(Plugin2.typeName);
       });
 
       it('returns undefined', () => {
@@ -62,13 +62,13 @@ describe('document-service', () => {
       });
     });
 
-    describe('when called without arguments for a plugin without dependencies', () => {
+    describe('when called for a plugin without dependencies', () => {
       const Plugin = createPluginType({ typeName: 'plugin' });
 
       beforeEach(() => {
         const container = new Container();
         const sut = new PluginFactoryBase(container, [Plugin]);
-        result = sut._createInstance(Plugin.typeName);
+        result = sut._getInstance(Plugin.typeName);
       });
 
       it('calls the constructor without any arguments', () => {
@@ -77,22 +77,7 @@ describe('document-service', () => {
       });
     });
 
-    describe('when called with arguments for a plugin without dependencies', () => {
-      const Plugin = createPluginType({ typeName: 'plugin' });
-
-      beforeEach(() => {
-        const container = new Container();
-        const sut = new PluginFactoryBase(container, [Plugin]);
-        result = sut._createInstance(Plugin.typeName, 'arg', 325);
-      });
-
-      it('calls the constructor with the specified arguments', () => {
-        sinon.assert.calledOnce(Plugin);
-        sinon.assert.calledWith(Plugin, 'arg', 325);
-      });
-    });
-
-    describe('when called without arguments for a plugin with dependencies', () => {
+    describe('when called for a plugin with dependencies', () => {
       const Dep1 = class {};
       const Dep2 = class {};
       const Plugin = createPluginType({ typeName: 'plugin', dependencies: [Dep1, Dep2] });
@@ -100,29 +85,12 @@ describe('document-service', () => {
       beforeEach(() => {
         const container = new Container();
         const sut = new PluginFactoryBase(container, [Plugin]);
-        result = sut._createInstance(Plugin.typeName);
+        result = sut._getInstance(Plugin.typeName);
       });
 
       it('calls the constructor with the specified dependencies', () => {
         sinon.assert.calledOnce(Plugin);
         sinon.assert.calledWith(Plugin, sinon.match.instanceOf(Dep1), sinon.match.instanceOf(Dep2));
-      });
-    });
-
-    describe('when called with arguments for a plugin with dependencies', () => {
-      const Dep1 = class {};
-      const Dep2 = class {};
-      const Plugin = createPluginType({ typeName: 'plugin', dependencies: [Dep1, Dep2] });
-
-      beforeEach(() => {
-        const container = new Container();
-        const sut = new PluginFactoryBase(container, [Plugin]);
-        result = sut._createInstance(Plugin.typeName, 'arg', 325);
-      });
-
-      it('calls the constructor with the specified dependencies and the specified arguments', () => {
-        sinon.assert.calledOnce(Plugin);
-        sinon.assert.calledWith(Plugin, sinon.match.instanceOf(Dep1), sinon.match.instanceOf(Dep2), 'arg', 325);
       });
     });
 

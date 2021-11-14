@@ -1560,26 +1560,6 @@ audio-loader@^0.5.0:
   resolved "https://registry.yarnpkg.com/audio-loader/-/audio-loader-0.5.0.tgz#9c125d1b25c33cd9626084054d9f6b7f31ddc908"
   integrity sha1-nBJdGyXDPNliYIQFTZ9rfzHdyQg=
 
-aurelia-dependency-injection@~1.5.2:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/aurelia-dependency-injection/-/aurelia-dependency-injection-1.5.2.tgz#a4a6aee8c3e480f11d84dba39fc6e615bf5f0469"
-  integrity sha512-LnKgpXzKuG2A/YPGeg5OOw8zvkbvDBMRJA9QDCjZlxymsPI98dwggNSQHI8UK+hTIBqOmjjRxqdMoeROo2Gpbw==
-  dependencies:
-    aurelia-metadata "^1.0.0"
-    aurelia-pal "^1.0.0"
-
-aurelia-metadata@^1.0.0:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/aurelia-metadata/-/aurelia-metadata-1.0.7.tgz#7774701e1f02b5f731048d1a2bd5edb6059552d0"
-  integrity sha512-6Q3VV5VvCRjvJyICESwCNSWLkaYml9PAxHo5SjzVv+HNmvFtQRKRazczwECbTD6IWiE+O90+PmamPy4Ac2YnTA==
-  dependencies:
-    aurelia-pal "^1.0.0"
-
-aurelia-pal@^1.0.0:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/aurelia-pal/-/aurelia-pal-1.8.2.tgz#9c39509ea2650291fa4bda06a4ed37d8be31f0ac"
-  integrity sha512-6erozUK5aaD88PvThs/L87kLsqxqPaBU59PGECr36v9yezhve0BHqpKgbtJ8haHJSiH80K9lsJtXfefedS/3sw==
-
 auto-bind@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/auto-bind/-/auto-bind-5.0.1.tgz#50d8e63ea5a1dddcb5e5e36451c1a8266ffbb2ae"
@@ -2392,11 +2372,6 @@ core-js@^2.5.0:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
-
-core-js@~3.18.3:
-  version "3.18.3"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.18.3.tgz#86a0bba2d8ec3df860fefcc07a8d119779f01509"
-  integrity sha512-tReEhtMReZaPFVw7dajMx0vlsz3oOb8ajgPoHVYGxr8ErnZ6PcYEvvmjGmXlfpnxpkYSdOQttjB+MvVbCGfvLw==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
