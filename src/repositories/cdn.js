@@ -3,6 +3,7 @@ import mime from 'mime';
 import Stream from 'stream';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
+import { nowUTC } from '../utils/date-time.js';
 
 const defaultContentType = 'application/octet-stream';
 
@@ -52,7 +53,7 @@ class Cdn {
   }
 
   _getDefaultMetadata() {
-    return { createdon: new Date().toISOString() };
+    return { createdon: nowUTC().toISOString() };
   }
 
   static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {
