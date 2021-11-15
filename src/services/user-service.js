@@ -10,8 +10,8 @@ import PasswordResetRequestStore from '../stores/password-reset-request-store.js
 const DEFAULT_ROLE_NAME = ROLE.user;
 const PROVIDER_NAME = 'elmu';
 const PASSWORD_SALT_ROUNDS = 1024;
-const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = { hours: 24 };
-const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = { hours: 24 };
+const PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN = { hours: 24 };
+const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN = { hours: 24 };
 
 const logger = new Logger(import.meta.url);
 
@@ -117,7 +117,7 @@ class UserService {
       passwordHash: await this._hashPassword(password),
       email: lowerCasedEmail,
       roles,
-      expires: verified ? null : add(new Date(), PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS),
+      expires: verified ? null : add(new Date(), PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN),
       verificationCode: verified ? null : uniqueId.create(),
       lockedOut: false
     };
@@ -173,7 +173,7 @@ class UserService {
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
-      expires: add(new Date(), PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS)
+      expires: add(new Date(), PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN)
     };
 
     logger.info('Creating password reset request %s for user with id %s', request._id, request.userId);
