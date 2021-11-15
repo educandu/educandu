@@ -205,10 +205,23 @@ export async function buildTestAppJs() {
       minify: optimize,
       loader: { '.js': 'jsx' },
       inject: ['./test-app/polyfills.js'],
+      metafile: optimize,
       sourcemap: true,
       sourcesContent: true,
       outdir: './test-app/dist'
     });
+
+    if (testAppBuildResult.metafile) {
+      const bundles = Object.entries(testAppBuildResult.metafile.outputs)
+        .map(([name, { bytes }]) => ({ name, bytes }))
+        .filter(x => x.name.endsWith('.js'));
+
+      const formatBytes = bytes => `${(bytes / 1000).toFixed(2)} kB`;
+      bundles.forEach(({ name, bytes }) => console.log(`${name}: ${formatBytes(bytes)}`));
+      console.log(`TOTAL: ${formatBytes(bundles.reduce((sum, { bytes }) => sum + bytes, 0))}`);
+
+      await fs.writeFile('./test-app/dist/meta.json', JSON.stringify(testAppBuildResult.metafile, null, 2), 'utf8');
+    }
   }
 }
 
