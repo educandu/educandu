@@ -1,5 +1,3 @@
-const emptyList = [];
-
 const keyToString = key => (key.name || key).toString();
 
 class InstanceResolver {
@@ -25,8 +23,9 @@ class ServiceResolver {
     if (!this.hasInstance) {
       this._checkForCircularDependency(resolveChain);
 
-      const deps = this._getDeps();
-      const args = deps.map(dep => this._container._resolve(dep, [...resolveChain, this._ctor]));
+      const deps = this._getDependencies();
+      const nextChain = resolveChain ? [...resolveChain, this._ctor] : [this._ctor];
+      const args = deps.map(dep => this._container._resolve(dep, nextChain));
       const Service = this._ctor;
       this._instance = new Service(...args);
 
@@ -36,13 +35,17 @@ class ServiceResolver {
     return this._instance;
   }
 
-  _getDeps() {
+  _getDependencies() {
     const inject = this._ctor.inject;
     const deps = typeof inject === 'function' ? inject() : inject;
-    return Array.isArray(deps) ? deps : emptyList;
+    return Array.isArray(deps) ? deps : [];
   }
 
   _checkForCircularDependency(resolveChain) {
+    if (!resolveChain || !resolveChain.length) {
+      return;
+    }
+
     const myIndex = resolveChain.indexOf(this._ctor);
     if (myIndex !== -1) {
       const depCircle = [...resolveChain.slice(myIndex), this._ctor];
@@ -61,7 +64,7 @@ export class Container {
   }
 
   get(key) {
-    return this._resolve(key, emptyList);
+    return this._resolve(key, null);
   }
 
   registerInstance(key, instance) {
