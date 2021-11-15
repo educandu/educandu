@@ -93,10 +93,12 @@ describe('di', () => {
         const resultA = container.get(A);
         const resultB = container.get(B);
 
+        const previousDisposedCalled = resultA.disposedCalled;
+
         await container.dispose();
 
         expect(resultA).toBe(resultB);
-        expect(resultA.disposedCalled).toBe(1);
+        expect(resultA.disposedCalled).toBe(previousDisposedCalled + 1);
       });
     });
 
