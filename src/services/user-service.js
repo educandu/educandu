@@ -6,7 +6,6 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import { SAVE_USER_RESULT } from '../domain/user-management.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
-import { nowUTC } from '../utils/date-time.js';
 
 const DEFAULT_ROLE_NAME = ROLE.user;
 const PROVIDER_NAME = 'elmu';
@@ -118,7 +117,7 @@ class UserService {
       passwordHash: await this._hashPassword(password),
       email: lowerCasedEmail,
       roles,
-      expires: verified ? null : add(nowUTC(), PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN),
+      expires: verified ? null : add(new Date(), PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN),
       verificationCode: verified ? null : uniqueId.create(),
       lockedOut: false
     };
@@ -174,7 +173,7 @@ class UserService {
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
-      expires: add(nowUTC(), PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN)
+      expires: add(new Date(), PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN)
     };
 
     logger.info('Creating password reset request %s for user with id %s', request._id, request.userId);
