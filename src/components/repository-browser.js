@@ -13,9 +13,9 @@ import browserHelper from '../ui/browser-helper.js';
 import { withLanguage } from './language-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import CdnApiClient from '../services/cdn-api-client.js';
+import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
 import { translationProps, languageProps } from '../ui/default-prop-types.js';
-import { Input, Table, Upload, Button, Divider, message, Breadcrumb } from 'antd';
-import { default as iconsNs, FolderOutlined, FileOutlined, DownOutlined, CloseOutlined, UploadOutlined, HomeOutlined } from '@ant-design/icons';
+import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
 
@@ -409,19 +409,6 @@ class RepositoryBrowser extends React.Component {
         {icon}
         &nbsp;&nbsp;&nbsp;
         <Highlighter search={normalizedFilterText} matchClass="RepositoryBrowser-browserRecordText is-highlighted">{text}</Highlighter>
-      </span>
-    );
-  }
-
-  renderActionsColumn() {
-    const { t } = this.props;
-    return (
-      <span>
-        <a>{t('action')}</a>
-        <Divider type="vertical" />
-        <a className="ant-dropdown-link">
-          {t('moreActions')} <DownOutlined />
-        </a>
       </span>
     );
   }

@@ -2,15 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Root from '../components/root.js';
 import Logger from '../common/logger.js';
+import { Container } from '../common/di.js';
 import ClientConfig from './client-config.js';
-import commonBootstrapper from './common-bootstrapper.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 const logger = new Logger(import.meta.url);
 
-export async function createContainer() {
+export function createContainer() {
   logger.info('Creating container');
-  const container = await commonBootstrapper.createContainer();
+  const container = new Container();
 
   const clientConfig = new ClientConfig(window.__clientconfig__);
   container.registerInstance(ClientConfig, clientConfig);
@@ -18,7 +18,7 @@ export async function createContainer() {
   const resourceManager = new ResourceManager(window.__resources__);
   container.registerInstance(ResourceManager, resourceManager);
 
-  return container;
+  return Promise.resolve(container);
 }
 
 export async function hydrateApp(bundleConfig) {

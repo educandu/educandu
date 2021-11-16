@@ -38,7 +38,7 @@ class RendererFactory extends PluginFactoryBase {
   }
 
   createRenderer(pluginType) {
-    return this._createInstance(pluginType);
+    return this._getInstance(pluginType);
   }
 }
 

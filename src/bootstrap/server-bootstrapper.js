@@ -1,20 +1,19 @@
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import { ROLE } from '../domain/role.js';
+import { Container } from '../common/di.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
-import EducanduServer from '../server/educandu-server.js';
 import resources from '../resources/resources.json';
 import UserService from '../services/user-service.js';
-import commonBootstrapper from './common-bootstrapper.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 const logger = new Logger(import.meta.url);
 
 export async function createContainer(configValues = {}) {
   logger.info('Creating container');
-  const container = await commonBootstrapper.createContainer();
+  const container = new Container();
 
   const serverConfig = new ServerConfig(configValues);
   container.registerInstance(ServerConfig, serverConfig);
@@ -91,12 +90,7 @@ export async function createContainer(configValues = {}) {
 }
 
 export function disposeContainer(container) {
-  logger.info('Disposing container');
-  return Promise.all([
-    container.get(EducanduServer),
-    container.get(Database),
-    container.get(Cdn)
-  ].map(service => service.dispose()));
+  return container.dispose();
 }
 
 export default {

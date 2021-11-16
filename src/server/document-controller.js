@@ -100,7 +100,7 @@ class DocumentController {
 
     router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
       const { query } = req.query;
-      const docs = await this.documentService.getDocumentsByTags(urls.decodeUrl(query), getDocumentsQueryFilter(req.user));
+      const docs = await this.documentService.getDocumentsByTags(urls.decodeUrl(query));
       return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
     });
   }
