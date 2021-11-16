@@ -37,26 +37,26 @@ function Search({ initialState }) {
 
   const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]);
 
-  const sanitizeTags = new Set(decodedQuery.split(/\s/)
+  const sanitizedQueryTags = new Set(decodedQuery.split(/\s/)
     .filter(tag => tag.length > 2)
     .map(tag => tag.toLowerCase()));
 
-  const { allTags, tagMap } = docs.reduce((acc, doc) => {
-    doc.tags.forEach(tag => {
-      acc.allTags.add(tag);
-      acc.tagMap[tag.toLowerCase()] = tag;
-    });
+  const allTags = docs.map(doc => doc.tags).flat();
 
+  const allUniqueTags = [...new Set(allTags)];
+
+  const tagMap = allUniqueTags.reduce((acc, tag) => {
+    acc[tag.toLowerCase()] = tag;
     return acc;
-  }, { allTags: new Set(), tagMap: {} });
+  }, { });
 
-  const initialSelectedTags = [...sanitizeTags]
+  const initialSelectedTags = [...sanitizedQueryTags]
     .map(tag => tagMap[tag])
     .filter(tag => !!tag);
 
   const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
 
-  const tagOptions = [...allTags].map(tag => ({ value: tag, key: tag }));
+  const tagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
 
   const handleTagsChanged = selectedValues => {
     const newFilteredDocs = sortedDocs
