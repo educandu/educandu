@@ -37,8 +37,8 @@ function Search({ initialState }) {
 
   const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]);
 
-  const queryTagsToLower = new Set(decodedQuery.split(/\s/)
-    .filter(tag => tag.length > 3)
+  const sanitizeTags = new Set(decodedQuery.split(/\s/)
+    .filter(tag => tag.length > 2)
     .map(tag => tag.toLowerCase()));
 
   const { allTags, tagMap } = docs.reduce((acc, doc) => {
@@ -50,7 +50,7 @@ function Search({ initialState }) {
     return acc;
   }, { allTags: new Set(), tagMap: {} });
 
-  const initialSelectedTags = [...queryTagsToLower]
+  const initialSelectedTags = [...sanitizeTags]
     .map(tag => tagMap[tag])
     .filter(tag => !!tag);
 
