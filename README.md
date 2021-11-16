@@ -47,7 +47,7 @@ educandu({
 });
 ~~~
 
-This should run both the entire application and provide you with an admin user as defined on the initialUser setting. In order to create other admins please consult the users page in the application. Here, admins can promote other users to the admin role.
+This should run the entire application and provide you with an admin user as defined on the initialUser setting. In order to create other admins please consult the users page in the application. Here, admins can promote other users to the admin role.
 
 ## How to run and develop locally
 
