@@ -18,6 +18,8 @@ function Search({ initialState }) {
   const { language } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
+  const decodedQuery = urls.decodeUrl(query.query);
+
   const languageNameProvider = useService(LanguageNameProvider);
   const languageData = languageNameProvider.getData(language);
   const { formatDate } = useDateFormat();
@@ -35,14 +37,27 @@ function Search({ initialState }) {
 
   const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]);
 
-  const [selectedTags, setSelectedTags] = useState([]);
+  const queryTagsToLower = new Set(
+    decodedQuery.split(/\s/)
+    .filter(tag => tag.length > 3)
+    .map(tag => tag.toLowerCase()));
 
-  const allTags = docs.reduce((acc, doc) => {
-    doc.tags.forEach(tag => acc.add(tag));
+  const { allTags, tagMap } = docs.reduce((acc, doc) => {
+    doc.tags.forEach(tag => {
+      acc.allTags.add(tag);
+      acc.tagMap[tag.toLowerCase()] = tag;
+    });
+
     return acc;
-  }, new Set());
+  }, { allTags: new Set(), tagMap: {} });
 
-  const tagOptions = Array.from(allTags).map(tag => ({ value: tag, key: tag }));
+  const initialSelectedTags = [...queryTagsToLower]
+    .map(tag => tagMap[tag])
+    .filter(tag => !!tag);
+
+  const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
+
+  const tagOptions = [...allTags.map(tag => ({ value: tag, key: tag }));
 
   const handleTagsChanged = selectedValues => {
     const newFilteredDocs = sortedDocs
@@ -99,7 +114,7 @@ function Search({ initialState }) {
 
   return (
     <Page headerActions={[]}>
-      <h1>{`${t('searchResultPrefix')}: ${urls.decodeUrl(query.query)}`} </h1>
+      <h1>{`${t('searchResultPrefix')}: ${decodedQuery}`} </h1>
 
       <div className="Search-searchSelectContainer">
         <Form.Item label={t('refineSearch')} >
