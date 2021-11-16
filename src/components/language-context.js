@@ -6,7 +6,7 @@ import deDENs from 'antd/lib/locale/de_DE.js';
 import { I18nextProvider } from 'react-i18next';
 import { useService } from './container-context.js';
 import ResourceManager from '../resources/resource-manager.js';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import {
   SUPPORTED_UI_LANGUAGES,
   UI_LANGUAGE_EN,
@@ -15,12 +15,19 @@ import {
   UI_LANGUAGE_COOKIE_EXPIRES,
   getLocale
 } from '../resources/ui-language.js';
+import { format, parseISO } from 'date-fns';
+import deDeLocale from 'date-fns/locale/de/index.js';
+import enUsLocale from 'date-fns/locale/en-US/index.js';
 
-import 'moment';
-import 'moment/locale/de.js';
+const antLocales = {
+  enUS: enUSNs.default || enUSNs,
+  deDE: deDENs.default || deDENs
+};
 
-const enUS = enUSNs.default || enUSNs;
-const deDE = deDENs.default || deDENs;
+const dateLocales = {
+  enUS: enUsLocale,
+  deDE: deDeLocale
+};
 
 const languageContext = React.createContext();
 
@@ -32,8 +39,8 @@ function createI18n(resourceManager, language) {
 
 function determineAntdLocale(language) {
   switch (language) {
-    case UI_LANGUAGE_EN: return enUS;
-    case UI_LANGUAGE_DE: return deDE;
+    case UI_LANGUAGE_EN: return antLocales.enUS;
+    case UI_LANGUAGE_DE: return antLocales.deDE;
     default: throw new Error(`No locale data for language ${language}!`);
   }
 }
@@ -94,15 +101,32 @@ export function useLanguage() {
   return createLanguageAndLocale(useContext(languageContext));
 }
 
+export function useDateFormat() {
+  const { locale } = useLanguage();
+  return useMemo(() => {
+    const dateLocale = locale === 'de-DE' ? dateLocales.deDE : dateLocales.enUS;
+    const localePattern = 'P, p';
+    const formatDate = (date, pattern) => date
+      ? format(parseISO(date), pattern || localePattern, { locale: dateLocale })
+      : '';
+
+    return {
+      formatDate
+    };
+  }, [locale]);
+}
+
 export function withLanguage(Component) {
   return function UserInjector(props) {
     const { language, locale } = useLanguage();
-    return <Component {...props} language={language} locale={locale} />;
+    const { formatDate } = useDateFormat();
+    return <Component {...props} language={language} locale={locale} formatDate={formatDate} />;
   };
 }
 
 export default {
   LanguageProvider,
   withLanguage,
-  useLanguage
+  useLanguage,
+  useDateFormat
 };

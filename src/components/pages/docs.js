@@ -1,6 +1,5 @@
 import by from 'thenby';
 import React from 'react';
-import moment from 'moment';
 import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
@@ -190,9 +189,8 @@ class Docs extends React.Component {
   }
 
   renderUpdatedOn(_value, doc) {
-    const { locale } = this.props;
-    const date = moment(doc.updatedOn).locale(locale);
-    return <span>{date.format('L, LT')}</span>;
+    const { formatDate } = this.props;
+    return <span>{formatDate(doc.updatedOn)}</span>;
   }
 
   renderLanguage(_value, doc) {

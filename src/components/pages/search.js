@@ -1,26 +1,26 @@
 import React, { useMemo, useState } from 'react';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import firstBy from 'thenby';
 import { SearchOutlined } from '@ant-design/icons';
 import { Table, Tag, Select, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { searchResultShape } from '../../ui/default-prop-types.js';
-import { useLanguage } from '../language-context.js';
 import { useRequest } from '../request-context.js';
 import urls from '../../utils/urls.js';
 import { useService } from '../container-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import { useDateFormat, useLanguage } from '../language-context.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');
-  const { locale, language } = useLanguage();
+  const { language } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
   const languageNameProvider = useService(LanguageNameProvider);
   const languageData = languageNameProvider.getData(language);
+  const { formatDate } = useDateFormat();
 
   const sortedDocs = useMemo(
     () => docs
@@ -52,6 +52,11 @@ function Search({ initialState }) {
     setSelectedTags(selectedValues);
   };
 
+  const renderUpdatedOn = (_value, doc) => {
+    const date = formatDate(doc.updatedOn);
+    return <span>{date}</span>;
+  };
+
   const renderTitle = (title, doc) => {
     const url = urls.getArticleUrl(doc.slug);
     return <a href={url}>{title}</a>;
@@ -60,11 +65,6 @@ function Search({ initialState }) {
   const renderTags = (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>));
 
   const renderLanguage = lang => <CountryFlagAndName code={languageData[lang]?.flag} name={languageData[lang]?.name || lang} />;
-
-  const renderUpdatedOn = (_value, doc) => {
-    const date = moment(doc.updatedOn).locale(locale);
-    return <span>{date.format('L, LT')}</span>;
-  };
 
   const searchPlaceholder = () => (
     <div className="Search-placeholderContainer">

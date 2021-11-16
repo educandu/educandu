@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
@@ -39,15 +38,14 @@ class Doc extends React.Component {
   }
 
   formatRevisionTooltip(index) {
-    const { languageNameProvider, language, locale, t } = this.props;
+    const { languageNameProvider, language, t, formatDate } = this.props;
     const revision = this.state.revisions[index];
-    const date = moment(revision.createdOn).locale(locale);
     const languageName = languageNameProvider.getData(language)[revision.language].name;
 
     return (
       <div>
         <div>{t('revision')}: <b>{index + 1}</b></div>
-        <div>{t('date')}: <b>{date.format('L, LT')}</b></div>
+        <div>{t('date')}: <b>{formatDate(revision.createdOn)}</b></div>
         <div>{t('language')}: <b>{languageName}</b></div>
         <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
         <div>{t('id')}: <b>{revision._id}</b></div>
