@@ -38,11 +38,6 @@ class Doc extends React.Component {
     window.location = urls.getEditDocUrl(currentRevision.key);
   }
 
-  handleRevisionChanged(value) {
-    const { revisions } = this.state;
-    this.setState({ currentRevision: revisions.find(revision => revision._id === value) });
-  }
-
   formatRevisionTooltip(index) {
     const { languageNameProvider, language, locale, t } = this.props;
     const revision = this.state.revisions[index];

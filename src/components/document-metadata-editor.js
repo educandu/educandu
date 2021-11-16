@@ -52,14 +52,6 @@ class DocumentMetadataEditor extends React.Component {
     return isValidSlug && areValidTags;
   }
 
-  handleEditClick() {
-    this.setState({ mode: MODE_EDIT });
-  }
-
-  handlePreviewClick() {
-    this.setState({ mode: MODE_PREVIEW });
-  }
-
   handleModeChange(event) {
     this.setState({ mode: event.target.value });
   }
