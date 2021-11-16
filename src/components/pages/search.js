@@ -37,8 +37,7 @@ function Search({ initialState }) {
 
   const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]);
 
-  const queryTagsToLower = new Set(
-    decodedQuery.split(/\s/)
+  const queryTagsToLower = new Set(decodedQuery.split(/\s/)
     .filter(tag => tag.length > 3)
     .map(tag => tag.toLowerCase()));
 
@@ -57,7 +56,7 @@ function Search({ initialState }) {
 
   const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
 
-  const tagOptions = [...allTags.map(tag => ({ value: tag, key: tag }));
+  const tagOptions = [...allTags.map(tag => ({ value: tag, key: tag }))];
 
   const handleTagsChanged = selectedValues => {
     const newFilteredDocs = sortedDocs
