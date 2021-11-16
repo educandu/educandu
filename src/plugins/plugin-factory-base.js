@@ -1,9 +1,7 @@
-import { Factory } from '../common/di.js';
-
 class PluginFactoryBase {
   constructor(container, plugins) {
     this.factories = plugins.reduce((map, plugin) => {
-      map.set(plugin.typeName, container.get(Factory.of(plugin)));
+      map.set(plugin.typeName, () => container.get(plugin));
       return map;
     }, new Map());
   }
@@ -12,9 +10,9 @@ class PluginFactoryBase {
     return Array.from(this.factories.keys());
   }
 
-  _createInstance(pluginType, ...args) {
+  _getInstance(pluginType) {
     const factory = this.factories.get(pluginType);
-    return factory && factory(...args);
+    return factory && factory();
   }
 }
 
