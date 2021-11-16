@@ -105,7 +105,7 @@ export function useDateFormat() {
   const { locale } = useLanguage();
   return useMemo(() => {
     const dateLocale = locale === 'de-DE' ? dateLocales.deDE : dateLocales.enUS;
-    const localePattern = 'P p';
+    const localePattern = 'P, p';
     const formatDate = (date, pattern) => date
       ? format(parseISO(date), pattern || localePattern, { locale: dateLocale })
       : '';
