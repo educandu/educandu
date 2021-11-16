@@ -56,7 +56,7 @@ function Search({ initialState }) {
 
   const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
 
-  const tagOptions = [...allTags.map(tag => ({ value: tag, key: tag }))];
+  const tagOptions = [...allTags].map(tag => ({ value: tag, key: tag }));
 
   const handleTagsChanged = selectedValues => {
     const newFilteredDocs = sortedDocs
