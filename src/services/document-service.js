@@ -1,7 +1,6 @@
 import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import UserService from './user-service.js';
-import dateTime from '../utils/date-time.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import DocumentStore from '../stores/document-store.js';
@@ -308,7 +307,7 @@ class DocumentService {
     }
 
     let lock;
-    const now = dateTime.now();
+    const now = new Date();
     const userId = user._id;
 
     try {
