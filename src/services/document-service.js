@@ -79,7 +79,7 @@ const createNewDocumentRevision = ({ doc, documentKey, userId, nextOrder, restor
     key: documentKey,
     order: nextOrder,
     restoredFrom,
-    createdOn: dateTime.now(),
+    createdOn: new Date(),
     createdBy: userId,
     title: doc.title || '',
     slug: doc.slug || '',
