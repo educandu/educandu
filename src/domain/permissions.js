@@ -12,6 +12,7 @@ export const SEE_USER_EMAIL = 'see-user-email';
 export const MIGRATE_DATA = 'migrate-data';
 export const MANAGE_DOC_REVISIONS = 'manage-doc-revisions';
 export const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
+export const LIST_EXPORTABLE_CONTENT = 'list-exportable-content';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -25,7 +26,8 @@ const rolesForPermission = {
   [SEE_USER_EMAIL]: [ROLE.admin],
   [MIGRATE_DATA]: [ROLE.admin],
   [MANAGE_DOC_REVISIONS]: [ROLE.admin],
-  [MANAGE_ARCHIVED_DOCS]: [ROLE.admin]
+  [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
+  [LIST_EXPORTABLE_CONTENT]: [ROLE.admin]
 };
 
 export function hasUserPermission(user, permission) {
@@ -45,5 +47,6 @@ export default {
   MIGRATE_DATA,
   MANAGE_ARCHIVED_DOCS,
   MANAGE_DOC_REVISIONS,
+  LIST_EXPORTABLE_CONTENT,
   hasUserPermission
 };
