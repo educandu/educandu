@@ -80,17 +80,17 @@ const createNewDocumentRevision = ({ doc, documentKey, userId, nextOrder, restor
     _id: uniqueId.create(),
     key: documentKey,
     order: nextOrder,
-    restoredFrom,
+    restoredFrom: restoredFrom || '',
     createdOn: new Date(),
-    createdBy: userId,
+    createdBy: userId || '',
     title: doc.title || '',
     slug: doc.slug || '',
-    namespace: doc.namespace,
-    language: doc.language,
+    namespace: doc.namespace || '',
+    language: doc.language || '',
     sections: sections || doc.sections,
-    tags: doc.tags,
+    tags: doc.tags || [],
     archived: doc.archived || false,
-    origin: DOCUMENT_ORIGIN.internal
+    origin: doc.origin || DOCUMENT_ORIGIN.internal
   };
 };
 
