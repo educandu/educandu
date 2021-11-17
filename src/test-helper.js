@@ -144,9 +144,9 @@ export function createTestDocument(container, user, document) {
       language: document.language ?? 'en',
       sections: document.sections ?? [],
       tags: document.tags || [],
-      appendTo: null,
-      archived: document.archived,
-      origin: DOCUMENT_ORIGIN.internal
+      appendTo: document.appendTo || null,
+      archived: document.archived || false,
+      origin: document.origin || DOCUMENT_ORIGIN.internal
     },
     user
   });
