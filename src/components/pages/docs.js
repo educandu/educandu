@@ -216,8 +216,8 @@ class Docs extends React.Component {
       translatedOrigin = t('originInternal');
     }
     if (origin.startsWith(DOCUMENT_ORIGIN.external)) {
-      const nameOfOrigin = origin.split('/')[1];
-      translatedOrigin = `${t('originExternal')}/${nameOfOrigin}`;
+      const nameOfOrigin = origin.split(DOCUMENT_ORIGIN.external)[1];
+      translatedOrigin = `${t('originExternal')}${nameOfOrigin}`;
     }
 
     return <span>{translatedOrigin}</span>;
