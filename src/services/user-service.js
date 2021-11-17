@@ -8,7 +8,7 @@ import { SAVE_USER_RESULT } from '../domain/user-management.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 
 const DEFAULT_ROLE_NAME = ROLE.user;
-const PROVIDER_NAME = 'elmu';
+const PROVIDER_NAME = 'educandu';
 const PASSWORD_SALT_ROUNDS = 1024;
 const PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN = { hours: 24 };
 const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN = { hours: 24 };
