@@ -54,7 +54,7 @@ const configDefaults = {
   resources: [],
   initialUser: null,
   exposeErrorDetails: false,
-  importApiKey: null,
+  importApiKey: '',
   importSources: []
 };
 
