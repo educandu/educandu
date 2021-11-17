@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
 import SiteLogo from '../site-logo.js';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
@@ -28,7 +28,7 @@ function Index({ initialState }) {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('pageshow', handlePageShow);
 
     return () => {
