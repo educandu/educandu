@@ -41,7 +41,7 @@ const searchResultsProjection = {
   language: 1
 };
 
-const exportableDocumentsProjection = {
+const exchangeableDocumentsProjection = {
   key: 1,
   revision: 1,
   updatedOn: 1,
@@ -104,13 +104,22 @@ class DocumentService {
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
+  getAllImportedDocumentsMetadata() {
+    const filter = {
+      archived: false,
+      origin: { $ne: DOCUMENT_ORIGIN.internal }
+    };
+
+    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: exchangeableDocumentsProjection });
+  }
+
   getAllExportableDocumentsMetadata() {
     const filter = {
       archived: false,
       origin: DOCUMENT_ORIGIN.internal
     };
 
-    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: exportableDocumentsProjection });
+    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: exchangeableDocumentsProjection });
   }
 
   async getDocumentsByTags(searchQuery, { includeArchived } = {}) {
