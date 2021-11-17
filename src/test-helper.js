@@ -56,10 +56,7 @@ export async function setupTestEnvironment() {
   const bucketName = `test-elmu-cdn-${randomId}`;
 
   const container = await createContainer({
-    env: 'test',
     mongoConnectionString: `mongodb://root:rootpw@localhost:27017/test-educandu-db-${randomId}?replicaSet=educandurs&authSource=admin`,
-    skipMongoMigrations: false,
-    skipMongoChecks: false,
     cdnEndpoint: 'http://localhost:9000',
     cdnRegion: region,
     cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
@@ -67,7 +64,6 @@ export async function setupTestEnvironment() {
     cdnBucketName: bucketName,
     cdnRootUrl: `http://localhost:9000/${bucketName}`,
     sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
-    sessionDurationInMinutes: 60,
     emailSenderAddress: 'educandu-test-app@test.com',
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true'
   });
