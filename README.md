@@ -10,6 +10,32 @@ The educandu framework
  * Docker
  * gulp installed globally (for conveninence): npm i -g gulp
 
+ ## Configuration options
+
+ | Option | Description | Type | Required |
+ | --- | --- | --- | --- |
+ | env | Environment on which the project is run | `string` | yes |
+ | port | Port on which the project is run | `number`, mininum 1 | yes |
+ | mongoConnectionString | The URI for the project's MongoDB | `string` | yes |
+ | skipMongoMigrations | Whether or not to run newly added MongoDB migration scripts on startup | `boolean` | yes |
+ | skipMongoChecks | Whether or not to run MongoDB checks resulting in ensuring DB collections on startup | `boolean` | yes |
+ | cdnEndpoint | The URL of the AWS-hosted CDN | `string` | yes |
+ | cdnRegion | The region of the AWS-hosted CDN | `string` | yes |
+ | cdnAccessKey | The access key of the AWS-hosted CDN | `string` | yes |
+ | cdnSecretKey | The secret key of the AWS-hosted CDN | `string` | yes |
+ | cdnBucketName | The name of the AWS S3 bucket storing the CDN data | `string` | yes |
+ | cdnRootUrl | The root url of the CDN | `string` | yes |
+ | sessionSecret | The unique ID of the user session | `string` | no, defaults to a generated unique id |
+ | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
+ | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | no |
+ | emailSenderAddress | The email address from which emails are sent | `string` | yes |
+ | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
+ | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
+ | initialUser | The first user account, with admin role | `{ username, password, email }` or `null` | yes |
+ | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | yes |
+ | importApiKey | The API key used for authorizing incoming requests for fetching data to be imported into another system | `string` | no |
+ | importSources | The system from which data can be imported | `{ name, baseUrl, apiKey }` | no |
+
 ## How to use
 
 ~~~
@@ -22,7 +48,8 @@ Use it in code as follows:
 import educandu from '@educandu/educandu';
 
 educandu({
-  port: 3000, //on which to run the application
+  env: 'integration',
+  port: 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   skipMongoMigrations: process.env.TEST_APP_SKIP_MONGO_MIGRATIONS === true.toString(),
   skipMongoChecks: process.env.TEST_APP_SKIP_MONGO_CHECKS === true.toString(),
@@ -43,7 +70,13 @@ educandu({
     password: 'test',
     email: 'test@test.com'
   },
-  exposeErrorDetails: true //set to false in order to hide error details such as stack trace on productive systems
+  exposeErrorDetails: true,
+  importApiKey: 'GSD54GDFgDGesdfs4'
+  importSources: {
+    name: 'otherSystem',
+    baseUrl: 'https://othersystem.com',
+    apiKey: 'FSERFSF56Ggsdfg6FGED'
+  }
 });
 ~~~
 

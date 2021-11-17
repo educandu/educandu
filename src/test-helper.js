@@ -69,7 +69,9 @@ export async function setupTestEnvironment() {
     sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
     sessionDurationInMinutes: 60,
     emailSenderAddress: 'educandu-test-app@test.com',
-    smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true'
+    smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
+    importApiKey: 'FSDREF56VS3GAA35',
+    importSources: []
   });
 
   // Make bucket publicly accessible:

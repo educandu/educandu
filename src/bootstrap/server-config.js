@@ -17,7 +17,7 @@ const configSchema = joi.object({
   sessionSecret: joi.string(),
   sessionDurationInMinutes: joi.number().min(1),
   smtpOptions: joi.any(),
-  emailSenderAddress: joi.string(),
+  emailSenderAddress: joi.string().required(),
   publicFolders: joi.array().items(joi.string()),
   resources: joi.array().items(joi.string()),
   initialUser: joi.object({
@@ -25,7 +25,13 @@ const configSchema = joi.object({
     password: joi.string().required(),
     email: joi.string().required()
   }).allow(null),
-  exposeErrorDetails: joi.boolean().required()
+  exposeErrorDetails: joi.boolean().required(),
+  importApiKey: joi.string(),
+  importSources: joi.array().items(joi.object({
+    name: joi.string().required(),
+    baseUrl: joi.string().required(),
+    apiKey: joi.string().required()
+  }))
 });
 
 const configDefaults = {
@@ -47,7 +53,9 @@ const configDefaults = {
   publicFolders: [],
   resources: [],
   initialUser: null,
-  exposeErrorDetails: false
+  exposeErrorDetails: false,
+  importApiKey: null,
+  importSources: []
 };
 
 class ServerConfig {
