@@ -47,7 +47,7 @@ function Search({ initialState }) {
     .filter(tag => sanitizedQueryTags.has(tag));
 
   const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
-  const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]
+  const [filteredDocs, setFilteredDocs] = useState(sortedDocs
     .filter(doc => initialSelectedTags.every(tag => doc.tagsSet.has(tag))));
 
   const tagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
