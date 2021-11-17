@@ -18,6 +18,8 @@ function Search({ initialState }) {
   const { language } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
+  const decodedQuery = urls.decodeUrl(query.query);
+
   const languageNameProvider = useService(LanguageNameProvider);
   const languageData = languageNameProvider.getData(language);
   const { formatDate } = useDateFormat();
@@ -26,23 +28,29 @@ function Search({ initialState }) {
     () => docs
       .map(doc => ({
         ...doc,
-        tagsSet: new Set(doc.tags)
+        tagsSet: new Set(doc.tags.map(tag => tag.toLowerCase()))
       }))
       .sort(firstBy(doc => doc.tagMatchCount, 'desc')
         .thenBy(doc => doc.updatedOn, 'desc')),
     [docs]
   );
 
-  const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]);
+  const sanitizedQueryTags = new Set(decodedQuery.split(/\s/)
+    .filter(tag => tag.length > 2)
+    .map(tag => tag.toLowerCase()));
 
-  const [selectedTags, setSelectedTags] = useState([]);
+  const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
 
-  const allTags = docs.reduce((acc, doc) => {
-    doc.tags.forEach(tag => acc.add(tag));
-    return acc;
-  }, new Set());
+  const allUniqueTags = [...new Set(allTags)];
 
-  const tagOptions = Array.from(allTags).map(tag => ({ value: tag, key: tag }));
+  const initialSelectedTags = allUniqueTags
+    .filter(tag => sanitizedQueryTags.has(tag));
+
+  const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
+  const [filteredDocs, setFilteredDocs] = useState(sortedDocs
+    .filter(doc => initialSelectedTags.every(tag => doc.tagsSet.has(tag))));
+
+  const tagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
 
   const handleTagsChanged = selectedValues => {
     const newFilteredDocs = sortedDocs
@@ -99,7 +107,7 @@ function Search({ initialState }) {
 
   return (
     <Page headerActions={[]}>
-      <h1>{`${t('searchResultPrefix')}: ${urls.decodeUrl(query.query)}`} </h1>
+      <h1>{`${t('searchResultPrefix')}: ${decodedQuery}`} </h1>
 
       <div className="Search-searchSelectContainer">
         <Form.Item label={t('refineSearch')} >
