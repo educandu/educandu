@@ -1,6 +1,7 @@
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import DocumentService from './document-service.js';
+import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('document-service', () => {
@@ -308,6 +309,35 @@ describe('document-service', () => {
         });
       });
 
+    });
+
+  });
+
+  describe('getAllExportableDocumentsMetadata', () => {
+
+    const testDocs = [
+      { title: 'doc-1', archived: false, origin: DOCUMENT_ORIGIN.internal },
+      { title: 'doc-2', archived: true, origin: DOCUMENT_ORIGIN.internal },
+      { title: 'doc-3', archived: false, origin: `${DOCUMENT_ORIGIN.external}/some-site` }
+    ];
+
+    let result;
+
+    beforeEach(async () => {
+      await Promise.all(testDocs.map(testDoc => createTestDocument(container, user, testDoc)));
+      result = await sut.getAllExportableDocumentsMetadata();
+    });
+
+    it('should return internal unarchived documents', () => {
+      expect(result.find(doc => doc.title === 'doc-1')).toBeDefined();
+    });
+
+    it('should not return archived documents', () => {
+      expect(result.find(doc => doc.title === 'doc-2')).toBeUndefined();
+    });
+
+    it('should not return external documents', () => {
+      expect(result.find(doc => doc.title === 'doc-3')).toBeUndefined();
     });
 
   });
