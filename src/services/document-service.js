@@ -3,11 +3,12 @@ import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
+import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import escapeStringRegexp from 'escape-string-regexp';
 
 const logger = new Logger(import.meta.url);
 
@@ -25,7 +26,8 @@ const metadataProjection = {
   updatedOn: 1,
   updatedBy: 1,
   tags: 1,
-  archived: 1
+  archived: 1,
+  origin: 1
 };
 
 const searchResultsProjection = {
@@ -78,16 +80,17 @@ const createNewDocumentRevision = ({ doc, documentKey, userId, nextOrder, restor
     _id: uniqueId.create(),
     key: documentKey,
     order: nextOrder,
-    restoredFrom,
+    restoredFrom: restoredFrom || '',
     createdOn: new Date(),
-    createdBy: userId,
+    createdBy: userId || '',
     title: doc.title || '',
     slug: doc.slug || '',
-    namespace: doc.namespace,
-    language: doc.language,
+    namespace: doc.namespace || '',
+    language: doc.language || '',
     sections: sections || doc.sections,
-    tags: doc.tags,
-    archived: doc.archived || false
+    tags: doc.tags || [],
+    archived: doc.archived || false,
+    origin: doc.origin || DOCUMENT_ORIGIN.internal
   };
 };
 
@@ -394,7 +397,8 @@ class DocumentService {
       sections: lastRevision.sections,
       contributors,
       tags: lastRevision.tags,
-      archived: lastRevision.archived
+      archived: lastRevision.archived,
+      origin: DOCUMENT_ORIGIN.internal
     };
   }
 }

@@ -7,6 +7,7 @@ import { ROLE } from './domain/role.js';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
 import UserService from './services/user-service.js';
+import { DOCUMENT_ORIGIN } from './common/constants.js';
 import DocumentService from './services/document-service.js';
 import { SAVE_USER_RESULT } from './domain/user-management.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
@@ -143,8 +144,9 @@ export function createTestDocument(container, user, document) {
       language: document.language ?? 'en',
       sections: document.sections ?? [],
       tags: document.tags || [],
-      appendTo: null,
-      archived: document.archived
+      appendTo: document.appendTo || null,
+      archived: document.archived || false,
+      origin: document.origin || DOCUMENT_ORIGIN.internal
     },
     user
   });
