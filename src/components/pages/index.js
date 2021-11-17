@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
 import SiteLogo from '../site-logo.js';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
@@ -21,12 +21,6 @@ function Index({ initialState }) {
   const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
   const [isSearching, setIsSearching] = useState(false);
-
-  useEffect(() => {
-    return () => {
-      setIsSearching(false);
-    };
-  });
 
   const handleSearch = () => {
     setIsSearching(true);
