@@ -22,6 +22,20 @@ function Index({ initialState }) {
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
   const [isSearching, setIsSearching] = useState(false);
 
+  const handlePageShow = event => {
+    if (event.persisted) {
+      window.location.reload(true);
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('pageshow', handlePageShow);
+
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
+
   const handleSearch = () => {
     setIsSearching(true);
     window.location = getSearchUrl(searchText.trim());
