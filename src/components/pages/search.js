@@ -45,7 +45,7 @@ function Search({ initialState }) {
 
   const allUniqueTags = [...new Set(allTags)];
 
-  const initialSelectedTags = [...allUniqueTags]
+  const initialSelectedTags = allUniqueTags
     .filter(tag => sanitizedQueryTags.has(tag.toLowerCase()));
 
   const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
