@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "@educandu/node-jsx-loader": "^2.1.0",
+    "@educandu/node-jsx-loader": "^2.2.0",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@unly/iso3166-1": "^1.0.2",
     "abcjs": "^5.12.0",
