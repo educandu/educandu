@@ -28,27 +28,27 @@ function Search({ initialState }) {
     () => docs
       .map(doc => ({
         ...doc,
-        tagsSet: new Set(doc.tags)
+        tagsSet: new Set(doc.tags.map(tag => tag.toLowerCase()))
       }))
       .sort(firstBy(doc => doc.tagMatchCount, 'desc')
         .thenBy(doc => doc.updatedOn, 'desc')),
     [docs]
   );
 
-  const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]);
-
   const sanitizedQueryTags = new Set(decodedQuery.split(/\s/)
     .filter(tag => tag.length > 2)
     .map(tag => tag.toLowerCase()));
 
-  const allTags = docs.map(doc => doc.tags).flat();
+  const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
 
   const allUniqueTags = [...new Set(allTags)];
 
   const initialSelectedTags = allUniqueTags
-    .filter(tag => sanitizedQueryTags.has(tag.toLowerCase()));
+    .filter(tag => sanitizedQueryTags.has(tag));
 
   const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
+  const [filteredDocs, setFilteredDocs] = useState([...sortedDocs]
+    .filter(doc => initialSelectedTags.every(tag => doc.tagsSet.has(tag))));
 
   const tagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
 
