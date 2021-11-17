@@ -152,7 +152,8 @@ export const documentRevisionShape = PropTypes.shape({
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   restoredFrom: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  archived: PropTypes.bool.isRequired
+  archived: PropTypes.bool.isRequired,
+  origin: PropTypes.string
 });
 
 const formItemDimensionShape = PropTypes.shape({
