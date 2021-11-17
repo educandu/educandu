@@ -43,3 +43,12 @@ newDocument:
 notAssigned:
   en: (not assigned)
   de: (nicht zugewiesen)
+origin:
+  en: Origin
+  de: Quelle
+originInternal:
+  en: internal
+  de: intern
+originExternal:
+  en: external
+  de: extern

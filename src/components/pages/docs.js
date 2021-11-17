@@ -13,6 +13,7 @@ import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { withLanguage } from '../language-context.js';
 import { toTrimmedString } from '../../utils/sanitize.js';
+import { DOCUMENT_ORIGIN } from '../../common/constants.js';
 import LanguageSelect from '../localization/language-select.js';
 import { Form, Input, Modal, Table, Button, Switch } from 'antd';
 import DocumentApiClient from '../../services/document-api-client.js';
@@ -206,6 +207,22 @@ class Docs extends React.Component {
       : <span>{doc.updatedBy.username}</span>;
   }
 
+  renderOrigin(_value, doc) {
+    const { t } = this.props;
+    const origin = doc.origin || '';
+    let translatedOrigin = origin;
+
+    if (origin === DOCUMENT_ORIGIN.internal) {
+      translatedOrigin = t('originInternal');
+    }
+    if (origin.startsWith(DOCUMENT_ORIGIN.external)) {
+      const nameOfOrigin = origin.split('/')[1];
+      translatedOrigin = `${t('originExternal')}/${nameOfOrigin}`;
+    }
+
+    return <span>{translatedOrigin}</span>;
+  }
+
   renderActions(_value, doc) {
     const { t } = this.props;
     return <span><a onClick={() => this.handleCloneClick(doc)}>{t('clone')}</a></span>;
@@ -255,6 +272,13 @@ class Docs extends React.Component {
         key: 'user',
         render: this.renderUpdatedBy,
         sorter: by(x => x.updatedBy.username)
+      },
+      {
+        title: t('origin'),
+        dataIndex: 'origin',
+        key: 'origin',
+        render: this.renderOrigin,
+        sorter: by(x => x.origin)
       },
       {
         title: t('actions'),
