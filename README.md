@@ -31,10 +31,10 @@ The educandu framework
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
  | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
- | initialUser | The first user account, with admin role | `{ username, password, email }` or `null` | yes |
+ | initialUser | The first user account, with admin role | `{ username, password, email }` or `null` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | yes |
  | importApiKey | The API key used for authorizing incoming requests for fetching data to be imported into another system | `string` | no |
- | importSources | The system from which data can be imported | `{ name, baseUrl, apiKey }` | no |
+ | importSources | The system from which data can be imported | `[{ name, baseUrl, apiKey }]` | no |
 
 ## How to use
 
@@ -72,11 +72,11 @@ educandu({
   },
   exposeErrorDetails: true,
   importApiKey: 'GSD54GDFgDGesdfs4'
-  importSources: {
+  importSources: [{
     name: 'otherSystem',
     baseUrl: 'https://othersystem.com',
     apiKey: 'FSERFSF56Ggsdfg6FGED'
-  }
+  }]
 });
 ~~~
 
