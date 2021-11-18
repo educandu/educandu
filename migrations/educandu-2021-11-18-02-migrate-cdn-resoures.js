@@ -10,7 +10,7 @@ const pluginsWithCdnResources = new Set([
 ]);
 
 const INTERNAL_URL_TYPE = 'internal';
-const processImageSection = ({content}) => {
+const processImageSection = ({ content }) => {
   const urls = content?.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
 
   if (content?.effect?.sourceType === INTERNAL_URL_TYPE) {
@@ -20,32 +20,31 @@ const processImageSection = ({content}) => {
   return urls;
 };
 
-const processVideoSection = ({content}) =>  content?.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
+const processVideoSection = ({ content }) => content?.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
 
-const processImageTilesSection = ({content}) => {
+const processImageTilesSection = ({ content }) => {
   return content?.tiles?.reduce((acc, tile) => {
     if (tile.image?.type === INTERNAL_URL_TYPE) {
       acc.push(tile.image.url);
     }
 
-    return acc
+    return acc;
   }, []) || [];
-}
+};
 
-const processEarTrainingSection = ({content}) => {
+const processEarTrainingSection = ({ content }) => {
   return content?.tests?.reduce((acc, test) => {
-    if(test.sound?.type === INTERNAL_URL_TYPE) {
+    if (test.sound?.type === INTERNAL_URL_TYPE) {
       acc.push(test.sound.url);
     }
 
     return acc;
   }, []) || [];
-}
+};
 
-const processAnavisSection = ({content}) => content?.media?.type === INTERNAL_URL_TYPE ? [content.media.url] : [];
+const processAnavisSection = ({ content }) => content?.media?.type === INTERNAL_URL_TYPE ? [content.media.url] : [];
 
-const processAudioSection = ({content}) => content?.type === INTERNAL_URL_TYPE ? [content.url]: [];
-
+const processAudioSection = ({ content }) => content?.type === INTERNAL_URL_TYPE ? [content.url] : [];
 
 const aggregateSectionUrls = sections => sections.reduce((acc, section) => {
   switch (section.type) {
@@ -60,7 +59,7 @@ const aggregateSectionUrls = sections => sections.reduce((acc, section) => {
     case 'anavis':
       return [...acc, ...processAnavisSection(section)];
     case 'audio':
-      return [...acc, ...processAudioSection(section)]
+      return [...acc, ...processAudioSection(section)];
     default:
       throw new Error('Unsupported type');
   }
@@ -80,20 +79,21 @@ async function updateAll(collection, query, updateFn) {
   }
 }
 
-export default class Educandu_2021_11_17_02_migrate_cdn_resources {
+// eslint-disable-next-line camelcase
+export default class Educandu_2021_11_18_02_migrate_cdn_resources {
   constructor(db) {
     this.db = db;
   }
 
   async up() {
-    this.db.collection('documents')
+    this.db.collection('documents');
 
-    await updateAll(this.db.collection('documents'), {}, (doc) => {
+    await updateAll(this.db.collection('documents'), {}, doc => {
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
       doc.cdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
     });
 
-    await updateAll(this.db.collection('documentRevisions'), {}, (doc) => {
+    await updateAll(this.db.collection('documentRevisions'), {}, doc => {
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
       doc.cdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
     });
