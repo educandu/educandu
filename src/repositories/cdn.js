@@ -52,7 +52,7 @@ class Cdn {
   }
 
   _getDefaultMetadata() {
-    return { createdon: new Date() };
+    return { createdon: new Date().toISOString() };
   }
 
   static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {
