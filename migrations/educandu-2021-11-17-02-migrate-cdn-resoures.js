@@ -24,7 +24,7 @@ const processVideoSection = ({content}) =>  content.sourceType === INTERNAL_URL_
 
 const processImageTilesSection = ({content}) => {
   return content.tiles?.reduce((acc, tile) => {
-    if (tile.image.type === INTERNAL_URL_TYPE) {
+    if (tile.image?.type === INTERNAL_URL_TYPE) {
       acc.push(tile.image.url);
     }
 
@@ -35,7 +35,7 @@ const processImageTilesSection = ({content}) => {
 const processEarTrainingSection = ({content}) => {
   return content.tests?.reduce((acc, test) => {
     if(test.sound?.type === INTERNAL_URL_TYPE) {
-      acc.push(test.sound?.url);
+      acc.push(test.sound.url);
     }
 
     return acc;
