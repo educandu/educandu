@@ -324,7 +324,10 @@ describe('document-service', () => {
     let result;
 
     beforeEach(async () => {
-      await Promise.all(testDocs.map(testDoc => createTestDocument(container, user, testDoc)));
+      for (const testDoc of testDocs) {
+        /* eslint-disable-next-line no-await-in-loop */
+        await createTestDocument(container, user, testDoc);
+      }
       result = await sut.getAllExportableDocumentsMetadata();
     });
 
