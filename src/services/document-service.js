@@ -427,7 +427,7 @@ class DocumentService {
     return [
       ...sections.reduce((cdnResources, section) => {
         const info = getPluginInfoByType(section.type);
-        if (info) {
+        if (info && section.content) {
           info.getCdnResources(section.content).forEach(resource => {
             cdnResources.add(resource);
           });

@@ -3,7 +3,8 @@ import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import DocumentService from './document-service.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
-import { SOURCE_TYPE } from '../plugins/image/constants.js';
+import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
+import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('document-service', () => {
@@ -40,12 +41,20 @@ describe('document-service', () => {
             key: uniqueId.create(),
             type: 'image',
             content: {
-              sourceType: SOURCE_TYPE.internal,
+              sourceType: IMAGE_SOURCE_TYPE.internal,
               sourceUrl: 'media/image-1.png',
               effect: {
-                sourceType: SOURCE_TYPE.internal,
+                sourceType: IMAGE_SOURCE_TYPE.internal,
                 sourceUrl: 'media/image-2.png'
               }
+            }
+          },
+          {
+            key: uniqueId.create(),
+            type: 'video',
+            content: {
+              type: VIDEO_SOURCE_TYPE.internal,
+              url: 'media/video-1.mp4'
             }
           }
         ]
@@ -55,11 +64,11 @@ describe('document-service', () => {
     });
     it('saves all referenced cdn resources with the document revision', async () => {
       const revision = await db.documentRevisions.findOne({ key });
-      expect(revision.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png']);
+      expect(revision.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
     });
     it('saves all referenced cdn resources with the document', async () => {
       const doc = await db.documents.findOne({ key });
-      expect(doc.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png']);
+      expect(doc.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
     });
   });
 
