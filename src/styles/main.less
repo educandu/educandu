@@ -24,18 +24,6 @@
 @import './utilities.less';
 @import './mixins.less';
 
-body {
-  font-family: 'Roboto', sans-serif;
-}
-
-h1 {
-  font-size: 2em;
-}
-
-h2 {
-  font-size: 1.5em;
-}
-
 // React components
 @import '../components/page.less';
 @import '../components/error-page.less';
@@ -80,3 +68,18 @@ h2 {
 @import '../plugins/interval-trainer/interval-trainer.less';
 @import '../plugins/ear-training/ear-training.less';
 @import '../plugins/diagram-net/diagram-net.less';
+
+// Global variables styles
+@import './global-variables.less';
+
+body {
+  font-family: @global-font-family;
+}
+
+h1 {
+  font-size: @global-h1-font-size;
+}
+
+h2 {
+  font-size: @global-h2-font-size;
+}
