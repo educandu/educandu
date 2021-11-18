@@ -104,6 +104,8 @@ class ClientDataMapper {
         case 'sections':
           result[key] = value.map(s => this._mapSection(s, userMap, allowedUserFields));
           break;
+        case 'cdnResources':
+          break;
         default:
           result[key] = value;
           break;

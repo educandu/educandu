@@ -2,6 +2,7 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import TileEditor from './tile-editor.js';
 import { withTranslation } from 'react-i18next';
+import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
 import { Form, Menu, Radio, Slider, Button, Dropdown, Modal } from 'antd';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
@@ -34,12 +35,12 @@ class ImageTilesEditor extends React.Component {
   createDefaultTile() {
     return {
       image: {
-        type: 'external',
+        type: IMAGE_TYPE.external,
         url: ''
       },
       description: '',
       link: {
-        type: 'external',
+        type: LINK_TYPE.external,
         url: ''
       }
     };

@@ -1,4 +1,5 @@
 import cloneDeep from '../../utils/clone-deep.js';
+import { MEDIA_KIND, MEDIA_TYPE } from './constants.js';
 
 export default {
   type: 'anavis',
@@ -14,8 +15,8 @@ export default {
       }
     ],
     media: {
-      kind: 'video',
-      type: 'youtube',
+      kind: MEDIA_KIND.video,
+      type: MEDIA_TYPE.youtube,
       url: '',
       text: '',
       aspectRatio: {
@@ -24,5 +25,6 @@ export default {
       }
     }
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: content => content.media?.type === MEDIA_TYPE.internal && content.media.url ? [content.media.url] : []
 };

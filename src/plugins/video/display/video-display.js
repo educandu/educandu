@@ -3,6 +3,7 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
+import { SOURCE_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaControl from '../../../components/media-control.js';
 import { inject } from '../../../components/container-context.js';
@@ -96,7 +97,7 @@ class VideoDisplay extends React.Component {
 
     let url;
     switch (content.type) {
-      case 'internal':
+      case SOURCE_TYPE.internal:
         url = content.url ? `${clientConfig.cdnRootUrl}/${content.url}` : null;
         break;
       default:

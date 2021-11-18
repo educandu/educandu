@@ -7,5 +7,6 @@ export default {
     title: '',
     text: ''
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: () => []
 };

@@ -9,5 +9,6 @@ export default {
     displayMidi: true,
     text: ''
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: () => []
 };

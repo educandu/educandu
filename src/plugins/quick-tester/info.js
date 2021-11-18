@@ -13,5 +13,6 @@ export default {
       }
     ]
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: () => []
 };

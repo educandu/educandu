@@ -1,5 +1,6 @@
 import React from 'react';
 import autoBind from 'auto-bind';
+import { SOUND_TYPE } from '../constants.js';
 import { withTranslation } from 'react-i18next';
 import { shuffleItems } from '../../../utils/array-utils.js';
 import AudioPlayer from '../../../components/audio-player.js';
@@ -94,21 +95,21 @@ class EarTrainingDisplay extends React.Component {
     let soundType;
     let soundUrl;
     let legendHtml;
-    if (currentTest.sound && currentTest.sound.type === 'internal') {
-      soundType = 'internal';
+    if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.internal) {
+      soundType = SOUND_TYPE.internal;
       soundUrl = currentTest.sound.url ? `${clientConfig.cdnRootUrl}/${currentTest.sound.url}` : null;
       legendHtml = currentTest.sound.text || '';
-    } else if (currentTest.sound && currentTest.sound.type === 'external') {
-      soundType = 'external';
+    } else if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.external) {
+      soundType = SOUND_TYPE.external;
       soundUrl = currentTest.sound.url || null;
       legendHtml = currentTest.sound.text || '';
     } else {
-      soundType = 'midi';
+      soundType = SOUND_TYPE.midi;
       soundUrl = null;
       legendHtml = '';
     }
 
-    const soundPlayer = soundType === 'midi'
+    const soundPlayer = soundType === SOUND_TYPE.midi
       ? <div ref={this.midiContainerRef} />
       : <AudioPlayer soundUrl={soundUrl} legendHtml={legendHtml} />;
 

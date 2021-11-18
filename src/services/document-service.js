@@ -7,6 +7,7 @@ import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
+import { getPluginInfoByType } from '../plugins/plugin-infos.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 
@@ -81,27 +82,6 @@ const getTagsQuery = searchString => [
 ];
 
 const lastUpdatedFirst = [['updatedOn', -1]];
-
-const createNewDocumentRevision = ({ doc, documentKey, userId, nextOrder, restoredFrom, sections }) => {
-  logger.info('Creating new revision for document key %s with order %d', documentKey, nextOrder);
-
-  return {
-    _id: uniqueId.create(),
-    key: documentKey,
-    order: nextOrder,
-    restoredFrom: restoredFrom || '',
-    createdOn: new Date(),
-    createdBy: userId || '',
-    title: doc.title || '',
-    slug: doc.slug || '',
-    namespace: doc.namespace || '',
-    language: doc.language || '',
-    sections: sections || doc.sections,
-    tags: doc.tags || [],
-    archived: doc.archived || false,
-    origin: doc.origin || DOCUMENT_ORIGIN.internal
-  };
-};
 
 class DocumentService {
   static get inject() {
@@ -270,8 +250,7 @@ class DocumentService {
       });
 
       const nextOrder = await this.documentOrderStore.getNextOrder();
-      const newDocumentRevision = createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
-
+      const newDocumentRevision = this._createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
       logger.info('Saving new document revision with id %s', newDocumentRevision._id);
       await this.documentRevisionStore.save(newDocumentRevision);
 
@@ -383,7 +362,7 @@ class DocumentService {
     const latestRevision = await this.getCurrentDocumentRevisionByKey(documentKey);
     const nextOrder = await this.documentOrderStore.getNextOrder();
 
-    const newRevision = createNewDocumentRevision({ doc: latestRevision, documentKey, userId: user._id, nextOrder });
+    const newRevision = this._createNewDocumentRevision({ doc: latestRevision, documentKey, userId: user._id, nextOrder });
 
     newRevision.appendTo = {
       key: documentKey,
@@ -392,6 +371,29 @@ class DocumentService {
     newRevision.archived = archived;
 
     return this.createDocumentRevision({ doc: newRevision, user });
+  }
+
+  _createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections }) {
+    logger.info('Creating new revision for document key %s with order %d', documentKey, nextOrder);
+
+    const newSections = sections || doc.sections;
+    return {
+      _id: uniqueId.create(),
+      key: documentKey,
+      order: nextOrder,
+      restoredFrom: restoredFrom || '',
+      createdOn: new Date(),
+      createdBy: userId || '',
+      title: doc.title || '',
+      slug: doc.slug || '',
+      namespace: doc.namespace || '',
+      language: doc.language || '',
+      sections: newSections,
+      tags: doc.tags || [],
+      archived: doc.archived || false,
+      origin: doc.origin || DOCUMENT_ORIGIN.internal,
+      cdnResources: this._getCdnResources(newSections)
+    };
   }
 
   _createDocumentFromRevisions(revisions) {
@@ -416,8 +418,23 @@ class DocumentService {
       contributors,
       tags: lastRevision.tags,
       archived: lastRevision.archived,
-      origin: lastRevision.origin
+      origin: lastRevision.origin,
+      cdnResources: lastRevision.cdnResources
     };
+  }
+
+  _getCdnResources(sections) {
+    return [
+      ...sections.reduce((cdnResources, section) => {
+        const info = getPluginInfoByType(section.type);
+        if (info) {
+          info.getCdnResources(section.content).forEach(resource => {
+            cdnResources.add(resource);
+          });
+        }
+        return cdnResources;
+      }, new Set())
+    ];
   }
 }
 

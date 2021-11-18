@@ -30,4 +30,6 @@ const pluginInfos = [
 
 export const pluginTypes = pluginInfos.map(info => info.type);
 
+export const getPluginInfoByType = type => pluginInfos.find(info => info.type === type);
+
 export default pluginInfos;

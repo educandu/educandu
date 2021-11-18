@@ -194,7 +194,7 @@ class ImageEditor extends React.Component {
                     <RadioButton value="internal">{t('internalCdn')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
-                {effect.sourceType === 'external' && (
+                {effect.sourceType === SOURCE_TYPE.external && (
                   <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(effect.sourceUrl, t)} hasFeedback>
                     <Input value={effect.sourceUrl} onChange={this.handleEffectExternalSourceUrlValueChanged} />
                   </FormItem>

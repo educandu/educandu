@@ -1,5 +1,6 @@
 import React from 'react';
 import autoBind from 'auto-bind';
+import { SOUND_TYPE } from '../constants.js';
 import { withTranslation } from 'react-i18next';
 import { Form, Input, Table, Button } from 'antd';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
@@ -12,7 +13,7 @@ const { TextArea } = Input;
 const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
 
-const defaultSound = { type: 'midi', url: null, text: null };
+const defaultSound = { type: SOUND_TYPE.midi, url: null, text: null };
 
 class EarTrainingEditor extends React.Component {
   constructor(props) {

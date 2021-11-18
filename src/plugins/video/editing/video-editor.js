@@ -1,5 +1,6 @@
 import React from 'react';
 import autoBind from 'auto-bind';
+import { SOURCE_TYPE } from '../constants.js';
 import { withTranslation } from 'react-i18next';
 import { Form, Input, Radio, Switch } from 'antd';
 import validation from '../../../ui/validation.js';
@@ -13,10 +14,6 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const TextArea = Input.TextArea;
-
-const TYPE_EXTERNAL = 'external';
-const TYPE_INTERNAL = 'internal';
-const TYPE_YOUTUBE = 'youtube';
 
 class VideoEditor extends React.Component {
   constructor(props) {
@@ -84,17 +81,17 @@ class VideoEditor extends React.Component {
         <Form layout="horizontal">
           <FormItem label={t('source')} {...formItemLayout}>
             <RadioGroup value={type} onChange={this.handleTypeChanged}>
-              <RadioButton value="external">{t('externalLink')}</RadioButton>
-              <RadioButton value="internal">{t('internalLink')}</RadioButton>
-              <RadioButton value="youtube">{t('youtube')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.internal}>{t('internalLink')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.youtube}>{t('youtube')}</RadioButton>
             </RadioGroup>
           </FormItem>
-          {type === TYPE_EXTERNAL && (
+          {type === SOURCE_TYPE.external && (
             <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
               <Input value={url} onChange={this.handleExternalUrlChanged} />
             </FormItem>
           )}
-          {type === TYPE_INTERNAL && (
+          {type === SOURCE_TYPE.internal && (
             <FormItem label={t('internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
@@ -112,7 +109,7 @@ class VideoEditor extends React.Component {
               </div>
             </FormItem>
           )}
-          {type === TYPE_YOUTUBE && (
+          {type === SOURCE_TYPE.youtube && (
             <FormItem label={t('youtubeUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
               <Input value={url} onChange={this.handleYoutubeUrlChanged} />
             </FormItem>

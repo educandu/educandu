@@ -1,18 +1,22 @@
 import uniqueId from '../utils/unique-id.js';
+import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import DocumentService from './document-service.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import { SOURCE_TYPE } from '../plugins/image/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('document-service', () => {
   let container;
   let user;
   let sut;
+  let db;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
     user = await setupTestUser(container);
     sut = container.get(DocumentService);
+    db = container.get(Database);
   });
 
   afterAll(async () => {
@@ -21,6 +25,42 @@ describe('document-service', () => {
 
   afterEach(async () => {
     await pruneTestEnvironment(container);
+  });
+
+  describe('createDocumentRevision', () => {
+    let key;
+    beforeEach(async () => {
+      const doc = {
+        title: 'Title',
+        slug: 'my-doc',
+        namespace: 'articles',
+        language: 'en',
+        sections: [
+          {
+            key: uniqueId.create(),
+            type: 'image',
+            content: {
+              sourceType: SOURCE_TYPE.internal,
+              sourceUrl: 'media/image-1.png',
+              effect: {
+                sourceType: SOURCE_TYPE.internal,
+                sourceUrl: 'media/image-2.png'
+              }
+            }
+          }
+        ]
+      };
+      const revision = await sut.createDocumentRevision({ doc, user });
+      key = revision.key;
+    });
+    it('saves all referenced cdn resources with the document revision', async () => {
+      const revision = await db.documentRevisions.findOne({ key });
+      expect(revision.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png']);
+    });
+    it('saves all referenced cdn resources with the document', async () => {
+      const doc = await db.documents.findOne({ key });
+      expect(doc.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png']);
+    });
   });
 
   describe('restoreDocumentRevision', () => {
