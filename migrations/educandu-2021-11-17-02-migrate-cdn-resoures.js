@@ -11,19 +11,19 @@ const pluginsWithCdnResources = new Set([
 
 const INTERNAL_URL_TYPE = 'internal';
 const processImageSection = ({content}) => {
-  const urls = content.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
+  const urls = content?.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
 
-  if (content.effect?.sourceType === INTERNAL_URL_TYPE) {
+  if (content?.effect?.sourceType === INTERNAL_URL_TYPE) {
     urls.push(content.effect.sourceUrl);
   }
 
   return urls;
 };
 
-const processVideoSection = ({content}) =>  content.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
+const processVideoSection = ({content}) =>  content?.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
 
 const processImageTilesSection = ({content}) => {
-  return content.tiles?.reduce((acc, tile) => {
+  return content?.tiles?.reduce((acc, tile) => {
     if (tile.image?.type === INTERNAL_URL_TYPE) {
       acc.push(tile.image.url);
     }
@@ -33,7 +33,7 @@ const processImageTilesSection = ({content}) => {
 }
 
 const processEarTrainingSection = ({content}) => {
-  return content.tests?.reduce((acc, test) => {
+  return content?.tests?.reduce((acc, test) => {
     if(test.sound?.type === INTERNAL_URL_TYPE) {
       acc.push(test.sound.url);
     }
@@ -42,9 +42,9 @@ const processEarTrainingSection = ({content}) => {
   }, []) || [];
 }
 
-const processAnavisSection = ({content}) => content.media?.type === INTERNAL_URL_TYPE ? [content.media.url] : [];
+const processAnavisSection = ({content}) => content?.media?.type === INTERNAL_URL_TYPE ? [content.media.url] : [];
 
-const processAudioSection = ({content}) => content.type === INTERNAL_URL_TYPE ? [content.url]: [];
+const processAudioSection = ({content}) => content?.type === INTERNAL_URL_TYPE ? [content.url]: [];
 
 
 const aggregateSectionUrls = sections => sections.reduce((acc, section) => {
@@ -89,11 +89,13 @@ export default class Educandu_2021_11_17_02_migrate_cdn_resources {
     this.db.collection('documents')
 
     await updateAll(this.db.collection('documents'), {}, (doc) => {
+      console.log('Processing', doc._id);
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
       doc.cdnResourceUrls = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
     });
 
     await updateAll(this.db.collection('documentRevisions'), {}, (doc) => {
+      console.log('Processing revision', doc._id);
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
       doc.cdnResourceUrls = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
     });
