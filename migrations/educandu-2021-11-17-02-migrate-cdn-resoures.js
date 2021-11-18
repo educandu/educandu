@@ -10,20 +10,20 @@ const pluginsWithCdnResources = new Set([
 ]);
 
 const INTERNAL_URL_TYPE = 'internal';
-const processImageSection = section => {
-  const urls = section.content.sourceType === INTERNAL_URL_TYPE ? [section.content.sourceUrl] : [];
+const processImageSection = ({content}) => {
+  const urls = content.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
 
-  if (section.content.effect?.sourceType === INTERNAL_URL_TYPE) {
-    urls.push(section.content.effect.sourceUrl);
+  if (content.effect?.sourceType === INTERNAL_URL_TYPE) {
+    urls.push(content.effect.sourceUrl);
   }
 
   return urls;
 };
 
-const processVideoSection = section =>  section.content.sourceType === INTERNAL_URL_TYPE ? [section.content.sourceUrl] : [];
+const processVideoSection = ({content}) =>  content.sourceType === INTERNAL_URL_TYPE ? [content.sourceUrl] : [];
 
-const processImageTilesSection = section => {
-  return section.content.tiles?.reduce((acc, tile) => {
+const processImageTilesSection = ({content}) => {
+  return content.tiles?.reduce((acc, tile) => {
     if (tile.image.type === INTERNAL_URL_TYPE) {
       acc.push(tile.image.url);
     }
@@ -32,8 +32,8 @@ const processImageTilesSection = section => {
   }, []) || [];
 }
 
-const processEarTrainingSection = section => {
-  return section.content.tests?.reduce((acc, test) => {
+const processEarTrainingSection = ({content}) => {
+  return content.tests?.reduce((acc, test) => {
     if(test.sound?.type === INTERNAL_URL_TYPE) {
       acc.push(test.sound?.url);
     }
@@ -42,9 +42,9 @@ const processEarTrainingSection = section => {
   }, []) || [];
 }
 
-const processAnavisSection = section => section.content.media?.type === INTERNAL_URL_TYPE ? [section.content.media.url] : [];
+const processAnavisSection = ({content}) => content.media?.type === INTERNAL_URL_TYPE ? [content.media.url] : [];
 
-const processAudioSection = section => section.content.type === INTERNAL_URL_TYPE ? [section.content.url]: [];
+const processAudioSection = ({content}) => content.type === INTERNAL_URL_TYPE ? [content.url]: [];
 
 
 const aggregateSectionUrls = sections => sections.reduce((acc, section) => {
