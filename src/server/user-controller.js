@@ -7,6 +7,8 @@ import Database from '../stores/database.js';
 import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import ApiKeyStrategy from '../domain/api-key-strategy.js';
+import { exchangeUser } from '../domain/built-in-users.js';
 import UserRequestHandler from './user-request-handler.js';
 import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -52,8 +54,15 @@ class UserController {
 
     router.use(passport.initialize());
     router.use(passport.session());
+    router.use(passport.authenticate('apikey', { session: false }));
 
-    passport.use(new LocalStrategy((username, password, cb) => {
+    passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
+      return apikey === this.serverConfig.importApiKey
+        ? cb(null, exchangeUser)
+        : cb(null, false);
+    }));
+
+    passport.use('local', new LocalStrategy((username, password, cb) => {
       this.userService.authenticateUser(username, password)
         .then(user => cb(null, user || false))
         .catch(err => cb(err));

@@ -26,12 +26,13 @@ const rolesForPermission = {
   [SEE_USER_EMAIL]: [ROLE.admin],
   [MIGRATE_DATA]: [ROLE.admin],
   [MANAGE_DOC_REVISIONS]: [ROLE.admin],
-  [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
-  [LIST_EXPORTABLE_CONTENT]: [ROLE.admin]
+  [MANAGE_ARCHIVED_DOCS]: [ROLE.admin]
 };
 
 export function hasUserPermission(user, permission) {
-  return (rolesForPermission[permission] || []).some(role => user?.roles?.includes(role));
+  return user?.permissions
+    ? user.permissions.includes(permission)
+    : (rolesForPermission[permission] || []).some(role => user?.roles?.includes(role));
 }
 
 export default {

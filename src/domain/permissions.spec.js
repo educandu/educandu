@@ -1,5 +1,5 @@
 import { ROLE } from './role.js';
-import sut from './permissions.js';
+import sut, { LIST_EXPORTABLE_CONTENT } from './permissions.js';
 
 describe('permissions', () => {
 
@@ -10,6 +10,7 @@ describe('permissions', () => {
 
     const permissions = Object.entries(sut)
       .filter(entry => (/^[A-Z_]+$/).test(entry[0]))
+      .filter(entry => entry[1] !== LIST_EXPORTABLE_CONTENT)
       .map(entry => entry[1]);
 
     permissions.forEach(permission => {
