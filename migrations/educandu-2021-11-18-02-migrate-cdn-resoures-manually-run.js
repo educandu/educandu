@@ -80,7 +80,7 @@ async function updateAll(collection, query, updateFn) {
 }
 
 // eslint-disable-next-line camelcase
-export default class Educandu_2021_11_18_02_migrate_cdn_resources {
+export default class Educandu_2021_11_18_02_migrate_cdn_resources_manually_run {
   constructor(db) {
     this.db = db;
   }
