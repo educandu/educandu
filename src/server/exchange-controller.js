@@ -10,7 +10,7 @@ class ExchangeController {
   }
 
   registerApi(router) {
-    router.get('/api/v1/exchange/exports', [needsPermission(permissions.LIST_EXPORTABLE_CONTENT)], async (req, res) => {
+    router.get('/api/v1/exchange/exports', [needsPermission(permissions.MANAGE_EXPORT)], async (req, res) => {
       const docs = await this.documentService.getAllExportableDocumentsMetadata();
       return res.send({ docs });
     });

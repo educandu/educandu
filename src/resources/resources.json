@@ -1189,6 +1189,7 @@
       "users": "Users",
       "account": "My account",
       "settings": "Settings",
+      "import": "Import",
       "docs": "Documents"
     }
   },
@@ -1200,6 +1201,7 @@
       "users": "Benutzer",
       "account": "Mein Konto",
       "settings": "Einstellungen",
+      "import": "Import",
       "docs": "Dokumente"
     }
   },

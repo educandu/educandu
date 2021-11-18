@@ -15,7 +15,7 @@ import { useSettings } from './settings-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
-import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
+import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
 
@@ -113,6 +113,13 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       text: t('pageNames:settings'),
       icon: SettingOutlined,
       permission: permissions.EDIT_SETTINGS
+    },
+    {
+      key: 'import',
+      href: urls.getImportUrl(),
+      text: t('pageNames:import'),
+      icon: ImportOutlined,
+      permission: permissions.MANAGE_IMPORT
     }
   ];
 
