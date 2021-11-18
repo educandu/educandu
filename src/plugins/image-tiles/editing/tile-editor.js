@@ -5,6 +5,7 @@ import { Form, Input, Radio } from 'antd';
 import urls from '../../../utils/urls.js';
 import { withTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
+import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { inject } from '../../../components/container-context.js';
 import CdnFilePicker from '../../../components/cdn-file-picker.js';
@@ -69,12 +70,12 @@ class TileEditor extends React.Component {
             <RadioButton value="internal">{t('internalCdn')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {image.type === 'external' && (
+        {image.type === IMAGE_TYPE.external && (
           <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(image.url, t)} hasFeedback>
             <Input value={image.url} onChange={this.handleExternalImageUrlValueChanged} />
           </FormItem>
         )}
-        {image.type === 'internal' && (
+        {image.type === IMAGE_TYPE.internal && (
           <FormItem label={t('internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
@@ -97,16 +98,16 @@ class TileEditor extends React.Component {
         </FormItem>
         <FormItem label={t('linkSource')} {...formItemLayout}>
           <RadioGroup value={link.type} onChange={this.handleLinkTypeValueChanged}>
-            <RadioButton value="external">{t('externalLink')}</RadioButton>
-            <RadioButton value="article">{t('articleLink')}</RadioButton>
+            <RadioButton value={LINK_TYPE.external}>{t('externalLink')}</RadioButton>
+            <RadioButton value={LINK_TYPE.article}>{t('articleLink')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {link.type === 'external' && (
+        {link.type === LINK_TYPE.external && (
           <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(link.url, t, { allowInsecure: true })} hasFeedback>
             <Input value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}
-        {link.type === 'article' && (
+        {link.type === LINK_TYPE.article && (
           <FormItem label={t('externalUrl')} {...formItemLayout}>
             <Input addonBefore={urls.articlesPrefix} value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>

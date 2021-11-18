@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import splitArray from 'split-array';
 import urls from '../../../utils/urls.js';
+import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { inject } from '../../../components/container-context.js';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
@@ -10,9 +11,9 @@ import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
-    case 'external':
+    case IMAGE_TYPE.external:
       return url || null;
-    case 'internal':
+    case IMAGE_TYPE.internal:
       return url ? `${cdnRootUrl}/${url}` : null;
     default:
       return null;
@@ -22,9 +23,9 @@ function getSource(type, url, cdnRootUrl) {
 function createTileUrl(tile) {
   const link = tile.link || {};
   switch (link.type) {
-    case 'external':
+    case LINK_TYPE.external:
       return link.url;
-    case 'article':
+    case LINK_TYPE.article:
       return urls.getArticleUrl(link.url);
     default:
       return '';

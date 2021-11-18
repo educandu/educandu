@@ -1,6 +1,7 @@
 import React from 'react';
 import autoBind from 'auto-bind';
 import { Form, Input, Radio } from 'antd';
+import { SOURCE_TYPE } from '../constants.js';
 import { withTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
@@ -61,8 +62,8 @@ class AudioEditor extends React.Component {
         <Form layout="horizontal">
           <FormItem label={t('source')} {...formItemLayout}>
             <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
-              <RadioButton value="external">{t('externalLink')}</RadioButton>
-              <RadioButton value="internal">{t('internalCdn')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
+              <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
             </RadioGroup>
           </FormItem>
           {type === 'external' && (

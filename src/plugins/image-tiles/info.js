@@ -1,3 +1,4 @@
+import { IMAGE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 
 export default {
@@ -9,5 +10,6 @@ export default {
     maxWidth: 100,
     hoverEffect: 'none'
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: content => content.tiles.filter(tile => tile.image?.type === IMAGE_TYPE.internal && tile.image.url).map(tile => tile.image.url)
 };

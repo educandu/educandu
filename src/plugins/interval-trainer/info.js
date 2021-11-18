@@ -11,5 +11,6 @@ export default {
     keyboardOffset: 48,
     tests: []
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: () => []
 };

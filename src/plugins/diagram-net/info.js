@@ -8,5 +8,6 @@ export default {
     image: null,
     maxWidth: 100
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: () => []
 };

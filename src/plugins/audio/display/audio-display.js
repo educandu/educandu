@@ -1,4 +1,5 @@
 import React from 'react';
+import { SOURCE_TYPE } from '../constants.js';
 import AudioPlayer from '../../../components/audio-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { inject } from '../../../components/container-context.js';
@@ -8,10 +9,10 @@ function AudioDisplay({ content, clientConfig }) {
 
   let soundUrl;
   switch (content.type) {
-    case 'external':
+    case SOURCE_TYPE.external:
       soundUrl = content.url || null;
       break;
-    case 'internal':
+    case SOURCE_TYPE.internal:
       soundUrl = content.url ? `${clientConfig.cdnRootUrl}/${content.url}` : null;
       break;
     default:

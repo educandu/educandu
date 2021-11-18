@@ -2,6 +2,7 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
+import { SOUND_TYPE } from '../constants.js';
 import { withTranslation } from 'react-i18next';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { inject } from '../../../components/container-context.js';
@@ -31,8 +32,8 @@ class EarTrainingSoundEditor extends React.Component {
     const { sound } = this.props;
     this.changeSound({
       type: value,
-      url: value === 'midi' ? null : '',
-      text: value === 'midi' ? null : sound.text || ''
+      url: value === SOUND_TYPE.midi ? null : '',
+      text: value === SOUND_TYPE.midi ? null : sound.text || ''
     });
   }
 
@@ -66,9 +67,9 @@ class EarTrainingSoundEditor extends React.Component {
             value={sound.type}
             onChange={this.handleSoundTypeChanged}
             >
-            <RadioButton value="midi">{t('midi')}</RadioButton>
-            <RadioButton value="external">{t('externalLink')}</RadioButton>
-            <RadioButton value="internal">{t('internalCdn')}</RadioButton>
+            <RadioButton value={SOUND_TYPE.midi}>{t('midi')}</RadioButton>
+            <RadioButton value={SOUND_TYPE.external}>{t('externalLink')}</RadioButton>
+            <RadioButton value={SOUND_TYPE.internal}>{t('internalCdn')}</RadioButton>
           </RadioGroup>
         </td>
         <td style={{ padding: 8 }}>&nbsp;</td>
@@ -81,17 +82,17 @@ class EarTrainingSoundEditor extends React.Component {
         <tr>
           <td style={{ padding: 8 }}>&nbsp;</td>
           <td style={{ padding: 8 }}>
-            {sound.type === 'external' && `${t('externalUrl')}:`}
-            {sound.type === 'internal' && `${t('internalUrl')}:`}
+            {sound.type === SOUND_TYPE.external && `${t('externalUrl')}:`}
+            {sound.type === SOUND_TYPE.internal && `${t('internalUrl')}:`}
           </td>
           <td style={{ padding: 8 }}>
-            {sound.type === 'external' && (
+            {sound.type === SOUND_TYPE.external && (
               <Input
                 value={sound.url}
                 onChange={this.handleExternalUrlChanged}
                 />
             )}
-            {sound.type === 'internal' && (
+            {sound.type === SOUND_TYPE.internal && (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
                   addonBefore={`${this.props.clientConfig.cdnRootUrl}/`}
@@ -112,7 +113,7 @@ class EarTrainingSoundEditor extends React.Component {
         </tr>
       );
 
-    const textRow = sound.type === 'midi'
+    const textRow = sound.type === SOUND_TYPE.midi
       ? null
       : (
         <tr>

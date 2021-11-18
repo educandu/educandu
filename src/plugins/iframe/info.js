@@ -9,5 +9,6 @@ export default {
     height: 150,
     isBorderVisible: true
   }),
-  cloneContent: content => cloneDeep(content)
+  cloneContent: content => cloneDeep(content),
+  getCdnResources: () => []
 };

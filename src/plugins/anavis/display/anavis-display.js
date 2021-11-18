@@ -7,18 +7,11 @@ import colorHelper from '../../../ui/color-helper.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaControl from '../../../components/media-control.js';
 import { inject } from '../../../components/container-context.js';
+import { MEDIA_KIND, MEDIA_TYPE, PLAY_STATE } from '../constants.js';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
-
-const playStates = {
-  INITIALIZING: 'initializing',
-  BUFFERING: 'buffering',
-  STOPPED: 'stopped',
-  PLAYING: 'playing',
-  PAUSING: 'pausing'
-};
 
 class AnavisDisplay extends React.Component {
   constructor(props) {
@@ -26,7 +19,7 @@ class AnavisDisplay extends React.Component {
     autoBind(this);
     this.playerRef = React.createRef();
     this.state = {
-      playState: playStates.INITIALIZING,
+      playState: PLAY_STATE.initializing,
       durationInSeconds: 0,
       playedSeconds: 0,
       volume: 1
@@ -34,23 +27,23 @@ class AnavisDisplay extends React.Component {
   }
 
   handleReady() {
-    this.setState({ playState: playStates.STOPPED });
+    this.setState({ playState: PLAY_STATE.stopped });
   }
 
   handleBuffer() {
-    this.setState({ playState: playStates.BUFFERING });
+    this.setState({ playState: PLAY_STATE.buffering });
   }
 
   handlePlay() {
-    this.setState({ playState: playStates.PLAYING });
+    this.setState({ playState: PLAY_STATE.playing });
   }
 
   handlePause() {
-    this.setState({ playState: playStates.PAUSING });
+    this.setState({ playState: PLAY_STATE.pausing });
   }
 
   handleStop() {
-    this.setState({ playState: playStates.STOPPED });
+    this.setState({ playState: PLAY_STATE.stopped });
   }
 
   handleMediaControlSeek(percentage) {
@@ -60,15 +53,15 @@ class AnavisDisplay extends React.Component {
   handleMediaControlTogglePlay() {
     this.setState(prevState => {
       switch (prevState.playState) {
-        case playStates.INITIALIZING:
-          return { playState: playStates.STOPPED };
-        case playStates.BUFFERING:
-          return { playState: playStates.BUFFERING };
-        case playStates.PLAYING:
-          return { playState: playStates.PAUSING };
-        case playStates.PAUSING:
-        case playStates.STOPPED:
-          return { playState: playStates.PLAYING };
+        case PLAY_STATE.initializing:
+          return { playState: PLAY_STATE.stopped };
+        case PLAY_STATE.buffering:
+          return { playState: PLAY_STATE.buffering };
+        case PLAY_STATE.playing:
+          return { playState: PLAY_STATE.pausing };
+        case PLAY_STATE.pausing:
+        case PLAY_STATE.stopped:
+          return { playState: PLAY_STATE.playing };
         default:
           throw new Error(`Invalid play state: ${prevState.playState}`);
       }
@@ -98,7 +91,7 @@ class AnavisDisplay extends React.Component {
 
     let url;
     switch (media.type) {
-      case 'internal':
+      case MEDIA_TYPE.internal:
         url = media.url ? `${clientConfig.cdnRootUrl}/${media.url}` : null;
         break;
       default:
@@ -108,11 +101,11 @@ class AnavisDisplay extends React.Component {
 
     const mediaControlContainerClasses = classNames(['AnavisDisplay-mediaControlContainer', `u-width-${width}`]);
 
-    const mediaControl = url && !(media.kind === 'video')
+    const mediaControl = url && !(media.kind === MEDIA_KIND.video)
       ? (
         <div className={mediaControlContainerClasses}>
           <MediaControl
-            isPlaying={playState === playStates.PLAYING}
+            isPlaying={playState === PLAY_STATE.playing}
             durationInSeconds={durationInSeconds}
             playedSeconds={playedSeconds}
             volume={volume}
@@ -126,8 +119,8 @@ class AnavisDisplay extends React.Component {
 
     const containerInnerClasses = classNames({
       'Anavis-mainPlayerContainer': true,
-      [`u-width-${width}`]: !!(media.kind === 'video'),
-      'Anavis-mainPlayerContainer--noDisplay': !(media.kind === 'video')
+      [`u-width-${width}`]: !!(media.kind === MEDIA_KIND.video),
+      'Anavis-mainPlayerContainer--noDisplay': !(media.kind === MEDIA_KIND.video)
     });
 
     const mainPlayer = (
@@ -142,7 +135,7 @@ class AnavisDisplay extends React.Component {
             controls
             volume={volume}
             progressInterval={100}
-            playing={playState === playStates.PLAYING || playState === playStates.BUFFERING}
+            playing={playState === PLAY_STATE.playing || playState === PLAY_STATE.buffering}
             onReady={this.handleReady}
             onBuffer={this.handleBuffer}
             onStart={this.handlePlay}
