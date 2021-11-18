@@ -7,6 +7,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import Index from '../components/pages/index.js';
 import Login from '../components/pages/login.js';
 import Users from '../components/pages/users.js';
+import Import from '../components/pages/import.js';
 import Article from '../components/pages/article.js';
 import Account from '../components/pages/account.js';
 import EditDoc from '../components/pages/edit-doc.js';
@@ -37,7 +38,8 @@ const pageComponentsByName = {
   'reset-password': ResetPassword,
   'settings': Settings,
   'users': Users,
-  'search': Search
+  'search': Search,
+  'import': Import
 };
 
 class PageRenderer extends PageRendererBase {

@@ -358,6 +358,20 @@
     }
   },
   {
+    "namespace": "import",
+    "language": "en",
+    "resources": {
+      "importButton": "Run import"
+    }
+  },
+  {
+    "namespace": "import",
+    "language": "de",
+    "resources": {
+      "importButton": "Importieren"
+    }
+  },
+  {
     "namespace": "index",
     "language": "en",
     "resources": {
