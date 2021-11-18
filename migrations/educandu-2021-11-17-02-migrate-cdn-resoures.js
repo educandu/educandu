@@ -89,13 +89,11 @@ export default class Educandu_2021_11_17_02_migrate_cdn_resources {
     this.db.collection('documents')
 
     await updateAll(this.db.collection('documents'), {}, (doc) => {
-      console.log('Processing', doc._id);
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
       doc.cdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
     });
 
     await updateAll(this.db.collection('documentRevisions'), {}, (doc) => {
-      console.log('Processing revision', doc._id);
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
       doc.cdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
     });
