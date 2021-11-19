@@ -7,10 +7,10 @@ class ExportApiClient {
     this.httpClient = httpClient;
   }
 
-  getExportableDocumentsMetadata(baseUrl, key) {
+  getExportableDocumentsMetadata({ baseUrl, apiKey }) {
     return this.httpClient
-      .get('baseUrl/api/v1/exports')
-      .query({ key })
+      .get(`${baseUrl}/api/v1/exports`)
+      .set('X-API-Key', apiKey)
       .accept('json')
       .then(res => res.body);
   }

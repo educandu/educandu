@@ -4,16 +4,18 @@ import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { DownOutlined } from '@ant-design/icons';
-import { Button, Table, Menu, Dropdown } from 'antd';
+import { Button, Table, Menu, Dropdown, Spin } from 'antd';
 
 const logger = new Logger(import.meta.url);
 
 function Import({ initialState }) {
   const { t } = useTranslation('import');
+
   const defaultSourceMenuItem = { name: t('source') };
   const sourceMenuItems = [defaultSourceMenuItem, ...initialState.importSources];
   const [selectedSource, setSelectedSource] = useState(defaultSourceMenuItem);
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
+  const [importableDocuments, setImportableDocuments] = useState([]);
 
   const handleImportClick = () => {
     logger.info('Dummy import');
@@ -22,21 +24,41 @@ function Import({ initialState }) {
   const handleSourceMenuClick = ({ key }) => {
     const item = sourceMenuItems.find(source => source.name === key);
     setSelectedSource(item);
+    setSelectedDocumentKeys([]);
+    setImportableDocuments([]);
+
+    setTimeout(() => {
+      setImportableDocuments([
+        { key: 'key1', importType: 'a1', title: 'b1', language: 'c1', updatedOn: 'd1' },
+        { key: 'key2', importType: 'a2', title: 'b2', language: 'c2', updatedOn: 'd2' }
+      ]);
+    }, 1500);
   };
 
+  const renderImportType = doc => doc.importType;
+  // What of the documents that are missing the slug? and if we use the key, then the user needs to log in
+  const renderTitle = doc => <a href={`${selectedSource.baseUrl}/articles/${doc.slug}`}>{doc.title}</a>;
+  const renderLanguage = doc => doc.language;
+  const renderUpdateDate = doc => doc.updateDate;
+
   const columns = [
-    { title: t('importType'), key: 'importType', dataIndex: 'importType', render: () => { } },
-    { title: t('title'), key: 'title', render: () => { } },
-    { title: t('language'), key: 'language', width: '100px', render: () => { } },
-    { title: t('updateDate'), key: 'updateDate', width: '150px', render: () => { } }
+    { title: t('importType'), key: 'importType', width: '100px', render: renderImportType },
+    { title: t('title'), key: 'title', render: renderTitle },
+    { title: t('language'), key: 'language', width: '100px', render: renderLanguage },
+    { title: t('updateDate'), key: 'updateDate', width: '150px', render: renderUpdateDate }
   ];
 
-  const rows = [
-    { key: 'docKey1', importType: 'a1', title: 'b1', language: 'c1', updateDate: 'd1' },
-    { key: 'docKey2', importType: 'a2', title: 'b2', language: 'c2', updateDate: 'd2' }
-  ];
+  const mapDocumentsToRows = documents => {
+    return documents.map(doc => ({
+      key: doc.key,
+      importType: doc.importType,
+      title: doc.title,
+      language: doc.language,
+      updateDate: doc.updatedOn
+    }));
+  };
 
-  const rowSelection = {
+  const tableRowSelection = {
     onChange: selectedRowKeys => {
       setSelectedDocumentKeys(selectedRowKeys);
     }
@@ -53,28 +75,33 @@ function Import({ initialState }) {
     </Menu>
   );
 
+  const showSpinner = selectedSource.name !== defaultSourceMenuItem.name && importableDocuments.length === 0;
+  const showTable = importableDocuments.length > 0;
+
   return (
     <Page>
       <div className="ImportPage">
         <h1>{t('pageNames:import')}</h1>
 
         <Dropdown overlay={sourceMenu} placement="bottomCenter">
-          <Button className="ImportPage-sourceButton">
+          <Button className="ImportPage-sourceButton" disabled={showSpinner}>
             {selectedSource.name}<DownOutlined />
           </Button>
         </Dropdown>
         <br /> <br />
 
-        {!!selectedSource.baseUrl && (
+        {showSpinner && <Spin className="ImportPage-spinner" size="large" />}
+
+        {showTable && (
           <React.Fragment>
             <Table
               size="small"
               rowSelection={{
                 type: 'checkbox',
-                ...rowSelection
+                ...tableRowSelection
               }}
               columns={columns}
-              dataSource={rows}
+              dataSource={mapDocumentsToRows(importableDocuments)}
               pagination={false}
               bordered
               />

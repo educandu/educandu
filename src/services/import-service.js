@@ -1,9 +1,6 @@
-import UserService from './user-service.js';
+import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
-import { DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN } from '../common/constants.js';
-import DocumentLockStore from '../stores/document-lock-store.js';
-import DocumentOrderStore from '../stores/document-order-store.js';
-import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { DOCUMENT_IMPORT_TYPE } from '../common/constants.js';
 
 const importedDocumentsProjection = {
   key: 1,
@@ -18,28 +15,24 @@ const lastUpdatedFirst = [['updatedOn', -1]];
 
 class ImportService {
   static get inject() {
-    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, UserService];
+    return [DocumentStore, ExportApiClient];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, userService) {
-    this.documentRevisionStore = documentRevisionStore;
-    this.documentOrderStore = documentOrderStore;
-    this.documentLockStore = documentLockStore;
+  constructor(documentStore, exportApiClient) {
     this.documentStore = documentStore;
-    this.userService = userService;
+    this.exportApiClient = exportApiClient;
   }
 
-  getAllImportedDocumentsMetadata() {
-    const filter = {
-      archived: false,
-      origin: { $ne: DOCUMENT_ORIGIN.internal }
-    };
-
+  getAllImportedDocumentsMetadata(origin) {
+    const filter = { archived: false, origin };
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: importedDocumentsProjection });
   }
 
-  async getAllImportableDocumentsMetadata(exportableDocuments) {
-    const importedDocuments = await this.getAllImportedDocumentsMetadata();
+  async getAllImportableDocumentsMetadata(importSource) {
+    const { baseUrl, apiKey } = importSource;
+
+    const exportableDocuments = await this.exportApiClient.getExportableDocumentsMetadata({ baseUrl, apiKey });
+    const importedDocuments = await this.getAllImportedDocumentsMetadata(importSource.name);
 
     const importableDocuments = exportableDocuments
       .map(exportableDocument => {
