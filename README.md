@@ -81,6 +81,12 @@ educandu({
 
 This should run the entire application and provide you with an admin user as defined on the initialUser setting.
 
+## How to override the styles
+
+In order to override the styles provided by educandu you need to import the main.less of the educandu project and override the less variables provided. An example override implementation is provided by the test-app in the 
+main.less file. We will keep this file updated so any user will know what can be overriden. Alternatively you can go 
+to the global-variables.less in educandu and consult the list there.
+
 ## How to run and develop locally
 
 ~~~
