@@ -1,5 +1,5 @@
 import httpErrors from 'http-errors';
-import permissions from './permissions.js';
+import { hasUserPermission } from './permissions.js';
 
 const { Unauthorized, Forbidden } = httpErrors;
 
@@ -8,7 +8,7 @@ function evaluatePermission(permission, req, res, next) {
     return next(new Unauthorized());
   }
 
-  if (!permissions.hasUserPermission(req.user, permission)) {
+  if (!hasUserPermission(req.user, permission)) {
     const forbidden = new Forbidden();
     forbidden.requiredPermission = permission;
     return next(forbidden);

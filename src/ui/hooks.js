@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
-import permissions from '../domain/permissions.js';
 import { useUser } from '../components/user-context.js';
+import { hasUserPermission } from '../domain/permissions.js';
 
 export function usePermission(permissionToCheck) {
   const user = useUser();
 
   return useMemo(
-    () => permissions.hasUserPermission(user, permissionToCheck),
+    () => hasUserPermission(user, permissionToCheck),
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     [permissionToCheck, ...user.roles]
   );

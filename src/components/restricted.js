@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { withUser } from './user-context.js';
-import permissions from '../domain/permissions.js';
 import { userProps } from '../ui/default-prop-types.js';
+import { hasUserPermission } from '../domain/permissions.js';
 
 function Restricted({ to, user, children }) {
   if (!to) {
@@ -9,7 +9,7 @@ function Restricted({ to, user, children }) {
   }
 
   const permissionsToCheck = Array.isArray(to) ? to : [to];
-  const allPermissionsGranted = permissionsToCheck.every(perm => permissions.hasUserPermission(user, perm));
+  const allPermissionsGranted = permissionsToCheck.every(perm => hasUserPermission(user, perm));
   return allPermissionsGranted ? children : null;
 }
 

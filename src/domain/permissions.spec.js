@@ -1,25 +1,47 @@
 import { ROLE } from './role.js';
-import sut from './permissions.js';
+import { exchangeUser } from './built-in-users.js';
+import permissions, { hasUserPermission } from './permissions.js';
+
+const isTechnicalPermission = permission => permission === permissions.LIST_EXPORTABLE_CONTENT;
 
 describe('permissions', () => {
 
   describe('hasUserPermission', () => {
-    const user = {
-      roles: [ROLE.admin]
-    };
 
-    const permissions = Object.entries(sut)
-      .filter(entry => (/^[A-Z_]+$/).test(entry[0]))
-      .map(entry => entry[1]);
+    describe('when user has role "admin"', () => {
+      const adminUser = {
+        roles: [ROLE.admin]
+      };
 
-    permissions.forEach(permission => {
-      let result;
-      beforeEach(() => {
-        result = sut.hasUserPermission(user, permission);
+      Object.values(permissions).forEach(permission => {
+        let result;
+        let expected;
+        beforeEach(() => {
+          result = hasUserPermission(adminUser, permission);
+          expected = !isTechnicalPermission(permission);
+        });
+        it(`should be ${expected} for permission '${permission}'`, () => {
+          expect(result).toBe(expected);
+        });
       });
-      it(`should be true for user in role '${ROLE.admin}' and permission '${permission}'`, () => {
-        expect(result).toBe(true);
+
+    });
+
+    describe('when user is builtin user "exchange"', () => {
+      const adminUser = exchangeUser;
+
+      Object.values(permissions).forEach(permission => {
+        let result;
+        let expected;
+        beforeEach(() => {
+          result = hasUserPermission(adminUser, permission);
+          expected = isTechnicalPermission(permission);
+        });
+        it(`should be ${expected} for permission '${permission}'`, () => {
+          expect(result).toBe(expected);
+        });
       });
+
     });
 
   });
