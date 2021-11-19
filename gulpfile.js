@@ -14,13 +14,15 @@ import eslint from 'gulp-eslint';
 import { promisify } from 'util';
 import plumber from 'gulp-plumber';
 import superagent from 'superagent';
-import { promises as fs } from 'fs';
+import { promises as fs, createReadStream, createWriteStream } from 'fs';
 import Graceful from 'node-graceful';
 import { spawn } from 'child_process';
 import { Docker } from 'docker-cli-js';
 import sourcemaps from 'gulp-sourcemaps';
 import { Client as MinioClient } from 'minio';
 import LessAutoprefix from 'less-plugin-autoprefix';
+import readline from 'readline';
+import { EOL } from 'os';
 
 const ROOT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -375,6 +377,50 @@ export function restartServer(done) {
     done();
   }
 }
+
+export function runGithubChangelogGenerator() {
+  return execa.command('github_changelog_generator -u educandu -p educandu', { stdio: 'inherit' });
+}
+
+export async function generateJiraLinks() {
+  let fileStream = null;
+  const newLines = [];
+  try {
+    fileStream = createReadStream('CHANGELOG.md');
+    const lineReader = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity
+    });
+
+    for await (const line of lineReader) {
+      let jiraLine = null;
+      if ((/^- EDU-\d+/).test(line)) {
+        const jiraNumber = line.match(/EDU-\d+/);
+        jiraLine = line.replace(/^- EDU-\d+/, `- [${jiraNumber}]{https://educandu.atlassian.net/browse/${jiraNumber}}`);
+      }
+
+      newLines.push(jiraLine || line);
+    }
+    lineReader.close();
+    fileStream.close();
+  } finally {
+    fileStream && fileStream.close();
+  }
+
+  let writer = null;
+  try {
+    writer = createWriteStream('CHANGELOG.md');
+    for (const line of newLines) {
+      writer.write(line);
+      writer.write(EOL);
+    }
+    writer.end();
+  } finally {
+    writer && writer.close();
+  }
+}
+
+export const generateChangelog = gulp.series(runGithubChangelogGenerator, generateJiraLinks);
 
 export const up = gulp.series(mongoUp, minioUp, maildevUp);
 
