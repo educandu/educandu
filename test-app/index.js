@@ -18,6 +18,13 @@ educandu({
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
   exportApiKey: 'fe160daddb0c44c4963f63ce08272c86',
+  importSources: [
+    {
+      name: 'elmu',
+      baseUrl: 'SomeBaseUrl',
+      apiKey: 'SomeFakeKey'
+    }
+  ],
   initialUser: {
     username: 'test',
     password: 'test',

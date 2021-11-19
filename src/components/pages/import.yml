@@ -16,3 +16,6 @@ language:
 updateDate:
   en: Update date
   de: Update-Datum
+source:
+  en: Choose source
+  de: Quelle wählen

@@ -28,7 +28,7 @@ const rolesForPermission = {
   [MIGRATE_DATA]: [ROLE.admin],
   [MANAGE_DOC_REVISIONS]: [ROLE.admin],
   [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
-  [MANAGE_EXPORT]: [ROLE.admin]
+  [MANAGE_IMPORT]: [ROLE.admin]
 };
 
 export function hasUserPermission(user, permission) {

@@ -366,7 +366,8 @@
       "importType": "Import type",
       "title": "Title",
       "language": "Language",
-      "updateDate": "Update date"
+      "updateDate": "Update date",
+      "source": "Choose source"
     }
   },
   {
@@ -375,10 +376,11 @@
     "resources": {
       "importButton": "Importieren",
       "import": "Importieren",
-      "importType": null,
+      "importType": "Import-Typ",
       "title": "Titel",
       "language": "Sprache",
-      "updateDate": "Update-Datum"
+      "updateDate": "Update-Datum",
+      "source": "Quelle wählen"
     }
   },
   {
