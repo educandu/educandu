@@ -1,17 +1,11 @@
 import iso3166 from '@unly/iso3166-1';
 import Logger from '../common/logger.js';
-import ServerConfig from '../bootstrap/server-config.js';
 import acceptLanguageParser from 'accept-language-parser';
 import { SUPPORTED_UI_LANGUAGES, DEFAULT_UI_LANGUAGE, UI_LANGUAGE_COOKIE_NAME, UI_LANGUAGE_COOKIE_EXPIRES } from '../resources/ui-language.js';
 
 const logger = new Logger(import.meta.url);
 
 class I18nController {
-  static get inject() { return [ServerConfig]; }
-
-  constructor(serverConfig) {
-    this.serverConfig = serverConfig;
-  }
 
   registerMiddleware(router) {
     router.use((req, res, next) => {
