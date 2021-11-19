@@ -94,7 +94,7 @@ class Database {
     const allFilesInMigrationDirectory = await pGlob(path.resolve(migrationsDirectory, './*.js'));
     const migrationFileNames = allFilesInMigrationDirectory
       .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
-      .filter(filename => !filename.includes('-manually-run'))
+      .filter(filename => !filename.endsWith('-manually-run'))
       .sort();
 
     const migrations = await Promise.all(migrationFileNames.map(async fileName => {
