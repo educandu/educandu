@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { DownOutlined } from '@ant-design/icons';
+import { inject } from '../container-context.js';
 import { Button, Table, Menu, Dropdown, Spin } from 'antd';
+import ImportApiClient from '../../services/import-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
-function Import({ initialState }) {
+function Import({ initialState, importApiClient }) {
   const { t } = useTranslation('import');
 
   const defaultSourceMenuItem = { name: t('source') };
@@ -21,24 +23,22 @@ function Import({ initialState }) {
     logger.info('Dummy import');
   };
 
-  const handleSourceMenuClick = ({ key }) => {
-    const item = sourceMenuItems.find(source => source.name === key);
-    setSelectedSource(item);
-    setSelectedDocumentKeys([]);
+  const handleSourceMenuClick = async ({ key }) => {
+    const newSelectedSource = sourceMenuItems.find(source => source.name === key);
+    setSelectedSource(newSelectedSource);
     setImportableDocuments([]);
+    setSelectedDocumentKeys([]);
 
-    setTimeout(() => {
-      setImportableDocuments([
-        { key: 'key1', importType: 'a1', title: 'b1', language: 'c1', updatedOn: 'd1' },
-        { key: 'key2', importType: 'a2', title: 'b2', language: 'c2', updatedOn: 'd2' }
-      ]);
-    }, 1500);
+    const { documents } = await importApiClient.getImports(newSelectedSource);
+    setImportableDocuments(documents);
   };
 
   const renderImportType = doc => doc.importType;
-  // What of the documents that are missing the slug? and if we use the key, then the user needs to log in
+  // ToDo: What of the documents that are missing the slug? and if we use the key, then the user needs to log in
   const renderTitle = doc => <a href={`${selectedSource.baseUrl}/articles/${doc.slug}`}>{doc.title}</a>;
+  // ToDo: add flag
   const renderLanguage = doc => doc.language;
+  // ToDo: format
   const renderUpdateDate = doc => doc.updateDate;
 
   const columns = [
@@ -47,16 +47,6 @@ function Import({ initialState }) {
     { title: t('language'), key: 'language', width: '100px', render: renderLanguage },
     { title: t('updateDate'), key: 'updateDate', width: '150px', render: renderUpdateDate }
   ];
-
-  const mapDocumentsToRows = documents => {
-    return documents.map(doc => ({
-      key: doc.key,
-      importType: doc.importType,
-      title: doc.title,
-      language: doc.language,
-      updateDate: doc.updatedOn
-    }));
-  };
 
   const tableRowSelection = {
     onChange: selectedRowKeys => {
@@ -75,6 +65,15 @@ function Import({ initialState }) {
     </Menu>
   );
 
+  const mapDocumentsToRows = documents => {
+    return documents.map(doc => ({
+      key: doc.key,
+      importType: doc.importType,
+      title: doc.title,
+      language: doc.language,
+      updateDate: doc.updatedOn
+    }));
+  };
   const showSpinner = selectedSource.name !== defaultSourceMenuItem.name && importableDocuments.length === 0;
   const showTable = importableDocuments.length > 0;
 
@@ -117,6 +116,7 @@ function Import({ initialState }) {
 }
 
 Import.propTypes = {
+  importApiClient: PropTypes.instanceOf(ImportApiClient).isRequired,
   initialState: PropTypes.shape({
     importSources: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -126,4 +126,6 @@ Import.propTypes = {
   }).isRequired
 };
 
-export default Import;
+export default inject({
+  importApiClient: ImportApiClient
+}, Import);

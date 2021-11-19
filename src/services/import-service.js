@@ -1,6 +1,6 @@
 import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
-import { DOCUMENT_IMPORT_TYPE } from '../common/constants.js';
+import { DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN } from '../common/constants.js';
 
 const importedDocumentsProjection = {
   key: 1,
@@ -23,15 +23,17 @@ class ImportService {
     this.exportApiClient = exportApiClient;
   }
 
-  getAllImportedDocumentsMetadata(origin) {
-    const filter = { archived: false, origin };
+  // ToDo: Correct unit tests
+  getAllImportedDocumentsMetadata(importSourceName) {
+    const filter = { archived: false, origin: `${DOCUMENT_ORIGIN.external}/${importSourceName}` };
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: importedDocumentsProjection });
   }
 
+  // ToDo: Add unit tests
   async getAllImportableDocumentsMetadata(importSource) {
     const { baseUrl, apiKey } = importSource;
 
-    const exportableDocuments = await this.exportApiClient.getExportableDocumentsMetadata({ baseUrl, apiKey });
+    const exportableDocuments = await this.exportApiClient.getExports({ baseUrl, apiKey });
     const importedDocuments = await this.getAllImportedDocumentsMetadata(importSource.name);
 
     const importableDocuments = exportableDocuments
