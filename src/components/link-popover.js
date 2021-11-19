@@ -1,9 +1,9 @@
 import React from 'react';
 import { Popover } from 'antd';
 import PropTypes from 'prop-types';
-import permissions from '../domain/permissions.js';
 import { default as iconsNs } from '@ant-design/icons';
 import { useUser } from '../components/user-context.js';
+import { hasUserPermission } from '../domain/permissions.js';
 
 const Icon = iconsNs.default || iconsNs;
 
@@ -11,7 +11,7 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
   const user = useUser();
 
   const filteredItems = items.filter(item => {
-    return !item.permission || permissions.hasUserPermission(user, item.permission);
+    return !item.permission || hasUserPermission(user, item.permission);
   });
 
   if (!filteredItems.length && !renderIfEmpty) {

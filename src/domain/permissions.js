@@ -1,18 +1,18 @@
 import { ROLE } from './role.js';
 
-export const EDIT_DOC = 'edit-doc';
-export const VIEW_DOCS = 'view-docs';
-export const EDIT_FILE = 'edit-file';
-export const VIEW_FILES = 'view-files';
-export const CREATE_FILE = 'create-file';
-export const EDIT_USERS = 'edit-users';
-export const EDIT_SETTINGS = 'edit-settings';
-export const HARD_DELETE_SECTION = 'hard-delete-section';
-export const SEE_USER_EMAIL = 'see-user-email';
-export const MIGRATE_DATA = 'migrate-data';
-export const MANAGE_DOC_REVISIONS = 'manage-doc-revisions';
-export const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
-export const LIST_EXPORTABLE_CONTENT = 'list-exportable-content';
+const EDIT_DOC = 'edit-doc';
+const VIEW_DOCS = 'view-docs';
+const EDIT_FILE = 'edit-file';
+const VIEW_FILES = 'view-files';
+const CREATE_FILE = 'create-file';
+const EDIT_USERS = 'edit-users';
+const EDIT_SETTINGS = 'edit-settings';
+const HARD_DELETE_SECTION = 'hard-delete-section';
+const SEE_USER_EMAIL = 'see-user-email';
+const MIGRATE_DATA = 'migrate-data';
+const MANAGE_DOC_REVISIONS = 'manage-doc-revisions';
+const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
+const LIST_EXPORTABLE_CONTENT = 'list-exportable-content';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -48,6 +48,5 @@ export default {
   MIGRATE_DATA,
   MANAGE_ARCHIVED_DOCS,
   MANAGE_DOC_REVISIONS,
-  LIST_EXPORTABLE_CONTENT,
-  hasUserPermission
+  LIST_EXPORTABLE_CONTENT
 };
