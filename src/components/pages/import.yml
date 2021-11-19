@@ -1,3 +1,18 @@
 importButton:
   en: Run import
   de: Importieren
+import:
+  en: Import
+  de: Importieren
+importType:
+  en: Import type
+  de: Import-Typ
+title:
+  en: Title
+  de: Titel
+language:
+  en: Language
+  de: Sprache
+updateDate:
+  en: Update date
+  de: Update-Datum

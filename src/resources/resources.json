@@ -361,14 +361,24 @@
     "namespace": "import",
     "language": "en",
     "resources": {
-      "importButton": "Run import"
+      "importButton": "Run import",
+      "import": "Import",
+      "importType": "Import type",
+      "title": "Title",
+      "language": "Language",
+      "updateDate": "Update date"
     }
   },
   {
     "namespace": "import",
     "language": "de",
     "resources": {
-      "importButton": "Importieren"
+      "importButton": "Importieren",
+      "import": "Importieren",
+      "importType": null,
+      "title": "Titel",
+      "language": "Sprache",
+      "updateDate": "Update-Datum"
     }
   },
   {
