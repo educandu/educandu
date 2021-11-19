@@ -13,6 +13,7 @@ function Import({ initialState }) {
   const defaultSourceMenuItem = { name: t('source') };
   const sourceMenuItems = [defaultSourceMenuItem, ...initialState.importSources];
   const [selectedSource, setSelectedSource] = useState(defaultSourceMenuItem);
+  const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
 
   const handleImportClick = () => {
     logger.info('Dummy import');
@@ -24,14 +25,22 @@ function Import({ initialState }) {
   };
 
   const columns = [
-    { title: t('import'), key: 'import', width: '64px', render: () => { } },
     { title: t('importType'), key: 'importType', dataIndex: 'importType', render: () => { } },
     { title: t('title'), key: 'title', render: () => { } },
     { title: t('language'), key: 'language', width: '100px', render: () => { } },
     { title: t('updateDate'), key: 'updateDate', width: '150px', render: () => { } }
   ];
 
-  const rows = [{ import: '', importType: '', title: '', language: '', updateDate: '' }];
+  const rows = [
+    { key: 'docKey1', importType: 'a1', title: 'b1', language: 'c1', updateDate: 'd1' },
+    { key: 'docKey2', importType: 'a2', title: 'b2', language: 'c2', updateDate: 'd2' }
+  ];
+
+  const rowSelection = {
+    onChange: selectedRowKeys => {
+      setSelectedDocumentKeys(selectedRowKeys);
+    }
+  };
 
   const sourceMenu = (
     <Menu onClick={handleSourceMenuClick}>
@@ -54,24 +63,27 @@ function Import({ initialState }) {
             {selectedSource.name}<DownOutlined />
           </Button>
         </Dropdown>
-
         <br /> <br />
 
-        {selectedSource.baseUrl && (
+        {!!selectedSource.baseUrl && (
           <React.Fragment>
             <Table
               size="small"
+              rowSelection={{
+                type: 'checkbox',
+                ...rowSelection
+              }}
               columns={columns}
               dataSource={rows}
               pagination={false}
               bordered
               />
-
             <br />
-            <Button type="primary" onClick={handleImportClick}>
+            <Button type="primary" disabled={!selectedDocumentKeys.length} onClick={handleImportClick}>
               {t('importButton')}
             </Button>
-          </React.Fragment>)}
+          </React.Fragment>
+        )}
       </div>
     </Page>
   );

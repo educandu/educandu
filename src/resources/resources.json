@@ -361,7 +361,7 @@
     "namespace": "import",
     "language": "en",
     "resources": {
-      "importButton": "Run import",
+      "importButton": "Start import",
       "import": "Import",
       "importType": "Import type",
       "title": "Title",
@@ -374,7 +374,7 @@
     "namespace": "import",
     "language": "de",
     "resources": {
-      "importButton": "Importieren",
+      "importButton": "Import anfangen",
       "import": "Importieren",
       "importType": "Import-Typ",
       "title": "Titel",
