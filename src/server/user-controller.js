@@ -57,7 +57,7 @@ class UserController {
     router.use(passport.authenticate('apikey', { session: false }));
 
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      return apikey === this.serverConfig.importApiKey
+      return apikey === this.serverConfig.exportApiKey
         ? cb(null, exchangeUser)
         : cb(null, false);
     }));

@@ -32,7 +32,7 @@ The educandu framework
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
  | initialUser | The first user account, with admin role | `{ username, password, email }` or `null` | no |
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
- | importApiKey | The API key used for authorizing incoming requests for fetching data to be imported into another system | `string` | no |
+ | exportApiKey | The API key used for authorizing incoming requests for fetching data to be imported into another system | `string` | no |
  | importSources | The system from which data can be imported | `[{ name, baseUrl, apiKey }]` | no |
 
 ## How to use
@@ -70,7 +70,7 @@ educandu({
     email: 'test@test.com'
   },
   exposeErrorDetails: true,
-  importApiKey: 'GSD54GDFgDGesdfs4'
+  exportApiKey: 'GSD54GDFgDGesdfs4'
   importSources: [{
     name: 'otherSystem',
     baseUrl: 'https://othersystem.com',

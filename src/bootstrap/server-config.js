@@ -25,7 +25,7 @@ const configSchema = joi.object({
     email: joi.string().required()
   }),
   exposeErrorDetails: joi.boolean(),
-  importApiKey: joi.string(),
+  exportApiKey: joi.string(),
   importSources: joi.array().items(joi.object({
     name: joi.string().required(),
     baseUrl: joi.string().required(),
