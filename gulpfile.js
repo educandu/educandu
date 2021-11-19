@@ -379,7 +379,7 @@ export function restartServer(done) {
 }
 
 export function runGithubChangelogGenerator() {
-  return execa.command('github_changelog_generator -u educandu -p educandu', { stdio: 'inherit' });
+  return execa.command('github_changelog_generator -u educandu -p educandu --since-tag 0.1.0', { stdio: 'inherit' });
 }
 
 export async function generateJiraLinks() {
@@ -396,7 +396,7 @@ export async function generateJiraLinks() {
       let jiraLine = null;
       if ((/^- EDU-\d+/).test(line)) {
         const jiraNumber = line.match(/EDU-\d+/);
-        jiraLine = line.replace(/^- EDU-\d+/, `- [${jiraNumber}]{https://educandu.atlassian.net/browse/${jiraNumber}}`);
+        jiraLine = line.replace(/^- EDU-\d+/, `- [${jiraNumber}](https://educandu.atlassian.net/browse/${jiraNumber})`);
       }
 
       newLines.push(jiraLine || line);

@@ -2,7 +2,7 @@
 
 ## [Unreleased](https://github.com/educandu/educandu/tree/HEAD)
 
-[Full Changelog](https://github.com/educandu/educandu/compare/4f040347c4c5cb111ff6a1026f1b1f6e54e906df...HEAD)
+[Full Changelog](https://github.com/educandu/educandu/compare/0.1.0...HEAD)
 
 **Merged pull requests:**
 
@@ -27,7 +27,7 @@
 - [EDU-68](https://educandu.atlassian.net/browse/EDU-68) Make sender email configurable [\#19](https://github.com/educandu/educandu/pull/19) ([ahelmberger](https://github.com/ahelmberger))
 - [EDU-60](https://educandu.atlassian.net/browse/EDU-60) correct document cloning [\#18](https://github.com/educandu/educandu/pull/18) ([adrianaluchian](https://github.com/adrianaluchian))
 - [EDU-63](https://educandu.atlassian.net/browse/EDU-63) Correct server configs [\#17](https://github.com/educandu/educandu/pull/17) ([laurentiu-ilici](https://github.com/laurentiu-ilici))
-- [EDU-59](https://educandu.atlassian.net/browse/EDU-59) Fix terms and conditions validation on user registration [\#16](https://github.com/educandu/educandu/pull/16) ([laurentiu-ilici](https://github.com/laurentiu-ilici))- 
+- [EDU-59](https://educandu.atlassian.net/browse/EDU-59) Fix terms and conditions validation on user registration [\#16](https://github.com/educandu/educandu/pull/16) ([laurentiu-ilici](https://github.com/laurentiu-ilici))
 - [EDU-61](https://educandu.atlassian.net/browse/EDU-61) Fix firing too many events [\#15](https://github.com/educandu/educandu/pull/15) ([laurentiu-ilici](https://github.com/laurentiu-ilici))
 - [EDU-53](https://educandu.atlassian.net/browse/EDU-53) Make search box independent from settings [\#14](https://github.com/educandu/educandu/pull/14) ([adrianaluchian](https://github.com/adrianaluchian))
 - [EDU-20](https://educandu.atlassian.net/browse/EDU-20) reset db migrations [\#13](https://github.com/educandu/educandu/pull/13) ([ahelmberger](https://github.com/ahelmberger))
