@@ -5,9 +5,9 @@ import UserController from './user-controller.js';
 import IndexController from './index-controller.js';
 import ErrorController from './error-controller.js';
 import StaticController from './static-controller.js';
+import ExportController from './export-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
-import ExchangeController from './exchange-controller.js';
 
 const controllerTypes = [
   StaticController,
@@ -18,7 +18,7 @@ const controllerTypes = [
   DocumentController,
   CdnController,
   ErrorController,
-  ExchangeController
+  ExportController
 ];
 
 class ControllerFactory {

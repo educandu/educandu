@@ -7,8 +7,8 @@ import Database from '../stores/database.js';
 import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { exportUser } from '../domain/built-in-users.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
-import { exchangeUser } from '../domain/built-in-users.js';
 import UserRequestHandler from './user-request-handler.js';
 import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -58,7 +58,7 @@ class UserController {
 
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
       return apikey === this.serverConfig.exportApiKey
-        ? cb(null, exchangeUser)
+        ? cb(null, exportUser)
         : cb(null, false);
     }));
 
