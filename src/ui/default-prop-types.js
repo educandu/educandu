@@ -18,7 +18,6 @@ export const sectionEditorProps = {
 
 export const clientConfigProps = {
   clientConfig: PropTypes.shape({
-    env: PropTypes.string.isRequired,
     cdnRootUrl: PropTypes.string.isRequired
   }).isRequired
 };
