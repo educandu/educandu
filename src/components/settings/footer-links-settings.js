@@ -58,8 +58,12 @@ FooterLinksSettings.propTypes = {
     documentRevisionShape,
     documentShape
   ])).isRequired,
-  footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)).isRequired,
+  footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
   onChange: PropTypes.func.isRequired
+};
+
+FooterLinksSettings.defaultProps = {
+  footerLinks: {}
 };
 
 export default memo(FooterLinksSettings);

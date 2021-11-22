@@ -106,8 +106,12 @@ HomeLanguagesSettings.propTypes = {
     documentRevisionShape,
     documentShape
   ])).isRequired,
-  homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,
+  homeLanguages: PropTypes.arrayOf(homeLanguageShape),
   onChange: PropTypes.func.isRequired
+};
+
+HomeLanguagesSettings.defaultProps = {
+  homeLanguages: []
 };
 
 export default memo(HomeLanguagesSettings);
