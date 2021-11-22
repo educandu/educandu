@@ -28,13 +28,14 @@ class ImportController {
   registerApi(router) {
     router.get('/api/v1/imports', [needsPermission(permissions.MANAGE_IMPORT), jsonParser], async (req, res) => {
       // ToDo: Validate query params are all provided
+      // ToDo: set external/name from hostname
       const importSource = {
         name: req.query.name,
         baseUrl: req.query.baseUrl,
         apiKey: req.query.apiKey
       };
 
-      const documents = await this.importService.getAllImportableDocumentsMetadata(importSource);
+      const documents = await this.importService.getAllImportableDocumentsMetadata(importSource, true);
       return res.send({ documents });
     });
   }
