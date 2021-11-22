@@ -25,8 +25,5 @@ global.process = {
   umask() { return 0; }
 };
 
-// ant.design needs a buffer for Table -> rowSelection
-global.Buffer = global.Buffer || require('buffer').Buffer;
-
 // midi-js (dep of abcjs) wants to have the global MIDI object:
 global.MIDI = {};
