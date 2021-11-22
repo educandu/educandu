@@ -7,12 +7,12 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { Button, Table, Menu, Dropdown, Spin } from 'antd';
 import { inject, useService } from '../container-context.js';
+import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { DownOutlined, CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
-import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -30,8 +30,14 @@ function Import({ initialState, importApiClient }) {
   const [importableDocuments, setImportableDocuments] = useState([]);
 
   const handleImportClick = () => {
-    // ToDo: prepare tasks to pass on
-    logger.info('Dummy import');
+    const tasks = selectedDocumentKeys
+      .map(key => importableDocuments.find(doc => doc.key === key))
+      .map(doc => ({
+        key: doc.key,
+        importedRevision: doc.importedRevision,
+        importableRevision: doc.importableRevision
+      }));
+    logger.info(`Dummy import sets tasks: ${JSON.stringify(tasks)}`);
   };
 
   const handleSourceMenuClick = async ({ key }) => {

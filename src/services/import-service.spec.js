@@ -22,39 +22,46 @@ describe('import-service', () => {
   });
 
   describe('getAllImportedDocumentsMetadata', () => {
-
-    const testDocs = [
-      { title: 'doc-1', archived: false, origin: DOCUMENT_ORIGIN.internal },
-      { title: 'doc-2', archived: true, origin: DOCUMENT_ORIGIN.internal },
-      { title: 'doc-3', archived: false, origin: `${DOCUMENT_ORIGIN.external}/some-site` },
-      { title: 'doc-4', archived: true, origin: `${DOCUMENT_ORIGIN.external}/some-site` }
-    ];
-
     let result;
 
-    beforeEach(async () => {
-      for (const testDoc of testDocs) {
+    describe('with \'website.com\' import domain', () => {
+      const testDocs = [
+        { title: 'doc-1', archived: false, origin: DOCUMENT_ORIGIN.internal },
+        { title: 'doc-2', archived: true, origin: DOCUMENT_ORIGIN.internal },
+        { title: 'doc-3', archived: false, origin: `${DOCUMENT_ORIGIN.external}/website.com` },
+        { title: 'doc-4', archived: true, origin: `${DOCUMENT_ORIGIN.external}/website.com` },
+        { title: 'doc-5', archived: false, origin: `${DOCUMENT_ORIGIN.external}/website.de` }
+      ];
+
+      beforeEach(async () => {
+        for (const testDoc of testDocs) {
         // eslint-disable-next-line no-await-in-loop
-        await createTestDocument(container, user, testDoc);
-      }
-      result = await sut.getAllImportedDocumentsMetadata();
+          await createTestDocument(container, user, testDoc);
+        }
+        result = await sut.getAllImportedDocumentsMetadata('website.com');
+      });
+
+      it('should not return unarchived documents with origin \'internal\'', () => {
+        expect(result.find(doc => doc.title === 'doc-1')).toBeUndefined();
+      });
+
+      it('should not return archived documents with origin \'internal\'', () => {
+        expect(result.find(doc => doc.title === 'doc-2')).toBeUndefined();
+      });
+
+      it('should return unarchived documents with origin \'external/website.com\'', () => {
+        expect(result.find(doc => doc.title === 'doc-3')).toBeDefined();
+      });
+
+      it('should not return archived documents with origin \'external/website.com\'', () => {
+        expect(result.find(doc => doc.title === 'doc-4')).toBeUndefined();
+      });
+
+      it('should not return unarchived documents with origin \'external/website.de\'', () => {
+        expect(result.find(doc => doc.title === 'doc-5')).toBeUndefined();
+      });
     });
 
-    it('should return external unarchived documents', () => {
-      expect(result.find(doc => doc.title === 'doc-3')).toBeDefined();
-    });
-
-    it('should not return external archived documents', () => {
-      expect(result.find(doc => doc.title === 'doc-4')).toBeUndefined();
-    });
-
-    it('should not return internal unarchived documents', () => {
-      expect(result.find(doc => doc.title === 'doc-1')).toBeUndefined();
-    });
-
-    it('should not return internal archived documents', () => {
-      expect(result.find(doc => doc.title === 'doc-2')).toBeUndefined();
-    });
   });
 
 });
