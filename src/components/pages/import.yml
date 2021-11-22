@@ -19,3 +19,10 @@ updateDate:
 source:
   en: Choose source
   de: Quelle wählen
+add:
+  en: Add
+  de: Hinzufügen
+update:
+  en: Update
+  de: Aktualisieren
+

@@ -367,7 +367,9 @@
       "title": "Title",
       "language": "Language",
       "updateDate": "Update date",
-      "source": "Choose source"
+      "source": "Choose source",
+      "add": "Add",
+      "update": "Update"
     }
   },
   {
@@ -380,7 +382,9 @@
       "title": "Titel",
       "language": "Sprache",
       "updateDate": "Update-Datum",
-      "source": "Quelle wählen"
+      "source": "Quelle wählen",
+      "add": "Hinzufügen",
+      "update": "Aktualisieren"
     }
   },
   {

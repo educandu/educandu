@@ -34,13 +34,11 @@ class ImportService {
     this.exportApiClient = exportApiClient;
   }
 
-  // ToDo: Correct unit tests
   getAllImportedDocumentsMetadata(importDomain) {
     const filter = { archived: false, origin: `${DOCUMENT_ORIGIN.external}/${importDomain}` };
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: importedDocumentsProjection });
   }
 
-  // ToDo: Add unit tests
   async getAllImportableDocumentsMetadata(importSource, useMockData) {
     const { baseUrl, apiKey } = importSource;
     const importDomain = new URL(baseUrl).hostname;
@@ -62,7 +60,7 @@ class ImportService {
           slug: exportableDocument.slug,
           language: exportableDocument.language,
           updatedOn: exportableDocument.updatedOn,
-          importedRevision: importedDocument?.revision,
+          importedRevision: importedDocument?.revision || null,
           importableRevision: exportableDocument.revision,
           importType: importedDocument ? DOCUMENT_IMPORT_TYPE.update : DOCUMENT_IMPORT_TYPE.add
         };

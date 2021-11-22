@@ -5,11 +5,11 @@ import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import { Button, Table, Menu, Dropdown, Spin } from 'antd';
 import { inject, useService } from '../container-context.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
+import { Tooltip, Button, Table, Menu, Dropdown, Spin } from 'antd';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { DownOutlined, CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
@@ -46,6 +46,10 @@ function Import({ initialState, importApiClient }) {
     setImportableDocuments([]);
     setSelectedDocumentKeys([]);
 
+    if (newSelectedSource === defaultSourceMenuItem) {
+      return;
+    }
+
     const { documents } = await importApiClient.getImports(newSelectedSource);
     setImportableDocuments(documents);
   };
@@ -58,7 +62,7 @@ function Import({ initialState, importApiClient }) {
     if (doc.importType === DOCUMENT_IMPORT_TYPE.update) {
       icon = <CloudSyncOutlined />;
     }
-    return <div className="ImportPage-importType">{icon}</div>;
+    return <Tooltip title={t(doc.importType)} className="ImportPage-importType">{icon}</Tooltip>;
   };
 
   const renderTitle = doc => {
@@ -81,10 +85,10 @@ function Import({ initialState, importApiClient }) {
   };
 
   const columns = [
-    { title: t('importType'), key: 'importType', width: '100px', sorter: by(x => x.importType), render: renderImportType },
+    { title: t('importType'), key: 'importType', width: '150px', sorter: by(x => x.importType), render: renderImportType },
     { title: t('title'), key: 'title', sorter: by(x => x.title), render: renderTitle },
-    { title: t('language'), key: 'language', width: '100px', sorter: by(x => x.language), render: renderLanguage },
-    { title: t('updateDate'), key: 'updateDate', width: '150px', sorter: by(x => x.updatedOn), render: renderUpdateDate }
+    { title: t('language'), key: 'language', width: '150px', sorter: by(x => x.language), render: renderLanguage },
+    { title: t('updateDate'), key: 'updateDate', width: '200px', sorter: by(x => x.updatedOn), render: renderUpdateDate }
   ];
 
   const tableRowSelection = {
@@ -112,7 +116,7 @@ function Import({ initialState, importApiClient }) {
       <div className="ImportPage">
         <h1>{t('pageNames:import')}</h1>
 
-        <Dropdown overlay={sourceMenu} placement="bottomCenter">
+        <Dropdown overlay={sourceMenu} placement="bottomLeft">
           <Button className="ImportPage-sourceButton" disabled={showSpinner}>
             {selectedSource.name}<DownOutlined />
           </Button>
