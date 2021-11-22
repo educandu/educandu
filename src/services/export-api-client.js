@@ -1,4 +1,3 @@
-
 import HttpClient from './http-client.js';
 
 const mockDocuments = [

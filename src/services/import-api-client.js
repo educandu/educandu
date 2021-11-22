@@ -1,6 +1,6 @@
 import HttpClient from './http-client.js';
 
-class ExportApiClient {
+class ImportApiClient {
   static inject() { return [HttpClient]; }
 
   constructor(httpClient) {
@@ -20,5 +20,5 @@ class ExportApiClient {
   }
 }
 
-export default ExportApiClient;
+export default ImportApiClient;
 

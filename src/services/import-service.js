@@ -24,6 +24,7 @@ const mockImportedDocuments = [
     language: 'de'
   }
 ];
+
 class ImportService {
   static get inject() {
     return [DocumentStore, ExportApiClient];

@@ -40,7 +40,7 @@ describe('import-service', () => {
 
       beforeEach(async () => {
         for (const testDoc of testDocs) {
-        // eslint-disable-next-line no-await-in-loop
+          // eslint-disable-next-line no-await-in-loop
           await createTestDocument(container, user, testDoc);
         }
         result = await sut.getAllImportedDocumentsMetadata('website.com');
