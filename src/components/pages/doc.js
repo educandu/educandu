@@ -133,40 +133,39 @@ class Doc extends React.Component {
     const { t, user } = this.props;
     const { revisions, currentRevision } = this.state;
 
-    let revisionPicker = null;
+    const marks = revisions.reduce((accu, item, index) => {
+      accu[index] = index === 0 || index === revisions.length - 1 ? (index + 1).toString() : '';
+      return accu;
+    }, {});
 
-    if (hasUserPermission(user, permissions.MANAGE_DOC_REVISIONS) && revisions.length > 1) {
-      const marks = revisions.reduce((accu, item, index) => {
-        accu[index] = index === 0 || index === revisions.length - 1 ? (index + 1).toString() : '';
-        return accu;
-      }, {});
+    const currentRevisionIndex = revisions.indexOf(currentRevision);
+    const isCurrentRevisionLatestRevision = currentRevisionIndex === revisions.length - 1;
+    const canRestoreRevisions = hasUserPermission(user, permissions.RESTORE_DOC_REVISIONS);
 
-      const currentRevisionIndex = revisions.indexOf(currentRevision);
-      const isCurrentRevisionLatestRevision = currentRevisionIndex === revisions.length - 1;
-
-      revisionPicker = (
-        <div className="DocPage-revisionPicker">
-          <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
-          <div className="DocPage-revisionPickerSlider">
-            <Slider
-              min={0}
-              max={revisions.length - 1}
-              value={currentRevisionIndex}
-              step={null}
-              marks={marks}
-              onChange={this.handleIndexChanged}
-              tipFormatter={this.formatRevisionTooltip}
-              />
-          </div>
-          <div className="DocPage-revisionPickerButtons">
-            <Button
-              className="DocPage-revisionPickerButton"
-              type="primary"
-              icon={<PaperClipOutlined />}
-              onClick={this.handlePermalinkRequest}
-              >
-              {t('permalink')}
-            </Button>
+    const revisionPicker = (
+      <div className="DocPage-revisionPicker">
+        <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
+        <div className="DocPage-revisionPickerSlider">
+          <Slider
+            min={0}
+            max={revisions.length - 1}
+            value={currentRevisionIndex}
+            step={null}
+            marks={marks}
+            onChange={this.handleIndexChanged}
+            tipFormatter={this.formatRevisionTooltip}
+            />
+        </div>
+        <div className="DocPage-revisionPickerButtons">
+          <Button
+            className="DocPage-revisionPickerButton"
+            type="primary"
+            icon={<PaperClipOutlined />}
+            onClick={this.handlePermalinkRequest}
+            >
+            {t('permalink')}
+          </Button>
+          {canRestoreRevisions && (
             <Button
               className="DocPage-revisionPickerButton"
               type="primary"
@@ -175,11 +174,10 @@ class Doc extends React.Component {
               disabled={isCurrentRevisionLatestRevision}
               >
               {t('restore')}
-            </Button>
-          </div>
+            </Button>)}
         </div>
-      );
-    }
+      </div>
+    );
 
     const customAlerts = [];
     const headerActions = [];
