@@ -35,17 +35,18 @@ class ImportService {
   }
 
   // ToDo: Correct unit tests
-  getAllImportedDocumentsMetadata(importSourceName) {
-    const filter = { archived: false, origin: `${DOCUMENT_ORIGIN.external}/${importSourceName}` };
+  getAllImportedDocumentsMetadata(importDomain) {
+    const filter = { archived: false, origin: `${DOCUMENT_ORIGIN.external}/${importDomain}` };
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: importedDocumentsProjection });
   }
 
   // ToDo: Add unit tests
   async getAllImportableDocumentsMetadata(importSource, useMockData) {
     const { baseUrl, apiKey } = importSource;
+    const importDomain = new URL(baseUrl).hostname;
 
     const exportableDocuments = await this.exportApiClient.getExports({ baseUrl, apiKey });
-    const importedDocuments = useMockData ? mockImportedDocuments : await this.getAllImportedDocumentsMetadata(importSource.name);
+    const importedDocuments = useMockData ? mockImportedDocuments : await this.getAllImportedDocumentsMetadata(importDomain);
 
     const importableDocuments = exportableDocuments
       .map(exportableDocument => {

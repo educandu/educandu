@@ -1,12 +1,11 @@
-import express from 'express';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ImportService from '../services/import-service.js';
 import ExportApiClient from '../services/export-api-client.js';
+import { validateQuery } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-
-const jsonParser = express.json();
+import { getImportsQuerySchema } from '../domain/schemas/import-schemas.js';
 
 class ImportController {
   static get inject() { return [ImportService, ExportApiClient, ServerConfig, PageRenderer]; }
@@ -26,13 +25,11 @@ class ImportController {
   }
 
   registerApi(router) {
-    router.get('/api/v1/imports', [needsPermission(permissions.MANAGE_IMPORT), jsonParser], async (req, res) => {
-      // ToDo: Validate query params are all provided
-      // ToDo: set external/name from hostname
+    router.get('/api/v1/imports', [needsPermission(permissions.MANAGE_IMPORT), validateQuery(getImportsQuerySchema)], async (req, res) => {
       const importSource = {
-        name: req.query.name,
-        baseUrl: req.query.baseUrl,
-        apiKey: req.query.apiKey
+        name: req.query.importSourceName,
+        baseUrl: req.query.importSourceBaseUrl,
+        apiKey: req.query.importSourceApiKey
       };
 
       const documents = await this.importService.getAllImportableDocumentsMetadata(importSource, true);

@@ -8,11 +8,13 @@ class ExportApiClient {
   }
 
   getImports(importSource) {
-    const { name, baseUrl, apiKey } = importSource;
-
     return this.httpClient
       .get('/api/v1/imports')
-      .query({ name, baseUrl, apiKey })
+      .query({
+        importSourceName: importSource.name,
+        importSourceBaseUrl: importSource.baseUrl,
+        importSourceApiKey: importSource.apiKey
+      })
       .accept('json')
       .then(res => res.body);
   }
