@@ -4,18 +4,18 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import urls from '../../utils/urls.js';
+import Restricted from '../restricted.js';
 import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
-import { withUser } from '../user-context.js';
 import { Button, Slider, message } from 'antd';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
+import permissions from '../../domain/permissions.js';
 import { withLanguage } from '../language-context.js';
 import { HARD_DELETE } from '../../ui/section-actions.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
@@ -130,7 +130,7 @@ class Doc extends React.Component {
   }
 
   render() {
-    const { t, user } = this.props;
+    const { t } = this.props;
     const { revisions, currentRevision } = this.state;
 
     const marks = revisions.reduce((accu, item, index) => {
@@ -140,7 +140,6 @@ class Doc extends React.Component {
 
     const currentRevisionIndex = revisions.indexOf(currentRevision);
     const isCurrentRevisionLatestRevision = currentRevisionIndex === revisions.length - 1;
-    const canRestoreRevisions = hasUserPermission(user, permissions.RESTORE_DOC_REVISIONS);
 
     const revisionPicker = (
       <div className="DocPage-revisionPicker">
@@ -165,7 +164,7 @@ class Doc extends React.Component {
             >
             {t('permalink')}
           </Button>
-          {canRestoreRevisions && (
+          <Restricted to={permissions.RESTORE_DOC_REVISIONS}>
             <Button
               className="DocPage-revisionPickerButton"
               type="primary"
@@ -174,7 +173,8 @@ class Doc extends React.Component {
               disabled={isCurrentRevisionLatestRevision}
               >
               {t('restore')}
-            </Button>)}
+            </Button>
+          </Restricted>
         </div>
       </div>
     );
@@ -224,7 +224,7 @@ Doc.propTypes = {
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
-export default withTranslation('doc')(withLanguage(withUser(inject({
+export default withTranslation('doc')(withLanguage(inject({
   documentApiClient: DocumentApiClient,
   languageNameProvider: LanguageNameProvider
-}, Doc))));
+}, Doc)));
