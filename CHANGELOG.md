@@ -6,9 +6,15 @@
 
 **Merged pull requests:**
 
+- [EDU-95](https://educandu.atlassian.net/browse/EDU-95) Allow null initial user [\#45](https://github.com/educandu/educandu/pull/45) ([laurentiu-ilici](https://github.com/laurentiu-ilici))
+- [EDU-117](https://educandu.atlassian.net/browse/EDU-117) Fix showing revisions slider for non admin users [\#44](https://github.com/educandu/educandu/pull/44) ([adrianaluchian](https://github.com/adrianaluchian))
+- [EDU-116](https://educandu.atlassian.net/browse/EDU-116) Pin mongodb at version 4.1.4 [\#42](https://github.com/educandu/educandu/pull/42) ([ahelmberger](https://github.com/ahelmberger))
+- [EDU-115](https://educandu.atlassian.net/browse/EDU-115) Remove `env` from client config [\#41](https://github.com/educandu/educandu/pull/41) ([ahelmberger](https://github.com/ahelmberger))
+- [EDU-100](https://educandu.atlassian.net/browse/EDU-100) Fix migration bug [\#40](https://github.com/educandu/educandu/pull/40) ([laurentiu-ilici](https://github.com/laurentiu-ilici))
 - [EDU-106](https://educandu.atlassian.net/browse/EDU-106) Enable API key authentication [\#38](https://github.com/educandu/educandu/pull/38) ([ahelmberger](https://github.com/ahelmberger))
 - [EDU-88](https://educandu.atlassian.net/browse/EDU-88) adaptible styles [\#37](https://github.com/educandu/educandu/pull/37) ([laurentiu-ilici](https://github.com/laurentiu-ilici))
 - [EDU-108](https://educandu.atlassian.net/browse/EDU-108) Fix duplicate key issue [\#36](https://github.com/educandu/educandu/pull/36) ([adrianaluchian](https://github.com/adrianaluchian))
+- [EDU-100](https://educandu.atlassian.net/browse/EDU-100)-migrate-cdn-resources [\#35](https://github.com/educandu/educandu/pull/35) ([laurentiu-ilici](https://github.com/laurentiu-ilici))
 - [EDU-99](https://educandu.atlassian.net/browse/EDU-99) Collect CDN resources [\#34](https://github.com/educandu/educandu/pull/34) ([ahelmberger](https://github.com/ahelmberger))
 - [EDU-103](https://educandu.atlassian.net/browse/EDU-103) Do a full page refresh \(without using the cache\) when home page is loaded from cache [\#33](https://github.com/educandu/educandu/pull/33) ([adrianaluchian](https://github.com/adrianaluchian))
 - [EDU-102](https://educandu.atlassian.net/browse/EDU-102) Add import config [\#32](https://github.com/educandu/educandu/pull/32) ([adrianaluchian](https://github.com/adrianaluchian))
