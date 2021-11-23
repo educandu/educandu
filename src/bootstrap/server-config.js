@@ -54,7 +54,8 @@ class ServerConfig {
 
   exportClientConfigValues() {
     return {
-      cdnRootUrl: this.cdnRootUrl
+      cdnRootUrl: this.cdnRootUrl,
+      importSources: this.importSources.map(({ name, baseUrl }) => ({ name, baseUrl }))
     };
   }
 }

@@ -7,9 +7,11 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, Button, Table, Select } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import { inject, useService } from '../container-context.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
+import { clientConfigProps } from '../../ui/default-prop-types.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
@@ -17,14 +19,14 @@ import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 
 const logger = new Logger(import.meta.url);
 
-function Import({ initialState, importApiClient }) {
+function Import({ clientConfig, importApiClient }) {
   const { t } = useTranslation('import');
 
   const { language } = useLanguage();
   const { formatDate } = useDateFormat();
   const languageNameProvider = useService(LanguageNameProvider);
 
-  const sourceMenuItems = initialState.importSources;
+  const sourceMenuItems = clientConfig.importSources;
   const [selectedSource, setSelectedSource] = useState(null);
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
@@ -140,15 +142,11 @@ function Import({ initialState, importApiClient }) {
 }
 
 Import.propTypes = {
-  importApiClient: PropTypes.instanceOf(ImportApiClient).isRequired,
-  initialState: PropTypes.shape({
-    importSources: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      baseUrl: PropTypes.string.isRequired
-    })).isRequired
-  }).isRequired
+  ...clientConfigProps,
+  importApiClient: PropTypes.instanceOf(ImportApiClient).isRequired
 };
 
 export default inject({
+  clientConfig: ClientConfig,
   importApiClient: ImportApiClient
 }, Import);

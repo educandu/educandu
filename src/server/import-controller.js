@@ -17,8 +17,7 @@ class ImportController {
 
   registerPages(app) {
     app.get('/import', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      const importSources = this.serverConfig.importSources.map(source => ({ name: source.name, baseUrl: source.baseUrl }));
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import', { importSources });
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import');
     });
   }
 
