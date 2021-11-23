@@ -39,7 +39,7 @@ jobs:
           node-version: "16.11.0"
           cache: "yarn"
       - name: Install github changelog generator
-        run: gem install github_changelog_generator
+        run: sudo gem install github_changelog_generator
       - name: Install node modules
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Lint
