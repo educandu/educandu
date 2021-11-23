@@ -27,6 +27,7 @@ function Import({ initialState, importApiClient }) {
   const [selectedSource, setSelectedSource] = useState(null);
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
+  const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
 
   const handleImportClick = () => {
     const tasks = selectedDocumentKeys
@@ -40,6 +41,7 @@ function Import({ initialState, importApiClient }) {
   };
 
   const handleSourceMenuChange = async value => {
+    setIsFetchingImportableDocuments(true);
     const newSelectedSource = sourceMenuItems.find(source => source.name === value);
     setSelectedSource(newSelectedSource);
     setImportableDocuments([]);
@@ -47,6 +49,7 @@ function Import({ initialState, importApiClient }) {
 
     const { documents } = await importApiClient.getImports(newSelectedSource);
     setImportableDocuments(documents);
+    setIsFetchingImportableDocuments(false);
   };
 
   const renderImportType = doc => {
@@ -70,8 +73,8 @@ function Import({ initialState, importApiClient }) {
   };
 
   const renderLanguage = doc => {
-    const langaugesData = languageNameProvider.getData(language);
-    const documentLanguageData = langaugesData[doc.language];
+    const languagesData = languageNameProvider.getData(language);
+    const documentLanguageData = languagesData[doc.language];
     return <CountryFlagAndName code={documentLanguageData.flag} name={documentLanguageData.name} flagOnly />;
   };
 
@@ -92,9 +95,6 @@ function Import({ initialState, importApiClient }) {
     }
   };
 
-  const showSpinner = !!selectedSource && importableDocuments.length === 0;
-  const showTable = importableDocuments.length > 0;
-
   return (
     <Page>
       <div className="ImportPage">
@@ -105,7 +105,7 @@ function Import({ initialState, importApiClient }) {
           className="ImportPage-source"
           onChange={handleSourceMenuChange}
           defaultValue={null}
-          disabled={showSpinner}
+          disabled={isFetchingImportableDocuments}
           >
           {sourceMenuItems
             .map(importSource => (
@@ -116,27 +116,24 @@ function Import({ initialState, importApiClient }) {
         </Select>
         <br /> <br />
 
-        {showSpinner && <Spin className="ImportPage-spinner" size="large" />}
+        {isFetchingImportableDocuments && <Spin className="ImportPage-spinner" size="large" />}
 
-        {showTable && (
-          <React.Fragment>
-            <Table
-              size="small"
-              rowSelection={{
-                type: 'checkbox',
-                ...tableRowSelection
-              }}
-              columns={columns}
-              dataSource={importableDocuments}
-              pagination={false}
-              bordered
-              />
-            <br />
-            <Button type="primary" disabled={!selectedDocumentKeys.length} onClick={handleImportClick}>
-              {t('importButton')}
-            </Button>
-          </React.Fragment>
-        )}
+        <Table
+          size="small"
+          rowSelection={{
+            type: 'checkbox',
+            ...tableRowSelection
+          }}
+          columns={columns}
+          dataSource={importableDocuments}
+          pagination={false}
+          bordered
+          no-data={importableDocuments.length === 0}
+          />
+        <br />
+        <Button type="primary" disabled={!selectedDocumentKeys.length} onClick={handleImportClick}>
+          {t('importButton')}
+        </Button>
       </div>
     </Page>
   );
