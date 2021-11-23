@@ -50,7 +50,7 @@ function Import({ initialState, importApiClient }) {
   };
 
   const renderImportType = doc => {
-    let icon = doc.importType;
+    let icon = null;
     if (doc.importType === DOCUMENT_IMPORT_TYPE.add) {
       icon = <CloudDownloadOutlined />;
     }
