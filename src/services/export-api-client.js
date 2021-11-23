@@ -1,4 +1,6 @@
 import HttpClient from './http-client.js';
+import Database from '../stores/database.js';
+import { API_KEY_HEADER } from '../domain/api-key-strategy.js';
 
 const mockDocuments = [
   {
@@ -21,17 +23,19 @@ const mockDocuments = [
   }
 ];
 class ExportApiClient {
-  static inject() { return [HttpClient]; }
+  static inject() { return [HttpClient, Database]; }
 
-  constructor(httpClient) {
+  constructor(httpClient, database) {
     this.httpClient = httpClient;
+    this.database = database;
   }
 
   getExports({ baseUrl, apiKey }) {
     return mockDocuments
       || this.httpClient
         .get(`${baseUrl}/api/v1/exports`)
-        .set('X-API-Key', apiKey)
+        .query({ databaseSchemaHash: this.database.schemaHash })
+        .set(API_KEY_HEADER, apiKey)
         .accept('json')
         .then(res => res.body);
   }
