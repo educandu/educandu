@@ -5,7 +5,7 @@ import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import { Tooltip, Button, Table, Select, Spin } from 'antd';
+import { Tooltip, Button, Table, Select } from 'antd';
 import { inject, useService } from '../container-context.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
@@ -95,6 +95,8 @@ function Import({ initialState, importApiClient }) {
     }
   };
 
+  const importSourceOptions = sourceMenuItems.map(item => ({ label: item.name, value: item.name }));
+
   return (
     <Page>
       <div className="ImportPage">
@@ -106,28 +108,21 @@ function Import({ initialState, importApiClient }) {
           onChange={handleSourceMenuChange}
           defaultValue={null}
           disabled={isFetchingImportableDocuments}
-          >
-          {sourceMenuItems
-            .map(importSource => (
-              <Select.Option value={importSource.name} key={importSource.name}>
-                {importSource.name}
-              </Select.Option>
-            ))}
-        </Select>
+          options={importSourceOptions}
+          />
         <br /> <br />
 
-        {isFetchingImportableDocuments && <Spin className="ImportPage-spinner" size="large" />}
-
         <Table
+          bordered
           size="small"
           rowSelection={{
             type: 'checkbox',
             ...tableRowSelection
           }}
           columns={columns}
-          dataSource={importableDocuments}
           pagination={false}
-          bordered
+          dataSource={importableDocuments}
+          loading={isFetchingImportableDocuments}
           no-data={importableDocuments.length === 0}
           />
         <br />

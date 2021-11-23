@@ -376,7 +376,7 @@
     "namespace": "import",
     "language": "de",
     "resources": {
-      "importButton": "Import anfangen",
+      "importButton": "Import starten",
       "import": "Importieren",
       "importType": "Import-Typ",
       "title": "Titel",
