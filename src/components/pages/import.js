@@ -5,14 +5,14 @@ import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { Tooltip, Button, Table, Select, Spin } from 'antd';
 import { inject, useService } from '../container-context.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
-import { Tooltip, Button, Table, Menu, Dropdown, Spin } from 'antd';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
-import { DownOutlined, CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
+import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 
 const logger = new Logger(import.meta.url);
 
@@ -23,9 +23,8 @@ function Import({ initialState, importApiClient }) {
   const { formatDate } = useDateFormat();
   const languageNameProvider = useService(LanguageNameProvider);
 
-  const defaultSourceMenuItem = { name: t('source') };
-  const sourceMenuItems = [defaultSourceMenuItem, ...initialState.importSources];
-  const [selectedSource, setSelectedSource] = useState(defaultSourceMenuItem);
+  const sourceMenuItems = initialState.importSources;
+  const [selectedSource, setSelectedSource] = useState(null);
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
 
@@ -40,15 +39,11 @@ function Import({ initialState, importApiClient }) {
     logger.info(`Dummy import sets tasks: ${JSON.stringify(tasks)}`);
   };
 
-  const handleSourceMenuClick = async ({ key }) => {
-    const newSelectedSource = sourceMenuItems.find(source => source.name === key);
+  const handleSourceMenuChange = async value => {
+    const newSelectedSource = sourceMenuItems.find(source => source.name === value);
     setSelectedSource(newSelectedSource);
     setImportableDocuments([]);
     setSelectedDocumentKeys([]);
-
-    if (newSelectedSource === defaultSourceMenuItem) {
-      return;
-    }
 
     const { documents } = await importApiClient.getImports(newSelectedSource);
     setImportableDocuments(documents);
@@ -97,18 +92,7 @@ function Import({ initialState, importApiClient }) {
     }
   };
 
-  const sourceMenu = (
-    <Menu onClick={handleSourceMenuClick}>
-      {sourceMenuItems
-        .map(importSource => (
-          <Menu.Item key={importSource.name}>
-            {importSource.name}
-          </Menu.Item>
-        ))}
-    </Menu>
-  );
-
-  const showSpinner = selectedSource.name !== defaultSourceMenuItem.name && importableDocuments.length === 0;
+  const showSpinner = !!selectedSource && importableDocuments.length === 0;
   const showTable = importableDocuments.length > 0;
 
   return (
@@ -116,11 +100,20 @@ function Import({ initialState, importApiClient }) {
       <div className="ImportPage">
         <h1>{t('pageNames:import')}</h1>
 
-        <Dropdown overlay={sourceMenu} placement="bottomLeft">
-          <Button className="ImportPage-sourceButton" disabled={showSpinner}>
-            {selectedSource.name}<DownOutlined />
-          </Button>
-        </Dropdown>
+        <Select
+          placeholder={t('source')}
+          className="ImportPage-source"
+          onChange={handleSourceMenuChange}
+          defaultValue={null}
+          disabled={showSpinner}
+          >
+          {sourceMenuItems
+            .map(importSource => (
+              <Select.Option value={importSource.name} key={importSource.name}>
+                {importSource.name}
+              </Select.Option>
+            ))}
+        </Select>
         <br /> <br />
 
         {showSpinner && <Spin className="ImportPage-spinner" size="large" />}
