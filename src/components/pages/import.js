@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, Button, Table, Select } from 'antd';
+import { handleApiError } from '../../ui/error-helper.js';
 import { inject, useService } from '../container-context.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
@@ -47,8 +48,12 @@ function Import({ initialState, importApiClient }) {
     setImportableDocuments([]);
     setSelectedDocumentKeys([]);
 
-    const { documents } = await importApiClient.getImports(newSelectedSource.name);
-    setImportableDocuments(documents);
+    try {
+      const { documents } = await importApiClient.getImports(newSelectedSource.name);
+      setImportableDocuments(documents);
+    } catch (error) {
+      handleApiError({ error, t });
+    }
     setIsFetchingImportableDocuments(false);
   };
 
