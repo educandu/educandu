@@ -66,7 +66,7 @@ function Import({ initialState, importApiClient }) {
     }
 
     const url = `${selectedSource.baseUrl}${urls.getArticleUrl(doc.slug)}`;
-    return <a href={url}>{doc.title}</a>;
+    return <a href={url} target="_blank" rel="noopener noreferrer" >{doc.title}</a>;
   };
 
   const renderLanguage = doc => {
