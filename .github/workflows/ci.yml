@@ -51,7 +51,7 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v2
       - name: Publish changelog
-        run: gh release create 0.2.0 --notes-file CHANGELOG.md --title 0.3.0
+        run: gh release create 0.3.0 --notes-file CHANGELOG.md --title 0.3.0
   publish-prerelease:
     runs-on: ubuntu-20.04
     needs: [verify]
