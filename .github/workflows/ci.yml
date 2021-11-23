@@ -38,18 +38,18 @@ jobs:
         with:
           node-version: "16.11.0"
           cache: "yarn"
-      # - name: Install node modules
-      #   run: yarn install --non-interactive --check-files --frozen-lockfile
+      - name: Install node modules
+        run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Install github changelog generator
         run: sudo gem install github_changelog_generator
       - name: Export github token
         run: export CHANGELOG_GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}}
-      # - name: Lint
-      #   run: ./node_modules/.bin/gulp lint
-      # - name: Test
-      #   run: ./node_modules/.bin/gulp test
-      # - name: Codecov
-      #   uses: codecov/codecov-action@v2
+      - name: Lint
+        run: ./node_modules/.bin/gulp lint
+      - name: Test
+        run: ./node_modules/.bin/gulp test
+      - name: Codecov
+        uses: codecov/codecov-action@v2
       - name: Build release notes
         run:  ./node_modules/.bin/gulp generateChangelog
       - name: Authenticate for changelog
