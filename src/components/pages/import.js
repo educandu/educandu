@@ -47,7 +47,7 @@ function Import({ initialState, importApiClient }) {
     setImportableDocuments([]);
     setSelectedDocumentKeys([]);
 
-    const { documents } = await importApiClient.getImports(newSelectedSource);
+    const { documents } = await importApiClient.getImports(newSelectedSource.name);
     setImportableDocuments(documents);
     setIsFetchingImportableDocuments(false);
   };
@@ -139,8 +139,7 @@ Import.propTypes = {
   initialState: PropTypes.shape({
     importSources: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
-      baseUrl: PropTypes.string.isRequired,
-      apiKey: PropTypes.string.isRequired
+      baseUrl: PropTypes.string.isRequired
     })).isRequired
   }).isRequired
 };

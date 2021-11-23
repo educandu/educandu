@@ -7,14 +7,10 @@ class ImportApiClient {
     this.httpClient = httpClient;
   }
 
-  getImports(importSource) {
+  getImports(importSourceName) {
     return this.httpClient
       .get('/api/v1/imports')
-      .query({
-        importSourceName: importSource.name,
-        importSourceBaseUrl: importSource.baseUrl,
-        importSourceApiKey: importSource.apiKey
-      })
+      .query({ importSourceName })
       .accept('json')
       .then(res => res.body);
   }
