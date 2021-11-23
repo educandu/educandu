@@ -393,7 +393,7 @@ export const up = gulp.series(mongoUp, minioUp, maildevUp);
 export const down = gulp.parallel(mongoDown, minioDown, maildevDown);
 export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startServer);
 
-export const ci = gulp.series(clean, lint, test, build);
+export const ci = gulp.series(clean, lint, test, build, generateChangelog);
 
 export function setupWatchers(done) {
   gulp.watch(['src/**/*.{js,json}', 'test-app/**/*.{js,json}', '!test-app/dist/**'], gulp.series(buildTestAppJs, restartServer));
