@@ -1,4 +1,5 @@
 import url from 'url';
+import md5 from 'md5';
 import path from 'path';
 import glob from 'glob';
 import { promisify } from 'util';
@@ -113,6 +114,14 @@ class Database {
     umzug.on('migrated', ({ name }) => logger.info(`Finished migrating ${name}`));
 
     await umzug.up();
+  }
+
+  async generateSchemaHash() {
+    const migrations = await this._db.collection('migrations').find({}).toArray();
+    const migrationNames = migrations.map(migration => migration.name).join();
+    this.schemaHash = md5(migrationNames);
+
+    return this.schemaHash;
   }
 
   static async create({ connectionString }) {
