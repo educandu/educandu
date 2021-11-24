@@ -87,6 +87,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     env:
       NODE_ENV: development
+      CHANGELOG_GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
       - name: Get tag
         id: tag
@@ -104,8 +105,6 @@ jobs:
         run: ./node_modules/.bin/gulp build
       - name: Install github changelog generator
         run: sudo gem install github_changelog_generator
-      - name: Export github token
-        run: export CHANGELOG_GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}}
       - name: Build release notes
         run:  ./node_modules/.bin/gulp generateChangelog
       - name: Authenticate for changelog
