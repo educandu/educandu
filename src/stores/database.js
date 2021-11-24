@@ -118,7 +118,7 @@ class Database {
 
   async generateSchemaHash() {
     const migrations = await this._db.collection('migrations').find({}).toArray();
-    const migrationNames = migrations.map(migration => migration.name).join();
+    const migrationNames = migrations.map(migration => migration.name).sort().join();
     this.schemaHash = md5(migrationNames);
 
     return this.schemaHash;
