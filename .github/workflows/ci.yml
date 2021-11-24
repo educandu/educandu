@@ -70,9 +70,6 @@ jobs:
         run: sudo gem install github_changelog_generator
       - name: Build release notes
         run:  ./node_modules/.bin/gulp generateChangelog
-      - name: Write github token to file
-        run: |
-          echo "$CHANGELOG_GITHUB_TOKEN" > gitToken.txt
       - name: Authenticate for changelog
         run:  echo "$CHANGELOG_GITHUB_TOKEN" | gh auth login --with-token
       - name: Publish changelog
