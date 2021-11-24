@@ -103,7 +103,11 @@ SpecialPageSettings.propTypes = {
     documentShape
   ])).isRequired,
   onChange: PropTypes.func.isRequired,
-  settings: PropTypes.objectOf(settingsDocumentShape).isRequired
+  settings: PropTypes.objectOf(settingsDocumentShape)
+};
+
+SpecialPageSettings.defaultProps = {
+  settings: {}
 };
 
 export default memo(SpecialPageSettings);

@@ -4,7 +4,6 @@ import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
-import ServerConfig from '../bootstrap/server-config.js';
 import SettingService from '../services/setting-service.js';
 import DocumentService from '../services/document-service.js';
 import { validateBody } from '../domain/validation-middleware.js';
@@ -14,10 +13,9 @@ import { saveSettingsBodySchema } from '../domain/schemas/settings-schemas.js';
 const jsonParser = express.json();
 
 class SettingController {
-  static get inject() { return [ServerConfig, Database, SettingService, DocumentService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [Database, SettingService, DocumentService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, database, settingService, documentService, mailService, clientDataMapper, pageRenderer) {
-    this.serverConfig = serverConfig;
+  constructor(database, settingService, documentService, mailService, clientDataMapper, pageRenderer) {
     this.database = database;
     this.settingService = settingService;
     this.documentService = documentService;

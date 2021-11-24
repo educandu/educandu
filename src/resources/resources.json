@@ -358,6 +358,36 @@
     }
   },
   {
+    "namespace": "import",
+    "language": "en",
+    "resources": {
+      "importButton": "Start import",
+      "import": "Import",
+      "importType": "Import type",
+      "title": "Title",
+      "language": "Language",
+      "updateDate": "Update date",
+      "source": "Choose source",
+      "add": "Add",
+      "update": "Update"
+    }
+  },
+  {
+    "namespace": "import",
+    "language": "de",
+    "resources": {
+      "importButton": "Import starten",
+      "import": "Importieren",
+      "importType": "Import-Typ",
+      "title": "Titel",
+      "language": "Sprache",
+      "updateDate": "Update-Datum",
+      "source": "Quelle wählen",
+      "add": "Hinzufügen",
+      "update": "Aktualisieren"
+    }
+  },
+  {
     "namespace": "index",
     "language": "en",
     "resources": {
@@ -1189,6 +1219,7 @@
       "users": "Users",
       "account": "My account",
       "settings": "Settings",
+      "import": "Import",
       "docs": "Documents"
     }
   },
@@ -1200,6 +1231,7 @@
       "users": "Benutzer",
       "account": "Mein Konto",
       "settings": "Einstellungen",
+      "import": "Import",
       "docs": "Dokumente"
     }
   },

@@ -41,15 +41,6 @@ const searchResultsProjection = {
   language: 1
 };
 
-const exportableDocumentsProjection = {
-  key: 1,
-  revision: 1,
-  updatedOn: 1,
-  title: 1,
-  slug: 1,
-  language: 1
-};
-
 const getTagsQuery = searchString => [
   { $unwind: '$tags' },
   {
@@ -102,15 +93,6 @@ class DocumentService {
       filter.archived = false;
     }
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: metadataProjection });
-  }
-
-  getAllExportableDocumentsMetadata() {
-    const filter = {
-      archived: false,
-      origin: DOCUMENT_ORIGIN.internal
-    };
-
-    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: exportableDocumentsProjection });
   }
 
   async getDocumentsByTags(searchQuery, { includeArchived } = {}) {

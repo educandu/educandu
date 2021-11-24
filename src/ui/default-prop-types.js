@@ -19,7 +19,11 @@ export const sectionEditorProps = {
 export const clientConfigProps = {
   clientConfig: PropTypes.shape({
     cdnRootUrl: PropTypes.string.isRequired
-  }).isRequired
+  }).isRequired,
+  importSources: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    baseUrl: PropTypes.string.isRequired
+  }))
 };
 
 export const requestProps = {
