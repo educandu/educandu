@@ -57,8 +57,6 @@ jobs:
       CHANGELOG_GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
     steps:
-      - name: Echo CHANGELOG_GITHUB_TOKEN
-        run: echo "$CHANGELOG_GITHUB_TOKEN"
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
