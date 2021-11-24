@@ -52,8 +52,11 @@ jobs:
         uses: codecov/codecov-action@v2
       - name: Build release notes
         run:  ./node_modules/.bin/gulp generateChangelog
+      - name: Write github token
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" > gitToken.txt
       - name: Authenticate for changelog
-        run: gh auth login --with-token ${{ secrets.GITHUG_TOKEN }}
+        run: gh auth login --with-token < gitToken.txt
       - name: Publish changelog
         run: gh release create 0.3.0 --notes-file CHANGELOG.md --title 0.3.0
   publish-prerelease:
