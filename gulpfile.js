@@ -376,13 +376,24 @@ export function restartServer(done) {
   }
 }
 
+export function runGithubChangelogGenerator() {
+  return execa.command('github_changelog_generator -u educandu -p educandu --since-tag 0.1.0 --no-author', { stdio: 'inherit' });
+}
+
+export async function generateJiraLinks() {
+  const changeLog = await fs.readFile('CHANGELOG.md', 'utf8');
+  const replacedChangeLog = changeLog.replace(/EDU-\d+/g, num => `[${num}](https://educandu.atlassian.net/browse/${num})`);
+  await fs.writeFile('CHANGELOG.md', replacedChangeLog, 'utf8');
+}
+
+export const generateChangelog = gulp.series(runGithubChangelogGenerator, generateJiraLinks);
+
 export const up = gulp.series(mongoUp, minioUp, maildevUp);
 
 export const down = gulp.parallel(mongoDown, minioDown, maildevDown);
-
 export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startServer);
 
-export const ci = gulp.series(clean, lint, test, build);
+export const ci = gulp.series(clean, lint, test, build, generateChangelog);
 
 export function setupWatchers(done) {
   gulp.watch(['src/**/*.{js,json}', 'test-app/**/*.{js,json}', '!test-app/dist/**'], gulp.series(buildTestAppJs, restartServer));
