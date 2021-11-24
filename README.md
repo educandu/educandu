@@ -47,7 +47,6 @@ Use it in code as follows:
 import educandu from '@educandu/educandu';
 
 educandu({
-  env: 'integration',
   port: 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   skipMongoMigrations: process.env.TEST_APP_SKIP_MONGO_MIGRATIONS === true.toString(),

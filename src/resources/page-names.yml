@@ -10,6 +10,9 @@ account:
 settings:
   en: Settings
   de: Einstellungen
+import:
+  en: Import
+  de: Import
 docs:
   en: Documents
   de: Dokumente

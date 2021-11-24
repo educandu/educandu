@@ -1,8 +1,8 @@
 import { ROLE } from './role.js';
-import { exchangeUser } from './built-in-users.js';
+import { exportUser } from './built-in-users.js';
 import permissions, { hasUserPermission } from './permissions.js';
 
-const isTechnicalPermission = permission => permission === permissions.LIST_EXPORTABLE_CONTENT;
+const isTechnicalPermission = permission => permission === permissions.MANAGE_EXPORT;
 
 describe('permissions', () => {
 
@@ -27,8 +27,8 @@ describe('permissions', () => {
 
     });
 
-    describe('when user is builtin user "exchange"', () => {
-      const adminUser = exchangeUser;
+    describe('when user is builtin user "export"', () => {
+      const adminUser = exportUser;
 
       Object.values(permissions).forEach(permission => {
         let result;

@@ -1,9 +1,9 @@
 import permissions from './permissions.js';
 
-export const exchangeUser = Object.freeze({
-  _id: 'exchange-user',
-  username: 'exchange-user',
-  provider: 'builtin/exchange',
+export const exportUser = Object.freeze({
+  _id: 'export-user',
+  username: 'export-user',
+  provider: 'builtin/export',
   roles: [],
-  permissions: [permissions.LIST_EXPORTABLE_CONTENT]
+  permissions: [permissions.MANAGE_EXPORT]
 });

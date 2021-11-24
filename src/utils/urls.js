@@ -4,6 +4,7 @@ export const homePath = '/';
 export const docsPath = '/docs';
 export const usersPath = '/users';
 export const settingsPath = '/settings';
+export const importPath = '/import';
 export const loginPath = '/login';
 export const logoutPath = '/logout';
 export const accountPath = '/account';
@@ -62,6 +63,10 @@ export function getDocumentRevisionUrl(revisionId) {
 
 export function getSettingsUrl() {
   return settingsPath;
+}
+
+export function getImportUrl() {
+  return importPath;
 }
 
 export function getCompleteRegistrationUrl(verificationCode) {
@@ -156,6 +161,7 @@ export default {
   getArticleUrl,
   getDocumentRevisionUrl,
   getSettingsUrl,
+  getImportUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
   getPluginApiPathPrefix,
