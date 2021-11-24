@@ -13,18 +13,6 @@ const importedDocumentsProjection = {
 
 const lastUpdatedFirst = [['updatedOn', -1]];
 
-const mockImportedDocuments = [
-  {
-    key: 'aZhbdGbTAt1435U5tswQNo',
-    order: 1,
-    revision: 'rABF765a1tvZJvM5yJNjfU',
-    updatedOn: new Date('2021-11-19T09:25:07.426Z'),
-    title: 'Document 1',
-    slug: 'doc-1',
-    language: 'de'
-  }
-];
-
 class ImportService {
   static get inject() {
     return [DocumentStore, ExportApiClient];
@@ -40,12 +28,13 @@ class ImportService {
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: importedDocumentsProjection });
   }
 
-  async getAllImportableDocumentsMetadata(importSource, useMockData) {
+  async getAllImportableDocumentsMetadata(importSource) {
     const { baseUrl, apiKey } = importSource;
     const importDomain = new URL(baseUrl).hostname;
 
-    const exportableDocuments = await this.exportApiClient.getExports({ baseUrl, apiKey });
-    const importedDocuments = useMockData ? mockImportedDocuments : await this.getAllImportedDocumentsMetadata(importDomain);
+    const exportApiClientResponse = await this.exportApiClient.getExports({ baseUrl, apiKey });
+    const exportableDocuments = exportApiClientResponse?.docs || [];
+    const importedDocuments = await this.getAllImportedDocumentsMetadata(importDomain);
 
     const importableDocuments = exportableDocuments
       .map(exportableDocument => {

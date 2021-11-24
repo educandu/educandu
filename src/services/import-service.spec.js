@@ -91,7 +91,7 @@ describe('import-service', () => {
 
     describe('on every call', () => {
       beforeEach(async () => {
-        exportApiClient.getExports.resolves([]);
+        exportApiClient.getExports.resolves({ docs: [] });
         documentStore.find.resolves([]);
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
@@ -114,7 +114,7 @@ describe('import-service', () => {
     describe('when there are no exportable and no already imported documents', () => {
       beforeEach(async () => {
         documentStore.find.resolves([]);
-        exportApiClient.getExports.resolves([]);
+        exportApiClient.getExports.resolves({ docs: [] });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 
@@ -126,7 +126,7 @@ describe('import-service', () => {
     describe('when there are only already imported documents', () => {
       beforeEach(async () => {
         documentStore.find.resolves([{ key: 'key', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]);
-        exportApiClient.getExports.resolves([]);
+        exportApiClient.getExports.resolves({ docs: [] });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 
@@ -138,7 +138,9 @@ describe('import-service', () => {
     describe('when there are only exportable documents', () => {
       beforeEach(async () => {
         documentStore.find.resolves([]);
-        exportApiClient.getExports.resolves([{ key: 'key', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]);
+        exportApiClient.getExports.resolves({
+          docs: [{ key: 'key', revision: 'revision', updatedOn: 'updatedOn', title: 'title', slug: 'slug', language: 'language' }]
+        });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 
@@ -154,11 +156,11 @@ describe('import-service', () => {
           { key: 'key2', revision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a' },
           { key: 'key3', revision: 'revision3a', updatedOn: 'updatedOn3a', title: 'title3a', slug: 'slug3a', language: 'language3a' }
         ]);
-        exportApiClient.getExports.resolves([
+        exportApiClient.getExports.resolves({ docs: [
           { key: 'key1', revision: 'revision1b', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b' },
           { key: 'key2', revision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a' },
           { key: 'key4', revision: 'revision4a', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a' }
-        ]);
+        ] });
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 

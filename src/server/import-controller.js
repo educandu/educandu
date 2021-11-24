@@ -26,18 +26,18 @@ class ImportController {
       const { importSourceName } = req.query;
 
       if (!importSourceName) {
-        res.status(400).send('importSourceName is required');
+        res.status(400).send('importSourceName query param is required');
         return;
       }
 
       const importSource = this.serverConfig.importSources.find(source => source.name === importSourceName);
 
       if (!importSource) {
-        res.status(400).send('importSourceName is unknown');
+        res.status(400).send(`import source ${importSourceName} is unknown`);
         return;
       }
 
-      const documents = await this.importService.getAllImportableDocumentsMetadata(importSource, true);
+      const documents = await this.importService.getAllImportableDocumentsMetadata(importSource);
       res.send({ documents });
     });
   }
