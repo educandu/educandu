@@ -54,6 +54,7 @@ jobs:
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/hotfix')
     env:
       NODE_ENV: development
+      CHANGELOG_GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -66,8 +67,6 @@ jobs:
         run: ./node_modules/.bin/gulp build
       - name: Install github changelog generator
         run: sudo gem install github_changelog_generator
-      - name: Export github token
-        run: export CHANGELOG_GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}}
       - name: Build release notes
         run:  ./node_modules/.bin/gulp generateChangelog
       - name: Write github token to file
