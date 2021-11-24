@@ -1,29 +1,26 @@
 import by from 'thenby';
 import Page from '../page.js';
-import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
-import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { useService } from '../container-context.js';
 import { Tooltip, Button, Table, Select } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { inject, useService } from '../container-context.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
-import { clientConfigProps } from '../../ui/default-prop-types.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 
-const logger = new Logger(import.meta.url);
-
-function Import({ clientConfig, importApiClient }) {
+export default function Import() {
   const { t } = useTranslation('import');
 
   const { language } = useLanguage();
   const { formatDate } = useDateFormat();
+  const clientConfig = useService(ClientConfig);
+  const importApiClient = useService(ImportApiClient);
   const languageNameProvider = useService(LanguageNameProvider);
 
   const sourceMenuItems = clientConfig.importSources;
@@ -31,16 +28,27 @@ function Import({ clientConfig, importApiClient }) {
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
   const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
+  const [isCreatingNewImportBatch, setIsCreatingNewImportBatch] = useState(false);
 
-  const handleImportClick = () => {
-    const tasks = selectedDocumentKeys
-      .map(key => importableDocuments.find(doc => doc.key === key))
-      .map(doc => ({
-        key: doc.key,
-        importedRevision: doc.importedRevision,
-        importableRevision: doc.importableRevision
-      }));
-    logger.info(`Dummy import sets tasks: ${JSON.stringify(tasks)}`);
+  const handleImportClick = async () => {
+    const selectedDocs = selectedDocumentKeys
+      .map(key => importableDocuments.find(doc => doc.key === key));
+
+    const batch = {
+      importSourceName: selectedSource.name,
+      documentsToImport: selectedDocs
+    };
+
+    try {
+      setIsCreatingNewImportBatch(true);
+      const result = await importApiClient.postImportBatch(batch);
+      // eslint-disable-next-line no-console
+      console.log('Batch created', result.batch);
+    } catch (error) {
+      handleApiError({ error, t });
+    } finally {
+      setIsCreatingNewImportBatch(false);
+    }
   };
 
   const handleSourceMenuChange = async value => {
@@ -133,20 +141,10 @@ function Import({ clientConfig, importApiClient }) {
           no-data={importableDocuments.length === 0}
           />
         <br />
-        <Button type="primary" disabled={!selectedDocumentKeys.length} onClick={handleImportClick}>
+        <Button type="primary" disabled={!selectedDocumentKeys.length} loading={isCreatingNewImportBatch} onClick={handleImportClick}>
           {t('importButton')}
         </Button>
       </div>
     </Page>
   );
 }
-
-Import.propTypes = {
-  ...clientConfigProps,
-  importApiClient: PropTypes.instanceOf(ImportApiClient).isRequired
-};
-
-export default inject({
-  clientConfig: ClientConfig,
-  importApiClient: ImportApiClient
-}, Import);

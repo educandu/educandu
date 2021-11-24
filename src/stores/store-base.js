@@ -34,6 +34,14 @@ class StoreBase {
     return Promise.all(items.map(item => this.save(item)));
   }
 
+  insertOne(...args) {
+    return this.collection.insertOne(...args);
+  }
+
+  insertMany(...args) {
+    return this.collection.insertMany(...args);
+  }
+
   updateOne(...args) {
     return this.collection.updateOne(...args);
   }
