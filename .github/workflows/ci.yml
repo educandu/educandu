@@ -73,8 +73,6 @@ jobs:
       - name: Write github token to file
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" > gitToken.txt
-      - name: Authenticate for changelog
-        run:  echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Publish changelog
         run: gh release create "0.0.0-pre.$GITHUB_SHA" --notes-file CHANGELOG.md --title "0.0.0-pre.$GITHUB_SHA"
       - name: Authenticate with npm
