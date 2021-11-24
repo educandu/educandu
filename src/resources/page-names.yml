@@ -13,6 +13,9 @@ settings:
 import:
   en: Import
   de: Import
+imports:
+  en: Imports overview
+  de: Übersicht über Importe
 docs:
   en: Documents
   de: Dokumente

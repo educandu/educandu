@@ -4,7 +4,8 @@ export const homePath = '/';
 export const docsPath = '/docs';
 export const usersPath = '/users';
 export const settingsPath = '/settings';
-export const importPath = '/import';
+export const importsPath = '/imports';
+export const createImportPath = '/imports/create';
 export const loginPath = '/login';
 export const logoutPath = '/logout';
 export const accountPath = '/account';
@@ -65,8 +66,29 @@ export function getSettingsUrl() {
   return settingsPath;
 }
 
-export function getImportUrl() {
-  return importPath;
+export function getImportsUrl() {
+  return importsPath;
+}
+
+export function getCreateImportUrl(sourceName) {
+  const url = new URL(document.location);
+  const keys = [];
+  for (const key of url.searchParams.keys()) {
+    keys.push(key);
+  }
+
+  for (const key of keys) {
+    url.searchParams.delete(key);
+  }
+
+  url.pathname = createImportPath;
+  url.searchParams.append('source', urlencode.encode(sourceName));
+
+  return url.href;
+}
+
+export function getBatchUrl(id) {
+  return concatParts(importsPath, id);
 }
 
 export function getCompleteRegistrationUrl(verificationCode) {
@@ -161,7 +183,8 @@ export default {
   getArticleUrl,
   getDocumentRevisionUrl,
   getSettingsUrl,
-  getImportUrl,
+  getImportsUrl,
+  getCreateImportUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
   getPluginApiPathPrefix,
@@ -175,5 +198,6 @@ export default {
   getResetPasswordUrl,
   createFullyQualifiedUrl,
   getSearchUrl,
-  decodeUrl: urlencode.decode
+  decodeUrl: urlencode.decode,
+  getBatchUrl
 };

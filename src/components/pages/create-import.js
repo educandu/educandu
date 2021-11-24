@@ -2,7 +2,7 @@ import by from 'thenby';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, Button, Table, Select } from 'antd';
@@ -16,18 +16,22 @@ import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
+import { useRequest } from '../request-context.js';
 
 const logger = new Logger(import.meta.url);
 
-function Import({ clientConfig, importApiClient }) {
-  const { t } = useTranslation('import');
+function CreateImport({ clientConfig, importApiClient }) {
+  const { t } = useTranslation('create-import');
 
   const { language } = useLanguage();
   const { formatDate } = useDateFormat();
   const languageNameProvider = useService(LanguageNameProvider);
 
   const sourceMenuItems = clientConfig.importSources;
-  const [selectedSource, setSelectedSource] = useState(null);
+  const { query } = useRequest();
+  const importSourceName = urls.decodeUrl(query.source);
+  const [selectedSource] = useState(sourceMenuItems.find(source => source.name === importSourceName));
+
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
   const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
@@ -43,21 +47,25 @@ function Import({ clientConfig, importApiClient }) {
     logger.info(`Dummy import sets tasks: ${JSON.stringify(tasks)}`);
   };
 
-  const handleSourceMenuChange = async value => {
-    setIsFetchingImportableDocuments(true);
-    const newSelectedSource = sourceMenuItems.find(source => source.name === value);
-    setSelectedSource(newSelectedSource);
-    setImportableDocuments([]);
-    setSelectedDocumentKeys([]);
+  useEffect(() => {
+    const getDocuments = async () => {
+      setIsFetchingImportableDocuments(true);
 
-    try {
-      const { documents } = await importApiClient.getImports(newSelectedSource.name);
-      setImportableDocuments(documents);
-    } catch (error) {
-      handleApiError({ error, t });
-    }
-    setIsFetchingImportableDocuments(false);
-  };
+      setImportableDocuments([]);
+      setSelectedDocumentKeys([]);
+
+      try {
+        const { documents } = await importApiClient.getImports(selectedSource.name);
+        setImportableDocuments(documents);
+      } catch (error) {
+        handleApiError({ error, t });
+      }
+      setIsFetchingImportableDocuments(false);
+    };
+
+    getDocuments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSource]);
 
   const renderImportType = doc => {
     let icon = null;
@@ -67,7 +75,7 @@ function Import({ clientConfig, importApiClient }) {
     if (doc.importType === DOCUMENT_IMPORT_TYPE.update) {
       icon = <CloudSyncOutlined />;
     }
-    return <Tooltip title={t(doc.importType)} className="ImportPage-importType">{icon}</Tooltip>;
+    return <Tooltip title={t(doc.importType)} className="CreateImportPage-importType">{icon}</Tooltip>;
   };
 
   const renderTitle = doc => {
@@ -102,20 +110,16 @@ function Import({ clientConfig, importApiClient }) {
     }
   };
 
-  const importSourceOptions = sourceMenuItems.map(item => ({ label: item.name, value: item.name }));
-
   return (
     <Page>
-      <div className="ImportPage">
+      <div className="CreateImportPage">
         <h1>{t('pageNames:import')}</h1>
 
         <Select
           placeholder={t('source')}
-          className="ImportPage-source"
-          onChange={handleSourceMenuChange}
-          defaultValue={null}
-          disabled={isFetchingImportableDocuments}
-          options={importSourceOptions}
+          className="CreateImportPage-source"
+          defaultValue={importSourceName}
+          disabled
           />
         <br /> <br />
 
@@ -141,7 +145,7 @@ function Import({ clientConfig, importApiClient }) {
   );
 }
 
-Import.propTypes = {
+CreateImport.propTypes = {
   ...clientConfigProps,
   importApiClient: PropTypes.instanceOf(ImportApiClient).isRequired
 };
@@ -149,4 +153,4 @@ Import.propTypes = {
 export default inject({
   clientConfig: ClientConfig,
   importApiClient: ImportApiClient
-}, Import);
+}, CreateImport);

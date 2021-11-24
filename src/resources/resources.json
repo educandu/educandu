@@ -264,6 +264,36 @@
     }
   },
   {
+    "namespace": "createImport",
+    "language": "en",
+    "resources": {
+      "importButton": "Start import",
+      "import": "Import",
+      "importType": "Import type",
+      "title": "Title",
+      "language": "Language",
+      "updateDate": "Update date",
+      "source": "Choose source",
+      "add": "Add",
+      "update": "Update"
+    }
+  },
+  {
+    "namespace": "createImport",
+    "language": "de",
+    "resources": {
+      "importButton": "Import starten",
+      "import": "Importieren",
+      "importType": "Import-Typ",
+      "title": "Titel",
+      "language": "Sprache",
+      "updateDate": "Update-Datum",
+      "source": "Quelle wählen",
+      "add": "Hinzufügen",
+      "update": "Aktualisieren"
+    }
+  },
+  {
     "namespace": "doc",
     "language": "en",
     "resources": {
@@ -358,33 +388,39 @@
     }
   },
   {
-    "namespace": "import",
+    "namespace": "imports",
     "language": "en",
     "resources": {
-      "importButton": "Start import",
-      "import": "Import",
-      "importType": "Import type",
-      "title": "Title",
-      "language": "Language",
-      "updateDate": "Update date",
-      "source": "Choose source",
-      "add": "Add",
-      "update": "Update"
+      "batchId": "Batch",
+      "batchType": "Batch type",
+      "batchStatus": "Batch status",
+      "batchStatusPending": "Pending",
+      "batchStatusDone": "Done",
+      "batchStatusProcessing": "Processing",
+      "viewBatch": "View batch",
+      "batchTypeImportDocument": "Document import",
+      "createdOn": "Created on",
+      "completedOn": "Completed on",
+      "createdBy": "Created by",
+      "createImport": "Create import"
     }
   },
   {
-    "namespace": "import",
+    "namespace": "imports",
     "language": "de",
     "resources": {
-      "importButton": "Import starten",
-      "import": "Importieren",
-      "importType": "Import-Typ",
-      "title": "Titel",
-      "language": "Sprache",
-      "updateDate": "Update-Datum",
-      "source": "Quelle wählen",
-      "add": "Hinzufügen",
-      "update": "Aktualisieren"
+      "batchId": "Chargen",
+      "batchType": "Chargentyp",
+      "batchStatus": "Chargenstatus",
+      "batchStatusPending": "Ausstehend",
+      "batchStatusDone": "Vertig",
+      "batchStatusProcessing": "Wird bearbeitet",
+      "viewBatch": "Chargen ansehen",
+      "batchTypeImportDocument": "Dokumentenimport",
+      "createdOn": "Erstellt am",
+      "completedOn": "Vervollständigt am",
+      "createdBy": "Erstellt von",
+      "createImport": "Import erstellen"
     }
   },
   {
@@ -1220,6 +1256,7 @@
       "account": "My account",
       "settings": "Settings",
       "import": "Import",
+      "imports": "Imports overview",
       "docs": "Documents"
     }
   },
@@ -1232,6 +1269,7 @@
       "account": "Mein Konto",
       "settings": "Einstellungen",
       "import": "Import",
+      "imports": "Übersicht über Importe",
       "docs": "Dokumente"
     }
   },

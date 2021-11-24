@@ -16,8 +16,11 @@ class ImportController {
   }
 
   registerPages(app) {
-    app.get('/import', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import');
+    app.get('/imports', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'imports');
+    });
+    app.get('/imports/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'create-import');
     });
   }
 

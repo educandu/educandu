@@ -115,8 +115,8 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       permission: permissions.EDIT_SETTINGS
     },
     {
-      key: 'import',
-      href: urls.getImportUrl(),
+      key: 'imports',
+      href: urls.getImportsUrl(),
       text: t('pageNames:import'),
       icon: ImportOutlined,
       permission: permissions.MANAGE_IMPORT
