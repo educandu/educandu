@@ -10,7 +10,7 @@ const EDIT_SETTINGS = 'edit-settings';
 const HARD_DELETE_SECTION = 'hard-delete-section';
 const SEE_USER_EMAIL = 'see-user-email';
 const MIGRATE_DATA = 'migrate-data';
-const MANAGE_DOC_REVISIONS = 'manage-doc-revisions';
+const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
 const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
 const MANAGE_EXPORT = 'manage-export';
@@ -26,7 +26,7 @@ const rolesForPermission = {
   [HARD_DELETE_SECTION]: [ROLE.admin],
   [SEE_USER_EMAIL]: [ROLE.admin],
   [MIGRATE_DATA]: [ROLE.admin],
-  [MANAGE_DOC_REVISIONS]: [ROLE.admin],
+  [RESTORE_DOC_REVISIONS]: [ROLE.admin],
   [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
   [MANAGE_IMPORT]: [ROLE.admin]
 };
@@ -49,7 +49,7 @@ export default {
   SEE_USER_EMAIL,
   MIGRATE_DATA,
   MANAGE_ARCHIVED_DOCS,
-  MANAGE_DOC_REVISIONS,
+  RESTORE_DOC_REVISIONS,
   MANAGE_IMPORT,
   MANAGE_EXPORT
 };
