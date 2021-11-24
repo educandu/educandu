@@ -377,7 +377,7 @@ export function restartServer(done) {
 }
 
 export function runGithubChangelogGenerator() {
-  return execa.command('github_changelog_generator -u educandu -p educandu --since-tag 0.1.0 --no-author', { stdio: 'inherit' });
+  return execa.command('github_changelog_generator -u educandu -p educandu --no-author', { stdio: 'inherit' });
 }
 
 export async function generateJiraLinks() {
