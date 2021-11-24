@@ -54,9 +54,11 @@ jobs:
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/hotfix')
     env:
       NODE_ENV: development
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      CHANGELOG_GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
     steps:
+      - name: Echo CHANGELOG_GITHUB_TOKEN
+        run: echo "$CHANGELOG_GITHUB_TOKEN"
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -72,9 +74,9 @@ jobs:
         run:  ./node_modules/.bin/gulp generateChangelog
       - name: Write github token to file
         run: |
-          echo "$GITHUB_TOKEN" > gitToken.txt
+          echo "$CHANGELOG_GITHUB_TOKEN" > gitToken.txt
       - name: Authenticate for changelog
-        run:  echo "$GITHUB_TOKEN" | gh auth login --with-token
+        run:  echo "$CHANGELOG_GITHUB_TOKEN" | gh auth login --with-token
       - name: Publish changelog
         run: gh release create "0.0.0-pre.$GITHUB_SHA" --notes-file CHANGELOG.md --title "0.0.0-pre.$GITHUB_SHA"
       - name: Authenticate with npm
@@ -89,7 +91,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     env:
       NODE_ENV: development
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      CHANGELOG_GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
     steps:
       - name: Get tag
@@ -111,7 +113,7 @@ jobs:
       - name: Build release notes
         run:  ./node_modules/.bin/gulp generateChangelog
       - name: Authenticate for changelog
-        run:  echo "$GITHUB_TOKEN" | gh auth login --with-token
+        run:  echo "$CHANGELOG_GITHUB_TOKEN" | gh auth login --with-token
       - name: Publish changelog
         run: gh release create ${{ steps.tag.outputs.tag }} --notes-file CHANGELOG.md --title ${{ steps.tag.outputs.tag }}
       - name: Authenticate with npm
