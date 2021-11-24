@@ -10,10 +10,12 @@ class ExportApiClient {
     this.database = database;
   }
 
-  getExports({ baseUrl, apiKey }) {
+  async getExports({ baseUrl, apiKey }) {
+    const databaseSchemaHash = await this.database.getSchemaHash();
+
     return this.httpClient
       .get(`${baseUrl}/api/v1/exports`)
-      .query({ databaseSchemaHash: this.database.schemaHash })
+      .query({ databaseSchemaHash })
       .set(API_KEY_HEADER, apiKey)
       .accept('json')
       .then(res => res.body);

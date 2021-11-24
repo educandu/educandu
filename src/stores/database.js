@@ -2,6 +2,7 @@ import url from 'url';
 import md5 from 'md5';
 import path from 'path';
 import glob from 'glob';
+import memoizee from 'memoizee';
 import { promisify } from 'util';
 import { MongoClient } from 'mongodb';
 import Logger from '../common/logger.js';
@@ -36,6 +37,7 @@ const collectionSpecs = [
 class Database {
   constructor(connectionString) {
     this._connectionString = connectionString;
+    this.getSchemaHash = memoizee(this._generateSchemaHash);
   }
 
   async connect() {
@@ -116,12 +118,11 @@ class Database {
     await umzug.up();
   }
 
-  async generateSchemaHash() {
+  async _generateSchemaHash() {
     const migrations = await this._db.collection('migrations').find({}).toArray();
     const migrationNames = migrations.map(migration => migration.name).sort().join();
-    this.schemaHash = md5(migrationNames);
 
-    return this.schemaHash;
+    return md5(migrationNames);
   }
 
   static async create({ connectionString }) {

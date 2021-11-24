@@ -47,9 +47,6 @@ export async function createContainer(configValues = {}) {
     logger.info('Finished database checks successfully');
   }
 
-  const schemaHash = await database.generateSchemaHash();
-  logger.info(`Generated database schema hash: ${schemaHash}`);
-
   logger.info('Registering database');
   container.registerInstance(Database, database);
 
