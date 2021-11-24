@@ -20,14 +20,9 @@ educandu({
   exportApiKey: 'fe160daddb0c44c4963f63ce08272c86',
   importSources: [
     {
-      name: 'ELMU - staging',
-      baseUrl: 'https://staging.elmu.online',
-      apiKey: 'placeholder'
-    },
-    {
-      name: 'Open Music Academy - integration',
-      baseUrl: 'https://integration.openmusic.academy',
-      apiKey: 'placeholder'
+      name: 'Educandu TestApp - local',
+      baseUrl: 'http://localhost:3000',
+      apiKey: 'fe160daddb0c44c4963f63ce08272c86'
     }
   ],
   initialUser: {

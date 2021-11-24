@@ -37,7 +37,7 @@ class ImportController {
         return;
       }
 
-      const documents = await this.importService.getAllImportableDocumentsMetadata(importSource, true);
+      const documents = await this.importService.getAllImportableDocumentsMetadata(importSource);
       res.send({ documents });
     });
   }

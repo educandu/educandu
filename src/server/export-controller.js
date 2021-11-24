@@ -24,7 +24,7 @@ class ExportController {
       const schemaHash = this.database.schemaHash;
 
       if (schemaHash === importingSystemSchemaHash) {
-        docs = await this.documentService.getAllExportableDocumentsMetadata();
+        docs = await this.exportService.getAllExportableDocumentsMetadata();
       }
 
       res.send({ schemaHash, docs });
