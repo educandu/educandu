@@ -46,6 +46,8 @@ jobs:
         run: ./node_modules/.bin/gulp test
       - name: Codecov
         uses: codecov/codecov-action@v2
+      - name: Authenticate for changelog
+        run:  echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
   publish-prerelease:
     runs-on: ubuntu-20.04
     needs: [verify]
@@ -72,7 +74,7 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" > gitToken.txt
       - name: Authenticate for changelog
-        run: gh auth login --with-token < gitToken.txt
+        run:  echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Publish changelog
         run: gh release create "0.0.0-pre.$GITHUB_SHA" --notes-file CHANGELOG.md --title "0.0.0-pre.$GITHUB_SHA"
       - name: Authenticate with npm
@@ -108,11 +110,8 @@ jobs:
         run: export CHANGELOG_GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}}
       - name: Build release notes
         run:  ./node_modules/.bin/gulp generateChangelog
-      - name: Write github token to file
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" > gitToken.txt
       - name: Authenticate for changelog
-        run: gh auth login --with-token < gitToken.txt
+        run:  echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Publish changelog
         run: gh release create ${{ steps.tag.outputs.tag }} --notes-file CHANGELOG.md --title ${{ steps.tag.outputs.tag }}
       - name: Authenticate with npm
