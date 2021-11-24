@@ -58,7 +58,7 @@ jobs:
       - name: Authenticate for changelog
         run: gh auth login --with-token < gitToken.txt
       - name: Publish changelog
-        run: gh release create 0.3.0 --notes-file CHANGELOG.md --title 0.3.0
+        run: gh release create "0.0.0-pre.$GITHUB_SHA" --notes-file CHANGELOG.md --title "0.0.0-pre.$GITHUB_SHA"
   publish-prerelease:
     runs-on: ubuntu-20.04
     needs: [verify]
