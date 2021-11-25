@@ -12,7 +12,7 @@ class MailService {
   }
 
   sendRegistrationVerificationLink({ username, email, verificationLink }) {
-    logger.info('Creating email with registration verification link %s', verificationLink);
+    logger.info(`Creating email with registration verification link ${verificationLink}`);
 
     const germanText
       = 'Willkommen!\n\n'
@@ -46,7 +46,7 @@ class MailService {
   }
 
   sendPasswordResetRequestCompletionLink({ username, email, completionLink }) {
-    logger.info('Creating email with password reset request completion link %s', completionLink);
+    logger.info(`Creating email with password reset request completion link ${completionLink}`);
 
     const germanText
       = `Hallo ${username}!\n\n`
@@ -80,7 +80,7 @@ class MailService {
   }
 
   _sendMail(message) {
-    logger.info('Sending email with subject "%s"', message.subject);
+    logger.info(`Sending email with subject "${message.subject}"`);
     return this.transport.sendMail(message);
   }
 }
