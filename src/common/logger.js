@@ -1,6 +1,5 @@
 /* eslint no-process-env: off */
 
-import acho from 'acho';
 import cookie from './cookie.js';
 import formatErrorM from 'format-error';
 import { isBrowser } from '../ui/browser-helper.js';
@@ -22,40 +21,80 @@ const shortenBrowserUrl = url => {
   }
 };
 
+const logLevels = {
+  fatal: {
+    rank: 1,
+    applyBrowserColor: text => `\u001b[31m${text}\u001b[0m`,
+    applyServerColor: text => `\u001b[31m${text}\u001b[0m`
+  },
+  error: {
+    rank: 2,
+    applyBrowserColor: text => `\u001b[31m${text}\u001b[0m`,
+    applyServerColor: text => `\u001b[31m${text}\u001b[0m`
+  },
+  warn: {
+    rank: 3,
+    applyBrowserColor: text => `\u001b[31m${text}\u001b[0m`,
+    applyServerColor: text => `\u001b[33m${text}\u001b[0m`
+  },
+  info: {
+    rank: 4,
+    applyBrowserColor: text => `\u001b[34m${text}\u001b[0m`,
+    applyServerColor: text => `\u001b[34m${text}\u001b[0m`
+  },
+  debug: {
+    rank: 5,
+    applyBrowserColor: text => `\u001b[30m${text}\u001b[0m`,
+    applyServerColor: text => `\u001b[37m${text}\u001b[0m`
+  }
+};
+
 const logLevel = isBrowser() ? getBrowserLevel() : getServerLevel();
+const logLevelRank = logLevels[logLevel].rank;
 
 class Logger {
   constructor(name) {
-    const realName = isBrowser() ? shortenBrowserUrl(name) : shortenNodeUrl(name);
-    this._acho = acho({
-      level: logLevel,
-      outputMessage: message => `[${new Date().toISOString()}] [${realName}] ${message}`
-    });
+    this.callerPath = isBrowser() ? shortenBrowserUrl(name) : shortenNodeUrl(name);
   }
 
   fatal(...args) {
-    this._acho.fatal(...args.map(explodeError));
+    this._logMessage('fatal', args);
     return this;
   }
 
   error(...args) {
-    this._acho.error(...args.map(explodeError));
+    this._logMessage('error', args);
     return this;
   }
 
   warn(...args) {
-    this._acho.warn(...args.map(explodeError));
+    this._logMessage('warn', args);
     return this;
   }
 
   info(...args) {
-    this._acho.info(...args.map(explodeError));
+    this._logMessage('info', args);
     return this;
   }
 
   debug(...args) {
-    this._acho.debug(...args.map(explodeError));
+    this._logMessage('debug', args);
     return this;
+  }
+
+  _logMessage(messageLogLevel, args) {
+    if (logLevels[messageLogLevel].rank > logLevelRank) {
+      return;
+    }
+
+    const coloredLogLevel = isBrowser()
+      ? logLevels[messageLogLevel].applyBrowserColor(messageLogLevel)
+      : logLevels[messageLogLevel].applyServerColor(messageLogLevel);
+
+    const timestamp = new Date().toISOString();
+
+    // eslint-disable-next-line no-console
+    console.log(`${coloredLogLevel}`, `[${timestamp}] [${this.callerPath}]`, ...args.map(explodeError));
   }
 
 }
