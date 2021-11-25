@@ -48,7 +48,7 @@ const logLevels = {
 };
 
 const logLevel = isBrowser() ? getBrowserLevel() : getServerLevel();
-const logLevelRank = logLevels[logLevel].rank;
+const logLevelRank = logLevels[logLevel]?.rank || logLevels.error.rank;
 
 class Logger {
   constructor(name) {
