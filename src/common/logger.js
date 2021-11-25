@@ -1,21 +1,19 @@
 /* eslint no-process-env: off */
 
 import cookie from './cookie.js';
-import formatErrorM from 'format-error';
 import { isBrowser } from '../ui/browser-helper.js';
 
 const getServerLevel = () => process.env.EDUCANDU_LOG_LEVEL || 'debug';
 const getBrowserLevel = () => cookie.get('EDUCANDU_LOG_LEVEL') || 'debug';
-const formatError = err => formatErrorM.format(err) || err.stack || err.message || err.toString();
-const explodeError = obj => obj instanceof Error ? formatError(obj) : obj;
+
 const shortenNodeUrl = url => {
   const index = url.indexOf('/src/');
   return index === -1 ? url : url.slice(index);
 };
+
 const shortenBrowserUrl = url => {
   try {
-    const urlObject = new URL(url);
-    return urlObject.pathname;
+    return new URL(url).pathname;
   } catch {
     return url;
   }
@@ -94,7 +92,7 @@ class Logger {
     const timestamp = new Date().toISOString();
 
     // eslint-disable-next-line no-console
-    console.log(`${coloredLogLevel}`, `[${timestamp}] [${this.callerPath}]`, ...args.map(explodeError));
+    console.log(`${coloredLogLevel}`, `[${timestamp}] [${this.callerPath}]`, ...args);
   }
 
 }

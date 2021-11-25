@@ -2165,11 +2165,6 @@ color@^4.0.1:
     color-convert "^2.0.1"
     color-string "^1.6.0"
 
-colors@0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/colors/-/colors-0.6.2.tgz#2423fe6678ac0c5dae8852e5d0e5be08c997abcc"
-  integrity sha1-JCP+ZnisDF2uiFLl0OW+CMmXq8w=
-
 colors@~1.2.1:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.2.5.tgz#89c7ad9a374bc030df8013241f68136ed8835afc"
@@ -4055,13 +4050,6 @@ form-data@^3.0.0:
     asynckit "^0.4.0"
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
-
-format-error@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/format-error/-/format-error-1.0.0.tgz#10216af8218707dd79129c4f25e3410baf5d4915"
-  integrity sha1-ECFq+CGHB915EpxPJeNBC69dSRU=
-  dependencies:
-    prettyjson "~0.13.0"
 
 formidable@^1.2.2:
   version "1.2.2"
@@ -6318,11 +6306,6 @@ minimatch@3.0.4, minimatch@^3.0.2, minimatch@^3.0.3, minimatch@^3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimist@0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
-  integrity sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0=
-
 minimist@^1.2.0, minimist@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
@@ -7213,14 +7196,6 @@ pretty-hrtime@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/pretty-hrtime/-/pretty-hrtime-1.0.3.tgz#b7e3ea42435a4c9b2759d99e0f201eb195802ee1"
   integrity sha1-t+PqQkNaTJsnWdmeDyAesZWALuE=
-
-prettyjson@~0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/prettyjson/-/prettyjson-0.13.0.tgz#91e6940a8a94f191f92b256ef551b9f49fadeeff"
-  integrity sha1-keaUCoqU8ZH5KyVu9VG59J+t7v8=
-  dependencies:
-    colors "0.6.2"
-    minimist "0.0.8"
 
 process-nextick-args@^2.0.0, process-nextick-args@~2.0.0:
   version "2.0.1"
