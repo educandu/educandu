@@ -30,7 +30,8 @@ const configSchema = joi.object({
     name: joi.string().required(),
     baseUrl: joi.string().required(),
     apiKey: joi.string().required()
-  }))
+  })),
+  disabledFeatures: joi.array().items(joi.string())
 });
 
 const configDefaults = {
@@ -42,7 +43,8 @@ const configDefaults = {
   publicFolders: [],
   resources: [],
   exposeErrorDetails: false,
-  importSources: []
+  importSources: [],
+  disabledFeatures: []
 };
 
 class ServerConfig {
@@ -55,6 +57,7 @@ class ServerConfig {
   exportClientConfigValues() {
     return {
       cdnRootUrl: this.cdnRootUrl,
+      disabledFeatures: this.disabledFeatures,
       importSources: this.importSources.map(({ name, baseUrl }) => ({ name, baseUrl }))
     };
   }
