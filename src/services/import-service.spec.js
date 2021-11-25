@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import httpErrors from 'http-errors';
 import Database from '../stores/database.js';
 import ImportService from './import-service.js';
 import ExportApiClient from './export-api-client.js';
@@ -6,6 +7,8 @@ import DocumentStore from '../stores/document-store.js';
 import BatchLockStore from '../stores/batch-lock-store.js';
 import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+
+const { BadRequest } = httpErrors;
 
 describe('import-service', () => {
 
@@ -284,7 +287,7 @@ describe('import-service', () => {
       it('should fail the concurrency check', () => {
         expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
           .rejects
-          .toThrowError('Concurrent batch creation for the same source is not allowed');
+          .toThrowError(BadRequest);
       });
     });
 
@@ -296,7 +299,7 @@ describe('import-service', () => {
       it('should fail the unique check', () => {
         expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
           .rejects
-          .toThrowError('Cannot create a new batch while another batch for the same source is still active');
+          .toThrowError(BadRequest);
       });
     });
 

@@ -24,6 +24,8 @@ const importedDocumentsProjection = {
 
 const lastUpdatedFirst = [['updatedOn', -1]];
 
+const CONCURRENT_BATCH_ERROR_MESSAGE = 'Cannot create a new batch while another batch for the same source is still active';
+
 class ImportService {
   static get inject() {
     return [DocumentStore, ExportApiClient, TransactionRunner, BatchStore, TaskStore, BatchLockStore];
@@ -110,7 +112,7 @@ class ImportService {
     try {
       lock = await this.batchLockStore.takeLock(importSource.name);
     } catch (error) {
-      throw new BadRequest('Concurrent batch creation for the same source is not allowed');
+      throw new BadRequest(CONCURRENT_BATCH_ERROR_MESSAGE);
     }
 
     try {
@@ -121,7 +123,7 @@ class ImportService {
       });
 
       if (existingActiveBatch) {
-        throw new BadRequest('Cannot create a new batch while another batch for the same source is still active');
+        throw new BadRequest(CONCURRENT_BATCH_ERROR_MESSAGE);
       }
 
       logger.info('Creating new import batch for source %s containing %n tasks', importSource.name, tasks.length);
