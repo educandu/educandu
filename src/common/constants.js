@@ -15,3 +15,7 @@ export const BATCH_TYPE = {
 export const TASK_TYPE = {
   importDocument: 'import-document'
 };
+
+export const FEATURE_TOGGLES = {
+  import: 'import'
+};

@@ -13,6 +13,8 @@ import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
 import { Trans, useTranslation } from 'react-i18next';
+import ClientConfig from '../bootstrap/client-config.js';
+import { FEATURE_TOGGLES } from '../common/constants.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined } from '@ant-design/icons';
@@ -29,6 +31,7 @@ function createLanguagesToChoose(languageNameProvider, supportedLanguages, langu
 function Page({ children, disableProfileWarning, fullScreen, headerActions, customAlerts }) {
   const user = useUser();
   const settings = useSettings();
+  const clientConfig = useService(ClientConfig);
   const { t, i18n } = useTranslation('page');
   const { supportedLanguages, language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
@@ -113,15 +116,18 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       text: t('pageNames:settings'),
       icon: SettingOutlined,
       permission: permissions.EDIT_SETTINGS
-    },
-    {
+    }
+  ];
+
+  if (!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)) {
+    pageMenuItems.push({
       key: 'import',
       href: urls.getImportUrl(),
       text: t('pageNames:import'),
       icon: ImportOutlined,
       permission: permissions.MANAGE_IMPORT
-    }
-  ];
+    });
+  }
 
   if (settings?.helpPage?.[language]) {
     pageMenuItems.push({

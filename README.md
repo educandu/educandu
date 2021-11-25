@@ -34,6 +34,7 @@ The educandu framework
  | exposeErrorDetails | Whether or not to expose details of thrown errors (e.g. stack trace) | `boolean` | no, defaults to `false` |
  | exportApiKey | The API key used for authorizing incoming requests for fetching data to be imported into another system | `string` | no |
  | importSources | The system from which data can be imported | `[{ name, baseUrl, apiKey }]` | no |
+ | disabledFeatures | A list of names of disabled features | `string[]` | no |
 
 ## How to use
 
