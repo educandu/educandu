@@ -12,7 +12,7 @@ export default async function educandu(options) {
 
   let container = null;
 
-  Graceful.on('exit', async (_event, signal) => {
+  Graceful.on('exit', async signal => {
     logger.info(`Received ${signal} - Starting graceful exit process`);
 
     let hasError = false;

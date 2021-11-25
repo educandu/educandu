@@ -7,6 +7,7 @@ import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
 import resources from '../resources/resources.json';
 import UserService from '../services/user-service.js';
+import TaskScheduler from '../services/task-scheduler.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 const logger = new Logger(import.meta.url);
@@ -85,6 +86,10 @@ export async function createContainer(configValues = {}) {
       logger.info('Initial user sucessfully created');
     }
   }
+
+  logger.info('Starting task scheduler');
+  const taskScheduler = container.get(TaskScheduler);
+  taskScheduler.start();
 
   return container;
 }
