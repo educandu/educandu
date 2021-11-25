@@ -8,9 +8,13 @@ import { MongoClient } from 'mongodb';
 import Logger from '../common/logger.js';
 import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';
+import tasksSpec from './collection-specs/tasks.js';
+import batchesSpec from './collection-specs/batches.js';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
+import taskLocksSpec from './collection-specs/task-locks.js';
+import batchLocksSpec from './collection-specs/batch-locks.js';
 import documentLocksSpec from './collection-specs/document-locks.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
@@ -25,9 +29,13 @@ const logger = new Logger(import.meta.url);
 
 const collectionSpecs = [
   usersSpec,
+  tasksSpec,
+  batchesSpec,
   settingsSpec,
   sessionsSpec,
   documentsSpec,
+  taskLocksSpec,
+  batchLocksSpec,
   documentLocksSpec,
   documentOrdersSpec,
   documentRevisionsSpec,
@@ -48,6 +56,10 @@ class Database {
     collectionSpecs.forEach(spec => {
       this[spec.name] = this._db.collection(spec.name);
     });
+  }
+
+  startSession() {
+    return this._mongoClient.startSession();
   }
 
   async checkDb() {

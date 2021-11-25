@@ -1,7 +1,7 @@
 import joi from 'joi';
 import { slugValidationPattern } from '../../common/validation-patterns.js';
 
-const idOrKeySchema = joi.string().alphanum().min(15).max(30);
+export const idOrKeySchema = joi.string().alphanum().min(15).max(30);
 
 const sectionSchema = joi.object({
   key: idOrKeySchema.required(),
