@@ -171,7 +171,7 @@ class DocumentService {
       let existingDocumentRevisions;
       let ancestorRevision;
 
-      logger.info('Creating new document revision for document key %s', documentKey);
+      logger.info(`Creating new document revision for document key ${documentKey}`);
 
       lock = await this.documentLockStore.takeLock(documentKey);
 
@@ -181,7 +181,7 @@ class DocumentService {
           throw new Error(`Cannot append new revision for key ${documentKey}, because there are no existing revisions`);
         }
 
-        logger.info('Found %d existing revisions for key %s', existingDocumentRevisions.length, documentKey);
+        logger.info(`Found ${existingDocumentRevisions.length} existing revisions for key ${documentKey}`);
         ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
         if (ancestorRevision._id !== ancestorId) {
           throw new Error(`Ancestor id ${ancestorId} is not the latest revision`);
@@ -196,7 +196,7 @@ class DocumentService {
         const ancestorSection = ancestorRevision?.sections.find(s => s.key === sectionKey) || null;
 
         if (ancestorSection) {
-          logger.info('Found ancestor section with key %s', sectionKey);
+          logger.info(`Found ancestor section with key ${sectionKey}`);
 
           if (ancestorSection.type !== section.type) {
             throw new Error(`Ancestor section has type ${ancestorSection.type} and cannot be changed to ${section.type}`);
@@ -208,7 +208,7 @@ class DocumentService {
 
           // If not changed, re-use existing revision:
           if (deepEqual(ancestorSection.content, section.content)) {
-            logger.info('Section has not changed compared to ancestor section with revision %s, using the existing', ancestorSection.revision);
+            logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
             return cloneDeep(ancestorSection);
           }
         }
@@ -217,7 +217,7 @@ class DocumentService {
           throw new Error('Sections that are not deleted must specify a content');
         }
 
-        logger.info('Creating new revision for section key %s', sectionKey);
+        logger.info(`Creating new revision for section key ${sectionKey}`);
 
         // Create a new section revision:
         return {
@@ -233,12 +233,12 @@ class DocumentService {
 
       const nextOrder = await this.documentOrderStore.getNextOrder();
       const newDocumentRevision = this._createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
-      logger.info('Saving new document revision with id %s', newDocumentRevision._id);
+      logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
       await this.documentRevisionStore.save(newDocumentRevision);
 
       const latestDocument = this._createDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
 
-      logger.info('Saving latest document with revision %s', latestDocument.revision);
+      logger.info(`Saving latest document with revision ${latestDocument.revision}`);
       await this.documentStore.save(latestDocument);
 
       return newDocumentRevision;
@@ -294,7 +294,7 @@ class DocumentService {
 
     try {
 
-      logger.info('Hard deleting sections with section key %s in documents with key %s', sectionKey, documentKey);
+      logger.info(`Hard deleting sections with section key ${sectionKey} in documents with key ${documentKey}`);
 
       lock = await this.documentLockStore.takeLock(documentKey);
 
@@ -318,7 +318,7 @@ class DocumentService {
       }
 
       if (revisionsToUpdate.length) {
-        logger.info('Hard deleting %d sections with section key %s in document revisions with key %s', revisionsToUpdate, sectionKey, documentKey);
+        logger.info(`Hard deleting %d sections with section key ${sectionKey} in document revisions with key ${documentKey}`, revisionsToUpdate);
         await this.documentRevisionStore.saveMany(revisionsToUpdate);
       } else {
         throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
@@ -326,7 +326,7 @@ class DocumentService {
 
       const latestDocument = this._createDocumentFromRevisions(allRevisions);
 
-      logger.info('Saving latest document with revision %s', latestDocument.revision);
+      logger.info(`Saving latest document with revision ${latestDocument.revision}`);
       await this.documentStore.save(latestDocument);
 
     } finally {
@@ -356,7 +356,7 @@ class DocumentService {
   }
 
   _createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections }) {
-    logger.info('Creating new revision for document key %s with order %d', documentKey, nextOrder);
+    logger.info(`Creating new revision for document key ${documentKey} with order ${nextOrder}`);
 
     const newSections = sections || doc.sections;
     return {

@@ -62,9 +62,9 @@ class Database {
     const collectionExists = existingCollections.map(col => col.name).includes(collectionName);
 
     if (collectionExists) {
-      logger.info('Collection %s already exists. Skipping creation.', collectionName);
+      logger.info(`Collection ${collectionName} already exists. Skipping creation.`);
     } else {
-      logger.info('Creating collection %s on MongoDB.', collectionName);
+      logger.info(`Creating collection ${collectionName} on MongoDB.`);
       await this._db.createCollection(collectionName);
     }
 
@@ -72,13 +72,13 @@ class Database {
 
     if (indexes.length) {
       try {
-        logger.info('Creating %s indexes on MongoDB collection %s', indexes.length, collectionName);
+        logger.info(`Creating ${indexes.length} indexes on MongoDB collection ${collectionName}`);
         await collection.createIndexes(indexes);
       } catch (error) {
         if (error.code === MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT) {
-          logger.info('Indexes on MongoDB collection %s seem to have changes. Dropping old ones.', collectionName);
+          logger.info(`Indexes on MongoDB collection ${collectionName} seem to have changes. Dropping old ones.`);
           await collection.dropIndexes();
-          logger.info('Creating %s indexes on MongoDB collection %s', indexes.length, collectionName);
+          logger.info(`Creating ${indexes.length} indexes on MongoDB collection ${collectionName}`);
           await collection.createIndexes(indexes);
         } else {
           throw error;
