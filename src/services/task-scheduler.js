@@ -6,17 +6,33 @@ const delay = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
 });
 
-const doWork = async () => {
+const doWork = async ctx => {
   logger.debug('1');
   await delay(1000);
+  if (ctx.cancellationRequested) {
+    return true;
+  }
   logger.debug('2');
   await delay(1000);
+  if (ctx.cancellationRequested) {
+    return true;
+  }
   logger.debug('3');
   await delay(1000);
+  if (ctx.cancellationRequested) {
+    return true;
+  }
   logger.debug('4');
   await delay(1000);
+  if (ctx.cancellationRequested) {
+    return true;
+  }
   logger.debug('5');
   await delay(1000);
+  if (ctx.cancellationRequested) {
+    return true;
+  }
+  return true;
 };
 
 export default class TaskScheduler {
@@ -24,7 +40,7 @@ export default class TaskScheduler {
     this.timeout = null;
     this.currentTick = Promise.resolve();
     this.idlePollIntervalInMs = 5000;
-    this.cancellationRequested = false;
+    this.context = { cancellationRequested: false };
   }
 
   start() {
@@ -36,18 +52,19 @@ export default class TaskScheduler {
     logger.info('Setting and executing current tick');
     this.currentTick = (async () => {
       logger.info('TICK');
-      const isThereNoMoreWork = await doWork();
-      logger.info('isThereNoMoreWork', isThereNoMoreWork);
+      const isThereMoreWork = await doWork(this.context);
+      logger.info('isThereMoreWork', isThereMoreWork);
 
-      if (!this.cancellationRequested) {
-        this.timeout = setTimeout(() => this._tick(), isThereNoMoreWork ? this.idlePollIntervalInMs : 0);
+      if (!this.context.cancellationRequested) {
+        const nextPollTimeSpan = isThereMoreWork ? 0 : this.idlePollIntervalInMs;
+        this.timeout = setTimeout(() => this._tick(), nextPollTimeSpan);
       }
     })();
   }
 
   async dispose() {
     logger.info('Stopping task scheduler');
-    this.cancellationRequested = true;
+    this.context.cancellationRequested = true;
     clearTimeout(this.timeout);
     await this.currentTick;
   }
