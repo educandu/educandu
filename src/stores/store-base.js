@@ -16,6 +16,15 @@ class StoreBase {
     return this.collection.aggregate(...args).toArray();
   }
 
+  async findRandomOne(filter) {
+    const results = await this.collection.aggregate([
+      { $match: filter },
+      { $sample: { size: 1 } }
+    ]).toArray();
+
+    return results[0];
+  }
+
   find(...args) {
     return this.collection.find(...args).toArray();
   }

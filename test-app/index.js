@@ -30,5 +30,10 @@ educandu({
     password: 'test',
     email: 'test@test.com'
   },
-  exposeErrorDetails: true
+  exposeErrorDetails: true,
+  taskProcessing: {
+    isEnabled: true,
+    idlePollIntervalInMs: 10000,
+    maxAttempts: 1
+  }
 });

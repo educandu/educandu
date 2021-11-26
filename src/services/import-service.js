@@ -126,7 +126,7 @@ class ImportService {
         throw new BadRequest(CONCURRENT_BATCH_ERROR_MESSAGE);
       }
 
-      logger.info('Creating new import batch for source %s containing %n tasks', importSource.name, tasks.length);
+      logger.info(`Creating new import batch for source ${importSource.name} containing ${tasks.length} tasks`);
       await this.transactionRunner.run(async session => {
         await this.batchStore.insertOne(batch, { session });
         await this.taskStore.insertMany(tasks, { session });
