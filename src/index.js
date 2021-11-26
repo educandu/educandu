@@ -1,6 +1,7 @@
 import Graceful from 'node-graceful';
 import Logger from './common/logger.js';
 import EducanduServer from './server/educandu-server.js';
+import TaskScheduler from './services/task-scheduler.js';
 import bootstrapper from './bootstrap/server-bootstrapper.js';
 
 const logger = new Logger(import.meta.url);
@@ -53,6 +54,9 @@ export default async function educandu(options) {
         logger.info(`App listening on http://localhost:${port}`);
       }
     });
+
+    const taskScheduler = container.get(TaskScheduler);
+    taskScheduler.start();
 
   } catch (err) {
 
