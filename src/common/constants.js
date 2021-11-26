@@ -9,5 +9,13 @@ export const DOCUMENT_IMPORT_TYPE = {
 };
 
 export const BATCH_TYPE = {
-  importDocument: 'import-documents'
+  importDocuments: 'import-documents'
+};
+
+export const TASK_TYPE = {
+  importDocument: 'import-document'
+};
+
+export const FEATURE_TOGGLES = {
+  import: 'import'
 };

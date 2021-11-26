@@ -46,12 +46,16 @@ jobs:
         run: ./node_modules/.bin/gulp test
       - name: Codecov
         uses: codecov/codecov-action@v2
+      - name: Authenticate for changelog
+        run:  echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
   publish-prerelease:
     runs-on: ubuntu-20.04
     needs: [verify]
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/hotfix')
     env:
       NODE_ENV: development
+      CHANGELOG_GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -62,8 +66,16 @@ jobs:
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Build library
         run: ./node_modules/.bin/gulp build
+      - name: Install github changelog generator
+        run: sudo gem install github_changelog_generator
+      - name: Build release notes
+        run:  ./node_modules/.bin/gulp generateChangelog
+      - name: Authenticate for changelog
+        run:  echo "$CHANGELOG_GITHUB_TOKEN" | gh auth login --with-token
+      - name: Publish changelog
+        run: gh release create "0.0.0-pre.$GITHUB_SHA" --notes-file CHANGELOG.md --title "0.0.0-pre.$GITHUB_SHA"
       - name: Authenticate with npm
-        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+        run: npm set //registry.npmjs.org/:_authToken $NPM_AUTH_TOKEN
       - name: npm version
         run: npm version --allow-same-version --git-tag-version=false "0.0.0-pre.$GITHUB_SHA"
       - name: npm publish
@@ -74,6 +86,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     env:
       NODE_ENV: development
+      CHANGELOG_GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
     steps:
       - name: Get tag
         id: tag
@@ -89,8 +103,16 @@ jobs:
         run: yarn install --non-interactive --check-files --frozen-lockfile
       - name: Build library
         run: ./node_modules/.bin/gulp build
+      - name: Install github changelog generator
+        run: sudo gem install github_changelog_generator
+      - name: Build release notes
+        run:  ./node_modules/.bin/gulp generateChangelog
+      - name: Authenticate for changelog
+        run:  echo "$CHANGELOG_GITHUB_TOKEN" | gh auth login --with-token
+      - name: Publish changelog
+        run: gh release create ${{ steps.tag.outputs.tag }} --notes-file CHANGELOG.md --title ${{ steps.tag.outputs.tag }}
       - name: Authenticate with npm
-        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+        run: npm set //registry.npmjs.org/:_authToken $NPM_AUTH_TOKEN
       - name: npm version
         run: npm version --allow-same-version --git-tag-version=false ${{ steps.tag.outputs.tag }}
       - name: npm publish

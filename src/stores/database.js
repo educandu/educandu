@@ -1,14 +1,20 @@
 import url from 'url';
+import md5 from 'md5';
 import path from 'path';
 import glob from 'glob';
+import memoizee from 'memoizee';
 import { promisify } from 'util';
 import { MongoClient } from 'mongodb';
 import Logger from '../common/logger.js';
 import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';
+import tasksSpec from './collection-specs/tasks.js';
+import batchesSpec from './collection-specs/batches.js';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
+import taskLocksSpec from './collection-specs/task-locks.js';
+import batchLocksSpec from './collection-specs/batch-locks.js';
 import documentLocksSpec from './collection-specs/document-locks.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
@@ -23,9 +29,13 @@ const logger = new Logger(import.meta.url);
 
 const collectionSpecs = [
   usersSpec,
+  tasksSpec,
+  batchesSpec,
   settingsSpec,
   sessionsSpec,
   documentsSpec,
+  taskLocksSpec,
+  batchLocksSpec,
   documentLocksSpec,
   documentOrdersSpec,
   documentRevisionsSpec,
@@ -35,6 +45,7 @@ const collectionSpecs = [
 class Database {
   constructor(connectionString) {
     this._connectionString = connectionString;
+    this.getSchemaHash = memoizee(this._generateSchemaHash);
   }
 
   async connect() {
@@ -45,6 +56,10 @@ class Database {
     collectionSpecs.forEach(spec => {
       this[spec.name] = this._db.collection(spec.name);
     });
+  }
+
+  startSession() {
+    return this._mongoClient.startSession();
   }
 
   async checkDb() {
@@ -59,9 +74,9 @@ class Database {
     const collectionExists = existingCollections.map(col => col.name).includes(collectionName);
 
     if (collectionExists) {
-      logger.info('Collection %s already exists. Skipping creation.', collectionName);
+      logger.info(`Collection ${collectionName} already exists. Skipping creation.`);
     } else {
-      logger.info('Creating collection %s on MongoDB.', collectionName);
+      logger.info(`Creating collection ${collectionName} on MongoDB.`);
       await this._db.createCollection(collectionName);
     }
 
@@ -69,13 +84,13 @@ class Database {
 
     if (indexes.length) {
       try {
-        logger.info('Creating %s indexes on MongoDB collection %s', indexes.length, collectionName);
+        logger.info(`Creating ${indexes.length} indexes on MongoDB collection ${collectionName}`);
         await collection.createIndexes(indexes);
       } catch (error) {
         if (error.code === MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT) {
-          logger.info('Indexes on MongoDB collection %s seem to have changes. Dropping old ones.', collectionName);
+          logger.info(`Indexes on MongoDB collection ${collectionName} seem to have changes. Dropping old ones.`);
           await collection.dropIndexes();
-          logger.info('Creating %s indexes on MongoDB collection %s', indexes.length, collectionName);
+          logger.info(`Creating ${indexes.length} indexes on MongoDB collection ${collectionName}`);
           await collection.createIndexes(indexes);
         } else {
           throw error;
@@ -113,6 +128,13 @@ class Database {
     umzug.on('migrated', ({ name }) => logger.info(`Finished migrating ${name}`));
 
     await umzug.up();
+  }
+
+  async _generateSchemaHash() {
+    const migrations = await this._db.collection('migrations').find({}).toArray();
+    const migrationNames = migrations.map(migration => migration.name).sort().join();
+
+    return md5(migrationNames);
   }
 
   static async create({ connectionString }) {

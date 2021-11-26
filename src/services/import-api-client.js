@@ -14,6 +14,15 @@ class ImportApiClient {
       .accept('json')
       .then(res => res.body);
   }
+
+  postImportBatch(batch) {
+    return this.httpClient
+      .post('/api/v1/imports/batch')
+      .accept('json')
+      .type('json')
+      .send(batch)
+      .then(res => res.body);
+  }
 }
 
 export default ImportApiClient;

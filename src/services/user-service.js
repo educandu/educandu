@@ -46,12 +46,12 @@ class UserService {
   }
 
   saveUser(user) {
-    logger.info('Saving user with id %s', user._id);
+    logger.info(`Saving user with id ${user._id}`);
     return this.userStore.save(user);
   }
 
   async updateUserAccount({ userId, username, email }) {
-    logger.info('Updating account data for user with id %s', userId);
+    logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
     const otherExistingUser = await this.userStore.findOne({
@@ -75,7 +75,7 @@ class UserService {
   }
 
   async updateUserProfile(userId, newProfile) {
-    logger.info('Updating profile for user with id %s', userId);
+    logger.info(`Updating profile for user with id ${userId}`);
     const user = await this.getUserById(userId);
     user.profile = newProfile;
     await this.saveUser(user);
@@ -83,7 +83,7 @@ class UserService {
   }
 
   async updateUserRoles(userId, newRoles) {
-    logger.info('Updating roles for user with id %s: %j', userId, newRoles);
+    logger.info(`Updating roles for user with id ${userId}: ${newRoles}`);
     const user = await this.getUserById(userId);
     const roleSet = new Set(newRoles || []);
     roleSet.add(DEFAULT_ROLE_NAME);
@@ -93,7 +93,7 @@ class UserService {
   }
 
   async updateUserLockedOutState(userId, lockedOut) {
-    logger.info('Updating locked out state for user with id %s: %j', userId, lockedOut);
+    logger.info(`Updating locked out state for user with id ${userId}: ${lockedOut}`);
     const user = await this.getUserById(userId);
     user.lockedOut = lockedOut;
     await this.saveUser(user);
@@ -122,23 +122,23 @@ class UserService {
       lockedOut: false
     };
 
-    logger.info('Creating new user with id %s', user._id);
+    logger.info(`Creating new user with id ${user._id}`);
     await this.saveUser(user);
     return { result: SAVE_USER_RESULT.success, user };
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME) {
-    logger.info('Verifying user with verification code %s', verificationCode);
+    logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
       user = await this.userStore.findOne({ verificationCode, provider });
       if (user) {
-        logger.info('Found user with id %s', user._id);
+        logger.info(`Found user with id ${user._id}`);
         user.expires = null;
         user.verificationCode = null;
         await this.saveUser(user);
       } else {
-        logger.info('No user found for verification code %s', verificationCode);
+        logger.info(`No user found for verification code ${verificationCode}`);
       }
     } catch (err) {
       logger.fatal(err);
@@ -176,30 +176,30 @@ class UserService {
       expires: add(new Date(), PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN)
     };
 
-    logger.info('Creating password reset request %s for user with id %s', request._id, request.userId);
+    logger.info(`Creating password reset request ${request._id} for user with id ${request.userId}`);
     await this.savePasswordResetRequest(request);
     return request;
   }
 
   async completePasswordResetRequest(passwordResetRequestId, password) {
-    logger.info('Completing password reset request %s', passwordResetRequestId);
+    logger.info(`Completing password reset request ${passwordResetRequestId}`);
     const request = await this.getPasswordResetRequestById(passwordResetRequestId);
     if (!request) {
-      logger.info('No password reset request has been found for id %s. Aborting request', passwordResetRequestId);
+      logger.info(`No password reset request has been found for id ${passwordResetRequestId}. Aborting request`);
       return false;
     }
 
     const user = await this.getUserById(request.userId);
     if (!user) {
-      logger.info('No user has been found for id %s. Aborting request', passwordResetRequestId);
+      logger.info(`No user has been found for id ${passwordResetRequestId}. Aborting request`);
       return false;
     }
 
     user.passwordHash = await this._hashPassword(password);
 
-    logger.info('Updating user %s with new password', user._id);
+    logger.info(`Updating user ${user._id} with new password`);
     await this.saveUser(user);
-    logger.info('Deleting password reset request %s', passwordResetRequestId);
+    logger.info(`Deleting password reset request ${passwordResetRequestId}`);
     await this.deletePasswordResetRequestById(passwordResetRequestId);
     return user;
   }

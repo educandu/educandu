@@ -4,7 +4,7 @@ import passportStrategy from 'passport-strategy';
 const { Unauthorized } = httpErrors;
 const { Strategy } = passportStrategy;
 
-const API_KEY_HEADER = 'X-Api-Key';
+export const API_KEY_HEADER = 'X-Api-Key';
 
 export default class ApiKeyStrategy extends Strategy {
   constructor(verify) {
