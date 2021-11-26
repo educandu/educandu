@@ -44,13 +44,20 @@ let testAppServer = null;
 let testAppBuildResult = null;
 const containerCommandTimeoutMs = 2000;
 
-Graceful.on('exit', () => {
-  testAppServer?.kill();
-  testAppBuildResult?.rebuild?.dispose();
-});
-
 const delay = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
+});
+
+Graceful.on('exit', () => {
+  testAppBuildResult?.rebuild?.dispose();
+  return new Promise(resolve => {
+    if (testAppServer) {
+      testAppServer.once('exit', () => resolve());
+      testAppServer.kill();
+    } else {
+      resolve();
+    }
+  });
 });
 
 const kebabToCamel = str => str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
@@ -350,7 +357,8 @@ function startTestApp({ skipMigrationsAndChecks }) {
         TEST_APP_SKIP_MONGO_MIGRATIONS: (!!skipMigrationsAndChecks).toString(),
         TEST_APP_SKIP_MONGO_CHECKS: (!!skipMigrationsAndChecks).toString()
       },
-      stdio: 'inherit'
+      stdio: 'inherit',
+      detached: true
     }
   );
   testAppServer.once('exit', () => {

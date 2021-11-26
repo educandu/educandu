@@ -1,57 +1,60 @@
 import joi from 'joi';
 import uniqueId from '../utils/unique-id.js';
-import { validate } from '../domain/validation.js';
+import { defaultValidationOptions, validate } from '../domain/validation.js';
+
+const defaultTaskProcessing = {
+  isEnabled: false,
+  idlePollIntervalInMs: 5000,
+  maxAttempts: 3
+};
 
 const configSchema = joi.object({
-  port: joi.number().min(1),
+  port: joi.number().min(1).default(80),
   mongoConnectionString: joi.string().required(),
-  skipMongoMigrations: joi.boolean(),
-  skipMongoChecks: joi.boolean(),
+  skipMongoMigrations: joi.boolean().default(false),
+  skipMongoChecks: joi.boolean().default(false),
   cdnEndpoint: joi.string().required(),
   cdnRegion: joi.string().required(),
   cdnAccessKey: joi.string().required(),
   cdnSecretKey: joi.string().required(),
   cdnBucketName: joi.string().required(),
   cdnRootUrl: joi.string().required(),
-  sessionSecret: joi.string(),
-  sessionDurationInMinutes: joi.number().min(1),
+  sessionSecret: joi.string().default(uniqueId.create()),
+  sessionDurationInMinutes: joi.number().min(1).default(60),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
-  publicFolders: joi.array().items(joi.string()),
-  resources: joi.array().items(joi.string()),
+  publicFolders: joi.array().items(joi.string()).default([]),
+  resources: joi.array().items(joi.string()).default([]),
   initialUser: joi.object({
     username: joi.string().required(),
     password: joi.string().required(),
     email: joi.string().required()
   }).allow(null),
-  exposeErrorDetails: joi.boolean(),
+  exposeErrorDetails: joi.boolean().default(false),
   exportApiKey: joi.string(),
   importSources: joi.array().items(joi.object({
     name: joi.string().required(),
     baseUrl: joi.string().required(),
     apiKey: joi.string().required()
-  })),
-  disabledFeatures: joi.array().items(joi.string())
+  })).default([]),
+  disabledFeatures: joi.array().items(joi.string()).default([]),
+  taskProcessing: joi.object({
+    isEnabled: joi.boolean().default(defaultTaskProcessing.isEnabled),
+    idlePollIntervalInMs: joi.number().min(1).default(defaultTaskProcessing.idlePollIntervalInMs),
+    maxAttempts: joi.number().min(1).default(defaultTaskProcessing.maxAttempts)
+  }).default(defaultTaskProcessing)
 });
-
-const configDefaults = {
-  port: 80,
-  skipMongoMigrations: false,
-  skipMongoChecks: false,
-  sessionSecret: uniqueId.create(),
-  sessionDurationInMinutes: 60,
-  publicFolders: [],
-  resources: [],
-  exposeErrorDetails: false,
-  importSources: [],
-  disabledFeatures: []
-};
 
 class ServerConfig {
   constructor(values = {}) {
-    const mergedConfig = { ...configDefaults, ...values };
-    validate(mergedConfig, configSchema);
-    Object.assign(this, mergedConfig);
+    const validationOptions = {
+      ...defaultValidationOptions,
+      convert: true,
+      noDefaults: false
+    };
+
+    const config = validate(values, configSchema, validationOptions);
+    Object.assign(this, config);
   }
 
   exportClientConfigValues() {
