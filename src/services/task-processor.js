@@ -1,32 +1,22 @@
 import Logger from '../common/logger.js';
 import TaskStore from '../stores/task-store.js';
 import TaskLockStore from '../stores/task-lock-store.js';
+import { TASK_TYPE } from '../common/constants.js';
+import { DocumentImportTaskProcessor } from './document-import-task-processor.js';
 
 const logger = new Logger(import.meta.url);
 
 const MAX_ATTEMPTS = 3;
 
-const delay = ms => new Promise(resolve => {
-  setTimeout(resolve, ms);
-});
-
-const processTask = async (task, ctx) => {
-  await delay(2000);
-  if (ctx.cancellationRequested) {
-    throw new Error();
-  }
-
-  if (Math.random() > 0.5) {
-    throw new Error('Mäh');
-  }
-};
-
 export default class TaskProcessor {
-  static get inject() { return [TaskStore, TaskLockStore]; }
+  static get inject() { return [TaskStore, TaskLockStore, DocumentImportTaskProcessor]; }
 
-  constructor(taskStore, taskLockStore) {
+  constructor(taskStore, taskLockStore, documentImportTaskProcessor) {
     this.taskStore = taskStore;
     this.taskLockStore = taskLockStore;
+    this.taskProcessors = {
+      [TASK_TYPE.importDocument]: documentImportTaskProcessor
+    };
   }
 
   async process(taskId, ctx) {
@@ -56,9 +46,14 @@ export default class TaskProcessor {
         errors: []
       };
 
+      const taskProcessor = this.taskProcessors[nextTask.taskType];
+      if (!taskProcessor) {
+        throw new Error(`Task type ${nextTask.taskType} is unknown`);
+      }
+
       try {
         logger.debug('Processing task');
-        await processTask(nextTask, ctx);
+        await taskProcessor.process(nextTask, ctx);
       } catch (processError) {
         logger.debug('Error processing task', processError);
         currentAttempt.errors.push(processError.message);
