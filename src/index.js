@@ -3,6 +3,7 @@ import Logger from './common/logger.js';
 import EducanduServer from './server/educandu-server.js';
 import TaskScheduler from './services/task-scheduler.js';
 import bootstrapper from './bootstrap/server-bootstrapper.js';
+import ServerConfig from './bootstrap/server-config.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -44,6 +45,7 @@ export default async function educandu(options) {
 
     container = await bootstrapper.createContainer(options);
     const educanduServer = container.get(EducanduServer);
+    const serverConfig = container.get(ServerConfig);
 
     logger.info('Starting server');
     educanduServer.listen((err, port) => {
@@ -55,9 +57,10 @@ export default async function educandu(options) {
       }
     });
 
-    const taskScheduler = container.get(TaskScheduler);
-    taskScheduler.start();
-
+    if (serverConfig.taskProcessing.isEnabled) {
+      const taskScheduler = container.get(TaskScheduler);
+      taskScheduler.start();
+    }
   } catch (err) {
 
     logger.fatal(err);

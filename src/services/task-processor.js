@@ -3,17 +3,18 @@ import TaskStore from '../stores/task-store.js';
 import TaskLockStore from '../stores/task-lock-store.js';
 import { TASK_TYPE } from '../common/constants.js';
 import { DocumentImportTaskProcessor } from './document-import-task-processor.js';
+import ServerConfig from '../bootstrap/server-config.js';
 
 const logger = new Logger(import.meta.url);
 
-const MAX_ATTEMPTS = 3;
-
 export default class TaskProcessor {
-  static get inject() { return [TaskStore, TaskLockStore, DocumentImportTaskProcessor]; }
+  static get inject() { return [TaskStore, TaskLockStore, DocumentImportTaskProcessor, ServerConfig]; }
 
-  constructor(taskStore, taskLockStore, documentImportTaskProcessor) {
+  constructor(taskStore, taskLockStore, documentImportTaskProcessor, serverConfig) {
     this.taskStore = taskStore;
     this.taskLockStore = taskLockStore;
+    this.serverConfig = serverConfig;
+
     this.taskProcessors = {
       [TASK_TYPE.importDocument]: documentImportTaskProcessor
     };
@@ -62,7 +63,7 @@ export default class TaskProcessor {
       currentAttempt.completedOn = new Date();
       nextTask.attempts.push(currentAttempt);
 
-      const attemptsExhausted = nextTask.attempts.length >= MAX_ATTEMPTS;
+      const attemptsExhausted = nextTask.attempts.length >= this.serverConfig.taskProcessing.maxAttempts;
       const taskSuccessfullyProcessed = currentAttempt.errors.length === 0;
       if (attemptsExhausted || taskSuccessfullyProcessed) {
         logger.debug(`Marking task as processed due to: ${attemptsExhausted ? 'exhausted attempts' : 'error processing task'}`);
