@@ -1,4 +1,16 @@
+import Logger from './logger.js';
+
+const logger = new Logger(import.meta.url);
+
 const keyToString = key => (key.name || key).toString();
+
+export const getDisposalInfo = Symbol('getDisposalInfo');
+
+export const DISPOSAL_PRIORITY = {
+  server: 100,
+  domain: 200,
+  storage: 300
+};
 
 class InstanceResolver {
   constructor(instance) {
@@ -57,7 +69,6 @@ class ServiceResolver {
 
 export class Container {
   constructor() {
-    this._isDisposing = false;
     this._resolversByKey = new Map();
     this._resolversByService = new Map();
     this.registerInstance(Container, this);
@@ -81,12 +92,7 @@ export class Container {
     this._registerResolver(key, resolver);
   }
 
-  dispose() {
-    if (this._isDisposing) {
-      return Promise.resolve();
-    }
-
-    this._isDisposing = true;
+  async dispose() {
     const resolvers = [...this._resolversByKey.values()];
 
     this._resolversByKey = null;
@@ -95,10 +101,26 @@ export class Container {
     const allResolvedObjects = resolvers
       .filter(resolver => resolver.hasInstance)
       .map(resolver => resolver.resolve())
-      .filter(obj => typeof obj?.dispose === 'function');
+      .filter(obj => obj && typeof obj[getDisposalInfo] === 'function');
 
     const uniqueObjects = [...new Set(allResolvedObjects)];
-    return Promise.all(uniqueObjects.map(obj => obj.dispose()));
+
+    const disposalGroups = uniqueObjects.map(obj => obj[getDisposalInfo]())
+      .reduce((acc, value) => {
+        acc.set(value.priority, [...acc.get(value.priority) || [], value.dispose]);
+        return acc;
+      }, new Map());
+
+    const sortedDisposalPriorities = [...disposalGroups.keys()].sort();
+
+    for (const priority of sortedDisposalPriorities) {
+      const disposalGroup = disposalGroups.get(priority);
+
+      logger.debug(`Disposing ${disposalGroup.length} items in priority group ${priority}`);
+
+      /* eslint-disable-next-line no-await-in-loop */
+      await Promise.all(disposalGroup.map(dispose => dispose()));
+    }
   }
 
   _registerResolver(key, resolver) {

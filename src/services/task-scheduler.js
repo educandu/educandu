@@ -1,6 +1,7 @@
-import ServerConfig from '../bootstrap/server-config.js';
 import Logger from '../common/logger.js';
 import BatchProcessor from './batch-processor.js';
+import ServerConfig from '../bootstrap/server-config.js';
+import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
 
 const logger = new Logger(import.meta.url);
 export default class TaskScheduler {
@@ -31,10 +32,16 @@ export default class TaskScheduler {
     })();
   }
 
-  async dispose() {
-    logger.info('Stopping task scheduler');
-    this.context.cancellationRequested = true;
-    clearTimeout(this.timeout);
-    await this.currentTick;
+  [getDisposalInfo]() {
+    return {
+      priority: DISPOSAL_PRIORITY.domain,
+      dispose: async () => {
+        logger.info('Stopping task scheduler');
+        this.context.cancellationRequested = true;
+        clearTimeout(this.timeout);
+        await this.currentTick;
+        logger.info('Task scheduler stopped');
+      }
+    };
   }
 }

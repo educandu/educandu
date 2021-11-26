@@ -4,6 +4,7 @@ import Logger from '../common/logger.js';
 import cookieParser from 'cookie-parser';
 import ControllerFactory from './controller-factory.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
 
 import 'express-async-errors';
 
@@ -65,16 +66,21 @@ class EducanduServer {
     return this.server;
   }
 
-  async dispose() {
-    if (this.server) {
-      logger.info('Closing server');
-      await util.promisify(this.server.close.bind(this.server))();
-      this.server = null;
-      logger.info('Server successfully closed');
-    } else {
-      logger.info('Cannot close server, it is not listining');
-      await Promise.resolve();
-    }
+  [getDisposalInfo]() {
+    return {
+      priority: DISPOSAL_PRIORITY.server,
+      dispose: async () => {
+        if (this.server) {
+          logger.info('Closing server');
+          await util.promisify(this.server.close.bind(this.server))();
+          this.server = null;
+          logger.info('Server successfully closed');
+        } else {
+          logger.info('Cannot close server, it is not listening');
+          await Promise.resolve();
+        }
+      }
+    };
   }
 }
 
