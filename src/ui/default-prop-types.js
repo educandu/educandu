@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { BATCH_TYPE } from '../common/constants.js';
 
 export const translationProps = {
   i18n: PropTypes.object.isRequired,
@@ -172,4 +173,16 @@ export const formItemLayoutShape = PropTypes.shape({
     xs: formItemDimensionShape.isRequired,
     sm: formItemDimensionShape.isRequired
   }).isRequired
+});
+
+export const importBatchShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  createdBy: userInDocShape.isRequired,
+  createdOn: PropTypes.string.isRequired,
+  completedOn: PropTypes.string,
+  batchType: PropTypes.oneOf(BATCH_TYPE.importDocuments),
+  batchParams: PropTypes.shape({
+    source: PropTypes.string.isRequired
+  }),
+  errors: PropTypes.arrayOf(PropTypes.any).isRequired
 });

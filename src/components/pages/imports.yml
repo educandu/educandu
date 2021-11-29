@@ -14,8 +14,8 @@ batchStatusDone:
   en: Done
   de: Vertig
 batchStatusProcessing:
-  en: Processing
-  de: Wird bearbeitet
+  en: '{progress, number, percent} completed'
+  de: '{progress, number, percent} abgeschlossen'
 viewBatch:
   en: View batch
   de: Chargen ansehen
@@ -34,3 +34,6 @@ createdBy:
 createImport:
   en: Create import
   de: Import erstellen
+importsHeaderPrefix:
+  en: Source
+  de: Quelle

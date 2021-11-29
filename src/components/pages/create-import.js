@@ -4,7 +4,7 @@ import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
-import { Tooltip, Button, Table, Select } from 'antd';
+import { Tooltip, Button, Table, Input } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
@@ -123,7 +123,7 @@ export default function CreateImport() {
       <div className="CreateImportPage">
         <h1>{t('pageNames:import')}</h1>
 
-        <Select
+        <Input
           placeholder={t('source')}
           className="CreateImportPage-source"
           defaultValue={importSourceName}

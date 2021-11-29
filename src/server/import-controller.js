@@ -8,25 +8,31 @@ import ExportApiClient from '../services/export-api-client.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery } from '../domain/validation-middleware.js';
 import { getImportsQuerySchema, postImportBatchBodySchema } from '../domain/schemas/import-schemas.js';
+import ClientDataMapper from './client-data-mapper.js';
 
 const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 
 class ImportController {
-  static get inject() { return [ImportService, ExportApiClient, ServerConfig, PageRenderer]; }
+  static get inject() { return [ImportService, ExportApiClient, ServerConfig, PageRenderer, ClientDataMapper]; }
 
-  constructor(importService, exportApiClient, serverConfig, pageRenderer) {
+  constructor(importService, exportApiClient, serverConfig, pageRenderer, clientDataMapper) {
     this.exportApiClient = exportApiClient;
     this.importService = importService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
+    this.clientDataMapper = clientDataMapper;
   }
 
   registerPages(app) {
-    app.get('/imports', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'imports');
+    app.get('/imports', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
+      const rawBatches = await this.importService.getImportBatches();
+      const batches = await this.clientDataMapper.mapImportBatches(rawBatches, req.user);
+
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'imports', { batches });
     });
+
     app.get('/imports/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'create-import');
     });

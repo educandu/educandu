@@ -55,6 +55,24 @@ class ClientDataMapper {
     });
   }
 
+  async mapImportBatches(batches, user) {
+    const idSet = new Set(batches.map(batch => batch.createdBy));
+    const users = await this.userService.getUsersByIds(Array.from(idSet));
+    const allowedUserFields = privateData.getAllowedUserFields(user);
+
+    if (users.length !== idSet.size) {
+      throw new Error(`Was searching for ${idSet.size} users, but found ${users.length}`);
+    }
+
+    const userMap = new Map(users.map(u => [u._id, u]));
+    return batches.map(batch => {
+      return {
+        ...batch,
+        createdBy: this._mapUser(userMap.get(batch.createdBy), allowedUserFields)
+      };
+    });
+  }
+
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {
     const idSet = this._getUserIdSetForDocsOrRevisions(docsOrRevisions);
     const users = await this.userService.getUsersByIds(Array.from(idSet));

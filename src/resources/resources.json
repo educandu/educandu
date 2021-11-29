@@ -396,13 +396,14 @@
       "batchStatus": "Batch status",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
-      "batchStatusProcessing": "Processing",
+      "batchStatusProcessing": "{progress, number, percent} completed",
       "viewBatch": "View batch",
       "batchTypeImportDocument": "Document import",
       "createdOn": "Created on",
       "completedOn": "Completed on",
       "createdBy": "Created by",
-      "createImport": "Create import"
+      "createImport": "Create import",
+      "importsHeaderPrefix": "Source"
     }
   },
   {
@@ -414,13 +415,14 @@
       "batchStatus": "Chargenstatus",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Vertig",
-      "batchStatusProcessing": "Wird bearbeitet",
+      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "viewBatch": "Chargen ansehen",
       "batchTypeImportDocument": "Dokumentenimport",
       "createdOn": "Erstellt am",
       "completedOn": "Vervollständigt am",
       "createdBy": "Erstellt von",
-      "createImport": "Import erstellen"
+      "createImport": "Import erstellen",
+      "importsHeaderPrefix": "Quelle"
     }
   },
   {
