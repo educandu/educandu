@@ -246,10 +246,10 @@ class UserService {
   _buildEmptyUser() {
     return {
       _id: uniqueId.create(),
-      provider: '',
-      username: '',
-      passwordHash: '',
-      email: '',
+      provider: null,
+      username: null,
+      passwordHash: null,
+      email: null,
       roles: [],
       expires: null,
       verificationCode: null,
