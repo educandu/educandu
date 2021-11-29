@@ -1,4 +1,5 @@
-import { Container } from './di.js';
+import sinon from 'sinon';
+import { Container, getDisposalInfo, DISPOSAL_PRIORITY } from './di.js';
 
 class A {}
 
@@ -17,9 +18,14 @@ class D {
     this.disposedCalled = 0;
   }
 
-  dispose() {
-    this.disposedCalled += 1;
-    return Promise.resolve();
+  [getDisposalInfo]() {
+    return {
+      priority: DISPOSAL_PRIORITY.domain,
+      dispose: () => {
+        this.disposedCalled += 1;
+        return Promise.resolve();
+      }
+    };
   }
 }
 
@@ -99,6 +105,33 @@ describe('di', () => {
 
         expect(resultA).toBe(resultB);
         expect(resultA.disposedCalled).toBe(previousDisposedCalled + 1);
+      });
+
+      it('should call the dispose functions in the right priority order', async () => {
+        const disposalInfoA = {
+          priority: DISPOSAL_PRIORITY.domain,
+          dispose: sinon.spy()
+        };
+
+        const a = {
+          [getDisposalInfo]: () => disposalInfoA
+        };
+
+        const disposalInfoB = {
+          priority: DISPOSAL_PRIORITY.storage,
+          dispose: sinon.spy()
+        };
+
+        const b = {
+          [getDisposalInfo]: () => disposalInfoB
+        };
+        const container = new Container();
+
+        container.registerInstance(B, b);
+        container.registerInstance(A, a);
+
+        await container.dispose();
+        sinon.assert.callOrder(disposalInfoA.dispose, disposalInfoB.dispose);
       });
     });
 

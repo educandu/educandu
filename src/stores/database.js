@@ -15,6 +15,7 @@ import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
 import taskLocksSpec from './collection-specs/task-locks.js';
 import batchLocksSpec from './collection-specs/batch-locks.js';
+import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentLocksSpec from './collection-specs/document-locks.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
@@ -99,9 +100,15 @@ class Database {
     }
   }
 
-  async dispose() {
-    logger.info('Closing MongoDB connection');
-    await this._mongoClient.close();
+  [getDisposalInfo]() {
+    return {
+      priority: DISPOSAL_PRIORITY.storage,
+      dispose: async () => {
+        logger.info('Closing MongoDB connection');
+        await this._mongoClient.close();
+        logger.info('MongoDB connection closed');
+      }
+    };
   }
 
   async runMigrationScripts() {
