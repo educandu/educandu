@@ -34,7 +34,8 @@ const configSchema = joi.object({
   exportApiKey: joi.string(),
   importSources: joi.array().items(joi.object({
     name: joi.string().required(),
-    baseUrl: joi.string().required(),
+    hostName: joi.string().required(),
+    allowUnsecure: joi.boolean().default(false),
     apiKey: joi.string().required()
   })).default([]),
   disabledFeatures: joi.array().items(joi.string()).default([]),
@@ -54,6 +55,7 @@ class ServerConfig {
     };
 
     const config = validate(values, configSchema, validationOptions);
+
     Object.assign(this, config);
   }
 
@@ -61,7 +63,7 @@ class ServerConfig {
     return {
       cdnRootUrl: this.cdnRootUrl,
       disabledFeatures: this.disabledFeatures,
-      importSources: this.importSources.map(({ name, baseUrl }) => ({ name, baseUrl }))
+      importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure }))
     };
   }
 }

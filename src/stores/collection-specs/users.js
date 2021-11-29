@@ -9,7 +9,8 @@ export default {
     {
       name: '_idx_email_provider_',
       key: { email: 1, provider: 1 },
-      unique: true
+      unique: true,
+      partialFilterExpression: { email: { $type: 'string' } }
     },
     {
       name: '_idx_expires_',

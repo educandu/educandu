@@ -20,6 +20,17 @@ class ExportApiClient {
       .accept('json')
       .then(res => res.body);
   }
+
+  async getDocumentExport({ baseUrl, apiKey, documentKey, fromRevision, toRevision }) {
+    const databaseSchemaHash = await this.database.getSchemaHash();
+
+    return this.httpClient
+      .get(`${baseUrl}/api/v1/exports/${encodeURIComponent(documentKey)}`)
+      .query({ fromRevision, toRevision, databaseSchemaHash })
+      .set(API_KEY_HEADER, apiKey)
+      .accept('json')
+      .then(res => res.body);
+  }
 }
 
 export default ExportApiClient;

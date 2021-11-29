@@ -1,6 +1,5 @@
 import by from 'thenby';
 import Page from '../page.js';
-import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
@@ -12,6 +11,7 @@ import ImportApiClient from '../../services/import-api-client.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import { getArticleUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 
 export default function Import() {
@@ -35,7 +35,7 @@ export default function Import() {
       .map(key => importableDocuments.find(doc => doc.key === key));
 
     const batch = {
-      importSourceName: selectedSource.name,
+      hostName: selectedSource.hostName,
       documentsToImport: selectedDocs
     };
 
@@ -59,7 +59,7 @@ export default function Import() {
     setSelectedDocumentKeys([]);
 
     try {
-      const { documents } = await importApiClient.getImports(newSelectedSource.name);
+      const { documents } = await importApiClient.getImports(newSelectedSource.hostName);
       setImportableDocuments(documents);
     } catch (error) {
       handleApiError({ error, t });
@@ -83,7 +83,9 @@ export default function Import() {
       return <span>{doc.title}</span>;
     }
 
-    const url = `${selectedSource.baseUrl}${urls.getArticleUrl(doc.slug)}`;
+    const baseUrl = getImportSourceBaseUrl(selectedSource);
+
+    const url = `${baseUrl}${getArticleUrl(doc.slug)}`;
     return <a href={url} target="_blank" rel="noopener noreferrer" >{doc.title}</a>;
   };
 
