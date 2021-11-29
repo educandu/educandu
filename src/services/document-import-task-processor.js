@@ -1,5 +1,6 @@
 import ExportApiClient from './export-api-client.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { getImportSourceBaseUrl } from '../utils/urls.js';
 
 const delay = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
@@ -21,11 +22,11 @@ export class DocumentImportTaskProcessor {
       throw new Error();
     }
 
-    const importSource = this.serverConfig.importSources.find(({ name }) => name === batchParams.source);
+    const importSource = this.serverConfig.importSources.find(({ hostName }) => hostName === batchParams.hostName);
     const { key, importedRevision, importableRevision } = task.taskParams;
 
     const documentExport = await this.exportApiClient.getDocumentExport({
-      baseUrl: importSource.baseUrl,
+      baseUrl: getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
       documentKey: key,
       fromRevision: importedRevision,

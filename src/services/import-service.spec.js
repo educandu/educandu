@@ -85,7 +85,8 @@ describe('import-service', () => {
 
     const importSource = {
       name: 'Other System',
-      baseUrl: 'https://other-system.com',
+      hostName: 'other-system.com',
+      allowUnsecure: true,
       apiKey: 'FSDdsh35nADh44nADCD8'
     };
 
@@ -104,7 +105,7 @@ describe('import-service', () => {
       });
 
       it('should call exportApiClient.getExports', () => {
-        sinon.assert.calledWith(exportApiClient.getExports, { baseUrl: 'https://other-system.com', apiKey: 'FSDdsh35nADh44nADCD8' });
+        sinon.assert.calledWith(exportApiClient.getExports, { baseUrl: 'http://other-system.com', apiKey: 'FSDdsh35nADh44nADCD8' });
       });
 
       it('should call documentStore.find', () => {
@@ -187,7 +188,10 @@ describe('import-service', () => {
 
     beforeEach(() => {
       importSource = {
-        name: 'source-1'
+        name: 'source-1',
+        hostName: 'source1.com',
+        allowUnsecure: false,
+        apiKey: 'DFGRDB553dscfVDSv'
       };
       documentsToImport = [
         {
@@ -229,7 +233,9 @@ describe('import-service', () => {
             completedOn: null,
             batchType: BATCH_TYPE.importDocuments,
             batchParams: {
-              source: 'source-1'
+              name: 'source-1',
+              hostName: 'source1.com',
+              allowUnsecure: false
             },
             errors: []
           }
@@ -277,7 +283,7 @@ describe('import-service', () => {
 
       beforeEach(async () => {
         batchLockStore = container.get(BatchLockStore);
-        lock = await batchLockStore.takeLock(importSource.name);
+        lock = await batchLockStore.takeLock(importSource.hostName);
       });
 
       afterEach(async () => {

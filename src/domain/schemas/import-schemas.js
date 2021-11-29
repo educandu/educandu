@@ -14,10 +14,10 @@ const importedDocumentSchema = joi.object({
 });
 
 export const getImportsQuerySchema = joi.object({
-  importSourceName: joi.string().required()
+  hostName: joi.string().required()
 });
 
 export const postImportBatchBodySchema = joi.object({
-  importSourceName: joi.string().required(),
+  hostName: joi.string().required(),
   documentsToImport: joi.array().required().items(importedDocumentSchema)
 });

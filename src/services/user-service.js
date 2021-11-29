@@ -134,21 +134,23 @@ class UserService {
         : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
     }
 
-    const user = {
-      _id: uniqueId.create(),
-      provider,
-      username,
-      passwordHash: await this._hashPassword(password),
-      email: lowerCasedEmail,
-      roles,
-      expires: verified ? null : add(new Date(), PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN),
-      verificationCode: verified ? null : uniqueId.create(),
-      lockedOut: false
-    };
+    const user = this._buildEmptyUser();
+    user.provider = provider;
+    user.username = username;
+    user.passwordHash = await this._hashPassword(password);
+    user.email = lowerCasedEmail;
+    user.roles = roles;
+    user.expires = verified ? null : add(new Date(), PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN);
+    user.verificationCode = verified ? null : uniqueId.create();
 
     logger.info(`Creating new user with id ${user._id}`);
     await this.saveUser(user);
     return { result: SAVE_USER_RESULT.success, user };
+  }
+
+  async ensureExternalUser({ _id, username, hostName }) {
+    const user = { _id, username, provider: `external/${hostName}` };
+    await this.userStore.saveUser(user);
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME) {
@@ -234,6 +236,21 @@ class UserService {
 
   _hashPassword(password) {
     return bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
+  }
+
+  _buildEmptyUser() {
+    return {
+      _id: uniqueId.create(),
+      provider: '',
+      username: '',
+      passwordHash: '',
+      email: '',
+      roles: [],
+      expires: null,
+      verificationCode: null,
+      lockedOut: false,
+      profile: null
+    };
   }
 }
 

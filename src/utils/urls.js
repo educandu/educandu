@@ -136,6 +136,10 @@ export function getSearchUrl(query) {
   return url.href;
 }
 
+export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
+  return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
+}
+
 export default {
   homePath,
   docsPath,
