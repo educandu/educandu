@@ -149,8 +149,13 @@ class UserService {
   }
 
   async ensureExternalUser({ _id, username, hostName }) {
-    const user = { _id, username, provider: `external/${hostName}` };
-    await this.userStore.saveUser(user);
+    const user = {
+      ...this._buildEmptyUser(),
+      _id,
+      username,
+      provider: `external/${hostName}`
+    };
+    await this.saveUser(user);
   }
 
   async verifyUser(verificationCode, provider = PROVIDER_NAME) {

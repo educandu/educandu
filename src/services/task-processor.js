@@ -65,8 +65,8 @@ export default class TaskProcessor {
 
       const attemptsExhausted = nextTask.attempts.length >= this.serverConfig.taskProcessing.maxAttempts;
       const taskSuccessfullyProcessed = currentAttempt.errors.length === 0;
-      if (attemptsExhausted || taskSuccessfullyProcessed) {
-        logger.debug(`Marking task as processed due to: ${attemptsExhausted ? 'exhausted attempts' : 'error processing task'}`);
+      if (taskSuccessfullyProcessed || attemptsExhausted) {
+        logger.debug(`Marking task as processed due to: ${attemptsExhausted ? 'exhausted attempts' : 'task succesfully processed'}`);
         nextTask.processed = true;
       }
 

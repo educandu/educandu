@@ -45,7 +45,7 @@ class ExportService {
       throw new BadRequest(`The specified revision interval (${fromRevision} - ${toRevision}) is invalid for document ${key}`);
     }
 
-    const revisionsToExport = revisions.slice(firstRevisionIndex, lastRevisionIndex - firstRevisionIndex);
+    const revisionsToExport = revisions.slice(firstRevisionIndex, lastRevisionIndex + 1);
 
     const userIdSet = this.userService.extractUserIdSetFromDocsOrRevisions(revisionsToExport);
     const users = (await this.userService.getUsersByIds(Array.from(userIdSet)))
