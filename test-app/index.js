@@ -23,6 +23,16 @@ educandu({
       name: 'Educandu TestApp - local',
       baseUrl: 'http://localhost:3000',
       apiKey: 'fe160daddb0c44c4963f63ce08272c86'
+    },
+    {
+      name: 'ELMU - staging',
+      baseUrl: 'https://staging.elmu.online',
+      apiKey: 'd5910b42afb948dcb0ae365104004b25'
+    },
+    {
+      name: 'OMA - integration',
+      baseUrl: 'https://integration.openmusic.academy',
+      apiKey: '9e88fd8288ed4738813aaf764df005c4'
     }
   ],
   initialUser: {

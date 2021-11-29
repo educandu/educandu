@@ -20,7 +20,7 @@ export default class TaskProcessor {
     };
   }
 
-  async process(taskId, ctx) {
+  async process(taskId, batchParams, ctx) {
     let lock;
     try {
       lock = await this.taskLockStore.takeLock(taskId);
@@ -54,7 +54,7 @@ export default class TaskProcessor {
 
       try {
         logger.debug('Processing task');
-        await taskProcessor.process(nextTask, ctx);
+        await taskProcessor.process(nextTask, batchParams, ctx);
       } catch (processError) {
         logger.debug('Error processing task', processError);
         currentAttempt.errors.push(processError.message);

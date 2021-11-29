@@ -41,6 +41,30 @@ class UserService {
     return this.userStore.findOne({ email: email.toLowerCase(), provider });
   }
 
+  extractUserIdSetFromDocsOrRevisions(docsOrRevisions) {
+    return docsOrRevisions.reduce((set, docOrRev) => this._fillUserIdSetForDocOrRevision(docOrRev, set), new Set());
+  }
+
+  _fillUserIdSetForDocOrRevision(docOrRev, set) {
+    if (docOrRev.createdBy) {
+      set.add(docOrRev.createdBy);
+    }
+    if (docOrRev.updatedBy) {
+      set.add(docOrRev.updatedBy);
+    }
+    if (docOrRev.contributors) {
+      docOrRev.contributors.forEach(c => set.add(c));
+    }
+    if (docOrRev.sections) {
+      docOrRev.sections.forEach(s => {
+        if (s.deletedBy) {
+          set.add(s.deletedBy);
+        }
+      });
+    }
+    return set;
+  }
+
   findUser(username, provider = PROVIDER_NAME) {
     return this.userStore.findOne({ username, provider });
   }

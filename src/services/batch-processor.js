@@ -38,7 +38,7 @@ export default class BatchProcessor {
     }
 
     logger.debug('Task to process', nextCandidateTask);
-    await this.taskProcessor.process(nextCandidateTask._id, ctx);
+    await this.taskProcessor.process(nextCandidateTask._id, uncompletedBatch.batchParams, ctx);
     return true;
   }
 }
