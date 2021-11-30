@@ -16,7 +16,7 @@ import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 import { useRequest } from '../request-context.js';
 
 export default function CreateImport() {
-  const { t } = useTranslation('create-import');
+  const { t } = useTranslation('createImport');
 
   const { language } = useLanguage();
   const { formatDate } = useDateFormat();
