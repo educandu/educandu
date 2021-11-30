@@ -73,7 +73,7 @@ describe('batch-processor', () => {
       let uncompletedBatch;
 
       beforeEach(async () => {
-        uncompletedBatch = {};
+        uncompletedBatch = { batchParams: {} };
         ctx = { cancellationRequested: false };
         batchStore.findOne.resolves(uncompletedBatch);
         taskStore.findRandomOne.resolves(null);
@@ -104,7 +104,7 @@ describe('batch-processor', () => {
       let nextCandidateTask;
 
       beforeEach(async () => {
-        uncompletedBatch = {};
+        uncompletedBatch = { batchParams: {} };
         nextCandidateTask = { _id: '123' };
         ctx = { cancellationRequested: false };
         batchStore.findOne.resolves(uncompletedBatch);
@@ -122,7 +122,7 @@ describe('batch-processor', () => {
       });
 
       it('should call taskProcessor.process', () => {
-        sinon.assert.calledWith(taskProcessor.process, nextCandidateTask._id, ctx);
+        sinon.assert.calledWith(taskProcessor.process, nextCandidateTask._id, uncompletedBatch.batchParams, ctx);
       });
 
       it('should return true', () => {
@@ -135,7 +135,7 @@ describe('batch-processor', () => {
       let nextCandidateTask;
 
       beforeEach(async () => {
-        uncompletedBatch = {};
+        uncompletedBatch = { batchParams: {} };
         nextCandidateTask = { _id: '123' };
         ctx = { cancellationRequested: true };
         batchStore.findOne.resolves(uncompletedBatch);
