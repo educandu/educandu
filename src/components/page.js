@@ -6,13 +6,12 @@ import SiteLogo from './site-logo.js';
 import Restricted from './restricted.js';
 import LoginLogout from './login-logout.js';
 import LinkPopover from './link-popover.js';
-import { useUser } from './user-context.js';
+import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions.js';
 import React, { useState, useEffect } from 'react';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
-import { Trans, useTranslation } from 'react-i18next';
 import ClientConfig from '../bootstrap/client-config.js';
 import { FEATURE_TOGGLES } from '../common/constants.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
@@ -21,15 +20,12 @@ import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileO
 
 const Icon = iconsNs.default || iconsNs;
 
-const userHasSufficientProfile = user => user.profile && (user.profile.firstName || user.profile.lastName);
-
 function createLanguagesToChoose(languageNameProvider, supportedLanguages, language) {
   const data = languageNameProvider.getData(language);
   return supportedLanguages.map(lang => ({ ...data[lang], code: lang }));
 }
 
-function Page({ children, disableProfileWarning, fullScreen, headerActions, customAlerts }) {
-  const user = useUser();
+function Page({ children, fullScreen, headerActions, alerts }) {
   const settings = useSettings();
   const clientConfig = useService(ClientConfig);
   const { t, i18n } = useTranslation('page');
@@ -55,20 +51,6 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
     'Page-content': true,
     'Page-content--fullScreen': fullScreen
   });
-
-  let profileWarning = null;
-  if (!disableProfileWarning && user && !userHasSufficientProfile(user)) {
-    const message = (
-      <span>
-        <Trans
-          t={t}
-          i18nKey="profileWarning"
-          components={[<a key="profile-warning" href={urls.getAccountUrl()} />]}
-          />
-      </span>
-    );
-    profileWarning = <Alert key="profile-warning" message={message} banner />;
-  }
 
   let headerActionComponents = null;
   if (headerActions && headerActions.length) {
@@ -174,8 +156,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
             </LinkPopover>
           </div>
         </div>
-        {!fullScreen && profileWarning}
-        {!fullScreen && customAlerts && customAlerts.map((alert, index) => (
+        {!fullScreen && alerts && alerts.map((alert, index) => (
           <Alert key={index.toString()} message={alert.message} type={alert.type || 'info'} banner />
         ))}
       </header>
@@ -198,12 +179,11 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
 }
 
 Page.propTypes = {
-  children: PropTypes.node,
-  customAlerts: PropTypes.arrayOf(PropTypes.shape({
-    message: PropTypes.string.isRequired,
+  alerts: PropTypes.arrayOf(PropTypes.shape({
+    message: PropTypes.node.isRequired,
     type: PropTypes.oneOf(['success', 'info', 'warning', 'error'])
   })),
-  disableProfileWarning: PropTypes.bool,
+  children: PropTypes.node,
   fullScreen: PropTypes.bool,
   headerActions: PropTypes.arrayOf(PropTypes.shape({
     handleClick: PropTypes.func.isRequired,
@@ -217,11 +197,10 @@ Page.propTypes = {
 };
 
 Page.defaultProps = {
+  alerts: [],
   children: null,
-  customAlerts: null,
-  disableProfileWarning: false,
   fullScreen: false,
-  headerActions: null
+  headerActions: []
 };
 
 export default Page;

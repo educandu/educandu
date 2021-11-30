@@ -12,10 +12,13 @@ import { useService } from '../container-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
+import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
+import { useUser } from '../user-context.js';
 
 function Search({ initialState }) {
   const { t } = useTranslation('search');
   const { language } = useLanguage();
+  const user = useUser();
   const { docs } = initialState;
   const { query } = useRequest();
   const decodedQuery = urls.decodeUrl(query.query);
@@ -105,8 +108,16 @@ function Search({ initialState }) {
     }
   ];
 
+  const alerts = [];
+  if (isProfileInsufficient(user)) {
+    alerts.push({
+      message: <InsufficientProfileWarning />,
+      type: 'info'
+    });
+  }
+
   return (
-    <Page headerActions={[]}>
+    <Page alerts={alerts}>
       <h1>{`${t('searchResultPrefix')}: ${decodedQuery}`} </h1>
 
       <div className="Search-searchSelectContainer">

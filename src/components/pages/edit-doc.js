@@ -17,7 +17,9 @@ import DocumentMetadataEditor from '../document-metadata-editor.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import { documentRevisionShape, sectionShape, translationProps } from '../../ui/default-prop-types.js';
+import { documentRevisionShape, sectionShape, translationProps, userProps } from '../../ui/default-prop-types.js';
+import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
+import { withUser } from '../user-context.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -317,7 +319,7 @@ class EditDoc extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { user, t } = this.props;
     const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys, invalidMetadata } = this.state;
 
     const newSectionMenu = (
@@ -355,6 +357,14 @@ class EditDoc extends React.Component {
     });
 
     const alerts = [];
+
+    if (isProfileInsufficient(user)) {
+      alerts.push({
+        message: <InsufficientProfileWarning />,
+        type: 'info'
+      });
+    }
+
     if (proposedSectionKeys.length) {
       alerts.push({
         message: t('proposedSectionsAlert'),
@@ -363,7 +373,7 @@ class EditDoc extends React.Component {
     }
 
     return (
-      <Page headerActions={headerActions} customAlerts={alerts}>
+      <Page headerActions={headerActions} alerts={alerts}>
         <div className="EditDocPage">
           <div className="EditDocPage-docEditor">
             <DocumentMetadataEditor
@@ -425,6 +435,7 @@ class EditDoc extends React.Component {
 
 EditDoc.propTypes = {
   ...translationProps,
+  ...userProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documentRevision: documentRevisionShape.isRequired,
@@ -432,6 +443,6 @@ EditDoc.propTypes = {
   }).isRequired
 };
 
-export default withTranslation('editDoc')(inject({
+export default withTranslation('editDoc')(withUser(inject({
   documentApiClient: DocumentApiClient
-}, EditDoc));
+}, EditDoc)));

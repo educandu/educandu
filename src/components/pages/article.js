@@ -3,23 +3,33 @@ import Page from '../page.js';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import urls from '../../utils/urls.js';
+import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import CreditsFooter from '../credits-footer.js';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions.js';
 import { documentShape, documentRevisionShape } from '../../ui/default-prop-types.js';
+import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 
 const handleBackClick = () => window.history.back();
 
 function Article({ initialState }) {
+  const user = useUser();
   const { t } = useTranslation();
   const { documentOrRevision, type } = initialState;
 
-  const customAlerts = [];
+  const alerts = [];
   const headerActions = [];
 
+  if (isProfileInsufficient(user)) {
+    alerts.push({
+      message: <InsufficientProfileWarning />,
+      type: 'info'
+    });
+  }
+
   if (documentOrRevision.archived) {
-    customAlerts.push({
+    alerts.push({
       message: t('common:archivedAlert'),
       type: 'warning'
     });
@@ -39,7 +49,7 @@ function Article({ initialState }) {
   }
 
   return (
-    <Page headerActions={headerActions} customAlerts={customAlerts}>
+    <Page headerActions={headerActions} alerts={alerts}>
       {type === 'document' && (
         <aside className="Content">
           <a onClick={handleBackClick}>{t('common:back')}</a>

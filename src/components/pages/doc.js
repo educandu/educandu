@@ -18,7 +18,9 @@ import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
-import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
+import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
+import { documentRevisionShape, translationProps, languageProps, userProps } from '../../ui/default-prop-types.js';
+import { withUser } from '../user-context.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -130,7 +132,7 @@ class Doc extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { user, t } = this.props;
     const { revisions, currentRevision } = this.state;
 
     const marks = revisions.reduce((accu, item, index) => {
@@ -179,11 +181,18 @@ class Doc extends React.Component {
       </div>
     );
 
-    const customAlerts = [];
+    const alerts = [];
     const headerActions = [];
 
+    if (isProfileInsufficient(user)) {
+      alerts.push({
+        message: <InsufficientProfileWarning />,
+        type: 'info'
+      });
+    }
+
     if (currentRevision.archived) {
-      customAlerts.push({
+      alerts.push({
         message: t('common:archivedAlert'),
         type: 'warning'
       });
@@ -201,7 +210,7 @@ class Doc extends React.Component {
     }
 
     return (
-      <Page headerActions={headerActions} customAlerts={customAlerts}>
+      <Page headerActions={headerActions} alerts={alerts}>
         <div className="DocPage">
           {revisionPicker}
           <DocView
@@ -217,6 +226,7 @@ class Doc extends React.Component {
 Doc.propTypes = {
   ...translationProps,
   ...languageProps,
+  ...userProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documentRevisions: PropTypes.arrayOf(documentRevisionShape)
@@ -224,7 +234,7 @@ Doc.propTypes = {
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
-export default withTranslation('doc')(withLanguage(inject({
+export default withTranslation('doc')(withLanguage(withUser(inject({
   documentApiClient: DocumentApiClient,
   languageNameProvider: LanguageNameProvider
-}, Doc)));
+}, Doc))));

@@ -20,6 +20,7 @@ import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
 
 const { Search } = Input;
@@ -298,8 +299,16 @@ class Docs extends React.Component {
       });
     }
 
+    const alerts = [];
+    if (isProfileInsufficient(user)) {
+      alerts.push({
+        message: <InsufficientProfileWarning />,
+        type: 'info'
+      });
+    }
+
     return (
-      <Page>
+      <Page alerts={alerts}>
         <div className="DocsPage">
           <h1>{t('pageNames:docs')}</h1>
           <div className="DocsPage-search">
