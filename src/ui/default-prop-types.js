@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { BATCH_TYPE } from '../common/constants.js';
+import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, TASK_TYPE } from '../common/constants.js';
 
 export const translationProps = {
   i18n: PropTypes.object.isRequired,
@@ -178,14 +178,43 @@ export const formItemLayoutShape = PropTypes.shape({
   }).isRequired
 });
 
+export const importTaskShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  batchId: PropTypes.string.isRequired,
+  taskType: PropTypes.oneOf([TASK_TYPE.importDocument]),
+  processed: true,
+  attempts: [
+    {
+      startedOn: PropTypes.string,
+      completedOn: PropTypes.string,
+      errors: PropTypes.arrayOf(PropTypes.string).isRequired
+    }
+  ],
+  taskParams: {
+    key: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    slug: PropTypes.string.isRequired,
+    language: PropTypes.string.isRequired,
+    updatedOn: PropTypes.string,
+    importedRevision: PropTypes.string,
+    importableRevision: PropTypes.string.isRequired,
+    importType: PropTypes.oneOf([DOCUMENT_IMPORT_TYPE.add, DOCUMENT_IMPORT_TYPE.update])
+  }
+});
+
 export const importBatchShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
   createdOn: PropTypes.string.isRequired,
   completedOn: PropTypes.string,
-  batchType: PropTypes.oneOf(BATCH_TYPE.importDocuments),
+  batchType: PropTypes.oneOf([BATCH_TYPE.importDocuments]),
   batchParams: PropTypes.shape({
     ...importSourceShape
   }),
   errors: PropTypes.arrayOf(PropTypes.any).isRequired
+});
+
+export const importBatchDetailsShape = PropTypes.shape({
+  ...importBatchShape,
+  tasks: PropTypes.arrayOf(importTaskShape)
 });
