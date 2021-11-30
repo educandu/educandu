@@ -1,11 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Page from '../page.js';
+import PropTypes from 'prop-types';
+import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import { Table, Collapse, Button } from 'antd';
-import urls from '../../utils/urls.js';
 import { useDateFormat } from '../language-context.js';
-import { importBatchShape } from '../../ui/default-prop-types.js';
+import { importBatchShape, importSourceShape } from '../../ui/default-prop-types.js';
 
 const Panel = Collapse.Panel;
 
@@ -13,12 +13,16 @@ function Imports({ initialState }) {
   const { t } = useTranslation('imports');
   const { formatDate } = useDateFormat();
 
-  const { batches } = initialState;
-
-  const sourceMap = batches.reduce((acc, batch) => {
-    acc[batch.batchParams.source] = [...acc[batch.batchParams.source] || [], batch];
+  const { batches, importSources } = initialState;
+  let sourceMap = importSources.reduce((acc, source) => {
+    acc[source.hostName] = [];
     return acc;
   }, {});
+
+  sourceMap = batches.reduce((acc, batch) => {
+    acc[batch.batchParams.source] = [...acc[batch.batchParams.source] || [], batch];
+    return acc;
+  }, sourceMap);
 
   const sources = Object.entries(sourceMap).map(([key, value]) => ({
     importSourceName: key,
@@ -90,7 +94,8 @@ function Imports({ initialState }) {
 
 Imports.propTypes = {
   initialState: PropTypes.shape({
-    batches: PropTypes.arrayOf(importBatchShape).isRequired
+    batches: PropTypes.arrayOf(importBatchShape).isRequired,
+    importSources: PropTypes.arrayOf(importSourceShape).isRequired
   }).isRequired
 };
 

@@ -26,8 +26,8 @@ export default function CreateImport() {
 
   const sourceMenuItems = clientConfig.importSources;
   const { query } = useRequest();
-  const importSourceName = urls.decodeUrl(query.source);
-  const [selectedSource] = useState(sourceMenuItems.find(source => source.name === importSourceName));
+  const importSourceHostName = urls.decodeUrl(query.source);
+  const [selectedSource] = useState(sourceMenuItems.find(source => source.hostName === importSourceHostName));
 
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
@@ -128,7 +128,7 @@ export default function CreateImport() {
         <Input
           placeholder={t('source')}
           className="CreateImportPage-source"
-          defaultValue={importSourceName}
+          defaultValue={selectedSource?.name}
           disabled
           />
         <br /> <br />

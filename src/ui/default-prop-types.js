@@ -17,14 +17,17 @@ export const sectionEditorProps = {
   onContentChanged: PropTypes.func.isRequired
 };
 
+export const importSourceShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  hostName: PropTypes.string.isRequired,
+  baseUrl: PropTypes.string.isRequired
+});
+
 export const clientConfigProps = {
   clientConfig: PropTypes.shape({
     cdnRootUrl: PropTypes.string.isRequired
   }).isRequired,
-  importSources: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    baseUrl: PropTypes.string.isRequired
-  }))
+  importSources: PropTypes.arrayOf(importSourceShape)
 };
 
 export const requestProps = {
