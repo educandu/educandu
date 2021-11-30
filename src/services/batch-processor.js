@@ -25,7 +25,10 @@ export default class BatchProcessor {
       return true;
     }
 
-    const nextCandidateTask = await this.taskStore.findRandomOne({ processed: false });
+    const nextCandidateTask = await this.taskStore.findRandomOne({
+      $and: [{ processed: false }, { batchId: uncompletedBatch._id }]
+    });
+
     if (!nextCandidateTask) {
       logger.debug('No more tasks to process, will complete the batch');
       uncompletedBatch.completedOn = new Date();
