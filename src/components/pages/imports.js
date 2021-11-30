@@ -1,3 +1,4 @@
+import by from 'thenby';
 import React from 'react';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
@@ -31,7 +32,7 @@ function Imports({ initialState }) {
   const sources = Object.entries(sourceMap).map(([key, value]) => ({
     importSourceHost: key,
     importSourceName: value.name,
-    batches: value.batches
+    batches: value.batches.sort(by(batch => batch.createdOn, 'desc'))
   }));
 
   const handleCreateImport = source => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Row, Space, Tooltip } from 'antd';
+import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,8 @@ import { importBatchShape } from '../../ui/default-prop-types.js';
 import { getImportedArticleUrl } from '../../utils/urls.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
+
+const { Panel } = Collapse;
 
 function Import({ initialState }) {
   const { t } = useTranslation('import');
@@ -39,7 +41,8 @@ function Import({ initialState }) {
       href={getImportedArticleUrl({ hostName, allowUnsecure, slug })}
       rel="noreferrer"
       >{title}
-    </a>);
+    </a>
+  );
 
   const renderImportType = taskParams => {
     let icon = null;
@@ -52,10 +55,38 @@ function Import({ initialState }) {
     return <Tooltip title={t(taskParams.importType)} className="CreateImportPage-importType">{icon}</Tooltip>;
   };
 
+  const renderErrors = errors => <span>{errors.join(';')}</span>;
+  const attemtpsColumns = [
+    { title: t('startedOn'), dataIndex: 'startedOn', width: '50px', render: renderDate },
+    { title: t('completedOn'), key: '_id', dataIndex: 'completedOn', width: '150px', render: renderDate },
+    { title: t('errors'), dataIndex: 'errors', width: '150px', render: renderErrors }
+  ];
+
+  const header = () => <span>{t('attemptsHeader')}</span>;
+  const getErrorsExtra = ({ errors }) => <span>{errors?.length || 0} {t('errors')}</span>;
+
+  const attemptsRenderer = (attempts, task) => {
+    const errors = task.attempts.map(attempt => attempt.errors).flat();
+    return (
+      <Collapse>
+        <Panel key={task._id} header={header()} extra={getErrorsExtra({ errors })}>
+          <Table
+            key={task._id}
+            rowKey={attempt => `${attempt.startedOn}: ${attempt.completedOn || Math.random()}`}
+            dataSource={attempts}
+            columns={attemtpsColumns}
+            pagination={false}
+            />
+        </Panel>
+      </Collapse>
+    );
+  };
+
   const columns = [
     { title: t('importType'), dataIndex: 'taskParams', width: '50px', render: renderImportType },
     { title: t('documentTitle'), key: '_id', dataIndex: 'taskParams', width: '150px', render: renderTitle },
-    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus }
+    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus },
+    { title: t('attemptsHeader'), dataIndex: 'attempts', width: '150px', render: attemptsRenderer }
   ];
 
   return (
@@ -86,8 +117,19 @@ function Import({ initialState }) {
             <span>{batch.createdBy.username}</span>
           </Space>
         </Row>
-
+        <Collapse>
+          <Panel header={t('batchErrors')} extra={getErrorsExtra(batch)}>
+            <List
+              dataSource={batch.errors}
+              renderItem={error => (
+                <List.Item>
+                  <span>{error}</span>
+                </List.Item>)}
+              />
+          </Panel>
+        </Collapse>
         <Table
+          style={{ marginTop: '20px' }}
           key={batch._id}
           rowKey="_id"
           dataSource={batch.tasks}

@@ -46,4 +46,15 @@ add:
 update:
   en: Update
   de: Aktualisieren
-  
+startedOn:
+  en: Started on
+  de: Begann am
+errors:
+  en: Errors
+  de: Fehler
+attemptsHeader:
+  en: Attempt details
+  de: Versuchsdetails
+batchErrors:
+  en: Batch errors
+  de: Chargenfelher

@@ -1,19 +1,20 @@
 import by from 'thenby';
 import Page from '../page.js';
-import urls, { getArticleUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
+import { useRequest } from '../request-context.js';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
 import { Tooltip, Button, Table, Input } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
-import { useRequest } from '../request-context.js';
+import urls, { getArticleUrl, getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 
 export default function CreateImport() {
   const { t } = useTranslation('createImport');
@@ -34,7 +35,10 @@ export default function CreateImport() {
   const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
   const [isCreatingNewImportBatch, setIsCreatingNewImportBatch] = useState(false);
 
+  useReloadPersistedWindow();
+
   const handleImportClick = async () => {
+    setIsCreatingNewImportBatch(true);
     const selectedDocs = selectedDocumentKeys
       .map(key => importableDocuments.find(doc => doc.key === key));
 
@@ -44,10 +48,9 @@ export default function CreateImport() {
     };
 
     try {
-      setIsCreatingNewImportBatch(true);
       const result = await importApiClient.postImportBatch(batch);
-      // eslint-disable-next-line no-console
-      console.log('Batch created', result.batch);
+      setIsCreatingNewImportBatch(false);
+      window.location = getImportDetailsUrl(result.batch._id);
     } catch (error) {
       handleApiError({ error, t });
     } finally {

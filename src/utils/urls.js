@@ -166,6 +166,10 @@ export function getImportedArticleUrl({ allowUnsecure, hostName, slug }) {
   return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(slug));
 }
 
+export function getImportDetailsUrl(batchId) {
+  return concatParts(importsPath, batchId);
+}
+
 export default {
   homePath,
   docsPath,

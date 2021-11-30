@@ -406,7 +406,11 @@
       "batchStatusProcessing": "{progress, number, percent} completed",
       "importType": "Import type",
       "add": "Add",
-      "update": "Update"
+      "update": "Update",
+      "startedOn": "Started on",
+      "errors": "Errors",
+      "attemptsHeader": "Attempt details",
+      "batchErrors": "Batch errors"
     }
   },
   {
@@ -428,7 +432,11 @@
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "importType": "Import-Typ",
       "add": "Hinzufügen",
-      "update": "Aktualisieren"
+      "update": "Aktualisieren",
+      "startedOn": "Begann am",
+      "errors": "Fehler",
+      "attemptsHeader": "Versuchsdetails",
+      "batchErrors": "Chargenfelher"
     }
   },
   {
