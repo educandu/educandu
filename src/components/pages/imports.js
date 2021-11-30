@@ -78,11 +78,14 @@ function Imports({ initialState }) {
     );
   };
 
+  const defaultActiveKey = sources.filter(source => source.batches.length)
+    .map(source => source.importSourceName);
+
   return (
     <Page>
       <div className="CreateImportPage">
         <h1>{t('pageNames:imports')}</h1>
-        <Collapse defaultActiveKey={sources.map(source => source.importSourceName)}>
+        <Collapse defaultActiveKey={defaultActiveKey}>
           {sources.map(source => (
             <Panel header={header(source)} key={source.importSourceName} extra={getExtra(source)} >
               <Table
