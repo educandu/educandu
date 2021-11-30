@@ -11,7 +11,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
 import UserStore from '../stores/user-store.js';
 
-const { BadRequest } = httpErrors;
+const { BadRequest, NotFound } = httpErrors;
 
 const logger = new Logger(import.meta.url);
 
@@ -183,6 +183,20 @@ class ImportService {
         progress
       };
     }));
+  }
+
+  async getImportBatchDetails(id) {
+    const batch = await this.batchStore.findOne({ _id: id });
+    if (!batch) {
+      throw new NotFound('Batch not found');
+    }
+
+    const tasks = await this.taskStore.find({ batchId: id });
+    const processedTasksCount = tasks.filter(task => task.processed).length;
+
+    batch.tasks = tasks;
+    batch.progress = batch.tasks.length === 0 ? 1 : processedTasksCount / tasks.length;
+    return batch;
   }
 }
 

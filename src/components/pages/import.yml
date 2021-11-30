@@ -1,0 +1,49 @@
+documentTitle:
+  en: Document
+  de: Dokument
+taskType:
+  en: Task type
+  de: Tasktyp
+taskStatus:
+  en: Task status
+  de: Taskstatus
+taskStatusPending:
+  en: Pending
+  de: Ausstehend
+taskStatusDone:
+  en: Done
+  de: Vertig
+createdOn:
+  en: Created on
+  de: Erstellt am
+completedOn:
+  en: Completed on
+  de: Vervollständigt am
+createdBy:
+  en: Created by
+  de: Erstellt von
+importHeading:
+  en: Import overview
+  de: Import ubersicht
+batchStatus:
+  en: Batch status
+  de: Chargenstatus
+batchStatusPending:
+  en: Pending
+  de: Ausstehend
+batchStatusDone:
+  en: Done
+  de: Vertig
+batchStatusProcessing:
+  en: '{progress, number, percent} completed'
+  de: '{progress, number, percent} abgeschlossen'
+importType:
+  en: Import type
+  de: Import-Typ
+add:
+  en: Add
+  de: Hinzufügen
+update:
+  en: Update
+  de: Aktualisieren
+  

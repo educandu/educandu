@@ -185,7 +185,7 @@ export const importBatchShape = PropTypes.shape({
   completedOn: PropTypes.string,
   batchType: PropTypes.oneOf(BATCH_TYPE.importDocuments),
   batchParams: PropTypes.shape({
-    source: PropTypes.string.isRequired
+    ...importSourceShape
   }),
   errors: PropTypes.arrayOf(PropTypes.any).isRequired
 });

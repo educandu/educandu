@@ -388,6 +388,50 @@
     }
   },
   {
+    "namespace": "import",
+    "language": "en",
+    "resources": {
+      "documentTitle": "Document",
+      "taskType": "Task type",
+      "taskStatus": "Task status",
+      "taskStatusPending": "Pending",
+      "taskStatusDone": "Done",
+      "createdOn": "Created on",
+      "completedOn": "Completed on",
+      "createdBy": "Created by",
+      "importHeading": "Import overview",
+      "batchStatus": "Batch status",
+      "batchStatusPending": "Pending",
+      "batchStatusDone": "Done",
+      "batchStatusProcessing": "{progress, number, percent} completed",
+      "importType": "Import type",
+      "add": "Add",
+      "update": "Update"
+    }
+  },
+  {
+    "namespace": "import",
+    "language": "de",
+    "resources": {
+      "documentTitle": "Dokument",
+      "taskType": "Tasktyp",
+      "taskStatus": "Taskstatus",
+      "taskStatusPending": "Ausstehend",
+      "taskStatusDone": "Vertig",
+      "createdOn": "Erstellt am",
+      "completedOn": "Vervollständigt am",
+      "createdBy": "Erstellt von",
+      "importHeading": "Import ubersicht",
+      "batchStatus": "Chargenstatus",
+      "batchStatusPending": "Ausstehend",
+      "batchStatusDone": "Vertig",
+      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
+      "importType": "Import-Typ",
+      "add": "Hinzufügen",
+      "update": "Aktualisieren"
+    }
+  },
+  {
     "namespace": "imports",
     "language": "en",
     "resources": {

@@ -90,6 +90,7 @@ function Imports({ initialState }) {
             <Panel header={header(source)} key={source.importSourceName} extra={getExtra(source)} >
               <Table
                 key={source.importSourceName}
+                rowKey="_id"
                 dataSource={source.batches}
                 columns={columns}
                 pagination={false}

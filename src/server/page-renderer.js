@@ -24,6 +24,7 @@ import ResetPassword from '../components/pages/reset-password.js';
 import CompleteRegistration from '../components/pages/complete-registration.js';
 import CompletePasswordReset from '../components/pages/complete-password-reset.js';
 import Imports from '../components/pages/imports.js';
+import Import from '../components/pages/import.js';
 
 const pageComponentsByName = {
   'article': Article,
@@ -41,7 +42,8 @@ const pageComponentsByName = {
   'users': Users,
   'search': Search,
   'create-import': CreateImport,
-  'imports': Imports
+  'imports': Imports,
+  'import': Import
 };
 
 class PageRenderer extends PageRendererBase {

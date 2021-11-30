@@ -162,6 +162,10 @@ export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
   return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
 }
 
+export function getImportedArticleUrl({ allowUnsecure, hostName, slug }) {
+  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(slug));
+}
+
 export default {
   homePath,
   docsPath,
