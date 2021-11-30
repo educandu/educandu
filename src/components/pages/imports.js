@@ -15,22 +15,27 @@ function Imports({ initialState }) {
 
   const { batches, importSources } = initialState;
   let sourceMap = importSources.reduce((acc, source) => {
-    acc[source.hostName] = [];
+    acc[source.hostName] = { name: source.name, batches: [] };
     return acc;
   }, {});
 
   sourceMap = batches.reduce((acc, batch) => {
-    acc[batch.batchParams.source] = [...acc[batch.batchParams.source] || [], batch];
+    const hostName = batch.batchParams.hostName;
+    acc[hostName] = {
+      name: batch.batchParams.name,
+      batches: [...acc[hostName].batches || [], batch]
+    };
     return acc;
   }, sourceMap);
 
   const sources = Object.entries(sourceMap).map(([key, value]) => ({
-    importSourceName: key,
-    batches: value
+    importSourceHost: key,
+    importSourceName: value.name,
+    batches: value.batches
   }));
 
   const handleCreateImport = source => {
-    window.location = urls.getCreateImportUrl(source.importSourceName);
+    window.location = urls.getCreateImportUrl(source.importSourceHost);
   };
 
   const renderId = id => <a href={urls.getBatchUrl(id)}>{t('viewBatch')}</a>;
