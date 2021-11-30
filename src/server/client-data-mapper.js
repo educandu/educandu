@@ -74,37 +74,13 @@ class ClientDataMapper {
   }
 
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {
-    const idSet = this._getUserIdSetForDocsOrRevisions(docsOrRevisions);
+    const idSet = this.userService.extractUserIdSetFromDocsOrRevisions(docsOrRevisions);
     const users = await this.userService.getUsersByIds(Array.from(idSet));
     if (users.length !== idSet.size) {
       throw new Error(`Was searching for ${idSet.size} users, but found ${users.length}`);
     }
 
     return new Map(users.map(u => [u._id, u]));
-  }
-
-  _getUserIdSetForDocsOrRevisions(docsOrRevisions) {
-    return docsOrRevisions.reduce((set, docOrRev) => this._fillUserIdSetForDocOrRevision(docOrRev, set), new Set());
-  }
-
-  _fillUserIdSetForDocOrRevision(docOrRev, set) {
-    if (docOrRev.createdBy) {
-      set.add(docOrRev.createdBy);
-    }
-    if (docOrRev.updatedBy) {
-      set.add(docOrRev.updatedBy);
-    }
-    if (docOrRev.contributors) {
-      docOrRev.contributors.forEach(c => set.add(c));
-    }
-    if (docOrRev.sections) {
-      docOrRev.sections.forEach(s => {
-        if (s.deletedBy) {
-          set.add(s.deletedBy);
-        }
-      });
-    }
-    return set;
   }
 
   _mapDocOrRevision(docOrRevision, userMap, allowedUserFields) {

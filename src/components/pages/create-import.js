@@ -1,6 +1,6 @@
 import by from 'thenby';
 import Page from '../page.js';
-import urls from '../../utils/urls.js';
+import urls, { getArticleUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
@@ -39,7 +39,7 @@ export default function CreateImport() {
       .map(key => importableDocuments.find(doc => doc.key === key));
 
     const batch = {
-      importSourceName: selectedSource.name,
+      hostName: selectedSource.hostName,
       documentsToImport: selectedDocs
     };
 
@@ -63,7 +63,7 @@ export default function CreateImport() {
       setSelectedDocumentKeys([]);
 
       try {
-        const { documents } = await importApiClient.getImports(selectedSource.name);
+        const { documents } = await importApiClient.getImports(selectedSource.hostName);
         setImportableDocuments(documents);
       } catch (error) {
         handleApiError({ error, t });
@@ -91,7 +91,9 @@ export default function CreateImport() {
       return <span>{doc.title}</span>;
     }
 
-    const url = `${selectedSource.baseUrl}${urls.getArticleUrl(doc.slug)}`;
+    const baseUrl = getImportSourceBaseUrl(selectedSource);
+
+    const url = `${baseUrl}${getArticleUrl(doc.slug)}`;
     return <a href={url} target="_blank" rel="noopener noreferrer" >{doc.title}</a>;
   };
 

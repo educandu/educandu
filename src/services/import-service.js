@@ -5,6 +5,7 @@ import TaskStore from '../stores/task-store.js';
 import BatchStore from '../stores/batch-store.js';
 import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
+import { getImportSourceBaseUrl } from '../utils/urls.js';
 import BatchLockStore from '../stores/batch-lock-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
@@ -42,18 +43,17 @@ class ImportService {
     this.userStore = userStore;
   }
 
-  getAllImportedDocumentsMetadata(importDomain) {
-    const filter = { archived: false, origin: `${DOCUMENT_ORIGIN.external}/${importDomain}` };
+  getAllImportedDocumentsMetadata(hostName) {
+    const filter = { archived: false, origin: `${DOCUMENT_ORIGIN.external}/${hostName}` };
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: importedDocumentsProjection });
   }
 
   async getAllImportableDocumentsMetadata(importSource) {
-    const { baseUrl, apiKey } = importSource;
-    const importDomain = new URL(baseUrl).hostname;
+    const baseUrl = getImportSourceBaseUrl(importSource);
 
-    const exportApiClientResponse = await this.exportApiClient.getExports({ baseUrl, apiKey });
+    const exportApiClientResponse = await this.exportApiClient.getExports({ baseUrl, apiKey: importSource.apiKey });
     const exportableDocuments = exportApiClientResponse?.docs || [];
-    const importedDocuments = await this.getAllImportedDocumentsMetadata(importDomain);
+    const importedDocuments = await this.getAllImportedDocumentsMetadata(importSource.hostName);
 
     const importableDocuments = exportableDocuments
       .map(exportableDocument => {
@@ -80,15 +80,16 @@ class ImportService {
   }
 
   async createImportBatch({ importSource, documentsToImport, user }) {
+    const batchParams = { ...importSource };
+    delete batchParams.apiKey;
+
     const batch = {
       _id: uniqueId.create(),
       createdBy: user._id,
       createdOn: new Date(),
       completedOn: null,
       batchType: BATCH_TYPE.importDocuments,
-      batchParams: {
-        source: importSource.name
-      },
+      batchParams,
       errors: []
     };
 
@@ -112,7 +113,7 @@ class ImportService {
 
     let lock;
     try {
-      lock = await this.batchLockStore.takeLock(importSource.name);
+      lock = await this.batchLockStore.takeLock(importSource.hostName);
     } catch (error) {
       throw new BadRequest(CONCURRENT_BATCH_ERROR_MESSAGE);
     }
@@ -120,7 +121,7 @@ class ImportService {
     try {
       const existingActiveBatch = await this.batchStore.findOne({
         'batchType': BATCH_TYPE.importDocuments,
-        'batchParams.source': importSource.name,
+        'batchParams.hostName': importSource.hostName,
         'completedOn': null
       });
 
@@ -128,7 +129,7 @@ class ImportService {
         throw new BadRequest(CONCURRENT_BATCH_ERROR_MESSAGE);
       }
 
-      logger.info(`Creating new import batch for source ${importSource.name} containing ${tasks.length} tasks`);
+      logger.info(`Creating new import batch for source '${importSource.name}' containing ${tasks.length} tasks`);
       await this.transactionRunner.run(async session => {
         await this.batchStore.insertOne(batch, { session });
         await this.taskStore.insertMany(tasks, { session });

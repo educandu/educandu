@@ -1,8 +1,12 @@
 import fs from 'fs';
 import mime from 'mime';
 import Stream from 'stream';
+import Logger from '../common/logger.js';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
+import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
+
+const logger = new Logger(import.meta.url);
 
 const defaultContentType = 'application/octet-stream';
 
@@ -46,9 +50,18 @@ class Cdn {
     await this.s3Client.deleteObjects(this.bucketName, objectNames);
   }
 
-  dispose() {
-    this.s3Client = null;
-    return Promise.resolve();
+  [getDisposalInfo]() {
+    return {
+      priority: DISPOSAL_PRIORITY.storage,
+      dispose: () => {
+        logger.info('Closing CDN connection');
+        this.s3Client = null;
+
+        logger.info('CDN connection closed');
+
+        return Promise.resolve();
+      }
+    };
   }
 
   _getDefaultMetadata() {

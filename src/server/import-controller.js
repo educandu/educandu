@@ -40,11 +40,11 @@ class ImportController {
 
   registerApi(router) {
     router.get('/api/v1/imports', [needsPermission(permissions.MANAGE_IMPORT), validateQuery(getImportsQuerySchema)], async (req, res) => {
-      const { importSourceName } = req.query;
+      const { hostName } = req.query;
 
-      const importSource = this.serverConfig.importSources.find(source => source.name === importSourceName);
+      const importSource = this.serverConfig.importSources.find(source => source.hostName === hostName);
       if (!importSource) {
-        throw new NotFound(`${importSourceName} is not a known import source`);
+        throw new NotFound(`'${hostName}' is not a host name of a known import source`);
       }
 
       const documents = await this.importService.getAllImportableDocumentsMetadata(importSource);
@@ -52,12 +52,12 @@ class ImportController {
     });
 
     router.post('/api/v1/imports/batch', [jsonParser, needsPermission(permissions.MANAGE_IMPORT), validateBody(postImportBatchBodySchema)], async (req, res) => {
-      const { importSourceName, documentsToImport } = req.body;
+      const { hostName, documentsToImport } = req.body;
       const user = req.user;
 
-      const importSource = this.serverConfig.importSources.find(source => source.name === importSourceName);
+      const importSource = this.serverConfig.importSources.find(source => source.hostName === hostName);
       if (!importSource) {
-        throw new NotFound(`${importSourceName} is not a known import source`);
+        throw new NotFound(`'${hostName}' is not a host name of a known import source`);
       }
 
       const batch = await this.importService.createImportBatch({ importSource, documentsToImport, user });
