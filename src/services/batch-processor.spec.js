@@ -19,7 +19,6 @@ describe('batch-processor', () => {
   let taskProcessor;
 
   beforeAll(async () => {
-    sandbox.useFakeTimers(now);
     container = await setupTestEnvironment();
     taskStore = container.get(TaskStore);
     batchStore = container.get(BatchStore);
@@ -28,6 +27,7 @@ describe('batch-processor', () => {
   });
 
   beforeEach(() => {
+    sandbox.useFakeTimers(now);
     sandbox.stub(taskStore, 'findRandomOne');
     sandbox.stub(batchStore, 'findOne');
     sandbox.stub(batchStore, 'save');
@@ -71,9 +71,11 @@ describe('batch-processor', () => {
 
     describe('when there are no tasks to process', () => {
       let uncompletedBatch;
+      let expectedBatch;
 
       beforeEach(async () => {
-        uncompletedBatch = { batchParams: {} };
+        uncompletedBatch = { _id: 'batchId', batchParams: {} };
+        expectedBatch = { ...uncompletedBatch, completedOn: now };
         ctx = { cancellationRequested: false };
         batchStore.findOne.resolves(uncompletedBatch);
         taskStore.findRandomOne.resolves(null);
@@ -82,12 +84,11 @@ describe('batch-processor', () => {
       });
 
       it('should call taskStore.findRandomOne', () => {
-        sinon.assert.calledWith(taskStore.findRandomOne, { processed: false });
+        sinon.assert.calledWith(taskStore.findRandomOne, { $and: [{ processed: false }, { batchId: 'batchId' }] });
       });
 
       it('should complete the batch', () => {
-        uncompletedBatch.completedOn = now;
-        sinon.assert.calledWith(batchStore.save, uncompletedBatch);
+        sinon.assert.calledWith(batchStore.save, expectedBatch);
       });
 
       it('should not call taskProcessor.process', () => {
@@ -104,8 +105,8 @@ describe('batch-processor', () => {
       let nextCandidateTask;
 
       beforeEach(async () => {
-        uncompletedBatch = { batchParams: {} };
-        nextCandidateTask = { _id: '123' };
+        uncompletedBatch = { _id: 'batchId', batchParams: {} };
+        nextCandidateTask = { _id: 'taskId' };
         ctx = { cancellationRequested: false };
         batchStore.findOne.resolves(uncompletedBatch);
         taskStore.findRandomOne.resolves(nextCandidateTask);
@@ -114,7 +115,7 @@ describe('batch-processor', () => {
       });
 
       it('should call taskStore.findRandomOne', () => {
-        sinon.assert.calledWith(taskStore.findRandomOne, { processed: false });
+        sinon.assert.calledWith(taskStore.findRandomOne, { $and: [{ processed: false }, { batchId: 'batchId' }] });
       });
 
       it('should not complete the batch', () => {
@@ -136,7 +137,7 @@ describe('batch-processor', () => {
 
       beforeEach(async () => {
         uncompletedBatch = { batchParams: {} };
-        nextCandidateTask = { _id: '123' };
+        nextCandidateTask = { _id: 'taskId' };
         ctx = { cancellationRequested: true };
         batchStore.findOne.resolves(uncompletedBatch);
         taskStore.findRandomOne.resolves(nextCandidateTask);
