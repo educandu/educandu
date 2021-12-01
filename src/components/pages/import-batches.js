@@ -75,7 +75,7 @@ function ImportBatches({ initialState }) {
 
   const header = source => {
     return (
-      <span className="ImportBatches-header" >{t('importsHeaderPrefix')}: {source.importSourceName}</span>
+      <span className="ImportBatchesPage-header" >{t('importsHeaderPrefix')}: {source.importSourceName}</span>
     );
   };
 
@@ -84,11 +84,11 @@ function ImportBatches({ initialState }) {
 
   return (
     <Page>
-      <div className="ImportBatches">
+      <div className="ImportBatchesPage">
         <h1>{t('pageNames:imports')}</h1>
         <Collapse defaultActiveKey={defaultActiveKey}>
           {sources.map(source => (
-            <Panel header={header(source)} key={source.importSourceName} extra={getExtra(source)} >
+            <Panel header={header(source)} className="ImportBatchesPage-batchTablePanel" key={source.importSourceName} extra={getExtra(source)} >
               <Table
                 key={source.importSourceName}
                 rowKey="_id"
