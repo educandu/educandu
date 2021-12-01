@@ -22,7 +22,7 @@ export class DocumentImportTaskProcessor {
       baseUrl: getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
       documentKey: key,
-      fromRevision: importedRevision,
+      afterRevision: importedRevision,
       toRevision: importableRevision
     });
 
