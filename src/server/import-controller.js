@@ -26,19 +26,19 @@ class ImportController {
   }
 
   registerPages(app) {
-    app.get('/imports', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
+    app.get('/import-batches', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
       const rawBatches = await this.importService.getImportBatches();
       const batches = await this.clientDataMapper.mapImportBatches(rawBatches, req.user);
       const importSources = this.serverConfig.importSources.slice();
 
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'imports', { batches, importSources });
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import-batches', { batches, importSources });
     });
 
-    app.get('/imports/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
+    app.get('/import-batches/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'create-import');
     });
 
-    app.get('/imports/:batchId', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
+    app.get('/import-batches/:batchId', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
       const batchId = req.params.batchId;
       const rawBatch = await this.importService.getImportBatchDetails(batchId);
       const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);

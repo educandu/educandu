@@ -388,6 +388,44 @@
     }
   },
   {
+    "namespace": "importBatches",
+    "language": "en",
+    "resources": {
+      "batchId": "Batch",
+      "batchType": "Batch type",
+      "batchStatus": "Batch status",
+      "batchStatusPending": "Pending",
+      "batchStatusDone": "Done",
+      "batchStatusProcessing": "{progress, number, percent} completed",
+      "viewBatch": "View batch",
+      "batchTypeImportDocument": "Document import",
+      "createdOn": "Created on",
+      "completedOn": "Completed on",
+      "createdBy": "Created by",
+      "createImport": "Create import",
+      "importsHeaderPrefix": "Source"
+    }
+  },
+  {
+    "namespace": "importBatches",
+    "language": "de",
+    "resources": {
+      "batchId": "Chargen",
+      "batchType": "Chargentyp",
+      "batchStatus": "Chargenstatus",
+      "batchStatusPending": "Ausstehend",
+      "batchStatusDone": "Vertig",
+      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
+      "viewBatch": "Chargen ansehen",
+      "batchTypeImportDocument": "Dokumentenimport",
+      "createdOn": "Erstellt am",
+      "completedOn": "Vervollständigt am",
+      "createdBy": "Erstellt von",
+      "createImport": "Import erstellen",
+      "importsHeaderPrefix": "Quelle"
+    }
+  },
+  {
     "namespace": "import",
     "language": "en",
     "resources": {
@@ -437,44 +475,6 @@
       "errors": "Fehler",
       "attemptsHeader": "Versuchsdetails",
       "batchErrors": "Chargenfelher"
-    }
-  },
-  {
-    "namespace": "imports",
-    "language": "en",
-    "resources": {
-      "batchId": "Batch",
-      "batchType": "Batch type",
-      "batchStatus": "Batch status",
-      "batchStatusPending": "Pending",
-      "batchStatusDone": "Done",
-      "batchStatusProcessing": "{progress, number, percent} completed",
-      "viewBatch": "View batch",
-      "batchTypeImportDocument": "Document import",
-      "createdOn": "Created on",
-      "completedOn": "Completed on",
-      "createdBy": "Created by",
-      "createImport": "Create import",
-      "importsHeaderPrefix": "Source"
-    }
-  },
-  {
-    "namespace": "imports",
-    "language": "de",
-    "resources": {
-      "batchId": "Chargen",
-      "batchType": "Chargentyp",
-      "batchStatus": "Chargenstatus",
-      "batchStatusPending": "Ausstehend",
-      "batchStatusDone": "Vertig",
-      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
-      "viewBatch": "Chargen ansehen",
-      "batchTypeImportDocument": "Dokumentenimport",
-      "createdOn": "Erstellt am",
-      "completedOn": "Vervollständigt am",
-      "createdBy": "Erstellt von",
-      "createImport": "Import erstellen",
-      "importsHeaderPrefix": "Quelle"
     }
   },
   {

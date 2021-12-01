@@ -10,8 +10,8 @@ import { importBatchShape, importSourceShape } from '../../ui/default-prop-types
 
 const Panel = Collapse.Panel;
 
-function Imports({ initialState }) {
-  const { t } = useTranslation('imports');
+function ImportBatches({ initialState }) {
+  const { t } = useTranslation('importBatches');
   const { formatDate } = useDateFormat();
 
   const { batches, importSources } = initialState;
@@ -75,7 +75,7 @@ function Imports({ initialState }) {
 
   const header = source => {
     return (
-      <span className="ImportsPage-header" >{t('importsHeaderPrefix')}: {source.importSourceName}</span>
+      <span className="ImportBatches-header" >{t('importsHeaderPrefix')}: {source.importSourceName}</span>
     );
   };
 
@@ -84,7 +84,7 @@ function Imports({ initialState }) {
 
   return (
     <Page>
-      <div className="ImportsPage">
+      <div className="ImportBatches">
         <h1>{t('pageNames:imports')}</h1>
         <Collapse defaultActiveKey={defaultActiveKey}>
           {sources.map(source => (
@@ -102,11 +102,11 @@ function Imports({ initialState }) {
     </Page>);
 }
 
-Imports.propTypes = {
+ImportBatches.propTypes = {
   initialState: PropTypes.shape({
     batches: PropTypes.arrayOf(importBatchShape).isRequired,
     importSources: PropTypes.arrayOf(importSourceShape).isRequired
   }).isRequired
 };
 
-export default Imports;
+export default ImportBatches;

@@ -23,7 +23,7 @@ import ResourceManager from '../resources/resource-manager.js';
 import ResetPassword from '../components/pages/reset-password.js';
 import CompleteRegistration from '../components/pages/complete-registration.js';
 import CompletePasswordReset from '../components/pages/complete-password-reset.js';
-import Imports from '../components/pages/imports.js';
+import ImportBatches from '../components/pages/import-batches.js';
 import Import from '../components/pages/import.js';
 
 const pageComponentsByName = {
@@ -42,7 +42,7 @@ const pageComponentsByName = {
   'users': Users,
   'search': Search,
   'create-import': CreateImport,
-  'imports': Imports,
+  'import-batches': ImportBatches,
   'import': Import
 };
 

@@ -4,8 +4,8 @@ export const homePath = '/';
 export const docsPath = '/docs';
 export const usersPath = '/users';
 export const settingsPath = '/settings';
-export const importsPath = '/imports';
-export const createImportPath = '/imports/create';
+export const importBatchesPath = '/import-batches';
+export const createImportPath = '/import-batches/create';
 export const loginPath = '/login';
 export const logoutPath = '/logout';
 export const accountPath = '/account';
@@ -67,7 +67,7 @@ export function getSettingsUrl() {
 }
 
 export function getImportsUrl() {
-  return importsPath;
+  return importBatchesPath;
 }
 
 export function getCreateImportUrl(sourceName) {
@@ -75,7 +75,7 @@ export function getCreateImportUrl(sourceName) {
 }
 
 export function getBatchUrl(id) {
-  return concatParts(importsPath, id);
+  return concatParts(importBatchesPath, id);
 }
 
 export function getCompleteRegistrationUrl(verificationCode) {
@@ -154,7 +154,7 @@ export function getImportedArticleUrl({ allowUnsecure, hostName, slug }) {
 }
 
 export function getImportDetailsUrl(batchId) {
-  return concatParts(importsPath, batchId);
+  return concatParts(importBatchesPath, batchId);
 }
 
 export default {
