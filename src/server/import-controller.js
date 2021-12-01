@@ -38,9 +38,9 @@ class ImportController {
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'create-import');
     });
 
-    app.get('/imports/:key', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
-      const key = req.params.key;
-      const rawBatch = await this.importService.getImportBatchDetails(key);
+    app.get('/imports/:batchId', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
+      const batchId = req.params.batchId;
+      const rawBatch = await this.importService.getImportBatchDetails(batchId);
       const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
 
       return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import', { batch });
