@@ -2,6 +2,7 @@ import express from 'express';
 import Database from '../stores/database.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
 import SettingService from '../services/setting-service.js';
@@ -39,7 +40,7 @@ class SettingController {
       ]);
       const documents = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
       const initialState = { settings, documents };
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'settings', initialState);
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.settings, initialState);
     });
   }
 

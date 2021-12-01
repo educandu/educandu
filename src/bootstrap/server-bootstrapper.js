@@ -7,6 +7,7 @@ import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
 import resources from '../resources/resources.json';
 import UserService from '../services/user-service.js';
+import PageResolver from '../domain/page-resolver.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 const logger = new Logger(import.meta.url);
@@ -73,6 +74,11 @@ export async function createContainer(configValues = {}) {
 
   logger.info('Registering resource manager');
   container.registerInstance(ResourceManager, resourceManager);
+
+  logger.info('Registering page resolver');
+  const pageResolver = new PageResolver(serverConfig.bundleConfig);
+  await pageResolver.prefillCache();
+  container.registerInstance(PageResolver, pageResolver);
 
   if (serverConfig.initialUser) {
     const userService = container.get(UserService);

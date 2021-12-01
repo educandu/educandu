@@ -2,6 +2,7 @@ import express from 'express';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ImportService from '../services/import-service.js';
 import ExportApiClient from '../services/export-api-client.js';
@@ -25,7 +26,7 @@ class ImportController {
 
   registerPages(app) {
     app.get('/import', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import');
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.import);
     });
   }
 

@@ -2,6 +2,7 @@ import PageRenderer from './page-renderer.js';
 import ClientDataMapper from './client-data-mapper.js';
 import SettingService from '../services/setting-service.js';
 import DocumentService from '../services/document-service.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 
 function findHomeLanguageIndexForRequest(homeLanguages, languageFromQuerystring) {
   if (languageFromQuerystring) {
@@ -34,7 +35,7 @@ class IndexController {
       const doc = documentKey ? await this.documentService.getDocumentByKey(documentKey) : null;
       const document = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
       const initialState = { document, homeLanguages, currentHomeLanguageIndex };
-      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'index', initialState);
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.index, initialState);
     });
   }
 }

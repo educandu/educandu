@@ -1,60 +1,29 @@
 import htmlescape from 'htmlescape';
 import Root from '../components/root.js';
 import { Container } from '../common/di.js';
-import Doc from '../components/pages/doc.js';
-import Docs from '../components/pages/docs.js';
 import cloneDeep from '../utils/clone-deep.js';
-import Index from '../components/pages/index.js';
-import Login from '../components/pages/login.js';
-import Users from '../components/pages/users.js';
-import Import from '../components/pages/import.js';
-import Search from '../components/pages/search.js';
-import Article from '../components/pages/article.js';
-import Account from '../components/pages/account.js';
-import EditDoc from '../components/pages/edit-doc.js';
-import Register from '../components/pages/register.js';
-import Settings from '../components/pages/settings.js';
+import PageResolver from '../domain/page-resolver.js';
 import requestHelper from '../utils/request-helper.js';
 import ClientDataMapper from './client-data-mapper.js';
 import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import ResourceManager from '../resources/resource-manager.js';
-import ResetPassword from '../components/pages/reset-password.js';
-import CompleteRegistration from '../components/pages/complete-registration.js';
-import CompletePasswordReset from '../components/pages/complete-password-reset.js';
-
-const pageComponentsByName = {
-  'article': Article,
-  'complete-password-reset': CompletePasswordReset,
-  'complete-registration': CompleteRegistration,
-  'doc': Doc,
-  'docs': Docs,
-  'edit-doc': EditDoc,
-  'index': Index,
-  'login': Login,
-  'account': Account,
-  'register': Register,
-  'reset-password': ResetPassword,
-  'settings': Settings,
-  'users': Users,
-  'search': Search,
-  'import': Import
-};
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMapper, ResourceManager]; }
+  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMapper, ResourceManager, PageResolver]; }
 
-  constructor(container, serverConfig, clientConfig, clientDataMapper, resourceManager) {
+  constructor(container, serverConfig, clientConfig, clientDataMapper, resourceManager, pageResolver) {
     super();
     this.container = container;
     this.serverConfig = serverConfig;
     this.clientConfig = clientConfig;
     this.clientDataMapper = clientDataMapper;
     this.resourceManager = resourceManager;
+    this.pageResolver = pageResolver;
   }
 
-  sendPage(req, res, bundleName, pageName, initialState = {}) {
+  sendPage(req, res, pageName, initialState = {}) {
     const title = 'elmu';
     const language = req.language;
     const settings = req.settings;
@@ -64,6 +33,11 @@ class PageRenderer extends PageRendererBase {
     const user = this.clientDataMapper.dbUserToClientUser(req.user);
     const resources = this.resourceManager.getAllResourceBundles();
 
+    const {
+      PageComponent,
+      PageTemplateComponent
+    } = this.pageResolver.getCachedPageComponentInfo(pageName);
+
     const props = {
       request: cloneDeep(request),
       user: cloneDeep(user),
@@ -71,7 +45,8 @@ class PageRenderer extends PageRendererBase {
       initialState: cloneDeep(initialState),
       language,
       settings: cloneDeep(settings),
-      PageComponent: pageComponentsByName[pageName]
+      PageComponent,
+      PageTemplateComponent
     };
 
     const inlineScript = [
@@ -87,10 +62,7 @@ class PageRenderer extends PageRendererBase {
 
     const styles = [{ href: '/main.css' }];
 
-    const scripts = [
-      { content: inlineScript },
-      { src: `/${bundleName}.js` }
-    ];
+    const scripts = [{ content: inlineScript }, { src: '/main.js' }];
 
     const html = this.renderHtml({
       language,

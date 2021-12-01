@@ -23,6 +23,9 @@ const configSchema = joi.object({
   sessionDurationInMinutes: joi.number().min(1).default(60),
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
+  bundleConfig: joi.object({
+    getPageTemplateComponent: joi.func().required()
+  }).required(),
   publicFolders: joi.array().items(joi.string()).default([]),
   resources: joi.array().items(joi.string()).default([]),
   initialUser: joi.object({
