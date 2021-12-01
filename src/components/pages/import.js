@@ -1,13 +1,13 @@
 import React from 'react';
-import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import Page from '../page.js';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
-import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
 import { getImportedArticleUrl } from '../../utils/urls.js';
-import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
+import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
+import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
+import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
