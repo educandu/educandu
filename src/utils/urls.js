@@ -71,20 +71,7 @@ export function getImportsUrl() {
 }
 
 export function getCreateImportUrl(sourceName) {
-  const url = new URL(document.location);
-  const keys = [];
-  for (const key of url.searchParams.keys()) {
-    keys.push(key);
-  }
-
-  for (const key of keys) {
-    url.searchParams.delete(key);
-  }
-
-  url.pathname = createImportPath;
-  url.searchParams.append('source', urlencode.encode(sourceName));
-
-  return url.href;
+  return `${createImportPath}?source=${encodeURIComponent(sourceName)}`;
 }
 
 export function getBatchUrl(id) {
