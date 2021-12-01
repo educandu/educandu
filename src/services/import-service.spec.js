@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import Database from '../stores/database.js';
+import TaskStore from '../stores/task-store.js';
 import ImportService from './import-service.js';
 import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
@@ -16,12 +17,16 @@ describe('import-service', () => {
 
   let container;
   let user;
+  let taskStore;
   let sut;
   let db;
+  let importSource;
+  let documentsToImport;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
     user = await setupTestUser(container);
+    taskStore = container.get(TaskStore);
     sut = container.get(ImportService);
     db = container.get(Database);
   });
@@ -35,6 +40,36 @@ describe('import-service', () => {
     sandbox.restore();
   });
 
+  beforeEach(() => {
+    importSource = {
+      name: 'source-1',
+      hostName: 'source1.com',
+      allowUnsecure: false,
+      apiKey: 'DFGRDB553dscfVDSv'
+    };
+    documentsToImport = [
+      {
+        key: 'v5NSMktadhzquVUAEdzAKg',
+        title: 'doc-1',
+        slug: 'doc-1',
+        language: 'en',
+        updatedOn: '2021-11-24T16:00:32.200Z',
+        importedRevision: null,
+        importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
+        importType: 'add'
+      },
+      {
+        key: 'sueoX7WCUtSUHT9cWE6UMq',
+        title: 'doc-2',
+        slug: 'doc-2',
+        language: 'en',
+        updatedOn: '2021-11-24T16:05:27.800Z',
+        importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
+        importableRevision: '6AXHKzH3z26r7JKJyPN6er',
+        importType: 'update'
+      }
+    ];
+  });
   describe('getAllImportedDocumentsMetadata', () => {
     let result;
 
@@ -182,43 +217,8 @@ describe('import-service', () => {
   });
 
   describe('createImportBatch', () => {
-    let importSource;
-    let documentsToImport;
-    let result;
-
-    beforeEach(() => {
-      importSource = {
-        name: 'source-1',
-        hostName: 'source1.com',
-        allowUnsecure: false,
-        apiKey: 'DFGRDB553dscfVDSv'
-      };
-      documentsToImport = [
-        {
-          key: 'v5NSMktadhzquVUAEdzAKg',
-          title: 'doc-1',
-          slug: 'doc-1',
-          language: 'en',
-          updatedOn: '2021-11-24T16:00:32.200Z',
-          importedRevision: null,
-          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
-          importType: 'add'
-        },
-        {
-          key: 'sueoX7WCUtSUHT9cWE6UMq',
-          title: 'doc-2',
-          slug: 'doc-2',
-          language: 'en',
-          updatedOn: '2021-11-24T16:05:27.800Z',
-          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
-          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
-          importType: 'update'
-        }
-      ];
-    });
-
     describe('when creating a new batch', () => {
-
+      let result;
       beforeEach(async () => {
         result = await sut.createImportBatch({ importSource, documentsToImport, user });
       });
@@ -311,4 +311,100 @@ describe('import-service', () => {
 
   });
 
+  describe('getImportBatches', () => {
+    let result;
+
+    beforeEach(async () => {
+      result = await sut.createImportBatch({ importSource, documentsToImport, user });
+      await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+    });
+
+    it('should return the batch', async () => {
+      result = await sut.getImportBatches();
+
+      expect(result).toEqual([
+        {
+          _id: expect.stringMatching(/\w+/),
+          createdBy: user._id,
+          createdOn: expect.any(Date),
+          completedOn: null,
+          batchType: BATCH_TYPE.importDocuments,
+          batchParams: {
+            name: 'source-1',
+            hostName: 'source1.com',
+            allowUnsecure: false
+          },
+          errors: [],
+          progress: 0.5
+        }
+      ]);
+    });
+  });
+
+  describe('getImportBatch', () => {
+    let result;
+    let createdBatchId;
+
+    beforeEach(async () => {
+      result = await sut.createImportBatch({ importSource, documentsToImport, user });
+      await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      const dbEntries = await db.batches.find({}).toArray();
+      createdBatchId = dbEntries[0]._id;
+    });
+
+    it('should return the batch', async () => {
+      result = await sut.getImportBatchDetails(createdBatchId);
+
+      expect(result).toEqual({
+        _id: createdBatchId,
+        createdBy: user._id,
+        createdOn: expect.any(Date),
+        completedOn: null,
+        batchType: BATCH_TYPE.importDocuments,
+        batchParams: {
+          name: 'source-1',
+          hostName: 'source1.com',
+          allowUnsecure: false
+        },
+        errors: [],
+        progress: 0.5,
+        tasks: expect.arrayContaining([
+          {
+            _id: expect.stringMatching(/\w+/),
+            attempts: [],
+            batchId: createdBatchId,
+            processed: true,
+            taskParams: {
+              importType: 'add',
+              importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
+              importedRevision: null,
+              key: documentsToImport[0].key,
+              language: 'en',
+              slug: 'doc-1',
+              title: 'doc-1',
+              updatedOn: expect.any(Date)
+            },
+            taskType: 'import-document'
+          },
+          {
+            _id: expect.stringMatching(/\w+/),
+            attempts: [],
+            batchId: createdBatchId,
+            processed: false,
+            taskParams: {
+              importType: 'update',
+              importableRevision: '6AXHKzH3z26r7JKJyPN6er',
+              importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
+              key: documentsToImport[1].key,
+              language: 'en',
+              slug: 'doc-2',
+              title: 'doc-2',
+              updatedOn: expect.any(Date)
+            },
+            taskType: 'import-document'
+          }
+        ])
+      });
+    });
+  });
 });
