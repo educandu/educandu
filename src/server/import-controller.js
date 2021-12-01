@@ -43,7 +43,7 @@ class ImportController {
       const rawBatch = await this.importService.getImportBatchDetails(batchId);
       const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
 
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import', { batch });
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import-batch-view', { batch });
     });
   }
 

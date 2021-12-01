@@ -7,7 +7,6 @@ import cloneDeep from '../utils/clone-deep.js';
 import Index from '../components/pages/index.js';
 import Login from '../components/pages/login.js';
 import Users from '../components/pages/users.js';
-import CreateImport from '../components/pages/create-import.js';
 import Search from '../components/pages/search.js';
 import Article from '../components/pages/article.js';
 import Account from '../components/pages/account.js';
@@ -20,11 +19,12 @@ import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import ResourceManager from '../resources/resource-manager.js';
+import CreateImport from '../components/pages/create-import.js';
+import ImportBatches from '../components/pages/import-batches.js';
 import ResetPassword from '../components/pages/reset-password.js';
+import ImportBatchView from '../components/pages/import-batch-view.js';
 import CompleteRegistration from '../components/pages/complete-registration.js';
 import CompletePasswordReset from '../components/pages/complete-password-reset.js';
-import ImportBatches from '../components/pages/import-batches.js';
-import Import from '../components/pages/import.js';
 
 const pageComponentsByName = {
   'article': Article,
@@ -43,7 +43,7 @@ const pageComponentsByName = {
   'search': Search,
   'create-import': CreateImport,
   'import-batches': ImportBatches,
-  'import': Import
+  'import-batch-view': ImportBatchView
 };
 
 class PageRenderer extends PageRendererBase {

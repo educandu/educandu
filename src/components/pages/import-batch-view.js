@@ -11,8 +11,8 @@ import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
-function Import({ initialState }) {
-  const { t } = useTranslation('import');
+function ImportBatchView({ initialState }) {
+  const { t } = useTranslation('importBatchView');
   const { formatDate } = useDateFormat();
 
   const { batch } = initialState;
@@ -53,7 +53,7 @@ function Import({ initialState }) {
     if (taskParams.importType === DOCUMENT_IMPORT_TYPE.update) {
       icon = <CloudSyncOutlined />;
     }
-    return <Tooltip title={t(taskParams.importType)} className="ImportPage-importType">{icon}</Tooltip>;
+    return <Tooltip title={t(taskParams.importType)} className="ImportBatchViewPage-importType">{icon}</Tooltip>;
   };
 
   const renderErrors = errors => <span>{errors.join(';')}</span>;
@@ -92,7 +92,7 @@ function Import({ initialState }) {
 
   return (
     <Page>
-      <div className="ImportPage">
+      <div className="ImportBatchViewPage">
         <h1>{t('importHeading')}</h1>
         <Row>
           <Space>
@@ -130,7 +130,7 @@ function Import({ initialState }) {
           </Panel>
         </Collapse>
         <Table
-          className="ImportPage-tasksTable"
+          className="ImportBatchViewPage-tasksTable"
           key={batch._id}
           rowKey="_id"
           dataSource={batch.tasks}
@@ -141,10 +141,10 @@ function Import({ initialState }) {
     </Page>);
 }
 
-Import.propTypes = {
+ImportBatchView.propTypes = {
   initialState: PropTypes.shape({
     batch: importBatchDetailsShape.isRequired
   }).isRequired
 };
 
-export default Import;
+export default ImportBatchView;

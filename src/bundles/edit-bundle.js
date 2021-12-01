@@ -5,7 +5,7 @@ import EditDoc from '../components/pages/edit-doc.js';
 import Settings from '../components/pages/settings.js';
 import { hydrateApp } from '../bootstrap/client-bootstrapper.js';
 import CreateImport from '../components/pages/create-import.js';
-import Import from '../components/pages/import.js';
+import ImportBatchView from '../components/pages/import-batch-view.js';
 
 hydrateApp({
   'docs': Docs,
@@ -14,5 +14,5 @@ hydrateApp({
   'settings': Settings,
   'imports-batches': ImportBatches,
   'create-import': CreateImport,
-  'import': Import
+  'import-batch-view': ImportBatchView
 });
