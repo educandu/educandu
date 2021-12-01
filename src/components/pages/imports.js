@@ -41,7 +41,7 @@ function Imports({ initialState }) {
 
   const renderId = id => <a href={urls.getBatchUrl(id)}>{t('viewBatch')}</a>;
 
-  const renderStatus = (_, batch) => {
+  const renderStatus = batch => {
     if (batch.progress === 1) {
       return <span>{t('batchStatusDone')}</span>;
     }
@@ -75,7 +75,7 @@ function Imports({ initialState }) {
 
   const header = source => {
     return (
-      <span style={{ marginRight: '20px' }}>{t('importsHeaderPrefix')}: {source.importSourceName}</span>
+      <span className="ImportsPage-header" >{t('importsHeaderPrefix')}: {source.importSourceName}</span>
     );
   };
 
@@ -84,7 +84,7 @@ function Imports({ initialState }) {
 
   return (
     <Page>
-      <div className="CreateImportPage">
+      <div className="ImportsPage">
         <h1>{t('pageNames:imports')}</h1>
         <Collapse defaultActiveKey={defaultActiveKey}>
           {sources.map(source => (

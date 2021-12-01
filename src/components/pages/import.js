@@ -39,7 +39,8 @@ function Import({ initialState }) {
     <a
       target="_blank"
       href={getImportedArticleUrl({ hostName, allowUnsecure, slug })}
-      rel="noreferrer"
+      rel="noreferrer noreferrer"
+      noopener
       >{title}
     </a>
   );
@@ -52,7 +53,7 @@ function Import({ initialState }) {
     if (taskParams.importType === DOCUMENT_IMPORT_TYPE.update) {
       icon = <CloudSyncOutlined />;
     }
-    return <Tooltip title={t(taskParams.importType)} className="CreateImportPage-importType">{icon}</Tooltip>;
+    return <Tooltip title={t(taskParams.importType)} className="ImportPage-importType">{icon}</Tooltip>;
   };
 
   const renderErrors = errors => <span>{errors.join(';')}</span>;
@@ -62,17 +63,17 @@ function Import({ initialState }) {
     { title: t('errors'), dataIndex: 'errors', width: '150px', render: renderErrors }
   ];
 
-  const header = () => <span>{t('attemptsHeader')}</span>;
-  const getErrorsExtra = ({ errors }) => <span>{errors?.length || 0} {t('errors')}</span>;
+  const renderHeader = () => <span>{t('attemptsHeader')}</span>;
+  const renderErrorsExtra = ({ errors }) => <span>{errors?.length || 0} {t('errors')}</span>;
 
   const attemptsRenderer = (attempts, task) => {
     const errors = task.attempts.map(attempt => attempt.errors).flat();
     return (
       <Collapse>
-        <Panel key={task._id} header={header()} extra={getErrorsExtra({ errors })}>
+        <Panel key={task._id} header={renderHeader()} extra={renderErrorsExtra({ errors })}>
           <Table
             key={task._id}
-            rowKey={attempt => `${attempt.startedOn}: ${attempt.completedOn || Math.random()}`}
+            rowKey={attempt => `${task._id}_${attempt.startedOn}}`}
             dataSource={attempts}
             columns={attemtpsColumns}
             pagination={false}
@@ -91,7 +92,7 @@ function Import({ initialState }) {
 
   return (
     <Page>
-      <div className="CreateImportPage">
+      <div className="ImportPage">
         <h1>{t('importHeading')}</h1>
         <Row>
           <Space>
@@ -118,7 +119,7 @@ function Import({ initialState }) {
           </Space>
         </Row>
         <Collapse>
-          <Panel header={t('batchErrors')} extra={getErrorsExtra(batch)}>
+          <Panel header={t('batchErrors')} extra={renderErrorsExtra(batch)}>
             <List
               dataSource={batch.errors}
               renderItem={error => (
@@ -129,7 +130,7 @@ function Import({ initialState }) {
           </Panel>
         </Collapse>
         <Table
-          style={{ marginTop: '20px' }}
+          className="ImportPage-tasksTable"
           key={batch._id}
           rowKey="_id"
           dataSource={batch.tasks}
