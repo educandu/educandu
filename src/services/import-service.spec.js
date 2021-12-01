@@ -316,11 +316,16 @@ describe('import-service', () => {
 
     beforeEach(async () => {
       result = await sut.createImportBatch({ importSource, documentsToImport, user });
+      result = await sut.createImportBatch({
+        importSource: { ...importSource, hostName: 'source2' },
+        documentsToImport,
+        user
+      });
       await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      result = await sut.getImportBatches();
     });
 
-    it('should return the batch', async () => {
-      result = await sut.getImportBatches();
+    it('should return the batch', () => {
 
       expect(result).toEqual([
         {
@@ -336,25 +341,43 @@ describe('import-service', () => {
           },
           errors: [],
           progress: 0.5
+        },
+        {
+          _id: expect.stringMatching(/\w+/),
+          createdBy: user._id,
+          createdOn: expect.any(Date),
+          completedOn: null,
+          batchType: BATCH_TYPE.importDocuments,
+          batchParams: {
+            name: 'source-1',
+            hostName: 'source2',
+            allowUnsecure: false
+          },
+          errors: [],
+          progress: 0
         }
       ]);
     });
+
+    it('should add the correct progress', () => {
+      expect(result[0].progress).toEqual(0.5);
+      expect(result[1].progress).toEqual(0);
+    });
   });
 
-  describe('getImportBatch', () => {
+  describe('getImportBatchDetails', () => {
     let result;
     let createdBatchId;
 
     beforeEach(async () => {
-      result = await sut.createImportBatch({ importSource, documentsToImport, user });
+      await sut.createImportBatch({ importSource, documentsToImport, user });
       await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
       const dbEntries = await db.batches.find({}).toArray();
       createdBatchId = dbEntries[0]._id;
+      result = await sut.getImportBatchDetails(createdBatchId);
     });
 
-    it('should return the batch', async () => {
-      result = await sut.getImportBatchDetails(createdBatchId);
-
+    it('should return the batch', () => {
       expect(result).toEqual({
         _id: createdBatchId,
         createdBy: user._id,
@@ -405,6 +428,10 @@ describe('import-service', () => {
           }
         ])
       });
+    });
+
+    it('should calculate the right progress', () => {
+      expect(result.progress).toEqual(0.5);
     });
   });
 });
