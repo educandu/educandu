@@ -273,7 +273,7 @@
       "title": "Title",
       "language": "Language",
       "updateDate": "Update date",
-      "source": "Choose source",
+      "source": "Source",
       "add": "Add",
       "update": "Update"
     }
@@ -288,7 +288,7 @@
       "title": "Titel",
       "language": "Sprache",
       "updateDate": "Update-Datum",
-      "source": "Quelle wählen",
+      "source": "Quelle",
       "add": "Hinzufügen",
       "update": "Aktualisieren"
     }

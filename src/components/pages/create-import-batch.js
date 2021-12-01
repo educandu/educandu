@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
-import { Tooltip, Button, Table, Input } from 'antd';
+import { Tooltip, Button, Table } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
@@ -128,12 +128,7 @@ export default function CreateImportBatch() {
       <div className="CreateImportBatchPage">
         <h1>{t('pageNames:import')}</h1>
 
-        <Input
-          placeholder={t('source')}
-          className="CreateImportBatchPage-source"
-          defaultValue={selectedSource?.name}
-          disabled
-          />
+        <h2> {t('source')}: {selectedSource?.name} </h2>
         <br /> <br />
 
         <Table
