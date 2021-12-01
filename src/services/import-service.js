@@ -164,7 +164,9 @@ class ImportService {
 
     const stats = countGroups.reduce((accumulator, current) => {
       accumulator.totalCount += current.count;
-      if (current._id === true) {
+      const isProcessedGroup = current._id === true;
+
+      if (isProcessedGroup) {
         accumulator.processedCount += current.count;
       }
       return accumulator;

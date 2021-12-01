@@ -56,12 +56,12 @@ class ClientDataMapper {
   }
 
   async mapImportBatches(batches, user) {
-    const idSet = new Set(batches.map(batch => batch.createdBy));
-    const users = await this.userService.getUsersByIds(Array.from(idSet));
+    const userIdSet = new Set(batches.map(batch => batch.createdBy));
+    const users = await this.userService.getUsersByIds(Array.from(userIdSet));
     const allowedUserFields = privateData.getAllowedUserFields(user);
 
-    if (users.length !== idSet.size) {
-      throw new Error(`Was searching for ${idSet.size} users, but found ${users.length}`);
+    if (users.length !== userIdSet.size) {
+      throw new Error(`Was searching for ${userIdSet.size} users, but found ${users.length}`);
     }
 
     const userMap = new Map(users.map(u => [u._id, u]));
