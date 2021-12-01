@@ -126,7 +126,7 @@ export default function CreateImportBatch() {
   return (
     <Page>
       <div className="CreateImportBatchPage">
-        <h1>{t('pageNames:import')}</h1>
+        <h1>{t('pageNames:createImportBatch')}</h1>
 
         <h2> {t('source')}: {selectedSource?.name} </h2>
         <br /> <br />

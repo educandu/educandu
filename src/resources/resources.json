@@ -399,7 +399,6 @@
       "createdOn": "Created on",
       "completedOn": "Completed on",
       "createdBy": "Created by",
-      "importHeading": "Import overview",
       "batchStatus": "Batch status",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
@@ -425,7 +424,6 @@
       "createdOn": "Erstellt am",
       "completedOn": "Vervollständigt am",
       "createdBy": "Erstellt von",
-      "importHeading": "Import-Übersicht",
       "batchStatus": "Chargenstatus",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Vertig",
@@ -1309,8 +1307,9 @@
       "users": "Users",
       "account": "My account",
       "settings": "Settings",
-      "import": "Import",
-      "imports": "Imports overview",
+      "createImportBatch": "Import",
+      "importBatches": "Imports overview",
+      "importBatchView": "Import details",
       "docs": "Documents"
     }
   },
@@ -1322,8 +1321,9 @@
       "users": "Benutzer",
       "account": "Mein Konto",
       "settings": "Einstellungen",
-      "import": "Import",
-      "imports": "Import-Übersicht",
+      "createImportBatch": "Import",
+      "importBatches": "Import-Übersicht",
+      "importBatchView": "Import-Details",
       "docs": "Dokumente"
     }
   },

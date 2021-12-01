@@ -85,7 +85,7 @@ function ImportBatches({ initialState }) {
   return (
     <Page>
       <div className="ImportBatchesPage">
-        <h1>{t('pageNames:imports')}</h1>
+        <h1>{t('pageNames:importBatches')}</h1>
         <Collapse defaultActiveKey={defaultActiveKey}>
           {sources.map(source => (
             <Panel header={header(source)} className="ImportBatchesPage-batchTablePanel" key={source.importSourceName} extra={getExtra(source)} >

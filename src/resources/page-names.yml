@@ -10,12 +10,15 @@ account:
 settings:
   en: Settings
   de: Einstellungen
-import:
+createImportBatch:
   en: Import
   de: Import
-imports:
+importBatches:
   en: Imports overview
   de: Import-Übersicht
+importBatchView:
+  en: Import details
+  de: Import-Details
 docs:
   en: Documents
   de: Dokumente

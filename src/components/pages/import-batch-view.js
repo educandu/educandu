@@ -92,7 +92,7 @@ function ImportBatchView({ initialState }) {
   return (
     <Page>
       <div className="ImportBatchViewPage">
-        <h1>{t('importHeading')}</h1>
+        <h1>{t('pageNames:importBatchView')}</h1>
         <Row>
           <Space>
             <span>{t('batchStatus')}:</span>
