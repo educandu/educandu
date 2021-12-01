@@ -181,7 +181,7 @@ export const formItemLayoutShape = PropTypes.shape({
 export const importTaskShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   batchId: PropTypes.string.isRequired,
-  taskType: PropTypes.oneOf([TASK_TYPE.importDocument]),
+  taskType: PropTypes.oneOf(Object.values(TASK_TYPE)),
   processed: true,
   attempts: [
     {
@@ -198,7 +198,7 @@ export const importTaskShape = PropTypes.shape({
     updatedOn: PropTypes.string,
     importedRevision: PropTypes.string,
     importableRevision: PropTypes.string.isRequired,
-    importType: PropTypes.oneOf([DOCUMENT_IMPORT_TYPE.add, DOCUMENT_IMPORT_TYPE.update])
+    importType: PropTypes.oneOf(Object.values(DOCUMENT_IMPORT_TYPE))
   }
 });
 
@@ -207,7 +207,7 @@ export const importBatchShape = PropTypes.shape({
   createdBy: userInDocShape.isRequired,
   createdOn: PropTypes.string.isRequired,
   completedOn: PropTypes.string,
-  batchType: PropTypes.oneOf([BATCH_TYPE.importDocuments]),
+  batchType: PropTypes.oneOf(Object.values(BATCH_TYPE.importDocuments)),
   batchParams: PropTypes.shape({
     ...importSourceShape
   }),
