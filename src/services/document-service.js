@@ -153,7 +153,21 @@ class DocumentService {
     return this.documentStore.toAggregateArray(getTagsQuery(searchString));
   }
 
-  async createDocumentRevision({ doc, user, restoredFrom = null }) {
+  createNewDocumentRevision({ doc, user, restoredFrom = null }) {
+    const documentKey = doc.appendTo ? doc.appendTo.key : uniqueId.create();
+    const revisionId = uniqueId.create();
+
+    return this._createDocumentRevision({ doc, revisionId, documentKey, user, restoredFrom });
+  }
+
+  copyDocumentRevision({ doc, user }) {
+    const documentKey = doc.appendTo ? doc.appendTo.key : doc.key;
+    const revisionId = doc._id;
+
+    return this._createDocumentRevision({ doc, revisionId, documentKey, user });
+  }
+
+  async _createDocumentRevision({ doc, revisionId, documentKey, user, restoredFrom = null }) {
     if (!user?._id) {
       throw new Error('No user specified');
     }
@@ -162,7 +176,6 @@ class DocumentService {
     const userId = user._id;
     const isAppendedRevision = !!doc.appendTo;
     const ancestorId = isAppendedRevision ? doc.appendTo.ancestorId : null;
-    const documentKey = isAppendedRevision ? doc.appendTo.key : uniqueId.create();
 
     try {
 
@@ -230,7 +243,7 @@ class DocumentService {
       });
 
       const nextOrder = await this.documentOrderStore.getNextOrder();
-      const newDocumentRevision = this._createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
+      const newDocumentRevision = this._buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
       logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
       await this.documentRevisionStore.save(newDocumentRevision);
 
@@ -276,7 +289,7 @@ class DocumentService {
       tags: revisionToRestore.tags
     };
 
-    await this.createDocumentRevision({ doc, user, restoredFrom: revisionToRestore._id });
+    await this.createNewDocumentRevision({ doc, user, restoredFrom: revisionToRestore._id });
 
     return this.getAllDocumentRevisionsByKey(documentKey);
   }
@@ -342,7 +355,7 @@ class DocumentService {
     const latestRevision = await this.getCurrentDocumentRevisionByKey(documentKey);
     const nextOrder = await this.documentOrderStore.getNextOrder();
 
-    const newRevision = this._createNewDocumentRevision({ doc: latestRevision, documentKey, userId: user._id, nextOrder });
+    const newRevision = this._buildDocumentRevision({ doc: latestRevision, documentKey, userId: user._id, nextOrder });
 
     newRevision.appendTo = {
       key: documentKey,
@@ -350,15 +363,15 @@ class DocumentService {
     };
     newRevision.archived = archived;
 
-    return this.createDocumentRevision({ doc: newRevision, user });
+    return this.createNewDocumentRevision({ doc: newRevision, user });
   }
 
-  _createNewDocumentRevision({ doc, documentKey, userId, nextOrder, restoredFrom, sections }) {
+  _buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections }) {
     logger.info(`Creating new revision for document key ${documentKey} with order ${nextOrder}`);
 
     const newSections = sections || doc.sections;
     return {
-      _id: uniqueId.create(),
+      _id: revisionId || uniqueId.create(),
       key: documentKey,
       order: nextOrder,
       restoredFrom: restoredFrom || '',

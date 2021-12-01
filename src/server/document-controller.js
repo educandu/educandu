@@ -108,7 +108,7 @@ class DocumentController {
 
   registerApi(router) {
     router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload, validateBody(createRevisionBodySchema)], async (req, res) => {
-      const revision = await this.documentService.createDocumentRevision({ doc: req.body, user: req.user });
+      const revision = await this.documentService.createNewDocumentRevision({ doc: req.body, user: req.user });
       if (!revision) {
         throw new NotFound();
       }

@@ -58,7 +58,7 @@ describe('document-service', () => {
           }
         ]
       };
-      const revision = await sut.createDocumentRevision({ doc, user });
+      const revision = await sut.createNewDocumentRevision({ doc, user });
       key = revision.key;
     });
     it('saves all referenced cdn resources with the document revision', async () => {

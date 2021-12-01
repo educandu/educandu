@@ -135,7 +135,7 @@ export async function setupTestUser(container, userValues) {
 export function createTestDocument(container, user, document) {
   const documentService = container.get(DocumentService);
 
-  return documentService.createDocumentRevision({
+  return documentService.createNewDocumentRevision({
     doc: {
       title: document.title ?? 'Title',
       slug: document.slug ?? 'my-doc',
@@ -160,7 +160,7 @@ export async function createTestRevisions(container, user, revisions) {
     const lastCreatedRevision = createdRevisions[createdRevisions.length - 1] || null;
 
     // eslint-disable-next-line no-await-in-loop
-    createdRevisions.push(await documentService.createDocumentRevision({
+    createdRevisions.push(await documentService.createNewDocumentRevision({
       doc: {
         title: revision.title ?? lastCreatedRevision?.title ?? 'Title',
         slug: revision.slug ?? lastCreatedRevision?.slug ?? 'my-doc',
