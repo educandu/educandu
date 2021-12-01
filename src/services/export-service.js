@@ -36,23 +36,31 @@ class ExportService {
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: exportableDocumentsProjection });
   }
 
-  async getDocumentExport({ key, fromRevision, toRevision }) {
+  async getDocumentExport({ key, afterRevision, toRevision }) {
     const revisions = (await this.documentService.getAllDocumentRevisionsByKey(key)).sort(by(d => d.order));
-    const firstRevisionIndex = fromRevision ? revisions.findIndex(revision => revision._id === fromRevision) : 0;
+
+    let nextRevisionIndex;
     const lastRevisionIndex = revisions.findIndex(revision => revision._id === toRevision);
 
-    if (firstRevisionIndex === -1 || lastRevisionIndex === -1 || firstRevisionIndex > lastRevisionIndex) {
-      throw new BadRequest(`The specified revision interval (${fromRevision} - ${toRevision}) is invalid for document ${key}`);
+    if (!afterRevision) {
+      nextRevisionIndex = 0;
+    } else {
+      const afterRevisionIndex = revisions.findIndex(revision => revision._id === afterRevision);
+      nextRevisionIndex = afterRevisionIndex === -1 ? -1 : afterRevisionIndex + 1;
     }
 
-    const revisionsToExport = revisions.slice(firstRevisionIndex, lastRevisionIndex + 1);
+    if (nextRevisionIndex === -1 || lastRevisionIndex === -1 || nextRevisionIndex > lastRevisionIndex) {
+      throw new BadRequest(`The specified revision interval (${afterRevision} - ${toRevision}) is invalid for document ${key}`);
+    }
+
+    const revisionsToExport = revisions.slice(nextRevisionIndex, lastRevisionIndex + 1);
 
     const userIdSet = this.userService.extractUserIdSetFromDocsOrRevisions(revisionsToExport);
     const users = (await this.userService.getUsersByIds(Array.from(userIdSet)))
       .map(({ _id, username }) => ({ _id, username }));
 
-    if (users.length !== userIdSet.size) {
-      throw new Error(`Was searching for ${userIdSet.size} users in document ${key} between revisions ${fromRevision} - ${toRevision}, but found ${users.length}`);
+    if (userIdSet.size !== users.length) {
+      throw new Error(`Was searching for ${userIdSet.size} users in document ${key} between revisions ${afterRevision} - ${toRevision}, but found ${users.length}`);
     }
 
     return { revisions: revisionsToExport, users };
