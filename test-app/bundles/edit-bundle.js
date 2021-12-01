@@ -4,7 +4,7 @@ import ImportBatchView from '../../src/components/pages/import-batch-view.js';
 import ImportBatches from '../../src/components/pages/import-batches.js';
 import EditDoc from '../../src/components/pages/edit-doc.js';
 import Settings from '../../src/components/pages/settings.js';
-import CreateImport from '../../src/components/pages/create-import.js';
+import CreateImportBatch from '../../src/components/pages/create-import-batch.js';
 import { hydrateApp } from '../../src/bootstrap/client-bootstrapper.js';
 
 hydrateApp({
@@ -12,7 +12,7 @@ hydrateApp({
   'users': Users,
   'edit-doc': EditDoc,
   'settings': Settings,
-  'create-import': CreateImport,
+  'create-import-batch': CreateImportBatch,
   'import-batches': ImportBatches,
   'import-batch-view': ImportBatchView
 });
