@@ -19,10 +19,10 @@ import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import ResourceManager from '../resources/resource-manager.js';
-import CreateImport from '../components/pages/create-import.js';
 import ImportBatches from '../components/pages/import-batches.js';
 import ResetPassword from '../components/pages/reset-password.js';
 import ImportBatchView from '../components/pages/import-batch-view.js';
+import CreateImportBatch from '../components/pages/create-import-batch.js';
 import CompleteRegistration from '../components/pages/complete-registration.js';
 import CompletePasswordReset from '../components/pages/complete-password-reset.js';
 
@@ -41,7 +41,7 @@ const pageComponentsByName = {
   'settings': Settings,
   'users': Users,
   'search': Search,
-  'create-import': CreateImport,
+  'create-import-batch': CreateImportBatch,
   'import-batches': ImportBatches,
   'import-batch-view': ImportBatchView
 };

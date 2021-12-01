@@ -264,7 +264,7 @@
     }
   },
   {
-    "namespace": "createImport",
+    "namespace": "createImportBatch",
     "language": "en",
     "resources": {
       "importButton": "Start import",
@@ -279,7 +279,7 @@
     }
   },
   {
-    "namespace": "createImport",
+    "namespace": "createImportBatch",
     "language": "de",
     "resources": {
       "importButton": "Import starten",
