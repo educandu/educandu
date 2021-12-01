@@ -40,7 +40,6 @@ function ImportBatchView({ initialState }) {
       target="_blank"
       href={getImportedArticleUrl({ hostName, allowUnsecure, slug })}
       rel="noreferrer noreferrer"
-      noopener
       >{title}
     </a>
   );
