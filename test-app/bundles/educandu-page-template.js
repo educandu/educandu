@@ -48,7 +48,7 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
   });
 
   let headerActionComponents = null;
-  if (headerActions && headerActions.length) {
+  if (headerActions?.length) {
     headerActionComponents = headerActions.map(action => (
       <Restricted to={action.permission} key={action.key}>
         <Button

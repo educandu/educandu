@@ -13,7 +13,7 @@ import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
 import ClientConfig from '../bootstrap/client-config.js';
-import { FEATURE_TOGGLES } from '../common/constants.js';
+import { ALERT_TYPE, FEATURE_TOGGLES } from '../common/constants.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined } from '@ant-design/icons';
@@ -157,7 +157,7 @@ function Page({ children, fullScreen, headerActions, alerts }) {
           </div>
         </div>
         {!fullScreen && alerts && alerts.map((alert, index) => (
-          <Alert key={index.toString()} message={alert.message} type={alert.type || 'info'} banner />
+          <Alert key={index.toString()} message={alert.message} type={alert.type || ALERT_TYPE.info} banner />
         ))}
       </header>
       <main className={pageContentAreaClasses}>
@@ -181,7 +181,7 @@ function Page({ children, fullScreen, headerActions, alerts }) {
 Page.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
     message: PropTypes.node.isRequired,
-    type: PropTypes.oneOf(['success', 'info', 'warning', 'error'])
+    type: PropTypes.oneOf(Object.values(ALERT_TYPE))
   })),
   children: PropTypes.node,
   fullScreen: PropTypes.bool,

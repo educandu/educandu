@@ -11,6 +11,7 @@ import { inject } from '../container-context.js';
 import SectionEditor from '../section-editor.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import errorHelper from '../../ui/error-helper.js';
+import { ALERT_TYPE } from '../../common/constants.js';
 import pluginInfos from '../../plugins/plugin-infos.js';
 import ShallowUpdateList from '../shallow-update-list.js';
 import DocumentMetadataEditor from '../document-metadata-editor.js';
@@ -360,14 +361,14 @@ class EditDoc extends React.Component {
     if (isProfileInsufficient(user)) {
       alerts.push({
         message: <InsufficientProfileWarning />,
-        type: 'info'
+        type: ALERT_TYPE.info
       });
     }
 
     if (proposedSectionKeys.length) {
       alerts.push({
         message: t('proposedSectionsAlert'),
-        type: 'info'
+        type: ALERT_TYPE.info
       });
     }
 

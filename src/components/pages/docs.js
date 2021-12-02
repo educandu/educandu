@@ -12,11 +12,11 @@ import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { withLanguage } from '../language-context.js';
 import { toTrimmedString } from '../../utils/sanitize.js';
-import { DOCUMENT_ORIGIN } from '../../common/constants.js';
 import LanguageSelect from '../localization/language-select.js';
 import { Form, Input, Modal, Table, Button, Switch } from 'antd';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
+import { ALERT_TYPE, DOCUMENT_ORIGIN } from '../../common/constants.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
@@ -302,7 +302,7 @@ class Docs extends React.Component {
     if (isProfileInsufficient(user)) {
       alerts.push({
         message: <InsufficientProfileWarning />,
-        type: 'info'
+        type: ALERT_TYPE.info
       });
     }
 

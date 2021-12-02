@@ -8,6 +8,7 @@ import React, { useMemo, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import { SearchOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
+import { ALERT_TYPE } from '../../common/constants.js';
 import { searchResultShape } from '../../ui/default-prop-types.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
@@ -111,7 +112,7 @@ function Search({ initialState, PageTemplate }) {
   if (isProfileInsufficient(user)) {
     alerts.push({
       message: <InsufficientProfileWarning />,
-      type: 'info'
+      type: ALERT_TYPE.info
     });
   }
 

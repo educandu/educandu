@@ -20,6 +20,7 @@ import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/ico
 import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 import { documentRevisionShape, translationProps, languageProps, userProps } from '../../ui/default-prop-types.js';
 import { withUser } from '../user-context.js';
+import { ALERT_TYPE } from '../../common/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -186,14 +187,14 @@ class Doc extends React.Component {
     if (isProfileInsufficient(user)) {
       alerts.push({
         message: <InsufficientProfileWarning />,
-        type: 'info'
+        type: ALERT_TYPE.info
       });
     }
 
     if (currentRevision.archived) {
       alerts.push({
         message: t('common:archivedAlert'),
-        type: 'warning'
+        type: ALERT_TYPE.warning
       });
     }
 

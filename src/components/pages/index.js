@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
+import { ALERT_TYPE } from '../../common/constants.js';
 import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
@@ -59,7 +60,7 @@ function Index({ PageTemplate, initialState }) {
   if (isProfileInsufficient(user)) {
     alerts.push({
       message: <InsufficientProfileWarning />,
-      type: 'info'
+      type: ALERT_TYPE.info
     });
   }
 
