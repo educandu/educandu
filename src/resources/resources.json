@@ -396,6 +396,8 @@
       "taskStatus": "Task status",
       "taskStatusPending": "Pending",
       "taskStatusDone": "Done",
+      "taskStatusFailed": "Failed",
+      "taskStatusDoneWithWarnings": "Done (with warnings)",
       "createdOn": "Created on",
       "completedOn": "Completed on",
       "createdBy": "Created by",
@@ -410,9 +412,7 @@
       "errors": "Errors",
       "errorsCount": "Errors count",
       "attemptsHeader": "Attempt details",
-      "batchErrors": "Batch errors",
-      "hasErrors": "Has errors",
-      "isSuccessful": "Is successful"
+      "batchErrors": "Batch errors"
     }
   },
   {
@@ -424,6 +424,8 @@
       "taskStatus": "Taskstatus",
       "taskStatusPending": "Ausstehend",
       "taskStatusDone": "Abgeschlossen",
+      "taskStatusFailed": "Fehler",
+      "taskStatusDoneWithWarnings": "Abgeschlossen (mit Warnungen)",
       "createdOn": "Erstellt am",
       "completedOn": "Abgeschlossen am",
       "createdBy": "Erstellt von",
@@ -438,9 +440,7 @@
       "errors": "Fehler",
       "errorsCount": "Fehleranzahl",
       "attemptsHeader": "Versuchsdetails",
-      "batchErrors": "Chargenfehler",
-      "hasErrors": "Hat Fehler",
-      "isSuccessful": "Ist erfolgreich"
+      "batchErrors": "Chargenfehler"
     }
   },
   {

@@ -7,8 +7,8 @@ import { getImportedArticleUrl } from '../../utils/urls.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
-import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
-import { isTaskSuccessful, taskStatusSorter } from '../../utils/task-utils.js';
+import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
 
 const { Panel } = Collapse;
 
@@ -19,12 +19,18 @@ function ImportBatchView({ initialState }) {
   const { batch } = initialState;
   const { hostName, allowUnsecure } = batch.batchParams;
 
-  const doesTaskHaveErrors = ({ attempts }) => attempts?.some(attempt => attempt.errors.length);
+  const renderTaskStatus = (processed, task) => {
+    if (!processed) {
+      return <span>{t('taskStatusPending')} <SyncOutlined /></span>;
+    }
 
-  const renderStatus = processed => {
-    return processed
-      ? <span>{t('taskStatusDone')}</span>
-      : <span>{t('taskStatusPending')}</span>;
+    if (!isTaskSuccessful(task)) {
+      return <span>{t('taskStatusFailed')} <ExclamationCircleOutlined className="ImportBatchViewPage-failedIcon" /></span>;
+    }
+
+    return doesTaskHaveErrors(task)
+      ? <span>{t('taskStatusDoneWithWarnings')} <WarningOutlined className="ImportBatchViewPage-warningIcon" /> </span>
+      : <span>{t('taskStatusDone')} <CheckOutlined className="ImportBatchViewPage-doneIcon" /></span>;
   };
 
   const renderBatchStatus = ({ progress }) => {
@@ -92,7 +98,7 @@ function ImportBatchView({ initialState }) {
   const taskTableColumns = [
     { title: t('importType'), dataIndex: 'taskParams', width: '50px', render: renderImportType },
     { title: t('documentTitle'), key: '_id', dataIndex: 'taskParams', width: '150px', render: renderTitle },
-    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus, sorter: taskStatusSorter }
+    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderTaskStatus, sorter: taskStatusSorter }
   ];
 
   return (

@@ -13,6 +13,12 @@ taskStatusPending:
 taskStatusDone:
   en: Done
   de: Abgeschlossen
+taskStatusFailed:
+  en: Failed
+  de: Fehler
+taskStatusDoneWithWarnings:
+  en: Done (with warnings)
+  de: Abgeschlossen (mit Warnungen)
 createdOn:
   en: Created on
   de: Erstellt am
@@ -58,10 +64,3 @@ attemptsHeader:
 batchErrors:
   en: Batch errors
   de: Chargenfehler
-hasErrors:
-  en: Has errors
-  de: Hat Fehler
-isSuccessful:
-  en: Is successful
-  de: Ist erfolgreich
-  
