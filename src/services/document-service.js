@@ -167,100 +167,6 @@ class DocumentService {
     return this._createDocumentRevision({ doc, revisionId, documentKey, user });
   }
 
-  async _createDocumentRevision({ doc, revisionId, documentKey, user, restoredFrom = null }) {
-    if (!user?._id) {
-      throw new Error('No user specified');
-    }
-
-    let lock;
-    const userId = user._id;
-    const isAppendedRevision = !!doc.appendTo;
-    const ancestorId = isAppendedRevision ? doc.appendTo.ancestorId : null;
-
-    try {
-
-      let existingDocumentRevisions;
-      let ancestorRevision;
-
-      logger.info(`Creating new document revision for document key ${documentKey}`);
-
-      lock = await this.documentLockStore.takeLock(documentKey);
-
-      if (isAppendedRevision) {
-        existingDocumentRevisions = await this.getAllDocumentRevisionsByKey(documentKey);
-        if (!existingDocumentRevisions.length) {
-          throw new Error(`Cannot append new revision for key ${documentKey}, because there are no existing revisions`);
-        }
-
-        logger.info(`Found ${existingDocumentRevisions.length} existing revisions for key ${documentKey}`);
-        ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
-        if (ancestorRevision._id !== ancestorId) {
-          throw new Error(`Ancestor id ${ancestorId} is not the latest revision`);
-        }
-      } else {
-        existingDocumentRevisions = [];
-        ancestorRevision = null;
-      }
-
-      const newSections = doc.sections.map(section => {
-        const sectionKey = section.key;
-        const ancestorSection = ancestorRevision?.sections.find(s => s.key === sectionKey) || null;
-
-        if (ancestorSection) {
-          logger.info(`Found ancestor section with key ${sectionKey}`);
-
-          if (ancestorSection.type !== section.type) {
-            throw new Error(`Ancestor section has type ${ancestorSection.type} and cannot be changed to ${section.type}`);
-          }
-
-          if (ancestorSection.deletedOn && section.content) {
-            throw new Error(`Ancestor section with key ${sectionKey} is deleted and cannot be changed`);
-          }
-
-          // If not changed, re-use existing revision:
-          if (deepEqual(ancestorSection.content, section.content)) {
-            logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
-            return cloneDeep(ancestorSection);
-          }
-        }
-
-        if (!section.content && !restoredFrom) {
-          throw new Error('Sections that are not deleted must specify a content');
-        }
-
-        logger.info(`Creating new revision for section key ${sectionKey}`);
-
-        // Create a new section revision:
-        return {
-          revision: uniqueId.create(),
-          key: sectionKey,
-          deletedOn: null,
-          deletedBy: null,
-          deletedBecause: null,
-          type: section.type,
-          content: section.content && cloneDeep(section.content)
-        };
-      });
-
-      const nextOrder = await this.documentOrderStore.getNextOrder();
-      const newDocumentRevision = this._buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
-      logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
-      await this.documentRevisionStore.save(newDocumentRevision);
-
-      const latestDocument = this._createDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
-
-      logger.info(`Saving latest document with revision ${latestDocument.revision}`);
-      await this.documentStore.save(latestDocument);
-
-      return newDocumentRevision;
-
-    } finally {
-      if (lock) {
-        await this.documentLockStore.releaseLock(lock);
-      }
-    }
-  }
-
   async restoreDocumentRevision({ documentKey, revisionId, user }) {
     if (!user?._id) {
       throw new Error('No user specified');
@@ -364,6 +270,100 @@ class DocumentService {
     newRevision.archived = archived;
 
     return this.createNewDocumentRevision({ doc: newRevision, user });
+  }
+
+  async _createDocumentRevision({ doc, revisionId, documentKey, user, restoredFrom = null }) {
+    if (!user?._id) {
+      throw new Error('No user specified');
+    }
+
+    let lock;
+    const userId = user._id;
+    const isAppendedRevision = !!doc.appendTo;
+    const ancestorId = isAppendedRevision ? doc.appendTo.ancestorId : null;
+
+    try {
+
+      let existingDocumentRevisions;
+      let ancestorRevision;
+
+      logger.info(`Creating new document revision for document key ${documentKey}`);
+
+      lock = await this.documentLockStore.takeLock(documentKey);
+
+      if (isAppendedRevision) {
+        existingDocumentRevisions = await this.getAllDocumentRevisionsByKey(documentKey);
+        if (!existingDocumentRevisions.length) {
+          throw new Error(`Cannot append new revision for key ${documentKey}, because there are no existing revisions`);
+        }
+
+        logger.info(`Found ${existingDocumentRevisions.length} existing revisions for key ${documentKey}`);
+        ancestorRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
+        if (ancestorRevision._id !== ancestorId) {
+          throw new Error(`Ancestor id ${ancestorId} is not the latest revision`);
+        }
+      } else {
+        existingDocumentRevisions = [];
+        ancestorRevision = null;
+      }
+
+      const newSections = doc.sections.map(section => {
+        const sectionKey = section.key;
+        const ancestorSection = ancestorRevision?.sections.find(s => s.key === sectionKey) || null;
+
+        if (ancestorSection) {
+          logger.info(`Found ancestor section with key ${sectionKey}`);
+
+          if (ancestorSection.type !== section.type) {
+            throw new Error(`Ancestor section has type ${ancestorSection.type} and cannot be changed to ${section.type}`);
+          }
+
+          if (ancestorSection.deletedOn && section.content) {
+            throw new Error(`Ancestor section with key ${sectionKey} is deleted and cannot be changed`);
+          }
+
+          // If not changed, re-use existing revision:
+          if (deepEqual(ancestorSection.content, section.content)) {
+            logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
+            return cloneDeep(ancestorSection);
+          }
+        }
+
+        if (!section.content && !restoredFrom) {
+          throw new Error('Sections that are not deleted must specify a content');
+        }
+
+        logger.info(`Creating new revision for section key ${sectionKey}`);
+
+        // Create a new section revision:
+        return {
+          revision: uniqueId.create(),
+          key: sectionKey,
+          deletedOn: null,
+          deletedBy: null,
+          deletedBecause: null,
+          type: section.type,
+          content: section.content && cloneDeep(section.content)
+        };
+      });
+
+      const nextOrder = await this.documentOrderStore.getNextOrder();
+      const newDocumentRevision = this._buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
+      logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
+      await this.documentRevisionStore.save(newDocumentRevision);
+
+      const latestDocument = this._createDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
+
+      logger.info(`Saving latest document with revision ${latestDocument.revision}`);
+      await this.documentStore.save(latestDocument);
+
+      return newDocumentRevision;
+
+    } finally {
+      if (lock) {
+        await this.documentLockStore.releaseLock(lock);
+      }
+    }
   }
 
   _buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections }) {

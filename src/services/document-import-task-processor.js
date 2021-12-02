@@ -1,10 +1,10 @@
 import by from 'thenby';
 import UserService from './user-service.js';
+import DocumentService from './document-service.js';
 import ExportApiClient from './export-api-client.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { getImportSourceBaseUrl } from '../utils/urls.js';
-import DocumentService from './document-service.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import { getDocUrl, getImportSourceBaseUrl } from '../utils/urls.js';
 
 export class DocumentImportTaskProcessor {
   static get inject() {
@@ -44,12 +44,25 @@ export class DocumentImportTaskProcessor {
 
     for (const revision of sortedRevisions) {
       /* eslint-disable-next-line no-await-in-loop */
+      const previousRevision = await this.documentService.getCurrentDocumentRevisionByKey(revision.key);
+
+      /* eslint-disable-next-line no-await-in-loop */
       const user = await this.userService.getUserById(revision.createdBy);
+      const baseUrl = getImportSourceBaseUrl(importSource);
+      const docUrl = getDocUrl(revision.key);
+
       const mappedRevision = {
         ...revision,
         origin: `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`,
-        cdnResources: revision.cdnResources,
-        appendTo: null
+        originUrl: `${baseUrl}${docUrl}`,
+        appendTo: previousRevision
+          ? {
+            key: revision.key,
+            ancestorId: previousRevision._id
+          }
+          : null,
+        // To replace
+        cdnResources: revision.cdnResources
       };
 
       /* eslint-disable-next-line no-await-in-loop */
