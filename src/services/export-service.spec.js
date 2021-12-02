@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import UserService from './user-service.js';
 import ExportService from './export-service.js';
 import DocumentService from './document-service.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
@@ -10,6 +11,7 @@ describe('export-service', () => {
   const sandbox = sinon.createSandbox();
 
   let documentService;
+  let serverConfig;
   let userService;
   let container;
   let user;
@@ -19,6 +21,7 @@ describe('export-service', () => {
     container = await setupTestEnvironment();
     user = await setupTestUser(container);
 
+    serverConfig = container.get(ServerConfig);
     documentService = container.get(DocumentService);
     userService = container.get(UserService);
     sut = container.get(ExportService);
@@ -29,6 +32,7 @@ describe('export-service', () => {
   });
 
   beforeEach(() => {
+    sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.root.url');
     sandbox.stub(userService, 'extractUserIdSetFromDocsOrRevisions');
     sandbox.stub(userService, 'getUsersByIds');
     sandbox.stub(documentService, 'getAllDocumentRevisionsByKey');
@@ -136,7 +140,7 @@ describe('export-service', () => {
         });
 
         it('should return revisions', () => {
-          expect(result).toEqual({ revisions: expectedRevisions, users: [{ _id: 'user1', username: 'JohnDoe' }] });
+          expect(result).toEqual({ revisions: expectedRevisions, users: [{ _id: 'user1', username: 'JohnDoe' }], cdnRootUrl: 'https://cdn.root.url' });
         });
       });
     });

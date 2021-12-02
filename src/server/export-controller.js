@@ -42,9 +42,9 @@ class ExportController {
         throw new BadRequest(`Database schema mismatch between request (${schemaHash}) and host (${importingSystemSchemaHash})`);
       }
 
-      const { revisions, users } = await this.exportService.getDocumentExport({ key, afterRevision, toRevision });
+      const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ key, afterRevision, toRevision });
 
-      res.send({ revisions, users });
+      res.send({ revisions, users, cdnRootUrl });
     });
   }
 }
