@@ -123,7 +123,7 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
     pageMenuItems.push({
       key: 'import',
       href: urls.getImportsUrl(),
-      text: t('pageNames:import'),
+      text: t('pageNames:importBatchCreation'),
       icon: ImportOutlined,
       permission: permissions.MANAGE_IMPORT
     });

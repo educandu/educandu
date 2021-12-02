@@ -12,13 +12,13 @@ taskStatusPending:
   de: Ausstehend
 taskStatusDone:
   en: Done
-  de: Vertig
+  de: Abgeschlossen
 createdOn:
   en: Created on
   de: Erstellt am
 completedOn:
   en: Completed on
-  de: Vervollständigt am
+  de: Abgeschlossen am
 createdBy:
   en: Created by
   de: Erstellt von
@@ -30,7 +30,7 @@ batchStatusPending:
   de: Ausstehend
 batchStatusDone:
   en: Done
-  de: Vertig
+  de: Abgeschlossen
 batchStatusProcessing:
   en: '{progress, number, percent} completed'
   de: '{progress, number, percent} abgeschlossen'
@@ -57,7 +57,7 @@ attemptsHeader:
   de: Versuchsdetails
 batchErrors:
   en: Batch errors
-  de: Chargenfelher
+  de: Chargenfehler
 hasErrors:
   en: Has errors
   de: Hat Fehler

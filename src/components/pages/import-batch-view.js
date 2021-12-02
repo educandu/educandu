@@ -89,22 +89,10 @@ function ImportBatchView({ initialState }) {
       />
   );
 
-  const renderHasErrrors = attempts => doesTaskHaveErrors(attempts) ? t('common:yes') : t('common:no');
-
-  const renderIsSuccessful = task => {
-    if (!task.processed) {
-      return <span />;
-    }
-
-    return isTaskSuccessful(task) ? t('common:yes') : t('common:no');
-  };
-
   const taskTableColumns = [
     { title: t('importType'), dataIndex: 'taskParams', width: '50px', render: renderImportType },
     { title: t('documentTitle'), key: '_id', dataIndex: 'taskParams', width: '150px', render: renderTitle },
-    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus, sorter: task => task.processed ? 1 : -1 },
-    { title: t('hasErrors'), width: '150px', render: renderHasErrrors, sorter: task => doesTaskHaveErrors(task) ? 1 : -1 },
-    { title: t('isSuccessful'), width: '150px', render: renderIsSuccessful, sorter: taskStatusSorter }
+    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus, sorter: taskStatusSorter }
   ];
 
   return (
