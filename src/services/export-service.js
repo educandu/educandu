@@ -3,6 +3,7 @@ import httpErrors from 'http-errors';
 import UserService from './user-service.js';
 import DocumentService from './document-service.js';
 import DocumentStore from '../stores/document-store.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
 
 const { BadRequest } = httpErrors;
@@ -19,9 +20,10 @@ const exportableDocumentsProjection = {
 const lastUpdatedFirst = [['updatedOn', -1]];
 
 class ExportService {
-  static get inject() { return [DocumentStore, DocumentService, UserService]; }
+  static get inject() { return [ServerConfig, DocumentStore, DocumentService, UserService]; }
 
-  constructor(documentStore, documentService, userService) {
+  constructor(serverConfig, documentStore, documentService, userService) {
+    this.serverConfig = serverConfig;
     this.documentStore = documentStore;
     this.documentService = documentService;
     this.userService = userService;
@@ -63,7 +65,7 @@ class ExportService {
       throw new Error(`Was searching for ${userIdSet.size} users in document ${key} between revisions ${afterRevision} - ${toRevision}, but found ${users.length}`);
     }
 
-    return { revisions: revisionsToExport, users };
+    return { revisions: revisionsToExport, users, cdnRootUrl: this.serverConfig.cdnRootUrl };
   }
 }
 
