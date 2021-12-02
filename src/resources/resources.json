@@ -636,7 +636,10 @@
       "postalCode": "Postal code",
       "city": "City",
       "country": "Country",
-      "profile": "Profile"
+      "profile": "Profile",
+      "importSource": "Import source",
+      "internalUsers": "Internal users",
+      "externalUsers": "External users"
     }
   },
   {
@@ -656,7 +659,10 @@
       "postalCode": "Postleitzahl",
       "city": "Ort",
       "country": "Land",
-      "profile": "Profil"
+      "profile": "Profil",
+      "importSource": "Import-Quelle",
+      "internalUsers": "Interne Benutzer",
+      "externalUsers": "Externe Benutzer"
     }
   },
   {

@@ -40,3 +40,12 @@ country:
 profile:
   en: Profile
   de: Profil
+importSource:
+  en: Import source
+  de: Import-Quelle
+internalUsers:
+  en: Internal users
+  de: Interne Benutzer
+externalUsers:
+  en: External users
+  de: Externe Benutzer
