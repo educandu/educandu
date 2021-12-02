@@ -42,7 +42,7 @@ describe('isTaskSuccessful', () => {
   });
 
   it('should return true when the task is processed and has no errors on the last attempt', () => {
-    expect(isTaskSuccessful(erroredTask)).toEqual(false);
+    expect(isTaskSuccessful(successfulTask)).toEqual(true);
   });
 });
 
