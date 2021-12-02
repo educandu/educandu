@@ -207,7 +207,7 @@ export const importBatchShape = PropTypes.shape({
   createdBy: userInDocShape.isRequired,
   createdOn: PropTypes.string.isRequired,
   completedOn: PropTypes.string,
-  batchType: PropTypes.oneOf(Object.values(BATCH_TYPE.importDocuments)),
+  batchType: PropTypes.oneOf(Object.values(BATCH_TYPE)),
   batchParams: PropTypes.shape({
     ...importSourceShape
   }),
