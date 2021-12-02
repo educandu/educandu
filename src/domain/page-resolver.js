@@ -9,7 +9,6 @@ const pageImporters = {
   [PAGE_NAME.users]: async () => (await import('../components/pages/users.js')).default,
   [PAGE_NAME.index]: async () => (await import('../components/pages/index.js')).default,
   [PAGE_NAME.search]: async () => (await import('../components/pages/search.js')).default,
-  [PAGE_NAME.import]: async () => (await import('../components/pages/import.js')).default,
   [PAGE_NAME.article]: async () => (await import('../components/pages/article.js')).default,
   [PAGE_NAME.account]: async () => (await import('../components/pages/account.js')).default,
   [PAGE_NAME.editDoc]: async () => (await import('../components/pages/edit-doc.js')).default,
@@ -17,7 +16,10 @@ const pageImporters = {
   [PAGE_NAME.register]: async () => (await import('../components/pages/register.js')).default,
   [PAGE_NAME.resetPassword]: async () => (await import('../components/pages/reset-password.js')).default,
   [PAGE_NAME.completeRegistration]: async () => (await import('../components/pages/complete-registration.js')).default,
-  [PAGE_NAME.completePasswordReset]: async () => (await import('../components/pages/complete-password-reset.js')).default
+  [PAGE_NAME.completePasswordReset]: async () => (await import('../components/pages/complete-password-reset.js')).default,
+  [PAGE_NAME.importBatches]: async () => (await import('../components/pages/import-batches.js')).default,
+  [PAGE_NAME.importBatchView]: async () => (await import('../components/pages/import-batch-view.js')).default,
+  [PAGE_NAME.importBatchCreation]: async () => (await import('../components/pages/import-batch-creation.js')).default
 };
 
 async function resolveAll(promiseCreators) {

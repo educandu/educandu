@@ -99,8 +99,8 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
   if (!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)) {
     pageMenuItems.push({
       key: 'import',
-      href: urls.getImportUrl(),
-      text: t('pageNames:import'),
+      href: urls.getImportsUrl(),
+      text: t('pageNames:importBatches'),
       icon: ImportOutlined,
       permission: permissions.MANAGE_IMPORT
     });

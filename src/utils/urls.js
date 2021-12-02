@@ -4,7 +4,8 @@ export const homePath = '/';
 export const docsPath = '/docs';
 export const usersPath = '/users';
 export const settingsPath = '/settings';
-export const importPath = '/import';
+export const importBatchesPath = '/import-batches';
+export const createImportPath = '/import-batches/create';
 export const loginPath = '/login';
 export const logoutPath = '/logout';
 export const accountPath = '/account';
@@ -65,8 +66,16 @@ export function getSettingsUrl() {
   return settingsPath;
 }
 
-export function getImportUrl() {
-  return importPath;
+export function getImportsUrl() {
+  return importBatchesPath;
+}
+
+export function getCreateImportUrl(sourceName) {
+  return `${createImportPath}?source=${encodeURIComponent(sourceName)}`;
+}
+
+export function getBatchUrl(id) {
+  return concatParts(importBatchesPath, id);
 }
 
 export function getCompleteRegistrationUrl(verificationCode) {
@@ -140,6 +149,14 @@ export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
   return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
 }
 
+export function getImportedArticleUrl({ allowUnsecure, hostName, slug }) {
+  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(slug));
+}
+
+export function getImportDetailsUrl(batchId) {
+  return concatParts(importBatchesPath, batchId);
+}
+
 export default {
   homePath,
   docsPath,
@@ -165,7 +182,8 @@ export default {
   getArticleUrl,
   getDocumentRevisionUrl,
   getSettingsUrl,
-  getImportUrl,
+  getImportsUrl,
+  getCreateImportUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
   getPluginApiPathPrefix,
@@ -179,5 +197,6 @@ export default {
   getResetPasswordUrl,
   createFullyQualifiedUrl,
   getSearchUrl,
-  decodeUrl: urlencode.decode
+  decodeUrl: urlencode.decode,
+  getBatchUrl
 };

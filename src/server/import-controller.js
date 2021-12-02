@@ -3,6 +3,7 @@ import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ImportService from '../services/import-service.js';
 import ExportApiClient from '../services/export-api-client.js';
@@ -15,18 +16,35 @@ const { NotFound } = httpErrors;
 const jsonParser = express.json();
 
 class ImportController {
-  static get inject() { return [ImportService, ExportApiClient, ServerConfig, PageRenderer]; }
+  static get inject() { return [ServerConfig, PageRenderer, ImportService, ExportApiClient, ClientDataMapper]; }
 
-  constructor(importService, exportApiClient, serverConfig, pageRenderer) {
+  constructor(serverConfig, pageRenderer, importService, exportApiClient, clientDataMapper) {
+    this.serverConfig = serverConfig;
     this.exportApiClient = exportApiClient;
     this.importService = importService;
-    this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
+    this.clientDataMapper = clientDataMapper;
   }
 
   registerPages(app) {
-    app.get('/import', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.import);
+    app.get('/import-batches', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
+      const rawBatches = await this.importService.getImportBatches();
+      const batches = await this.clientDataMapper.mapImportBatches(rawBatches, req.user);
+      const importSources = this.serverConfig.importSources.slice();
+
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatches, { batches, importSources });
+    });
+
+    app.get('/import-batches/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchCreation);
+    });
+
+    app.get('/import-batches/:batchId', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
+      const batchId = req.params.batchId;
+      const rawBatch = await this.importService.getImportBatchDetails(batchId);
+      const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
+
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchView, { batch });
     });
   }
 

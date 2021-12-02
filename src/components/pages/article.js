@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import CreditsFooter from '../credits-footer.js';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions.js';
+import { ALERT_TYPE } from '../../common/constants.js';
 import { documentShape, documentRevisionShape } from '../../ui/default-prop-types.js';
 import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 
@@ -23,14 +24,14 @@ function Article({ initialState, PageTemplate }) {
   if (isProfileInsufficient(user)) {
     alerts.push({
       message: <InsufficientProfileWarning />,
-      type: 'info'
+      type: ALERT_TYPE.info
     });
   }
 
   if (documentOrRevision.archived) {
     alerts.push({
       message: t('common:archivedAlert'),
-      type: 'warning'
+      type: ALERT_TYPE.warning
     });
   }
 

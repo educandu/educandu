@@ -358,7 +358,7 @@
     }
   },
   {
-    "namespace": "import",
+    "namespace": "importBatchCreation",
     "language": "en",
     "resources": {
       "importButton": "Start import",
@@ -367,13 +367,13 @@
       "title": "Title",
       "language": "Language",
       "updateDate": "Update date",
-      "source": "Choose source",
+      "source": "Source",
       "add": "Add",
       "update": "Update"
     }
   },
   {
-    "namespace": "import",
+    "namespace": "importBatchCreation",
     "language": "de",
     "resources": {
       "importButton": "Import starten",
@@ -382,9 +382,103 @@
       "title": "Titel",
       "language": "Sprache",
       "updateDate": "Update-Datum",
-      "source": "Quelle wählen",
+      "source": "Quelle",
       "add": "Hinzufügen",
       "update": "Aktualisieren"
+    }
+  },
+  {
+    "namespace": "importBatchView",
+    "language": "en",
+    "resources": {
+      "documentTitle": "Document",
+      "taskType": "Task type",
+      "taskStatus": "Task status",
+      "taskStatusPending": "Pending",
+      "taskStatusDone": "Done",
+      "taskStatusFailed": "Failed",
+      "taskStatusDoneWithWarnings": "Done (with warnings)",
+      "createdOn": "Created on",
+      "completedOn": "Completed on",
+      "createdBy": "Created by",
+      "batchStatus": "Batch status",
+      "batchStatusPending": "Pending",
+      "batchStatusDone": "Done",
+      "batchStatusProcessing": "{progress, number, percent} completed",
+      "importType": "Import type",
+      "add": "Add",
+      "update": "Update",
+      "startedOn": "Started on",
+      "errors": "Errors",
+      "errorsCount": "Errors count",
+      "attemptsHeader": "Attempt details",
+      "batchErrors": "Batch errors"
+    }
+  },
+  {
+    "namespace": "importBatchView",
+    "language": "de",
+    "resources": {
+      "documentTitle": "Dokument",
+      "taskType": "Tasktyp",
+      "taskStatus": "Taskstatus",
+      "taskStatusPending": "Ausstehend",
+      "taskStatusDone": "Abgeschlossen",
+      "taskStatusFailed": "Fehler",
+      "taskStatusDoneWithWarnings": "Abgeschlossen (mit Warnungen)",
+      "createdOn": "Erstellt am",
+      "completedOn": "Abgeschlossen am",
+      "createdBy": "Erstellt von",
+      "batchStatus": "Chargenstatus",
+      "batchStatusPending": "Ausstehend",
+      "batchStatusDone": "Abgeschlossen",
+      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
+      "importType": "Import-Typ",
+      "add": "Hinzufügen",
+      "update": "Aktualisieren",
+      "startedOn": "Begann am",
+      "errors": "Fehler",
+      "errorsCount": "Fehleranzahl",
+      "attemptsHeader": "Versuchsdetails",
+      "batchErrors": "Chargenfehler"
+    }
+  },
+  {
+    "namespace": "importBatches",
+    "language": "en",
+    "resources": {
+      "batchId": "Batch",
+      "batchType": "Batch type",
+      "batchStatus": "Batch status",
+      "batchStatusPending": "Pending",
+      "batchStatusDone": "Done",
+      "batchStatusProcessing": "{progress, number, percent} completed",
+      "viewBatch": "View batch",
+      "batchTypeImportDocument": "Document import",
+      "createdOn": "Created on",
+      "completedOn": "Completed on",
+      "createdBy": "Created by",
+      "createImport": "Create import",
+      "importsHeaderPrefix": "Source"
+    }
+  },
+  {
+    "namespace": "importBatches",
+    "language": "de",
+    "resources": {
+      "batchId": "Chargen",
+      "batchType": "Chargentyp",
+      "batchStatus": "Chargenstatus",
+      "batchStatusPending": "Ausstehend",
+      "batchStatusDone": "Vertig",
+      "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
+      "viewBatch": "Chargen ansehen",
+      "batchTypeImportDocument": "Dokumentenimport",
+      "createdOn": "Erstellt am",
+      "completedOn": "Abgeschlossen am",
+      "createdBy": "Erstellt von",
+      "createImport": "Import erstellen",
+      "importsHeaderPrefix": "Quelle"
     }
   },
   {
@@ -1219,7 +1313,9 @@
       "users": "Users",
       "account": "My account",
       "settings": "Settings",
-      "import": "Import",
+      "importBatchCreation": "Import",
+      "importBatches": "Imports overview",
+      "importBatchView": "Import details",
       "docs": "Documents"
     }
   },
@@ -1231,7 +1327,9 @@
       "users": "Benutzer",
       "account": "Mein Konto",
       "settings": "Einstellungen",
-      "import": "Import",
+      "importBatchCreation": "Import",
+      "importBatches": "Import-Übersicht",
+      "importBatchView": "Import-Details",
       "docs": "Dokumente"
     }
   },

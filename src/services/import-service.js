@@ -9,8 +9,9 @@ import { getImportSourceBaseUrl } from '../utils/urls.js';
 import BatchLockStore from '../stores/batch-lock-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
+import UserStore from '../stores/user-store.js';
 
-const { BadRequest } = httpErrors;
+const { BadRequest, NotFound } = httpErrors;
 
 const logger = new Logger(import.meta.url);
 
@@ -29,16 +30,17 @@ const CONCURRENT_BATCH_ERROR_MESSAGE = 'Cannot create a new batch while another 
 
 class ImportService {
   static get inject() {
-    return [DocumentStore, ExportApiClient, TransactionRunner, BatchStore, TaskStore, BatchLockStore];
+    return [DocumentStore, ExportApiClient, TransactionRunner, BatchStore, TaskStore, BatchLockStore, UserStore];
   }
 
-  constructor(documentStore, exportApiClient, transactionRunner, batchStore, taskStore, batchLockStore) {
+  constructor(documentStore, exportApiClient, transactionRunner, batchStore, taskStore, batchLockStore, userStore) {
     this.documentStore = documentStore;
     this.exportApiClient = exportApiClient;
     this.transactionRunner = transactionRunner;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.batchLockStore = batchLockStore;
+    this.userStore = userStore;
   }
 
   getAllImportedDocumentsMetadata(hostName) {
@@ -137,6 +139,65 @@ class ImportService {
       await this.batchLockStore.releaseLock(lock);
     }
 
+    return batch;
+  }
+
+  async _getProgressForBatch(batch) {
+    if (batch.completedOn) {
+      return 1;
+    }
+
+    const countGroups = await this.taskStore.toAggregateArray([
+      {
+        $match: {
+          batchId: batch._id
+        }
+      }, {
+        $group: {
+          _id: '$processed',
+          count: {
+            $sum: 1
+          }
+        }
+      }
+    ]);
+
+    const stats = countGroups.reduce((accumulator, current) => {
+      accumulator.totalCount += current.count;
+      const isProcessedGroup = current._id === true;
+
+      if (isProcessedGroup) {
+        accumulator.processedCount += current.count;
+      }
+      return accumulator;
+    }, { totalCount: 0, processedCount: 0 });
+
+    return stats.totalCount === 0 ? 1 : stats.processedCount / stats.totalCount;
+  }
+
+  async getImportBatches() {
+    const batches = await this.batchStore.find({ batchType: BATCH_TYPE.importDocuments });
+
+    return Promise.all(batches.map(async batch => {
+      const progress = await this._getProgressForBatch(batch);
+      return {
+        ...batch,
+        progress
+      };
+    }));
+  }
+
+  async getImportBatchDetails(id) {
+    const batch = await this.batchStore.findOne({ _id: id });
+    if (!batch) {
+      throw new NotFound('Batch not found');
+    }
+
+    const tasks = await this.taskStore.find({ batchId: id });
+    const processedTasksCount = tasks.filter(task => task.processed).length;
+
+    batch.tasks = tasks;
+    batch.progress = batch.tasks.length === 0 ? 1 : processedTasksCount / tasks.length;
     return batch;
   }
 }

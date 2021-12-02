@@ -7,11 +7,13 @@ export const PAGE_NAME = {
   completePasswordReset: 'complete-password-reset',
   docs: 'docs',
   users: 'users',
-  import: 'import',
   editDoc: 'edit-doc',
   settings: 'settings',
   doc: 'doc',
   index: 'index',
   article: 'article',
-  search: 'search'
+  search: 'search',
+  importBatchCreation: 'import-batch-creation',
+  importBatchView: 'import-batch-view',
+  importBatches: 'import-batches'
 };

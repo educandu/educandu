@@ -1,21 +1,23 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRequest } from '../request-context.js';
+import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
-import { Tooltip, Button, Table, Select } from 'antd';
+import { Tooltip, Button, Table } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
-import { getArticleUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
+import urls, { getArticleUrl, getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 
-export default function Import({ PageTemplate }) {
-  const { t } = useTranslation('import');
+export default function ImportBatchCreation({ PageTemplate }) {
+  const { t } = useTranslation('importBatchCreation');
 
   const { language } = useLanguage();
   const { formatDate } = useDateFormat();
@@ -24,13 +26,19 @@ export default function Import({ PageTemplate }) {
   const languageNameProvider = useService(LanguageNameProvider);
 
   const sourceMenuItems = clientConfig.importSources;
-  const [selectedSource, setSelectedSource] = useState(null);
+  const { query } = useRequest();
+  const importSourceHostName = urls.decodeUrl(query.source);
+  const [selectedSource] = useState(sourceMenuItems.find(source => source.hostName === importSourceHostName));
+
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
   const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);
   const [isCreatingNewImportBatch, setIsCreatingNewImportBatch] = useState(false);
 
+  useReloadPersistedWindow();
+
   const handleImportClick = async () => {
+    setIsCreatingNewImportBatch(true);
     const selectedDocs = selectedDocumentKeys
       .map(key => importableDocuments.find(doc => doc.key === key));
 
@@ -40,10 +48,9 @@ export default function Import({ PageTemplate }) {
     };
 
     try {
-      setIsCreatingNewImportBatch(true);
       const result = await importApiClient.postImportBatch(batch);
-      // eslint-disable-next-line no-console
-      console.log('Batch created', result.batch);
+      setIsCreatingNewImportBatch(false);
+      window.location = getImportDetailsUrl(result.batch._id);
     } catch (error) {
       handleApiError({ error, t });
     } finally {
@@ -51,21 +58,25 @@ export default function Import({ PageTemplate }) {
     }
   };
 
-  const handleSourceMenuChange = async value => {
-    setIsFetchingImportableDocuments(true);
-    const newSelectedSource = sourceMenuItems.find(source => source.name === value);
-    setSelectedSource(newSelectedSource);
-    setImportableDocuments([]);
-    setSelectedDocumentKeys([]);
+  useEffect(() => {
+    const getDocuments = async () => {
+      setIsFetchingImportableDocuments(true);
 
-    try {
-      const { documents } = await importApiClient.getImports(newSelectedSource.hostName);
-      setImportableDocuments(documents);
-    } catch (error) {
-      handleApiError({ error, t });
-    }
-    setIsFetchingImportableDocuments(false);
-  };
+      setImportableDocuments([]);
+      setSelectedDocumentKeys([]);
+
+      try {
+        const { documents } = await importApiClient.getImports(selectedSource.hostName);
+        setImportableDocuments(documents);
+      } catch (error) {
+        handleApiError({ error, t });
+      }
+      setIsFetchingImportableDocuments(false);
+    };
+
+    getDocuments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSource]);
 
   const renderImportType = doc => {
     let icon = null;
@@ -75,7 +86,7 @@ export default function Import({ PageTemplate }) {
     if (doc.importType === DOCUMENT_IMPORT_TYPE.update) {
       icon = <CloudSyncOutlined />;
     }
-    return <Tooltip title={t(doc.importType)} className="ImportPage-importType">{icon}</Tooltip>;
+    return <Tooltip title={t(doc.importType)} className="ImportBatchCreationPage-importType">{icon}</Tooltip>;
   };
 
   const renderTitle = doc => {
@@ -112,26 +123,18 @@ export default function Import({ PageTemplate }) {
     }
   };
 
-  const importSourceOptions = sourceMenuItems.map(item => ({ label: item.name, value: item.name }));
-
   return (
     <PageTemplate>
-      <div className="ImportPage">
-        <h1>{t('pageNames:import')}</h1>
+      <div className="ImportBatchCreationPage">
+        <h1>{t('pageNames:importBatchCreation')}</h1>
 
-        <Select
-          placeholder={t('source')}
-          className="ImportPage-source"
-          onChange={handleSourceMenuChange}
-          defaultValue={null}
-          disabled={isFetchingImportableDocuments}
-          options={importSourceOptions}
-          />
+        <h2> {t('source')}: {selectedSource?.name} </h2>
         <br /> <br />
 
         <Table
           bordered
           size="small"
+          rowKey="key"
           rowSelection={{
             type: 'checkbox',
             ...tableRowSelection
@@ -151,6 +154,6 @@ export default function Import({ PageTemplate }) {
   );
 }
 
-Import.propTypes = {
+ImportBatchCreation.propTypes = {
   PageTemplate: PropTypes.func.isRequired
 };

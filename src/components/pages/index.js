@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
 import SiteLogo from '../site-logo.js';
+import React, { useState } from 'react';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
-import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import { ALERT_TYPE } from '../../common/constants.js';
+import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
@@ -25,19 +26,7 @@ function Index({ PageTemplate, initialState }) {
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
   const [isSearching, setIsSearching] = useState(false);
 
-  const handlePageShow = event => {
-    if (event.persisted) {
-      window.location.reload(true);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('pageshow', handlePageShow);
-
-    return () => {
-      window.removeEventListener('pageshow', handlePageShow);
-    };
-  }, []);
+  useReloadPersistedWindow();
 
   const handleSearch = () => {
     setIsSearching(true);
