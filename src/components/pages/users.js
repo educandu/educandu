@@ -1,6 +1,5 @@
 import React from 'react';
 import firstBy from 'thenby';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Table, Popover } from 'antd';
@@ -206,7 +205,7 @@ class Users extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, PageTemplate } = this.props;
     const { users, isDirty } = this.state;
 
     const headerActions = [];
@@ -227,17 +226,18 @@ class Users extends React.Component {
     }
 
     return (
-      <Page headerActions={headerActions}>
+      <PageTemplate headerActions={headerActions}>
         <div className="UsersPage">
           <h1>{t('pageNames:users')}</h1>
           <Table dataSource={users} columns={this.columns} rowKey="_id" size="middle" bordered />
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Users.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   initialState: PropTypes.arrayOf(userShape).isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired

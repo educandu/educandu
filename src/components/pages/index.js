@@ -1,4 +1,3 @@
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
@@ -14,7 +13,7 @@ import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 
-function Index({ initialState }) {
+function Index({ PageTemplate, initialState }) {
   const [searchText, setSearchText] = useState('');
   const { t } = useTranslation('index');
   const user = useUser();
@@ -65,7 +64,7 @@ function Index({ initialState }) {
   }
 
   return (
-    <Page alerts={alerts} fullScreen>
+    <PageTemplate alerts={alerts} fullScreen>
       <div className="IndexPage">
         <div className="IndexPage-title">
           <SiteLogo size="big" readonly />
@@ -106,11 +105,12 @@ function Index({ initialState }) {
         )}
         {doc && <DocView documentOrRevision={doc} />}
       </div>
-    </Page>
+    </PageTemplate>
   );
 }
 
 Index.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     document: documentShape,
     homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,

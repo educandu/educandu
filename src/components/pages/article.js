@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import urls from '../../utils/urls.js';
@@ -13,7 +12,7 @@ import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficie
 
 const handleBackClick = () => window.history.back();
 
-function Article({ initialState }) {
+function Article({ initialState, PageTemplate }) {
   const user = useUser();
   const { t } = useTranslation();
   const { documentOrRevision, type } = initialState;
@@ -49,7 +48,7 @@ function Article({ initialState }) {
   }
 
   return (
-    <Page headerActions={headerActions} alerts={alerts}>
+    <PageTemplate headerActions={headerActions} alerts={alerts}>
       {type === 'document' && (
         <aside className="Content">
           <a onClick={handleBackClick}>{t('common:back')}</a>
@@ -59,11 +58,12 @@ function Article({ initialState }) {
       <aside className="Content">
         <CreditsFooter documentOrRevision={documentOrRevision} type={type} />
       </aside>
-    </Page>
+    </PageTemplate>
   );
 }
 
 Article.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]),
     type: PropTypes.oneOf(['document', 'revision'])

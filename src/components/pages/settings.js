@@ -1,4 +1,3 @@
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +16,7 @@ import { documentMetadataShape, settingsShape } from '../../ui/default-prop-type
 
 const logger = new Logger(import.meta.url);
 
-function Settings({ initialState }) {
+function Settings({ initialState, PageTemplate }) {
   const { t } = useTranslation('settings');
   const settingApiClient = useService(SettingApiClient);
   const [settings, setSettings] = useState(initialState.settings);
@@ -96,7 +95,7 @@ function Settings({ initialState }) {
   }
 
   return (
-    <Page headerActions={headerActions}>
+    <PageTemplate headerActions={headerActions}>
       <div className="SettingsPage">
         <h1>{t('pageNames:settings')}</h1>
         <h2 className="SettingsPage-sectionHeader">{t('homeLanguagesHeader')}</h2>
@@ -130,11 +129,12 @@ function Settings({ initialState }) {
           onChange={handleDefaultTagsChanged}
           />
       </div>
-    </Page>
+    </PageTemplate>
   );
 }
 
 Settings.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     settings: settingsShape.isRequired,
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired

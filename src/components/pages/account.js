@@ -1,6 +1,5 @@
 import by from 'thenby';
 import React from 'react';
-import Page from '../page.js';
 import gravatar from 'gravatar';
 import memoizee from 'memoizee';
 import autoBind from 'auto-bind';
@@ -138,7 +137,7 @@ class Account extends React.Component {
 
   render() {
     const { showAvatarDescription } = this.state;
-    const { countryNameProvider, user, language, t } = this.props;
+    const { countryNameProvider, user, language, t, PageTemplate } = this.props;
     const profile = user.profile || { country: '' };
     const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
 
@@ -263,7 +262,7 @@ class Account extends React.Component {
     ];
 
     return (
-      <Page headerActions={headerActions} disableProfileWarning>
+      <PageTemplate headerActions={headerActions} disableProfileWarning>
         <div className="AccountPage">
           <div className="AccountPage-forms">
             <h1>{t('pageNames:account')}</h1>
@@ -273,12 +272,13 @@ class Account extends React.Component {
             <section>{profileForm}</section>
           </div>
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Account.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...userProps,
   ...languageProps,
   ...translationProps,

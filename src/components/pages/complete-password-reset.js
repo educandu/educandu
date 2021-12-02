@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Form, Button } from 'antd';
@@ -45,7 +44,7 @@ class CompletePasswordReset extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, PageTemplate } = this.props;
     const { user } = this.state;
 
     const formItemLayout = {
@@ -115,7 +114,7 @@ class CompletePasswordReset extends React.Component {
     const isValidRequest = !!this.props.initialState.passwordResetRequestId;
 
     return (
-      <Page fullScreen>
+      <PageTemplate fullScreen>
         <div className="CompletePasswordResetPage">
           <div className="CompletePasswordResetPage-title">
             <SiteLogo size="big" readonly />
@@ -124,12 +123,13 @@ class CompletePasswordReset extends React.Component {
           {isValidRequest && !user && completionForm}
           {isValidRequest && user && completionSuccessConfirmation}
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 CompletePasswordReset.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   initialState: PropTypes.shape({
     passwordResetRequestId: PropTypes.string

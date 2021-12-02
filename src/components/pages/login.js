@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -62,7 +61,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, PageTemplate } = this.props;
     const { loginError } = this.state;
 
     const formItemLayout = {
@@ -129,7 +128,7 @@ class Login extends React.Component {
     );
 
     return (
-      <Page fullScreen>
+      <PageTemplate fullScreen>
         <div className="LoginPage">
           <div className="LoginPage-title">
             <SiteLogo size="big" readonly />
@@ -138,12 +137,13 @@ class Login extends React.Component {
             {loginForm}
           </div>
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Login.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...requestProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired

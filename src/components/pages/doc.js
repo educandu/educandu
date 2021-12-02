@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
@@ -132,7 +131,7 @@ class Doc extends React.Component {
   }
 
   render() {
-    const { user, t } = this.props;
+    const { user, t, PageTemplate } = this.props;
     const { revisions, currentRevision } = this.state;
 
     const marks = revisions.reduce((accu, item, index) => {
@@ -210,7 +209,7 @@ class Doc extends React.Component {
     }
 
     return (
-      <Page headerActions={headerActions} alerts={alerts}>
+      <PageTemplate headerActions={headerActions} alerts={alerts}>
         <div className="DocPage">
           {revisionPicker}
           <DocView
@@ -218,12 +217,13 @@ class Doc extends React.Component {
             onAction={this.handleAction}
             />
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Doc.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...languageProps,
   ...userProps,

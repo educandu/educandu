@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -42,7 +41,7 @@ class ResetPassword extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, PageTemplate } = this.props;
     const { isRequestSent } = this.state;
 
     const formItemLayout = {
@@ -117,19 +116,20 @@ class ResetPassword extends React.Component {
     );
 
     return (
-      <Page fullScreen>
+      <PageTemplate fullScreen>
         <div className="ResetPasswordPage">
           <div className="ResetPasswordPage-title">
             <SiteLogo size="big" readonly />
           </div>
           {isRequestSent ? resetRequestConfirmation : resetRequestForm}
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 ResetPassword.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };

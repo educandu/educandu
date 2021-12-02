@@ -1,10 +1,10 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { Menu, Button, Dropdown } from 'antd';
+import { withUser } from '../user-context.js';
 import uniqueId from '../../utils/unique-id.js';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
@@ -17,9 +17,8 @@ import DocumentMetadataEditor from '../document-metadata-editor.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import { documentRevisionShape, sectionShape, translationProps, userProps } from '../../ui/default-prop-types.js';
 import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
-import { withUser } from '../user-context.js';
+import { documentRevisionShape, sectionShape, translationProps, userProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -319,7 +318,7 @@ class EditDoc extends React.Component {
   }
 
   render() {
-    const { user, t } = this.props;
+    const { user, t, PageTemplate } = this.props;
     const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys, invalidMetadata } = this.state;
 
     const newSectionMenu = (
@@ -373,7 +372,7 @@ class EditDoc extends React.Component {
     }
 
     return (
-      <Page headerActions={headerActions} alerts={alerts}>
+      <PageTemplate headerActions={headerActions} alerts={alerts}>
         <div className="EditDocPage">
           <div className="EditDocPage-docEditor">
             <DocumentMetadataEditor
@@ -428,12 +427,13 @@ class EditDoc extends React.Component {
             {newSectionDropdown}
           </aside>
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 EditDoc.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...userProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,

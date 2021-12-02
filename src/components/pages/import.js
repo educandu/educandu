@@ -1,5 +1,5 @@
 import by from 'thenby';
-import Page from '../page.js';
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
@@ -14,7 +14,7 @@ import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { getArticleUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 
-export default function Import() {
+export default function Import({ PageTemplate }) {
   const { t } = useTranslation('import');
 
   const { language } = useLanguage();
@@ -115,7 +115,7 @@ export default function Import() {
   const importSourceOptions = sourceMenuItems.map(item => ({ label: item.name, value: item.name }));
 
   return (
-    <Page>
+    <PageTemplate>
       <div className="ImportPage">
         <h1>{t('pageNames:import')}</h1>
 
@@ -147,6 +147,10 @@ export default function Import() {
           {t('importButton')}
         </Button>
       </div>
-    </Page>
+    </PageTemplate>
   );
 }
+
+Import.propTypes = {
+  PageTemplate: PropTypes.func.isRequired
+};

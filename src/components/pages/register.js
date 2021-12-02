@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -66,7 +65,7 @@ class Register extends React.Component {
   }
 
   render() {
-    const { settings, language, t } = this.props;
+    const { settings, language, t, PageTemplate } = this.props;
     const { user } = this.state;
 
     const formItemLayout = {
@@ -153,19 +152,20 @@ class Register extends React.Component {
     );
 
     return (
-      <Page fullScreen>
+      <PageTemplate fullScreen>
         <div className="RegisterPage">
           <div className="RegisterPage-title">
             <SiteLogo size="big" readonly />
           </div>
           {user ? registrationConfirmation : registrationForm}
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Register.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...settingsProps,
   ...languageProps,
   ...translationProps,

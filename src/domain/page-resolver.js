@@ -1,4 +1,5 @@
 import { PAGE_NAME } from './page-name.js';
+import { isBrowser } from '../ui/browser-helper.js';
 import DefaultPageTemplateComponent from '../components/page.js';
 
 const pageImporters = {
@@ -21,7 +22,7 @@ const pageImporters = {
 
 async function resolveAll(promiseCreators) {
   // eslint-disable-next-line no-process-env
-  if (process?.env?.EDUCANDU_TEST === true.toString()) {
+  if (!isBrowser() && process.env.EDUCANDU_TEST === true.toString()) {
     // Resolve sequentially in the test runner,
     // because otherwise Jest bursts into flames:
     // https://github.com/facebook/jest/issues/11434

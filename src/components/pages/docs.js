@@ -1,6 +1,5 @@
 import by from 'thenby';
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -234,7 +233,7 @@ class Docs extends React.Component {
   }
 
   render() {
-    const { t, user } = this.props;
+    const { t, user, PageTemplate } = this.props;
     const { filteredDocs, filterInput, newDoc, isNewDocModalVisible, isLoading } = this.state;
 
     const columns = [
@@ -308,7 +307,7 @@ class Docs extends React.Component {
     }
 
     return (
-      <Page alerts={alerts}>
+      <PageTemplate alerts={alerts}>
         <div className="DocsPage">
           <h1>{t('pageNames:docs')}</h1>
           <div className="DocsPage-search">
@@ -346,12 +345,13 @@ class Docs extends React.Component {
             </Form>
           </Modal>
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Docs.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...languageProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,

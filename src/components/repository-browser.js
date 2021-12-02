@@ -9,7 +9,6 @@ import Highlighter from 'react-highlighter';
 import pathHelper from '../ui/path-helper.js';
 import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
-import browserHelper from '../ui/browser-helper.js';
 import { withLanguage } from './language-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import CdnApiClient from '../services/cdn-api-client.js';
@@ -205,10 +204,6 @@ class RepositoryBrowser extends React.Component {
   handleFrameDrag(event) {
     if (!this.eventHasFiles(event) || event.target === this.lastDragElement) {
       return;
-    }
-
-    if (!browserHelper.isIE()) {
-      event.dataTransfer.dropEffect = 'copy';
     }
 
     this.lastDragElement = event.target;
