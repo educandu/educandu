@@ -27,7 +27,8 @@ const metadataProjection = {
   updatedBy: 1,
   tags: 1,
   archived: 1,
-  origin: 1
+  origin: 1,
+  originUrl: 1
 };
 
 const searchResultsProjection = {
@@ -385,6 +386,7 @@ class DocumentService {
       tags: doc.tags || [],
       archived: doc.archived || false,
       origin: doc.origin || DOCUMENT_ORIGIN.internal,
+      originUrl: doc.originUrl || '',
       cdnResources: this._getCdnResources(newSections)
     };
   }
@@ -412,6 +414,7 @@ class DocumentService {
       tags: lastRevision.tags,
       archived: lastRevision.archived,
       origin: lastRevision.origin,
+      originUrl: lastRevision.originUrl,
       cdnResources: lastRevision.cdnResources
     };
   }

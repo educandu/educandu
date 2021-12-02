@@ -4,7 +4,7 @@ import TaskProcessor from './task-processor.js';
 import { TASK_TYPE } from '../common/constants.js';
 import TaskLockStore from '../stores/task-lock-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { DocumentImportTaskProcessor } from './document-import-task-processor.js';
+import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
 describe('task-processor', () => {

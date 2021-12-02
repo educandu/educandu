@@ -6,7 +6,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import { getDocUrl, getImportSourceBaseUrl } from '../utils/urls.js';
 
-export class DocumentImportTaskProcessor {
+class DocumentImportTaskProcessor {
   static get inject() {
     return [ServerConfig, ExportApiClient, UserService, DocumentService];
   }
@@ -70,3 +70,5 @@ export class DocumentImportTaskProcessor {
     }
   }
 }
+
+export default DocumentImportTaskProcessor;
