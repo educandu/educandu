@@ -17,11 +17,13 @@ export const sectionEditorProps = {
   onContentChanged: PropTypes.func.isRequired
 };
 
-export const importSourceShape = PropTypes.shape({
+export const importSourceProps = {
   name: PropTypes.string.isRequired,
   hostName: PropTypes.string.isRequired,
   allowUnsecure: PropTypes.bool
-});
+};
+
+export const importSourceShape = PropTypes.shape(importSourceProps);
 
 export const clientConfigProps = {
   clientConfig: PropTypes.shape({
@@ -182,15 +184,13 @@ export const importTaskShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   batchId: PropTypes.string.isRequired,
   taskType: PropTypes.oneOf(Object.values(TASK_TYPE)),
-  processed: true,
-  attempts: [
-    {
-      startedOn: PropTypes.string,
-      completedOn: PropTypes.string,
-      errors: PropTypes.arrayOf(PropTypes.string).isRequired
-    }
-  ],
-  taskParams: {
+  processed: PropTypes.bool.isRequired,
+  attempts: PropTypes.arrayOf(PropTypes.shape({
+    startedOn: PropTypes.string,
+    completedOn: PropTypes.string,
+    errors: PropTypes.arrayOf(PropTypes.string).isRequired
+  })),
+  taskParams: PropTypes.shape({
     key: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     slug: PropTypes.string.isRequired,
@@ -199,22 +199,22 @@ export const importTaskShape = PropTypes.shape({
     importedRevision: PropTypes.string,
     importableRevision: PropTypes.string.isRequired,
     importType: PropTypes.oneOf(Object.values(DOCUMENT_IMPORT_TYPE))
-  }
+  })
 });
 
-export const importBatchShape = PropTypes.shape({
+export const batchProps = {
   _id: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
   createdOn: PropTypes.string.isRequired,
   completedOn: PropTypes.string,
   batchType: PropTypes.oneOf(Object.values(BATCH_TYPE)),
-  batchParams: PropTypes.shape({
-    ...importSourceShape
-  }),
   errors: PropTypes.arrayOf(PropTypes.any).isRequired
-});
+};
+
+export const importBatchShape = PropTypes.shape(batchProps);
 
 export const importBatchDetailsShape = PropTypes.shape({
-  ...importBatchShape,
+  ...batchProps,
+  batchParams: importSourceShape,
   tasks: PropTypes.arrayOf(importTaskShape)
 });
