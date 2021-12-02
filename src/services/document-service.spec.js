@@ -84,11 +84,11 @@ describe('document-service', () => {
       });
 
       it('creates an _id', () => {
-        expect(result._id).toBeDefined();
+        expect(result._id).toMatch(/\w+/);
       });
 
       it('creates a document key', () => {
-        expect(result.key).toBeDefined();
+        expect(result.key).toMatch(/\w+/);
       });
 
       it('saves the revision', () => {
@@ -100,6 +100,13 @@ describe('document-service', () => {
           restoredFrom: '',
           archived: false,
           origin: DOCUMENT_ORIGIN.internal
+        });
+      });
+
+      it('generates ids for the sections revisions', () => {
+        result.sections.forEach((section, index) => {
+          expect(section.revision).toMatch(/\w+/);
+          expect(section.revision).not.toEqual(revision.sections[index].revision);
         });
       });
 
@@ -171,7 +178,7 @@ describe('document-service', () => {
       });
 
       it('creates an _id', () => {
-        expect(result._id).toBeDefined();
+        expect(result._id).toMatch(/\w+/);
       });
 
       it('sets the same document key', () => {
@@ -190,6 +197,13 @@ describe('document-service', () => {
         };
         delete expectedResult.appendTo;
         expect(result).toMatchObject(expectedResult);
+      });
+
+      it('generates ids for the sections revisions', () => {
+        result.sections.forEach((section, index) => {
+          expect(section.revision).toMatch(/\w+/);
+          expect(section.revision).not.toEqual(secondRevision.sections[index].revision);
+        });
       });
 
       it('saves all referenced cdn resources with the revision', () => {
@@ -234,6 +248,7 @@ describe('document-service', () => {
         language: 'en',
         sections: [
           {
+            revision: uniqueId.create(),
             key: uniqueId.create(),
             type: 'image',
             content: {
@@ -246,6 +261,7 @@ describe('document-service', () => {
             }
           },
           {
+            revision: uniqueId.create(),
             key: uniqueId.create(),
             type: 'video',
             content: {
@@ -279,6 +295,13 @@ describe('document-service', () => {
           order: 1,
           restoredFrom: '',
           archived: false
+        });
+      });
+
+      it('preservers the keys and revisions of the sections', () => {
+        result.sections.forEach((section, index) => {
+          expect(section.revision).toMatch(/\w+/);
+          expect(section.revision).toEqual(revision.sections[index].revision);
         });
       });
 
@@ -331,6 +354,7 @@ describe('document-service', () => {
           sections: [
             ...firstRevision.sections,
             {
+              revision: uniqueId.create(),
               key: uniqueId.create(),
               type: 'video',
               content: {
@@ -366,6 +390,13 @@ describe('document-service', () => {
         };
         delete expectedResult.appendTo;
         expect(result).toMatchObject(expectedResult);
+      });
+
+      it('preservers the keys and revisions of the sections', () => {
+        result.sections.forEach((section, index) => {
+          expect(section.revision).toMatch(/\w+/);
+          expect(section.revision).toEqual(secondRevision.sections[index].revision);
+        });
       });
 
       it('saves all referenced cdn resources with the revision', () => {

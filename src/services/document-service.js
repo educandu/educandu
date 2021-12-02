@@ -158,14 +158,14 @@ class DocumentService {
     const documentKey = doc.appendTo ? doc.appendTo.key : uniqueId.create();
     const revisionId = uniqueId.create();
 
-    return this._createDocumentRevision({ doc, revisionId, documentKey, user, restoredFrom });
+    return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._createNewSections, restoredFrom });
   }
 
   copyDocumentRevision({ doc, user }) {
     const documentKey = doc.appendTo ? doc.appendTo.key : doc.key;
     const revisionId = doc._id;
 
-    return this._createDocumentRevision({ doc, revisionId, documentKey, user });
+    return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._copySections });
   }
 
   async restoreDocumentRevision({ documentKey, revisionId, user }) {
@@ -273,7 +273,7 @@ class DocumentService {
     return this.createNewDocumentRevision({ doc: newRevision, user });
   }
 
-  async _createDocumentRevision({ doc, revisionId, documentKey, user, restoredFrom = null }) {
+  async _createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections, restoredFrom = null }) {
     if (!user?._id) {
       throw new Error('No user specified');
     }
@@ -284,7 +284,6 @@ class DocumentService {
     const ancestorId = isAppendedRevision ? doc.appendTo.ancestorId : null;
 
     try {
-
       let existingDocumentRevisions;
       let ancestorRevision;
 
@@ -308,45 +307,7 @@ class DocumentService {
         ancestorRevision = null;
       }
 
-      const newSections = doc.sections.map(section => {
-        const sectionKey = section.key;
-        const ancestorSection = ancestorRevision?.sections.find(s => s.key === sectionKey) || null;
-
-        if (ancestorSection) {
-          logger.info(`Found ancestor section with key ${sectionKey}`);
-
-          if (ancestorSection.type !== section.type) {
-            throw new Error(`Ancestor section has type ${ancestorSection.type} and cannot be changed to ${section.type}`);
-          }
-
-          if (ancestorSection.deletedOn && section.content) {
-            throw new Error(`Ancestor section with key ${sectionKey} is deleted and cannot be changed`);
-          }
-
-          // If not changed, re-use existing revision:
-          if (deepEqual(ancestorSection.content, section.content)) {
-            logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
-            return cloneDeep(ancestorSection);
-          }
-        }
-
-        if (!section.content && !restoredFrom) {
-          throw new Error('Sections that are not deleted must specify a content');
-        }
-
-        logger.info(`Creating new revision for section key ${sectionKey}`);
-
-        // Create a new section revision:
-        return {
-          revision: uniqueId.create(),
-          key: sectionKey,
-          deletedOn: null,
-          deletedBy: null,
-          deletedBecause: null,
-          type: section.type,
-          content: section.content && cloneDeep(section.content)
-        };
-      });
+      const newSections = mapNewSections({ sections: doc.sections, ancestorSections: ancestorRevision?.sections, restoredFrom });
 
       const nextOrder = await this.documentOrderStore.getNextOrder();
       const newDocumentRevision = this._buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
@@ -365,6 +326,60 @@ class DocumentService {
         await this.documentLockStore.releaseLock(lock);
       }
     }
+  }
+
+  _createNewSections({ sections, ancestorSections = [], restoredFrom = null }) {
+    return sections.map(section => {
+      const sectionKey = section.key;
+      const ancestorSection = ancestorSections.find(s => s.key === sectionKey) || null;
+
+      if (ancestorSection) {
+        logger.info(`Found ancestor section with key ${sectionKey}`);
+
+        if (ancestorSection.type !== section.type) {
+          throw new Error(`Ancestor section has type ${ancestorSection.type} and cannot be changed to ${section.type}`);
+        }
+
+        if (ancestorSection.deletedOn && section.content) {
+          throw new Error(`Ancestor section with key ${sectionKey} is deleted and cannot be changed`);
+        }
+
+        // If not changed, re-use existing revision:
+        if (deepEqual(ancestorSection.content, section.content)) {
+          logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
+          return cloneDeep(ancestorSection);
+        }
+      }
+
+      if (!section.content && !restoredFrom) {
+        throw new Error('Sections that are not deleted must specify a content');
+      }
+
+      logger.info(`Creating new revision for section key ${sectionKey}`);
+
+      // Create a new section revision:
+      return {
+        revision: uniqueId.create(),
+        key: sectionKey,
+        deletedOn: null,
+        deletedBy: null,
+        deletedBecause: null,
+        type: section.type,
+        content: section.content && cloneDeep(section.content)
+      };
+    });
+  }
+
+  _copySections({ sections }) {
+    return sections.map(section => ({
+      revision: section.revision,
+      key: section.key,
+      deletedOn: null,
+      deletedBy: null,
+      deletedBecause: null,
+      type: section.type,
+      content: section.content && cloneDeep(section.content)
+    }));
   }
 
   _buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections }) {
