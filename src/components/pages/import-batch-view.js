@@ -21,16 +21,16 @@ function ImportBatchView({ initialState }) {
 
   const renderTaskStatus = (processed, task) => {
     if (!processed) {
-      return <span>{t('taskStatusPending')} <SyncOutlined /></span>;
+      return <span><SyncOutlined spin /> {t('taskStatusPending')}</span>;
     }
 
     if (!isTaskSuccessful(task)) {
-      return <span>{t('taskStatusFailed')} <ExclamationCircleOutlined className="ImportBatchViewPage-failedIcon" /></span>;
+      return <span><ExclamationCircleOutlined className="ImportBatchViewPage-failedIcon" /> {t('taskStatusFailed')}</span>;
     }
 
     return doesTaskHaveErrors(task)
-      ? <span>{t('taskStatusDoneWithWarnings')} <WarningOutlined className="ImportBatchViewPage-warningIcon" /> </span>
-      : <span>{t('taskStatusDone')} <CheckOutlined className="ImportBatchViewPage-doneIcon" /></span>;
+      ? <span><WarningOutlined className="ImportBatchViewPage-warningIcon" /> {t('taskStatusDoneWithWarnings')}</span>
+      : <span><CheckOutlined className="ImportBatchViewPage-doneIcon" /> {t('taskStatusDone')}</span>;
   };
 
   const renderBatchStatus = ({ progress }) => {
