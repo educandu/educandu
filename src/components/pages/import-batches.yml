@@ -1,0 +1,39 @@
+batchId:
+  en: Batch
+  de: Chargen
+batchType:
+  en: Batch type
+  de: Chargentyp
+batchStatus:
+  en: Batch status
+  de: Chargenstatus
+batchStatusPending:
+  en: Pending
+  de: Ausstehend
+batchStatusDone:
+  en: Done
+  de: Vertig
+batchStatusProcessing:
+  en: '{progress, number, percent} completed'
+  de: '{progress, number, percent} abgeschlossen'
+viewBatch:
+  en: View batch
+  de: Chargen ansehen
+batchTypeImportDocument:
+  en: Document import
+  de: Dokumentenimport
+createdOn:
+  en: Created on
+  de: Erstellt am
+completedOn:
+  en: Completed on
+  de: Abgeschlossen am
+createdBy:
+  en: Created by
+  de: Erstellt von
+createImport:
+  en: Create import
+  de: Import erstellen
+importsHeaderPrefix:
+  en: Source
+  de: Quelle

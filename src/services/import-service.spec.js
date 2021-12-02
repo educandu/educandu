@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import Database from '../stores/database.js';
+import TaskStore from '../stores/task-store.js';
 import ImportService from './import-service.js';
 import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
@@ -16,12 +17,16 @@ describe('import-service', () => {
 
   let container;
   let user;
+  let taskStore;
   let sut;
   let db;
+  let importSource;
+  let documentsToImport;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
     user = await setupTestUser(container);
+    taskStore = container.get(TaskStore);
     sut = container.get(ImportService);
     db = container.get(Database);
   });
@@ -35,6 +40,36 @@ describe('import-service', () => {
     sandbox.restore();
   });
 
+  beforeEach(() => {
+    importSource = {
+      name: 'source-1',
+      hostName: 'source1.com',
+      allowUnsecure: false,
+      apiKey: 'DFGRDB553dscfVDSv'
+    };
+    documentsToImport = [
+      {
+        key: 'v5NSMktadhzquVUAEdzAKg',
+        title: 'doc-1',
+        slug: 'doc-1',
+        language: 'en',
+        updatedOn: '2021-11-24T16:00:32.200Z',
+        importedRevision: null,
+        importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
+        importType: 'add'
+      },
+      {
+        key: 'sueoX7WCUtSUHT9cWE6UMq',
+        title: 'doc-2',
+        slug: 'doc-2',
+        language: 'en',
+        updatedOn: '2021-11-24T16:05:27.800Z',
+        importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
+        importableRevision: '6AXHKzH3z26r7JKJyPN6er',
+        importType: 'update'
+      }
+    ];
+  });
   describe('getAllImportedDocumentsMetadata', () => {
     let result;
 
@@ -83,18 +118,17 @@ describe('import-service', () => {
     let exportApiClient;
     let result;
 
-    const importSource = {
-      name: 'Other System',
-      hostName: 'other-system.com',
-      allowUnsecure: true,
-      apiKey: 'FSDdsh35nADh44nADCD8'
-    };
-
     beforeEach(() => {
       exportApiClient = container.get(ExportApiClient);
       sandbox.stub(exportApiClient, 'getExports');
       documentStore = container.get(DocumentStore);
       sandbox.stub(documentStore, 'find');
+      importSource = {
+        name: 'Other System',
+        hostName: 'other-system.com',
+        allowUnsecure: true,
+        apiKey: 'FSDdsh35nADh44nADCD8'
+      };
     });
 
     describe('on every call', () => {
@@ -182,43 +216,8 @@ describe('import-service', () => {
   });
 
   describe('createImportBatch', () => {
-    let importSource;
-    let documentsToImport;
-    let result;
-
-    beforeEach(() => {
-      importSource = {
-        name: 'source-1',
-        hostName: 'source1.com',
-        allowUnsecure: false,
-        apiKey: 'DFGRDB553dscfVDSv'
-      };
-      documentsToImport = [
-        {
-          key: 'v5NSMktadhzquVUAEdzAKg',
-          title: 'doc-1',
-          slug: 'doc-1',
-          language: 'en',
-          updatedOn: '2021-11-24T16:00:32.200Z',
-          importedRevision: null,
-          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
-          importType: 'add'
-        },
-        {
-          key: 'sueoX7WCUtSUHT9cWE6UMq',
-          title: 'doc-2',
-          slug: 'doc-2',
-          language: 'en',
-          updatedOn: '2021-11-24T16:05:27.800Z',
-          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
-          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
-          importType: 'update'
-        }
-      ];
-    });
-
     describe('when creating a new batch', () => {
-
+      let result;
       beforeEach(async () => {
         result = await sut.createImportBatch({ importSource, documentsToImport, user });
       });
@@ -311,4 +310,172 @@ describe('import-service', () => {
 
   });
 
+  describe('_getProgressForBatch', () => {
+    describe('when the batch is completed', () => {
+      it('should return 1', async () => {
+        const result = await sut._getProgressForBatch({ completedOn: new Date() });
+        expect(result).toEqual(1);
+      });
+    });
+
+    describe('when the total count is 0', () => {
+      it('should return 1', async () => {
+        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+          { _id: true, count: 0 },
+          { id: false, count: 0 }
+        ]);
+
+        const result = await sut._getProgressForBatch({ _id: '123' });
+        expect(result).toEqual(1);
+      });
+    });
+
+    describe('when the processed count matches the total count', () => {
+      it('should return 1', async () => {
+        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+          { _id: true, count: 15 },
+          { id: false, count: 0 }
+        ]);
+
+        const result = await sut._getProgressForBatch({ _id: '123' });
+        expect(result).toEqual(1);
+      });
+    });
+
+    describe('when the total count matches is half of the total count', () => {
+      it('should return 0.5', async () => {
+        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+          { _id: true, count: 15 },
+          { id: false, count: 15 }
+        ]);
+
+        const result = await sut._getProgressForBatch({ _id: '123' });
+        expect(result).toEqual(0.5);
+      });
+    });
+  });
+
+  describe('getImportBatches', () => {
+    let result;
+
+    beforeEach(async () => {
+      result = await sut.createImportBatch({ importSource, documentsToImport, user });
+      result = await sut.createImportBatch({
+        importSource: { ...importSource, hostName: 'source2' },
+        documentsToImport,
+        user
+      });
+      await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      result = await sut.getImportBatches();
+    });
+
+    it('should return the batch', () => {
+
+      expect(result).toEqual([
+        {
+          _id: expect.stringMatching(/\w+/),
+          createdBy: user._id,
+          createdOn: expect.any(Date),
+          completedOn: null,
+          batchType: BATCH_TYPE.importDocuments,
+          batchParams: {
+            name: 'source-1',
+            hostName: 'source1.com',
+            allowUnsecure: false
+          },
+          errors: [],
+          progress: 0.5
+        },
+        {
+          _id: expect.stringMatching(/\w+/),
+          createdBy: user._id,
+          createdOn: expect.any(Date),
+          completedOn: null,
+          batchType: BATCH_TYPE.importDocuments,
+          batchParams: {
+            name: 'source-1',
+            hostName: 'source2',
+            allowUnsecure: false
+          },
+          errors: [],
+          progress: 0
+        }
+      ]);
+    });
+
+    it('should add the correct progress', () => {
+      expect(result[0].progress).toEqual(0.5);
+      expect(result[1].progress).toEqual(0);
+    });
+  });
+
+  describe('getImportBatchDetails', () => {
+    let result;
+    let createdBatchId;
+
+    beforeEach(async () => {
+      await sut.createImportBatch({ importSource, documentsToImport, user });
+      await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      const dbEntries = await db.batches.find({}).toArray();
+      createdBatchId = dbEntries[0]._id;
+      result = await sut.getImportBatchDetails(createdBatchId);
+    });
+
+    it('should return the batch', () => {
+      expect(result).toEqual({
+        _id: createdBatchId,
+        createdBy: user._id,
+        createdOn: expect.any(Date),
+        completedOn: null,
+        batchType: BATCH_TYPE.importDocuments,
+        batchParams: {
+          name: 'source-1',
+          hostName: 'source1.com',
+          allowUnsecure: false
+        },
+        errors: [],
+        progress: 0.5,
+        tasks: expect.arrayContaining([
+          {
+            _id: expect.stringMatching(/\w+/),
+            attempts: [],
+            batchId: createdBatchId,
+            processed: true,
+            taskParams: {
+              importType: 'add',
+              importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
+              importedRevision: null,
+              key: documentsToImport[0].key,
+              language: 'en',
+              slug: 'doc-1',
+              title: 'doc-1',
+              updatedOn: expect.any(Date)
+            },
+            taskType: 'import-document'
+          },
+          {
+            _id: expect.stringMatching(/\w+/),
+            attempts: [],
+            batchId: createdBatchId,
+            processed: false,
+            taskParams: {
+              importType: 'update',
+              importableRevision: '6AXHKzH3z26r7JKJyPN6er',
+              importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
+              key: documentsToImport[1].key,
+              language: 'en',
+              slug: 'doc-2',
+              title: 'doc-2',
+              updatedOn: expect.any(Date)
+            },
+            taskType: 'import-document'
+          }
+        ])
+      });
+    });
+
+    it('should calculate the right progress', () => {
+      expect(result.progress).toEqual(0.5);
+    });
+  });
 });

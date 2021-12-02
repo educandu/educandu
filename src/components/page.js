@@ -122,8 +122,8 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
   if (!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)) {
     pageMenuItems.push({
       key: 'import',
-      href: urls.getImportUrl(),
-      text: t('pageNames:import'),
+      href: urls.getImportsUrl(),
+      text: t('pageNames:importBatchCreation'),
       icon: ImportOutlined,
       permission: permissions.MANAGE_IMPORT
     });

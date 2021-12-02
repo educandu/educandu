@@ -1,6 +1,5 @@
 import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
-import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import escapeStringRegexp from 'escape-string-regexp';
@@ -76,15 +75,14 @@ const lastUpdatedFirst = [['updatedOn', -1]];
 
 class DocumentService {
   static get inject() {
-    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, UserService];
+    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, userService) {
+  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore) {
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
-    this.userService = userService;
   }
 
   getAllDocumentsMetadata({ includeArchived } = {}) {

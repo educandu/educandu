@@ -1,0 +1,66 @@
+documentTitle:
+  en: Document
+  de: Dokument
+taskType:
+  en: Task type
+  de: Tasktyp
+taskStatus:
+  en: Task status
+  de: Taskstatus
+taskStatusPending:
+  en: Pending
+  de: Ausstehend
+taskStatusDone:
+  en: Done
+  de: Abgeschlossen
+taskStatusFailed:
+  en: Failed
+  de: Fehler
+taskStatusDoneWithWarnings:
+  en: Done (with warnings)
+  de: Abgeschlossen (mit Warnungen)
+createdOn:
+  en: Created on
+  de: Erstellt am
+completedOn:
+  en: Completed on
+  de: Abgeschlossen am
+createdBy:
+  en: Created by
+  de: Erstellt von
+batchStatus:
+  en: Batch status
+  de: Chargenstatus
+batchStatusPending:
+  en: Pending
+  de: Ausstehend
+batchStatusDone:
+  en: Done
+  de: Abgeschlossen
+batchStatusProcessing:
+  en: '{progress, number, percent} completed'
+  de: '{progress, number, percent} abgeschlossen'
+importType:
+  en: Import type
+  de: Import-Typ
+add:
+  en: Add
+  de: Hinzufügen
+update:
+  en: Update
+  de: Aktualisieren
+startedOn:
+  en: Started on
+  de: Begann am
+errors:
+  en: Errors
+  de: Fehler
+errorsCount:
+  en: Errors count
+  de: Fehleranzahl
+attemptsHeader:
+  en: Attempt details
+  de: Versuchsdetails
+batchErrors:
+  en: Batch errors
+  de: Chargenfehler
