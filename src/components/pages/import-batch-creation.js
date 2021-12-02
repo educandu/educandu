@@ -134,6 +134,7 @@ export default function ImportBatchCreation() {
         <Table
           bordered
           size="small"
+          rowKey="key"
           rowSelection={{
             type: 'checkbox',
             ...tableRowSelection
