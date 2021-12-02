@@ -142,7 +142,7 @@ class ImportService {
     return batch;
   }
 
-  async getProgressForBatch(batch) {
+  async _getProgressForBatch(batch) {
     if (batch.completedOn) {
       return 1;
     }
@@ -179,7 +179,7 @@ class ImportService {
     const batches = await this.batchStore.find({ batchType: BATCH_TYPE.importDocuments });
 
     return Promise.all(batches.map(async batch => {
-      const progress = await this.getProgressForBatch(batch);
+      const progress = await this._getProgressForBatch(batch);
       return {
         ...batch,
         progress
