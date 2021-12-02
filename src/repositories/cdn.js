@@ -76,12 +76,12 @@ class Cdn {
     return { createdon: new Date().toISOString() };
   }
 
-  static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl, httpClient }) {
+  static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {
     const s3Client = endpoint.includes('.amazonaws.com')
       ? new AwsSdkS3Client({ endpoint, region, accessKey, secretKey })
       : new MinioS3Client({ endpoint, region, accessKey, secretKey });
 
-    return Promise.resolve(new Cdn(s3Client, bucketName, region, rootUrl, httpClient));
+    return Promise.resolve(new Cdn(s3Client, bucketName, region, rootUrl));
   }
 }
 
