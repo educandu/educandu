@@ -20,7 +20,7 @@ export const sectionEditorProps = {
 export const importSourceShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
   hostName: PropTypes.string.isRequired,
-  baseUrl: PropTypes.string.isRequired
+  allowUnsecure: PropTypes.bool
 });
 
 export const clientConfigProps = {

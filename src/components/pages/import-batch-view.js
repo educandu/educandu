@@ -8,6 +8,7 @@ import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
+import { isTaskSuccessful, taskStatusSorter } from '../../utils/task-utils.js';
 
 const { Panel } = Collapse;
 
@@ -18,7 +19,6 @@ function ImportBatchView({ initialState }) {
   const { batch } = initialState;
   const { hostName, allowUnsecure } = batch.batchParams;
 
-  const isTaskSuccessful = task => task.processed && !task.attempts[task.attempts.length - 1].errors.length;
   const doesTaskHaveErrors = ({ attempts }) => attempts?.some(attempt => attempt.errors.length);
 
   const renderStatus = processed => {
@@ -104,7 +104,7 @@ function ImportBatchView({ initialState }) {
     { title: t('documentTitle'), key: '_id', dataIndex: 'taskParams', width: '150px', render: renderTitle },
     { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus, sorter: task => task.processed ? 1 : -1 },
     { title: t('hasErrors'), width: '150px', render: renderHasErrrors, sorter: task => doesTaskHaveErrors(task) ? 1 : -1 },
-    { title: t('isSuccessful'), width: '150px', render: renderIsSuccessful, sorter: task => isTaskSuccessful(task) ? 1 : -1 }
+    { title: t('isSuccessful'), width: '150px', render: renderIsSuccessful, sorter: taskStatusSorter }
   ];
 
   return (
