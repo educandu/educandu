@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import Cdn from '../repositories/cdn.js';
 import UserService from './user-service.js';
 import DocumentService from './document-service.js';
 import ExportApiClient from './export-api-client.js';
@@ -10,6 +11,7 @@ describe('document-import-task-processor', () => {
   const sandbox = sinon.createSandbox();
 
   let sut;
+  let cdn;
   let users;
   let container;
   let userService;
@@ -20,10 +22,13 @@ describe('document-import-task-processor', () => {
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    userService = container.get(UserService);
+
     serverConfig = container.get(ServerConfig);
-    documentService = container.get(DocumentService);
     exportApiClient = container.get(ExportApiClient);
+    userService = container.get(UserService);
+    cdn = container.get(Cdn);
+    documentService = container.get(DocumentService);
+
     sut = container.get(DocumentImportTaskProcessor);
   });
 
@@ -37,6 +42,7 @@ describe('document-import-task-processor', () => {
     sandbox.stub(userService, 'getUserById');
     sandbox.stub(userService, 'ensureExternalUser');
     sandbox.stub(exportApiClient, 'getDocumentExport');
+    sandbox.stub(cdn, 'uploadObjectFromUrl');
     sandbox.stub(documentService, 'getCurrentDocumentRevisionByKey');
     sandbox.stub(documentService, 'copyDocumentRevision');
   });
@@ -65,32 +71,34 @@ describe('document-import-task-processor', () => {
         }
       };
       batchParams = { hostName: 'host.name' };
-      revisions = [
-        {
-          _id: 'rev-1',
-          key: 'key',
-          createdBy: users[0]._id,
-          order: 2,
-          sections: [],
-          cdnResources: []
-        }, {
-          _id: 'rev-2',
-          key: 'key',
-          createdBy: users[1]._id,
-          order: 1,
-          sections: [],
-          cdnResources: []
-        }
-      ];
+      const revision1 = {
+        _id: 'rev-1',
+        key: 'key',
+        createdBy: users[0]._id,
+        order: 1,
+        sections: [],
+        cdnResources: ['resource-1']
+      };
+      const revision2 = {
+        _id: 'rev-2',
+        key: 'key',
+        createdBy: users[1]._id,
+        order: 2,
+        sections: [],
+        cdnResources: ['resource-2']
+      };
+      revisions = [revision2, revision1];
       ctx = { cancellationRequested: false };
 
-      exportApiClient.getDocumentExport.resolves({ revisions, users });
+      exportApiClient.getDocumentExport.resolves({ revisions, users, cdnRootUrl: 'https://cdn.root.url' });
 
       userService.getUserById.withArgs(users[0]._id).resolves(users[0]);
       userService.getUserById.withArgs(users[1]._id).resolves(users[1]);
 
       documentService.getCurrentDocumentRevisionByKey.onCall(0).resolves(null);
-      documentService.getCurrentDocumentRevisionByKey.onCall(1).resolves(revisions[0]);
+      documentService.getCurrentDocumentRevisionByKey.onCall(1).resolves(revision1);
+
+      cdn.uploadObjectFromUrl.resolves();
 
       documentService.copyDocumentRevision.resolves();
 
@@ -123,29 +131,34 @@ describe('document-import-task-processor', () => {
       });
     });
 
+    it('should call cdn.uploadObjectFromUrl all cdn resources', () => {
+      sinon.assert.calledWith(cdn.uploadObjectFromUrl.firstCall, 'resource-1', 'https://cdn.root.url/resource-1');
+      sinon.assert.calledWith(cdn.uploadObjectFromUrl.secondCall, 'resource-2', 'https://cdn.root.url/resource-2');
+    });
+
     it('should call documentService.copyDocumentRevision for each mapped revision, sorted by order', () => {
       sinon.assert.calledWith(documentService.copyDocumentRevision.firstCall, {
-        doc: {
-          _id: 'rev-2',
-          key: 'key',
-          createdBy: users[1]._id,
-          order: 1,
-          sections: [],
-          cdnResources: [],
-          origin: 'external/host.name',
-          originUrl: 'https://host.name/docs/key',
-          appendTo: null
-        },
-        user: users[1]
-      });
-      sinon.assert.calledWith(documentService.copyDocumentRevision.secondCall, {
         doc: {
           _id: 'rev-1',
           key: 'key',
           createdBy: users[0]._id,
+          order: 1,
+          sections: [],
+          cdnResources: ['resource-1'],
+          origin: 'external/host.name',
+          originUrl: 'https://host.name/docs/key',
+          appendTo: null
+        },
+        user: users[0]
+      });
+      sinon.assert.calledWith(documentService.copyDocumentRevision.secondCall, {
+        doc: {
+          _id: 'rev-2',
+          key: 'key',
+          createdBy: users[1]._id,
           order: 2,
           sections: [],
-          cdnResources: [],
+          cdnResources: ['resource-2'],
           origin: 'external/host.name',
           originUrl: 'https://host.name/docs/key',
           appendTo: {
@@ -153,7 +166,7 @@ describe('document-import-task-processor', () => {
             ancestorId: 'rev-1'
           }
         },
-        user: users[0]
+        user: users[1]
       });
     });
   });

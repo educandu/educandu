@@ -1,6 +1,7 @@
 import fs from 'fs';
 import mime from 'mime';
 import Stream from 'stream';
+import superagent from 'superagent';
 import Logger from '../common/logger.js';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
@@ -40,6 +41,13 @@ class Cdn {
     return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, { ...defaultMetadata, ...metadata });
   }
 
+  async uploadObjectFromUrl(objectName, url) {
+    const body = await superagent.get(url).then(res => res.body);
+    const sanitizedObjectName = objectName.replace(/\\/g, '/');
+    const contentType = mime.getType(sanitizedObjectName) || defaultContentType;
+    return this.s3Client.upload(this.bucketName, sanitizedObjectName, body, contentType);
+  }
+
   uploadEmptyObject(objectName, metadata) {
     const defaultMetadata = this._getDefaultMetadata();
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
@@ -68,12 +76,12 @@ class Cdn {
     return { createdon: new Date().toISOString() };
   }
 
-  static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl }) {
+  static create({ endpoint, region, accessKey, secretKey, bucketName, rootUrl, httpClient }) {
     const s3Client = endpoint.includes('.amazonaws.com')
       ? new AwsSdkS3Client({ endpoint, region, accessKey, secretKey })
       : new MinioS3Client({ endpoint, region, accessKey, secretKey });
 
-    return Promise.resolve(new Cdn(s3Client, bucketName, region, rootUrl));
+    return Promise.resolve(new Cdn(s3Client, bucketName, region, rootUrl, httpClient));
   }
 }
 

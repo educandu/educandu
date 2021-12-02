@@ -1,4 +1,6 @@
+/* eslint-disable no-await-in-loop */
 import by from 'thenby';
+import Cdn from '../repositories/cdn.js';
 import UserService from './user-service.js';
 import DocumentService from './document-service.js';
 import ExportApiClient from './export-api-client.js';
@@ -8,21 +10,22 @@ import { getDocUrl, getImportSourceBaseUrl } from '../utils/urls.js';
 
 class DocumentImportTaskProcessor {
   static get inject() {
-    return [ServerConfig, ExportApiClient, UserService, DocumentService];
+    return [ServerConfig, ExportApiClient, UserService, DocumentService, Cdn];
   }
 
-  constructor(serverConfig, exportApiClient, userService, documentService) {
+  constructor(serverConfig, exportApiClient, userService, documentService, cdn) {
     this.serverConfig = serverConfig;
     this.exportApiClient = exportApiClient;
     this.userService = userService;
     this.documentService = documentService;
+    this.cdn = cdn;
   }
 
   async process(task, batchParams, ctx) {
     const importSource = this.serverConfig.importSources.find(({ hostName }) => hostName === batchParams.hostName);
     const { key, importedRevision, importableRevision } = task.taskParams;
 
-    const response = await this.exportApiClient.getDocumentExport({
+    const documentExport = await this.exportApiClient.getDocumentExport({
       baseUrl: getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
       documentKey: key,
@@ -34,22 +37,25 @@ class DocumentImportTaskProcessor {
       throw new Error('Cancellation requested');
     }
 
-    await Promise.all(response.users.map(user => this.userService.ensureExternalUser({
+    await Promise.all(documentExport.users.map(user => this.userService.ensureExternalUser({
       _id: user._id,
       username: user.username,
       hostName: batchParams.hostName
     })));
 
-    const sortedRevisions = response.revisions.sort(by(revision => revision.order));
+    const sortedRevisions = documentExport.revisions.sort(by(revision => revision.order));
 
     for (const revision of sortedRevisions) {
-      /* eslint-disable-next-line no-await-in-loop */
       const previousRevision = await this.documentService.getCurrentDocumentRevisionByKey(revision.key);
 
-      /* eslint-disable-next-line no-await-in-loop */
       const user = await this.userService.getUserById(revision.createdBy);
       const baseUrl = getImportSourceBaseUrl(importSource);
       const docUrl = getDocUrl(revision.key);
+
+      for (const resource of revision.cdnResources) {
+        const url = `${documentExport.cdnRootUrl || 'https://cdn.integration.openmusic.academy/'}/${resource}`;
+        await this.cdn.uploadObjectFromUrl(resource, url);
+      }
 
       const mappedRevision = {
         ...revision,
@@ -60,12 +66,9 @@ class DocumentImportTaskProcessor {
             key: revision.key,
             ancestorId: previousRevision._id
           }
-          : null,
-        // To replace
-        cdnResources: revision.cdnResources
+          : null
       };
 
-      /* eslint-disable-next-line no-await-in-loop */
       await this.documentService.copyDocumentRevision({ doc: mappedRevision, user });
     }
   }
