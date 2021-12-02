@@ -161,11 +161,11 @@ class DocumentService {
     return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._createNewSections, restoredFrom });
   }
 
-  copyDocumentRevision({ doc, user }) {
+  copyDocumentRevision({ doc, user, databaseSession }) {
     const documentKey = doc.appendTo ? doc.appendTo.key : doc.key;
     const revisionId = doc._id;
 
-    return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._copySections });
+    return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._copySections, databaseSession });
   }
 
   async restoreDocumentRevision({ documentKey, revisionId, user }) {
@@ -273,7 +273,7 @@ class DocumentService {
     return this.createNewDocumentRevision({ doc: newRevision, user });
   }
 
-  async _createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections, restoredFrom = null }) {
+  async _createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections, restoredFrom = null, databaseSession = null }) {
     if (!user?._id) {
       throw new Error('No user specified');
     }
@@ -307,17 +307,18 @@ class DocumentService {
         ancestorRevision = null;
       }
 
-      const newSections = mapNewSections({ sections: doc.sections, ancestorSections: ancestorRevision?.sections, restoredFrom });
-
       const nextOrder = await this.documentOrderStore.getNextOrder();
+      const newSections = mapNewSections({ sections: doc.sections, ancestorSections: ancestorRevision?.sections, restoredFrom });
       const newDocumentRevision = this._buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
+      const saveOptions = databaseSession ? { session: databaseSession } : {};
+
       logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
-      await this.documentRevisionStore.save(newDocumentRevision);
+      await this.documentRevisionStore.save(newDocumentRevision, saveOptions);
 
       const latestDocument = this._createDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
 
       logger.info(`Saving latest document with revision ${latestDocument.revision}`);
-      await this.documentStore.save(latestDocument);
+      await this.documentStore.save(latestDocument, saveOptions);
 
       return newDocumentRevision;
 

@@ -6,19 +6,21 @@ import DocumentService from './document-service.js';
 import ExportApiClient from './export-api-client.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import TransactionRunner from '../stores/transaction-runner.js';
 import { getDocUrl, getImportSourceBaseUrl } from '../utils/urls.js';
 
 class DocumentImportTaskProcessor {
   static get inject() {
-    return [ServerConfig, ExportApiClient, UserService, DocumentService, Cdn];
+    return [ServerConfig, ExportApiClient, UserService, DocumentService, Cdn, TransactionRunner];
   }
 
-  constructor(serverConfig, exportApiClient, userService, documentService, cdn) {
+  constructor(serverConfig, exportApiClient, userService, documentService, cdn, transactionRunner) {
     this.serverConfig = serverConfig;
     this.exportApiClient = exportApiClient;
     this.userService = userService;
     this.documentService = documentService;
     this.cdn = cdn;
+    this.transactionRunner = transactionRunner;
   }
 
   async process(task, batchParams, ctx) {
@@ -45,32 +47,34 @@ class DocumentImportTaskProcessor {
 
     const sortedRevisions = documentExport.revisions.sort(by(revision => revision.order));
 
-    for (const revision of sortedRevisions) {
-      const previousRevision = await this.documentService.getCurrentDocumentRevisionByKey(revision.key);
+    await this.transactionRunner.run(async session => {
+      for (const revision of sortedRevisions) {
+        const previousRevision = await this.documentService.getCurrentDocumentRevisionByKey(revision.key);
 
-      const user = await this.userService.getUserById(revision.createdBy);
-      const baseUrl = getImportSourceBaseUrl(importSource);
-      const docUrl = getDocUrl(revision.key);
+        const user = await this.userService.getUserById(revision.createdBy);
+        const baseUrl = getImportSourceBaseUrl(importSource);
+        const docUrl = getDocUrl(revision.key);
 
-      for (const resource of revision.cdnResources) {
-        const url = `${documentExport.cdnRootUrl || 'https://cdn.integration.openmusic.academy/'}/${resource}`;
-        await this.cdn.uploadObjectFromUrl(resource, url);
+        for (const resource of revision.cdnResources) {
+          const url = `${documentExport.cdnRootUrl}/${resource}`;
+          await this.cdn.uploadObjectFromUrl(resource, url);
+        }
+
+        const mappedRevision = {
+          ...revision,
+          origin: `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`,
+          originUrl: `${baseUrl}${docUrl}`,
+          appendTo: previousRevision
+            ? {
+              key: revision.key,
+              ancestorId: previousRevision._id
+            }
+            : null
+        };
+
+        await this.documentService.copyDocumentRevision({ doc: mappedRevision, user, databaseSession: session });
       }
-
-      const mappedRevision = {
-        ...revision,
-        origin: `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`,
-        originUrl: `${baseUrl}${docUrl}`,
-        appendTo: previousRevision
-          ? {
-            key: revision.key,
-            ancestorId: previousRevision._id
-          }
-          : null
-      };
-
-      await this.documentService.copyDocumentRevision({ doc: mappedRevision, user });
-    }
+    });
   }
 }
 

@@ -149,7 +149,8 @@ describe('document-import-task-processor', () => {
           originUrl: 'https://host.name/docs/key',
           appendTo: null
         },
-        user: users[0]
+        user: users[0],
+        databaseSession: sinon.match.any
       });
       sinon.assert.calledWith(documentService.copyDocumentRevision.secondCall, {
         doc: {
@@ -166,7 +167,8 @@ describe('document-import-task-processor', () => {
             ancestorId: 'rev-1'
           }
         },
-        user: users[1]
+        user: users[1],
+        databaseSession: sinon.match.any
       });
     });
   });
