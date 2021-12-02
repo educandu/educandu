@@ -1,12 +1,18 @@
+/* eslint-disable max-lines */
+import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import DocumentService from './document-service.js';
+import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('document-service', () => {
+  const sandbox = sinon.createSandbox();
+  const now = new Date();
+
   let container;
   let user;
   let sut;
@@ -23,14 +29,22 @@ describe('document-service', () => {
     await destroyTestEnvironment(container);
   });
 
-  afterEach(async () => {
-    await pruneTestEnvironment(container);
+  beforeEach(() => {
+    sandbox.useFakeTimers(now);
   });
 
-  describe('createDocumentRevision', () => {
-    let key;
-    beforeEach(async () => {
-      const doc = {
+  afterEach(async () => {
+    await pruneTestEnvironment(container);
+    sandbox.restore();
+  });
+
+  describe('createNewDocumentRevision', () => {
+    let result;
+    let revision;
+
+    beforeEach(() => {
+      result = null;
+      revision = {
         title: 'Title',
         slug: 'my-doc',
         namespace: 'articles',
@@ -56,18 +70,328 @@ describe('document-service', () => {
               url: 'media/video-1.mp4'
             }
           }
-        ]
+        ],
+        tags: ['tag-1']
       };
-      const revision = await sut.createNewDocumentRevision({ doc, user });
-      key = revision.key;
     });
-    it('saves all referenced cdn resources with the document revision', async () => {
-      const revision = await db.documentRevisions.findOne({ key });
-      expect(revision.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+
+    describe('when it is the first revision', () => {
+      let createdDocument;
+
+      beforeEach(async () => {
+        result = await sut.createNewDocumentRevision({ doc: revision, user });
+        createdDocument = await db.documents.findOne({ key: result.key });
+      });
+
+      it('creates an _id', () => {
+        expect(result._id).toBeDefined();
+      });
+
+      it('creates a document key', () => {
+        expect(result.key).toBeDefined();
+      });
+
+      it('saves the revision', () => {
+        expect(result).toMatchObject({
+          ...revision,
+          createdOn: now,
+          createdBy: user._id,
+          order: 1,
+          restoredFrom: '',
+          archived: false,
+          origin: DOCUMENT_ORIGIN.internal
+        });
+      });
+
+      it('saves all referenced cdn resources with the revision', () => {
+        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+      });
+
+      it('creates a document', () => {
+        expect(createdDocument).toBeDefined();
+      });
+
+      it('saves the revision data onto the document', () => {
+        expect(createdDocument).toMatchObject({ ...revision,
+          revision: result._id,
+          createdOn: now,
+          createdBy: user._id,
+          updatedOn: now,
+          updatedBy: user._id,
+          order: 1,
+          archived: false,
+          origin: DOCUMENT_ORIGIN.internal,
+          contributors: [user._id] });
+      });
+
+      it('saves all referenced cdn resources with the document', () => {
+        expect(createdDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+      });
     });
-    it('saves all referenced cdn resources with the document', async () => {
-      const doc = await db.documents.findOne({ key });
-      expect(doc.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+
+    describe('when it is the second revision', () => {
+      let secondTick;
+      let secondUser;
+      let secondRevision;
+      let updatedDocument;
+      let persistedFirstRevision;
+
+      beforeEach(async () => {
+        const firstRevision = { ...revision };
+        persistedFirstRevision = await sut.createNewDocumentRevision({ doc: firstRevision, user });
+
+        secondUser = await setupTestUser(container);
+
+        secondRevision = {
+          ...firstRevision,
+          title: 'Title 2',
+          slug: 'my-doc-2',
+          language: 'de',
+          sections: [
+            ...firstRevision.sections,
+            {
+              key: uniqueId.create(),
+              type: 'video',
+              content: {
+                type: VIDEO_SOURCE_TYPE.internal,
+                url: 'media/video-2.mp4'
+              }
+            }
+          ],
+          appendTo: {
+            key: persistedFirstRevision.key,
+            ancestorId: persistedFirstRevision._id
+          }
+        };
+
+        secondTick = new Date(sandbox.clock.tick(1000));
+
+        result = await sut.createNewDocumentRevision({ doc: secondRevision, user: secondUser });
+        updatedDocument = await db.documents.findOne({ key: result.key });
+      });
+
+      it('creates an _id', () => {
+        expect(result._id).toBeDefined();
+      });
+
+      it('sets the same document key', () => {
+        expect(result.key).toBe(persistedFirstRevision.key);
+      });
+
+      it('saves the second revision', () => {
+        const expectedResult = {
+          ...secondRevision,
+          createdOn: secondTick,
+          createdBy: secondUser._id,
+          order: 2,
+          restoredFrom: '',
+          archived: false,
+          origin: DOCUMENT_ORIGIN.internal
+        };
+        delete expectedResult.appendTo;
+        expect(result).toMatchObject(expectedResult);
+      });
+
+      it('saves all referenced cdn resources with the revision', () => {
+        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+      });
+
+      it('saves the second revision data onto the document', () => {
+        const expectedResult = {
+          ...secondRevision,
+          revision: result._id,
+          createdOn: now,
+          createdBy: user._id,
+          updatedOn: secondTick,
+          updatedBy: secondUser._id,
+          order: 2,
+          archived: false,
+          origin: DOCUMENT_ORIGIN.internal,
+          contributors: [user._id, secondUser._id]
+        };
+        delete expectedResult.appendTo;
+        expect(updatedDocument).toMatchObject(expectedResult);
+      });
+
+      it('saves all referenced cdn resources with the document', () => {
+        expect(updatedDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+      });
+    });
+  });
+
+  describe('copyDocumentRevision', () => {
+    let result;
+    let revision;
+
+    beforeEach(() => {
+      result = null;
+      revision = {
+        _id: uniqueId.create(),
+        key: uniqueId.create(),
+        title: 'Title',
+        slug: 'my-doc',
+        namespace: 'articles',
+        language: 'en',
+        sections: [
+          {
+            key: uniqueId.create(),
+            type: 'image',
+            content: {
+              sourceType: IMAGE_SOURCE_TYPE.internal,
+              sourceUrl: 'media/image-1.png',
+              effect: {
+                sourceType: IMAGE_SOURCE_TYPE.internal,
+                sourceUrl: 'media/image-2.png'
+              }
+            }
+          },
+          {
+            key: uniqueId.create(),
+            type: 'video',
+            content: {
+              type: VIDEO_SOURCE_TYPE.internal,
+              url: 'media/video-1.mp4'
+            }
+          }
+        ],
+        tags: ['tag-1'],
+        origin: `${DOCUMENT_ORIGIN.external}/host.name`
+      };
+    });
+
+    describe('when it is the first revision', () => {
+      let createdDocument;
+
+      beforeEach(async () => {
+        result = await sut.copyDocumentRevision({ doc: revision, user });
+        createdDocument = await db.documents.findOne({ key: result.key });
+      });
+
+      it('creates a revision with the given _id', () => {
+        expect(result._id).toBe(revision._id);
+      });
+
+      it('saves the revision', () => {
+        expect(result).toMatchObject({
+          ...revision,
+          createdOn: now,
+          createdBy: user._id,
+          order: 1,
+          restoredFrom: '',
+          archived: false
+        });
+      });
+
+      it('saves all referenced cdn resources with the revision', () => {
+        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+      });
+
+      it('creates a document with the given key', () => {
+        expect(result.key).toBe(revision.key);
+      });
+
+      it('saves the revision data onto the document', () => {
+        expect(createdDocument).toMatchObject({
+          ...revision,
+          _id: revision.key,
+          revision: result._id,
+          createdOn: now,
+          createdBy: user._id,
+          updatedOn: now,
+          updatedBy: user._id,
+          order: 1,
+          archived: false,
+          contributors: [user._id]
+        });
+      });
+
+      it('saves all referenced cdn resources with the document', () => {
+        expect(createdDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+      });
+    });
+
+    describe('when it is the second revision', () => {
+      let secondTick;
+      let secondUser;
+      let secondRevision;
+      let updatedDocument;
+
+      beforeEach(async () => {
+        const firstRevision = { ...revision };
+        await sut.copyDocumentRevision({ doc: firstRevision, user });
+
+        secondUser = await setupTestUser(container);
+
+        secondRevision = {
+          ...firstRevision,
+          _id: uniqueId.create(),
+          title: 'Title 2',
+          slug: 'my-doc-2',
+          language: 'de',
+          sections: [
+            ...firstRevision.sections,
+            {
+              key: uniqueId.create(),
+              type: 'video',
+              content: {
+                type: VIDEO_SOURCE_TYPE.internal,
+                url: 'media/video-2.mp4'
+              }
+            }
+          ],
+          appendTo: {
+            key: firstRevision.key,
+            ancestorId: firstRevision._id
+          }
+        };
+
+        secondTick = new Date(sandbox.clock.tick(1000));
+
+        result = await sut.copyDocumentRevision({ doc: secondRevision, user: secondUser });
+        updatedDocument = await db.documents.findOne({ key: firstRevision.key });
+      });
+
+      it('creates a revision with the given _id', () => {
+        expect(result._id).toBe(secondRevision._id);
+      });
+
+      it('saves the second revision', () => {
+        const expectedResult = {
+          ...secondRevision,
+          createdOn: secondTick,
+          createdBy: secondUser._id,
+          order: 2,
+          restoredFrom: '',
+          archived: false
+        };
+        delete expectedResult.appendTo;
+        expect(result).toMatchObject(expectedResult);
+      });
+
+      it('saves all referenced cdn resources with the revision', () => {
+        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+      });
+
+      it('saves the second revision data onto the document', () => {
+        const expectedResult = {
+          ...secondRevision,
+          _id: revision.key,
+          revision: result._id,
+          createdOn: now,
+          createdBy: user._id,
+          updatedOn: secondTick,
+          updatedBy: secondUser._id,
+          order: 2,
+          archived: false,
+          contributors: [user._id, secondUser._id]
+        };
+        delete expectedResult.appendTo;
+        expect(updatedDocument).toMatchObject(expectedResult);
+      });
+
+      it('saves all referenced cdn resources with the document', () => {
+        expect(updatedDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+      });
     });
   });
 
@@ -95,16 +419,22 @@ describe('document-service', () => {
 
         initialDocumentRevisions = await createTestRevisions(container, user, [
           {
+            id: 'id-rev-1',
+            key: 'key',
             title: 'Revision 1',
             slug: 'rev-1',
             sections: [cloneDeep(section1)]
           },
           {
+            id: 'id-rev-2',
+            key: 'key',
             title: 'Revision 2',
             slug: 'rev-2',
             sections: [cloneDeep(section1), cloneDeep(section2)]
           },
           {
+            id: 'id-rev-3',
+            key: 'key',
             title: 'Revision 3',
             slug: 'rev-3',
             sections: [cloneDeep(section1), { ...cloneDeep(section2), content: { text: 'Override text' } }]
@@ -125,6 +455,14 @@ describe('document-service', () => {
 
         it('should create another revision', () => {
           expect(result).toHaveLength(4);
+        });
+
+        it('should set a new _id', () => {
+          expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
+        });
+
+        it('should restore the key', () => {
+          expect(result[3].key).toBe(initialDocumentRevisions[1].key);
         });
 
         it('should restore the title', () => {
@@ -161,6 +499,69 @@ describe('document-service', () => {
 
     });
 
+  });
+
+  describe('setArchivedState', () => {
+    let result;
+    let revision;
+
+    describe('to true', () => {
+      beforeEach(async () => {
+        const revisionToCreate = {
+          title: 'Title',
+          slug: 'my-doc',
+          namespace: 'articles',
+          language: 'en',
+          sections: [],
+          archived: false
+        };
+        revision = await sut.createNewDocumentRevision({ doc: revisionToCreate, user });
+
+        result = await sut.setArchivedState({ documentKey: revision.key, user, archived: true });
+      });
+
+      it('should create a new revision', () => {
+        expect(result._id).not.toBe(revision._id);
+      });
+
+      it('should set archived to true', () => {
+        expect(result.archived).toBe(true);
+      });
+
+      it('should not change other static revision data', () => {
+        const expectedResult = { ...revision, _id: result._id, archived: result.archived, order: result.order };
+        expect(result).toEqual(expectedResult);
+      });
+    });
+
+    describe('to false', () => {
+      beforeEach(async () => {
+        const revisionToCreate = {
+          title: 'Title',
+          slug: 'my-doc',
+          namespace: 'articles',
+          language: 'en',
+          sections: [],
+          archived: true
+        };
+        revision = await sut.createNewDocumentRevision({ doc: revisionToCreate, user });
+
+        result = await sut.setArchivedState({ documentKey: revision.key, user, archived: false });
+      });
+
+      it('should create a new revision', () => {
+        expect(result._id).not.toBe(revision._id);
+      });
+
+      it('should set archived to false', () => {
+        expect(result.archived).toBe(false);
+      });
+
+      it('should not change other static revision data', () => {
+        const expectedResult = { ...revision, _id: result._id, archived: result.archived, order: result.order };
+        expect(result).toEqual(expectedResult);
+      });
+    });
   });
 
   describe('hardDeleteSection', () => {
