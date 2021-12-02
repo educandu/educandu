@@ -1,5 +1,7 @@
 export const isTaskSuccessful = task => task.processed && !task.attempts[task.attempts.length - 1].errors.length;
 
+export const doesTaskHaveErrors = ({ attempts }) => !!attempts?.some(attempt => attempt.errors.length);
+
 export const taskStatusSorter = (task1, task2) => {
   if (!task1.processed && !task2.processed) {
     return 0;

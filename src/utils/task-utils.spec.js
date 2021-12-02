@@ -1,4 +1,4 @@
-import { taskStatusSorter, isTaskSuccessful } from './task-utils.js';
+import { taskStatusSorter, isTaskSuccessful, doesTaskHaveErrors } from './task-utils.js';
 
 const unprocessedTask = {
   processed: false
@@ -13,6 +13,24 @@ const successfulTask = {
   processed: true,
   attempts: [{ errors: ['Attempt with error'] }, { errors: [] }]
 };
+
+describe('doesTaskHaveErrors', () => {
+  it('should return true for a task with errors', () => {
+    expect(doesTaskHaveErrors(successfulTask)).toEqual(true);
+  });
+
+  it('should return false for a task with missing attempts', () => {
+    expect(doesTaskHaveErrors({ })).toEqual(false);
+  });
+
+  it('should return false for a task without attempts', () => {
+    expect(doesTaskHaveErrors({ attempts: [] })).toEqual(false);
+  });
+
+  it('should return false for a task without errors', () => {
+    expect(doesTaskHaveErrors({ attempts: [{ errors: [] }] })).toEqual(false);
+  });
+});
 
 describe('isTaskSuccessful', () => {
   it('should return false when the task is not processed', () => {
