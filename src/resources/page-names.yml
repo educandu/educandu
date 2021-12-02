@@ -10,7 +10,7 @@ account:
 settings:
   en: Settings
   de: Einstellungen
-createImportBatch:
+importBatchCreation:
   en: Import
   de: Import
 importBatches:

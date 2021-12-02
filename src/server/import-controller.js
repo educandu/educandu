@@ -35,7 +35,7 @@ class ImportController {
     });
 
     app.get('/import-batches/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'create-import-batch');
+      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import-batch-creation');
     });
 
     app.get('/import-batches/:batchId', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {

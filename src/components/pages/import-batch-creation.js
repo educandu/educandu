@@ -16,8 +16,8 @@ import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 import urls, { getArticleUrl, getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 
-export default function CreateImportBatch() {
-  const { t } = useTranslation('createImportBatch');
+export default function ImportBatchCreation() {
+  const { t } = useTranslation('importBatchCreation');
 
   const { language } = useLanguage();
   const { formatDate } = useDateFormat();
@@ -86,7 +86,7 @@ export default function CreateImportBatch() {
     if (doc.importType === DOCUMENT_IMPORT_TYPE.update) {
       icon = <CloudSyncOutlined />;
     }
-    return <Tooltip title={t(doc.importType)} className="CreateImportBatchPage-importType">{icon}</Tooltip>;
+    return <Tooltip title={t(doc.importType)} className="ImportBatchCreationPage-importType">{icon}</Tooltip>;
   };
 
   const renderTitle = doc => {
@@ -125,8 +125,8 @@ export default function CreateImportBatch() {
 
   return (
     <Page>
-      <div className="CreateImportBatchPage">
-        <h1>{t('pageNames:createImportBatch')}</h1>
+      <div className="ImportBatchCreationPage">
+        <h1>{t('pageNames:importBatchCreation')}</h1>
 
         <h2> {t('source')}: {selectedSource?.name} </h2>
         <br /> <br />

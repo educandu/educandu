@@ -264,36 +264,6 @@
     }
   },
   {
-    "namespace": "createImportBatch",
-    "language": "en",
-    "resources": {
-      "importButton": "Start import",
-      "import": "Import",
-      "importType": "Import type",
-      "title": "Title",
-      "language": "Language",
-      "updateDate": "Update date",
-      "source": "Source",
-      "add": "Add",
-      "update": "Update"
-    }
-  },
-  {
-    "namespace": "createImportBatch",
-    "language": "de",
-    "resources": {
-      "importButton": "Import starten",
-      "import": "Importieren",
-      "importType": "Import-Typ",
-      "title": "Titel",
-      "language": "Sprache",
-      "updateDate": "Update-Datum",
-      "source": "Quelle",
-      "add": "Hinzufügen",
-      "update": "Aktualisieren"
-    }
-  },
-  {
     "namespace": "doc",
     "language": "en",
     "resources": {
@@ -385,6 +355,36 @@
     "language": "de",
     "resources": {
       "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Seite verlassen.\n"
+    }
+  },
+  {
+    "namespace": "importBatchCreation",
+    "language": "en",
+    "resources": {
+      "importButton": "Start import",
+      "import": "Import",
+      "importType": "Import type",
+      "title": "Title",
+      "language": "Language",
+      "updateDate": "Update date",
+      "source": "Source",
+      "add": "Add",
+      "update": "Update"
+    }
+  },
+  {
+    "namespace": "importBatchCreation",
+    "language": "de",
+    "resources": {
+      "importButton": "Import starten",
+      "import": "Importieren",
+      "importType": "Import-Typ",
+      "title": "Titel",
+      "language": "Sprache",
+      "updateDate": "Update-Datum",
+      "source": "Quelle",
+      "add": "Hinzufügen",
+      "update": "Aktualisieren"
     }
   },
   {
@@ -1313,7 +1313,7 @@
       "users": "Users",
       "account": "My account",
       "settings": "Settings",
-      "createImportBatch": "Import",
+      "importBatchCreation": "Import",
       "importBatches": "Imports overview",
       "importBatchView": "Import details",
       "docs": "Documents"
@@ -1327,7 +1327,7 @@
       "users": "Benutzer",
       "account": "Mein Konto",
       "settings": "Einstellungen",
-      "createImportBatch": "Import",
+      "importBatchCreation": "Import",
       "importBatches": "Import-Übersicht",
       "importBatchView": "Import-Details",
       "docs": "Dokumente"
