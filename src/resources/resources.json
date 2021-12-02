@@ -408,8 +408,11 @@
       "update": "Update",
       "startedOn": "Started on",
       "errors": "Errors",
+      "errorsCount": "Errors count",
       "attemptsHeader": "Attempt details",
-      "batchErrors": "Batch errors"
+      "batchErrors": "Batch errors",
+      "hasErrors": "Has errors",
+      "isSuccessful": "Is successful"
     }
   },
   {
@@ -433,8 +436,11 @@
       "update": "Aktualisieren",
       "startedOn": "Begann am",
       "errors": "Fehler",
+      "errorsCount": "Fehleranzahl",
       "attemptsHeader": "Versuchsdetails",
-      "batchErrors": "Chargenfelher"
+      "batchErrors": "Chargenfelher",
+      "hasErrors": "Hat Fehler",
+      "isSuccessful": "Ist erfolgreich"
     }
   },
   {

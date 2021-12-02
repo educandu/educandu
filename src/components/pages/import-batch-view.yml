@@ -49,9 +49,18 @@ startedOn:
 errors:
   en: Errors
   de: Fehler
+errorsCount:
+  en: Errors count
+  de: Fehleranzahl
 attemptsHeader:
   en: Attempt details
   de: Versuchsdetails
 batchErrors:
   en: Batch errors
   de: Chargenfelher
+hasErrors:
+  en: Has errors
+  de: Hat Fehler
+isSuccessful:
+  en: Is successful
+  de: Ist erfolgreich

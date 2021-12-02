@@ -18,6 +18,9 @@ function ImportBatchView({ initialState }) {
   const { batch } = initialState;
   const { hostName, allowUnsecure } = batch.batchParams;
 
+  const isTaskSuccessful = task => task.processed && !task.attempts[task.attempts.length - 1].errors.length;
+  const doesTaskHaveErrors = ({ attempts }) => attempts?.some(attempt => attempt.errors.length);
+
   const renderStatus = processed => {
     return processed
       ? <span>{t('taskStatusDone')}</span>
@@ -55,38 +58,53 @@ function ImportBatchView({ initialState }) {
     return <Tooltip title={t(taskParams.importType)} className="ImportBatchViewPage-importType">{icon}</Tooltip>;
   };
 
-  const renderErrors = errors => <span>{errors.join(';')}</span>;
-  const attemtpsColumns = [
+  const renderErrorCount = ({ errors }) => <span>{errors?.length || 0} {t('errors')}</span>;
+
+  const renderErrors = ({ errors }) => (
+    <List
+      dataSource={errors}
+      renderItem={error => (
+        <List.Item>
+          <span>{error}</span>
+        </List.Item>)}
+      />);
+
+  const attemtpsTableColumns = [
     { title: t('startedOn'), dataIndex: 'startedOn', width: '50px', render: renderDate },
     { title: t('completedOn'), key: '_id', dataIndex: 'completedOn', width: '150px', render: renderDate },
-    { title: t('errors'), dataIndex: 'errors', width: '150px', render: renderErrors }
+    { title: t('errorsCount'), width: '150px', render: renderErrorCount }
   ];
 
-  const renderHeader = () => <span>{t('attemptsHeader')}</span>;
-  const renderErrorsExtra = ({ errors }) => <span>{errors?.length || 0} {t('errors')}</span>;
+  const attemptsRenderer = task => (
+    <Table
+      key={task._id}
+      rowKey={attempt => `${task._id}_${attempt.startedOn}}`}
+      dataSource={task.attempts}
+      columns={attemtpsTableColumns}
+      pagination={false}
+      expandable={{
+        rowExpandable: attempt => attempt.errors?.length,
+        expandedRowRender: attempt => renderErrors(attempt)
+      }}
+      />
+  );
 
-  const attemptsRenderer = (attempts, task) => {
-    const errors = task.attempts.map(attempt => attempt.errors).flat();
-    return (
-      <Collapse>
-        <Panel key={task._id} header={renderHeader()} extra={renderErrorsExtra({ errors })}>
-          <Table
-            key={task._id}
-            rowKey={attempt => `${task._id}_${attempt.startedOn}}`}
-            dataSource={attempts}
-            columns={attemtpsColumns}
-            pagination={false}
-            />
-        </Panel>
-      </Collapse>
-    );
+  const renderHasErrrors = attempts => doesTaskHaveErrors(attempts) ? t('common:yes') : t('common:no');
+
+  const renderIsSuccessful = task => {
+    if (!task.processed) {
+      return <span />;
+    }
+
+    return isTaskSuccessful(task) ? t('common:yes') : t('common:no');
   };
 
-  const columns = [
+  const taskTableColumns = [
     { title: t('importType'), dataIndex: 'taskParams', width: '50px', render: renderImportType },
     { title: t('documentTitle'), key: '_id', dataIndex: 'taskParams', width: '150px', render: renderTitle },
-    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus },
-    { title: t('attemptsHeader'), dataIndex: 'attempts', width: '150px', render: attemptsRenderer }
+    { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderStatus, sorter: task => task.processed ? 1 : -1 },
+    { title: t('hasErrors'), width: '150px', render: renderHasErrrors, sorter: task => doesTaskHaveErrors(task) ? 1 : -1 },
+    { title: t('isSuccessful'), width: '150px', render: renderIsSuccessful, sorter: task => isTaskSuccessful(task) ? 1 : -1 }
   ];
 
   return (
@@ -118,7 +136,7 @@ function ImportBatchView({ initialState }) {
           </Space>
         </Row>
         <Collapse>
-          <Panel header={t('batchErrors')} extra={renderErrorsExtra(batch)}>
+          <Panel header={t('batchErrors')} extra={renderErrorCount(batch)}>
             <List
               dataSource={batch.errors}
               renderItem={error => (
@@ -133,8 +151,12 @@ function ImportBatchView({ initialState }) {
           key={batch._id}
           rowKey="_id"
           dataSource={batch.tasks}
-          columns={columns}
+          columns={taskTableColumns}
           pagination={false}
+          expandable={{
+            expandedRowRender: attemptsRenderer,
+            rowExpandable: task => task.attempts?.length
+          }}
           />
       </div>
     </Page>);
