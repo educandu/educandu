@@ -310,6 +310,51 @@ describe('import-service', () => {
 
   });
 
+  describe('_getProgressForBatch', () => {
+    describe('when the batch is completed', () => {
+      it('should return 1', async () => {
+        const result = await sut._getProgressForBatch({ completedOn: new Date() });
+        expect(result).toEqual(1);
+      });
+    });
+
+    describe('when the total count is 0', () => {
+      it('should return 1', async () => {
+        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+          { _id: true, count: 0 },
+          { id: false, count: 0 }
+        ]);
+
+        const result = await sut._getProgressForBatch({ _id: '123' });
+        expect(result).toEqual(1);
+      });
+    });
+
+    describe('when the processed count matches the total count', () => {
+      it('should return 1', async () => {
+        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+          { _id: true, count: 15 },
+          { id: false, count: 0 }
+        ]);
+
+        const result = await sut._getProgressForBatch({ _id: '123' });
+        expect(result).toEqual(1);
+      });
+    });
+
+    describe('when the total count matches is half of the total count', () => {
+      it('should return 0.5', async () => {
+        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+          { _id: true, count: 15 },
+          { id: false, count: 15 }
+        ]);
+
+        const result = await sut._getProgressForBatch({ _id: '123' });
+        expect(result).toEqual(0.5);
+      });
+    });
+  });
+
   describe('getImportBatches', () => {
     let result;
 
