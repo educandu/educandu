@@ -118,18 +118,17 @@ describe('import-service', () => {
     let exportApiClient;
     let result;
 
-    const importSource = {
-      name: 'Other System',
-      hostName: 'other-system.com',
-      allowUnsecure: true,
-      apiKey: 'FSDdsh35nADh44nADCD8'
-    };
-
     beforeEach(() => {
       exportApiClient = container.get(ExportApiClient);
       sandbox.stub(exportApiClient, 'getExports');
       documentStore = container.get(DocumentStore);
       sandbox.stub(documentStore, 'find');
+      importSource = {
+        name: 'Other System',
+        hostName: 'other-system.com',
+        allowUnsecure: true,
+        apiKey: 'FSDdsh35nADh44nADCD8'
+      };
     });
 
     describe('on every call', () => {
