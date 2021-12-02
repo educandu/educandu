@@ -73,7 +73,8 @@ function ImportBatchView({ initialState }) {
         <List.Item>
           <span>{error}</span>
         </List.Item>)}
-      />);
+      />
+  );
 
   const attemtpsTableColumns = [
     { title: t('startedOn'), dataIndex: 'startedOn', width: '50px', render: renderDate },
