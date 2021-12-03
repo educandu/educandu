@@ -187,10 +187,9 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       </main>
       <footer className="Page-footer">
         <div className="Page-footerContent">
-          {/* // TODO Fix getArticle */}
           {(settings?.footerLinks?.[language] || []).map((fl, index) => (
             <span key={index.toString()} className="Page-footerLink">
-              <a href={urls.getArticleUrl(fl.documentKey)}>{fl.linkTitle}</a>
+              <a href={urls.getArticleUrl(fl.documentKey, fl.documentSlug)}>{fl.linkTitle}</a>
             </span>
           ))}
         </div>

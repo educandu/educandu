@@ -44,10 +44,10 @@ function ImportBatchView({ initialState }) {
   };
 
   const renderDate = date => <span>{formatDate(date)}</span>;
-  const renderTitle = ({ title, slug }) => (
+  const renderTitle = ({ title, key, slug }) => (
     <a
       target="_blank"
-      href={getImportedArticleUrl({ hostName, allowUnsecure, slug })}
+      href={getImportedArticleUrl({ hostName, allowUnsecure, key, slug })}
       rel="noreferrer noopener"
       >{title}
     </a>

@@ -148,9 +148,8 @@ export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
   return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
 }
 
-export function getImportedArticleUrl({ allowUnsecure, hostName, slug }) {
-  // TODO Fix
-  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(slug));
+export function getImportedArticleUrl({ allowUnsecure, hostName, key, slug }) {
+  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(key, slug));
 }
 
 export function getImportDetailsUrl(batchId) {
