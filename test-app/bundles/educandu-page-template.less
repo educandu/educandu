@@ -1,4 +1,5 @@
 @educandu-page-template-header-content-min-height: 32px;
+@educandu-page-template-header-min-height: @educandu-page-template-header-content-min-height + (2* @global-content-padding);
 @educandu-page-template-header-z-index: 1;
 @educandu-page-template-content-z-index: 0;
 @educandu-page-template-footer-z-index: 0;
@@ -27,7 +28,7 @@
 .EducanduPageTemplate-header {
   display: flex;
   align-items: center;
-  min-height: @educandu-page-template-header-content-min-height + (2* @global-content-padding);
+  min-height: @educandu-page-template-header-min-height;
   background-color: @educandu-blue;
   color: #fff;
 
