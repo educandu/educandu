@@ -31,7 +31,7 @@ function ImportBatchView({ initialState }) {
 
   useEffect(() => {
     if (isCompletedImport) {
-      return () => {};
+      return;
     }
 
     const interval = setInterval(async () => {
@@ -46,6 +46,7 @@ function ImportBatchView({ initialState }) {
       }
     }, POLL_INTERVAL_IN_MS);
 
+    // eslint-disable-next-line consistent-return
     return () => {
       if (interval) {
         clearInterval(interval);
