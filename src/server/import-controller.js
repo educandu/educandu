@@ -60,7 +60,7 @@ class ImportController {
       res.send({ documents });
     });
 
-    router.get('/api/v1/imports/:batchId', [needsPermission(permissions.MANAGE_IMPORT)], async (req, res) => {
+    router.get('/api/v1/imports/batch/:batchId', [needsPermission(permissions.MANAGE_IMPORT)], async (req, res) => {
       const { batchId } = req.params;
       const rawBatch = await this.importService.getImportBatchDetails(batchId);
       const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
