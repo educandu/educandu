@@ -66,7 +66,7 @@ function Search({ initialState }) {
   };
 
   const renderTitle = (title, doc) => {
-    const url = urls.getArticleUrl(doc.slug);
+    const url = urls.getArticleUrl(doc.key, doc.slug);
     return <a href={url}>{title}</a>;
   };
 

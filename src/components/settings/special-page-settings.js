@@ -24,7 +24,7 @@ const settingsToPageList = (supportedLanguages, settings = {}) => {
       key: supportedLanguage,
       language: supportedLanguage,
       linkTitle: setting?.linkTitle || '',
-      urlPath: [setting?.documentNamespace || '', setting?.documentSlug || ''].filter(x => x).join('/') || ''
+      urlPath: [setting?.documentKey || '', setting?.documentSlug || ''].filter(x => x).join('/') || ''
     };
   });
 };
@@ -34,7 +34,7 @@ const pageListToSettings = pageList => {
     const urlPathSegments = item.urlPath.split('/');
     map[item.language] = {
       linkTitle: item.linkTitle,
-      documentNamespace: urlPathSegments[0] || '',
+      documentKey: urlPathSegments[0] || '',
       documentSlug: urlPathSegments.slice(1).join('/') || ''
     };
     return map;

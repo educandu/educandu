@@ -185,7 +185,7 @@ class Docs extends React.Component {
       return t('notAssigned');
     }
 
-    const url = urls.getArticleUrl(doc.slug);
+    const url = urls.getArticleUrl(doc.key, doc.slug);
     return <a href={url}>{url}</a>;
   }
 

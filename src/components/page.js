@@ -130,9 +130,10 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
   }
 
   if (settings?.helpPage?.[language]) {
+    const { documentKey, documentSlug } = settings.helpPage[language];
     pageMenuItems.push({
       key: 'help',
-      href: urls.getArticleUrl(settings.helpPage[language].documentSlug),
+      href: urls.getArticleUrl(documentKey, documentSlug),
       text: settings.helpPage[language].linkTitle,
       icon: QuestionOutlined,
       permission: permissions.EDIT_SETTINGS
@@ -186,9 +187,10 @@ function Page({ children, disableProfileWarning, fullScreen, headerActions, cust
       </main>
       <footer className="Page-footer">
         <div className="Page-footerContent">
+          {/* // TODO Fix getArticle */}
           {(settings?.footerLinks?.[language] || []).map((fl, index) => (
             <span key={index.toString()} className="Page-footerLink">
-              <a href={urls.getArticleUrl(fl.documentSlug)}>{fl.linkTitle}</a>
+              <a href={urls.getArticleUrl(fl.documentKey)}>{fl.linkTitle}</a>
             </span>
           ))}
         </div>

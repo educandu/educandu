@@ -15,7 +15,6 @@ export const searchPath = '/search';
 
 export const docsPrefix = '/docs/';
 export const editDocPrefix = '/edit/doc/';
-export const articlesPrefix = '/articles/';
 export const revisionPrefix = '/revs/';
 export const pluginApiPathPrefix = '/plugins/';
 export const completeRegistrationPrefix = '/complete-registration/';
@@ -54,8 +53,8 @@ export function getUsersUrl() {
   return usersPath;
 }
 
-export function getArticleUrl(slug) {
-  return concatParts(articlesPrefix, slug);
+export function getArticleUrl(key, slug) {
+  return concatParts(docsPrefix, key, slug);
 }
 
 export function getDocumentRevisionUrl(revisionId) {
@@ -150,6 +149,7 @@ export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
 }
 
 export function getImportedArticleUrl({ allowUnsecure, hostName, slug }) {
+  // TODO Fix
   return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(slug));
 }
 
@@ -167,7 +167,6 @@ export default {
   resetPasswordPath,
   docsPrefix,
   editDocPrefix,
-  articlesPrefix,
   pluginApiPathPrefix,
   completeRegistrationPrefix,
   completePasswordResetPrefix,

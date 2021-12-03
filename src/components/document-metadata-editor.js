@@ -109,7 +109,7 @@ class DocumentMetadataEditor extends React.Component {
             <br />
             <span>{t('language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
             <br />
-            <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getArticleUrl(documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
+            <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getArticleUrl(document.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
             <br />
             <span>{t('tags')}</span>: {documentRevision.tags.map(item => (<Space key={item}><Tag key={item}>{item}</Tag></Space>))}
           </div>

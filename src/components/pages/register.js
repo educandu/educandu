@@ -117,7 +117,10 @@ class Register extends React.Component {
                   <a
                     key="terms-link"
                     title={settings.termsPage?.[language]?.linkTitle || null}
-                    href={settings.termsPage?.[language]?.documentSlug ? urls.getArticleUrl(settings.termsPage[language].documentSlug) : '#'}
+                    // TODO Fix getArticle
+                    href={settings.termsPage?.[language]?.documentKey
+                      ? urls.getArticleUrl(settings.termsPage[language].documentKey, settings.helpPage[language].documentSlug)
+                      : '#'}
                     />
                 ]}
                 />

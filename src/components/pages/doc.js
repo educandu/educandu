@@ -10,6 +10,7 @@ import Logger from '../../common/logger.js';
 import { Button, Slider, message } from 'antd';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
+import CreditsFooter from '../credits-footer.js';
 import errorHelper from '../../ui/error-helper.js';
 import permissions from '../../domain/permissions.js';
 import { withLanguage } from '../language-context.js';
@@ -21,6 +22,7 @@ import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/ico
 import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
+const handleBackClick = () => window.history.back();
 
 class Doc extends React.Component {
   constructor(props) {
@@ -28,7 +30,8 @@ class Doc extends React.Component {
     autoBind(this);
     this.state = {
       revisions: props.initialState.documentRevisions,
-      currentRevision: props.initialState.documentRevisions[props.initialState.documentRevisions.length - 1]
+      currentRevision: props.initialState.documentRevisions[props.initialState.documentRevisions.length - 1],
+      type: props.initialState.type
     };
   }
 
@@ -131,7 +134,7 @@ class Doc extends React.Component {
 
   render() {
     const { t } = this.props;
-    const { revisions, currentRevision } = this.state;
+    const { revisions, currentRevision, type } = this.state;
 
     const marks = revisions.reduce((accu, item, index) => {
       accu[index] = index === 0 || index === revisions.length - 1 ? (index + 1).toString() : '';
@@ -202,13 +205,23 @@ class Doc extends React.Component {
 
     return (
       <Page headerActions={headerActions} customAlerts={customAlerts}>
+        {type === 'document' && (
+          <aside className="Content">
+            <a onClick={handleBackClick}>{t('common:back')}</a>
+          </aside>
+        )}
         <div className="DocPage">
-          {revisionPicker}
+          { type !== 'document' && revisionPicker}
           <DocView
             documentOrRevision={currentRevision}
             onAction={this.handleAction}
             />
         </div>
+        {type === 'document' && (
+          <aside className="Content">
+            <CreditsFooter documentOrRevision={currentRevision} type={type} />
+          </aside>
+        )}
       </Page>
     );
   }

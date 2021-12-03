@@ -96,7 +96,7 @@ export default function ImportBatchCreation() {
 
     const baseUrl = getImportSourceBaseUrl(selectedSource);
 
-    const url = `${baseUrl}${getArticleUrl(doc.slug)}`;
+    const url = `${baseUrl}${getArticleUrl(doc.key, doc.slug)}`;
     return <a href={url} target="_blank" rel="noopener noreferrer" >{doc.title}</a>;
   };
 
