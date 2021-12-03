@@ -52,12 +52,12 @@ class DocumentImportTaskProcessor {
     const allCdnResources = new Set(sortedRevisions.map(revision => revision.cdnResources).flat());
 
     for (const cdnResource of allCdnResources) {
+      const url = `${documentExport.cdnRootUrl}/${cdnResource}`;
+      await this.cdn.uploadObjectFromUrl(cdnResource, url);
+
       if (ctx.cancellationRequested) {
         throw new Error('Cancellation requested');
       }
-
-      const url = `${documentExport.cdnRootUrl}/${cdnResource}`;
-      await this.cdn.uploadObjectFromUrl(cdnResource, url);
     }
 
     let lock;
