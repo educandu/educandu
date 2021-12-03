@@ -161,11 +161,11 @@ class DocumentService {
     return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._createNewSections, restoredFrom });
   }
 
-  copyDocumentRevision({ doc, user, databaseSession }) {
+  copyDocumentRevision({ doc, user, transaction }) {
     const documentKey = doc.appendTo ? doc.appendTo.key : doc.key;
     const revisionId = doc._id;
 
-    return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._copySections, databaseSession });
+    return this._createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections: this._copySections, transaction });
   }
 
   async restoreDocumentRevision({ documentKey, revisionId, user }) {
@@ -273,7 +273,7 @@ class DocumentService {
     return this.createNewDocumentRevision({ doc: newRevision, user });
   }
 
-  async _createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections, restoredFrom = null, databaseSession = null }) {
+  async _createDocumentRevision({ doc, revisionId, documentKey, user, mapNewSections, restoredFrom = null, transaction = null }) {
     if (!user?._id) {
       throw new Error('No user specified');
     }
@@ -289,7 +289,9 @@ class DocumentService {
 
       logger.info(`Creating new document revision for document key ${documentKey}`);
 
-      lock = await this.documentLockStore.takeLock(documentKey);
+      if (!transaction?.lock) {
+        lock = await this.documentLockStore.takeLock(documentKey);
+      }
 
       if (isAppendedRevision) {
         existingDocumentRevisions = await this.getAllDocumentRevisionsByKey(documentKey);
@@ -310,7 +312,7 @@ class DocumentService {
       const nextOrder = await this.documentOrderStore.getNextOrder();
       const newSections = mapNewSections({ sections: doc.sections, ancestorSections: ancestorRevision?.sections, restoredFrom });
       const newDocumentRevision = this._buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections: newSections });
-      const saveOptions = databaseSession ? { session: databaseSession } : {};
+      const saveOptions = transaction?.session ? { session: transaction.session } : {};
 
       logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
       await this.documentRevisionStore.save(newDocumentRevision, saveOptions);
@@ -372,15 +374,7 @@ class DocumentService {
   }
 
   _copySections({ sections }) {
-    return sections.map(section => ({
-      revision: section.revision,
-      key: section.key,
-      deletedOn: null,
-      deletedBy: null,
-      deletedBecause: null,
-      type: section.type,
-      content: section.content && cloneDeep(section.content)
-    }));
+    return sections.map(s => cloneDeep(s));
   }
 
   _buildDocumentRevision({ doc, revisionId, documentKey, userId, nextOrder, restoredFrom, sections }) {
