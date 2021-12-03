@@ -122,7 +122,7 @@ describe('user-request-handler', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
-          user: { _id: 1234 },
+          user: { _id: 1234, provider: 'educandu' },
           body: { username: 'test1234', email: 'test@test.com' }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
@@ -136,7 +136,7 @@ describe('user-request-handler', () => {
       });
 
       it('should call userService.updateUserAccount', () => {
-        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, username: 'test1234', email: 'test@test.com' });
+        sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', username: 'test1234', email: 'test@test.com' });
       });
 
       it('should set the status code on the response to 200', () => {

@@ -12,7 +12,7 @@ import { getImportsQuerySchema, postImportBatchBodySchema } from '../domain/sche
 
 const { NotFound } = httpErrors;
 
-const jsonParser = express.json();
+const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class ImportController {
   static get inject() { return [ServerConfig, PageRenderer, ImportService, ExportApiClient, ClientDataMapper]; }
@@ -68,7 +68,7 @@ class ImportController {
       res.send({ batch });
     });
 
-    router.post('/api/v1/imports/batches', [jsonParser, needsPermission(permissions.MANAGE_IMPORT), validateBody(postImportBatchBodySchema)], async (req, res) => {
+    router.post('/api/v1/imports/batches', [needsPermission(permissions.MANAGE_IMPORT), jsonParserLargePayload, validateBody(postImportBatchBodySchema)], async (req, res) => {
       const { hostName, documentsToImport } = req.body;
       const user = req.user;
 
