@@ -625,7 +625,6 @@
     "resources": {
       "username": "Username",
       "email": "Email",
-      "id": "ID",
       "expires": "Expires",
       "lockedOut": "Locked Out",
       "roles": "Roles",
@@ -648,7 +647,6 @@
     "resources": {
       "username": "Benutzername",
       "email": "E-Mail",
-      "id": "ID",
       "expires": "Verfallsdatum",
       "lockedOut": "Ausgesperrt",
       "roles": "Rollen",

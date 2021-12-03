@@ -26,7 +26,7 @@ const TABS = {
   externalUsers: 'external-users'
 };
 
-function separateInternalAndExternalUsers(allUsers) {
+function splitInternalAndExternalUsers(allUsers) {
   const internalUsers = [];
   const externalUsers = [];
   for (const user of allUsers) {
@@ -44,13 +44,17 @@ function separateInternalAndExternalUsers(allUsers) {
   return { internalUsers, externalUsers };
 }
 
+function replaceUserById(users, newUser) {
+  return users.map(user => user._id === newUser._id ? newUser : user);
+}
+
 class Users extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
 
     this.state = {
-      ...separateInternalAndExternalUsers(props.initialState),
+      ...splitInternalAndExternalUsers(props.initialState),
       currentTab: TABS.internalUsers,
       isSaving: false
     };
@@ -67,11 +71,6 @@ class Users extends React.Component {
         dataIndex: 'email',
         key: 'email',
         sorter: firstBy('email')
-      }, {
-        title: () => this.props.t('id'),
-        dataIndex: '_id',
-        key: '_id',
-        sorter: firstBy('_id')
       }, {
         title: () => this.props.t('expires'),
         dataIndex: 'expires',
@@ -98,16 +97,6 @@ class Users extends React.Component {
         key: 'username',
         sorter: firstBy('username'),
         render: this.renderUsername
-      }, {
-        title: () => this.props.t('email'),
-        dataIndex: 'email',
-        key: 'email',
-        sorter: firstBy('email')
-      }, {
-        title: () => this.props.t('id'),
-        dataIndex: '_id',
-        key: '_id',
-        sorter: firstBy('_id')
       }, {
         title: () => this.props.t('importSource'),
         dataIndex: 'importSource',
@@ -194,7 +183,7 @@ class Users extends React.Component {
 
     this.setState(prevState => ({
       ...prevState,
-      internalUsers: prevState.internalUsers.map(usr => usr._id === user._id ? { ...user, roles: newRoles } : usr),
+      internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: newRoles }),
       isSaving: true
     }));
 
@@ -204,7 +193,7 @@ class Users extends React.Component {
       errorHelper.handleApiError({ error, logger, t });
       this.setState(prevState => ({
         ...prevState,
-        internalUsers: prevState.internalUsers.map(usr => usr._id === user._id ? { ...user, roles: oldRoles } : usr)
+        internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: oldRoles })
       }));
     } finally {
       this.setState({ isSaving: false });
@@ -217,7 +206,7 @@ class Users extends React.Component {
 
     this.setState(prevState => ({
       ...prevState,
-      internalUsers: prevState.internalUsers.map(usr => usr._id === user._id ? { ...user, lockedOut: newLockedOut } : usr),
+      internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: newLockedOut }),
       isSaving: true
     }));
 
@@ -227,7 +216,7 @@ class Users extends React.Component {
       errorHelper.handleApiError({ error, logger, t });
       this.setState(prevState => ({
         ...prevState,
-        internalUsers: prevState.internalUsers.map(usr => usr._id === user._id ? { ...user, lockedOut: oldLockedOut } : usr)
+        internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: oldLockedOut })
       }));
     } finally {
       this.setState({ isSaving: false });
