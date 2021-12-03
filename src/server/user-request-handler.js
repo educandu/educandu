@@ -78,9 +78,10 @@ class UserRequestHandler {
 
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
+    const provider = req.user.provider;
     const { username, email } = req.body;
 
-    const { result, user } = await this.userService.updateUserAccount({ userId, username, email });
+    const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
 
     res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
   }

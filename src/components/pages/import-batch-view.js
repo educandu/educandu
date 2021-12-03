@@ -1,23 +1,58 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
+import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { getImportedArticleUrl } from '../../utils/urls.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
+import ImportApiClient from '../../services/import-api-client.js';
 import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
 import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
+const POLL_INTERVAL_IN_MS = 1500;
+const logger = new Logger(import.meta.url);
 
 function ImportBatchView({ initialState, PageTemplate }) {
   const { t } = useTranslation('importBatchView');
   const { formatDate } = useDateFormat();
+  const importApiClient = useService(ImportApiClient);
 
-  const { batch } = initialState;
+  const [batch, setBatch] = useState(initialState.batch);
+
+  const id = batch._id;
+  const isCompletedImport = batch.progress === 1;
   const { hostName, allowUnsecure } = batch.batchParams;
+
+  useEffect(() => {
+    if (isCompletedImport) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      try {
+        const updatedBatchDetails = await importApiClient.getImportBatch(id);
+        setBatch(updatedBatchDetails.batch);
+        if (updatedBatchDetails.batch.progress === 1) {
+          clearInterval(interval);
+        }
+      } catch (error) {
+        handleApiError({ error, logger, t });
+      }
+    }, POLL_INTERVAL_IN_MS);
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  });
 
   const renderTaskStatus = (processed, task) => {
     if (!processed) {
