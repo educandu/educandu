@@ -128,6 +128,20 @@
     }
   },
   {
+    "namespace": "insufficientProfileWarning",
+    "language": "en",
+    "resources": {
+      "profileWarning": "Your user profile is not complete yet.\nClick <0>here</0> in order to edit your profile.\n"
+    }
+  },
+  {
+    "namespace": "insufficientProfileWarning",
+    "language": "de",
+    "resources": {
+      "profileWarning": "Ihr Benutzerprofil ist noch nicht vollständig.\nKlicken Sie <0>hier</0>, um Ihr Profil zu bearbeiten.\n"
+    }
+  },
+  {
     "namespace": "loginLogout",
     "language": "en",
     "resources": {
@@ -161,20 +175,6 @@
     "language": "de",
     "resources": {
       "messageTitle": "Dieser Inhalt wird nicht unterstützt"
-    }
-  },
-  {
-    "namespace": "page",
-    "language": "en",
-    "resources": {
-      "profileWarning": "Your user profile is not complete yet.\nClick <0>here</0> in order to edit your profile.\n"
-    }
-  },
-  {
-    "namespace": "page",
-    "language": "de",
-    "resources": {
-      "profileWarning": "Ihr Benutzerprofil ist noch nicht vollständig.\nKlicken Sie <0>hier</0>, um Ihr Profil zu bearbeiten.\n"
     }
   },
   {

@@ -1,17 +1,17 @@
 import by from 'thenby';
 import React from 'react';
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import { Table, Collapse, Button } from 'antd';
 import { useDateFormat } from '../language-context.js';
-import { importBatchShape, importSourceShape } from '../../ui/default-prop-types.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
+import { importBatchShape, importSourceShape } from '../../ui/default-prop-types.js';
 
 const Panel = Collapse.Panel;
 
-function ImportBatches({ initialState }) {
+function ImportBatches({ initialState, PageTemplate }) {
   const { t } = useTranslation('importBatches');
   const { formatDate } = useDateFormat();
   useReloadPersistedWindow();
@@ -71,7 +71,8 @@ function ImportBatches({ initialState }) {
       <Button
         disabled={isCreateButtonDisabled}
         onClick={() => { handleCreateImport(source); }}
-        >{t('createImport')}
+        >
+        {t('createImport')}
       </Button>);
   };
 
@@ -84,8 +85,10 @@ function ImportBatches({ initialState }) {
   const defaultActiveKey = sources.filter(source => source.batches.length)
     .map(source => source.importSourceName);
 
+  const alerts = useGlobalAlerts();
+
   return (
-    <Page>
+    <PageTemplate alerts={alerts}>
       <div className="ImportBatchesPage">
         <h1>{t('pageNames:importBatches')}</h1>
         <Collapse defaultActiveKey={defaultActiveKey}>
@@ -101,10 +104,11 @@ function ImportBatches({ initialState }) {
             </Panel>))}
         </Collapse>
       </div>
-    </Page>);
+    </PageTemplate>);
 }
 
 ImportBatches.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     batches: PropTypes.arrayOf(importBatchShape).isRequired,
     importSources: PropTypes.arrayOf(importSourceShape).isRequired

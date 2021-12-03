@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Form, Button } from 'antd';
@@ -13,6 +12,9 @@ import errorHelper from '../../ui/error-helper.js';
 import { withTranslation, Trans } from 'react-i18next';
 import UserApiClient from '../../services/user-api-client.js';
 import { translationProps } from '../../ui/default-prop-types.js';
+import { withUser } from '../user-context.js';
+import { withPageName } from '../page-name-context.js';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -45,7 +47,7 @@ class CompletePasswordReset extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, PageTemplate } = this.props;
     const { user } = this.state;
 
     const formItemLayout = {
@@ -114,8 +116,10 @@ class CompletePasswordReset extends React.Component {
 
     const isValidRequest = !!this.props.initialState.passwordResetRequestId;
 
+    const alerts = getGlobalAlerts(this.props.pageName, this.props.user);
+
     return (
-      <Page fullScreen>
+      <PageTemplate alerts={alerts} fullScreen>
         <div className="CompletePasswordResetPage">
           <div className="CompletePasswordResetPage-title">
             <SiteLogo size="big" readonly />
@@ -124,12 +128,13 @@ class CompletePasswordReset extends React.Component {
           {isValidRequest && !user && completionForm}
           {isValidRequest && user && completionSuccessConfirmation}
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 CompletePasswordReset.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   initialState: PropTypes.shape({
     passwordResetRequestId: PropTypes.string
@@ -137,6 +142,6 @@ CompletePasswordReset.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('completePasswordReset')(inject({
+export default withTranslation('completePasswordReset')(withUser(withPageName(inject({
   userApiClient: UserApiClient
-}, CompletePasswordReset));
+}, CompletePasswordReset))));

@@ -1,19 +1,19 @@
-import React, { useMemo, useState } from 'react';
-import Page from '../page.js';
-import PropTypes from 'prop-types';
 import firstBy from 'thenby';
-import { SearchOutlined } from '@ant-design/icons';
-import { Table, Tag, Select, Form } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { searchResultShape } from '../../ui/default-prop-types.js';
-import { useRequest } from '../request-context.js';
+import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
+import { useTranslation } from 'react-i18next';
+import { Table, Tag, Select, Form } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { useRequest } from '../request-context.js';
+import { SearchOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { searchResultShape } from '../../ui/default-prop-types.js';
+import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
-import { useDateFormat, useLanguage } from '../language-context.js';
 
-function Search({ initialState }) {
+function Search({ initialState, PageTemplate }) {
   const { t } = useTranslation('search');
   const { language } = useLanguage();
   const { docs } = initialState;
@@ -105,8 +105,10 @@ function Search({ initialState }) {
     }
   ];
 
+  const alerts = useGlobalAlerts();
+
   return (
-    <Page headerActions={[]}>
+    <PageTemplate alerts={alerts}>
       <h1>{`${t('searchResultPrefix')}: ${decodedQuery}`} </h1>
 
       <div className="Search-searchSelectContainer">
@@ -130,11 +132,12 @@ function Search({ initialState }) {
         dataSource={filteredDocs}
         />
 
-    </Page>
+    </PageTemplate>
   );
 }
 
 Search.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     docs: PropTypes.arrayOf(searchResultShape)
   }).isRequired

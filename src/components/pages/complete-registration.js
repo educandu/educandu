@@ -1,4 +1,3 @@
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import SiteLogo from '../site-logo.js';
@@ -6,11 +5,13 @@ import Countdown from '../countdown.js';
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { userShape } from '../../ui/default-prop-types.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 
-function CompleteRegistration({ initialState }) {
+function CompleteRegistration({ initialState, PageTemplate }) {
   const { t } = useTranslation('completeRegistration');
   const [isCountdownRunning, setIsCountdownRunning] = useState(false);
   useEffect(() => setIsCountdownRunning(true), []);
+  const alerts = useGlobalAlerts();
 
   const registrationSuccessContent = () => (
     <React.Fragment>
@@ -42,7 +43,7 @@ function CompleteRegistration({ initialState }) {
   );
 
   return (
-    <Page fullScreen>
+    <PageTemplate alerts={alerts} fullScreen>
       <div className="CompleteRegistrationPage">
         <div className="CompleteRegistrationPage-title">
           <SiteLogo size="big" readonly />
@@ -53,11 +54,12 @@ function CompleteRegistration({ initialState }) {
             : registrationFailureContent()}
         </div>
       </div>
-    </Page>
+    </PageTemplate>
   );
 }
 
 CompleteRegistration.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     user: userShape
   }).isRequired

@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
@@ -7,18 +6,22 @@ import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
+import { withUser } from '../user-context.js';
 import { Button, Slider, message } from 'antd';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import permissions from '../../domain/permissions.js';
 import { withLanguage } from '../language-context.js';
+import { withPageName } from '../page-name-context.js';
+import { ALERT_TYPE } from '../../common/constants.js';
 import { HARD_DELETE } from '../../ui/section-actions.js';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
-import { documentRevisionShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
+import { documentRevisionShape, translationProps, languageProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -130,7 +133,7 @@ class Doc extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { pageName, user, t, PageTemplate } = this.props;
     const { revisions, currentRevision } = this.state;
 
     const marks = revisions.reduce((accu, item, index) => {
@@ -179,16 +182,15 @@ class Doc extends React.Component {
       </div>
     );
 
-    const customAlerts = [];
-    const headerActions = [];
-
+    const alerts = getGlobalAlerts(pageName, user);
     if (currentRevision.archived) {
-      customAlerts.push({
+      alerts.push({
         message: t('common:archivedAlert'),
-        type: 'warning'
+        type: ALERT_TYPE.warning
       });
     }
 
+    const headerActions = [];
     if (!currentRevision.archived) {
       headerActions.push({
         key: 'edit',
@@ -201,7 +203,7 @@ class Doc extends React.Component {
     }
 
     return (
-      <Page headerActions={headerActions} customAlerts={customAlerts}>
+      <PageTemplate headerActions={headerActions} alerts={alerts}>
         <div className="DocPage">
           {revisionPicker}
           <DocView
@@ -209,14 +211,17 @@ class Doc extends React.Component {
             onAction={this.handleAction}
             />
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Doc.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...languageProps,
+  ...userProps,
+  ...pageNameProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documentRevisions: PropTypes.arrayOf(documentRevisionShape)
@@ -224,7 +229,7 @@ Doc.propTypes = {
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
-export default withTranslation('doc')(withLanguage(inject({
+export default withTranslation('doc')(withLanguage(withUser(withPageName(inject({
   documentApiClient: DocumentApiClient,
   languageNameProvider: LanguageNameProvider
-}, Doc)));
+}, Doc)))));

@@ -1,4 +1,3 @@
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { getImportedArticleUrl } from '../../utils/urls.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
@@ -18,7 +18,7 @@ const { Panel } = Collapse;
 const POLL_INTERVAL_IN_MS = 1500;
 const logger = new Logger(import.meta.url);
 
-function ImportBatchView({ initialState }) {
+function ImportBatchView({ initialState, PageTemplate }) {
   const { t } = useTranslation('importBatchView');
   const { formatDate } = useDateFormat();
   const importApiClient = useService(ImportApiClient);
@@ -84,7 +84,8 @@ function ImportBatchView({ initialState }) {
       target="_blank"
       href={getImportedArticleUrl({ hostName, allowUnsecure, slug })}
       rel="noreferrer noopener"
-      >{title}
+      >
+      {title}
     </a>
   );
 
@@ -137,8 +138,10 @@ function ImportBatchView({ initialState }) {
     { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderTaskStatus, sorter: taskStatusSorter }
   ];
 
+  const alerts = useGlobalAlerts();
+
   return (
-    <Page>
+    <PageTemplate alerts={alerts}>
       <div className="ImportBatchViewPage">
         <h1>{t('pageNames:importBatchView')}</h1>
         <Row>
@@ -189,10 +192,11 @@ function ImportBatchView({ initialState }) {
           }}
           />
       </div>
-    </Page>);
+    </PageTemplate>);
 }
 
 ImportBatchView.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     batch: importBatchDetailsShape.isRequired
   }).isRequired

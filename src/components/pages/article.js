@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import urls from '../../utils/urls.js';
@@ -7,24 +6,26 @@ import { useTranslation } from 'react-i18next';
 import CreditsFooter from '../credits-footer.js';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions.js';
+import { PAGE_NAME } from '../../domain/page-name.js';
+import { ALERT_TYPE } from '../../common/constants.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { documentShape, documentRevisionShape } from '../../ui/default-prop-types.js';
 
 const handleBackClick = () => window.history.back();
 
-function Article({ initialState }) {
+function Article({ initialState, PageTemplate }) {
   const { t } = useTranslation();
   const { documentOrRevision, type } = initialState;
 
-  const customAlerts = [];
-  const headerActions = [];
-
+  const alerts = useGlobalAlerts(PAGE_NAME.articles);
   if (documentOrRevision.archived) {
-    customAlerts.push({
+    alerts.push({
       message: t('common:archivedAlert'),
-      type: 'warning'
+      type: ALERT_TYPE.warning
     });
   }
 
+  const headerActions = [];
   if (!documentOrRevision.archived && type !== 'revision') {
     headerActions.push({
       handleClick: () => {
@@ -39,7 +40,7 @@ function Article({ initialState }) {
   }
 
   return (
-    <Page headerActions={headerActions} customAlerts={customAlerts}>
+    <PageTemplate headerActions={headerActions} alerts={alerts}>
       {type === 'document' && (
         <aside className="Content">
           <a onClick={handleBackClick}>{t('common:back')}</a>
@@ -49,11 +50,12 @@ function Article({ initialState }) {
       <aside className="Content">
         <CreditsFooter documentOrRevision={documentOrRevision} type={type} />
       </aside>
-    </Page>
+    </PageTemplate>
   );
 }
 
 Article.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]),
     type: PropTypes.oneOf(['document', 'revision'])

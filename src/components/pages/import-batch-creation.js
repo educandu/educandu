@@ -1,12 +1,13 @@
 import by from 'thenby';
-import Page from '../page.js';
+import PropTypes from 'prop-types';
+import { Tooltip, Button, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
-import { Tooltip, Button, Table } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
@@ -16,7 +17,7 @@ import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
 import urls, { getArticleUrl, getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 
-export default function ImportBatchCreation() {
+export default function ImportBatchCreation({ PageTemplate }) {
   const { t } = useTranslation('importBatchCreation');
 
   const { language } = useLanguage();
@@ -75,8 +76,7 @@ export default function ImportBatchCreation() {
     };
 
     getDocuments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSource]);
+  }, [importApiClient, selectedSource, t]);
 
   const renderImportType = doc => {
     let icon = null;
@@ -123,8 +123,10 @@ export default function ImportBatchCreation() {
     }
   };
 
+  const alerts = useGlobalAlerts();
+
   return (
-    <Page>
+    <PageTemplate alerts={alerts}>
       <div className="ImportBatchCreationPage">
         <h1>{t('pageNames:importBatchCreation')}</h1>
 
@@ -150,6 +152,10 @@ export default function ImportBatchCreation() {
           {t('importButton')}
         </Button>
       </div>
-    </Page>
+    </PageTemplate>
   );
 }
+
+ImportBatchCreation.propTypes = {
+  PageTemplate: PropTypes.func.isRequired
+};

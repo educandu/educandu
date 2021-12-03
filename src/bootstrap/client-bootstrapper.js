@@ -4,11 +4,14 @@ import Root from '../components/root.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';
 import ClientConfig from './client-config.js';
+import PageResolver from '../domain/page-resolver.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 const logger = new Logger(import.meta.url);
 
-export function createContainer() {
+export async function hydrateApp({ bundleConfig }) {
+  logger.info('Starting application');
+
   logger.info('Creating container');
   const container = new Container();
 
@@ -18,19 +21,25 @@ export function createContainer() {
   const resourceManager = new ResourceManager(window.__resources__);
   container.registerInstance(ResourceManager, resourceManager);
 
-  return Promise.resolve(container);
-}
+  const pageResolver = new PageResolver(bundleConfig);
+  container.registerInstance(PageResolver, pageResolver);
 
-export async function hydrateApp(bundleConfig) {
-  logger.info('Starting application');
+  logger.info('Resolving entry point');
+  const {
+    PageComponent,
+    PageTemplateComponent
+  } = await pageResolver.getPageComponentInfo(window.__pageName__);
+
   const props = {
     user: window.__user__,
     request: window.__request__,
     language: window.__language__,
     settings: window.__settings__,
-    container: await createContainer(),
+    pageName: window.__pageName__,
+    container,
     initialState: window.__initalState__,
-    PageComponent: bundleConfig[window.__pageName__]
+    PageComponent,
+    PageTemplateComponent
   };
 
   logger.info('Hydrating application');
@@ -39,8 +48,3 @@ export async function hydrateApp(bundleConfig) {
     document.getElementById('root')
   );
 }
-
-export default {
-  createContainer,
-  hydrateApp
-};

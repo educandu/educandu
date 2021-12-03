@@ -2,6 +2,7 @@ import express from 'express';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ImportService from '../services/import-service.js';
@@ -31,11 +32,11 @@ class ImportController {
       const batches = await this.clientDataMapper.mapImportBatches(rawBatches, req.user);
       const importSources = this.serverConfig.importSources.slice();
 
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import-batches', { batches, importSources });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatches, { batches, importSources });
     });
 
     app.get('/import-batches/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import-batch-creation');
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchCreation);
     });
 
     app.get('/import-batches/:batchId', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
@@ -43,7 +44,7 @@ class ImportController {
       const rawBatch = await this.importService.getImportBatchDetails(batchId);
       const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
 
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'import-batch-view', { batch });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchView, { batch });
     });
   }
 

@@ -1,6 +1,5 @@
 import by from 'thenby';
 import React from 'react';
-import Page from '../page.js';
 import gravatar from 'gravatar';
 import memoizee from 'memoizee';
 import autoBind from 'auto-bind';
@@ -14,14 +13,16 @@ import UsernameInput from '../username-input.js';
 import { CloseOutlined } from '@ant-design/icons';
 import errorHelper from '../../ui/error-helper.js';
 import { withLanguage } from '../language-context.js';
+import { withPageName } from '../page-name-context.js';
 import { Trans, withTranslation } from 'react-i18next';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../services/user-api-client.js';
 import { SAVE_USER_RESULT } from '../../domain/user-management.js';
 import CountryNameProvider from '../../data/country-name-provider.js';
 import { confirmIdentityWithPassword } from '../confirmation-dialogs.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
-import { userProps, languageProps, translationProps } from '../../ui/default-prop-types.js';
+import { userProps, languageProps, translationProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -138,7 +139,7 @@ class Account extends React.Component {
 
   render() {
     const { showAvatarDescription } = this.state;
-    const { countryNameProvider, user, language, t } = this.props;
+    const { countryNameProvider, user, pageName, language, t, PageTemplate } = this.props;
     const profile = user.profile || { country: '' };
     const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
 
@@ -253,6 +254,8 @@ class Account extends React.Component {
       </Form>
     );
 
+    const alerts = getGlobalAlerts(pageName, user);
+
     const headerActions = [
       {
         handleClick: this.handleBackClick,
@@ -263,7 +266,7 @@ class Account extends React.Component {
     ];
 
     return (
-      <Page headerActions={headerActions} disableProfileWarning>
+      <PageTemplate alerts={alerts} headerActions={headerActions} disableProfileWarning>
         <div className="AccountPage">
           <div className="AccountPage-forms">
             <h1>{t('pageNames:account')}</h1>
@@ -273,20 +276,22 @@ class Account extends React.Component {
             <section>{profileForm}</section>
           </div>
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Account.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...userProps,
   ...languageProps,
   ...translationProps,
+  ...pageNameProps,
   countryNameProvider: PropTypes.instanceOf(CountryNameProvider).isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('account')(withLanguage(withUser(inject({
+export default withTranslation('account')(withLanguage(withUser(withPageName(inject({
   countryNameProvider: CountryNameProvider,
   userApiClient: UserApiClient
-}, Account))));
+}, Account)))));
