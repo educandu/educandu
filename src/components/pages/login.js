@@ -5,12 +5,15 @@ import urls from '../../utils/urls.js';
 import SiteLogo from '../site-logo.js';
 import { Form, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
+import { withUser } from '../user-context.js';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { withRequest } from '../request-context.js';
+import { withPageName } from '../page-name-context.js';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../services/user-api-client.js';
-import { requestProps, translationProps } from '../../ui/default-prop-types.js';
+import { pageNameProps, requestProps, translationProps, userProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -127,8 +130,10 @@ class Login extends React.Component {
       </Form>
     );
 
+    const alerts = getGlobalAlerts(this.props.pageName, this.props.user);
+
     return (
-      <PageTemplate fullScreen>
+      <PageTemplate alerts={alerts} fullScreen>
         <div className="LoginPage">
           <div className="LoginPage-title">
             <SiteLogo size="big" readonly />
@@ -146,9 +151,11 @@ Login.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...requestProps,
+  ...userProps,
+  ...pageNameProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('login')(withRequest(inject({
+export default withTranslation('login')(withRequest(withUser(withPageName(inject({
   userApiClient: UserApiClient
-}, Login)));
+}, Login)))));

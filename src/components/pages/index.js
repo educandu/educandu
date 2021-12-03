@@ -3,22 +3,19 @@ import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
 import SiteLogo from '../site-logo.js';
 import React, { useState } from 'react';
-import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
-import { ALERT_TYPE } from '../../common/constants.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
-import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 
 function Index({ PageTemplate, initialState }) {
   const [searchText, setSearchText] = useState('');
   const { t } = useTranslation('index');
-  const user = useUser();
 
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
@@ -45,13 +42,7 @@ function Index({ PageTemplate, initialState }) {
 
   const languageNames = languageNameProvider.getData(language);
 
-  const alerts = [];
-  if (isProfileInsufficient(user)) {
-    alerts.push({
-      message: <InsufficientProfileWarning />,
-      type: ALERT_TYPE.info
-    });
-  }
+  const alerts = useGlobalAlerts();
 
   return (
     <PageTemplate alerts={alerts} fullScreen>

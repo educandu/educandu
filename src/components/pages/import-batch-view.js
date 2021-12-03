@@ -1,18 +1,18 @@
 import React from 'react';
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { getImportedArticleUrl } from '../../utils/urls.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
-import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
+import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
-function ImportBatchView({ initialState }) {
+function ImportBatchView({ initialState, PageTemplate }) {
   const { t } = useTranslation('importBatchView');
   const { formatDate } = useDateFormat();
 
@@ -49,7 +49,8 @@ function ImportBatchView({ initialState }) {
       target="_blank"
       href={getImportedArticleUrl({ hostName, allowUnsecure, slug })}
       rel="noreferrer noopener"
-      >{title}
+      >
+      {title}
     </a>
   );
 
@@ -102,8 +103,10 @@ function ImportBatchView({ initialState }) {
     { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderTaskStatus, sorter: taskStatusSorter }
   ];
 
+  const alerts = useGlobalAlerts();
+
   return (
-    <Page>
+    <PageTemplate alerts={alerts}>
       <div className="ImportBatchViewPage">
         <h1>{t('pageNames:importBatchView')}</h1>
         <Row>
@@ -154,10 +157,11 @@ function ImportBatchView({ initialState }) {
           }}
           />
       </div>
-    </Page>);
+    </PageTemplate>);
 }
 
 ImportBatchView.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     batch: importBatchDetailsShape.isRequired
   }).isRequired

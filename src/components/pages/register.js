@@ -6,6 +6,7 @@ import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import EmailInput from '../email-input.js';
 import Logger from '../../common/logger.js';
+import { withUser } from '../user-context.js';
 import { Form, Button, Checkbox } from 'antd';
 import { inject } from '../container-context.js';
 import PasswordInput from '../password-input.js';
@@ -13,10 +14,12 @@ import UsernameInput from '../username-input.js';
 import errorHelper from '../../ui/error-helper.js';
 import { withSettings } from '../settings-context.js';
 import { withLanguage } from '../language-context.js';
+import { withPageName } from '../page-name-context.js';
 import { withTranslation, Trans } from 'react-i18next';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../services/user-api-client.js';
 import { SAVE_USER_RESULT } from '../../domain/user-management.js';
-import { languageProps, settingsProps, translationProps } from '../../ui/default-prop-types.js';
+import { languageProps, pageNameProps, settingsProps, translationProps, userProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -151,8 +154,10 @@ class Register extends React.Component {
       </div>
     );
 
+    const alerts = getGlobalAlerts(this.props.pageName, this.props.user);
+
     return (
-      <PageTemplate fullScreen>
+      <PageTemplate alerts={alerts} fullScreen>
         <div className="RegisterPage">
           <div className="RegisterPage-title">
             <SiteLogo size="big" readonly />
@@ -169,9 +174,11 @@ Register.propTypes = {
   ...settingsProps,
   ...languageProps,
   ...translationProps,
+  ...userProps,
+  ...pageNameProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('register')(withSettings(withLanguage(inject({
+export default withTranslation('register')(withSettings(withUser(withPageName(withLanguage(inject({
   userApiClient: UserApiClient
-}, Register))));
+}, Register))))));

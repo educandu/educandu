@@ -35,6 +35,7 @@ export async function hydrateApp({ bundleConfig }) {
     request: window.__request__,
     language: window.__language__,
     settings: window.__settings__,
+    pageName: window.__pageName__,
     container,
     initialState: window.__initalState__,
     PageComponent,

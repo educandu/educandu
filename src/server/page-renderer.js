@@ -44,6 +44,7 @@ class PageRenderer extends PageRendererBase {
       container,
       initialState: cloneDeep(initialState),
       language,
+      pageName,
       settings: cloneDeep(settings),
       PageComponent,
       PageTemplateComponent

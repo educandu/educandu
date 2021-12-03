@@ -12,14 +12,15 @@ import SectionEditor from '../section-editor.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import errorHelper from '../../ui/error-helper.js';
 import { ALERT_TYPE } from '../../common/constants.js';
+import { withPageName } from '../page-name-context.js';
 import pluginInfos from '../../plugins/plugin-infos.js';
 import ShallowUpdateList from '../shallow-update-list.js';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import DocumentMetadataEditor from '../document-metadata-editor.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
-import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
-import { documentRevisionShape, sectionShape, translationProps, userProps } from '../../ui/default-prop-types.js';
+import { documentRevisionShape, pageNameProps, sectionShape, translationProps, userProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -319,7 +320,7 @@ class EditDoc extends React.Component {
   }
 
   render() {
-    const { user, t, PageTemplate } = this.props;
+    const { user, t, pageName, PageTemplate } = this.props;
     const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys, invalidMetadata } = this.state;
 
     const newSectionMenu = (
@@ -338,6 +339,8 @@ class EditDoc extends React.Component {
       </Dropdown>
     );
 
+    const alerts = getGlobalAlerts(pageName, user);
+
     const headerActions = [];
     if (isDirty && !invalidSectionKeys.length && !invalidMetadata) {
       headerActions.push({
@@ -355,15 +358,6 @@ class EditDoc extends React.Component {
       text: t('common:back'),
       handleClick: this.handleBackClick
     });
-
-    const alerts = [];
-
-    if (isProfileInsufficient(user)) {
-      alerts.push({
-        message: <InsufficientProfileWarning />,
-        type: ALERT_TYPE.info
-      });
-    }
 
     if (proposedSectionKeys.length) {
       alerts.push({
@@ -437,6 +431,7 @@ EditDoc.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...userProps,
+  ...pageNameProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documentRevision: documentRevisionShape.isRequired,
@@ -444,6 +439,6 @@ EditDoc.propTypes = {
   }).isRequired
 };
 
-export default withTranslation('editDoc')(withUser(inject({
+export default withTranslation('editDoc')(withUser(withPageName(inject({
   documentApiClient: DocumentApiClient
-}, EditDoc)));
+}, EditDoc))));

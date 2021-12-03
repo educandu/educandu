@@ -1,24 +1,21 @@
 import firstBy from 'thenby';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { Table, Tag, Select, Form } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import { SearchOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
-import { ALERT_TYPE } from '../../common/constants.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { searchResultShape } from '../../ui/default-prop-types.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
-import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 
 function Search({ initialState, PageTemplate }) {
   const { t } = useTranslation('search');
   const { language } = useLanguage();
-  const user = useUser();
   const { docs } = initialState;
   const { query } = useRequest();
   const decodedQuery = urls.decodeUrl(query.query);
@@ -108,13 +105,7 @@ function Search({ initialState, PageTemplate }) {
     }
   ];
 
-  const alerts = [];
-  if (isProfileInsufficient(user)) {
-    alerts.push({
-      message: <InsufficientProfileWarning />,
-      type: ALERT_TYPE.info
-    });
-  }
+  const alerts = useGlobalAlerts();
 
   return (
     <PageTemplate alerts={alerts}>

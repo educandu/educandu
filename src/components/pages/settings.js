@@ -5,6 +5,7 @@ import errorHelper from '../../ui/error-helper.js';
 import React, { useState, useCallback } from 'react';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import SettingApiClient from '../../services/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
@@ -94,8 +95,10 @@ function Settings({ initialState, PageTemplate }) {
     });
   }
 
+  const alerts = useGlobalAlerts();
+
   return (
-    <PageTemplate headerActions={headerActions}>
+    <PageTemplate alerts={alerts} headerActions={headerActions}>
       <div className="SettingsPage">
         <h1>{t('pageNames:settings')}</h1>
         <h2 className="SettingsPage-sectionHeader">{t('homeLanguagesHeader')}</h2>

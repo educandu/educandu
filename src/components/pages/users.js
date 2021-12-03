@@ -5,15 +5,18 @@ import PropTypes from 'prop-types';
 import { Table, Popover } from 'antd';
 import { ROLE } from '../../domain/role.js';
 import Logger from '../../common/logger.js';
+import { withUser } from '../user-context.js';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
+import { withPageName } from '../page-name-context.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../services/user-api-client.js';
 import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
-import { userShape, translationProps } from '../../ui/default-prop-types.js';
+import { userShape, translationProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -205,7 +208,7 @@ class Users extends React.Component {
   }
 
   render() {
-    const { t, PageTemplate } = this.props;
+    const { t, PageTemplate, pageName, user } = this.props;
     const { users, isDirty } = this.state;
 
     const headerActions = [];
@@ -225,8 +228,10 @@ class Users extends React.Component {
       });
     }
 
+    const alerts = getGlobalAlerts(pageName, user);
+
     return (
-      <PageTemplate headerActions={headerActions}>
+      <PageTemplate alerts={alerts} headerActions={headerActions}>
         <div className="UsersPage">
           <h1>{t('pageNames:users')}</h1>
           <Table dataSource={users} columns={this.columns} rowKey="_id" size="middle" bordered />
@@ -239,10 +244,12 @@ class Users extends React.Component {
 Users.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
+  ...userProps,
+  ...pageNameProps,
   initialState: PropTypes.arrayOf(userShape).isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('users')(inject({
+export default withTranslation('users')(withPageName(withUser(inject({
   userApiClient: UserApiClient
-}, Users));
+}, Users))));

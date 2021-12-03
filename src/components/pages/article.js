@@ -2,32 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import urls from '../../utils/urls.js';
-import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import CreditsFooter from '../credits-footer.js';
 import { EditOutlined } from '@ant-design/icons';
 import permissions from '../../domain/permissions.js';
+import { PAGE_NAME } from '../../domain/page-name.js';
 import { ALERT_TYPE } from '../../common/constants.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { documentShape, documentRevisionShape } from '../../ui/default-prop-types.js';
-import InsufficientProfileWarning, { isProfileInsufficient } from '../insufficient-profile-warning.js';
 
 const handleBackClick = () => window.history.back();
 
 function Article({ initialState, PageTemplate }) {
-  const user = useUser();
   const { t } = useTranslation();
   const { documentOrRevision, type } = initialState;
 
-  const alerts = [];
-  const headerActions = [];
-
-  if (isProfileInsufficient(user)) {
-    alerts.push({
-      message: <InsufficientProfileWarning />,
-      type: ALERT_TYPE.info
-    });
-  }
-
+  const alerts = useGlobalAlerts(PAGE_NAME.articles);
   if (documentOrRevision.archived) {
     alerts.push({
       message: t('common:archivedAlert'),
@@ -35,6 +25,7 @@ function Article({ initialState, PageTemplate }) {
     });
   }
 
+  const headerActions = [];
   if (!documentOrRevision.archived && type !== 'revision') {
     headerActions.push({
       handleClick: () => {
