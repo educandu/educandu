@@ -15,7 +15,7 @@ import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../ut
 import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
-const POLL_INTERVAL_IN_MS = 1000;
+const POLL_INTERVAL_IN_MS = 1500;
 const logger = new Logger(import.meta.url);
 
 function ImportBatchView({ initialState }) {
