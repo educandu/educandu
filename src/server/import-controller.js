@@ -60,6 +60,14 @@ class ImportController {
       res.send({ documents });
     });
 
+    router.get('/api/v1/imports/:batchId', [needsPermission(permissions.MANAGE_IMPORT)], async (req, res) => {
+      const { batchId } = req.params;
+      const rawBatch = await this.importService.getImportBatchDetails(batchId);
+      const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
+
+      res.send({ batch });
+    });
+
     router.post('/api/v1/imports/batch', [jsonParser, needsPermission(permissions.MANAGE_IMPORT), validateBody(postImportBatchBodySchema)], async (req, res) => {
       const { hostName, documentsToImport } = req.body;
       const user = req.user;

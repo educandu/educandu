@@ -15,6 +15,14 @@ class ImportApiClient {
       .then(res => res.body);
   }
 
+  getImportBatch(batchId) {
+    return this.httpClient
+      .get(`/api/v1/imports/${encodeURIComponent(batchId)}`)
+      .accept('json')
+      .type('json')
+      .then(res => res.body);
+  }
+
   postImportBatch(batch) {
     return this.httpClient
       .post('/api/v1/imports/batch')
