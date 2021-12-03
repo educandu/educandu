@@ -43,9 +43,8 @@ class Cdn {
 
   async uploadObjectFromUrl(objectName, url) {
     const body = await superagent.get(url).then(res => res.body);
-    const sanitizedObjectName = objectName.replace(/\\/g, '/');
-    const contentType = mime.getType(sanitizedObjectName) || defaultContentType;
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, body, contentType);
+    const contentType = mime.getType(objectName) || defaultContentType;
+    return this.s3Client.upload(this.bucketName, objectName, body, contentType);
   }
 
   uploadEmptyObject(objectName, metadata) {
