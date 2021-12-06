@@ -13,7 +13,7 @@ function renderUser(user) {
 
 function renderDocumentContributors(doc, t) {
   const cons = doc.contributors.map((user, index) => (
-    <Fragment key={index.toString()}>
+    <Fragment key={user.email}>
       {index !== 0 && ', '}
       {renderUser(user)}
     </Fragment>
