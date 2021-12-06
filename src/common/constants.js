@@ -26,3 +26,8 @@ export const ALERT_TYPE = {
   warning: 'warning',
   error: 'error'
 };
+
+export const DOCUMENT_TYPE = {
+  revision: 'revision',
+  document: 'document'
+};

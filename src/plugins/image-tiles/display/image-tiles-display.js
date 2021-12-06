@@ -26,7 +26,7 @@ function createTileUrl(tile) {
     case LINK_TYPE.external:
       return link.url;
     case LINK_TYPE.article:
-      return urls.getArticleUrl(link.url);
+      return urls.getDocUrl(link.url);
     default:
       return '';
   }

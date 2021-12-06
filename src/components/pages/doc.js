@@ -11,17 +11,17 @@ import { Button, Slider, message } from 'antd';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
 import CreditsFooter from '../credits-footer.js';
-import errorHelper from '../../ui/error-helper.js';
 import permissions from '../../domain/permissions.js';
 import { withLanguage } from '../language-context.js';
 import { withPageName } from '../page-name-context.js';
-import { ALERT_TYPE } from '../../common/constants.js';
 import { HARD_DELETE } from '../../ui/section-actions.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
+import { ALERT_TYPE, DOCUMENT_TYPE } from '../../common/constants.js';
 import DocumentApiClient from '../../services/document-api-client.js';
+import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
-import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
+import { PaperClipOutlined, ReloadOutlined, EditOutlined, SlidersOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -31,15 +31,30 @@ class Doc extends React.Component {
     super(props);
     autoBind(this);
     this.state = {
-      revisions: props.initialState.documentRevisions,
-      currentRevision: props.initialState.documentRevisions[props.initialState.documentRevisions.length - 1],
+      revisions: [],
+      currentDocOrRevision: props.initialState.currentDocOrRevision,
       type: props.initialState.type
     };
   }
 
   handleEditClick() {
-    const { currentRevision } = this.state;
-    window.location = urls.getEditDocUrl(currentRevision.key);
+    const { currentDocOrRevision } = this.state;
+    window.location = urls.getEditDocUrl(currentDocOrRevision.key);
+  }
+
+  async handleViewVersionsClick() {
+    const { documentApiClient, t } = this.props;
+    const { key: docKey } = this.state.currentDocOrRevision;
+    try {
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(docKey);
+      this.setState({
+        currentDocOrRevision: documentRevisions[documentRevisions.length - 1],
+        revisions: documentRevisions,
+        type: DOCUMENT_TYPE.revision
+      });
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
   }
 
   formatRevisionTooltip(index) {
@@ -60,13 +75,13 @@ class Doc extends React.Component {
   }
 
   handleIndexChanged(index) {
-    this.setState(prevState => ({ currentRevision: prevState.revisions[index] }));
+    this.setState(prevState => ({ currentDocOrRevision: prevState.revisions[index] }));
   }
 
   async handlePermalinkRequest() {
     const { t } = this.props;
-    const { currentRevision } = this.state;
-    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(currentRevision._id));
+    const { currentDocOrRevision } = this.state;
+    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(currentDocOrRevision._id));
     try {
       await clipboardCopy(permalinkUrl);
       message.success(t('permalinkCopied'));
@@ -84,21 +99,22 @@ class Doc extends React.Component {
 
   handleRestoreButtonClick() {
     const { documentApiClient, t } = this.props;
-    const { currentRevision } = this.state;
+    const { currentDocOrRevision } = this.state;
 
     confirmDocumentRevisionRestoration(
       t,
-      currentRevision,
+      currentDocOrRevision,
       async () => {
         try {
           const { documentRevisions } = await documentApiClient.restoreDocumentRevision({
-            documentKey: currentRevision.key,
-            revisionId: currentRevision._id
+            documentKey: currentDocOrRevision.key,
+            revisionId: currentDocOrRevision._id
           });
 
           this.setState({
             revisions: documentRevisions,
-            currentRevision: documentRevisions[documentRevisions.length - 1]
+            currentDocOrRevision: documentRevisions[documentRevisions.length - 1],
+            type: DOCUMENT_TYPE.revision
           });
         } catch (error) {
           errorHelper.handleApiError({ error, logger, t });
@@ -119,8 +135,8 @@ class Doc extends React.Component {
 
   async hardDelete({ sectionKey, sectionRevision, reason, deleteAllRevisions }) {
     const { documentApiClient, t } = this.props;
-    const { currentRevision } = this.state;
-    const documentKey = currentRevision.key;
+    const { currentDocOrRevision } = this.state;
+    const documentKey = currentDocOrRevision.key;
     try {
       await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
     } catch (error) {
@@ -130,21 +146,21 @@ class Doc extends React.Component {
     const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);
     this.setState(prevState => ({
       revisions: documentRevisions,
-      currentRevision: documentRevisions.find(revision => revision._id === prevState.currentRevision._id)
+      currentDocOrRevision: documentRevisions.find(revision => revision._id === prevState.currentDocOrRevision._id)
     }));
   }
 
   render() {
     const { pageName, user, t, PageTemplate } = this.props;
-    const { revisions, currentRevision, type } = this.state;
+    const { revisions, currentDocOrRevision } = this.state;
 
     const marks = revisions.reduce((accu, item, index) => {
       accu[index] = index === 0 || index === revisions.length - 1 ? (index + 1).toString() : '';
       return accu;
     }, {});
 
-    const currentRevisionIndex = revisions.indexOf(currentRevision);
-    const isCurrentRevisionLatestRevision = currentRevisionIndex === revisions.length - 1;
+    const currentDocOrRevisionIndex = revisions.indexOf(currentDocOrRevision);
+    const isCurrentDocOrRevisionLatestRevision = currentDocOrRevisionIndex === revisions.length - 1;
 
     const revisionPicker = (
       <div className="DocPage-revisionPicker">
@@ -153,7 +169,7 @@ class Doc extends React.Component {
           <Slider
             min={0}
             max={revisions.length - 1}
-            value={currentRevisionIndex}
+            value={currentDocOrRevisionIndex}
             step={null}
             marks={marks}
             onChange={this.handleIndexChanged}
@@ -175,7 +191,7 @@ class Doc extends React.Component {
               type="primary"
               icon={<ReloadOutlined />}
               onClick={this.handleRestoreButtonClick}
-              disabled={isCurrentRevisionLatestRevision}
+              disabled={isCurrentDocOrRevisionLatestRevision}
               >
               {t('restore')}
             </Button>
@@ -185,7 +201,7 @@ class Doc extends React.Component {
     );
 
     const alerts = getGlobalAlerts(pageName, user);
-    if (currentRevision.archived) {
+    if (currentDocOrRevision.archived) {
       alerts.push({
         message: t('common:archivedAlert'),
         type: ALERT_TYPE.warning
@@ -193,10 +209,23 @@ class Doc extends React.Component {
     }
 
     const headerActions = [];
-    if (!currentRevision.archived) {
+    if (!this.state.revisions.length && this.state.type === DOCUMENT_TYPE.document) {
+      headerActions.push({
+        key: 'viewRevisions',
+        type: 'primary',
+        icon: SlidersOutlined,
+        text: t('common:viewVersions'),
+        permission: permissions.VIEW_DOCS,
+        handleClick: this.handleViewVersionsClick
+      });
+    }
+
+    if (!currentDocOrRevision.archived) {
+      const isButtonDisabled = this.state.type === DOCUMENT_TYPE.revision;
       headerActions.push({
         key: 'edit',
         type: 'primary',
+        disabled: isButtonDisabled,
         icon: EditOutlined,
         text: t('common:edit'),
         permission: permissions.EDIT_DOC,
@@ -207,17 +236,15 @@ class Doc extends React.Component {
     return (
       <PageTemplate headerActions={headerActions} alerts={alerts}>
         <div className="DocPage">
-          { type !== 'document' && revisionPicker}
+          { this.state.revisions.length && revisionPicker}
           <DocView
-            documentOrRevision={currentRevision}
+            documentOrRevision={currentDocOrRevision}
             onAction={this.handleAction}
             />
         </div>
-        {type === 'document' && (
-          <aside className="Content">
-            <CreditsFooter documentOrRevision={currentRevision} type={type} />
-          </aside>
-        )}
+        <aside className="Content">
+          <CreditsFooter documentOrRevision={currentDocOrRevision} />
+        </aside>
       </PageTemplate>
     );
   }
@@ -231,7 +258,8 @@ Doc.propTypes = {
   ...pageNameProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
-    documentRevisions: PropTypes.arrayOf(documentRevisionShape)
+    currentDocOrRevision: PropTypes.instanceOf(documentRevisionShape),
+    type: PropTypes.oneOf(Object.values(DOCUMENT_TYPE))
   }).isRequired,
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };

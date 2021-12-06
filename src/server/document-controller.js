@@ -3,6 +3,7 @@ import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { DOCUMENT_TYPE } from '../common/constants.js';
 import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -43,7 +44,7 @@ class DocumentController {
       }
 
       const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.article, { documentOrRevision: documentRevision, type: 'revision' });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: documentRevision, type: DOCUMENT_TYPE.revision });
     });
 
     router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
@@ -66,7 +67,7 @@ class DocumentController {
       }
 
       const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { documentRevisions: [mappedDoc], type: 'document' });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
     });
 
     router.get('/edit/doc/:docKey', needsPermission(permissions.EDIT_DOC), async (req, res) => {
