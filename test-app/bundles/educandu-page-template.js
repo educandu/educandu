@@ -107,9 +107,10 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
   }
 
   if (settings?.helpPage?.[language]) {
+    const { documentKey, documentSlug } = settings.helpPage[language];
     pageMenuItems.push({
       key: 'help',
-      href: urls.getArticleUrl(settings.helpPage[language].documentSlug),
+      href: urls.getArticleUrl(documentKey, documentSlug),
       text: settings.helpPage[language].linkTitle,
       icon: QuestionOutlined,
       permission: permissions.EDIT_SETTINGS
