@@ -15,7 +15,7 @@ import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../ut
 import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
-const POLL_INTERVAL_IN_MS = 1500;
+const POLL_INTERVAL_IN_MS = 500;
 const logger = new Logger(import.meta.url);
 
 function ImportBatchView({ initialState, PageTemplate }) {
@@ -25,34 +25,33 @@ function ImportBatchView({ initialState, PageTemplate }) {
 
   const [batch, setBatch] = useState(initialState.batch);
 
-  const id = batch._id;
-  const isCompletedImport = batch.progress === 1;
+  const { _id: id, progress: batchProgress } = batch;
   const { hostName, allowUnsecure } = batch.batchParams;
 
   useEffect(() => {
-    if (isCompletedImport) {
-      return;
-    }
+    let nextTimeout = null;
+    const getUpdate = async () => {
+      if (batchProgress === 1) {
+        return;
+      }
 
-    const interval = setInterval(async () => {
       try {
         const updatedBatchDetails = await importApiClient.getImportBatch(id);
         setBatch(updatedBatchDetails.batch);
-        if (updatedBatchDetails.batch.progress === 1) {
-          clearInterval(interval);
-        }
+        nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
       } catch (error) {
         handleApiError({ error, logger, t });
       }
-    }, POLL_INTERVAL_IN_MS);
+    };
 
-    // eslint-disable-next-line consistent-return
+    nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
+
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (nextTimeout) {
+        clearTimeout(nextTimeout);
       }
     };
-  });
+  }, [t, importApiClient, id, batchProgress]);
 
   const renderTaskStatus = (processed, task) => {
     if (!processed) {
