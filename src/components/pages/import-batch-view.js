@@ -25,36 +25,41 @@ function ImportBatchView({ initialState }) {
 
   const [batch, setBatch] = useState(initialState.batch);
 
-  const id = batch._id;
-  const isCompletedImport = batch.progress === 1;
+  const { _id: id, progress } = batch;
   const { hostName, allowUnsecure } = batch.batchParams;
 
   useEffect(() => {
-    if (isCompletedImport) {
-      return;
-    }
+    let nextTimeout = null;
 
-    const interval = setInterval(async () => {
+    const getUpdate = async () => {
+      if (progress === 1) {
+        if (nextTimeout) {
+          clearTimeout(nextTimeout);
+        }
+        return;
+      }
+
       try {
         const updatedBatchDetails = await importApiClient.getImportBatch(id);
         setBatch(updatedBatchDetails.batch);
-        if (updatedBatchDetails.batch.progress === 1) {
-          clearInterval(interval);
-        }
+        nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
       } catch (error) {
         handleApiError({ error, logger, t });
-      }
-    }, POLL_INTERVAL_IN_MS);
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      if (interval) {
-        clearInterval(interval);
+        if (nextTimeout) {
+          clearTimeout(nextTimeout);
+        }
       }
     };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!nextTimeout) {
+      nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
+    }
+    return () => {
+      if (nextTimeout) {
+        clearTimeout(nextTimeout);
+      }
+    };
+  }, [t, importApiClient, id, progress]);
 
   const renderTaskStatus = (processed, task) => {
     if (!processed) {
