@@ -382,13 +382,12 @@ class DocumentService {
         }
 
         for (const revision of revisions) {
-
           const data = { ...revision, origin, originUrl };
 
           // eslint-disable-next-line no-await-in-loop
           const order = await this.documentOrderStore.getNextOrder();
 
-          const newDocumentRevision = this._buildDocumentRevision({
+          newDocumentRevisions.push(this._buildDocumentRevision({
             data,
             revisionId: revision._id,
             documentKey,
@@ -396,19 +395,16 @@ class DocumentService {
             order,
             restoredFrom: revision.restoredFrom,
             sections: cloneDeep(revision.sections)
-          });
-
-          logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
-          // eslint-disable-next-line no-await-in-loop
-          await this.documentRevisionStore.save(newDocumentRevision, { session });
-
-          newDocumentRevisions.push(newDocumentRevision);
+          }));
         }
 
-        const latestDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
+        logger.info(`Saving revisions for document '${documentKey}'`);
+        await this.documentRevisionStore.insertMany(newDocumentRevisions);
 
-        logger.info(`Saving latest document with revision ${latestDocument.revision}`);
-        await this.documentStore.save(latestDocument, { session });
+        const document = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
+
+        logger.info(`Saving document '${documentKey}' with revision ${document.revision}`);
+        await this.documentStore.save(document, { session });
       });
 
       return newDocumentRevisions;
