@@ -15,7 +15,7 @@ import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../ut
 import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
-const POLL_INTERVAL_IN_MS = 1500;
+const POLL_INTERVAL_IN_MS = 500;
 const logger = new Logger(import.meta.url);
 
 function ImportBatchView({ initialState }) {
@@ -25,17 +25,13 @@ function ImportBatchView({ initialState }) {
 
   const [batch, setBatch] = useState(initialState.batch);
 
-  const { _id: id, progress } = batch;
+  const { _id: id, progress: batchProgres } = batch;
   const { hostName, allowUnsecure } = batch.batchParams;
 
   useEffect(() => {
     let nextTimeout = null;
-
     const getUpdate = async () => {
-      if (progress === 1) {
-        if (nextTimeout) {
-          clearTimeout(nextTimeout);
-        }
+      if (batchProgres === 1) {
         return;
       }
 
@@ -45,21 +41,17 @@ function ImportBatchView({ initialState }) {
         nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
       } catch (error) {
         handleApiError({ error, logger, t });
-        if (nextTimeout) {
-          clearTimeout(nextTimeout);
-        }
       }
     };
 
-    if (!nextTimeout) {
-      nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
-    }
+    nextTimeout = setTimeout(getUpdate, POLL_INTERVAL_IN_MS);
+
     return () => {
       if (nextTimeout) {
         clearTimeout(nextTimeout);
       }
     };
-  }, [t, importApiClient, id, progress]);
+  }, [t, importApiClient, id, batchProgres]);
 
   const renderTaskStatus = (processed, task) => {
     if (!processed) {
