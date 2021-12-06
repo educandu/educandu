@@ -203,7 +203,7 @@ export async function buildTestAppJs() {
     await testAppBuildResult.rebuild();
   } else {
     testAppBuildResult = await esbuild.build({
-      entryPoints: await promisify(glob)('./test-app/bundles/*.js'),
+      entryPoints: ['./test-app/bundles/main.js'],
       target: ['esnext', 'chrome95', 'firefox93', 'safari15', 'edge95'],
       format: 'esm',
       bundle: true,

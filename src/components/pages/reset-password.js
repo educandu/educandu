@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -7,11 +6,14 @@ import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import { Form, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
+import { withUser } from '../user-context.js';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
+import { withPageName } from '../page-name-context.js';
 import { withTranslation, Trans } from 'react-i18next';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../services/user-api-client.js';
-import { translationProps } from '../../ui/default-prop-types.js';
+import { pageNameProps, translationProps, userProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -42,7 +44,7 @@ class ResetPassword extends React.Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, PageTemplate, pageName, user } = this.props;
     const { isRequestSent } = this.state;
 
     const formItemLayout = {
@@ -116,24 +118,29 @@ class ResetPassword extends React.Component {
       </div>
     );
 
+    const alerts = getGlobalAlerts(pageName, user);
+
     return (
-      <Page fullScreen>
+      <PageTemplate alerts={alerts} fullScreen>
         <div className="ResetPasswordPage">
           <div className="ResetPasswordPage-title">
             <SiteLogo size="big" readonly />
           </div>
           {isRequestSent ? resetRequestConfirmation : resetRequestForm}
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 ResetPassword.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
+  ...userProps,
+  ...pageNameProps,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('resetPassword')(inject({
+export default withTranslation('resetPassword')(withUser(withPageName(inject({
   userApiClient: UserApiClient
-}, ResetPassword));
+}, ResetPassword))));

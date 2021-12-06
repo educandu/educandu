@@ -1,5 +1,6 @@
 import passport from 'passport';
 import urls from '../utils/urls.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import PageRenderer from '../server/page-renderer.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
@@ -18,21 +19,21 @@ class UserRequestHandler {
   }
 
   handleGetRegisterPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'register', {});
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.register, {});
   }
 
   handleGetResetPasswordPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'reset-password', {});
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.resetPassword, {});
   }
 
   async handleCompleteRegistrationPage(req, res) {
     const user = await this.userService.verifyUser(req.params.verificationCode);
     const initialState = { user };
-    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-registration', initialState);
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.completeRegistration, initialState);
   }
 
   handleGetLoginPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'login', {});
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
   }
 
   handleGetLogoutPage(req, res) {
@@ -41,19 +42,19 @@ class UserRequestHandler {
   }
 
   handleGetAccountPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'account', {});
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.account, {});
   }
 
   async handleGetCompletePasswordResetPage(req, res) {
     const resetRequest = await this.userService.getPasswordResetRequestById(req.params.passwordResetRequestId);
     const passwordResetRequestId = (resetRequest || {})._id;
     const initialState = { passwordResetRequestId };
-    return this.pageRenderer.sendPage(req, res, 'settings-bundle', 'complete-password-reset', initialState);
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
   }
 
   async handleGetUsersPage(req, res) {
     const initialState = await this.userService.getAllUsers();
-    return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'users', initialState);
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
   }
 
   async handleGetUsers(req, res) {
@@ -77,9 +78,10 @@ class UserRequestHandler {
 
   async handlePostUserAccount(req, res) {
     const userId = req.user._id;
+    const provider = req.user.provider;
     const { username, email } = req.body;
 
-    const { result, user } = await this.userService.updateUserAccount({ userId, username, email });
+    const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
 
     res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
   }

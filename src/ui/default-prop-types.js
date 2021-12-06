@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, TASK_TYPE } from '../common/constants.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 
 export const translationProps = {
   i18n: PropTypes.object.isRequired,
@@ -102,6 +103,10 @@ export const userProps = {
 export const languageProps = {
   language: PropTypes.string.isRequired,
   locale: PropTypes.string.isRequired
+};
+
+export const pageNameProps = {
+  pageName: PropTypes.oneOf(Object.values(PAGE_NAME)).isRequired
 };
 
 const userInDocShape = PropTypes.shape({

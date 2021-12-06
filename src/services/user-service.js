@@ -8,7 +8,7 @@ import { SAVE_USER_RESULT } from '../domain/user-management.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 
 const DEFAULT_ROLE_NAME = ROLE.user;
-const PROVIDER_NAME = 'educandu';
+const DEFAULT_PROVIDER_NAME = 'educandu';
 const PASSWORD_SALT_ROUNDS = 1024;
 const PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN = { hours: 24 };
 const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN = { hours: 24 };
@@ -37,7 +37,7 @@ class UserService {
       : Promise.resolve([]);
   }
 
-  getUserByEmailAddress(email, provider = PROVIDER_NAME) {
+  getUserByEmailAddress(email, provider = DEFAULT_PROVIDER_NAME) {
     return this.userStore.findOne({ email: email.toLowerCase(), provider });
   }
 
@@ -65,7 +65,7 @@ class UserService {
     return set;
   }
 
-  findUser(username, provider = PROVIDER_NAME) {
+  findUser(username, provider = DEFAULT_PROVIDER_NAME) {
     return this.userStore.findOne({ username, provider });
   }
 
@@ -74,13 +74,14 @@ class UserService {
     return this.userStore.save(user);
   }
 
-  async updateUserAccount({ userId, username, email }) {
+  async updateUserAccount({ userId, provider, username, email }) {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
     const otherExistingUser = await this.userStore.findOne({
       $and: [
         { _id: { $ne: userId } },
+        { provider },
         { $or: [{ username }, { email: lowerCasedEmail }] }
       ]
     });
@@ -124,7 +125,7 @@ class UserService {
     return user.lockedOut;
   }
 
-  async createUser({ username, password, email, provider = PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
+  async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
     const existingUser = await this.userStore.findOne({ $or: [{ username }, { email: lowerCasedEmail }] });
@@ -158,7 +159,7 @@ class UserService {
     await this.saveUser(user);
   }
 
-  async verifyUser(verificationCode, provider = PROVIDER_NAME) {
+  async verifyUser(verificationCode, provider = DEFAULT_PROVIDER_NAME) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
@@ -178,7 +179,7 @@ class UserService {
     return user;
   }
 
-  async authenticateUser(username, password, provider = PROVIDER_NAME) {
+  async authenticateUser(username, password, provider = DEFAULT_PROVIDER_NAME) {
     const user = await this.findUser(username, provider);
     if (!user || user.expires || user.lockedOut) {
       return false;
@@ -197,7 +198,7 @@ class UserService {
   }
 
   async createPasswordResetRequest(user) {
-    if (user.provider !== PROVIDER_NAME) {
+    if (user.provider !== DEFAULT_PROVIDER_NAME) {
       throw new Error('Cannot reset passwords on third party users');
     }
 

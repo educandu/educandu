@@ -1,5 +1,6 @@
 import path from 'path';
 import educandu from '../src/index.js';
+import bundleConfig from './bundles/bundle-config.js';
 
 educandu({
   port: 3000,
@@ -15,6 +16,7 @@ educandu({
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
   emailSenderAddress: 'educandu-test-app@test.com',
   smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
+  bundleConfig,
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
   exportApiKey: 'fe160daddb0c44c4963f63ce08272c86',

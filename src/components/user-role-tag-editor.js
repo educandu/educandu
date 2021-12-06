@@ -4,8 +4,6 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { userShape } from './../ui/default-prop-types.js';
 
-const COLOR_RED_10 = '#5c0011';
-
 const { CheckableTag } = Tag;
 
 class UserRoleTagEditor extends React.Component {
@@ -26,15 +24,21 @@ class UserRoleTagEditor extends React.Component {
   }
 
   render() {
-    const { roleName, isReadonly, user } = this.props;
-    return isReadonly
-      ? <Tag key={roleName} color={user.roles.includes(roleName) ? COLOR_RED_10 : null}>{roleName}</Tag>
-      : <CheckableTag key={roleName} checked={user.roles.includes(roleName)} onChange={this.handleRoleChange}>{roleName}</CheckableTag>;
+    const { roleName, user } = this.props;
+    const isUserInRole = user.roles.includes(roleName);
+    return (
+      <CheckableTag
+        key={roleName}
+        checked={isUserInRole}
+        onChange={this.handleRoleChange}
+        >
+        {roleName}
+      </CheckableTag>
+    );
   }
 }
 
 UserRoleTagEditor.propTypes = {
-  isReadonly: PropTypes.bool.isRequired,
   onRoleChange: PropTypes.func.isRequired,
   roleName: PropTypes.string.isRequired,
   user: userShape.isRequired

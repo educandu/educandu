@@ -1,6 +1,5 @@
 import by from 'thenby';
 import React from 'react';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -12,15 +11,17 @@ import { PlusOutlined } from '@ant-design/icons';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { withLanguage } from '../language-context.js';
+import { withPageName } from '../page-name-context.js';
 import { toTrimmedString } from '../../utils/sanitize.js';
 import { DOCUMENT_ORIGIN } from '../../common/constants.js';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageSelect from '../localization/language-select.js';
 import { Form, Input, Modal, Table, Button, Switch } from 'antd';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { documentMetadataShape, translationProps, languageProps } from '../../ui/default-prop-types.js';
+import { documentMetadataShape, translationProps, languageProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const { Search } = Input;
 const FormItem = Form.Item;
@@ -233,7 +234,7 @@ class Docs extends React.Component {
   }
 
   render() {
-    const { t, user } = this.props;
+    const { t, user, pageName, PageTemplate } = this.props;
     const { filteredDocs, filterInput, newDoc, isNewDocModalVisible, isLoading } = this.state;
 
     const columns = [
@@ -298,8 +299,10 @@ class Docs extends React.Component {
       });
     }
 
+    const alerts = getGlobalAlerts(pageName, user);
+
     return (
-      <Page>
+      <PageTemplate alerts={alerts}>
         <div className="DocsPage">
           <h1>{t('pageNames:docs')}</h1>
           <div className="DocsPage-search">
@@ -337,14 +340,16 @@ class Docs extends React.Component {
             </Form>
           </Modal>
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Docs.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
   ...languageProps,
+  ...pageNameProps,
   documentApiClient: PropTypes.instanceOf(DocumentApiClient).isRequired,
   initialState: PropTypes.shape({
     documents: PropTypes.arrayOf(documentMetadataShape).isRequired
@@ -352,7 +357,7 @@ Docs.propTypes = {
   languageNameProvider: PropTypes.instanceOf(LanguageNameProvider).isRequired
 };
 
-export default withTranslation('docs')(withLanguage(withUser(inject({
+export default withTranslation('docs')(withLanguage(withUser(withPageName(inject({
   documentApiClient: DocumentApiClient,
   languageNameProvider: LanguageNameProvider
-}, Docs))));
+}, Docs)))));

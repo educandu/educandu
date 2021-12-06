@@ -2,6 +2,7 @@ import express from 'express';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -42,14 +43,14 @@ class DocumentController {
       }
 
       const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
-      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'article', { documentOrRevision: documentRevision, type: 'revision' });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.article, { documentOrRevision: documentRevision, type: 'revision' });
     });
 
     router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const allDocs = await this.documentService.getAllDocumentsMetadata(getDocumentsQueryFilter(req.user));
       const documents = await this.clientDataMapper.mapDocsOrRevisions(allDocs, req.user);
 
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'docs', { documents });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents });
     });
 
     router.get('/docs/:docKey', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
@@ -59,7 +60,7 @@ class DocumentController {
       }
 
       const documentRevisions = await this.clientDataMapper.mapDocsOrRevisions(revisions, req.user);
-      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'doc', { documentRevisions });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { documentRevisions });
     });
 
     router.get('/docs/:docKey/*', async (req, res) => {
@@ -70,7 +71,7 @@ class DocumentController {
       }
 
       const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
-      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'doc', { documentRevisions: [mappedDoc], type: 'document' });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { documentRevisions: [mappedDoc], type: 'document' });
     });
 
     router.get('/edit/doc/:docKey', needsPermission(permissions.EDIT_DOC), async (req, res) => {
@@ -95,13 +96,13 @@ class DocumentController {
 
       const [documentRevision, blueprintRevision] = await this.clientDataMapper.mapDocsOrRevisions([revision, blueprint], req.user);
       const proposedSections = blueprintRevision ? this.clientDataMapper.createProposedSections(blueprintRevision) : null;
-      return this.pageRenderer.sendPage(req, res, 'edit-bundle', 'edit-doc', { documentRevision, proposedSections });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.editDoc, { documentRevision, proposedSections });
     });
 
     router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
       const { query } = req.query;
       const docs = await this.documentService.getDocumentsByTags(urls.decodeUrl(query));
-      return this.pageRenderer.sendPage(req, res, 'view-bundle', 'search', { docs });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.search, { docs });
     });
   }
 

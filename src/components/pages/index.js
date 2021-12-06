@@ -1,4 +1,3 @@
-import Page from '../page.js';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
@@ -7,13 +6,14 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 
-function Index({ initialState }) {
+function Index({ PageTemplate, initialState }) {
   const [searchText, setSearchText] = useState('');
   const { t } = useTranslation('index');
 
@@ -42,8 +42,10 @@ function Index({ initialState }) {
 
   const languageNames = languageNameProvider.getData(language);
 
+  const alerts = useGlobalAlerts();
+
   return (
-    <Page fullScreen>
+    <PageTemplate alerts={alerts} fullScreen>
       <div className="IndexPage">
         <div className="IndexPage-title">
           <SiteLogo size="big" readonly />
@@ -84,11 +86,12 @@ function Index({ initialState }) {
         )}
         {doc && <DocView documentOrRevision={doc} />}
       </div>
-    </Page>
+    </PageTemplate>
   );
 }
 
 Index.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     document: documentShape,
     homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,

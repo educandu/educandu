@@ -1,40 +1,67 @@
 import React from 'react';
 import firstBy from 'thenby';
-import Page from '../page.js';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
-import { Table, Popover } from 'antd';
-import { ROLE } from '../../domain/role.js';
 import Logger from '../../common/logger.js';
+import { ROLE } from '../../domain/role.js';
+import { Table, Popover, Menu } from 'antd';
+import { withUser } from '../user-context.js';
 import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
+import { withPageName } from '../page-name-context.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
+import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../services/user-api-client.js';
-import { SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
-import { userShape, translationProps } from '../../ui/default-prop-types.js';
+import { userShape, translationProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
-const availableRoles = [
-  { name: ROLE.user, isReadonly: false },
-  { name: ROLE.admin, isReadonly: true }
-];
+const MenuItem = Menu.Item;
+
+const availableRoles = Object.values(ROLE);
+
+const TABS = {
+  internalUsers: 'internal-users',
+  externalUsers: 'external-users'
+};
+
+function splitInternalAndExternalUsers(allUsers) {
+  const internalUsers = [];
+  const externalUsers = [];
+  for (const user of allUsers) {
+    const matches = (/^external\/(.+)$/).exec(user.provider);
+    if (matches) {
+      externalUsers.push({
+        ...user,
+        importSource: matches[1]
+      });
+    } else {
+      internalUsers.push(user);
+    }
+  }
+
+  return { internalUsers, externalUsers };
+}
+
+function replaceUserById(users, newUser) {
+  return users.map(user => user._id === newUser._id ? newUser : user);
+}
 
 class Users extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
+
     this.state = {
-      users: props.initialState,
-      changedLockOutStates: {},
-      changedRoles: {},
-      isDirty: false
+      ...splitInternalAndExternalUsers(props.initialState),
+      currentTab: TABS.internalUsers,
+      isSaving: false
     };
 
-    this.columns = [
+    this.internalUserTableColumns = [
       {
         title: () => this.props.t('username'),
         dataIndex: 'username',
@@ -46,11 +73,6 @@ class Users extends React.Component {
         dataIndex: 'email',
         key: 'email',
         sorter: firstBy('email')
-      }, {
-        title: () => this.props.t('id'),
-        dataIndex: '_id',
-        key: '_id',
-        sorter: firstBy('_id')
       }, {
         title: () => this.props.t('expires'),
         dataIndex: 'expires',
@@ -67,6 +89,21 @@ class Users extends React.Component {
         dataIndex: 'roles',
         key: 'roles',
         render: this.renderRoleTags
+      }
+    ];
+
+    this.externalUserTableColumns = [
+      {
+        title: () => this.props.t('username'),
+        dataIndex: 'username',
+        key: 'username',
+        sorter: firstBy('username'),
+        render: this.renderUsername
+      }, {
+        title: () => this.props.t('importSource'),
+        dataIndex: 'importSource',
+        key: 'importSource',
+        sorter: firstBy('importSource')
       }
     ];
   }
@@ -121,128 +158,123 @@ class Users extends React.Component {
     return <b>{username}</b>;
   }
 
-  renderRoleTags(userRoles, user) {
-    return availableRoles.map(ar => {
+  renderRoleTags(_userRoles, user) {
+    return availableRoles.map(role => {
       return (
         <UserRoleTagEditor
-          key={ar.name}
+          key={role}
           user={user}
-          roleName={ar.name}
-          isReadonly={ar.isReadonly}
+          roleName={role}
           onRoleChange={this.handleRoleChange}
           />
       );
     });
   }
 
-  renderLockedOutState(lockedOut, user) {
+  renderLockedOutState(_lockedOut, user) {
     return <UserLockedOutStateEditor user={user} onLockedOutStateChange={this.handleLockedOutStateChange} />;
   }
 
-  handleRoleChange(user, newRoles) {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        users: prevState.users.map(usr => usr._id === user._id ? { ...user, roles: newRoles } : usr),
-        changedRoles: {
-          ...prevState.changedRoles,
-          [user._id]: newRoles
-        },
-        isDirty: true
-      };
-    });
+  handleTabClick(evt) {
+    this.setState({ currentTab: evt.key });
   }
 
-  handleLockedOutStateChange(user, newLockedOut) {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        users: prevState.users.map(usr => usr._id === user._id ? { ...user, lockedOut: newLockedOut } : usr),
-        changedLockOutStates: {
-          ...prevState.changedLockOutStates,
-          [user._id]: newLockedOut
-        },
-        isDirty: true
-      };
-    });
-  }
-
-  async handleSaveClick() {
+  async handleRoleChange(user, newRoles) {
     const { userApiClient, t } = this.props;
-    const { changedLockOutStates, changedRoles } = this.state;
+    const oldRoles = user.roles;
+
+    this.setState(prevState => ({
+      ...prevState,
+      internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: newRoles }),
+      isSaving: true
+    }));
 
     try {
-      for (const [userId, newLockedOut] of Object.entries(changedLockOutStates)) {
-        /* eslint-disable-next-line no-await-in-loop */
-        await userApiClient.saveUserLockedOutState({ userId, lockedOut: newLockedOut });
-      }
-
-      for (const [userId, newRoles] of Object.entries(changedRoles)) {
-        /* eslint-disable-next-line no-await-in-loop */
-        await userApiClient.saveUserRoles({ userId, roles: newRoles });
-      }
+      await userApiClient.saveUserRoles({ userId: user._id, roles: newRoles });
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
+      this.setState(prevState => ({
+        ...prevState,
+        internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: oldRoles })
+      }));
+    } finally {
+      this.setState({ isSaving: false });
     }
-
-    this.setState({
-      changedLockOutStates: {},
-      changedRoles: {},
-      isDirty: false
-    });
   }
 
-  async handleCancelClick() {
-    const { userApiClient } = this.props;
+  async handleLockedOutStateChange(user, newLockedOut) {
+    const { userApiClient, t } = this.props;
+    const oldLockedOut = user.lockedOut;
 
-    const { users } = await userApiClient.getUsers();
+    this.setState(prevState => ({
+      ...prevState,
+      internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: newLockedOut }),
+      isSaving: true
+    }));
 
-    this.setState({
-      users,
-      changedLockOutStates: {},
-      changedRoles: {},
-      isDirty: false
-    });
+    try {
+      await userApiClient.saveUserLockedOutState({ userId: user._id, lockedOut: newLockedOut });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      this.setState(prevState => ({
+        ...prevState,
+        internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: oldLockedOut })
+      }));
+    } finally {
+      this.setState({ isSaving: false });
+    }
   }
 
   render() {
-    const { t } = this.props;
-    const { users, isDirty } = this.state;
+    const { t, PageTemplate, pageName, user } = this.props;
+    const { internalUsers, externalUsers, isSaving, currentTab } = this.state;
 
-    const headerActions = [];
-    if (isDirty) {
-      headerActions.push({
-        key: 'save',
-        type: 'primary',
-        icon: SaveOutlined,
-        text: t('common:save'),
-        handleClick: this.handleSaveClick
-      });
-      headerActions.push({
-        key: 'close',
-        icon: CloseOutlined,
-        text: t('common:cancel'),
-        handleClick: this.handleCancelClick
-      });
-    }
+    const alerts = getGlobalAlerts(pageName, user);
 
     return (
-      <Page headerActions={headerActions}>
+      <PageTemplate alerts={alerts}>
         <div className="UsersPage">
           <h1>{t('pageNames:users')}</h1>
-          <Table dataSource={users} columns={this.columns} rowKey="_id" size="middle" bordered />
+          <Menu onClick={this.handleTabClick} selectedKeys={[currentTab]} mode="horizontal" disabled={isSaving}>
+            <MenuItem key={TABS.internalUsers}>{t('internalUsers')}</MenuItem>
+            <MenuItem key={TABS.externalUsers}>{t('externalUsers')}</MenuItem>
+          </Menu>
+          <br />
+          <br />
+          {currentTab === TABS.internalUsers && (
+            <Table
+              dataSource={internalUsers}
+              columns={this.internalUserTableColumns}
+              rowKey="_id"
+              size="middle"
+              loading={isSaving}
+              bordered
+              />
+          )}
+          {currentTab === TABS.externalUsers && (
+            <Table
+              dataSource={externalUsers}
+              columns={this.externalUserTableColumns}
+              rowKey="_id"
+              size="middle"
+              bordered
+              />
+          )}
         </div>
-      </Page>
+      </PageTemplate>
     );
   }
 }
 
 Users.propTypes = {
+  PageTemplate: PropTypes.func.isRequired,
   ...translationProps,
+  ...userProps,
+  ...pageNameProps,
   initialState: PropTypes.arrayOf(userShape).isRequired,
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('users')(inject({
+export default withTranslation('users')(withPageName(withUser(inject({
   userApiClient: UserApiClient
-}, Users));
+}, Users))));
