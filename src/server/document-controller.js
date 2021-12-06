@@ -54,13 +54,8 @@ class DocumentController {
     });
 
     router.get('/docs/:docKey', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
-      const revisions = await this.documentService.getAllDocumentRevisionsByKey(req.params.docKey);
-      if (!revisions.length) {
-        throw new NotFound();
-      }
-
-      const documentRevisions = await this.clientDataMapper.mapDocsOrRevisions(revisions, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { documentRevisions });
+      const doc = await this.documentService.getDocumentByKey(req.params.docKey);
+      return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
     });
 
     router.get('/docs/:docKey/*', async (req, res) => {
