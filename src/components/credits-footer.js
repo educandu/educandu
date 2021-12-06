@@ -26,7 +26,7 @@ function renderRevisionAuthor(revision, t) {
   return <span><b>{t('revisionBy')}:</b> {renderUser(revision.createdBy)}</span>;
 }
 
-function CreditsFooter({ documentOrRevision, type }) {
+function CreditsFooter({ documentOrRevision }) {
   const request = useRequest();
   const { t } = useTranslation('creditsFooter');
   const { formatDate } = useDateFormat();
@@ -42,15 +42,14 @@ function CreditsFooter({ documentOrRevision, type }) {
         <br />
         <b>{t('source')}:</b> <i>{currentHost}</i>, {citation}
         <br />
-        {type === 'document' ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
+        {documentOrRevision.contributors ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
       </p>
     </div>
   );
 }
 
 CreditsFooter.propTypes = {
-  documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]).isRequired,
-  type: PropTypes.oneOf(['document', 'revision']).isRequired
+  documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]).isRequired
 };
 
 export default CreditsFooter;
