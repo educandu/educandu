@@ -11,7 +11,6 @@ export const PAGE_NAME = {
   settings: 'settings',
   doc: 'doc',
   index: 'index',
-  article: 'article',
   search: 'search',
   importBatchCreation: 'import-batch-creation',
   importBatchView: 'import-batch-view',
