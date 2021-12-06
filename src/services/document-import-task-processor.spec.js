@@ -5,7 +5,6 @@ import UserService from './user-service.js';
 import DocumentService from './document-service.js';
 import ExportApiClient from './export-api-client.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
@@ -21,7 +20,6 @@ describe('document-import-task-processor', () => {
   let importSource;
   let documentService;
   let exportApiClient;
-  let documentLockStore;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -30,7 +28,6 @@ describe('document-import-task-processor', () => {
     exportApiClient = container.get(ExportApiClient);
     userService = container.get(UserService);
     cdn = container.get(Cdn);
-    documentLockStore = container.get(DocumentLockStore);
     documentService = container.get(DocumentService);
 
     sut = container.get(DocumentImportTaskProcessor);
@@ -47,10 +44,8 @@ describe('document-import-task-processor', () => {
     sandbox.stub(userService, 'getUserById');
     sandbox.stub(userService, 'ensureExternalUser');
     sandbox.stub(cdn, 'uploadObjectFromUrl');
-    sandbox.stub(documentLockStore, 'takeLock').resolves('lock');
-    sandbox.stub(documentLockStore, 'releaseLock').resolves();
     sandbox.stub(documentService, 'getCurrentDocumentRevisionByKey');
-    sandbox.stub(documentService, 'copyDocumentRevision');
+    sandbox.stub(documentService, 'copyDocumentRevisions');
   });
 
   afterEach(async () => {
@@ -62,6 +57,9 @@ describe('document-import-task-processor', () => {
     let ctx;
     let task;
     let batchParams;
+    let revision1;
+    let revision2;
+    let revision3;
     let revisionsToImport;
 
     describe('a task to import a new document', () => {
@@ -73,12 +71,12 @@ describe('document-import-task-processor', () => {
         task = {
           taskParams: {
             key: 'key',
-            importedRevision: 0,
+            importedRevision: null,
             importableRevision: 'rev-2'
           }
         };
         batchParams = { hostName: 'host.name' };
-        const revision1 = {
+        revision1 = {
           _id: 'rev-1',
           key: 'key',
           createdBy: users[0]._id,
@@ -86,7 +84,7 @@ describe('document-import-task-processor', () => {
           sections: [],
           cdnResources: ['resource-1']
         };
-        const revision2 = {
+        revision2 = {
           _id: 'rev-2',
           key: 'key',
           createdBy: users[1]._id,
@@ -104,10 +102,8 @@ describe('document-import-task-processor', () => {
 
         cdn.uploadObjectFromUrl.resolves();
 
-        documentService.getCurrentDocumentRevisionByKey.onCall(0).resolves(null);
-        documentService.getCurrentDocumentRevisionByKey.onCall(1).resolves(revision1);
-
-        documentService.copyDocumentRevision.resolves();
+        documentService.copyDocumentRevisions.onCall(0).resolves(revision1);
+        documentService.copyDocumentRevisions.onCall(1).resolves(revision2);
 
         await sut.process(task, batchParams, ctx);
       });
@@ -143,54 +139,13 @@ describe('document-import-task-processor', () => {
         sinon.assert.calledWith(cdn.uploadObjectFromUrl.secondCall, 'resource-2', 'https://cdn.root.url/resource-2');
       });
 
-      it('should call documentLockStore.takeLock', () => {
-        sinon.assert.calledWith(documentLockStore.takeLock, 'key');
-      });
-
-      it('should call documentService.copyDocumentRevision for each mapped revision, sorted by order', () => {
-        sinon.assert.calledWith(documentService.copyDocumentRevision.firstCall, {
-          doc: {
-            _id: 'rev-1',
-            key: 'key',
-            createdBy: users[0]._id,
-            order: 1,
-            sections: [],
-            cdnResources: ['resource-1'],
-            origin: 'external/host.name',
-            originUrl: 'https://host.name/docs/key',
-            appendTo: null
-          },
-          user: users[0],
-          transaction: {
-            lock: 'lock',
-            session: sinon.match.any
-          }
+      it('should call documentService.copyDocumentRevisions', () => {
+        sinon.assert.calledWith(documentService.copyDocumentRevisions, {
+          revisions: [revision1, revision2],
+          ancestorId: null,
+          origin: 'external/host.name',
+          originUrl: 'https://host.name/docs/key'
         });
-        sinon.assert.calledWith(documentService.copyDocumentRevision.secondCall, {
-          doc: {
-            _id: 'rev-2',
-            key: 'key',
-            createdBy: users[1]._id,
-            order: 2,
-            sections: [],
-            cdnResources: ['resource-2'],
-            origin: 'external/host.name',
-            originUrl: 'https://host.name/docs/key',
-            appendTo: {
-              key: 'key',
-              ancestorId: 'rev-1'
-            }
-          },
-          user: users[1],
-          transaction: {
-            lock: 'lock',
-            session: sinon.match.any
-          }
-        });
-      });
-
-      it('should call documentLockStore.releaseLock', () => {
-        sinon.assert.called(documentLockStore.releaseLock);
       });
     });
 
@@ -208,11 +163,11 @@ describe('document-import-task-processor', () => {
           }
         };
         batchParams = { hostName: 'host.name' };
-        const revision1 = {
+        revision1 = {
           _id: 'rev-1',
           key: 'key'
         };
-        const revision2 = {
+        revision2 = {
           _id: 'rev-2',
           key: 'key',
           createdBy: users[0]._id,
@@ -220,7 +175,7 @@ describe('document-import-task-processor', () => {
           sections: [],
           cdnResources: ['resource-2']
         };
-        const revision3 = {
+        revision3 = {
           _id: 'rev-3',
           key: 'key',
           createdBy: users[1]._id,
@@ -239,9 +194,9 @@ describe('document-import-task-processor', () => {
         cdn.uploadObjectFromUrl.resolves();
 
         documentService.getCurrentDocumentRevisionByKey.onCall(0).resolves(revision1);
-        documentService.getCurrentDocumentRevisionByKey.onCall(1).resolves(revision2);
 
-        documentService.copyDocumentRevision.resolves();
+        documentService.copyDocumentRevisions.onCall(0).resolves(revision2);
+        documentService.copyDocumentRevisions.onCall(1).resolves(revision3);
 
         await sut.process(task, batchParams, ctx);
       });
@@ -277,135 +232,15 @@ describe('document-import-task-processor', () => {
         sinon.assert.calledWith(cdn.uploadObjectFromUrl.secondCall, 'resource-3', 'https://cdn.root.url/resource-3');
       });
 
-      it('should call documentLockStore.takeLock', () => {
-        sinon.assert.calledWith(documentLockStore.takeLock, 'key');
-      });
-
-      it('should call documentService.copyDocumentRevision for each mapped revision, sorted by order', () => {
-        sinon.assert.calledWith(documentService.copyDocumentRevision.firstCall, {
-          doc: {
-            _id: 'rev-2',
-            key: 'key',
-            createdBy: users[0]._id,
-            order: 2,
-            sections: [],
-            cdnResources: ['resource-2'],
-            origin: 'external/host.name',
-            originUrl: 'https://host.name/docs/key',
-            appendTo: {
-              key: 'key',
-              ancestorId: 'rev-1'
-            }
-          },
-          user: users[0],
-          transaction: {
-            lock: 'lock',
-            session: sinon.match.any
-          }
-        });
-        sinon.assert.calledWith(documentService.copyDocumentRevision.secondCall, {
-          doc: {
-            _id: 'rev-3',
-            key: 'key',
-            createdBy: users[1]._id,
-            order: 3,
-            sections: [],
-            cdnResources: ['resource-3'],
-            origin: 'external/host.name',
-            originUrl: 'https://host.name/docs/key',
-            appendTo: {
-              key: 'key',
-              ancestorId: 'rev-2'
-            }
-          },
-          user: users[1],
-          transaction: {
-            lock: 'lock',
-            session: sinon.match.any
-          }
+      it('should call documentService.copyDocumentRevisions', () => {
+        sinon.assert.calledWith(documentService.copyDocumentRevisions, {
+          revisions: [revision2, revision3],
+          ancestorId: 'rev-1',
+          origin: 'external/host.name',
+          originUrl: 'https://host.name/docs/key'
         });
       });
 
-      it('should call documentLockStore.releaseLock', () => {
-        sinon.assert.called(documentLockStore.releaseLock);
-      });
-    });
-
-    describe('a task to update an already imported document, that meantime has a different last revision', () => {
-      let result;
-
-      beforeEach(async () => {
-        users = [{ _id: 'user-id-1', username: 'username1' }];
-        task = {
-          taskParams: {
-            key: 'key',
-            importedRevision: 'rev-1',
-            importableRevision: 'rev-2'
-          }
-        };
-        batchParams = { hostName: 'host.name' };
-        const revisionX = {
-          _id: 'rev-x',
-          key: 'key'
-        };
-        const revision2 = {
-          _id: 'rev-2',
-          key: 'key',
-          createdBy: users[0]._id,
-          order: 2,
-          sections: [],
-          cdnResources: ['resource-1', 'resource-2']
-        };
-        revisionsToImport = [revision2];
-        ctx = { cancellationRequested: false };
-
-        exportApiClient.getDocumentExport.resolves({ revisions: revisionsToImport, users, cdnRootUrl: 'https://cdn.root.url' });
-
-        userService.getUserById.resolves(users[0]);
-        cdn.uploadObjectFromUrl.resolves();
-
-        documentService.getCurrentDocumentRevisionByKey.resolves(revisionX);
-
-        try {
-          await sut.process(task, batchParams, ctx);
-        } catch (error) {
-          result = error;
-        }
-      });
-
-      it('should call exportApiClient.getDocumentExport', () => {
-        sinon.assert.calledWith(exportApiClient.getDocumentExport, {
-          baseUrl: 'https://host.name',
-          apiKey: importSource.apiKey,
-          documentKey: task.taskParams.key,
-          afterRevision: task.taskParams.importedRevision,
-          toRevision: task.taskParams.importableRevision
-        });
-      });
-
-      it('should call userService.ensureExternalUser', () => {
-        sinon.assert.calledWith(userService.ensureExternalUser, {
-          _id: users[0]._id,
-          username: users[0].username,
-          hostName: batchParams.hostName
-        });
-      });
-
-      it('should call documentLockStore.takeLock', () => {
-        sinon.assert.calledWith(documentLockStore.takeLock, 'key');
-      });
-
-      it('should throw due to missmatch of expected previous revision', () => {
-        expect(result?.message).toBe('Import of document \'key\' expected to find revision \'rev-1\' as the latest revision but found revision \'rev-x\'');
-      });
-
-      it('should not call documentService.copyDocumentRevision', () => {
-        sinon.assert.notCalled(documentService.copyDocumentRevision);
-      });
-
-      it('should call documentLockStore.releaseLock', () => {
-        sinon.assert.called(documentLockStore.releaseLock);
-      });
     });
 
   });

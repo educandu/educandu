@@ -233,195 +233,186 @@ describe('document-service', () => {
     });
   });
 
-  describe('copyDocumentRevision', () => {
-    let result;
-    let revision;
+  describe('copyDocumentRevisions', () => {
+    let revisions;
+    const documentKey = 'FDSGSFDG4D2443';
 
     beforeEach(() => {
-      result = null;
-      revision = {
-        _id: uniqueId.create(),
-        key: uniqueId.create(),
-        title: 'Title',
-        slug: 'my-doc',
-        namespace: 'articles',
-        language: 'en',
-        sections: [
-          {
-            revision: uniqueId.create(),
-            key: uniqueId.create(),
-            type: 'image',
-            content: {
-              sourceType: IMAGE_SOURCE_TYPE.internal,
-              sourceUrl: 'media/image-1.png',
-              effect: {
-                sourceType: IMAGE_SOURCE_TYPE.internal,
-                sourceUrl: 'media/image-2.png'
+      revisions = [
+        {
+          _id: uniqueId.create(),
+          key: documentKey,
+          title: 'Title 1',
+          slug: 'my-doc-1',
+          namespace: 'articles',
+          language: 'en',
+          createdBy: 'user-1',
+          sections: [
+            {
+              key: uniqueId.create(),
+              type: 'video',
+              content: {
+                type: VIDEO_SOURCE_TYPE.internal,
+                url: 'media/video-1.mp4'
               }
             }
-          },
-          {
-            revision: uniqueId.create(),
-            key: uniqueId.create(),
-            type: 'video',
-            content: {
-              type: VIDEO_SOURCE_TYPE.internal,
-              url: 'media/video-1.mp4'
+          ],
+          tags: ['tag-1']
+        },
+        {
+          _id: uniqueId.create(),
+          key: documentKey,
+          title: 'Title 2',
+          slug: 'my-doc-2',
+          namespace: 'articles',
+          language: 'en',
+          createdBy: 'user-1',
+          sections: [
+            {
+              key: uniqueId.create(),
+              type: 'video',
+              content: {
+                type: VIDEO_SOURCE_TYPE.internal,
+                url: 'media/video-1.mp4'
+              }
             }
-          }
-        ],
-        tags: ['tag-1'],
-        origin: `${DOCUMENT_ORIGIN.external}/host.name`
-      };
+          ],
+          tags: ['tag-2']
+        }
+      ];
     });
 
     describe('when it is the first revision', () => {
       let createdDocument;
 
       beforeEach(async () => {
-        result = await sut.copyDocumentRevision({ doc: revision, user });
-        createdDocument = await db.documents.findOne({ key: result.key });
+        await sut.copyDocumentRevisions({ revisions, ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        createdDocument = await db.documents.findOne({ key: documentKey });
       });
 
-      it('creates a revision with the given _id', () => {
-        expect(result._id).toBe(revision._id);
-      });
-
-      it('saves the revision', () => {
-        expect(result).toMatchObject({
-          ...revision,
-          createdOn: now,
-          createdBy: user._id,
-          order: 1,
-          restoredFrom: '',
-          archived: false
-        });
-      });
-
-      it('preservers the keys and revisions of the sections', () => {
-        result.sections.forEach((section, index) => {
-          expect(section.revision).toMatch(/\w+/);
-          expect(section.revision).toEqual(revision.sections[index].revision);
-        });
-      });
-
-      it('saves all referenced cdn resources with the revision', () => {
-        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+      it('creates the revisions', async () => {
+        const createdRevisions = await db.documentRevisions.find({ key: documentKey }).toArray();
+        expect(createdRevisions).toEqual([
+          {
+            ...revisions[0],
+            order: 1,
+            createdOn: now,
+            origin: 'external/origin.url',
+            originUrl: 'https://origin.url',
+            restoredFrom: '',
+            archived: false,
+            cdnResources: ['media/video-1.mp4']
+          },
+          {
+            ...revisions[1],
+            order: 2,
+            createdOn: now,
+            origin: 'external/origin.url',
+            originUrl: 'https://origin.url',
+            restoredFrom: '',
+            archived: false,
+            cdnResources: ['media/video-1.mp4']
+          }
+        ]);
       });
 
       it('creates a document with the given key', () => {
-        expect(result.key).toBe(revision.key);
+        expect(createdDocument.key).toBe(documentKey);
       });
 
-      it('saves the revision data onto the document', () => {
+      it('saves the last revision data onto the document', () => {
         expect(createdDocument).toMatchObject({
-          ...revision,
-          _id: revision.key,
-          revision: result._id,
+          ...revisions[1],
+          _id: documentKey,
+          revision: revisions[1]._id,
           createdOn: now,
-          createdBy: user._id,
+          createdBy: revisions[1].createdBy,
           updatedOn: now,
-          updatedBy: user._id,
-          order: 1,
+          updatedBy: revisions[1].createdBy,
+          order: 2,
           archived: false,
-          contributors: [user._id]
+          contributors: [revisions[1].createdBy],
+          cdnResources: ['media/video-1.mp4']
         });
-      });
-
-      it('saves all referenced cdn resources with the document', () => {
-        expect(createdDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
       });
     });
 
     describe('when it is the second revision', () => {
       let secondTick;
-      let secondUser;
-      let secondRevision;
       let updatedDocument;
 
       beforeEach(async () => {
-        const firstRevision = { ...revision };
-        await sut.copyDocumentRevision({ doc: firstRevision, user });
-
-        secondUser = await setupTestUser(container);
-
-        secondRevision = {
-          ...firstRevision,
-          _id: uniqueId.create(),
-          title: 'Title 2',
-          slug: 'my-doc-2',
-          language: 'de',
-          sections: [
-            ...firstRevision.sections,
-            {
-              revision: uniqueId.create(),
-              key: uniqueId.create(),
-              type: 'video',
-              content: {
-                type: VIDEO_SOURCE_TYPE.internal,
-                url: 'media/video-2.mp4'
-              }
-            }
-          ],
-          appendTo: {
-            key: firstRevision.key,
-            ancestorId: firstRevision._id
-          }
-        };
+        await sut.copyDocumentRevisions({ revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
 
         secondTick = new Date(sandbox.clock.tick(1000));
 
-        result = await sut.copyDocumentRevision({ doc: secondRevision, user: secondUser });
-        updatedDocument = await db.documents.findOne({ key: firstRevision.key });
+        await sut.copyDocumentRevisions({ revisions: [revisions[1]], ancestorId: revisions[0]._id, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        updatedDocument = await db.documents.findOne({ key: documentKey });
       });
 
-      it('creates a revision with the given _id', () => {
-        expect(result._id).toBe(secondRevision._id);
+      it('creates the revisions', async () => {
+        const createdRevisions = await db.documentRevisions.find({ key: documentKey }).toArray();
+        expect(createdRevisions).toEqual([
+          {
+            ...revisions[0],
+            order: 1,
+            createdOn: now,
+            origin: 'external/origin.url',
+            originUrl: 'https://origin.url',
+            restoredFrom: '',
+            archived: false,
+            cdnResources: ['media/video-1.mp4']
+          },
+          {
+            ...revisions[1],
+            order: 2,
+            createdOn: secondTick,
+            origin: 'external/origin.url',
+            originUrl: 'https://origin.url',
+            restoredFrom: '',
+            archived: false,
+            cdnResources: ['media/video-1.mp4']
+          }
+        ]);
       });
 
-      it('saves the second revision', () => {
-        const expectedResult = {
-          ...secondRevision,
-          createdOn: secondTick,
-          createdBy: secondUser._id,
-          order: 2,
-          restoredFrom: '',
-          archived: false
-        };
-        delete expectedResult.appendTo;
-        expect(result).toMatchObject(expectedResult);
+      it('creates a document with the given key', () => {
+        expect(updatedDocument.key).toBe(documentKey);
       });
 
-      it('preservers the keys and revisions of the sections', () => {
-        result.sections.forEach((section, index) => {
-          expect(section.revision).toMatch(/\w+/);
-          expect(section.revision).toEqual(secondRevision.sections[index].revision);
-        });
-      });
-
-      it('saves all referenced cdn resources with the revision', () => {
-        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
-      });
-
-      it('saves the second revision data onto the document', () => {
-        const expectedResult = {
-          ...secondRevision,
-          _id: revision.key,
-          revision: result._id,
+      it('saves the last revision data onto the document', () => {
+        expect(updatedDocument).toMatchObject({
+          ...revisions[1],
+          _id: documentKey,
+          revision: revisions[1]._id,
           createdOn: now,
-          createdBy: user._id,
+          createdBy: revisions[1].createdBy,
           updatedOn: secondTick,
-          updatedBy: secondUser._id,
+          updatedBy: revisions[1].createdBy,
           order: 2,
           archived: false,
-          contributors: [user._id, secondUser._id]
-        };
-        delete expectedResult.appendTo;
-        expect(updatedDocument).toMatchObject(expectedResult);
+          contributors: [revisions[1].createdBy],
+          cdnResources: ['media/video-1.mp4']
+        });
+      });
+    });
+
+    describe('when the ancestorId does not match the last revision', () => {
+      let result;
+      const expectedAncestorId = uniqueId.create();
+
+      beforeEach(async () => {
+        await sut.copyDocumentRevisions({ revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+
+        try {
+          await sut.copyDocumentRevisions({ revisions: [revisions[1]], ancestorId: expectedAncestorId, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        } catch (error) {
+          result = error;
+        }
       });
 
-      it('saves all referenced cdn resources with the document', () => {
-        expect(updatedDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+      it('throws', () => {
+        expect(result?.message).toBe(`Import of document '${documentKey}' expected to find revision '${expectedAncestorId}' as the latest revision but found revision '${revisions[0]._id}'`);
       });
     });
   });

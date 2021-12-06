@@ -33,6 +33,10 @@ class Cdn {
     return buffer.toString(encoding);
   }
 
+  objectExists(objectName) {
+    return this.s3Client.objectExists(this.bucketName, objectName);
+  }
+
   uploadObject(objectName, filePath, metadata) {
     const defaultMetadata = this._getDefaultMetadata();
     const stream = fs.createReadStream(filePath);

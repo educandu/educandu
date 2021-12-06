@@ -1,28 +1,27 @@
 /* eslint-disable no-await-in-loop */
 import by from 'thenby';
 import Cdn from '../repositories/cdn.js';
+import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import DocumentService from './document-service.js';
 import ExportApiClient from './export-api-client.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
-import TransactionRunner from '../stores/transaction-runner.js';
-import DocumentLockStore from '../stores/document-lock-store.js';
 import { getDocUrl, getImportSourceBaseUrl } from '../utils/urls.js';
+
+const logger = new Logger(import.meta.url);
 
 class DocumentImportTaskProcessor {
   static get inject() {
-    return [ServerConfig, ExportApiClient, UserService, Cdn, DocumentLockStore, DocumentService, TransactionRunner];
+    return [ServerConfig, ExportApiClient, UserService, Cdn, DocumentService];
   }
 
-  constructor(serverConfig, exportApiClient, userService, cdn, documentLockStore, documentService, transactionRunner) {
+  constructor(serverConfig, exportApiClient, userService, cdn, documentService) {
     this.serverConfig = serverConfig;
     this.exportApiClient = exportApiClient;
     this.userService = userService;
     this.cdn = cdn;
-    this.documentLockStore = documentLockStore;
     this.documentService = documentService;
-    this.transactionRunner = transactionRunner;
   }
 
   async process(task, batchParams, ctx) {
@@ -52,52 +51,26 @@ class DocumentImportTaskProcessor {
     const allCdnResources = new Set(sortedRevisions.map(revision => revision.cdnResources).flat());
 
     for (const cdnResource of allCdnResources) {
-      const url = `${documentExport.cdnRootUrl}/${cdnResource}`;
-      await this.cdn.uploadObjectFromUrl(cdnResource, url);
+      if (await this.cdn.objectExists(cdnResource)) {
+        logger.info(`CDN resource '${cdnResource}' already exists, skipping upload`);
+      } else {
+        logger.info(`Uploading CDN resource '${cdnResource}'`);
+        const url = `${documentExport.cdnRootUrl}/${cdnResource}`;
+        await this.cdn.uploadObjectFromUrl(cdnResource, url);
+      }
 
       if (ctx.cancellationRequested) {
         throw new Error('Cancellation requested');
       }
     }
 
-    let lock;
-    try {
-      lock = await this.documentLockStore.takeLock(key);
+    const docUrl = getDocUrl(sortedRevisions[0].key);
+    const baseUrl = getImportSourceBaseUrl(importSource);
 
-      await this.transactionRunner.run(async session => {
-        for (const [index, revision] of sortedRevisions.entries()) {
-          const previousRevision = await this.documentService.getCurrentDocumentRevisionByKey(revision.key);
+    const originUrl = `${baseUrl}${docUrl}`;
+    const origin = `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`;
 
-          if (index === 0 && importedRevision && previousRevision?._id !== importedRevision) {
-            throw new Error(`Import of document '${key}' expected to find revision '${importedRevision}' as the latest revision but found revision '${previousRevision?._id}'`);
-          }
-
-          const user = await this.userService.getUserById(revision.createdBy);
-          const baseUrl = getImportSourceBaseUrl(importSource);
-          const docUrl = getDocUrl(revision.key);
-
-          const mappedRevision = {
-            ...revision,
-            origin: `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`,
-            originUrl: `${baseUrl}${docUrl}`,
-            appendTo: previousRevision
-              ? {
-                key: revision.key,
-                ancestorId: previousRevision._id
-              }
-              : null
-          };
-
-          const transaction = { session, lock };
-          await this.documentService.copyDocumentRevision({ doc: mappedRevision, user, transaction });
-        }
-      });
-
-    } finally {
-      if (lock) {
-        await this.documentLockStore.releaseLock(lock);
-      }
-    }
+    await this.documentService.copyDocumentRevisions({ revisions: sortedRevisions, ancestorId: importedRevision, origin, originUrl });
   }
 }
 

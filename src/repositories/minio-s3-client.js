@@ -55,6 +55,18 @@ class MinioS3Client {
     return readAllStream(stream);
   }
 
+  async objectExists(bucketName, objectName) {
+    try {
+      await this.tasks.push(cb => this.minioClient.statObject(bucketName, objectName, cb), PRIORITY_DOWNLOAD);
+      return true;
+    } catch (error) {
+      if (error.code === 'NotFound') {
+        return false;
+      }
+      throw error;
+    }
+  }
+
   async deleteObject(bucketName, objectName) {
     await this.tasks.push(cb => this.minioClient.removeObject(bucketName, objectName, cb), PRIORITY_UPLOAD);
   }
