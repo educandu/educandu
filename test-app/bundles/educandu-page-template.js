@@ -166,7 +166,7 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
         <div className="EducanduPageTemplate-footerContent">
           {(settings?.footerLinks?.[language] || []).map((fl, index) => (
             <span key={index.toString()} className="EducanduPageTemplate-footerLink">
-              <a href={urls.getArticleUrl(fl.documentSlug)}>{fl.linkTitle}</a>
+              <a href={urls.getArticleUrl(fl.documentKey, fl.documentSlug)}>{fl.linkTitle}</a>
             </span>
           ))}
         </div>
