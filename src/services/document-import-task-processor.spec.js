@@ -1,8 +1,5 @@
 import sinon from 'sinon';
-<<<<<<< HEAD
 import Cdn from '../repositories/cdn.js';
-=======
->>>>>>> 104a79b (EDU-139 Change import processor unit tests to (partial) integration tests)
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import ExportApiClient from './export-api-client.js';
@@ -16,10 +13,7 @@ describe('document-import-task-processor', () => {
 
   let db;
   let sut;
-<<<<<<< HEAD
   let cdn;
-=======
->>>>>>> 104a79b (EDU-139 Change import processor unit tests to (partial) integration tests)
   let container;
   let serverConfig;
   let importSource;
@@ -28,10 +22,7 @@ describe('document-import-task-processor', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
 
-<<<<<<< HEAD
     cdn = container.get(Cdn);
-=======
->>>>>>> 104a79b (EDU-139 Change import processor unit tests to (partial) integration tests)
     db = container.get(Database);
     serverConfig = container.get(ServerConfig);
     exportApiClient = container.get(ExportApiClient);
