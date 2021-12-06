@@ -25,7 +25,6 @@ import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/ico
 import { documentRevisionShape, translationProps, languageProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
-const handleBackClick = () => window.history.back();
 
 class Doc extends React.Component {
   constructor(props) {
@@ -207,11 +206,6 @@ class Doc extends React.Component {
 
     return (
       <PageTemplate headerActions={headerActions} alerts={alerts}>
-        {type === 'document' && (
-          <aside className="Content">
-            <a onClick={handleBackClick}>{t('common:back')}</a>
-          </aside>
-        )}
         <div className="DocPage">
           { type !== 'document' && revisionPicker}
           <DocView

@@ -310,7 +310,7 @@ class EditDoc extends React.Component {
 
   handleBackClick() {
     const { editedDocumentRevision } = this.state;
-    window.location = urls.getDocUrl(editedDocumentRevision.key);
+    window.location = urls.getArticleUrl(editedDocumentRevision.key, editedDocumentRevision.slug);
   }
 
   handleDragEnd({ source, destination }) {

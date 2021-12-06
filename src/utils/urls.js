@@ -40,10 +40,6 @@ export function getDocsUrl() {
   return docsPath;
 }
 
-export function getDocUrl(docKey) {
-  return concatParts(docsPrefix, docKey);
-}
-
 export function getEditDocUrl(docKey, blueprintKey = null) {
   const url = concatParts(editDocPrefix, docKey);
   return blueprintKey ? `${url}?blueprintKey=${urlencode(blueprintKey)}` : url;
@@ -174,7 +170,6 @@ export default {
   removeLeadingSlash,
   concatParts,
   getDocsUrl,
-  getDocUrl,
   getEditDocUrl,
   getUsersUrl,
   getArticleUrl,

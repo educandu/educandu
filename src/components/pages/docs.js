@@ -177,7 +177,7 @@ class Docs extends React.Component {
   }
 
   renderTitle(_value, doc) {
-    return <a href={urls.getDocUrl(doc.key)}>{doc.title}</a>;
+    return <a href={urls.getArticleUrl(doc.key, doc.slug)}>{doc.title}</a>;
   }
 
   renderSlug(_value, doc) {
