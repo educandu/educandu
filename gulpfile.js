@@ -10,6 +10,8 @@ import less from 'gulp-less';
 import csso from 'gulp-csso';
 import gulpif from 'gulp-if';
 import esbuild from 'esbuild';
+import { Umzug } from 'umzug';
+import inquirer from 'inquirer';
 import eslint from 'gulp-eslint';
 import { promisify } from 'util';
 import plumber from 'gulp-plumber';
@@ -17,9 +19,11 @@ import superagent from 'superagent';
 import { promises as fs } from 'fs';
 import Graceful from 'node-graceful';
 import { spawn } from 'child_process';
+import { MongoClient } from 'mongodb';
 import { Docker } from 'docker-cli-js';
 import sourcemaps from 'gulp-sourcemaps';
 import { Client as MinioClient } from 'minio';
+
 import LessAutoprefix from 'less-plugin-autoprefix';
 
 const ROOT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
@@ -381,6 +385,69 @@ export function restartServer(done) {
   } else {
     startTestApp({ skipMigrationsAndChecks: true });
     done();
+  }
+}
+
+export async function migrate() {
+  const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*\.js$/;
+
+  const migrationFiles = await promisify(glob)('migrations/manual/*.js');
+  const migrationChoices = migrationFiles
+    .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
+    .sort()
+    .map(fileName => ({
+      name: path.basename(fileName, '.js'),
+      value: path.resolve(fileName)
+    }));
+
+  const { connectionString, migrationsToRun } = await inquirer.prompt([
+    {
+      message: 'Connection string:',
+      name: 'connectionString',
+      type: 'input',
+      filter: s => (s || '').trim(),
+      validate: s => !s || !s.trim() ? 'Please provide a value' : true
+    },
+    {
+      message: 'Migrations to run:',
+      name: 'migrationsToRun',
+      type: 'checkbox',
+      choices: migrationChoices
+    }
+  ]);
+
+  if (!migrationsToRun.length) {
+    console.log('No migration selected, quitting');
+    return;
+  }
+
+  console.log(`Running ${migrationsToRun.length} ${migrationsToRun.length === 1 ? 'migration' : 'migrations'}`);
+
+  const mongoClient = await MongoClient.connect(connectionString, { useUnifiedTopology: true });
+
+  const migrations = await Promise.all(migrationsToRun.map(async filePath => {
+    const Migration = (await import(url.pathToFileURL(filePath).href)).default;
+    const instance = new Migration(mongoClient.db(), mongoClient);
+    instance.name = path.basename(filePath, '.js');
+    return instance;
+  }));
+
+  const umzug = new Umzug({
+    migrations,
+    storage: {
+      logMigration: () => {},
+      unlogMigration: () => {},
+      executed: () => []
+    },
+    logger: console
+  });
+
+  umzug.on('migrated', ({ name }) => console.log(`Finished migrating ${name}`));
+
+  try {
+    await umzug.up();
+  } finally {
+    await mongoClient.close();
   }
 }
 
