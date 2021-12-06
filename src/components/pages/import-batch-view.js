@@ -25,13 +25,13 @@ function ImportBatchView({ initialState }) {
 
   const [batch, setBatch] = useState(initialState.batch);
 
-  const { _id: id, progress: batchProgres } = batch;
+  const { _id: id, progress: batchProgress } = batch;
   const { hostName, allowUnsecure } = batch.batchParams;
 
   useEffect(() => {
     let nextTimeout = null;
     const getUpdate = async () => {
-      if (batchProgres === 1) {
+      if (batchProgress === 1) {
         return;
       }
 
@@ -51,7 +51,7 @@ function ImportBatchView({ initialState }) {
         clearTimeout(nextTimeout);
       }
     };
-  }, [t, importApiClient, id, batchProgres]);
+  }, [t, importApiClient, id, batchProgress]);
 
   const renderTaskStatus = (processed, task) => {
     if (!processed) {
