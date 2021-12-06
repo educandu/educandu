@@ -101,7 +101,7 @@ class DocumentController {
 
     router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
       const { query } = req.query;
-      const docs = await this.documentService.getDocumentsByTags(urls.decodeUrl(query));
+      const docs = await this.documentService.getDocumentsByTags(decodeURIComponent(query));
       return this.pageRenderer.sendPage(req, res, PAGE_NAME.search, { docs });
     });
   }

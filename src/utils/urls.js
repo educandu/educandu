@@ -1,5 +1,3 @@
-import urlencode from 'urlencode';
-
 export const homePath = '/';
 export const docsPath = '/docs';
 export const usersPath = '/users';
@@ -34,7 +32,7 @@ function concatParts(...parts) {
 }
 
 export function createRedirectUrl(path, redirect) {
-  return `${path}?redirect=${urlencode(redirect)}`;
+  return `${path}?redirect=${encodeURIComponent(redirect)}`;
 }
 
 export function getDocsUrl() {
@@ -47,7 +45,7 @@ export function getDocUrl(docKey) {
 
 export function getEditDocUrl(docKey, blueprintKey = null) {
   const url = concatParts(editDocPrefix, docKey);
-  return blueprintKey ? `${url}?blueprintKey=${urlencode(blueprintKey)}` : url;
+  return blueprintKey ? `${url}?blueprintKey=${encodeURIComponent(blueprintKey)}` : url;
 }
 
 export function getUsersUrl() {
@@ -99,7 +97,7 @@ export function getDefaultLogoutRedirectUrl() {
 }
 
 export function getHomeUrl(language = null) {
-  return language ? `${homePath}?language=${urlencode(language)}` : homePath;
+  return language ? `${homePath}?language=${encodeURIComponent(language)}` : homePath;
 }
 
 export function getLoginUrl(redirect = null) {
@@ -140,7 +138,7 @@ export function getSearchUrl(query) {
   }
 
   url.pathname = searchPath;
-  url.searchParams.append('query', urlencode.encode(query));
+  url.searchParams.append('query', encodeURIComponent(query));
 
   return url.href;
 }
@@ -197,6 +195,5 @@ export default {
   getResetPasswordUrl,
   createFullyQualifiedUrl,
   getSearchUrl,
-  decodeUrl: urlencode.decode,
   getBatchUrl
 };
