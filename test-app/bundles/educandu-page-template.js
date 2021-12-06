@@ -110,7 +110,7 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
     const { documentKey, documentSlug } = settings.helpPage[language];
     pageMenuItems.push({
       key: 'help',
-      href: urls.getArticleUrl(documentKey, documentSlug),
+      href: urls.getDocUrl(documentKey, documentSlug),
       text: settings.helpPage[language].linkTitle,
       icon: QuestionOutlined,
       permission: permissions.EDIT_SETTINGS
@@ -167,7 +167,7 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
         <div className="EducanduPageTemplate-footerContent">
           {(settings?.footerLinks?.[language] || []).map((fl, index) => (
             <span key={index.toString()} className="EducanduPageTemplate-footerLink">
-              <a href={urls.getArticleUrl(fl.documentKey, fl.documentSlug)}>{fl.linkTitle}</a>
+              <a href={urls.getDocUrl(fl.documentKey, fl.documentSlug)}>{fl.linkTitle}</a>
             </span>
           ))}
         </div>

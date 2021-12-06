@@ -15,7 +15,7 @@ import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
-import urls, { getArticleUrl, getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
+import urls, { getDocUrl, getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 
 export default function ImportBatchCreation({ PageTemplate }) {
   const { t } = useTranslation('importBatchCreation');
@@ -96,7 +96,7 @@ export default function ImportBatchCreation({ PageTemplate }) {
 
     const baseUrl = getImportSourceBaseUrl(selectedSource);
 
-    const url = `${baseUrl}${getArticleUrl(doc.key, doc.slug)}`;
+    const url = `${baseUrl}${getDocUrl(doc.key, doc.slug)}`;
     return <a href={url} target="_blank" rel="noopener noreferrer" >{doc.title}</a>;
   };
 

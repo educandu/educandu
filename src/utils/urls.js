@@ -49,7 +49,7 @@ export function getUsersUrl() {
   return usersPath;
 }
 
-export function getArticleUrl(key, slug) {
+export function getDocUrl(key, slug) {
   return concatParts(docsPrefix, key, slug);
 }
 
@@ -145,7 +145,7 @@ export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
 }
 
 export function getImportedArticleUrl({ allowUnsecure, hostName, key, slug }) {
-  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(key, slug));
+  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getDocUrl(key, slug));
 }
 
 export function getImportDetailsUrl(batchId) {
@@ -172,7 +172,7 @@ export default {
   getDocsUrl,
   getEditDocUrl,
   getUsersUrl,
-  getArticleUrl,
+  getDocUrl,
   getDocumentRevisionUrl,
   getSettingsUrl,
   getImportsUrl,

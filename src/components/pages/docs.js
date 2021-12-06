@@ -177,7 +177,7 @@ class Docs extends React.Component {
   }
 
   renderTitle(_value, doc) {
-    return <a href={urls.getArticleUrl(doc.key, doc.slug)}>{doc.title}</a>;
+    return <a href={urls.getDocUrl(doc.key, doc.slug)}>{doc.title}</a>;
   }
 
   renderSlug(_value, doc) {
@@ -186,7 +186,7 @@ class Docs extends React.Component {
       return t('notAssigned');
     }
 
-    const url = urls.getArticleUrl(doc.key, doc.slug);
+    const url = urls.getDocUrl(doc.key, doc.slug);
     return <a href={url}>{url}</a>;
   }
 
