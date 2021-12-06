@@ -180,7 +180,7 @@ function Page({ children, fullScreen, headerActions, alerts }) {
 
 Page.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
-    message: PropTypes.node.isRequired,
+    message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
     type: PropTypes.oneOf(Object.values(ALERT_TYPE))
   })),
   children: PropTypes.node,

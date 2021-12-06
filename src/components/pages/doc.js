@@ -8,17 +8,17 @@ import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
 import { withUser } from '../user-context.js';
 import { Button, Slider, message } from 'antd';
-import { withTranslation } from 'react-i18next';
 import { inject } from '../container-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import permissions from '../../domain/permissions.js';
 import { withLanguage } from '../language-context.js';
 import { withPageName } from '../page-name-context.js';
-import { ALERT_TYPE } from '../../common/constants.js';
+import { withTranslation, Trans } from 'react-i18next';
 import { HARD_DELETE } from '../../ui/section-actions.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
+import { ALERT_TYPE, DOCUMENT_ORIGIN } from '../../common/constants.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';
@@ -144,6 +144,9 @@ class Doc extends React.Component {
     const currentRevisionIndex = revisions.indexOf(currentRevision);
     const isCurrentRevisionLatestRevision = currentRevisionIndex === revisions.length - 1;
 
+    const isExternalDocument = this.state.currentRevision.origin.startsWith(DOCUMENT_ORIGIN.external);
+    const isEditingDisabled = this.state.currentRevision.archived || isExternalDocument;
+
     const revisionPicker = (
       <div className="DocPage-revisionPicker">
         <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
@@ -167,17 +170,19 @@ class Doc extends React.Component {
             >
             {t('permalink')}
           </Button>
-          <Restricted to={permissions.RESTORE_DOC_REVISIONS}>
-            <Button
-              className="DocPage-revisionPickerButton"
-              type="primary"
-              icon={<ReloadOutlined />}
-              onClick={this.handleRestoreButtonClick}
-              disabled={isCurrentRevisionLatestRevision}
-              >
-              {t('restore')}
-            </Button>
-          </Restricted>
+          {!isExternalDocument && (
+            <Restricted to={permissions.RESTORE_DOC_REVISIONS}>
+              <Button
+                className="DocPage-revisionPickerButton"
+                type="primary"
+                icon={<ReloadOutlined />}
+                onClick={this.handleRestoreButtonClick}
+                disabled={isCurrentRevisionLatestRevision}
+                >
+                {t('restore')}
+              </Button>
+            </Restricted>
+          )}
         </div>
       </div>
     );
@@ -190,8 +195,20 @@ class Doc extends React.Component {
       });
     }
 
+    if (isExternalDocument) {
+      alerts.push({
+        message:
+          (<Trans
+            t={t}
+            i18nKey="common:externalDocumentWarning"
+            components={[<a key="external-document-warning" href={this.state.currentRevision.originUrl} />]}
+            />),
+        type: 'warning'
+      });
+    }
+
     const headerActions = [];
-    if (!currentRevision.archived) {
+    if (!isEditingDisabled) {
       headerActions.push({
         key: 'edit',
         type: 'primary',
