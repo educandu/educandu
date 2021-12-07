@@ -1,0 +1,45 @@
+.DefaultSiteLogo {
+  color: @global-primary-color;
+
+  &:link, &:visited, &:active, &:hover {
+    text-decoration: none;
+    color: @global-primary-color;
+  }
+}
+
+.DefaultSiteLogo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+
+  &.DefaultSiteLogo-link--readonly {
+    cursor: inherit;
+  }
+}
+
+.DefaultSiteLogo-image {
+  color: inherit;
+
+  &.DefaultSiteLogo-image--small {
+    height: 32px;
+    width: 32px;
+  }
+
+  &.DefaultSiteLogo-image--normal {
+    height: 50px;
+    width: 50px;
+  }
+}
+
+.DefaultSiteLogo-text {
+  margin-left: 15px;
+
+  &.DefaultSiteLogo-text--small {
+    font-size: 25px;
+  }
+
+  &.DefaultSiteLogo-text--normal {
+    font-size: 40px;
+  }
+}

@@ -1,6 +1,7 @@
 import { PAGE_NAME } from './page-name.js';
 import { isBrowser } from '../ui/browser-helper.js';
-import DefaultPageTemplateComponent from '../components/page.js';
+import DefaultSiteLogoComponent from '../components/default-site-logo.js';
+import DefaultPageTemplateComponent from '../components/default-page-template.js';
 
 const pageImporters = {
   [PAGE_NAME.doc]: async () => (await import('../components/pages/doc.js')).default,
@@ -51,14 +52,16 @@ export default class PageResolver {
       throw new Error(`Invalid page name: '${pageName}'`);
     }
 
-    const [PageComponent, PageTemplateComponent] = await resolveAll([
+    const [PageComponent, PageTemplateComponent, SiteLogoComponent] = await resolveAll([
       pageImporters[pageName],
-      () => this.bundleConfig.getPageTemplateComponent(pageName)
+      () => this.bundleConfig.getPageTemplateComponent(pageName),
+      () => this.bundleConfig.getSiteLogoComponent(pageName)
     ]);
 
     return {
       PageComponent,
-      PageTemplateComponent: PageTemplateComponent || DefaultPageTemplateComponent
+      PageTemplateComponent: PageTemplateComponent || DefaultPageTemplateComponent,
+      SiteLogoComponent: SiteLogoComponent || DefaultSiteLogoComponent
     };
   }
 

@@ -2,7 +2,6 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import SiteLogo from '../site-logo.js';
 import { Form, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
 import { withUser } from '../user-context.js';
@@ -64,7 +63,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const { t, PageTemplate } = this.props;
+    const { t, PageTemplate, SiteLogo } = this.props;
     const { loginError } = this.state;
 
     const formItemLayout = {
@@ -136,7 +135,7 @@ class Login extends React.Component {
       <PageTemplate alerts={alerts} fullScreen>
         <div className="LoginPage">
           <div className="LoginPage-title">
-            <SiteLogo size="big" readonly />
+            <SiteLogo readonly />
           </div>
           <div className="LoginPage-form">
             {loginForm}
@@ -149,6 +148,7 @@ class Login extends React.Component {
 
 Login.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
+  SiteLogo: PropTypes.func.isRequired,
   ...translationProps,
   ...requestProps,
   ...userProps,

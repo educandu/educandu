@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
-import SiteLogo from '../site-logo.js';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
@@ -13,7 +12,7 @@ import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
 
-function Index({ PageTemplate, initialState }) {
+function Index({ initialState, PageTemplate, SiteLogo }) {
   const [searchText, setSearchText] = useState('');
   const { t } = useTranslation('index');
 
@@ -48,7 +47,7 @@ function Index({ PageTemplate, initialState }) {
     <PageTemplate alerts={alerts} fullScreen>
       <div className="IndexPage">
         <div className="IndexPage-title">
-          <SiteLogo size="big" readonly />
+          <SiteLogo readonly />
         </div>
         <div className="IndexPage-search">
           <Input
@@ -92,6 +91,7 @@ function Index({ PageTemplate, initialState }) {
 
 Index.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
+  SiteLogo: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     document: documentShape,
     homeLanguages: PropTypes.arrayOf(homeLanguageShape).isRequired,

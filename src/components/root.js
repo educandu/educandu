@@ -18,7 +18,8 @@ function Root({
   language,
   pageName,
   PageComponent,
-  PageTemplateComponent
+  PageTemplateComponent,
+  SiteLogoComponent
 }) {
   return (
     <ContainerProvider value={container}>
@@ -30,6 +31,7 @@ function Root({
                 <PageComponent
                   initialState={initialState}
                   PageTemplate={PageTemplateComponent}
+                  SiteLogo={SiteLogoComponent}
                   />
               </UserProvider>
             </RequestProvider>

@@ -2,7 +2,6 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import EmailInput from '../email-input.js';
 import Logger from '../../common/logger.js';
@@ -68,7 +67,7 @@ class Register extends React.Component {
   }
 
   render() {
-    const { settings, language, t, PageTemplate } = this.props;
+    const { settings, language, t, PageTemplate, SiteLogo } = this.props;
     const { user } = this.state;
 
     const formItemLayout = {
@@ -160,7 +159,7 @@ class Register extends React.Component {
       <PageTemplate alerts={alerts} fullScreen>
         <div className="RegisterPage">
           <div className="RegisterPage-title">
-            <SiteLogo size="big" readonly />
+            <SiteLogo readonly />
           </div>
           {user ? registrationConfirmation : registrationForm}
         </div>
@@ -171,6 +170,7 @@ class Register extends React.Component {
 
 Register.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
+  SiteLogo: PropTypes.func.isRequired,
   ...settingsProps,
   ...languageProps,
   ...translationProps,
