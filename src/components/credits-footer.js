@@ -42,6 +42,11 @@ function CreditsFooter({ documentOrRevision, type }) {
         <br />
         <b>{t('source')}:</b> <i>{currentHost}</i>, {citation}
         <br />
+        {documentOrRevision.originUrl && (
+          <React.Fragment>
+            <b>{t('originalSource')}:</b> <a href={documentOrRevision.originUrl}>{documentOrRevision.originUrl}</a>
+            <br />
+          </React.Fragment>)}
         {type === 'document' ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
       </p>
     </div>

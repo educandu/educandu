@@ -52,6 +52,7 @@
       "citation": "Article “{title}”, {url}, {date}",
       "license": "License",
       "source": "Source",
+      "originalSource": "Original source",
       "contributionsBy": "Contributions by",
       "revisionBy": "Revision created by"
     }
@@ -63,6 +64,7 @@
       "citation": "Artikel »{title}«, {url}, {date}",
       "license": "Lizenz",
       "source": "Quelle",
+      "originalSource": "Original Quelle",
       "contributionsBy": "Bearbeitungen durch",
       "revisionBy": "Revision erstellt von"
     }
@@ -1308,7 +1310,7 @@
       "error": "Fehler",
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
-      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original könnte <0>hier</0> editiert werden."
+      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden."
     }
   },
   {
