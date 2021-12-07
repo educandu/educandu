@@ -52,3 +52,6 @@ invalidSlug:
 archivedAlert:
   en: This document is archived and cannot be edited
   de: Dieses Dokument ist archiviert und kann nicht editiert werden
+externalDocumentWarning:
+  en: This document is a copy. The original can be edited <0>here</0>.
+  de: Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.
