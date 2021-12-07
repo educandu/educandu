@@ -3,7 +3,7 @@ import TaskStore from '../stores/task-store.js';
 import { TASK_TYPE } from '../common/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import TaskLockStore from '../stores/task-lock-store.js';
-import { DocumentImportTaskProcessor } from './document-import-task-processor.js';
+import DocumentImportTaskProcessor from './document-import-task-processor.js';
 
 const logger = new Logger(import.meta.url);
 

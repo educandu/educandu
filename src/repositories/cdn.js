@@ -1,6 +1,7 @@
 import fs from 'fs';
 import mime from 'mime';
 import Stream from 'stream';
+import superagent from 'superagent';
 import Logger from '../common/logger.js';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
@@ -32,12 +33,22 @@ class Cdn {
     return buffer.toString(encoding);
   }
 
+  objectExists(objectName) {
+    return this.s3Client.objectExists(this.bucketName, objectName);
+  }
+
   uploadObject(objectName, filePath, metadata) {
     const defaultMetadata = this._getDefaultMetadata();
     const stream = fs.createReadStream(filePath);
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
     const contentType = mime.getType(sanitizedObjectName) || defaultContentType;
     return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, { ...defaultMetadata, ...metadata });
+  }
+
+  async uploadObjectFromUrl(objectName, url) {
+    const body = await superagent.get(url).then(res => res.body);
+    const contentType = mime.getType(objectName) || defaultContentType;
+    return this.s3Client.upload(this.bucketName, objectName, body, contentType);
   }
 
   uploadEmptyObject(objectName, metadata) {
