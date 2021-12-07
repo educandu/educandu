@@ -15,9 +15,9 @@ import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
-import { documentRevisionShape, documentShape } from '../../ui/default-prop-types.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
+import { documentRevisionShape, documentShape } from '../../ui/default-prop-types.js';
 import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN } from '../../common/constants.js';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined, SlidersOutlined, FormOutlined } from '@ant-design/icons';
 
