@@ -48,7 +48,8 @@ export function getUsersUrl() {
 }
 
 export function getDocUrl(key, slug) {
-  return concatParts(docsPrefix, key, slug);
+  // We need the check here until we fix the image-tiles component in story https://educandu.atlassian.net/browse/EDU-150
+  return slug ? concatParts(docsPrefix, key, slug) : concatParts(docsPrefix, key);
 }
 
 export function getDocumentRevisionUrl(revisionId) {
