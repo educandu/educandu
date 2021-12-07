@@ -2,7 +2,6 @@ import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import { Form, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
@@ -44,7 +43,7 @@ class ResetPassword extends React.Component {
   }
 
   render() {
-    const { t, PageTemplate, pageName, user } = this.props;
+    const { t, pageName, user, PageTemplate, SiteLogo } = this.props;
     const { isRequestSent } = this.state;
 
     const formItemLayout = {
@@ -124,7 +123,7 @@ class ResetPassword extends React.Component {
       <PageTemplate alerts={alerts} fullScreen>
         <div className="ResetPasswordPage">
           <div className="ResetPasswordPage-title">
-            <SiteLogo size="big" readonly />
+            <SiteLogo readonly />
           </div>
           {isRequestSent ? resetRequestConfirmation : resetRequestForm}
         </div>
@@ -135,6 +134,7 @@ class ResetPassword extends React.Component {
 
 ResetPassword.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
+  SiteLogo: PropTypes.func.isRequired,
   ...translationProps,
   ...userProps,
   ...pageNameProps,

@@ -27,7 +27,8 @@ export async function hydrateApp({ bundleConfig }) {
   logger.info('Resolving entry point');
   const {
     PageComponent,
-    PageTemplateComponent
+    PageTemplateComponent,
+    SiteLogoComponent
   } = await pageResolver.getPageComponentInfo(window.__pageName__);
 
   const props = {
@@ -39,7 +40,8 @@ export async function hydrateApp({ bundleConfig }) {
     container,
     initialState: window.__initalState__,
     PageComponent,
-    PageTemplateComponent
+    PageTemplateComponent,
+    SiteLogoComponent
   };
 
   logger.info('Hydrating application');

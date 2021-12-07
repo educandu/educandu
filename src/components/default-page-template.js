@@ -1,21 +1,21 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import urls from '../utils/urls.js';
 import { Alert, Button } from 'antd';
-import urls from '../../src/utils/urls.js';
-import EducanduLogo from './educandu-logo.js';
+import Restricted from './restricted.js';
+import LoginLogout from './login-logout.js';
+import LinkPopover from './link-popover.js';
 import { useTranslation } from 'react-i18next';
+import permissions from '../domain/permissions.js';
 import React, { useState, useEffect } from 'react';
-import permissions from '../../src/domain/permissions.js';
-import Restricted from '../../src/components/restricted.js';
-import LoginLogout from '../../src/components/login-logout.js';
-import LinkPopover from '../../src/components/link-popover.js';
-import ClientConfig from '../../src/bootstrap/client-config.js';
-import { FEATURE_TOGGLES } from '../../src/common/constants.js';
-import { useService } from '../../src/components/container-context.js';
-import { useLanguage } from '../../src/components/language-context.js';
-import { useSettings } from '../../src/components/settings-context.js';
-import LanguageNameProvider from '../../src/data/language-name-provider.js';
-import CountryFlagAndName from '../../src/components/localization/country-flag-and-name.js';
+import { useService } from './container-context.js';
+import { useLanguage } from './language-context.js';
+import { useSettings } from './settings-context.js';
+import DefaultSiteLogo from './default-site-logo.js';
+import ClientConfig from '../bootstrap/client-config.js';
+import { ALERT_TYPE, FEATURE_TOGGLES } from '../common/constants.js';
+import LanguageNameProvider from '../data/language-name-provider.js';
+import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
@@ -25,7 +25,7 @@ function createLanguagesToChoose(languageNameProvider, supportedLanguages, langu
   return supportedLanguages.map(lang => ({ ...data[lang], code: lang }));
 }
 
-function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
+function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
   const settings = useSettings();
   const clientConfig = useService(ClientConfig);
   const { t, i18n } = useTranslation('page');
@@ -38,13 +38,13 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
   }, [languageNameProvider, supportedLanguages, language]);
 
   const contentAreaClasses = classNames({
-    'EducanduPageTemplate-contentArea': true,
-    'EducanduPageTemplate-contentArea--fullScreen': fullScreen
+    'DefaultPageTemplate-contentArea': true,
+    'DefaultPageTemplate-contentArea--fullScreen': fullScreen
   });
 
   const contentClasses = classNames({
-    'EducanduPageTemplate-content': true,
-    'EducanduPageTemplate-content--fullScreen': fullScreen
+    'DefaultPageTemplate-content': true,
+    'DefaultPageTemplate-content--fullScreen': fullScreen
   });
 
   let headerActionComponents = null;
@@ -52,7 +52,7 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
     headerActionComponents = headerActions.map(action => (
       <Restricted to={action.permission} key={action.key}>
         <Button
-          className="EducanduPageTemplate-headerButton"
+          className="DefaultPageTemplate-headerButton"
           type={action.type || 'default'}
           loading={!!action.loading}
           disabled={!!action.disabled}
@@ -100,7 +100,7 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
     pageMenuItems.push({
       key: 'import',
       href: urls.getImportsUrl(),
-      text: t('pageNames:importBatches'),
+      text: t('pageNames:importBatchCreation'),
       icon: ImportOutlined,
       permission: permissions.MANAGE_IMPORT
     });
@@ -119,7 +119,7 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
   pageMenuItems.push({
     key: 'language',
     node: (
-      <div className="EducanduPageTemplate-languageSwitch">
+      <div className="DefaultPageTemplate-languageSwitch">
         {languagesToChoose.map((lang, index) => (
           <React.Fragment key={lang.code}>
             {index !== 0 && <span>/</span>}
@@ -133,23 +133,23 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
   });
 
   return (
-    <div className="EducanduPageTemplate">
-      <header className="EducanduPageTemplate-headerArea">
-        <div className="EducanduPageTemplate-header">
-          <div className="EducanduPageTemplate-headerContent EducanduPageTemplate-headerContent--left">
-            <a href="/" className="EducanduPageTemplate-logoAndName">
-              <EducanduLogo size="small" />&nbsp;&nbsp;educandu
-            </a>
+    <div className="DefaultPageTemplate">
+      <header className="DefaultPageTemplate-headerArea">
+        <div className="DefaultPageTemplate-header">
+          <div className="DefaultPageTemplate-headerContent DefaultPageTemplate-headerContent--left">
+            <div className="DefaultPageTemplate-logo">
+              <DefaultSiteLogo size="small" />
+            </div>
           </div>
-          <div className="EducanduPageTemplate-headerContent EducanduPageTemplate-headerContent--center">
+          <div className="DefaultPageTemplate-headerContent DefaultPageTemplate-headerContent--center">
             {headerActionComponents}
           </div>
-          <div className="EducanduPageTemplate-headerContent EducanduPageTemplate-headerContent--right">
-            <div className="EducanduPageTemplate-loginLogoutButton">
+          <div className="DefaultPageTemplate-headerContent DefaultPageTemplate-headerContent--right">
+            <div className="DefaultPageTemplate-loginLogoutButton">
               <LoginLogout />
             </div>
             <LinkPopover items={pageMenuItems} trigger="hover" placement="bottomRight">
-              <Button className="EducanduPageTemplate-headerButton" icon={<MenuOutlined />} />
+              <Button className="DefaultPageTemplate-headerButton" icon={<MenuOutlined />} />
             </LinkPopover>
           </div>
         </div>
@@ -162,10 +162,10 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
           {children}
         </div>
       </main>
-      <footer className="EducanduPageTemplate-footer">
-        <div className="EducanduPageTemplate-footerContent">
+      <footer className="DefaultPageTemplate-footer">
+        <div className="DefaultPageTemplate-footerContent">
           {(settings?.footerLinks?.[language] || []).map((fl, index) => (
-            <span key={index.toString()} className="EducanduPageTemplate-footerLink">
+            <span key={index.toString()} className="DefaultPageTemplate-footerLink">
               <a href={urls.getArticleUrl(fl.documentSlug)}>{fl.linkTitle}</a>
             </span>
           ))}
@@ -175,10 +175,10 @@ function EducanduPageTemplate({ children, fullScreen, headerActions, alerts }) {
   );
 }
 
-EducanduPageTemplate.propTypes = {
+DefaultPageTemplate.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
     message: PropTypes.node.isRequired,
-    type: PropTypes.oneOf(['success', 'info', 'warning', 'error'])
+    type: PropTypes.oneOf(Object.values(ALERT_TYPE))
   })),
   children: PropTypes.node,
   fullScreen: PropTypes.bool,
@@ -193,11 +193,11 @@ EducanduPageTemplate.propTypes = {
   }))
 };
 
-EducanduPageTemplate.defaultProps = {
+DefaultPageTemplate.defaultProps = {
   alerts: [],
   children: null,
   fullScreen: false,
   headerActions: []
 };
 
-export default EducanduPageTemplate;
+export default DefaultPageTemplate;
