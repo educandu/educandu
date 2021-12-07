@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
-import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 import { useDateFormat } from './language-context.js';
 import { DOCUMENT_TYPE } from '../common/constants.js';
+import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function renderUser(user) {
   return user.email

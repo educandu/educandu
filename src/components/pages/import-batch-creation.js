@@ -15,7 +15,7 @@ import { useDateFormat, useLanguage } from '../language-context.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
-import { getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
+import { getImportDetailsUrl, getImportSourceBaseUrl, getDocUrl } from '../../utils/urls.js';
 
 export default function ImportBatchCreation({ PageTemplate }) {
   const { t } = useTranslation('importBatchCreation');

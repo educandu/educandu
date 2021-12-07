@@ -190,7 +190,7 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 1,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-1`,
             cdnResources: ['media/video-1.mp4'],
             archived: false
           },
@@ -199,7 +199,7 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 2,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-1`,
             cdnResources: ['media/video-2.mp4'],
             archived: false
           }
@@ -218,7 +218,7 @@ describe('document-import-task-processor', () => {
           updatedBy: revision2.createdBy,
           order: 2,
           origin: `external/${batchParams.hostName}`,
-          originUrl: `https://${batchParams.hostName}/docs/${documentKey}`,
+          originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-1`,
           cdnResources: ['media/video-2.mp4'],
           archived: false,
           contributors: [user1._id, user2._id]
@@ -308,7 +308,7 @@ describe('document-import-task-processor', () => {
             createdOn: now,
             order: 3,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-3`,
             cdnResources: ['media/video-3.mp4'],
             archived: false
           });
@@ -326,7 +326,7 @@ describe('document-import-task-processor', () => {
             updatedBy: revision3.createdBy,
             order: 3,
             origin: `external/${batchParams.hostName}`,
-            originUrl: `https://${batchParams.hostName}/docs/${documentKey}`,
+            originUrl: `https://${batchParams.hostName}/docs/${documentKey}/slug-3`,
             cdnResources: ['media/video-3.mp4'],
             archived: false,
             contributors: [user1._id, user2._id, user3._id]
