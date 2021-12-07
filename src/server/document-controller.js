@@ -97,14 +97,14 @@ class DocumentController {
 
     router.get('/search', validateQuery(getSearchDocumentsByTagsSchema), async (req, res) => {
       const { query } = req.query;
-      const docs = await this.documentService.getDocumentsByTags(urls.decodeUrl(query));
+      const docs = await this.documentService.getDocumentsByTags(decodeURIComponent(query));
       return this.pageRenderer.sendPage(req, res, PAGE_NAME.search, { docs });
     });
   }
 
   registerApi(router) {
     router.post('/api/v1/docs', [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload, validateBody(createRevisionBodySchema)], async (req, res) => {
-      const revision = await this.documentService.createDocumentRevision({ doc: req.body, user: req.user });
+      const revision = await this.documentService.createNewDocumentRevision({ doc: req.body, user: req.user });
       if (!revision) {
         throw new NotFound();
       }

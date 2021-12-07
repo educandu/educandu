@@ -249,7 +249,7 @@ class Doc extends React.Component {
     return (
       <PageTemplate headerActions={headerActions} alerts={alerts}>
         <div className="DocPage">
-          { this.state.revisions.length && revisionPicker}
+          { this.state.revisions.length > 0 && revisionPicker}
           <DocView
             documentOrRevision={currentDocOrRevision}
             onAction={this.handleAction}

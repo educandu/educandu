@@ -1,24 +1,34 @@
+/* eslint-disable no-await-in-loop */
+import by from 'thenby';
+import Cdn from '../repositories/cdn.js';
+import Logger from '../common/logger.js';
 import UserService from './user-service.js';
+import DocumentService from './document-service.js';
 import ExportApiClient from './export-api-client.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { getImportSourceBaseUrl } from '../utils/urls.js';
+import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import { getDocUrl, getImportSourceBaseUrl } from '../utils/urls.js';
 
-export class DocumentImportTaskProcessor {
+const logger = new Logger(import.meta.url);
+
+class DocumentImportTaskProcessor {
   static get inject() {
-    return [ServerConfig, ExportApiClient, UserService];
+    return [ServerConfig, ExportApiClient, UserService, Cdn, DocumentService];
   }
 
-  constructor(serverConfig, exportApiClient, userService) {
+  constructor(serverConfig, exportApiClient, userService, cdn, documentService) {
     this.serverConfig = serverConfig;
     this.exportApiClient = exportApiClient;
     this.userService = userService;
+    this.cdn = cdn;
+    this.documentService = documentService;
   }
 
   async process(task, batchParams, ctx) {
     const importSource = this.serverConfig.importSources.find(({ hostName }) => hostName === batchParams.hostName);
     const { key, importedRevision, importableRevision } = task.taskParams;
 
-    const response = await this.exportApiClient.getDocumentExport({
+    const documentExport = await this.exportApiClient.getDocumentExport({
       baseUrl: getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
       documentKey: key,
@@ -30,10 +40,38 @@ export class DocumentImportTaskProcessor {
       throw new Error('Cancellation requested');
     }
 
-    await Promise.all(response.users.map(user => this.userService.ensureExternalUser({
-      _id: user._id,
-      username: user.username,
-      hostName: batchParams.hostName
-    })));
+    await Promise.all(documentExport.users
+      .map(user => this.userService.ensureExternalUser({ _id: user._id, username: user.username, hostName: batchParams.hostName })));
+
+    if (ctx.cancellationRequested) {
+      throw new Error('Cancellation requested');
+    }
+
+    const sortedRevisions = documentExport.revisions.sort(by(revision => revision.order));
+    const allCdnResources = new Set(sortedRevisions.map(revision => revision.cdnResources).flat());
+
+    for (const cdnResource of allCdnResources) {
+      if (await this.cdn.objectExists(cdnResource)) {
+        logger.info(`CDN resource '${cdnResource}' already exists, skipping upload`);
+      } else {
+        logger.info(`Uploading CDN resource '${cdnResource}'`);
+        const url = `${documentExport.cdnRootUrl}/${cdnResource}`;
+        await this.cdn.uploadObjectFromUrl(cdnResource, url);
+      }
+
+      if (ctx.cancellationRequested) {
+        throw new Error('Cancellation requested');
+      }
+    }
+
+    const docUrl = getDocUrl(sortedRevisions[0].key);
+    const baseUrl = getImportSourceBaseUrl(importSource);
+
+    const originUrl = `${baseUrl}${docUrl}`;
+    const origin = `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`;
+
+    await this.documentService.copyDocumentRevisions({ revisions: sortedRevisions, ancestorId: importedRevision, origin, originUrl });
   }
 }
+
+export default DocumentImportTaskProcessor;

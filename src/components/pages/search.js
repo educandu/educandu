@@ -18,7 +18,7 @@ function Search({ initialState, PageTemplate }) {
   const { language } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
-  const decodedQuery = urls.decodeUrl(query.query);
+  const decodedQuery = decodeURIComponent(query.query);
 
   const languageNameProvider = useService(LanguageNameProvider);
   const languageData = languageNameProvider.getData(language);

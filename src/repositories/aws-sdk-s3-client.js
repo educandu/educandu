@@ -123,6 +123,23 @@ class AwsSdkS3Client {
     return response.Body;
   }
 
+  async objectExists(bucketName, objectName) {
+    const params = {
+      Bucket: bucketName,
+      Key: objectName
+    };
+
+    try {
+      await this.req(() => this.awsSdkS3Client.headObject(params), PRIORITY_DOWNLOAD);
+      return true;
+    } catch (error) {
+      if (error?.statusCode === 404) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
   async deleteObject(bucketName, objectName) {
     const params = {
       Bucket: bucketName,

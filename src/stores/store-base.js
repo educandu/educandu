@@ -33,10 +33,9 @@ class StoreBase {
     return this.collection.findOne(...args);
   }
 
-  save(item) {
+  save(item, options = {}) {
     const query = { _id: item._id };
-    const options = { upsert: true };
-    return this.collection.replaceOne(query, item, options);
+    return this.collection.replaceOne(query, item, Object.assign(options, { upsert: true }));
   }
 
   saveMany(items) {
