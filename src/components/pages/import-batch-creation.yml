@@ -1,27 +1,9 @@
 importButton:
   en: Start import
   de: Import starten
-import:
-  en: Import
-  de: Importieren
-importType:
-  en: Import type
-  de: Import-Typ
-title:
-  en: Title
-  de: Titel
-language:
-  en: Language
-  de: Sprache
-updateDate:
-  en: Update date
-  de: Update-Datum
 source:
-  en: Source 
+  en: Source
   de: Quelle
-add:
-  en: Add
-  de: Hinzufügen
-update:
-  en: Update
-  de: Aktualisieren
+backToImports:
+  en: Back to the overview
+  de: Zurück zur Übersicht

@@ -82,27 +82,25 @@ function ImportBatches({ initialState, PageTemplate }) {
     );
   };
 
-  const defaultActiveKey = sources.filter(source => source.batches.length)
-    .map(source => source.importSourceName);
-
   const alerts = useGlobalAlerts();
 
   return (
     <PageTemplate alerts={alerts}>
       <div className="ImportBatchesPage">
         <h1>{t('pageNames:importBatches')}</h1>
-        <Collapse defaultActiveKey={defaultActiveKey}>
-          {sources.map(source => (
-            <Panel header={header(source)} className="ImportBatchesPage-batchTablePanel" key={source.importSourceName} extra={getExtra(source)} >
+        {sources.map(source => (
+          <Collapse key={source.importSourceName} className="ImportBatchesPage-sourceCollapse" defaultActiveKey={source.batches.length ? '1' : null}>
+            <Panel header={header(source)} className="ImportBatchesPage-batchTablePanel" extra={getExtra(source)} key="1">
               <Table
-                key={source.importSourceName}
+                size="small"
                 rowKey="_id"
                 dataSource={source.batches}
                 columns={columns}
                 pagination={false}
                 />
-            </Panel>))}
-        </Collapse>
+            </Panel>
+          </Collapse>
+        ))}
       </div>
     </PageTemplate>);
 }

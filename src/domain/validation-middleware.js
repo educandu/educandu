@@ -8,6 +8,10 @@ const baseValidator = validator.createValidator({
   joi
 });
 
+export function validateParams(schema) {
+  return baseValidator.params(schema, { joi: defaultValidationOptions });
+}
+
 export function validateQuery(schema) {
   return baseValidator.query(schema, { joi: defaultValidationOptions });
 }

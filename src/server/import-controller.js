@@ -8,8 +8,8 @@ import ServerConfig from '../bootstrap/server-config.js';
 import ImportService from '../services/import-service.js';
 import ExportApiClient from '../services/export-api-client.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { validateBody, validateQuery } from '../domain/validation-middleware.js';
-import { getImportsQuerySchema, postImportBatchBodySchema } from '../domain/schemas/import-schemas.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
+import { createImportBatchQuerySchema, getImportsQuerySchema, importBatchViewParamsSchema, postImportBatchBodySchema } from '../domain/schemas/import-schemas.js';
 
 const { NotFound } = httpErrors;
 
@@ -35,13 +35,22 @@ class ImportController {
       return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatches, { batches, importSources });
     });
 
-    app.get('/import-batches/create', needsPermission(permissions.MANAGE_IMPORT), (req, res) => {
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchCreation);
+    app.get('/import-batches/create', [needsPermission(permissions.MANAGE_IMPORT), validateQuery(createImportBatchQuerySchema)], (req, res) => {
+      const importSourceHostName = req.query.source;
+      if (!this.serverConfig.importSources.some(source => source.hostName === importSourceHostName)) {
+        throw new NotFound(`${importSourceHostName} is not a valid import source`);
+      }
+
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchCreation, { importSourceHostName });
     });
 
-    app.get('/import-batches/:batchId', needsPermission(permissions.MANAGE_IMPORT), async (req, res) => {
+    app.get('/import-batches/:batchId', [needsPermission(permissions.MANAGE_IMPORT), validateParams(importBatchViewParamsSchema)], async (req, res) => {
       const batchId = req.params.batchId;
       const rawBatch = await this.importService.getImportBatchDetails(batchId);
+      if (!rawBatch) {
+        throw new NotFound(`Batch with ID '${batchId}' could not be found`);
+      }
+
       const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
 
       return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchView, { batch });
