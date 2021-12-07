@@ -49,7 +49,7 @@
     "namespace": "creditsFooter",
     "language": "en",
     "resources": {
-      "citation": "Article “{title}”, {url}, {date}",
+      "citation": "Article “{title}”",
       "license": "License",
       "source": "Source",
       "originalSource": "Original source",
@@ -61,10 +61,10 @@
     "namespace": "creditsFooter",
     "language": "de",
     "resources": {
-      "citation": "Artikel »{title}«, {url}, {date}",
+      "citation": "Artikel »{title}«",
       "license": "Lizenz",
       "source": "Quelle",
-      "originalSource": "Original Quelle",
+      "originalSource": "Originalquelle",
       "contributionsBy": "Bearbeitungen durch",
       "revisionBy": "Revision erstellt von"
     }
