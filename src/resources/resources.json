@@ -1283,7 +1283,8 @@
       "error": "Error",
       "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits",
       "archivedAlert": "This document is archived and cannot be edited",
-      "viewVersions": "View versions"
+      "viewVersions": "View versions",
+      "viewDocument": "View document"
     }
   },
   {
@@ -1308,7 +1309,8 @@
       "error": "Fehler",
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
-      "viewVersions": "Versionen ansehen"
+      "viewVersions": "Versionen ansehen",
+      "viewDocument": "Dokument ansehen"
     }
   },
   {

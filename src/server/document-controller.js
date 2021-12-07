@@ -44,7 +44,7 @@ class DocumentController {
       }
 
       const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: documentRevision, type: DOCUMENT_TYPE.revision });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: documentRevision, type: DOCUMENT_TYPE.permalinkedRevision });
     });
 
     router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {

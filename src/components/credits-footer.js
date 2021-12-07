@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 import { useDateFormat } from './language-context.js';
+import { DOCUMENT_TYPE } from '../common/constants.js';
 
 function renderUser(user) {
   return user.email
@@ -26,7 +27,7 @@ function renderRevisionAuthor(revision, t) {
   return <span><b>{t('revisionBy')}:</b> {renderUser(revision.createdBy)}</span>;
 }
 
-function CreditsFooter({ documentOrRevision }) {
+function CreditsFooter({ documentOrRevision, type }) {
   const request = useRequest();
   const { t } = useTranslation('creditsFooter');
   const { formatDate } = useDateFormat();
@@ -42,14 +43,15 @@ function CreditsFooter({ documentOrRevision }) {
         <br />
         <b>{t('source')}:</b> <i>{currentHost}</i>, {citation}
         <br />
-        {documentOrRevision.contributors ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
+        {type === DOCUMENT_TYPE.document ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
       </p>
     </div>
   );
 }
 
 CreditsFooter.propTypes = {
-  documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]).isRequired
+  documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]).isRequired,
+  type: PropTypes.oneOf(Object.values(DOCUMENT_TYPE)).isRequired
 };
 
 export default CreditsFooter;

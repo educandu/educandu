@@ -21,7 +21,7 @@ import DocumentApiClient from '../../services/document-api-client.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
-import { PaperClipOutlined, ReloadOutlined, EditOutlined, SlidersOutlined } from '@ant-design/icons';
+import { PaperClipOutlined, ReloadOutlined, EditOutlined, SlidersOutlined, FormOutlined } from '@ant-design/icons';
 import { documentRevisionShape, translationProps, languageProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -55,6 +55,10 @@ class Doc extends React.Component {
     } catch (error) {
       handleApiError({ error, t, logger });
     }
+  }
+
+  handleViewDocumentClick() {
+    window.location.reload();
   }
 
   formatRevisionTooltip(index) {
@@ -209,7 +213,7 @@ class Doc extends React.Component {
     }
 
     const headerActions = [];
-    if (!this.state.revisions.length && this.state.type === DOCUMENT_TYPE.document) {
+    if (this.state.type === DOCUMENT_TYPE.document) {
       headerActions.push({
         key: 'viewRevisions',
         type: 'primary',
@@ -220,12 +224,21 @@ class Doc extends React.Component {
       });
     }
 
-    if (!currentDocOrRevision.archived) {
-      const isButtonDisabled = this.state.type === DOCUMENT_TYPE.revision;
+    if (this.state.type === DOCUMENT_TYPE.revision) {
+      headerActions.push({
+        key: 'viewDocument',
+        type: 'primary',
+        icon: FormOutlined,
+        text: t('common:viewDocument'),
+        permission: permissions.VIEW_DOCS,
+        handleClick: this.handleViewDocumentClick
+      });
+    }
+
+    if (!currentDocOrRevision.archived && this.state.type === DOCUMENT_TYPE.document) {
       headerActions.push({
         key: 'edit',
         type: 'primary',
-        disabled: isButtonDisabled,
         icon: EditOutlined,
         text: t('common:edit'),
         permission: permissions.EDIT_DOC,
@@ -243,7 +256,7 @@ class Doc extends React.Component {
             />
         </div>
         <aside className="Content">
-          <CreditsFooter documentOrRevision={currentDocOrRevision} />
+          <CreditsFooter documentOrRevision={currentDocOrRevision} type={this.state.type} />
         </aside>
       </PageTemplate>
     );

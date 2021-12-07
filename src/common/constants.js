@@ -29,5 +29,6 @@ export const ALERT_TYPE = {
 
 export const DOCUMENT_TYPE = {
   revision: 'revision',
-  document: 'document'
+  document: 'document',
+  permalinkedRevision: 'permalinked-revision'
 };
