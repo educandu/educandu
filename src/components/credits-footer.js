@@ -33,17 +33,27 @@ function CreditsFooter({ documentOrRevision, type }) {
   const { formatDate } = useDateFormat();
 
   const currentHost = request.hostInfo.host;
+  const citation = t('citation', { title: documentOrRevision.title });
   const url = `${request.hostInfo.origin}${request.path}`;
-  const citation = t('citation', { title: documentOrRevision.title, url, date: formatDate(new Date().toISOString()) });
+  const originalUrl = documentOrRevision.originUrl;
+  const date = formatDate(new Date().toISOString());
+
+  const renderUrl = () => (<a rel="noopener noreferrer" target="_blank" href={url}>{url}</a>);
+  const renderOriginalUrl = () => (<a rel="noopener noreferrer" target="_blank" href={originalUrl}>{originalUrl}</a>);
 
   return (
     <div className="CreditsFooter">
       <p>
         <b>{t('license')}:</b> <a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.de">CC BY-SA 3.0 DE</a>
         <br />
-        <b>{t('source')}:</b> <i>{currentHost}</i>, {citation}
+        <b>{t('source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
         <br />
-        {type === DOCUMENT_TYPE.document ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
+        {originalUrl && (
+          <Fragment>
+            <b>{t('originalSource')}:</b> {renderOriginalUrl()}
+            <br />
+          </Fragment>)}
+        {type === 'document' ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
       </p>
     </div>
   );

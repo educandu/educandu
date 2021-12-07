@@ -49,9 +49,10 @@
     "namespace": "creditsFooter",
     "language": "en",
     "resources": {
-      "citation": "Article “{title}”, {url}, {date}",
+      "citation": "Article “{title}”",
       "license": "License",
       "source": "Source",
+      "originalSource": "Original source",
       "contributionsBy": "Contributions by",
       "revisionBy": "Revision created by"
     }
@@ -60,9 +61,10 @@
     "namespace": "creditsFooter",
     "language": "de",
     "resources": {
-      "citation": "Artikel »{title}«, {url}, {date}",
+      "citation": "Artikel »{title}«",
       "license": "Lizenz",
       "source": "Quelle",
+      "originalSource": "Originalquelle",
       "contributionsBy": "Bearbeitungen durch",
       "revisionBy": "Revision erstellt von"
     }
@@ -1284,7 +1286,8 @@
       "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits",
       "archivedAlert": "This document is archived and cannot be edited",
       "viewVersions": "View versions",
-      "viewDocument": "View document"
+      "viewDocument": "View document",
+      "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>."
     }
   },
   {
@@ -1310,7 +1313,8 @@
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
       "viewVersions": "Versionen ansehen",
-      "viewDocument": "Dokument ansehen"
+      "viewDocument": "Dokument ansehen",
+      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden."
     }
   },
   {
