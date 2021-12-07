@@ -30,6 +30,12 @@ class ControllerFactory {
     this.container = container;
   }
 
+  registerAdditionalControllers(additionalControllers) {
+    for (const controller of additionalControllers) {
+      controllerTypes.push(controller);
+    }
+  }
+
   getAllControllers() {
     return controllerTypes.map(ControllerType => this.container.get(ControllerType));
   }

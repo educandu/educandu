@@ -39,6 +39,7 @@ class EducanduServer {
       return next();
     });
 
+    controllerFactory.registerAdditionalControllers(serverConfig.additionalControllers);
     const controllers = controllerFactory.getAllControllers();
 
     logger.info('Registering middlewares');

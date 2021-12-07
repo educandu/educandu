@@ -1,5 +1,6 @@
 import path from 'path';
 import educandu from '../src/index.js';
+import ArticleController from './article-controller.js';
 import bundleConfig from './bundles/bundle-config.js';
 
 educandu({
@@ -48,5 +49,6 @@ educandu({
     isEnabled: true,
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
-  }
+  },
+  additionalControllers: [ArticleController]
 });

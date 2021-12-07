@@ -46,7 +46,8 @@ const configSchema = joi.object({
     isEnabled: joi.boolean().default(defaultTaskProcessing.isEnabled),
     idlePollIntervalInMs: joi.number().min(1).default(defaultTaskProcessing.idlePollIntervalInMs),
     maxAttempts: joi.number().min(1).default(defaultTaskProcessing.maxAttempts)
-  }).default(defaultTaskProcessing)
+  }).default(defaultTaskProcessing),
+  additionalControllers: joi.array().items(joi.function().class()).default([])
 });
 
 class ServerConfig {
