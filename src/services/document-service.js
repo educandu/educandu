@@ -132,10 +132,6 @@ class DocumentService {
     return this.documentStore.findOne({ _id: documentKey });
   }
 
-  getDocumentByNamespaceAndSlug(namespace, slug) {
-    return this.documentStore.findOne({ namespace, slug });
-  }
-
   getAllDocumentRevisionsByKey(documentKey) {
     return this._getAllDocumentRevisionsByKey(documentKey);
   }
