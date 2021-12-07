@@ -15,7 +15,7 @@ import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
-import { documentRevisionShape } from '../../ui/default-prop-types.js';
+import { documentRevisionShape, documentShape } from '../../ui/default-prop-types.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
 import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN } from '../../common/constants.js';
@@ -271,7 +271,7 @@ function Doc({ initialState, PageTemplate }) {
 Doc.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    currentDocOrRevision: PropTypes.instanceOf(documentRevisionShape),
+    currentDocOrRevision: PropTypes.oneOfType([documentRevisionShape, documentShape]),
     type: PropTypes.oneOf(Object.values(DOCUMENT_TYPE))
   }).isRequired
 };
