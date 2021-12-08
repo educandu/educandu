@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import TaskStore from '../stores/task-store.js';
+import { serializeError } from 'serialize-error';
 import TaskProcessor from './task-processor.js';
 import { TASK_TYPE } from '../common/constants.js';
 import TaskLockStore from '../stores/task-lock-store.js';
@@ -156,6 +157,8 @@ describe('task-processor', () => {
     });
 
     describe('when task processing fails for the first time (out of 2 maxAttempts)', () => {
+      let expectedError;
+
       beforeEach(async () => {
         ctx = { cancellationRequested: false };
 
@@ -163,7 +166,8 @@ describe('task-processor', () => {
 
         taskLockStore.takeLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
-        documentImportTaskProcessor.process.rejects(new Error('Processing failure 1'));
+        expectedError = new Error('Processing failure 1');
+        documentImportTaskProcessor.process.rejects(expectedError);
 
         await sut.process(taskId, batchParams, ctx);
       });
@@ -189,7 +193,7 @@ describe('task-processor', () => {
             {
               startedOn: now,
               completedOn: now,
-              errors: ['Processing failure 1']
+              errors: [serializeError(expectedError)]
             }
           ]
         });
@@ -202,9 +206,12 @@ describe('task-processor', () => {
 
     describe('when task processing fails for the second time (out of 2 maxAttempts)', () => {
       let nextTick;
+      let expectedErrors;
 
       beforeEach(async () => {
         ctx = { cancellationRequested: false };
+        expectedErrors = [new Error('Processing failure 1'), new Error('Processing failure 2')];
+
         nextTask = {
           _id: taskId,
           taskType: TASK_TYPE.importDocument,
@@ -213,7 +220,7 @@ describe('task-processor', () => {
             {
               startedOn: now,
               completedOn: now,
-              errors: ['Processing failure 1']
+              errors: [serializeError(expectedErrors[0])]
             }
           ]
         };
@@ -221,7 +228,7 @@ describe('task-processor', () => {
 
         taskLockStore.takeLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
-        documentImportTaskProcessor.process.rejects(new Error('Processing failure 2'));
+        documentImportTaskProcessor.process.rejects(expectedErrors[1]);
 
         await sut.process(taskId, batchParams, ctx);
       });
@@ -247,12 +254,12 @@ describe('task-processor', () => {
             {
               startedOn: now,
               completedOn: now,
-              errors: ['Processing failure 1']
+              errors: [serializeError(expectedErrors[0])]
             },
             {
               startedOn: nextTick,
               completedOn: nextTick,
-              errors: ['Processing failure 2']
+              errors: [serializeError(expectedErrors[1])]
             }
           ]
         });
