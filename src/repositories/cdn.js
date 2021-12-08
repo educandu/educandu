@@ -1,7 +1,7 @@
 import fs from 'fs';
 import mime from 'mime';
+import axios from 'axios';
 import Stream from 'stream';
-import superagent from 'superagent';
 import Logger from '../common/logger.js';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
@@ -46,9 +46,14 @@ class Cdn {
   }
 
   async uploadObjectFromUrl(objectName, url) {
-    const body = await superagent.get(url).then(res => res.body);
+    const response = await axios({
+      method: 'get',
+      url,
+      responseType: 'stream'
+    });
+
     const contentType = mime.getType(objectName) || defaultContentType;
-    return this.s3Client.upload(this.bucketName, objectName, body, contentType);
+    return this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
   }
 
   uploadEmptyObject(objectName, metadata) {

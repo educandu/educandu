@@ -34,6 +34,7 @@
     "async": "^3.2.1",
     "auto-bind": "^5.0.1",
     "aws-sdk": "^2.1006.0",
+    "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "classnames": "^2.3.1",
     "clipboard-copy": "^4.0.1",
