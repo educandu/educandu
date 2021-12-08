@@ -9,11 +9,12 @@ class SettingApiClient {
 
   saveSettings({ settings }) {
     return this.httpClient
-      .post('/api/v1/settings')
-      .type('json')
-      .accept('json')
-      .send({ settings })
-      .then(res => res.body);
+      .post(
+        '/api/v1/settings',
+        { settings },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 }
 

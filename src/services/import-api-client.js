@@ -9,27 +9,33 @@ class ImportApiClient {
 
   getImports(hostName) {
     return this.httpClient
-      .get('/api/v1/imports')
-      .query({ hostName })
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        '/api/v1/imports',
+        {
+          params: { hostName },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
   }
 
   getImportBatch(batchId) {
     return this.httpClient
-      .get(`/api/v1/imports/batches/${encodeURIComponent(batchId)}`)
-      .accept('json')
-      .type('json')
-      .then(res => res.body);
+      .get(
+        `/api/v1/imports/batches/${encodeURIComponent(batchId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   postImportBatch(batch) {
     return this.httpClient
-      .post('/api/v1/imports/batches')
-      .accept('json')
-      .type('json')
-      .send(batch)
-      .then(res => res.body);
+      .post(
+        '/api/v1/imports/batches',
+        batch,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 }
 

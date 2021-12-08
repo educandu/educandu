@@ -1,24 +1,24 @@
-import superagent from 'superagent';
+import axios from 'axios';
 
 class HttpClient {
   get(...args) {
-    return superagent.get(...args);
+    return axios.get(...args);
   }
 
   put(...args) {
-    return superagent.put(...args);
+    return axios.put(...args);
   }
 
   post(...args) {
-    return superagent.post(...args);
+    return axios.post(...args);
   }
 
   patch(...args) {
-    return superagent.patch(...args);
+    return axios.patch(...args);
   }
 
   delete(...args) {
-    return superagent.delete(...args);
+    return axios.delete(...args);
   }
 }
 

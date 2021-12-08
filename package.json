@@ -100,7 +100,6 @@
     "soundfont-player": "^0.12.0",
     "split-array": "^1.0.1",
     "stream-to-array": "^2.3.0",
-    "superagent": "^6.1.0",
     "thenby": "^1.3.4",
     "toposort": "^2.0.2",
     "umzug": "^v3.0.0-beta.16",

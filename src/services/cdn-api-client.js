@@ -9,23 +9,31 @@ class CdnApiClient {
 
   getObjects(prefix) {
     return this.httpClient
-      .get(`/api/v1/cdn/objects?prefix=${prefix}`)
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        `/api/v1/cdn/objects?prefix=${prefix}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   uploadFiles(files, prefix, { onProgress = () => {} } = {}) {
+    const formData = new FormData();
+
+    formData.set('prefix', prefix);
+    files.forEach(file => formData.append('files', file, file.name));
+
     const request = this.httpClient
-      .post('/api/v1/cdn/objects')
-      .accept('json')
-      .field('prefix', prefix)
-      .on('progress', onProgress);
+      .post(
+        '/api/v1/cdn/objects',
+        formData,
+        {
+          responseType: 'json',
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: onProgress
+        }
+      );
 
-    files.forEach(file => {
-      request.attach('files', file, file.name);
-    });
-
-    return request.then(res => res.body);
+    return request.then(res => res.data);
   }
 }
 

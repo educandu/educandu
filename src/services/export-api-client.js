@@ -14,22 +14,30 @@ class ExportApiClient {
     const databaseSchemaHash = await this.database.getSchemaHash();
 
     return this.httpClient
-      .get(`${baseUrl}/api/v1/exports`)
-      .query({ databaseSchemaHash })
-      .set(API_KEY_HEADER, apiKey)
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        `${baseUrl}/api/v1/exports`,
+        {
+          params: { databaseSchemaHash },
+          headers: { [API_KEY_HEADER]: apiKey },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
   }
 
   async getDocumentExport({ baseUrl, apiKey, documentKey, afterRevision, toRevision }) {
     const databaseSchemaHash = await this.database.getSchemaHash();
 
     return this.httpClient
-      .get(`${baseUrl}/api/v1/exports/${encodeURIComponent(documentKey)}`)
-      .query({ afterRevision, toRevision, databaseSchemaHash })
-      .set(API_KEY_HEADER, apiKey)
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        `${baseUrl}/api/v1/exports/${encodeURIComponent(documentKey)}`,
+        {
+          params: { afterRevision, toRevision, databaseSchemaHash },
+          headers: { [API_KEY_HEADER]: apiKey },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
   }
 }
 
