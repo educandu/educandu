@@ -103,7 +103,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
 
   const renderErrors = ({ errors }) => (
     <List
-      dataSource={errors}
+      dataSource={errors.map(JSON.stringify)}
       renderItem={error => (
         <List.Item>
           <span>{error}</span>
@@ -172,7 +172,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
         <Collapse>
           <Panel header={t('batchErrors')} extra={renderErrorCount(batch)}>
             <List
-              dataSource={batch.errors}
+              dataSource={batch.errors.map(JSON.stringify)}
               renderItem={error => (
                 <List.Item>
                   <span>{error}</span>

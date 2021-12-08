@@ -24,7 +24,7 @@ class ExportController {
       const schemaHash = await this.database.getSchemaHash();
 
       if (schemaHash !== importingSystemSchemaHash) {
-        throw new BadRequest(`Database schema mismatch between request (${schemaHash}) and host (${importingSystemSchemaHash})`);
+        throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
       }
 
       docs = await this.exportService.getAllExportableDocumentsMetadata();
@@ -39,7 +39,7 @@ class ExportController {
 
       const schemaHash = await this.database.getSchemaHash();
       if (schemaHash !== importingSystemSchemaHash) {
-        throw new BadRequest(`Database schema mismatch between request (${schemaHash}) and host (${importingSystemSchemaHash})`);
+        throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
       }
 
       const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ key, afterRevision, toRevision });

@@ -1,5 +1,6 @@
 import Logger from '../common/logger.js';
 import TaskStore from '../stores/task-store.js';
+import { serializeError } from 'serialize-error';
 import { TASK_TYPE } from '../common/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import TaskLockStore from '../stores/task-lock-store.js';
@@ -55,9 +56,9 @@ export default class TaskProcessor {
       try {
         logger.debug('Processing task');
         await taskProcessor.process(nextTask, batchParams, ctx);
-      } catch (processError) {
-        logger.debug('Error processing task', processError);
-        currentAttempt.errors.push(processError.message);
+      } catch (processingError) {
+        logger.debug(`Error processing task '${nextTask?._id}':`, processingError);
+        currentAttempt.errors.push(serializeError(processingError));
       }
 
       currentAttempt.completedOn = new Date();
@@ -72,7 +73,6 @@ export default class TaskProcessor {
 
       logger.debug('Saving task');
       await this.taskStore.save(nextTask);
-
     } finally {
       await this.taskLockStore.releaseLock(lock);
     }
