@@ -55,7 +55,7 @@ class DocumentImportTaskProcessor {
         logger.info(`CDN resource '${cdnResource}' already exists, skipping upload`);
       } else {
         logger.info(`Uploading CDN resource '${cdnResource}'`);
-        const url = `${documentExport.cdnRootUrl}/${encodeURIComponent(cdnResource)}`;
+        const url = `${documentExport.cdnRootUrl}/${encodeURI(cdnResource)}`;
         await this.cdn.uploadObjectFromUrl(cdnResource, url);
       }
 
