@@ -111,10 +111,15 @@ class Database {
     };
   }
 
-  async runMigrationScripts() {
-    const migrationsDirectory = url.fileURLToPath(new URL('../../migrations/automatic', import.meta.url));
-    const allFilesInMigrationDirectory = await pGlob(path.resolve(migrationsDirectory, './*.js'));
-    const migrationFileNames = allFilesInMigrationDirectory
+  async runMigrationScripts(includeManualMigrations = false) {
+    const migrationsDirectory = url.fileURLToPath(new URL('../../migrations', import.meta.url));
+    const allPossibleMigrationFiles = await pGlob(path.resolve(migrationsDirectory, './automatic/*.js'));
+
+    if (includeManualMigrations) {
+      allPossibleMigrationFiles.push(...await pGlob(path.resolve(migrationsDirectory, './manual/*.js')));
+    }
+
+    const migrationFileNames = allPossibleMigrationFiles
       .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
       .sort();
 

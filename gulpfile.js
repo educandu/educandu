@@ -10,7 +10,7 @@ import less from 'gulp-less';
 import csso from 'gulp-csso';
 import gulpif from 'gulp-if';
 import esbuild from 'esbuild';
-import { Umzug } from 'umzug';
+import { MongoDBStorage, Umzug } from 'umzug';
 import inquirer from 'inquirer';
 import eslint from 'gulp-eslint';
 import { promisify } from 'util';
@@ -434,11 +434,7 @@ export async function migrate() {
 
   const umzug = new Umzug({
     migrations,
-    storage: {
-      logMigration: () => {},
-      unlogMigration: () => {},
-      executed: () => []
-    },
+    storage: new MongoDBStorage({ collection: mongoClient.db().collection('migrations') }),
     logger: console
   });
 
