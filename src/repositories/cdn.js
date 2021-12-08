@@ -46,14 +46,22 @@ class Cdn {
   }
 
   async uploadObjectFromUrl(objectName, url) {
-    const response = await axios({
-      method: 'get',
-      url,
-      responseType: 'stream'
-    });
+    try {
+      const response = await axios({
+        method: 'get',
+        url,
+        responseType: 'stream'
+      });
 
-    const contentType = mime.getType(objectName) || defaultContentType;
-    return this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
+      const contentType = mime.getType(objectName) || defaultContentType;
+      this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
+    } catch (error) {
+      if (error.response.status === 404) {
+        logger.warn(`File not found ${url}`);
+        return;
+      }
+      throw error;
+    }
   }
 
   uploadEmptyObject(objectName, metadata) {
