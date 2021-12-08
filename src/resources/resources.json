@@ -84,6 +84,26 @@
     }
   },
   {
+    "namespace": "documentImportTable",
+    "language": "en",
+    "resources": {
+      "importType": "Import type",
+      "title": "Title",
+      "language": "Language",
+      "updatedOn": "Update date"
+    }
+  },
+  {
+    "namespace": "documentImportTable",
+    "language": "de",
+    "resources": {
+      "importType": "Import-Typ",
+      "title": "Titel",
+      "language": "Sprache",
+      "updatedOn": "Update-Datum"
+    }
+  },
+  {
     "namespace": "documentMetadataEditor",
     "language": "en",
     "resources": {
@@ -364,14 +384,8 @@
     "language": "en",
     "resources": {
       "importButton": "Start import",
-      "import": "Import",
-      "importType": "Import type",
-      "title": "Title",
-      "language": "Language",
-      "updateDate": "Update date",
       "source": "Source",
-      "add": "Add",
-      "update": "Update"
+      "backToImports": "Back to the overview"
     }
   },
   {
@@ -379,14 +393,8 @@
     "language": "de",
     "resources": {
       "importButton": "Import starten",
-      "import": "Importieren",
-      "importType": "Import-Typ",
-      "title": "Titel",
-      "language": "Sprache",
-      "updateDate": "Update-Datum",
       "source": "Quelle",
-      "add": "Hinzufügen",
-      "update": "Aktualisieren"
+      "backToImports": "Zurück zur Übersicht"
     }
   },
   {
@@ -414,7 +422,8 @@
       "errors": "Errors",
       "errorsCount": "Errors count",
       "attemptsHeader": "Attempt details",
-      "batchErrors": "Batch errors"
+      "batchErrors": "Batch errors",
+      "backToImports": "Back to the overview"
     }
   },
   {
@@ -442,7 +451,8 @@
       "errors": "Fehler",
       "errorsCount": "Fehleranzahl",
       "attemptsHeader": "Versuchsdetails",
-      "batchErrors": "Chargenfehler"
+      "batchErrors": "Chargenfehler",
+      "backToImports": "Zurück zur Übersicht"
     }
   },
   {
@@ -472,7 +482,7 @@
       "batchType": "Chargentyp",
       "batchStatus": "Chargenstatus",
       "batchStatusPending": "Ausstehend",
-      "batchStatusDone": "Vertig",
+      "batchStatusDone": "Abgeschlossen",
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "viewBatch": "Chargen ansehen",
       "batchTypeImportDocument": "Dokumentenimport",
@@ -1321,8 +1331,8 @@
       "users": "Users",
       "account": "My account",
       "settings": "Settings",
-      "importBatchCreation": "Import",
-      "importBatches": "Imports overview",
+      "importBatchCreation": "Create import",
+      "importBatches": "Imports",
       "importBatchView": "Import details",
       "docs": "Documents"
     }
@@ -1335,8 +1345,8 @@
       "users": "Benutzer",
       "account": "Mein Konto",
       "settings": "Einstellungen",
-      "importBatchCreation": "Import",
-      "importBatches": "Import-Übersicht",
+      "importBatchCreation": "Import erstellen",
+      "importBatches": "Importe",
       "importBatchView": "Import-Details",
       "docs": "Dokumente"
     }

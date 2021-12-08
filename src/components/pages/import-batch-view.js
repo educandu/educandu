@@ -142,6 +142,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
   return (
     <PageTemplate alerts={alerts}>
       <div className="ImportBatchViewPage">
+        <div><a href="/import-batches">{t('backToImports')}</a></div>
         <h1>{t('pageNames:importBatchView')}</h1>
         <Row>
           <Space>
@@ -167,6 +168,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
             <span>{batch.createdBy.username}</span>
           </Space>
         </Row>
+        <br />
         <Collapse>
           <Panel header={t('batchErrors')} extra={renderErrorCount(batch)}>
             <List
@@ -180,6 +182,8 @@ function ImportBatchView({ initialState, PageTemplate }) {
         </Collapse>
         <Table
           className="ImportBatchViewPage-tasksTable"
+          size="small"
+          bordered
           key={batch._id}
           rowKey="_id"
           dataSource={batch.tasks}

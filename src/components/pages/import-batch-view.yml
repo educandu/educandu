@@ -64,3 +64,6 @@ attemptsHeader:
 batchErrors:
   en: Batch errors
   de: Chargenfehler
+backToImports:
+  en: Back to the overview
+  de: Zurück zur Übersicht
