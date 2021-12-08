@@ -296,6 +296,10 @@ class DocumentService {
         if (ancestorRevision._id !== ancestorId) {
           throw new Error(`Ancestor id ${ancestorId} is not the latest revision`);
         }
+
+        if (ancestorRevision.origin !== DOCUMENT_ORIGIN.internal) {
+          throw new Error(`Ancestor id ${ancestorId} is not an internal document`);
+        }
       } else {
         existingDocumentRevisions = [];
         ancestorRevision = null;

@@ -139,7 +139,7 @@ class Database {
 
   async _generateSchemaHash() {
     const migrations = await this._db.collection('migrations').find({}).toArray();
-    const migrationNames = migrations.map(migration => migration.name).sort().join();
+    const migrationNames = migrations.map(migration => migration.migrationName).sort().join();
 
     return md5(migrationNames);
   }
