@@ -35,7 +35,7 @@ export default class Educandu_2021_12_08_01_migrate_settings_to_new_format {
   async up() {
     await updateAll(this.db.collection('settings'), { _id: { $in: affectedSettings } }, async setting => {
       if (setting._id === 'footerLinks') {
-        await await Promise.all(Object.keys(setting.value)
+        await Promise.all(Object.keys(setting.value)
           .map(key => setting.value[key]
             .map(value => this.processValueUp(value))).flat());
       } else {
@@ -47,7 +47,7 @@ export default class Educandu_2021_12_08_01_migrate_settings_to_new_format {
   async down() {
     await updateAll(this.db.collection('settings'), { _id: { $in: affectedSettings } }, async setting => {
       if (setting._id === 'footerLinks') {
-        await await Promise.all(Object.keys(setting.value)
+        await Promise.all(Object.keys(setting.value)
           .map(key => setting.value[key]
             .map(value => this.processValueDown(value))).flat());
       } else {

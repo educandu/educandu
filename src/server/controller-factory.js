@@ -31,9 +31,7 @@ class ControllerFactory {
   }
 
   registerAdditionalControllers(additionalControllers) {
-    for (const controller of additionalControllers) {
-      controllerTypes.push(controller);
-    }
+    controllerTypes.push(...additionalControllers);
   }
 
   getAllControllers() {
