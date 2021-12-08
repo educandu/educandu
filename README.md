@@ -37,7 +37,7 @@ The educandu framework
  | importSources | The system from which data can be imported | `[{ name, hostName, allowUnsecure, apiKey }]` | no, if not specified then `allowUnsecure` defaults to `false` |
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
- | additionalControllers | Any custome controllers you need | arrayOfControllers: [] | no, defaults to [] |
+ | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
 
 ## How to use
 
@@ -118,10 +118,10 @@ The gulpfile has a number of useful tasks which can be run with "gulp taskName",
 
 ## How add additional controllers
   In order to extend the educandu functionality you can add your custom controllers. These should be classes that expose one or more of the following methods:
-   * registerApi: if you wish to register some API calls
-   * registerPages: if you with to register additional pages
-   * registerMiddleware: if you wish to register some middleware
-   * registerErrorHandler: if you wish to register error handlers
+   * registerApi: regiters API endpoints
+   * registerPages: registers additional pages
+   * registerMiddleware: regiters some middleware
+   * registerErrorHandler: regiters error handlers
   
   
 An example implementation is given in the test app for registering a redirect from an "/articles" page to the standard "doc/:docKey/*" page of educandu. You can find the additional controller
