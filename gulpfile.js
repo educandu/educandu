@@ -137,7 +137,7 @@ function runJest(...flags) {
 
 const downloadCountryList = async lang => {
   const res = await axios.get(
-    `https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`,
+    `https://raw.githubusercontent.com/umpirsky/country-list/master/data/${encodeURIComponent(lang)}/country.json`,
     { responseType: 'json' }
   );
   await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(res.data, null, 2), 'utf8');

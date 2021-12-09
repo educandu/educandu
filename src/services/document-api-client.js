@@ -60,7 +60,7 @@ class DocumentApiClient {
   getRevisionTagSuggestions(tagsSuggestionQuery) {
     return this.httpClient
       .get(
-        `/api/v1/docs/revisions/tags/${tagsSuggestionQuery}`,
+        `/api/v1/docs/revisions/tags/${encodeURIComponent(tagsSuggestionQuery)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -69,7 +69,7 @@ class DocumentApiClient {
   getDocumentTagSuggestions(tagsSuggestionQuery) {
     return this.httpClient
       .get(
-        `/api/v1/docs/tags/${tagsSuggestionQuery}`,
+        `/api/v1/docs/tags/${encodeURIComponent(tagsSuggestionQuery)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -78,7 +78,7 @@ class DocumentApiClient {
   archiveDocument(documentKey) {
     return this.httpClient
       .patch(
-        `/api/v1/docs/${documentKey}/archive`,
+        `/api/v1/docs/${encodeURIComponent(documentKey)}/archive`,
         null,
         { responseType: 'json' }
       )
@@ -88,7 +88,7 @@ class DocumentApiClient {
   unarchiveDocument(documentKey) {
     return this.httpClient
       .patch(
-        `/api/v1/docs/${documentKey}/unarchive`,
+        `/api/v1/docs/${encodeURIComponent(documentKey)}/unarchive`,
         null,
         { responseType: 'json' }
       )

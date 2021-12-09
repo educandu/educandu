@@ -10,7 +10,7 @@ class CdnApiClient {
   getObjects(prefix) {
     return this.httpClient
       .get(
-        `/api/v1/cdn/objects?prefix=${prefix}`,
+        `/api/v1/cdn/objects?prefix=${encodeURIComponent(prefix)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

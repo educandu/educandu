@@ -59,7 +59,7 @@ class UserApiClient {
   saveUserRoles({ userId, roles }) {
     return this.httpClient
       .post(
-        `/api/v1/users/${userId}/roles`,
+        `/api/v1/users/${encodeURIComponent(userId)}/roles`,
         { roles },
         { responseType: 'json' }
       )
@@ -89,7 +89,7 @@ class UserApiClient {
   saveUserLockedOutState({ userId, lockedOut }) {
     return this.httpClient
       .post(
-        `/api/v1/users/${userId}/lockedOut`,
+        `/api/v1/users/${encodeURIComponent(userId)}/lockedOut`,
         { lockedOut },
         { responseType: 'json' }
       )
