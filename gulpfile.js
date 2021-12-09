@@ -5,12 +5,12 @@ import path from 'path';
 import gulp from 'gulp';
 import glob from 'glob';
 import yaml from 'yaml';
+import { EOL } from 'os';
 import execa from 'execa';
 import less from 'gulp-less';
 import csso from 'gulp-csso';
 import gulpif from 'gulp-if';
 import esbuild from 'esbuild';
-import { MongoDBStorage, Umzug } from 'umzug';
 import inquirer from 'inquirer';
 import eslint from 'gulp-eslint';
 import { promisify } from 'util';
@@ -23,6 +23,7 @@ import { MongoClient } from 'mongodb';
 import { Docker } from 'docker-cli-js';
 import sourcemaps from 'gulp-sourcemaps';
 import { Client as MinioClient } from 'minio';
+import { MongoDBStorage, Umzug } from 'umzug';
 
 import LessAutoprefix from 'less-plugin-autoprefix';
 
@@ -400,7 +401,7 @@ export async function migrate() {
       value: path.resolve(fileName)
     }));
 
-  const { connectionString, migrationsToRun } = await inquirer.prompt([
+  const { connectionString, migrationsToRun, isConfirmed } = await inquirer.prompt([
     {
       message: 'Connection string:',
       name: 'connectionString',
@@ -413,11 +414,21 @@ export async function migrate() {
       name: 'migrationsToRun',
       type: 'checkbox',
       choices: migrationChoices
+    },
+    {
+      when: currentAnswers => !!currentAnswers.migrationsToRun.length,
+      message: currentAnswers => [
+        'You have selected the follwing migrations:',
+        ...currentAnswers.migrationsToRun,
+        'Do you want to run them now?'
+      ].join(EOL),
+      name: 'isConfirmed',
+      type: 'confirm'
     }
   ]);
 
-  if (!migrationsToRun.length) {
-    console.log('No migration selected, quitting');
+  if (!isConfirmed) {
+    console.log('No migration will be run, quitting');
     return;
   }
 
