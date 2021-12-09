@@ -155,9 +155,9 @@ function Doc({ initialState, PageTemplate }) {
 
   const isExternalDocument = state.currentDocOrRevision.origin.startsWith(DOCUMENT_ORIGIN.external);
   const isEditingDisabled = state.currentDocOrRevision.archived || isExternalDocument || state.type !== DOCUMENT_TYPE.document;
-  const shouldShowViewRevisionsButton = state.type === DOCUMENT_TYPE.document;
-  const shouldShowViewDocumentButton = state.type === DOCUMENT_TYPE.revision;
-  const shouldOfferHardDelete = state.type === DOCUMENT_TYPE.revision;
+  const isViewRevisionsButtonVisible = state.type === DOCUMENT_TYPE.document;
+  const isViewDocumentButtonVisible = state.type === DOCUMENT_TYPE.revision;
+  const isHardDeleteEnabled = state.type === DOCUMENT_TYPE.revision;
 
   const revisionPicker = (
     <div className="DocPage-revisionPicker">
@@ -230,7 +230,7 @@ function Doc({ initialState, PageTemplate }) {
       handleClick: handleEditClick
     });
   }
-  if (shouldShowViewRevisionsButton) {
+  if (isViewRevisionsButtonVisible) {
     headerActions.push({
       key: 'viewRevisions',
       type: 'primary',
@@ -241,7 +241,7 @@ function Doc({ initialState, PageTemplate }) {
     });
   }
 
-  if (shouldShowViewDocumentButton) {
+  if (isViewDocumentButtonVisible) {
     headerActions.push({
       key: 'viewDocument',
       type: 'primary',
@@ -258,7 +258,7 @@ function Doc({ initialState, PageTemplate }) {
         { state.revisions.length > 0 && revisionPicker}
         <DocView
           documentOrRevision={state.currentDocOrRevision}
-          onAction={shouldOfferHardDelete ? handleAction : null}
+          onAction={isHardDeleteEnabled ? handleAction : null}
           />
       </div>
       <aside className="Content">
