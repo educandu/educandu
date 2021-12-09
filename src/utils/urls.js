@@ -124,20 +124,7 @@ export function createFullyQualifiedUrl(pathname) {
 }
 
 export function getSearchUrl(query) {
-  const url = new URL(document.location);
-  const keys = [];
-  for (const key of url.searchParams.keys()) {
-    keys.push(key);
-  }
-
-  for (const key of keys) {
-    url.searchParams.delete(key);
-  }
-
-  url.pathname = searchPath;
-  url.searchParams.append('query', encodeURIComponent(query));
-
-  return url.href;
+  return `${searchPath}?query=${encodeURIComponent(query)}`;
 }
 
 export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {

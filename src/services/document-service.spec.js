@@ -788,6 +788,7 @@ describe('document-service', () => {
     let doc1 = null;
     let doc2 = null;
     let doc3 = null;
+    let doc4 = null;
 
     beforeEach(async () => {
       doc1 = await createTestDocument(container, user, {
@@ -817,9 +818,9 @@ describe('document-service', () => {
         language: 'en'
       });
 
-      await createTestDocument(container, user, {
+      doc4 = await createTestDocument(container, user, {
         title: 'Doc 4',
-        slug: 'doc-43',
+        slug: 'doc-4',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
         archived: true,
@@ -874,7 +875,12 @@ describe('document-service', () => {
     });
 
     describe('when I search with a query that returns multiple documents', () => {
-      it('contain all documents with the corect tag match count', async () => {
+      it('does not contain archived documents', async () => {
+        const results = await sut.getDocumentsByTags('music');
+        expect(results.map(result => result.title)).not.toContain('Doc 4');
+      });
+
+      it('contains all documents with the correct tag match count', async () => {
         const results = await sut.getDocumentsByTags('music instructor goga');
 
         expect(results).toHaveLength(3);
@@ -890,11 +896,26 @@ describe('document-service', () => {
       });
     });
 
-    describe('when I search for archived documents', () => {
-      it('contain archived documents', async () => {
-        const results = await sut.getDocumentsByTags('Beat oven', { includeArchived: true });
+    describe('when I search using the minus search operators', () => {
+      it('excludes all documents containing a tag entirely matched by the minus search operator', async () => {
+        const results = await sut.getDocumentsByTags('music -goga -cretu');
+
+        expect(results).toHaveLength(1);
+        expect(results[0].title).toBe('Doc 3');
+      });
+
+      it('does not exclude documents with tags only partially matched by the minus search operator', async () => {
+        const results = await sut.getDocumentsByTags('music -goga -cret');
 
         expect(results).toHaveLength(2);
+        expect(results[0].title).toBe('Doc 3');
+        expect(results[1].title).toBe('Doc 1');
+      });
+
+      it('does not return any result when the query contains only minus operator expressions', async () => {
+        const results = await sut.getDocumentsByTags('-cretu');
+
+        expect(results).toHaveLength(0);
       });
     });
   });
