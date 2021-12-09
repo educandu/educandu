@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
+import { getImportedDocUrl } from '../../utils/urls.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { getImportedArticleUrl } from '../../utils/urls.js';
 import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
 import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
@@ -81,7 +81,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
   const renderTitle = ({ title, key, slug }) => (
     <a
       target="_blank"
-      href={getImportedArticleUrl({ hostName, allowUnsecure, key, slug })}
+      href={getImportedDocUrl({ hostName, allowUnsecure, key, slug })}
       rel="noreferrer noopener"
       >
       {title}

@@ -27,7 +27,9 @@ function removeLeadingSlash(path) {
 }
 
 function concatParts(...parts) {
-  return parts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
+  return parts
+    .filter(part => part || part === 0)
+    .reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
 }
 
 export function createRedirectUrl(path, redirect) {
@@ -48,8 +50,7 @@ export function getUsersUrl() {
 }
 
 export function getDocUrl(key, slug) {
-  // We need the check here until we fix the image-tiles component in story https://educandu.atlassian.net/browse/EDU-150
-  return slug ? concatParts(docsPrefix, key, slug) : concatParts(docsPrefix, key);
+  return concatParts(docsPrefix, key, slug);
 }
 
 export function getDocumentRevisionUrl(revisionId) {
@@ -143,7 +144,7 @@ export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
   return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
 }
 
-export function getImportedArticleUrl({ allowUnsecure, hostName, key, slug }) {
+export function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
   return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getDocUrl(key, slug));
 }
 
