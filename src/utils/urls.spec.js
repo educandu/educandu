@@ -76,4 +76,52 @@ describe('order-store-base', () => {
 
   });
 
+  describe('concatParts', () => {
+    const testCases = [
+      {
+        description: 'when called with multiple parts',
+        expectation: 'should return the right url',
+        parts: ['abc', 'def', 'ghi'],
+        expectedResult: 'abc/def/ghi'
+      },
+      {
+        description: 'when called with a 0 part',
+        expectation: 'should return the right url',
+        parts: ['abc', 0, 'ghi'],
+        expectedResult: 'abc/0/ghi'
+      },
+      {
+        description: 'when called with a false part',
+        expectation: 'should return the right url',
+        parts: ['abc', false, 'ghi'],
+        expectedResult: 'abc/false/ghi'
+      },
+      {
+        description: 'when called with a null part',
+        expectation: 'should return the right url',
+        parts: ['abc', null, 'ghi'],
+        expectedResult: 'abc/ghi'
+      },
+      {
+        description: 'when called with an empty string part',
+        expectation: 'should return the right url',
+        parts: ['abc', '', 'ghi'],
+        expectedResult: 'abc/ghi'
+      }
+    ];
+
+    testCases.forEach(({ description, expectation, parts, expectedResult }) => {
+      describe(description, () => {
+        let actualResult;
+        beforeEach(() => {
+          actualResult = sut.concatParts(...parts);
+        });
+        it(expectation, () => {
+          expect(actualResult).toBe(expectedResult);
+        });
+      });
+    });
+
+  });
+
 });

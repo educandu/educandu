@@ -28,7 +28,7 @@ function removeLeadingSlash(path) {
 
 function concatParts(...parts) {
   return parts
-    .filter(part => part || part === 0)
+    .filter(part => part || part === 0 || part === false)
     .reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
 }
 
