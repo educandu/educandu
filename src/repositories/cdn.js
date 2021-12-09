@@ -47,12 +47,7 @@ class Cdn {
 
   async uploadObjectFromUrl(objectName, url) {
     try {
-      const response = await axios({
-        method: 'get',
-        url,
-        responseType: 'stream'
-      });
-
+      const response = await axios.get(url, { responseType: 'stream' });
       const contentType = mime.getType(objectName) || defaultContentType;
       await this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
     } catch (error) {

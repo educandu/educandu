@@ -7,6 +7,7 @@ import glob from 'glob';
 import yaml from 'yaml';
 import { EOL } from 'os';
 import execa from 'execa';
+import axios from 'axios';
 import less from 'gulp-less';
 import csso from 'gulp-csso';
 import gulpif from 'gulp-if';
@@ -15,7 +16,6 @@ import inquirer from 'inquirer';
 import eslint from 'gulp-eslint';
 import { promisify } from 'util';
 import plumber from 'gulp-plumber';
-import superagent from 'superagent';
 import { promises as fs } from 'fs';
 import Graceful from 'node-graceful';
 import { spawn } from 'child_process';
@@ -136,8 +136,11 @@ function runJest(...flags) {
 }
 
 const downloadCountryList = async lang => {
-  const res = await superagent.get(`https://raw.githubusercontent.com/umpirsky/country-list/master/data/${lang}/country.json`);
-  await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(JSON.parse(res.text), null, 2), 'utf8');
+  const res = await axios.get(
+    `https://raw.githubusercontent.com/umpirsky/country-list/master/data/${encodeURIComponent(lang)}/country.json`,
+    { responseType: 'json' }
+  );
+  await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(res.data, null, 2), 'utf8');
 };
 
 export async function clean() {

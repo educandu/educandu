@@ -9,73 +9,90 @@ class DocumentApiClient {
 
   saveDocument(data) {
     return this.httpClient
-      .post('/api/v1/docs')
-      .accept('json')
-      .type('json')
-      .send(data)
-      .then(res => res.body);
+      .post(
+        '/api/v1/docs',
+        data,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   restoreDocumentRevision({ documentKey, revisionId }) {
     return this.httpClient
-      .post('/api/v1/docs/restore-revision')
-      .accept('json')
-      .type('json')
-      .send({ documentKey, revisionId })
-      .then(res => res.body);
+      .post(
+        '/api/v1/docs/restore-revision',
+        { documentKey, revisionId },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   getDocumentRevisions(key) {
     return this.httpClient
-      .get('/api/v1/docs')
-      .query({ key })
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        '/api/v1/docs',
+        {
+          params: { key },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
   }
 
   hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions }) {
     return this.httpClient
-      .delete('/api/v1/docs/sections')
-      .accept('json')
-      .type('json')
-      .send({
-        documentKey,
-        sectionKey,
-        sectionRevision,
-        reason,
-        deleteAllRevisions: !!deleteAllRevisions
-      })
-      .then(res => res.body);
+      .delete(
+        '/api/v1/docs/sections',
+        {
+          data: {
+            documentKey,
+            sectionKey,
+            sectionRevision,
+            reason,
+            deleteAllRevisions: !!deleteAllRevisions
+          },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
   }
 
   getRevisionTagSuggestions(tagsSuggestionQuery) {
     return this.httpClient
-      .get(`/api/v1/docs/revisions/tags/${tagsSuggestionQuery}`)
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        `/api/v1/docs/revisions/tags/${encodeURIComponent(tagsSuggestionQuery)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   getDocumentTagSuggestions(tagsSuggestionQuery) {
     return this.httpClient
-      .get(`/api/v1/docs/tags/${tagsSuggestionQuery}`)
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        `/api/v1/docs/tags/${encodeURIComponent(tagsSuggestionQuery)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   archiveDocument(documentKey) {
     return this.httpClient
-      .patch(`/api/v1/docs/${documentKey}/archive`)
-      .accept('json')
-      .send()
-      .then(res => res.body);
+      .patch(
+        `/api/v1/docs/${encodeURIComponent(documentKey)}/archive`,
+        null,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   unarchiveDocument(documentKey) {
     return this.httpClient
-      .patch(`/api/v1/docs/${documentKey}/unarchive`)
-      .accept('json')
-      .send()
-      .then(res => res.body);
+      .patch(
+        `/api/v1/docs/${encodeURIComponent(documentKey)}/unarchive`,
+        null,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 }
 

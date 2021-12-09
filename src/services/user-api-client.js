@@ -9,81 +9,91 @@ class UserApiClient {
 
   getUsers() {
     return this.httpClient
-      .get('/api/v1/users')
-      .accept('json')
-      .then(res => res.body);
+      .get(
+        '/api/v1/users',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   register({ username, password, email }) {
     return this.httpClient
-      .post('/api/v1/users')
-      .type('json')
-      .accept('json')
-      .send({ username, password, email })
-      .then(res => res.body);
+      .post(
+        '/api/v1/users',
+        { username, password, email },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   requestPasswordReset({ email }) {
     return this.httpClient
-      .post('/api/v1/users/request-password-reset')
-      .type('json')
-      .accept('json')
-      .send({ email })
-      .then(res => res.body);
+      .post(
+        '/api/v1/users/request-password-reset',
+        { email },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   completePasswordReset({ passwordResetRequestId, password }) {
     return this.httpClient
-      .post('/api/v1/users/complete-password-reset')
-      .type('json')
-      .accept('json')
-      .send({ passwordResetRequestId, password })
-      .then(res => res.body);
+      .post(
+        '/api/v1/users/complete-password-reset',
+        { passwordResetRequestId, password },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   login({ username, password }) {
     return this.httpClient
-      .post('/api/v1/users/login')
-      .type('json')
-      .accept('json')
-      .send({ username, password })
-      .then(res => res.body);
+      .post(
+        '/api/v1/users/login',
+        { username, password },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   saveUserRoles({ userId, roles }) {
     return this.httpClient
-      .post(`/api/v1/users/${userId}/roles`)
-      .type('json')
-      .accept('json')
-      .send({ roles })
-      .then(res => res.body);
+      .post(
+        `/api/v1/users/${encodeURIComponent(userId)}/roles`,
+        { roles },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   saveUserAccount({ username, email }) {
     return this.httpClient
-      .post('/api/v1/users/account')
-      .type('json')
-      .accept('json')
-      .send({ username, email })
-      .then(res => res.body);
+      .post(
+        '/api/v1/users/account',
+        { username, email },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   saveUserProfile({ profile }) {
     return this.httpClient
-      .post('/api/v1/users/profile')
-      .type('json')
-      .accept('json')
-      .send({ profile })
-      .then(res => res.body);
+      .post(
+        '/api/v1/users/profile',
+        { profile },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 
   saveUserLockedOutState({ userId, lockedOut }) {
     return this.httpClient
-      .post(`/api/v1/users/${userId}/lockedOut`)
-      .type('json')
-      .accept('json')
-      .send({ lockedOut })
-      .then(res => res.body);
+      .post(
+        `/api/v1/users/${encodeURIComponent(userId)}/lockedOut`,
+        { lockedOut },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 }
 
