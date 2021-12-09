@@ -12,7 +12,7 @@ batchStatusPending:
   de: Ausstehend
 batchStatusDone:
   en: Done
-  de: Vertig
+  de: Abgeschlossen
 batchStatusProcessing:
   en: '{progress, number, percent} completed'
   de: '{progress, number, percent} abgeschlossen'

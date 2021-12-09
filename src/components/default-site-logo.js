@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import urls from '../../src/utils/urls.js';
+import classNames from 'classnames';
 
-export default function EducanduLogo({ size }) {
-  return (
+export default function DefaultSiteLogo({ readonly, size }) {
+  const renderImage = () => (
     <svg
-      className={`EducanduLogo EducanduLogo-${size}`}
+      className={`DefaultSiteLogo-image DefaultSiteLogo-image--${size}`}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 354.33072 354.33072"
       version="1.1"
@@ -21,14 +23,32 @@ export default function EducanduLogo({ size }) {
           style={{ fill: 'currentColor' }}
           />
       </g>
-    </svg>
+    </svg>);
+
+  const linkClasses = classNames({
+    'DefaultSiteLogo-link': true,
+    'DefaultSiteLogo-link--readonly': readonly
+  });
+
+  const homeUrl = readonly ? null : urls.getHomeUrl();
+
+  return (
+    <div className="DefaultSiteLogo">
+      <a href={homeUrl} className={linkClasses}>
+        {renderImage()}
+        <span className={`DefaultSiteLogo-text DefaultSiteLogo-text--${size}`}>educandu</span>
+      </a>
+    </div>
   );
+
 }
 
-EducanduLogo.propTypes = {
-  size: PropTypes.oneOf(['normal', 'small'])
+DefaultSiteLogo.propTypes = {
+  readonly: PropTypes.bool,
+  size: PropTypes.oneOf(['small', 'normal'])
 };
 
-EducanduLogo.defaultProps = {
+DefaultSiteLogo.defaultProps = {
+  readonly: false,
   size: 'normal'
 };

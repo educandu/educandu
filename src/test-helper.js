@@ -67,7 +67,8 @@ export async function setupTestEnvironment() {
     emailSenderAddress: 'educandu-test-app@test.com',
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
     bundleConfig: {
-      getPageTemplateComponent: () => Promise.resolve(null)
+      getPageTemplateComponent: () => Promise.resolve(null),
+      getSiteLogoComponent: () => Promise.resolve(null)
     }
   });
 

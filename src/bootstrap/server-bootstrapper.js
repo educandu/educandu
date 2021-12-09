@@ -32,7 +32,7 @@ export async function createContainer(configValues = {}) {
   } else {
     try {
       logger.info('Starting database migrations');
-      await database.runMigrationScripts();
+      await database.runMigrationScripts(serverConfig.includeManualMigrations);
       logger.info('Finished database migrations successfully');
     } catch (error) {
       logger.error(error);

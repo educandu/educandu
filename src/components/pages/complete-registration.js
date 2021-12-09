@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { userShape } from '../../ui/default-prop-types.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 
-function CompleteRegistration({ initialState, PageTemplate }) {
+function CompleteRegistration({ initialState, PageTemplate, SiteLogo }) {
   const { t } = useTranslation('completeRegistration');
   const [isCountdownRunning, setIsCountdownRunning] = useState(false);
   useEffect(() => setIsCountdownRunning(true), []);
@@ -46,7 +45,7 @@ function CompleteRegistration({ initialState, PageTemplate }) {
     <PageTemplate alerts={alerts} fullScreen>
       <div className="CompleteRegistrationPage">
         <div className="CompleteRegistrationPage-title">
-          <SiteLogo size="big" readonly />
+          <SiteLogo readonly />
         </div>
         <div className="CompleteRegistrationPage-message">
           {initialState.user
@@ -60,6 +59,7 @@ function CompleteRegistration({ initialState, PageTemplate }) {
 
 CompleteRegistration.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
+  SiteLogo: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     user: userShape
   }).isRequired

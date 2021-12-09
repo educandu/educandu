@@ -17,6 +17,7 @@ The educandu framework
  | port | Port on which the project is run | `number`, mininum 1 | no, defaults to 80 |
  | mongoConnectionString | The URI for the project's MongoDB | `string` | yes |
  | skipMongoMigrations | Whether or not to run newly added MongoDB migration scripts on startup | `boolean` | no, defaults to `false` |
+ | includeManualMigrations | Whether or not to include manual migrations when running migration scripts on startup | `boolean` | no, defaults to `false` |
  | skipMongoChecks | Whether or not to run MongoDB checks resulting in ensuring DB collections on startup | `boolean` | no, defaults to `false` |
  | cdnEndpoint | The URL of the AWS-hosted CDN | `string` | yes |
  | cdnRegion | The region of the AWS-hosted CDN | `string` | yes |
@@ -28,7 +29,7 @@ The educandu framework
  | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
- | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent }` | yes |
+ | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
  | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
  | initialUser | The first user account, with admin role | `{ username, password, email }` or `null` | no |
@@ -54,6 +55,7 @@ educandu({
   port: 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   skipMongoMigrations: process.env.TEST_APP_SKIP_MONGO_MIGRATIONS === true.toString(),
+  includeManualMigrations: process.env.TEST_APP_INCLUDE_MANUAL_MIGRATIONS === true.toString(),
   skipMongoChecks: process.env.TEST_APP_SKIP_MONGO_CHECKS === true.toString(),
   cdnEndpoint: 'http://localhost:9000',
   cdnRegion: 'eu-central-1',

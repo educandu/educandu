@@ -23,7 +23,14 @@ export default class TaskScheduler {
   _tick() {
     logger.info('Setting and executing current tick');
     this.currentTick = (async () => {
-      const isThereMoreWork = await this.batchProcessor.process(this.context);
+      let isThereMoreWork;
+
+      try {
+        isThereMoreWork = await this.batchProcessor.process(this.context);
+      } catch (error) {
+        logger.error('Error in batch processor: ', error);
+        isThereMoreWork = false;
+      }
 
       if (!this.context.cancellationRequested) {
         const nextPollTimeSpan = isThereMoreWork ? 0 : this.serverConfig.taskProcessing.idlePollIntervalInMs;

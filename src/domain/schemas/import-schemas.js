@@ -17,6 +17,14 @@ export const getImportsQuerySchema = joi.object({
   hostName: joi.string().required()
 });
 
+export const createImportBatchQuerySchema = joi.object({
+  source: joi.string().required()
+});
+
+export const importBatchViewParamsSchema = joi.object({
+  batchId: idOrKeySchema.required()
+});
+
 export const postImportBatchBodySchema = joi.object({
   hostName: joi.string().required(),
   documentsToImport: joi.array().required().items(importedDocumentSchema)

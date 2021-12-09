@@ -308,7 +308,7 @@ class EditDoc extends React.Component {
     }));
   }
 
-  handleBackClick() {
+  handleCancelClick() {
     const { editedDocumentRevision } = this.state;
     window.location = urls.getDocUrl(editedDocumentRevision.key, editedDocumentRevision.slug);
   }
@@ -353,10 +353,10 @@ class EditDoc extends React.Component {
     }
 
     headerActions.push({
-      key: 'back',
+      key: 'cancel',
       icon: CloseOutlined,
-      text: t('common:back'),
-      handleClick: this.handleBackClick
+      text: t('common:cancel'),
+      handleClick: this.handleCancelClick
     });
 
     if (proposedSectionKeys.length) {

@@ -11,11 +11,11 @@ settings:
   en: Settings
   de: Einstellungen
 importBatchCreation:
-  en: Import
-  de: Import
+  en: Create import
+  de: Import erstellen
 importBatches:
-  en: Imports overview
-  de: Import-Übersicht
+  en: Imports
+  de: Importe
 importBatchView:
   en: Import details
   de: Import-Details

@@ -103,7 +103,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
 
   const renderErrors = ({ errors }) => (
     <List
-      dataSource={errors}
+      dataSource={errors.map(JSON.stringify)}
       renderItem={error => (
         <List.Item>
           <span>{error}</span>
@@ -142,6 +142,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
   return (
     <PageTemplate alerts={alerts}>
       <div className="ImportBatchViewPage">
+        <div><a href="/import-batches">{t('backToImports')}</a></div>
         <h1>{t('pageNames:importBatchView')}</h1>
         <Row>
           <Space>
@@ -167,10 +168,11 @@ function ImportBatchView({ initialState, PageTemplate }) {
             <span>{batch.createdBy.username}</span>
           </Space>
         </Row>
+        <br />
         <Collapse>
           <Panel header={t('batchErrors')} extra={renderErrorCount(batch)}>
             <List
-              dataSource={batch.errors}
+              dataSource={batch.errors.map(JSON.stringify)}
               renderItem={error => (
                 <List.Item>
                   <span>{error}</span>
@@ -180,6 +182,8 @@ function ImportBatchView({ initialState, PageTemplate }) {
         </Collapse>
         <Table
           className="ImportBatchViewPage-tasksTable"
+          size="small"
+          bordered
           key={batch._id}
           rowKey="_id"
           dataSource={batch.tasks}

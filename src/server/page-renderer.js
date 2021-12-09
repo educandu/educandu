@@ -35,7 +35,8 @@ class PageRenderer extends PageRendererBase {
 
     const {
       PageComponent,
-      PageTemplateComponent
+      PageTemplateComponent,
+      SiteLogoComponent
     } = this.pageResolver.getCachedPageComponentInfo(pageName);
 
     const props = {
@@ -47,7 +48,8 @@ class PageRenderer extends PageRendererBase {
       pageName,
       settings: cloneDeep(settings),
       PageComponent,
-      PageTemplateComponent
+      PageTemplateComponent,
+      SiteLogoComponent
     };
 
     const inlineScript = [

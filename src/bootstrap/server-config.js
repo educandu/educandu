@@ -12,6 +12,7 @@ const configSchema = joi.object({
   port: joi.number().min(1).default(80),
   mongoConnectionString: joi.string().required(),
   skipMongoMigrations: joi.boolean().default(false),
+  includeManualMigrations: joi.boolean().default(false),
   skipMongoChecks: joi.boolean().default(false),
   cdnEndpoint: joi.string().required(),
   cdnRegion: joi.string().required(),
@@ -24,7 +25,8 @@ const configSchema = joi.object({
   smtpOptions: joi.any().required(),
   emailSenderAddress: joi.string().required(),
   bundleConfig: joi.object({
-    getPageTemplateComponent: joi.func().required()
+    getPageTemplateComponent: joi.func().required().allow(null),
+    getSiteLogoComponent: joi.func().required().allow(null)
   }).required(),
   publicFolders: joi.array().items(joi.string()).default([]),
   resources: joi.array().items(joi.string()).default([]),

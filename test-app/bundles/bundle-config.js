@@ -1,7 +1,11 @@
-import EducanduPageTemplate from './educandu-page-template.js';
+import SiteLogoComponent from '../../src/components/default-site-logo.js';
+import PageTemplateComponent from '../../src/components/default-page-template.js';
 
 export default {
   getPageTemplateComponent() {
-    return EducanduPageTemplate;
+    return PageTemplateComponent;
+  },
+  getSiteLogoComponent() {
+    return SiteLogoComponent;
   }
 };

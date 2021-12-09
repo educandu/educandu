@@ -3,7 +3,6 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Form, Button } from 'antd';
 import urls from '../../utils/urls.js';
-import SiteLogo from '../site-logo.js';
 import Countdown from '../countdown.js';
 import Logger from '../../common/logger.js';
 import { inject } from '../container-context.js';
@@ -47,7 +46,7 @@ class CompletePasswordReset extends React.Component {
   }
 
   render() {
-    const { t, PageTemplate } = this.props;
+    const { t, PageTemplate, SiteLogo } = this.props;
     const { user } = this.state;
 
     const formItemLayout = {
@@ -122,7 +121,7 @@ class CompletePasswordReset extends React.Component {
       <PageTemplate alerts={alerts} fullScreen>
         <div className="CompletePasswordResetPage">
           <div className="CompletePasswordResetPage-title">
-            <SiteLogo size="big" readonly />
+            <SiteLogo readonly />
           </div>
           {!isValidRequest && completionFailureNotice}
           {isValidRequest && !user && completionForm}
@@ -135,6 +134,7 @@ class CompletePasswordReset extends React.Component {
 
 CompletePasswordReset.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
+  SiteLogo: PropTypes.func.isRequired,
   ...translationProps,
   initialState: PropTypes.shape({
     passwordResetRequestId: PropTypes.string

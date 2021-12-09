@@ -194,7 +194,7 @@ export const importTaskShape = PropTypes.shape({
   attempts: PropTypes.arrayOf(PropTypes.shape({
     startedOn: PropTypes.string,
     completedOn: PropTypes.string,
-    errors: PropTypes.arrayOf(PropTypes.string).isRequired
+    errors: PropTypes.arrayOf(PropTypes.any).isRequired
   })),
   taskParams: PropTypes.shape({
     key: PropTypes.string.isRequired,
