@@ -788,6 +788,7 @@ describe('document-service', () => {
     let doc1 = null;
     let doc2 = null;
     let doc3 = null;
+    let doc4 = null;
 
     beforeEach(async () => {
       doc1 = await createTestDocument(container, user, {
@@ -817,8 +818,7 @@ describe('document-service', () => {
         language: 'en'
       });
 
-      // This archived document should never be matched:
-      await createTestDocument(container, user, {
+      doc4 = await createTestDocument(container, user, {
         title: 'Doc 4',
         slug: 'doc-4',
         sections: [],
@@ -875,6 +875,11 @@ describe('document-service', () => {
     });
 
     describe('when I search with a query that returns multiple documents', () => {
+      it('does not contain archived documents', async () => {
+        const results = await sut.getDocumentsByTags('music');
+        expect(results.map(result => result.title)).not.toContain('Doc 4');
+      });
+
       it('contains all documents with the correct tag match count', async () => {
         const results = await sut.getDocumentsByTags('music instructor goga');
 
