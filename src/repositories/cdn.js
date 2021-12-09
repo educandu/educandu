@@ -54,7 +54,7 @@ class Cdn {
       });
 
       const contentType = mime.getType(objectName) || defaultContentType;
-      this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
+      await this.s3Client.upload(this.bucketName, objectName, response.data, contentType);
     } catch (error) {
       if (error.response.status === 404) {
         logger.warn(`File not found ${url}`);
