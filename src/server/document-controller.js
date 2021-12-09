@@ -1,5 +1,5 @@
 import express from 'express';
-import urls from '../utils/urls.js';
+import urls, { getDocUrl } from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
@@ -61,9 +61,15 @@ class DocumentController {
 
     router.get('/docs/:docKey/*', async (req, res) => {
       const docKey = req.params.docKey || '';
+      const slug = req.params[0];
+
       const doc = await this.documentService.getDocumentByKey(docKey);
       if (!doc) {
         throw new NotFound();
+      }
+
+      if (slug !== doc.slug) {
+        return res.redirect(301, getDocUrl(doc.key, doc.slug));
       }
 
       const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
