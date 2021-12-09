@@ -53,7 +53,7 @@ function CreditsFooter({ documentOrRevision, type }) {
             <b>{t('originalSource')}:</b> {renderOriginalUrl()}
             <br />
           </Fragment>)}
-        {type === 'document' ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
+        {type === DOCUMENT_TYPE.document ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
       </p>
     </div>
   );
