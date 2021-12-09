@@ -2,7 +2,7 @@ import by from 'thenby';
 import PropTypes from 'prop-types';
 import { Tooltip, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { getArticleUrl } from '../utils/urls.js';
+import { getDocUrl } from '../utils/urls.js';
 import { useService } from './container-context.js';
 import { DOCUMENT_IMPORT_TYPE } from '../common/constants.js';
 import React, { useMemo, memo, useState, useEffect } from 'react';
@@ -39,7 +39,7 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
 
   return importableDocuments.map(doc => {
     const documentLanguageData = languagesData[doc.language];
-    const url = doc.slug ? `${importSourceBaseUrl}${getArticleUrl(doc.slug)}` : null;
+    const url = doc.slug ? `${importSourceBaseUrl}${getDocUrl(doc.key, doc.slug)}` : null;
     const importTypeIcon = getImportTypeIcon(doc.importType);
     const importTypeTooltipText = t(doc.importType);
 

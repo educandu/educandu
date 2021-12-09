@@ -59,7 +59,8 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
     };
 
     getDocuments();
-  }, [importApiClient, importSource, t]);
+
+  }, [importApiClient, importSource.hostName, t]);
 
   const alerts = useGlobalAlerts();
 

@@ -10,7 +10,7 @@ import { documentMetadataShape, documentRevisionShape, documentShape, settingsDo
 
 const hasValue = value => value && String(value).trim();
 
-const isValidFooterLinkItem = item => [item.linkTitle, item.documentNamespace, item.documentSlug].every(hasValue);
+const isValidFooterLinkItem = item => [item.linkTitle, item.documentKey, item.documentSlug].every(hasValue);
 
 function FooterLinksSettings({ footerLinks, documents, onChange }) {
   const { t } = useTranslation('footerLinksSettings');

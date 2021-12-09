@@ -16,7 +16,7 @@ const createKeyOptions = memoizeOne(documents => {
 const createUrlOptions = memoizeOne(documents => {
   return documents
     .filter(doc => doc.slug)
-    .map(doc => ({ key: doc.key, value: `${doc.namespace}/${doc.slug}`, title: `${doc.namespace}/${doc.slug}` }))
+    .map(doc => ({ key: doc.key, value: `${doc.key}/${doc.slug}`, title: `${doc.key}/${doc.slug}` }))
     .sort(thenby(x => x.title));
 });
 

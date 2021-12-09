@@ -64,7 +64,7 @@ class DocumentImportTaskProcessor {
       }
     }
 
-    const docUrl = getDocUrl(sortedRevisions[0].key);
+    const docUrl = getDocUrl(sortedRevisions[0].key, sortedRevisions[0].slug);
     const baseUrl = getImportSourceBaseUrl(importSource);
 
     const originUrl = `${baseUrl}${docUrl}`;

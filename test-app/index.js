@@ -1,6 +1,7 @@
 import path from 'path';
 import educandu from '../src/index.js';
 import bundleConfig from './bundles/bundle-config.js';
+import ArticleController from './article-controller.js';
 
 educandu({
   port: 3000,
@@ -49,5 +50,6 @@ educandu({
     isEnabled: true,
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
-  }
+  },
+  additionalControllers: [ArticleController]
 });

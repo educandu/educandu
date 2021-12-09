@@ -1,8 +1,9 @@
 import express from 'express';
-import urls from '../utils/urls.js';
+import urls, { getDocUrl } from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { DOCUMENT_TYPE } from '../common/constants.js';
 import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -32,17 +33,6 @@ class DocumentController {
   }
 
   registerPages(router) {
-    router.get('/articles/*', async (req, res) => {
-      const slug = req.params[0] || '';
-      const doc = await this.documentService.getDocumentByNamespaceAndSlug('articles', slug);
-      if (!doc) {
-        throw new NotFound();
-      }
-
-      const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.article, { documentOrRevision: mappedDoc, type: 'document' });
-    });
-
     router.get('/revs/articles/:id', (req, res) => {
       return res.redirect(301, urls.getDocumentRevisionUrl(req.params.id));
     });
@@ -54,7 +44,7 @@ class DocumentController {
       }
 
       const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.article, { documentOrRevision: documentRevision, type: 'revision' });
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: documentRevision, type: DOCUMENT_TYPE.permalinkedRevision });
     });
 
     router.get('/docs', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
@@ -65,13 +55,25 @@ class DocumentController {
     });
 
     router.get('/docs/:docKey', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
-      const revisions = await this.documentService.getAllDocumentRevisionsByKey(req.params.docKey);
-      if (!revisions.length) {
+      const doc = await this.documentService.getDocumentByKey(req.params.docKey);
+      return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
+    });
+
+    router.get('/docs/:docKey/*', async (req, res) => {
+      const docKey = req.params.docKey || '';
+      const slug = req.params[0];
+
+      const doc = await this.documentService.getDocumentByKey(docKey);
+      if (!doc) {
         throw new NotFound();
       }
 
-      const documentRevisions = await this.clientDataMapper.mapDocsOrRevisions(revisions, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { documentRevisions });
+      if (slug !== doc.slug) {
+        return res.redirect(301, getDocUrl(doc.key, doc.slug));
+      }
+
+      const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
+      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
     });
 
     router.get('/edit/doc/:docKey', needsPermission(permissions.EDIT_DOC), async (req, res) => {

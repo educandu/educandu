@@ -13,7 +13,6 @@ export const searchPath = '/search';
 
 export const docsPrefix = '/docs/';
 export const editDocPrefix = '/edit/doc/';
-export const articlesPrefix = '/articles/';
 export const revisionPrefix = '/revs/';
 export const pluginApiPathPrefix = '/plugins/';
 export const completeRegistrationPrefix = '/complete-registration/';
@@ -28,7 +27,9 @@ function removeLeadingSlash(path) {
 }
 
 function concatParts(...parts) {
-  return parts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
+  return parts
+    .filter(part => part || part === 0 || part === false)
+    .reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
 }
 
 export function createRedirectUrl(path, redirect) {
@@ -37,10 +38,6 @@ export function createRedirectUrl(path, redirect) {
 
 export function getDocsUrl() {
   return docsPath;
-}
-
-export function getDocUrl(docKey) {
-  return concatParts(docsPrefix, docKey);
 }
 
 export function getEditDocUrl(docKey, blueprintKey = null) {
@@ -52,8 +49,8 @@ export function getUsersUrl() {
   return usersPath;
 }
 
-export function getArticleUrl(slug) {
-  return concatParts(articlesPrefix, slug);
+export function getDocUrl(key, slug) {
+  return concatParts(docsPrefix, key, slug);
 }
 
 export function getDocumentRevisionUrl(revisionId) {
@@ -147,8 +144,8 @@ export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
   return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
 }
 
-export function getImportedArticleUrl({ allowUnsecure, hostName, slug }) {
-  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getArticleUrl(slug));
+export function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
+  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getDocUrl(key, slug));
 }
 
 export function getImportDetailsUrl(batchId) {
@@ -165,7 +162,6 @@ export default {
   resetPasswordPath,
   docsPrefix,
   editDocPrefix,
-  articlesPrefix,
   pluginApiPathPrefix,
   completeRegistrationPrefix,
   completePasswordResetPrefix,
@@ -174,10 +170,9 @@ export default {
   removeLeadingSlash,
   concatParts,
   getDocsUrl,
-  getDocUrl,
   getEditDocUrl,
   getUsersUrl,
-  getArticleUrl,
+  getDocUrl,
   getDocumentRevisionUrl,
   getSettingsUrl,
   getImportsUrl,

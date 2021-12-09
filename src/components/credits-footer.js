@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
-import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 import { useDateFormat } from './language-context.js';
+import { DOCUMENT_TYPE } from '../common/constants.js';
+import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function renderUser(user) {
   return user.email
@@ -13,7 +14,7 @@ function renderUser(user) {
 
 function renderDocumentContributors(doc, t) {
   const cons = doc.contributors.map((user, index) => (
-    <Fragment key={index.toString()}>
+    <Fragment key={user._id}>
       {index !== 0 && ', '}
       {renderUser(user)}
     </Fragment>
@@ -52,7 +53,7 @@ function CreditsFooter({ documentOrRevision, type }) {
             <b>{t('originalSource')}:</b> {renderOriginalUrl()}
             <br />
           </Fragment>)}
-        {type === 'document' ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
+        {type === DOCUMENT_TYPE.document ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
       </p>
     </div>
   );
@@ -60,7 +61,7 @@ function CreditsFooter({ documentOrRevision, type }) {
 
 CreditsFooter.propTypes = {
   documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]).isRequired,
-  type: PropTypes.oneOf(['document', 'revision']).isRequired
+  type: PropTypes.oneOf(Object.values(DOCUMENT_TYPE)).isRequired
 };
 
 export default CreditsFooter;

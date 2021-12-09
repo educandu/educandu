@@ -21,7 +21,7 @@ const settingsDocumentsToLinkList = settingsDocuments => {
   return settingsDocuments.map((sd, idx) => ({
     key: idx.toString(),
     linkTitle: sd?.linkTitle || '',
-    urlPath: [sd?.documentNamespace || '', sd?.documentSlug || ''].filter(x => x).join('/') || ''
+    urlPath: [sd?.documentKey || '', sd?.documentSlug || ''].filter(x => x).join('/') || ''
   }));
 };
 
@@ -30,7 +30,7 @@ const linkListToSettingsDocuments = linkList => {
     const urlPathSegments = item.urlPath.split('/');
     return {
       linkTitle: item.linkTitle,
-      documentNamespace: urlPathSegments[0] || '',
+      documentKey: urlPathSegments[0] || '',
       documentSlug: urlPathSegments.slice(1).join('/') || ''
     };
   });

@@ -7,8 +7,7 @@ export function usePermission(permissionToCheck) {
 
   return useMemo(
     () => hasUserPermission(user, permissionToCheck),
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    [permissionToCheck, ...user.roles]
+    [permissionToCheck, user]
   );
 }
 

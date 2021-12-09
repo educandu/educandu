@@ -30,6 +30,10 @@ class ControllerFactory {
     this.container = container;
   }
 
+  registerAdditionalControllers(additionalControllers) {
+    controllerTypes.push(...additionalControllers);
+  }
+
   getAllControllers() {
     return controllerTypes.map(ControllerType => this.container.get(ControllerType));
   }

@@ -57,7 +57,7 @@ export const homeLanguageShape = PropTypes.shape(homeLanguageSettingProps);
 
 const settingsDocumentProps = {
   linkTitle: PropTypes.string.isRequired,
-  documentNamespace: PropTypes.string.isRequired,
+  documentKey: PropTypes.string.isRequired,
   documentSlug: PropTypes.string.isRequired
 };
 
