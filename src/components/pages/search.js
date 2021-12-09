@@ -18,7 +18,6 @@ function Search({ initialState, PageTemplate }) {
   const { language } = useLanguage();
   const { docs } = initialState;
   const { query } = useRequest();
-  const decodedQuery = decodeURIComponent(query.query);
 
   const languageNameProvider = useService(LanguageNameProvider);
   const languageData = languageNameProvider.getData(language);
@@ -28,28 +27,18 @@ function Search({ initialState, PageTemplate }) {
     () => docs
       .map(doc => ({
         ...doc,
+        tags: [...new Set(doc.tags)], // Some docs have duplicate tags we don't want to render
         tagsSet: new Set(doc.tags.map(tag => tag.toLowerCase()))
       }))
-      .sort(firstBy(doc => doc.tagMatchCount, 'desc')
-        .thenBy(doc => doc.updatedOn, 'desc')),
+      .sort(firstBy(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc')),
     [docs]
   );
 
-  const sanitizedQueryTags = new Set(decodedQuery.split(/\s/)
-    .filter(tag => tag.length > 2)
-    .map(tag => tag.toLowerCase()));
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [filteredDocs, setFilteredDocs] = useState(sortedDocs);
 
   const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
-
   const allUniqueTags = [...new Set(allTags)];
-
-  const initialSelectedTags = allUniqueTags
-    .filter(tag => sanitizedQueryTags.has(tag));
-
-  const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
-  const [filteredDocs, setFilteredDocs] = useState(sortedDocs
-    .filter(doc => initialSelectedTags.every(tag => doc.tagsSet.has(tag))));
-
   const tagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
 
   const handleTagsChanged = selectedValues => {
@@ -70,7 +59,7 @@ function Search({ initialState, PageTemplate }) {
     return <a href={url}>{title}</a>;
   };
 
-  const renderTags = (tags, doc) => tags.map(tag => (<Tag key={`${doc.key}_${tag}`}>{tag}</Tag>));
+  const renderTags = tags => tags.map(tag => (<Tag key={tag}>{tag}</Tag>));
 
   const renderLanguage = lang => <CountryFlagAndName code={languageData[lang]?.flag} name={languageData[lang]?.name || lang} />;
 
@@ -78,7 +67,8 @@ function Search({ initialState, PageTemplate }) {
     <div className="Search-placeholderContainer">
       {t('refineSearch')}
       <SearchOutlined className="Search-placeholderContainerIcon" />
-    </div>);
+    </div>
+  );
 
   const columns = [
     {
@@ -109,7 +99,7 @@ function Search({ initialState, PageTemplate }) {
 
   return (
     <PageTemplate alerts={alerts}>
-      <h1>{`${t('searchResultPrefix')}: ${decodedQuery}`} </h1>
+      <h1>{`${t('searchResultPrefix')}: ${query.query}`} </h1>
 
       <div className="Search-searchSelectContainer">
         <Form.Item label={t('refineSearch')} >

@@ -96,35 +96,39 @@ class DocumentService {
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  async getDocumentsByTags(searchQuery, { includeArchived } = {}) {
-    const searchTags = new Set(searchQuery.trim()
-      .split(/\s+/)
-      .map(tag => escapeStringRegexp(tag.toLowerCase()))
-      .filter(tag => tag.length > 2));
+  async getDocumentsByTags(searchQuery) {
+    const tokens = searchQuery.trim().split(/\s+/);
 
-    if (!searchTags.size) {
+    const positiveTokens = new Set(tokens
+      .filter(token => !token.startsWith('-'))
+      .filter(token => token.length > 2)
+      .map(token => escapeStringRegexp(token.toLowerCase())));
+
+    const negativeTokens = new Set(tokens
+      .filter(token => token.startsWith('-'))
+      .map(token => token.substr(1))
+      .filter(token => token.length > 2)
+      .map(token => escapeStringRegexp(token.toLowerCase())));
+
+    if (!positiveTokens.size) {
       return [];
     }
 
-    let query = {
-      $or: Array.from(searchTags).map(tag => ({
-        tags: {
-          $regex: `.*${tag}.*`, $options: 'i'
-        }
-      }))
-    };
+    const queryConditions = [
+      { archived: false },
+      { tags: { $regex: `.*(${[...positiveTokens].join('|')}).*`, $options: 'i' } }
+    ];
 
-    if (!includeArchived) {
-      query = { $and: [query, { archived: false }] };
+    if (negativeTokens.size) {
+      queryConditions.push({ tags: { $not: { $regex: `^(${[...negativeTokens].join('|')})$`, $options: 'i' } } });
     }
 
     const documents = await this.documentStore
-      .find(query, { projection: searchResultsProjection }) || [];
+      .find({ $and: queryConditions }, { projection: searchResultsProjection }) || [];
 
-    return documents.map(result => ({
-      ...result,
-      tagMatchCount: result.tags
-        .filter(tag => searchTags.has(tag.toLowerCase())).length
+    return documents.map(document => ({
+      ...document,
+      tagMatchCount: document.tags.filter(tag => positiveTokens.has(tag.toLowerCase())).length
     }));
   }
 
