@@ -58,7 +58,6 @@ Graceful.on('exit', () => {
   return new Promise(resolve => {
     if (testAppServer) {
       testAppServer.once('exit', () => resolve());
-      testAppServer.kill();
     } else {
       resolve();
     }
@@ -365,8 +364,7 @@ function startTestApp({ skipMigrationsAndChecks }) {
         TEST_APP_SKIP_MONGO_MIGRATIONS: (!!skipMigrationsAndChecks).toString(),
         TEST_APP_SKIP_MONGO_CHECKS: (!!skipMigrationsAndChecks).toString()
       },
-      stdio: 'inherit',
-      detached: true
+      stdio: 'inherit'
     }
   );
   testAppServer.once('exit', () => {
