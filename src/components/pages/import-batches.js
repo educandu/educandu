@@ -88,7 +88,7 @@ function ImportBatches({ initialState, PageTemplate }) {
     <PageTemplate alerts={alerts}>
       <div className="ImportBatchesPage">
         <h1>{t('pageNames:importBatches')}</h1>
-        {!sources.length && <h2>{t('noImportSourcesConfigures')}</h2>}
+        {!sources.length && <h2>{t('noImportSourcesConfigured')}</h2>}
         {sources.map(source => (
           <Collapse
             key={`collapse-${source.importSourceName}`}

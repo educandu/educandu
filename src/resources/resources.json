@@ -472,7 +472,7 @@
       "createdBy": "Created by",
       "createImport": "Create import",
       "importsHeaderPrefix": "Source",
-      "noImportSourcesConfigures": "No import sources configured"
+      "noImportSourcesConfigured": "No import sources configured"
     }
   },
   {
@@ -492,7 +492,7 @@
       "createdBy": "Erstellt von",
       "createImport": "Import erstellen",
       "importsHeaderPrefix": "Quelle",
-      "noImportSourcesConfigures": "Keine Importquellen konfiguriert"
+      "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
     }
   },
   {
