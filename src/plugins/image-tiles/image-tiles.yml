@@ -31,9 +31,9 @@ linkSource:
 externalLink:
   en: External link
   de: Externer Link
-articleLink:
-  en: Article link
-  de: Artikel-Link
+internalLink:
+  en: Internal link
+  de: Internal-Link
 internalCdn:
   en: Internal CDN
   de: Internes CDN

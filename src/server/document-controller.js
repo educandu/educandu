@@ -56,6 +56,10 @@ class DocumentController {
 
     router.get('/docs/:docKey', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const doc = await this.documentService.getDocumentByKey(req.params.docKey);
+      if (!doc) {
+        throw new NotFound();
+      }
+
       return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
     });
 

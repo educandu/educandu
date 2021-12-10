@@ -25,7 +25,7 @@ function createTileUrl(tile) {
   switch (link.type) {
     case LINK_TYPE.external:
       return link.url;
-    case LINK_TYPE.article:
+    case LINK_TYPE.internal:
       return urls.getDocUrl(link.url);
     default:
       return '';

@@ -99,7 +99,7 @@ class TileEditor extends React.Component {
         <FormItem label={t('linkSource')} {...formItemLayout}>
           <RadioGroup value={link.type} onChange={this.handleLinkTypeValueChanged}>
             <RadioButton value={LINK_TYPE.external}>{t('externalLink')}</RadioButton>
-            <RadioButton value={LINK_TYPE.article}>{t('articleLink')}</RadioButton>
+            <RadioButton value={LINK_TYPE.internal}>{t('internalLink')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {link.type === LINK_TYPE.external && (
@@ -107,9 +107,9 @@ class TileEditor extends React.Component {
             <Input value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}
-        {link.type === LINK_TYPE.article && (
-          <FormItem label={t('externalUrl')} {...formItemLayout}>
-            <Input addonBefore={urls.articlesPrefix} value={link.url} onChange={this.handleLinkUrlValueChanged} />
+        {link.type === LINK_TYPE.internal && (
+          <FormItem label={t('internalUrl')} {...formItemLayout}>
+            <Input addonBefore={urls.docsPrefix} value={link.url} onChange={this.handleLinkUrlValueChanged} />
           </FormItem>
         )}
       </React.Fragment>
