@@ -26,7 +26,7 @@ function ImportBatches({ initialState, PageTemplate }) {
     const hostName = batch.batchParams.hostName;
     acc[hostName] = {
       name: batch.batchParams.name,
-      batches: [...acc[hostName].batches || [], batch]
+      batches: [...acc[hostName]?.batches || [], batch]
     };
     return acc;
   }, sourceMap);
@@ -88,6 +88,7 @@ function ImportBatches({ initialState, PageTemplate }) {
     <PageTemplate alerts={alerts}>
       <div className="ImportBatchesPage">
         <h1>{t('pageNames:importBatches')}</h1>
+        {!sources.length && <h2>{t('noImportSourcesConfigured')}</h2>}
         {sources.map(source => (
           <Collapse
             key={`collapse-${source.importSourceName}`}
