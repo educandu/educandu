@@ -6,14 +6,16 @@ async function updateAll(collection, query, updateFn) {
     /* eslint-disable-next-line no-await-in-loop */
     const doc = await cursor.next();
     /* eslint-disable-next-line no-await-in-loop */
-    await updateFn(doc);
-    /* eslint-disable-next-line no-await-in-loop */
-    await collection.replaceOne({ _id: doc._id }, doc);
+    const updatedDoc = await updateFn(doc);
+    if (updatedDoc) {
+      /* eslint-disable-next-line no-await-in-loop */
+      await collection.replaceOne({ _id: doc._id }, updatedDoc);
+    }
   }
 }
 
 // eslint-disable-next-line camelcase
-export default class Educandu_2021_12_10_01_migrate_migrate_image_tiles_to_use_docs {
+export default class Educandu_2021_12_10_01_migrate_image_tiles_to_use_docs {
   constructor(db) {
     this.db = db;
   }
@@ -28,16 +30,25 @@ export default class Educandu_2021_12_10_01_migrate_migrate_image_tiles_to_use_d
   async up() {
     await updateAll(this.db.collection('documents'), { 'sections.type': 'image-tiles' }, async doc => {
       const links = this.collectLinks(doc.sections, 'article');
+      if (!links.length) {
+        return null;
+      }
+
       for (const link of links) {
         /* eslint-disable-next-line no-await-in-loop */
         const linkedDoc = await this.db.collection('documents').find({ namespace: 'articles', slug: link.url });
         link.url = linkedDoc?.key;
         link.type = 'internal';
       }
+
+      return doc;
     });
 
     await updateAll(this.db.collection('documentRevisions'), { 'sections.type': 'image-tiles' }, async doc => {
       const links = this.collectLinks(doc.sections, 'article');
+      if (!links.length) {
+        return null;
+      }
 
       for (const link of links) {
         /* eslint-disable-next-line no-await-in-loop */
@@ -45,12 +56,17 @@ export default class Educandu_2021_12_10_01_migrate_migrate_image_tiles_to_use_d
         link.url = linkedDoc?.key;
         link.type = 'internal';
       }
+
+      return doc;
     });
   }
 
   async down() {
     await updateAll(this.db.collection('documents'), { 'sections.type': 'image-tiles' }, async doc => {
       const links = this.collectLinks(doc.sections, 'internal');
+      if (!links.length) {
+        return null;
+      }
 
       for (const link of links) {
         /* eslint-disable-next-line no-await-in-loop */
@@ -58,10 +74,15 @@ export default class Educandu_2021_12_10_01_migrate_migrate_image_tiles_to_use_d
         link.url = linkedDoc?.slug;
         link.type = 'article';
       }
+
+      return doc;
     });
 
     await updateAll(this.db.collection('documentRevisions'), { 'sections.type': 'image-tiles' }, async doc => {
       const links = this.collectLinks(doc.sections, 'internal');
+      if (!links.length) {
+        return null;
+      }
 
       for (const link of links) {
         /* eslint-disable-next-line no-await-in-loop */
@@ -69,6 +90,8 @@ export default class Educandu_2021_12_10_01_migrate_migrate_image_tiles_to_use_d
         link.url = linkedDoc?.slug;
         link.type = 'article';
       }
+
+      return doc;
     });
   }
 }
