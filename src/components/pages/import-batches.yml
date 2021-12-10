@@ -37,3 +37,6 @@ createImport:
 importsHeaderPrefix:
   en: Source
   de: Quelle
+noImportSourcesConfigures:
+  en: No import sources configured
+  de: Keine Importquellen konfiguriert

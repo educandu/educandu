@@ -471,7 +471,8 @@
       "completedOn": "Completed on",
       "createdBy": "Created by",
       "createImport": "Create import",
-      "importsHeaderPrefix": "Source"
+      "importsHeaderPrefix": "Source",
+      "noImportSourcesConfigures": "No import sources configured"
     }
   },
   {
@@ -490,7 +491,8 @@
       "completedOn": "Abgeschlossen am",
       "createdBy": "Erstellt von",
       "createImport": "Import erstellen",
-      "importsHeaderPrefix": "Quelle"
+      "importsHeaderPrefix": "Quelle",
+      "noImportSourcesConfigures": "Keine Importquellen konfiguriert"
     }
   },
   {
