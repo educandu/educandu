@@ -208,12 +208,14 @@ class DocumentService {
 
       lock = await this.documentLockStore.takeLock(documentKey);
 
-      const allRevisions = await this._getAllDocumentRevisionsByKey(documentKey);
+      const revisionsBeforeDelete = await this._getAllDocumentRevisionsByKey(documentKey);
 
-      const revisionsToUpdate = [];
+      const revisionsAfterDelete = [];
+      const revisionsToUpdateInDb = [];
 
-      for (const revision of allRevisions) {
-        for (const section of revision.sections) {
+      for (const originalRevision of revisionsBeforeDelete) {
+        let revisionHasChanged = false;
+        for (const section of originalRevision.sections) {
           if (section.key === sectionKey && !section.deletedOn) {
             // eslint-disable-next-line max-depth
             if (section.revision === sectionRevision || deleteAllRevisions) {
@@ -221,20 +223,36 @@ class DocumentService {
               section.deletedBy = userId;
               section.deletedBecause = reason;
               section.content = null;
-              revisionsToUpdate.push(revision);
+              revisionHasChanged = true;
             }
           }
         }
+
+        if (revisionHasChanged) {
+          const updatedRevision = this._buildDocumentRevision({
+            data: originalRevision,
+            revisionId: originalRevision._id,
+            documentKey: originalRevision.key,
+            userId: originalRevision.createdBy,
+            order: originalRevision.order,
+            restoredFrom: originalRevision.restoredFrom,
+            sections: originalRevision.sections
+          });
+          revisionsToUpdateInDb.push(updatedRevision);
+          revisionsAfterDelete.push(updatedRevision);
+        } else {
+          revisionsAfterDelete.push(originalRevision);
+        }
       }
 
-      if (revisionsToUpdate.length) {
-        logger.info(`Hard deleting %d sections with section key ${sectionKey} in document revisions with key ${documentKey}`, revisionsToUpdate);
-        await this.documentRevisionStore.saveMany(revisionsToUpdate);
+      if (revisionsToUpdateInDb.length) {
+        logger.info(`Hard deleting ${revisionsToUpdateInDb.length} sections with section key ${sectionKey} in document revisions with key ${documentKey}`);
+        await this.documentRevisionStore.saveMany(revisionsToUpdateInDb);
       } else {
         throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
       }
 
-      const latestDocument = this._buildDocumentFromRevisions(allRevisions);
+      const latestDocument = this._buildDocumentFromRevisions(revisionsAfterDelete);
 
       logger.info(`Saving latest document with revision ${latestDocument.revision}`);
       await this.documentStore.save(latestDocument);
