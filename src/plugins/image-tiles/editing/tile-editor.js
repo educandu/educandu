@@ -99,7 +99,7 @@ class TileEditor extends React.Component {
         <FormItem label={t('linkSource')} {...formItemLayout}>
           <RadioGroup value={link.type} onChange={this.handleLinkTypeValueChanged}>
             <RadioButton value={LINK_TYPE.external}>{t('externalLink')}</RadioButton>
-            <RadioButton value={LINK_TYPE.internal}>{t('articleLink')}</RadioButton>
+            <RadioButton value={LINK_TYPE.internal}>{t('internalLink')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {link.type === LINK_TYPE.external && (
