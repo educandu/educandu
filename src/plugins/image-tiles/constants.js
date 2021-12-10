@@ -5,5 +5,5 @@ export const IMAGE_TYPE = {
 
 export const LINK_TYPE = {
   external: 'external',
-  article: 'article'
+  internal: 'internal'
 };
