@@ -13,7 +13,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import errorHelper from '../../ui/error-helper.js';
 import { ALERT_TYPE } from '../../common/constants.js';
 import { withPageName } from '../page-name-context.js';
-import pluginInfos from '../../plugins/plugin-infos.js';
+import InfoFactory from '../../plugins/info-factory.js';
 import ShallowUpdateList from '../shallow-update-list.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import DocumentMetadataEditor from '../document-metadata-editor.js';
@@ -57,12 +57,12 @@ class EditDoc extends React.Component {
 
     autoBind(this);
 
-    const { initialState } = this.props;
+    const { initialState, infoFactory } = this.props;
     const { documentRevision, proposedSections } = initialState;
 
     this.state = this.createStateFromDocumentRevision(documentRevision, proposedSections);
 
-    this.availablePlugins = pluginInfos.map(info => ({
+    this.availablePlugins = infoFactory.getRegisteredTypes().map(typeName => infoFactory.createInfo(typeName)).map(info => ({
       info,
       handleNew: this.handleNewSectionClick.bind(this, info)
     }));
@@ -195,7 +195,7 @@ class EditDoc extends React.Component {
   }
 
   cloneSection(section) {
-    const info = pluginInfos.find(i => i.type === section.type);
+    const info = InfoFactory.createInfo(section.type);
     return {
       key: uniqueId.create(),
       revision: null,
@@ -440,5 +440,6 @@ EditDoc.propTypes = {
 };
 
 export default withTranslation('editDoc')(withUser(withPageName(inject({
-  documentApiClient: DocumentApiClient
+  documentApiClient: DocumentApiClient,
+  infoFactory: InfoFactory
 }, EditDoc))));

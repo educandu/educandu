@@ -1,7 +1,12 @@
-import sut from './info.js';
+import AudioInfo from './info.js';
 import { SOURCE_TYPE } from './constants.js';
 
 describe('audio-info', () => {
+  let sut;
+  beforeEach(() => {
+    sut = new AudioInfo();
+  });
+
   describe('getCdnResources', () => {
     it('returns empty list for an external resource', () => {
       const result = sut.getCdnResources({ type: SOURCE_TYPE.external, url: 'https://someplace.com/sound.mp3' });

@@ -1,7 +1,12 @@
-import sut from './info.js';
+import ImageInfo from './info.js';
 import { SOURCE_TYPE } from './constants.js';
 
 describe('image-info', () => {
+  let sut;
+  beforeEach(() => {
+    sut = new ImageInfo();
+  });
+
   describe('getCdnResources', () => {
     it('returns empty list for an external resource', () => {
       const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.external, sourceUrl: 'https://someplace.com/image.png' });

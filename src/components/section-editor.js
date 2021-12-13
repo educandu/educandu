@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
+import InfoFactory from '../plugins/info-factory.js';
 import { Menu, Radio, Button, Dropdown } from 'antd';
 import EditorFactory from '../plugins/editor-factory.js';
-import { pluginTypes } from '../plugins/plugin-infos.js';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import { confirmSectionDelete } from './confirmation-dialogs.js';
@@ -49,6 +49,7 @@ function SectionEditor({
   const [mode, setMode] = React.useState('preview');
   const rendererFactory = useService(RendererFactory);
   const editorFactory = useService(EditorFactory);
+  const infoFactory = useService(InfoFactory);
   const { t } = useTranslation('sectionEditor');
 
   const handleModeChange = event => {
@@ -122,7 +123,7 @@ function SectionEditor({
   };
 
   const hasContent = !!section.content;
-  const isSupportedPlugin = pluginTypes.includes(section.type);
+  const isSupportedPlugin = infoFactory.getRegisteredTypes().includes(section.type);
   const canBeEdited = hasContent && isSupportedPlugin;
   const componentToShow = getComponentToShow(hasContent, isSupportedPlugin);
 
