@@ -244,6 +244,20 @@
     }
   },
   {
+    "namespace": "browserNotSupported",
+    "language": "en",
+    "resources": {
+      "mainText": "We have detected that your browser version is not supported by our"
+    }
+  },
+  {
+    "namespace": "browserNotSupported",
+    "language": "de",
+    "resources": {
+      "mainText": "We have detected that your browser version is not supported by our"
+    }
+  },
+  {
     "namespace": "completePasswordReset",
     "language": "en",
     "resources": {

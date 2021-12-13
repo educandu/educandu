@@ -14,5 +14,6 @@ export const PAGE_NAME = {
   search: 'search',
   importBatchCreation: 'import-batch-creation',
   importBatchView: 'import-batch-view',
-  importBatches: 'import-batches'
+  importBatches: 'import-batches',
+  browserNotSupported: 'browser-not-supported'
 };

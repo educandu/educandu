@@ -9,10 +9,12 @@ import ImportController from './import-controller.js';
 import ExportController from './export-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
+import UserAgentController from './user-agent-controller.js';
 
 const controllerTypes = [
   StaticController,
   I18nController,
+  UserAgentController,
   SettingsController,
   IndexController,
   UserController,

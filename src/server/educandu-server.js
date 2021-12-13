@@ -2,6 +2,7 @@ import util from 'util';
 import express from 'express';
 import Logger from '../common/logger.js';
 import cookieParser from 'cookie-parser';
+import useragent from 'express-useragent';
 import ControllerFactory from './controller-factory.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
@@ -23,6 +24,8 @@ class EducanduServer {
     this.app.on('error', err => logger.error(err));
 
     this.app.enable('trust proxy');
+
+    this.app.use(useragent.express());
 
     this.app.use(cookieParser());
 
