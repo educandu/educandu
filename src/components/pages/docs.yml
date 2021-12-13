@@ -40,9 +40,6 @@ enterSearchTerm:
 newDocument:
   en: New document
   de: Neues Dokument
-notAssigned:
-  en: (not assigned)
-  de: (nicht zugewiesen)
 origin:
   en: Origin
   de: Quelle
