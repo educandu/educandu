@@ -39,7 +39,7 @@ The educandu framework
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
  | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
- | consentCookieName | Consent cookie name | an unique name for the cookie | yes |
+ | consentCookieName | Consent cookie name | an unique name for the cookie | no |
 
 ## How to use
 
