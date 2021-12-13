@@ -1,17 +1,3 @@
-* Merge pull request #80 from educandu/feature/[EDU-150](https://educandu.atlassian.net/browse/EDU-150)-fix-image-tiles ([16d4e72](https://github.com/educandu/educandu/tree/16d4e72))
-* [EDU-150](https://educandu.atlassian.net/browse/EDU-150) Optimize the migration ([dee8a02](https://github.com/educandu/educandu/tree/dee8a02))
-* [EDU-150](https://educandu.atlassian.net/browse/EDU-150) Fix translations ([b8589ea](https://github.com/educandu/educandu/tree/b8589ea))
-* [EDU-150](https://educandu.atlassian.net/browse/EDU-150) Add migration for image tile content ([73977a4](https://github.com/educandu/educandu/tree/73977a4))
-* [EDU-150](https://educandu.atlassian.net/browse/EDU-150) Add not found on response to redirecting with a document key ([2a62708](https://github.com/educandu/educandu/tree/2a62708))
-* [EDU-150](https://educandu.atlassian.net/browse/EDU-150) Change link type from article to internal ([ed11685](https://github.com/educandu/educandu/tree/ed11685))
-
-
-
-
-
-
-
-
 # educandu
 
 [![codecov](https://codecov.io/gh/educandu/educandu/branch/main/graph/badge.svg?token=SM7ANNBT3A)](https://codecov.io/gh/educandu/educandu)
