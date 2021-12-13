@@ -10,8 +10,8 @@ import CreditsFooter from '../credits-footer.js';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { Trans, useTranslation } from 'react-i18next';
-import { HARD_DELETE } from '../../ui/section-actions.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { SECTION_ACTIONS } from '../../ui/section-actions.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
@@ -138,7 +138,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleAction = ({ name, data }) => {
     switch (name) {
-      case HARD_DELETE:
+      case SECTION_ACTIONS.hardDelete:
         return hardDelete(data);
       default:
         throw new Error(`Unknown action ${name}`);
@@ -157,7 +157,7 @@ function Doc({ initialState, PageTemplate }) {
   const isEditingDisabled = state.currentDocOrRevision.archived || isExternalDocument || state.type !== DOCUMENT_TYPE.document;
   const isViewRevisionsButtonVisible = state.type === DOCUMENT_TYPE.document;
   const isViewDocumentButtonVisible = state.type === DOCUMENT_TYPE.revision;
-  const isHardDeleteEnabled = state.type === DOCUMENT_TYPE.revision;
+  const disabledSectionActions = [...isExternalDocument ? [SECTION_ACTIONS.hardDelete] : []];
 
   const revisionPicker = (
     <div className="DocPage-revisionPicker">
@@ -258,7 +258,8 @@ function Doc({ initialState, PageTemplate }) {
         { state.revisions.length > 0 && revisionPicker}
         <DocView
           documentOrRevision={state.currentDocOrRevision}
-          onAction={isHardDeleteEnabled ? handleAction : null}
+          disabledActions={disabledSectionActions}
+          onAction={handleAction}
           />
       </div>
       <aside className="Content">

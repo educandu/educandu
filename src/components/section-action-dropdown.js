@@ -7,18 +7,18 @@ import permissions from '../domain/permissions.js';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { sectionShape } from '../ui/default-prop-types.js';
 import { confirmSectionHardDelete } from './confirmation-dialogs.js';
-import { HARD_DELETE, createHardDelete } from '../ui/section-actions.js';
+import { SECTION_ACTIONS, createHardDelete } from '../ui/section-actions.js';
 
 const MenuItem = Menu.Item;
 const redIconStyle = { color: 'red' };
 
-function SectionActionDropdown({ children, section, onAction, onVisibleChange, placement }) {
+function SectionActionDropdown({ children, section, disabledActions, onAction, onVisibleChange, placement }) {
   const { t } = useTranslation();
   const canHardDelete = usePermission(permissions.HARD_DELETE_SECTION);
 
   const handleSectionMenuClick = ({ key }) => {
     switch (key) {
-      case HARD_DELETE:
+      case SECTION_ACTIONS.hardDelete:
         confirmSectionHardDelete(t, ({ reason, deleteAllRevisions }) => onAction(createHardDelete(section, reason, deleteAllRevisions)));
         break;
       default:
@@ -30,9 +30,9 @@ function SectionActionDropdown({ children, section, onAction, onVisibleChange, p
 
   const menuItems = [];
 
-  if (canHardDelete && !section.deletedOn) {
+  if (canHardDelete && !section.deletedOn && !disabledActions.includes(SECTION_ACTIONS.hardDelete)) {
     menuItems.push((
-      <MenuItem key={HARD_DELETE}>
+      <MenuItem key={SECTION_ACTIONS.hardDelete}>
         <ThunderboltOutlined style={redIconStyle} />&nbsp;&nbsp;<span>{t('common:hardDelete')}</span>
       </MenuItem>
     ));
@@ -57,6 +57,7 @@ function SectionActionDropdown({ children, section, onAction, onVisibleChange, p
 
 SectionActionDropdown.propTypes = {
   children: PropTypes.node,
+  disabledActions: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SECTION_ACTIONS))),
   onAction: PropTypes.func.isRequired,
   onVisibleChange: PropTypes.func,
   placement: PropTypes.oneOf(['bottomLeft', 'bottomCenter', 'bottomRight', 'topLeft', 'topCenter', 'topRight']),
@@ -65,6 +66,7 @@ SectionActionDropdown.propTypes = {
 
 SectionActionDropdown.defaultProps = {
   children: null,
+  disabledActions: [],
   onVisibleChange: null,
   placement: 'bottomLeft'
 };
