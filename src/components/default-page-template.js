@@ -159,7 +159,6 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
         ))}
       </header>
       <main className={contentAreaClasses}>
-        <CookieConsentDrawer cookieName={clientConfig.consentCookieName} />
         <div className={contentClasses}>
           {children}
         </div>
@@ -173,6 +172,7 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
           ))}
         </div>
       </footer>
+      <CookieConsentDrawer cookieName={clientConfig.consentCookieName} />
     </div>
   );
 }

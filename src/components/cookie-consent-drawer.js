@@ -1,12 +1,16 @@
 import PropTypes from 'prop-types';
 import { Button, Drawer } from 'antd';
-import React, { useState } from 'react';
 import cookie from '../common/cookie.js';
 import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
 
 export default function CookieConsentDrawer({ cookieName }) {
-  const consentCookie = cookie.get(cookieName);
-  const [isVisible, setIsVisible] = useState(!consentCookie);
+  const [isVisible, setIsVisible] = useState();
+
+  useEffect(() => {
+    const consentCookie = cookie.get(cookieName);
+    setIsVisible(!consentCookie);
+  }, [cookieName]);
 
   const handleClose = () => {
     cookie.set(cookieName, 'true', { expires: 365 });
