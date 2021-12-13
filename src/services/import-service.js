@@ -59,10 +59,6 @@ class ImportService {
       .map(exportableDocument => {
         const importedDocument = importedDocuments.find(document => document.key === exportableDocument.key);
 
-        if (importedDocument?.revision === exportableDocument.revision) {
-          return null;
-        }
-
         return {
           key: exportableDocument.key,
           title: exportableDocument.title,

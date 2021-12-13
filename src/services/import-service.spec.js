@@ -206,9 +206,10 @@ describe('import-service', () => {
         result = await sut.getAllImportableDocumentsMetadata(importSource);
       });
 
-      it('should return an array of documents that can be updated or freshly imported (added)', () => {
+      it('should return the array of documents that can be updated or freshly imported (added)', () => {
         expect(result).toEqual([
           { key: 'key1', importedRevision: 'revision1a', importableRevision: 'revision1b', updatedOn: 'updatedOn1b', title: 'title1b', slug: 'slug1b', language: 'language1b', importType: 'update' },
+          { key: 'key2', importedRevision: 'revision2a', importableRevision: 'revision2a', updatedOn: 'updatedOn2a', title: 'title2a', slug: 'slug2a', language: 'language2a', importType: 'update' },
           { key: 'key4', importedRevision: null, importableRevision: 'revision4a', updatedOn: 'updatedOn4a', title: 'title4a', slug: 'slug4a', language: 'language4a', importType: 'add' }
         ]);
       });

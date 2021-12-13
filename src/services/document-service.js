@@ -403,7 +403,7 @@ class DocumentService {
         }
 
         logger.info(`Saving revisions for document '${documentKey}'`);
-        await this.documentRevisionStore.insertMany(newDocumentRevisions);
+        await this.documentRevisionStore.saveMany(newDocumentRevisions);
 
         const document = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
 
