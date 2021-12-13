@@ -57,6 +57,10 @@ class DocumentController {
     router.get('/docs/:docKey', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const doc = await this.documentService.getDocumentByKey(req.params.docKey);
       if (!doc) {
+        throw new NotFound();
+      }
+
+      if (!doc.slug) {
         const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
         return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
       }
