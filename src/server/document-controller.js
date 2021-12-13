@@ -19,8 +19,6 @@ import {
 
 const { NotFound } = httpErrors;
 
-const UNDEFINED_SLUG = 'undefinedSlug';
-
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 const getDocumentsQueryFilter = user => ({ includeArchived: hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS) });
@@ -59,10 +57,11 @@ class DocumentController {
     router.get('/docs/:docKey', needsPermission(permissions.VIEW_DOCS), async (req, res) => {
       const doc = await this.documentService.getDocumentByKey(req.params.docKey);
       if (!doc) {
-        throw new NotFound();
+        const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
+        return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
       }
 
-      return res.redirect(301, urls.getDocUrl(doc.key, doc.slug || UNDEFINED_SLUG));
+      return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
     });
 
     router.get('/docs/:docKey/*', async (req, res) => {
@@ -74,7 +73,7 @@ class DocumentController {
         throw new NotFound();
       }
 
-      if (slug !== UNDEFINED_SLUG && slug !== doc.slug) {
+      if (slug !== doc.slug) {
         return res.redirect(301, getDocUrl(doc.key, doc.slug));
       }
 
