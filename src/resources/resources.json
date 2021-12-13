@@ -46,6 +46,22 @@
     }
   },
   {
+    "namespace": "cookieConsentDrawer",
+    "language": "en",
+    "resources": {
+      "consentTitle": "Before you start",
+      "consentText": "This website uses cookies that are technically needed for strictly functional aspects of the website. These cookies neither track your activities, nor provide 3-rd parties with information of any kind about your visit. By clicking accept you acknowledge this and give your express consent to the usage of the cookies."
+    }
+  },
+  {
+    "namespace": "cookieConsentDrawer",
+    "language": "de",
+    "resources": {
+      "consentTitle": "Bevor Sie fortfahren",
+      "consentText": "Diese Website verwendet technisch notwendige Cookies, um die Funktionalität der Website zu gewährleisten. Diese Cookies verfolgen weder Ihre Aktivitäten, noch liefern sie Dritten irgendwelche Informationen über Ihren Besuch. Indem Sie auf Akzeptieren klicken, bestätigen Sie dies und stimmen der Verwendung der Cookies ausdrücklich zu."
+    }
+  },
+  {
     "namespace": "creditsFooter",
     "language": "en",
     "resources": {
@@ -1299,7 +1315,8 @@
       "archivedAlert": "This document is archived and cannot be edited",
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
-      "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>."
+      "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
+      "accept": "Accept"
     }
   },
   {
@@ -1326,7 +1343,8 @@
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
-      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden."
+      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
+      "accept": "Akzeptieren"
     }
   },
   {
