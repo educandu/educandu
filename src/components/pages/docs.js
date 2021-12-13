@@ -246,13 +246,6 @@ class Docs extends React.Component {
         sorter: by(x => x.title)
       },
       {
-        title: t('slug'),
-        dataIndex: 'slug',
-        key: 'slug',
-        render: this.renderSlug,
-        sorter: by(x => x.slug)
-      },
-      {
         title: t('language'),
         dataIndex: 'language',
         key: 'language',
