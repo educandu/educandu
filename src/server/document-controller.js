@@ -13,6 +13,7 @@ import {
   getRevisionsByKeyQuerySchema,
   createRevisionBodySchema,
   hardDeleteSectionBodySchema,
+  hardDeleteExternalDocumentBodySchema,
   restoreRevisionBodySchema,
   getSearchDocumentsByTagsSchema
 } from '../domain/schemas/document-schemas.js';
@@ -178,6 +179,12 @@ class DocumentController {
       const { user } = req;
       const { documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
       const result = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
+      return res.send(result);
+    });
+
+    router.delete('/api/v1/docs', [needsPermission(permissions.MANAGE_IMPORT), jsonParser, validateBody(hardDeleteExternalDocumentBodySchema)], async (req, res) => {
+      const { documentKey } = req.body;
+      const result = await this.documentService.hardDeleteDocument(documentKey);
       return res.send(result);
     });
 

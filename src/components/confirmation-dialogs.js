@@ -17,6 +17,18 @@ export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
   });
 }
 
+export function confirmDocumentDelete(t, documentTitle, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteDocumentConfirmation', { title: documentTitle }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmSectionHardDelete(
   t,
   onOk,

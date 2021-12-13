@@ -10,9 +10,6 @@ copyTitleSuffix:
 copySlugSuffix:
   en: copy
   de: kopie
-clone:
-  en: Clone
-  de: Klonen
 title:
   en: Title
   de: Titel
@@ -31,6 +28,12 @@ user:
 actions:
   en: Actions
   de: Aktionen
+clone:
+  en: Clone
+  de: Klonen
+delete:
+  en: Delete
+  de: Entfernen
 archived:
   en: Archived
   de: Archiviert

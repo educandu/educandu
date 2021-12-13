@@ -246,6 +246,31 @@ class DocumentService {
     }
   }
 
+  async hardDeleteDocument(documentKey) {
+    const document = await this.getDocumentByKey(documentKey);
+
+    if (!document.origin.startsWith(DOCUMENT_ORIGIN.external)) {
+      throw new Error(`Only external documents can be hard deleted. Document '${documentKey}' has origin '${document.origin}'`);
+    }
+
+    let lock;
+    try {
+      lock = await this.documentLockStore.takeLock(documentKey);
+
+      logger.info(`Hard deleting external document '${documentKey}'`);
+
+      await this.transactionRunner.run(async session => {
+        await this.documentRevisionStore.deleteMany({ key: documentKey }, { session });
+        await this.documentStore.deleteOne({ key: documentKey }, { session });
+      });
+
+    } finally {
+      if (lock) {
+        await this.documentLockStore.releaseLock(lock);
+      }
+    }
+  }
+
   async setArchivedState({ documentKey, user, archived }) {
     if (!user?._id) {
       throw new Error('No user specified');

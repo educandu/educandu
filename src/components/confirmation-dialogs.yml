@@ -4,6 +4,9 @@ areYouSure:
 deleteSectionConfirmation:
   en: Do you really want to delete the section?
   de: Möchten Sie den Abschnitt wirklich löschen?
+deleteDocumentConfirmation:
+  en: Do you really want to delete document "{title}"?
+  de: Möchten Sie das Dokument "{title}" wirklich löschen?
 thisActionIsIrreversible:
   en: This Action is irreversible!
   de: Diese Aktion ist unwiderrufbar!
