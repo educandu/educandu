@@ -1,8 +1,8 @@
 name: Verify
 on:
   push:
-    tags-ignore:
-      - '*'
+    branches:
+      - '**'
 jobs:
   verify:
     runs-on: ubuntu-20.04

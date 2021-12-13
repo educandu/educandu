@@ -21,6 +21,7 @@ import plumber from 'gulp-plumber';
 import ghreleases from 'ghreleases';
 import { promises as fs } from 'fs';
 import Graceful from 'node-graceful';
+import axiosRetry from 'axios-retry';
 import { spawn } from 'child_process';
 import { MongoClient } from 'mongodb';
 import { Docker } from 'docker-cli-js';
@@ -467,9 +468,9 @@ export async function migrate() {
   }
 }
 
-export function verifyTag() {
-  if (!CLI_ARGS.tag || CLI_ARGS.tag !== semver.clean(CLI_ARGS.tag)) {
-    throw new Error(`Tag ${CLI_ARGS.tag} is not a pure semver string`);
+export function verifySemverTag() {
+  if (!semver.valid(CLI_ARGS.tag)) {
+    throw new Error(`Tag ${CLI_ARGS.tag} is not a valid semver string`);
   }
 }
 
@@ -485,9 +486,6 @@ export async function release() {
   const githubBaseUrl = `${GITHUB_SERVER_URL}/${githubOrgaName}/${githubRepoName}`;
 
   const [currentTag, previousTag] = await promisify(gitSemverTags)();
-  if (CLI_ARGS.tag !== currentTag) {
-    throw new Error(`Tag ${CLI_ARGS.tag} does not match the current semver compatible tag ${currentTag}`);
-  }
 
   const commits = previousTag
     ? await commitsBetween({ from: previousTag, to: currentTag })
@@ -514,15 +512,21 @@ export async function release() {
     prerelease: !!semver.prerelease(currentTag)
   });
 
+  const client = axios.create({ baseURL: JIRA_BASE_URL });
+  axiosRetry(client, { retries: 3 });
+
   const issueKeys = [...new Set(releaseNotes.match(new RegExp(JIRA_ISSUE_PATTERN, 'g')) || [])].sort();
-  const label = `v${currentTag}`;
   for (const issueKey of issueKeys) {
-    console.log(`Setting label ${label} on JIRA issue ${issueKey}`);
-    await axios.put(
-      `${JIRA_BASE_URL}/rest/api/3/issue/${encodeURIComponent(issueKey)}`,
-      { update: { labels: [{ add: label }] } },
-      { responseType: 'json', auth: { username: CLI_ARGS.jiraUser, password: CLI_ARGS.jiraApiKey } }
-    );
+    console.log(`Setting label ${currentTag} on JIRA issue ${issueKey}`);
+    try {
+      await client.put(
+        `/rest/api/3/issue/${encodeURIComponent(issueKey)}`,
+        { update: { labels: [{ add: currentTag }] } },
+        { responseType: 'json', auth: { username: CLI_ARGS.jiraUser, password: CLI_ARGS.jiraApiKey } }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
