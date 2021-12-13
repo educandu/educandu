@@ -51,5 +51,6 @@ educandu({
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
   },
-  additionalControllers: [ArticleController]
+  additionalControllers: [ArticleController],
+  consentCookieName: 'TEST_APP_ENUCANDU_CONSENT'
 });

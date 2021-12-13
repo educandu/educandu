@@ -1,16 +1,15 @@
+import PropTypes from 'prop-types';
 import { Button, Drawer } from 'antd';
 import React, { useState } from 'react';
 import cookie from '../common/cookie.js';
 import { useTranslation } from 'react-i18next';
 
-const EDUCANDU_COOKIE_CONSENT = 'educanduCookieConsent';
-
-export default function CookieConsentDrawer() {
-  const consentCookie = cookie.get(EDUCANDU_COOKIE_CONSENT);
+export default function CookieConsentDrawer({ cookieName }) {
+  const consentCookie = cookie.get(cookieName);
   const [isVisible, setIsVisible] = useState(!consentCookie);
 
   const handleClose = () => {
-    cookie.set(EDUCANDU_COOKIE_CONSENT, 'true', { expires: 365 });
+    cookie.set(cookieName, 'true', { expires: 365 });
     setIsVisible(false);
   };
 
@@ -27,3 +26,7 @@ export default function CookieConsentDrawer() {
     </Drawer>
   );
 }
+
+CookieConsentDrawer.propTypes = {
+  cookieName: PropTypes.string.isRequired
+};
