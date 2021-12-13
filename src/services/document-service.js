@@ -211,43 +211,38 @@ class DocumentService {
       const revisionsBeforeDelete = await this._getAllDocumentRevisionsByKey(documentKey);
 
       const revisionsAfterDelete = [];
-      const revisionsToUpdateInDb = [];
+      const revisionsToUpdateById = new Map();
 
       for (const originalRevision of revisionsBeforeDelete) {
-        let revisionHasChanged = false;
-        for (const section of originalRevision.sections) {
-          if (section.key === sectionKey && !section.deletedOn) {
-            // eslint-disable-next-line max-depth
-            if (section.revision === sectionRevision || deleteAllRevisions) {
-              section.deletedOn = now;
-              section.deletedBy = userId;
-              section.deletedBecause = reason;
-              section.content = null;
-              revisionHasChanged = true;
-            }
+        let finalRevision = originalRevision;
+
+        for (const section of finalRevision.sections) {
+          if (section.key === sectionKey && !section.deletedOn && (section.revision === sectionRevision || deleteAllRevisions)) {
+            section.deletedOn = now;
+            section.deletedBy = userId;
+            section.deletedBecause = reason;
+            section.content = null;
+
+            finalRevision = this._buildDocumentRevision({
+              data: finalRevision,
+              revisionId: finalRevision._id,
+              documentKey: finalRevision.key,
+              userId: finalRevision.createdBy,
+              order: finalRevision.order,
+              restoredFrom: finalRevision.restoredFrom,
+              sections: finalRevision.sections
+            });
+
+            revisionsToUpdateById.set(finalRevision._id, finalRevision);
           }
         }
 
-        if (revisionHasChanged) {
-          const updatedRevision = this._buildDocumentRevision({
-            data: originalRevision,
-            revisionId: originalRevision._id,
-            documentKey: originalRevision.key,
-            userId: originalRevision.createdBy,
-            order: originalRevision.order,
-            restoredFrom: originalRevision.restoredFrom,
-            sections: originalRevision.sections
-          });
-          revisionsToUpdateInDb.push(updatedRevision);
-          revisionsAfterDelete.push(updatedRevision);
-        } else {
-          revisionsAfterDelete.push(originalRevision);
-        }
+        revisionsAfterDelete.push(finalRevision);
       }
 
-      if (revisionsToUpdateInDb.length) {
-        logger.info(`Hard deleting ${revisionsToUpdateInDb.length} sections with section key ${sectionKey} in document revisions with key ${documentKey}`);
-        await this.documentRevisionStore.saveMany(revisionsToUpdateInDb);
+      if (revisionsToUpdateById.size) {
+        logger.info(`Hard deleting ${revisionsToUpdateById.size} sections with section key ${sectionKey} in document revisions with key ${documentKey}`);
+        await this.documentRevisionStore.saveMany([...revisionsToUpdateById.values()]);
       } else {
         throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
       }
