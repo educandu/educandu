@@ -9,14 +9,16 @@ import React, { useMemo, memo, useState, useEffect } from 'react';
 import { useDateFormat, useLanguage } from './language-context.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
-import { CloudDownloadOutlined, CloudSyncOutlined } from '@ant-design/icons';
+import { DownloadOutlined, HistoryOutlined, RedoOutlined } from '@ant-design/icons';
 
 const getImportTypeIcon = importType => {
   switch (importType) {
     case DOCUMENT_IMPORT_TYPE.add:
-      return <CloudDownloadOutlined />;
+      return <DownloadOutlined />;
     case DOCUMENT_IMPORT_TYPE.update:
-      return <CloudSyncOutlined />;
+      return <HistoryOutlined />;
+    case DOCUMENT_IMPORT_TYPE.reimport:
+      return <RedoOutlined />;
     default:
       throw new Error(`Invalid import type: '${importType}'`);
   }
@@ -39,7 +41,7 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
 
   return importableDocuments.map(doc => {
     const documentLanguageData = languagesData[doc.language];
-    const url = doc.slug ? `${importSourceBaseUrl}${getDocUrl(doc.key, doc.slug)}` : null;
+    const url = `${importSourceBaseUrl}${getDocUrl(doc.key, doc.slug)}`;
     const importTypeIcon = getImportTypeIcon(doc.importType);
     const importTypeTooltipText = t(doc.importType);
 
