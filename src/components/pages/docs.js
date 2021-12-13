@@ -180,16 +180,6 @@ class Docs extends React.Component {
     return <a href={urls.getDocUrl(doc.key, doc.slug)}>{doc.title}</a>;
   }
 
-  renderSlug(_value, doc) {
-    if (!doc.slug) {
-      const { t } = this.props;
-      return t('notAssigned');
-    }
-
-    const url = urls.getDocUrl(doc.key, doc.slug);
-    return <a href={url}>{url}</a>;
-  }
-
   renderUpdatedOn(_value, doc) {
     const { formatDate } = this.props;
     return <span>{formatDate(doc.updatedOn)}</span>;
@@ -244,13 +234,6 @@ class Docs extends React.Component {
         key: 'title',
         render: this.renderTitle,
         sorter: by(x => x.title)
-      },
-      {
-        title: t('slug'),
-        dataIndex: 'slug',
-        key: 'slug',
-        render: this.renderSlug,
-        sorter: by(x => x.slug)
       },
       {
         title: t('language'),

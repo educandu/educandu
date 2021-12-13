@@ -60,6 +60,11 @@ class DocumentController {
         throw new NotFound();
       }
 
+      if (!doc.slug) {
+        const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
+        return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
+      }
+
       return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
     });
 

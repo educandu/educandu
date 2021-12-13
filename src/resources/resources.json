@@ -335,7 +335,6 @@
       "archived": "Archived",
       "enterSearchTerm": "Enter search term",
       "newDocument": "New document",
-      "notAssigned": "(not assigned)",
       "origin": "Origin",
       "originInternal": "internal",
       "originExternal": "external"
@@ -359,7 +358,6 @@
       "archived": "Archiviert",
       "enterSearchTerm": "Suchbegriff eingeben",
       "newDocument": "Neues Dokument",
-      "notAssigned": "(nicht zugewiesen)",
       "origin": "Quelle",
       "originInternal": "intern",
       "originExternal": "extern"
