@@ -468,10 +468,11 @@ export async function migrate() {
   }
 }
 
-export function verifySemverTag() {
+export function verifySemverTag(done) {
   if (!semver.valid(CLI_ARGS.tag)) {
     throw new Error(`Tag ${CLI_ARGS.tag} is not a valid semver string`);
   }
+  done();
 }
 
 export async function release() {
