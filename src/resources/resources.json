@@ -247,14 +247,16 @@
     "namespace": "browserNotSupported",
     "language": "en",
     "resources": {
-      "mainText": "We have detected that your browser version is not supported by our"
+      "headerText": "We have detected that your browser version is not supported by our website",
+      "mainText": "Please download a modern broswer of your choice, some examples below"
     }
   },
   {
     "namespace": "browserNotSupported",
     "language": "de",
     "resources": {
-      "mainText": "We have detected that your browser version is not supported by our"
+      "headerText": "Wir haben festgestellt, dass Ihre Browserversion von unserer Website nicht unterstützt wird",
+      "mainText": "Bitte laden Sie einen modernen Browser Ihrer Wahl herunter, einige Beispiele unten"
     }
   },
   {
