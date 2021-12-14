@@ -211,7 +211,7 @@ export async function buildTestAppJs() {
   } else {
     testAppBuildResult = await esbuild.build({
       entryPoints: ['./test-app/bundles/main.js'],
-      target: ['esnext', 'chrome95', 'firefox93', 'safari15', 'edge95'],
+      target: ['esnext', 'chrome95', 'firefox93', 'safari13', 'edge95'],
       format: 'esm',
       bundle: true,
       splitting: true,
