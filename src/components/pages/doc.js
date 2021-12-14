@@ -158,7 +158,6 @@ function Doc({ initialState, PageTemplate }) {
   const isViewRevisionsButtonVisible = state.type === DOCUMENT_TYPE.document;
   const isViewDocumentButtonVisible = state.type === DOCUMENT_TYPE.revision;
   const isSectionHardDeletionAllowed = state.type === DOCUMENT_TYPE.revision && !isExternalDocument;
-  const disabledSectionActions = [...isSectionHardDeletionAllowed ? [] : [SECTION_ACTIONS.hardDelete]];
 
   const revisionPicker = (
     <div className="DocPage-revisionPicker">
@@ -259,8 +258,7 @@ function Doc({ initialState, PageTemplate }) {
         { state.revisions.length > 0 && revisionPicker}
         <DocView
           documentOrRevision={state.currentDocOrRevision}
-          disabledActions={disabledSectionActions}
-          onAction={handleAction}
+          onAction={isSectionHardDeletionAllowed ? handleAction : null}
           />
       </div>
       <aside className="Content">

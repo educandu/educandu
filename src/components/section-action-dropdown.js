@@ -12,7 +12,7 @@ import { SECTION_ACTIONS, createHardDelete } from '../ui/section-actions.js';
 const MenuItem = Menu.Item;
 const redIconStyle = { color: 'red' };
 
-function SectionActionDropdown({ children, section, disabledActions, onAction, onVisibleChange, placement }) {
+function SectionActionDropdown({ children, section, onAction, onVisibleChange, placement }) {
   const { t } = useTranslation();
   const canHardDelete = usePermission(permissions.HARD_DELETE_SECTION);
 
@@ -30,7 +30,7 @@ function SectionActionDropdown({ children, section, disabledActions, onAction, o
 
   const menuItems = [];
 
-  if (canHardDelete && !section.deletedOn && !disabledActions.includes(SECTION_ACTIONS.hardDelete)) {
+  if (canHardDelete && !section.deletedOn) {
     menuItems.push((
       <MenuItem key={SECTION_ACTIONS.hardDelete}>
         <ThunderboltOutlined style={redIconStyle} />&nbsp;&nbsp;<span>{t('common:hardDelete')}</span>
@@ -57,7 +57,6 @@ function SectionActionDropdown({ children, section, disabledActions, onAction, o
 
 SectionActionDropdown.propTypes = {
   children: PropTypes.node,
-  disabledActions: PropTypes.arrayOf(PropTypes.oneOf(Object.values(SECTION_ACTIONS))),
   onAction: PropTypes.func.isRequired,
   onVisibleChange: PropTypes.func,
   placement: PropTypes.oneOf(['bottomLeft', 'bottomCenter', 'bottomRight', 'topLeft', 'topCenter', 'topRight']),
@@ -66,7 +65,6 @@ SectionActionDropdown.propTypes = {
 
 SectionActionDropdown.defaultProps = {
   children: null,
-  disabledActions: [],
   onVisibleChange: null,
   placement: 'bottomLeft'
 };
