@@ -25,14 +25,14 @@ export default function BrowserNotSupported() {
   const { t } = useTranslation('browserNotSupported');
   return (
     <Fragment>
-      <div style={{ display: 'flex', top: '0', width: '100%', justifyContent: 'center' }}>
+      <div className="BrowserNotSupported-headerContainer">
         <h2>
           {t('headerText')}
         </h2>
       </div>
 
-      <div style={{ display: 'flex', top: '0', width: '100%', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="BrowserNotSupported-mainContainer">
+        <div className="BrowserNotSupported-column">
           <p>{t('mainText')}:</p>
           <List
             dataSource={supportedBrowsers}
