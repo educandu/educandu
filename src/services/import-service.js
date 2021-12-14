@@ -59,8 +59,14 @@ class ImportService {
       .map(exportableDocument => {
         const importedDocument = importedDocuments.find(document => document.key === exportableDocument.key);
 
-        if (importedDocument?.revision === exportableDocument.revision) {
-          return null;
+        let importType;
+
+        if (importedDocument) {
+          importType = importedDocument.revision === exportableDocument.revision
+            ? DOCUMENT_IMPORT_TYPE.reimport
+            : DOCUMENT_IMPORT_TYPE.update;
+        } else {
+          importType = DOCUMENT_IMPORT_TYPE.add;
         }
 
         return {
@@ -71,7 +77,7 @@ class ImportService {
           updatedOn: exportableDocument.updatedOn,
           importedRevision: importedDocument?.revision || null,
           importableRevision: exportableDocument.revision,
-          importType: importedDocument ? DOCUMENT_IMPORT_TYPE.update : DOCUMENT_IMPORT_TYPE.add
+          importType
         };
       })
       .filter(importableDocument => importableDocument);

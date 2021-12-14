@@ -1,8 +1,10 @@
-export const HARD_DELETE = 'hard-delete';
+export const SECTION_ACTIONS = {
+  hardDelete: 'hard-delete'
+};
 
 export function createHardDelete(section, reason, deleteAllRevisions) {
   return {
-    name: HARD_DELETE,
+    name: SECTION_ACTIONS.hardDelete,
     data: {
       sectionKey: section.key,
       sectionRevision: section.revision,
@@ -11,8 +13,3 @@ export function createHardDelete(section, reason, deleteAllRevisions) {
     }
   };
 }
-
-export default {
-  HARD_DELETE,
-  createHardDelete
-};

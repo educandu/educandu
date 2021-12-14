@@ -5,7 +5,8 @@ export const DOCUMENT_ORIGIN = {
 
 export const DOCUMENT_IMPORT_TYPE = {
   add: 'add',
-  update: 'update'
+  update: 'update',
+  reimport: 'reimport'
 };
 
 export const BATCH_TYPE = {

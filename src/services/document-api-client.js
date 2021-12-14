@@ -57,6 +57,18 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  hardDeleteDocument(documentKey) {
+    return this.httpClient
+      .delete(
+        '/api/v1/docs',
+        {
+          data: { documentKey },
+          responseType: 'json'
+        }
+      )
+      .then(res => res.data);
+  }
+
   getRevisionTagSuggestions(tagsSuggestionQuery) {
     return this.httpClient
       .get(

@@ -5,7 +5,6 @@ export const getExportsQuerySchema = joi.object({
 });
 
 export const getExportsDocumentQuerySchema = joi.object({
-  afterRevision: joi.string().allow('').allow(null),
   toRevision: joi.string().required(),
   databaseSchemaHash: joi.string().required()
 });

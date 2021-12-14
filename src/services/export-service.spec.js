@@ -81,67 +81,61 @@ describe('export-service', () => {
   });
 
   describe('getDocumentExport', () => {
+    let result;
+
     const rev1 = { _id: '1', order: 1 };
     const rev2 = { _id: '2', order: 2 };
     const rev3 = { _id: '3', order: 3 };
-    const rev4 = { _id: '4', order: 4 };
 
     beforeEach(() => {
       userService.extractUserIdSetFromDocsOrRevisions.returns(new Set(['user1']));
       userService.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
-      documentService.getAllDocumentRevisionsByKey.resolves([rev3, rev1, rev2, rev4]);
+      documentService.getAllDocumentRevisionsByKey.resolves([rev2, rev3, rev1]);
     });
 
-    const negativeTestCases = [
-      { afterRevision: null, toRevision: null },
-      { afterRevision: null, toRevision: '0' },
-      { afterRevision: null, toRevision: '5' },
-      { afterRevision: 'x', toRevision: '4' },
-      { afterRevision: '4', toRevision: '4' }
-    ];
+    describe('with toRevision = null', () => {
+      beforeEach(async () => {
+        result = null;
 
-    const positiveTestCases = [
-      { afterRevision: null, toRevision: '1', expectedRevisions: [rev1] },
-      { afterRevision: null, toRevision: '4', expectedRevisions: [rev1, rev2, rev3, rev4] },
-      { afterRevision: '1', toRevision: '3', expectedRevisions: [rev2, rev3] },
-      { afterRevision: '2', toRevision: '3', expectedRevisions: [rev3] }
-    ];
+        try {
+          await sut.getDocumentExport({ key: 'abc', toRevision: null });
+        } catch (error) {
+          result = error;
+        }
+      });
 
-    let result;
-    let expectedError;
-
-    negativeTestCases.forEach(({ afterRevision, toRevision }) => {
-      describe(`with afterRevision = '${afterRevision}' and toRevision = '${toRevision}'`, () => {
-        beforeEach(async () => {
-          result = null;
-          expectedError = `The specified revision interval (${afterRevision} - ${toRevision}) is invalid for document abc`;
-
-          try {
-            await sut.getDocumentExport({ key: 'abc', afterRevision, toRevision });
-          } catch (error) {
-            result = error;
-          }
-        });
-
-        it('should throw', () => {
-          expect(result.message).toBe(expectedError);
-        });
+      it('should throw', () => {
+        expect(result.message).toBe('The specified revision \'null\' is invalid for document \'abc\'');
       });
     });
 
-    positiveTestCases.forEach(({ afterRevision, toRevision, expectedRevisions }) => {
-      describe(`with afterRevision = '${afterRevision}' and toRevision = '${toRevision}'`, () => {
-        beforeEach(async () => {
-          result = await sut.getDocumentExport({ key: 'abc', afterRevision, toRevision });
-        });
+    describe('with toRevision = \'4\'', () => {
+      beforeEach(async () => {
+        result = null;
 
-        it('should call userService.extractUserIdSetFromDocsOrRevisions', () => {
-          sinon.assert.calledWith(userService.extractUserIdSetFromDocsOrRevisions, expectedRevisions);
-        });
+        try {
+          await sut.getDocumentExport({ key: 'abc', toRevision: '4' });
+        } catch (error) {
+          result = error;
+        }
+      });
 
-        it('should return revisions', () => {
-          expect(result).toEqual({ revisions: expectedRevisions, users: [{ _id: 'user1', username: 'JohnDoe' }], cdnRootUrl: 'https://cdn.root.url' });
-        });
+      it('should throw', () => {
+        expect(result.message).toBe('The specified revision \'4\' is invalid for document \'abc\'');
+      });
+    });
+
+    describe('with toRevision = \'2\'', () => {
+      beforeEach(async () => {
+        result = await sut.getDocumentExport({ key: 'abc', toRevision: '2' });
+      });
+
+      it('should call userService.extractUserIdSetFromDocsOrRevisions', () => {
+        sinon.assert.calledWith(userService.extractUserIdSetFromDocsOrRevisions, [rev1, rev2]);
+      });
+
+      it('should return revisions', () => {
+        expect(result).toEqual({ revisions: [rev1, rev2], users: [{ _id: 'user1', username: 'JohnDoe' }], cdnRootUrl: 'https://cdn.root.url' });
       });
     });
   });

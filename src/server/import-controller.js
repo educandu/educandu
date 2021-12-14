@@ -6,7 +6,6 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ImportService from '../services/import-service.js';
-import ExportApiClient from '../services/export-api-client.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { createImportBatchQuerySchema, getImportsQuerySchema, importBatchViewParamsSchema, postImportBatchBodySchema } from '../domain/schemas/import-schemas.js';
@@ -16,11 +15,10 @@ const { NotFound } = httpErrors;
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class ImportController {
-  static get inject() { return [ServerConfig, PageRenderer, ImportService, ExportApiClient, ClientDataMapper]; }
+  static get inject() { return [ServerConfig, PageRenderer, ImportService, ClientDataMapper]; }
 
-  constructor(serverConfig, pageRenderer, importService, exportApiClient, clientDataMapper) {
+  constructor(serverConfig, pageRenderer, importService, clientDataMapper) {
     this.serverConfig = serverConfig;
-    this.exportApiClient = exportApiClient;
     this.importService = importService;
     this.pageRenderer = pageRenderer;
     this.clientDataMapper = clientDataMapper;

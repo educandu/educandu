@@ -50,3 +50,7 @@ export const hardDeleteSectionBodySchema = joi.object({
   reason: joi.string().min(3).required(),
   deleteAllRevisions: joi.boolean().required()
 });
+
+export const hardDeleteDocumentBodySchema = joi.object({
+  documentKey: idOrKeySchema.required()
+});
