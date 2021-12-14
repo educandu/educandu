@@ -1,35 +1,21 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import { Tooltip, Table } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { getDocUrl } from '../utils/urls.js';
+import { useTranslation } from 'react-i18next';
+import ImportTypeIcon from './import-type-icon.js';
 import { useService } from './container-context.js';
-import { DOCUMENT_IMPORT_TYPE } from '../common/constants.js';
 import React, { useMemo, memo, useState, useEffect } from 'react';
 import { useDateFormat, useLanguage } from './language-context.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
-import { DownloadOutlined, HistoryOutlined, RedoOutlined } from '@ant-design/icons';
-
-const getImportTypeIcon = importType => {
-  switch (importType) {
-    case DOCUMENT_IMPORT_TYPE.add:
-      return <DownloadOutlined />;
-    case DOCUMENT_IMPORT_TYPE.update:
-      return <HistoryOutlined />;
-    case DOCUMENT_IMPORT_TYPE.reimport:
-      return <RedoOutlined />;
-    default:
-      throw new Error(`Invalid import type: '${importType}'`);
-  }
-};
 
 const getLanguageComponent = documentLanguageData => {
   return <CountryFlagAndName code={documentLanguageData.flag} name={documentLanguageData.name} flagOnly />;
 };
 
-const getTooltipComponent = (importTypeIcon, importTypeTooltipText) => {
-  return <Tooltip className="DocumentImportTable-importTypeIcon" title={importTypeTooltipText}>{importTypeIcon}</Tooltip>;
+const getTooltipComponent = (importType, importTypeTooltipText) => {
+  return <Tooltip className="DocumentImportTable-importTypeIcon" title={importTypeTooltipText}><ImportTypeIcon importType={importType} /></Tooltip>;
 };
 
 const getTitleComponent = (title, url) => {
@@ -42,7 +28,6 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
   return importableDocuments.map(doc => {
     const documentLanguageData = languagesData[doc.language];
     const url = `${importSourceBaseUrl}${getDocUrl(doc.key, doc.slug)}`;
-    const importTypeIcon = getImportTypeIcon(doc.importType);
     const importTypeTooltipText = t(doc.importType);
 
     return {
@@ -56,9 +41,9 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
       updatedOn: doc.updatedOn,
       updatedOnLocalized: formatDate(doc.updatedOn),
       importType: doc.importType,
-      importTypeIcon,
+      importTypeIcon: <ImportTypeIcon importType={doc.importType} />,
       importTypeTooltipText,
-      importTypeTooltipComponent: getTooltipComponent(importTypeIcon, importTypeTooltipText)
+      importTypeTooltipComponent: getTooltipComponent(doc.importType, importTypeTooltipText)
     };
   });
 }
