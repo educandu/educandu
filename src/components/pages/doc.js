@@ -157,7 +157,8 @@ function Doc({ initialState, PageTemplate }) {
   const isEditingDisabled = state.currentDocOrRevision.archived || isExternalDocument || state.type !== DOCUMENT_TYPE.document;
   const isViewRevisionsButtonVisible = state.type === DOCUMENT_TYPE.document;
   const isViewDocumentButtonVisible = state.type === DOCUMENT_TYPE.revision;
-  const disabledSectionActions = [...isExternalDocument ? [SECTION_ACTIONS.hardDelete] : []];
+  const isSectionHardDeletionAllowed = state.type === DOCUMENT_TYPE.revision && !isExternalDocument;
+  const disabledSectionActions = [...isSectionHardDeletionAllowed ? [] : [SECTION_ACTIONS.hardDelete]];
 
   const revisionPicker = (
     <div className="DocPage-revisionPicker">
