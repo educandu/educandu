@@ -172,7 +172,7 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
           ))}
         </div>
       </footer>
-      <CookieConsentDrawer cookieName={clientConfig.consentCookieName} />
+      <CookieConsentDrawer />
     </div>
   );
 }

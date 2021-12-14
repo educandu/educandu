@@ -1,19 +1,21 @@
-import PropTypes from 'prop-types';
 import { Button, Drawer } from 'antd';
 import cookie from '../common/cookie.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+import { useService } from './container-context.js';
+import ClientConfig from '../bootstrap/client-config.js';
 
-export default function CookieConsentDrawer({ cookieName }) {
+export default function CookieConsentDrawer() {
   const [isVisible, setIsVisible] = useState();
+  const { consentCookieName } = useService(ClientConfig);
 
   useEffect(() => {
-    const consentCookie = cookie.get(cookieName);
+    const consentCookie = cookie.get(consentCookieName);
     setIsVisible(!consentCookie);
-  }, [cookieName]);
+  }, [consentCookieName]);
 
   const handleClose = () => {
-    cookie.set(cookieName, 'true', { expires: 365 });
+    cookie.set(consentCookieName, 'true', { expires: 365 });
     setIsVisible(false);
   };
 
@@ -30,7 +32,3 @@ export default function CookieConsentDrawer({ cookieName }) {
     </Drawer>
   );
 }
-
-CookieConsentDrawer.propTypes = {
-  cookieName: PropTypes.string.isRequired
-};
