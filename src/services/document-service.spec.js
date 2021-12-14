@@ -594,17 +594,25 @@ describe('document-service', () => {
       beforeEach(async () => {
         const unrelatedSection = {
           key: uniqueId.create(),
-          type: 'markdown',
+          type: 'image',
           content: {
-            text: 'Unmodified text'
+            sourceType: 'internal',
+            sourceUrl: 'media/image-1.png',
+            maxWidth: 100,
+            text: 'Unmodified text',
+            effect: null
           }
         };
 
         const sectionToBeDeleted = {
           key: uniqueId.create(),
-          type: 'markdown',
+          type: 'image',
           content: {
-            text: 'Initial text'
+            sourceType: 'internal',
+            sourceUrl: 'media/image-2.png',
+            maxWidth: 100,
+            text: 'Initial text',
+            effect: null
           }
         };
 
@@ -613,40 +621,40 @@ describe('document-service', () => {
             title: 'Revision 1',
             slug: 'rev-1',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated A' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section A' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated A' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section A' } }
             ]
           },
           {
             title: 'Revision 2',
             slug: 'rev-2',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated B' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section B' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated B' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section B' } }
             ]
           },
           {
             title: 'Revision 3',
             slug: 'rev-3',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated C' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section B' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated C' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section B' } }
             ]
           },
           {
             title: 'Revision 4',
             slug: 'rev-4',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated D' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section B' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated D' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section B' } }
             ]
           },
           {
             title: 'Revision 5',
             slug: 'rev-5',
             sections: [
-              { ...cloneDeep(unrelatedSection), content: { text: 'Unrelated E' } },
-              { ...cloneDeep(sectionToBeDeleted), content: { text: 'Doomed section C' } }
+              { ...cloneDeep(unrelatedSection), content: { ...unrelatedSection.content, text: 'Unrelated E' } },
+              { ...cloneDeep(sectionToBeDeleted), content: { ...sectionToBeDeleted.content, text: 'Doomed section C' } }
             ]
           }
         ]);
@@ -777,6 +785,28 @@ describe('document-service', () => {
             deletedBecause: 'My old reason',
             content: null
           });
+        });
+      });
+
+      describe('and the section had cdn resources', () => {
+        let documentRevisionsAfterDeletion;
+
+        beforeEach(async () => {
+          await sut.hardDeleteSection({
+            documentKey: documentRevisionsBeforeDeletion[4].key,
+            sectionKey: documentRevisionsBeforeDeletion[4].sections[1].key,
+            sectionRevision: documentRevisionsBeforeDeletion[4].sections[1].revision,
+            reason: 'My reason',
+            deleteAllRevisions: false,
+            user
+          });
+
+          documentRevisionsAfterDeletion = await sut.getAllDocumentRevisionsByKey(documentRevisionsBeforeDeletion[0].key);
+        });
+
+        it('removes the cdn resources of the hard-deleted section', () => {
+          expect(documentRevisionsBeforeDeletion[4].cdnResources).toMatchObject(['media/image-1.png', 'media/image-2.png']);
+          expect(documentRevisionsAfterDeletion[4].cdnResources).toMatchObject(['media/image-1.png']);
         });
       });
 
