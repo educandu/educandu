@@ -153,7 +153,7 @@ class Docs extends React.Component {
 
   async handleDocumentDelete(documentKey) {
     const { documentApiClient } = this.props;
-    await documentApiClient.hardDeleteExternalDocument(documentKey);
+    await documentApiClient.hardDeleteDocument(documentKey);
 
     this.setState(prevState => ({
       filteredDocs: prevState.filteredDocs.filter(doc => doc.key !== documentKey)
