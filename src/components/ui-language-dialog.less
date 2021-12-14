@@ -1,0 +1,24 @@
+.UiLanguageDialog {}
+
+.UiLanguageDialog-explanation {
+  margin: 0 0 25px 0;
+}
+
+.UiLanguageDialog-languageSwitch {
+  display: grid;
+  column-gap: 25px;
+  grid-auto-flow: column;
+}
+
+.UiLanguageDialog-languageButton {
+  width: 100%;
+  height: auto;
+
+  &.ant-radio-button-wrapper-checked {
+    background-color: fade(@global-primary-color, 10%);
+  }
+}
+
+.UiLanguageDialog-languageButtonContent {
+  padding: 10px 10px 0 10px;
+}
