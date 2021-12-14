@@ -24,7 +24,7 @@ import passwordResetRequestsSpec from './collection-specs/password-reset-request
 const pGlob = promisify(glob);
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
-const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*\.js$/;
+const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
 
 const logger = new Logger(import.meta.url);
 
