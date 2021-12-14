@@ -291,17 +291,22 @@ class DocumentService {
     }
 
     const latestRevision = await this.getCurrentDocumentRevisionByKey(documentKey);
-    const order = await this.documentOrderStore.getNextOrder();
 
-    const newRevision = this._buildDocumentRevision({ data: latestRevision, documentKey, userId: user._id, order, sections: latestRevision.sections });
-
-    newRevision.appendTo = {
-      key: documentKey,
-      ancestorId: latestRevision._id
+    const doc = {
+      title: latestRevision.title,
+      slug: latestRevision.slug,
+      namespace: latestRevision.namespace,
+      language: latestRevision.language,
+      sections: latestRevision.sections,
+      appendTo: {
+        key: documentKey,
+        ancestorId: latestRevision._id
+      },
+      tags: latestRevision.tags,
+      archived
     };
-    newRevision.archived = archived;
 
-    return this.createNewDocumentRevision({ doc: newRevision, user });
+    return this.createNewDocumentRevision({ doc, user });
   }
 
   async createNewDocumentRevision({ doc, user, restoredFrom = null }) {
