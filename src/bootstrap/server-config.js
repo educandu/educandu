@@ -49,7 +49,8 @@ const configSchema = joi.object({
     idlePollIntervalInMs: joi.number().min(1).default(defaultTaskProcessing.idlePollIntervalInMs),
     maxAttempts: joi.number().min(1).default(defaultTaskProcessing.maxAttempts)
   }).default(defaultTaskProcessing),
-  additionalControllers: joi.array().items(joi.function().class()).default([])
+  additionalControllers: joi.array().items(joi.function().class()).default([]),
+  consentCookieName: joi.string().default('COOKIECONSENT')
 });
 
 class ServerConfig {
@@ -69,7 +70,8 @@ class ServerConfig {
     return {
       cdnRootUrl: this.cdnRootUrl,
       disabledFeatures: this.disabledFeatures,
-      importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure }))
+      importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),
+      consentCookieName: this.consentCookieName
     };
   }
 }
