@@ -53,7 +53,7 @@ class ExportService {
       .map(({ _id, username }) => ({ _id, username }));
 
     if (userIdSet.size !== users.length) {
-      throw new Error(`Was searching for ${userIdSet.size} users in document ${key} before revision '${toRevision}', but found ${users.length}`);
+      throw new Error(`Was searching for ${userIdSet.size} users in document ${key} up to revision '${toRevision}', but found ${users.length}`);
     }
 
     return { revisions: revisionsToExport, users, cdnRootUrl: this.serverConfig.cdnRootUrl };

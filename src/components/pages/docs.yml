@@ -31,9 +31,6 @@ actions:
 clone:
   en: Clone
   de: Klonen
-delete:
-  en: Delete
-  de: Löschen
 archived:
   en: Archived
   de: Archiviert

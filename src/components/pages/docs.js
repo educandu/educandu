@@ -237,7 +237,7 @@ class Docs extends React.Component {
         {doc.origin.startsWith(DOCUMENT_ORIGIN.external) && (
           <Fragment>
             <br />
-            <span><a onClick={() => this.handleDeleteClick(doc)}>{t('delete')}</a></span>
+            <span><a onClick={() => this.handleDeleteClick(doc)}>{t('common:delete')}</a></span>
           </Fragment>
         )}
       </Fragment>
