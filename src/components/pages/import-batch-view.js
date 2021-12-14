@@ -6,10 +6,10 @@ import ImportTypeIcon from '../import-type-icon.js';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import { getImportedDocUrl } from '../../utils/urls.js';
+import { Table, Row, Space, Collapse, List } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import ImportApiClient from '../../services/import-api-client.js';
-import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
@@ -88,13 +88,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
     </a>
   );
 
-  const renderImportType = taskParams => {
-    return (
-      <Tooltip title={t(taskParams.importType)} className="ImportBatchViewPage-importType">
-        <ImportTypeIcon importType={taskParams.importType} />
-      </Tooltip>
-    );
-  };
+  const renderImportType = taskParams => <ImportTypeIcon importType={taskParams.importType} />;
 
   const renderErrorCount = ({ errors }) => <span>{errors?.length || 0} {t('errors')}</span>;
 

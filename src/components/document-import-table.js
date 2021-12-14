@@ -1,6 +1,6 @@
 import by from 'thenby';
+import { Table } from 'antd';
 import PropTypes from 'prop-types';
-import { Tooltip, Table } from 'antd';
 import { getDocUrl } from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import ImportTypeIcon from './import-type-icon.js';
@@ -14,10 +14,6 @@ const getLanguageComponent = documentLanguageData => {
   return <CountryFlagAndName code={documentLanguageData.flag} name={documentLanguageData.name} flagOnly />;
 };
 
-const getTooltipComponent = (importType, importTypeTooltipText) => {
-  return <Tooltip className="DocumentImportTable-importTypeIcon" title={importTypeTooltipText}><ImportTypeIcon importType={importType} /></Tooltip>;
-};
-
 const getTitleComponent = (title, url) => {
   return url ? <a href={url} target="_blank" rel="noopener noreferrer" >{title}</a> : <span>{title}</span>;
 };
@@ -28,7 +24,6 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
   return importableDocuments.map(doc => {
     const documentLanguageData = languagesData[doc.language];
     const url = `${importSourceBaseUrl}${getDocUrl(doc.key, doc.slug)}`;
-    const importTypeTooltipText = t(doc.importType);
 
     return {
       key: doc.key,
@@ -41,9 +36,7 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
       updatedOn: doc.updatedOn,
       updatedOnLocalized: formatDate(doc.updatedOn),
       importType: doc.importType,
-      importTypeIcon: <ImportTypeIcon importType={doc.importType} />,
-      importTypeTooltipText,
-      importTypeTooltipComponent: getTooltipComponent(doc.importType, importTypeTooltipText)
+      importTypeIcon: <ImportTypeIcon importType={doc.importType} />
     };
   });
 }
@@ -65,8 +58,8 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
       key: 'importType',
       width: '150px',
       sorter: by(x => x.importType),
-      render: (_text, record) => record.importTypeTooltipComponent,
-      shouldCellUpdate: (record, prevRecord) => record.importType !== prevRecord.importType || record.importTypeTooltipText !== prevRecord.importTypeTooltipText
+      render: (_text, record) => record.importTypeIcon,
+      shouldCellUpdate: (record, prevRecord) => record.importType !== prevRecord.importType
     },
     {
       title: t('title'),

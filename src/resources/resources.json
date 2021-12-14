@@ -152,6 +152,24 @@
     }
   },
   {
+    "namespace": "importTypeIcon",
+    "language": "en",
+    "resources": {
+      "add": "Add",
+      "update": "Update",
+      "reimport": "Reimport"
+    }
+  },
+  {
+    "namespace": "importTypeIcon",
+    "language": "de",
+    "resources": {
+      "add": "Hinzufügen",
+      "update": "Aktualisieren",
+      "reimport": "Erneut importieren"
+    }
+  },
+  {
     "namespace": "insufficientProfileWarning",
     "language": "en",
     "resources": {
@@ -416,8 +434,6 @@
       "batchStatusDone": "Done",
       "batchStatusProcessing": "{progress, number, percent} completed",
       "importType": "Import type",
-      "add": "Add",
-      "update": "Update",
       "startedOn": "Started on",
       "errors": "Errors",
       "errorsCount": "Errors count",
@@ -445,8 +461,6 @@
       "batchStatusDone": "Abgeschlossen",
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "importType": "Import-Typ",
-      "add": "Hinzufügen",
-      "update": "Aktualisieren",
       "startedOn": "Begann am",
       "errors": "Fehler",
       "errorsCount": "Fehleranzahl",
@@ -1314,7 +1328,7 @@
       "back": "Zurück",
       "preview": "Vorschau",
       "edit": "Bearbeiten",
-      "apply": "Übernehmen`",
+      "apply": "Übernehmen",
       "discard": "Verwerfen",
       "duplicate": "Duplizieren",
       "delete": "Löschen",
