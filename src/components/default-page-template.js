@@ -13,11 +13,11 @@ import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
 import DefaultSiteLogo from './default-site-logo.js';
 import ClientConfig from '../bootstrap/client-config.js';
+import CookieConsentDrawer from './cookie-consent-drawer.js';
 import { ALERT_TYPE, FEATURE_TOGGLES } from '../common/constants.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined } from '@ant-design/icons';
-
 const Icon = iconsNs.default || iconsNs;
 
 function createLanguagesToChoose(languageNameProvider, supportedLanguages, language) {
@@ -172,6 +172,7 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
           ))}
         </div>
       </footer>
+      <CookieConsentDrawer />
     </div>
   );
 }

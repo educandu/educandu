@@ -208,33 +208,46 @@ class DocumentService {
 
       lock = await this.documentLockStore.takeLock(documentKey);
 
-      const allRevisions = await this._getAllDocumentRevisionsByKey(documentKey);
+      const revisionsBeforeDelete = await this._getAllDocumentRevisionsByKey(documentKey);
 
-      const revisionsToUpdate = [];
+      const revisionsAfterDelete = [];
+      const revisionsToUpdateById = new Map();
 
-      for (const revision of allRevisions) {
-        for (const section of revision.sections) {
-          if (section.key === sectionKey && !section.deletedOn) {
-            // eslint-disable-next-line max-depth
-            if (section.revision === sectionRevision || deleteAllRevisions) {
-              section.deletedOn = now;
-              section.deletedBy = userId;
-              section.deletedBecause = reason;
-              section.content = null;
-              revisionsToUpdate.push(revision);
-            }
+      for (const originalRevision of revisionsBeforeDelete) {
+        let finalRevision = originalRevision;
+
+        for (const section of finalRevision.sections) {
+          if (section.key === sectionKey && !section.deletedOn && (section.revision === sectionRevision || deleteAllRevisions)) {
+            section.deletedOn = now;
+            section.deletedBy = userId;
+            section.deletedBecause = reason;
+            section.content = null;
+
+            finalRevision = this._buildDocumentRevision({
+              data: finalRevision,
+              revisionId: finalRevision._id,
+              documentKey: finalRevision.key,
+              userId: finalRevision.createdBy,
+              order: finalRevision.order,
+              restoredFrom: finalRevision.restoredFrom,
+              sections: finalRevision.sections
+            });
+
+            revisionsToUpdateById.set(finalRevision._id, finalRevision);
           }
         }
+
+        revisionsAfterDelete.push(finalRevision);
       }
 
-      if (revisionsToUpdate.length) {
-        logger.info(`Hard deleting %d sections with section key ${sectionKey} in document revisions with key ${documentKey}`, revisionsToUpdate);
-        await this.documentRevisionStore.saveMany(revisionsToUpdate);
+      if (revisionsToUpdateById.size) {
+        logger.info(`Hard deleting ${revisionsToUpdateById.size} sections with section key ${sectionKey} in document revisions with key ${documentKey}`);
+        await this.documentRevisionStore.saveMany([...revisionsToUpdateById.values()]);
       } else {
         throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
       }
 
-      const latestDocument = this._buildDocumentFromRevisions(allRevisions);
+      const latestDocument = this._buildDocumentFromRevisions(revisionsAfterDelete);
 
       logger.info(`Saving latest document with revision ${latestDocument.revision}`);
       await this.documentStore.save(latestDocument);

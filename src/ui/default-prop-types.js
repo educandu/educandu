@@ -30,7 +30,8 @@ export const clientConfigProps = {
   clientConfig: PropTypes.shape({
     cdnRootUrl: PropTypes.string.isRequired
   }).isRequired,
-  importSources: PropTypes.arrayOf(importSourceShape)
+  importSources: PropTypes.arrayOf(importSourceShape),
+  cookieConsentName: PropTypes.string.isRequired
 };
 
 export const requestProps = {

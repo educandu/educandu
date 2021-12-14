@@ -61,3 +61,6 @@ viewDocument:
 externalDocumentWarning:
   en: This document is a copy. The original can be edited <0>here</0>.
   de: Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.
+accept:
+  en: Accept
+  de: Akzeptieren
