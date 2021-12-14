@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SectionDisplay from './section-display.js';
-import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 import { SECTION_ACTIONS } from '../ui/section-actions.js';
+import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function DocView({ documentOrRevision, onAction, disabledActions }) {
   return (
