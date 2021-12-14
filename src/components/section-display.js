@@ -5,13 +5,14 @@ import classNames from 'classnames';
 import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
 import { SettingOutlined } from '@ant-design/icons';
-import { pluginTypes } from '../plugins/plugin-infos.js';
+import InfoFactory from '../plugins/info-factory.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import SectionActionDropdown from './section-action-dropdown.js';
 
 function SectionDisplay({ docKey, section, onAction }) {
+  const infoFactory = useService(InfoFactory);
   const [isMouseOver, setIsMouseOver] = React.useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = React.useState(false);
   const rendererFactory = useService(RendererFactory);
@@ -57,7 +58,7 @@ function SectionDisplay({ docKey, section, onAction }) {
 
   let displayComponent;
   if (section.content) {
-    const isSupportedPlugin = pluginTypes.includes(section.type);
+    const isSupportedPlugin = infoFactory.getRegisteredTypes().includes(section.type);
     displayComponent = isSupportedPlugin ? getDisplayComponent() : (<NotSupportedSection />);
   } else {
     displayComponent = (<DeletedSection section={section} />);

@@ -400,7 +400,7 @@ export function restartServer(done) {
 }
 
 export async function migrate() {
-  const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*\.js$/;
+  const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
 
   const migrationFiles = await promisify(glob)('migrations/manual/*.js');
   const migrationChoices = migrationFiles

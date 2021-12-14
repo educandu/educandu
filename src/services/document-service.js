@@ -2,12 +2,12 @@ import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
-import { getPluginInfoByType } from '../plugins/plugin-infos.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 
@@ -77,15 +77,16 @@ const lastUpdatedFirst = [['updatedOn', -1]];
 
 class DocumentService {
   static get inject() {
-    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, TransactionRunner];
+    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, TransactionRunner, InfoFactory];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, transactionRunner) {
+  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, transactionRunner, infoFactory) {
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
     this.transactionRunner = transactionRunner;
+    this.infoFactory = infoFactory;
   }
 
   getAllDocumentsMetadata({ includeArchived } = {}) {
@@ -511,7 +512,7 @@ class DocumentService {
   _getCdnResources(sections) {
     return [
       ...sections.reduce((cdnResources, section) => {
-        const info = getPluginInfoByType(section.type);
+        const info = this.infoFactory.createInfo(section.type);
         if (info && section.content) {
           info.getCdnResources(section.content).forEach(resource => {
             cdnResources.add(resource);
