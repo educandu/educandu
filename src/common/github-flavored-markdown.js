@@ -35,7 +35,7 @@ class GithubFlavoredMarkdown {
       }
     });
     extractor.use(replaceLink);
-    extractor.parse(markdown);
+    extractor.render(markdown);
     return [...linkSet].map(link => link.substr(6));
   }
 }

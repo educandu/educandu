@@ -245,7 +245,15 @@ class Docs extends React.Component {
   }
 
   renderArchived(value, doc) {
-    return <Switch size="small" checked={doc.archived} onChange={() => this.handleArchivedSwitchChange(value, doc)} />;
+    const disableArchiving = doc.origin !== DOCUMENT_ORIGIN.internal;
+    return (
+      <Switch
+        size="small"
+        checked={doc.archived}
+        disabled={disableArchiving}
+        onChange={() => this.handleArchivedSwitchChange(value, doc)}
+        />
+    );
   }
 
   render() {
