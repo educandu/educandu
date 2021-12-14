@@ -59,12 +59,14 @@ class ImportService {
       .map(exportableDocument => {
         const importedDocument = importedDocuments.find(document => document.key === exportableDocument.key);
 
-        let importType = DOCUMENT_IMPORT_TYPE.add;
+        let importType;
+
         if (importedDocument) {
-          importType = DOCUMENT_IMPORT_TYPE.update;
-        }
-        if (importedDocument?.revision === exportableDocument.revision) {
-          importType = DOCUMENT_IMPORT_TYPE.reimport;
+          importType = importedDocument.revision === exportableDocument.revision
+            ? DOCUMENT_IMPORT_TYPE.reimport
+            : DOCUMENT_IMPORT_TYPE.update;
+        } else {
+          importType = DOCUMENT_IMPORT_TYPE.add;
         }
 
         return {
