@@ -99,24 +99,28 @@ to the global-variables.less in educandu and consult the list there.
 
 ~~~
 $ yarn
-$ gulp
+$ gulp                 # run the test application
+$ gulp --instances 3   # run 3 instances behind a load balancer
 ~~~
 
 This will build and start up the TestApp (in watch mode), which is set up to use educandu.
 
 By default the application requires that the following ports are available to be taken:
-  * 3000: the application itself
-  * 8000: maildev server, can be used for debugging emails that would be sent to the users (head to http://localhost:8000 when the application is running)
-  * 8025: smpt server port
+  * 3000: the application itself (or the load balancer)
+  * 400x: the individual application instances, in case of load balancing
+  * 8000: maildev UI, can be used for debugging emails that would be sent to the users (head to http://localhost:8000 when the application is running)
+  * 8025: maildev smpt server port
   * 9000: minio docker image (local CDN used for testing)
   * 21017: mongodb docker image port
 
 The ports can be changed in the gulp file and must be changed in the gulpfile.js and need to be reflected in the test-app/index.js.
 
 The gulpfile has a number of useful tasks which can be run with "gulp taskName", here are some more widely used:
- * test: runs all tests
+ * test: runs all tests (with coverage)
+ * testWatch: runs tests in watch mode
  * testChanged: runs tests that were affected by the current modifications
  * lint: runs lint
+ * up: starts all the containers (if not already running)
  * down: stops all the containers and deletes them
 
 

@@ -4,7 +4,7 @@ import bundleConfig from './bundles/bundle-config.js';
 import ArticleController from './article-controller.js';
 
 educandu({
-  port: 3000,
+  port: process.env.TEST_APP_PORT || 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   skipMongoMigrations: process.env.TEST_APP_SKIP_MONGO_MIGRATIONS === true.toString(),
   includeManualMigrations: true,

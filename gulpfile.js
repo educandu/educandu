@@ -3,12 +3,9 @@ import url from 'url';
 import del from 'del';
 import path from 'path';
 import gulp from 'gulp';
-import glob from 'glob';
 import yaml from 'yaml';
 import { EOL } from 'os';
-import execa from 'execa';
 import axios from 'axios';
-import yargs from 'yargs';
 import semver from 'semver';
 import less from 'gulp-less';
 import csso from 'gulp-csso';
@@ -22,126 +19,46 @@ import ghreleases from 'ghreleases';
 import { promises as fs } from 'fs';
 import Graceful from 'node-graceful';
 import axiosRetry from 'axios-retry';
-import { spawn } from 'child_process';
 import { MongoClient } from 'mongodb';
-import { Docker } from 'docker-cli-js';
 import { cleanEnv, str } from 'envalid';
 import sourcemaps from 'gulp-sourcemaps';
 import gitSemverTags from 'git-semver-tags';
 import commitsBetween from 'commits-between';
-import { Client as MinioClient } from 'minio';
 import { MongoDBStorage, Umzug } from 'umzug';
 import LessAutoprefix from 'less-plugin-autoprefix';
-
-const CLI_ARGS = yargs(process.argv.slice(2)).argv;
-
-const ROOT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
-
-const TEST_MAILDEV_IMAGE = 'maildev/maildev:1.1.0';
-const TEST_MAILDEV_CONTAINER_NAME = 'maildev';
-
-const TEST_MONGO_IMAGE = 'bitnami/mongodb:4.2.17-debian-10-r23';
-const TEST_MONGO_CONTAINER_NAME = 'mongo';
-
-const TEST_MINIO_IMAGE = 'bitnami/minio:2020.12.18';
-const TEST_MINIO_CONTAINER_NAME = 'minio';
-
-const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
-const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
+import { cliArgs, glob, jest, kebabToCamel, MongoContainer, MinioContainer, MaildevContainer, NodeProcess, LoadBalancedNodeProcessGroup } from './dev/index.js';
 
 const JIRA_ISSUE_PATTERN = '(EDU|OMA|ELMU)-\\d+';
 const JIRA_BASE_URL = 'https://educandu.atlassian.net';
 
 const supportedLanguages = ['en', 'de'];
 
-let testAppServer = null;
-let testAppBuildResult = null;
-const containerCommandTimeoutMs = 2000;
+let bundler = null;
+let currentApp = null;
 
-const delay = ms => new Promise(resolve => {
-  setTimeout(resolve, ms);
+const mongoContainer = new MongoContainer({
+  port: 27017,
+  rootUser: 'root',
+  rootPassword: 'rootpw',
+  replicaSetName: 'educandurs'
 });
 
-Graceful.on('exit', () => {
-  testAppBuildResult?.rebuild?.dispose();
-  return new Promise(resolve => {
-    if (testAppServer) {
-      testAppServer.once('exit', () => resolve());
-    } else {
-      resolve();
-    }
-  });
+const minioContainer = new MinioContainer({
+  port: 9000,
+  accessKey: 'UVDXF41PYEAX0PXD8826',
+  secretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
+  initialBuckets: ['dev-educandu-cdn']
 });
 
-const kebabToCamel = string => string.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
+const maildevContainer = new MaildevContainer({
+  smtpPort: 8025,
+  frontendPort: 8000
+});
 
-const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () => Promise.resolve() }) => {
-  const docker = new Docker();
-  const data = await docker.command('ps -a');
-  const container = data.containerList.find(c => c.names === containerName);
-  if (!container) {
-    await docker.command(`run --name ${containerName} ${runArgs}`);
-    await delay(containerCommandTimeoutMs);
-    await afterRun();
-  } else if (!container.status.startsWith('Up')) {
-    await docker.command(`restart ${containerName}`);
-    await delay(containerCommandTimeoutMs);
-  }
-};
-
-const ensureContainerRemoved = async ({ containerName }) => {
-  const docker = new Docker();
-  try {
-    await docker.command(`rm -f ${containerName}`);
-    await delay(containerCommandTimeoutMs);
-  } catch (err) {
-    if (!err.toString().includes('No such container')) {
-      throw err;
-    }
-  }
-};
-
-async function ensureBucketExists() {
-  const region = 'eu-central-1';
-  const bucketName = 'dev-educandu-cdn';
-
-  const minioClient = new MinioClient({
-    endPoint: 'localhost',
-    port: 9000,
-    useSSL: false,
-    region,
-    accessKey: MINIO_ACCESS_KEY,
-    secretKey: MINIO_SECRET_KEY
-  });
-
-  const bucketPolicy = {
-    Version: '2012-10-17',
-    Statement: [
-      {
-        Sid: 'PublicReadGetObject',
-        Effect: 'Allow',
-        Principal: '*',
-        Action: 's3:GetObject',
-        Resource: `arn:aws:s3:::${bucketName}/*`
-      }
-    ]
-  };
-
-  const buckets = await minioClient.listBuckets();
-
-  if (!buckets.find(x => x.name === 'dev-educandu-cdn')) {
-    await minioClient.makeBucket(bucketName, region);
-    await minioClient.setBucketPolicy(bucketName, JSON.stringify(bucketPolicy));
-  }
-}
-
-function runJest(...flags) {
-  return execa(process.execPath, [
-    '--experimental-vm-modules',
-    `${ROOT_DIR}/node_modules/jest/bin/jest.js`,
-    ...flags.map(flag => `--${flag}`)
-  ], { stdio: 'inherit' });
-}
+Graceful.on('exit', async () => {
+  bundler?.rebuild?.dispose();
+  await currentApp?.waitForExit();
+});
 
 const downloadCountryList = async lang => {
   const res = await axios.get(
@@ -159,7 +76,7 @@ export function lint() {
   return gulp.src(['*.js', 'src/**/*.js', 'scripts/**/*.js'], { base: './' })
     .pipe(eslint())
     .pipe(eslint.format())
-    .pipe(gulpif(!testAppServer, eslint.failAfterError()));
+    .pipe(gulpif(!currentApp, eslint.failAfterError()));
 }
 
 export function fix() {
@@ -171,19 +88,19 @@ export function fix() {
 }
 
 export function test() {
-  return runJest('coverage', 'runInBand');
+  return jest.coverage();
 }
 
 export function testChanged() {
-  return runJest('onlyChanged');
+  return jest.changed();
 }
 
 export function testWatch() {
-  return runJest('watch');
+  return jest.watch();
 }
 
 export async function buildJs() {
-  const jsFiles = await promisify(glob)('src/**/*.js', { ignore: 'src/**/*.spec.js' });
+  const jsFiles = await glob('src/**/*.js', { ignore: 'src/**/*.spec.js' });
   Promise.all(jsFiles.map(jsFile => {
     return esbuild.build({
       entryPoints: [jsFile],
@@ -206,36 +123,36 @@ export const build = gulp.parallel(copyToDist, buildJs);
 
 export function buildTestAppCss() {
   return gulp.src('test-app/main.less')
-    .pipe(gulpif(!!testAppServer, plumber()))
+    .pipe(gulpif(!!currentApp, plumber()))
     .pipe(sourcemaps.init())
     .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix({ browsers: ['last 2 versions', 'Safari >= 13'] })] }))
-    .pipe(gulpif(CLI_ARGS.optimize, csso()))
+    .pipe(gulpif(cliArgs.optimize, csso()))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('test-app/dist'));
 }
 
 export async function buildTestAppJs() {
-  if (testAppBuildResult && testAppBuildResult.rebuild) {
-    await testAppBuildResult.rebuild();
+  if (bundler && bundler.rebuild) {
+    await bundler.rebuild();
   } else {
-    testAppBuildResult = await esbuild.build({
+    bundler = await esbuild.build({
       entryPoints: ['./test-app/bundles/main.js'],
       target: ['esnext', 'chrome95', 'firefox93', 'safari13', 'edge95'],
       format: 'esm',
       bundle: true,
       splitting: true,
-      incremental: !!testAppServer,
-      minify: CLI_ARGS.optimize,
+      incremental: !!currentApp,
+      minify: cliArgs.optimize,
       loader: { '.js': 'jsx' },
       inject: ['./test-app/polyfills.js'],
-      metafile: CLI_ARGS.optimize,
+      metafile: cliArgs.optimize,
       sourcemap: true,
       sourcesContent: true,
       outdir: './test-app/dist'
     });
 
-    if (testAppBuildResult.metafile) {
-      const bundles = Object.entries(testAppBuildResult.metafile.outputs)
+    if (bundler.metafile) {
+      const bundles = Object.entries(bundler.metafile.outputs)
         .map(([name, { bytes }]) => ({ name, bytes }))
         .filter(x => x.name.endsWith('.js'));
 
@@ -243,13 +160,13 @@ export async function buildTestAppJs() {
       bundles.forEach(({ name, bytes }) => console.log(`${name}: ${formatBytes(bytes)}`));
       console.log(`TOTAL: ${formatBytes(bundles.reduce((sum, { bytes }) => sum + bytes, 0))}`);
 
-      await fs.writeFile('./test-app/dist/meta.json', JSON.stringify(testAppBuildResult.metafile, null, 2), 'utf8');
+      await fs.writeFile('./test-app/dist/meta.json', JSON.stringify(bundler.metafile, null, 2), 'utf8');
     }
   }
 }
 
 export async function buildTranslations() {
-  const filePaths = await promisify(glob)('./src/**/*.yml');
+  const filePaths = await glob('./src/**/*.yml');
 
   const bundleGroups = await Promise.all(filePaths.map(async filePath => {
     const namespace = kebabToCamel(path.basename(filePath, '.yml'));
@@ -294,115 +211,72 @@ export async function countriesUpdate() {
 }
 
 export async function maildevUp() {
-  await ensureContainerRunning({
-    containerName: TEST_MAILDEV_CONTAINER_NAME,
-    runArgs: `-d -p 8000:80 -p 8025:25 ${TEST_MAILDEV_IMAGE}`
-  });
+  await maildevContainer.ensureIsRunning();
 }
 
 export async function maildevDown() {
-  await ensureContainerRemoved({
-    containerName: TEST_MAILDEV_CONTAINER_NAME
-  });
+  await maildevContainer.ensureIsRemoved();
 }
 
 export const maildevReset = gulp.series(maildevDown, maildevUp);
 
 export async function mongoUp() {
-  await ensureContainerRunning({
-    containerName: TEST_MONGO_CONTAINER_NAME,
-    runArgs: [
-      '-d',
-      '-p 27017:27017',
-      '-e MONGODB_ROOT_USER=root',
-      '-e MONGODB_ROOT_PASSWORD=rootpw',
-      '-e MONGODB_REPLICA_SET_KEY=educandurs',
-      '-e MONGODB_REPLICA_SET_NAME=educandurs',
-      '-e MONGODB_REPLICA_SET_MODE=primary',
-      '-e MONGODB_ADVERTISED_HOSTNAME=localhost',
-      TEST_MONGO_IMAGE
-    ].join(' ')
-  });
+  await mongoContainer.ensureIsRunning();
 }
 
 export async function mongoDown() {
-  await ensureContainerRemoved({
-    containerName: TEST_MONGO_CONTAINER_NAME
-  });
+  await mongoContainer.ensureIsRemoved();
 }
 
 export const mongoReset = gulp.series(mongoDown, mongoUp);
 
 export async function minioUp() {
-  await ensureContainerRunning({
-    containerName: TEST_MINIO_CONTAINER_NAME,
-    runArgs: [
-      '-d',
-      '-p 9000:9000',
-      `-e MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}`,
-      `-e MINIO_SECRET_KEY=${MINIO_SECRET_KEY}`,
-      '-e MINIO_BROWSER=on',
-      TEST_MINIO_IMAGE
-    ].join(' '),
-    afterRun: ensureBucketExists
-  });
+  await minioContainer.ensureIsRunning();
 }
 
 export async function minioDown() {
-  await ensureContainerRemoved({
-    containerName: TEST_MINIO_CONTAINER_NAME
-  });
+  await minioContainer.ensureIsRemoved();
 }
 
 export const minioReset = gulp.series(minioDown, minioUp);
 
-function startTestApp({ skipMigrationsAndChecks }) {
-  testAppServer = spawn(
-    process.execPath,
-    [
-      '--experimental-json-modules',
-      '--experimental-loader',
-      '@educandu/node-jsx-loader',
-      '--enable-source-maps',
-      'test-app/index.js'
-    ],
-    {
-      env: {
+export async function startServer() {
+  if (cliArgs.instances > 1) {
+    currentApp = new LoadBalancedNodeProcessGroup({
+      script: 'test-app/index.js',
+      loadBalancerPort: 3000,
+      getNodeProcessPort: index => 4000 + index,
+      instanceCount: cliArgs.instances,
+      getInstanceEnv: index => ({
         ...process.env,
         NODE_ENV: 'development',
-        TEST_APP_SKIP_MONGO_MIGRATIONS: (!!skipMigrationsAndChecks).toString(),
-        TEST_APP_SKIP_MONGO_CHECKS: (!!skipMigrationsAndChecks).toString()
-      },
-      stdio: 'inherit'
-    }
-  );
-  testAppServer.once('exit', () => {
-    testAppServer = null;
+        TEST_APP_PORT: (4000 + index).toString()
+      })
+    });
+  } else {
+    currentApp = new NodeProcess({
+      script: 'test-app/index.js',
+      env: { ...process.env, NODE_ENV: 'development' }
+    });
+  }
+
+  await currentApp.start({
+    TEST_APP_SKIP_MONGO_MIGRATIONS: false.toString(),
+    TEST_APP_SKIP_MONGO_CHECKS: false.toString()
   });
 }
 
-export function startServer(done) {
-  startTestApp({ skipMigrationsAndChecks: false });
-  done();
-}
-
-export function restartServer(done) {
-  if (testAppServer) {
-    testAppServer.once('exit', () => {
-      startTestApp({ skipMigrationsAndChecks: true });
-      done();
-    });
-    testAppServer.kill();
-  } else {
-    startTestApp({ skipMigrationsAndChecks: true });
-    done();
-  }
+export async function restartServer() {
+  await currentApp.restart({
+    TEST_APP_SKIP_MONGO_MIGRATIONS: true.toString(),
+    TEST_APP_SKIP_MONGO_CHECKS: true.toString()
+  });
 }
 
 export async function migrate() {
   const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
 
-  const migrationFiles = await promisify(glob)('migrations/manual/*.js');
+  const migrationFiles = await glob('migrations/manual/*.js');
   const migrationChoices = migrationFiles
     .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
     .sort()
@@ -469,8 +343,8 @@ export async function migrate() {
 }
 
 export function verifySemverTag(done) {
-  if (!semver.valid(CLI_ARGS.tag)) {
-    throw new Error(`Tag ${CLI_ARGS.tag} is not a valid semver string`);
+  if (!semver.valid(cliArgs.tag)) {
+    throw new Error(`Tag ${cliArgs.tag} is not a valid semver string`);
   }
   done();
 }
@@ -523,7 +397,7 @@ export async function release() {
       await client.put(
         `/rest/api/3/issue/${encodeURIComponent(issueKey)}`,
         { update: { labels: [{ add: currentTag }] } },
-        { responseType: 'json', auth: { username: CLI_ARGS.jiraUser, password: CLI_ARGS.jiraApiKey } }
+        { responseType: 'json', auth: { username: cliArgs.jiraUser, password: cliArgs.jiraApiKey } }
       );
     } catch (error) {
       console.log(error);
@@ -531,9 +405,10 @@ export async function release() {
   }
 }
 
-export const up = gulp.series(mongoUp, minioUp, maildevUp);
+export const up = gulp.parallel(mongoUp, minioUp, maildevUp);
 
 export const down = gulp.parallel(mongoDown, minioDown, maildevDown);
+
 export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startServer);
 
 export const verify = gulp.series(lint, test, build);
