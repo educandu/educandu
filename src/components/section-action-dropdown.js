@@ -7,7 +7,7 @@ import permissions from '../domain/permissions.js';
 import { ThunderboltOutlined } from '@ant-design/icons';
 import { sectionShape } from '../ui/default-prop-types.js';
 import { confirmSectionHardDelete } from './confirmation-dialogs.js';
-import { HARD_DELETE, createHardDelete } from '../ui/section-actions.js';
+import { SECTION_ACTIONS, createHardDelete } from '../ui/section-actions.js';
 
 const MenuItem = Menu.Item;
 const redIconStyle = { color: 'red' };
@@ -18,7 +18,7 @@ function SectionActionDropdown({ children, section, onAction, onVisibleChange, p
 
   const handleSectionMenuClick = ({ key }) => {
     switch (key) {
-      case HARD_DELETE:
+      case SECTION_ACTIONS.hardDelete:
         confirmSectionHardDelete(t, ({ reason, deleteAllRevisions }) => onAction(createHardDelete(section, reason, deleteAllRevisions)));
         break;
       default:
@@ -32,7 +32,7 @@ function SectionActionDropdown({ children, section, onAction, onVisibleChange, p
 
   if (canHardDelete && !section.deletedOn) {
     menuItems.push((
-      <MenuItem key={HARD_DELETE}>
+      <MenuItem key={SECTION_ACTIONS.hardDelete}>
         <ThunderboltOutlined style={redIconStyle} />&nbsp;&nbsp;<span>{t('common:hardDelete')}</span>
       </MenuItem>
     ));

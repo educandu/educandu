@@ -2,12 +2,12 @@ import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import { DOCUMENT_ORIGIN } from '../common/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
-import { getPluginInfoByType } from '../plugins/plugin-infos.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 
@@ -77,15 +77,16 @@ const lastUpdatedFirst = [['updatedOn', -1]];
 
 class DocumentService {
   static get inject() {
-    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, TransactionRunner];
+    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, TransactionRunner, InfoFactory];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, transactionRunner) {
+  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, transactionRunner, infoFactory) {
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
     this.transactionRunner = transactionRunner;
+    this.infoFactory = infoFactory;
   }
 
   getAllDocumentsMetadata({ includeArchived } = {}) {
@@ -208,36 +209,74 @@ class DocumentService {
 
       lock = await this.documentLockStore.takeLock(documentKey);
 
-      const allRevisions = await this._getAllDocumentRevisionsByKey(documentKey);
+      const revisionsBeforeDelete = await this._getAllDocumentRevisionsByKey(documentKey);
 
-      const revisionsToUpdate = [];
+      const revisionsAfterDelete = [];
+      const revisionsToUpdateById = new Map();
 
-      for (const revision of allRevisions) {
-        for (const section of revision.sections) {
-          if (section.key === sectionKey && !section.deletedOn) {
-            // eslint-disable-next-line max-depth
-            if (section.revision === sectionRevision || deleteAllRevisions) {
-              section.deletedOn = now;
-              section.deletedBy = userId;
-              section.deletedBecause = reason;
-              section.content = null;
-              revisionsToUpdate.push(revision);
-            }
+      for (const originalRevision of revisionsBeforeDelete) {
+        let finalRevision = originalRevision;
+
+        for (const section of finalRevision.sections) {
+          if (section.key === sectionKey && !section.deletedOn && (section.revision === sectionRevision || deleteAllRevisions)) {
+            section.deletedOn = now;
+            section.deletedBy = userId;
+            section.deletedBecause = reason;
+            section.content = null;
+
+            finalRevision = this._buildDocumentRevision({
+              data: finalRevision,
+              revisionId: finalRevision._id,
+              documentKey: finalRevision.key,
+              userId: finalRevision.createdBy,
+              order: finalRevision.order,
+              restoredFrom: finalRevision.restoredFrom,
+              sections: finalRevision.sections
+            });
+
+            revisionsToUpdateById.set(finalRevision._id, finalRevision);
           }
         }
+
+        revisionsAfterDelete.push(finalRevision);
       }
 
-      if (revisionsToUpdate.length) {
-        logger.info(`Hard deleting %d sections with section key ${sectionKey} in document revisions with key ${documentKey}`, revisionsToUpdate);
-        await this.documentRevisionStore.saveMany(revisionsToUpdate);
+      if (revisionsToUpdateById.size) {
+        logger.info(`Hard deleting ${revisionsToUpdateById.size} sections with section key ${sectionKey} in document revisions with key ${documentKey}`);
+        await this.documentRevisionStore.saveMany([...revisionsToUpdateById.values()]);
       } else {
         throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
       }
 
-      const latestDocument = this._buildDocumentFromRevisions(allRevisions);
+      const latestDocument = this._buildDocumentFromRevisions(revisionsAfterDelete);
 
       logger.info(`Saving latest document with revision ${latestDocument.revision}`);
       await this.documentStore.save(latestDocument);
+
+    } finally {
+      if (lock) {
+        await this.documentLockStore.releaseLock(lock);
+      }
+    }
+  }
+
+  async hardDeleteDocument(documentKey) {
+    const document = await this.getDocumentByKey(documentKey);
+
+    if (!document.origin.startsWith(DOCUMENT_ORIGIN.external)) {
+      throw new Error(`Only external documents can be hard deleted. Document '${documentKey}' has origin '${document.origin}'`);
+    }
+
+    let lock;
+    try {
+      lock = await this.documentLockStore.takeLock(documentKey);
+
+      logger.info(`Hard deleting external document '${documentKey}'`);
+
+      await this.transactionRunner.run(async session => {
+        await this.documentRevisionStore.deleteMany({ key: documentKey }, { session });
+        await this.documentStore.deleteOne({ key: documentKey }, { session });
+      });
 
     } finally {
       if (lock) {
@@ -252,17 +291,22 @@ class DocumentService {
     }
 
     const latestRevision = await this.getCurrentDocumentRevisionByKey(documentKey);
-    const order = await this.documentOrderStore.getNextOrder();
 
-    const newRevision = this._buildDocumentRevision({ data: latestRevision, documentKey, userId: user._id, order, sections: latestRevision.sections });
-
-    newRevision.appendTo = {
-      key: documentKey,
-      ancestorId: latestRevision._id
+    const doc = {
+      title: latestRevision.title,
+      slug: latestRevision.slug,
+      namespace: latestRevision.namespace,
+      language: latestRevision.language,
+      sections: latestRevision.sections,
+      appendTo: {
+        key: documentKey,
+        ancestorId: latestRevision._id
+      },
+      tags: latestRevision.tags,
+      archived
     };
-    newRevision.archived = archived;
 
-    return this.createNewDocumentRevision({ doc: newRevision, user });
+    return this.createNewDocumentRevision({ doc, user });
   }
 
   async createNewDocumentRevision({ doc, user, restoredFrom = null }) {
@@ -403,7 +447,7 @@ class DocumentService {
         }
 
         logger.info(`Saving revisions for document '${documentKey}'`);
-        await this.documentRevisionStore.insertMany(newDocumentRevisions);
+        await this.documentRevisionStore.saveMany(newDocumentRevisions);
 
         const document = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
 
@@ -473,7 +517,7 @@ class DocumentService {
   _getCdnResources(sections) {
     return [
       ...sections.reduce((cdnResources, section) => {
-        const info = getPluginInfoByType(section.type);
+        const info = this.infoFactory.createInfo(section.type);
         if (info && section.content) {
           info.getCdnResources(section.content).forEach(resource => {
             cdnResources.add(resource);

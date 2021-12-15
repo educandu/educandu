@@ -1,7 +1,12 @@
-import sut from './info.js';
+import ImageTilesInfo from './info.js';
 import { IMAGE_TYPE } from './constants.js';
 
 describe('image-tiles-info', () => {
+  let sut;
+  beforeEach(() => {
+    sut = new ImageTilesInfo();
+  });
+
   describe('getCdnResources', () => {
     it('returns empty list if there is no image specified', () => {
       const result = sut.getCdnResources({ tiles: [{ image: null }] });

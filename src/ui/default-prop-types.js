@@ -28,9 +28,11 @@ export const importSourceShape = PropTypes.shape(importSourceProps);
 
 export const clientConfigProps = {
   clientConfig: PropTypes.shape({
-    cdnRootUrl: PropTypes.string.isRequired
-  }).isRequired,
-  importSources: PropTypes.arrayOf(importSourceShape)
+    cdnRootUrl: PropTypes.string.isRequired,
+    disabledFeatures: PropTypes.arrayOf(PropTypes.string).isRequired,
+    importSources: PropTypes.arrayOf(importSourceShape).isRequired,
+    consentCookieName: PropTypes.string.isRequired
+  }).isRequired
 };
 
 export const requestProps = {

@@ -1,8 +1,8 @@
 import by from 'thenby';
-import React from 'react';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
+import React, { Fragment } from 'react';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import { withUser } from '../user-context.js';
@@ -17,6 +17,7 @@ import { DOCUMENT_ORIGIN } from '../../common/constants.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageSelect from '../localization/language-select.js';
 import { Form, Input, Modal, Table, Button, Switch } from 'antd';
+import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
@@ -150,6 +151,20 @@ class Docs extends React.Component {
     }));
   }
 
+  async handleDocumentDelete(documentKey) {
+    const { documentApiClient } = this.props;
+    await documentApiClient.hardDeleteDocument(documentKey);
+
+    this.setState(prevState => ({
+      filteredDocs: prevState.filteredDocs.filter(doc => doc.key !== documentKey)
+    }));
+  }
+
+  handleDeleteClick(doc) {
+    const { t } = this.props;
+    confirmDocumentDelete(t, doc.title, () => this.handleDocumentDelete(doc.key));
+  }
+
   async handleArchivedSwitchChange(archived, doc) {
     const { t } = this.props;
     const { filteredDocs } = this.state;
@@ -216,11 +231,29 @@ class Docs extends React.Component {
 
   renderActions(_value, doc) {
     const { t } = this.props;
-    return <span><a onClick={() => this.handleCloneClick(doc)}>{t('clone')}</a></span>;
+    return (
+      <Fragment>
+        <span><a onClick={() => this.handleCloneClick(doc)}>{t('clone')}</a></span>
+        {doc.origin.startsWith(DOCUMENT_ORIGIN.external) && (
+          <Fragment>
+            <br />
+            <span><a onClick={() => this.handleDeleteClick(doc)}>{t('common:delete')}</a></span>
+          </Fragment>
+        )}
+      </Fragment>
+    );
   }
 
   renderArchived(value, doc) {
-    return <Switch size="small" checked={doc.archived} onChange={() => this.handleArchivedSwitchChange(value, doc)} />;
+    const disableArchiving = doc.origin !== DOCUMENT_ORIGIN.internal;
+    return (
+      <Switch
+        size="small"
+        checked={doc.archived}
+        disabled={disableArchiving}
+        onChange={() => this.handleArchivedSwitchChange(value, doc)}
+        />
+    );
   }
 
   render() {

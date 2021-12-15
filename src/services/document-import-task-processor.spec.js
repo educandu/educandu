@@ -143,7 +143,6 @@ describe('document-import-task-processor', () => {
           baseUrl: `https://${batchParams.hostName}`,
           apiKey: importSource.apiKey,
           documentKey: task.taskParams.key,
-          afterRevision: task.taskParams.importedRevision,
           toRevision: task.taskParams.importableRevision
         });
       });
@@ -183,7 +182,7 @@ describe('document-import-task-processor', () => {
       });
 
       it('should create the revisions', async () => {
-        const importedRevisions = await db.documentRevisions.find({ key: documentKey }).toArray();
+        const importedRevisions = await db.documentRevisions.find({ key: documentKey }, { sort: [['order', 1]] }).toArray();
         expect(importedRevisions).toMatchObject([
           {
             ...revision1,
@@ -276,7 +275,6 @@ describe('document-import-task-processor', () => {
             baseUrl: `https://${batchParams.hostName}`,
             apiKey: importSource.apiKey,
             documentKey: task.taskParams.key,
-            afterRevision: task.taskParams.importedRevision,
             toRevision: task.taskParams.importableRevision
           });
         });

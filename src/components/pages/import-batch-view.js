@@ -2,17 +2,17 @@ import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+import ImportTypeIcon from '../import-type-icon.js';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import { getImportedDocUrl } from '../../utils/urls.js';
+import { Table, Row, Space, Collapse, List } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
 import ImportApiClient from '../../services/import-api-client.js';
-import { Table, Row, Space, Tooltip, Collapse, List } from 'antd';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
-import { CloudDownloadOutlined, CloudSyncOutlined, WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 const POLL_INTERVAL_IN_MS = 500;
@@ -88,16 +88,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
     </a>
   );
 
-  const renderImportType = taskParams => {
-    let icon = null;
-    if (taskParams.importType === DOCUMENT_IMPORT_TYPE.add) {
-      icon = <CloudDownloadOutlined />;
-    }
-    if (taskParams.importType === DOCUMENT_IMPORT_TYPE.update) {
-      icon = <CloudSyncOutlined />;
-    }
-    return <Tooltip title={t(taskParams.importType)} className="ImportBatchViewPage-importType">{icon}</Tooltip>;
-  };
+  const renderImportType = taskParams => <ImportTypeIcon importType={taskParams.importType} />;
 
   const renderErrorCount = ({ errors }) => <span>{errors?.length || 0} {t('errors')}</span>;
 

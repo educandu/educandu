@@ -156,8 +156,7 @@ export async function createTestRevisions(container, user, revisions) {
   const documentService = container.get(DocumentService);
   const createdRevisions = [];
 
-  for (let index = 0; index < revisions.length; index += 1) {
-    const revision = revisions[index];
+  for (const revision of revisions) {
     const lastCreatedRevision = createdRevisions[createdRevisions.length - 1] || null;
 
     // eslint-disable-next-line no-await-in-loop

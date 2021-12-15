@@ -14,6 +14,7 @@ import { useSettings } from './settings-context.js';
 import DefaultSiteLogo from './default-site-logo.js';
 import UiLanguageDialog from './ui-language-dialog.js';
 import ClientConfig from '../bootstrap/client-config.js';
+import CookieConsentDrawer from './cookie-consent-drawer.js';
 import { ALERT_TYPE, FEATURE_TOGGLES } from '../common/constants.js';
 import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined, GlobalOutlined } from '@ant-design/icons';
 
@@ -158,6 +159,7 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
         </div>
       </footer>
       <UiLanguageDialog visible={isUiLanguageDialogVisible} onClose={handleUiLanguageDialogClose} />
+      <CookieConsentDrawer />
     </div>
   );
 }

@@ -32,7 +32,6 @@ class DocumentImportTaskProcessor {
       baseUrl: getImportSourceBaseUrl(importSource),
       apiKey: importSource.apiKey,
       documentKey: key,
-      afterRevision: importedRevision,
       toRevision: importableRevision
     });
 
