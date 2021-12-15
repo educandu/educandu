@@ -8,6 +8,7 @@ const CREATE_FILE = 'create-file';
 const EDIT_USERS = 'edit-users';
 const EDIT_SETTINGS = 'edit-settings';
 const HARD_DELETE_SECTION = 'hard-delete-section';
+const DELETE_CDN_FILE = 'delete-cdn-file';
 const SEE_USER_EMAIL = 'see-user-email';
 const MIGRATE_DATA = 'migrate-data';
 const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
@@ -24,6 +25,7 @@ const rolesForPermission = {
   [EDIT_SETTINGS]: [ROLE.admin],
   [EDIT_USERS]: [ROLE.admin],
   [HARD_DELETE_SECTION]: [ROLE.admin],
+  [DELETE_CDN_FILE]: [ROLE.admin],
   [SEE_USER_EMAIL]: [ROLE.admin],
   [MIGRATE_DATA]: [ROLE.admin],
   [RESTORE_DOC_REVISIONS]: [ROLE.admin],
@@ -51,5 +53,6 @@ export default {
   MANAGE_ARCHIVED_DOCS,
   RESTORE_DOC_REVISIONS,
   MANAGE_IMPORT,
-  MANAGE_EXPORT
+  MANAGE_EXPORT,
+  DELETE_CDN_FILE
 };

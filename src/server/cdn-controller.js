@@ -29,6 +29,9 @@ class CdnController {
       return res.send({ objects });
     });
 
+    router.delete('/api/v1/cdn/objects/:id', [needsPermission(permissions.DELETE_CDN_FILE), jsonParser, validateQuery(getObjectsQuerySchema)], async (req, res) => {
+    });
+
     router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)], async (req, res) => {
       if (req.files && req.files.length) {
         const uploads = req.files.map(async file => {

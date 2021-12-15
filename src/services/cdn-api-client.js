@@ -35,6 +35,9 @@ class CdnApiClient {
 
     return request.then(res => res.data);
   }
+
+  deleteFile(fileName) {
+  }
 }
 
 export default CdnApiClient;

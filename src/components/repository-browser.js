@@ -71,7 +71,7 @@ class RepositoryBrowser extends React.Component {
 
     this.columns = [
       {
-        title: () => this.props.t('displayName'),
+        title: () => this.props.t('displayNameText'),
         dataIndex: 'displayName',
         key: 'displayName',
         align: 'left',
