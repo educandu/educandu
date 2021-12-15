@@ -39,10 +39,10 @@ The end!
 describe('processSection', () => {
 
   it('should replace all links and images that match a CDN root URL', () => {
-    const section = { type: 'markdown', content: testMarkdown };
+    const section = { type: 'markdown', content: { text: testMarkdown } };
     const updateCount = processSection(section);
     expect(updateCount).toBe(5);
-    expect(section.content).toBe(expectedResult);
+    expect(section.content.text).toBe(expectedResult);
   });
 
 });

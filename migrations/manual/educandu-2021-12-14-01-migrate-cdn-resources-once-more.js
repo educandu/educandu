@@ -48,8 +48,8 @@ const processAnavisSection = ({ content }) => content?.media?.type === INTERNAL_
 const processAudioSection = ({ content }) => content?.type === INTERNAL_URL_TYPE ? [content.url] : [];
 
 const processMarkdownSection = ({ content }) => {
-  if (!content || !content.text) {
-    return content;
+  if (!content) {
+    return [];
   }
   const regexp = /(?<=\]\(cdn:\/\/)(.*?)(?=\))/g;
   const matches = content.text.match(regexp);
