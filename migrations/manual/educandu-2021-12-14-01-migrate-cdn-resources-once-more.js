@@ -48,12 +48,12 @@ const processAnavisSection = ({ content }) => content?.media?.type === INTERNAL_
 const processAudioSection = ({ content }) => content?.type === INTERNAL_URL_TYPE ? [content.url] : [];
 
 const processMarkdownSection = ({ content }) => {
-  if (!content) {
+  if (!content || !content.text) {
     return content;
   }
   const regexp = /(?<=\]\(cdn:\/\/)(.*?)(?=\))/g;
-  const matches = content.match(regexp);
-  return matches ? [...new Set(matches)] : [];
+  const matches = content.text.match(regexp);
+  return matches || [];
 };
 
 export const aggregateSectionUrls = sections => sections.reduce((acc, section) => {

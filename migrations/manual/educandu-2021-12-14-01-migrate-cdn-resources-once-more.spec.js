@@ -68,12 +68,14 @@ const audioContent2 = {
   type: 'external',
   url: 'media/audio-content-2.mp3'
 };
-const markdownContent = `
+const markdownContent = {
+  text: `
 # The document contains
 a [picture](cdn://media/markdown-content-1.png) from the CDN,
 a [second picture](cdn://media/markdown-content-2.png) from the CDN,
 and an image from [the-great-interwebs](https://amazing-domain.de/amazing-picture.jpeg)
-`;
+`
+};
 
 describe('aggregateSectionUrls', () => {
 
