@@ -15,7 +15,7 @@ async function updateAll(collection, query, updateFn) {
 const affectedSettings = ['footerLinks', 'helpPage', 'termsPage'];
 
 // eslint-disable-next-line camelcase
-export default class Educandu_2021_12_08_01_migrate_settings_to_new_format {
+export default class Educandu_2021_12_15_01_migrate_settings_to_new_format_once_more {
   constructor(db) {
     this.db = db;
   }

@@ -18,7 +18,7 @@ export function processSection(section) {
   let updateCount = 0;
   if (section.type === 'markdown' && section.content) {
     const regexp = /\]\((https:\/\/((staging\.)?cdn\.elmu\.online)|(https:\/\/cdn\.((integration|staging)\.)?openmusic\.academy))\//g;
-    section.content = section.content.replace(regexp, () => {
+    section.content.text = section.content.text.replace(regexp, () => {
       updateCount += 1;
       return '](cdn://';
     });
