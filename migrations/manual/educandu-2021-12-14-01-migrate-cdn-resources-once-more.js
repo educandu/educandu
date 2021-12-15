@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, no-await-in-loop */
+/* eslint-disable camelcase, no-await-in-loop, no-console */
 
 const pluginsWithCdnResources = new Set([
   'image',
@@ -82,8 +82,14 @@ async function updateAll(collection, query, updateFn) {
 
   while (await cursor.hasNext()) {
     const doc = await cursor.next();
-    await updateFn(doc);
-    await collection.replaceOne({ _id: doc._id }, doc);
+    const shouldUpdate = await updateFn(doc);
+
+    if (shouldUpdate) {
+      const docType = doc.revision ? 'document' : 'document revision';
+      console.log(`Updating ${docType} '${doc._id}:'`);
+      console.log(`    cdnResources: ${JSON.stringify(doc.cdnResources)}`);
+      await collection.replaceOne({ _id: doc._id }, doc);
+    }
   }
 }
 
@@ -93,16 +99,37 @@ export default class Educandu_2021_12_14_01_migrate_cdn_resources_once_more {
   }
 
   async up() {
-    this.db.collection('documents');
+    console.log('Updating documents ...');
 
     await updateAll(this.db.collection('documents'), {}, doc => {
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
-      doc.cdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
+      const newCdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
+
+      if (newCdnResources.length === doc.cdnResources.length) {
+        const intersection = newCdnResources.filter(x => doc.cdnResources.includes(x));
+        if (intersection.length === newCdnResources.length) {
+          return false;
+        }
+      }
+
+      doc.cdnResources = newCdnResources;
+      return true;
     });
 
+    console.log('Updating document revisions ...');
     await updateAll(this.db.collection('documentRevisions'), {}, doc => {
       const relevantSections = doc.sections.filter(section => pluginsWithCdnResources.has(section.type));
-      doc.cdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
+      const newCdnResources = [...new Set(aggregateSectionUrls(relevantSections).filter(url => !!url))];
+
+      if (newCdnResources.length === doc.cdnResources.length) {
+        const intersection = newCdnResources.filter(x => doc.cdnResources.includes(x));
+        if (intersection.length === newCdnResources.length) {
+          return false;
+        }
+      }
+
+      doc.cdnResources = newCdnResources;
+      return true;
     });
   }
 
