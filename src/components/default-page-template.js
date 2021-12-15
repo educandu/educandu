@@ -2,40 +2,34 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import urls from '../utils/urls.js';
 import { Alert, Button } from 'antd';
+import React, { useState } from 'react';
 import Restricted from './restricted.js';
 import LoginLogout from './login-logout.js';
 import LinkPopover from './link-popover.js';
 import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions.js';
-import React, { useState, useEffect } from 'react';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
 import DefaultSiteLogo from './default-site-logo.js';
+import UiLanguageDialog from './ui-language-dialog.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import CookieConsentDrawer from './cookie-consent-drawer.js';
 import { ALERT_TYPE, FEATURE_TOGGLES } from '../common/constants.js';
-import LanguageNameProvider from '../data/language-name-provider.js';
-import CountryFlagAndName from './localization/country-flag-and-name.js';
-import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined } from '@ant-design/icons';
-const Icon = iconsNs.default || iconsNs;
+import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined, GlobalOutlined } from '@ant-design/icons';
 
-function createLanguagesToChoose(languageNameProvider, supportedLanguages, language) {
-  const data = languageNameProvider.getData(language);
-  return supportedLanguages.map(lang => ({ ...data[lang], code: lang }));
-}
+const Icon = iconsNs.default || iconsNs;
 
 function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
   const settings = useSettings();
+  const { language } = useLanguage();
+  const { t } = useTranslation('page');
   const clientConfig = useService(ClientConfig);
-  const { t, i18n } = useTranslation('page');
-  const { supportedLanguages, language } = useLanguage();
-  const languageNameProvider = useService(LanguageNameProvider);
-  const [languagesToChoose, setLanguagesToChoose] = useState(createLanguagesToChoose(languageNameProvider, supportedLanguages, language));
+  const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
 
-  useEffect(() => {
-    setLanguagesToChoose(createLanguagesToChoose(languageNameProvider, supportedLanguages, language));
-  }, [languageNameProvider, supportedLanguages, language]);
+  const handleUiLanguageDialogClose = () => {
+    setIsUiLanguageDialogVisible(false);
+  };
 
   const contentAreaClasses = classNames({
     'DefaultPageTemplate-contentArea': true,
@@ -119,17 +113,9 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
 
   pageMenuItems.push({
     key: 'language',
-    node: (
-      <div className="DefaultPageTemplate-languageSwitch">
-        {languagesToChoose.map((lang, index) => (
-          <React.Fragment key={lang.code}>
-            {index !== 0 && <span>/</span>}
-            <Button type="link" size="small" onClick={() => i18n.changeLanguage(lang.code)}>
-              <CountryFlagAndName code={lang.flag} name={lang.name} flagOnly />
-            </Button>
-          </React.Fragment>
-        ))}
-      </div>),
+    onClick: () => setIsUiLanguageDialogVisible(true),
+    text: t('common:language'),
+    icon: GlobalOutlined,
     permission: null
   });
 
@@ -172,6 +158,7 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
           ))}
         </div>
       </footer>
+      <UiLanguageDialog visible={isUiLanguageDialogVisible} onClose={handleUiLanguageDialogClose} />
       <CookieConsentDrawer />
     </div>
   );
