@@ -21,7 +21,7 @@ export default class TaskScheduler {
   }
 
   _tick() {
-    logger.info('Setting and executing current tick');
+    logger.debug('Setting and executing current tick');
     this.currentTick = (async () => {
       let isThereMoreWork;
 
