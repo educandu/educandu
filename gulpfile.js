@@ -208,7 +208,7 @@ export function buildTestAppCss() {
   return gulp.src('test-app/main.less')
     .pipe(gulpif(!!testAppServer, plumber()))
     .pipe(sourcemaps.init())
-    .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix({ browsers: ['last 2 versions'] })] }))
+    .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix({ browsers: ['last 2 versions', 'Safari >= 13'] })] }))
     .pipe(gulpif(CLI_ARGS.optimize, csso()))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('test-app/dist'));
@@ -220,7 +220,7 @@ export async function buildTestAppJs() {
   } else {
     testAppBuildResult = await esbuild.build({
       entryPoints: ['./test-app/bundles/main.js'],
-      target: ['esnext', 'chrome95', 'firefox93', 'safari15', 'edge95'],
+      target: ['esnext', 'chrome95', 'firefox93', 'safari13', 'edge95'],
       format: 'esm',
       bundle: true,
       splitting: true,
