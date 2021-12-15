@@ -1,7 +1,12 @@
-import sut from './info.js';
+import EarTrainingInfo from './info.js';
 import { SOUND_TYPE } from './constants.js';
 
 describe('ear-training-info', () => {
+  let sut;
+  beforeEach(() => {
+    sut = new EarTrainingInfo();
+  });
+
   describe('getCdnResources', () => {
     it('returns empty list if there is no sound specified', () => {
       const result = sut.getCdnResources({ tests: [{ sound: null }] });

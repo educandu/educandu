@@ -18,18 +18,21 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
     return null;
   }
 
-  const renderLinkItem = item => (
-    <a href={item.href} className="LinkPopover-itemLink">
-      {item.icon && <span><Icon component={item.icon} />&nbsp;&nbsp;</span>}
-      {item.text}
-    </a>);
+  const renderLinkItem = item => {
+    const handleClick = item.onClick;
+    return (
+      <a href={item.href} onClick={handleClick} className="LinkPopover-itemLink">
+        {item.icon && <span><Icon component={item.icon} />&nbsp;&nbsp;</span>}
+        {item.text}
+      </a>
+    );
+  };
 
   const content = (
     <ul className="LinkPopover">
       {filteredItems.map(item => (
         <li key={item.key} className="LinkPopover-item">
-          {!!item.href && renderLinkItem(item)}
-          {!!item.node && item.node}
+          {!!(item.href || item.onClick) && renderLinkItem(item)}
         </li>
       ))}
     </ul>
@@ -52,14 +55,14 @@ LinkPopover.propTypes = {
   items: PropTypes.arrayOf(PropTypes.oneOfType([
     PropTypes.shape({
       key: PropTypes.string.isRequired,
-      href: PropTypes.string.isRequired,
+      href: PropTypes.string,
+      onClick: PropTypes.func,
       text: PropTypes.string.isRequired,
       icon: PropTypes.elementType,
       permission: PropTypes.string
     }),
     PropTypes.shape({
       key: PropTypes.string.isRequired,
-      node: PropTypes.node.isRequired,
       permission: PropTypes.string
     })
   ])),

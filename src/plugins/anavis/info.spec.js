@@ -1,7 +1,12 @@
-import sut from './info.js';
+import AnavisInfo from './info.js';
 import { MEDIA_TYPE } from './constants.js';
 
 describe('anavis-info', () => {
+  let sut;
+  beforeEach(() => {
+    sut = new AnavisInfo();
+  });
+
   describe('getCdnResources', () => {
     it('returns empty list if there is no media specified', () => {
       const result = sut.getCdnResources({ media: null });

@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-process-env, require-atomic-updates */
+/* eslint-disable no-console, no-process-env, require-atomic-updates, no-await-in-loop */
 import url from 'url';
 import del from 'del';
 import path from 'path';
@@ -8,6 +8,8 @@ import yaml from 'yaml';
 import { EOL } from 'os';
 import execa from 'execa';
 import axios from 'axios';
+import yargs from 'yargs';
+import semver from 'semver';
 import less from 'gulp-less';
 import csso from 'gulp-csso';
 import gulpif from 'gulp-if';
@@ -16,16 +18,22 @@ import inquirer from 'inquirer';
 import eslint from 'gulp-eslint';
 import { promisify } from 'util';
 import plumber from 'gulp-plumber';
+import ghreleases from 'ghreleases';
 import { promises as fs } from 'fs';
 import Graceful from 'node-graceful';
+import axiosRetry from 'axios-retry';
 import { spawn } from 'child_process';
 import { MongoClient } from 'mongodb';
 import { Docker } from 'docker-cli-js';
+import { cleanEnv, str } from 'envalid';
 import sourcemaps from 'gulp-sourcemaps';
+import gitSemverTags from 'git-semver-tags';
+import commitsBetween from 'commits-between';
 import { Client as MinioClient } from 'minio';
 import { MongoDBStorage, Umzug } from 'umzug';
-
 import LessAutoprefix from 'less-plugin-autoprefix';
+
+const CLI_ARGS = yargs(process.argv.slice(2)).argv;
 
 const ROOT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -41,7 +49,8 @@ const TEST_MINIO_CONTAINER_NAME = 'minio';
 const MINIO_ACCESS_KEY = 'UVDXF41PYEAX0PXD8826';
 const MINIO_SECRET_KEY = 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx';
 
-const optimize = (process.argv[2] || '').startsWith('ci') || process.argv.includes('--optimize');
+const JIRA_ISSUE_PATTERN = '(EDU|OMA|ELMU)-\\d+';
+const JIRA_BASE_URL = 'https://educandu.atlassian.net';
 
 const supportedLanguages = ['en', 'de'];
 
@@ -64,7 +73,7 @@ Graceful.on('exit', () => {
   });
 });
 
-const kebabToCamel = str => str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
+const kebabToCamel = string => string.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
 
 const ensureContainerRunning = async ({ containerName, runArgs, afterRun = () => Promise.resolve() }) => {
   const docker = new Docker();
@@ -200,7 +209,7 @@ export function buildTestAppCss() {
     .pipe(gulpif(!!testAppServer, plumber()))
     .pipe(sourcemaps.init())
     .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix({ browsers: ['last 2 versions', 'Safari >= 13'] })] }))
-    .pipe(gulpif(optimize, csso()))
+    .pipe(gulpif(CLI_ARGS.optimize, csso()))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('test-app/dist'));
 }
@@ -216,10 +225,10 @@ export async function buildTestAppJs() {
       bundle: true,
       splitting: true,
       incremental: !!testAppServer,
-      minify: optimize,
+      minify: CLI_ARGS.optimize,
       loader: { '.js': 'jsx' },
       inject: ['./test-app/polyfills.js'],
-      metafile: optimize,
+      metafile: CLI_ARGS.optimize,
       sourcemap: true,
       sourcesContent: true,
       outdir: './test-app/dist'
@@ -391,7 +400,7 @@ export function restartServer(done) {
 }
 
 export async function migrate() {
-  const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*\.js$/;
+  const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
 
   const migrationFiles = await promisify(glob)('migrations/manual/*.js');
   const migrationChoices = migrationFiles
@@ -459,24 +468,75 @@ export async function migrate() {
   }
 }
 
-export function runGithubChangelogGenerator() {
-  return execa.command('github_changelog_generator -u educandu -p educandu --no-author', { stdio: 'inherit' });
+export function verifySemverTag(done) {
+  if (!semver.valid(CLI_ARGS.tag)) {
+    throw new Error(`Tag ${CLI_ARGS.tag} is not a valid semver string`);
+  }
+  done();
 }
 
-export async function generateJiraLinks() {
-  const changeLog = await fs.readFile('CHANGELOG.md', 'utf8');
-  const replacedChangeLog = changeLog.replace(/EDU-\d+/g, num => `[${num}](https://educandu.atlassian.net/browse/${num})`);
-  await fs.writeFile('CHANGELOG.md', replacedChangeLog, 'utf8');
-}
+export async function release() {
+  const { GITHUB_REPOSITORY, GITHUB_SERVER_URL, GITHUB_ACTOR, GITHUB_TOKEN } = cleanEnv(process.env, {
+    GITHUB_REPOSITORY: str(),
+    GITHUB_SERVER_URL: str(),
+    GITHUB_ACTOR: str(),
+    GITHUB_TOKEN: str()
+  });
 
-export const generateChangelog = gulp.series(runGithubChangelogGenerator, generateJiraLinks);
+  const [githubOrgaName, githubRepoName] = GITHUB_REPOSITORY.split('/');
+  const githubBaseUrl = `${GITHUB_SERVER_URL}/${githubOrgaName}/${githubRepoName}`;
+
+  const [currentTag, previousTag] = await promisify(gitSemverTags)();
+
+  const commits = previousTag
+    ? await commitsBetween({ from: previousTag, to: currentTag })
+    : await commitsBetween();
+
+  const commitListMarkdown = commits.map(commit => {
+    const message = commit.subject
+      .replace(/#\d+/g, num => `[\\${num}](${githubBaseUrl}/pull/${num.replace(/^#/, '')})`)
+      .replace(new RegExp(JIRA_ISSUE_PATTERN, 'g'), num => `[${num}](${JIRA_BASE_URL}/browse/${num})`);
+    const sha = `[${commit.commit.short}](${githubBaseUrl}/tree/${commit.commit.short})`;
+    return `* ${message} (${sha})${EOL}`;
+  }).join('');
+
+  const releaseNotes = previousTag
+    ? `${commitListMarkdown}${EOL}[View all changes](${githubBaseUrl}/compare/${previousTag}...${currentTag})${EOL}`
+    : commitListMarkdown;
+
+  console.log(`Creating Github release ${currentTag}`);
+  await promisify(ghreleases.create)({ user: GITHUB_ACTOR, token: GITHUB_TOKEN }, githubOrgaName, githubRepoName, {
+    // eslint-disable-next-line camelcase
+    tag_name: currentTag,
+    name: currentTag,
+    body: releaseNotes,
+    prerelease: !!semver.prerelease(currentTag)
+  });
+
+  const client = axios.create({ baseURL: JIRA_BASE_URL });
+  axiosRetry(client, { retries: 3 });
+
+  const issueKeys = [...new Set(releaseNotes.match(new RegExp(JIRA_ISSUE_PATTERN, 'g')) || [])].sort();
+  for (const issueKey of issueKeys) {
+    console.log(`Setting label ${currentTag} on JIRA issue ${issueKey}`);
+    try {
+      await client.put(
+        `/rest/api/3/issue/${encodeURIComponent(issueKey)}`,
+        { update: { labels: [{ add: currentTag }] } },
+        { responseType: 'json', auth: { username: CLI_ARGS.jiraUser, password: CLI_ARGS.jiraApiKey } }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
 
 export const up = gulp.series(mongoUp, minioUp, maildevUp);
 
 export const down = gulp.parallel(mongoDown, minioDown, maildevDown);
 export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startServer);
 
-export const ci = gulp.series(clean, lint, test, build, generateChangelog);
+export const verify = gulp.series(lint, test, build);
 
 export function setupWatchers(done) {
   gulp.watch(['src/**/*.{js,json}', 'test-app/**/*.{js,json}', '!test-app/dist/**'], gulp.series(buildTestAppJs, restartServer));

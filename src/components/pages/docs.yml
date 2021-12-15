@@ -10,9 +10,6 @@ copyTitleSuffix:
 copySlugSuffix:
   en: copy
   de: kopie
-clone:
-  en: Clone
-  de: Klonen
 title:
   en: Title
   de: Titel
@@ -31,6 +28,9 @@ user:
 actions:
   en: Actions
   de: Aktionen
+clone:
+  en: Clone
+  de: Klonen
 archived:
   en: Archived
   de: Archiviert
@@ -40,9 +40,6 @@ enterSearchTerm:
 newDocument:
   en: New document
   de: Neues Dokument
-notAssigned:
-  en: (not assigned)
-  de: (nicht zugewiesen)
 origin:
   en: Origin
   de: Quelle

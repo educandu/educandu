@@ -19,6 +19,7 @@
     "resources": {
       "areYouSure": "Are you sure?",
       "deleteSectionConfirmation": "Do you really want to delete the section?",
+      "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
       "thisActionIsIrreversible": "This Action is irreversible!",
       "pleaseSpecifyAReason": "Please specify a reason",
       "deleteAllRevisions": "Delete all existing revisions of this section",
@@ -35,6 +36,7 @@
     "resources": {
       "areYouSure": "Sind Sie sicher?",
       "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
+      "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
       "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",
       "deleteAllRevisions": "Alle existierenden Revisionen dieses Abschnitts löschen",
@@ -43,6 +45,22 @@
       "enterPassword": "Bitte geben Sie ein Kennwort an",
       "password": "Kennwort",
       "wrongPasswordProvided": "Das Kennwort ist ungültig"
+    }
+  },
+  {
+    "namespace": "cookieConsentDrawer",
+    "language": "en",
+    "resources": {
+      "consentTitle": "Before you start",
+      "consentText": "This website uses cookies that are technically needed for strictly functional aspects of the website. These cookies neither track your activities, nor provide 3-rd parties with information of any kind about your visit. By clicking accept you acknowledge this and give your express consent to the usage of the cookies."
+    }
+  },
+  {
+    "namespace": "cookieConsentDrawer",
+    "language": "de",
+    "resources": {
+      "consentTitle": "Bevor Sie fortfahren",
+      "consentText": "Diese Website verwendet technisch notwendige Cookies, um die Funktionalität der Website zu gewährleisten. Diese Cookies verfolgen weder Ihre Aktivitäten, noch liefern sie Dritten irgendwelche Informationen über Ihren Besuch. Indem Sie auf Akzeptieren klicken, bestätigen Sie dies und stimmen der Verwendung der Cookies ausdrücklich zu."
     }
   },
   {
@@ -147,6 +165,24 @@
       "enterEmail": "Bitte geben Sie eine E-Mail-Adresse an",
       "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
       "emailIsInUse": "Die E-Mail-Adresse ist bereits vergeben"
+    }
+  },
+  {
+    "namespace": "importTypeIcon",
+    "language": "en",
+    "resources": {
+      "add": "Add",
+      "update": "Update",
+      "reimport": "Reimport"
+    }
+  },
+  {
+    "namespace": "importTypeIcon",
+    "language": "de",
+    "resources": {
+      "add": "Hinzufügen",
+      "update": "Aktualisieren",
+      "reimport": "Erneut importieren"
     }
   },
   {
@@ -341,17 +377,16 @@
       "email": "Email",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
-      "clone": "Clone",
       "title": "Title",
       "language": "Language",
       "slug": "URL path",
       "updateDate": "Update date",
       "user": "User info",
       "actions": "Actions",
+      "clone": "Clone",
       "archived": "Archived",
       "enterSearchTerm": "Enter search term",
       "newDocument": "New document",
-      "notAssigned": "(not assigned)",
       "origin": "Origin",
       "originInternal": "internal",
       "originExternal": "external"
@@ -365,17 +400,16 @@
       "email": "E-Mail",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
-      "clone": "Klonen",
       "title": "Titel",
       "language": "Sprache",
       "slug": "URL-Pfad",
       "updateDate": "Update-Datum",
       "user": "User-Info",
       "actions": "Aktionen",
+      "clone": "Klonen",
       "archived": "Archiviert",
       "enterSearchTerm": "Suchbegriff eingeben",
       "newDocument": "Neues Dokument",
-      "notAssigned": "(nicht zugewiesen)",
       "origin": "Quelle",
       "originInternal": "intern",
       "originExternal": "extern"
@@ -432,8 +466,6 @@
       "batchStatusDone": "Done",
       "batchStatusProcessing": "{progress, number, percent} completed",
       "importType": "Import type",
-      "add": "Add",
-      "update": "Update",
       "startedOn": "Started on",
       "errors": "Errors",
       "errorsCount": "Errors count",
@@ -461,8 +493,6 @@
       "batchStatusDone": "Abgeschlossen",
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "importType": "Import-Typ",
-      "add": "Hinzufügen",
-      "update": "Aktualisieren",
       "startedOn": "Begann am",
       "errors": "Fehler",
       "errorsCount": "Fehleranzahl",
@@ -875,6 +905,22 @@
       "linkTitle": "Link-Titel",
       "urlPath": "URL-Pfad",
       "unknown": "Unbekannt"
+    }
+  },
+  {
+    "namespace": "uiLanguageDialog",
+    "language": "en",
+    "resources": {
+      "title": "Choose language",
+      "explanation": "Please select your preferred language for user interface elements like buttons, menus etc."
+    }
+  },
+  {
+    "namespace": "uiLanguageDialog",
+    "language": "de",
+    "resources": {
+      "title": "Sprache auswählen",
+      "explanation": "Bitte wählen Sie Ihre bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
     }
   },
   {
@@ -1311,11 +1357,13 @@
       "moveUp": "Move up",
       "moveDown": "Move down",
       "error": "Error",
+      "language": "Language",
       "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits",
       "archivedAlert": "This document is archived and cannot be edited",
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
-      "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>."
+      "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
+      "accept": "Accept"
     }
   },
   {
@@ -1338,11 +1386,13 @@
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
       "error": "Fehler",
+      "language": "Sprache",
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
-      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden."
+      "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
+      "accept": "Akzeptieren"
     }
   },
   {

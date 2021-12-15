@@ -43,12 +43,6 @@ batchStatusProcessing:
 importType:
   en: Import type
   de: Import-Typ
-add:
-  en: Add
-  de: Hinzufügen
-update:
-  en: Update
-  de: Aktualisieren
 startedOn:
   en: Started on
   de: Begann am

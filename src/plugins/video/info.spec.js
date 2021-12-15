@@ -1,7 +1,12 @@
-import sut from './info.js';
+import VideoInfo from './info.js';
 import { SOURCE_TYPE } from './constants.js';
 
 describe('video-info', () => {
+  let sut;
+  beforeEach(() => {
+    sut = new VideoInfo();
+  });
+
   describe('getCdnResources', () => {
     it('returns empty list for a YouTube resource', () => {
       const result = sut.getCdnResources({ type: SOURCE_TYPE.youtube, url: 'https://youtube.com/something' });

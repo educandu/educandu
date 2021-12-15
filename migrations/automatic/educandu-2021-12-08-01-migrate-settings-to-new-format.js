@@ -23,12 +23,12 @@ export default class Educandu_2021_12_08_01_migrate_settings_to_new_format {
   async processValueDown(value) {
     const doc = await this.db.collection('documents').findOne({ key: value.documentKey });
     delete value.documentKey;
-    value.namespace = doc?.namespace;
+    value.documentNamespace = doc?.namespace;
   }
 
   async processValueUp(value) {
-    const doc = await this.db.collection('documents').findOne({ namespace: value.namespace, slug: value.documentSlug });
-    delete value.namespace;
+    const doc = await this.db.collection('documents').findOne({ namespace: value.documentNamespace, slug: value.documentSlug });
+    delete value.documentNamespace;
     value.documentKey = doc?.key;
   }
 
