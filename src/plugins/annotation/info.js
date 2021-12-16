@@ -1,9 +1,13 @@
 import cloneDeep from '../../utils/clone-deep.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 export default class Annotation {
+  static get inject() { return [GithubFlavoredMarkdown]; }
+
   static get typeName() { return 'annotation'; }
 
-  constructor() {
+  constructor(gfm) {
+    this.gfm = gfm;
     this.type = 'annotation';
   }
 
@@ -22,7 +26,7 @@ export default class Annotation {
     return cloneDeep(content);
   }
 
-  getCdnResources() {
-    return [];
+  getCdnResources(content) {
+    return this.gfm.extractCdnResources(content.text || '');
   }
 }
