@@ -36,7 +36,7 @@ class CdnApiClient {
     return request.then(res => res.data);
   }
 
-  deleteFile(prefix, fileName) {
+  deleteCdnObject(prefix, fileName) {
     return this.httpClient
       .delete(
         `/api/v1/cdn/objects/${fileName}?prefix=${encodeURIComponent(prefix)}`,

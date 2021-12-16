@@ -8,8 +8,8 @@ deleteDocumentConfirmation:
   en: Do you really want to delete document "{title}"?
   de: Möchten Sie das Dokument "{title}" wirklich löschen?
 deleteCdnDocumentConfirmation:
-  en: Do you really want to delete the cdn file "{fileName}"?
-  de: Möchten Sie das cdn Datei "{fileName}" wirklich löschen?
+  en: Do you really want to delete the CDN file "{fileName}"?
+  de: Möchten Sie das CDN Datei "{fileName}" wirklich löschen?
 thisActionIsIrreversible:
   en: This Action is irreversible!
   de: Diese Aktion ist unwiderrufbar!

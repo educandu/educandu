@@ -285,7 +285,7 @@ class RepositoryBrowser extends React.Component {
     const prefix = pathHelper.getPrefix(currentPathSegments);
     const objectName = `${prefix}${fileName}`;
 
-    await cdnApiClient.deleteFile(prefix, fileName);
+    await cdnApiClient.deleteCdnObject(prefix, fileName);
     if (selectedRowKeys.includes(objectName)) {
       onSelectionChanged([], true);
     }
