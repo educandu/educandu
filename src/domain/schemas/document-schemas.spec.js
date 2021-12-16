@@ -5,7 +5,6 @@ describe('createRevisionBodySchema', () => {
   const happyPathData = {
     title: 'My Title',
     slug: 'my-slug',
-    namespace: 'articles',
     language: 'en',
     sections: [
       {
@@ -50,13 +49,6 @@ describe('createRevisionBodySchema', () => {
       data: {
         ...happyPathData,
         language: 'DE'
-      }
-    },
-    {
-      description: 'Invalid namespace',
-      data: {
-        ...happyPathData,
-        namespace: 'something-wrong'
       }
     },
     {

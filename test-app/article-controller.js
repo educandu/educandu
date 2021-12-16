@@ -14,7 +14,7 @@ class ArticleController {
   registerPages(router) {
     router.get('/articles/*', async (req, res) => {
       const slug = req.params[0] || '';
-      const doc = await this.documentStore.findOne({ namespace: 'articles', slug });
+      const doc = await this.documentStore.findOne({ slug });
       if (!doc) {
         throw new NotFound(`Article '${slug}' could  not be found`);
       }

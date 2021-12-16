@@ -140,7 +140,6 @@ export function createTestDocument(container, user, document) {
     doc: {
       title: document.title ?? 'Title',
       slug: document.slug ?? 'my-doc',
-      namespace: document.namespace ?? 'articles',
       language: document.language ?? 'en',
       sections: document.sections ?? [],
       tags: document.tags || [],
@@ -164,7 +163,6 @@ export async function createTestRevisions(container, user, revisions) {
       doc: {
         title: revision.title ?? lastCreatedRevision?.title ?? 'Title',
         slug: revision.slug ?? lastCreatedRevision?.slug ?? 'my-doc',
-        namespace: revision.namespace ?? lastCreatedRevision?.namespace ?? 'articles',
         language: revision.language ?? lastCreatedRevision?.language ?? 'en',
         sections: (revision.sections ?? lastCreatedRevision?.sections ?? []).map(s => ({
           key: s.key ?? uniqueId.create(),

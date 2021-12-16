@@ -20,7 +20,6 @@ const metadataProjection = {
   revision: 1,
   title: 1,
   slug: 1,
-  namespace: 1,
   language: 1,
   createdOn: 1,
   createdBy: 1,
@@ -179,7 +178,6 @@ class DocumentService {
     const doc = {
       title: revisionToRestore.title,
       slug: revisionToRestore.slug,
-      namespace: revisionToRestore.namespace,
       language: revisionToRestore.language,
       sections: cloneDeep(revisionToRestore.sections),
       appendTo: {
@@ -295,7 +293,6 @@ class DocumentService {
     const doc = {
       title: latestRevision.title,
       slug: latestRevision.slug,
-      namespace: latestRevision.namespace,
       language: latestRevision.language,
       sections: latestRevision.sections,
       appendTo: {
@@ -475,7 +472,6 @@ class DocumentService {
       createdBy: userId || '',
       title: data.title || '',
       slug: data.slug || '',
-      namespace: data.namespace || '',
       language: data.language || '',
       sections,
       tags: data.tags || [],
@@ -502,7 +498,6 @@ class DocumentService {
       updatedBy: lastRevision.createdBy,
       title: lastRevision.title,
       slug: lastRevision.slug,
-      namespace: lastRevision.namespace,
       language: lastRevision.language,
       sections: lastRevision.sections,
       contributors,

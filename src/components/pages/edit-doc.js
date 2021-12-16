@@ -262,7 +262,6 @@ class EditDoc extends React.Component {
     const data = {
       title: editedDocumentRevision.title,
       slug: editedDocumentRevision.slug,
-      namespace: editedDocumentRevision.namespace,
       language: editedDocumentRevision.language,
       sections: editedDocumentRevision.sections.filter(s => !proposedSectionKeys.includes(s.key)).map(s => ({
         key: s.key,
