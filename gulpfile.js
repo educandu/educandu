@@ -333,6 +333,15 @@ export async function migrate() {
     logger: console
   });
 
+  const executedMigrationNames = (await umzug.executed()).map(migration => migration.name);
+
+  migrationsToRun.forEach(migrationFullPath => {
+    const executedMigrationName = executedMigrationNames.find(migrationName => migrationFullPath.includes(migrationName));
+    if (executedMigrationName) {
+      console.log(`Migration ${executedMigrationName} was already run, skipping it.`);
+    }
+  });
+
   umzug.on('migrated', ({ name }) => console.log(`Finished migrating ${name}`));
 
   try {
