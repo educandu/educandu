@@ -290,8 +290,8 @@ describe('import-service', () => {
         await batchLockStore.releaseLock(lock);
       });
 
-      it('should fail the concurrency check', () => {
-        expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
+      it('should fail the concurrency check', async () => {
+        await expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
           .rejects
           .toThrowError(BadRequest);
       });
@@ -302,8 +302,8 @@ describe('import-service', () => {
         await sut.createImportBatch({ importSource, documentsToImport, user });
       });
 
-      it('should fail the unique check', () => {
-        expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
+      it('should fail the unique check', async () => {
+        await expect(() => sut.createImportBatch({ importSource, documentsToImport, user }))
           .rejects
           .toThrowError(BadRequest);
       });
