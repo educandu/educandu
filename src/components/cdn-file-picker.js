@@ -3,9 +3,7 @@ import { Modal, Button } from 'antd';
 import React, { useState } from 'react';
 import selection from '../ui/selection.js';
 import { useTranslation } from 'react-i18next';
-
 import RepositoryBrowser from './repository-browser.js';
-import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 
 export default function CdnFilePicker(props) {
   const { t } = useTranslation('cdnFilePicker');
@@ -43,16 +41,6 @@ export default function CdnFilePicker(props) {
       applySelection(newSelectedFile);
     }
   };
-  const handleDocumentDelete = () => {
-    if (!state.currentSelectedFile) {
-
-    }
-
-  };
-
-  const handleDeleteClick = () => {
-    confirmCdnFileDelete(t, state.currentSelectedFile, () => handleDocumentDelete());
-  };
 
   const { rootPrefix, uploadPrefix, initialPrefix } = props;
   const { isModalVisible, currentSelectedFile } = state;
@@ -72,14 +60,6 @@ export default function CdnFilePicker(props) {
         onOk={handleApply}
         onCancel={handleCancel}
         footer={[
-          <Button
-            key="delete"
-            disabled={!currentSelectedFile}
-            onClick={handleDeleteClick}
-            style={{ color: 'red' }}
-            >
-            {t('common:delete')}
-          </Button>,
           <Button
             key="back"
             onClick={handleCancel}
