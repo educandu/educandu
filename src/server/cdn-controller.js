@@ -13,6 +13,7 @@ import { getObjectsQuerySchema, postObjectsBodySchema } from '../domain/schemas/
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
+const { NotFound } = createHttpError;
 
 class CdnController {
   static get inject() { return [Cdn]; }
@@ -29,7 +30,15 @@ class CdnController {
       return res.send({ objects });
     });
 
-    router.delete('/api/v1/cdn/objects/:id', [needsPermission(permissions.DELETE_CDN_FILE), jsonParser, validateQuery(getObjectsQuerySchema)], async (req, res) => {
+    router.delete('/api/v1/cdn/objects/:objectName', [needsPermission(permissions.DELETE_CDN_FILE)], async (req, res) => {
+      const objectName = req.params.objectName;
+      if (!objectName) {
+        throw new NotFound();
+      }
+
+      await this.cdn.deleteObject(objectName);
+
+      res.send(200);
     });
 
     router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)], async (req, res) => {

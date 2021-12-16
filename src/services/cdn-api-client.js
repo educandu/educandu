@@ -37,6 +37,12 @@ class CdnApiClient {
   }
 
   deleteFile(fileName) {
+    return this.httpClient
+      .delete(
+        `/api/v1/cdn/objects/${fileName}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
   }
 }
 
