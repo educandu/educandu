@@ -289,7 +289,7 @@ class RepositoryBrowser extends React.Component {
       onSelectionChanged([], true);
     }
 
-    await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key === objectName));
+    await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key !== objectName));
   }
 
   ensureVirtualFolders(currentPathSegments, existingRecords, virtualFolderPathSegments) {
