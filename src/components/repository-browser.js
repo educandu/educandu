@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import React from 'react';
 import firstBy from 'thenby';
 import autoBind from 'auto-bind';
@@ -14,30 +13,15 @@ import { withTranslation } from 'react-i18next';
 import { withLanguage } from './language-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import CdnApiClient from '../services/cdn-api-client.js';
+import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
 import { translationProps, languageProps, userProps } from '../ui/default-prop-types.js';
 import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined, DeleteOutlined } from '@ant-design/icons';
-import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 
 const Icon = iconsNs.default || iconsNs;
 
-const resourceKeyMap = {
-  [mimeTypeHelper.CATEGORY_TEXT]: 'mimeTypeCategoryText',
-  [mimeTypeHelper.CATEGORY_MARKUP]: 'mimeTypeCategoryMarkup',
-  [mimeTypeHelper.CATEGORY_IMAGE]: 'mimeTypeCategoryImage',
-  [mimeTypeHelper.CATEGORY_VIDEO]: 'mimeTypeCategoryVideo',
-  [mimeTypeHelper.CATEGORY_AUDIO]: 'mimeTypeCategoryAudio',
-  [mimeTypeHelper.CATEGORY_ARCHIVE]: 'mimeTypeCategoryArchive',
-  [mimeTypeHelper.CATEGORY_DOCUMENT]: 'mimeTypeCategoryDocument',
-  [mimeTypeHelper.CATEGORY_SPREADSHEET]: 'mimeTypeCategorySpreadsheet',
-  [mimeTypeHelper.CATEGORY_PRESENTATION]: 'mimeTypeCategoryPresentation',
-  [mimeTypeHelper.CATEGORY_PROGRAM]: 'mimeTypeCategoryProgram',
-  [mimeTypeHelper.CATEGORY_FOLDER]: 'mimeTypeCategoryFolder',
-  [mimeTypeHelper.CATEGORY_UNKNOWN]: 'mimeTypeCategoryUnknown'
-};
-
-const localizeCategory = (cat, t) => t(resourceKeyMap[cat]);
+const localizeCategory = (cat, t) => t(mimeTypeHelper.resourceKeyMap[cat]);
 
 class RepositoryBrowser extends React.Component {
   constructor(props) {
@@ -120,7 +104,7 @@ class RepositoryBrowser extends React.Component {
           return {
             onClick: event => {
               this.handleDeleteClick(displayName);
-              event.preventDefault();
+              event.stopPropagation();
             }
           };
         }
@@ -295,13 +279,17 @@ class RepositoryBrowser extends React.Component {
   }
 
   async handleDeleteFile(fileName) {
-    const { cdnApiClient } = this.props;
+    const { cdnApiClient, onSelectionChanged } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = pathHelper.getPrefix(currentPathSegments);
+    const objectName = `${prefix}${fileName}`;
 
     await cdnApiClient.deleteFile(prefix, fileName);
+    if (selectedRowKeys.includes(objectName)) {
+      onSelectionChanged([], true);
+    }
 
-    await this.refreshFiles(currentPathSegments, selectedRowKeys);
+    await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key === objectName));
   }
 
   ensureVirtualFolders(currentPathSegments, existingRecords, virtualFolderPathSegments) {
@@ -428,7 +416,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   renderDeleteColumn() {
-    return (<DeleteOutlined style={{ color: 'red' }} />);
+    return (<DeleteOutlined className="RepositoryBrowser-tableDeleteCell" />);
   }
 
   renderNameColumn(text, record) {

@@ -187,6 +187,21 @@ const predefinedMappings = {
   'text/plain': CATEGORY_TEXT
 };
 
+export const resourceKeyMap = {
+  [CATEGORY_TEXT]: 'mimeTypeCategoryText',
+  [CATEGORY_MARKUP]: 'mimeTypeCategoryMarkup',
+  [CATEGORY_IMAGE]: 'mimeTypeCategoryImage',
+  [CATEGORY_VIDEO]: 'mimeTypeCategoryVideo',
+  [CATEGORY_AUDIO]: 'mimeTypeCategoryAudio',
+  [CATEGORY_ARCHIVE]: 'mimeTypeCategoryArchive',
+  [CATEGORY_DOCUMENT]: 'mimeTypeCategoryDocument',
+  [CATEGORY_SPREADSHEET]: 'mimeTypeCategorySpreadsheet',
+  [CATEGORY_PRESENTATION]: 'mimeTypeCategoryPresentation',
+  [CATEGORY_PROGRAM]: 'mimeTypeCategoryProgram',
+  [CATEGORY_FOLDER]: 'mimeTypeCategoryFolder',
+  [CATEGORY_UNKNOWN]: 'mimeTypeCategoryUnknown'
+};
+
 // Never returns CATEGORY_FOLDER
 export function getCategory(pathOrExtension) {
   const mimeType = mime.getType(pathOrExtension);
@@ -227,5 +242,6 @@ export default {
   CATEGORY_PROGRAM,
   CATEGORY_FOLDER,
   CATEGORY_UNKNOWN,
+  resourceKeyMap,
   getCategory
 };
