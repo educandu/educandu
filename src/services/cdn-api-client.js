@@ -36,10 +36,10 @@ class CdnApiClient {
     return request.then(res => res.data);
   }
 
-  deleteFile(fileName) {
+  deleteFile(prefix, fileName) {
     return this.httpClient
       .delete(
-        `/api/v1/cdn/objects/${fileName}`,
+        `/api/v1/cdn/objects/${fileName}?prefix=${encodeURIComponent(prefix)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

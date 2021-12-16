@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import firstBy from 'thenby';
 import autoBind from 'auto-bind';
@@ -6,15 +7,18 @@ import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
+import { withUser } from './user-context.js';
 import pathHelper from '../ui/path-helper.js';
 import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
 import { withLanguage } from './language-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import CdnApiClient from '../services/cdn-api-client.js';
+import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
-import { translationProps, languageProps } from '../ui/default-prop-types.js';
-import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined } from '@ant-design/icons';
+import { translationProps, languageProps, userProps } from '../ui/default-prop-types.js';
+import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 
 const Icon = iconsNs.default || iconsNs;
 
@@ -106,6 +110,22 @@ class RepositoryBrowser extends React.Component {
         sorter: firstBy('lastModified')
       }
     ];
+
+    if (hasUserPermission(this.props.user, permissions.DELETE_CDN_FILE)) {
+      this.columns.unshift({
+        dataIndex: 'displayName',
+        key: 'displayName',
+        render: this.renderDeleteColumn,
+        onCell: ({ displayName }) => {
+          return {
+            onClick: event => {
+              this.handleDeleteClick(displayName);
+              event.preventDefault();
+            }
+          };
+        }
+      });
+    }
   }
 
   componentDidMount() {
@@ -264,13 +284,23 @@ class RepositoryBrowser extends React.Component {
     this.increaseCurrentUploadCount();
 
     const { cdnApiClient } = this.props;
-    const prefix = pathHelper.getPrefix(pathSegments);
+    const { currentPathSegments, selectedRowKeys } = this.state;
+    const prefix = pathHelper.getPrefix(currentPathSegments);
 
     await cdnApiClient.uploadFiles(files, prefix, { onProgress });
 
     this.decreaseCurrentUploadCount();
 
+    await this.refreshFiles(currentPathSegments, selectedRowKeys);
+  }
+
+  async handleDeleteFile(fileName) {
+    const { cdnApiClient } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
+    const prefix = pathHelper.getPrefix(currentPathSegments);
+
+    await cdnApiClient.deleteFile(prefix, fileName);
+
     await this.refreshFiles(currentPathSegments, selectedRowKeys);
   }
 
@@ -344,6 +374,11 @@ class RepositoryBrowser extends React.Component {
     return this.refreshFiles(pathHelper.getPathSegments(record.path), selectedRowKeys);
   }
 
+  handleDeleteClick(fileName) {
+    const { t } = this.props;
+    confirmCdnFileDelete(t, fileName, () => this.handleDeleteFile(fileName));
+  }
+
   handleFileClick(record, applySelection) {
     const { selectedRowKeys, records } = this.state;
     const { selectionMode, onSelectionChanged } = this.props;
@@ -390,6 +425,10 @@ class RepositoryBrowser extends React.Component {
       'RepositoryBrowser-tableRow--selected': selectedRowKeys.includes(record.key),
       'RepositoryBrowser-tableRow--dropTarget': record.path === currentDropTarget
     });
+  }
+
+  renderDeleteColumn() {
+    return (<DeleteOutlined style={{ color: 'red' }} />);
   }
 
   renderNameColumn(text, record) {
@@ -546,6 +585,7 @@ class RepositoryBrowser extends React.Component {
 }
 
 RepositoryBrowser.propTypes = {
+  ...userProps,
   ...languageProps,
   ...translationProps,
   cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
@@ -563,6 +603,6 @@ RepositoryBrowser.defaultProps = {
   uploadPrefix: null
 };
 
-export default withTranslation('repositoryBrowser')(withLanguage(inject({
+export default withTranslation('repositoryBrowser')(withLanguage(withUser(inject({
   cdnApiClient: CdnApiClient
-}, RepositoryBrowser)));
+}, RepositoryBrowser))));

@@ -9,11 +9,11 @@ import permissions from '../domain/permissions.js';
 import fileNameHelper from '../utils/file-name-helper.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery } from '../domain/validation-middleware.js';
-import { getObjectsQuerySchema, postObjectsBodySchema } from '../domain/schemas/cdn-schemas.js';
+import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema } from '../domain/schemas/cdn-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
-const { NotFound } = createHttpError;
+const { BadRequest } = createHttpError;
 
 class CdnController {
   static get inject() { return [Cdn]; }
@@ -30,15 +30,16 @@ class CdnController {
       return res.send({ objects });
     });
 
-    router.delete('/api/v1/cdn/objects/:objectName', [needsPermission(permissions.DELETE_CDN_FILE)], async (req, res) => {
+    router.delete('/api/v1/cdn/objects/:objectName', [needsPermission(permissions.DELETE_CDN_FILE), validateQuery(deleteObjectQuerySchema)], async (req, res) => {
       const objectName = req.params.objectName;
+      const prefix = req.query.prefix;
       if (!objectName) {
-        throw new NotFound();
+        throw new BadRequest();
       }
 
-      await this.cdn.deleteObject(objectName);
+      await this.cdn.deleteObject(urls.concatParts(prefix, objectName));
 
-      res.send(200);
+      res.sendStatus(200);
     });
 
     router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)], async (req, res) => {
