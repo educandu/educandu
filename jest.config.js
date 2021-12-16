@@ -7,6 +7,7 @@ export default {
     '<rootDir>/node_modules/',
     '<rootDir>/migrations/',
     '<rootDir>/coverage/',
+    '<rootDir>/dev/',
     '<rootDir>/dist/',
     '<rootDir>/test-app/',
     '<rootDir>/src/components/',
