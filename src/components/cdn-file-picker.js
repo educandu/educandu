@@ -33,11 +33,11 @@ export default function CdnFilePicker(props) {
     setState(prevState => ({ ...prevState, isModalVisible: false }));
   };
 
-  const handleSelectionChanged = (objects, shouldApply) => {
+  const handleSelectionChanged = (objects, shouldApplySelection) => {
     const newSelectedFile = objects.length ? objects[0].name : null;
     setState(prevState => ({ ...prevState, currentSelectedFile: newSelectedFile }));
 
-    if (shouldApply) {
+    if (shouldApplySelection) {
       applySelection(newSelectedFile);
     }
   };

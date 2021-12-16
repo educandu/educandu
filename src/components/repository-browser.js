@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import React from 'react';
 import firstBy from 'thenby';
 import autoBind from 'auto-bind';
