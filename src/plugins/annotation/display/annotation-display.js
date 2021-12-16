@@ -1,38 +1,29 @@
 import React from 'react';
 import { Collapse } from 'antd';
-import autoBind from 'auto-bind';
-import PropTypes from 'prop-types';
-import { inject } from '../../../components/container-context.js';
+import ClientConfig from '../../../bootstrap/client-config.js';
+import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 const { Panel } = Collapse;
 
-class AnnotationDisplay extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
+function AnnotationDisplay({ content }) {
+  const gfm = useService(GithubFlavoredMarkdown);
+  const { cdnRootUrl } = useService(ClientConfig);
 
-  render() {
-    const { content, githubFlavoredMarkdown } = this.props;
-    const html = githubFlavoredMarkdown.render(content.text || '');
+  const html = gfm.render(content.text || '', { cdnRootUrl });
 
-    return (
-      <Collapse accordion>
-        <Panel header={content.title || '\u00A0'} key="1">
-          <p className="Annotation" dangerouslySetInnerHTML={{ __html: html }} />
-        </Panel>
-      </Collapse>
-    );
-  }
+  return (
+    <Collapse accordion>
+      <Panel header={content.title || '\u00A0'} key="1">
+        <p className="Annotation" dangerouslySetInnerHTML={{ __html: html }} />
+      </Panel>
+    </Collapse>
+  );
 }
 
 AnnotationDisplay.propTypes = {
-  ...sectionDisplayProps,
-  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
+  ...sectionDisplayProps
 };
 
-export default inject({
-  githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, AnnotationDisplay);
+export default AnnotationDisplay;
