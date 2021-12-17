@@ -753,18 +753,6 @@
     "namespace": "repositoryBrowser",
     "language": "en",
     "resources": {
-      "mimeTypeCategoryText": "Text",
-      "mimeTypeCategoryMarkup": "Markup",
-      "mimeTypeCategoryImage": "Image",
-      "mimeTypeCategoryVideo": "Video",
-      "mimeTypeCategoryAudio": "Audio",
-      "mimeTypeCategoryArchive": "Archive",
-      "mimeTypeCategoryDocument": "Document",
-      "mimeTypeCategorySpreadsheet": "Spreadsheet",
-      "mimeTypeCategoryPresentation": "Presentation",
-      "mimeTypeCategoryProgram": "Program",
-      "mimeTypeCategoryFolder": "Folder",
-      "mimeTypeCategoryUnknown": "Unknown",
       "fileUpload": "File upload",
       "searchFilter": "Search filter",
       "displayNameText": "Name",
@@ -780,18 +768,6 @@
     "namespace": "repositoryBrowser",
     "language": "de",
     "resources": {
-      "mimeTypeCategoryText": "Text",
-      "mimeTypeCategoryMarkup": "Markup",
-      "mimeTypeCategoryImage": "Bild",
-      "mimeTypeCategoryVideo": "Video",
-      "mimeTypeCategoryAudio": "Audio",
-      "mimeTypeCategoryArchive": "Archiv",
-      "mimeTypeCategoryDocument": "Dokument",
-      "mimeTypeCategorySpreadsheet": "Tabellenkalkulation",
-      "mimeTypeCategoryPresentation": "Präsentation",
-      "mimeTypeCategoryProgram": "Programm",
-      "mimeTypeCategoryFolder": "Verzeichnis",
-      "mimeTypeCategoryUnknown": "Unbekannt",
       "fileUpload": "Datei-Upload",
       "searchFilter": "Suchfilter",
       "displayNameText": "Name",
@@ -1423,6 +1399,42 @@
       "importBatches": "Importe",
       "importBatchView": "Import-Details",
       "docs": "Dokumente"
+    }
+  },
+  {
+    "namespace": "mimeTypeHelper",
+    "language": "en",
+    "resources": {
+      "mimeTypeCategoryText": "Text",
+      "mimeTypeCategoryMarkup": "Markup",
+      "mimeTypeCategoryImage": "Image",
+      "mimeTypeCategoryVideo": "Video",
+      "mimeTypeCategoryAudio": "Audio",
+      "mimeTypeCategoryArchive": "Archive",
+      "mimeTypeCategoryDocument": "Document",
+      "mimeTypeCategorySpreadsheet": "Spreadsheet",
+      "mimeTypeCategoryPresentation": "Presentation",
+      "mimeTypeCategoryProgram": "Program",
+      "mimeTypeCategoryFolder": "Folder",
+      "mimeTypeCategoryUnknown": "Unknown"
+    }
+  },
+  {
+    "namespace": "mimeTypeHelper",
+    "language": "de",
+    "resources": {
+      "mimeTypeCategoryText": "Text",
+      "mimeTypeCategoryMarkup": "Markup",
+      "mimeTypeCategoryImage": "Bild",
+      "mimeTypeCategoryVideo": "Video",
+      "mimeTypeCategoryAudio": "Audio",
+      "mimeTypeCategoryArchive": "Archiv",
+      "mimeTypeCategoryDocument": "Dokument",
+      "mimeTypeCategorySpreadsheet": "Tabellenkalkulation",
+      "mimeTypeCategoryPresentation": "Präsentation",
+      "mimeTypeCategoryProgram": "Programm",
+      "mimeTypeCategoryFolder": "Verzeichnis",
+      "mimeTypeCategoryUnknown": "Unbekannt"
     }
   },
   {

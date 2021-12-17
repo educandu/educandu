@@ -22,8 +22,6 @@ import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, Upload
 
 const Icon = iconsNs.default || iconsNs;
 
-const localizeCategory = (cat, t) => t(mimeTypeHelper.resourceKeyMap[cat]);
-
 class RepositoryBrowser extends React.Component {
   constructor(props) {
     super(props);
@@ -323,7 +321,7 @@ class RepositoryBrowser extends React.Component {
         displayName: segments[segments.length - 1] || '',
         isDirectory,
         category,
-        categoryText: localizeCategory(category, t),
+        categoryText: mimeTypeHelper.localizeCategory(category, t),
         originalObject: obj,
         segments,
         rowProps: {}
