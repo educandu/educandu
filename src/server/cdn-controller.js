@@ -8,8 +8,8 @@ import createHttpError from 'http-errors';
 import permissions from '../domain/permissions.js';
 import fileNameHelper from '../utils/file-name-helper.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { validateBody, validateQuery } from '../domain/validation-middleware.js';
-import { getObjectsQuerySchema, postObjectsBodySchema } from '../domain/schemas/cdn-schemas.js';
+import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
+import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/cdn-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
@@ -27,6 +27,15 @@ class CdnController {
       const recursive = parseBool(req.query.recursive);
       const objects = await this.cdn.listObjects({ prefix, recursive });
       return res.send({ objects });
+    });
+
+    router.delete('/api/v1/cdn/objects/:objectName', [needsPermission(permissions.DELETE_CDN_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)], async (req, res) => {
+      const objectName = req.params.objectName;
+      const prefix = req.query.prefix;
+
+      await this.cdn.deleteObject(urls.concatParts(prefix, objectName));
+
+      res.sendStatus(200);
     });
 
     router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)], async (req, res) => {

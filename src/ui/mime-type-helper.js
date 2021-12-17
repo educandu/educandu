@@ -1,17 +1,17 @@
 import mime from 'mime';
 
-export const CATEGORY_TEXT = 'text';
-export const CATEGORY_MARKUP = 'markup';
-export const CATEGORY_IMAGE = 'image';
-export const CATEGORY_VIDEO = 'video';
-export const CATEGORY_AUDIO = 'audio';
-export const CATEGORY_ARCHIVE = 'archive';
-export const CATEGORY_DOCUMENT = 'document';
-export const CATEGORY_SPREADSHEET = 'spreadsheet';
-export const CATEGORY_PRESENTATION = 'presentation';
-export const CATEGORY_PROGRAM = 'program';
-export const CATEGORY_FOLDER = 'folder';
-export const CATEGORY_UNKNOWN = 'unknown';
+const CATEGORY_TEXT = 'text';
+const CATEGORY_MARKUP = 'markup';
+const CATEGORY_IMAGE = 'image';
+const CATEGORY_VIDEO = 'video';
+const CATEGORY_AUDIO = 'audio';
+const CATEGORY_ARCHIVE = 'archive';
+const CATEGORY_DOCUMENT = 'document';
+const CATEGORY_SPREADSHEET = 'spreadsheet';
+const CATEGORY_PRESENTATION = 'presentation';
+const CATEGORY_PROGRAM = 'program';
+const CATEGORY_FOLDER = 'folder';
+const CATEGORY_UNKNOWN = 'unknown';
 
 const predefinedMappings = {
 
@@ -187,8 +187,25 @@ const predefinedMappings = {
   'text/plain': CATEGORY_TEXT
 };
 
+const resourceKeyMap = {
+  [CATEGORY_TEXT]: 'mimeTypeHelper:mimeTypeCategoryText',
+  [CATEGORY_MARKUP]: 'mimeTypeHelper:mimeTypeCategoryMarkup',
+  [CATEGORY_IMAGE]: 'mimeTypeHelper:mimeTypeCategoryImage',
+  [CATEGORY_VIDEO]: 'mimeTypeHelper:mimeTypeCategoryVideo',
+  [CATEGORY_AUDIO]: 'mimeTypeHelper:mimeTypeCategoryAudio',
+  [CATEGORY_ARCHIVE]: 'mimeTypeHelper:mimeTypeCategoryArchive',
+  [CATEGORY_DOCUMENT]: 'mimeTypeHelper:mimeTypeCategoryDocument',
+  [CATEGORY_SPREADSHEET]: 'mimeTypeHelper:mimeTypeCategorySpreadsheet',
+  [CATEGORY_PRESENTATION]: 'mimeTypeHelper:mimeTypeCategoryPresentation',
+  [CATEGORY_PROGRAM]: 'mimeTypeHelper:mimeTypeCategoryProgram',
+  [CATEGORY_FOLDER]: 'mimeTypeHelper:mimeTypeCategoryFolder',
+  [CATEGORY_UNKNOWN]: 'mimeTypeHelper:mimeTypeCategoryUnknown'
+};
+
+const localizeCategory = (cat, t) => t(resourceKeyMap[cat]);
+
 // Never returns CATEGORY_FOLDER
-export function getCategory(pathOrExtension) {
+function getCategory(pathOrExtension) {
   const mimeType = mime.getType(pathOrExtension);
   if (!mimeType) {
     return CATEGORY_UNKNOWN;
@@ -227,5 +244,7 @@ export default {
   CATEGORY_PROGRAM,
   CATEGORY_FOLDER,
   CATEGORY_UNKNOWN,
-  getCategory
+  resourceKeyMap,
+  getCategory,
+  localizeCategory
 };
