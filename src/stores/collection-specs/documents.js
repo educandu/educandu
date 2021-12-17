@@ -6,8 +6,8 @@ export default {
       key: { updatedOn: -1 }
     },
     {
-      name: '_idx_namespace_slug_',
-      key: { namespace: 1, slug: 1 }
+      name: '_idx_slug_',
+      key: { slug: 1 }
     },
     {
       name: '_idx_tags_',

@@ -47,7 +47,6 @@ describe('document-service', () => {
       revision = {
         title: 'Title',
         slug: 'my-doc',
-        namespace: 'articles',
         language: 'en',
         sections: [
           {
@@ -244,7 +243,6 @@ describe('document-service', () => {
           key: documentKey,
           title: 'Title 1',
           slug: 'my-doc-1',
-          namespace: 'articles',
           language: 'en',
           createdBy: 'user-1',
           sections: [
@@ -264,7 +262,6 @@ describe('document-service', () => {
           key: documentKey,
           title: 'Title 2',
           slug: 'my-doc-2',
-          namespace: 'articles',
           language: 'en',
           createdBy: 'user-1',
           sections: [
@@ -291,7 +288,8 @@ describe('document-service', () => {
       });
 
       it('creates the revisions', async () => {
-        const createdRevisions = await db.documentRevisions.find({ key: documentKey }).toArray();
+        const createdRevisions = await db.documentRevisions.find({ key: documentKey }).sort({ order: 1 }).toArray();
+
         expect(createdRevisions).toEqual([
           {
             ...revisions[0],
@@ -532,7 +530,6 @@ describe('document-service', () => {
         const revisionToCreate = {
           title: 'Title',
           slug: 'my-doc',
-          namespace: 'articles',
           language: 'en',
           sections: [],
           archived: false
@@ -561,7 +558,6 @@ describe('document-service', () => {
         const revisionToCreate = {
           title: 'Title',
           slug: 'my-doc',
-          namespace: 'articles',
           language: 'en',
           sections: [],
           archived: true

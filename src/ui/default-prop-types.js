@@ -142,7 +142,6 @@ const commonDocumentOrRevisionProps = {
   order: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   slug: PropTypes.string,
-  namespace: PropTypes.string.isRequired,
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired

@@ -29,7 +29,6 @@ const FormItem = Form.Item;
 
 const logger = new Logger(import.meta.url);
 
-const DEFAULT_DOCUMENT_NAMESPACE = 'articles';
 const DEFAULT_FILTER_INPUT = '';
 const DEFAULT_DOCUMENT_SLUG = '';
 
@@ -68,7 +67,6 @@ class Docs extends React.Component {
     return {
       title: toTrimmedString(newDocState.title) || t('defaultDocumentTitle'),
       slug: toTrimmedString(newDocState.slug) || '',
-      namespace: DEFAULT_DOCUMENT_NAMESPACE,
       language: newDocState.language,
       sections: [],
       tags: newDocState.tags ? [...newDocState.tags] : [],

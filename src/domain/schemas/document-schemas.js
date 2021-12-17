@@ -30,7 +30,6 @@ export const slugSchema = joi.string().pattern(slugValidationPattern).allow('').
 export const createRevisionBodySchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
-  namespace: joi.any().valid('articles').required(),
   language: joi.string().case('lower').required(),
   sections: joi.array().items(sectionSchema).required(),
   appendTo: documentRevisionAppendToSchema.optional(),
