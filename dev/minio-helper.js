@@ -1,4 +1,9 @@
+/* eslint-disable no-await-in-loop, no-console */
+
 import { Client } from 'minio';
+import { delay } from './helpers.js';
+
+const bucketMaxCreationAttemptCount = 3;
 
 export async function ensureMinioBucketExists({
   bucketName,
@@ -22,12 +27,31 @@ export async function ensureMinioBucketExists({
     ]
   };
 
-  const minioClient = new Client({ endPoint, port, useSSL, region, accessKey, secretKey });
+  let error = null;
+  let bucketCreationAttempt = 0;
 
-  const buckets = await minioClient.listBuckets();
+  do {
 
-  if (!buckets.find(x => x.name === bucketName)) {
-    await minioClient.makeBucket(bucketName, region);
-    await minioClient.setBucketPolicy(bucketName, JSON.stringify(bucketPolicy));
+    try {
+      bucketCreationAttempt += 1;
+
+      const minioClient = new Client({ endPoint, port, useSSL, region, accessKey, secretKey });
+      const buckets = await minioClient.listBuckets();
+
+      if (!buckets.find(x => x.name === bucketName)) {
+        await minioClient.makeBucket(bucketName, region);
+        await minioClient.setBucketPolicy(bucketName, JSON.stringify(bucketPolicy));
+      }
+    } catch (err) {
+      console.log(`Attempt ${bucketCreationAttempt} to create minio bucket failed`);
+
+      error = err;
+      await delay(bucketCreationAttempt * 1000);
+    }
+
+  } while (error && bucketCreationAttempt < bucketMaxCreationAttemptCount);
+
+  if (error) {
+    throw error;
   }
 }

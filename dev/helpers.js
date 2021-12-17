@@ -11,7 +11,7 @@ export function delay(ms) {
 export const glob = promisify(globModule);
 
 export function isMac() {
-  return os.platform === 'darwin';
+  return os.platform() === 'darwin';
 }
 
 export function kebabToCamel(str) {
