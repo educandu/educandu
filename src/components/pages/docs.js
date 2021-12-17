@@ -150,12 +150,17 @@ class Docs extends React.Component {
   }
 
   async handleDocumentDelete(documentKey) {
-    const { documentApiClient } = this.props;
-    await documentApiClient.hardDeleteDocument(documentKey);
+    const { documentApiClient, t } = this.props;
 
-    this.setState(prevState => ({
-      filteredDocs: prevState.filteredDocs.filter(doc => doc.key !== documentKey)
-    }));
+    try {
+      await documentApiClient.hardDeleteDocument(documentKey);
+
+      this.setState(prevState => ({
+        filteredDocs: prevState.filteredDocs.filter(doc => doc.key !== documentKey)
+      }));
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+    }
   }
 
   handleDeleteClick(doc) {
@@ -233,10 +238,10 @@ class Docs extends React.Component {
       <Fragment>
         <span><a onClick={() => this.handleCloneClick(doc)}>{t('clone')}</a></span>
         {doc.origin.startsWith(DOCUMENT_ORIGIN.external) && (
-          <Fragment>
+          <Restricted to={permissions.MANAGE_IMPORT}>
             <br />
             <span><a onClick={() => this.handleDeleteClick(doc)}>{t('common:delete')}</a></span>
-          </Fragment>
+          </Restricted>
         )}
       </Fragment>
     );
