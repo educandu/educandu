@@ -97,8 +97,8 @@ class RepositoryBrowser extends React.Component {
     ];
 
     if (hasUserPermission(this.props.user, permissions.DELETE_CDN_FILE)) {
-      this.columns.unshift({
-        dataIndex: 'displayName',
+      this.columns.push({
+        dataIndex: 'isDirectory',
         key: 'displayName',
         render: this.renderDeleteColumn,
         onCell: ({ displayName }) => {
@@ -416,8 +416,8 @@ class RepositoryBrowser extends React.Component {
     });
   }
 
-  renderDeleteColumn() {
-    return (<DeleteOutlined className="RepositoryBrowser-tableDeleteCell" />);
+  renderDeleteColumn(isDirectory) {
+    return isDirectory ? null : (<DeleteOutlined className="RepositoryBrowser-tableDeleteCell" />);
   }
 
   renderNameColumn(text, record) {
