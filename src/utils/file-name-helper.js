@@ -7,7 +7,9 @@ export function buildCdnFileName(fileName, prefix = null) {
   const id = uniqueId.create();
   const extension = path.extname(fileName);
   const baseName = fileName.substr(0, fileName.length - extension.length);
-  const newFileName = `${slugify(baseName)}_${id}${extension}`;
+  const slugifiedBaseName = slugify(baseName);
+  const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
+  const newFileName = `${uniqueBaseName}${extension}`;
   return prefix ? urls.concatParts(prefix, newFileName) : newFileName;
 }
 
