@@ -4,7 +4,7 @@ import { roomSchema } from '../domain/schemas/rooms-schemas.js';
 import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 
-export default class RoomsController {
+export default class RoomController {
   static get indeject() { return [RoomService]; }
 
   constructor(roomService) {

@@ -1,8 +1,8 @@
-import RoomsStore from '../stores/rooms-store.js';
+import RoomStore from '../stores/room-store.js';
 import uniqueId from '../utils/unique-id.js';
 
 export default class RoomService {
-  static get inject() { return [RoomsStore]; }
+  static get inject() { return [RoomStore]; }
 
   constructor(roomsStore) {
     this.roomsStore = roomsStore;

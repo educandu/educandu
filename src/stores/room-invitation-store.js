@@ -1,7 +1,7 @@
 import Database from './database.js';
 import StoreBase from './store-base.js';
 
-class RoomInvitationsStore extends StoreBase {
+class RoomInvitationStore extends StoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
@@ -9,4 +9,4 @@ class RoomInvitationsStore extends StoreBase {
   }
 }
 
-export default RoomInvitationsStore;
+export default RoomInvitationStore;

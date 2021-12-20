@@ -4,7 +4,7 @@ import I18nController from './i18n-controller.js';
 import UserController from './user-controller.js';
 import IndexController from './index-controller.js';
 import ErrorController from './error-controller.js';
-import RoomsController from './rooms-controller.js';
+import RoomsController from './room-controller.js';
 import StaticController from './static-controller.js';
 import ImportController from './import-controller.js';
 import ExportController from './export-controller.js';
