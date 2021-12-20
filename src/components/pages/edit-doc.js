@@ -195,7 +195,9 @@ class EditDoc extends React.Component {
   }
 
   cloneSection(section) {
-    const info = InfoFactory.createInfo(section.type);
+    const { infoFactory } = this.props;
+
+    const info = infoFactory.createInfo(section.type);
     return {
       key: uniqueId.create(),
       revision: null,
