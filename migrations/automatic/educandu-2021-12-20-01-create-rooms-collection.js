@@ -14,7 +14,7 @@ export default class Educandu_2021_12_20_01_create_rooms_collection {
         key: { owner: 1 }
       },
       {
-        name: '_idx_members_user_id',
+        name: '_idx_members_user_id_',
         key: { 'members.userId': 1 }
       }
     ]);
