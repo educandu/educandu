@@ -3,7 +3,7 @@
     "namespace": "loginLogout",
     "language": "en",
     "resources": {
-      "logonState": "G'day <0>{username}</0>"
+      "logonState": "G'day {username}"
     }
   },
   {

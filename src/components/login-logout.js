@@ -1,71 +1,36 @@
 import React from 'react';
-import { Avatar } from 'antd';
 import gravatar from 'gravatar';
 import urls from '../utils/urls.js';
+import { Avatar, Tooltip } from 'antd';
 import { useUser } from './user-context.js';
-import LinkPopover from './link-popover.js';
+import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
-import { Trans, useTranslation } from 'react-i18next';
-import { ProfileOutlined, LogoutOutlined } from '@ant-design/icons';
 
-function createAuthenticatedUserHeader(user, t) {
-  const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
+function LoginLogout() {
+  const user = useUser();
+  const request = useRequest();
+  const { t } = useTranslation('loginLogout');
 
-  const popoverTitle = (
-    <span>
-      <Trans
-        t={t}
-        i18nKey="logonState"
-        components={[<b key="username" />]}
-        values={{ username: user.username }}
-        />
-    </span>
-  );
+  const handleAvatarClick = () => {
+    window.location = urls.getMySpaceUrl();
+  };
 
-  const gravatarPopoverItems = [
-    {
-      key: 'profile',
-      href: urls.getMySpaceUrl(),
-      text: t('pageNames:mySpace'),
-      icon: ProfileOutlined,
-      permission: null
-    }, {
-      key: 'logout',
-      href: urls.getLogoutUrl(),
-      text: t('logoff'),
-      icon: LogoutOutlined,
-      permission: null
-    }
-  ];
+  const createAuthenticatedUserHeader = () => {
+    const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
+    return (
+      <Tooltip title={t('logonState', { username: user.username })}>
+        <Avatar src={gravatarUrl} alt={user.username} shape="square" onClick={handleAvatarClick} />
+      </Tooltip>
+    );
+  };
 
-  return (
-    <div>
-      <LinkPopover
-        title={popoverTitle}
-        items={gravatarPopoverItems}
-        placement="bottomRight"
-        trigger="hover"
-        >
-        <Avatar src={gravatarUrl} alt={user.username} shape="square" />
-      </LinkPopover>
-    </div>
-  );
-}
-
-function createAnonymousUserHeader(redirectUrl, t) {
-  return (
+  const createAnonymousUserHeader = redirectUrl => (
     <div>
       <a href={urls.getLoginUrl(redirectUrl)}>{t('logon')}</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a href={urls.getRegisterUrl()}>{t('register')}</a>
     </div>
   );
-}
-
-function LoginLogout() {
-  const user = useUser();
-  const request = useRequest();
-  const { t } = useTranslation('loginLogout');
 
   return (
     <span className="LoginLogout">

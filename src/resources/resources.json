@@ -1339,7 +1339,8 @@
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
-      "accept": "Accept"
+      "accept": "Accept",
+      "logoff": "Log off"
     }
   },
   {
@@ -1368,7 +1369,8 @@
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
-      "accept": "Akzeptieren"
+      "accept": "Akzeptieren",
+      "logoff": "Abmelden"
     }
   },
   {
