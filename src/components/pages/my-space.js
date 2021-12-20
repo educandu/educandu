@@ -1,297 +1,66 @@
-import by from 'thenby';
 import React from 'react';
-import gravatar from 'gravatar';
-import memoizee from 'memoizee';
-import autoBind from 'auto-bind';
+import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
-import EmailInput from '../email-input.js';
-import Logger from '../../common/logger.js';
-import localeCompare from 'locale-compare';
-import { withUser } from '../user-context.js';
-import { inject } from '../container-context.js';
-import UsernameInput from '../username-input.js';
-import { CloseOutlined } from '@ant-design/icons';
-import errorHelper from '../../ui/error-helper.js';
-import { withLanguage } from '../language-context.js';
-import { withPageName } from '../page-name-context.js';
-import { Trans, withTranslation } from 'react-i18next';
+import ProfileTab from '../profile-tab.js';
+import AccountTab from '../account-tab.js';
+import { useUser } from '../user-context.js';
+import { useTranslation } from 'react-i18next';
+import { usePageName } from '../page-name-context.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
-import UserApiClient from '../../services/user-api-client.js';
-import { SAVE_USER_RESULT } from '../../domain/user-management.js';
-import CountryNameProvider from '../../data/country-name-provider.js';
-import { confirmIdentityWithPassword } from '../confirmation-dialogs.js';
-import CountryFlagAndName from '../localization/country-flag-and-name.js';
-import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
-import { userProps, languageProps, translationProps, pageNameProps } from '../../ui/default-prop-types.js';
 
-const logger = new Logger(import.meta.url);
+const { TabPane } = Tabs;
+function MySpace({ PageTemplate }) {
+  const user = useUser();
+  const pageName = usePageName();
+  const { t } = useTranslation('mySpace');
 
-const FormItem = Form.Item;
-const Option = Select.Option;
-
-const AVATAR_SIZE = 256;
-
-const createCountryNames = memoizee((countryNameProvider, language) => {
-  return Object.entries(countryNameProvider.getData(language))
-    .map(([key, name]) => ({ key, name }))
-    .sort(by(x => x.name, { cmp: localeCompare(language) }));
-}, { max: 1 });
-
-class MySpace extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-    this.accountFormRef = React.createRef();
-
-    this.state = {
-      showAvatarDescription: false,
-      forbiddenEmails: [],
-      forbiddenUsernames: []
-    };
-  }
-
-  async saveAccountData({ username, email }) {
-    const { t, userApiClient } = this.props;
-
-    try {
-      const { result, user } = await userApiClient.saveUserAccount({ username, email });
-      switch (result) {
-        case SAVE_USER_RESULT.success:
-          this.setState(prevState => ({ user: { ...prevState.user, username: user.username, email: user.email } }));
-          await message.success(t('account.updateSuccessMessage'));
-          break;
-        case SAVE_USER_RESULT.duplicateEmail:
-          this.setState(prevState => ({ forbiddenEmails: [...prevState.forbiddenEmails, email.toLowerCase()] }));
-          this.accountFormRef.current.validateFields(['email'], { force: true });
-          break;
-        case SAVE_USER_RESULT.duplicateUsername:
-          this.setState(prevState => ({ forbiddenUsernames: [...prevState.forbiddenUsernames, username.toLowerCase()] }));
-          this.accountFormRef.current.validateFields(['username'], { force: true });
-          break;
-        default:
-          throw new Error(`Unknown result: ${result}`);
-      }
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
     }
-  }
+  };
 
-  async saveProfile(profileToSave) {
-    const { user, userApiClient, t } = this.props;
-
-    try {
-      const { profile } = await userApiClient.saveUserProfile({ profile: profileToSave });
-      user.profile = profile;
-      message.success(t('profile.updateSuccessMessage'));
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
-    }
-  }
-
-  handleBackClick() {
-    window.history.back();
-  }
-
-  handleAccountFinish({ username, email }) {
-    const { t, userApiClient, user } = this.props;
-
-    confirmIdentityWithPassword({
-      t,
-      username: user.username,
-      onOk: () => this.saveAccountData({
-        username,
-        email
-      }),
-      userApiClient
-    });
-  }
-
-  handleProfileFinish(values) {
-    this.saveProfile({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      street: values.street,
-      streetSupplement: values.streetSupplement,
-      postalCode: values.postalCode,
-      city: values.city,
-      country: values.country
-    });
-  }
-
-  handleShowAvatarDescriptionClick() {
-    this.setState({ showAvatarDescription: true });
-  }
-
-  handleAvatarDescriptionAfterClose() {
-    this.setState({ showAvatarDescription: false });
-  }
-
-  async handleResetPasswordClick() {
-    const { t, userApiClient, user } = this.props;
-
-    try {
-      await userApiClient.requestPasswordReset({ email: user.email });
-      message.success(t('account.passwordResetEmailSent', { email: user.email }));
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
-    }
-  }
-
-  render() {
-    const { showAvatarDescription } = this.state;
-    const { countryNameProvider, user, pageName, language, t, PageTemplate } = this.props;
-    const profile = user.profile || { country: '' };
-    const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
-
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 }
+  const tailFormItemLayout = {
+    wrapperCol: {
+      xs: {
+        span: 24,
+        offset: 0
       },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 }
+      sm: {
+        span: 16,
+        offset: 8
       }
-    };
+    }
+  };
 
-    const tailFormItemLayout = {
-      wrapperCol: {
-        xs: {
-          span: 24,
-          offset: 0
-        },
-        sm: {
-          span: 16,
-          offset: 8
-        }
-      }
-    };
+  const alerts = getGlobalAlerts(pageName, user);
 
-    const gravatarRagistrationUrl = `https://${language}.gravatar.com/`;
+  return (
+    <PageTemplate alerts={alerts} disableProfileWarning>
+      <div className="MySpacePage">
 
-    const avatarDescription = (
-      <div>
-        <Trans
-          t={t}
-          i18nKey="profile.avatarDescription"
-          components={[<a key="gravatar-link" href={gravatarRagistrationUrl} target="_blank" rel="noopener noreferrer" />]}
-          />
+        <h1>{t('pageNames:mySpace')}</h1>
+        <Tabs className="MySpacePage-tabs" defaultActiveKey="1" type="card" size="large">
+          <TabPane className="MySpacePage-tab" tab={t('accountTabTitle')} key="1">
+            <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
+          </TabPane>
+          <TabPane className="MySpacePage-tab" tab={t('profileTabTitle')} key="2">
+            <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
+          </TabPane>
+        </Tabs>
+
       </div>
-    );
-
-    const accountForm = (
-      <Form ref={this.accountFormRef} onFinish={this.handleAccountFinish} scrollToFirstError>
-        <FormItem {...tailFormItemLayout}>
-          <h2>{t('account.headline')}</h2>
-        </FormItem>
-        <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={this.state.forbiddenUsernames} />
-        <EmailInput formItemLayout={formItemLayout} forbiddenEmails={this.state.forbiddenEmails} />
-        <FormItem {...tailFormItemLayout}>
-          <Button type="link" size="small" onClick={this.handleResetPasswordClick}>{t('account.resetPassword')}</Button>
-        </FormItem>
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">{t('common:save')}</Button>
-        </FormItem>
-      </Form>
-    );
-
-    const profileForm = (
-      <Form onFinish={this.handleProfileFinish} scrollToFirstError>
-        <FormItem {...tailFormItemLayout}>
-          <h2>{t('profile.headline')}</h2>
-        </FormItem>
-        <FormItem {...tailFormItemLayout}>
-          <Avatar shape="square" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
-          <br />
-          <a onClick={this.handleShowAvatarDescriptionClick}>{t('profile.changePicture')}</a>
-          <br />
-          {showAvatarDescription && (
-            <Alert
-              message={t('profile.howToChangePicture')}
-              description={avatarDescription}
-              type="info"
-              showIcon
-              closable
-              afterClose={this.handleAvatarDescriptionAfterClose}
-              />
-          )}
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('profile.firstName')} name="firstName" initialValue={profile.firstName || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('profile.lastName')} name="lastName" initialValue={profile.lastName || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('profile.street')} name="street" initialValue={profile.street || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('profile.streetSupplement')} name="streetSupplement" initialValue={profile.streetSupplement || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('profile.postalCode')} name="postalCode" initialValue={profile.postalCode || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('profile.city')} name="city" initialValue={profile.city || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('profile.country')} name="country" initialValue={profile.country || ''}>
-          <Select
-            optionFilterProp="title"
-            showSearch
-            allowClear
-            autoComplete="none"
-            >
-            {createCountryNames(countryNameProvider, language).map(cn => (
-              <Option key={cn.key} value={cn.key} title={cn.name}>
-                <CountryFlagAndName code={cn.key} name={cn.name} />
-              </Option>
-            ))}
-          </Select>
-        </FormItem>
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">{t('common:save')}</Button>
-        </FormItem>
-      </Form>
-    );
-
-    const alerts = getGlobalAlerts(pageName, user);
-
-    const headerActions = [
-      {
-        handleClick: this.handleBackClick,
-        icon: CloseOutlined,
-        key: 'close',
-        text: t('common:back')
-      }
-    ];
-
-    return (
-      <PageTemplate alerts={alerts} headerActions={headerActions} disableProfileWarning>
-        <div className="MySpacePage">
-          <div className="MySpacePage-forms">
-            <h1>{t('pageNames:mySpace')}</h1>
-            <section>{accountForm}</section>
-            <br />
-            <br />
-            <section>{profileForm}</section>
-          </div>
-        </div>
-      </PageTemplate>
-    );
-  }
+    </PageTemplate>
+  );
 }
 
 MySpace.propTypes = {
-  PageTemplate: PropTypes.func.isRequired,
-  ...userProps,
-  ...languageProps,
-  ...translationProps,
-  ...pageNameProps,
-  countryNameProvider: PropTypes.instanceOf(CountryNameProvider).isRequired,
-  userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
+  PageTemplate: PropTypes.func.isRequired
 };
 
-export default withTranslation('mySpace')(withLanguage(withUser(withPageName(inject({
-  countryNameProvider: CountryNameProvider,
-  userApiClient: UserApiClient
-}, MySpace)))));
+export default MySpace;

@@ -174,18 +174,22 @@ export const documentRevisionShape = PropTypes.shape({
 });
 
 const formItemDimensionShape = PropTypes.shape({
-  span: PropTypes.number.isRequired
+  span: PropTypes.number.isRequired,
+  offset: PropTypes.number
+});
+
+const formItemDimensionsShape = PropTypes.shape({
+  xs: formItemDimensionShape.isRequired,
+  sm: formItemDimensionShape.isRequired
 });
 
 export const formItemLayoutShape = PropTypes.shape({
-  labelCol: PropTypes.shape({
-    xs: formItemDimensionShape.isRequired,
-    sm: formItemDimensionShape.isRequired
-  }).isRequired,
-  wrapperCol: PropTypes.shape({
-    xs: formItemDimensionShape.isRequired,
-    sm: formItemDimensionShape.isRequired
-  }).isRequired
+  labelCol: formItemDimensionsShape.isRequired,
+  wrapperCol: formItemDimensionsShape.isRequired
+});
+
+export const tailFormItemLayoutShape = PropTypes.shape({
+  wrapperCol: formItemDimensionsShape.isRequired
 });
 
 export const importTaskShape = PropTypes.shape({

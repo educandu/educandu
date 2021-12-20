@@ -3,7 +3,7 @@
     "namespace": "login",
     "language": "en",
     "resources": {
-      "logonState": "G'day {username}"
+      "logonState": "G'day <0>{username}</0>"
     }
   },
   {

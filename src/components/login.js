@@ -3,8 +3,8 @@ import gravatar from 'gravatar';
 import urls from '../utils/urls.js';
 import { Avatar, Tooltip } from 'antd';
 import { useUser } from './user-context.js';
-import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
+import { Trans, useTranslation } from 'react-i18next';
 
 function Login() {
   const user = useUser();
@@ -18,8 +18,19 @@ function Login() {
   const createAuthenticatedUserHeader = () => {
     const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
 
+    const popoverTitle = (
+      <span>
+        <Trans
+          t={t}
+          i18nKey="logonState"
+          components={[<b key="username" />]}
+          values={{ username: user.username }}
+          />
+      </span>
+    );
+
     return (
-      <Tooltip title={t('logonState', { username: user.username })}>
+      <Tooltip title={popoverTitle} placement="bottomRight">
         <Avatar src={gravatarUrl} alt={user.username} shape="square" onClick={handleAvatarClick} />
       </Tooltip>
     );
