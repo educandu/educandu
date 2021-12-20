@@ -25,8 +25,8 @@ function createAuthenticatedUserHeader(user, t) {
   const gravatarPopoverItems = [
     {
       key: 'profile',
-      href: urls.getAccountUrl(),
-      text: t('account'),
+      href: urls.getMySpaceUrl(),
+      text: t('pageNames:mySpace'),
       icon: ProfileOutlined,
       permission: null
     }, {

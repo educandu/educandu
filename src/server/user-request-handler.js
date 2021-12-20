@@ -41,8 +41,8 @@ class UserRequestHandler {
     return res.redirect(urls.getDefaultLogoutRedirectUrl());
   }
 
-  handleGetAccountPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.account, {});
+  handleGetMySpacePage(req, res) {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.mySpace, {});
   }
 
   async handleGetCompletePasswordResetPage(req, res) {

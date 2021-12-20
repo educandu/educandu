@@ -20,7 +20,7 @@ export default function InsufficientProfileWarning() {
     <Trans
       t={t}
       i18nKey="profileWarning"
-      components={[<a key="profile-warning" href={urls.getAccountUrl()} />]}
+      components={[<a key="profile-warning" href={urls.getMySpaceUrl()} />]}
       />
   );
 }

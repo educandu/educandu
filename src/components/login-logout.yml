@@ -7,9 +7,6 @@ logoff:
 register:
   en: Register
   de: Registrieren
-account:
-  en: My account
-  de: Mein Konto
 logonState:
   en: You are logged on as <0>{username}</0>
   de: Sie sind angemeldet als <0>{username}</0>

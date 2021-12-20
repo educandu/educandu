@@ -37,7 +37,7 @@ const createCountryNames = memoizee((countryNameProvider, language) => {
     .sort(by(x => x.name, { cmp: localeCompare(language) }));
 }, { max: 1 });
 
-class Account extends React.Component {
+class MySpace extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
@@ -267,9 +267,9 @@ class Account extends React.Component {
 
     return (
       <PageTemplate alerts={alerts} headerActions={headerActions} disableProfileWarning>
-        <div className="AccountPage">
-          <div className="AccountPage-forms">
-            <h1>{t('pageNames:account')}</h1>
+        <div className="MySpacePage">
+          <div className="MySpacePage-forms">
+            <h1>{t('pageNames:mySpace')}</h1>
             <section>{accountForm}</section>
             <br />
             <br />
@@ -281,7 +281,7 @@ class Account extends React.Component {
   }
 }
 
-Account.propTypes = {
+MySpace.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   ...userProps,
   ...languageProps,
@@ -291,7 +291,7 @@ Account.propTypes = {
   userApiClient: PropTypes.instanceOf(UserApiClient).isRequired
 };
 
-export default withTranslation('account')(withLanguage(withUser(withPageName(inject({
+export default withTranslation('mySpace')(withLanguage(withUser(withPageName(inject({
   countryNameProvider: CountryNameProvider,
   userApiClient: UserApiClient
-}, Account)))));
+}, MySpace)))));

@@ -6,7 +6,7 @@ export const importBatchesPath = '/import-batches';
 export const createImportPath = '/import-batches/create';
 export const loginPath = '/login';
 export const logoutPath = '/logout';
-export const accountPath = '/account';
+export const mySpacePath = '/my-space';
 export const registerPath = '/register';
 export const resetPasswordPath = '/reset-password';
 export const searchPath = '/search';
@@ -105,8 +105,8 @@ export function getLogoutUrl() {
   return logoutPath;
 }
 
-export function getAccountUrl() {
-  return accountPath;
+export function getMySpaceUrl() {
+  return mySpacePath;
 }
 
 export function getRegisterUrl() {
@@ -172,7 +172,7 @@ export default {
   getHomeUrl,
   getLoginUrl,
   getLogoutUrl,
-  getAccountUrl,
+  getMySpaceUrl,
   getRegisterUrl,
   getResetPasswordUrl,
   createFullyQualifiedUrl,
