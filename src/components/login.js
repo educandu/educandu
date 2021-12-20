@@ -6,10 +6,10 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
 
-function LoginLogout() {
+function Login() {
   const user = useUser();
   const request = useRequest();
-  const { t } = useTranslation('loginLogout');
+  const { t } = useTranslation('login');
 
   const handleAvatarClick = () => {
     window.location = urls.getMySpaceUrl();
@@ -17,6 +17,7 @@ function LoginLogout() {
 
   const createAuthenticatedUserHeader = () => {
     const gravatarUrl = gravatar.url(user.email, { d: 'mp' });
+
     return (
       <Tooltip title={t('logonState', { username: user.username })}>
         <Avatar src={gravatarUrl} alt={user.username} shape="square" onClick={handleAvatarClick} />
@@ -33,10 +34,10 @@ function LoginLogout() {
   );
 
   return (
-    <span className="LoginLogout">
+    <span>
       {user ? createAuthenticatedUserHeader(user, t) : createAnonymousUserHeader(request.originalUrl, t)}
     </span>
   );
 }
 
-export default LoginLogout;
+export default Login;

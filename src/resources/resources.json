@@ -202,23 +202,21 @@
     }
   },
   {
-    "namespace": "loginLogout",
+    "namespace": "login",
     "language": "en",
     "resources": {
       "logon": "Log on",
-      "logoff": "Log off",
       "register": "Register",
-      "logonState": "You are logged on as <0>{username}</0>"
+      "logonState": "You are logged on as {username}"
     }
   },
   {
-    "namespace": "loginLogout",
+    "namespace": "login",
     "language": "de",
     "resources": {
       "logon": "Anmelden",
-      "logoff": "Abmelden",
       "register": "Registrieren",
-      "logonState": "Sie sind angemeldet als <0>{username}</0>"
+      "logonState": "Sie sind angemeldet als {username}"
     }
   },
   {

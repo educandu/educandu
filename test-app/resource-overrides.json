@@ -1,13 +1,13 @@
 [
   {
-    "namespace": "loginLogout",
+    "namespace": "login",
     "language": "en",
     "resources": {
       "logonState": "G'day {username}"
     }
   },
   {
-    "namespace": "loginLogout",
+    "namespace": "login",
     "language": "de",
     "resources": {
       "logon": "Reinspaziert"

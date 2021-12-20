@@ -1,10 +1,10 @@
+import Login from './login.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import urls from '../utils/urls.js';
 import { Alert, Button } from 'antd';
 import React, { useState } from 'react';
 import Restricted from './restricted.js';
-import LoginLogout from './login-logout.js';
 import LinkPopover from './link-popover.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
@@ -150,8 +150,8 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
             {headerActionComponents}
           </div>
           <div className="DefaultPageTemplate-headerContent DefaultPageTemplate-headerContent--right">
-            <div className="DefaultPageTemplate-loginLogoutButton">
-              <LoginLogout />
+            <div className="DefaultPageTemplate-loginButton">
+              <Login />
             </div>
             <LinkPopover items={pageMenuItems} trigger="hover" placement="bottomRight">
               <Button className="DefaultPageTemplate-headerButton" icon={<MenuOutlined />} />
