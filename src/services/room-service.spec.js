@@ -1,4 +1,3 @@
-import { afterAll } from '@jest/globals';
 import RoomService from './room-service.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment } from '../test-helper.js';
