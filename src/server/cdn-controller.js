@@ -1,7 +1,6 @@
 import os from 'os';
 import multer from 'multer';
 import express from 'express';
-import urls from '../utils/urls.js';
 import parseBool from 'parseboolean';
 import Cdn from '../repositories/cdn.js';
 import createHttpError from 'http-errors';
@@ -41,9 +40,8 @@ class CdnController {
     router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)], async (req, res) => {
       if (req.files && req.files.length) {
         const uploads = req.files.map(async file => {
-          const fileName = req.body.prefix ? urls.concatParts(req.body.prefix, file.originalname) : file.originalname;
-          const uniqueFileName = fileNameHelper.makeUnique(fileName);
-          await this.cdn.uploadObject(uniqueFileName, file.path, {});
+          const cdnFileName = fileNameHelper.buildCdnFileName(file.originalname, req.body.prefix);
+          await this.cdn.uploadObject(cdnFileName, file.path, {});
         });
         await Promise.all(uploads);
       } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
