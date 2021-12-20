@@ -15,7 +15,7 @@ const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
 const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
 const MANAGE_EXPORT = 'manage-export';
-const CREATE_ROOMS = 'manage-rooms';
+const CREATE_ROOMS = 'create-rooms';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
