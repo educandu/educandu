@@ -1,6 +1,7 @@
+import { afterAll } from '@jest/globals';
 import RoomService from './room-service.js';
-import { setupTestEnvironment } from '../test-helper.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { destroyTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
 describe('room-service', () => {
   let sut;
@@ -10,6 +11,10 @@ describe('room-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     sut = container.get(RoomService);
+  });
+
+  afterAll(async () => {
+    await destroyTestEnvironment(container);
   });
 
   describe('createRoom', () => {
