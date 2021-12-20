@@ -89,20 +89,20 @@ describe('roomsSchema', () => {
 describe('roomInvitationSchema', () => {
   describe('when body contains correct data', () => {
     it('should pass validation', () => {
-      expect(() => validate({ roomId: 'abc', userId: 'def' }, roomInvitationSchema)).not.toThrow();
+      expect(() => validate({ roomId: 'abc', email: 'x@y.com' }, roomInvitationSchema)).not.toThrow();
     });
   });
 
   describe('wnen the room has incomplete data', () => {
     describe('when the room id is missing', () => {
       it('should throw', () => {
-        expect(() => validate({ userId: '1', roomId: '' }, roomSchema)).toThrow();
+        expect(() => validate({ email: 'x@y.com', roomId: '' }, roomSchema)).toThrow();
       });
     });
 
     describe('when the user id is missing', () => {
       it('should throw', () => {
-        expect(() => validate({ userId: '', roomId: 'my room' }, roomSchema)).toThrow();
+        expect(() => validate({ email: '', roomId: 'my room' }, roomSchema)).toThrow();
       });
     });
 

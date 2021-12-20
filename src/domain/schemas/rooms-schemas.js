@@ -9,5 +9,5 @@ export const roomSchema = joi.object({
 
 export const roomInvitationSchema = joi.object({
   roomId: joi.string().required(),
-  userId: joi.string().required()
+  email: joi.string().required()
 });
