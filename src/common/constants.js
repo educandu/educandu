@@ -33,3 +33,8 @@ export const DOCUMENT_TYPE = {
   document: 'document',
   permalinkedRevision: 'permalinked-revision'
 };
+
+export const ROOM_ACCESS_LEVEL = {
+  public: 'public',
+  private: 'private'
+};
