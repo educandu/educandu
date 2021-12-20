@@ -46,11 +46,11 @@ function MySpace({ PageTemplate }) {
 
         <h1>{t('pageNames:mySpace')}</h1>
         <Tabs className="MySpacePage-tabs" defaultActiveKey="1" type="card" size="large">
-          <TabPane className="MySpacePage-tab" tab={t('accountTabTitle')} key="1">
-            <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
-          </TabPane>
-          <TabPane className="MySpacePage-tab" tab={t('profileTabTitle')} key="2">
+          <TabPane className="MySpacePage-tab" tab={t('profileTabTitle')} key="1">
             <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
+          </TabPane>
+          <TabPane className="MySpacePage-tab" tab={t('accountTabTitle')} key="2">
+            <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
         </Tabs>
 
