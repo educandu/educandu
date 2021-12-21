@@ -2,11 +2,13 @@ import express from 'express';
 import urls from '../utils/urls.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
-import ServerConfig from '../bootstrap/server-config.js';
 import MailService from '../services/mail-service.js';
 import requestHelper from '../utils/request-helper.js';
+import ServerConfig from '../bootstrap/server-config.js';
+import { FEATURE_TOGGLES } from '../common/constants.js';
 import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { postRoomBodySchema, postRoomInvitationBodySchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
 
