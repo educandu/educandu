@@ -127,8 +127,7 @@
     "resources": {
       "importType": "Import type",
       "title": "Title",
-      "language": "Language",
-      "updatedOn": "Update date"
+      "language": "Language"
     }
   },
   {
@@ -137,8 +136,7 @@
     "resources": {
       "importType": "Import-Typ",
       "title": "Titel",
-      "language": "Sprache",
-      "updatedOn": "Update-Datum"
+      "language": "Sprache"
     }
   },
   {
@@ -346,13 +344,11 @@
     "language": "en",
     "resources": {
       "defaultDocumentTitle": "New document",
-      "email": "Email",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "title": "Title",
       "language": "Language",
       "slug": "URL path",
-      "updateDate": "Update date",
       "user": "User info",
       "actions": "Actions",
       "clone": "Clone",
@@ -369,13 +365,11 @@
     "language": "de",
     "resources": {
       "defaultDocumentTitle": "Neues Dokument",
-      "email": "E-Mail",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
       "title": "Titel",
       "language": "Sprache",
       "slug": "URL-Pfad",
-      "updateDate": "Update-Datum",
       "user": "User-Info",
       "actions": "Aktionen",
       "clone": "Klonen",
@@ -430,9 +424,6 @@
       "taskStatusDone": "Done",
       "taskStatusFailed": "Failed",
       "taskStatusDoneWithWarnings": "Done (with warnings)",
-      "createdOn": "Created on",
-      "completedOn": "Completed on",
-      "createdBy": "Created by",
       "batchStatus": "Batch status",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
@@ -457,9 +448,6 @@
       "taskStatusDone": "Abgeschlossen",
       "taskStatusFailed": "Fehler",
       "taskStatusDoneWithWarnings": "Abgeschlossen (mit Warnungen)",
-      "createdOn": "Erstellt am",
-      "completedOn": "Abgeschlossen am",
-      "createdBy": "Erstellt von",
       "batchStatus": "Chargenstatus",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Abgeschlossen",
@@ -485,9 +473,6 @@
       "batchStatusProcessing": "{progress, number, percent} completed",
       "viewBatch": "View batch",
       "batchTypeImportDocument": "Document import",
-      "createdOn": "Created on",
-      "completedOn": "Completed on",
-      "createdBy": "Created by",
       "createImport": "Create import",
       "importsHeaderPrefix": "Source",
       "noImportSourcesConfigured": "No import sources configured"
@@ -505,9 +490,6 @@
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "viewBatch": "Chargen ansehen",
       "batchTypeImportDocument": "Dokumentenimport",
-      "createdOn": "Erstellt am",
-      "completedOn": "Abgeschlossen am",
-      "createdBy": "Erstellt von",
       "createImport": "Import erstellen",
       "importsHeaderPrefix": "Quelle",
       "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
@@ -559,16 +541,18 @@
     "namespace": "mySpace",
     "language": "en",
     "resources": {
+      "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
-      "profileTabTitle": "Profile"
+      "roomsTabTitle": "Rooms"
     }
   },
   {
     "namespace": "mySpace",
     "language": "de",
     "resources": {
+      "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
-      "profileTabTitle": "Profil"
+      "roomsTabTitle": "Räume"
     }
   },
   {
@@ -624,7 +608,6 @@
     "language": "en",
     "resources": {
       "title": "Title",
-      "updateDate": "Update date",
       "tags": "Tags",
       "refineSearch": "Filter by tags",
       "searchResultPrefix": "Results for",
@@ -636,7 +619,6 @@
     "language": "de",
     "resources": {
       "title": "Titel",
-      "updateDate": "Update-Datum",
       "tags": "Tags",
       "refineSearch": "Nach Tags filtern",
       "searchResultPrefix": "Ergebnisse für",
@@ -672,7 +654,6 @@
     "language": "en",
     "resources": {
       "username": "Username",
-      "email": "Email",
       "expires": "Expires",
       "lockedOut": "Locked Out",
       "roles": "Roles",
@@ -694,7 +675,6 @@
     "language": "de",
     "resources": {
       "username": "Benutzername",
-      "email": "E-Mail",
       "expires": "Verfallsdatum",
       "lockedOut": "Ausgesperrt",
       "roles": "Rollen",
@@ -797,6 +777,32 @@
       "action": "Aktion",
       "moreActions": "Weitere Aktionen",
       "uploadFiles": "Dateien hochladen"
+    }
+  },
+  {
+    "namespace": "roomsTab",
+    "language": "en",
+    "resources": {
+      "ownedRoomsHeader": "Your rooms",
+      "joinedRoomsHeader": "Rooms you are a member of",
+      "accessType_public": "public",
+      "accessType_private": "private",
+      "name": "Name",
+      "access": "Access",
+      "joinedOn": "Joined on"
+    }
+  },
+  {
+    "namespace": "roomsTab",
+    "language": "de",
+    "resources": {
+      "ownedRoomsHeader": "Deine Räume",
+      "joinedRoomsHeader": "Räume in denen du Mitglied bist",
+      "accessType_public": "öffentlich",
+      "accessType_private": "privat",
+      "name": "Name",
+      "access": "Zugang",
+      "joinedOn": "Eingetreten am"
     }
   },
   {
@@ -1362,7 +1368,13 @@
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
       "accept": "Accept",
-      "logoff": "Log off"
+      "logoff": "Log off",
+      "createdOn": "Created on",
+      "completedOn": "Completed on",
+      "createdBy": "Created by",
+      "updatedOn": "Update date",
+      "owner": "Owner",
+      "email": "Email"
     }
   },
   {
@@ -1392,7 +1404,13 @@
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
       "accept": "Akzeptieren",
-      "logoff": "Abmelden"
+      "logoff": "Abmelden",
+      "createdOn": "Erstellt am",
+      "completedOn": "Abgeschlossen am",
+      "createdBy": "Erstellt von",
+      "updatedOn": "Update-Datum",
+      "owner": "Eigentümer",
+      "email": "E-Mail"
     }
   },
   {

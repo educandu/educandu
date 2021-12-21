@@ -69,7 +69,7 @@ class Users extends React.Component {
         sorter: firstBy('username'),
         render: this.renderUsername
       }, {
-        title: () => this.props.t('email'),
+        title: () => this.props.t('common:email'),
         dataIndex: 'email',
         key: 'email',
         sorter: firstBy('email')

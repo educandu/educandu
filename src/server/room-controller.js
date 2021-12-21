@@ -2,20 +2,21 @@ import express from 'express';
 import urls from '../utils/urls.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import MailService from '../services/mail-service.js';
 import requestHelper from '../utils/request-helper.js';
 import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { postRoomBodySchema, postRoomInvitationBodySchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
 
 export default class RoomController {
-  static get inject() { return [RoomService, MailService]; }
+  static get inject() { return [RoomService, MailService, ServerConfig]; }
 
-  constructor(roomService, mailService) {
+  constructor(roomService, mailService, serverConfig) {
     this.roomService = roomService;
     this.mailService = mailService;
+    this.serverConfig = serverConfig;
   }
 
   async handlePostRoom(req, res) {
@@ -38,6 +39,10 @@ export default class RoomController {
   }
 
   registerApi(router) {
+    if (this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
+      return;
+    }
+
     router.post(
       '/api/v1/rooms',
       [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomBodySchema)],

@@ -1,9 +1,6 @@
 username:
   en: Username
   de: Benutzername
-email:
-  en: Email
-  de: E-Mail
 expires:
   en: Expires
   de: Verfallsdatum

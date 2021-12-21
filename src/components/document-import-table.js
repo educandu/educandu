@@ -77,7 +77,7 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
       shouldCellUpdate: (record, prevRecord) => record.language !== prevRecord.language || record.languageLocalized !== prevRecord.languageLocalized
     },
     {
-      title: t('updatedOn'),
+      title: t('common:updatedOn'),
       key: 'updatedOn',
       width: '200px',
       sorter: by(x => x.updatedOn),
