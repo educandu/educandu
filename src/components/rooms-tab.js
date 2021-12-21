@@ -60,7 +60,7 @@ function RoomsTab() {
 
   const renderOwner = owner => {
     return owner.email
-      ? <span>{owner.username} | <a href={`mailto:${owner.email}`}>{t('owner')}</a></span>
+      ? <span>{owner.username} | <a href={`mailto:${owner.email}`}>{t('common:email')}</a></span>
       : <span>{owner.username}</span>;
   };
 
@@ -108,7 +108,7 @@ function RoomsTab() {
       sorter: by(x => x.name)
     },
     {
-      title: t('owner'),
+      title: t('common:owner'),
       dataIndex: 'owner',
       key: 'owner',
       render: renderOwner,

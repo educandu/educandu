@@ -82,3 +82,9 @@ createdBy:
 updatedOn:
   en: Update date
   de: Update-Datum
+owner:
+  en: Owner
+  de: Eigentümer
+email:
+  en: Email
+  de: E-Mail

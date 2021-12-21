@@ -344,7 +344,6 @@
     "language": "en",
     "resources": {
       "defaultDocumentTitle": "New document",
-      "email": "Email",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "title": "Title",
@@ -366,7 +365,6 @@
     "language": "de",
     "resources": {
       "defaultDocumentTitle": "Neues Dokument",
-      "email": "E-Mail",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
       "title": "Titel",
@@ -656,7 +654,6 @@
     "language": "en",
     "resources": {
       "username": "Username",
-      "email": "Email",
       "expires": "Expires",
       "lockedOut": "Locked Out",
       "roles": "Roles",
@@ -678,7 +675,6 @@
     "language": "de",
     "resources": {
       "username": "Benutzername",
-      "email": "E-Mail",
       "expires": "Verfallsdatum",
       "lockedOut": "Ausgesperrt",
       "roles": "Rollen",
@@ -793,8 +789,7 @@
       "accessType_private": "private",
       "name": "Name",
       "access": "Access",
-      "joinedOn": "Joined on",
-      "owner": "Owner"
+      "joinedOn": "Joined on"
     }
   },
   {
@@ -807,8 +802,7 @@
       "accessType_private": "privat",
       "name": "Name",
       "access": "Zugang",
-      "joinedOn": "Eingetreten am",
-      "owner": "Besitzer"
+      "joinedOn": "Eingetreten am"
     }
   },
   {
@@ -1378,7 +1372,9 @@
       "createdOn": "Created on",
       "completedOn": "Completed on",
       "createdBy": "Created by",
-      "updatedOn": "Update date"
+      "updatedOn": "Update date",
+      "owner": "Owner",
+      "email": "Email"
     }
   },
   {
@@ -1412,7 +1408,9 @@
       "createdOn": "Erstellt am",
       "completedOn": "Abgeschlossen am",
       "createdBy": "Erstellt von",
-      "updatedOn": "Update-Datum"
+      "updatedOn": "Update-Datum",
+      "owner": "Eigentümer",
+      "email": "E-Mail"
     }
   },
   {

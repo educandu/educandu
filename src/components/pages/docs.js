@@ -212,7 +212,7 @@ class Docs extends React.Component {
   renderUpdatedBy(_user, doc) {
     const { t } = this.props;
     return doc.updatedBy.email
-      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>{t('email')}</a></span>
+      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>{t('common:email')}</a></span>
       : <span>{doc.updatedBy.username}</span>;
   }
 
