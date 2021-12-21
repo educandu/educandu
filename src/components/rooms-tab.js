@@ -8,14 +8,14 @@ import { useDateFormat } from './language-context.js';
 const fakeGetRoomUrl = roomId => `/rooms/${roomId}`;
 const getOwnedRooms = user => [
   {
-    key: 'dsadasdsa',
+    _id: '_room1.1',
     name: 'Room 1',
     createdOn: new Date().toISOString(),
     access: 'public',
     owner: user
   }, {
+    _id: '_room1.2',
     name: 'Room 2',
-    key: 'dsfdsdsf',
     createdOn: new Date().toISOString(),
     access: 'private',
     owner: user
@@ -24,7 +24,7 @@ const getOwnedRooms = user => [
 
 const getMembershipRooms = user => [
   {
-    key: 'dsadasdsa',
+    _id: '_room2.1',
     name: 'Room 1',
     createdOn: new Date().toISOString(),
     access: 'public',
@@ -34,8 +34,8 @@ const getMembershipRooms = user => [
     },
     members: [{ userId: user._id, joinedOn: new Date().toISOString() }]
   }, {
+    _id: '_room2.2',
     name: 'Room 2',
-    key: 'dsfdsdsf',
     createdOn: new Date().toISOString(),
     access: 'private',
     owner: {
@@ -50,27 +50,26 @@ function RoomsTab() {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomsTab');
 
-  const renderName = (_value, room) => {
-    return <a href={fakeGetRoomUrl(room._id)}>{room.name}</a>;
+  const renderName = (name, room) => {
+    return <a href={fakeGetRoomUrl(room._id)}>{name}</a>;
   };
 
-  const renderCreatedOn = (_value, room) => {
-    return <span>{formatDate(room.createdOn)}</span>;
+  const renderCreatedOn = createdOn => {
+    return <span>{formatDate(createdOn)}</span>;
   };
 
-  const renderOwner = (_value, room) => {
-    return room.owner.email
-      ? <span>{room.owner.username} | <a href={`mailto:${room.owner.email}`}>{t('email')}</a></span>
-      : <span>{room.owner.username}</span>;
+  const renderOwner = owner => {
+    return owner.email
+      ? <span>{owner.username} | <a href={`mailto:${owner.email}`}>{t('email')}</a></span>
+      : <span>{owner.username}</span>;
   };
 
-  const renderJoinedOn = (_value, room) => {
-    const userAsMember = room.members.find(member => member.userId === user._id);
-    return <span>{formatDate(userAsMember.joinedOn)}</span>;
+  const renderJoinedOn = joinedOn => {
+    return <span>{formatDate(joinedOn)}</span>;
   };
 
-  const renderAccess = (_value, room) => {
-    return <span>{t(`accessType_${room.access}`)}</span>;
+  const renderAccess = access => {
+    return <span>{t(`accessType_${access}`)}</span>;
   };
 
   const ownedRoomsColumns = [
@@ -113,7 +112,6 @@ function RoomsTab() {
       dataIndex: 'owner',
       key: 'owner',
       render: renderOwner,
-      defaultSortOrder: 'descend',
       sorter: by(x => x.owner),
       width: '200px'
     },
@@ -136,15 +134,35 @@ function RoomsTab() {
     }
   ];
 
+  const ownerRoomsRows = getOwnedRooms(user).map(room => ({
+    key: room._id,
+    name: room.name,
+    createdOn: room.createdOn,
+    access: room.access
+  }));
+
+  const membershipRoomsRows = getMembershipRooms(user).map(room => {
+    const userAsMember = room.members.find(member => member.userId === user._id);
+    const joinedOn = userAsMember.joinedOn;
+
+    return {
+      key: room._id,
+      name: room.name,
+      owner: room.owner,
+      joinedOn,
+      access: room.access
+    };
+  });
+
   return (
     <div className="RoomsTab">
       <section>
         <h2 className="RoomsTab-sectionHeader">{t('ownedRoomsHeader')}</h2>
-        <Table dataSource={getOwnedRooms(user)} columns={ownedRoomsColumns} size="middle" />
+        <Table dataSource={ownerRoomsRows} columns={ownedRoomsColumns} size="middle" />
       </section>
       <section>
         <h2 className="RoomsTab-sectionHeader">{t('joinedRoomsHeader')}</h2>
-        <Table dataSource={getMembershipRooms(user)} columns={membershipRoomsColumns} size="middle" />
+        <Table dataSource={membershipRoomsRows} columns={membershipRoomsColumns} size="middle" />
       </section>
     </div>
   );
