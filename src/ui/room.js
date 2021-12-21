@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Space, List } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useDateFormat } from '../language-context.js';
-import { roomShape } from '../../ui/default-prop-types.js';
+import { roomShape } from '../ui/default-prop-types.js';
+import { useDateFormat } from '../components/language-context.js';
 
 export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');

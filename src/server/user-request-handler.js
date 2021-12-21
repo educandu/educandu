@@ -41,10 +41,6 @@ class UserRequestHandler {
     return res.redirect(urls.getDefaultLogoutRedirectUrl());
   }
 
-  handleGetMySpacePage(req, res) {
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.mySpace, {});
-  }
-
   async handleGetCompletePasswordResetPage(req, res) {
     const resetRequest = await this.userService.getPasswordResetRequestById(req.params.passwordResetRequestId);
     const passwordResetRequestId = (resetRequest || {})._id;

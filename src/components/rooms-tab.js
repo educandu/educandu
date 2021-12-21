@@ -1,57 +1,20 @@
 import by from 'thenby';
 import React from 'react';
 import { Table } from 'antd';
+import PropTypes from 'prop-types';
+import urls from '../utils/urls.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './language-context.js';
+import { roomShape } from '../ui/default-prop-types.js';
 
-const fakeGetRoomUrl = roomId => `/rooms/${roomId}`;
-const getOwnedRooms = user => [
-  {
-    _id: '_room1.1',
-    name: 'Room 1',
-    createdOn: new Date().toISOString(),
-    access: 'public',
-    owner: user
-  }, {
-    _id: '_room1.2',
-    name: 'Room 2',
-    createdOn: new Date().toISOString(),
-    access: 'private',
-    owner: user
-  }
-];
-
-const getMembershipRooms = user => [
-  {
-    _id: '_room2.1',
-    name: 'Room 1',
-    createdOn: new Date().toISOString(),
-    access: 'public',
-    owner: {
-      username: 'user1',
-      email: 'user1@test.com'
-    },
-    members: [{ userId: user._id, joinedOn: new Date().toISOString() }]
-  }, {
-    _id: '_room2.2',
-    name: 'Room 2',
-    createdOn: new Date().toISOString(),
-    access: 'private',
-    owner: {
-      username: 'user2'
-    },
-    members: [{ userId: user._id, joinedOn: new Date().toISOString() }]
-  }
-];
-
-function RoomsTab() {
+function RoomsTab({ rooms }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomsTab');
 
   const renderName = (name, room) => {
-    return <a href={fakeGetRoomUrl(room._id)}>{name}</a>;
+    return <a href={urls.getRoomDetailsUrl(room._id)}>{name}</a>;
   };
 
   const renderCreatedOn = createdOn => {
@@ -71,6 +34,9 @@ function RoomsTab() {
   const renderAccess = access => {
     return <span>{t(`accessType_${access}`)}</span>;
   };
+
+  const ownedRooms = rooms.filter(room => room.owner._id === user._id);
+  const membershipRooms = rooms.filter(room => room.owner._id !== user._id);
 
   const ownedRoomsColumns = [
     {
@@ -134,18 +100,20 @@ function RoomsTab() {
     }
   ];
 
-  const ownerRoomsRows = getOwnedRooms(user).map(room => ({
+  const ownedRoomsRows = ownedRooms.map(room => ({
+    _id: room._id,
     key: room._id,
     name: room.name,
     createdOn: room.createdOn,
     access: room.access
   }));
 
-  const membershipRoomsRows = getMembershipRooms(user).map(room => {
+  const membershipRoomsRows = membershipRooms.map(room => {
     const userAsMember = room.members.find(member => member.userId === user._id);
     const joinedOn = userAsMember.joinedOn;
 
     return {
+      _id: room._id,
       key: room._id,
       name: room.name,
       owner: room.owner,
@@ -156,16 +124,24 @@ function RoomsTab() {
 
   return (
     <div className="RoomsTab">
-      <section>
-        <h2 className="RoomsTab-sectionHeader">{t('ownedRoomsHeader')}</h2>
-        <Table dataSource={ownerRoomsRows} columns={ownedRoomsColumns} size="middle" />
+      <section className="RoomsTab-section">
+        <h2>{t('ownedRoomsHeader')}</h2>
+        <Table dataSource={ownedRoomsRows} columns={ownedRoomsColumns} size="middle" />
       </section>
-      <section>
-        <h2 className="RoomsTab-sectionHeader">{t('joinedRoomsHeader')}</h2>
+      <section className="RoomsTab-section">
+        <h2>{t('joinedRoomsHeader')}</h2>
         <Table dataSource={membershipRoomsRows} columns={membershipRoomsColumns} size="middle" />
       </section>
     </div>
   );
 }
+
+RoomsTab.defaultProps = {
+  rooms: []
+};
+
+RoomsTab.propTypes = {
+  rooms: PropTypes.arrayOf(roomShape)
+};
 
 export default RoomsTab;

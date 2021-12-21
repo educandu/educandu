@@ -231,17 +231,22 @@ export const importBatchDetailsShape = PropTypes.shape({
   tasks: PropTypes.arrayOf(importTaskShape)
 });
 
-export const roomMemberShape = PropTypes.shape({
-  userId: PropTypes.string.isRequired,
-  joinedOn: PropTypes.string.isRequired
+export const roomOwnerShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
+  email: PropTypes.string
 });
 
-export const roomDetailsShape = PropTypes.shape({
+export const roomMemberShape = PropTypes.shape({
+  userId: PropTypes.string.isRequired,
+  joinedOn: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired
+});
+
+export const roomShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  owner: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired
-  }),
+  owner: roomOwnerShape.isRequired,
   members: PropTypes.arrayOf(roomMemberShape),
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired
 });

@@ -12,8 +12,9 @@ export const resetPasswordPath = '/reset-password';
 export const searchPath = '/search';
 
 export const docsPrefix = '/docs/';
-export const editDocPrefix = '/edit/doc/';
 export const revisionPrefix = '/revs/';
+export const editDocPrefix = '/edit/doc/';
+export const roomDetailsPrefix = '/rooms/';
 export const pluginApiPathPrefix = '/plugins/';
 export const completeRegistrationPrefix = '/complete-registration/';
 export const completePasswordResetPrefix = '/complete-password-reset/';
@@ -144,6 +145,10 @@ export function getImportDetailsUrl(batchId) {
   return concatParts(importBatchesPath, batchId);
 }
 
+export function getRoomDetailsUrl(roomId) {
+  return concatParts(roomDetailsPrefix, encodeURIComponent(roomId));
+}
+
 export default {
   homePath,
   docsPath,
@@ -184,5 +189,6 @@ export default {
   getResetPasswordUrl,
   createFullyQualifiedUrl,
   getSearchUrl,
-  getBatchUrl
+  getBatchUrl,
+  getRoomDetailsUrl
 };

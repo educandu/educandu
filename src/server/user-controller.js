@@ -95,8 +95,6 @@ class UserController {
 
     router.get('/logout', (req, res) => this.userRequestHandler.handleGetLogoutPage(req, res));
 
-    router.get('/my-space', needsAuthentication(), (req, res) => this.userRequestHandler.handleGetMySpacePage(req, res));
-
     router.get('/complete-password-reset/:passwordResetRequestId', (req, res) => this.userRequestHandler.handleGetCompletePasswordResetPage(req, res));
 
     router.get('/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.userRequestHandler.handleGetUsersPage(req, res));

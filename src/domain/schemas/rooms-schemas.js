@@ -4,7 +4,7 @@ import { ROOM_ACCESS_LEVEL } from '../../common/constants.js';
 
 export const postRoomBodySchema = joi.object({
   name: joi.string().required(),
-  access: joi.string().valid(ROOM_ACCESS_LEVEL.private, ROOM_ACCESS_LEVEL.public).required()
+  access: joi.string().valid(...Object.values(ROOM_ACCESS_LEVEL)).required()
 });
 
 export const postRoomInvitationBodySchema = joi.object({
@@ -12,7 +12,7 @@ export const postRoomInvitationBodySchema = joi.object({
   email: joi.string().required()
 });
 
-export const roomDetailsParamSchema = joi.object({
+export const getRoomDetailsParamSchema = joi.object({
   roomId: joi.string().required()
 });
 

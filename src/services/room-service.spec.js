@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
@@ -8,14 +9,18 @@ import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, set
 const { BadRequest, NotFound } = httpErrors;
 
 describe('room-service', () => {
+  let sut;
   let myUser;
   let otherUser;
   let roomStore;
   let container;
-  let sut;
+
+  const now = new Date();
+  const sandbox = sinon.createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
+
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
     roomStore = container.get(RoomStore);
@@ -30,10 +35,72 @@ describe('room-service', () => {
     await pruneTestEnvironment(container);
   });
 
+  describe('getRooms', () => {
+    const testCases = [
+      {
+        args: {},
+        expectedFilter: {}
+      },
+      {
+        args: { ownerId: '_ownerId' },
+        expectedFilter: { owner: '_ownerId' }
+      },
+      {
+        args: { memberId: '_memberId' },
+        expectedFilter: { members: { $elemMatch: { userId: '_memberId' } } }
+      },
+      {
+        args: { access: 'public' },
+        expectedFilter: { access: 'public' }
+      },
+      {
+        args: { ownerId: '_ownerId', memberId: '_memberId' },
+        expectedFilter: { $or: [{ owner: '_ownerId' }, { members: { $elemMatch: { userId: '_memberId' } } }] }
+      },
+      {
+        args: { ownerId: '_ownerId', access: 'public' },
+        expectedFilter: { $and: [{ owner: '_ownerId' }, { access: 'public' }] }
+      },
+      {
+        args: { ownerId: '_ownerId', memberId: '_memberId', access: 'private' },
+        expectedFilter: { $and: [
+          { $or: [{ owner: '_ownerId' }, { members: { $elemMatch: { userId: '_memberId' } } }] },
+          { access: 'private' }
+        ] }
+      }
+    ];
+
+    beforeEach(() => {
+      sandbox.spy(roomStore, 'find');
+      sandbox.useFakeTimers(now);
+    });
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    testCases.forEach(({ args, expectedFilter }) => {
+      describe(`when called with aguments ${JSON.stringify(args)}`, () => {
+        beforeEach(() => {
+          return sut.getRooms(args);
+        });
+
+        it(`should call the store with filter ${JSON.stringify(expectedFilter)}`, () => {
+          sinon.assert.calledWith(roomStore.find, expectedFilter);
+        });
+      });
+    });
+  });
+
   describe('createRoom', () => {
     let createdRoom;
     beforeEach(async () => {
+      sandbox.useFakeTimers(now);
       createdRoom = await sut.createRoom({ name: 'my room', access: ROOM_ACCESS_LEVEL.public, user: myUser });
+    });
+
+    afterEach(() => {
+      sandbox.restore();
     });
 
     it('should create a room', () => {
@@ -42,6 +109,8 @@ describe('room-service', () => {
         name: 'my room',
         owner: myUser._id,
         access: ROOM_ACCESS_LEVEL.public,
+        createdOn: now,
+        createdBy: myUser._id,
         members: []
       });
     });

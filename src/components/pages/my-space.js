@@ -11,13 +11,16 @@ import { usePageName } from '../page-name-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import { FEATURE_TOGGLES } from '../../common/constants.js';
+import { roomShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
-function MySpace({ PageTemplate }) {
+function MySpace({ initialState, PageTemplate }) {
   const user = useUser();
   const pageName = usePageName();
   const { t } = useTranslation('mySpace');
   const clientConfig = useService(ClientConfig);
+
+  const { rooms } = initialState;
 
   const formItemLayout = {
     labelCol: {
@@ -60,7 +63,7 @@ function MySpace({ PageTemplate }) {
           </TabPane>
           { isRoomsTabEnabled && (
             <TabPane className="MySpacePage-tab" tab={t('roomsTabTitle')} key="3">
-              <RoomsTab />
+              <RoomsTab rooms={rooms} />
             </TabPane>)}
         </Tabs>
 
@@ -70,7 +73,10 @@ function MySpace({ PageTemplate }) {
 }
 
 MySpace.propTypes = {
-  PageTemplate: PropTypes.func.isRequired
+  PageTemplate: PropTypes.func.isRequired,
+  initialState: PropTypes.shape({
+    rooms: PropTypes.arrayOf(roomShape)
+  }).isRequired
 };
 
 export default MySpace;
