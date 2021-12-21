@@ -48,6 +48,19 @@ export default class RoomController {
     res.status(201).send(invitation);
   }
 
+  async handleGetRoomDetails(req, res) {
+    const { roomId } = req.params;
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    const roomDetails = await this.clientDataMapper.mapRoomDetails(room);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
+  }
+
   registerApi(router) {
     if (this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
       return;
@@ -67,17 +80,6 @@ export default class RoomController {
   }
 
   registerPages(router) {
-    router.get('/rooms/:roomId', [needsPermission(permissions.VIEW_ROOMS), validateParams(roomDetailsParamSchema)], async (req, res) => {
-      const { roomId } = req.params;
-      const room = await this.roomService.getRoomById(roomId);
-
-      if (!room) {
-        throw new NotFound();
-      }
-
-      const roomDetails = await this.clientDataMapper.mapRoomDetails(room);
-
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
-    });
+    router.get('/rooms/:roomId', [needsPermission(permissions.VIEW_ROOMS), validateParams(roomDetailsParamSchema)], (req, res) => this.handleGetRoomDetails(req, res));
   }
 }
