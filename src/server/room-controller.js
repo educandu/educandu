@@ -45,8 +45,8 @@ export default class RoomController {
     );
 
     router.post(
-      '/api/v1/room-invites',
-      [needsPermission(permissions.EDIT_DOC), jsonParser, validateBody(postRoomInvitationBodySchema)],
+      '/api/v1/room-invitations',
+      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
       (req, res) => this.handlePostRoomInvitation(req, res)
     );
   }
