@@ -60,7 +60,7 @@ function RoomsTab() {
 
   const renderOwner = owner => {
     return owner.email
-      ? <span>{owner.username} | <a href={`mailto:${owner.email}`}>{t('email')}</a></span>
+      ? <span>{owner.username} | <a href={`mailto:${owner.email}`}>{t('owner')}</a></span>
       : <span>{owner.username}</span>;
   };
 
