@@ -53,16 +53,16 @@ function ImportBatches({ initialState, PageTemplate }) {
     return <span>{t('batchStatusProcessing', { progress: batch.progress })}</span>;
   };
 
-  const renderDate = doc => <span>{formatDate(doc)}</span>;
+  const renderDate = date => <span>{formatDate(date)}</span>;
 
   const renderUser = user => <span>{user.username}</span>;
 
   const columns = [
     { title: t('batchId'), key: '_id', dataIndex: '_id', width: '150px', render: renderId },
     { title: t('batchStatus'), width: '150px', render: renderStatus },
-    { title: t('createdOn'), width: '150px', dataIndex: 'createdOn', render: renderDate },
-    { title: t('completedOn'), width: '150px', dataIndex: 'completedOn', render: renderDate },
-    { title: t('createdBy'), width: '150px', dataIndex: 'createdBy', render: renderUser }
+    { title: t('common:createdOn'), width: '150px', dataIndex: 'createdOn', render: renderDate },
+    { title: t('common:completedOn'), width: '150px', dataIndex: 'completedOn', render: renderDate },
+    { title: t('common:createdBy'), width: '150px', dataIndex: 'createdBy', render: renderUser }
   ];
 
   const getExtra = source => {

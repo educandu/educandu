@@ -22,15 +22,6 @@ viewBatch:
 batchTypeImportDocument:
   en: Document import
   de: Dokumentenimport
-createdOn:
-  en: Created on
-  de: Erstellt am
-completedOn:
-  en: Completed on
-  de: Abgeschlossen am
-createdBy:
-  en: Created by
-  de: Erstellt von
 createImport:
   en: Create import
   de: Import erstellen

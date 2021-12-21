@@ -70,3 +70,21 @@ accept:
 logoff:
   en: Log off
   de: Abmelden
+createdOn:
+  en: Created on
+  de: Erstellt am
+completedOn:
+  en: Completed on
+  de: Abgeschlossen am
+createdBy:
+  en: Created by
+  de: Erstellt von
+updatedOn:
+  en: Update date
+  de: Update-Datum
+owner:
+  en: Owner
+  de: Eigentümer
+email:
+  en: Email
+  de: E-Mail
