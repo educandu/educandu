@@ -5,7 +5,7 @@ import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 
 export default class RoomController {
-  static get indeject() { return [RoomService]; }
+  static get inject() { return [RoomService]; }
 
   constructor(roomService) {
     this.roomService = roomService;
