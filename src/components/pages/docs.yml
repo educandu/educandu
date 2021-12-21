@@ -19,9 +19,6 @@ language:
 slug:
   en: URL path
   de: URL-Pfad
-updateDate:
-  en: Update date
-  de: Update-Datum
 user:
   en: User info
   de: User-Info

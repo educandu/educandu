@@ -53,7 +53,7 @@ function ImportBatches({ initialState, PageTemplate }) {
     return <span>{t('batchStatusProcessing', { progress: batch.progress })}</span>;
   };
 
-  const renderDate = doc => <span>{formatDate(doc)}</span>;
+  const renderDate = date => <span>{formatDate(date)}</span>;
 
   const renderUser = user => <span>{user.username}</span>;
 

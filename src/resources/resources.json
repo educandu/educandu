@@ -127,8 +127,7 @@
     "resources": {
       "importType": "Import type",
       "title": "Title",
-      "language": "Language",
-      "updatedOn": "Update date"
+      "language": "Language"
     }
   },
   {
@@ -137,8 +136,7 @@
     "resources": {
       "importType": "Import-Typ",
       "title": "Titel",
-      "language": "Sprache",
-      "updatedOn": "Update-Datum"
+      "language": "Sprache"
     }
   },
   {
@@ -352,7 +350,6 @@
       "title": "Title",
       "language": "Language",
       "slug": "URL path",
-      "updateDate": "Update date",
       "user": "User info",
       "actions": "Actions",
       "clone": "Clone",
@@ -375,7 +372,6 @@
       "title": "Titel",
       "language": "Sprache",
       "slug": "URL-Pfad",
-      "updateDate": "Update-Datum",
       "user": "User-Info",
       "actions": "Aktionen",
       "clone": "Klonen",
@@ -614,7 +610,6 @@
     "language": "en",
     "resources": {
       "title": "Title",
-      "updateDate": "Update date",
       "tags": "Tags",
       "refineSearch": "Filter by tags",
       "searchResultPrefix": "Results for",
@@ -626,7 +621,6 @@
     "language": "de",
     "resources": {
       "title": "Titel",
-      "updateDate": "Update-Datum",
       "tags": "Tags",
       "refineSearch": "Nach Tags filtern",
       "searchResultPrefix": "Ergebnisse für",
@@ -1381,7 +1375,8 @@
       "logoff": "Log off",
       "createdOn": "Created on",
       "completedOn": "Completed on",
-      "createdBy": "Created by"
+      "createdBy": "Created by",
+      "updatedOn": "Update date"
     }
   },
   {
@@ -1414,7 +1409,8 @@
       "logoff": "Abmelden",
       "createdOn": "Erstellt am",
       "completedOn": "Abgeschlossen am",
-      "createdBy": "Erstellt von"
+      "createdBy": "Erstellt von",
+      "updatedOn": "Update-Datum"
     }
   },
   {
