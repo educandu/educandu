@@ -7,7 +7,7 @@ import Database from '../stores/database.js';
 import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { exportUser } from '../domain/built-in-users.js';
+import { cdnAutorizationUser, exportUser } from '../domain/built-in-users.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import UserRequestHandler from './user-request-handler.js';
 import { validateBody } from '../domain/validation-middleware.js';
@@ -57,6 +57,10 @@ class UserController {
     router.use(passport.authenticate('apikey', { session: false }));
 
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
+      if (apikey === this.serverConfig.cdnAuthorizationApiKey) {
+        return cb(null, cdnAutorizationUser);
+      }
+
       return apikey === this.serverConfig.exportApiKey
         ? cb(null, exportUser)
         : cb(null, false);
