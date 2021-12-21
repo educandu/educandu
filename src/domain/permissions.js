@@ -16,6 +16,7 @@ const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
 const MANAGE_EXPORT = 'manage-export';
 const CREATE_ROOMS = 'create-rooms';
+const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -57,5 +58,6 @@ export default {
   MANAGE_IMPORT,
   MANAGE_EXPORT,
   DELETE_CDN_FILE,
-  CREATE_ROOMS
+  CREATE_ROOMS,
+  AUTORIZE_ROOMS_RESOURCES
 };

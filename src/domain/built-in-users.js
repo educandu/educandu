@@ -7,3 +7,11 @@ export const exportUser = Object.freeze({
   roles: [],
   permissions: [permissions.MANAGE_EXPORT]
 });
+
+export const cdnAutorizationUser = Object.freeze({
+  _id: 'cdn-authorization-user',
+  username: 'cdn-authorization-user',
+  provider: 'builtin/cdnAuthorization',
+  roles: [],
+  permissions: [permissions.AUTORIZE_ROOMS_RESOURCES]
+});
