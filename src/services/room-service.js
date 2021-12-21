@@ -37,7 +37,11 @@ export default class RoomService {
 
   async findOwnedRoomById({ roomId, ownerId }) {
     const room = await this.roomStore.findOne({ _id: roomId });
-    return room?.owner === ownerId ? room : null;
+    if (room?.owner !== ownerId) {
+      throw new NotFound(`A room with ID '${roomId}' owned by '${ownerId}' could not be found`);
+    }
+
+    return room;
   }
 
   async createOrUpdateInvitation({ roomId, email, user }) {
@@ -45,10 +49,6 @@ export default class RoomService {
     const lowerCasedEmail = email.toLowerCase();
 
     const room = await this.findOwnedRoomById({ roomId, ownerId: user._id });
-    if (!room) {
-      throw new NotFound(`Room with ID '${roomId}' could not be found`);
-    }
-
     if (room.access === ROOM_ACCESS_LEVEL.public) {
       throw new BadRequest(`Room with ID '${roomId}' is public, therefore invitations cannot be sent`);
     }

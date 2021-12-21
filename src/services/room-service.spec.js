@@ -56,9 +56,10 @@ describe('room-service', () => {
       expect(room.name).toBe('my room');
     });
 
-    it('should not find rooms owned by other users', async () => {
-      const room = await sut.findOwnedRoomById({ roomId: otherRoom._id, ownerId: myUser._id });
-      expect(room).toBeNull();
+    it('should throw when trying to find rooms owned by other users', async () => {
+      await expect(async () => {
+        await sut.findOwnedRoomById({ roomId: otherRoom._id, ownerId: myUser._id });
+      }).rejects.toThrow(NotFound);
     });
   });
 
