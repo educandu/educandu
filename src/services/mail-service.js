@@ -51,7 +51,7 @@ class MailService {
     const germanText
       = `Hallo ${username}!\n\n`
       + 'Sie möchten Ihr Kennwort auf ELMU ändern?\n'
-      + `Zum Ändern Ihres Kennworts klicken Sie bitte hier: ${completionLink}`;
+      + `Zum Ändern Ihres Kennworts folgen Sie bitte diesem Link: ${completionLink}`;
 
     const germanHtml
       = `<p>Hallo ${username}!<br/><br/>`
@@ -61,7 +61,7 @@ class MailService {
     const englishText
       = `Hello ${username}!\n\n`
       + 'You want to change your password for ELMU?\n'
-      + `Please click here in order to change your password: ${completionLink}`;
+      + `Please follow this link in order to change your password: ${completionLink}`;
 
     const englishHtml
       = `<p>Hello ${username}!<br/><br/>`
@@ -71,7 +71,41 @@ class MailService {
     const message = {
       from: this.emailSenderAddress,
       to: email,
-      subject: 'Ihr Kennwort auf ELMU/ Your password for ELMU',
+      subject: 'Ihr Kennwort auf ELMU / Your password for ELMU',
+      text: `${germanText}\n\n${englishText}`,
+      html: `${germanHtml}\n${englishHtml}`
+    };
+
+    return this._sendMail(message);
+  }
+
+  sendRoomInvitation({ roomName, ownerName, email, invitationLink }) {
+    logger.info(`Creating email with room invitation link ${invitationLink}`);
+
+    const germanText
+      = 'Hallo!\n\n'
+      + `Der Benutzer ${ownerName} hat Sie in den Raum ${roomName} eingeladen.\n`
+      + `Um die Einladung zu bestätigen, folgen Sie bitte diesem Link: ${invitationLink}`;
+
+    const germanHtml
+      = '<p>Hallo!<br/><br/>'
+      + `Der Benutzer <b>${ownerName}</b> hat Sie in den Raum <b>${roomName}</b> eingeladen.<br/>`
+      + `Um die Einladung zu bestätigen, klicken Sie bitte hier: <a href="${invitationLink}">Raum beitreten</a>.</p>`;
+
+    const englishText
+      = 'Hello!\n\n'
+      + `User ${ownerName} has invited you to the room ${roomName}.\n`
+      + `Please follow this link in order to confirm the invitation: ${invitationLink}`;
+
+    const englishHtml
+      = '<p>Hello!<br/><br/>'
+      + `User <b>${ownerName}</b> has invited you to the room <b>${roomName}</b>.<br/>`
+      + `Please click here in order to confirm the invitation: <a href="${invitationLink}">Join room</a>.</p>`;
+
+    const message = {
+      from: this.emailSenderAddress,
+      to: email,
+      subject: `Sie wurden in den Raum ${roomName} eingeladen / You have been invited to room ${roomName}`,
       text: `${germanText}\n\n${englishText}`,
       html: `${germanHtml}\n${englishHtml}`
     };

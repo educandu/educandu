@@ -17,6 +17,7 @@ export const revisionPrefix = '/revs/';
 export const pluginApiPathPrefix = '/plugins/';
 export const completeRegistrationPrefix = '/complete-registration/';
 export const completePasswordResetPrefix = '/complete-password-reset/';
+export const confirmRoomMembershipPrefix = '/confirm-room-membership/';
 
 function removeTrailingSlash(path) {
   return String(path).replace(/\/*$/, '');
@@ -79,6 +80,10 @@ export function getCompleteRegistrationUrl(verificationCode) {
 
 export function getCompletePasswordResetUrl(passwordResetRequestId) {
   return concatParts(completePasswordResetPrefix, passwordResetRequestId);
+}
+
+export function getConfirmRoomMembershipUrl(token) {
+  return concatParts(confirmRoomMembershipPrefix, token);
 }
 
 export function getPluginApiPathPrefix(pluginType) {
@@ -152,6 +157,7 @@ export default {
   pluginApiPathPrefix,
   completeRegistrationPrefix,
   completePasswordResetPrefix,
+  confirmRoomMembershipPrefix,
   createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
@@ -166,6 +172,7 @@ export default {
   getCreateImportUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
+  getConfirmRoomMembershipUrl,
   getPluginApiPathPrefix,
   getDefaultLoginRedirectUrl,
   getDefaultLogoutRedirectUrl,
