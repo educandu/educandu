@@ -84,7 +84,7 @@ describe('room-service', () => {
       expect(updatedInvitation._id).toBe(originalInvitation._id);
       expect(updatedInvitation.token).not.toBe(originalInvitation.token);
       expect(updatedInvitation.sentOn).not.toBe(originalInvitation.sentOn);
-      expect(updatedInvitation.expires).not.toBe(originalInvitation.expires);
+      expect(updatedInvitation.expires.getTime()).toBeGreaterThan(originalInvitation.expires.getTime());
     });
 
     it('should throw a BadRequest error when the room is public', async () => {
