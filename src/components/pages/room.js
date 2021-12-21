@@ -19,27 +19,20 @@ export default function Room({ PageTemplate, initialState }) {
           <span> {roomDetails.owner.username}</span>
         </Space>
       </Row>
-      <Row>
-        <Space>
-          <span>{t('ownerEmail')}:</span>
-          <span>{roomDetails.owner.email}</span>
-        </Space>
-      </Row>
       <List
         dataSource={roomDetails.members}
         renderItem={member => (
           <List.Item>
             <Space>
-              <span>{t('memberUsername')}:</span>
-              <span>{member.username}</span>
-            </Space>
-            <Space>
-              <span>{t('memberEmail')}:</span>
-              <span>{member.email}</span>
-            </Space>
-            <Space>
-              <span>{t('joinedOn')}:</span>
-              <span>{formatDate(member.joinedOn)}</span>
+              <Space>
+                <span>{t('memberUsername')}:</span>
+                <span>{member.username}</span>
+              </Space>
+
+              <Space>
+                <span>{t('joinedOn')}:</span>
+                <span>{formatDate(member.joinedOn)}</span>
+              </Space>
             </Space>
           </List.Item>)}
         />
