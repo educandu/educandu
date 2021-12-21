@@ -1,11 +1,12 @@
+import Login from './login.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import urls from '../utils/urls.js';
 import { Alert, Button } from 'antd';
 import React, { useState } from 'react';
 import Restricted from './restricted.js';
-import LoginLogout from './login-logout.js';
 import LinkPopover from './link-popover.js';
+import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
@@ -16,15 +17,17 @@ import UiLanguageDialog from './ui-language-dialog.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import CookieConsentDrawer from './cookie-consent-drawer.js';
 import { ALERT_TYPE, FEATURE_TOGGLES } from '../common/constants.js';
-import { default as iconsNs, QuestionOutlined, MenuOutlined, HomeOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined, GlobalOutlined } from '@ant-design/icons';
+import { default as iconsNs, QuestionOutlined, MenuOutlined, LogoutOutlined, HomeOutlined, IdcardOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined, GlobalOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
 
 function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
+  const user = useUser();
   const settings = useSettings();
   const { language } = useLanguage();
   const { t } = useTranslation('page');
   const clientConfig = useService(ClientConfig);
+  const helpPage = settings?.helpPage?.[language];
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
 
   const handleUiLanguageDialogClose = () => {
@@ -65,59 +68,74 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
       href: urls.getHomeUrl(),
       text: t('pageNames:home'),
       icon: HomeOutlined,
-      permission: null
+      permission: null,
+      showWhen: true
+    },
+    {
+      key: 'my-space',
+      href: urls.getMySpaceUrl(),
+      text: t('pageNames:mySpace'),
+      icon: IdcardOutlined,
+      permission: null,
+      showWhen: !!user
     },
     {
       key: 'docs',
       href: urls.getDocsUrl(),
       text: t('pageNames:docs'),
       icon: FileOutlined,
-      permission: permissions.VIEW_DOCS
+      permission: permissions.VIEW_DOCS,
+      showWhen: true
     },
     {
       key: 'users',
       href: urls.getUsersUrl(),
       text: t('pageNames:users'),
       icon: UserOutlined,
-      permission: permissions.EDIT_USERS
+      permission: permissions.EDIT_USERS,
+      showWhen: true
     },
     {
       key: 'settings',
       href: urls.getSettingsUrl(),
       text: t('pageNames:settings'),
       icon: SettingOutlined,
-      permission: permissions.EDIT_SETTINGS
-    }
-  ];
-
-  if (!clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)) {
-    pageMenuItems.push({
+      permission: permissions.EDIT_SETTINGS,
+      showWhen: true
+    },
+    {
       key: 'import',
       href: urls.getImportsUrl(),
       text: t('pageNames:importBatches'),
       icon: ImportOutlined,
-      permission: permissions.MANAGE_IMPORT
-    });
-  }
-
-  if (settings?.helpPage?.[language]) {
-    const { documentKey, documentSlug } = settings.helpPage[language];
-    pageMenuItems.push({
+      permission: permissions.MANAGE_IMPORT,
+      showWhen: !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)
+    },
+    {
       key: 'help',
-      href: urls.getDocUrl(documentKey, documentSlug),
-      text: settings.helpPage[language].linkTitle,
+      href: helpPage ? urls.getDocUrl(helpPage.documentKey, helpPage.documentSlug) : '',
+      text: helpPage?.linkTitle,
       icon: QuestionOutlined,
-      permission: permissions.EDIT_SETTINGS
-    });
-  }
-
-  pageMenuItems.push({
-    key: 'language',
-    onClick: () => setIsUiLanguageDialogVisible(true),
-    text: t('common:language'),
-    icon: GlobalOutlined,
-    permission: null
-  });
+      permission: permissions.EDIT_SETTINGS,
+      showWhen: !!helpPage
+    },
+    {
+      key: 'language',
+      onClick: () => setIsUiLanguageDialogVisible(true),
+      text: t('common:language'),
+      icon: GlobalOutlined,
+      permission: null,
+      showWhen: true
+    },
+    {
+      key: 'logout',
+      href: urls.getLogoutUrl(),
+      text: t('common:logoff'),
+      icon: LogoutOutlined,
+      permission: null,
+      showWhen: !!user
+    }
+  ].filter(item => item.showWhen);
 
   return (
     <div className="DefaultPageTemplate">
@@ -132,8 +150,8 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
             {headerActionComponents}
           </div>
           <div className="DefaultPageTemplate-headerContent DefaultPageTemplate-headerContent--right">
-            <div className="DefaultPageTemplate-loginLogoutButton">
-              <LoginLogout />
+            <div className="DefaultPageTemplate-loginButton">
+              <Login />
             </div>
             <LinkPopover items={pageMenuItems} trigger="hover" placement="bottomRight">
               <Button className="DefaultPageTemplate-headerButton" icon={<MenuOutlined />} />

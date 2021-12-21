@@ -1,49 +1,34 @@
-account.headline:
-  en: Account
-  de: Konto
-account.resetPassword:
-  en: Reset password
-  de: Kennwort wiederherstellen
-account.updateSuccessMessage:
-  en: Your account was updated successfully.
-  de: Ihr Konto wurde erfolgreich aktualisiert.
-account.passwordResetEmailSent:
-  en: The password reset link has been sent to {email}
-  de: Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet
-profile.headline:
-  en: Profile
-  de: Profil
-profile.changePicture:
+changePicture:
   en: Change profile picture
   de: Profilbild ändern
-profile.howToChangePicture:
+howToChangePicture:
   en: How can I change my profile picture?
   de: Wie ändere ich mein Profilbild?
-profile.firstName:
+firstName:
   en: First name(s)
   de: Vorname(n)
-profile.lastName:
+lastName:
   en: Last name
   de: Nachname
-profile.street:
+street:
   en: Street
   de: Straße
-profile.streetSupplement:
+streetSupplement:
   en: Street supplement
   de: Straße (Zusatz)
-profile.postalCode:
+postalCode:
   en: Postal code
   de: Postleitzahl
-profile.city:
+city:
   en: City
   de: Ort
-profile.country:
+country:
   en: Country
   de: Land
-profile.updateSuccessMessage:
+updateSuccessMessage:
   en: Your profile was updated successfully.
   de: Ihr Profil wurde erfolgreich aktualisiert.
-profile.avatarDescription:
+avatarDescription:
   en: |
     ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.
     A Gravatar is a globally recognized avatar, which is linked to your email address.

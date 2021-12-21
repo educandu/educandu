@@ -8,7 +8,7 @@ import InsufficientProfileWarning, { isProfileInsufficient } from '../components
 export function getGlobalAlerts(pageName, user) {
   const globalAlerts = [];
 
-  if (user && isProfileInsufficient(user) && pageName !== PAGE_NAME.account) {
+  if (user && isProfileInsufficient(user) && pageName !== PAGE_NAME.mySpace) {
     globalAlerts.push({
       message: <InsufficientProfileWarning />,
       type: ALERT_TYPE.info

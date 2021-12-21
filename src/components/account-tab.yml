@@ -1,0 +1,9 @@
+resetPassword:
+  en: Reset password
+  de: Kennwort wiederherstellen
+updateSuccessMessage:
+  en: Your account was updated successfully.
+  de: Ihr Konto wurde erfolgreich aktualisiert.
+passwordResetEmailSent:
+  en: The password reset link has been sent to {email}
+  de: Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet

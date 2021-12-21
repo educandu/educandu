@@ -1,5 +1,23 @@
 [
   {
+    "namespace": "accountTab",
+    "language": "en",
+    "resources": {
+      "resetPassword": "Reset password",
+      "updateSuccessMessage": "Your account was updated successfully.",
+      "passwordResetEmailSent": "The password reset link has been sent to {email}"
+    }
+  },
+  {
+    "namespace": "accountTab",
+    "language": "de",
+    "resources": {
+      "resetPassword": "Kennwort wiederherstellen",
+      "updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
+      "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet"
+    }
+  },
+  {
     "namespace": "cdnFilePicker",
     "language": "en",
     "resources": {
@@ -202,24 +220,20 @@
     }
   },
   {
-    "namespace": "loginLogout",
+    "namespace": "login",
     "language": "en",
     "resources": {
       "logon": "Log on",
-      "logoff": "Log off",
       "register": "Register",
-      "account": "My account",
       "logonState": "You are logged on as <0>{username}</0>"
     }
   },
   {
-    "namespace": "loginLogout",
+    "namespace": "login",
     "language": "de",
     "resources": {
       "logon": "Anmelden",
-      "logoff": "Abmelden",
       "register": "Registrieren",
-      "account": "Mein Konto",
       "logonState": "Sie sind angemeldet als <0>{username}</0>"
     }
   },
@@ -235,50 +249,6 @@
     "language": "de",
     "resources": {
       "messageTitle": "Dieser Inhalt wird nicht unterstützt"
-    }
-  },
-  {
-    "namespace": "account",
-    "language": "en",
-    "resources": {
-      "account.headline": "Account",
-      "account.resetPassword": "Reset password",
-      "account.updateSuccessMessage": "Your account was updated successfully.",
-      "account.passwordResetEmailSent": "The password reset link has been sent to {email}",
-      "profile.headline": "Profile",
-      "profile.changePicture": "Change profile picture",
-      "profile.howToChangePicture": "How can I change my profile picture?",
-      "profile.firstName": "First name(s)",
-      "profile.lastName": "Last name",
-      "profile.street": "Street",
-      "profile.streetSupplement": "Street supplement",
-      "profile.postalCode": "Postal code",
-      "profile.city": "City",
-      "profile.country": "Country",
-      "profile.updateSuccessMessage": "Your profile was updated successfully.",
-      "profile.avatarDescription": "ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that ELMU has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
-    }
-  },
-  {
-    "namespace": "account",
-    "language": "de",
-    "resources": {
-      "account.headline": "Konto",
-      "account.resetPassword": "Kennwort wiederherstellen",
-      "account.updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
-      "account.passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
-      "profile.headline": "Profil",
-      "profile.changePicture": "Profilbild ändern",
-      "profile.howToChangePicture": "Wie ändere ich mein Profilbild?",
-      "profile.firstName": "Vorname(n)",
-      "profile.lastName": "Nachname",
-      "profile.street": "Straße",
-      "profile.streetSupplement": "Straße (Zusatz)",
-      "profile.postalCode": "Postleitzahl",
-      "profile.city": "Ort",
-      "profile.country": "Land",
-      "profile.updateSuccessMessage": "Ihr Profil wurde erfolgreich aktualisiert.",
-      "profile.avatarDescription": "ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <0>Gravatar</0>.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {
@@ -586,6 +556,22 @@
     }
   },
   {
+    "namespace": "mySpace",
+    "language": "en",
+    "resources": {
+      "accountTabTitle": "Account",
+      "profileTabTitle": "Profile"
+    }
+  },
+  {
+    "namespace": "mySpace",
+    "language": "de",
+    "resources": {
+      "accountTabTitle": "Konto",
+      "profileTabTitle": "Profil"
+    }
+  },
+  {
     "namespace": "register",
     "language": "en",
     "resources": {
@@ -747,6 +733,40 @@
       "passwordIsInvalid": "Das Kennwort muss mindestens {length} Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten",
       "confirmPassword": "Bitte bestätigen Sie Ihr Kennwort",
       "passwordsDoNotMatch": "Die Kennwörter stimmen nicht überein"
+    }
+  },
+  {
+    "namespace": "profileTab",
+    "language": "en",
+    "resources": {
+      "changePicture": "Change profile picture",
+      "howToChangePicture": "How can I change my profile picture?",
+      "firstName": "First name(s)",
+      "lastName": "Last name",
+      "street": "Street",
+      "streetSupplement": "Street supplement",
+      "postalCode": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "updateSuccessMessage": "Your profile was updated successfully.",
+      "avatarDescription": "ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that ELMU has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
+    }
+  },
+  {
+    "namespace": "profileTab",
+    "language": "de",
+    "resources": {
+      "changePicture": "Profilbild ändern",
+      "howToChangePicture": "Wie ändere ich mein Profilbild?",
+      "firstName": "Vorname(n)",
+      "lastName": "Nachname",
+      "street": "Straße",
+      "streetSupplement": "Straße (Zusatz)",
+      "postalCode": "Postleitzahl",
+      "city": "Ort",
+      "country": "Land",
+      "updateSuccessMessage": "Ihr Profil wurde erfolgreich aktualisiert.",
+      "avatarDescription": "ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <0>Gravatar</0>.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {
@@ -1341,7 +1361,8 @@
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
-      "accept": "Accept"
+      "accept": "Accept",
+      "logoff": "Log off"
     }
   },
   {
@@ -1370,7 +1391,8 @@
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
-      "accept": "Akzeptieren"
+      "accept": "Akzeptieren",
+      "logoff": "Abmelden"
     }
   },
   {
@@ -1379,7 +1401,7 @@
     "resources": {
       "home": "Home",
       "users": "Users",
-      "account": "My account",
+      "mySpace": "My space",
       "settings": "Settings",
       "importBatchCreation": "Create import",
       "importBatches": "Imports",
@@ -1393,7 +1415,7 @@
     "resources": {
       "home": "Home",
       "users": "Benutzer",
-      "account": "Mein Konto",
+      "mySpace": "Mein Bereich",
       "settings": "Einstellungen",
       "importBatchCreation": "Import erstellen",
       "importBatches": "Importe",

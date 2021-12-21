@@ -4,9 +4,9 @@ home:
 users:
   en: Users
   de: Benutzer
-account:
-  en: My account
-  de: Mein Konto
+mySpace:
+  en: My space
+  de: Mein Bereich
 settings:
   en: Settings
   de: Einstellungen
