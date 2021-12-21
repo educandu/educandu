@@ -1,5 +1,6 @@
 import joi from 'joi';
 import uniqueId from '../utils/unique-id.js';
+import { FEATURE_TOGGLES } from '../common/constants.js';
 import { defaultValidationOptions, validate } from '../domain/validation.js';
 
 const defaultTaskProcessing = {
@@ -43,7 +44,7 @@ const configSchema = joi.object({
     allowUnsecure: joi.boolean().default(false),
     apiKey: joi.string().required()
   })).default([]),
-  disabledFeatures: joi.array().items(joi.string()).default([]),
+  disabledFeatures: joi.array().items(joi.string().valid(...Object.values(FEATURE_TOGGLES))).default([]),
   taskProcessing: joi.object({
     isEnabled: joi.boolean().default(defaultTaskProcessing.isEnabled),
     idlePollIntervalInMs: joi.number().min(1).default(defaultTaskProcessing.idlePollIntervalInMs),

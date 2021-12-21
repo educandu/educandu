@@ -559,16 +559,18 @@
     "namespace": "mySpace",
     "language": "en",
     "resources": {
+      "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
-      "profileTabTitle": "Profile"
+      "roomsTabTitle": "Rooms"
     }
   },
   {
     "namespace": "mySpace",
     "language": "de",
     "resources": {
+      "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
-      "profileTabTitle": "Profil"
+      "roomsTabTitle": "Räume"
     }
   },
   {

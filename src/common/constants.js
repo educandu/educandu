@@ -18,7 +18,8 @@ export const TASK_TYPE = {
 };
 
 export const FEATURE_TOGGLES = {
-  import: 'import'
+  import: 'import',
+  rooms: 'rooms'
 };
 
 export const ALERT_TYPE = {
