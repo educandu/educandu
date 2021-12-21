@@ -143,7 +143,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
         </Row>
         <Row>
           <Space>
-            <span>{t('createdOn')}:</span>
+            <span>{t('common:createdOn')}:</span>
             <span>{renderDate(batch.createdOn)}</span>
           </Space>
         </Row>
@@ -155,7 +155,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
         </Row>
         <Row>
           <Space>
-            <span>{t('createdBy')}:</span>
+            <span>{t('common:createdBy')}:</span>
             <span>{batch.createdBy.username}</span>
           </Space>
         </Row>

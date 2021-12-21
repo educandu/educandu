@@ -70,3 +70,9 @@ accept:
 logoff:
   en: Log off
   de: Abmelden
+createdOn:
+  en: Created on
+  de: Erstellt am
+createdBy:
+  en: Created by
+  de: Erstellt von

@@ -430,9 +430,7 @@
       "taskStatusDone": "Done",
       "taskStatusFailed": "Failed",
       "taskStatusDoneWithWarnings": "Done (with warnings)",
-      "createdOn": "Created on",
       "completedOn": "Completed on",
-      "createdBy": "Created by",
       "batchStatus": "Batch status",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
@@ -457,9 +455,7 @@
       "taskStatusDone": "Abgeschlossen",
       "taskStatusFailed": "Fehler",
       "taskStatusDoneWithWarnings": "Abgeschlossen (mit Warnungen)",
-      "createdOn": "Erstellt am",
       "completedOn": "Abgeschlossen am",
-      "createdBy": "Erstellt von",
       "batchStatus": "Chargenstatus",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Abgeschlossen",
@@ -485,9 +481,7 @@
       "batchStatusProcessing": "{progress, number, percent} completed",
       "viewBatch": "View batch",
       "batchTypeImportDocument": "Document import",
-      "createdOn": "Created on",
       "completedOn": "Completed on",
-      "createdBy": "Created by",
       "createImport": "Create import",
       "importsHeaderPrefix": "Source",
       "noImportSourcesConfigured": "No import sources configured"
@@ -505,9 +499,7 @@
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "viewBatch": "Chargen ansehen",
       "batchTypeImportDocument": "Dokumentenimport",
-      "createdOn": "Erstellt am",
       "completedOn": "Abgeschlossen am",
-      "createdBy": "Erstellt von",
       "createImport": "Import erstellen",
       "importsHeaderPrefix": "Quelle",
       "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
@@ -799,6 +791,32 @@
       "action": "Aktion",
       "moreActions": "Weitere Aktionen",
       "uploadFiles": "Dateien hochladen"
+    }
+  },
+  {
+    "namespace": "roomsTab",
+    "language": "en",
+    "resources": {
+      "ownedRoomsHeader": "Your rooms",
+      "joinedRoomsHeader": "Rooms you are a member of",
+      "accessType_public": "public",
+      "accessType_private": "private",
+      "name": "Name",
+      "access": "Access",
+      "joinedOn": "Joined on"
+    }
+  },
+  {
+    "namespace": "roomsTab",
+    "language": "de",
+    "resources": {
+      "ownedRoomsHeader": "Deine Räume",
+      "joinedRoomsHeader": "Räume in denen du Mitglied bist",
+      "accessType_public": "öffentlich",
+      "accessType_private": "privat",
+      "name": "Name",
+      "access": "Zugang",
+      "joinedOn": "Eingetreten am"
     }
   },
   {
@@ -1364,7 +1382,9 @@
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
       "accept": "Accept",
-      "logoff": "Log off"
+      "logoff": "Log off",
+      "createdOn": "Created on",
+      "createdBy": "Created by"
     }
   },
   {
@@ -1394,7 +1414,9 @@
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
       "accept": "Akzeptieren",
-      "logoff": "Abmelden"
+      "logoff": "Abmelden",
+      "createdOn": "Erstellt am",
+      "createdBy": "Erstellt von"
     }
   },
   {
