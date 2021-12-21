@@ -77,4 +77,8 @@ export default class RoomService {
   getRoomById(roomId) {
     return this.roomStore.findOne({ _id: roomId });
   }
+
+  isRoomMember(roomId, userId) {
+    return this.roomStore.findOne({ '_id': roomId, 'members.userId': userId });
+  }
 }

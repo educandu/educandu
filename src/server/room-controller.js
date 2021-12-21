@@ -12,7 +12,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { FEATURE_TOGGLES } from '../common/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema } from '../domain/schemas/rooms-schemas.js';
+import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourceAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
 const { NotFound } = httpErrors;
@@ -61,6 +61,12 @@ export default class RoomController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
   }
 
+  async handleAuthorizeResourceAccess(req, res) {
+    const { roomId, userId } = req.params;
+    const result = await this.roomService.isRoomMember(roomId, userId);
+    return result ? res.sendStatus(200) : res.sendStatus(403);
+  }
+
   registerApi(router) {
     if (this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
       return;
@@ -76,6 +82,12 @@ export default class RoomController {
       '/api/v1/room-invitations',
       [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
       (req, res) => this.handlePostRoomInvitation(req, res)
+    );
+
+    router.get(
+      '/api/v1/room/:roomId/authorize-resource-access/:userId',
+      [needsPermission(permissions.AUTORIZE_ROOMS_RESOURCES), validateParams(getAuthorizeResourceAccessParamsSchema)],
+      (req, res) => this.handleAuthorizeResourceAccess(req, res)
     );
   }
 

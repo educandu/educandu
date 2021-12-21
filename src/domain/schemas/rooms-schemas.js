@@ -15,3 +15,8 @@ export const postRoomInvitationBodySchema = joi.object({
 export const roomDetailsParamSchema = joi.object({
   roomId: joi.string().required()
 });
+
+export const getAuthorizeResourceAccessParamsSchema = joi.object({
+  roomId: joi.string().required(),
+  userId: joi.string().required()
+});
