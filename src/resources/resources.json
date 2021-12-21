@@ -1406,7 +1406,8 @@
       "importBatchCreation": "Create import",
       "importBatches": "Imports",
       "importBatchView": "Import details",
-      "docs": "Documents"
+      "docs": "Documents",
+      "room": "Room - {roomName}"
     }
   },
   {
@@ -1420,7 +1421,8 @@
       "importBatchCreation": "Import erstellen",
       "importBatches": "Importe",
       "importBatchView": "Import-Details",
-      "docs": "Dokumente"
+      "docs": "Dokumente",
+      "room": "Raum - {roomName}"
     }
   },
   {

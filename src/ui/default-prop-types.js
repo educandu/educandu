@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, TASK_TYPE } from '../common/constants.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../common/constants.js';
 
 export const translationProps = {
   i18n: PropTypes.object.isRequired,
@@ -229,4 +229,17 @@ export const importBatchDetailsShape = PropTypes.shape({
   ...batchProps,
   batchParams: importSourceShape,
   tasks: PropTypes.arrayOf(importTaskShape)
+});
+
+export const roomMemberShape = PropTypes.shape({
+  userId: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  joinedOn: PropTypes.string
+});
+
+export const roomDetailsShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  owner: PropTypes.string.isRequired,
+  members: PropTypes.arrayOf(roomMemberShape),
+  access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired
 });

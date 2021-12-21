@@ -22,3 +22,6 @@ importBatchView:
 docs:
   en: Documents
   de: Dokumente
+room:
+  en: Room - {roomName}
+  de: Raum - {roomName}

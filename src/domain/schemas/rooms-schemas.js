@@ -11,3 +11,7 @@ export const roomInvitationSchema = joi.object({
   roomId: joi.string().required(),
   email: joi.string().required()
 });
+
+export const roomDetailsParamSchema = joi.object({
+  roomId: joi.string().required()
+});

@@ -18,4 +18,8 @@ export default class RoomService {
     await this.roomsStore.save(newRoom);
     return newRoom;
   }
+
+  getRoomById(roomId) {
+    return this.roomsStore.findOne({ _id: roomId });
+  }
 }
