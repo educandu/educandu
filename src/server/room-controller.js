@@ -1,26 +1,51 @@
+import express from 'express';
+import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
+import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
+import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { FEATURE_TOGGLES } from '../common/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-import { roomDetailsParamSchema, roomSchema } from '../domain/schemas/rooms-schemas.js';
+import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema } from '../domain/schemas/rooms-schemas.js';
 
+const jsonParser = express.json();
 const { NotFound } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, RoomService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, roomService, clientDataMapper, pageRenderer) {
-    this.roomService = roomService;
-    this.pageRenderer = pageRenderer;
-    this.clientDataMapper = clientDataMapper;
+  constructor(serverConfig, roomService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
+    this.roomService = roomService;
+    this.mailService = mailService;
+    this.clientDataMapper = clientDataMapper;
+    this.pageRenderer = pageRenderer;
 
+  }
+
+  async handlePostRoom(req, res) {
+    const { user } = req;
+    const { name, access } = req.body;
+    const newRoom = await this.roomService.createRoom({ name, access, user });
+    res.status(201).send(newRoom);
+  }
+
+  async handlePostRoomInvitation(req, res) {
+    const { user } = req;
+    const { roomId, email } = req.body;
+    const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
+
+    const { origin } = requestHelper.getHostInfo(req);
+    const invitationLink = urls.concatParts(origin, urls.getConfirmRoomMembershipUrl(invitation.token));
+    await this.mailService.sendRoomInvitation({ roomName: room.name, ownerName: owner.username, email, invitationLink });
+
+    res.status(201).send(invitation);
   }
 
   registerApi(router) {
@@ -28,10 +53,17 @@ export default class RoomController {
       return;
     }
 
-    router.post('/api/v1/rooms', [needsPermission(permissions.CREATE_ROOMS), validateBody(roomSchema)], async (req, res) => {
-      const newRoom = await this.roomService.createRoom(req.body);
-      return res.send(newRoom);
-    });
+    router.post(
+      '/api/v1/rooms',
+      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
+      (req, res) => this.handlePostRoom(req, res)
+    );
+
+    router.post(
+      '/api/v1/room-invitations',
+      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
+      (req, res) => this.handlePostRoomInvitation(req, res)
+    );
   }
 
   registerPages(router) {

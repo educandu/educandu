@@ -1,18 +1,14 @@
 import { validate } from '../validation.js';
 import { ROOM_ACCESS_LEVEL } from '../../common/constants.js';
-import {
-  roomInvitationSchema,
-  roomSchema
-} from './rooms-schemas.js';
+import { postRoomBodySchema, postRoomInvitationBodySchema } from './rooms-schemas.js';
 
-describe('roomsSchema', () => {
+describe('postRoomBodySchema', () => {
   let incompleteBody = null;
 
   describe('when body contains correct data', () => {
     beforeEach(() => {
       incompleteBody = {
-        name: 'my room',
-        owner: 'some user id'
+        name: 'my room'
       };
     });
 
@@ -22,7 +18,7 @@ describe('roomsSchema', () => {
           ...incompleteBody,
           access: ROOM_ACCESS_LEVEL.public
         };
-        expect(() => validate(completeBody, roomSchema)).not.toThrow();
+        expect(() => validate(completeBody, postRoomBodySchema)).not.toThrow();
       });
     });
 
@@ -33,42 +29,30 @@ describe('roomsSchema', () => {
           access: ROOM_ACCESS_LEVEL.private
         };
 
-        expect(() => validate(completeBody, roomSchema)).not.toThrow();
+        expect(() => validate(completeBody, postRoomBodySchema)).not.toThrow();
       });
     });
   });
 
-  describe('wnen the room has incomplete data', () => {
+  describe('when the room has incomplete data', () => {
     describe('when the room name is missing', () => {
       it('should throw', () => {
         incompleteBody = {
-          owner: 'owner1',
           access: ROOM_ACCESS_LEVEL.public
         };
 
-        expect(() => validate(incompleteBody, roomSchema)).toThrow();
+        expect(() => validate(incompleteBody, postRoomBodySchema)).toThrow();
       });
     });
 
-    describe('when the room owner is missing', () => {
+    describe('and the access is missing', () => {
       it('should throw', () => {
         incompleteBody = {
           name: 'my room',
-          access: ROOM_ACCESS_LEVEL.public
+          owner: 'f74jr8gjg7ehr8jrif3264'
         };
 
-        expect(() => validate(incompleteBody, roomSchema)).toThrow();
-      });
-    });
-
-    describe('when the access is missing', () => {
-      it('should throw', () => {
-        incompleteBody = {
-          name: 'my room',
-          owner: 'owner1'
-        };
-
-        expect(() => validate(incompleteBody, roomSchema)).toThrow();
+        expect(() => validate(incompleteBody, postRoomBodySchema)).toThrow();
       });
     });
   });
@@ -76,33 +60,32 @@ describe('roomsSchema', () => {
   describe('when the room has an unsupported access level', () => {
     it('should throw', () => {
       const invalidAccess = {
-        owner: 'abc',
         name: 'def',
         access: 'random access'
       };
 
-      expect(() => validate(invalidAccess, roomSchema)).toThrow();
+      expect(() => validate(invalidAccess, postRoomBodySchema)).toThrow();
     });
   });
 });
 
-describe('roomInvitationSchema', () => {
+describe('postRoomInvitationBodySchema', () => {
   describe('when body contains correct data', () => {
     it('should pass validation', () => {
-      expect(() => validate({ roomId: 'abc', email: 'x@y.com' }, roomInvitationSchema)).not.toThrow();
+      expect(() => validate({ roomId: '29c29c78n8uih9cqh9huhf324', email: 'x@y.com' }, postRoomInvitationBodySchema)).not.toThrow();
     });
   });
 
   describe('wnen the room has incomplete data', () => {
     describe('when the room id is missing', () => {
       it('should throw', () => {
-        expect(() => validate({ email: 'x@y.com', roomId: '' }, roomSchema)).toThrow();
+        expect(() => validate({ email: 'x@y.com', roomId: '' }, postRoomBodySchema)).toThrow();
       });
     });
 
-    describe('when the user id is missing', () => {
+    describe('when the email is missing', () => {
       it('should throw', () => {
-        expect(() => validate({ email: '', roomId: 'my room' }, roomSchema)).toThrow();
+        expect(() => validate({ email: '', roomId: '29c29c78n8uih9cqh9huhf324' }, postRoomBodySchema)).toThrow();
       });
     });
 
