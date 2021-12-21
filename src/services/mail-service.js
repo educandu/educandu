@@ -105,7 +105,7 @@ class MailService {
     const message = {
       from: this.emailSenderAddress,
       to: email,
-      subject: `Sie wurden in den Raum ${roomName} eingeladen / You have been invited to room ${roomName}`,
+      subject: 'Sie wurden in einen Raum eingeladen / You have been invited to a room',
       text: `${germanText}\n\n${englishText}`,
       html: `${germanHtml}\n${englishHtml}`
     };
