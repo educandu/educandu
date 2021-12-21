@@ -194,32 +194,31 @@ class Docs extends React.Component {
     }
   }
 
-  renderTitle(_value, doc) {
-    return <a href={urls.getDocUrl(doc.key, doc.slug)}>{doc.title}</a>;
+  renderTitle(title, doc) {
+    return <a href={urls.getDocUrl(doc.key, doc.slug)}>{title}</a>;
   }
 
-  renderUpdatedOn(_value, doc) {
+  renderUpdatedOn(updatedOn) {
     const { formatDate } = this.props;
-    return <span>{formatDate(doc.updatedOn)}</span>;
+    return <span>{formatDate(updatedOn)}</span>;
   }
 
-  renderLanguage(_value, doc) {
+  renderLanguage(documentLanguage) {
     const { languageNameProvider, language } = this.props;
-    const lang = languageNameProvider.getData(language)[doc.language];
-    return <CountryFlagAndName code={lang.flag} name={`${doc.language} (${lang.name})`} flagOnly />;
+    const lang = languageNameProvider.getData(language)[documentLanguage];
+    return <CountryFlagAndName code={lang.flag} name={`${documentLanguage} (${lang.name})`} flagOnly />;
   }
 
-  renderUpdatedBy(_value, doc) {
+  renderUpdatedBy(_user, doc) {
     const { t } = this.props;
     return doc.updatedBy.email
-      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>{t('email')}</a></span>
+      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>{t('common:email')}</a></span>
       : <span>{doc.updatedBy.username}</span>;
   }
 
-  renderOrigin(_value, doc) {
+  renderOrigin(origin) {
     const { t } = this.props;
-    const origin = doc.origin || '';
-    let translatedOrigin = origin;
+    let translatedOrigin = origin || '';
 
     if (origin === DOCUMENT_ORIGIN.internal) {
       translatedOrigin = t('originInternal');
@@ -232,7 +231,7 @@ class Docs extends React.Component {
     return <span>{translatedOrigin}</span>;
   }
 
-  renderActions(_value, doc) {
+  renderActions(_actions, doc) {
     const { t } = this.props;
     return (
       <Fragment>
@@ -247,14 +246,14 @@ class Docs extends React.Component {
     );
   }
 
-  renderArchived(value, doc) {
+  renderArchived(archived, doc) {
     const disableArchiving = doc.origin !== DOCUMENT_ORIGIN.internal;
     return (
       <Switch
         size="small"
         checked={doc.archived}
         disabled={disableArchiving}
-        onChange={() => this.handleArchivedSwitchChange(value, doc)}
+        onChange={() => this.handleArchivedSwitchChange(archived, doc)}
         />
     );
   }
@@ -279,9 +278,9 @@ class Docs extends React.Component {
         sorter: by(x => x.language)
       },
       {
-        title: t('updateDate'),
-        dataIndex: 'updateDate',
-        key: 'updateDate',
+        title: t('common:updatedOn'),
+        dataIndex: 'updatedOn',
+        key: 'updatedOn',
         render: this.renderUpdatedOn,
         defaultSortOrder: 'descend',
         sorter: by(x => x.updatedOn)

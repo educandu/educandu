@@ -1,9 +1,6 @@
 defaultDocumentTitle:
   en: New document
   de: Neues Dokument
-email:
-  en: Email
-  de: E-Mail
 copyTitleSuffix:
   en: (copy)
   de: (Kopie)
@@ -19,9 +16,6 @@ language:
 slug:
   en: URL path
   de: URL-Pfad
-updateDate:
-  en: Update date
-  de: Update-Datum
 user:
   en: User info
   de: User-Info

@@ -49,9 +49,8 @@ function Search({ initialState, PageTemplate }) {
     setSelectedTags(selectedValues);
   };
 
-  const renderUpdatedOn = (_value, doc) => {
-    const date = formatDate(doc.updatedOn);
-    return <span>{date}</span>;
+  const renderUpdatedOn = updatedOn => {
+    return <span>{formatDate(updatedOn)}</span>;
   };
 
   const renderTitle = (title, doc) => {
@@ -83,7 +82,7 @@ function Search({ initialState, PageTemplate }) {
       render: renderTags
     },
     {
-      title: t('updateDate'),
+      title: t('common:updatedOn'),
       dataIndex: 'updatedOn',
       render: renderUpdatedOn
     },
