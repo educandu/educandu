@@ -1,0 +1,15 @@
+ownerUsername:
+  en: Owner user name
+  de: Benutzername des Eigentümers
+ownerEmail:
+  en: Owner email
+  de: Email des Eigentümers
+memberUsername:
+  en: Member username
+  de: Mitglieder Benutzername
+memberEmail:
+  en: Member email
+  de: Mitglieder email
+joinedOn:
+  en: Member since
+  de: Mitglied seit

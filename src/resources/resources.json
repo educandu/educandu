@@ -620,6 +620,28 @@
     }
   },
   {
+    "namespace": "room",
+    "language": "en",
+    "resources": {
+      "ownerUsername": "Owner user name",
+      "ownerEmail": "Owner email",
+      "memberUsername": "Member username",
+      "memberEmail": "Member email",
+      "joinedOn": "Member since"
+    }
+  },
+  {
+    "namespace": "room",
+    "language": "de",
+    "resources": {
+      "ownerUsername": "Benutzername des Eigentümers",
+      "ownerEmail": "Email des Eigentümers",
+      "memberUsername": "Mitglieder Benutzername",
+      "memberEmail": "Mitglieder email",
+      "joinedOn": "Mitglied seit"
+    }
+  },
+  {
     "namespace": "search",
     "language": "en",
     "resources": {
