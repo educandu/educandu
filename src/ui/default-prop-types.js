@@ -233,16 +233,14 @@ export const importBatchDetailsShape = PropTypes.shape({
 
 export const roomMemberShape = PropTypes.shape({
   userId: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
   joinedOn: PropTypes.string.isRequired
 });
 
 export const roomDetailsShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
   owner: PropTypes.shape({
-    userId: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired
+    _id: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired
   }),
   members: PropTypes.arrayOf(roomMemberShape),
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired
