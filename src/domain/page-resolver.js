@@ -20,7 +20,8 @@ const pageImporters = {
   [PAGE_NAME.importBatches]: async () => (await import('../components/pages/import-batches.js')).default,
   [PAGE_NAME.importBatchView]: async () => (await import('../components/pages/import-batch-view.js')).default,
   [PAGE_NAME.importBatchCreation]: async () => (await import('../components/pages/import-batch-creation.js')).default,
-  [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default
+  [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default,
+  [PAGE_NAME.room]: async () => (await import('../components/pages/room.js')).default
 };
 
 async function resolveAll(promiseCreators) {

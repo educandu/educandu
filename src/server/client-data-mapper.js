@@ -87,6 +87,25 @@ class ClientDataMapper {
     };
   }
 
+  async mapRoomDetails(roomDetails, user) {
+    const allowedUserFields = privateData.getAllowedUserFields(user);
+    const result = { ...roomDetails };
+    const owner = await this.userService.getUserById(roomDetails.owner);
+    result.owner = this._mapUser(owner, allowedUserFields);
+
+    const members = await this.userService.getUsersByIds(roomDetails.members.map(member => member.userId));
+
+    result.members = roomDetails.members.map(member => {
+      const memberDetails = members.find(u => member.userId === u._id);
+      return {
+        ...member,
+        username: memberDetails.username
+      };
+    });
+
+    return result;
+  }
+
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {
     const idSet = this.userService.extractUserIdSetFromDocsOrRevisions(docsOrRevisions);
     const users = await this.userService.getUsersByIds(Array.from(idSet));

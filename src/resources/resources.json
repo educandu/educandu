@@ -604,6 +604,24 @@
     }
   },
   {
+    "namespace": "room",
+    "language": "en",
+    "resources": {
+      "ownerUsername": "Owner user name",
+      "memberUsername": "Member username",
+      "joinedOn": "Member since"
+    }
+  },
+  {
+    "namespace": "room",
+    "language": "de",
+    "resources": {
+      "ownerUsername": "Benutzername des Eigentümers",
+      "memberUsername": "Mitglieder Benutzername",
+      "joinedOn": "Mitglied seit"
+    }
+  },
+  {
     "namespace": "search",
     "language": "en",
     "resources": {
@@ -1424,7 +1442,8 @@
       "importBatchCreation": "Create import",
       "importBatches": "Imports",
       "importBatchView": "Import details",
-      "docs": "Documents"
+      "docs": "Documents",
+      "room": "Room - {roomName}"
     }
   },
   {
@@ -1438,7 +1457,8 @@
       "importBatchCreation": "Import erstellen",
       "importBatches": "Importe",
       "importBatchView": "Import-Details",
-      "docs": "Dokumente"
+      "docs": "Dokumente",
+      "room": "Raum - {roomName}"
     }
   },
   {
