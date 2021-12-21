@@ -47,7 +47,7 @@ educandu({
   },
   exposeErrorDetails: true,
   taskProcessing: {
-    isEnabled: true,
+    isEnabled: false,
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
   },
