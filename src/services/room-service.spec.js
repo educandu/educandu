@@ -6,10 +6,10 @@ import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, set
 const { BadRequest, NotFound } = httpErrors;
 
 describe('room-service', () => {
-  let sut;
   let myUser;
   let otherUser;
   let container;
+  let sut;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -27,15 +27,25 @@ describe('room-service', () => {
   });
 
   describe('createRoom', () => {
-    it('should create a room', async () => {
-      const result = await sut.createRoom({ name: 'my room', access: ROOM_ACCESS_LEVEL.public, user: myUser });
+    let createdRoom;
+    beforeEach(async () => {
+      createdRoom = await sut.createRoom({ name: 'my room', access: ROOM_ACCESS_LEVEL.public, user: myUser });
+    });
 
-      expect(result).toEqual({
+    it('should create a room', () => {
+      expect(createdRoom).toEqual({
         _id: expect.stringMatching(/\w+/),
         name: 'my room',
         owner: myUser._id,
         access: ROOM_ACCESS_LEVEL.public,
         members: []
+      });
+    });
+
+    describe('when retrieving the room', () => {
+      it('should retrieve the room', async () => {
+        const retrievedRoom = await sut.getRoomById(createdRoom._id);
+        expect(retrievedRoom).toEqual(createdRoom);
       });
     });
   });
@@ -107,5 +117,4 @@ describe('room-service', () => {
     });
 
   });
-
 });

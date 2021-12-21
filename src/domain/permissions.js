@@ -16,6 +16,8 @@ const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
 const MANAGE_EXPORT = 'manage-export';
 const CREATE_ROOMS = 'create-rooms';
+const VIEW_ROOMS = 'view-rooms';
+const EDIT_ROOMS = 'edit-rooms';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -32,7 +34,9 @@ const rolesForPermission = {
   [RESTORE_DOC_REVISIONS]: [ROLE.admin],
   [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
   [MANAGE_IMPORT]: [ROLE.admin],
-  [CREATE_ROOMS]: [ROLE.admin, ROLE.user]
+  [CREATE_ROOMS]: [ROLE.admin, ROLE.user],
+  [EDIT_ROOMS]: [ROLE.admin, ROLE.user],
+  [VIEW_ROOMS]: [ROLE.admin, ROLE.user]
 };
 
 export function hasUserPermission(user, permission) {
@@ -57,5 +61,7 @@ export default {
   MANAGE_IMPORT,
   MANAGE_EXPORT,
   DELETE_CDN_FILE,
-  CREATE_ROOMS
+  CREATE_ROOMS,
+  VIEW_ROOMS,
+  EDIT_ROOMS
 };

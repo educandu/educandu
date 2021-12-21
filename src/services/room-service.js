@@ -73,4 +73,8 @@ export default class RoomService {
 
     return { room, owner, invitation };
   }
+
+  getRoomById(roomId) {
+    return this.roomStore.findOne({ _id: roomId });
+  }
 }

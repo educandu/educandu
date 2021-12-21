@@ -15,5 +15,6 @@ export const PAGE_NAME = {
   importBatchCreation: 'import-batch-creation',
   importBatchView: 'import-batch-view',
   importBatches: 'import-batches',
-  browserNotSupported: 'browser-not-supported'
+  browserNotSupported: 'browser-not-supported',
+  room: 'room'
 };

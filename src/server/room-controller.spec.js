@@ -3,13 +3,19 @@ import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import RoomController from './room-controller.js';
+import { PAGE_NAME } from '../domain/page-name.js';
 
 const { NotFound } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
+  const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+
   let roomService;
   let mailService;
+  let serverConfig;
+  let clientDataMapper;
+  let pageRenderer;
   let user;
   let req;
   let res;
@@ -17,7 +23,13 @@ describe('room-controller', () => {
 
   beforeEach(() => {
     roomService = {
-      createOrUpdateInvitation: sandbox.stub()
+      createOrUpdateInvitation: sandbox.stub(),
+      getRoomById: sandbox.stub().callsFake(roomId => {
+        if (roomId === room.roomId) {
+          return Promise.resolve(room);
+        }
+        return Promise.resolve();
+      })
     };
     mailService = {
       sendRoomInvitation: sandbox.stub()
@@ -25,7 +37,19 @@ describe('room-controller', () => {
     user = {
       username: 'dagobert-the-third'
     };
-    sut = new RoomController(roomService, mailService);
+    serverConfig = {
+      disabledFeatures: []
+    };
+
+    clientDataMapper = {
+      mapRoomDetails: sandbox.stub().resolves(room)
+    };
+
+    pageRenderer = {
+      sendPage: sandbox.stub()
+    };
+
+    sut = new RoomController(serverConfig, roomService, mailService, clientDataMapper, pageRenderer);
   });
 
   afterEach(() => {
@@ -35,7 +59,6 @@ describe('room-controller', () => {
   describe('handlePostRoomInvitation', () => {
 
     describe('when all goes well', () => {
-      const room = { name: 'Mein schöner Raum' };
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
       beforeEach(done => {
@@ -104,5 +127,37 @@ describe('room-controller', () => {
       });
     });
 
+  });
+
+  describe('handleGetRoomDetails', () => {
+    describe('when the room exists', () => {
+      const request = {
+        params: {
+          roomId: 'roomId'
+        }
+      };
+
+      beforeEach(async () => {
+        await sut.handleGetRoomDetails(request, {});
+      });
+
+      it('should call getRoomById with roomId', () => {
+        sinon.assert.calledWith(roomService.getRoomById, 'roomId');
+      });
+
+      it('should call mapRoomDetails with the room returned by the service', () => {
+        sinon.assert.calledWith(clientDataMapper.mapRoomDetails, room);
+      });
+
+      it('should call pageRenderer with the right parameters', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: room });
+      });
+    });
+
+    describe('when the room does not exist', () => {
+      it('should throw a not found exception', () => {
+        expect(() => sut.handleGetRoomDetails({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+      });
+    });
   });
 });
