@@ -430,7 +430,6 @@
       "taskStatusDone": "Done",
       "taskStatusFailed": "Failed",
       "taskStatusDoneWithWarnings": "Done (with warnings)",
-      "completedOn": "Completed on",
       "batchStatus": "Batch status",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
@@ -455,7 +454,6 @@
       "taskStatusDone": "Abgeschlossen",
       "taskStatusFailed": "Fehler",
       "taskStatusDoneWithWarnings": "Abgeschlossen (mit Warnungen)",
-      "completedOn": "Abgeschlossen am",
       "batchStatus": "Chargenstatus",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Abgeschlossen",
@@ -481,7 +479,6 @@
       "batchStatusProcessing": "{progress, number, percent} completed",
       "viewBatch": "View batch",
       "batchTypeImportDocument": "Document import",
-      "completedOn": "Completed on",
       "createImport": "Create import",
       "importsHeaderPrefix": "Source",
       "noImportSourcesConfigured": "No import sources configured"
@@ -499,7 +496,6 @@
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",
       "viewBatch": "Chargen ansehen",
       "batchTypeImportDocument": "Dokumentenimport",
-      "completedOn": "Abgeschlossen am",
       "createImport": "Import erstellen",
       "importsHeaderPrefix": "Quelle",
       "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
@@ -1384,6 +1380,7 @@
       "accept": "Accept",
       "logoff": "Log off",
       "createdOn": "Created on",
+      "completedOn": "Completed on",
       "createdBy": "Created by"
     }
   },
@@ -1416,6 +1413,7 @@
       "accept": "Akzeptieren",
       "logoff": "Abmelden",
       "createdOn": "Erstellt am",
+      "completedOn": "Abgeschlossen am",
       "createdBy": "Erstellt von"
     }
   },

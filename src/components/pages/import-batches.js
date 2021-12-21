@@ -61,7 +61,7 @@ function ImportBatches({ initialState, PageTemplate }) {
     { title: t('batchId'), key: '_id', dataIndex: '_id', width: '150px', render: renderId },
     { title: t('batchStatus'), width: '150px', render: renderStatus },
     { title: t('common:createdOn'), width: '150px', dataIndex: 'createdOn', render: renderDate },
-    { title: t('completedOn'), width: '150px', dataIndex: 'completedOn', render: renderDate },
+    { title: t('common:completedOn'), width: '150px', dataIndex: 'completedOn', render: renderDate },
     { title: t('common:createdBy'), width: '150px', dataIndex: 'createdBy', render: renderUser }
   ];
 

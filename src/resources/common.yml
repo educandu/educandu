@@ -73,6 +73,9 @@ logoff:
 createdOn:
   en: Created on
   de: Erstellt am
+completedOn:
+  en: Completed on
+  de: Abgeschlossen am
 createdBy:
   en: Created by
   de: Erstellt von

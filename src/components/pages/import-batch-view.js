@@ -104,7 +104,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
 
   const attemtpsTableColumns = [
     { title: t('startedOn'), dataIndex: 'startedOn', width: '50px', render: renderDate },
-    { title: t('completedOn'), key: '_id', dataIndex: 'completedOn', width: '150px', render: renderDate },
+    { title: t('common:completedOn'), key: '_id', dataIndex: 'completedOn', width: '150px', render: renderDate },
     { title: t('errorsCount'), width: '150px', render: renderErrorCount }
   ];
 
@@ -149,7 +149,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
         </Row>
         <Row>
           <Space>
-            <span>{t('completedOn')}:</span>
+            <span>{t('common:completedOn')}:</span>
             <span>{renderDate(batch.completedOn)}</span>
           </Space>
         </Row>
