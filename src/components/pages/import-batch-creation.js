@@ -1,5 +1,6 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
@@ -9,7 +10,6 @@ import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import DocumentImportTable from '../document-import-table.js';
 import ImportApiClient from '../../services/import-api-client.js';
-import { getImportDetailsUrl, getImportSourceBaseUrl } from '../../utils/urls.js';
 
 export default function ImportBatchCreation({ initialState, PageTemplate }) {
   useReloadPersistedWindow();
@@ -22,7 +22,7 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
   const [isCreatingNewImportBatch, setIsCreatingNewImportBatch] = useState(false);
 
   const importSource = clientConfig.importSources.find(source => source.hostName === initialState.importSourceHostName);
-  const importSourceBaseUrl = getImportSourceBaseUrl(importSource);
+  const importSourceBaseUrl = urls.getImportSourceBaseUrl(importSource);
 
   const handleImportClick = async () => {
     setIsCreatingNewImportBatch(true);
@@ -37,7 +37,7 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
     try {
       const result = await importApiClient.postImportBatch(batch);
       setIsCreatingNewImportBatch(false);
-      window.location = getImportDetailsUrl(result.batch._id);
+      window.location = urls.getImportDetailsUrl(result.batch._id);
     } catch (error) {
       handleApiError({ error, t });
     } finally {
