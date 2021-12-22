@@ -1,5 +1,7 @@
 import httpErrors from 'http-errors';
 import RoomService from './room-service.js';
+import uniqueId from '../utils/unique-id.js';
+import RoomStore from '../stores/room-store.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
@@ -8,6 +10,7 @@ const { BadRequest, NotFound } = httpErrors;
 describe('room-service', () => {
   let myUser;
   let otherUser;
+  let roomStore;
   let container;
   let sut;
 
@@ -15,6 +18,7 @@ describe('room-service', () => {
     container = await setupTestEnvironment();
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
+    roomStore = container.get(RoomStore);
     sut = container.get(RoomService);
   });
 
@@ -116,5 +120,38 @@ describe('room-service', () => {
       }).rejects.toThrow(NotFound);
     });
 
+  });
+
+  describe('isRoomMemberOrOwner', () => {
+    const roomId = uniqueId.create();
+    beforeEach(async () => {
+      await roomStore.save({
+        _id: roomId,
+        name: 'my room',
+        access: ROOM_ACCESS_LEVEL.private,
+        owner: myUser._id,
+        members: [
+          {
+            userId: otherUser._id,
+            joinedOn: new Date()
+          }
+        ]
+      });
+    });
+
+    it('should return true when the user is the owner', async () => {
+      const result = await sut.isRoomMemberOrOwner(roomId, myUser._id);
+      expect(result).toBe(true);
+    });
+
+    it('should return true when the user is a member', async () => {
+      const result = await sut.isRoomMemberOrOwner(roomId, otherUser._id);
+      expect(result).toBe(true);
+    });
+
+    it('should return false when the is not a member', async () => {
+      const result = await sut.isRoomMemberOrOwner(roomId, uniqueId.create());
+      expect(result).toBe(false);
+    });
   });
 });
