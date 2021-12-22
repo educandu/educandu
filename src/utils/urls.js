@@ -82,7 +82,7 @@ function getCompletePasswordResetUrl(passwordResetRequestId) {
   return concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
-export function getRoomMembershipConfirmationUrl(token) {
+function getRoomMembershipConfirmationUrl(token) {
   return concatParts(roomMembershipConfirmationPrefix, token);
 }
 
