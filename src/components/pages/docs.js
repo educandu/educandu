@@ -334,7 +334,7 @@ class Docs extends React.Component {
           <Table dataSource={filteredDocs} columns={columns} size="middle" />
           <aside>
             <Restricted to={permissions.EDIT_DOC}>
-              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewDocumentClick} />
+              <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewDocumentClick} />
             </Restricted>
           </aside>
           <Modal

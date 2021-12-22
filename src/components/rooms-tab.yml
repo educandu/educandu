@@ -19,3 +19,6 @@ access:
 joinedOn:
   en: Joined on
   de: Eingetreten am
+defaultRoomName:
+  en: New room
+  de: Neuer Raum

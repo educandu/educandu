@@ -833,7 +833,8 @@
       "accessType_private": "private",
       "name": "Name",
       "access": "Access",
-      "joinedOn": "Joined on"
+      "joinedOn": "Joined on",
+      "defaultRoomName": "New room"
     }
   },
   {
@@ -846,7 +847,8 @@
       "accessType_private": "privat",
       "name": "Name",
       "access": "Zugang",
-      "joinedOn": "Eingetreten am"
+      "joinedOn": "Eingetreten am",
+      "defaultRoomName": "Neuer Raum"
     }
   },
   {

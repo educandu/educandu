@@ -1,17 +1,25 @@
 import by from 'thenby';
-import React from 'react';
-import { Table } from 'antd';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
+import { Button, Table } from 'antd';
+import React, { useState } from 'react';
+import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
+import permissions from '../domain/permissions.js';
 import { useDateFormat } from './language-context.js';
 import { roomShape } from '../ui/default-prop-types.js';
+import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
 
 function RoomsTab({ rooms }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomsTab');
+  const [setState] = useState({
+    isNewRoomModalVisible: false,
+    newRoom: null
+  });
 
   const renderName = (name, room) => {
     return <a href={urls.getRoomUrl(room._id)}>{name}</a>;
@@ -33,6 +41,20 @@ function RoomsTab({ rooms }) {
 
   const renderAccess = access => {
     return <span>{t(`accessType_${access}`)}</span>;
+  };
+
+  const createNewRoomState = () => {
+    return {
+      name: t('defaultRoomName'),
+      access: ROOM_ACCESS_LEVEL.private
+    };
+  };
+
+  const handleNewRoomClick = () => {
+    setState({
+      newRoom: createNewRoomState(),
+      isNewDocModalVisible: true
+    });
   };
 
   const ownedRooms = rooms.filter(room => room.owner._id === user._id);
@@ -127,6 +149,9 @@ function RoomsTab({ rooms }) {
       <section className="RoomsTab-section">
         <h2>{t('ownedRoomsHeader')}</h2>
         <Table dataSource={ownedRoomsRows} columns={ownedRoomsColumns} size="middle" />
+        <Restricted to={permissions.CREATE_ROOMS}>
+          <Button className="RoomsTab-newRoomButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewRoomClick} />
+        </Restricted>
       </section>
       <section className="RoomsTab-section">
         <h2>{t('joinedRoomsHeader')}</h2>
