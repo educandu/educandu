@@ -8,10 +8,10 @@ export const exportUser = Object.freeze({
   permissions: [permissions.MANAGE_EXPORT]
 });
 
-export const cdnAutorizationUser = Object.freeze({
-  _id: 'cdn-authorization-user',
-  username: 'cdn-authorization-user',
-  provider: 'builtin/cdnAuthorization',
+export const roomResourceAutorizationUser = Object.freeze({
+  _id: 'room-resource-authorization-user',
+  username: 'room-resource-authorization-user',
+  provider: 'builtin/roomResourceAuthorization',
   roles: [],
   permissions: [permissions.AUTORIZE_ROOMS_RESOURCES]
 });
