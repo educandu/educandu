@@ -9,8 +9,10 @@ import errorHelper from '../ui/error-helper.js';
 import React, { useState, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../domain/permissions.js';
+import { useService } from './container-context.js';
 import { useDateFormat } from './language-context.js';
 import { roomShape } from '../ui/default-prop-types.js';
+import RoomApiClient from '../services/room-api-client.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
 import { Form, Button, Table, Modal, Input, Radio } from 'antd';
 
@@ -25,6 +27,7 @@ function RoomsTab({ rooms }) {
   const newRoomFormRef = useRef(null);
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomsTab');
+  const roomApiClient = useService(RoomApiClient);
 
   const roomNameValidationRules = [
     {
@@ -93,9 +96,10 @@ function RoomsTab({ rooms }) {
       }
 
       setState(prevState => ({ ...prevState, isNewRoomBeingCreated: true }));
-      // eslint-disable-next-line no-console
-      console.log(`In EDU-206 a new room ${JSON.stringify(state.newRoom)} will be created and redirected to`);
+      const newRoom = await roomApiClient.addRoom({ name: state.newRoom.name, access: state.newRoom.access });
       setState(prevState => ({ ...prevState, isNewRoomBeingCreated: false, isNewRoomModalVisible: false }));
+
+      window.location = urls.getRoomDetailsUrl(newRoom._id);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
       setState(prevState => ({ ...prevState, isNewRoomBeingCreated: false }));
