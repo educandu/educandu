@@ -12,7 +12,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { FEATURE_TOGGLES } from '../common/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourceAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
+import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourcesAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
 const { NotFound, Forbidden } = httpErrors;
@@ -61,7 +61,7 @@ export default class RoomController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
   }
 
-  async handleAuthorizeResourceAccess(req, res) {
+  async handleAuthorizeResourcesAccess(req, res) {
     const { roomId } = req.params;
     const { _id: userId } = req.user;
 
@@ -92,8 +92,8 @@ export default class RoomController {
 
     router.get(
       '/api/v1/rooms/:roomId/authorize-resources-access',
-      [needsPermission(permissions.AUTORIZE_ROOMS_RESOURCES), validateParams(getAuthorizeResourceAccessParamsSchema)],
-      (req, res) => this.handleAuthorizeResourceAccess(req, res)
+      [needsPermission(permissions.AUTORIZE_ROOMS_RESOURCES), validateParams(getAuthorizeResourcesAccessParamsSchema)],
+      (req, res) => this.handleAuthorizeResourcesAccess(req, res)
     );
   }
 

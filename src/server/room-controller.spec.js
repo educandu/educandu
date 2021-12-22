@@ -178,7 +178,7 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
-        sut.handleAuthorizeResourceAccess(req, res);
+        sut.handleAuthorizeResourcesAccess(req, res);
       });
 
       it('should call the room service with the correct roomId and userId', () => {
@@ -204,7 +204,7 @@ describe('room-controller', () => {
       });
 
       it('should throw a not authorized exception', () => {
-        expect(() => sut.handleAuthorizeResourceAccess(req, res)).rejects.toThrow(Forbidden);
+        expect(() => sut.handleAuthorizeResourcesAccess(req, res)).rejects.toThrow(Forbidden);
       });
 
     });
