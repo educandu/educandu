@@ -1,24 +1,59 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
-import { Button, Table } from 'antd';
-import React, { useState } from 'react';
+import Logger from '../common/logger.js';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
+import errorHelper from '../ui/error-helper.js';
+import React, { useState, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../domain/permissions.js';
 import { useDateFormat } from './language-context.js';
 import { roomShape } from '../ui/default-prop-types.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { Form, Button, Table, Modal, Input, Radio } from 'antd';
+
+const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
+
+const logger = new Logger(import.meta.url);
 
 function RoomsTab({ rooms }) {
   const user = useUser();
+  const newRoomFormRef = useRef(null);
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomsTab');
-  const [setState] = useState({
+
+  const roomNameValidationRules = [
+    {
+      required: true,
+      message: t('roomNameRequired'),
+      whitespace: true
+    }
+  ];
+
+  const isNewRoomFormValid = async () => {
+    try {
+      await newRoomFormRef.current.validateFields(['name'], { force: true });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const createNewRoomState = () => {
+    return {
+      name: t('newRoom'),
+      access: ROOM_ACCESS_LEVEL.private
+    };
+  };
+
+  const [state, setState] = useState({
     isNewRoomModalVisible: false,
-    newRoom: null
+    isNewRoomBeingCreated: false,
+    newRoom: createNewRoomState()
   });
 
   const renderName = (name, room) => {
@@ -43,18 +78,42 @@ function RoomsTab({ rooms }) {
     return <span>{t(`accessType_${access}`)}</span>;
   };
 
-  const createNewRoomState = () => {
-    return {
-      name: t('defaultRoomName'),
-      access: ROOM_ACCESS_LEVEL.private
-    };
-  };
-
   const handleNewRoomClick = () => {
     setState({
       newRoom: createNewRoomState(),
-      isNewDocModalVisible: true
+      isNewRoomModalVisible: true
     });
+  };
+
+  const handleNewRoomOk = async () => {
+    try {
+      const isValid = await isNewRoomFormValid();
+      if (!isValid) {
+        return;
+      }
+
+      setState(prevState => ({ ...prevState, isNewRoomBeingCreated: true }));
+      // eslint-disable-next-line no-console
+      console.log(`In EDU-206 a new room ${JSON.stringify(state.newRoom)} will be created and redirected to`);
+      setState(prevState => ({ ...prevState, isNewRoomBeingCreated: false, isNewRoomModalVisible: false }));
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      setState(prevState => ({ ...prevState, isNewRoomBeingCreated: false }));
+    }
+  };
+
+  const handleNewRoomCancel = () => {
+    setState(prevState => ({ ...prevState, isNewRoomModalVisible: false }));
+  };
+
+  const handleNewRoomNameChange = event => {
+    const { value } = event.target;
+    setState(prevState => ({ ...prevState, newRoom: { ...prevState.newRoom, name: value } }));
+  };
+
+  const handleRoomAccessChange = event => {
+    const { value } = event.target;
+    setState(prevState => ({ ...prevState, newRoom: { ...prevState.newRoom, access: value } }));
   };
 
   const ownedRooms = rooms.filter(room => room.owner._id === user._id);
@@ -157,6 +216,29 @@ function RoomsTab({ rooms }) {
         <h2>{t('joinedRoomsHeader')}</h2>
         <Table dataSource={membershipRoomsRows} columns={membershipRoomsColumns} size="middle" />
       </section>
+
+      {state.isNewRoomModalVisible && (
+        <Modal
+          title={t('newRoom')}
+          onOk={handleNewRoomOk}
+          onCancel={handleNewRoomCancel}
+          maskClosable={false}
+          visible={state.isNewRoomModalVisible}
+          okButtonProps={{ loading: state.isNewRoomBeingCreated }}
+          >
+          <Form name="new-room-form" ref={newRoomFormRef} layout="vertical">
+            <FormItem label={t('name')} name="name" rules={roomNameValidationRules} initialValue={state.newRoom.name}>
+              <Input onChange={handleNewRoomNameChange} />
+            </FormItem>
+            <FormItem label={t('access')}>
+              <RadioGroup value={state.newRoom.access} onChange={handleRoomAccessChange}>
+                <RadioButton value={ROOM_ACCESS_LEVEL.private}>{t('accessType_private')}</RadioButton>
+                <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('accessType_public')}</RadioButton>
+              </RadioGroup>
+            </FormItem>
+          </Form>
+        </Modal>
+      )}
     </div>
   );
 }

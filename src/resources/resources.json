@@ -834,7 +834,8 @@
       "name": "Name",
       "access": "Access",
       "joinedOn": "Joined on",
-      "defaultRoomName": "New room"
+      "newRoom": "New room",
+      "roomNameRequired": "Please specify a room name"
     }
   },
   {
@@ -848,7 +849,8 @@
       "name": "Name",
       "access": "Zugang",
       "joinedOn": "Eingetreten am",
-      "defaultRoomName": "Neuer Raum"
+      "newRoom": "Neuer Raum",
+      "roomNameRequired": "Bitte geben Sie einen Raumnamen"
     }
   },
   {
