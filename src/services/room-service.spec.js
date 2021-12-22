@@ -139,19 +139,19 @@ describe('room-service', () => {
       });
     });
 
-    it('should return truthy when the user is the owner', async () => {
+    it('should return true when the user is the owner', async () => {
       const result = await sut.isRoomMemberOrOwner(roomId, myUser._id);
-      expect(result).toBeTruthy();
+      expect(result).toBe(true);
     });
 
-    it('should return truthy when the user is a member', async () => {
+    it('should return true when the user is a member', async () => {
       const result = await sut.isRoomMemberOrOwner(roomId, otherUser._id);
-      expect(result).toBeTruthy();
+      expect(result).toBe(true);
     });
 
-    it('should return falsy when the is not a member', async () => {
+    it('should return false when the is not a member', async () => {
       const result = await sut.isRoomMemberOrOwner(roomId, uniqueId.create());
-      expect(result).toBeFalsy();
+      expect(result).toBe(false);
     });
   });
 });

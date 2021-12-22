@@ -79,7 +79,7 @@ export default class RoomService {
   }
 
   async isRoomMemberOrOwner(roomId, userId) {
-    const room = await this.roomStore.findOne({ $or: [{ '_id': roomId, 'members.userId': userId }, { _id: roomId, owner: userId }] });
+    const room = await this.roomStore.findOne({ $and: [{ _id: roomId }, { $or: [{ 'members.userId': userId }, { owner: userId }] }] });
     return !!room;
   }
 }
