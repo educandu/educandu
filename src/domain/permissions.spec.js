@@ -1,5 +1,5 @@
 import { ROLE } from './role.js';
-import { exportUser, cdnAutorizationUser } from './built-in-users.js';
+import { exportUser, roomResourceAutorizationUser } from './built-in-users.js';
 import permissions, { hasUserPermission } from './permissions.js';
 
 const isTechnicalPermission = permission => [permissions.AUTORIZE_ROOMS_RESOURCES, permissions.MANAGE_EXPORT].includes(permission);
@@ -44,8 +44,8 @@ describe('permissions', () => {
 
     });
 
-    describe('when user is builtin user "cdnAutorizationUser"', () => {
-      const user = cdnAutorizationUser;
+    describe('when user is builtin user "roomResourceAutorizationUser"', () => {
+      const user = roomResourceAutorizationUser;
 
       Object.values(permissions).forEach(permission => {
         let result;
