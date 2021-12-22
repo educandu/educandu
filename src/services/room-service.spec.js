@@ -133,7 +133,7 @@ describe('room-service', () => {
         members: [
           {
             userId: otherUser._id,
-            joinedOn: new Date().toISOString()
+            joinedOn: new Date()
           }
         ]
       });

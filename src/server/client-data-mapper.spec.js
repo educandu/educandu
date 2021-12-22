@@ -83,11 +83,11 @@ describe('client-data-mapper', () => {
       members: [
         {
           userId: 'member1',
-          joinedOn: new Date().toISOString()
+          joinedOn: new Date()
         },
         {
           userId: 'member2',
-          joinedOn: new Date().toISOString()
+          joinedOn: new Date()
         }
       ],
       access: ROOM_ACCESS_LEVEL.public
