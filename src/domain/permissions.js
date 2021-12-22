@@ -37,7 +37,8 @@ const rolesForPermission = {
   [MANAGE_IMPORT]: [ROLE.admin],
   [CREATE_ROOMS]: [ROLE.admin, ROLE.user],
   [EDIT_ROOMS]: [ROLE.admin, ROLE.user],
-  [VIEW_ROOMS]: [ROLE.admin, ROLE.user]
+  [VIEW_ROOMS]: [ROLE.admin, ROLE.user],
+  [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user]
 };
 
 export function hasUserPermission(user, permission) {

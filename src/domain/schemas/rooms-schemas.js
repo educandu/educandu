@@ -17,6 +17,5 @@ export const roomDetailsParamSchema = joi.object({
 });
 
 export const getAuthorizeResourceAccessParamsSchema = joi.object({
-  roomId: joi.string().required(),
-  userId: joi.string().required()
+  roomId: joi.string().required()
 });

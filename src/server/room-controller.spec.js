@@ -41,7 +41,8 @@ describe('room-controller', () => {
       sendRoomInvitation: sandbox.stub()
     };
     user = {
-      username: 'dagobert-the-third'
+      username: 'dagobert-the-third',
+      _id: 'Ludwig the great'
     };
     serverConfig = {
       disabledFeatures: []
@@ -168,14 +169,13 @@ describe('room-controller', () => {
   });
 
   describe('handleAuthorizeResourceAccess', () => {
-    const userId = 'Ludwig the great';
     const roomId = '843zvnzn2vw';
     describe('when the user is authorized', () => {
       beforeEach(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
-          params: { roomId, userId }
+          params: { roomId }
         });
         req.user = user;
 
@@ -186,7 +186,7 @@ describe('room-controller', () => {
       });
 
       it('should call the room service with the correct roomId and userId', () => {
-        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, roomId, userId);
+        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, roomId, user._id);
       });
 
       it('should return status 200 when the user is authorized', () => {
@@ -199,7 +199,7 @@ describe('room-controller', () => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
-          params: { roomId: 'abcd', userId }
+          params: { roomId: 'abcd' }
         });
         req.user = user;
 
@@ -210,7 +210,7 @@ describe('room-controller', () => {
       });
 
       it('should call the room service with the correct roomId and userId', () => {
-        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, 'abcd', userId);
+        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, 'abcd', user._id);
       });
 
       it('should return status 403 when the user is not authorized', () => {

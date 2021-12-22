@@ -51,8 +51,7 @@ const configSchema = joi.object({
     maxAttempts: joi.number().min(1).default(defaultTaskProcessing.maxAttempts)
   }).default(defaultTaskProcessing),
   additionalControllers: joi.array().items(joi.function().class()).default([]),
-  consentCookieName: joi.string().default('COOKIECONSENT'),
-  roomResourceAuthorizationApiKey: joi.string().default('')
+  consentCookieName: joi.string().default('COOKIECONSENT')
 });
 
 class ServerConfig {

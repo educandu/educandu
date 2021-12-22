@@ -6,6 +6,7 @@ import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
 import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
+import { exportUser } from '../domain/built-in-users.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import UserRequestHandler from './user-request-handler.js';
@@ -13,7 +14,6 @@ import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
-import { roomResourceAutorizationUser, exportUser } from '../domain/built-in-users.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -57,11 +57,7 @@ class UserController {
     router.use(passport.authenticate('apikey', { session: false }));
 
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      const { roomResourceAuthorizationApiKey, exportApiKey } = this.serverConfig;
-
-      if (roomResourceAuthorizationApiKey && apikey === roomResourceAuthorizationApiKey) {
-        return cb(null, roomResourceAutorizationUser);
-      }
+      const { exportApiKey } = this.serverConfig;
 
       return exportApiKey && apikey === exportApiKey
         ? cb(null, exportUser)

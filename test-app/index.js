@@ -51,6 +51,5 @@ educandu({
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
   },
-  additionalControllers: [ArticleController],
-  roomResourceAuthorizationApiKey: 'jd161abcdb0c44c4963f63ce08272c86'
+  additionalControllers: [ArticleController]
 });

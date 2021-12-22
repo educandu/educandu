@@ -62,7 +62,9 @@ export default class RoomController {
   }
 
   async handleAuthorizeResourceAccess(req, res) {
-    const { roomId, userId } = req.params;
+    const { roomId } = req.params;
+    const { _id: userId } = req.user;
+
     const result = await this.roomService.isRoomMemberOrOwner(roomId, userId);
     return result ? res.sendStatus(200) : res.sendStatus(403);
   }
@@ -85,7 +87,7 @@ export default class RoomController {
     );
 
     router.get(
-      '/api/v1/rooms/:roomId/authorize-resource-access/:userId',
+      '/api/v1/rooms/:roomId/authorize-resource-access',
       [needsPermission(permissions.AUTORIZE_ROOMS_RESOURCES), validateParams(getAuthorizeResourceAccessParamsSchema)],
       (req, res) => this.handleAuthorizeResourceAccess(req, res)
     );

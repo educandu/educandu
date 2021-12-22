@@ -1,8 +1,8 @@
 import { ROLE } from './role.js';
-import { exportUser, roomResourceAutorizationUser } from './built-in-users.js';
+import { exportUser } from './built-in-users.js';
 import permissions, { hasUserPermission } from './permissions.js';
 
-const isTechnicalPermission = permission => [permissions.AUTORIZE_ROOMS_RESOURCES, permissions.MANAGE_EXPORT].includes(permission);
+const isTechnicalPermission = permission => permission === permissions.MANAGE_EXPORT;
 
 describe('permissions', () => {
 
@@ -35,7 +35,7 @@ describe('permissions', () => {
         let expected;
         beforeEach(() => {
           result = hasUserPermission(adminUser, permission);
-          expected = permission === permissions.MANAGE_EXPORT;
+          expected = isTechnicalPermission(permission);
         });
         it(`should be ${expected} for permission '${permission}'`, () => {
           expect(result).toBe(expected);
@@ -43,24 +43,6 @@ describe('permissions', () => {
       });
 
     });
-
-    describe('when user is builtin user "roomResourceAutorizationUser"', () => {
-      const user = roomResourceAutorizationUser;
-
-      Object.values(permissions).forEach(permission => {
-        let result;
-        let expected;
-        beforeEach(() => {
-          result = hasUserPermission(user, permission);
-          expected = permission === permissions.AUTORIZE_ROOMS_RESOURCES;
-        });
-        it(`should be ${expected} for permission '${permission}'`, () => {
-          expect(result).toBe(expected);
-        });
-      });
-
-    });
-
   });
 
 });
