@@ -82,10 +82,8 @@ function RoomsTab({ rooms }) {
   };
 
   const handleNewRoomClick = () => {
-    setState({
-      newRoom: createNewRoomState(),
-      isNewRoomModalVisible: true
-    });
+    setState({ isNewRoomModalVisible: true, newRoom: createNewRoomState() });
+    newRoomFormRef.resetFields();
   };
 
   const handleNewRoomOk = async () => {
@@ -221,28 +219,26 @@ function RoomsTab({ rooms }) {
         <Table dataSource={membershipRoomsRows} columns={membershipRoomsColumns} size="middle" />
       </section>
 
-      {state.isNewRoomModalVisible && (
-        <Modal
-          title={t('newRoom')}
-          onOk={handleNewRoomOk}
-          onCancel={handleNewRoomCancel}
-          maskClosable={false}
-          visible={state.isNewRoomModalVisible}
-          okButtonProps={{ loading: state.isNewRoomBeingCreated }}
-          >
-          <Form name="new-room-form" ref={newRoomFormRef} layout="vertical">
-            <FormItem label={t('name')} name="name" rules={roomNameValidationRules} initialValue={state.newRoom.name}>
-              <Input onChange={handleNewRoomNameChange} />
-            </FormItem>
-            <FormItem label={t('access')}>
-              <RadioGroup value={state.newRoom.access} onChange={handleRoomAccessChange}>
-                <RadioButton value={ROOM_ACCESS_LEVEL.private}>{t('accessType_private')}</RadioButton>
-                <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('accessType_public')}</RadioButton>
-              </RadioGroup>
-            </FormItem>
-          </Form>
-        </Modal>
-      )}
+      <Modal
+        title={t('newRoom')}
+        onOk={handleNewRoomOk}
+        onCancel={handleNewRoomCancel}
+        maskClosable={false}
+        visible={state.isNewRoomModalVisible}
+        okButtonProps={{ loading: state.isNewRoomBeingCreated }}
+        >
+        <Form name="new-room-form" ref={newRoomFormRef} layout="vertical">
+          <FormItem label={t('name')} name="name" rules={roomNameValidationRules} initialValue={state.newRoom.name}>
+            <Input onChange={handleNewRoomNameChange} />
+          </FormItem>
+          <FormItem label={t('access')}>
+            <RadioGroup value={state.newRoom.access} onChange={handleRoomAccessChange}>
+              <RadioButton value={ROOM_ACCESS_LEVEL.private}>{t('accessType_private')}</RadioButton>
+              <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('accessType_public')}</RadioButton>
+            </RadioGroup>
+          </FormItem>
+        </Form>
+      </Modal>
     </div>
   );
 }
