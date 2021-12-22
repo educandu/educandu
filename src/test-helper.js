@@ -7,9 +7,9 @@ import { ROLE } from './domain/role.js';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
 import UserService from './services/user-service.js';
-import { DOCUMENT_ORIGIN } from './common/constants.js';
 import DocumentService from './services/document-service.js';
 import { SAVE_USER_RESULT } from './domain/user-management.js';
+import { DOCUMENT_ORIGIN, ROOM_ACCESS_LEVEL } from './common/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 export async function createTestDir() {
@@ -131,6 +131,22 @@ export async function setupTestUser(container, userValues) {
   verifiedUser.lockedOut = lockedOut || false;
   await userService.saveUser(verifiedUser);
   return verifiedUser;
+}
+
+export async function createTestRoom(container, roomValues) {
+  const db = container.get(Database);
+
+  const room = {
+    _id: roomValues._id || uniqueId.create(),
+    name: roomValues.name || 'my-room',
+    access: roomValues.access || ROOM_ACCESS_LEVEL.public,
+    owner: roomValues.owner || uniqueId.create(),
+    createdBy: roomValues.createdBy || uniqueId.create(),
+    createdOn: roomValues.createdOn || new Date(),
+    members: roomValues.members || []
+  };
+  await db.rooms.insertOne(room);
+  return room;
 }
 
 export function createTestDocument(container, user, document) {

@@ -21,7 +21,7 @@ class UserController {
 
     let rooms = [];
     if (!this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
-      rooms = await this.roomService.getRooms({ ownerId: user._id, memberId: user._id });
+      rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
     }
 
     const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMapper.mapRoom(room, user)));

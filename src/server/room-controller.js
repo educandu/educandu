@@ -12,11 +12,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { FEATURE_TOGGLES } from '../common/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-<<<<<<< HEAD
-import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourcesAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
-=======
-import { getRoomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema } from '../domain/schemas/rooms-schemas.js';
->>>>>>> ab44eb1 (EDU-204 Add GET /rooms endpoint)
+import { getRoomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourcesAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
 const { NotFound, Forbidden } = httpErrors;
