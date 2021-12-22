@@ -15,7 +15,7 @@ import { validateBody, validateParams } from '../domain/validation-middleware.js
 import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourceAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
-const { NotFound } = httpErrors;
+const { NotFound, Forbidden } = httpErrors;
 
 export default class RoomController {
   static get inject() { return [ServerConfig, RoomService, MailService, ClientDataMapper, PageRenderer]; }
@@ -66,7 +66,11 @@ export default class RoomController {
     const { _id: userId } = req.user;
 
     const result = await this.roomService.isRoomMemberOrOwner(roomId, userId);
-    return result ? res.sendStatus(200) : res.sendStatus(403);
+    if (!result) {
+      throw new Forbidden();
+    }
+
+    return res.end();
   }
 
   registerApi(router) {

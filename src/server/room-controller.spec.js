@@ -5,7 +5,7 @@ import httpMocks from 'node-mocks-http';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, Forbidden } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -30,12 +30,7 @@ describe('room-controller', () => {
         }
         return Promise.resolve();
       }),
-      isRoomMemberOrOwner: sandbox.stub().callsFake(roomId => {
-        if (roomId === '843zvnzn2vw') {
-          return {};
-        }
-        return null;
-      })
+      isRoomMemberOrOwner: sandbox.stub()
     };
     mailService = {
       sendRoomInvitation: sandbox.stub()
@@ -172,6 +167,7 @@ describe('room-controller', () => {
     const roomId = '843zvnzn2vw';
     describe('when the user is authorized', () => {
       beforeEach(done => {
+        roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
@@ -195,7 +191,8 @@ describe('room-controller', () => {
 
     });
     describe('when the user is not authorized', () => {
-      beforeEach(done => {
+      beforeEach(() => {
+        roomService.isRoomMemberOrOwner = sandbox.stub().resolves(false);
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
@@ -204,17 +201,10 @@ describe('room-controller', () => {
         req.user = user;
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
-
-        sut.handleAuthorizeResourceAccess(req, res);
       });
 
-      it('should call the room service with the correct roomId and userId', () => {
-        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, 'abcd', user._id);
-      });
-
-      it('should return status 403 when the user is not authorized', () => {
-        expect(res.statusCode).toBe(403);
+      it('should throw a not authorized exception', () => {
+        expect(() => sut.handleAuthorizeResourceAccess(req, res)).rejects.toThrow(Forbidden);
       });
 
     });
