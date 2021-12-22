@@ -29,6 +29,12 @@ describe('room-controller', () => {
           return Promise.resolve(room);
         }
         return Promise.resolve();
+      }),
+      isRoomMemberOrOwner: sandbox.stub().callsFake(roomId => {
+        if (roomId === '843zvnzn2vw') {
+          return {};
+        }
+        return null;
       })
     };
     mailService = {
@@ -158,6 +164,59 @@ describe('room-controller', () => {
       it('should throw a not found exception', () => {
         expect(() => sut.handleGetRoomDetails({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
       });
+    });
+  });
+
+  describe('handleAuthorizeResourceAccess', () => {
+    const userId = 'Ludwig the great';
+    const roomId = '843zvnzn2vw';
+    describe('when the user is authorized', () => {
+      beforeEach(done => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId, userId }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleAuthorizeResourceAccess(req, res);
+      });
+
+      it('should call the room service with the correct roomId and userId', () => {
+        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, roomId, userId);
+      });
+
+      it('should return status 200 when the user is authorized', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+    });
+    describe('when the user is not authorized', () => {
+      beforeEach(done => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId: 'abcd', userId }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleAuthorizeResourceAccess(req, res);
+      });
+
+      it('should call the room service with the correct roomId and userId', () => {
+        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, 'abcd', userId);
+      });
+
+      it('should return status 403 when the user is not authorized', () => {
+        expect(res.statusCode).toBe(403);
+      });
+
     });
   });
 });
