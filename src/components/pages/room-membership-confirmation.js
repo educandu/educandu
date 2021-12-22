@@ -56,7 +56,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
             <Trans
               t={t}
               i18nKey="redirectMessage"
-              values={{ seconds }}
+              values={{ roomName, seconds }}
               components={[<a key="login-link" href={urls.getRoomUrl(roomId)} />]}
               />
           )}
