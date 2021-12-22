@@ -75,7 +75,7 @@ function MySpace({ initialState, PageTemplate }) {
 MySpace.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    rooms: PropTypes.arrayOf(roomShape)
+    rooms: PropTypes.arrayOf(roomShape).isRequired
   }).isRequired
 };
 
