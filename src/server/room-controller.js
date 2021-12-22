@@ -63,7 +63,7 @@ export default class RoomController {
 
   async handleAuthorizeResourceAccess(req, res) {
     const { roomId, userId } = req.params;
-    const result = await this.roomService.isRoomMember(roomId, userId);
+    const result = await this.roomService.isRoomMemberOrOwner(roomId, userId);
     return result ? res.sendStatus(200) : res.sendStatus(403);
   }
 
