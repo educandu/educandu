@@ -14,7 +14,7 @@ function RoomsTab({ rooms }) {
   const { t } = useTranslation('roomsTab');
 
   const renderName = (name, room) => {
-    return <a href={urls.getRoomDetailsUrl(room._id)}>{name}</a>;
+    return <a href={urls.getRoomUrl(room._id)}>{name}</a>;
   };
 
   const renderCreatedOn = createdOn => {

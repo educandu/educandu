@@ -5,6 +5,7 @@ import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -14,12 +15,17 @@ const logger = new Logger(import.meta.url);
 const PENDING_ROOM_INVITATION_EXPIRATION_TIMESPAN = { days: 7 };
 
 export default class RoomService {
-  static get inject() { return [RoomStore, RoomInvitationStore, UserService]; }
+  static get inject() { return [RoomStore, RoomInvitationStore, UserService, TransactionRunner]; }
 
-  constructor(roomStore, roomInvitationStore, userService) {
+  constructor(roomStore, roomInvitationStore, userService, transactionRunner) {
     this.roomStore = roomStore;
     this.roomInvitationStore = roomInvitationStore;
     this.userService = userService;
+    this.transactionRunner = transactionRunner;
+  }
+
+  getRoomById(roomId) {
+    return this.roomStore.findOne({ _id: roomId });
   }
 
   async _getRooms({ ownerId, memberId }) {
@@ -78,7 +84,7 @@ export default class RoomService {
 
     const owner = await this.userService.getUserById(room.owner);
 
-    let invitation = await this.roomInvitationStore.find({ roomId, email: lowerCasedEmail });
+    let invitation = await this.roomInvitationStore.findOne({ roomId, email: lowerCasedEmail });
     if (!invitation) {
       invitation = {
         _id: uniqueId.create(),
@@ -97,8 +103,44 @@ export default class RoomService {
     return { room, owner, invitation };
   }
 
-  getRoomById(roomId) {
-    return this.roomStore.findOne({ _id: roomId });
+  async verifyInvitationToken({ token, user }) {
+    let roomId = null;
+    let roomName = null;
+    let isValid = false;
+
+    const invitation = await this.roomInvitationStore.findOne({ token });
+    if (invitation?.email === user.email) {
+      const room = await this.roomStore.findOne({ _id: invitation.roomId });
+      if (room) {
+        roomId = room._id;
+        roomName = room.name;
+        isValid = true;
+      }
+    }
+
+    return { roomId, roomName, isValid };
+  }
+
+  async confirmInvitation({ token, user }) {
+    const invitation = await this.roomInvitationStore.findOne({ token });
+    if (invitation?.email !== user.email) {
+      throw new NotFound();
+    }
+
+    await this.transactionRunner.run(async session => {
+      const newMember = {
+        userId: user._id,
+        joinedOn: new Date()
+      };
+
+      await this.roomStore.updateOne(
+        { _id: invitation.roomId },
+        { $push: { members: newMember } },
+        { session }
+      );
+
+      await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
+    });
   }
 
   async isRoomMemberOrOwner(roomId, userId) {

@@ -9,7 +9,6 @@ const { NotFound, Forbidden } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
-  const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
 
   let roomService;
   let mailService;
@@ -24,12 +23,8 @@ describe('room-controller', () => {
   beforeEach(() => {
     roomService = {
       createOrUpdateInvitation: sandbox.stub(),
-      getRoomById: sandbox.stub().callsFake(roomId => {
-        if (roomId === room.roomId) {
-          return Promise.resolve(room);
-        }
-        return Promise.resolve();
-      }),
+      confirmInvitation: sandbox.stub(),
+      getRoomById: sandbox.stub(),
       isRoomMemberOrOwner: sandbox.stub()
     };
     mailService = {
@@ -44,7 +39,7 @@ describe('room-controller', () => {
     };
 
     clientDataMapper = {
-      mapRoom: sandbox.stub().resolves(room)
+      mapRoom: sandbox.stub()
     };
 
     pageRenderer = {
@@ -61,6 +56,7 @@ describe('room-controller', () => {
   describe('handlePostRoomInvitation', () => {
 
     describe('when all goes well', () => {
+      const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
       beforeEach(done => {
@@ -105,7 +101,7 @@ describe('room-controller', () => {
           roomName: 'Mein schöner Raum',
           ownerName: 'dagobert-the-third',
           email: 'invited@user.com',
-          invitationLink: 'https://educandu.dev/confirm-room-membership/94zv87nt2zztc8m3zt2z3845z8txc'
+          invitationLink: 'https://educandu.dev/room-membership-confirmation/94zv87nt2zztc8m3zt2z3845z8txc'
         });
       });
     });
@@ -131,7 +127,39 @@ describe('room-controller', () => {
 
   });
 
-  describe('handleGetRoomDetails', () => {
+  describe('handlePostRoomInvitationConfirm', () => {
+    const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+    const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
+
+    beforeEach(done => {
+      roomService.createOrUpdateInvitation.returns(Promise.resolve({
+        room,
+        owner: user,
+        invitation
+      }));
+      mailService.sendRoomInvitation.returns(Promise.resolve());
+
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'educandu.dev' },
+        body: { token: invitation.token }
+      });
+      req.user = user;
+
+      res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+      res.on('end', done);
+
+      sut.handlePostRoomInvitationConfirm(req, res);
+    });
+
+    it('should respond with status code 201', () => {
+      expect(res.statusCode).toBe(201);
+    });
+  });
+
+  describe('handleGetRoom', () => {
+    const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+
     describe('when the room exists', () => {
       const request = {
         params: {
@@ -140,7 +168,14 @@ describe('room-controller', () => {
       };
 
       beforeEach(async () => {
-        await sut.handleGetRoomDetails(request, {});
+        clientDataMapper.mapRoom.resolves(room);
+        roomService.getRoomById.callsFake(roomId => {
+          if (roomId === room.roomId) {
+            return Promise.resolve(room);
+          }
+          return Promise.resolve();
+        });
+        await sut.handleGetRoom(request, {});
       });
 
       it('should call getRoomById with roomId', () => {
@@ -158,16 +193,16 @@ describe('room-controller', () => {
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoomDetails({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoom({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
       });
     });
   });
 
-  describe('handleAuthorizeResourceAccess', () => {
+  describe('handleAuthorizeResourcesAccess', () => {
     const roomId = '843zvnzn2vw';
     describe('when the user is authorized', () => {
       beforeEach(done => {
-        roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
+        roomService.isRoomMemberOrOwner.resolves(true);
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
@@ -192,7 +227,7 @@ describe('room-controller', () => {
     });
     describe('when the user is not authorized', () => {
       beforeEach(() => {
-        roomService.isRoomMemberOrOwner = sandbox.stub().resolves(false);
+        roomService.isRoomMemberOrOwner.resolves(false);
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },

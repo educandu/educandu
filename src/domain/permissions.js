@@ -19,6 +19,7 @@ const CREATE_ROOMS = 'create-rooms';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
 const VIEW_ROOMS = 'view-rooms';
 const EDIT_ROOMS = 'edit-rooms';
+const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -38,7 +39,8 @@ const rolesForPermission = {
   [CREATE_ROOMS]: [ROLE.admin, ROLE.user],
   [EDIT_ROOMS]: [ROLE.admin, ROLE.user],
   [VIEW_ROOMS]: [ROLE.admin, ROLE.user],
-  [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user]
+  [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user],
+  [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user]
 };
 
 export function hasUserPermission(user, permission) {
@@ -66,5 +68,6 @@ export default {
   CREATE_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
   VIEW_ROOMS,
-  EDIT_ROOMS
+  EDIT_ROOMS,
+  JOIN_PRIVATE_ROOMS
 };

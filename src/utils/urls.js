@@ -12,13 +12,12 @@ const resetPasswordPath = '/reset-password';
 const createImportPath = '/import-batches/create';
 
 const docsPrefix = '/docs/';
+const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
 const editDocPrefix = '/edit/doc/';
-const roomDetailsPrefix = '/rooms/';
-const pluginApiPathPrefix = '/plugins/';
 const completeRegistrationPrefix = '/complete-registration/';
 const completePasswordResetPrefix = '/complete-password-reset/';
-const confirmRoomMembershipPrefix = '/confirm-room-membership/';
+const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 function removeTrailingSlash(path) {
   return String(path).replace(/\/*$/, '');
@@ -83,12 +82,8 @@ function getCompletePasswordResetUrl(passwordResetRequestId) {
   return concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
-function getConfirmRoomMembershipUrl(token) {
-  return concatParts(confirmRoomMembershipPrefix, token);
-}
-
-function getPluginApiPathPrefix(pluginType) {
-  return concatParts(pluginApiPathPrefix, pluginType);
+function getRoomMembershipConfirmationUrl(token) {
+  return concatParts(roomMembershipConfirmationPrefix, token);
 }
 
 function getDefaultLoginRedirectUrl() {
@@ -145,8 +140,8 @@ function getImportDetailsUrl(batchId) {
   return concatParts(importBatchesPath, batchId);
 }
 
-function getRoomDetailsUrl(roomId) {
-  return concatParts(roomDetailsPrefix, encodeURIComponent(roomId));
+function getRoomUrl(roomId) {
+  return concatParts(roomsPrefix, encodeURIComponent(roomId));
 }
 
 export default {
@@ -159,10 +154,8 @@ export default {
   resetPasswordPath,
   docsPrefix,
   editDocPrefix,
-  pluginApiPathPrefix,
   completeRegistrationPrefix,
   completePasswordResetPrefix,
-  confirmRoomMembershipPrefix,
   createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
@@ -172,13 +165,13 @@ export default {
   getUsersUrl,
   getDocUrl,
   getDocumentRevisionUrl,
+  getRoomUrl,
   getSettingsUrl,
   getImportsUrl,
   getCreateImportUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
-  getConfirmRoomMembershipUrl,
-  getPluginApiPathPrefix,
+  getRoomMembershipConfirmationUrl,
   getDefaultLoginRedirectUrl,
   getDefaultLogoutRedirectUrl,
   getHomeUrl,
@@ -192,6 +185,5 @@ export default {
   getBatchUrl,
   getImportedDocUrl,
   getImportDetailsUrl,
-  getImportSourceBaseUrl,
-  getRoomDetailsUrl
+  getImportSourceBaseUrl
 };

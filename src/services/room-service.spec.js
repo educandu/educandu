@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
+import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
@@ -9,6 +10,7 @@ import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, set
 const { BadRequest, NotFound } = httpErrors;
 
 describe('room-service', () => {
+  let db;
   let sut;
   let myUser;
   let result;
@@ -16,7 +18,6 @@ describe('room-service', () => {
   let roomStore;
   let container;
 
-  const now = new Date();
   const sandbox = sinon.createSandbox();
 
   beforeAll(async () => {
@@ -27,6 +28,7 @@ describe('room-service', () => {
     roomStore = container.get(RoomStore);
 
     sut = container.get(RoomService);
+    db = container.get(Database);
   });
 
   afterAll(async () => {
@@ -38,6 +40,8 @@ describe('room-service', () => {
   });
 
   describe('getRoomsOwnedOrJoinedByUser', () => {
+    const now = new Date();
+
     beforeEach(async () => {
       sandbox.useFakeTimers(now);
 
@@ -103,7 +107,9 @@ describe('room-service', () => {
   });
 
   describe('createRoom', () => {
+    const now = new Date();
     let createdRoom;
+
     beforeEach(async () => {
       sandbox.useFakeTimers(now);
       createdRoom = await sut.createRoom({ name: 'my room', access: ROOM_ACCESS_LEVEL.public, user: myUser });
@@ -198,7 +204,79 @@ describe('room-service', () => {
         await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: { _id: 'xyzxyzxyzxyzxyz' } });
       }).rejects.toThrow(NotFound);
     });
+  });
 
+  describe('verifyInvitationToken', () => {
+    let testRoom = null;
+    let invitation = null;
+
+    beforeEach(async () => {
+      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+    });
+
+    it('should be valid if user and token are valid', async () => {
+      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: otherUser });
+      expect(isValid).toBe(true);
+      expect(roomId).toBe(testRoom._id);
+      expect(roomName).toBe(testRoom.name);
+    });
+
+    it('should be invalid if user is valid but token is invalid', async () => {
+      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: '34z5c7z47z92234z592qz', user: otherUser });
+      expect(isValid).toBe(false);
+      expect(roomId).toBeNull();
+      expect(roomName).toBeNull();
+    });
+
+    it('should be invalid if token is valid but user is invalid', async () => {
+      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
+      expect(isValid).toBe(false);
+      expect(roomId).toBeNull();
+      expect(roomName).toBeNull();
+    });
+  });
+
+  describe('confirmInvitation', () => {
+    let testRoom = null;
+    let invitation = null;
+
+    beforeEach(async () => {
+      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+    });
+
+    it('should throw NotFound if invitation does not exist', async () => {
+      await expect(async () => {
+        await sut.confirmInvitation({ token: '34z5c7z47z92234z592qz', user: otherUser });
+      }).rejects.toThrow(NotFound);
+    });
+
+    it('should throw NotFound if the email is not the email used in the invitation', async () => {
+      await expect(async () => {
+        await sut.confirmInvitation({ token: invitation.token, user: { ...otherUser, email: 'changed@test.com' } });
+      }).rejects.toThrow(NotFound);
+    });
+
+    describe('when user and token are valid', () => {
+      beforeEach(async () => {
+        await sut.confirmInvitation({ token: invitation.token, user: otherUser });
+      });
+
+      it('should add the user as a room member if user and token are valid', async () => {
+        const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
+        expect(roomFromDb.members).toHaveLength(1);
+        expect(roomFromDb.members[0]).toEqual({
+          userId: otherUser._id,
+          joinedOn: expect.any(Date)
+        });
+      });
+
+      it('should remove the invitation from the database', async () => {
+        const invitationFromDb = await db.roomInvitations.findOne({ _id: invitation._id });
+        expect(invitationFromDb).toBeNull();
+      });
+    });
   });
 
   describe('isRoomMemberOrOwner', () => {
