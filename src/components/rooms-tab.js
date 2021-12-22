@@ -82,8 +82,11 @@ function RoomsTab({ rooms }) {
   };
 
   const handleNewRoomClick = () => {
-    setState({ isNewRoomModalVisible: true, newRoom: createNewRoomState() });
-    newRoomFormRef.resetFields();
+    const newRoom = createNewRoomState();
+    setState(prevState => ({ ...prevState, isNewRoomModalVisible: true, newRoom }));
+    if (newRoomFormRef.current) {
+      newRoomFormRef.current.setFieldsValue({ name: newRoom.name });
+    }
   };
 
   const handleNewRoomOk = async () => {
