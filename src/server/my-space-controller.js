@@ -24,12 +24,7 @@ class UserController {
       rooms = await this.roomService.getRooms({ ownerId: user._id, memberId: user._id });
     }
 
-    const mappedRooms = [];
-    for (const room of rooms) {
-      // eslint-disable-next-line no-await-in-loop
-      mappedRooms.push(await this.clientDataMapper.mapRoom(room, user));
-    }
-
+    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMapper.mapRoom(room, user)));
     const initialState = { rooms: mappedRooms };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.mySpace, initialState);
