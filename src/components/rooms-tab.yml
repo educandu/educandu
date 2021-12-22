@@ -1,9 +1,9 @@
 ownedRoomsHeader:
-  en: Your rooms
-  de: Deine Räume
+  en: My rooms
+  de: Meine Räume
 joinedRoomsHeader:
-  en: Rooms you are a member of
-  de: Räume in denen du Mitglied bist
+  en: Rooms I am a member of
+  de: Räume in denen ich Mitglied bin
 accessType_public:
   en: public
   de: öffentlich

@@ -1,13 +1,14 @@
 import { Container } from '../common/di.js';
 import CdnController from './cdn-controller.js';
+import RoomController from './room-controller.js';
 import I18nController from './i18n-controller.js';
 import UserController from './user-controller.js';
 import IndexController from './index-controller.js';
 import ErrorController from './error-controller.js';
-import RoomController from './room-controller.js';
 import StaticController from './static-controller.js';
 import ImportController from './import-controller.js';
 import ExportController from './export-controller.js';
+import MySpaceController from './my-space-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
 import UserAgentController from './user-agent-controller.js';
@@ -24,7 +25,8 @@ const controllerTypes = [
   ExportController,
   ImportController,
   ErrorController,
-  RoomController
+  RoomController,
+  MySpaceController
 ];
 
 class ControllerFactory {

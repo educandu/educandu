@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import { Button, Input } from 'antd';
+import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
-import { getHomeUrl, getSearchUrl } from '../../utils/urls.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
@@ -26,7 +26,7 @@ function Index({ initialState, PageTemplate, SiteLogo }) {
 
   const handleSearch = () => {
     setIsSearching(true);
-    window.location = getSearchUrl(searchText.trim());
+    window.location = urls.getSearchUrl(searchText.trim());
   };
 
   const handleSearchTextChanged = event => {
@@ -73,7 +73,7 @@ function Index({ initialState, PageTemplate, SiteLogo }) {
         {currentHomeLanguage && (
           <div className="IndexPage-languageLinks">
             {homeLanguages.map((hl, index) => (
-              <Button key={index.toString()} type="link" href={getHomeUrl(index === 0 ? null : hl.language)}>
+              <Button key={index.toString()} type="link" href={urls.getHomeUrl(index === 0 ? null : hl.language)}>
                 <CountryFlagAndName
                   code={languageNames[hl.language]?.flag || null}
                   name={languageNames[hl.language]?.name || null}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Logger from '../common/logger.js';
 import EmailInput from './email-input.js';
 import { useUser } from './user-context.js';
@@ -28,7 +28,7 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
     forbiddenUsernames: []
   });
 
-  const formRef = React.createRef();
+  const formRef = useRef(null);
 
   const saveAccountData = async ({ username, email }) => {
     try {

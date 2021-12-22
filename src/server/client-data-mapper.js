@@ -1,4 +1,5 @@
 import uniqueId from '../utils/unique-id.js';
+import cloneDeep from '../utils/clone-deep.js';
 import privateData from '../domain/private-data.js';
 import UserService from '../services/user-service.js';
 
@@ -87,23 +88,25 @@ class ClientDataMapper {
     };
   }
 
-  async mapRoomDetails(roomDetails, user) {
+  async mapRoom(room, user) {
     const allowedUserFields = privateData.getAllowedUserFields(user);
-    const result = { ...roomDetails };
-    const owner = await this.userService.getUserById(roomDetails.owner);
-    result.owner = this._mapUser(owner, allowedUserFields);
+    const mappedRoom = cloneDeep(room);
 
-    const members = await this.userService.getUsersByIds(roomDetails.members.map(member => member.userId));
+    const owner = await this.userService.getUserById(room.owner);
+    mappedRoom.owner = this._mapUser(owner, allowedUserFields);
 
-    result.members = roomDetails.members.map(member => {
-      const memberDetails = members.find(u => member.userId === u._id);
+    const memberUsers = await this.userService.getUsersByIds(room.members.map(member => member.userId));
+
+    mappedRoom.members = room.members.map(member => {
+      const memberDetails = memberUsers.find(memberUser => member.userId === memberUser._id);
       return {
-        ...member,
+        userId: member.userId,
+        joinedOn: member.joinedOn,
         username: memberDetails.username
       };
     });
 
-    return result;
+    return mappedRoom;
   }
 
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {

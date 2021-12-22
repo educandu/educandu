@@ -801,8 +801,8 @@
     "namespace": "roomsTab",
     "language": "en",
     "resources": {
-      "ownedRoomsHeader": "Your rooms",
-      "joinedRoomsHeader": "Rooms you are a member of",
+      "ownedRoomsHeader": "My rooms",
+      "joinedRoomsHeader": "Rooms I am a member of",
       "accessType_public": "public",
       "accessType_private": "private",
       "name": "Name",
@@ -814,8 +814,8 @@
     "namespace": "roomsTab",
     "language": "de",
     "resources": {
-      "ownedRoomsHeader": "Deine Räume",
-      "joinedRoomsHeader": "Räume in denen du Mitglied bist",
+      "ownedRoomsHeader": "Meine Räume",
+      "joinedRoomsHeader": "Räume in denen ich Mitglied bin",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
       "name": "Name",

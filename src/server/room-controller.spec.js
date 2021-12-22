@@ -44,7 +44,7 @@ describe('room-controller', () => {
     };
 
     clientDataMapper = {
-      mapRoomDetails: sandbox.stub().resolves(room)
+      mapRoom: sandbox.stub().resolves(room)
     };
 
     pageRenderer = {
@@ -147,8 +147,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(roomService.getRoomById, 'roomId');
       });
 
-      it('should call mapRoomDetails with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMapper.mapRoomDetails, room);
+      it('should call mapRoom with the room returned by the service', () => {
+        sinon.assert.calledWith(clientDataMapper.mapRoom, room);
       });
 
       it('should call pageRenderer with the right parameters', () => {

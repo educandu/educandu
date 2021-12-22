@@ -22,12 +22,35 @@ export default class RoomService {
     this.userService = userService;
   }
 
+  async _getRooms({ ownerId, memberId }) {
+    const orFilters = [];
+
+    if (ownerId) {
+      orFilters.push({ owner: ownerId });
+    }
+    if (memberId) {
+      orFilters.push({ members: { $elemMatch: { userId: memberId } } });
+    }
+
+    const filter = orFilters.length === 1 ? orFilters[0] : { $or: orFilters };
+
+    const rooms = await this.roomStore.find(filter);
+    return rooms;
+  }
+
+  async getRoomsOwnedOrJoinedByUser(userId) {
+    const rooms = await this._getRooms({ ownerId: userId, memberId: userId });
+    return rooms;
+  }
+
   async createRoom({ name, access, user }) {
     const newRoom = {
       _id: uniqueId.create(),
       name,
       access,
       owner: user._id,
+      createdBy: user._id,
+      createdOn: new Date(),
       members: []
     };
 

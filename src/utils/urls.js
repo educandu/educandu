@@ -1,23 +1,24 @@
-export const homePath = '/';
-export const docsPath = '/docs';
-export const usersPath = '/users';
-export const settingsPath = '/settings';
-export const importBatchesPath = '/import-batches';
-export const createImportPath = '/import-batches/create';
-export const loginPath = '/login';
-export const logoutPath = '/logout';
-export const mySpacePath = '/my-space';
-export const registerPath = '/register';
-export const resetPasswordPath = '/reset-password';
-export const searchPath = '/search';
+const homePath = '/';
+const docsPath = '/docs';
+const usersPath = '/users';
+const loginPath = '/login';
+const logoutPath = '/logout';
+const searchPath = '/search';
+const mySpacePath = '/my-space';
+const registerPath = '/register';
+const settingsPath = '/settings';
+const importBatchesPath = '/import-batches';
+const resetPasswordPath = '/reset-password';
+const createImportPath = '/import-batches/create';
 
-export const docsPrefix = '/docs/';
-export const editDocPrefix = '/edit/doc/';
-export const revisionPrefix = '/revs/';
-export const pluginApiPathPrefix = '/plugins/';
-export const completeRegistrationPrefix = '/complete-registration/';
-export const completePasswordResetPrefix = '/complete-password-reset/';
-export const confirmRoomMembershipPrefix = '/confirm-room-membership/';
+const docsPrefix = '/docs/';
+const revisionPrefix = '/revs/';
+const editDocPrefix = '/edit/doc/';
+const roomDetailsPrefix = '/rooms/';
+const pluginApiPathPrefix = '/plugins/';
+const completeRegistrationPrefix = '/complete-registration/';
+const completePasswordResetPrefix = '/complete-password-reset/';
+const confirmRoomMembershipPrefix = '/confirm-room-membership/';
 
 function removeTrailingSlash(path) {
   return String(path).replace(/\/*$/, '');
@@ -33,115 +34,119 @@ function concatParts(...parts) {
     .reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
 }
 
-export function createRedirectUrl(path, redirect) {
+function createRedirectUrl(path, redirect) {
   return `${path}?redirect=${encodeURIComponent(redirect)}`;
 }
 
-export function getDocsUrl() {
+function getDocsUrl() {
   return docsPath;
 }
 
-export function getEditDocUrl(docKey, blueprintKey = null) {
+function getEditDocUrl(docKey, blueprintKey = null) {
   const url = concatParts(editDocPrefix, docKey);
   return blueprintKey ? `${url}?blueprintKey=${encodeURIComponent(blueprintKey)}` : url;
 }
 
-export function getUsersUrl() {
+function getUsersUrl() {
   return usersPath;
 }
 
-export function getDocUrl(key, slug) {
+function getDocUrl(key, slug) {
   return concatParts(docsPrefix, key, slug);
 }
 
-export function getDocumentRevisionUrl(revisionId) {
+function getDocumentRevisionUrl(revisionId) {
   return concatParts(revisionPrefix, revisionId);
 }
 
-export function getSettingsUrl() {
+function getSettingsUrl() {
   return settingsPath;
 }
 
-export function getImportsUrl() {
+function getImportsUrl() {
   return importBatchesPath;
 }
 
-export function getCreateImportUrl(sourceName) {
+function getCreateImportUrl(sourceName) {
   return `${createImportPath}?source=${encodeURIComponent(sourceName)}`;
 }
 
-export function getBatchUrl(id) {
+function getBatchUrl(id) {
   return concatParts(importBatchesPath, id);
 }
 
-export function getCompleteRegistrationUrl(verificationCode) {
+function getCompleteRegistrationUrl(verificationCode) {
   return concatParts(completeRegistrationPrefix, verificationCode);
 }
 
-export function getCompletePasswordResetUrl(passwordResetRequestId) {
+function getCompletePasswordResetUrl(passwordResetRequestId) {
   return concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
-export function getConfirmRoomMembershipUrl(token) {
+function getConfirmRoomMembershipUrl(token) {
   return concatParts(confirmRoomMembershipPrefix, token);
 }
 
-export function getPluginApiPathPrefix(pluginType) {
+function getPluginApiPathPrefix(pluginType) {
   return concatParts(pluginApiPathPrefix, pluginType);
 }
 
-export function getDefaultLoginRedirectUrl() {
+function getDefaultLoginRedirectUrl() {
   return homePath;
 }
 
-export function getDefaultLogoutRedirectUrl() {
+function getDefaultLogoutRedirectUrl() {
   return homePath;
 }
 
-export function getHomeUrl(language = null) {
+function getHomeUrl(language = null) {
   return language ? `${homePath}?language=${encodeURIComponent(language)}` : homePath;
 }
 
-export function getLoginUrl(redirect = null) {
+function getLoginUrl(redirect = null) {
   return redirect ? createRedirectUrl(loginPath, redirect) : loginPath;
 }
 
-export function getLogoutUrl() {
+function getLogoutUrl() {
   return logoutPath;
 }
 
-export function getMySpaceUrl() {
+function getMySpaceUrl() {
   return mySpacePath;
 }
 
-export function getRegisterUrl() {
+function getRegisterUrl() {
   return registerPath;
 }
 
-export function getResetPasswordUrl() {
+function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
-export function createFullyQualifiedUrl(pathname) {
+function createFullyQualifiedUrl(pathname) {
   const url = new URL(document.location);
   url.pathname = pathname;
   return url.href;
 }
 
-export function getSearchUrl(query) {
+function getSearchUrl(query) {
   return `${searchPath}?query=${encodeURIComponent(query)}`;
 }
 
-export function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
+function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
   return `${allowUnsecure ? 'http' : 'https'}://${hostName}`;
 }
 
-export function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
+function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
   return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getDocUrl(key, slug));
 }
 
-export function getImportDetailsUrl(batchId) {
+function getImportDetailsUrl(batchId) {
   return concatParts(importBatchesPath, batchId);
+}
+
+function getRoomDetailsUrl(roomId) {
+  return concatParts(roomDetailsPrefix, encodeURIComponent(roomId));
 }
 
 export default {
@@ -184,5 +189,9 @@ export default {
   getResetPasswordUrl,
   createFullyQualifiedUrl,
   getSearchUrl,
-  getBatchUrl
+  getBatchUrl,
+  getImportedDocUrl,
+  getImportDetailsUrl,
+  getImportSourceBaseUrl,
+  getRoomDetailsUrl
 };

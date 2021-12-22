@@ -12,7 +12,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { FEATURE_TOGGLES } from '../common/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourcesAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
+import { getRoomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, getAuthorizeResourcesAccessParamsSchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
 const { NotFound, Forbidden } = httpErrors;
@@ -26,7 +26,6 @@ export default class RoomController {
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
-
   }
 
   async handlePostRoom(req, res) {
@@ -56,7 +55,7 @@ export default class RoomController {
       throw new NotFound();
     }
 
-    const roomDetails = await this.clientDataMapper.mapRoomDetails(room);
+    const roomDetails = await this.clientDataMapper.mapRoom(room);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
   }
@@ -98,6 +97,14 @@ export default class RoomController {
   }
 
   registerPages(router) {
-    router.get('/rooms/:roomId', [needsPermission(permissions.VIEW_ROOMS), validateParams(roomDetailsParamSchema)], (req, res) => this.handleGetRoomDetails(req, res));
+    if (this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
+      return;
+    }
+
+    router.get(
+      '/rooms/:roomId',
+      [needsPermission(permissions.VIEW_ROOMS), validateParams(getRoomDetailsParamSchema)],
+      (req, res) => this.handleGetRoomDetails(req, res)
+    );
   }
 }

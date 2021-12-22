@@ -1,15 +1,15 @@
+import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
+import UserStore from '../stores/user-store.js';
 import TaskStore from '../stores/task-store.js';
 import BatchStore from '../stores/batch-store.js';
 import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
-import { getImportSourceBaseUrl } from '../utils/urls.js';
 import BatchLockStore from '../stores/batch-lock-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
-import UserStore from '../stores/user-store.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -49,7 +49,7 @@ class ImportService {
   }
 
   async getAllImportableDocumentsMetadata(importSource) {
-    const baseUrl = getImportSourceBaseUrl(importSource);
+    const baseUrl = urls.getImportSourceBaseUrl(importSource);
 
     const exportApiClientResponse = await this.exportApiClient.getExports({ baseUrl, apiKey: importSource.apiKey });
     const exportableDocuments = exportApiClientResponse?.docs || [];

@@ -1,7 +1,7 @@
 import by from 'thenby';
 import { Table } from 'antd';
 import PropTypes from 'prop-types';
-import { getDocUrl } from '../utils/urls.js';
+import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import ImportTypeIcon from './import-type-icon.js';
 import { useService } from './container-context.js';
@@ -23,7 +23,7 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
 
   return importableDocuments.map(doc => {
     const documentLanguageData = languagesData[doc.language];
-    const url = `${importSourceBaseUrl}${getDocUrl(doc.key, doc.slug)}`;
+    const url = `${importSourceBaseUrl}${urls.getDocUrl(doc.key, doc.slug)}`;
 
     return {
       key: doc.key,
