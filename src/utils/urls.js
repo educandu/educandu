@@ -14,10 +14,10 @@ export const searchPath = '/search';
 export const docsPrefix = '/docs/';
 export const editDocPrefix = '/edit/doc/';
 export const revisionPrefix = '/revs/';
-export const pluginApiPathPrefix = '/plugins/';
+export const roomsPrefix = '/rooms/';
 export const completeRegistrationPrefix = '/complete-registration/';
 export const completePasswordResetPrefix = '/complete-password-reset/';
-export const confirmRoomMembershipPrefix = '/confirm-room-membership/';
+export const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 
 function removeTrailingSlash(path) {
   return String(path).replace(/\/*$/, '');
@@ -58,6 +58,10 @@ export function getDocumentRevisionUrl(revisionId) {
   return concatParts(revisionPrefix, revisionId);
 }
 
+export function getRoomUrl(roomId) {
+  return concatParts(roomsPrefix, roomId);
+}
+
 export function getSettingsUrl() {
   return settingsPath;
 }
@@ -82,12 +86,8 @@ export function getCompletePasswordResetUrl(passwordResetRequestId) {
   return concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
-export function getConfirmRoomMembershipUrl(token) {
-  return concatParts(confirmRoomMembershipPrefix, token);
-}
-
-export function getPluginApiPathPrefix(pluginType) {
-  return concatParts(pluginApiPathPrefix, pluginType);
+export function getRoomMembershipConfirmationUrl(token) {
+  return concatParts(roomMembershipConfirmationPrefix, token);
 }
 
 export function getDefaultLoginRedirectUrl() {
@@ -154,10 +154,8 @@ export default {
   resetPasswordPath,
   docsPrefix,
   editDocPrefix,
-  pluginApiPathPrefix,
   completeRegistrationPrefix,
   completePasswordResetPrefix,
-  confirmRoomMembershipPrefix,
   createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
@@ -167,13 +165,13 @@ export default {
   getUsersUrl,
   getDocUrl,
   getDocumentRevisionUrl,
+  getRoomUrl,
   getSettingsUrl,
   getImportsUrl,
   getCreateImportUrl,
   getCompleteRegistrationUrl,
   getCompletePasswordResetUrl,
-  getConfirmRoomMembershipUrl,
-  getPluginApiPathPrefix,
+  getRoomMembershipConfirmationUrl,
   getDefaultLoginRedirectUrl,
   getDefaultLogoutRedirectUrl,
   getHomeUrl,

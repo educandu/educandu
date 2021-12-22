@@ -18,6 +18,7 @@ const MANAGE_EXPORT = 'manage-export';
 const CREATE_ROOMS = 'create-rooms';
 const VIEW_ROOMS = 'view-rooms';
 const EDIT_ROOMS = 'edit-rooms';
+const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -36,7 +37,8 @@ const rolesForPermission = {
   [MANAGE_IMPORT]: [ROLE.admin],
   [CREATE_ROOMS]: [ROLE.admin, ROLE.user],
   [EDIT_ROOMS]: [ROLE.admin, ROLE.user],
-  [VIEW_ROOMS]: [ROLE.admin, ROLE.user]
+  [VIEW_ROOMS]: [ROLE.admin, ROLE.user],
+  [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user]
 };
 
 export function hasUserPermission(user, permission) {
@@ -63,5 +65,6 @@ export default {
   DELETE_CDN_FILE,
   CREATE_ROOMS,
   VIEW_ROOMS,
-  EDIT_ROOMS
+  EDIT_ROOMS,
+  JOIN_PRIVATE_ROOMS
 };

@@ -1,5 +1,6 @@
 import httpErrors from 'http-errors';
 import RoomService from './room-service.js';
+import Database from '../stores/database.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
@@ -10,12 +11,14 @@ describe('room-service', () => {
   let otherUser;
   let container;
   let sut;
+  let db;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
     sut = container.get(RoomService);
+    db = container.get(Database);
   });
 
   afterAll(async () => {
@@ -115,6 +118,79 @@ describe('room-service', () => {
         await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: { _id: 'xyzxyzxyzxyzxyz' } });
       }).rejects.toThrow(NotFound);
     });
-
   });
+
+  describe('verifyInvitationToken', () => {
+    let testRoom = null;
+    let invitation = null;
+
+    beforeEach(async () => {
+      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+    });
+
+    it('should be valid if user and token are valid', async () => {
+      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: otherUser });
+      expect(isValid).toBe(true);
+      expect(roomId).toBe(testRoom._id);
+      expect(roomName).toBe(testRoom.name);
+    });
+
+    it('should be invalid if user is valid but token is invalid', async () => {
+      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: '34z5c7z47z92234z592qz', user: otherUser });
+      expect(isValid).toBe(false);
+      expect(roomId).toBeNull();
+      expect(roomName).toBeNull();
+    });
+
+    it('should be invalid if token is valid but user is invalid', async () => {
+      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
+      expect(isValid).toBe(false);
+      expect(roomId).toBeNull();
+      expect(roomName).toBeNull();
+    });
+  });
+
+  describe('confirmInvitation', () => {
+    let testRoom = null;
+    let invitation = null;
+
+    beforeEach(async () => {
+      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+    });
+
+    it('should throw NotFound if invitation does not exist', async () => {
+      await expect(async () => {
+        await sut.confirmInvitation({ token: '34z5c7z47z92234z592qz', user: otherUser });
+      }).rejects.toThrow(NotFound);
+    });
+
+    it('should throw NotFound if the email is not the email used in the invitation', async () => {
+      await expect(async () => {
+        await sut.confirmInvitation({ token: invitation.token, user: { ...otherUser, email: 'changed@test.com' } });
+      }).rejects.toThrow(NotFound);
+    });
+
+    describe('when user and token are valid', () => {
+      beforeEach(async () => {
+        await sut.confirmInvitation({ token: invitation.token, user: otherUser });
+      });
+
+      it('should add the user as a room member if user and token are valid', async () => {
+        const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
+        expect(roomFromDb.members).toHaveLength(1);
+        expect(roomFromDb.members[0]).toEqual({
+          userId: otherUser._id,
+          joinedOn: expect.any(Date)
+        });
+      });
+
+      it('should remove the invitation from the database', async () => {
+        const invitationFromDb = await db.roomInvitations.findOne({ _id: invitation._id });
+        expect(invitationFromDb).toBeNull();
+      });
+    });
+  });
+
 });

@@ -12,7 +12,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { FEATURE_TOGGLES } from '../common/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema } from '../domain/schemas/rooms-schemas.js';
+import { roomDetailsParamSchema, postRoomBodySchema, postRoomInvitationBodySchema, postRoomInvitationConfirmBodySchema, getRoomMembershipConfirmationParamsSchema } from '../domain/schemas/rooms-schemas.js';
 
 const jsonParser = express.json();
 const { NotFound } = httpErrors;
@@ -26,7 +26,15 @@ export default class RoomController {
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
+  }
 
+  async handleRoomMembershipConfirmationPage(req, res) {
+    const { user } = req;
+    const { token } = req.params;
+
+    const { roomId, roomName, isValid } = await this.roomService.verifyInvitationToken({ token, user });
+    const initialState = { token, roomId, roomName, isValid };
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.roomMembershipConfirmation, initialState);
   }
 
   async handlePostRoom(req, res) {
@@ -42,10 +50,18 @@ export default class RoomController {
     const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
 
     const { origin } = requestHelper.getHostInfo(req);
-    const invitationLink = urls.concatParts(origin, urls.getConfirmRoomMembershipUrl(invitation.token));
+    const invitationLink = urls.concatParts(origin, urls.getRoomMembershipConfirmationUrl(invitation.token));
     await this.mailService.sendRoomInvitation({ roomName: room.name, ownerName: owner.username, email, invitationLink });
 
     res.status(201).send(invitation);
+  }
+
+  async handlePostRoomInvitationConfirm(req, res) {
+    const { user } = req;
+    const { token } = req.body;
+    await this.roomService.confirmInvitation({ token, user });
+
+    res.status(201).end();
   }
 
   async handleGetRoomDetails(req, res) {
@@ -77,9 +93,29 @@ export default class RoomController {
       [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
       (req, res) => this.handlePostRoomInvitation(req, res)
     );
+
+    router.post(
+      '/api/v1/room-invitations/confirm',
+      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
+      (req, res) => this.handlePostRoomInvitationConfirm(req, res)
+    );
   }
 
   registerPages(router) {
-    router.get('/rooms/:roomId', [needsPermission(permissions.VIEW_ROOMS), validateParams(roomDetailsParamSchema)], (req, res) => this.handleGetRoomDetails(req, res));
+    if (this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
+      return;
+    }
+
+    router.get(
+      '/rooms/:roomId',
+      [needsPermission(permissions.VIEW_ROOMS), validateParams(roomDetailsParamSchema)],
+      (req, res) => this.handleGetRoomDetails(req, res)
+    );
+
+    router.get(
+      '/room-membership-confirmation/:token',
+      [needsPermission(permissions.JOIN_PRIVATE_ROOMS), validateParams(getRoomMembershipConfirmationParamsSchema)],
+      (req, res) => this.handleRoomMembershipConfirmationPage(req, res)
+    );
   }
 }

@@ -10,6 +10,11 @@ export default {
       name: '_idx_roomId_email_',
       key: { email: 1, roomId: 1 },
       unique: true
+    },
+    {
+      name: '_idx_token_',
+      key: { token: 1 },
+      unique: true
     }
   ]
 };

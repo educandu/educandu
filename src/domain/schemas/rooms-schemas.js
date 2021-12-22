@@ -2,6 +2,10 @@ import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
 import { ROOM_ACCESS_LEVEL } from '../../common/constants.js';
 
+export const getRoomMembershipConfirmationParamsSchema = joi.object({
+  token: idOrKeySchema.required()
+});
+
 export const postRoomBodySchema = joi.object({
   name: joi.string().required(),
   access: joi.string().valid(ROOM_ACCESS_LEVEL.private, ROOM_ACCESS_LEVEL.public).required()
@@ -10,6 +14,10 @@ export const postRoomBodySchema = joi.object({
 export const postRoomInvitationBodySchema = joi.object({
   roomId: idOrKeySchema.required(),
   email: joi.string().required()
+});
+
+export const postRoomInvitationConfirmBodySchema = joi.object({
+  token: idOrKeySchema.required()
 });
 
 export const roomDetailsParamSchema = joi.object({

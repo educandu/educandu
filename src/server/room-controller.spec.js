@@ -9,7 +9,6 @@ const { NotFound } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
-  const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
 
   let roomService;
   let mailService;
@@ -24,12 +23,8 @@ describe('room-controller', () => {
   beforeEach(() => {
     roomService = {
       createOrUpdateInvitation: sandbox.stub(),
-      getRoomById: sandbox.stub().callsFake(roomId => {
-        if (roomId === room.roomId) {
-          return Promise.resolve(room);
-        }
-        return Promise.resolve();
-      })
+      confirmInvitation: sandbox.stub(),
+      getRoomById: sandbox.stub()
     };
     mailService = {
       sendRoomInvitation: sandbox.stub()
@@ -42,7 +37,7 @@ describe('room-controller', () => {
     };
 
     clientDataMapper = {
-      mapRoomDetails: sandbox.stub().resolves(room)
+      mapRoomDetails: sandbox.stub()
     };
 
     pageRenderer = {
@@ -59,6 +54,7 @@ describe('room-controller', () => {
   describe('handlePostRoomInvitation', () => {
 
     describe('when all goes well', () => {
+      const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
       beforeEach(done => {
@@ -103,7 +99,7 @@ describe('room-controller', () => {
           roomName: 'Mein schöner Raum',
           ownerName: 'dagobert-the-third',
           email: 'invited@user.com',
-          invitationLink: 'https://educandu.dev/confirm-room-membership/94zv87nt2zztc8m3zt2z3845z8txc'
+          invitationLink: 'https://educandu.dev/room-membership-confirmation/94zv87nt2zztc8m3zt2z3845z8txc'
         });
       });
     });
@@ -129,7 +125,39 @@ describe('room-controller', () => {
 
   });
 
+  describe('handlePostRoomInvitationConfirm', () => {
+    const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+    const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
+
+    beforeEach(done => {
+      roomService.createOrUpdateInvitation.returns(Promise.resolve({
+        room,
+        owner: user,
+        invitation
+      }));
+      mailService.sendRoomInvitation.returns(Promise.resolve());
+
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'educandu.dev' },
+        body: { token: invitation.token }
+      });
+      req.user = user;
+
+      res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+      res.on('end', done);
+
+      sut.handlePostRoomInvitationConfirm(req, res);
+    });
+
+    it('should respond with status code 201', () => {
+      expect(res.statusCode).toBe(201);
+    });
+  });
+
   describe('handleGetRoomDetails', () => {
+    const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+
     describe('when the room exists', () => {
       const request = {
         params: {
@@ -138,6 +166,13 @@ describe('room-controller', () => {
       };
 
       beforeEach(async () => {
+        clientDataMapper.mapRoomDetails.resolves(room);
+        roomService.getRoomById.callsFake(roomId => {
+          if (roomId === room.roomId) {
+            return Promise.resolve(room);
+          }
+          return Promise.resolve();
+        });
         await sut.handleGetRoomDetails(request, {});
       });
 

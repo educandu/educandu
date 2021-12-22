@@ -1,0 +1,21 @@
+confirmationSuccess:
+  en: Congratulations! You are now a member of room <0>{roomName}</0>.
+  de: Gratulation! Sie sind nun ein Mitglied des Raumes <0>{roomName}</0>.
+invitationConfirmation:
+  en: Please click on the button in order to join room <0>{roomName}</0>.
+  de: Bitte klicken Sie auf den Button, um dem Raum <0>{roomName}</0> beizutreten.
+invitationConfirmationDisclaimer:
+  en: By clicking on the button you give your consent to ???
+  de: Mit Klick auf den Button erklären Sie sich damit einverstanden, dass ???
+joinButton:
+  en: Join room
+  de: Raum beitreten
+invalidOrExpiredInvitationCode:
+  en: The invitation code is invalid or expired.
+  de: Der Einladungs-Code ist ungültig oder abgelaufen.
+homeLink:
+  en: Home
+  de: Home
+redirectMessage:
+  en: You will be redirected to the <0>room</0> in {seconds, plural, =1 {# second} other {# seconds}}.
+  de: Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} in den <0>Raum</0> weitergeleitet.
