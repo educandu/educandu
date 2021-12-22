@@ -15,7 +15,6 @@ educandu({
   cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
   cdnBucketName: 'dev-educandu-cdn',
   cdnRootUrl: 'http://localhost:9000/dev-educandu-cdn',
-  cdnAuthorizationApiKey: 'jd161abcdb0c44c4963f63ce08272c86',
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
   emailSenderAddress: 'educandu-test-app@test.com',
   smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
@@ -52,5 +51,6 @@ educandu({
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
   },
-  additionalControllers: [ArticleController]
+  additionalControllers: [ArticleController],
+  roomResourceAuthorizationApiKey: 'jd161abcdb0c44c4963f63ce08272c86'
 });

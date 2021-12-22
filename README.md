@@ -40,7 +40,7 @@ The educandu framework
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
  | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
  | consentCookieName | Consent cookie name | an unique name for the cookie | no |
- | cdnAuthorizationApiKey | Used by the CDN to authorize room resource access, only relevant when rooms are enabled | `string` | no |
+ | roomResourceAuthorizationApiKey | Used by the CDN to authorize room resource access, only relevant when rooms are enabled | `string` | no |
 
 ## How to use
 

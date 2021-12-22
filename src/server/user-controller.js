@@ -57,11 +57,13 @@ class UserController {
     router.use(passport.authenticate('apikey', { session: false }));
 
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      if (apikey === this.serverConfig.cdnAuthorizationApiKey) {
+      const { roomResourceAuthorizationApiKey, exportApiKey } = this.serverConfig;
+
+      if (roomResourceAuthorizationApiKey && apikey === roomResourceAuthorizationApiKey) {
         return cb(null, cdnAutorizationUser);
       }
 
-      return apikey === this.serverConfig.exportApiKey
+      return exportApiKey && apikey === exportApiKey
         ? cb(null, exportUser)
         : cb(null, false);
     }));
