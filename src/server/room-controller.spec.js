@@ -5,7 +5,7 @@ import httpMocks from 'node-mocks-http';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, Forbidden } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -24,20 +24,22 @@ describe('room-controller', () => {
     roomService = {
       createOrUpdateInvitation: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
-      getRoomById: sandbox.stub()
+      getRoomById: sandbox.stub(),
+      isRoomMemberOrOwner: sandbox.stub()
     };
     mailService = {
       sendRoomInvitation: sandbox.stub()
     };
     user = {
-      username: 'dagobert-the-third'
+      username: 'dagobert-the-third',
+      _id: 'Ludwig the great'
     };
     serverConfig = {
       disabledFeatures: []
     };
 
     clientDataMapper = {
-      mapRoomDetails: sandbox.stub()
+      mapRoom: sandbox.stub()
     };
 
     pageRenderer = {
@@ -155,7 +157,7 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handleGetRoomDetails', () => {
+  describe('handleGetRoom', () => {
     const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
 
     describe('when the room exists', () => {
@@ -166,22 +168,22 @@ describe('room-controller', () => {
       };
 
       beforeEach(async () => {
-        clientDataMapper.mapRoomDetails.resolves(room);
+        clientDataMapper.mapRoom.resolves(room);
         roomService.getRoomById.callsFake(roomId => {
           if (roomId === room.roomId) {
             return Promise.resolve(room);
           }
           return Promise.resolve();
         });
-        await sut.handleGetRoomDetails(request, {});
+        await sut.handleGetRoom(request, {});
       });
 
       it('should call getRoomById with roomId', () => {
         sinon.assert.calledWith(roomService.getRoomById, 'roomId');
       });
 
-      it('should call mapRoomDetails with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMapper.mapRoomDetails, room);
+      it('should call mapRoom with the room returned by the service', () => {
+        sinon.assert.calledWith(clientDataMapper.mapRoom, room);
       });
 
       it('should call pageRenderer with the right parameters', () => {
@@ -191,8 +193,55 @@ describe('room-controller', () => {
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoomDetails({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoom({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
       });
+    });
+  });
+
+  describe('handleAuthorizeResourcesAccess', () => {
+    const roomId = '843zvnzn2vw';
+    describe('when the user is authorized', () => {
+      beforeEach(done => {
+        roomService.isRoomMemberOrOwner.resolves(true);
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleAuthorizeResourcesAccess(req, res);
+      });
+
+      it('should call the room service with the correct roomId and userId', () => {
+        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, roomId, user._id);
+      });
+
+      it('should return status 200 when the user is authorized', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+    });
+    describe('when the user is not authorized', () => {
+      beforeEach(() => {
+        roomService.isRoomMemberOrOwner.resolves(false);
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId: 'abcd' }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+      });
+
+      it('should throw a not authorized exception', () => {
+        expect(() => sut.handleAuthorizeResourcesAccess(req, res)).rejects.toThrow(Forbidden);
+      });
+
     });
   });
 });

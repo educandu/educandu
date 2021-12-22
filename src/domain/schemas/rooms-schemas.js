@@ -8,7 +8,7 @@ export const getRoomMembershipConfirmationParamsSchema = joi.object({
 
 export const postRoomBodySchema = joi.object({
   name: joi.string().required(),
-  access: joi.string().valid(ROOM_ACCESS_LEVEL.private, ROOM_ACCESS_LEVEL.public).required()
+  access: joi.string().valid(...Object.values(ROOM_ACCESS_LEVEL)).required()
 });
 
 export const postRoomInvitationBodySchema = joi.object({
@@ -20,6 +20,10 @@ export const postRoomInvitationConfirmBodySchema = joi.object({
   token: idOrKeySchema.required()
 });
 
-export const roomDetailsParamSchema = joi.object({
+export const getRoomParamsSchema = joi.object({
+  roomId: joi.string().required()
+});
+
+export const getAuthorizeResourcesAccessParamsSchema = joi.object({
   roomId: joi.string().required()
 });

@@ -28,12 +28,35 @@ export default class RoomService {
     return this.roomStore.findOne({ _id: roomId });
   }
 
+  async _getRooms({ ownerId, memberId }) {
+    const orFilters = [];
+
+    if (ownerId) {
+      orFilters.push({ owner: ownerId });
+    }
+    if (memberId) {
+      orFilters.push({ members: { $elemMatch: { userId: memberId } } });
+    }
+
+    const filter = orFilters.length === 1 ? orFilters[0] : { $or: orFilters };
+
+    const rooms = await this.roomStore.find(filter);
+    return rooms;
+  }
+
+  async getRoomsOwnedOrJoinedByUser(userId) {
+    const rooms = await this._getRooms({ ownerId: userId, memberId: userId });
+    return rooms;
+  }
+
   async createRoom({ name, access, user }) {
     const newRoom = {
       _id: uniqueId.create(),
       name,
       access,
       owner: user._id,
+      createdBy: user._id,
+      createdOn: new Date(),
       members: []
     };
 
@@ -118,5 +141,10 @@ export default class RoomService {
 
       await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
     });
+  }
+
+  async isRoomMemberOrOwner(roomId, userId) {
+    const room = await this.roomStore.findOne({ $and: [{ _id: roomId }, { $or: [{ 'members.userId': userId }, { owner: userId }] }] });
+    return !!room;
   }
 }

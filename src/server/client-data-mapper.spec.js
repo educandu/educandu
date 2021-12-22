@@ -59,7 +59,7 @@ describe('client-data-mapper', () => {
     });
   });
 
-  describe('mapRoomDetails', () => {
+  describe('mapRoom', () => {
     const owner = {
       _id: 'owner',
       email: 'owner@owner',
@@ -83,11 +83,11 @@ describe('client-data-mapper', () => {
       members: [
         {
           userId: 'member1',
-          joinedOn: new Date().toISOString()
+          joinedOn: new Date()
         },
         {
           userId: 'member2',
-          joinedOn: new Date().toISOString()
+          joinedOn: new Date()
         }
       ],
       access: ROOM_ACCESS_LEVEL.public
@@ -97,7 +97,7 @@ describe('client-data-mapper', () => {
     beforeEach(async () => {
       sandbox.stub(userService, 'getUserById').resolves(owner);
       sandbox.stub(userService, 'getUsersByIds').resolves([member1, member2]);
-      result = await sut.mapRoomDetails(fakeRoom, { roles: [ROLE.admin] });
+      result = await sut.mapRoom(fakeRoom, { roles: [ROLE.admin] });
     });
 
     it('should call getUserById with "owner"', () => {

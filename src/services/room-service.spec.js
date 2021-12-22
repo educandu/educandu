@@ -1,22 +1,32 @@
+import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import RoomService from './room-service.js';
+import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
+import RoomStore from '../stores/room-store.js';
 import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
+import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
 describe('room-service', () => {
-  let myUser;
-  let otherUser;
-  let container;
-  let sut;
   let db;
+  let sut;
+  let myUser;
+  let result;
+  let otherUser;
+  let roomStore;
+  let container;
+
+  const sandbox = sinon.createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
+
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
+    roomStore = container.get(RoomStore);
+
     sut = container.get(RoomService);
     db = container.get(Database);
   });
@@ -29,10 +39,84 @@ describe('room-service', () => {
     await pruneTestEnvironment(container);
   });
 
-  describe('createRoom', () => {
-    let createdRoom;
+  describe('getRoomsOwnedOrJoinedByUser', () => {
+    const now = new Date();
+
     beforeEach(async () => {
+      sandbox.useFakeTimers(now);
+
+      const rooms = [
+        {
+          name: 'Room 1',
+          owner: myUser._id
+        },
+        {
+          name: 'Room 2',
+          owner: otherUser._id,
+          members: [{ userId: myUser._id, joinedOn: now }]
+        },
+        {
+          name: 'Room 3',
+          owner: otherUser._id,
+          members: []
+        },
+        {
+          name: 'Room 4',
+          owner: otherUser._id,
+          members: [{ userId: 'onlyJoiningUser', joinedOn: now }]
+        }
+      ];
+      await Promise.all(rooms.map(room => createTestRoom(container, room)));
+    });
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    describe('when called with a user that both owns rooms and has joined rooms', () => {
+      beforeEach(async () => {
+        result = await sut.getRoomsOwnedOrJoinedByUser(myUser._id);
+      });
+
+      it('should return all owned and joined rooms', () => {
+        expect(result).toHaveLength(2);
+        expect(result.map(room => room.name)).toEqual(expect.arrayContaining(['Room 1', 'Room 2']));
+      });
+    });
+
+    describe('when called with a user that only owns rooms', () => {
+      beforeEach(async () => {
+        result = await sut.getRoomsOwnedOrJoinedByUser(otherUser._id);
+      });
+
+      it('should return all owned rooms', () => {
+        expect(result).toHaveLength(3);
+        expect(result.map(room => room.name)).toEqual(expect.arrayContaining(['Room 2', 'Room 3', 'Room 4']));
+      });
+    });
+
+    describe('when called with a user that has only joined rooms', () => {
+      beforeEach(async () => {
+        result = await sut.getRoomsOwnedOrJoinedByUser('onlyJoiningUser');
+      });
+
+      it('should return all joined rooms', () => {
+        expect(result.map(room => room.name)).toEqual(['Room 4']);
+      });
+    });
+  });
+
+  describe('createRoom', () => {
+    const now = new Date();
+    let createdRoom;
+
+    beforeEach(async () => {
+      sandbox.useFakeTimers(now);
       createdRoom = await sut.createRoom({ name: 'my room', access: ROOM_ACCESS_LEVEL.public, user: myUser });
+    });
+
+    afterEach(() => {
+      sandbox.restore();
     });
 
     it('should create a room', () => {
@@ -41,6 +125,8 @@ describe('room-service', () => {
         name: 'my room',
         owner: myUser._id,
         access: ROOM_ACCESS_LEVEL.public,
+        createdOn: now,
+        createdBy: myUser._id,
         members: []
       });
     });
@@ -193,4 +279,36 @@ describe('room-service', () => {
     });
   });
 
+  describe('isRoomMemberOrOwner', () => {
+    const roomId = uniqueId.create();
+    beforeEach(async () => {
+      await roomStore.save({
+        _id: roomId,
+        name: 'my room',
+        access: ROOM_ACCESS_LEVEL.private,
+        owner: myUser._id,
+        members: [
+          {
+            userId: otherUser._id,
+            joinedOn: new Date()
+          }
+        ]
+      });
+    });
+
+    it('should return true when the user is the owner', async () => {
+      result = await sut.isRoomMemberOrOwner(roomId, myUser._id);
+      expect(result).toBe(true);
+    });
+
+    it('should return true when the user is a member', async () => {
+      result = await sut.isRoomMemberOrOwner(roomId, otherUser._id);
+      expect(result).toBe(true);
+    });
+
+    it('should return false when the is not a member', async () => {
+      result = await sut.isRoomMemberOrOwner(roomId, uniqueId.create());
+      expect(result).toBe(false);
+    });
+  });
 });

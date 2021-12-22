@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import events from 'events';
 import httpMocks from 'node-mocks-http';
-import UserRequestHandler from './user-request-handler.js';
+import UserController from './user-controller.js';
 import { SAVE_USER_RESULT } from '../domain/user-management.js';
 
-describe('user-request-handler', () => {
+describe('user-controller', () => {
 
   const sandbox = sinon.createSandbox();
   let clientDataMapper;
@@ -27,7 +27,11 @@ describe('user-request-handler', () => {
     clientDataMapper = {
       dbUserToClientUser: sandbox.stub()
     };
-    sut = new UserRequestHandler(userService, mailService, clientDataMapper);
+    const serverConfig = {};
+    const database = {};
+    const pageRenderer = {};
+
+    sut = new UserController(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer);
   });
 
   afterEach(() => {
