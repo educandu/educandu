@@ -7,7 +7,7 @@ const logger = new Logger(import.meta.url);
 
 class I18nController {
 
-  handleUseMiddleware(req, res, next) {
+  handleDetectUiLanguage(req, res, next) {
     const language = this._detectLanguageFromRequest(req);
     req.language = language;
     res.cookie(UI_LANGUAGE_COOKIE_NAME, language, { expires: UI_LANGUAGE_COOKIE_EXPIRES });
@@ -54,7 +54,7 @@ class I18nController {
   }
 
   registerMiddleware(router) {
-    router.use((req, res, next) => this.handleUseMiddleware(req, res, next));
+    router.use((req, res, next) => this.handleDetectUiLanguage(req, res, next));
   }
 }
 

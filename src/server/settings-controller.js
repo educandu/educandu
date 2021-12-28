@@ -25,7 +25,7 @@ class SettingController {
     this.pageRenderer = pageRenderer;
   }
 
-  async handleUseMiddleware(req, res, next) {
+  async handleGetAllSettings(req, res, next) {
     req.settings = await this.settingService.getAllSettings();
     next();
   }
@@ -47,7 +47,7 @@ class SettingController {
   }
 
   registerMiddleware(router) {
-    router.use((req, res, next) => this.handleUseMiddleware(req, res, next));
+    router.use((req, res, next) => this.handleGetAllSettings(req, res, next));
   }
 
   registerPages(app) {

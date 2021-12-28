@@ -18,7 +18,7 @@ class UserAgentController {
     return majorVersion < 13;
   }
 
-  handleUseMiddleware(req, res, next) {
+  handleDetectBrowserSupport(req, res, next) {
     if (req.url.indexOf(PAGE_NAME.browserNotSupported) !== -1) {
       return next();
     }
@@ -32,7 +32,7 @@ class UserAgentController {
   }
 
   registerMiddleware(router) {
-    router.use((req, res, next) => this.handleUseMiddleware(req, res, next));
+    router.use((req, res, next) => this.handleDetectBrowserSupport(req, res, next));
   }
 
   handleGetNotSupportedBrowserPage(req, res) {
