@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import events from 'events';
 import httpMocks from 'node-mocks-http';
 import UserController from './user-controller.js';
-import { SAVE_USER_RESULT } from '../domain/user-management.js';
+import { SAVE_USER_RESULT } from '../domain/constants.js';
 
 describe('user-controller', () => {
 

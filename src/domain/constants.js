@@ -44,3 +44,9 @@ export const ROOM_ACCESS_LEVEL = {
   public: 'public',
   private: 'private'
 };
+
+export const SAVE_USER_RESULT = {
+  success: 'success',
+  duplicateEmail: 'duplicate-email',
+  duplicateUsername: 'duplicate-username'
+};
