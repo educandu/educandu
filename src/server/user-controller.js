@@ -184,6 +184,10 @@ class UserController {
   registerMiddleware(router) {
     router.use(session({
       name: 'SID',
+      cookie: {
+        httpOnly: true,
+        domain: this.serverConfig.sessionCookieDomain
+      },
       secret: this.serverConfig.sessionSecret,
       resave: false,
       saveUninitialized: false, // Don't create session until something stored
