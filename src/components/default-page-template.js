@@ -116,7 +116,7 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
       href: helpPage ? urls.getDocUrl(helpPage.documentKey, helpPage.documentSlug) : '',
       text: helpPage?.linkTitle,
       icon: QuestionOutlined,
-      permission: permissions.EDIT_SETTINGS,
+      permission: null,
       showWhen: !!helpPage
     },
     {
