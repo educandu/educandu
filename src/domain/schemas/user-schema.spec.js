@@ -1,4 +1,4 @@
-import { ROLE } from '../role.js';
+import { ROLE } from '../constants.js';
 import { validate } from '../validation.js';
 import {
   postUserBodySchema,

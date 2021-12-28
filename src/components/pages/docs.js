@@ -13,7 +13,7 @@ import errorHelper from '../../ui/error-helper.js';
 import { withLanguage } from '../language-context.js';
 import { withPageName } from '../page-name-context.js';
 import { toTrimmedString } from '../../utils/sanitize.js';
-import { DOCUMENT_ORIGIN } from '../../common/constants.js';
+import { DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageSelect from '../localization/language-select.js';
 import { Form, Input, Modal, Table, Button, Switch } from 'antd';

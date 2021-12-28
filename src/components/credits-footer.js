@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
 import { useDateFormat } from './language-context.js';
-import { DOCUMENT_TYPE } from '../common/constants.js';
+import { DOCUMENT_TYPE } from '../domain/constants.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function renderUser(user) {

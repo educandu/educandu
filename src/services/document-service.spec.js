@@ -4,7 +4,7 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import DocumentService from './document-service.js';
-import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';

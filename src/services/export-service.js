@@ -4,7 +4,7 @@ import UserService from './user-service.js';
 import DocumentService from './document-service.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 
 const { BadRequest } = httpErrors;
 

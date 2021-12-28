@@ -11,7 +11,7 @@ import { inject } from '../container-context.js';
 import SectionEditor from '../section-editor.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import errorHelper from '../../ui/error-helper.js';
-import { ALERT_TYPE } from '../../common/constants.js';
+import { ALERT_TYPE } from '../../domain/constants.js';
 import { withPageName } from '../page-name-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import ShallowUpdateList from '../shallow-update-list.js';

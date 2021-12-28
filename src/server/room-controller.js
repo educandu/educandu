@@ -9,7 +9,7 @@ import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { FEATURE_TOGGLES } from '../common/constants.js';
+import { FEATURE_TOGGLES } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {

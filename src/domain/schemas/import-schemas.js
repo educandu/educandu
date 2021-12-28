@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
-import { DOCUMENT_IMPORT_TYPE } from '../../common/constants.js';
+import { DOCUMENT_IMPORT_TYPE } from '../../domain/constants.js';
 
 const importedDocumentSchema = joi.object({
   key: idOrKeySchema.required(),

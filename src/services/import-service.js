@@ -9,7 +9,7 @@ import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
 import BatchLockStore from '../stores/batch-lock-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
+import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 

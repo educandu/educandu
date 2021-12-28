@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import { add } from 'date-fns';
-import { ROLE } from '../domain/role.js';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
+import { ROLE } from '../domain/constants.js';
 import UserStore from '../stores/user-store.js';
 import { SAVE_USER_RESULT } from '../domain/user-management.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';

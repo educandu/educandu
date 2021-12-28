@@ -1,6 +1,6 @@
 import joi from 'joi';
 import uniqueId from '../utils/unique-id.js';
-import { FEATURE_TOGGLES } from '../common/constants.js';
+import { FEATURE_TOGGLES } from '../domain/constants.js';
 import { defaultValidationOptions, validate } from '../domain/validation.js';
 
 const defaultTaskProcessing = {

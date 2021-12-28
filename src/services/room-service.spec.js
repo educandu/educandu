@@ -4,7 +4,7 @@ import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
-import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;

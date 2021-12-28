@@ -1,3 +1,8 @@
+export const ROLE = {
+  user: 'user',
+  admin: 'admin'
+};
+
 export const DOCUMENT_ORIGIN = {
   internal: 'internal',
   external: 'external'
