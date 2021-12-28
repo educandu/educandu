@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
-import { slugValidationPattern } from '../../common/validation-patterns.js';
+import inputValidators from '../../utils/input-validators.js';
 
 const sectionSchema = joi.object({
   key: idOrKeySchema.required(),
@@ -24,7 +24,7 @@ export const getRevisionsByKeyQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });
 
-export const slugSchema = joi.string().pattern(slugValidationPattern).allow('').required();
+export const slugSchema = joi.string().pattern(inputValidators.slugValidationPattern).allow('').required();
 
 export const createRevisionBodySchema = joi.object({
   title: joi.string().required(),
