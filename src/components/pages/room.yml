@@ -7,3 +7,12 @@ memberUsername:
 joinedOn:
   en: Member since
   de: Mitglied seit
+sentOn:
+  en: Invitation sent on
+  de: Einladung gesendet am
+expires:
+  en: Invitation expires on
+  de: Einladung läuft ab am
+createInvitationButton:
+  en: Create an invitation
+  de: Einladung erstellen

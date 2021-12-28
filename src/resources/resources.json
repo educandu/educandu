@@ -635,7 +635,10 @@
     "resources": {
       "ownerUsername": "Owner user name",
       "memberUsername": "Member username",
-      "joinedOn": "Member since"
+      "joinedOn": "Member since",
+      "sentOn": "Invitation sent on",
+      "expires": "Invitation expires on",
+      "createInvitationButton": "Create an invitation"
     }
   },
   {
@@ -644,7 +647,10 @@
     "resources": {
       "ownerUsername": "Benutzername des Eigentümers",
       "memberUsername": "Mitglieder Benutzername",
-      "joinedOn": "Mitglied seit"
+      "joinedOn": "Mitglied seit",
+      "sentOn": "Einladung gesendet am",
+      "expires": "Einladung läuft ab am",
+      "createInvitationButton": "Einladung erstellen"
     }
   },
   {
