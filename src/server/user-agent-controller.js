@@ -18,25 +18,32 @@ class UserAgentController {
     return majorVersion < 13;
   }
 
-  registerMiddleware(router) {
-    router.use((req, res, next) => {
-      if (req.url.indexOf(PAGE_NAME.browserNotSupported) !== -1) {
-        return next();
-      }
-
-      if (req.useragent.isIE || this.isUnsuportedSafari(req.useragent)) {
-        logger.info(req.useragent);
-        return res.redirect(301, `/${PAGE_NAME.browserNotSupported}`);
-      }
-
+  handleUseMiddleware(req, res, next) {
+    if (req.url.indexOf(PAGE_NAME.browserNotSupported) !== -1) {
       return next();
-    });
+    }
+
+    if (req.useragent.isIE || this.isUnsuportedSafari(req.useragent)) {
+      logger.info(req.useragent);
+      return res.redirect(301, `/${PAGE_NAME.browserNotSupported}`);
+    }
+
+    return next();
+  }
+
+  registerMiddleware(router) {
+    router.use((req, res, next) => this.handleUseMiddleware(req, res, next));
+  }
+
+  handleGetNotSupportedBrowserPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.browserNotSupported);
   }
 
   registerPages(router) {
-    router.get(`/${PAGE_NAME.browserNotSupported}`, (req, res) => {
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.browserNotSupported);
-    });
+    router.get(
+      `/${PAGE_NAME.browserNotSupported}`,
+      (req, res) => this.handleGetNotSupportedBrowserPage(req, res)
+    );
   }
 }
 
