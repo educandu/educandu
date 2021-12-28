@@ -1,10 +1,10 @@
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
-import { ROLE } from '../domain/role.js';
 import { Container } from '../common/di.js';
 import Database from '../stores/database.js';
 import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
+import { ROLE } from '../domain/constants.js';
 import resources from '../resources/resources.json';
 import UserService from '../services/user-service.js';
 import PageResolver from '../domain/page-resolver.js';

@@ -13,13 +13,13 @@ import errorHelper from '../../ui/error-helper.js';
 import { withLanguage } from '../language-context.js';
 import { withPageName } from '../page-name-context.js';
 import { toTrimmedString } from '../../utils/sanitize.js';
-import { DOCUMENT_ORIGIN } from '../../common/constants.js';
+import { DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageSelect from '../localization/language-select.js';
 import { Form, Input, Modal, Table, Button, Switch } from 'antd';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
-import DocumentApiClient from '../../services/document-api-client.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { documentMetadataShape, translationProps, languageProps, pageNameProps } from '../../ui/default-prop-types.js';
@@ -334,7 +334,7 @@ class Docs extends React.Component {
           <Table dataSource={filteredDocs} columns={columns} size="middle" />
           <aside>
             <Restricted to={permissions.EDIT_DOC}>
-              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewDocumentClick} />
+              <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.handleNewDocumentClick} />
             </Restricted>
           </aside>
           <Modal

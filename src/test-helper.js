@@ -3,14 +3,12 @@ import url from 'url';
 import path from 'path';
 import { promises as fs } from 'fs';
 import Cdn from './repositories/cdn.js';
-import { ROLE } from './domain/role.js';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
-import { SAVE_USER_RESULT } from './domain/user-management.js';
-import { DOCUMENT_ORIGIN, ROOM_ACCESS_LEVEL } from './common/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
+import { ROLE, DOCUMENT_ORIGIN, ROOM_ACCESS_LEVEL, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.tmp/', import.meta.url).href);

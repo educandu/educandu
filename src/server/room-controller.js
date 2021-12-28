@@ -10,7 +10,7 @@ import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { FEATURE_TOGGLES, ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { FEATURE_TOGGLES, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
@@ -35,7 +35,20 @@ export default class RoomController {
     this.pageRenderer = pageRenderer;
   }
 
-  async handleRoomMembershipConfirmationPage(req, res) {
+  async handleGetRoomPage(req, res) {
+    const { roomId } = req.params;
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    const roomDetails = await this.clientDataMapper.mapRoom(room);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
+  }
+
+  async handleGetRoomMembershipConfirmationPage(req, res) {
     const { user } = req;
     const { token } = req.params;
 
@@ -150,13 +163,13 @@ export default class RoomController {
     router.get(
       '/rooms/:roomId',
       [needsPermission(permissions.VIEW_ROOMS), validateParams(getRoomParamsSchema)],
-      (req, res) => this.handleGetRoom(req, res)
+      (req, res) => this.handleGetRoomPage(req, res)
     );
 
     router.get(
       '/room-membership-confirmation/:token',
       [needsPermission(permissions.JOIN_PRIVATE_ROOMS), validateParams(getRoomMembershipConfirmationParamsSchema)],
-      (req, res) => this.handleRoomMembershipConfirmationPage(req, res)
+      (req, res) => this.handleGetRoomMembershipConfirmationPage(req, res)
     );
   }
 }

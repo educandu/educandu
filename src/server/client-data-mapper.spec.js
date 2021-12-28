@@ -1,8 +1,7 @@
 import sinon from 'sinon';
-import { ROLE } from '../domain/role.js';
 import UserService from '../services/user-service.js';
 import ClientDataMapper from './client-data-mapper.js';
-import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { ROLE, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('client-data-mapper', () => {

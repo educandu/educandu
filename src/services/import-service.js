@@ -5,11 +5,11 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import TaskStore from '../stores/task-store.js';
 import BatchStore from '../stores/batch-store.js';
-import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
 import BatchLockStore from '../stores/batch-lock-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
+import ExportApiClient from '../api-clients/export-api-client.js';
+import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 

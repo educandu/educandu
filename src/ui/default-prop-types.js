@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../common/constants.js';
+import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../domain/constants.js';
 
 export const translationProps = {
   i18n: PropTypes.object.isRequired,
@@ -91,7 +91,7 @@ export const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   provider: PropTypes.string.isRequired,
   username: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
+  email: PropTypes.string,
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
   expires: PropTypes.string,
   lockedOut: PropTypes.bool,

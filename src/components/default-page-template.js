@@ -16,7 +16,7 @@ import DefaultSiteLogo from './default-site-logo.js';
 import UiLanguageDialog from './ui-language-dialog.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import CookieConsentDrawer from './cookie-consent-drawer.js';
-import { ALERT_TYPE, FEATURE_TOGGLES } from '../common/constants.js';
+import { ALERT_TYPE, FEATURE_TOGGLES } from '../domain/constants.js';
 import { default as iconsNs, QuestionOutlined, MenuOutlined, LogoutOutlined, HomeOutlined, IdcardOutlined, FileOutlined, UserOutlined, SettingOutlined, ImportOutlined, GlobalOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;

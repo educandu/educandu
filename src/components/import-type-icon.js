@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { DOCUMENT_IMPORT_TYPE } from '../common/constants.js';
+import { DOCUMENT_IMPORT_TYPE } from '../domain/constants.js';
 import { DownloadOutlined, HistoryOutlined, RedoOutlined } from '@ant-design/icons';
 
 function ImportTypeIcon({ importType }) {

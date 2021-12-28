@@ -9,7 +9,7 @@ import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { Trans, useTranslation } from 'react-i18next';
-import UserApiClient from '../services/user-api-client.js';
+import UserApiClient from '../api-clients/user-api-client.js';
 import CountryNameProvider from '../data/country-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';

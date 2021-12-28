@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import TaskStore from '../stores/task-store.js';
 import { serializeError } from 'serialize-error';
 import TaskProcessor from './task-processor.js';
-import { TASK_TYPE } from '../common/constants.js';
+import { TASK_TYPE } from '../domain/constants.js';
 import TaskLockStore from '../stores/task-lock-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';

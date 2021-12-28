@@ -3,10 +3,10 @@ import httpErrors from 'http-errors';
 import Database from '../stores/database.js';
 import TaskStore from '../stores/task-store.js';
 import ImportService from './import-service.js';
-import ExportApiClient from './export-api-client.js';
 import DocumentStore from '../stores/document-store.js';
 import BatchLockStore from '../stores/batch-lock-store.js';
-import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../common/constants.js';
+import ExportApiClient from '../api-clients/export-api-client.js';
+import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest } = httpErrors;

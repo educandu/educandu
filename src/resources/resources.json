@@ -834,15 +834,27 @@
     }
   },
   {
+    "namespace": "roomCreationModal",
+    "language": "en",
+    "resources": {
+      "newRoom": "New room",
+      "roomNameRequired": "Please specify a room name"
+    }
+  },
+  {
+    "namespace": "roomCreationModal",
+    "language": "de",
+    "resources": {
+      "newRoom": "Neuer Raum",
+      "roomNameRequired": "Bitte geben Sie einen Raumnamen an"
+    }
+  },
+  {
     "namespace": "roomsTab",
     "language": "en",
     "resources": {
       "ownedRoomsHeader": "My rooms",
       "joinedRoomsHeader": "Rooms I am a member of",
-      "accessType_public": "public",
-      "accessType_private": "private",
-      "name": "Name",
-      "access": "Access",
       "joinedOn": "Joined on"
     }
   },
@@ -852,10 +864,6 @@
     "resources": {
       "ownedRoomsHeader": "Meine Räume",
       "joinedRoomsHeader": "Räume in denen ich Mitglied bin",
-      "accessType_public": "öffentlich",
-      "accessType_private": "privat",
-      "name": "Name",
-      "access": "Zugang",
       "joinedOn": "Eingetreten am"
     }
   },
@@ -1428,7 +1436,11 @@
       "createdBy": "Created by",
       "updatedOn": "Update date",
       "owner": "Owner",
-      "email": "Email"
+      "email": "Email",
+      "name": "Name",
+      "access": "Access",
+      "accessType_public": "public",
+      "accessType_private": "private"
     }
   },
   {
@@ -1464,7 +1476,11 @@
       "createdBy": "Erstellt von",
       "updatedOn": "Update-Datum",
       "owner": "Eigentümer",
-      "email": "E-Mail"
+      "email": "E-Mail",
+      "name": "Name",
+      "access": "Zugang",
+      "accessType_public": "öffentlich",
+      "accessType_private": "privat"
     }
   },
   {

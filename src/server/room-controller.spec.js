@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 
 const { NotFound, Forbidden } = httpErrors;
 
@@ -158,7 +158,7 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handleGetRoom', () => {
+  describe('handleGetRoomPage', () => {
     const privateRoom = { roomId: 'roomId', name: 'Mein schöner Raum', owner: 'owner', access: ROOM_ACCESS_LEVEL.private };
 
     beforeEach(() => {
@@ -291,7 +291,7 @@ describe('room-controller', () => {
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoom({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoomPage({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
       });
     });
   });

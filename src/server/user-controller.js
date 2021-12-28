@@ -14,8 +14,8 @@ import requestHelper from '../utils/request-helper.js';
 import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
+import { SAVE_USER_RESULT } from '../domain/constants.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
-import { SAVE_USER_RESULT } from '../domain/user-management.js';
 import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
@@ -43,53 +43,6 @@ class UserController {
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
-  }
-
-  registerMiddleware(router) {
-    router.use(session({
-      name: 'SID',
-      secret: this.serverConfig.sessionSecret,
-      resave: false,
-      saveUninitialized: false, // Don't create session until something stored
-      store: MongoStore.create({
-        client: this.database._mongoClient,
-        collectionName: sessionsStoreSpec.name,
-        ttl: this.serverConfig.sessionDurationInMinutes * 60,
-        autoRemove: 'disabled', // We use our own index
-        stringify: false // Do not serialize session data
-      })
-    }));
-
-    router.use(passport.initialize());
-    router.use(passport.session());
-    router.use(passport.authenticate('apikey', { session: false }));
-
-    passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      const { exportApiKey } = this.serverConfig;
-
-      return exportApiKey && apikey === exportApiKey
-        ? cb(null, exportUser)
-        : cb(null, false);
-    }));
-
-    passport.use('local', new LocalStrategy((username, password, cb) => {
-      this.userService.authenticateUser(username, password)
-        .then(user => cb(null, user || false))
-        .catch(err => cb(err));
-    }));
-
-    passport.serializeUser((user, cb) => {
-      cb(null, { _id: user._id });
-    });
-
-    passport.deserializeUser(async (input, cb) => {
-      try {
-        const user = await this.userService.getUserById(input._id);
-        return cb(null, user);
-      } catch (err) {
-        return cb(err);
-      }
-    });
   }
 
   handleGetRegisterPage(req, res) {
@@ -226,6 +179,57 @@ class UserController {
     const { lockedOut } = req.body;
     const newLockedOutState = await this.userService.updateUserLockedOutState(userId, lockedOut);
     return res.send({ lockedOut: newLockedOutState });
+  }
+
+  registerMiddleware(router) {
+    router.use(session({
+      name: 'SID',
+      cookie: {
+        httpOnly: true,
+        domain: this.serverConfig.sessionCookieDomain
+      },
+      secret: this.serverConfig.sessionSecret,
+      resave: false,
+      saveUninitialized: false, // Don't create session until something stored
+      store: MongoStore.create({
+        client: this.database._mongoClient,
+        collectionName: sessionsStoreSpec.name,
+        ttl: this.serverConfig.sessionDurationInMinutes * 60,
+        autoRemove: 'disabled', // We use our own index
+        stringify: false // Do not serialize session data
+      })
+    }));
+
+    router.use(passport.initialize());
+    router.use(passport.session());
+    router.use(passport.authenticate('apikey', { session: false }));
+
+    passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
+      const { exportApiKey } = this.serverConfig;
+
+      return exportApiKey && apikey === exportApiKey
+        ? cb(null, exportUser)
+        : cb(null, false);
+    }));
+
+    passport.use('local', new LocalStrategy((username, password, cb) => {
+      this.userService.authenticateUser(username, password)
+        .then(user => cb(null, user || false))
+        .catch(err => cb(err));
+    }));
+
+    passport.serializeUser((user, cb) => {
+      cb(null, { _id: user._id });
+    });
+
+    passport.deserializeUser(async (input, cb) => {
+      try {
+        const user = await this.userService.getUserById(input._id);
+        return cb(null, user);
+      } catch (err) {
+        return cb(err);
+      }
+    });
   }
 
   registerPages(router) {

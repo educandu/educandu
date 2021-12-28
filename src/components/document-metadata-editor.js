@@ -6,24 +6,21 @@ import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
 import { withSettings } from './settings-context.js';
 import { withLanguage } from './language-context.js';
-import validators from '../utils/input-validators.js';
+import { handleApiError } from '../ui/error-helper.js';
+import inputValidators from '../utils/input-validators.js';
 import { Input, Radio, Tag, Space, Select, Form } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import LanguageSelect from './localization/language-select.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
+import DocumentApiClient from '../api-clients/document-api-client.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
-import { slugValidationPattern } from '../common/validation-patterns.js';
-import DocumentApiClient from '../services/document-api-client.js';
-import { handleApiError } from '../ui/error-helper.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
 const MODE_EDIT = 'edit';
 const MODE_PREVIEW = 'preview';
-
-const { isValidTag } = validators;
 
 class DocumentMetadataEditor extends React.Component {
   constructor(props) {
@@ -43,10 +40,10 @@ class DocumentMetadataEditor extends React.Component {
   }
 
   validateMetadata(metadata) {
-    const isValidSlug = slugValidationPattern.test(metadata.slug);
+    const isValidSlug = inputValidators.isValidSlug(metadata.slug);
     this.setState({ slugValidationStatus: isValidSlug ? '' : 'error' });
 
-    const areValidTags = metadata.tags.length > 0 && metadata.tags.every(tag => isValidTag({ tag }));
+    const areValidTags = metadata.tags.length > 0 && metadata.tags.every(tag => inputValidators.isValidTag({ tag }));
     this.setState({ tagsValidationStatus: areValidTags ? '' : 'error' });
 
     return isValidSlug && areValidTags;

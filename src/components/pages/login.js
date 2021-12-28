@@ -11,7 +11,7 @@ import errorHelper from '../../ui/error-helper.js';
 import { withRequest } from '../request-context.js';
 import { withPageName } from '../page-name-context.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
-import UserApiClient from '../../services/user-api-client.js';
+import UserApiClient from '../../api-clients/user-api-client.js';
 import { pageNameProps, requestProps, translationProps, userProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);

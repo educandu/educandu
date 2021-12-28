@@ -5,7 +5,7 @@ import cloneDeep from '../utils/clone-deep.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
-import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';

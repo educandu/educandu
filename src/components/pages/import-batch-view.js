@@ -9,7 +9,7 @@ import { useDateFormat } from '../language-context.js';
 import { Table, Row, Space, Collapse, List } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import ImportApiClient from '../../services/import-api-client.js';
+import ImportApiClient from '../../api-clients/import-api-client.js';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
