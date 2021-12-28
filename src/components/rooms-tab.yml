@@ -4,18 +4,6 @@ ownedRoomsHeader:
 joinedRoomsHeader:
   en: Rooms I am a member of
   de: Räume in denen ich Mitglied bin
-accessType_public:
-  en: public
-  de: öffentlich
-accessType_private:
-  en: private
-  de: privat
-name:
-  en: Name
-  de: Name
-access:
-  en: Access
-  de: Zugang
 joinedOn:
   en: Joined on
   de: Eingetreten am

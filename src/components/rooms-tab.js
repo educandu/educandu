@@ -1,17 +1,23 @@
 import by from 'thenby';
-import React from 'react';
-import { Table } from 'antd';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
+import { Button, Table } from 'antd';
+import React, { useState } from 'react';
+import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
+import permissions from '../domain/permissions.js';
 import { useDateFormat } from './language-context.js';
 import { roomShape } from '../ui/default-prop-types.js';
+import RoomCreationModal from './room-creation-modal.js';
 
 function RoomsTab({ rooms }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomsTab');
+
+  const [isRoomCreationModalVisible, setIsRoomCreationModalVisible] = useState(false);
 
   const renderName = (name, room) => {
     return <a href={urls.getRoomUrl(room._id)}>{name}</a>;
@@ -32,7 +38,15 @@ function RoomsTab({ rooms }) {
   };
 
   const renderAccess = access => {
-    return <span>{t(`accessType_${access}`)}</span>;
+    return <span>{t(`common:accessType_${access}`)}</span>;
+  };
+
+  const handleCreateRoomClick = () => {
+    setIsRoomCreationModalVisible(true);
+  };
+
+  const handleRoomCreationModalClose = () => {
+    setIsRoomCreationModalVisible(false);
   };
 
   const ownedRooms = rooms.filter(room => room.owner._id === user._id);
@@ -40,7 +54,7 @@ function RoomsTab({ rooms }) {
 
   const ownedRoomsColumns = [
     {
-      title: t('name'),
+      title: t('common:name'),
       dataIndex: 'name',
       key: 'name',
       render: renderName,
@@ -53,10 +67,10 @@ function RoomsTab({ rooms }) {
       render: renderCreatedOn,
       defaultSortOrder: 'descend',
       sorter: by(x => x.createdOn),
-      width: '150px'
+      width: '200px'
     },
     {
-      title: t('access'),
+      title: t('common:access'),
       dataIndex: 'access',
       key: 'access',
       render: renderAccess,
@@ -67,7 +81,7 @@ function RoomsTab({ rooms }) {
 
   const membershipRoomsColumns = [
     {
-      title: t('name'),
+      title: t('common:name'),
       dataIndex: 'name',
       key: 'name',
       render: renderName,
@@ -88,10 +102,10 @@ function RoomsTab({ rooms }) {
       render: renderJoinedOn,
       defaultSortOrder: 'descend',
       sorter: by(x => x.joinedOn),
-      width: '150px'
+      width: '200px'
     },
     {
-      title: t('access'),
+      title: t('common:access'),
       dataIndex: 'access',
       key: 'access',
       render: renderAccess,
@@ -127,11 +141,22 @@ function RoomsTab({ rooms }) {
       <section className="RoomsTab-section">
         <h2>{t('ownedRoomsHeader')}</h2>
         <Table dataSource={ownedRoomsRows} columns={ownedRoomsColumns} size="middle" />
+        <Restricted to={permissions.CREATE_ROOMS}>
+          <Button
+            size="large"
+            type="primary"
+            shape="circle"
+            icon={<PlusOutlined />}
+            onClick={handleCreateRoomClick}
+            className="RoomsTab-createRoomButton"
+            />
+        </Restricted>
       </section>
       <section className="RoomsTab-section">
         <h2>{t('joinedRoomsHeader')}</h2>
         <Table dataSource={membershipRoomsRows} columns={membershipRoomsColumns} size="middle" />
       </section>
+      <RoomCreationModal isVisible={isRoomCreationModalVisible} onClose={handleRoomCreationModalClose} />
     </div>
   );
 }

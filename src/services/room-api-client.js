@@ -7,6 +7,16 @@ class RoomApiClient {
     this.httpClient = httpClient;
   }
 
+  addRoom({ name, access }) {
+    return this.httpClient
+      .post(
+        '/api/v1/rooms',
+        { name, access },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   confirmInvitation({ token }) {
     return this.httpClient
       .post(
@@ -19,4 +29,3 @@ class RoomApiClient {
 }
 
 export default RoomApiClient;
-

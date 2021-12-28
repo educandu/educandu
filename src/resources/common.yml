@@ -88,3 +88,15 @@ owner:
 email:
   en: Email
   de: E-Mail
+name:
+  en: Name
+  de: Name
+access:
+  en: Access
+  de: Zugang
+accessType_public:
+  en: public
+  de: öffentlich
+accessType_private:
+  en: private
+  de: privat
