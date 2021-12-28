@@ -13,12 +13,12 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { SECTION_ACTIONS } from '../../ui/section-actions.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
-import DocumentApiClient from '../../services/document-api-client.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
 import { documentRevisionShape, documentShape } from '../../ui/default-prop-types.js';
-import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN } from '../../common/constants.js';
+import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { PaperClipOutlined, ReloadOutlined, EditOutlined, SlidersOutlined, FormOutlined } from '@ant-design/icons';
 
 const logger = new Logger(import.meta.url);

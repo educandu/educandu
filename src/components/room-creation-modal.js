@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import { Form, Modal, Input, Radio } from 'antd';
 import { useService } from './container-context.js';
-import RoomApiClient from '../services/room-api-client.js';
-import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import RoomApiClient from '../api-clients/room-api-client.js';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 const FormItem = Form.Item;
@@ -71,7 +71,7 @@ function RoomCreationModal({ isVisible, onClose }) {
       setState(prevState => ({ ...prevState, loading: false }));
       onClose();
 
-      window.location = urls.getRoomDetailsUrl(room._id);
+      window.location = urls.getRoomUrl(room._id);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
       setState(prevState => ({ ...prevState, loading: false }));

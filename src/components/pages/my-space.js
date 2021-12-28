@@ -8,10 +8,10 @@ import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { usePageName } from '../page-name-context.js';
+import { roomShape } from '../../ui/default-prop-types.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
-import { FEATURE_TOGGLES } from '../../common/constants.js';
-import { roomShape } from '../../ui/default-prop-types.js';
+import { FEATURE_TOGGLES } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 function MySpace({ initialState, PageTemplate }) {

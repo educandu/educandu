@@ -144,10 +144,6 @@ function getRoomUrl(roomId) {
   return concatParts(roomsPrefix, encodeURIComponent(roomId));
 }
 
-function getRoomDetailsUrl(roomId) {
-  return concatParts(roomsPrefix, roomId);
-}
-
 export default {
   homePath,
   docsPath,
@@ -170,7 +166,6 @@ export default {
   getDocUrl,
   getDocumentRevisionUrl,
   getRoomUrl,
-  getRoomDetailsUrl,
   getSettingsUrl,
   getImportsUrl,
   getCreateImportUrl,

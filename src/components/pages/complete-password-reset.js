@@ -5,15 +5,15 @@ import { Form, Button } from 'antd';
 import urls from '../../utils/urls.js';
 import Countdown from '../countdown.js';
 import Logger from '../../common/logger.js';
+import { withUser } from '../user-context.js';
 import { inject } from '../container-context.js';
 import PasswordInput from '../password-input.js';
 import errorHelper from '../../ui/error-helper.js';
-import { withTranslation, Trans } from 'react-i18next';
-import UserApiClient from '../../services/user-api-client.js';
-import { translationProps } from '../../ui/default-prop-types.js';
-import { withUser } from '../user-context.js';
 import { withPageName } from '../page-name-context.js';
+import { withTranslation, Trans } from 'react-i18next';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
+import UserApiClient from '../../api-clients/user-api-client.js';
+import { translationProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 

@@ -3,7 +3,7 @@ import UserService from './user-service.js';
 import ExportService from './export-service.js';
 import DocumentService from './document-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { DOCUMENT_ORIGIN } from '../common/constants.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('export-service', () => {

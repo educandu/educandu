@@ -1,6 +1,6 @@
 import React from 'react';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ALERT_TYPE } from '../common/constants.js';
+import { ALERT_TYPE } from '../domain/constants.js';
 import { useUser } from '../components/user-context.js';
 import { usePageName } from '../components/page-name-context.js';
 import InsufficientProfileWarning, { isProfileInsufficient } from '../components/insufficient-profile-warning.js';

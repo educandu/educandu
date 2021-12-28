@@ -1,3 +1,5 @@
+const slugValidationPattern = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
+
 function isValidPassword({ password, minLength = 8 }) {
   const minOneLetterAndOneDigitPattern = /^(?=.*[A-Za-z])(?=.*\d).*$/;
   const sanitizedPassword = (password || '').trim();
@@ -19,7 +21,13 @@ function isValidTag({ tag, allTags = [] }) {
   return true;
 }
 
+function isValidSlug(slug) {
+  return slugValidationPattern.test(slug);
+}
+
 export default {
   isValidPassword,
-  isValidTag
+  isValidTag,
+  isValidSlug,
+  slugValidationPattern
 };

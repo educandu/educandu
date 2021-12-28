@@ -1,5 +1,5 @@
 import { validate } from '../validation.js';
-import { ROOM_ACCESS_LEVEL } from '../../common/constants.js';
+import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { postRoomBodySchema, postRoomInvitationBodySchema } from './rooms-schemas.js';
 
 describe('postRoomBodySchema', () => {

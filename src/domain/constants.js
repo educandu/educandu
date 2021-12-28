@@ -1,3 +1,8 @@
+export const ROLE = {
+  user: 'user',
+  admin: 'admin'
+};
+
 export const DOCUMENT_ORIGIN = {
   internal: 'internal',
   external: 'external'
@@ -38,4 +43,10 @@ export const DOCUMENT_TYPE = {
 export const ROOM_ACCESS_LEVEL = {
   public: 'public',
   private: 'private'
+};
+
+export const SAVE_USER_RESULT = {
+  success: 'success',
+  duplicateEmail: 'duplicate-email',
+  duplicateUsername: 'duplicate-username'
 };

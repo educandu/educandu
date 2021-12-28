@@ -3,7 +3,7 @@ import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { DOCUMENT_TYPE } from '../common/constants.js';
+import { DOCUMENT_TYPE } from '../domain/constants.js';
 import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';

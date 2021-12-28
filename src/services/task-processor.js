@@ -1,7 +1,7 @@
 import Logger from '../common/logger.js';
 import TaskStore from '../stores/task-store.js';
 import { serializeError } from 'serialize-error';
-import { TASK_TYPE } from '../common/constants.js';
+import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import TaskLockStore from '../stores/task-lock-store.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';

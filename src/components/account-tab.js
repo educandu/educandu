@@ -1,14 +1,14 @@
-import React, { useRef, useState } from 'react';
 import Logger from '../common/logger.js';
 import EmailInput from './email-input.js';
 import { useUser } from './user-context.js';
 import { Form, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
-import UsernameInput from './username-input.js';
 import errorHelper from '../ui/error-helper.js';
+import UsernameInput from './username-input.js';
+import React, { useRef, useState } from 'react';
 import { useService } from './container-context.js';
-import UserApiClient from '../services/user-api-client.js';
-import { SAVE_USER_RESULT } from '../domain/user-management.js';
+import { SAVE_USER_RESULT } from '../domain/constants.js';
+import UserApiClient from '../api-clients/user-api-client.js';
 import { confirmIdentityWithPassword } from './confirmation-dialogs.js';
 import { formItemLayoutShape, tailFormItemLayoutShape } from '../ui/default-prop-types.js';
 

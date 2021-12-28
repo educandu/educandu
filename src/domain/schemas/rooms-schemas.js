@@ -1,6 +1,6 @@
 import joi from 'joi';
 import { idOrKeySchema } from './shared-schemas.js';
-import { ROOM_ACCESS_LEVEL } from '../../common/constants.js';
+import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 
 export const getRoomMembershipConfirmationParamsSchema = joi.object({
   token: idOrKeySchema.required()

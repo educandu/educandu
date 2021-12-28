@@ -4,7 +4,7 @@ import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
-import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
+import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 

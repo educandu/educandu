@@ -16,8 +16,8 @@ import { withLanguage } from '../language-context.js';
 import { withPageName } from '../page-name-context.js';
 import { withTranslation, Trans } from 'react-i18next';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
-import UserApiClient from '../../services/user-api-client.js';
-import { SAVE_USER_RESULT } from '../../domain/user-management.js';
+import { SAVE_USER_RESULT } from '../../domain/constants.js';
+import UserApiClient from '../../api-clients/user-api-client.js';
 import { languageProps, pageNameProps, settingsProps, translationProps, userProps } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);

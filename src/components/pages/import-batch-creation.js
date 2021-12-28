@@ -9,7 +9,7 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import DocumentImportTable from '../document-import-table.js';
-import ImportApiClient from '../../services/import-api-client.js';
+import ImportApiClient from '../../api-clients/import-api-client.js';
 
 export default function ImportBatchCreation({ initialState, PageTemplate }) {
   useReloadPersistedWindow();
