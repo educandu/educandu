@@ -25,31 +25,45 @@ class SettingController {
     this.pageRenderer = pageRenderer;
   }
 
+  async handleUseMiddleware(req, res, next) {
+    req.settings = await this.settingService.getAllSettings();
+    next();
+  }
+
+  async handleGetSettingsPage(req, res) {
+    const [settings, docs] = await Promise.all([
+      this.settingService.getAllSettings(),
+      this.documentService.getAllDocumentsMetadata()
+    ]);
+    const documents = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
+    const initialState = { settings, documents };
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.settings, initialState);
+  }
+
+  async handlePostSettings(req, res) {
+    const { settings } = req.body;
+    await this.settingService.saveSettings(settings);
+    return res.send({ settings });
+  }
+
   registerMiddleware(router) {
-    router.use(async (req, _res, next) => {
-      req.settings = await this.settingService.getAllSettings();
-      next();
-    });
+    router.use((req, res, next) => this.handleUseMiddleware(req, res, next));
   }
 
   registerPages(app) {
-    app.get('/settings', needsPermission(permissions.EDIT_SETTINGS), async (req, res) => {
-      const [settings, docs] = await Promise.all([
-        this.settingService.getAllSettings(),
-        this.documentService.getAllDocumentsMetadata()
-      ]);
-      const documents = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
-      const initialState = { settings, documents };
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.settings, initialState);
-    });
+    app.get(
+      '/settings',
+      needsPermission(permissions.EDIT_SETTINGS),
+      (req, res) => this.handleGetSettingsPage(req, res)
+    );
   }
 
   registerApi(app) {
-    app.post('/api/v1/settings', [needsPermission(permissions.EDIT_SETTINGS), jsonParser, validateBody(saveSettingsBodySchema)], async (req, res) => {
-      const { settings } = req.body;
-      await this.settingService.saveSettings(settings);
-      return res.send({ settings });
-    });
+    app.post(
+      '/api/v1/settings',
+      [needsPermission(permissions.EDIT_SETTINGS), jsonParser, validateBody(saveSettingsBodySchema)],
+      (req, res) => this.handlePostSettings(req, res)
+    );
   }
 }
 
