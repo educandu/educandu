@@ -1,0 +1,6 @@
+newRoom:
+  en: New room
+  de: Neuer Raum
+roomNameRequired:
+  en: Please specify a room name
+  de: Bitte geben Sie einen Raumnamen an
