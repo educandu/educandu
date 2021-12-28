@@ -17,7 +17,7 @@ import InfoFactory from '../../plugins/info-factory.js';
 import ShallowUpdateList from '../shallow-update-list.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import DocumentMetadataEditor from '../document-metadata-editor.js';
-import DocumentApiClient from '../../services/document-api-client.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { documentRevisionShape, pageNameProps, sectionShape, translationProps, userProps } from '../../ui/default-prop-types.js';

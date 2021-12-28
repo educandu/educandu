@@ -8,7 +8,7 @@ import { useService } from '../container-context.js';
 import { useTranslation, Trans } from 'react-i18next';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import RoomApiClient from '../../services/room-api-client.js';
+import RoomApiClient from '../../api-clients/room-api-client.js';
 
 const logger = new Logger(import.meta.url);
 

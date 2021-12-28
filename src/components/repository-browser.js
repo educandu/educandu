@@ -13,7 +13,7 @@ import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
 import { withLanguage } from './language-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
-import CdnApiClient from '../services/cdn-api-client.js';
+import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';

@@ -7,7 +7,7 @@ import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
-import SettingApiClient from '../../services/setting-api-client.js';
+import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
 import SpecialPageSettings from '../settings/special-page-settings.js';
 import FooterLinksSettings from '../settings/footer-links-settings.js';

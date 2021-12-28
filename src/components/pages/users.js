@@ -12,7 +12,7 @@ import errorHelper from '../../ui/error-helper.js';
 import { withPageName } from '../page-name-context.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { getGlobalAlerts } from '../../ui/global-alerts.js';
-import UserApiClient from '../../services/user-api-client.js';
+import UserApiClient from '../../api-clients/user-api-client.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
 import { userShape, translationProps, userProps, pageNameProps } from '../../ui/default-prop-types.js';

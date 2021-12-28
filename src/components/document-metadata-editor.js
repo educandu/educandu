@@ -11,8 +11,8 @@ import inputValidators from '../utils/input-validators.js';
 import { Input, Radio, Tag, Space, Select, Form } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import LanguageSelect from './localization/language-select.js';
-import DocumentApiClient from '../services/document-api-client.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
+import DocumentApiClient from '../api-clients/document-api-client.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { documentRevisionShape, translationProps, languageProps, settingsProps } from '../ui/default-prop-types.js';
 

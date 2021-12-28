@@ -5,9 +5,9 @@ import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import DocumentService from './document-service.js';
-import ExportApiClient from './export-api-client.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
+import ExportApiClient from '../api-clients/export-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
