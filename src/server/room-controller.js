@@ -35,19 +35,6 @@ export default class RoomController {
     this.pageRenderer = pageRenderer;
   }
 
-  async handleGetRoomPage(req, res) {
-    const { roomId } = req.params;
-    const room = await this.roomService.getRoomById(roomId);
-
-    if (!room) {
-      throw new NotFound();
-    }
-
-    const roomDetails = await this.clientDataMapper.mapRoom(room);
-
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
-  }
-
   async handleGetRoomMembershipConfirmationPage(req, res) {
     const { user } = req;
     const { token } = req.params;
@@ -86,7 +73,7 @@ export default class RoomController {
     return res.status(201).end();
   }
 
-  async handleGetRoom(req, res) {
+  async handleGetRoomPage(req, res) {
     const { roomId } = req.params;
     const room = await this.roomService.getRoomById(roomId);
 
@@ -97,6 +84,7 @@ export default class RoomController {
     const { _id: userId } = req.user;
 
     let invitations = null;
+
     if (room.access === ROOM_ACCESS_LEVEL.private) {
       const isOwnerOrMember = await this.roomService.isRoomMemberOrOwner(roomId, userId);
       if (!isOwnerOrMember) {

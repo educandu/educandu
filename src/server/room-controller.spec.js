@@ -190,7 +190,7 @@ describe('room-controller', () => {
           roomService.getRoomInvitations = sandbox.stub().resolves(invitations);
           roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
 
-          await sut.handleGetRoom(request, {});
+          await sut.handleGetRoomPage(request, {});
         });
 
         it('should call getRoomById with roomId', () => {
@@ -224,7 +224,7 @@ describe('room-controller', () => {
           roomService.getRoomInvitations = sandbox.stub();
           roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
 
-          await sut.handleGetRoom(request, {});
+          await sut.handleGetRoomPage(request, {});
         });
 
         it('should call getRoomById with roomId', () => {
@@ -259,7 +259,7 @@ describe('room-controller', () => {
         });
 
         it('should throw a forbidden exception', () => {
-          expect(() => sut.handleGetRoom(request, res)).rejects.toThrow(Forbidden);
+          expect(() => sut.handleGetRoomPage(request, res)).rejects.toThrow(Forbidden);
         });
       });
     });
@@ -277,7 +277,7 @@ describe('room-controller', () => {
       const publicRoom = { ...privateRoom, access: ROOM_ACCESS_LEVEL.public };
       beforeEach(async () => {
         roomService.getRoomById.resolves(publicRoom);
-        await sut.handleGetRoom(request, {});
+        await sut.handleGetRoomPage(request, {});
       });
 
       it('should not check if the room caller is the owner or a member', () => {
@@ -291,7 +291,7 @@ describe('room-controller', () => {
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoomPage({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoomPagePage({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
       });
     });
   });

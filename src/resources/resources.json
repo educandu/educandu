@@ -850,6 +850,22 @@
     }
   },
   {
+    "namespace": "roomInvitationCreationModal",
+    "language": "en",
+    "resources": {
+      "newRoomInvitation": "New invitation",
+      "emailRequired": "Please specify an Email"
+    }
+  },
+  {
+    "namespace": "roomInvitationCreationModal",
+    "language": "de",
+    "resources": {
+      "newRoomInvitation": "Neuer Einladung",
+      "emailRequired": "Bitte geben Sie einen E-Mail an"
+    }
+  },
+  {
     "namespace": "roomsTab",
     "language": "en",
     "resources": {

@@ -1,18 +1,34 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
 import { Row, Space, List, Collapse, Button } from 'antd';
 import { invitationShape, roomShape } from '../../ui/default-prop-types.js';
+import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 
 export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
   const { roomDetails, invitations } = initialState;
+  const [isInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
+
+  const handleOpenInvitationModalClick = event => {
+    setIsRoomInvitationModalOpen(true);
+    event.stopPropagation();
+  };
+
+  const handleInvitationModalClose = wasNewInvitationCreated => {
+    setIsRoomInvitationModalOpen(false);
+
+    if (!wasNewInvitationCreated) {
+      return;
+    }
+    window.location.reload();
+  };
 
   const displayInvitations = () => (
     <Collapse className="Room-invitationsCollapse">
-      <Collapse.Panel header={t('invitationsHeader', { count: invitations.length })} extra={<Button>{t('createInvitationButton')}</Button>}>
+      <Collapse.Panel header={t('invitationsHeader', { count: invitations.length })} extra={<Button onClick={handleOpenInvitationModalClick}>{t('createInvitationButton')}</Button>}>
         <List
           dataSource={invitations}
           renderItem={invitation => (
@@ -70,6 +86,7 @@ export default function Room({ PageTemplate, initialState }) {
         </Collapse.Panel>
       </Collapse>
       { invitations && displayInvitations(invitations) }
+      <RoomInvitationCreationModal isVisible={isInvitationModalOpen} onClose={handleInvitationModalClose} roomId={roomDetails._id} />
     </PageTemplate>);
 }
 
