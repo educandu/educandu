@@ -35,7 +35,20 @@ export default class RoomController {
     this.pageRenderer = pageRenderer;
   }
 
-  async handleRoomMembershipConfirmationPage(req, res) {
+  async handleGetRoomPage(req, res) {
+    const { roomId } = req.params;
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    const roomDetails = await this.clientDataMapper.mapRoom(room);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
+  }
+
+  async handleGetRoomMembershipConfirmationPage(req, res) {
     const { user } = req;
     const { token } = req.params;
 
@@ -71,19 +84,6 @@ export default class RoomController {
     await this.roomService.confirmInvitation({ token, user });
 
     return res.status(201).end();
-  }
-
-  async handleGetRoom(req, res) {
-    const { roomId } = req.params;
-    const room = await this.roomService.getRoomById(roomId);
-
-    if (!room) {
-      throw new NotFound();
-    }
-
-    const roomDetails = await this.clientDataMapper.mapRoom(room);
-
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
   }
 
   async handleAuthorizeResourcesAccess(req, res) {
@@ -136,13 +136,13 @@ export default class RoomController {
     router.get(
       '/rooms/:roomId',
       [needsPermission(permissions.VIEW_ROOMS), validateParams(getRoomParamsSchema)],
-      (req, res) => this.handleGetRoom(req, res)
+      (req, res) => this.handleGetRoomPage(req, res)
     );
 
     router.get(
       '/room-membership-confirmation/:token',
       [needsPermission(permissions.JOIN_PRIVATE_ROOMS), validateParams(getRoomMembershipConfirmationParamsSchema)],
-      (req, res) => this.handleRoomMembershipConfirmationPage(req, res)
+      (req, res) => this.handleGetRoomMembershipConfirmationPage(req, res)
     );
   }
 }

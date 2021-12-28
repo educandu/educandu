@@ -21,39 +21,58 @@ class CdnController {
     this.cdn = cdn;
   }
 
+  async handleGetCdnObject(req, res) {
+    const prefix = req.query.prefix;
+    const recursive = parseBool(req.query.recursive);
+    const objects = await this.cdn.listObjects({ prefix, recursive });
+
+    return res.send({ objects });
+  }
+
+  async handleDeleteCdnObject(req, res) {
+    const prefix = req.query.prefix;
+    const objectName = req.params.objectName;
+
+    await this.cdn.deleteObject(urls.concatParts(prefix, objectName));
+
+    return res.sendStatus(200);
+  }
+
+  async handlePostCdnObject(req, res) {
+    if (req.files && req.files.length) {
+      const uploads = req.files.map(async file => {
+        const cdnFileName = fileNameHelper.buildCdnFileName(file.originalname, req.body.prefix);
+        await this.cdn.uploadObject(cdnFileName, file.path, {});
+      });
+      await Promise.all(uploads);
+    } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
+      // If no file but a prefix ending with `/` is provided, create a folder instead of a file:
+      await this.cdn.uploadEmptyObject(req.body.prefix, {});
+    } else {
+      createHttpError(400);
+    }
+
+    return res.send({});
+  }
+
   registerApi(router) {
-    router.get('/api/v1/cdn/objects', [needsPermission(permissions.VIEW_FILES), jsonParser, validateQuery(getObjectsQuerySchema)], async (req, res) => {
-      const prefix = req.query.prefix;
-      const recursive = parseBool(req.query.recursive);
-      const objects = await this.cdn.listObjects({ prefix, recursive });
-      return res.send({ objects });
-    });
+    router.get(
+      '/api/v1/cdn/objects',
+      [needsPermission(permissions.VIEW_FILES), jsonParser, validateQuery(getObjectsQuerySchema)],
+      (req, res) => this.handleGetCdnObject(req, res)
+    );
 
-    router.delete('/api/v1/cdn/objects/:objectName', [needsPermission(permissions.DELETE_CDN_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)], async (req, res) => {
-      const objectName = req.params.objectName;
-      const prefix = req.query.prefix;
+    router.delete(
+      '/api/v1/cdn/objects/:objectName',
+      [needsPermission(permissions.DELETE_CDN_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
+      (req, res) => this.handleDeleteCdnObject(req, res)
+    );
 
-      await this.cdn.deleteObject(urls.concatParts(prefix, objectName));
-
-      res.sendStatus(200);
-    });
-
-    router.post('/api/v1/cdn/objects', [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)], async (req, res) => {
-      if (req.files && req.files.length) {
-        const uploads = req.files.map(async file => {
-          const cdnFileName = fileNameHelper.buildCdnFileName(file.originalname, req.body.prefix);
-          await this.cdn.uploadObject(cdnFileName, file.path, {});
-        });
-        await Promise.all(uploads);
-      } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
-        // If no file but a prefix ending with `/` is provided, create a folder instead of a file:
-        await this.cdn.uploadEmptyObject(req.body.prefix, {});
-      } else {
-        createHttpError(400);
-      }
-
-      return res.send({});
-    });
+    router.post(
+      '/api/v1/cdn/objects',
+      [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)],
+      (req, res) => this.handlePostCdnObject(req, res)
+    );
   }
 }
 

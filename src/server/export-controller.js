@@ -16,35 +16,47 @@ class ExportController {
     this.database = database;
   }
 
+  async handleGetExports(req, res) {
+    const importingSystemSchemaHash = req.query.databaseSchemaHash;
+
+    let docs = [];
+    const schemaHash = await this.database.getSchemaHash();
+
+    if (schemaHash !== importingSystemSchemaHash) {
+      throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
+    }
+
+    docs = await this.exportService.getAllExportableDocumentsMetadata();
+    return res.send({ schemaHash, docs });
+  }
+
+  async handleGetExport(req, res) {
+    const key = req.params.key;
+    const toRevision = req.query.toRevision;
+    const importingSystemSchemaHash = req.query.databaseSchemaHash;
+
+    const schemaHash = await this.database.getSchemaHash();
+    if (schemaHash !== importingSystemSchemaHash) {
+      throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
+    }
+
+    const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ key, toRevision });
+
+    return res.send({ revisions, users, cdnRootUrl });
+  }
+
   registerApi(router) {
-    router.get('/api/v1/exports', [needsPermission(permissions.MANAGE_EXPORT), validateQuery(getExportsQuerySchema)], async (req, res) => {
-      const importingSystemSchemaHash = req.query.databaseSchemaHash;
+    router.get(
+      '/api/v1/exports',
+      [needsPermission(permissions.MANAGE_EXPORT), validateQuery(getExportsQuerySchema)],
+      (req, res) => this.handleGetExports(req, res)
+    );
 
-      let docs = [];
-      const schemaHash = await this.database.getSchemaHash();
-
-      if (schemaHash !== importingSystemSchemaHash) {
-        throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
-      }
-
-      docs = await this.exportService.getAllExportableDocumentsMetadata();
-      res.send({ schemaHash, docs });
-    });
-
-    router.get('/api/v1/exports/:key', validateQuery(getExportsDocumentQuerySchema), async (req, res) => {
-      const key = req.params.key;
-      const toRevision = req.query.toRevision;
-      const importingSystemSchemaHash = req.query.databaseSchemaHash;
-
-      const schemaHash = await this.database.getSchemaHash();
-      if (schemaHash !== importingSystemSchemaHash) {
-        throw new BadRequest(`Database schema mismatch between importing system (${importingSystemSchemaHash}) and exporting system (${schemaHash})`);
-      }
-
-      const { revisions, users, cdnRootUrl } = await this.exportService.getDocumentExport({ key, toRevision });
-
-      res.send({ revisions, users, cdnRootUrl });
-    });
+    router.get(
+      '/api/v1/exports/:key',
+      validateQuery(getExportsDocumentQuerySchema),
+      (req, res) => this.handleGetExport(req, res)
+    );
   }
 }
 

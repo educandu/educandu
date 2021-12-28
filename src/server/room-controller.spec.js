@@ -157,7 +157,7 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handleGetRoom', () => {
+  describe('handleGetRoomPage', () => {
     const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
 
     describe('when the room exists', () => {
@@ -175,7 +175,7 @@ describe('room-controller', () => {
           }
           return Promise.resolve();
         });
-        await sut.handleGetRoom(request, {});
+        await sut.handleGetRoomPage(request, {});
       });
 
       it('should call getRoomById with roomId', () => {
@@ -193,7 +193,7 @@ describe('room-controller', () => {
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoom({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoomPage({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
       });
     });
   });

@@ -22,21 +22,26 @@ class IndexController {
     this.pageRenderer = pageRenderer;
   }
 
-  registerPages(router) {
-    router.get('/', async (req, res) => {
-      const { language } = req.query;
-      const homeLanguages = req.settings?.homeLanguages || [];
-      const currentHomeLanguageIndex = findHomeLanguageIndexForRequest(homeLanguages, language);
-      if (currentHomeLanguageIndex <= 0 && language) {
-        return res.redirect(302, '/');
-      }
+  async handleGetIndexPage(req, res) {
+    const { language } = req.query;
+    const homeLanguages = req.settings?.homeLanguages || [];
+    const currentHomeLanguageIndex = findHomeLanguageIndexForRequest(homeLanguages, language);
+    if (currentHomeLanguageIndex <= 0 && language) {
+      return res.redirect(302, '/');
+    }
 
-      const documentKey = req.settings?.homeLanguages?.[currentHomeLanguageIndex]?.documentKey || null;
-      const doc = documentKey ? await this.documentService.getDocumentByKey(documentKey) : null;
-      const document = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
-      const initialState = { document, homeLanguages, currentHomeLanguageIndex };
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.index, initialState);
-    });
+    const documentKey = req.settings?.homeLanguages?.[currentHomeLanguageIndex]?.documentKey || null;
+    const doc = documentKey ? await this.documentService.getDocumentByKey(documentKey) : null;
+    const document = doc ? await this.clientDataMapper.mapDocOrRevision(doc, req.user) : null;
+    const initialState = { document, homeLanguages, currentHomeLanguageIndex };
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.index, initialState);
+  }
+
+  registerPages(router) {
+    router.get(
+      '/',
+      (req, res) => this.handleGetIndexPage(req, res)
+    );
   }
 }
 
