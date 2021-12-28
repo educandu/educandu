@@ -4,6 +4,7 @@ import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { ROOM_ACCESS_LEVEL } from '../common/constants.js';
 
 const { NotFound, Forbidden } = httpErrors;
 
@@ -158,36 +159,133 @@ describe('room-controller', () => {
   });
 
   describe('handleGetRoom', () => {
-    const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+    const privateRoom = { roomId: 'roomId', name: 'Mein schöner Raum', owner: 'owner', access: ROOM_ACCESS_LEVEL.private };
 
-    describe('when the room exists', () => {
+    beforeEach(() => {
+      clientDataMapper.mapRoom.resolves(privateRoom);
+
+      roomService.getRoomById.callsFake(roomId => {
+        if (roomId === privateRoom.roomId) {
+          return Promise.resolve(privateRoom);
+        }
+        return Promise.resolve();
+      });
+    });
+
+    describe('when the private room exists', () => {
+      describe('when the room owner calls', () => {
+
+        const request = {
+          params: {
+            roomId: 'roomId'
+          },
+          user: {
+            _id: 'owner'
+          }
+        };
+
+        const invitations = [{ email: 'lae@bucalae.com', sentOn: new Date() }];
+
+        beforeEach(async () => {
+          roomService.getRoomInvitations = sandbox.stub().resolves(invitations);
+          roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
+
+          await sut.handleGetRoom(request, {});
+        });
+
+        it('should call getRoomById with roomId', () => {
+          sinon.assert.calledWith(roomService.getRoomById, 'roomId');
+        });
+
+        it('should call mapRoom with the room returned by the service', () => {
+          sinon.assert.calledWith(clientDataMapper.mapRoom, privateRoom);
+        });
+
+        it('should call getRoomInvitations', () => {
+          sinon.assert.calledWith(roomService.getRoomInvitations, 'roomId');
+        });
+
+        it('should call pageRenderer with the right parameters', () => {
+          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: privateRoom, invitations });
+        });
+      });
+
+      describe('when a member calls', () => {
+        const request = {
+          params: {
+            roomId: 'roomId'
+          },
+          user: {
+            _id: 'member'
+          }
+        };
+
+        beforeEach(async () => {
+          roomService.getRoomInvitations = sandbox.stub();
+          roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
+
+          await sut.handleGetRoom(request, {});
+        });
+
+        it('should call getRoomById with roomId', () => {
+          sinon.assert.calledWith(roomService.getRoomById, 'roomId');
+        });
+
+        it('should call mapRoom with the room returned by the service', () => {
+          sinon.assert.calledWith(clientDataMapper.mapRoom, privateRoom);
+        });
+
+        it('should not call getRoomInvitations', () => {
+          sinon.assert.notCalled(roomService.getRoomInvitations);
+        });
+
+        it('should call pageRenderer with the right parameters', () => {
+          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: privateRoom, invitations: null });
+        });
+      });
+
+      describe('when some random person calls', () => {
+        const request = {
+          params: {
+            roomId: 'roomId'
+          },
+          user: {
+            _id: 'randomGuy'
+          }
+        };
+
+        beforeEach(() => {
+          roomService.isRoomMemberOrOwner = sandbox.stub().resolves(false);
+        });
+
+        it('should throw a forbidden exception', () => {
+          expect(() => sut.handleGetRoom(request, res)).rejects.toThrow(Forbidden);
+        });
+      });
+    });
+
+    describe('when the public room exists', () => {
       const request = {
         params: {
           roomId: 'roomId'
+        },
+        user: {
+          _id: 'someGuy'
         }
       };
 
+      const publicRoom = { ...privateRoom, access: ROOM_ACCESS_LEVEL.public };
       beforeEach(async () => {
-        clientDataMapper.mapRoom.resolves(room);
-        roomService.getRoomById.callsFake(roomId => {
-          if (roomId === room.roomId) {
-            return Promise.resolve(room);
-          }
-          return Promise.resolve();
-        });
+        roomService.getRoomById.resolves(publicRoom);
         await sut.handleGetRoom(request, {});
       });
 
-      it('should call getRoomById with roomId', () => {
-        sinon.assert.calledWith(roomService.getRoomById, 'roomId');
-      });
-
-      it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMapper.mapRoom, room);
+      it('should not check if the room caller is the owner or a member', () => {
+        sinon.assert.notCalled(roomService.isRoomMemberOrOwner);
       });
 
       it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: room });
+        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: privateRoom, invitations: null });
       });
     });
 

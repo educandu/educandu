@@ -14,6 +14,13 @@ const logger = new Logger(import.meta.url);
 
 const PENDING_ROOM_INVITATION_EXPIRATION_TIMESPAN = { days: 7 };
 
+const roomInvitationProjection = {
+  _id: 1,
+  email: 1,
+  sentOn: 1,
+  expires: 1
+};
+
 export default class RoomService {
   static get inject() { return [RoomStore, RoomInvitationStore, UserService, TransactionRunner]; }
 
@@ -146,5 +153,9 @@ export default class RoomService {
   async isRoomMemberOrOwner(roomId, userId) {
     const room = await this.roomStore.findOne({ $and: [{ _id: roomId }, { $or: [{ 'members.userId': userId }, { owner: userId }] }] });
     return !!room;
+  }
+
+  getRoomInvitations(roomId) {
+    return this.roomInvitationStore.find({ roomId }, { projection: roomInvitationProjection });
   }
 }

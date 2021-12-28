@@ -9,8 +9,8 @@ import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { FEATURE_TOGGLES } from '../common/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { FEATURE_TOGGLES, ROOM_ACCESS_LEVEL } from '../common/constants.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
@@ -81,9 +81,23 @@ export default class RoomController {
       throw new NotFound();
     }
 
+    const { _id: userId } = req.user;
+
+    let invitations = null;
+    if (room.access === ROOM_ACCESS_LEVEL.private) {
+      const isOwnerOrMember = await this.roomService.isRoomMemberOrOwner(roomId, userId);
+      if (!isOwnerOrMember) {
+        throw new Forbidden();
+      }
+
+      if (room.owner === userId) {
+        invitations = await this.roomService.getRoomInvitations(roomId);
+      }
+    }
+
     const roomDetails = await this.clientDataMapper.mapRoom(room);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails, invitations });
   }
 
   async handleAuthorizeResourcesAccess(req, res) {

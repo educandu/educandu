@@ -279,6 +279,26 @@ describe('room-service', () => {
     });
   });
 
+  describe('getRoomInvitations', () => {
+    let testRoom = null;
+    let invitation = null;
+
+    beforeEach(async () => {
+      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+
+    });
+
+    it('should retrieve the invitation', async () => {
+      delete invitation.roomId;
+      delete invitation.token;
+
+      const invitations = await sut.getRoomInvitations(testRoom._id);
+      expect(invitations).toEqual([invitation]);
+    });
+
+  });
+
   describe('isRoomMemberOrOwner', () => {
     const roomId = uniqueId.create();
     beforeEach(async () => {
