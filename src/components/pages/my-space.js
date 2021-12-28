@@ -14,6 +14,7 @@ import { getGlobalAlerts } from '../../ui/global-alerts.js';
 import { FEATURE_TOGGLES } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
+
 function MySpace({ initialState, PageTemplate }) {
   const user = useUser();
   const pageName = usePageName();
@@ -54,15 +55,15 @@ function MySpace({ initialState, PageTemplate }) {
       <div className="MySpacePage">
 
         <h1>{t('pageNames:mySpace')}</h1>
-        <Tabs className="MySpacePage-tabs" defaultActiveKey="1" type="card" size="large">
-          <TabPane className="MySpacePage-tab" tab={t('profileTabTitle')} key="1">
+        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
+          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="1">
             <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
-          <TabPane className="MySpacePage-tab" tab={t('accountTabTitle')} key="2">
+          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="2">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
           { isRoomsTabEnabled && (
-            <TabPane className="MySpacePage-tab" tab={t('roomsTabTitle')} key="3">
+            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="3">
               <RoomsTab rooms={rooms} />
             </TabPane>)}
         </Tabs>
