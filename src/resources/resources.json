@@ -638,7 +638,9 @@
       "joinedOn": "Member since",
       "sentOn": "Invitation sent on",
       "expires": "Invitation expires on",
-      "createInvitationButton": "Create an invitation"
+      "createInvitationButton": "Create an invitation",
+      "roomMembersHeader": "Room members ({count})",
+      "invitationsHeader": "Outstanding invitations ({count})"
     }
   },
   {
@@ -650,7 +652,9 @@
       "joinedOn": "Mitglied seit",
       "sentOn": "Einladung gesendet am",
       "expires": "Einladung läuft ab am",
-      "createInvitationButton": "Einladung erstellen"
+      "createInvitationButton": "Einladung erstellen",
+      "roomMembersHeader": "Raummitglieder ({count})",
+      "invitationsHeader": "Herausragende Einladungen ({count})"
     }
   },
   {

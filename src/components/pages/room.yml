@@ -16,3 +16,9 @@ expires:
 createInvitationButton:
   en: Create an invitation
   de: Einladung erstellen
+roomMembersHeader:
+  en: Room members ({count})
+  de: Raummitglieder ({count})
+invitationsHeader:
+  en: Outstanding invitations ({count})
+  de: Herausragende Einladungen ({count})
