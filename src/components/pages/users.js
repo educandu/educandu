@@ -3,7 +3,7 @@ import firstBy from 'thenby';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
-import { Table, Popover, Menu } from 'antd';
+import { Table, Popover, Tabs } from 'antd';
 import { withUser } from '../user-context.js';
 import { withTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
@@ -19,7 +19,7 @@ import { userShape, translationProps, userProps, pageNameProps } from '../../ui/
 
 const logger = new Logger(import.meta.url);
 
-const MenuItem = Menu.Item;
+const { TabPane } = Tabs;
 
 const availableRoles = Object.values(ROLE);
 
@@ -57,7 +57,6 @@ class Users extends React.Component {
 
     this.state = {
       ...splitInternalAndExternalUsers(props.initialState),
-      currentTab: TABS.internalUsers,
       isSaving: false
     };
 
@@ -175,10 +174,6 @@ class Users extends React.Component {
     return <UserLockedOutStateEditor user={user} onLockedOutStateChange={this.handleLockedOutStateChange} />;
   }
 
-  handleTabClick(evt) {
-    this.setState({ currentTab: evt.key });
-  }
-
   async handleRoleChange(user, newRoles) {
     const { userApiClient, t } = this.props;
     const oldRoles = user.roles;
@@ -227,7 +222,7 @@ class Users extends React.Component {
 
   render() {
     const { t, PageTemplate, pageName, user } = this.props;
-    const { internalUsers, externalUsers, isSaving, currentTab } = this.state;
+    const { internalUsers, externalUsers, isSaving } = this.state;
 
     const alerts = getGlobalAlerts(pageName, user);
 
@@ -235,31 +230,27 @@ class Users extends React.Component {
       <PageTemplate alerts={alerts}>
         <div className="UsersPage">
           <h1>{t('pageNames:users')}</h1>
-          <Menu onClick={this.handleTabClick} selectedKeys={[currentTab]} mode="horizontal" disabled={isSaving}>
-            <MenuItem key={TABS.internalUsers}>{t('internalUsers')}</MenuItem>
-            <MenuItem key={TABS.externalUsers}>{t('externalUsers')}</MenuItem>
-          </Menu>
-          <br />
-          <br />
-          {currentTab === TABS.internalUsers && (
-            <Table
-              dataSource={internalUsers}
-              columns={this.internalUserTableColumns}
-              rowKey="_id"
-              size="middle"
-              loading={isSaving}
-              bordered
-              />
-          )}
-          {currentTab === TABS.externalUsers && (
-            <Table
-              dataSource={externalUsers}
-              columns={this.externalUserTableColumns}
-              rowKey="_id"
-              size="middle"
-              bordered
-              />
-          )}
+          <Tabs className="Tabs" defaultActiveKey={TABS.internalUsers} type="line" size="large" disabled={isSaving}>
+            <TabPane className="Tabs-tabPane" tab={t('internalUsers')} key={TABS.internalUsers}>
+              <Table
+                dataSource={internalUsers}
+                columns={this.internalUserTableColumns}
+                rowKey="_id"
+                size="middle"
+                loading={isSaving}
+                bordered
+                />
+            </TabPane>
+            <TabPane className="Tabs-tabPane" tab={t('externalUsers')} key={TABS.externalUsers}>
+              <Table
+                dataSource={externalUsers}
+                columns={this.externalUserTableColumns}
+                rowKey="_id"
+                size="middle"
+                bordered
+                />
+            </TabPane>
+          </Tabs>
         </div>
       </PageTemplate>
     );
