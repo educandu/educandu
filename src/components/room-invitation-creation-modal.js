@@ -26,7 +26,7 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
   const initialFormValues = { email: null };
   const [loading, setIsLoading] = useState(false);
 
-  const onFinish = async values => {
+  const handleFormFinish = async values => {
     try {
       setIsLoading(prevState => ({ ...prevState, loading: true }));
       await roomApiClient.addRoomInvitation({ email: values.email, roomId });
@@ -45,7 +45,7 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
     onClose(false);
   };
 
-  const submitForm = () => {
+  const handleSubmitForm = () => {
     if (formRef.current) {
       formRef.current.submit();
     }
@@ -55,12 +55,12 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
     <Modal
       title={t('newRoomInvitation')}
       onCancel={handleCancel}
-      onOk={submitForm}
+      onOk={handleSubmitForm}
       maskClosable={false}
       visible={isVisible}
-      okButtonProps={{ loading: loading.loading, htmlType: 'submit' }}
+      okButtonProps={{ loading: loading.loading }}
       >
-      <Form name="new-room-invitation-form" initialValues={initialFormValues} onFinish={onFinish} ref={formRef} layout="vertical">
+      <Form name="new-room-invitation-form" initialValues={initialFormValues} onFinish={handleFormFinish} ref={formRef} layout="vertical">
         <FormItem label={t('common:email')} name="email" rules={emailValidationRules}>
           <Input />
         </FormItem>
