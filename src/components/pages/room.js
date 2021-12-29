@@ -10,7 +10,7 @@ export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
   const { roomDetails, invitations } = initialState;
-  const [isInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
+  const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
 
   const handleOpenInvitationModalClick = event => {
     setIsRoomInvitationModalOpen(true);
@@ -86,7 +86,7 @@ export default function Room({ PageTemplate, initialState }) {
         </Collapse.Panel>
       </Collapse>
       { invitations && displayInvitations(invitations) }
-      <RoomInvitationCreationModal isVisible={isInvitationModalOpen} onClose={handleInvitationModalClose} roomId={roomDetails._id} />
+      <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={roomDetails._id} />
     </PageTemplate>);
 }
 

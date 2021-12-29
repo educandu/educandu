@@ -4,7 +4,7 @@ import { Form, Modal, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
 
 const FormItem = Form.Item;
@@ -23,67 +23,46 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
       whitespace: true
     }
   ];
+  const initialFormValues = { email: null };
+  const [loading, setIsLoading] = useState(false);
 
-  const isFormValid = async () => {
+  const onFinish = async values => {
     try {
-      await formRef.current.validateFields(['email'], { force: true });
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  const [state, setState] = useState({
-    loading: false,
-    email: null
-  });
-
-  useEffect(() => {
-    if (isVisible) {
-      setState(prevState => ({ ...prevState, email: null }));
-
-      if (formRef.current) {
-        formRef.current.setFieldsValue({ email: null });
-      }
-    }
-  }, [isVisible]);
-
-  const handleOk = async () => {
-    try {
-      const isValid = await isFormValid();
-      if (!isValid) {
-        return;
-      }
-
-      setState(prevState => ({ ...prevState, loading: true }));
-      await roomApiClient.addRoomInvitation({ email: state.email, roomId });
+      setIsLoading(prevState => ({ ...prevState, loading: true }));
+      await roomApiClient.addRoomInvitation({ email: values.email, roomId });
       onClose(true);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     } finally {
-      setState(prevState => ({ ...prevState, loading: false }));
+      setIsLoading(prevState => ({ ...prevState, loading: false }));
     }
   };
 
-  const handleCancel = () => onClose(false);
+  const handleCancel = () => {
+    if (formRef.current) {
+      formRef.current.resetFields();
+    }
+    onClose(false);
+  };
 
-  const handleEmailChange = event => {
-    const { value } = event.target;
-    setState(prevState => ({ ...prevState, email: value }));
+  const submitForm = () => {
+    if (formRef.current) {
+      formRef.current.submit();
+    }
   };
 
   return (
     <Modal
       title={t('newRoomInvitation')}
-      onOk={handleOk}
       onCancel={handleCancel}
+      onOk={submitForm}
       maskClosable={false}
       visible={isVisible}
-      okButtonProps={{ loading: state.loading }}
+      okButtonProps={{ loading: loading.loading, htmlType: 'submit' }}
       >
-      <Form name="new-room-invitation-form" ref={formRef} layout="vertical">
+      <Form name="new-room-invitation-form" initialValues={initialFormValues} onFinish={onFinish} ref={formRef} layout="vertical">
         <FormItem label={t('common:email')} name="email" rules={emailValidationRules}>
-          <Input onChange={handleEmailChange} />
+          <Input />
         </FormItem>
       </Form>
     </Modal>
