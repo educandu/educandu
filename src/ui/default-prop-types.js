@@ -252,7 +252,7 @@ export const roomShape = PropTypes.shape({
 });
 
 export const invitationShape = PropTypes.shape({
-  emails: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
   sentOn: PropTypes.string.isRequired,
   expires: PropTypes.string.isRequired
 });
