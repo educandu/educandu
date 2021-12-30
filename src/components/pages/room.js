@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
 import { Row, Space, List, Collapse, Button } from 'antd';
+import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { invitationShape, roomShape } from '../../ui/default-prop-types.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 
@@ -11,6 +13,8 @@ export default function Room({ PageTemplate, initialState }) {
   const { formatDate } = useDateFormat();
   const { room, invitations } = initialState;
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
+  const user = useUser();
+  const isRoomOwner = user._id === room.owner.key;
 
   const handleOpenInvitationModalClick = event => {
     setIsRoomInvitationModalOpen(true);
@@ -26,9 +30,14 @@ export default function Room({ PageTemplate, initialState }) {
     window.location.reload();
   };
 
+  const shouldDisplayInivations = room.access === ROOM_ACCESS_LEVEL.private && isRoomOwner;
+
   const displayInvitations = () => (
     <Collapse className="Room-sectionCollapse">
-      <Collapse.Panel header={t('invitationsHeader', { count: invitations.length })} extra={<Button onClick={handleOpenInvitationModalClick}>{t('createInvitationButton')}</Button>}>
+      <Collapse.Panel
+        header={t('invitationsHeader', { count: invitations.length })}
+        extra={<Button onClick={handleOpenInvitationModalClick}>{t('createInvitationButton')}</Button>}
+        >
         <List
           dataSource={invitations}
           renderItem={invitation => (
@@ -85,7 +94,7 @@ export default function Room({ PageTemplate, initialState }) {
             />
         </Collapse.Panel>
       </Collapse>
-      { invitations && displayInvitations(invitations) }
+      { shouldDisplayInivations && displayInvitations(invitations) }
       <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
     </PageTemplate>);
 }
@@ -94,6 +103,6 @@ Room.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
-    invitations: PropTypes.arrayOf(invitationShape)
+    invitations: PropTypes.arrayOf(invitationShape).isRequired
   }).isRequired
 };

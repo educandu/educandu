@@ -239,7 +239,7 @@ describe('room-controller', () => {
         });
 
         it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: null });
+          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: [] });
         });
       });
 
@@ -284,7 +284,7 @@ describe('room-controller', () => {
       });
 
       it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: null });
+        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: [] });
       });
     });
 

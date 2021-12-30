@@ -83,7 +83,7 @@ export default class RoomController {
 
     const { _id: userId } = req.user;
 
-    let invitations = null;
+    let invitations = [];
 
     if (room.access === ROOM_ACCESS_LEVEL.private) {
       const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
