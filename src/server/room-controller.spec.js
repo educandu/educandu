@@ -26,7 +26,7 @@ describe('room-controller', () => {
       createOrUpdateInvitation: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
       getRoomById: sandbox.stub(),
-      isRoomOwnerOrMember: sandbox.stub().resolves(true),
+      isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub()
     };
     mailService = {
@@ -188,7 +188,9 @@ describe('room-controller', () => {
         const invitations = [{ email: 'lae@bucalae.com', sentOn: new Date() }];
 
         beforeEach(async () => {
-          roomService.getRoomInvitations = sandbox.stub().resolves(invitations);
+          roomService.getRoomInvitations.resolves(invitations);
+          roomService.isRoomOwnerOrMember.resolves(true);
+
           await sut.handleGetRoomPage(request, {});
         });
 
@@ -220,6 +222,7 @@ describe('room-controller', () => {
         };
 
         beforeEach(async () => {
+          roomService.isRoomOwnerOrMember.resolves(true);
           await sut.handleGetRoomPage(request, {});
         });
 
@@ -251,7 +254,7 @@ describe('room-controller', () => {
         };
 
         beforeEach(() => {
-          roomService.isRoomOwnerOrMember = sandbox.stub().resolves(false);
+          roomService.isRoomOwnerOrMember.resolves(false);
         });
 
         it('should throw a forbidden exception', () => {
@@ -306,6 +309,7 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
+        roomService.isRoomOwnerOrMember.resolves(true);
         sut.handleAuthorizeResourcesAccess(req, res);
       });
 
