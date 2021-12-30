@@ -86,8 +86,8 @@ export default class RoomController {
     let invitations = null;
 
     if (room.access === ROOM_ACCESS_LEVEL.private) {
-      const isOwnerOrMember = await this.roomService.isRoomMemberOrOwner(roomId, userId);
-      if (!isOwnerOrMember) {
+      const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
+      if (!isRoomOwnerOrMember) {
         throw new Forbidden();
       }
 
@@ -105,7 +105,7 @@ export default class RoomController {
     const { roomId } = req.params;
     const { _id: userId } = req.user;
 
-    const result = await this.roomService.isRoomMemberOrOwner(roomId, userId);
+    const result = await this.roomService.isRoomOwnerOrMember(roomId, userId);
     if (!result) {
       throw new Forbidden();
     }

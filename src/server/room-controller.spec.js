@@ -26,7 +26,7 @@ describe('room-controller', () => {
       createOrUpdateInvitation: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
       getRoomById: sandbox.stub(),
-      isRoomMemberOrOwner: sandbox.stub().resolves(true),
+      isRoomOwnerOrMember: sandbox.stub().resolves(true),
       getRoomInvitations: sandbox.stub()
     };
     mailService = {
@@ -251,7 +251,7 @@ describe('room-controller', () => {
         };
 
         beforeEach(() => {
-          roomService.isRoomMemberOrOwner = sandbox.stub().resolves(false);
+          roomService.isRoomOwnerOrMember = sandbox.stub().resolves(false);
         });
 
         it('should throw a forbidden exception', () => {
@@ -277,7 +277,7 @@ describe('room-controller', () => {
       });
 
       it('should not check if the room caller is the owner or a member', () => {
-        sinon.assert.notCalled(roomService.isRoomMemberOrOwner);
+        sinon.assert.notCalled(roomService.isRoomOwnerOrMember);
       });
 
       it('should call pageRenderer with the right parameters', () => {
@@ -310,7 +310,7 @@ describe('room-controller', () => {
       });
 
       it('should call the room service with the correct roomId and userId', () => {
-        sinon.assert.calledWith(roomService.isRoomMemberOrOwner, roomId, user._id);
+        sinon.assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
       });
 
       it('should return status 200 when the user is authorized', () => {
@@ -320,7 +320,7 @@ describe('room-controller', () => {
     });
     describe('when the user is not authorized', () => {
       beforeEach(() => {
-        roomService.isRoomMemberOrOwner.resolves(false);
+        roomService.isRoomOwnerOrMember.resolves(false);
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },

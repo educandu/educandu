@@ -299,7 +299,7 @@ describe('room-service', () => {
 
   });
 
-  describe('isRoomMemberOrOwner', () => {
+  describe('isRoomOwnerOrMember', () => {
     const roomId = uniqueId.create();
     beforeEach(async () => {
       await roomStore.save({
@@ -317,17 +317,17 @@ describe('room-service', () => {
     });
 
     it('should return true when the user is the owner', async () => {
-      result = await sut.isRoomMemberOrOwner(roomId, myUser._id);
+      result = await sut.isRoomOwnerOrMember(roomId, myUser._id);
       expect(result).toBe(true);
     });
 
     it('should return true when the user is a member', async () => {
-      result = await sut.isRoomMemberOrOwner(roomId, otherUser._id);
+      result = await sut.isRoomOwnerOrMember(roomId, otherUser._id);
       expect(result).toBe(true);
     });
 
     it('should return false when the is not a member', async () => {
-      result = await sut.isRoomMemberOrOwner(roomId, uniqueId.create());
+      result = await sut.isRoomOwnerOrMember(roomId, uniqueId.create());
       expect(result).toBe(false);
     });
   });
