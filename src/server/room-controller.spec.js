@@ -173,7 +173,7 @@ describe('room-controller', () => {
     });
 
     describe('when the private room exists', () => {
-      describe('when the room owner calls', () => {
+      describe('and the room owner calls', () => {
 
         const request = {
           params: {
@@ -210,7 +210,7 @@ describe('room-controller', () => {
         });
       });
 
-      describe('when a member calls', () => {
+      describe('and a member calls', () => {
         const request = {
           params: {
             roomId: 'roomId'
@@ -244,7 +244,7 @@ describe('room-controller', () => {
         });
       });
 
-      describe('when an unauthorized person calls', () => {
+      describe('and an unauthorized person calls', () => {
         const request = {
           params: {
             roomId: 'roomId'

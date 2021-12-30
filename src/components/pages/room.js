@@ -27,7 +27,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const displayInvitations = () => (
-    <Collapse className="Room-invitationsCollapse">
+    <Collapse className="Room-sectionCollapse">
       <Collapse.Panel header={t('invitationsHeader', { count: invitations.length })} extra={<Button onClick={handleOpenInvitationModalClick}>{t('createInvitationButton')}</Button>}>
         <List
           dataSource={invitations}
@@ -64,7 +64,7 @@ export default function Room({ PageTemplate, initialState }) {
           <span> {room.owner.username}</span>
         </Space>
       </Row>
-      <Collapse className="Room-membersCollapse">
+      <Collapse className="Room-sectionCollapse">
         <Collapse.Panel header={t('roomMembersHeader', { count: room.members.length })} >
           <List
             dataSource={room.members}
@@ -93,7 +93,7 @@ export default function Room({ PageTemplate, initialState }) {
 Room.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    room: roomShape,
+    room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(invitationShape)
   }).isRequired
 };
