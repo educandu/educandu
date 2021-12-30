@@ -1,6 +1,6 @@
 newRoomInvitation:
   en: New invitation
-  de: Neuer Einladung
+  de: Neue Einladung
 emailRequired:
-  en: Please specify an Email
-  de: Bitte geben Sie einen E-Mail an
+  en: Please specify an email address
+  de: Bitte geben Sie eine E-Mail-Adresse an

@@ -21,4 +21,4 @@ roomMembersHeader:
   de: Raummitglieder ({count})
 invitationsHeader:
   en: Outstanding invitations ({count})
-  de: Herausragende Einladungen ({count})
+  de: Ausstehende Einladungen ({count})
