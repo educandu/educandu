@@ -654,7 +654,7 @@
       "expires": "Einladung läuft ab am",
       "createInvitationButton": "Einladung erstellen",
       "roomMembersHeader": "Raummitglieder ({count})",
-      "invitationsHeader": "Herausragende Einladungen ({count})"
+      "invitationsHeader": "Ausstehende Einladungen ({count})"
     }
   },
   {
@@ -854,15 +854,15 @@
     "language": "en",
     "resources": {
       "newRoomInvitation": "New invitation",
-      "emailRequired": "Please specify an Email"
+      "emailRequired": "Please specify an email address"
     }
   },
   {
     "namespace": "roomInvitationCreationModal",
     "language": "de",
     "resources": {
-      "newRoomInvitation": "Neuer Einladung",
-      "emailRequired": "Bitte geben Sie einen E-Mail an"
+      "newRoomInvitation": "Neue Einladung",
+      "emailRequired": "Bitte geben Sie eine E-Mail-Adresse an"
     }
   },
   {

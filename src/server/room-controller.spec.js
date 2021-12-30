@@ -206,7 +206,7 @@ describe('room-controller', () => {
         });
 
         it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: privateRoom, invitations });
+          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations });
         });
       });
 
@@ -240,11 +240,11 @@ describe('room-controller', () => {
         });
 
         it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: privateRoom, invitations: null });
+          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: null });
         });
       });
 
-      describe('when some random person calls', () => {
+      describe('when an unauthorized person calls', () => {
         const request = {
           params: {
             roomId: 'roomId'
@@ -285,13 +285,13 @@ describe('room-controller', () => {
       });
 
       it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { roomDetails: privateRoom, invitations: null });
+        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: null });
       });
     });
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoomPagePage({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoomPage({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
       });
     });
   });

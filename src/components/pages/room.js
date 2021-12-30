@@ -9,7 +9,7 @@ import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
-  const { roomDetails, invitations } = initialState;
+  const { room, invitations } = initialState;
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
 
   const handleOpenInvitationModalClick = event => {
@@ -57,17 +57,17 @@ export default function Room({ PageTemplate, initialState }) {
 
   return (
     <PageTemplate>
-      <h1> {t('pageNames:room', { roomName: roomDetails.name })}</h1>
+      <h1> {t('pageNames:room', { roomName: room.name })}</h1>
       <Row>
         <Space>
           <span>{t('ownerUsername')}:</span>
-          <span> {roomDetails.owner.username}</span>
+          <span> {room.owner.username}</span>
         </Space>
       </Row>
       <Collapse className="Room-membersCollapse">
-        <Collapse.Panel header={t('roomMembersHeader', { count: roomDetails.members.length })} >
+        <Collapse.Panel header={t('roomMembersHeader', { count: room.members.length })} >
           <List
-            dataSource={roomDetails.members}
+            dataSource={room.members}
             renderItem={member => (
               <List.Item>
                 <Space>
@@ -86,14 +86,14 @@ export default function Room({ PageTemplate, initialState }) {
         </Collapse.Panel>
       </Collapse>
       { invitations && displayInvitations(invitations) }
-      <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={roomDetails._id} />
+      <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
     </PageTemplate>);
 }
 
 Room.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    roomDetails: roomShape,
+    room: roomShape,
     invitations: PropTypes.arrayOf(invitationShape)
   }).isRequired
 };
