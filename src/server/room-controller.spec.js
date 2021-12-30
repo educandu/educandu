@@ -26,7 +26,8 @@ describe('room-controller', () => {
       createOrUpdateInvitation: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
       getRoomById: sandbox.stub(),
-      isRoomMemberOrOwner: sandbox.stub()
+      isRoomMemberOrOwner: sandbox.stub().resolves(true),
+      getRoomInvitations: sandbox.stub()
     };
     mailService = {
       sendRoomInvitation: sandbox.stub()
@@ -188,8 +189,6 @@ describe('room-controller', () => {
 
         beforeEach(async () => {
           roomService.getRoomInvitations = sandbox.stub().resolves(invitations);
-          roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
-
           await sut.handleGetRoomPage(request, {});
         });
 
@@ -221,9 +220,6 @@ describe('room-controller', () => {
         };
 
         beforeEach(async () => {
-          roomService.getRoomInvitations = sandbox.stub();
-          roomService.isRoomMemberOrOwner = sandbox.stub().resolves(true);
-
           await sut.handleGetRoomPage(request, {});
         });
 
@@ -300,7 +296,6 @@ describe('room-controller', () => {
     const roomId = '843zvnzn2vw';
     describe('when the user is authorized', () => {
       beforeEach(done => {
-        roomService.isRoomMemberOrOwner.resolves(true);
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
