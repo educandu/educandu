@@ -240,7 +240,7 @@ describe('room-controller', () => {
         });
       });
 
-      describe('and an unauthorized person calls', () => {
+      describe('and an unauthorized user for the room calls', () => {
         const request = {
           params: {
             roomId: 'roomId'
