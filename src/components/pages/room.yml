@@ -1,15 +1,6 @@
 ownerUsername:
   en: Owner user name
   de: Benutzername des Eigentümers
-memberUsername:
-  en: Member username
-  de: Mitglieder Benutzername
-joinedOn:
-  en: Member since
-  de: Mitglied seit
-sentOn:
-  en: Invitation sent on
-  de: Einladung gesendet am
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am

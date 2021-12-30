@@ -30,9 +30,32 @@ export default function Room({ PageTemplate, initialState }) {
     window.location.reload();
   };
 
-  const shouldDisplayInivations = room.access === ROOM_ACCESS_LEVEL.private && isRoomOwner;
+  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+  const shouldDisplayInivations = isPrivateRoom && isRoomOwner;
 
-  const displayInvitations = () => (
+  const displayMembers = (
+    <Collapse className="Room-sectionCollapse">
+      <Collapse.Panel header={t('roomMembersHeader', { count: room.members.length })} >
+        <List
+          dataSource={room.members}
+          renderItem={member => (
+            <List.Item>
+              <Space>
+                <Space>
+                  <span>{formatDate(member.joinedOn)}</span>
+                </Space>
+
+                <Space>
+                  <span>{member.username}</span>
+                </Space>
+              </Space>
+            </List.Item>)}
+          />
+      </Collapse.Panel>
+    </Collapse>
+  );
+
+  const displayInvitations = (
     <Collapse className="Room-sectionCollapse">
       <Collapse.Panel
         header={t('invitationsHeader', { count: invitations.length })}
@@ -41,24 +64,21 @@ export default function Room({ PageTemplate, initialState }) {
         <List
           dataSource={invitations}
           renderItem={invitation => (
-            <List.Item>
+            <List.Item className="Room-invitationRow">
               <Space>
+                <span>{formatDate(invitation.sentOn)}</span>
                 <Space>
-                  <span>{t('common:email')}:</span>
                   <span>{invitation.email}</span>
                 </Space>
-
-                <Space>
-                  <span>{t('sentOn')}:</span>
-                  <span>{formatDate(invitation.sentOn)}</span>
-                </Space>
-
-                <Space>
-                  <span>{t('expires')}:</span>
-                  <span>{formatDate(invitation.expires)}</span>
-                </Space>
               </Space>
-            </List.Item>)}
+
+              <Space>
+                <span>{t('expires')}:</span>
+                <span>{formatDate(invitation.expires)}</span>
+              </Space>
+
+            </List.Item>
+          )}
           />
       </Collapse.Panel>
     </Collapse>
@@ -73,28 +93,8 @@ export default function Room({ PageTemplate, initialState }) {
           <span> {room.owner.username}</span>
         </Space>
       </Row>
-      <Collapse className="Room-sectionCollapse">
-        <Collapse.Panel header={t('roomMembersHeader', { count: room.members.length })} >
-          <List
-            dataSource={room.members}
-            renderItem={member => (
-              <List.Item>
-                <Space>
-                  <Space>
-                    <span>{t('memberUsername')}:</span>
-                    <span>{member.username}</span>
-                  </Space>
-
-                  <Space>
-                    <span>{t('joinedOn')}:</span>
-                    <span>{formatDate(member.joinedOn)}</span>
-                  </Space>
-                </Space>
-              </List.Item>)}
-            />
-        </Collapse.Panel>
-      </Collapse>
-      { shouldDisplayInivations && displayInvitations(invitations) }
+      { isPrivateRoom && displayMembers }
+      { shouldDisplayInivations && displayInvitations }
       <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
     </PageTemplate>);
 }
