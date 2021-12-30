@@ -32,7 +32,7 @@ export const createRevisionBodySchema = joi.object({
   language: joi.string().case('lower').required(),
   sections: joi.array().items(sectionSchema).required(),
   appendTo: documentRevisionAppendToSchema.optional(),
-  tags: joi.array(),
+  tags: joi.array().items(joi.string()).required(),
   archived: joi.boolean()
 });
 
@@ -51,4 +51,56 @@ export const hardDeleteSectionBodySchema = joi.object({
 
 export const hardDeleteDocumentBodySchema = joi.object({
   documentKey: idOrKeySchema.required()
+});
+
+const sectionDBSchema = joi.object({
+  revision: joi.string().required(),
+  key: idOrKeySchema.required(),
+  deletedOn: joi.date().allow(null).required(),
+  deletedBy: idOrKeySchema.allow(null).required(),
+  deletedBecause: joi.string().allow(null).required(),
+  type: joi.string().required(),
+  content: joi.alternatives().try(
+    joi.object().required(),
+    joi.any().allow(null).required()
+  ).required()
+});
+
+export const documentRevisionDBSchema = joi.object({
+  _id: idOrKeySchema.required(),
+  key: idOrKeySchema.required(),
+  order: joi.number().required(),
+  createdOn: joi.date().required(),
+  createdBy: idOrKeySchema.required(),
+  title: joi.string().required(),
+  slug: slugSchema,
+  language: joi.string().case('lower').required(),
+  sections: joi.array().items(sectionDBSchema).required(),
+  restoredFrom: joi.string().allow(null).allow('').required(),
+  tags: joi.array().items(joi.string()).required(),
+  archived: joi.bool().required(),
+  origin: joi.string().required(),
+  originUrl: joi.string().allow(null).allow(''),
+  cdnResources: joi.array().items(joi.string()).required()
+});
+
+export const documentDBSchema = joi.object({
+  _id: idOrKeySchema.required(),
+  key: idOrKeySchema.required(),
+  order: joi.number().required(),
+  revision: idOrKeySchema.required(),
+  createdOn: joi.date().required(),
+  createdBy: idOrKeySchema.required(),
+  updatedOn: joi.date().required(),
+  updatedBy: idOrKeySchema.required(),
+  title: joi.string().required(),
+  slug: slugSchema,
+  language: joi.string().case('lower').required(),
+  sections: joi.array().items(sectionDBSchema).required(),
+  contributors: joi.array().items(joi.string()).required(),
+  tags: joi.array().items(joi.string()).required(),
+  archived: joi.bool().required(),
+  origin: joi.string().required(),
+  originUrl: joi.string().allow(null).allow(''),
+  cdnResources: joi.array().items(joi.string()).required()
 });
