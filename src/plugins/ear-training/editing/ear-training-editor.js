@@ -1,8 +1,8 @@
 import React from 'react';
 import autoBind from 'auto-bind';
-import { SOUND_TYPE } from '../constants.js';
 import { withTranslation } from 'react-i18next';
-import { Form, Input, Table, Button } from 'antd';
+import { Form, Input, Table, Button, Radio } from 'antd';
+import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
@@ -11,6 +11,8 @@ import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
+const RadioGroup = Radio.Group;
+const RadioButton = Radio.Button;
 const ButtonGroup = Button.Group;
 
 const defaultSound = { type: SOUND_TYPE.midi, url: null, text: null };
@@ -158,6 +160,10 @@ class EarTrainingEditor extends React.Component {
     this.changeContent({ tests: newTests });
   }
 
+  handleTestsOrderChanged(event) {
+    this.changeContent({ testsOrder: event.target.value });
+  }
+
   render() {
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -180,6 +186,12 @@ class EarTrainingEditor extends React.Component {
           <Form.Item label={t('maximumWidth')} {...formItemLayout}>
             <ObjectMaxWidthSlider defaultValue={100} value={content.maxWidth} onChange={this.handleMaxWidthChanged} />
           </Form.Item>
+          <FormItem label={t('testsOrder')} {...formItemLayout}>
+            <RadioGroup value={content.testsOrder} onChange={this.handleTestsOrderChanged}>
+              <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
+              <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
+            </RadioGroup>
+          </FormItem>
         </Form>
         <Table
           dataSource={dataSource}

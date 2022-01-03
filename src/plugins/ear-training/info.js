@@ -1,4 +1,4 @@
-import { SOUND_TYPE } from './constants.js';
+import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 
 export default class EarTraining {
@@ -26,7 +26,8 @@ export default class EarTraining {
             text: null
           }
         }
-      ]
+      ],
+      testsOrder: TESTS_ORDER.given
     };
   }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import autoBind from 'auto-bind';
-import { SOUND_TYPE } from '../constants.js';
+import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
 import { withTranslation } from 'react-i18next';
 import { shuffleItems } from '../../../utils/array-utils.js';
 import AudioPlayer from '../../../components/audio-player.js';
@@ -38,7 +38,7 @@ class EarTrainingDisplay extends React.Component {
     this.state = {
       title: content.title,
       maxWidth: content.maxWidth,
-      tests: shuffleItems(content.tests),
+      tests: content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests,
       currentIndex: 0,
       showResult: false
     };
