@@ -2,7 +2,7 @@ import { validate } from '../validation.js';
 import { createRevisionBodySchema, slugSchema } from './document-schemas.js';
 
 describe('createRevisionBodySchema', () => {
-  const happyPathData = {
+  const documentRevision = {
     title: 'My Title',
     slug: 'my-slug',
     language: 'en',
@@ -14,20 +14,21 @@ describe('createRevisionBodySchema', () => {
           text: 'Hello world!'
         }
       }
-    ]
+    ],
+    tags: []
   };
 
   const validTestCases = [
     {
-      description: 'Happy path (new doc)',
+      description: 'a valid first revision',
       data: {
-        ...happyPathData
+        ...documentRevision
       }
     },
     {
-      description: 'Happy path (updated doc)',
+      description: 'a valid additional revision',
       data: {
-        ...happyPathData,
+        ...documentRevision,
         appendTo: {
           key: 'ftg31hf714zmcmhWTUILD89z3',
           ancestorId: '9znDNV9HFNDELEUjnhjji4409uki8'
@@ -35,9 +36,9 @@ describe('createRevisionBodySchema', () => {
       }
     },
     {
-      description: 'Empty slug',
+      description: 'a revision having an empty slug',
       data: {
-        ...happyPathData,
+        ...documentRevision,
         slug: ''
       }
     }
@@ -45,50 +46,57 @@ describe('createRevisionBodySchema', () => {
 
   const invalidTestCases = [
     {
-      description: 'Invalid language',
+      description: 'a revision with an invalid language',
       data: {
-        ...happyPathData,
+        ...documentRevision,
         language: 'DE'
       }
     },
     {
-      description: 'Invalid slug',
+      description: 'a revision with an invalid slug',
       data: {
-        ...happyPathData,
+        ...documentRevision,
         slug: 'trailing-slash/'
       }
     },
     {
-      description: 'Invalid title',
+      description: 'a revision with an invalid title',
       data: {
-        ...happyPathData,
+        ...documentRevision,
         title: ''
       }
     },
     {
-      description: 'Missing sections',
+      description: 'a revision with missing sections',
       data: {
-        ...happyPathData,
+        ...documentRevision,
         sections: null
       }
     },
     {
-      description: 'Unknown section key',
+      description: 'a revision with an unknown section key',
       data: {
-        ...happyPathData,
-        sections: happyPathData.sections.map(s => ({ ...s, ancestorId: 'gh83z4g9hg9ztewioghuisghd' }))
+        ...documentRevision,
+        sections: documentRevision.sections.map(s => ({ ...s, ancestorId: 'gh83z4g9hg9ztewioghuisghd' }))
+      }
+    },
+    {
+      description: 'a revision tags that are not of type string',
+      data: {
+        ...documentRevision,
+        tags: [1, {}, false, null]
       }
     }
   ];
 
   validTestCases.forEach(({ description, data }) => {
-    describe(description, () => {
+    describe(`When called with ${description}`, () => {
       it('should pass validation', () => expect(() => validate(data, createRevisionBodySchema)).not.toThrow());
     });
   });
 
   invalidTestCases.forEach(({ description, data }) => {
-    describe(description, () => {
+    describe(`When called with ${description}`, () => {
       it('should fail validation', () => expect(() => validate(data, createRevisionBodySchema)).toThrow());
     });
   });
