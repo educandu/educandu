@@ -71,8 +71,8 @@ describe('document-import-task-processor', () => {
         batchParams = { hostName: 'host.name' };
         cdnRootUrl = 'https://cdn.integration.openmusic.academy';
 
-        user1 = { _id: 'user-id-1', username: 'username-1' };
-        user2 = { _id: 'user-id-2', username: 'username-2' };
+        user1 = { _id: uniqueId.create(), username: 'username-1' };
+        user2 = { _id: uniqueId.create(), username: 'username-2' };
 
         revision1 = {
           _id: uniqueId.create(),
@@ -85,12 +85,16 @@ describe('document-import-task-processor', () => {
           order: 1000,
           sections: [
             {
+              revision: uniqueId.create(),
               key: uniqueId.create(),
               type: 'video',
               content: {
                 type: VIDEO_SOURCE_TYPE.internal,
                 url: 'media/video-1.mp4'
-              }
+              },
+              deletedOn: null,
+              deletedBy: null,
+              deletedBecause: null
             }
           ],
           restoredFrom: uniqueId.create(),
@@ -108,12 +112,16 @@ describe('document-import-task-processor', () => {
           order: 2000,
           sections: [
             {
+              revision: uniqueId.create(),
               key: uniqueId.create(),
               type: 'video',
               content: {
                 type: VIDEO_SOURCE_TYPE.internal,
                 url: 'media/video-2.mp4'
-              }
+              },
+              deletedOn: null,
+              deletedBy: null,
+              deletedBecause: null
             }
           ],
           cdnResources: ['media/video-2.mp4']
@@ -184,6 +192,12 @@ describe('document-import-task-processor', () => {
         expect(importedRevisions).toMatchObject([
           {
             ...revision1,
+            sections: [
+              {
+                ...revision1.sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             createdOn: now,
             order: 1,
             origin: `external/${batchParams.hostName}`,
@@ -193,6 +207,12 @@ describe('document-import-task-processor', () => {
           },
           {
             ...revision2,
+            sections: [
+              {
+                ...revision2.sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             createdOn: now,
             order: 2,
             origin: `external/${batchParams.hostName}`,
@@ -207,6 +227,12 @@ describe('document-import-task-processor', () => {
         const importedDocument = await db.documents.findOne({ key: documentKey });
         expect(importedDocument).toMatchObject({
           ...revision2,
+          sections: [
+            {
+              ...revision2.sections[0],
+              revision: expect.stringMatching(/\w+/)
+            }
+          ],
           _id: documentKey,
           revision: revision2._id,
           createdOn: now,
@@ -225,7 +251,7 @@ describe('document-import-task-processor', () => {
       describe('followed by a task to update the document', () => {
 
         beforeEach(async () => {
-          user3 = { _id: 'user-id-3', username: 'username-3' };
+          user3 = { _id: uniqueId.create(), username: 'username-3' };
 
           revision3 = {
             _id: uniqueId.create(),
@@ -238,12 +264,16 @@ describe('document-import-task-processor', () => {
             order: 3000,
             sections: [
               {
+                revision: uniqueId.create(),
                 key: uniqueId.create(),
                 type: 'video',
                 content: {
                   type: VIDEO_SOURCE_TYPE.internal,
                   url: 'media/video-3.mp4'
-                }
+                },
+                deletedOn: null,
+                deletedBy: null,
+                deletedBecause: null
               }
             ],
             cdnResources: ['media/video-3.mp4']
@@ -300,6 +330,12 @@ describe('document-import-task-processor', () => {
           const importedRevision3 = await db.documentRevisions.findOne({ _id: revision3._id });
           expect(importedRevision3).toMatchObject({
             ...revision3,
+            sections: [
+              {
+                ...revision3.sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             createdOn: now,
             order: 3,
             origin: `external/${batchParams.hostName}`,
@@ -313,6 +349,12 @@ describe('document-import-task-processor', () => {
           const importedDocument = await db.documents.findOne({ key: documentKey });
           expect(importedDocument).toMatchObject({
             ...revision3,
+            sections: [
+              {
+                ...revision3.sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             _id: documentKey,
             revision: revision3._id,
             createdOn: now,

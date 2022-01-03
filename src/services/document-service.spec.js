@@ -9,6 +9,13 @@ import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js'
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
+const createDefaultSection = () => ({
+  key: uniqueId.create(),
+  deletedOn: null,
+  deletedBy: null,
+  deletedBecause: null
+});
+
 describe('document-service', () => {
   const sandbox = sinon.createSandbox();
   const now = new Date();
@@ -50,7 +57,7 @@ describe('document-service', () => {
         language: 'en',
         sections: [
           {
-            key: uniqueId.create(),
+            ...createDefaultSection(),
             type: 'image',
             content: {
               sourceType: IMAGE_SOURCE_TYPE.internal,
@@ -62,7 +69,7 @@ describe('document-service', () => {
             }
           },
           {
-            key: uniqueId.create(),
+            ...createDefaultSection(),
             type: 'video',
             content: {
               type: VIDEO_SOURCE_TYPE.internal,
@@ -93,6 +100,16 @@ describe('document-service', () => {
       it('saves the revision', () => {
         expect(result).toMatchObject({
           ...revision,
+          sections: [
+            {
+              ...revision.sections[0],
+              revision: expect.stringMatching(/\w+/)
+            },
+            {
+              ...revision.sections[1],
+              revision: expect.stringMatching(/\w+/)
+            }
+          ],
           createdOn: now,
           createdBy: user._id,
           order: 1,
@@ -118,7 +135,18 @@ describe('document-service', () => {
       });
 
       it('saves the revision data onto the document', () => {
-        expect(createdDocument).toMatchObject({ ...revision,
+        expect(createdDocument).toMatchObject({
+          ...revision,
+          sections: [
+            {
+              ...revision.sections[0],
+              revision: expect.stringMatching(/\w+/)
+            },
+            {
+              ...revision.sections[1],
+              revision: expect.stringMatching(/\w+/)
+            }
+          ],
           revision: result._id,
           createdOn: now,
           createdBy: user._id,
@@ -127,7 +155,8 @@ describe('document-service', () => {
           order: 1,
           archived: false,
           origin: DOCUMENT_ORIGIN.internal,
-          contributors: [user._id] });
+          contributors: [user._id]
+        });
       });
 
       it('saves all referenced cdn resources with the document', () => {
@@ -156,7 +185,7 @@ describe('document-service', () => {
           sections: [
             ...firstRevision.sections,
             {
-              key: uniqueId.create(),
+              ...createDefaultSection(),
               type: 'video',
               content: {
                 type: VIDEO_SOURCE_TYPE.internal,
@@ -187,6 +216,20 @@ describe('document-service', () => {
       it('saves the second revision', () => {
         const expectedResult = {
           ...secondRevision,
+          sections: [
+            {
+              ...secondRevision.sections[0],
+              revision: expect.stringMatching(/\w+/)
+            },
+            {
+              ...secondRevision.sections[1],
+              revision: expect.stringMatching(/\w+/)
+            },
+            {
+              ...secondRevision.sections[2],
+              revision: expect.stringMatching(/\w+/)
+            }
+          ],
           createdOn: secondTick,
           createdBy: secondUser._id,
           order: 2,
@@ -212,6 +255,20 @@ describe('document-service', () => {
       it('saves the second revision data onto the document', () => {
         const expectedResult = {
           ...secondRevision,
+          sections: [
+            {
+              ...secondRevision.sections[0],
+              revision: expect.stringMatching(/\w+/)
+            },
+            {
+              ...secondRevision.sections[1],
+              revision: expect.stringMatching(/\w+/)
+            },
+            {
+              ...secondRevision.sections[2],
+              revision: expect.stringMatching(/\w+/)
+            }
+          ],
           revision: result._id,
           createdOn: now,
           createdBy: user._id,
@@ -234,7 +291,8 @@ describe('document-service', () => {
 
   describe('copyDocumentRevisions', () => {
     let revisions;
-    const documentKey = 'FDSGSFDG4D2443';
+    const documentKey = uniqueId.create();
+    const userId1 = uniqueId.create();
 
     beforeEach(() => {
       revisions = [
@@ -244,10 +302,11 @@ describe('document-service', () => {
           title: 'Title 1',
           slug: 'my-doc-1',
           language: 'en',
-          createdBy: 'user-1',
+          createdBy: userId1,
           sections: [
             {
-              key: uniqueId.create(),
+              ...createDefaultSection(),
+              revision: uniqueId.create(),
               type: 'video',
               content: {
                 type: VIDEO_SOURCE_TYPE.internal,
@@ -263,10 +322,11 @@ describe('document-service', () => {
           title: 'Title 2',
           slug: 'my-doc-2',
           language: 'en',
-          createdBy: 'user-1',
+          createdBy: userId1,
           sections: [
             {
-              key: uniqueId.create(),
+              ...createDefaultSection(),
+              revision: uniqueId.create(),
               type: 'video',
               content: {
                 type: VIDEO_SOURCE_TYPE.internal,
@@ -293,6 +353,12 @@ describe('document-service', () => {
         expect(createdRevisions).toEqual([
           {
             ...revisions[0],
+            sections: [
+              {
+                ...revisions[0].sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             order: 1,
             createdOn: now,
             origin: 'external/origin.url',
@@ -303,6 +369,12 @@ describe('document-service', () => {
           },
           {
             ...revisions[1],
+            sections: [
+              {
+                ...revisions[1].sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             order: 2,
             createdOn: now,
             origin: 'external/origin.url',
@@ -353,6 +425,12 @@ describe('document-service', () => {
         expect(createdRevisions).toEqual([
           {
             ...revisions[0],
+            sections: [
+              {
+                ...revisions[0].sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             order: 1,
             createdOn: now,
             origin: 'external/origin.url',
@@ -363,6 +441,12 @@ describe('document-service', () => {
           },
           {
             ...revisions[1],
+            sections: [
+              {
+                ...revisions[1].sections[0],
+                revision: expect.stringMatching(/\w+/)
+              }
+            ],
             order: 2,
             createdOn: secondTick,
             origin: 'external/origin.url',
@@ -381,6 +465,12 @@ describe('document-service', () => {
       it('saves the last revision data onto the document', () => {
         expect(updatedDocument).toMatchObject({
           ...revisions[1],
+          sections: [
+            {
+              ...revisions[1].sections[0],
+              revision: expect.stringMatching(/\w+/)
+            }
+          ],
           _id: documentKey,
           revision: revisions[1]._id,
           createdOn: now,
@@ -422,7 +512,8 @@ describe('document-service', () => {
 
       beforeEach(async () => {
         const section1 = {
-          key: uniqueId.create(),
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
           type: 'markdown',
           content: {
             text: 'Unmodified text'
@@ -430,7 +521,8 @@ describe('document-service', () => {
         };
 
         const section2 = {
-          key: uniqueId.create(),
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
           type: 'markdown',
           content: {
             text: 'Initial text'
@@ -589,7 +681,8 @@ describe('document-service', () => {
 
       beforeEach(async () => {
         const unrelatedSection = {
-          key: uniqueId.create(),
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
           type: 'image',
           content: {
             sourceType: 'internal',
@@ -601,7 +694,8 @@ describe('document-service', () => {
         };
 
         const sectionToBeDeleted = {
-          key: uniqueId.create(),
+          ...createDefaultSection(),
+          revision: uniqueId.create(),
           type: 'image',
           content: {
             sourceType: 'internal',
