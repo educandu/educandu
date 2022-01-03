@@ -18,7 +18,7 @@ educandu({
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
   sessionCookieDomain: 'localhost',
   emailSenderAddress: 'educandu-test-app@test.com',
-  smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
+  smtpOptions: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   bundleConfig,
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
   resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
