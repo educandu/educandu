@@ -1,9 +1,3 @@
-homeLanguagesHeader:
-  en: Landing page languages
-  de: Sprachen auf der Startseite
-homeLanguagesSubHeader:
-  en: The top most entry will be used as default
-  de: Der oberste Eintrag wird als Standard benutzt
 helpPageHeader:
   en: Help page
   de: Hilfe-Seite

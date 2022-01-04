@@ -11,7 +11,6 @@ import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
 import SpecialPageSettings from '../settings/special-page-settings.js';
 import FooterLinksSettings from '../settings/footer-links-settings.js';
-import HomeLanguagesSettings from '../settings/home-languages-settings.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
@@ -31,10 +30,6 @@ function Settings({ initialState, PageTemplate }) {
     setDirtyKeys(prev => ensureIsIncluded(prev, key));
     setInvalidKeys(prev => isValid ? ensureIsExcluded(prev, key) : ensureIsIncluded(prev, key));
   }, [setSettings, setDirtyKeys, setInvalidKeys]);
-
-  const handleHomeLanguagesChanged = useCallback((value, { isValid }) => {
-    handleChange('homeLanguages', value, isValid);
-  }, [handleChange]);
 
   const handleHelpPageChanged = useCallback((value, { isValid }) => {
     handleChange('helpPage', value, isValid);
@@ -101,13 +96,6 @@ function Settings({ initialState, PageTemplate }) {
     <PageTemplate alerts={alerts} headerActions={headerActions}>
       <div className="SettingsPage">
         <h1>{t('pageNames:settings')}</h1>
-        <h2 className="SettingsPage-sectionHeader">{t('homeLanguagesHeader')}</h2>
-        <p>{t('homeLanguagesSubHeader')}</p>
-        <HomeLanguagesSettings
-          homeLanguages={settings.homeLanguages}
-          documents={initialState.documents}
-          onChange={handleHomeLanguagesChanged}
-          />
         <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
         <SpecialPageSettings
           settings={settings.helpPage}

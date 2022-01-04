@@ -51,13 +51,6 @@ export const requestProps = {
   }).isRequired
 };
 
-export const homeLanguageSettingProps = {
-  language: PropTypes.string.isRequired,
-  documentKey: PropTypes.string.isRequired
-};
-
-export const homeLanguageShape = PropTypes.shape(homeLanguageSettingProps);
-
 const settingsDocumentProps = {
   linkTitle: PropTypes.string.isRequired,
   documentKey: PropTypes.string.isRequired,
@@ -67,7 +60,6 @@ const settingsDocumentProps = {
 export const settingsDocumentShape = PropTypes.shape(settingsDocumentProps);
 
 export const settingsShape = PropTypes.shape({
-  homeLanguages: PropTypes.arrayOf(homeLanguageShape),
   helpPage: PropTypes.objectOf(settingsDocumentShape),
   termsPage: PropTypes.objectOf(settingsDocumentShape),
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
