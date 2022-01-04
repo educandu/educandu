@@ -10,6 +10,5 @@ export default class Educandu_2022_01_04_01_create_lessons_collection {
 
   async down() {
     await this.db.dropCollection('lessons');
-
   }
 }
