@@ -4,9 +4,9 @@ import { lessonDBSchema } from './lesson-schemas.js';
 
 describe('lessonDBSchema', () => {
   const lesson = {
-    _id: 'lesson123456789',
+    _id: uniqueId.create(),
     createdOn: new Date(),
-    createdBy: 'lesson123456789',
+    createdBy: uniqueId.create(),
     updatedOn: new Date(),
     title: 'the title',
     slug: '0123-123',
