@@ -1,20 +1,22 @@
 import { promises as fs } from 'fs';
 
+const IMAGE_TILE_SECTION_TYPE = 'image-tiles'
+
 // eslint-disable-next-line camelcase
 export default class Educandu_2021_12_29_01_repair_image_tiles {
   constructor(db) {
     this.db = db;
   }
 
-  async fixTile(documentLinkInfo) {
-    const revisions = await this.db.collection('documentRevisions').find({
+  async fixTile(collectionName, documentLinkInfo) {
+    const docsOrRevisions = await this.db.collection(collectionName).find({
       'key': documentLinkInfo.documentKey,
       'sections.key': documentLinkInfo.sectionKey,
       'sections.revision': documentLinkInfo.sectionRevision
     }).toArray();
 
-    for (const revision of revisions) {
-      const imageTilesSections = revision.sections.filter(section => section.type === 'image-tiles' && Array.isArray(section.content?.tiles))
+    for (const docOrRevision of docsOrRevisions) {
+      const imageTilesSections = docOrRevision.sections.filter(section => section.type === IMAGE_TILE_SECTION_TYPE && Array.isArray(section.content?.tiles))
         .filter(section => section.key === documentLinkInfo.sectionKey && section.revision === documentLinkInfo.sectionRevision);
 
       if (imageTilesSections.length !== 1) {
@@ -24,7 +26,7 @@ export default class Educandu_2021_12_29_01_repair_image_tiles {
 
       if (imageTilesSections[0].content.tiles.length < documentLinkInfo.tileIndex + 1) {
         console.log(documentLinkInfo);
-        console.log('Number of tile sections', imageTilesSections[0].content.tiles.length, 'tile index: ', documentLinkInfo.tileIndex, 'revision', revision._id);
+        console.log('Number of tile sections', imageTilesSections[0].content.tiles.length, 'tile index: ', documentLinkInfo.tileIndex, 'revision', docOrRevision._id);
       }
       // eslint-disable-next-line no-await-in-loop
       const doc = await this.db.collection('documents').findOne({ slug: documentLinkInfo.url });
@@ -40,7 +42,7 @@ export default class Educandu_2021_12_29_01_repair_image_tiles {
       }
 
       // eslint-disable-next-line no-await-in-loop
-      await this.db.collection('documentRevisions').replaceOne({ _id: revision._id }, revision);
+      await this.db.collection(collectionName).replaceOne({ _id: docOrRevision._id }, docOrRevision);
     }
   }
 
@@ -51,9 +53,20 @@ export default class Educandu_2021_12_29_01_repair_image_tiles {
     for (let i = 0; i < revsData.length; i += 1) {
       const revData = revsData[i];
 
-      console.log(`Processing ${i} of ${revsData.length} document key`, revData.documentKey);
+      console.log(`Processing revision ${i} of ${revsData.length} document key`, revData.documentKey);
       // eslint-disable-next-line no-await-in-loop
-      await this.fixTile(revData);
+      await this.fixTile('documentRevisions', revData);
+    }
+
+    const docsDataRaw = await fs.readFile('./migrations/manual/docs-image-tiles.json', 'utf8');
+    const docsData = JSON.parse(docsDataRaw);
+
+    for (let i = 0; i < docsData.length; i += 1) {
+      const docData = docsData[i];
+
+      console.log(`Processing document ${i} of ${docsData.length} document key`, docData.documentKey);
+      // eslint-disable-next-line no-await-in-loop
+      await this.fixTile('documents', docData);
     }
   }
 
