@@ -43,3 +43,12 @@ internalUrl:
 copyrightInfos:
   en: Copyright infos
   de: Copyright Infos
+testsOrder:
+  en: Display order
+  de: Anzeigereihenfolge
+testsOrderGiven:
+  en: as given
+  de: wie angegeben
+testsOrderRandom:
+  en: random
+  de: zufällig

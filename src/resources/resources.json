@@ -1147,7 +1147,10 @@
       "internalCdn": "Internal CDN",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
-      "copyrightInfos": "Copyright infos"
+      "copyrightInfos": "Copyright infos",
+      "testsOrder": "Display order",
+      "testsOrderGiven": "as given",
+      "testsOrderRandom": "random"
     }
   },
   {
@@ -1168,7 +1171,10 @@
       "internalCdn": "Internes CDN",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
-      "copyrightInfos": "Copyright Infos"
+      "copyrightInfos": "Copyright Infos",
+      "testsOrder": "Anzeigereihenfolge",
+      "testsOrderGiven": "wie angegeben",
+      "testsOrderRandom": "zufällig"
     }
   },
   {
