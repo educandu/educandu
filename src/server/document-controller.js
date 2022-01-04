@@ -217,7 +217,6 @@ class DocumentController {
 
     router.get(
       '/docs/:docKey',
-      needsPermission(permissions.VIEW_DOCS),
       (req, res) => this.handleGetDocPage(req, res)
     );
 
