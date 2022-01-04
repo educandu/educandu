@@ -3,7 +3,7 @@ import Markdown from '../../../components/markdown.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 
 function MarkdownDisplay({ content }) {
-  return <Markdown className="Markdown">{content.text}</Markdown>;
+  return <Markdown>{content.text}</Markdown>;
 }
 
 MarkdownDisplay.propTypes = {

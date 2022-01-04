@@ -11,8 +11,8 @@ function Markdown({ children, inline, tag, ...rest }) {
   const Tag = tag || 'div';
 
   return typeof children === 'string'
-    ? <Tag {...rest} dangerouslySetInnerHTML={{ __html: gfm[inline ? 'renderInline' : 'render'](children, { cdnRootUrl }) }} />
-    : <Tag {...rest}>{children}</Tag>;
+    ? <Tag className="Markdown" {...rest} dangerouslySetInnerHTML={{ __html: gfm[inline ? 'renderInline' : 'render'](children, { cdnRootUrl }) }} />
+    : <Tag className="Markdown" {...rest}>{children}</Tag>;
 }
 
 Markdown.propTypes = {
