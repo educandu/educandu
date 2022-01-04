@@ -17,7 +17,7 @@ describe('lesson-store', () => {
       createdOn: new Date(),
       createdBy: uniqueId.create(),
       updatedOn: new Date(),
-      title: 'the title',
+      title: 'title 1',
       slug: '0123-123',
       language: 'en',
       sections: [],
@@ -55,15 +55,17 @@ describe('lesson-store', () => {
 
   describe('saveMany', () => {
     it('should save an array of valid lessons', async () => {
-      const anotherKey = 'validKey1234567';
+      const anotherKey = uniqueId.create();
       const validLesson2 = {
         ...validLesson,
-        _id: anotherKey
+        _id: anotherKey,
+        title: 'title 2'
       };
 
       await sut.saveMany([validLesson, validLesson2]);
 
       const savedItems = await sut.find({ _id: { $in: [testLessonKey, anotherKey] } });
+      savedItems.sort((a, b) => a.title > b.title ? 1 : -1);
 
       expect([validLesson, validLesson2]).toEqual(savedItems);
 

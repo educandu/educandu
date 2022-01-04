@@ -1,6 +1,5 @@
 import joi from 'joi';
-import { idOrKeySchema } from './shared-schemas.js';
-import inputValidators from '../../utils/input-validators.js';
+import { idOrKeySchema, slugSchema, sectionDBSchema } from './shared-schemas.js';
 
 const sectionSchema = joi.object({
   key: idOrKeySchema.required(),
@@ -23,8 +22,6 @@ export const getSearchDocumentsByTagsSchema = joi.object({
 export const getRevisionsByKeyQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });
-
-export const slugSchema = joi.string().pattern(inputValidators.slugValidationPattern).allow('').required();
 
 export const createRevisionBodySchema = joi.object({
   title: joi.string().required(),
@@ -51,19 +48,6 @@ export const hardDeleteSectionBodySchema = joi.object({
 
 export const hardDeleteDocumentBodySchema = joi.object({
   documentKey: idOrKeySchema.required()
-});
-
-export const sectionDBSchema = joi.object({
-  revision: idOrKeySchema.required(),
-  key: idOrKeySchema.required(),
-  deletedOn: joi.date().allow(null).required(),
-  deletedBy: idOrKeySchema.allow(null).required(),
-  deletedBecause: joi.string().allow(null).required(),
-  type: joi.string().required(),
-  content: joi.alternatives().try(
-    joi.object().required(),
-    joi.any().allow(null).required()
-  ).required()
 });
 
 export const documentRevisionDBSchema = joi.object({

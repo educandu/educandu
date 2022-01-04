@@ -1,6 +1,5 @@
 import joi from 'joi';
-import { idOrKeySchema } from './shared-schemas.js';
-import { slugSchema, sectionDBSchema } from './document-schemas.js';
+import { idOrKeySchema, slugSchema, sectionDBSchema } from './shared-schemas.js';
 
 export const lessonDBSchema = joi.object({
   _id: idOrKeySchema.required(),

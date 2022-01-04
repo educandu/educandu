@@ -1,5 +1,6 @@
 import { validate } from '../validation.js';
-import { createRevisionBodySchema, slugSchema } from './document-schemas.js';
+import { slugSchema } from './shared-schemas.js';
+import { createRevisionBodySchema } from './document-schemas.js';
 
 describe('createRevisionBodySchema', () => {
   const documentRevision = {
