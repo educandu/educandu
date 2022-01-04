@@ -47,7 +47,6 @@ function MySpace({ initialState, PageTemplate }) {
   };
 
   const alerts = getGlobalAlerts(pageName, user);
-  const isRoomsTabEnabled = clientConfig.areRoomsEnabled;
 
   return (
     <PageTemplate alerts={alerts} disableProfileWarning>
@@ -61,7 +60,7 @@ function MySpace({ initialState, PageTemplate }) {
           <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="2">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
-          { isRoomsTabEnabled && (
+          { clientConfig.areRoomsEnabled && (
             <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="3">
               <RoomsTab rooms={rooms} />
             </TabPane>)}
