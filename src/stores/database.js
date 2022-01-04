@@ -10,6 +10,7 @@ import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';
 import tasksSpec from './collection-specs/tasks.js';
 import roomsSpec from './collection-specs/rooms.js';
+import lessonsSpec from './collection-specs/lessons.js';
 import batchesSpec from './collection-specs/batches.js';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
@@ -44,7 +45,8 @@ const collectionSpecs = [
   documentRevisionsSpec,
   passwordResetRequestsSpec,
   roomInvitationsSpec,
-  roomsSpec
+  roomsSpec,
+  lessonsSpec
 ];
 
 class Database {

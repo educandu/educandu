@@ -53,7 +53,7 @@ export const hardDeleteDocumentBodySchema = joi.object({
   documentKey: idOrKeySchema.required()
 });
 
-const sectionDBSchema = joi.object({
+export const sectionDBSchema = joi.object({
   revision: idOrKeySchema.required(),
   key: idOrKeySchema.required(),
   deletedOn: joi.date().allow(null).required(),
