@@ -1172,8 +1172,8 @@
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
       "copyrightInfos": "Copyright Infos",
-      "testsOrder": "Anzeige Reihnfolge",
-      "testsOrderGiven": "als gegeben",
+      "testsOrder": "Anzeigereihenfolge",
+      "testsOrderGiven": "wie angegeben",
       "testsOrderRandom": "zufällig"
     }
   },
