@@ -4,19 +4,16 @@ import PropTypes from 'prop-types';
 import RoomsTab from '../rooms-tab.js';
 import ProfileTab from '../profile-tab.js';
 import AccountTab from '../account-tab.js';
-import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
-import { usePageName } from '../page-name-context.js';
 import { roomShape } from '../../ui/default-prop-types.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { getGlobalAlerts } from '../../ui/global-alerts.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 
 const { TabPane } = Tabs;
 
 function MySpace({ initialState, PageTemplate }) {
-  const user = useUser();
-  const pageName = usePageName();
+  const alerts = useGlobalAlerts();
   const { t } = useTranslation('mySpace');
   const clientConfig = useService(ClientConfig);
 
@@ -45,8 +42,6 @@ function MySpace({ initialState, PageTemplate }) {
       }
     }
   };
-
-  const alerts = getGlobalAlerts(pageName, user);
 
   return (
     <PageTemplate alerts={alerts} disableProfileWarning>

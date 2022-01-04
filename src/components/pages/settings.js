@@ -4,10 +4,10 @@ import Markdown from '../markdown.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper.js';
-import React, { useState, useCallback, Fragment } from 'react';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import React, { useState, useCallback, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
@@ -108,7 +108,7 @@ function Settings({ initialState, PageTemplate }) {
           {settings.announcement && (
             <Fragment>
               <span className="SettingsPage-announcementPreview">{t('announcementPreview')}</span>
-              <Alert message={<Markdown inline>{settings.announcement}</Markdown>} banner />
+              <Alert type="warning" message={<Markdown inline>{settings.announcement}</Markdown>} banner />
             </Fragment>
           )}
         </section>

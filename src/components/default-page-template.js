@@ -159,7 +159,14 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
           </div>
         </div>
         {!fullScreen && alerts && alerts.map((alert, index) => (
-          <Alert key={index.toString()} message={alert.message} type={alert.type || 'info'} banner />
+          <Alert
+            key={index.toString()}
+            message={alert.message}
+            type={alert.type || 'info'}
+            banner
+            closable={alert.closable || false}
+            onClose={alert.onClose || (() => {})}
+            />
         ))}
       </header>
       <main className={contentAreaClasses}>
