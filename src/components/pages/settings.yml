@@ -1,3 +1,9 @@
+announcementHeader:
+  en: Announcement
+  de: Mitteilung
+announcementPreview:
+  en: Preview
+  de: Vorschau
 helpPageHeader:
   en: Help page
   de: Hilfe-Seite

@@ -677,6 +677,8 @@
     "namespace": "settings",
     "language": "en",
     "resources": {
+      "announcementHeader": "Announcement",
+      "announcementPreview": "Preview",
       "helpPageHeader": "Help page",
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
@@ -687,6 +689,8 @@
     "namespace": "settings",
     "language": "de",
     "resources": {
+      "announcementHeader": "Mitteilung",
+      "announcementPreview": "Vorschau",
       "helpPageHeader": "Hilfe-Seite",
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",

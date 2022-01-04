@@ -60,6 +60,7 @@ const settingsDocumentProps = {
 export const settingsDocumentShape = PropTypes.shape(settingsDocumentProps);
 
 export const settingsShape = PropTypes.shape({
+  announcement: PropTypes.string,
   helpPage: PropTypes.objectOf(settingsDocumentShape),
   termsPage: PropTypes.objectOf(settingsDocumentShape),
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
