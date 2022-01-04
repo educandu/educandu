@@ -52,5 +52,6 @@ educandu({
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
   },
-  additionalControllers: [ArticleController]
+  additionalControllers: [ArticleController],
+  areRoomsEnabled: true
 });

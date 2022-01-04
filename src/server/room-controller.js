@@ -10,7 +10,7 @@ import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { FEATURE_TOGGLES, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
@@ -114,7 +114,7 @@ export default class RoomController {
   }
 
   registerApi(router) {
-    if (this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
+    if (!this.serverConfig.areRoomsEnabled) {
       return;
     }
 
@@ -144,7 +144,7 @@ export default class RoomController {
   }
 
   registerPages(router) {
-    if (this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
+    if (!this.serverConfig.areRoomsEnabled) {
       return;
     }
 

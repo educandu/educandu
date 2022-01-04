@@ -2,7 +2,6 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { FEATURE_TOGGLES } from '../domain/constants.js';
 import ClientDataMapper from '../server/client-data-mapper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 
@@ -20,7 +19,7 @@ class UserController {
     const { user } = req;
 
     let rooms = [];
-    if (!this.serverConfig.disabledFeatures.includes(FEATURE_TOGGLES.rooms)) {
+    if (this.serverConfig.areRoomsEnabled) {
       rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
     }
 
