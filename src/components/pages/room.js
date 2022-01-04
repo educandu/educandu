@@ -31,7 +31,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
-  const shouldDisplayInivations = isPrivateRoom && isRoomOwner;
+  const shouldDisplayInvitations = isPrivateRoom && isRoomOwner;
 
   const displayMembers = (
     <Collapse className="Room-sectionCollapse">
@@ -94,7 +94,7 @@ export default function Room({ PageTemplate, initialState }) {
         </Space>
       </Row>
       { isPrivateRoom && displayMembers }
-      { shouldDisplayInivations && displayInvitations }
+      { shouldDisplayInvitations && displayInvitations }
       <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
     </PageTemplate>);
 }
