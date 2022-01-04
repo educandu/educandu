@@ -183,7 +183,7 @@ class UserController {
 
   registerMiddleware(router) {
     router.use(session({
-      name: 'SID',
+      name: 'SESSION_ID',
       cookie: {
         httpOnly: true,
         domain: this.serverConfig.sessionCookieDomain
