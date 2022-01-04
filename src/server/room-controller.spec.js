@@ -37,7 +37,7 @@ describe('room-controller', () => {
       _id: 'Ludwig the great'
     };
     serverConfig = {
-      disabledFeatures: []
+      areRoomsEnabled: true
     };
 
     clientDataMapper = {
