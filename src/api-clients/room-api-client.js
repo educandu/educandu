@@ -17,6 +17,16 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
+  addRoomInvitation({ email, roomId }) {
+    return this.httpClient
+      .post(
+        '/api/v1/room-invitations',
+        { email, roomId },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   confirmInvitation({ token }) {
     return this.httpClient
       .post(

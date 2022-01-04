@@ -9,8 +9,8 @@ import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { FEATURE_TOGGLES } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { FEATURE_TOGGLES, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
@@ -33,19 +33,6 @@ export default class RoomController {
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
-  }
-
-  async handleGetRoomPage(req, res) {
-    const { roomId } = req.params;
-    const room = await this.roomService.getRoomById(roomId);
-
-    if (!room) {
-      throw new NotFound();
-    }
-
-    const roomDetails = await this.clientDataMapper.mapRoom(room);
-
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { roomDetails });
   }
 
   async handleGetRoomMembershipConfirmationPage(req, res) {
@@ -86,11 +73,39 @@ export default class RoomController {
     return res.status(201).end();
   }
 
+  async handleGetRoomPage(req, res) {
+    const { roomId } = req.params;
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    const { _id: userId } = req.user;
+
+    let invitations = [];
+
+    if (room.access === ROOM_ACCESS_LEVEL.private) {
+      const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
+      if (!isRoomOwnerOrMember) {
+        throw new Forbidden();
+      }
+
+      if (room.owner === userId) {
+        invitations = await this.roomService.getRoomInvitations(roomId);
+      }
+    }
+
+    const mappedRoom = await this.clientDataMapper.mapRoom(room);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, invitations });
+  }
+
   async handleAuthorizeResourcesAccess(req, res) {
     const { roomId } = req.params;
     const { _id: userId } = req.user;
 
-    const result = await this.roomService.isRoomMemberOrOwner(roomId, userId);
+    const result = await this.roomService.isRoomOwnerOrMember(roomId, userId);
     if (!result) {
       throw new Forbidden();
     }

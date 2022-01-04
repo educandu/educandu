@@ -250,3 +250,9 @@ export const roomShape = PropTypes.shape({
   members: PropTypes.arrayOf(roomMemberShape),
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired
 });
+
+export const invitationShape = PropTypes.shape({
+  email: PropTypes.string.isRequired,
+  sentOn: PropTypes.string.isRequired,
+  expires: PropTypes.string.isRequired
+});

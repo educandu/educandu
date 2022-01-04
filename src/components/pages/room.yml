@@ -1,9 +1,15 @@
 ownerUsername:
   en: Owner user name
   de: Benutzername des Eigentümers
-memberUsername:
-  en: Member username
-  de: Mitglieder Benutzername
-joinedOn:
-  en: Member since
-  de: Mitglied seit
+expires:
+  en: Invitation expires on
+  de: Einladung läuft ab am
+createInvitationButton:
+  en: Create an invitation
+  de: Einladung erstellen
+roomMembersHeader:
+  en: Room members ({count})
+  de: Raummitglieder ({count})
+invitationsHeader:
+  en: Outstanding invitations ({count})
+  de: Ausstehende Einladungen ({count})

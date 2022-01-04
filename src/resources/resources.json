@@ -634,8 +634,10 @@
     "language": "en",
     "resources": {
       "ownerUsername": "Owner user name",
-      "memberUsername": "Member username",
-      "joinedOn": "Member since"
+      "expires": "Invitation expires on",
+      "createInvitationButton": "Create an invitation",
+      "roomMembersHeader": "Room members ({count})",
+      "invitationsHeader": "Outstanding invitations ({count})"
     }
   },
   {
@@ -643,8 +645,10 @@
     "language": "de",
     "resources": {
       "ownerUsername": "Benutzername des Eigentümers",
-      "memberUsername": "Mitglieder Benutzername",
-      "joinedOn": "Mitglied seit"
+      "expires": "Einladung läuft ab am",
+      "createInvitationButton": "Einladung erstellen",
+      "roomMembersHeader": "Raummitglieder ({count})",
+      "invitationsHeader": "Ausstehende Einladungen ({count})"
     }
   },
   {
@@ -837,6 +841,22 @@
     "resources": {
       "newRoom": "Neuer Raum",
       "roomNameRequired": "Bitte geben Sie einen Raumnamen an"
+    }
+  },
+  {
+    "namespace": "roomInvitationCreationModal",
+    "language": "en",
+    "resources": {
+      "newRoomInvitation": "New invitation",
+      "emailRequired": "Please specify an email address"
+    }
+  },
+  {
+    "namespace": "roomInvitationCreationModal",
+    "language": "de",
+    "resources": {
+      "newRoomInvitation": "Neue Einladung",
+      "emailRequired": "Bitte geben Sie eine E-Mail-Adresse an"
     }
   },
   {
