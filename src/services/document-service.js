@@ -364,7 +364,10 @@ class DocumentService {
           // If not changed, re-use existing revision:
           if (deepEqual(ancestorSection.content, section.content)) {
             logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
-            return cloneDeep(ancestorSection);
+            const clonedSection = cloneDeep(ancestorSection);
+            clonedSection.deletedOn = clonedSection.deletedOn && new Date(clonedSection.deletedOn);
+
+            return clonedSection;
           }
         }
 
@@ -389,6 +392,7 @@ class DocumentService {
       const order = await this.documentOrderStore.getNextOrder();
       const newDocumentRevision = this._buildDocumentRevision({ data: doc, documentKey, userId, order, restoredFrom, sections: newSections });
       logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
+
       await this.documentRevisionStore.save(newDocumentRevision);
 
       const latestDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
