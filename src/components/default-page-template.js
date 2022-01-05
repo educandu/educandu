@@ -137,6 +137,25 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
     }
   ].filter(item => item.showWhen);
 
+  const renderAlert = alert => {
+    const shouldRenderAlert = !fullScreen || alert.showInFullScreen;
+
+    if (!shouldRenderAlert) {
+      return null;
+    }
+
+    return (
+      <Alert
+        key={alert.message}
+        message={alert.message}
+        type={alert.type || 'info'}
+        banner
+        closable={alert.closable || false}
+        onClose={alert.onClose || (() => { })}
+        />
+    );
+  };
+
   return (
     <div className="DefaultPageTemplate">
       <header className="DefaultPageTemplate-headerArea">
@@ -158,9 +177,7 @@ function DefaultPageTemplate({ children, fullScreen, headerActions, alerts }) {
             </LinkPopover>
           </div>
         </div>
-        {!fullScreen && alerts && alerts.map((alert, index) => (
-          <Alert key={index.toString()} message={alert.message} type={alert.type || 'info'} banner />
-        ))}
+        {alerts && alerts.map(renderAlert)}
       </header>
       <main className={contentAreaClasses}>
         <div className={contentClasses}>

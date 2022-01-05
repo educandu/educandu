@@ -677,8 +677,8 @@
     "namespace": "settings",
     "language": "en",
     "resources": {
-      "homeLanguagesHeader": "Landing page languages",
-      "homeLanguagesSubHeader": "The top most entry will be used as default",
+      "announcementHeader": "Announcement",
+      "announcementPreview": "Preview",
       "helpPageHeader": "Help page",
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
@@ -689,8 +689,8 @@
     "namespace": "settings",
     "language": "de",
     "resources": {
-      "homeLanguagesHeader": "Sprachen auf der Startseite",
-      "homeLanguagesSubHeader": "Der oberste Eintrag wird als Standard benutzt",
+      "announcementHeader": "Mitteilung",
+      "announcementPreview": "Vorschau",
       "helpPageHeader": "Hilfe-Seite",
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
@@ -923,24 +923,6 @@
     "language": "de",
     "resources": {
       "unknown": "Unbekannt"
-    }
-  },
-  {
-    "namespace": "homeLanguagesSettings",
-    "language": "en",
-    "resources": {
-      "rank": "Rank",
-      "language": "Language",
-      "documentKey": "Document key"
-    }
-  },
-  {
-    "namespace": "homeLanguagesSettings",
-    "language": "de",
-    "resources": {
-      "rank": "Rang",
-      "language": "Sprache",
-      "documentKey": "Dokument-Schlüssel"
     }
   },
   {

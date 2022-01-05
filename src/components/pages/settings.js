@@ -1,17 +1,18 @@
 import PropTypes from 'prop-types';
+import { Alert, Input } from 'antd';
+import Markdown from '../markdown.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper.js';
-import React, { useState, useCallback } from 'react';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import React, { useState, useCallback, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
 import SpecialPageSettings from '../settings/special-page-settings.js';
 import FooterLinksSettings from '../settings/footer-links-settings.js';
-import HomeLanguagesSettings from '../settings/home-languages-settings.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
@@ -32,23 +33,23 @@ function Settings({ initialState, PageTemplate }) {
     setInvalidKeys(prev => isValid ? ensureIsExcluded(prev, key) : ensureIsIncluded(prev, key));
   }, [setSettings, setDirtyKeys, setInvalidKeys]);
 
-  const handleHomeLanguagesChanged = useCallback((value, { isValid }) => {
-    handleChange('homeLanguages', value, isValid);
+  const handleAnnouncementChange = useCallback(event => {
+    handleChange('announcement', event.target.value, true);
   }, [handleChange]);
 
-  const handleHelpPageChanged = useCallback((value, { isValid }) => {
+  const handleHelpPageChange = useCallback((value, { isValid }) => {
     handleChange('helpPage', value, isValid);
   }, [handleChange]);
 
-  const handleTermsPageChanged = useCallback((value, { isValid }) => {
+  const handleTermsPageChange = useCallback((value, { isValid }) => {
     handleChange('termsPage', value, isValid);
   }, [handleChange]);
 
-  const handleFooterLinksChanged = useCallback((value, { isValid }) => {
+  const handleFooterLinksChange = useCallback((value, { isValid }) => {
     handleChange('footerLinks', value, isValid);
   }, [handleChange]);
 
-  const handleDefaultTagsChanged = useCallback((value, { isValid }) => {
+  const handleDefaultTagsChange = useCallback((value, { isValid }) => {
     handleChange('defaultTags', value, isValid);
   }, [handleChange]);
 
@@ -101,35 +102,38 @@ function Settings({ initialState, PageTemplate }) {
     <PageTemplate alerts={alerts} headerActions={headerActions}>
       <div className="SettingsPage">
         <h1>{t('pageNames:settings')}</h1>
-        <h2 className="SettingsPage-sectionHeader">{t('homeLanguagesHeader')}</h2>
-        <p>{t('homeLanguagesSubHeader')}</p>
-        <HomeLanguagesSettings
-          homeLanguages={settings.homeLanguages}
-          documents={initialState.documents}
-          onChange={handleHomeLanguagesChanged}
-          />
+        <h2 className="SettingsPage-sectionHeader">{t('announcementHeader')}</h2>
+        <section className="SettingsPage-section SettingsPage-section--announcement">
+          <Input value={settings.announcement} onChange={handleAnnouncementChange} />
+          {settings.announcement && (
+            <Fragment>
+              <span className="SettingsPage-announcementPreview">{t('announcementPreview')}</span>
+              <Alert type="warning" message={<Markdown inline>{settings.announcement}</Markdown>} banner />
+            </Fragment>
+          )}
+        </section>
         <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
         <SpecialPageSettings
           settings={settings.helpPage}
           documents={initialState.documents}
-          onChange={handleHelpPageChanged}
+          onChange={handleHelpPageChange}
           />
         <h2 className="SettingsPage-sectionHeader">{t('termsPageHeader')}</h2>
         <SpecialPageSettings
           settings={settings.termsPage}
           documents={initialState.documents}
-          onChange={handleTermsPageChanged}
+          onChange={handleTermsPageChange}
           />
         <h2 className="SettingsPage-sectionHeader">{t('footerLinksHeader')}</h2>
         <FooterLinksSettings
           footerLinks={settings.footerLinks}
           documents={initialState.documents}
-          onChange={handleFooterLinksChanged}
+          onChange={handleFooterLinksChange}
           />
         <h2 className="SettingsPage-sectionHeader">{t('defaultTagsHeader')}</h2>
         <DefaultTagsSettings
           defaultTags={settings.defaultTags || []}
-          onChange={handleDefaultTagsChanged}
+          onChange={handleDefaultTagsChange}
           />
       </div>
     </PageTemplate>
