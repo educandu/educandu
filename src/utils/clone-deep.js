@@ -3,7 +3,7 @@ function isObject(value) {
 }
 
 function isArray(value) {
-  return value instanceof Array;
+  return Array.isArray(value);
 }
 
 function isFunction(value) {
