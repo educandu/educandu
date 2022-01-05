@@ -80,7 +80,7 @@ export default class RoomService {
     return room;
   }
 
-  async createOrUpdateInvitationIfNotOwner({ roomId, email, user }) {
+  async createOrUpdateInvitation({ roomId, email, user }) {
     const now = new Date();
     const lowerCasedEmail = email.toLowerCase();
 
@@ -92,7 +92,7 @@ export default class RoomService {
     const owner = await this.userService.getUserById(room.owner);
 
     if (owner.email.toLowerCase() === lowerCasedEmail) {
-      return { room, owner, invitation: null };
+      throw new BadRequest('The owner may not invite herself as a member');
     }
 
     let invitation = await this.roomInvitationStore.findOne({ roomId, email: lowerCasedEmail });

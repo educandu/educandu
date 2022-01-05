@@ -165,7 +165,7 @@ describe('room-service', () => {
     });
   });
 
-  describe('createOrUpdateInvitationIfNotOwner', () => {
+  describe('createOrUpdateInvitation', () => {
     let myPublicRoom = null;
     let myPrivateRoom = null;
 
@@ -182,18 +182,17 @@ describe('room-service', () => {
     });
 
     it('should create a new invitation if it does not exist', async () => {
-      const { invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
       expect(invitation.token).toBeDefined();
     });
 
-    it('should not create an invitation if the owner invites herself', async () => {
-      const { invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser });
-      expect(invitation).toBeNull();
+    it('should throw a bad request if the owner invites herself', () => {
+      expect(() => sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser })).rejects.toThrow(BadRequest);
     });
 
     it('should update an invitation if it already exists', async () => {
-      const { invitation: originalInvitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
-      const { invitation: updatedInvitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      const { invitation: originalInvitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      const { invitation: updatedInvitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
       expect(updatedInvitation._id).toBe(originalInvitation._id);
       expect(updatedInvitation.token).not.toBe(originalInvitation.token);
       expect(updatedInvitation.sentOn).not.toBe(originalInvitation.sentOn);
@@ -202,19 +201,19 @@ describe('room-service', () => {
 
     it('should throw a BadRequest error when the room is public', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
+        await sut.createOrUpdateInvitation({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
       }).rejects.toThrow(BadRequest);
     });
 
     it('should throw a NotFound error when the room does not exist', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitationIfNotOwner({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: myUser });
+        await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: myUser });
       }).rejects.toThrow(NotFound);
     });
 
     it('should throw a NotFound error when the room exists, but belongs to a different user', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitationIfNotOwner({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: { _id: 'xyzxyzxyzxyzxyz' } });
+        await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: { _id: 'xyzxyzxyzxyzxyz' } });
       }).rejects.toThrow(NotFound);
     });
   });
@@ -225,7 +224,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
-      ({ invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
     it('should be valid if user and token are valid', async () => {
@@ -256,7 +255,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
-      ({ invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
     it('should throw NotFound if invitation does not exist', async () => {
@@ -298,7 +297,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
-      ({ invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
 
     });
 

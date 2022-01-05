@@ -56,11 +56,7 @@ export default class RoomController {
   async handlePostRoomInvitation(req, res) {
     const { user } = req;
     const { roomId, email } = req.body;
-    const { room, owner, invitation } = await this.roomService.createOrUpdateInvitationIfNotOwner({ roomId, email, user });
-
-    if (!invitation) {
-      return res.status(200).send();
-    }
+    const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
 
     const { origin } = requestHelper.getHostInfo(req);
     const invitationLink = urls.concatParts(origin, urls.getRoomMembershipConfirmationUrl(invitation.token));
