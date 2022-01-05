@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentShape, homeLanguageShape } from '../../ui/default-prop-types.js';
@@ -21,8 +20,6 @@ function Index({ initialState, PageTemplate, SiteLogo }) {
   const { document: doc, homeLanguages, currentHomeLanguageIndex } = initialState;
   const currentHomeLanguage = homeLanguages[currentHomeLanguageIndex];
   const [isSearching, setIsSearching] = useState(false);
-
-  useReloadPersistedWindow();
 
   const handleSearch = () => {
     setIsSearching(true);
