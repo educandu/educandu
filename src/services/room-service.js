@@ -4,6 +4,7 @@ import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
+import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
@@ -22,10 +23,11 @@ const roomInvitationProjection = {
 };
 
 export default class RoomService {
-  static get inject() { return [RoomStore, RoomInvitationStore, UserService, TransactionRunner]; }
+  static get inject() { return [RoomStore, RoomLockStore, RoomInvitationStore, UserService, TransactionRunner]; }
 
-  constructor(roomStore, roomInvitationStore, userService, transactionRunner) {
+  constructor(roomStore, roomLockStore, roomInvitationStore, userService, transactionRunner) {
     this.roomStore = roomStore;
+    this.roomLockStore = roomLockStore;
     this.roomInvitationStore = roomInvitationStore;
     this.userService = userService;
     this.transactionRunner = transactionRunner;
@@ -144,13 +146,28 @@ export default class RoomService {
         joinedOn: new Date()
       };
 
-      await this.roomStore.updateOne(
-        { _id: invitation.roomId },
-        { $push: { members: newMember } },
-        { session }
-      );
+      let lock;
 
-      await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
+      try {
+        try {
+          lock = await this.roomLockStore.takeLock(invitation.roomId);
+        } catch {
+          throw new BadRequest();
+        }
+
+        const room = await this.roomStore.findOne({ '_id': invitation.roomId, 'members.userId': newMember.userId });
+        if (!room) {
+          await this.roomStore.updateOne(
+            { _id: invitation.roomId },
+            { $push: { members: newMember } },
+            { session }
+          );
+        }
+
+        await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
+      } finally {
+        this.roomLockStore.releaseLock(lock);
+      }
     });
   }
 

@@ -5,6 +5,7 @@ import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
+import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
@@ -17,6 +18,7 @@ describe('room-service', () => {
   let result;
   let otherUser;
   let roomStore;
+  let roomLockStore;
   let container;
   let userService;
 
@@ -28,6 +30,7 @@ describe('room-service', () => {
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
     roomStore = container.get(RoomStore);
+    roomLockStore = container.get(RoomLockStore);
     userService = container.get(UserService);
 
     sut = container.get(RoomService);
@@ -252,7 +255,6 @@ describe('room-service', () => {
   describe('confirmInvitation', () => {
     let testRoom = null;
     let invitation = null;
-
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
@@ -271,8 +273,20 @@ describe('room-service', () => {
     });
 
     describe('when user and token are valid', () => {
+      const lock = { key: 'room' };
+
       beforeEach(async () => {
+        roomLockStore.takeLock = sandbox.stub().resolves(lock);
+        roomLockStore.releaseLock = sandbox.stub().resolves();
         await sut.confirmInvitation({ token: invitation.token, user: otherUser });
+      });
+
+      it('should take a lock on the room', () => {
+        sinon.assert.calledWith(roomLockStore.takeLock, invitation.roomId);
+      });
+
+      it('should release thelock on the room', () => {
+        sinon.assert.calledWith(roomLockStore.releaseLock, lock);
       });
 
       it('should add the user as a room member if user and token are valid', async () => {
@@ -287,6 +301,33 @@ describe('room-service', () => {
       it('should remove the invitation from the database', async () => {
         const invitationFromDb = await db.roomInvitations.findOne({ _id: invitation._id });
         expect(invitationFromDb).toBeNull();
+      });
+
+      describe('and the user gets invited a second time', () => {
+        let exisingMemberJoinDate;
+
+        beforeEach(async () => {
+          ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+
+          const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
+          exisingMemberJoinDate = roomFromDb.members[0].joinedOn;
+
+          await sut.confirmInvitation({ token: invitation.token, user: otherUser });
+        });
+
+        it('should not add the user user a second time', async () => {
+          const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
+          expect(roomFromDb.members).toHaveLength(1);
+          expect(roomFromDb.members[0]).toEqual({
+            userId: otherUser._id,
+            joinedOn: exisingMemberJoinDate
+          });
+        });
+
+        it('should remove the invitation from the database', async () => {
+          const invitationFromDb = await db.roomInvitations.findOne({ _id: invitation._id });
+          expect(invitationFromDb).toBeNull();
+        });
       });
     });
   });
