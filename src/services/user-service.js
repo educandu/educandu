@@ -36,8 +36,8 @@ class UserService {
       : Promise.resolve([]);
   }
 
-  getUserByEmailAddress(email, provider = DEFAULT_PROVIDER_NAME) {
-    return this.userStore.findOne({ email: email.toLowerCase(), provider });
+  getUserByEmailAddress(email) {
+    return this.userStore.findOne({ email: email.toLowerCase() });
   }
 
   extractUserIdSetFromDocsOrRevisions(docsOrRevisions) {

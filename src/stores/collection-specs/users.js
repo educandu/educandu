@@ -2,15 +2,15 @@ export default {
   name: 'users',
   indexes: [
     {
+      name: '_idx_email',
+      key: { email: 1 },
+      unique: true,
+      partialFilterExpression: { email: { $type: 'string' } }
+    },
+    {
       name: '_idx_username_provider_',
       key: { username: 1, provider: 1 },
       unique: true
-    },
-    {
-      name: '_idx_email_provider_',
-      key: { email: 1, provider: 1 },
-      unique: true,
-      partialFilterExpression: { email: { $type: 'string' } }
     },
     {
       name: '_idx_expires_',
