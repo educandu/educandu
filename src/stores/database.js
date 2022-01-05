@@ -117,13 +117,9 @@ class Database {
     };
   }
 
-  async runMigrationScripts(includeManualMigrations = false) {
+  async runMigrationScripts() {
     const migrationsDirectory = url.fileURLToPath(new URL('../../migrations', import.meta.url));
-    const allPossibleMigrationFiles = await pGlob(path.resolve(migrationsDirectory, './automatic/*.js'));
-
-    if (includeManualMigrations) {
-      allPossibleMigrationFiles.push(...await pGlob(path.resolve(migrationsDirectory, './manual/*.js')));
-    }
+    const allPossibleMigrationFiles = await pGlob(path.resolve(migrationsDirectory, './*.js'));
 
     const migrationFileNames = allPossibleMigrationFiles
       .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
