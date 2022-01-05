@@ -203,7 +203,8 @@ function Doc({ initialState, PageTemplate }) {
   if (state.currentDocOrRevision.archived) {
     alerts.push({
       message: t('common:archivedAlert'),
-      type: ALERT_TYPE.warning
+      type: ALERT_TYPE.warning,
+      showInFullScreen: false
     });
   }
 
@@ -215,7 +216,8 @@ function Doc({ initialState, PageTemplate }) {
           i18nKey="common:externalDocumentWarning"
           components={[<a key="external-document-warning" href={state.currentDocOrRevision.originUrl} />]}
           />),
-      type: 'warning'
+      type: 'warning',
+      showInFullScreen: false
     });
   }
 

@@ -336,7 +336,8 @@ function EditDoc({ initialState, PageTemplate }) {
   if (proposedSectionKeys.length) {
     alerts.push({
       message: t('proposedSectionsAlert'),
-      type: ALERT_TYPE.info
+      type: ALERT_TYPE.info,
+      showInFullScreen: false
     });
   }
 

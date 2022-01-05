@@ -16,7 +16,8 @@ function getGlobalAlerts(pageName, user, settings) {
   if (user && isProfileInsufficient(user) && pageName !== PAGE_NAME.mySpace) {
     globalAlerts.push({
       message: <InsufficientProfileWarning />,
-      type: ALERT_TYPE.info
+      type: ALERT_TYPE.info,
+      showInFullScreen: false
     });
   }
 
@@ -24,6 +25,7 @@ function getGlobalAlerts(pageName, user, settings) {
     globalAlerts.push({
       message: <Markdown inline>{settings.announcement}</Markdown>,
       type: ALERT_TYPE.warning,
+      showInFullScreen: true,
       closable: true,
       onClose: () => cookie.set(ANNONCEMENT_COOKIE, 'true')
     });
