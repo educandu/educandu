@@ -38,7 +38,7 @@ export function useGlobalAlerts() {
   const pageName = usePageName();
   const settings = useSettings();
   const user = useUser();
-  const [alerts, setAlerts] = useState();
+  const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
     setAlerts(getGlobalAlerts(pageName, user, settings));
