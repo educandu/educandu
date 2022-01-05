@@ -7,12 +7,10 @@ import { useService } from '../container-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import DocumentImportTable from '../document-import-table.js';
 import ImportApiClient from '../../api-clients/import-api-client.js';
 
 export default function ImportBatchCreation({ initialState, PageTemplate }) {
-  useReloadPersistedWindow();
   const { t } = useTranslation('importBatchCreation');
   const clientConfig = useService(ClientConfig);
   const importApiClient = useService(ImportApiClient);

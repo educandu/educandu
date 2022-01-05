@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { Table, Collapse, Button } from 'antd';
 import { useDateFormat } from '../language-context.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { useReloadPersistedWindow } from '../../ui/hooks.js';
 import { importBatchShape, importSourceShape } from '../../ui/default-prop-types.js';
 
 const Panel = Collapse.Panel;
@@ -14,7 +13,6 @@ const Panel = Collapse.Panel;
 function ImportBatches({ initialState, PageTemplate }) {
   const { t } = useTranslation('importBatches');
   const { formatDate } = useDateFormat();
-  useReloadPersistedWindow();
 
   const { batches, importSources } = initialState;
   let sourceMap = importSources.reduce((acc, source) => {

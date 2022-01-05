@@ -6,6 +6,7 @@ import { RequestProvider } from './request-context.js';
 import { LanguageProvider } from './language-context.js';
 import { SettingsProvider } from './settings-context.js';
 import { PageNameProvider } from './page-name-context.js';
+import { useReloadPersistedWindow } from '../ui/hooks.js';
 import { ContainerProvider } from './container-context.js';
 import { userProps, requestProps, settingsProps, pageNameProps } from '../ui/default-prop-types.js';
 
@@ -21,6 +22,9 @@ function Root({
   PageTemplateComponent,
   SiteLogoComponent
 }) {
+
+  useReloadPersistedWindow();
+
   return (
     <ContainerProvider value={container}>
       <PageNameProvider value={pageName}>
