@@ -106,9 +106,13 @@ export function useDateFormat() {
   return useMemo(() => {
     const dateLocale = locale === 'de-DE' ? dateLocales.deDE : dateLocales.enUS;
     const localePattern = 'P, p';
-    const formatDate = (date, pattern) => date
-      ? format(parseISO(date), pattern || localePattern, { locale: dateLocale })
-      : '';
+    const formatDate = (date, pattern) => {
+      if (!date) {
+        return '';
+      }
+      const dateInstance = date instanceof Date ? date : parseISO(date);
+      return format(dateInstance, pattern || localePattern, { locale: dateLocale });
+    };
 
     return {
       formatDate
