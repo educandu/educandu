@@ -15,7 +15,7 @@ function isDate(value) {
 }
 
 function isPrimitiveType(value) {
-  return ['string', 'number', 'boolean', 'undefined'].includes(typeof value);
+  return ['undefined', 'string', 'number', 'bigint', 'boolean'].includes(typeof value);
 }
 
 function cloneDeep(value) {

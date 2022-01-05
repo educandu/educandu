@@ -3,14 +3,15 @@ import cloneDeep from './clone-deep.js';
 describe('clone-deep', () => {
 
   const original = {
-    stringProp: 'a',
-    numberProp: 1,
     nullProp: null,
     // eslint-disable-next-line no-undefined
     undefinedProp: undefined,
+    stringProp: 'a',
+    numberProp: 1,
+    bigintProp: 10n,
     booleanProp: true,
-    dateAsStringProp: new Date().toISOString(),
     dateProp: new Date(),
+    dateAsStringProp: new Date().toISOString(),
     functionProp: () => 'function response',
     simpleArrayProp: [1, 2, 3],
     deepArrayProp: [[1], [[2]], { prop: 3 }],
