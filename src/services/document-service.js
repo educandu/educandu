@@ -364,10 +364,7 @@ class DocumentService {
           // If not changed, re-use existing revision:
           if (deepEqual(ancestorSection.content, section.content)) {
             logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
-            const clonedSection = cloneDeep(ancestorSection);
-            clonedSection.deletedOn = clonedSection.deletedOn && new Date(clonedSection.deletedOn);
-
-            return clonedSection;
+            return cloneDeep(ancestorSection);
           }
         }
 
