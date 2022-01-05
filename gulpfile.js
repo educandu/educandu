@@ -35,6 +35,7 @@ const supportedLanguages = ['en', 'de'];
 
 let bundler = null;
 let currentApp = null;
+let currentCdnProxy = null;
 
 const mongoContainer = new MongoContainer({
   port: 27017,
@@ -58,6 +59,7 @@ const maildevContainer = new MaildevContainer({
 Graceful.on('exit', async () => {
   bundler?.rebuild?.dispose();
   await currentApp?.waitForExit();
+  await currentCdnProxy?.waitForExit();
 });
 
 const downloadCountryList = async lang => {
@@ -241,6 +243,18 @@ export async function minioDown() {
 export const minioReset = gulp.series(minioDown, minioUp);
 
 export async function startServer() {
+  currentCdnProxy = new NodeProcess({
+    script: 'node_modules/@educandu/rooms-auth-lambda/src/dev-server/run.js',
+    env: {
+      ...process.env,
+      PORT: 10000,
+      WEBSITE_BASE_URL: 'http://localhost:3000',
+      CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn'
+    }
+  });
+
+  await currentCdnProxy.start();
+
   if (cliArgs.instances > 1) {
     currentApp = new LoadBalancedNodeProcessGroup({
       script: 'test-app/index.js',

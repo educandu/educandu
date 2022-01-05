@@ -296,8 +296,57 @@ describe('room-controller', () => {
   });
 
   describe('handleAuthorizeResourcesAccess', () => {
-    const roomId = '843zvnzn2vw';
-    describe('when the user is authorized', () => {
+    describe('when there is no authenticated user', () => {
+      beforeEach(done => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId: 'abcd' }
+        });
+        req.user = null;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        roomService.isRoomOwnerOrMember.resolves(false);
+        sut.handleAuthorizeResourcesAccess(req, res);
+      });
+
+      it('should return status 401', () => {
+        expect(res.statusCode).toBe(401);
+      });
+    });
+
+    describe('when the user is authenticated but not authorized', () => {
+      const roomId = '843zvnzn2vw';
+
+      beforeEach(done => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        roomService.isRoomOwnerOrMember.resolves(false);
+        sut.handleAuthorizeResourcesAccess(req, res);
+      });
+
+      it('should call the room service with the correct roomId and userId', () => {
+        sinon.assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
+      });
+
+      it('should return status 403', () => {
+        expect(res.statusCode).toBe(403);
+      });
+    });
+
+    describe('when the user is authenticated and authorized', () => {
+      const roomId = '843zvnzn2vw';
+
       beforeEach(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -317,28 +366,9 @@ describe('room-controller', () => {
         sinon.assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
       });
 
-      it('should return status 200 when the user is authorized', () => {
+      it('should return status 200', () => {
         expect(res.statusCode).toBe(200);
       });
-
-    });
-    describe('when the user is not authorized', () => {
-      beforeEach(() => {
-        roomService.isRoomOwnerOrMember.resolves(false);
-        req = httpMocks.createRequest({
-          protocol: 'https',
-          headers: { host: 'educandu.dev' },
-          params: { roomId: 'abcd' }
-        });
-        req.user = user;
-
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-      });
-
-      it('should throw a not authorized exception', () => {
-        expect(() => sut.handleAuthorizeResourcesAccess(req, res)).rejects.toThrow(Forbidden);
-      });
-
     });
   });
 });

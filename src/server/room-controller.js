@@ -103,14 +103,18 @@ export default class RoomController {
 
   async handleAuthorizeResourcesAccess(req, res) {
     const { roomId } = req.params;
-    const { _id: userId } = req.user;
+
+    const userId = req.user?._id || null;
+    if (!userId) {
+      return res.status(401).end();
+    }
 
     const result = await this.roomService.isRoomOwnerOrMember(roomId, userId);
     if (!result) {
-      throw new Forbidden();
+      return res.status(403).end();
     }
 
-    return res.end();
+    return res.status(200).end();
   }
 
   registerApi(router) {
