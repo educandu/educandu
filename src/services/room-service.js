@@ -80,7 +80,7 @@ export default class RoomService {
     return room;
   }
 
-  async createOrUpdateInvitation({ roomId, email, user }) {
+  async createOrUpdateInvitationIfNotOwner({ roomId, email, user }) {
     const now = new Date();
     const lowerCasedEmail = email.toLowerCase();
 
@@ -90,6 +90,10 @@ export default class RoomService {
     }
 
     const owner = await this.userService.getUserById(room.owner);
+
+    if (owner.email.toLowerCase() === lowerCasedEmail) {
+      return { room, owner, invitation: null };
+    }
 
     let invitation = await this.roomInvitationStore.findOne({ roomId, email: lowerCasedEmail });
     if (!invitation) {

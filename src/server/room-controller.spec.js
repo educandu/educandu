@@ -23,7 +23,7 @@ describe('room-controller', () => {
 
   beforeEach(() => {
     roomService = {
-      createOrUpdateInvitation: sandbox.stub(),
+      createOrUpdateInvitationIfNotOwner: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
       getRoomById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub(),
@@ -62,7 +62,7 @@ describe('room-controller', () => {
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
       beforeEach(done => {
-        roomService.createOrUpdateInvitation.returns(Promise.resolve({
+        roomService.createOrUpdateInvitationIfNotOwner.returns(Promise.resolve({
           room,
           owner: user,
           invitation
@@ -90,8 +90,8 @@ describe('room-controller', () => {
         expect(res._getData()).toEqual(invitation);
       });
 
-      it('should have called roomService.createOrUpdateInvitation', () => {
-        sinon.assert.calledWith(roomService.createOrUpdateInvitation, {
+      it('should have called roomService.createOrUpdateInvitationIfNotOwner', () => {
+        sinon.assert.calledWith(roomService.createOrUpdateInvitationIfNotOwner, {
           roomId: '843zvnzn2vw',
           email: 'invited@user.com',
           user
@@ -108,9 +108,49 @@ describe('room-controller', () => {
       });
     });
 
+    describe('when the owner invites herself', () => {
+      const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+
+      beforeEach(done => {
+        roomService.createOrUpdateInvitationIfNotOwner.returns(Promise.resolve({
+          room,
+          owner: user,
+          invitation: null
+        }));
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          body: { roomId: '843zvnzn2vw', email: 'myself@user.com' }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handlePostRoomInvitation(req, res);
+      });
+
+      it('should respond with status code 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should have called roomService.createOrUpdateInvitationIfNotOwner', () => {
+        sinon.assert.calledWith(roomService.createOrUpdateInvitationIfNotOwner, {
+          roomId: '843zvnzn2vw',
+          email: 'myself@user.com',
+          user
+        });
+      });
+
+      it('should not have called mailService.sendRoomInvitation', () => {
+        sinon.assert.notCalled(mailService.sendRoomInvitation);
+      });
+    });
+
     describe('when the service call fails', () => {
       beforeEach(() => {
-        roomService.createOrUpdateInvitation.returns(Promise.reject(new NotFound()));
+        roomService.createOrUpdateInvitationIfNotOwner.returns(Promise.reject(new NotFound()));
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -134,7 +174,7 @@ describe('room-controller', () => {
     const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
     beforeEach(done => {
-      roomService.createOrUpdateInvitation.returns(Promise.resolve({
+      roomService.createOrUpdateInvitationIfNotOwner.returns(Promise.resolve({
         room,
         owner: user,
         invitation

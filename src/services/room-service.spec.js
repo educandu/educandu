@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
+import UserService from './user-service.js';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
@@ -17,6 +18,7 @@ describe('room-service', () => {
   let otherUser;
   let roomStore;
   let container;
+  let userService;
 
   const sandbox = sinon.createSandbox();
 
@@ -26,6 +28,7 @@ describe('room-service', () => {
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
     roomStore = container.get(RoomStore);
+    userService = container.get(UserService);
 
     sut = container.get(RoomService);
     db = container.get(Database);
@@ -162,25 +165,35 @@ describe('room-service', () => {
     });
   });
 
-  describe('createOrUpdateInvitation', () => {
+  describe('createOrUpdateInvitationIfNotOwner', () => {
     let myPublicRoom = null;
     let myPrivateRoom = null;
 
     beforeEach(async () => {
+      userService.getUserById = sandbox.stub().resolves(myUser);
       [myPublicRoom, myPrivateRoom] = await Promise.all([
         await sut.createRoom({ name: 'my public room', access: ROOM_ACCESS_LEVEL.public, user: myUser }),
         await sut.createRoom({ name: 'my private room', access: ROOM_ACCESS_LEVEL.private, user: myUser })
       ]);
     });
 
+    afterEach(() => {
+      sandbox.restore();
+    });
+
     it('should create a new invitation if it does not exist', async () => {
-      const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      const { invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
       expect(invitation.token).toBeDefined();
     });
 
+    it('should not create an invitation if the owner invites herself', async () => {
+      const { invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser });
+      expect(invitation).toBeNull();
+    });
+
     it('should update an invitation if it already exists', async () => {
-      const { invitation: originalInvitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
-      const { invitation: updatedInvitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      const { invitation: originalInvitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      const { invitation: updatedInvitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
       expect(updatedInvitation._id).toBe(originalInvitation._id);
       expect(updatedInvitation.token).not.toBe(originalInvitation.token);
       expect(updatedInvitation.sentOn).not.toBe(originalInvitation.sentOn);
@@ -189,19 +202,19 @@ describe('room-service', () => {
 
     it('should throw a BadRequest error when the room is public', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitation({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
+        await sut.createOrUpdateInvitationIfNotOwner({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
       }).rejects.toThrow(BadRequest);
     });
 
     it('should throw a NotFound error when the room does not exist', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: myUser });
+        await sut.createOrUpdateInvitationIfNotOwner({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: myUser });
       }).rejects.toThrow(NotFound);
     });
 
     it('should throw a NotFound error when the room exists, but belongs to a different user', async () => {
       await expect(async () => {
-        await sut.createOrUpdateInvitation({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: { _id: 'xyzxyzxyzxyzxyz' } });
+        await sut.createOrUpdateInvitationIfNotOwner({ roomId: 'abcabcabcabcabc', email: 'invited-user@test.com', user: { _id: 'xyzxyzxyzxyzxyz' } });
       }).rejects.toThrow(NotFound);
     });
   });
@@ -212,7 +225,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
-      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      ({ invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
     it('should be valid if user and token are valid', async () => {
@@ -243,7 +256,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
-      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      ({ invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
     it('should throw NotFound if invitation does not exist', async () => {
@@ -285,7 +298,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
-      ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+      ({ invitation } = await sut.createOrUpdateInvitationIfNotOwner({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
 
     });
 
