@@ -13,3 +13,12 @@ roomMembersHeader:
 invitationsHeader:
   en: Outstanding invitations ({count})
   de: Ausstehende Einladungen ({count})
+lessonsTabTitle:
+  en: Lessons
+  de: Unterrichte
+membersTabTitle:
+  en: Room members
+  de: Raummitglieder
+settingsTabTitle:
+  en: Settings
+  de: Einstellungen

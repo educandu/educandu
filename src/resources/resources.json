@@ -637,7 +637,10 @@
       "expires": "Invitation expires on",
       "createInvitationButton": "Create an invitation",
       "roomMembersHeader": "Room members ({count})",
-      "invitationsHeader": "Outstanding invitations ({count})"
+      "invitationsHeader": "Outstanding invitations ({count})",
+      "lessonsTabTitle": "Lessons",
+      "membersTabTitle": "Room members",
+      "settingsTabTitle": "Settings"
     }
   },
   {
@@ -648,7 +651,10 @@
       "expires": "Einladung läuft ab am",
       "createInvitationButton": "Einladung erstellen",
       "roomMembersHeader": "Raummitglieder ({count})",
-      "invitationsHeader": "Ausstehende Einladungen ({count})"
+      "invitationsHeader": "Ausstehende Einladungen ({count})",
+      "lessonsTabTitle": "Unterrichte",
+      "membersTabTitle": "Raummitglieder",
+      "settingsTabTitle": "Einstellungen"
     }
   },
   {

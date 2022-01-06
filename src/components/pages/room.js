@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
-import { Row, Space, List, Collapse, Button } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { Row, Space, List, Collapse, Button, Tabs } from 'antd';
 import { invitationShape, roomShape } from '../../ui/default-prop-types.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+
+const { TabPane } = Tabs;
 
 export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');
@@ -88,6 +90,12 @@ export default function Room({ PageTemplate, initialState }) {
     <PageTemplate>
       <div className="Room">
         <h1> {t('pageNames:room', { roomName: room.name })}</h1>
+        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
+          <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1" />
+          <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2" />
+          <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3" />
+        </Tabs>
+
         <Row>
           <Space>
             <span>{t('ownerUsername')}:</span>
