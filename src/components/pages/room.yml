@@ -1,6 +1,6 @@
-ownerUsername:
-  en: Owner user name
-  de: Benutzername des Eigentümers
+roomOwner:
+  en: Room owner
+  de: Raum Eigentümer
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am

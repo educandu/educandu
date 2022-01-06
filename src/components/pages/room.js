@@ -3,20 +3,22 @@ import React, { useState } from 'react';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
+import { Space, List, Collapse, Button, Tabs } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
-import { Row, Space, List, Collapse, Button, Tabs } from 'antd';
 import { invitationShape, roomShape } from '../../ui/default-prop-types.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 
 const { TabPane } = Tabs;
 
 export default function Room({ PageTemplate, initialState }) {
+  const user = useUser();
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
-  const { room, invitations } = initialState;
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
-  const user = useUser();
+
+  const { room, invitations } = initialState;
   const isRoomOwner = user._id === room.owner.key;
+  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
 
   const handleOpenInvitationModalClick = event => {
     setIsRoomInvitationModalOpen(true);
@@ -32,24 +34,16 @@ export default function Room({ PageTemplate, initialState }) {
     window.location.reload();
   };
 
-  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
-  const shouldDisplayInvitations = isPrivateRoom && isRoomOwner;
-
-  const displayMembers = (
+  const renderRoomMembers = () => (
     <Collapse className="Room-sectionCollapse">
       <Collapse.Panel header={t('roomMembersHeader', { count: room.members.length })} >
         <List
           dataSource={room.members}
           renderItem={member => (
-            <List.Item>
+            <List.Item className="Room-sectionCollapseRow">
               <Space>
-                <Space>
-                  <span>{formatDate(member.joinedOn)}</span>
-                </Space>
-
-                <Space>
-                  <span>{member.username}</span>
-                </Space>
+                <span>{formatDate(member.joinedOn)}</span>
+                <span>{member.username}</span>
               </Space>
             </List.Item>)}
           />
@@ -57,7 +51,7 @@ export default function Room({ PageTemplate, initialState }) {
     </Collapse>
   );
 
-  const displayInvitations = (
+  const renderRoomInvitations = () => (
     <Collapse className="Room-sectionCollapse">
       <Collapse.Panel
         header={t('invitationsHeader', { count: invitations.length })}
@@ -66,19 +60,16 @@ export default function Room({ PageTemplate, initialState }) {
         <List
           dataSource={invitations}
           renderItem={invitation => (
-            <List.Item className="Room-invitationRow">
+            <List.Item className="Room-sectionCollapseRow">
               <Space>
                 <span>{formatDate(invitation.sentOn)}</span>
-                <Space>
-                  <span>{invitation.email}</span>
-                </Space>
+                <span>{invitation.email}</span>
               </Space>
 
               <Space>
                 <span>{t('expires')}:</span>
                 <span>{formatDate(invitation.expires)}</span>
               </Space>
-
             </List.Item>
           )}
           />
@@ -92,19 +83,16 @@ export default function Room({ PageTemplate, initialState }) {
         <h1> {t('pageNames:room', { roomName: room.name })}</h1>
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
           <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1" />
-          <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2" />
-          <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3" />
-        </Tabs>
 
-        <Row>
-          <Space>
-            <span>{t('ownerUsername')}:</span>
-            <span> {room.owner.username}</span>
-          </Space>
-        </Row>
-        { isPrivateRoom && displayMembers }
-        { shouldDisplayInvitations && displayInvitations }
-        <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
+          <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
+            <span>{t('roomOwner')}: {room.owner.username}</span>
+            {isPrivateRoom && renderRoomMembers()}
+            {isPrivateRoom && isRoomOwner && renderRoomInvitations()}
+            <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
+          </TabPane>
+
+          {isRoomOwner && (<TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3" />)}
+        </Tabs>
       </div>
     </PageTemplate>);
 }

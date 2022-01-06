@@ -633,7 +633,7 @@
     "namespace": "room",
     "language": "en",
     "resources": {
-      "ownerUsername": "Owner user name",
+      "roomOwner": "Room owner",
       "expires": "Invitation expires on",
       "createInvitationButton": "Create an invitation",
       "roomMembersHeader": "Room members ({count})",
@@ -647,7 +647,7 @@
     "namespace": "room",
     "language": "de",
     "resources": {
-      "ownerUsername": "Benutzername des Eigentümers",
+      "roomOwner": "Raum Eigentümer",
       "expires": "Einladung läuft ab am",
       "createInvitationButton": "Einladung erstellen",
       "roomMembersHeader": "Raummitglieder ({count})",
