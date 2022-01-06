@@ -174,6 +174,7 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       userService.getUserById = sandbox.stub().resolves(myUser);
+
       [myPublicRoom, myPrivateRoom] = await Promise.all([
         await sut.createRoom({ name: 'my public room', access: ROOM_ACCESS_LEVEL.public, user: myUser }),
         await sut.createRoom({ name: 'my private room', access: ROOM_ACCESS_LEVEL.private, user: myUser })
@@ -291,11 +292,13 @@ describe('room-service', () => {
 
       it('should add the user as a room member if user and token are valid', async () => {
         const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
-        expect(roomFromDb.members).toHaveLength(1);
-        expect(roomFromDb.members[0]).toEqual({
-          userId: otherUser._id,
-          joinedOn: expect.any(Date)
-        });
+
+        expect(roomFromDb.members).toEqual([
+          {
+            userId: otherUser._id,
+            joinedOn: expect.any(Date)
+          }
+        ]);
       });
 
       it('should remove the invitation from the database', async () => {
@@ -304,24 +307,26 @@ describe('room-service', () => {
       });
 
       describe('and the user gets invited a second time', () => {
-        let exisingMemberJoinDate;
+        let existingMemberJoinedOn;
 
         beforeEach(async () => {
           ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
 
           const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
-          exisingMemberJoinDate = roomFromDb.members[0].joinedOn;
+          existingMemberJoinedOn = roomFromDb.members[0].joinedOn;
 
           await sut.confirmInvitation({ token: invitation.token, user: otherUser });
         });
 
         it('should not add the user user a second time', async () => {
           const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
-          expect(roomFromDb.members).toHaveLength(1);
-          expect(roomFromDb.members[0]).toEqual({
-            userId: otherUser._id,
-            joinedOn: exisingMemberJoinDate
-          });
+
+          expect(roomFromDb.members).toEqual([
+            {
+              userId: otherUser._id,
+              joinedOn: existingMemberJoinedOn
+            }
+          ]);
         });
 
         it('should remove the invitation from the database', async () => {

@@ -94,7 +94,7 @@ export default class RoomService {
     const owner = await this.userService.getUserById(room.owner);
 
     if (owner.email.toLowerCase() === lowerCasedEmail) {
-      throw new BadRequest('The owner may not invite herself as a member');
+      throw new BadRequest('Invited user is the same as room owner');
     }
 
     let invitation = await this.roomInvitationStore.findOne({ roomId, email: lowerCasedEmail });
@@ -149,14 +149,10 @@ export default class RoomService {
       let lock;
 
       try {
-        try {
-          lock = await this.roomLockStore.takeLock(invitation.roomId);
-        } catch {
-          throw new BadRequest();
-        }
+        lock = await this.roomLockStore.takeLock(invitation.roomId);
 
-        const room = await this.roomStore.findOne({ '_id': invitation.roomId, 'members.userId': newMember.userId });
-        if (!room) {
+        const roomContainingNewMember = await this.roomStore.findOne({ '_id': invitation.roomId, 'members.userId': newMember.userId });
+        if (!roomContainingNewMember) {
           await this.roomStore.updateOne(
             { _id: invitation.roomId },
             { $push: { members: newMember } },

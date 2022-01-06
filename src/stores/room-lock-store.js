@@ -5,7 +5,7 @@ class RoomLockStore extends LockStoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.batchLocks);
+    super(db.roomLocks);
   }
 }
 
