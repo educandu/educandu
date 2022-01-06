@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
 import { Space, List, Collapse, Button, Tabs } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
-import { invitationShape, roomShape } from '../../ui/default-prop-types.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
@@ -16,7 +16,7 @@ export default function Room({ PageTemplate, initialState }) {
   const { formatDate } = useDateFormat();
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
 
-  const { room, invitations } = initialState;
+  const { room, invitations, lessons } = initialState;
   const isRoomOwner = user._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
 
@@ -32,6 +32,17 @@ export default function Room({ PageTemplate, initialState }) {
       return;
     }
     window.location.reload();
+  };
+
+  const renderLesson = lesson => {
+    const urlParts = ['lessons', encodeURIComponent(lesson._id)];
+    if (lesson.slug) {
+      urlParts.push(encodeURIComponent(lesson.slug));
+    }
+    const url = urlParts.join('/');
+    return (
+      <a className="Room-lesson" key={lesson._id} rel="noopener noreferrer" target="_blank" href={url}>{lesson.title}</a>
+    );
   };
 
   const renderRoomMembers = () => (
@@ -82,7 +93,9 @@ export default function Room({ PageTemplate, initialState }) {
       <div className="Room">
         <h1> {t('pageNames:room', { roomName: room.name })}</h1>
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
-          <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1" />
+          <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
+            {lessons.map(renderLesson)}
+          </TabPane>
 
           <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
             <span>{t('roomOwner')}: {room.owner.username}</span>
@@ -101,6 +114,7 @@ Room.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
-    invitations: PropTypes.arrayOf(invitationShape).isRequired
+    invitations: PropTypes.arrayOf(invitationShape).isRequired,
+    lessons: PropTypes.arrayOf(lessonShape).isRequired
   }).isRequired
 };

@@ -9,8 +9,9 @@ import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import needsPermission from '../domain/needs-permission-middleware.js';
+import LessonService from '../services/lesson-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
@@ -25,11 +26,12 @@ const jsonParser = express.json();
 const { NotFound, Forbidden } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, RoomService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, roomService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, roomService, lessonService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.roomService = roomService;
+    this.lessonService = lessonService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
@@ -75,17 +77,17 @@ export default class RoomController {
 
   async handleGetRoomPage(req, res) {
     const { roomId } = req.params;
+    const { _id: userId } = req.user;
     const room = await this.roomService.getRoomById(roomId);
 
     if (!room) {
       throw new NotFound();
     }
 
-    const { _id: userId } = req.user;
-
+    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
     let invitations = [];
 
-    if (room.access === ROOM_ACCESS_LEVEL.private) {
+    if (isPrivateRoom) {
       const isRoomOwnerOrMember = await this.roomService.isRoomOwnerOrMember(roomId, userId);
       if (!isRoomOwnerOrMember) {
         throw new Forbidden();
@@ -97,8 +99,9 @@ export default class RoomController {
     }
 
     const mappedRoom = await this.clientDataMapper.mapRoom(room);
+    const lessons = await this.lessonService.getLessons(roomId);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, invitations });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, invitations, lessons });
   }
 
   async handleAuthorizeResourcesAccess(req, res) {
