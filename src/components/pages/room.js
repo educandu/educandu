@@ -86,16 +86,18 @@ export default function Room({ PageTemplate, initialState }) {
 
   return (
     <PageTemplate>
-      <h1> {t('pageNames:room', { roomName: room.name })}</h1>
-      <Row>
-        <Space>
-          <span>{t('ownerUsername')}:</span>
-          <span> {room.owner.username}</span>
-        </Space>
-      </Row>
-      { isPrivateRoom && displayMembers }
-      { shouldDisplayInvitations && displayInvitations }
-      <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
+      <div className="Room">
+        <h1> {t('pageNames:room', { roomName: room.name })}</h1>
+        <Row>
+          <Space>
+            <span>{t('ownerUsername')}:</span>
+            <span> {room.owner.username}</span>
+          </Space>
+        </Row>
+        { isPrivateRoom && displayMembers }
+        { shouldDisplayInvitations && displayInvitations }
+        <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
+      </div>
     </PageTemplate>);
 }
 
