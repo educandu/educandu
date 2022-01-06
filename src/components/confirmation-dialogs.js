@@ -29,6 +29,18 @@ export function confirmDocumentDelete(t, documentTitle, onOk, onCancel = () => {
   });
 }
 
+export function confirmRoomDelete(t, roomName, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteRoomConfirmation', { roomName }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmCdnFileDelete(t, fileName, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),

@@ -1,5 +1,6 @@
 import { add } from 'date-fns';
 import httpErrors from 'http-errors';
+import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
@@ -8,7 +9,7 @@ import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, NotFound, Forbidden } = httpErrors;
 
 const logger = new Logger(import.meta.url);
 
@@ -22,12 +23,13 @@ const roomInvitationProjection = {
 };
 
 export default class RoomService {
-  static get inject() { return [RoomStore, RoomInvitationStore, UserService, TransactionRunner]; }
+  static get inject() { return [RoomStore, RoomInvitationStore, UserService, Cdn, TransactionRunner]; }
 
-  constructor(roomStore, roomInvitationStore, userService, transactionRunner) {
+  constructor(roomStore, roomInvitationStore, userService, cdn, transactionRunner) {
     this.roomStore = roomStore;
     this.roomInvitationStore = roomInvitationStore;
     this.userService = userService;
+    this.cdn = cdn;
     this.transactionRunner = transactionRunner;
   }
 
@@ -157,5 +159,31 @@ export default class RoomService {
 
   getRoomInvitations(roomId) {
     return this.roomInvitationStore.find({ roomId }, { projection: roomInvitationProjection });
+  }
+
+  async deleteRoom(roomId, user) {
+    const room = await this.roomStore.findOne({ _id: roomId });
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    if (room.owner !== user._id) {
+      throw new Forbidden();
+    }
+
+    await this.transactionRunner.run(async session => {
+      await this.roomStore.deleteOne({ _id: roomId }, { session });
+      await this.roomInvitationStore.deleteMany({ roomId }, { session });
+    });
+
+    try {
+      const objectList = await this.cdn.listObjects({ prefix: `/rooms/${roomId}`, recursive: true });
+      await this.cdn.deleteObjects(objectList.map(({ name }) => name));
+    } catch (error) {
+      logger.error(error);
+    }
+
+    return room;
   }
 }

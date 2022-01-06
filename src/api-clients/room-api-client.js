@@ -36,6 +36,15 @@ class RoomApiClient {
       )
       .then(res => res.data);
   }
+
+  deleteRoom(roomId) {
+    return this.httpClient
+      .delete(
+        `/api/v1/rooms/${roomId}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default RoomApiClient;

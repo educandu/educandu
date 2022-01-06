@@ -1,12 +1,21 @@
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
+import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import { Row, Space, List, Collapse, Button } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { confirmRoomDelete } from '../confirmation-dialogs.js';
+import RoomApiClient from '../../api-clients/room-api-client.js';
 import { invitationShape, roomShape } from '../../ui/default-prop-types.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+
+const logger = new Logger(import.meta.url);
 
 export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');
@@ -14,11 +23,25 @@ export default function Room({ PageTemplate, initialState }) {
   const { room, invitations } = initialState;
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
   const user = useUser();
+  const roomApiClient = useService(RoomApiClient);
   const isRoomOwner = user._id === room.owner.key;
 
   const handleOpenInvitationModalClick = event => {
     setIsRoomInvitationModalOpen(true);
     event.stopPropagation();
+  };
+
+  const handleRoomDelete = async () => {
+    try {
+      await roomApiClient.deleteRoom(room._id);
+      window.location = urls.getMySpaceUrl();
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  };
+
+  const handleRoomDeleteClick = () => {
+    confirmRoomDelete(t, room.name, handleRoomDelete);
   };
 
   const handleInvitationModalClose = wasNewInvitationCreated => {
@@ -32,6 +55,16 @@ export default function Room({ PageTemplate, initialState }) {
 
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
   const shouldDisplayInvitations = isPrivateRoom && isRoomOwner;
+  const headerActions = [];
+  if (isRoomOwner) {
+    headerActions.push({
+      key: 'delete',
+      type: 'primary',
+      icon: DeleteOutlined,
+      text: t('deleteRoomButton'),
+      handleClick: handleRoomDeleteClick
+    });
+  }
 
   const displayMembers = (
     <Collapse className="Room-sectionCollapse">
@@ -85,7 +118,7 @@ export default function Room({ PageTemplate, initialState }) {
   );
 
   return (
-    <PageTemplate>
+    <PageTemplate headerActions={headerActions}>
       <h1> {t('pageNames:room', { roomName: room.name })}</h1>
       <Row>
         <Space>

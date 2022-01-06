@@ -4,17 +4,19 @@ import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
+import UserService from '../services/user-service.js';
 import RoomService from '../services/room-service.js';
 import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import needsPermission from '../domain/needs-permission-middleware.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
+  deleteRoomParamsSchema,
   postRoomInvitationBodySchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
@@ -25,11 +27,12 @@ const jsonParser = express.json();
 const { NotFound, Forbidden } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, RoomService, UserService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, roomService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, roomService, userService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.roomService = roomService;
+    this.userService = userService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
@@ -51,6 +54,23 @@ export default class RoomController {
     const newRoom = await this.roomService.createRoom({ name, access, user });
 
     return res.status(201).send(newRoom);
+  }
+
+  async handleDeleteRoom(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+
+    const { members, name: roomName } = await this.roomService.deleteRoom(roomId, user);
+
+    const userIds = members.map(({ userId }) => userId);
+
+    const users = await this.userService.getUsersByIds(userIds);
+
+    await Promise.all(users.map(({ email }) => {
+      return this.mailService.sendRoomDeletionNotification({ email, roomName, ownerName: user.username });
+    }));
+
+    return res.status(200).end();
   }
 
   async handlePostRoomInvitation(req, res) {
@@ -122,6 +142,12 @@ export default class RoomController {
       '/api/v1/rooms',
       [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
       (req, res) => this.handlePostRoom(req, res)
+    );
+
+    router.delete(
+      '/api/v1/rooms/:roomId',
+      [needsPermission(permissions.CREATE_ROOMS), validateParams(deleteRoomParamsSchema)],
+      (req, res) => this.handleDeleteRoom(req, res)
     );
 
     router.post(

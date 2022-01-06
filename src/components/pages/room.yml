@@ -13,3 +13,6 @@ roomMembersHeader:
 invitationsHeader:
   en: Outstanding invitations ({count})
   de: Ausstehende Einladungen ({count})
+deleteRoomButton:
+  en: Delete room
+  de: Raum löschen

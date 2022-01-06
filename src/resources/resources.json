@@ -38,6 +38,7 @@
       "areYouSure": "Are you sure?",
       "deleteSectionConfirmation": "Do you really want to delete the section?",
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
+      "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
       "thisActionIsIrreversible": "This Action is irreversible!",
       "pleaseSpecifyAReason": "Please specify a reason",
@@ -56,6 +57,7 @@
       "areYouSure": "Sind Sie sicher?",
       "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
+      "deleteRoomConfirmation": "Möchten Sie der Raum \"{roomName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
       "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",
@@ -637,7 +639,8 @@
       "expires": "Invitation expires on",
       "createInvitationButton": "Create an invitation",
       "roomMembersHeader": "Room members ({count})",
-      "invitationsHeader": "Outstanding invitations ({count})"
+      "invitationsHeader": "Outstanding invitations ({count})",
+      "deleteRoomButton": "Delete room"
     }
   },
   {
@@ -648,7 +651,8 @@
       "expires": "Einladung läuft ab am",
       "createInvitationButton": "Einladung erstellen",
       "roomMembersHeader": "Raummitglieder ({count})",
-      "invitationsHeader": "Ausstehende Einladungen ({count})"
+      "invitationsHeader": "Ausstehende Einladungen ({count})",
+      "deleteRoomButton": "Raum löschen"
     }
   },
   {

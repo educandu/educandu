@@ -7,6 +7,9 @@ deleteSectionConfirmation:
 deleteDocumentConfirmation:
   en: Do you really want to delete document "{title}"?
   de: Möchten Sie das Dokument "{title}" wirklich löschen?
+deleteRoomConfirmation:
+  en: Do you really want to delete room "{roomName}"?
+  de: Möchten Sie der Raum "{roomName}" wirklich löschen?
 deleteCdnDocumentConfirmation:
   en: Do you really want to delete the CDN file "{fileName}"?
   de: Möchten Sie die Datei "{fileName}" wirklich vom CDN löschen?
