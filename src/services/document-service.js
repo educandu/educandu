@@ -2,14 +2,16 @@ import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import TaskStore from '../stores/task-store.js';
+import BatchStore from '../stores/batch-store.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
-import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -76,14 +78,25 @@ const lastUpdatedFirst = [['updatedOn', -1]];
 
 class DocumentService {
   static get inject() {
-    return [DocumentRevisionStore, DocumentOrderStore, DocumentLockStore, DocumentStore, TransactionRunner, InfoFactory];
+    return [
+      DocumentRevisionStore,
+      DocumentOrderStore,
+      DocumentLockStore,
+      DocumentStore,
+      BatchStore,
+      TaskStore,
+      TransactionRunner,
+      InfoFactory
+    ];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, transactionRunner, infoFactory) {
+  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, batchStore, taskStore, transactionRunner, infoFactory) {
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
+    this.batchStore = batchStore;
+    this.taskStore = taskStore;
     this.transactionRunner = transactionRunner;
     this.infoFactory = infoFactory;
   }
@@ -459,6 +472,67 @@ class DocumentService {
         await this.documentLockStore.releaseLock(lock);
       }
     }
+  }
+
+  async regenerateDocument(documentKey) {
+    let lock;
+
+    try {
+      lock = await this.documentLockStore.takeLock(documentKey);
+
+      await this.transactionRunner.run(async session => {
+        const existingDocumentRevisions = await this._getAllDocumentRevisionsByKey(documentKey, session);
+
+        const document = this._buildDocumentFromRevisions(existingDocumentRevisions);
+
+        logger.info(`Saving document '${documentKey}' with revision ${document.revision}`);
+        await this.documentStore.save(document, { session });
+      });
+    } finally {
+      if (lock) {
+        await this.documentLockStore.releaseLock(lock);
+      }
+    }
+  }
+
+  async createDocumentsBatch(user) {
+    const existingActiveBatch = await this.batchStore.findOne({
+      batchType: BATCH_TYPE.regenerateDocuments,
+      completedOn: null
+    });
+
+    if (existingActiveBatch) {
+      return null;
+    }
+
+    const batch = {
+      _id: uniqueId.create(),
+      createdBy: user._id,
+      createdOn: new Date(),
+      completedOn: null,
+      batchType: BATCH_TYPE.regenerateDocuments,
+      batchParams: {},
+      errors: []
+    };
+
+    const allDocuments = await this.documentStore.find({});
+    const tasks = allDocuments.map(document => ({
+      _id: uniqueId.create(),
+      batchId: batch._id,
+      taskType: TASK_TYPE.regenerateDocument,
+      processed: false,
+      attempts: [],
+      taskParams: {
+        key: document.key
+      }
+    }));
+
+    await this.transactionRunner.run(async session => {
+      await this.batchStore.insertOne(batch, { session });
+      await this.taskStore.insertMany(tasks, { session });
+    });
+
+    return batch;
   }
 
   _buildDocumentRevision({ data, revisionId, documentKey, userId, order, restoredFrom, sections }) {

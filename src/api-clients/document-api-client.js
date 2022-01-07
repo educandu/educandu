@@ -106,6 +106,16 @@ class DocumentApiClient {
       )
       .then(res => res.data);
   }
+
+  createDocumentsBatch() {
+    return this.httpClient
+      .post(
+        '/api/v1/docs/documents-batch',
+        null,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default DocumentApiClient;

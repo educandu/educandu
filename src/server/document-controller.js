@@ -18,7 +18,7 @@ import {
   getSearchDocumentsByTagsSchema
 } from '../domain/schemas/document-schemas.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, BadRequest } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
@@ -198,6 +198,17 @@ class DocumentController {
     return res.send(result.length ? result[0].uniqueTags : []);
   }
 
+  async handlePostDocumentsBatch(req, res) {
+    const { user } = req;
+    const batch = await this.documentService.createDocumentsBatch(user);
+
+    if (!batch) {
+      throw new BadRequest('Another document regeneration is in progress');
+    }
+
+    return res.status(201).send(batch);
+  }
+
   registerPages(router) {
     router.get(
       '/revs/articles/:id',
@@ -289,6 +300,12 @@ class DocumentController {
     router.get(
       '/api/v1/docs/tags/*',
       (req, res) => this.handleGetDocTags(req, res)
+    );
+
+    router.post(
+      '/api/v1/docs/documents-batch',
+      [needsPermission(permissions.REGENERATE_ALL_DOCS)],
+      (req, res) => this.handlePostDocumentsBatch(req, res)
     );
   }
 }

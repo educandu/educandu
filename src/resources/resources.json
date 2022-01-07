@@ -682,7 +682,9 @@
       "helpPageHeader": "Help page",
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
-      "defaultTagsHeader": "Default tags"
+      "defaultTagsHeader": "Default tags",
+      "createDocumentsBatchHeader": "Trigger document recreation",
+      "createDocumentsBatch": "Regenerate Documents"
     }
   },
   {
@@ -694,7 +696,9 @@
       "helpPageHeader": "Hilfe-Seite",
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
-      "defaultTagsHeader": "Vordefinierte Tags"
+      "defaultTagsHeader": "Vordefinierte Tags",
+      "createDocumentsBatchHeader": "Dokumentwiederherstellung auslösen",
+      "createDocumentsBatch": "Dokumente neu erstellen"
     }
   },
   {

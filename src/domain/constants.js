@@ -15,11 +15,13 @@ export const DOCUMENT_IMPORT_TYPE = {
 };
 
 export const BATCH_TYPE = {
-  importDocuments: 'import-documents'
+  importDocuments: 'import-documents',
+  regenerateDocuments: 'regenerate-documents'
 };
 
 export const TASK_TYPE = {
-  importDocument: 'import-document'
+  importDocument: 'import-document',
+  regenerateDocument: 'regenerate-document'
 };
 
 export const FEATURE_TOGGLES = {
