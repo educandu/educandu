@@ -1,6 +1,6 @@
-ownerUsername:
-  en: Owner user name
-  de: Benutzername des Eigentümers
+roomOwner:
+  en: Room owner
+  de: Raum Eigentümer
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am
@@ -13,3 +13,15 @@ roomMembersHeader:
 invitationsHeader:
   en: Outstanding invitations ({count})
   de: Ausstehende Einladungen ({count})
+lessonsTabTitle:
+  en: Lessons
+  de: Unterrichtseinheiten
+membersTabTitle:
+  en: Room members
+  de: Raummitglieder
+settingsTabTitle:
+  en: Settings
+  de: Einstellungen
+thisWeek:
+  en: This week
+  de: Diese Woche
