@@ -18,6 +18,7 @@ class DocumentRegenerateTaskProcessor {
     if (ctx.cancellationRequested) {
       throw new Error('Cancellation requested');
     }
+
     logger.info(`Regenerating document with key ${key}`);
     await this.documentService.regenerateDocument(key);
   }
