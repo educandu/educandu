@@ -141,7 +141,7 @@ function RoomsTab({ rooms }) {
       <section className="RoomsTab-section">
         <h2>{t('ownedRoomsHeader')}</h2>
         <Table dataSource={ownedRoomsRows} columns={ownedRoomsColumns} size="middle" />
-        <Restricted to={permissions.CREATE_ROOMS}>
+        <Restricted to={permissions.OWN_ROOMS}>
           <Button
             size="large"
             type="primary"
