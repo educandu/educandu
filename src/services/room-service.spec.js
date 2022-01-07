@@ -42,6 +42,7 @@ describe('room-service', () => {
   });
 
   afterEach(async () => {
+    sandbox.restore();
     await pruneTestEnvironment(container);
   });
 
@@ -382,10 +383,6 @@ describe('room-service', () => {
         invitationDetails = await sut.createOrUpdateInvitation({ roomId, email: otherUser.email, user: myUser });
 
         await sut.deleteRoom(roomId, myUser);
-      });
-
-      afterEach(() => {
-        sandbox.restore();
       });
 
       it('should delete the room', async () => {
