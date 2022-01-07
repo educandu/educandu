@@ -32,7 +32,7 @@ describe('document-controller', () => {
 
   beforeEach(() => {
     documentService = {
-      createDocumentsBatch: sandbox.stub()
+      createRegenerateDocumentsBatch: sandbox.stub()
     };
 
     sut = new DocumentController(documentService, clientDataMapper, pageRenderer);
@@ -43,12 +43,12 @@ describe('document-controller', () => {
     sandbox.restore();
   });
 
-  describe('handlePostDocumentsBatch', () => {
+  describe('handlePostRegenerateDocumentsBatch', () => {
 
     describe('when all goes well', () => {
       const batch = { _id: uniqueId.create() };
       beforeEach(done => {
-        documentService.createDocumentsBatch.resolves(batch);
+        documentService.createRegenerateDocumentsBatch.resolves(batch);
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -59,11 +59,11 @@ describe('document-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
-        sut.handlePostDocumentsBatch(req, res);
+        sut.handlePostRegenerateDocumentsBatch(req, res);
       });
 
       it('should call createDocumentsBatch with the user', () => {
-        sinon.assert.calledWith(documentService.createDocumentsBatch, user);
+        sinon.assert.calledWith(documentService.createRegenerateDocumentsBatch, user);
       });
 
       it('should return the batch', () => {
@@ -73,7 +73,7 @@ describe('document-controller', () => {
 
     describe('when we cannot schedule a new batch', () => {
       beforeEach(() => {
-        documentService.createDocumentsBatch.resolves(null);
+        documentService.createRegenerateDocumentsBatch.resolves(null);
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -85,7 +85,7 @@ describe('document-controller', () => {
       });
 
       it('should throw a bad request', () => {
-        expect(() => sut.handlePostDocumentsBatch(req, res)).rejects.toThrow(BadRequest);
+        expect(() => sut.handlePostRegenerateDocumentsBatch(req, res)).rejects.toThrow(BadRequest);
       });
     });
   });

@@ -145,8 +145,13 @@ function Settings({ initialState, PageTemplate }) {
           defaultTags={settings.defaultTags || []}
           onChange={handleDefaultTagsChange}
           />
-        <h2 className="SettingsPage-sectionHeader">{t('createDocumentsBatchHeader')}</h2>
-        <Button className="SettingsPage-creteDocumentsBatchButton" onClick={handleCreateDocumentsBatchClick} >{t('createDocumentsBatch')}</Button>
+        <h2 className="SettingsPage-sectionHeader">{t('createRegenerateDocumentsBatchHeader')}</h2>
+        <Button
+          className="SettingsPage-createRegenerateDocumentsBatchButton"
+          onClick={handleCreateDocumentsBatchClick}
+          >
+          {t('createRegenerateDocumentsBatch')}
+        </Button>
       </div>
     </PageTemplate>
   );

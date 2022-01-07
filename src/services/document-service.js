@@ -495,7 +495,7 @@ class DocumentService {
     }
   }
 
-  async createDocumentsBatch(user) {
+  async createRegenerateDocumentsBatch(user) {
     const existingActiveBatch = await this.batchStore.findOne({
       batchType: BATCH_TYPE.regenerateDocuments,
       completedOn: null

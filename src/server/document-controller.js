@@ -198,9 +198,9 @@ class DocumentController {
     return res.send(result.length ? result[0].uniqueTags : []);
   }
 
-  async handlePostDocumentsBatch(req, res) {
+  async handlePostRegenerateDocumentsBatch(req, res) {
     const { user } = req;
-    const batch = await this.documentService.createDocumentsBatch(user);
+    const batch = await this.documentService.createRegenerateDocumentsBatch(user);
 
     if (!batch) {
       throw new BadRequest('Another document regeneration is in progress');
@@ -305,7 +305,7 @@ class DocumentController {
     router.post(
       '/api/v1/docs/documents-batch',
       [needsPermission(permissions.REGENERATE_ALL_DOCS)],
-      (req, res) => this.handlePostDocumentsBatch(req, res)
+      (req, res) => this.handlePostRegenerateDocumentsBatch(req, res)
     );
   }
 }

@@ -1049,7 +1049,7 @@ describe('document-service', () => {
     });
   });
 
-  describe('createDocumentsBatch', () => {
+  describe('createRegenerateDocumentsBatch', () => {
     let createdDocument;
     let result;
     let revision;
@@ -1067,11 +1067,11 @@ describe('document-service', () => {
 
     describe('when a running batch already exists', () => {
       beforeEach(async () => {
-        await sut.createDocumentsBatch(user);
+        await sut.createRegenerateDocumentsBatch(user);
       });
 
       it('should return null', async () => {
-        const batch = await sut.createDocumentsBatch(user);
+        const batch = await sut.createRegenerateDocumentsBatch(user);
         expect(batch).toBeNull();
       });
     });
@@ -1079,7 +1079,7 @@ describe('document-service', () => {
     describe('when a new batch is created', () => {
       let batch = null;
       beforeEach(async () => {
-        batch = await sut.createDocumentsBatch(user);
+        batch = await sut.createRegenerateDocumentsBatch(user);
       });
 
       it('should create the new batch', () => {
