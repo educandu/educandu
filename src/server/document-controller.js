@@ -303,7 +303,7 @@ class DocumentController {
     );
 
     router.post(
-      '/api/v1/docs/documents-batch',
+      '/api/v1/docs/regenerate-documents-batch',
       [needsPermission(permissions.REGENERATE_ALL_DOCS)],
       (req, res) => this.handlePostRegenerateDocumentsBatch(req, res)
     );
