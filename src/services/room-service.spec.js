@@ -1,14 +1,16 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
+import Cdn from '../repositories/cdn.js';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
-const { BadRequest, NotFound } = httpErrors;
+const { BadRequest, NotFound, Forbidden } = httpErrors;
 
 describe('room-service', () => {
   let db;
@@ -17,6 +19,8 @@ describe('room-service', () => {
   let result;
   let otherUser;
   let roomStore;
+  let cdn;
+  let roomInvitationStore;
   let roomLockStore;
   let container;
 
@@ -25,6 +29,8 @@ describe('room-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     roomStore = container.get(RoomStore);
+    roomInvitationStore = container.get(RoomInvitationStore);
+    cdn = container.get(Cdn);
     roomLockStore = container.get(RoomLockStore);
 
     sut = container.get(RoomService);
@@ -41,6 +47,7 @@ describe('room-service', () => {
   });
 
   afterEach(async () => {
+    sandbox.restore();
     await pruneTestEnvironment(container);
   });
 
@@ -389,6 +396,74 @@ describe('room-service', () => {
     it('should return false when the is not a member', async () => {
       result = await sut.isRoomOwnerOrMember(roomId, uniqueId.create());
       expect(result).toBe(false);
+    });
+  });
+
+  describe('deleteRoom', () => {
+    const roomId = uniqueId.create();
+    beforeEach(async () => {
+      await roomStore.save({
+        _id: roomId,
+        name: 'my room',
+        access: ROOM_ACCESS_LEVEL.private,
+        owner: myUser._id,
+        members: [
+          {
+            userId: otherUser._id,
+            joinedOn: new Date()
+          }
+        ]
+      });
+    });
+
+    describe('when the room does not exist', () => {
+      it('should throw a not found exception', () => {
+        expect(() => sut.deleteRoom('badIdBadIdITellYou', myUser)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when another user except the owner tries to delete', () => {
+      it('should throw a forbidden exception', () => {
+        expect(() => sut.deleteRoom(roomId, otherUser)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when all goes well', () => {
+      let invitationDetails;
+      const cdnNameObject1 = `/rooms/${roomId}/object1`;
+      const cdnNameObject2 = `/rooms/${roomId}/object2`;
+
+      beforeEach(async () => {
+        sandbox.stub(cdn, 'listObjects').resolves([
+          { name: cdnNameObject1 },
+          { name: cdnNameObject2 }
+        ]);
+
+        sandbox.stub(cdn, 'deleteObjects');
+        invitationDetails = await sut.createOrUpdateInvitation({ roomId, email: otherUser.email, user: myUser });
+
+        await sut.deleteRoom(roomId, myUser);
+      });
+
+      it('should delete the room', async () => {
+        const formerRoom = await roomStore.findOne({ _id: roomId });
+        expect(formerRoom).toBeNull();
+      });
+
+      it('should delete the invitations', async () => {
+        const { invitation } = invitationDetails;
+
+        const formerInvitation = await roomInvitationStore.findOne({ token: invitation.token });
+        expect(formerInvitation).toBeNull();
+      });
+
+      it('should call the Cdn to list all objects', () => {
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `/rooms/${roomId}`, recursive: true });
+      });
+
+      it('should call the Cdn to delete the objects', () => {
+        sinon.assert.calledWith(cdn.deleteObjects, [cdnNameObject1, cdnNameObject2]);
+      });
     });
   });
 });

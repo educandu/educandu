@@ -25,3 +25,6 @@ settingsTabTitle:
 thisWeek:
   en: This week
   de: Diese Woche
+deleteRoomButton:
+  en: Delete room
+  de: Raum löschen

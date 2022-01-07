@@ -38,6 +38,7 @@
       "areYouSure": "Are you sure?",
       "deleteSectionConfirmation": "Do you really want to delete the section?",
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
+      "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
       "thisActionIsIrreversible": "This Action is irreversible!",
       "pleaseSpecifyAReason": "Please specify a reason",
@@ -56,6 +57,7 @@
       "areYouSure": "Sind Sie sicher?",
       "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
+      "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
       "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",
@@ -641,7 +643,8 @@
       "lessonsTabTitle": "Lessons",
       "membersTabTitle": "Room members",
       "settingsTabTitle": "Settings",
-      "thisWeek": "This week"
+      "thisWeek": "This week",
+      "deleteRoomButton": "Delete room"
     }
   },
   {
@@ -656,7 +659,8 @@
       "lessonsTabTitle": "Unterrichtseinheiten",
       "membersTabTitle": "Raummitglieder",
       "settingsTabTitle": "Einstellungen",
-      "thisWeek": "Diese Woche"
+      "thisWeek": "Diese Woche",
+      "deleteRoomButton": "Raum löschen"
     }
   },
   {

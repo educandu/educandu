@@ -1,20 +1,30 @@
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
+import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import { Space, List, Collapse, Button, Tabs } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { confirmRoomDelete } from '../confirmation-dialogs.js';
+import RoomApiClient from '../../api-clients/room-api-client.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
+
+const logger = new Logger(import.meta.url);
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
+  const roomApiClient = useService(RoomApiClient);
 
   const { room, invitations, lessons } = initialState;
   const isRoomOwner = user._id === room.owner.key;
@@ -25,6 +35,19 @@ export default function Room({ PageTemplate, initialState }) {
     event.stopPropagation();
   };
 
+  const handleRoomDelete = async () => {
+    try {
+      await roomApiClient.deleteRoom(room._id);
+      window.location = urls.getMySpaceUrl();
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  };
+
+  const handleRoomDeleteClick = () => {
+    confirmRoomDelete(t, room.name, handleRoomDelete);
+  };
+
   const handleInvitationModalClose = wasNewInvitationCreated => {
     setIsRoomInvitationModalOpen(false);
 
@@ -33,6 +56,17 @@ export default function Room({ PageTemplate, initialState }) {
     }
     window.location.reload();
   };
+
+  const headerActions = [];
+  if (isRoomOwner) {
+    headerActions.push({
+      key: 'delete',
+      type: 'primary',
+      icon: DeleteOutlined,
+      text: t('deleteRoomButton'),
+      handleClick: handleRoomDeleteClick
+    });
+  }
 
   const renderLesson = (lesson, index) => {
     const urlParts = ['lessons', encodeURIComponent(lesson._id)];
@@ -99,7 +133,7 @@ export default function Room({ PageTemplate, initialState }) {
   );
 
   return (
-    <PageTemplate>
+    <PageTemplate headerActions={headerActions}>
       <div className="Room">
         <h1> {t('pageNames:room', { roomName: room.name })}</h1>
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">

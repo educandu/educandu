@@ -5,6 +5,7 @@ import httpMocks from 'node-mocks-http';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import uniqueId from '../utils/unique-id.js';
 
 const { NotFound, Forbidden } = httpErrors;
 
@@ -17,6 +18,7 @@ describe('room-controller', () => {
   let serverConfig;
   let clientDataMapper;
   let pageRenderer;
+  let userService;
   let user;
   let req;
   let res;
@@ -28,13 +30,15 @@ describe('room-controller', () => {
       confirmInvitation: sandbox.stub(),
       getRoomById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub(),
-      getRoomInvitations: sandbox.stub()
+      getRoomInvitations: sandbox.stub(),
+      deleteRoom: sandbox.stub()
     };
     lessonService = {
       getLessons: sandbox.stub()
     };
     mailService = {
-      sendRoomInvitation: sandbox.stub()
+      sendRoomInvitation: sandbox.stub(),
+      sendRoomDeletionNotification: sandbox.stub()
     };
     user = {
       username: 'dagobert-the-third',
@@ -52,7 +56,11 @@ describe('room-controller', () => {
       sendPage: sandbox.stub()
     };
 
-    sut = new RoomController(serverConfig, roomService, lessonService, mailService, clientDataMapper, pageRenderer);
+    userService = {
+      getUsersByIds: sandbox.stub()
+    };
+
+    sut = new RoomController(serverConfig, roomService, userService, lessonService, mailService, clientDataMapper, pageRenderer);
   });
 
   afterEach(() => {
@@ -391,4 +399,45 @@ describe('room-controller', () => {
       });
     });
   });
+
+  describe('handleDeleteRoom', () => {
+    const roomId = uniqueId.create();
+    const members = [{ userId: uniqueId.create() }, { userId: uniqueId.create() }];
+    const roomName = 'my room';
+    const users = [{ email: 'email1' }, { email: 'email2' }];
+    beforeEach(done => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'educandu.dev' },
+        params: { roomId }
+      });
+      req.user = user;
+
+      res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+      res.on('end', done);
+
+      roomService.deleteRoom.resolves({ members, name: roomName });
+      userService.getUsersByIds.resolves(users);
+
+      sut.handleDeleteRoom(req, res);
+    });
+
+    it('should call delete room on roomService', () => {
+      sinon.assert.calledWith(roomService.deleteRoom, roomId, user);
+    });
+
+    it('should call getUsersByIds with the right ids', () => {
+      sinon.assert.calledWith(userService.getUsersByIds, members.map(({ userId }) => userId));
+    });
+
+    it('should call sendRoomDeletionNotification with the right emails', () => {
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotification, { email: 'email1', roomName, ownerName: user.username });
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotification, { email: 'email2', roomName, ownerName: user.username });
+    });
+
+    it('should return status 200 when all goes well', () => {
+      expect(res.statusCode).toBe(200);
+    });
+  });
+
 });
