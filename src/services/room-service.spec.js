@@ -373,15 +373,19 @@ describe('room-service', () => {
       const cdnNameObject2 = `/rooms/${roomId}/object2`;
 
       beforeEach(async () => {
-        cdn.listObjects = sandbox.stub().resolves([
+        sandbox.stub(cdn, 'listObjects').resolves([
           { name: cdnNameObject1 },
           { name: cdnNameObject2 }
         ]);
 
-        cdn.deleteObjects = sandbox.stub();
+        sandbox.stub(cdn, 'deleteObjects');
         invitationDetails = await sut.createOrUpdateInvitation({ roomId, email: otherUser.email, user: myUser });
 
         await sut.deleteRoom(roomId, myUser);
+      });
+
+      afterEach(() => {
+        sandbox.restore();
       });
 
       it('should delete the room', async () => {
