@@ -7,7 +7,6 @@ import RoomStore from '../stores/room-store.js';
 import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
-import { afterEach } from '@jest/globals';
 
 const { BadRequest, NotFound } = httpErrors;
 
