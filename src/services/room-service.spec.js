@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
-import UserService from './user-service.js';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
@@ -8,6 +7,7 @@ import RoomStore from '../stores/room-store.js';
 import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
+import { afterEach } from '@jest/globals';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -20,18 +20,13 @@ describe('room-service', () => {
   let roomStore;
   let roomLockStore;
   let container;
-  let userService;
 
   const sandbox = sinon.createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-
-    myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
-    otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
     roomStore = container.get(RoomStore);
     roomLockStore = container.get(RoomLockStore);
-    userService = container.get(UserService);
 
     sut = container.get(RoomService);
     db = container.get(Database);
@@ -39,6 +34,11 @@ describe('room-service', () => {
 
   afterAll(async () => {
     await destroyTestEnvironment(container);
+  });
+
+  beforeEach(async () => {
+    myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
+    otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
   });
 
   afterEach(async () => {
@@ -173,8 +173,6 @@ describe('room-service', () => {
     let myPrivateRoom = null;
 
     beforeEach(async () => {
-      userService.getUserById = sandbox.stub().resolves(myUser);
-
       [myPublicRoom, myPrivateRoom] = await Promise.all([
         await sut.createRoom({ name: 'my public room', access: ROOM_ACCESS_LEVEL.public, user: myUser }),
         await sut.createRoom({ name: 'my private room', access: ROOM_ACCESS_LEVEL.private, user: myUser })
@@ -190,7 +188,7 @@ describe('room-service', () => {
       expect(invitation.token).toBeDefined();
     });
 
-    it('should throw a bad request if the owner invites herself', () => {
+    it('should throw a bad request if the owner invites themselves', () => {
       expect(() => sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser })).rejects.toThrow(BadRequest);
     });
 
@@ -277,9 +275,14 @@ describe('room-service', () => {
       const lock = { key: 'room' };
 
       beforeEach(async () => {
-        roomLockStore.takeLock = sandbox.stub().resolves(lock);
-        roomLockStore.releaseLock = sandbox.stub().resolves();
+        sandbox.stub(roomLockStore, 'takeLock').resolves(lock);
+        sandbox.stub(roomLockStore, 'releaseLock').resolves();
+
         await sut.confirmInvitation({ token: invitation.token, user: otherUser });
+      });
+
+      afterEach(() => {
+        sandbox.restore();
       });
 
       it('should take a lock on the room', () => {
