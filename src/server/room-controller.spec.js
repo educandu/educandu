@@ -13,6 +13,7 @@ describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
 
   let roomService;
+  let lessonService;
   let mailService;
   let serverConfig;
   let clientDataMapper;
@@ -31,6 +32,9 @@ describe('room-controller', () => {
       isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
       deleteRoom: sandbox.stub()
+    };
+    lessonService = {
+      getLessons: sandbox.stub()
     };
     mailService = {
       sendRoomInvitation: sandbox.stub(),
@@ -56,7 +60,7 @@ describe('room-controller', () => {
       getUsersByIds: sandbox.stub()
     };
 
-    sut = new RoomController(serverConfig, roomService, userService, mailService, clientDataMapper, pageRenderer);
+    sut = new RoomController(serverConfig, roomService, userService, lessonService, mailService, clientDataMapper, pageRenderer);
   });
 
   afterEach(() => {
@@ -194,10 +198,12 @@ describe('room-controller', () => {
         };
 
         const invitations = [{ email: 'lae@bucalae.com', sentOn: new Date() }];
+        const lessons = [];
 
         beforeEach(async () => {
           roomService.getRoomInvitations.resolves(invitations);
           roomService.isRoomOwnerOrMember.resolves(true);
+          lessonService.getLessons.resolves(lessons);
 
           await sut.handleGetRoomPage(request, {});
         });
@@ -214,8 +220,12 @@ describe('room-controller', () => {
           sinon.assert.calledWith(roomService.getRoomInvitations, 'roomId');
         });
 
+        it('should call getLessons', () => {
+          sinon.assert.calledWith(lessonService.getLessons, 'roomId');
+        });
+
         it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations });
+          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations, lessons });
         });
       });
 
@@ -229,8 +239,12 @@ describe('room-controller', () => {
           }
         };
 
+        const lessons = [];
+
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
+          lessonService.getLessons.resolves(lessons);
+
           await sut.handleGetRoomPage(request, {});
         });
 
@@ -247,7 +261,7 @@ describe('room-controller', () => {
         });
 
         it('should call pageRenderer with the right parameters', () => {
-          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: [] });
+          sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: [], lessons });
         });
       });
 
@@ -261,8 +275,11 @@ describe('room-controller', () => {
           }
         };
 
+        const lessons = [];
+
         beforeEach(() => {
           roomService.isRoomOwnerOrMember.resolves(false);
+          lessonService.getLessons.resolves(lessons);
         });
 
         it('should throw a forbidden exception', () => {
@@ -282,8 +299,11 @@ describe('room-controller', () => {
       };
 
       const publicRoom = { ...privateRoom, access: ROOM_ACCESS_LEVEL.public };
+      const lessons = [];
+
       beforeEach(async () => {
         roomService.getRoomById.resolves(publicRoom);
+        lessonService.getLessons.resolves(lessons);
         await sut.handleGetRoomPage(request, {});
       });
 
@@ -292,7 +312,7 @@ describe('room-controller', () => {
       });
 
       it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: [] });
+        sinon.assert.calledWith(pageRenderer.sendPage, request, {}, PAGE_NAME.room, { room: privateRoom, invitations: [], lessons });
       });
     });
 

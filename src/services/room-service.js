@@ -5,6 +5,7 @@ import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
+import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
@@ -23,10 +24,11 @@ const roomInvitationProjection = {
 };
 
 export default class RoomService {
-  static get inject() { return [RoomStore, RoomInvitationStore, UserService, Cdn, TransactionRunner]; }
+  static get inject() { return [RoomStore, RoomLockStore, RoomInvitationStore, UserService, Cdn, TransactionRunner]; }
 
-  constructor(roomStore, roomInvitationStore, userService, cdn, transactionRunner) {
+  constructor(roomStore, roomLockStore, roomInvitationStore, userService, cdn, transactionRunner) {
     this.roomStore = roomStore;
+    this.roomLockStore = roomLockStore;
     this.roomInvitationStore = roomInvitationStore;
     this.userService = userService;
     this.cdn = cdn;
@@ -93,6 +95,10 @@ export default class RoomService {
 
     const owner = await this.userService.getUserById(room.owner);
 
+    if (owner.email.toLowerCase() === lowerCasedEmail) {
+      throw new BadRequest('Invited user is the same as room owner');
+    }
+
     let invitation = await this.roomInvitationStore.findOne({ roomId, email: lowerCasedEmail });
     if (!invitation) {
       invitation = {
@@ -142,13 +148,28 @@ export default class RoomService {
         joinedOn: new Date()
       };
 
-      await this.roomStore.updateOne(
-        { _id: invitation.roomId },
-        { $push: { members: newMember } },
-        { session }
-      );
+      let lock;
 
-      await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
+      try {
+        lock = await this.roomLockStore.takeLock(invitation.roomId);
+
+        const roomContainingNewMember = await this.roomStore.findOne(
+          { '_id': invitation.roomId, 'members.userId': newMember.userId },
+          { session }
+        );
+
+        if (!roomContainingNewMember) {
+          await this.roomStore.updateOne(
+            { _id: invitation.roomId },
+            { $push: { members: newMember } },
+            { session }
+          );
+        }
+
+        await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
+      } finally {
+        this.roomLockStore.releaseLock(lock);
+      }
     });
   }
 

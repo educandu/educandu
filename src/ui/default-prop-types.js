@@ -250,3 +250,9 @@ export const invitationShape = PropTypes.shape({
   sentOn: PropTypes.instanceOf(Date).isRequired,
   expires: PropTypes.instanceOf(Date).isRequired
 });
+
+export const lessonShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string
+});
