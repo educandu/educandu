@@ -57,7 +57,7 @@
       "areYouSure": "Sind Sie sicher?",
       "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
-      "deleteRoomConfirmation": "Möchten Sie der Raum \"{roomName}\" wirklich löschen?",
+      "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
       "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",

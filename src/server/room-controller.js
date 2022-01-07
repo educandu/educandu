@@ -146,7 +146,7 @@ export default class RoomController {
 
     router.delete(
       '/api/v1/rooms/:roomId',
-      [needsPermission(permissions.CREATE_ROOMS), validateParams(deleteRoomParamsSchema)],
+      [needsPermission(permissions.DELETE_ROOMS), validateParams(deleteRoomParamsSchema)],
       (req, res) => this.handleDeleteRoom(req, res)
     );
 

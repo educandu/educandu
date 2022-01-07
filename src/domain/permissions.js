@@ -16,6 +16,7 @@ const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
 const MANAGE_EXPORT = 'manage-export';
 const CREATE_ROOMS = 'create-rooms';
+const DELETE_ROOMS = 'delete-rooms';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
 const VIEW_ROOMS = 'view-rooms';
 const EDIT_ROOMS = 'edit-rooms';
@@ -37,6 +38,7 @@ const rolesForPermission = {
   [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
   [MANAGE_IMPORT]: [ROLE.admin],
   [CREATE_ROOMS]: [ROLE.admin, ROLE.user],
+  [DELETE_ROOMS]: [ROLE.admin, ROLE.user],
   [EDIT_ROOMS]: [ROLE.admin, ROLE.user],
   [VIEW_ROOMS]: [ROLE.admin, ROLE.user],
   [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user],
@@ -66,6 +68,7 @@ export default {
   MANAGE_EXPORT,
   DELETE_CDN_FILE,
   CREATE_ROOMS,
+  DELETE_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
   VIEW_ROOMS,
   EDIT_ROOMS,
