@@ -3,18 +3,22 @@ import React, { useState } from 'react';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../language-context.js';
-import { Row, Space, List, Collapse, Button } from 'antd';
+import { Space, List, Collapse, Button, Tabs } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
-import { invitationShape, roomShape } from '../../ui/default-prop-types.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
+
+const { TabPane } = Tabs;
 
 export default function Room({ PageTemplate, initialState }) {
+  const user = useUser();
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
-  const { room, invitations } = initialState;
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
-  const user = useUser();
+
+  const { room, invitations, lessons } = initialState;
   const isRoomOwner = user._id === room.owner.key;
+  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
 
   const handleOpenInvitationModalClick = event => {
     setIsRoomInvitationModalOpen(true);
@@ -30,24 +34,37 @@ export default function Room({ PageTemplate, initialState }) {
     window.location.reload();
   };
 
-  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
-  const shouldDisplayInvitations = isPrivateRoom && isRoomOwner;
+  const renderLesson = (lesson, index) => {
+    const urlParts = ['lessons', encodeURIComponent(lesson._id)];
+    if (lesson.slug) {
+      urlParts.push(encodeURIComponent(lesson.slug));
+    }
+    const url = urlParts.join('/');
 
-  const displayMembers = (
+    const hightlightedLessonIndex = 1;
+
+    return (
+      <div className="Room-lesson" key={lesson._id}>
+        {index === hightlightedLessonIndex && (<hr />)}
+        <div className="Room-lessonInfo">
+          <span className="Room-lessonWeek">{index === hightlightedLessonIndex && t('thisWeek')}</span>
+          <a rel="noopener noreferrer" target="_blank" href={url}>{lesson.title}</a>
+        </div>
+        {index === hightlightedLessonIndex && (<hr />)}
+      </div>
+    );
+  };
+
+  const renderRoomMembers = () => (
     <Collapse className="Room-sectionCollapse">
       <Collapse.Panel header={t('roomMembersHeader', { count: room.members.length })} >
         <List
           dataSource={room.members}
           renderItem={member => (
-            <List.Item>
+            <List.Item className="Room-sectionCollapseRow">
               <Space>
-                <Space>
-                  <span>{formatDate(member.joinedOn)}</span>
-                </Space>
-
-                <Space>
-                  <span>{member.username}</span>
-                </Space>
+                <span>{formatDate(member.joinedOn)}</span>
+                <span>{member.username}</span>
               </Space>
             </List.Item>)}
           />
@@ -55,7 +72,7 @@ export default function Room({ PageTemplate, initialState }) {
     </Collapse>
   );
 
-  const displayInvitations = (
+  const renderRoomInvitations = () => (
     <Collapse className="Room-sectionCollapse">
       <Collapse.Panel
         header={t('invitationsHeader', { count: invitations.length })}
@@ -64,19 +81,16 @@ export default function Room({ PageTemplate, initialState }) {
         <List
           dataSource={invitations}
           renderItem={invitation => (
-            <List.Item className="Room-invitationRow">
+            <List.Item className="Room-sectionCollapseRow">
               <Space>
                 <span>{formatDate(invitation.sentOn)}</span>
-                <Space>
-                  <span>{invitation.email}</span>
-                </Space>
+                <span>{invitation.email}</span>
               </Space>
 
               <Space>
                 <span>{t('expires')}:</span>
                 <span>{formatDate(invitation.expires)}</span>
               </Space>
-
             </List.Item>
           )}
           />
@@ -86,16 +100,23 @@ export default function Room({ PageTemplate, initialState }) {
 
   return (
     <PageTemplate>
-      <h1> {t('pageNames:room', { roomName: room.name })}</h1>
-      <Row>
-        <Space>
-          <span>{t('ownerUsername')}:</span>
-          <span> {room.owner.username}</span>
-        </Space>
-      </Row>
-      { isPrivateRoom && displayMembers }
-      { shouldDisplayInvitations && displayInvitations }
-      <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
+      <div className="Room">
+        <h1> {t('pageNames:room', { roomName: room.name })}</h1>
+        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
+          <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
+            {lessons.map(renderLesson)}
+          </TabPane>
+
+          <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
+            <span>{t('roomOwner')}: {room.owner.username}</span>
+            {isPrivateRoom && renderRoomMembers()}
+            {isPrivateRoom && isRoomOwner && renderRoomInvitations()}
+            <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
+          </TabPane>
+
+          {isRoomOwner && (<TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3" />)}
+        </Tabs>
+      </div>
     </PageTemplate>);
 }
 
@@ -103,6 +124,7 @@ Room.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
-    invitations: PropTypes.arrayOf(invitationShape).isRequired
+    invitations: PropTypes.arrayOf(invitationShape).isRequired,
+    lessons: PropTypes.arrayOf(lessonShape).isRequired
   }).isRequired
 };
