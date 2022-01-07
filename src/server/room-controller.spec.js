@@ -235,7 +235,6 @@ describe('room-controller', () => {
 
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
-          roomService.isRoomOwnerOrMember.resolves(true);
           lessonService.getLessons.resolves(lessons);
 
           await sut.handleGetRoomPage(request, {});
