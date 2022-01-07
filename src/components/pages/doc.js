@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import urls from '../../utils/urls.js';
-import React, { useState } from 'react';
 import Restricted from '../restricted.js';
 import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
 import { Button, Slider, message } from 'antd';
 import CreditsFooter from '../credits-footer.js';
+import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { Trans, useTranslation } from 'react-i18next';
@@ -24,6 +24,9 @@ import { PaperClipOutlined, ReloadOutlined, EditOutlined, SlidersOutlined, FormO
 const logger = new Logger(import.meta.url);
 
 function Doc({ initialState, PageTemplate }) {
+  const globalAlerts = useGlobalAlerts();
+  const [alerts, setAlerts] = useState([]);
+
   const { t } = useTranslation('doc');
   const { formatDate } = useDateFormat();
 
@@ -199,27 +202,32 @@ function Doc({ initialState, PageTemplate }) {
     </div>
   );
 
-  const alerts = useGlobalAlerts();
-  if (state.currentDocOrRevision.archived) {
-    alerts.push({
-      message: t('common:archivedAlert'),
-      type: ALERT_TYPE.warning,
-      showInFullScreen: false
-    });
-  }
+  useEffect(() => {
+    const newAlerts = [...globalAlerts];
 
-  if (isExternalDocument) {
-    alerts.push({
-      message:
-        (<Trans
-          t={t}
-          i18nKey="common:externalDocumentWarning"
-          components={[<a key="external-document-warning" href={state.currentDocOrRevision.originUrl} />]}
-          />),
-      type: 'warning',
-      showInFullScreen: false
-    });
-  }
+    if (state.currentDocOrRevision.archived) {
+      newAlerts.push({
+        message: t('common:archivedAlert'),
+        type: ALERT_TYPE.warning,
+        showInFullScreen: false
+      });
+    }
+
+    if (isExternalDocument) {
+      newAlerts.push({
+        message:
+          (<Trans
+            t={t}
+            i18nKey="common:externalDocumentWarning"
+            components={[<a key="external-document-warning" href={state.currentDocOrRevision.originUrl} />]}
+            />),
+        type: 'warning',
+        showInFullScreen: false
+      });
+    }
+
+    setAlerts(newAlerts);
+  }, [globalAlerts, state.currentDocOrRevision, isExternalDocument, t]);
 
   const headerActions = [];
   if (!isEditingDisabled) {

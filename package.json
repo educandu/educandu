@@ -109,6 +109,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@educandu/rooms-auth-lambda": "^1.0.1",
     "@jest/globals": "^27.3.1",
     "@rauschma/stringio": "^1.4.0",
     "axios-retry": "^3.2.4",

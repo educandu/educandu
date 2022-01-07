@@ -4,6 +4,7 @@ import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
+import UserService from '../services/user-service.js';
 import RoomService from '../services/room-service.js';
 import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
@@ -16,6 +17,7 @@ import { validateBody, validateParams } from '../domain/validation-middleware.js
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
+  deleteRoomParamsSchema,
   postRoomInvitationBodySchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
@@ -26,11 +28,12 @@ const jsonParser = express.json();
 const { NotFound, Forbidden } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, RoomService, UserService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, roomService, lessonService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, roomService, userService, lessonService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.roomService = roomService;
+    this.userService = userService;
     this.lessonService = lessonService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
@@ -53,6 +56,23 @@ export default class RoomController {
     const newRoom = await this.roomService.createRoom({ name, access, user });
 
     return res.status(201).send(newRoom);
+  }
+
+  async handleDeleteRoom(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+
+    const { members, name: roomName } = await this.roomService.deleteRoom(roomId, user);
+
+    const userIds = members.map(({ userId }) => userId);
+
+    const users = await this.userService.getUsersByIds(userIds);
+
+    await Promise.all(users.map(({ email }) => {
+      return this.mailService.sendRoomDeletionNotification({ email, roomName, ownerName: user.username });
+    }));
+
+    return res.status(200).end();
   }
 
   async handlePostRoomInvitation(req, res) {
@@ -106,14 +126,18 @@ export default class RoomController {
 
   async handleAuthorizeResourcesAccess(req, res) {
     const { roomId } = req.params;
-    const { _id: userId } = req.user;
+
+    const userId = req.user?._id;
+    if (!userId) {
+      return res.status(401).end();
+    }
 
     const result = await this.roomService.isRoomOwnerOrMember(roomId, userId);
     if (!result) {
-      throw new Forbidden();
+      return res.status(403).end();
     }
 
-    return res.end();
+    return res.status(200).end();
   }
 
   registerApi(router) {
@@ -123,19 +147,25 @@ export default class RoomController {
 
     router.post(
       '/api/v1/rooms',
-      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
       (req, res) => this.handlePostRoom(req, res)
+    );
+
+    router.delete(
+      '/api/v1/rooms/:roomId',
+      [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomParamsSchema)],
+      (req, res) => this.handleDeleteRoom(req, res)
     );
 
     router.post(
       '/api/v1/room-invitations',
-      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
       (req, res) => this.handlePostRoomInvitation(req, res)
     );
 
     router.post(
       '/api/v1/room-invitations/confirm',
-      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
       (req, res) => this.handlePostRoomInvitationConfirm(req, res)
     );
 
@@ -153,7 +183,7 @@ export default class RoomController {
 
     router.get(
       '/rooms/:roomId',
-      [needsPermission(permissions.VIEW_ROOMS), validateParams(getRoomParamsSchema)],
+      [needsPermission(permissions.OWN_ROOMS), validateParams(getRoomParamsSchema)],
       (req, res) => this.handleGetRoomPage(req, res)
     );
 

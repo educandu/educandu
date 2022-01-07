@@ -24,6 +24,10 @@ export const getRoomParamsSchema = joi.object({
   roomId: joi.string().required()
 });
 
+export const deleteRoomParamsSchema = joi.object({
+  roomId: joi.string().required()
+});
+
 export const getAuthorizeResourcesAccessParamsSchema = joi.object({
   roomId: joi.string().required()
 });

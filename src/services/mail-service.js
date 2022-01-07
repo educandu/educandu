@@ -113,6 +113,36 @@ class MailService {
     return this._sendMail(message);
   }
 
+  sendRoomDeletionNotification({ roomName, ownerName, email }) {
+    logger.info(`Sending delete notification to ${email}`);
+
+    const germanText
+      = 'Hallo!\n\n'
+      + `Der Benutzer ${ownerName} hat den Raum ${roomName} gelöscht.\n`;
+
+    const germanHtml
+      = '<p>Hallo!<br/><br/>'
+      + `Der Benutzer <b>${ownerName}</b> hat den Raum <b>${roomName}</b> gelöscht.<br/>`;
+
+    const englishText
+      = 'Hello!\n\n'
+      + `User ${ownerName} has deleted the room ${roomName}.\n`;
+
+    const englishHtml
+      = '<p>Hello!<br/><br/>'
+      + `User <b>${ownerName}</b> has deleted the room <b>${roomName}</b>.<br/>`;
+
+    const message = {
+      from: this.emailSenderAddress,
+      to: email,
+      subject: 'Ein Raum, in dem Sie Mitglied waren, wurde gelöscht / A room you were a member of has been deleted',
+      text: `${germanText}\n\n${englishText}`,
+      html: `${germanHtml}\n${englishHtml}`
+    };
+
+    return this._sendMail(message);
+  }
+
   _sendMail(message) {
     logger.info(`Sending email with subject "${message.subject}"`);
     return this.transport.sendMail(message);

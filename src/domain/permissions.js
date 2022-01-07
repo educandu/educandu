@@ -15,10 +15,8 @@ const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
 const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
 const MANAGE_EXPORT = 'manage-export';
-const CREATE_ROOMS = 'create-rooms';
+const OWN_ROOMS = 'own-rooms';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
-const VIEW_ROOMS = 'view-rooms';
-const EDIT_ROOMS = 'edit-rooms';
 const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
 const REGENERATE_ALL_DOCS = 'regenerate-all-docs';
 
@@ -37,9 +35,7 @@ const rolesForPermission = {
   [RESTORE_DOC_REVISIONS]: [ROLE.admin],
   [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
   [MANAGE_IMPORT]: [ROLE.admin],
-  [CREATE_ROOMS]: [ROLE.admin, ROLE.user],
-  [EDIT_ROOMS]: [ROLE.admin, ROLE.user],
-  [VIEW_ROOMS]: [ROLE.admin, ROLE.user],
+  [OWN_ROOMS]: [ROLE.admin, ROLE.user],
   [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user],
   [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user],
   [REGENERATE_ALL_DOCS]: [ROLE.admin]
@@ -67,10 +63,8 @@ export default {
   MANAGE_IMPORT,
   MANAGE_EXPORT,
   DELETE_CDN_FILE,
-  CREATE_ROOMS,
+  OWN_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
-  VIEW_ROOMS,
-  EDIT_ROOMS,
   JOIN_PRIVATE_ROOMS,
   REGENERATE_ALL_DOCS
 };

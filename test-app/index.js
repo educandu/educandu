@@ -14,7 +14,7 @@ educandu({
   cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
   cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
   cdnBucketName: 'dev-educandu-cdn',
-  cdnRootUrl: 'http://localhost:9000/dev-educandu-cdn',
+  cdnRootUrl: 'http://localhost:10000',
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
   sessionCookieDomain: 'localhost',
   emailSenderAddress: 'educandu-test-app@test.com',
