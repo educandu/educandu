@@ -4,6 +4,7 @@ import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
+import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
@@ -16,16 +17,15 @@ describe('room-service', () => {
   let result;
   let otherUser;
   let roomStore;
+  let roomLockStore;
   let container;
 
   const sandbox = sinon.createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-
-    myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
-    otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
     roomStore = container.get(RoomStore);
+    roomLockStore = container.get(RoomLockStore);
 
     sut = container.get(RoomService);
     db = container.get(Database);
@@ -33,6 +33,11 @@ describe('room-service', () => {
 
   afterAll(async () => {
     await destroyTestEnvironment(container);
+  });
+
+  beforeEach(async () => {
+    myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
+    otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
   });
 
   afterEach(async () => {
@@ -173,9 +178,17 @@ describe('room-service', () => {
       ]);
     });
 
+    afterEach(() => {
+      sandbox.restore();
+    });
+
     it('should create a new invitation if it does not exist', async () => {
       const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
       expect(invitation.token).toBeDefined();
+    });
+
+    it('should throw a bad request if the owner invites themselves', () => {
+      expect(() => sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser })).rejects.toThrow(BadRequest);
     });
 
     it('should update an invitation if it already exists', async () => {
@@ -240,7 +253,6 @@ describe('room-service', () => {
   describe('confirmInvitation', () => {
     let testRoom = null;
     let invitation = null;
-
     beforeEach(async () => {
       testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
@@ -259,22 +271,70 @@ describe('room-service', () => {
     });
 
     describe('when user and token are valid', () => {
+      const lock = { key: 'room' };
+
       beforeEach(async () => {
+        sandbox.stub(roomLockStore, 'takeLock').resolves(lock);
+        sandbox.stub(roomLockStore, 'releaseLock').resolves();
+
         await sut.confirmInvitation({ token: invitation.token, user: otherUser });
+      });
+
+      afterEach(() => {
+        sandbox.restore();
+      });
+
+      it('should take a lock on the room', () => {
+        sinon.assert.calledWith(roomLockStore.takeLock, invitation.roomId);
+      });
+
+      it('should release the lock on the room', () => {
+        sinon.assert.calledWith(roomLockStore.releaseLock, lock);
       });
 
       it('should add the user as a room member if user and token are valid', async () => {
         const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
-        expect(roomFromDb.members).toHaveLength(1);
-        expect(roomFromDb.members[0]).toEqual({
-          userId: otherUser._id,
-          joinedOn: expect.any(Date)
-        });
+
+        expect(roomFromDb.members).toEqual([
+          {
+            userId: otherUser._id,
+            joinedOn: expect.any(Date)
+          }
+        ]);
       });
 
       it('should remove the invitation from the database', async () => {
         const invitationFromDb = await db.roomInvitations.findOne({ _id: invitation._id });
         expect(invitationFromDb).toBeNull();
+      });
+
+      describe('and the user gets invited a second time', () => {
+        let existingMemberJoinedOn;
+
+        beforeEach(async () => {
+          ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
+
+          const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
+          existingMemberJoinedOn = roomFromDb.members[0].joinedOn;
+
+          await sut.confirmInvitation({ token: invitation.token, user: otherUser });
+        });
+
+        it('should not add the user user a second time', async () => {
+          const roomFromDb = await db.rooms.findOne({ _id: testRoom._id });
+
+          expect(roomFromDb.members).toEqual([
+            {
+              userId: otherUser._id,
+              joinedOn: existingMemberJoinedOn
+            }
+          ]);
+        });
+
+        it('should remove the invitation from the database', async () => {
+          const invitationFromDb = await db.roomInvitations.findOne({ _id: invitation._id });
+          expect(invitationFromDb).toBeNull();
+        });
       });
     });
   });

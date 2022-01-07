@@ -15,6 +15,7 @@ import batchesSpec from './collection-specs/batches.js';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
+import roomLocksSpec from './collection-specs/room-locks.js';
 import taskLocksSpec from './collection-specs/task-locks.js';
 import batchLocksSpec from './collection-specs/batch-locks.js';
 import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
@@ -46,6 +47,7 @@ const collectionSpecs = [
   passwordResetRequestsSpec,
   roomInvitationsSpec,
   roomsSpec,
+  roomLocksSpec,
   lessonsSpec
 ];
 
