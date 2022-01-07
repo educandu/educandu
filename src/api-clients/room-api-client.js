@@ -40,7 +40,7 @@ class RoomApiClient {
   deleteRoom(roomId) {
     return this.httpClient
       .delete(
-        `/api/v1/rooms/${roomId}`,
+        `/api/v1/rooms/${encodeURIComponent(roomId)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
