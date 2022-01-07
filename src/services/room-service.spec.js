@@ -422,7 +422,7 @@ describe('room-service', () => {
       });
     });
 
-    describe('when another another user except the owner tries to delete', () => {
+    describe('when another user except the owner tries to delete', () => {
       it('should throw a forbidden exception', () => {
         expect(() => sut.deleteRoom(roomId, otherUser)).rejects.toThrow(Forbidden);
       });
