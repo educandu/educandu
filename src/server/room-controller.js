@@ -104,7 +104,7 @@ export default class RoomController {
   async handleAuthorizeResourcesAccess(req, res) {
     const { roomId } = req.params;
 
-    const userId = req.user?._id || null;
+    const userId = req.user?._id;
     if (!userId) {
       return res.status(401).end();
     }
