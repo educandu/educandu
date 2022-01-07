@@ -640,7 +640,8 @@
       "invitationsHeader": "Outstanding invitations ({count})",
       "lessonsTabTitle": "Lessons",
       "membersTabTitle": "Room members",
-      "settingsTabTitle": "Settings"
+      "settingsTabTitle": "Settings",
+      "thisWeek": "This week"
     }
   },
   {
@@ -654,7 +655,8 @@
       "invitationsHeader": "Ausstehende Einladungen ({count})",
       "lessonsTabTitle": "Unterrichte",
       "membersTabTitle": "Raummitglieder",
-      "settingsTabTitle": "Einstellungen"
+      "settingsTabTitle": "Einstellungen",
+      "thisWeek": "Diese Woche"
     }
   },
   {

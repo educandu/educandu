@@ -34,14 +34,24 @@ export default function Room({ PageTemplate, initialState }) {
     window.location.reload();
   };
 
-  const renderLesson = lesson => {
+  const renderLesson = (lesson, index) => {
     const urlParts = ['lessons', encodeURIComponent(lesson._id)];
     if (lesson.slug) {
       urlParts.push(encodeURIComponent(lesson.slug));
     }
     const url = urlParts.join('/');
+
+    const hightlightedLessonIndex = 1;
+
     return (
-      <a className="Room-lesson" key={lesson._id} rel="noopener noreferrer" target="_blank" href={url}>{lesson.title}</a>
+      <div className="Room-lesson" key={lesson._id}>
+        {index === hightlightedLessonIndex && (<hr />)}
+        <div className="Room-lessonInfo">
+          <span className="Room-lessonWeek">{index === hightlightedLessonIndex && t('thisWeek')}</span>
+          <a rel="noopener noreferrer" target="_blank" href={url}>{lesson.title}</a>
+        </div>
+        {index === hightlightedLessonIndex && (<hr />)}
+      </div>
     );
   };
 
