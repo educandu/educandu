@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { Menu, Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +7,7 @@ import uniqueId from '../../utils/unique-id.js';
 import SectionEditor from '../section-editor.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import errorHelper from '../../ui/error-helper.js';
+import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
 import { ALERT_TYPE } from '../../domain/constants.js';
 import InfoFactory from '../../plugins/info-factory.js';
@@ -49,7 +49,9 @@ const removeKeyIfExists = (arr, key) => {
 };
 
 function EditDoc({ initialState, PageTemplate }) {
-  const alerts = useGlobalAlerts();
+  const globalAlerts = useGlobalAlerts();
+  const [alerts, setAlerts] = useState([]);
+
   const { t } = useTranslation('editDoc');
   const infoFactory = useService(InfoFactory);
   const documentApiClient = useService(DocumentApiClient);
@@ -333,13 +335,19 @@ function EditDoc({ initialState, PageTemplate }) {
     handleClick: handleCancelClick
   });
 
-  if (proposedSectionKeys.length) {
-    alerts.push({
-      message: t('proposedSectionsAlert'),
-      type: ALERT_TYPE.info,
-      showInFullScreen: false
-    });
-  }
+  useEffect(() => {
+    const newAlerts = [...globalAlerts];
+
+    if (initialState.proposedSections?.length) {
+      newAlerts.push({
+        message: t('proposedSectionsAlert'),
+        type: ALERT_TYPE.info,
+        showInFullScreen: false
+      });
+    }
+
+    setAlerts(newAlerts);
+  }, [globalAlerts, initialState.proposedSections, t]);
 
   return (
     <PageTemplate headerActions={headerActions} alerts={alerts}>
