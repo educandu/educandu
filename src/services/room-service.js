@@ -151,7 +151,11 @@ export default class RoomService {
       try {
         lock = await this.roomLockStore.takeLock(invitation.roomId);
 
-        const roomContainingNewMember = await this.roomStore.findOne({ '_id': invitation.roomId, 'members.userId': newMember.userId });
+        const roomContainingNewMember = await this.roomStore.findOne(
+          { '_id': invitation.roomId, 'members.userId': newMember.userId },
+          { session }
+        );
+
         if (!roomContainingNewMember) {
           await this.roomStore.updateOne(
             { _id: invitation.roomId },

@@ -288,7 +288,7 @@ describe('room-service', () => {
         sinon.assert.calledWith(roomLockStore.takeLock, invitation.roomId);
       });
 
-      it('should release thelock on the room', () => {
+      it('should release the lock on the room', () => {
         sinon.assert.calledWith(roomLockStore.releaseLock, lock);
       });
 
