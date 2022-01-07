@@ -247,6 +247,6 @@ export const roomShape = PropTypes.shape({
 
 export const invitationShape = PropTypes.shape({
   email: PropTypes.string.isRequired,
-  sentOn: PropTypes.string.isRequired,
-  expires: PropTypes.string.isRequired
+  sentOn: PropTypes.instanceOf(Date).isRequired,
+  expires: PropTypes.instanceOf(Date).isRequired
 });
