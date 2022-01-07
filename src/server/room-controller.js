@@ -140,25 +140,25 @@ export default class RoomController {
 
     router.post(
       '/api/v1/rooms',
-      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
       (req, res) => this.handlePostRoom(req, res)
     );
 
     router.delete(
       '/api/v1/rooms/:roomId',
-      [needsPermission(permissions.DELETE_ROOMS), validateParams(deleteRoomParamsSchema)],
+      [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomParamsSchema)],
       (req, res) => this.handleDeleteRoom(req, res)
     );
 
     router.post(
       '/api/v1/room-invitations',
-      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
       (req, res) => this.handlePostRoomInvitation(req, res)
     );
 
     router.post(
       '/api/v1/room-invitations/confirm',
-      [needsPermission(permissions.CREATE_ROOMS), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationConfirmBodySchema)],
       (req, res) => this.handlePostRoomInvitationConfirm(req, res)
     );
 
@@ -176,7 +176,7 @@ export default class RoomController {
 
     router.get(
       '/rooms/:roomId',
-      [needsPermission(permissions.VIEW_ROOMS), validateParams(getRoomParamsSchema)],
+      [needsPermission(permissions.OWN_ROOMS), validateParams(getRoomParamsSchema)],
       (req, res) => this.handleGetRoomPage(req, res)
     );
 
