@@ -8,14 +8,15 @@ import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { validateBody, validateQuery } from '../domain/validation-middleware.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   getRevisionsByKeyQuerySchema,
   createRevisionBodySchema,
   hardDeleteSectionBodySchema,
   hardDeleteDocumentBodySchema,
   restoreRevisionBodySchema,
-  getSearchDocumentsByTagsSchema
+  getSearchDocumentsByTagsSchema,
+  getDocumentParamsSchema
 } from '../domain/schemas/document-schemas.js';
 
 const { NotFound } = httpErrors;
@@ -55,33 +56,19 @@ class DocumentController {
   }
 
   async handleGetDocPage(req, res) {
-    const doc = await this.documentService.getDocumentByKey(req.params.docKey);
-    if (!doc) {
-      throw new NotFound();
-    }
-
-    if (!doc.slug) {
-      const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
-      return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
-    }
-
-    return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
-  }
-
-  async handleGetDocPageWithSlug(req, res) {
-    const docKey = req.params.docKey || '';
-    const slug = req.params[0];
+    const { user } = req;
+    const { docKey, docSlug } = req.params;
 
     const doc = await this.documentService.getDocumentByKey(docKey);
     if (!doc) {
       throw new NotFound();
     }
 
-    if (slug !== doc.slug) {
+    if (doc.slug && docSlug !== doc.slug) {
       return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
     }
 
-    const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, req.user);
+    const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, user);
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
   }
 
@@ -217,12 +204,14 @@ class DocumentController {
 
     router.get(
       '/docs/:docKey',
+      validateParams(getDocumentParamsSchema),
       (req, res) => this.handleGetDocPage(req, res)
     );
 
     router.get(
-      '/docs/:docKey/*',
-      (req, res) => this.handleGetDocPageWithSlug(req, res)
+      '/docs/:docKey/:docSlug',
+      validateParams(getDocumentParamsSchema),
+      (req, res) => this.handleGetDocPage(req, res)
     );
 
     router.get(
