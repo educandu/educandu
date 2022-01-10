@@ -70,7 +70,7 @@ function Doc({ initialState, PageTemplate }) {
       <div>
         <div>{t('revision')}: <b>{index + 1}</b></div>
         <div>{t('date')}: <b>{formatDate(revision.createdOn)}</b></div>
-        <div>{t('language')}: <b>{languageName}</b></div>
+        <div>{t('common:language')}: <b>{languageName}</b></div>
         <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
         <div>{t('id')}: <b>{revision._id}</b></div>
         {revision.restoredFrom && <div style={{ whiteSpace: 'nowrap' }}>{t('restoredFrom')}: <b>{revision.restoredFrom}</b></div>}

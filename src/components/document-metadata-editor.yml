@@ -1,12 +1,6 @@
 header:
   en: Metadata
   de: Metadaten
-language:
-  en: Language
-  de: Sprache
-slug:
-  en: URL path
-  de: URL-Pfad
 unassigned:
   en: unassigned
   de: nicht zugewiesen

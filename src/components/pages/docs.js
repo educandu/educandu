@@ -243,7 +243,7 @@ function Docs({ initialState, PageTemplate }) {
       sorter: by(x => x.title)
     },
     {
-      title: t('language'),
+      title: t('common:language'),
       dataIndex: 'language',
       key: 'language',
       render: renderLanguage,
@@ -319,11 +319,11 @@ function Docs({ initialState, PageTemplate }) {
             <FormItem label={t('common:title')}>
               <Input value={state.newDoc.title} onChange={handleNewDocTitleChange} />
             </FormItem>
-            <FormItem label={t('language')}>
+            <FormItem label={t('common:language')}>
               <LanguageSelect value={state.newDoc.language} onChange={handleNewDocLanguageChange} />
             </FormItem>
-            <FormItem label={t('slug')}>
-              <Input addonBefore={urls.articlesPrefix} value={state.newDoc.slug} onChange={handleNewDocSlugChange} />
+            <FormItem label={t('common:slug')}>
+              <Input value={state.newDoc.slug} onChange={handleNewDocSlugChange} />
             </FormItem>
           </Form>
         </Modal>

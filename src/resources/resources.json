@@ -127,16 +127,14 @@
     "namespace": "documentImportTable",
     "language": "en",
     "resources": {
-      "importType": "Import type",
-      "language": "Language"
+      "importType": "Import type"
     }
   },
   {
     "namespace": "documentImportTable",
     "language": "de",
     "resources": {
-      "importType": "Import-Typ",
-      "language": "Sprache"
+      "importType": "Import-Typ"
     }
   },
   {
@@ -144,8 +142,6 @@
     "language": "en",
     "resources": {
       "header": "Metadata",
-      "language": "Language",
-      "slug": "URL path",
       "unassigned": "unassigned",
       "tags": "Tags",
       "invalidTags": "At least one tag must be provided and all tags must be between 3 and 30 characters"
@@ -156,8 +152,6 @@
     "language": "de",
     "resources": {
       "header": "Metadaten",
-      "language": "Sprache",
-      "slug": "URL-Pfad",
       "unassigned": "nicht zugewiesen",
       "tags": "Tags",
       "invalidTags": "Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein"
@@ -326,7 +320,6 @@
       "revision": "Revision",
       "date": "Date",
       "user": "User",
-      "language": "Language",
       "id": "ID",
       "restoredFrom": "Restored from",
       "permalink": "Permalink",
@@ -342,7 +335,6 @@
       "revision": "Revision",
       "date": "Datum",
       "user": "Benutzer",
-      "language": "Sprache",
       "id": "ID",
       "restoredFrom": "Wiederhergestellt aus",
       "permalink": "Permalink",
@@ -358,8 +350,6 @@
       "defaultDocumentTitle": "New document",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
-      "language": "Language",
-      "slug": "URL path",
       "user": "User info",
       "actions": "Actions",
       "clone": "Clone",
@@ -378,8 +368,6 @@
       "defaultDocumentTitle": "Neues Dokument",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
-      "language": "Sprache",
-      "slug": "URL-Pfad",
       "user": "User-Info",
       "actions": "Aktionen",
       "clone": "Klonen",
@@ -677,8 +665,7 @@
     "resources": {
       "tags": "Tags",
       "refineSearch": "Filter by tags",
-      "searchResultPrefix": "Results for",
-      "language": "Language"
+      "searchResultPrefix": "Results for"
     }
   },
   {
@@ -687,8 +674,7 @@
     "resources": {
       "tags": "Tags",
       "refineSearch": "Nach Tags filtern",
-      "searchResultPrefix": "Ergebnisse für",
-      "language": "Sprache"
+      "searchResultPrefix": "Ergebnisse für"
     }
   },
   {
@@ -970,7 +956,6 @@
     "language": "en",
     "resources": {
       "rank": "Rank",
-      "language": "Language",
       "linkTitle": "Link title",
       "urlPath": "URL path",
       "unknown": "Unknown"
@@ -981,7 +966,6 @@
     "language": "de",
     "resources": {
       "rank": "Rang",
-      "language": "Sprache",
       "linkTitle": "Link-Titel",
       "urlPath": "URL-Pfad",
       "unknown": "Unbekannt"
@@ -1457,7 +1441,8 @@
       "access": "Access",
       "accessType_public": "public",
       "accessType_private": "private",
-      "title": "Title"
+      "title": "Title",
+      "slug": "URL path"
     }
   },
   {
@@ -1498,7 +1483,8 @@
       "access": "Zugang",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
-      "title": "Titel"
+      "title": "Titel",
+      "slug": "URL-Pfad"
     }
   },
   {

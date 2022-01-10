@@ -7,12 +7,6 @@ copyTitleSuffix:
 copySlugSuffix:
   en: copy
   de: kopie
-language:
-  en: Language
-  de: Sprache
-slug:
-  en: URL path
-  de: URL-Pfad
 user:
   en: User info
   de: User-Info

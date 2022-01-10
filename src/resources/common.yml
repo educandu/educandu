@@ -103,3 +103,6 @@ accessType_private:
 title:
   en: Title
   de: Titel
+slug:
+  en: URL path
+  de: URL-Pfad

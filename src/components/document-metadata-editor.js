@@ -93,9 +93,9 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
           <div>
             <span>{t('common:title')}:</span> <span>{documentRevision.title}</span>
             <br />
-            <span>{t('language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
+            <span>{t('common:language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
             <br />
-            <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl(documentRevision.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
+            <span>{t('common:slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl(documentRevision.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
             <br />
             <span>{t('tags')}</span>: {documentRevision.tags.map(item => (<Space key={item}><Tag key={item}>{item}</Tag></Space>))}
           </div>
@@ -105,11 +105,11 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
           <div>
             <span>{t('common:title')}:</span> <Input value={documentRevision.title} onChange={handleTitleChange} />
             <br />
-            <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={handleLanguageChange} />
+            <span>{t('common:language')}:</span> <LanguageSelect value={documentRevision.language} onChange={handleLanguageChange} />
             <br />
-            <span>{t('slug')}:</span>
+            <span>{t('common:slug')}:</span>
             <Form.Item validateStatus={slugValidationStatus} help={slugValidationStatus && t('common:invalidSlug')}>
-              <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={handleSlugChange} />
+              <Input value={documentRevision.slug || ''} onChange={handleSlugChange} />
             </Form.Item>
             <span>{t('tags')}</span>:
             <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>

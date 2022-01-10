@@ -87,7 +87,7 @@ function Search({ initialState, PageTemplate }) {
       render: renderUpdatedOn
     },
     {
-      title: t('language'),
+      title: t('common:language'),
       className: 'Search-searchTableLanguageColumn',
       dataIndex: 'language',
       render: renderLanguage
