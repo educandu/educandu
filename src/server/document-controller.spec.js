@@ -4,13 +4,11 @@ import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import DocumentController from './document-controller.js';
-import { setupTestUser, setupTestEnvironment, destroyTestEnvironment, pruneTestEnvironment } from '../test-helper.js';
 
 const { BadRequest } = httpErrors;
 
 describe('document-controller', () => {
   const sandbox = sinon.createSandbox();
-  let container;
 
   let documentService;
   let clientDataMapper;
@@ -21,15 +19,6 @@ describe('document-controller', () => {
   let res;
   let sut;
 
-  beforeAll(async () => {
-    container = await setupTestEnvironment();
-    user = await setupTestUser(container);
-  });
-
-  afterAll(async () => {
-    await destroyTestEnvironment(container);
-  });
-
   beforeEach(() => {
     documentService = {
       createRegenerateDocumentsBatch: sandbox.stub()
@@ -38,8 +27,7 @@ describe('document-controller', () => {
     sut = new DocumentController(documentService, clientDataMapper, pageRenderer);
   });
 
-  afterEach(async () => {
-    await pruneTestEnvironment(container);
+  afterEach(() => {
     sandbox.restore();
   });
 
