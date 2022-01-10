@@ -150,7 +150,7 @@ function Settings({ initialState, PageTemplate }) {
           className="SettingsPage-createRegenerateDocumentsBatchButton"
           onClick={handleCreateRegenerateDocumentsBatchClick}
           >
-          {t('createRegenerateDocumentsBatch')}
+          {t('createRegenerateDocumentsBatchButton')}
         </Button>
       </div>
     </PageTemplate>

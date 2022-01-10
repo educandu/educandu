@@ -19,6 +19,6 @@ defaultTagsHeader:
 createRegenerateDocumentsBatchHeader:
   en: Trigger document recreation
   de: Dokumentwiederherstellung auslösen
-createRegenerateDocumentsBatch:
+createRegenerateDocumentsBatchButton:
   en: Regenerate Documents
   de: Dokumente neu erstellen

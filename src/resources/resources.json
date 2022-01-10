@@ -696,7 +696,7 @@
       "footerLinksHeader": "Footer links",
       "defaultTagsHeader": "Default tags",
       "createRegenerateDocumentsBatchHeader": "Trigger document recreation",
-      "createRegenerateDocumentsBatch": "Regenerate Documents"
+      "createRegenerateDocumentsBatchButton": "Regenerate Documents"
     }
   },
   {
@@ -710,7 +710,7 @@
       "footerLinksHeader": "Footer-Links",
       "defaultTagsHeader": "Vordefinierte Tags",
       "createRegenerateDocumentsBatchHeader": "Dokumentwiederherstellung auslösen",
-      "createRegenerateDocumentsBatch": "Dokumente neu erstellen"
+      "createRegenerateDocumentsBatchButton": "Dokumente neu erstellen"
     }
   },
   {
