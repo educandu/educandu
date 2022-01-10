@@ -77,7 +77,7 @@ function Settings({ initialState, PageTemplate }) {
 
   const handleCreateDocumentRegenerationBatchClick = async () => {
     try {
-      await documentApiClient.createDocumentRegenerationBatch();
+      await documentApiClient.postDocumentRegenerationBatch();
     } catch (error) {
       handleApiError({ t, logger, error });
     }
