@@ -84,53 +84,50 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
   const defaultTags = settings?.defaultTags || [];
   const mergedTags = new Set([...defaultTags, ...documentRevision.tags, ...tagSuggestions]);
 
-  let docLanguage;
-  let componentToShow;
+  const renderComponent = () => {
+    const docLanguage = languageNameProvider.getData(language)[documentRevision.language];
 
-  switch (mode) {
-    case MODE_PREVIEW:
-      docLanguage = languageNameProvider.getData(language)[documentRevision.language];
-      componentToShow = (
-        <div>
-          <span>{t('title')}:</span> <span>{documentRevision.title}</span>
-          <br />
-          <span>{t('language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
-          <br />
-          <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl(documentRevision.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
-          <br />
-          <span>{t('tags')}</span>: {documentRevision.tags.map(item => (<Space key={item}><Tag key={item}>{item}</Tag></Space>))}
-        </div>
-      );
-      break;
-    case MODE_EDIT:
-      docLanguage = null;
-      componentToShow = (
-        <div>
-          <span>{t('title')}:</span> <Input value={documentRevision.title} onChange={handleTitleChange} />
-          <br />
-          <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={handleLanguageChange} />
-          <br />
-          <span>{t('slug')}:</span>
-          <Form.Item validateStatus={slugValidationStatus} help={slugValidationStatus && t('common:invalidSlug')}>
-            <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={handleSlugChange} />
-          </Form.Item>
-          <span>{t('tags')}</span>:
-          <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
-            <Select
-              mode="tags"
-              tokenSeparators={[' ', '\t']}
-              value={documentRevision.tags}
-              onSearch={handleTagSuggestionsRefresh}
-              onChange={selectedValues => handleTagsChange(selectedValues)}
-              options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
-              />
-          </Form.Item>
-        </div>
-      );
-      break;
-    default:
-      throw new Error(`Unsupported mode '${mode}'`);
-  }
+    switch (mode) {
+      case MODE_PREVIEW:
+        return (
+          <div>
+            <span>{t('title')}:</span> <span>{documentRevision.title}</span>
+            <br />
+            <span>{t('language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
+            <br />
+            <span>{t('slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl(documentRevision.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
+            <br />
+            <span>{t('tags')}</span>: {documentRevision.tags.map(item => (<Space key={item}><Tag key={item}>{item}</Tag></Space>))}
+          </div>
+        );
+      case MODE_EDIT:
+        return (
+          <div>
+            <span>{t('title')}:</span> <Input value={documentRevision.title} onChange={handleTitleChange} />
+            <br />
+            <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={handleLanguageChange} />
+            <br />
+            <span>{t('slug')}:</span>
+            <Form.Item validateStatus={slugValidationStatus} help={slugValidationStatus && t('common:invalidSlug')}>
+              <Input addonBefore={urls.articlesPrefix} value={documentRevision.slug || ''} onChange={handleSlugChange} />
+            </Form.Item>
+            <span>{t('tags')}</span>:
+            <Form.Item validateStatus={tagsValidationStatus} help={tagsValidationStatus && t('invalidTags')}>
+              <Select
+                mode="tags"
+                tokenSeparators={[' ', '\t']}
+                value={documentRevision.tags}
+                onSearch={handleTagSuggestionsRefresh}
+                onChange={selectedValues => handleTagsChange(selectedValues)}
+                options={Array.from(mergedTags).map(tag => ({ value: tag, key: tag }))}
+                />
+            </Form.Item>
+          </div>
+        );
+      default:
+        throw new Error(`Unsupported mode '${mode}'`);
+    }
+  };
 
   return (
     <div className="Panel">
@@ -138,7 +135,7 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
         {t('header')}
       </div>
       <div className="Panel-content">
-        {componentToShow}
+        {renderComponent()}
       </div>
       <div className="Panel-footer">
         <RadioGroup size="small" value={mode} onChange={handleModeChange}>
