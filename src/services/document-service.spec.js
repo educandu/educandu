@@ -1086,7 +1086,7 @@ describe('document-service', () => {
         expect(batch).toEqual({
           _id: expect.stringMatching(/\w+/),
           createdBy: user._id,
-          createdOn: new Date(),
+          createdOn: now,
           completedOn: null,
           batchType: BATCH_TYPE.regenerateDocuments,
           batchParams: {},
