@@ -18,7 +18,7 @@ const MANAGE_EXPORT = 'manage-export';
 const OWN_ROOMS = 'own-rooms';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
 const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
-const REGENERATE_ALL_DOCS = 'regenerate-all-docs';
+const REGENERATE_DOCS = 'regenerate-docs';
 
 const rolesForPermission = {
   [EDIT_DOC]: [ROLE.admin, ROLE.user],
@@ -38,7 +38,7 @@ const rolesForPermission = {
   [OWN_ROOMS]: [ROLE.admin, ROLE.user],
   [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user],
   [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user],
-  [REGENERATE_ALL_DOCS]: [ROLE.admin]
+  [REGENERATE_DOCS]: [ROLE.admin]
 };
 
 export function hasUserPermission(user, permission) {
@@ -66,5 +66,5 @@ export default {
   OWN_ROOMS,
   AUTORIZE_ROOMS_RESOURCES,
   JOIN_PRIVATE_ROOMS,
-  REGENERATE_ALL_DOCS
+  REGENERATE_DOCS
 };
