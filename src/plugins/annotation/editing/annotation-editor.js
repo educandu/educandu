@@ -39,7 +39,7 @@ class AnnotationEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <Form.Item label={t('title')} {...formItemLayout}>
+          <Form.Item label={t('common:title')} {...formItemLayout}>
             <Input value={title} onChange={this.handleTitleChange} />
           </Form.Item>
           <Form.Item label={t('text')} {...formItemLayout}>

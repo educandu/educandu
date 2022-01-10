@@ -71,7 +71,7 @@ function Search({ initialState, PageTemplate }) {
 
   const columns = [
     {
-      title: t('title'),
+      title: t('common:title'),
       dataIndex: 'title',
       key: 'title',
       render: renderTitle

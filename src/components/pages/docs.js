@@ -236,7 +236,7 @@ function Docs({ initialState, PageTemplate }) {
 
   const columns = [
     {
-      title: t('title'),
+      title: t('common:title'),
       dataIndex: 'title',
       key: 'title',
       render: renderTitle,
@@ -316,7 +316,7 @@ function Docs({ initialState, PageTemplate }) {
           okButtonProps={{ loading: state.isLoading }}
           >
           <Form name="new-document-form" layout="vertical">
-            <FormItem label={t('title')}>
+            <FormItem label={t('common:title')}>
               <Input value={state.newDoc.title} onChange={handleNewDocTitleChange} />
             </FormItem>
             <FormItem label={t('language')}>

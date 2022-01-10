@@ -91,7 +91,7 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
       case MODE_PREVIEW:
         return (
           <div>
-            <span>{t('title')}:</span> <span>{documentRevision.title}</span>
+            <span>{t('common:title')}:</span> <span>{documentRevision.title}</span>
             <br />
             <span>{t('language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
             <br />
@@ -103,7 +103,7 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
       case MODE_EDIT:
         return (
           <div>
-            <span>{t('title')}:</span> <Input value={documentRevision.title} onChange={handleTitleChange} />
+            <span>{t('common:title')}:</span> <Input value={documentRevision.title} onChange={handleTitleChange} />
             <br />
             <span>{t('language')}:</span> <LanguageSelect value={documentRevision.language} onChange={handleLanguageChange} />
             <br />
