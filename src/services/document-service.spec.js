@@ -1146,7 +1146,7 @@ describe('document-service', () => {
       regeneratedDocument = await db.documents.findOne({ _id: document.key });
     });
 
-    it('should take the a lock on the document', () => {
+    it('should take a lock on the document', () => {
       sinon.assert.calledWith(documentLockStore.takeLock, regeneratedDocument.key);
     });
 
