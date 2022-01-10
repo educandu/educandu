@@ -202,10 +202,6 @@ class DocumentController {
     const { user } = req;
     const batch = await this.documentService.createRegenerateDocumentsBatch(user);
 
-    if (!batch) {
-      throw new BadRequest('Another document regeneration is in progress');
-    }
-
     return res.status(201).send(batch);
   }
 

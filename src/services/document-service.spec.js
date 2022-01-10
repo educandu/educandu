@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import sinon from 'sinon';
+import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
@@ -10,6 +11,8 @@ import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+
+const { BadRequest } = httpErrors;
 
 const createDefaultSection = () => ({
   key: uniqueId.create(),
@@ -1070,9 +1073,8 @@ describe('document-service', () => {
         await sut.createRegenerateDocumentsBatch(user);
       });
 
-      it('should return null', async () => {
-        const batch = await sut.createRegenerateDocumentsBatch(user);
-        expect(batch).toBeNull();
+      it('should return null', () => {
+        expect(() => sut.createRegenerateDocumentsBatch(user)).rejects.toThrow(BadRequest);
       });
     });
 

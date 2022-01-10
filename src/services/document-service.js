@@ -1,3 +1,4 @@
+import httpErrors from 'http-errors';
 import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
@@ -14,6 +15,8 @@ import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
+
+const { BadRequest } = httpErrors;
 
 const metadataProjection = {
   _id: 1,
@@ -502,7 +505,7 @@ class DocumentService {
     });
 
     if (existingActiveBatch) {
-      return null;
+      throw new BadRequest('Another document regeneration batch is already in progress');
     }
 
     const batch = {
