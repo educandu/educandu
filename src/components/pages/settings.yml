@@ -20,5 +20,5 @@ createRegenerateDocumentsBatchHeader:
   en: Trigger document recreation
   de: Dokumentwiederherstellung auslösen
 createRegenerateDocumentsBatchButton:
-  en: Regenerate Documents
+  en: Regenerate documents
   de: Dokumente neu erstellen
