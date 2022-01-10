@@ -22,7 +22,7 @@ import {
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
   getRoomMembershipConfirmationParamsSchema
-} from '../domain/schemas/rooms-schemas.js';
+} from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
 const { NotFound, Forbidden } = httpErrors;
