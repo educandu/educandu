@@ -62,7 +62,7 @@ describe('document-controller', () => {
         sut.handlePostRegenerateDocumentsBatch(req, res);
       });
 
-      it('should call createDocumentsBatch with the user', () => {
+      it('should call createRegenerateDocumentsBatch with the user', () => {
         sinon.assert.calledWith(documentService.createRegenerateDocumentsBatch, user);
       });
 
