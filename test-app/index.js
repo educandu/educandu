@@ -17,6 +17,7 @@ educandu({
   cdnRootUrl: 'http://localhost:10000',
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
   sessionCookieDomain: 'localhost',
+  sessionCookieName: 'LOCAL_SESSION_ID',
   emailSenderAddress: 'educandu-test-app@test.com',
   smtpOptions: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   bundleConfig,
