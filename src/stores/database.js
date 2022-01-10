@@ -1,5 +1,6 @@
 import url from 'url';
 import md5 from 'md5';
+import by from 'thenby';
 import path from 'path';
 import glob from 'glob';
 import memoizee from 'memoizee';
@@ -21,10 +22,9 @@ import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentLocksSpec from './collection-specs/document-locks.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
+import maintenanceLocksSpec from './collection-specs/maintenance-locks.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests.js';
-
-const pGlob = promisify(glob);
 
 const MONGO_ERROR_CODE_INDEX_KEY_SPECS_CONFLICT = 86;
 const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
@@ -42,6 +42,7 @@ const collectionSpecs = [
   batchLocksSpec,
   documentLocksSpec,
   documentOrdersSpec,
+  maintenanceLocksSpec,
   documentRevisionsSpec,
   passwordResetRequestsSpec,
   roomInvitationsSpec,
@@ -52,6 +53,7 @@ const collectionSpecs = [
 class Database {
   constructor(connectionString) {
     this._connectionString = connectionString;
+    this._getUmzug = memoizee(this._generateUmzug);
     this.getSchemaHash = memoizee(this._generateSchemaHash);
   }
 
@@ -117,13 +119,32 @@ class Database {
     };
   }
 
+  async hasPendingMigrationScripts() {
+    const umzug = await this._getUmzug();
+    const pendingMigrations = await umzug.pending();
+    return !!pendingMigrations.length;
+  }
+
   async runMigrationScripts() {
+    const umzug = await this._getUmzug();
+    await umzug.up();
+    this.getSchemaHash.clear();
+  }
+
+  async _generateSchemaHash() {
+    const migrations = await this._db.collection('migrations').find({}).toArray();
+    const migrationNames = migrations.map(migration => migration.migrationName).sort().join();
+
+    return md5(migrationNames);
+  }
+
+  async _generateUmzug() {
     const migrationsDirectory = url.fileURLToPath(new URL('../../migrations', import.meta.url));
-    const allPossibleMigrationFiles = await pGlob(path.resolve(migrationsDirectory, './*.js'));
+    const allPossibleMigrationFiles = await promisify(glob)(path.resolve(migrationsDirectory, './*.js'));
 
     const migrationFileNames = allPossibleMigrationFiles
       .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
-      .sort();
+      .sort(by(fileName => path.basename(fileName)));
 
     const migrations = await Promise.all(migrationFileNames.map(async fileName => {
       const Migration = (await import(url.pathToFileURL(fileName).href)).default;
@@ -140,14 +161,7 @@ class Database {
 
     umzug.on('migrated', ({ name }) => logger.info(`Finished migrating ${name}`));
 
-    await umzug.up();
-  }
-
-  async _generateSchemaHash() {
-    const migrations = await this._db.collection('migrations').find({}).toArray();
-    const migrationNames = migrations.map(migration => migration.migrationName).sort().join();
-
-    return md5(migrationNames);
+    return umzug;
   }
 
   static async create({ connectionString }) {
