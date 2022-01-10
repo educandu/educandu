@@ -18,7 +18,7 @@ import {
   getSearchDocumentsByTagsSchema
 } from '../domain/schemas/document-schemas.js';
 
-const { NotFound, BadRequest } = httpErrors;
+const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
