@@ -15,12 +15,12 @@ export const DOCUMENT_IMPORT_TYPE = {
 };
 
 export const BATCH_TYPE = {
-  importDocuments: 'import-documents',
+  documentImport: 'document-import',
   documentRegeneration: 'document-regeneration'
 };
 
 export const TASK_TYPE = {
-  importDocument: 'import-document',
+  documentImport: 'document-import',
   documentRegeneration: 'document-regeneration'
 };
 

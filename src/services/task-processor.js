@@ -18,7 +18,7 @@ export default class TaskProcessor {
     this.serverConfig = serverConfig;
 
     this.taskProcessors = {
-      [TASK_TYPE.importDocument]: documentImportTaskProcessor,
+      [TASK_TYPE.documentImport]: documentImportTaskProcessor,
       [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor
     };
   }
