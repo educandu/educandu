@@ -515,15 +515,15 @@ class DocumentService {
       errors: []
     };
 
-    const allDocuments = await this.documentStore.find({});
-    const tasks = allDocuments.map(document => ({
+    const allDocumentKeys = await this.documentRevisionStore.distinct('key');
+    const tasks = allDocumentKeys.map(key => ({
       _id: uniqueId.create(),
       batchId: batch._id,
       taskType: TASK_TYPE.regenerateDocument,
       processed: false,
       attempts: [],
       taskParams: {
-        key: document.key
+        key
       }
     }));
 
