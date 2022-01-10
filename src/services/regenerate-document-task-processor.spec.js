@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import uniqueId from '../utils/unique-id.js';
 import DocumentService from './document-service.js';
-import DocumentRegenerateTaskProcessor from './document-regenerate-task-processor.js';
 import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
+import RegenerateDocumentTaskProcessor from './regenerate-document-task-processor.js';
 
-describe('DocumentRegenerateTaskProcessor', () => {
+describe('RegenerateDocumentTaskProcessor', () => {
   let container;
   let documentService;
   const sandbox = sinon.createSandbox();
@@ -14,7 +14,7 @@ describe('DocumentRegenerateTaskProcessor', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     documentService = container.get(DocumentService);
-    sut = container.get(DocumentRegenerateTaskProcessor);
+    sut = container.get(RegenerateDocumentTaskProcessor);
   });
 
   afterAll(async () => {
