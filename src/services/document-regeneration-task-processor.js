@@ -3,7 +3,7 @@ import DocumentService from './document-service.js';
 
 const logger = new Logger(import.meta.url);
 
-class RegenerateDocumentTaskProcessor {
+class DocumentRegenerationTaskProcessor {
   static get inject() {
     return [DocumentService];
   }
@@ -24,4 +24,4 @@ class RegenerateDocumentTaskProcessor {
   }
 }
 
-export default RegenerateDocumentTaskProcessor;
+export default DocumentRegenerationTaskProcessor;

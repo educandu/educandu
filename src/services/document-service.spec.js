@@ -1052,7 +1052,7 @@ describe('document-service', () => {
     });
   });
 
-  describe('createRegenerateDocumentsBatch', () => {
+  describe('createDocumentRegenerationBatch', () => {
     let createdDocument;
     let result;
     let revision;
@@ -1070,18 +1070,18 @@ describe('document-service', () => {
 
     describe('when a running batch already exists', () => {
       beforeEach(async () => {
-        await sut.createRegenerateDocumentsBatch(user);
+        await sut.createDocumentRegenerationBatch(user);
       });
 
       it('should return null', () => {
-        expect(() => sut.createRegenerateDocumentsBatch(user)).rejects.toThrow(BadRequest);
+        expect(() => sut.createDocumentRegenerationBatch(user)).rejects.toThrow(BadRequest);
       });
     });
 
     describe('when a new batch is created', () => {
       let batch = null;
       beforeEach(async () => {
-        batch = await sut.createRegenerateDocumentsBatch(user);
+        batch = await sut.createDocumentRegenerationBatch(user);
       });
 
       it('should create the new batch', () => {
@@ -1090,7 +1090,7 @@ describe('document-service', () => {
           createdBy: user._id,
           createdOn: now,
           completedOn: null,
-          batchType: BATCH_TYPE.regenerateDocuments,
+          batchType: BATCH_TYPE.documentRegeneration,
           batchParams: {},
           errors: []
         });
@@ -1102,7 +1102,7 @@ describe('document-service', () => {
           {
             _id: expect.stringMatching(/\w+/),
             batchId: batch._id,
-            taskType: TASK_TYPE.regenerateDocument,
+            taskType: TASK_TYPE.documentRegeneration,
             processed: false,
             attempts: [],
             taskParams: {

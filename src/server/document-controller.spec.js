@@ -18,7 +18,7 @@ describe('document-controller', () => {
 
   beforeEach(() => {
     documentService = {
-      createRegenerateDocumentsBatch: sandbox.stub()
+      createDocumentRegenerationBatch: sandbox.stub()
     };
 
     user = { _id: 'my user' };
@@ -30,10 +30,10 @@ describe('document-controller', () => {
     sandbox.restore();
   });
 
-  describe('handlePostRegenerateDocumentsBatch', () => {
+  describe('handlePostDocumentRegenerationBatch', () => {
     const batch = { _id: uniqueId.create() };
     beforeEach(done => {
-      documentService.createRegenerateDocumentsBatch.resolves(batch);
+      documentService.createDocumentRegenerationBatch.resolves(batch);
 
       req = httpMocks.createRequest({
         protocol: 'https',
@@ -44,11 +44,11 @@ describe('document-controller', () => {
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       res.on('end', done);
 
-      sut.handlePostRegenerateDocumentsBatch(req, res);
+      sut.handlePostDocumentRegenerationBatch(req, res);
     });
 
-    it('should call createRegenerateDocumentsBatch with the user', () => {
-      sinon.assert.calledWith(documentService.createRegenerateDocumentsBatch, user);
+    it('should call createDocumentRegenerationBatch with the user', () => {
+      sinon.assert.calledWith(documentService.createDocumentRegenerationBatch, user);
     });
 
     it('should return the batch', () => {

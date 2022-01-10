@@ -107,10 +107,10 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  createRegenerateDocumentsBatch() {
+  createDocumentRegenerationBatch() {
     return this.httpClient
       .post(
-        '/api/v1/docs/regenerate-documents-batch',
+        '/api/v1/docs/document-regeneration-batch',
         null,
         { responseType: 'json' }
       )

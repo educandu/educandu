@@ -695,8 +695,8 @@
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
       "defaultTagsHeader": "Default tags",
-      "createRegenerateDocumentsBatchHeader": "Trigger document recreation",
-      "createRegenerateDocumentsBatchButton": "Regenerate documents"
+      "createDocumentRegenerationBatchHeader": "Trigger document recreation",
+      "createDocumentRegenerationBatchButton": "Regenerate documents"
     }
   },
   {
@@ -709,8 +709,8 @@
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
       "defaultTagsHeader": "Vordefinierte Tags",
-      "createRegenerateDocumentsBatchHeader": "Dokumentwiederherstellung auslösen",
-      "createRegenerateDocumentsBatchButton": "Dokumente neu erstellen"
+      "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung auslösen",
+      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen"
     }
   },
   {

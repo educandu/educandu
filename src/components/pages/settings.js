@@ -75,9 +75,9 @@ function Settings({ initialState, PageTemplate }) {
     setInvalidKeys([]);
   };
 
-  const handleCreateRegenerateDocumentsBatchClick = async () => {
+  const handleCreateDocumentRegenerationBatchClick = async () => {
     try {
-      await documentApiClient.createRegenerateDocumentsBatch();
+      await documentApiClient.createDocumentRegenerationBatch();
     } catch (error) {
       handleApiError({ t, logger, error });
     }
@@ -145,12 +145,12 @@ function Settings({ initialState, PageTemplate }) {
           defaultTags={settings.defaultTags || []}
           onChange={handleDefaultTagsChange}
           />
-        <h2 className="SettingsPage-sectionHeader">{t('createRegenerateDocumentsBatchHeader')}</h2>
+        <h2 className="SettingsPage-sectionHeader">{t('createDocumentRegenerationBatchHeader')}</h2>
         <Button
-          className="SettingsPage-createRegenerateDocumentsBatchButton"
-          onClick={handleCreateRegenerateDocumentsBatchClick}
+          className="SettingsPage-createDocumentRegenerationBatchButton"
+          onClick={handleCreateDocumentRegenerationBatchClick}
           >
-          {t('createRegenerateDocumentsBatchButton')}
+          {t('createDocumentRegenerationBatchButton')}
         </Button>
       </div>
     </PageTemplate>

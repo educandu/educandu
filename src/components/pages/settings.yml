@@ -16,9 +16,9 @@ footerLinksHeader:
 defaultTagsHeader:
   en: Default tags
   de: Vordefinierte Tags
-createRegenerateDocumentsBatchHeader:
+createDocumentRegenerationBatchHeader:
   en: Trigger document recreation
   de: Dokumentwiederherstellung auslösen
-createRegenerateDocumentsBatchButton:
+createDocumentRegenerationBatchButton:
   en: Regenerate documents
   de: Dokumente neu erstellen

@@ -5,21 +5,21 @@ import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import TaskLockStore from '../stores/task-lock-store.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
-import RegenerateDocumentTaskProcessor from './regenerate-document-task-processor.js';
+import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 
 const logger = new Logger(import.meta.url);
 
 export default class TaskProcessor {
-  static get inject() { return [TaskStore, TaskLockStore, DocumentImportTaskProcessor, RegenerateDocumentTaskProcessor, ServerConfig]; }
+  static get inject() { return [TaskStore, TaskLockStore, DocumentImportTaskProcessor, DocumentRegenerationTaskProcessor, ServerConfig]; }
 
-  constructor(taskStore, taskLockStore, documentImportTaskProcessor, regenerateDocumentTaskProcessor, serverConfig) {
+  constructor(taskStore, taskLockStore, documentImportTaskProcessor, documentRegenerationTaskProcessor, serverConfig) {
     this.taskStore = taskStore;
     this.taskLockStore = taskLockStore;
     this.serverConfig = serverConfig;
 
     this.taskProcessors = {
       [TASK_TYPE.importDocument]: documentImportTaskProcessor,
-      [TASK_TYPE.regenerateDocument]: regenerateDocumentTaskProcessor
+      [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor
     };
   }
 

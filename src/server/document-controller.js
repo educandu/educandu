@@ -198,9 +198,9 @@ class DocumentController {
     return res.send(result.length ? result[0].uniqueTags : []);
   }
 
-  async handlePostRegenerateDocumentsBatch(req, res) {
+  async handlePostDocumentRegenerationBatch(req, res) {
     const { user } = req;
-    const batch = await this.documentService.createRegenerateDocumentsBatch(user);
+    const batch = await this.documentService.createDocumentRegenerationBatch(user);
 
     return res.status(201).send(batch);
   }
@@ -299,9 +299,9 @@ class DocumentController {
     );
 
     router.post(
-      '/api/v1/docs/regenerate-documents-batch',
+      '/api/v1/docs/document-regeneration-batch',
       [needsPermission(permissions.REGENERATE_DOCS)],
-      (req, res) => this.handlePostRegenerateDocumentsBatch(req, res)
+      (req, res) => this.handlePostDocumentRegenerationBatch(req, res)
     );
   }
 }

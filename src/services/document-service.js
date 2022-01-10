@@ -498,9 +498,9 @@ class DocumentService {
     }
   }
 
-  async createRegenerateDocumentsBatch(user) {
+  async createDocumentRegenerationBatch(user) {
     const existingActiveBatch = await this.batchStore.findOne({
-      batchType: BATCH_TYPE.regenerateDocuments,
+      batchType: BATCH_TYPE.documentRegeneration,
       completedOn: null
     });
 
@@ -513,7 +513,7 @@ class DocumentService {
       createdBy: user._id,
       createdOn: new Date(),
       completedOn: null,
-      batchType: BATCH_TYPE.regenerateDocuments,
+      batchType: BATCH_TYPE.documentRegeneration,
       batchParams: {},
       errors: []
     };
@@ -522,7 +522,7 @@ class DocumentService {
     const tasks = allDocumentKeys.map(key => ({
       _id: uniqueId.create(),
       batchId: batch._id,
-      taskType: TASK_TYPE.regenerateDocument,
+      taskType: TASK_TYPE.documentRegeneration,
       processed: false,
       attempts: [],
       taskParams: {

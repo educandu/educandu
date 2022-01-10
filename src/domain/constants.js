@@ -16,12 +16,12 @@ export const DOCUMENT_IMPORT_TYPE = {
 
 export const BATCH_TYPE = {
   importDocuments: 'import-documents',
-  regenerateDocuments: 'regenerate-documents'
+  documentRegeneration: 'document-regeneration'
 };
 
 export const TASK_TYPE = {
   importDocument: 'import-document',
-  regenerateDocument: 'regenerate-document'
+  documentRegeneration: 'document-regeneration'
 };
 
 export const FEATURE_TOGGLES = {
