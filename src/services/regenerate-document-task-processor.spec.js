@@ -21,15 +21,15 @@ describe('RegenerateDocumentTaskProcessor', () => {
     await destroyTestEnvironment(container);
   });
 
+  beforeEach(() => {
+    sandbox.stub(documentService, 'regenerateDocument');
+  });
+
   afterEach(() => {
     sandbox.restore();
   });
 
   describe('process', () => {
-    beforeEach(() => {
-      sandbox.stub(documentService, 'regenerateDocument');
-    });
-
     it('should call regenerate document', async () => {
       const documentKey = uniqueId.create();
 
