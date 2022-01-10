@@ -12,6 +12,16 @@ class LessonService {
     this.lessonStore = lessonStore;
   }
 
+  async getLesson(lessonId) {
+    const lesson = await Promise.resolve({
+      _id: lessonId,
+      title: 'Hs Fuge und Konzert im Werk J. S. Bachs',
+      slug: 'fuge-und-konzert-bach'
+    });
+
+    return lesson;
+  }
+
   async getLessons(roomId) {
     logger.info(`Mocking lessons for room '${roomId}'`);
     const lessons = await Promise.resolve([

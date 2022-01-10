@@ -14,6 +14,7 @@ const createImportPath = '/import-batches/create';
 const docsPrefix = '/docs/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
+const lessonsPrefix = '/lessons/';
 const editDocPrefix = '/edit/doc/';
 const completeRegistrationPrefix = '/complete-registration/';
 const completePasswordResetPrefix = '/complete-password-reset/';
@@ -144,18 +145,12 @@ function getRoomUrl(roomId) {
   return concatParts(roomsPrefix, encodeURIComponent(roomId));
 }
 
+function getLessonUrl(id, slug) {
+  return concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIComponent(slug));
+}
+
 export default {
-  homePath,
-  docsPath,
-  usersPath,
-  loginPath,
-  logoutPath,
-  registerPath,
-  resetPasswordPath,
   docsPrefix,
-  editDocPrefix,
-  completeRegistrationPrefix,
-  completePasswordResetPrefix,
   createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
@@ -185,5 +180,6 @@ export default {
   getBatchUrl,
   getImportedDocUrl,
   getImportDetailsUrl,
-  getImportSourceBaseUrl
+  getImportSourceBaseUrl,
+  getLessonUrl
 };

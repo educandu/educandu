@@ -13,3 +13,8 @@ export const lessonDBSchema = joi.object({
   cdnResources: joi.array().items(joi.string()).required(),
   schedule: joi.object().allow(null)
 });
+
+export const getLessonParamsSchema = joi.object({
+  lessonId: joi.string().required(),
+  lessonSlug: joi.string()
+});

@@ -25,3 +25,6 @@ docs:
 room:
   en: Room - {roomName}
   de: Raum - {roomName}
+lesson:
+  en: Lesson - {lessonTitle}
+  de: Unterricht - {lessonTitle}
