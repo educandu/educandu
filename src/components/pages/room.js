@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
-import { DeleteOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -12,6 +11,7 @@ import { Space, List, Collapse, Button, Tabs } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
 
@@ -55,6 +55,10 @@ export default function Room({ PageTemplate, initialState }) {
       return;
     }
     window.location.reload();
+  };
+
+  const handleNewLessonClick = () => {
+
   };
 
   const headerActions = [];
@@ -135,6 +139,9 @@ export default function Room({ PageTemplate, initialState }) {
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
           <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
             {lessons.map(renderLesson)}
+            {isRoomOwner && (
+              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewLessonClick} />
+            )}
           </TabPane>
 
           <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
