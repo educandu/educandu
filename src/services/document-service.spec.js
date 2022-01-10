@@ -1116,7 +1116,7 @@ describe('document-service', () => {
     const lock = { _id: 'mylock' };
 
     let regeneratedDocument;
-    let result;
+    let document;
     let revision;
 
     beforeEach(async () => {
@@ -1130,20 +1130,20 @@ describe('document-service', () => {
         tags: ['tag-1']
       };
 
-      result = await sut.createNewDocumentRevision({ doc: revision, user });
+      document = await sut.createNewDocumentRevision({ doc: revision, user });
 
       await db.documentRevisions.replaceOne(
-        { _id: result._id },
+        { _id: document._id },
         {
-          ...result,
+          ...document,
           slug: 'new-slug'
         },
         { upsert: true }
       );
 
-      await sut.regenerateDocument(result.key);
+      await sut.regenerateDocument(document.key);
 
-      regeneratedDocument = await db.documents.findOne({ _id: result.key });
+      regeneratedDocument = await db.documents.findOne({ _id: document.key });
     });
 
     it('should take the a lock on the document', () => {
