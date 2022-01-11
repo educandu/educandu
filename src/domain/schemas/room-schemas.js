@@ -21,13 +21,13 @@ export const postRoomInvitationConfirmBodySchema = joi.object({
 });
 
 export const getRoomParamsSchema = joi.object({
-  roomId: joi.string().required()
+  roomId: idOrKeySchema.required()
 });
 
 export const deleteRoomParamsSchema = joi.object({
-  roomId: joi.string().required()
+  roomId: idOrKeySchema.required()
 });
 
 export const getAuthorizeResourcesAccessParamsSchema = joi.object({
-  roomId: joi.string().required()
+  roomId: idOrKeySchema.required()
 });
