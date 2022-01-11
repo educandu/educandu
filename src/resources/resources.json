@@ -1522,7 +1522,7 @@
       "importBatchView": "Import-Details",
       "docs": "Dokumente",
       "room": "Raum - {roomName}",
-      "lesson": "Unterricht - {lessonTitle}"
+      "lesson": "Unterrichtseinheit - {lessonTitle}"
     }
   },
   {

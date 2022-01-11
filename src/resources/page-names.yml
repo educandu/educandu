@@ -27,4 +27,4 @@ room:
   de: Raum - {roomName}
 lesson:
   en: Lesson - {lessonTitle}
-  de: Unterricht - {lessonTitle}
+  de: Unterrichtseinheit - {lessonTitle}
