@@ -209,7 +209,7 @@ class DocumentController {
     );
 
     router.get(
-      '/docs/:docKey/:docSlug',
+      '/docs/:docKey/:docSlug*',
       validateParams(getDocumentParamsSchema),
       (req, res) => this.handleGetDocPage(req, res)
     );

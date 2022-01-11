@@ -46,7 +46,7 @@ export default class LessonController {
     );
 
     router.get(
-      '/lessons/:lessonId/:lessonSlug',
+      '/lessons/:lessonId/:lessonSlug*',
       [validateParams(getLessonParamsSchema)],
       (req, res) => this.handleGetLessonPage(req, res)
     );

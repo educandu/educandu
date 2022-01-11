@@ -92,4 +92,4 @@ export const documentDBSchema = joi.object({
 export const getDocumentParamsSchema = joi.object({
   docKey: idOrKeySchema.required(),
   docSlug: joi.string()
-});
+}).unknown(true);
