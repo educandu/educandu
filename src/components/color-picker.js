@@ -1,9 +1,7 @@
 import React from 'react';
 import { Dropdown } from 'antd';
 import PropTypes from 'prop-types';
-import reactColor from 'react-color';
-
-const { SwatchesPicker } = reactColor;
+import SwatchesPicker from 'react-color/lib/Swatches.js';
 
 function ColorPicker({ color, colors, onChange, placement, width }) {
   const picker = (
