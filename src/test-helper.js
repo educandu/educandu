@@ -72,6 +72,10 @@ export async function setupTestEnvironment() {
     }
   });
 
+  // Run the DB check in order to create all collections and indexes:
+  const db = container.get(Database);
+  await db.checkDb();
+
   // Make bucket publicly accessible:
   const cdn = container.get(Cdn);
   const s3Client = cdn.s3Client;

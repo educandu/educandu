@@ -275,93 +275,99 @@ export async function startServer() {
   }
 
   await currentApp.start({
-    TEST_APP_SKIP_MONGO_MIGRATIONS: false.toString(),
-    TEST_APP_SKIP_MONGO_CHECKS: false.toString()
+    TEST_APP_SKIP_MAINTENANCE: false.toString()
   });
 }
 
 export async function restartServer() {
   await currentApp.restart({
-    TEST_APP_SKIP_MONGO_MIGRATIONS: true.toString(),
-    TEST_APP_SKIP_MONGO_CHECKS: true.toString()
+    TEST_APP_SKIP_MAINTENANCE: true.toString()
   });
 }
 
 export async function migrate() {
-  const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
-
-  const migrationFiles = await glob('migrations/manual/*.js');
-  const migrationChoices = migrationFiles
-    .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
-    .sort()
-    .map(fileName => ({
-      name: path.basename(fileName, '.js'),
-      value: path.resolve(fileName)
-    }));
-
-  const { connectionString, migrationsToRun, isConfirmed } = await inquirer.prompt([
-    {
-      message: 'Connection string:',
-      name: 'connectionString',
-      type: 'input',
-      filter: s => (s || '').trim(),
-      validate: s => !s || !s.trim() ? 'Please provide a value' : true
-    },
-    {
-      message: 'Migrations to run:',
-      name: 'migrationsToRun',
-      type: 'checkbox',
-      choices: migrationChoices
-    },
-    {
-      when: currentAnswers => !!currentAnswers.migrationsToRun.length,
-      message: currentAnswers => [
-        'You have selected the follwing migrations:',
-        ...currentAnswers.migrationsToRun,
-        'Do you want to run them now?'
-      ].join(EOL),
-      name: 'isConfirmed',
-      type: 'confirm'
-    }
-  ]);
-
-  if (!isConfirmed) {
-    console.log('No migration will be run, quitting');
-    return;
-  }
-
-  console.log(`Running ${migrationsToRun.length} ${migrationsToRun.length === 1 ? 'migration' : 'migrations'}`);
-
-  const mongoClient = await MongoClient.connect(connectionString, { useUnifiedTopology: true });
-
-  const migrations = await Promise.all(migrationsToRun.map(async filePath => {
-    const Migration = (await import(url.pathToFileURL(filePath).href)).default;
-    const instance = new Migration(mongoClient.db(), mongoClient);
-    instance.name = path.basename(filePath, '.js');
-    return instance;
-  }));
-
-  const umzug = new Umzug({
-    migrations,
-    storage: new MongoDBStorage({ collection: mongoClient.db().collection('migrations') }),
-    logger: console
-  });
-
-  const executedMigrationNames = (await umzug.executed()).map(migration => migration.name);
-
-  migrationsToRun.forEach(migrationFullPath => {
-    const executedMigrationName = executedMigrationNames.find(migrationName => migrationFullPath.includes(migrationName));
-    if (executedMigrationName) {
-      console.log(`Migration ${executedMigrationName} was already run, skipping it.`);
-    }
-  });
-
-  umzug.on('migrated', ({ name }) => console.log(`Finished migrating ${name}`));
+  let mongoClient;
 
   try {
-    await umzug.up();
+    const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
+    const migrationFiles = await glob('migrations/*.js');
+
+    const migrationInfos = migrationFiles
+      .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
+      .sort()
+      .map(fileName => ({
+        name: path.basename(fileName, '.js'),
+        filePath: path.resolve(fileName)
+      }));
+
+    const { connectionString } = await inquirer.prompt([
+      {
+        message: 'Connection string:',
+        name: 'connectionString',
+        type: 'input',
+        filter: s => (s || '').trim(),
+        validate: s => !s || !s.trim() ? 'Please provide a value' : true
+      }
+    ]);
+
+    mongoClient = await MongoClient.connect(connectionString, { useUnifiedTopology: true });
+
+    await Promise.all(migrationInfos.map(async info => {
+      const Migration = (await import(url.pathToFileURL(info.filePath).href)).default;
+      const instance = new Migration(mongoClient.db(), mongoClient);
+      instance.name = info.name;
+      info.migration = instance;
+    }));
+
+    const umzug = new Umzug({
+      migrations: migrationInfos.map(info => info.migration),
+      storage: new MongoDBStorage({ collection: mongoClient.db().collection('migrations') }),
+      logger: console
+    });
+
+    umzug.on('migrated', ({ name }) => console.log(`Finished migrating ${name}`));
+
+    const executedMigrationNames = (await umzug.executed()).map(migration => migration.name);
+
+    migrationInfos.forEach(info => {
+      info.isExecuted = executedMigrationNames.includes(info.name);
+    });
+
+    const migrationChoices = migrationInfos.map(info => ({
+      name: `${info.isExecuted ? '🔄' : '  '} ${info.name}`,
+      value: info.name
+    }));
+
+    const { migrationsToRun, isConfirmed } = await inquirer.prompt([
+      {
+        message: 'Migrations to run:',
+        name: 'migrationsToRun',
+        type: 'checkbox',
+        choices: migrationChoices,
+        pageSize: migrationChoices.length + 1,
+        loop: false
+      },
+      {
+        when: currentAnswers => !!currentAnswers.migrationsToRun.length,
+        message: currentAnswers => [
+          'You have selected the follwing migrations:',
+          ...currentAnswers.migrationsToRun,
+          'Do you want to run them now?'
+        ].join(EOL),
+        name: 'isConfirmed',
+        type: 'confirm'
+      }
+    ]);
+
+    if (!isConfirmed) {
+      console.log('No migration will be run, quitting');
+      return;
+    }
+
+    console.log(`Running ${migrationsToRun.length} ${migrationsToRun.length === 1 ? 'migration' : 'migrations'}`);
+    await umzug.up({ migrations: migrationsToRun, rerun: 'ALLOW' });
   } finally {
-    await mongoClient.close();
+    await mongoClient?.close();
   }
 }
 
