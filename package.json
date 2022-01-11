@@ -85,6 +85,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.14.0",
     "react-beautiful-dnd": "^13.1.0",
+    "react-beforeunload": "^2.5.2",
     "react-color": "^2.19.3",
     "react-compare-slider": "^2.1.0",
     "react-cool-dimensions": "^2.0.7",

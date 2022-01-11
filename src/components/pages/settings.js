@@ -3,12 +3,13 @@ import Markdown from '../markdown.js';
 import { Alert, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import errorHelper, { handleApiError } from '../../ui/error-helper.js';
+import { useBeforeunload } from 'react-beforeunload';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { useState, useCallback, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
 import SpecialPageSettings from '../settings/special-page-settings.js';
@@ -107,6 +108,12 @@ function Settings({ initialState, PageTemplate }) {
   }
 
   const alerts = useGlobalAlerts();
+
+  useBeforeunload(event => {
+    if (dirtyKeys.length) {
+      event.preventDefault();
+    }
+  });
 
   return (
     <PageTemplate alerts={alerts} headerActions={headerActions}>
