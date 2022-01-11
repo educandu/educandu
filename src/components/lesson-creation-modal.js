@@ -47,16 +47,6 @@ function LessonCreationModal({ isVisible, onClose }) {
     }
   ];
 
-  const isFormValid = async () => {
-    try {
-      await formRef.current.validateFields(['title'], { force: true });
-      await formRef.current.validateFields(['slug'], { force: true });
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   const createLessonState = useCallback(() => ({
     title: t('newLesson'),
     slug: '',
@@ -73,19 +63,19 @@ function LessonCreationModal({ isVisible, onClose }) {
       setLesson(newLesson);
 
       if (formRef.current) {
-        formRef.current.setFieldsValue({ title: newLesson.title });
-        formRef.current.setFieldsValue({ slug: newLesson.slug });
+        formRef.current.resetFields();
       }
     }
   }, [isVisible, createLessonState]);
 
-  const handleOk = async () => {
-    try {
-      const isValid = await isFormValid();
-      if (!isValid) {
-        return;
-      }
+  const handleOk = () => {
+    if (formRef.current) {
+      formRef.current.submit();
+    }
+  };
 
+  const handleOnFinish = async () => {
+    try {
       setLoading(true);
       const newLesson = await lessonApiClient.addLesson({
         title: lesson.name,
@@ -104,20 +94,6 @@ function LessonCreationModal({ isVisible, onClose }) {
 
   const handleCancel = () => onClose();
 
-  const handleTitleChange = event => {
-    const { value } = event.target;
-    setLesson(prevState => ({ ...prevState, title: value }));
-  };
-
-  const handleLanguageChange = value => {
-    setLesson(prevState => ({ ...prevState, language: value }));
-  };
-
-  const handleSlugChange = event => {
-    const { value } = event.target;
-    setLesson(prevState => ({ ...prevState, slug: value }));
-  };
-
   return (
     <Modal
       title={t('newLesson')}
@@ -127,15 +103,15 @@ function LessonCreationModal({ isVisible, onClose }) {
       visible={isVisible}
       okButtonProps={{ loading }}
       >
-      <Form name="new-lesson-form" ref={formRef} layout="vertical" initialValues={lesson}>
+      <Form onFinish={handleOnFinish} name="new-lesson-form" ref={formRef} layout="vertical" initialValues={lesson}>
         <FormItem label={t('common:title')} name="title" rules={titleValidationRules}>
-          <Input onChange={handleTitleChange} />
+          <Input />
         </FormItem>
         <FormItem label={t('common:language')} name="language">
-          <LanguageSelect value={lesson.language} onChange={handleLanguageChange} />
+          <LanguageSelect />
         </FormItem>
         <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules}>
-          <Input onChange={handleSlugChange} />
+          <Input />
         </FormItem>
       </Form>
     </Modal>
