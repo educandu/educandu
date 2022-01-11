@@ -1,15 +1,16 @@
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import Logger from '../common/logger.js';
-import { Form, Modal, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
-import { useLanguage } from './language-context.js';
+import { Form, Modal, Input, DatePicker } from 'antd';
 import inputValidators from '../utils/input-validators.js';
 import React, { useState, useRef, useEffect } from 'react';
 import LanguageSelect from './localization/language-select.js';
 import LessonApiClient from '../api-clients/lesson-api-client.js';
+import { useDateFormat, useLanguage } from './language-context.js';
 
 const FormItem = Form.Item;
 
@@ -24,6 +25,7 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
 
 function LessonCreationModal({ isVisible, onClose }) {
   const formRef = useRef(null);
+  const { dateTimeFormat } = useDateFormat();
   const { language: uiLanguage } = useLanguage();
   const lessonApiClient = useService(LessonApiClient);
   const { t } = useTranslation('lessonCreationModal');
@@ -51,8 +53,7 @@ function LessonCreationModal({ isVisible, onClose }) {
   const defaultLesson = {
     title: t('newLesson'),
     slug: '',
-    language: getDefaultLanguageFromUiLanguage(uiLanguage),
-    scheduling: null
+    language: getDefaultLanguageFromUiLanguage(uiLanguage)
   };
 
   useEffect(() => {
@@ -67,14 +68,15 @@ function LessonCreationModal({ isVisible, onClose }) {
     }
   };
 
-  const handleOnFinish = async ({ title, slug, language }) => {
+  const handleOnFinish = async ({ title, slug, language, startsOn }) => {
     try {
       setLoading(true);
+
       const newLesson = await lessonApiClient.addLesson({
         title,
         slug: slug || '',
         language,
-        scheduling: null
+        schedule: startsOn ? { startsOn: startsOn.toDate() } : null
       });
 
       setLoading(false);
@@ -88,6 +90,24 @@ function LessonCreationModal({ isVisible, onClose }) {
   };
 
   const handleCancel = () => onClose();
+
+  const disabledDate = current => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    return current && current <= yesterday;
+  };
+
+  const disabledTime = () => {
+    const disabledMorningHours = [...Array(24).keys()].splice(0, 7);
+    const disabledEveningHours = [...Array(24).keys()].splice(21);
+    const disabledMinutes = [...Array(60).keys()].filter(minute => minute % 5 !== 0);
+
+    return {
+      disabledHours: () => [...disabledMorningHours, ...disabledEveningHours],
+      disabledMinutes: () => disabledMinutes
+    };
+  };
 
   return (
     <Modal
@@ -107,6 +127,16 @@ function LessonCreationModal({ isVisible, onClose }) {
         </FormItem>
         <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules}>
           <Input />
+        </FormItem>
+        <FormItem label={t('startsOn')} name="startsOn">
+          <DatePicker
+            inputReadOnly
+            style={{ width: '100%' }}
+            format={dateTimeFormat}
+            disabledDate={disabledDate}
+            disabledTime={disabledTime}
+            showTime={{ defaultValue: moment('00:00', 'HH:mm'), format: 'HH:mm', hideDisabledOptions: true }}
+            />
         </FormItem>
       </Form>
     </Modal>

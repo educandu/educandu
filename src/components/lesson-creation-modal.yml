@@ -4,3 +4,6 @@ newLesson:
 titleRequired:
   en: Please specify a lesson title
   de: Bitte geben Sie einen Unterrichtseinheit Titel an
+startsOn:
+  en: Date
+  de: Datum

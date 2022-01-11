@@ -39,8 +39,8 @@ export default class LessonController {
 
   async handlePostLesson(req, res) {
     const { user } = req;
-    const { title, slug, language } = req.body;
-    const newLesson = await this.lessonService.createLesson({ user, title, slug, language });
+    const { title, slug, language, schedule } = req.body;
+    const newLesson = await this.lessonService.createLesson({ user, title, slug, language, schedule });
 
     return res.status(201).send(newLesson);
   }

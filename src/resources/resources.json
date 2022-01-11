@@ -214,7 +214,8 @@
     "language": "en",
     "resources": {
       "newLesson": "New lesson",
-      "titleRequired": "Please specify a lesson title"
+      "titleRequired": "Please specify a lesson title",
+      "startsOn": "Date"
     }
   },
   {
@@ -222,7 +223,8 @@
     "language": "de",
     "resources": {
       "newLesson": "Neue Unterrichtseinheit",
-      "titleRequired": "Bitte geben Sie einen Unterrichtseinheit Titel an"
+      "titleRequired": "Bitte geben Sie einen Unterrichtseinheit Titel an",
+      "startsOn": "Datum"
     }
   },
   {
