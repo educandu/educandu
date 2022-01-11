@@ -51,7 +51,6 @@ export default async function educandu(options) {
 
     logger.info(`Starting server${runMaintenance ? ' in maintenance mode' : ''}`);
     const port = await educanduServer.listen({ maintenance: runMaintenance });
-    logger.info(`Server listening on http://localhost:${port}`);
 
     if (runMaintenance) {
       logger.info('Running maintenance');
@@ -85,6 +84,7 @@ export default async function educandu(options) {
     }
 
     logger.info('Application started successfully');
+    logger.info(`Server listening on http://localhost:${port}`);
   } catch (err) {
     logger.fatal(err);
     Graceful.exit(1);
