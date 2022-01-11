@@ -47,7 +47,7 @@ describe('maintenance-service', () => {
         sinon.assert.notCalled(maintenanceLockStore.takeLock);
       });
 
-      it('should have run the migrations', () => {
+      it('should not have run the migrations', () => {
         sinon.assert.notCalled(database.runMigrationScripts);
       });
     });
@@ -88,7 +88,7 @@ describe('maintenance-service', () => {
           await sut.runMaintenance();
         });
 
-        it('should have checked for pending migrations the lock twice', () => {
+        it('should have checked for pending migrations twice', () => {
           sinon.assert.calledTwice(database.hasPendingMigrationScripts);
         });
 
