@@ -16,18 +16,27 @@ export default class MaintenanceService {
   }
 
   async runMaintenance() {
-    // eslint-disable-next-line no-await-in-loop
-    while (await this.database.hasPendingMigrationScripts()) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
       let lock;
       try {
         // eslint-disable-next-line no-await-in-loop
         lock = await this.maintenanceLockStore.takeLock(MaintenanceService.MAINTENANCE_LOCK_KEY);
+
+        logger.info('Starting database migrations');
         // eslint-disable-next-line no-await-in-loop
         await this.database.runMigrationScripts();
-        logger.info('Migration scripts have run successfully');
+        logger.info('Finished database migrations successfully');
+
+        logger.info('Starting database checks');
+        // eslint-disable-next-line no-await-in-loop
+        await this.database.checkDb();
+        logger.info('Finished database checks successfully');
+
+        return;
       } catch (error) {
         if (error.code === MONGO_DUPLUCATE_KEY_ERROR_CODE) {
-          logger.info(`Lock is already taken, waiting for ${MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC} sec.`);
+          logger.info(`Maintenance lock is already taken, waiting for ${MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC} sec.`);
           // eslint-disable-next-line no-await-in-loop
           await delay(MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC * 1000);
         } else {
@@ -44,4 +53,4 @@ export default class MaintenanceService {
 }
 
 MaintenanceService.MAINTENANCE_LOCK_KEY = 'MAINTENANCE';
-MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC = 10;
+MaintenanceService.MAINTENANCE_LOCK_INTERVAL_IN_SEC = 5;

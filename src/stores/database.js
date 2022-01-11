@@ -119,12 +119,6 @@ class Database {
     };
   }
 
-  async hasPendingMigrationScripts() {
-    const umzug = await this._getUmzug();
-    const pendingMigrations = await umzug.pending();
-    return !!pendingMigrations.length;
-  }
-
   async runMigrationScripts() {
     const umzug = await this._getUmzug();
     await umzug.up();

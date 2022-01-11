@@ -261,15 +261,13 @@ export async function startServer() {
   }
 
   await currentApp.start({
-    TEST_APP_SKIP_MONGO_MIGRATIONS: false.toString(),
-    TEST_APP_SKIP_MONGO_CHECKS: false.toString()
+    TEST_APP_SKIP_MAINTENANCE: false.toString()
   });
 }
 
 export async function restartServer() {
   await currentApp.restart({
-    TEST_APP_SKIP_MONGO_MIGRATIONS: true.toString(),
-    TEST_APP_SKIP_MONGO_CHECKS: true.toString()
+    TEST_APP_SKIP_MAINTENANCE: true.toString()
   });
 }
 

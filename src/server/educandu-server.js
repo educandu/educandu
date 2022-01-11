@@ -84,7 +84,7 @@ export default class EducanduServer {
     return new Promise((resolve, reject) => {
       const { port } = this.serverConfig;
       if (this.server) {
-        logger.info('Cannot start server, it is already listining');
+        logger.info('Cannot start server, it is already listening');
         resolve(port);
       } else {
         logger.info('Starting server');
@@ -99,9 +99,6 @@ export default class EducanduServer {
       await util.promisify(this.server.close.bind(this.server))();
       this.server = null;
       logger.info('Server successfully closed');
-    } else {
-      logger.info('Cannot close server, it is not listening');
-      await Promise.resolve();
     }
   }
 

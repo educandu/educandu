@@ -10,8 +10,8 @@ describe('maintenance-service', () => {
 
   beforeAll(() => {
     database = {
-      hasPendingMigrationScripts: () => Promise.reject(new Error('not stubbed')),
-      runMigrationScripts: () => Promise.reject(new Error('not stubbed'))
+      runMigrationScripts: () => Promise.reject(new Error('not stubbed')),
+      checkDb: () => Promise.reject(new Error('not stubbed'))
     };
     maintenanceLockStore = {
       takeLock: () => Promise.reject(new Error('not stubbed')),
@@ -21,8 +21,8 @@ describe('maintenance-service', () => {
   });
 
   beforeEach(() => {
-    sandbox.stub(database, 'hasPendingMigrationScripts');
     sandbox.stub(database, 'runMigrationScripts');
+    sandbox.stub(database, 'checkDb');
     sandbox.stub(maintenanceLockStore, 'takeLock');
     sandbox.stub(maintenanceLockStore, 'releaseLock');
   });
@@ -32,71 +32,101 @@ describe('maintenance-service', () => {
   });
 
   describe('runMaintenance', () => {
-    beforeEach(() => {
-      database.runMigrationScripts.resolves();
-    });
 
-    describe('when there are no pending migration scripts', () => {
+    describe('when no lock is taken', () => {
       beforeEach(async () => {
-        database.hasPendingMigrationScripts.resolves(false);
         maintenanceLockStore.takeLock.resolves({});
+        maintenanceLockStore.releaseLock.resolves({});
+        database.runMigrationScripts.resolves();
+        database.checkDb.resolves();
+
         await sut.runMaintenance();
       });
 
-      it('should not have taken the lock', () => {
-        sinon.assert.notCalled(maintenanceLockStore.takeLock);
+      it('should have tried to take the lock', () => {
+        sinon.assert.calledOnce(maintenanceLockStore.takeLock);
       });
 
-      it('should not have run the migrations', () => {
-        sinon.assert.notCalled(database.runMigrationScripts);
+      it('should have released the lock', () => {
+        sinon.assert.calledOnce(maintenanceLockStore.releaseLock);
+      });
+
+      it('should have run the migrations', () => {
+        sinon.assert.calledOnce(database.runMigrationScripts);
+      });
+
+      it('should have run the checks', () => {
+        sinon.assert.calledOnce(database.checkDb);
       });
     });
 
-    describe('when there are pending migration scripts', () => {
-      beforeEach(() => {
-        database.hasPendingMigrationScripts
-          .onFirstCall().resolves(true)
-          .onSecondCall().resolves(false);
+    describe('when the lock is already taken on first try', () => {
+      beforeEach(async () => {
+        sandbox.stub(MaintenanceService, 'MAINTENANCE_LOCK_INTERVAL_IN_SEC').value(0);
+        maintenanceLockStore.takeLock
+          .onFirstCall().rejects({ code: 11000 })
+          .onSecondCall().resolves({});
+
+        maintenanceLockStore.releaseLock.resolves({});
+        database.runMigrationScripts.resolves();
+        database.checkDb.resolves();
+
+        await sut.runMaintenance();
       });
 
-      describe('and no lock is taken', () => {
-        beforeEach(async () => {
-          maintenanceLockStore.takeLock.resolves({});
+      it('should have tried to take the lock twice', () => {
+        sinon.assert.calledTwice(maintenanceLockStore.takeLock);
+      });
+
+      it('should have released the lock once', () => {
+        sinon.assert.calledOnce(maintenanceLockStore.releaseLock);
+      });
+
+      it('should have run the migrations once', () => {
+        sinon.assert.calledOnce(database.runMigrationScripts);
+      });
+
+      it('should have run the checks once', () => {
+        sinon.assert.calledOnce(database.checkDb);
+      });
+    });
+
+    describe('when an error occurs during migrations', () => {
+      let caughtError;
+
+      beforeEach(async () => {
+        maintenanceLockStore.takeLock.resolves({});
+        maintenanceLockStore.releaseLock.resolves({});
+        database.runMigrationScripts.rejects(new Error('Migration failed'));
+        database.checkDb.resolves();
+
+        caughtError = null;
+        try {
           await sut.runMaintenance();
-        });
-
-        it('should have taken the lock', () => {
-          sinon.assert.calledOnce(maintenanceLockStore.takeLock);
-        });
-
-        it('should have released the lock', () => {
-          sinon.assert.calledOnce(maintenanceLockStore.releaseLock);
-        });
-
-        it('should have run the migrations', () => {
-          sinon.assert.calledOnce(database.runMigrationScripts);
-        });
+        } catch (error) {
+          caughtError = error;
+        }
       });
 
-      describe('but the lock is already taken', () => {
-        beforeEach(async () => {
-          sandbox.stub(MaintenanceService, 'MAINTENANCE_LOCK_INTERVAL_IN_SEC').value(0);
-          maintenanceLockStore.takeLock
-            .onFirstCall().rejects({ code: 11000 })
-            .onSecondCall().resolves({});
-
-          await sut.runMaintenance();
-        });
-
-        it('should have checked for pending migrations twice', () => {
-          sinon.assert.calledTwice(database.hasPendingMigrationScripts);
-        });
-
-        it('should not have run the migrations', () => {
-          sinon.assert.notCalled(database.runMigrationScripts);
-        });
+      it('should have thrown an error', () => {
+        expect(caughtError).toBeInstanceOf(Error);
       });
 
+      it('should have tried to take the lock', () => {
+        sinon.assert.calledOnce(maintenanceLockStore.takeLock);
+      });
+
+      it('should have released the lock', () => {
+        sinon.assert.calledOnce(maintenanceLockStore.releaseLock);
+      });
+
+      it('should have tried run the migrations', () => {
+        sinon.assert.calledOnce(database.runMigrationScripts);
+      });
+
+      it('should not have run the checks', () => {
+        sinon.assert.notCalled(database.checkDb);
+      });
     });
 
   });

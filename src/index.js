@@ -1,6 +1,5 @@
 import Graceful from 'node-graceful';
 import Logger from './common/logger.js';
-import Database from './stores/database.js';
 import { ROLE } from './domain/constants.js';
 import UserService from './services/user-service.js';
 import ServerConfig from './bootstrap/server-config.js';
@@ -45,28 +44,20 @@ export default async function educandu(options) {
     const educanduServer = container.get(EducanduServer);
     const serverConfig = container.get(ServerConfig);
     const userService = container.get(UserService);
-    const database = container.get(Database);
 
     logger.info('Starting application');
 
-    logger.info('Starting server in maintenance mode');
-    const port = await educanduServer.listen({ maintenance: true });
+    const runMaintenance = !serverConfig.skipMaintenance;
+
+    logger.info(`Starting server${runMaintenance ? ' in maintenance mode' : ''}`);
+    const port = await educanduServer.listen({ maintenance: runMaintenance });
     logger.info(`Server listening on http://localhost:${port}`);
 
-    if (options.skipMongoMigrations) {
-      logger.info('Skipping database migrations');
-    } else {
-      logger.info('Starting database migrations');
+    if (runMaintenance) {
+      logger.info('Running maintenance');
       await maintenanceService.runMaintenance();
-      logger.info('Finished database migrations successfully');
-    }
-
-    if (serverConfig.skipMongoChecks) {
-      logger.info('Skipping database checks');
     } else {
-      logger.info('Starting database checks');
-      await database.checkDb();
-      logger.info('Finished database checks successfully');
+      logger.info('Skipping maintenance');
     }
 
     if (serverConfig.initialUser) {
@@ -88,8 +79,12 @@ export default async function educandu(options) {
       logger.info('Task processing is disabled');
     }
 
-    logger.info('Exiting maintenance mode, server ready');
-    educanduServer.exitMaintenanceMode();
+    if (runMaintenance) {
+      logger.info('Exiting maintenance mode');
+      educanduServer.exitMaintenanceMode();
+    }
+
+    logger.info('Application started successfully');
   } catch (err) {
     logger.fatal(err);
     Graceful.exit(1);

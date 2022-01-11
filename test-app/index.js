@@ -6,8 +6,7 @@ import ArticleController from './article-controller.js';
 educandu({
   port: process.env.TEST_APP_PORT || 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
-  skipMongoMigrations: process.env.TEST_APP_SKIP_MONGO_MIGRATIONS === true.toString(),
-  skipMongoChecks: process.env.TEST_APP_SKIP_MONGO_CHECKS === true.toString(),
+  skipMaintenance: process.env.TEST_APP_SKIP_MAINTENANCE === true.toString(),
   cdnEndpoint: 'http://localhost:9000',
   cdnRegion: 'eu-central-1',
   cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
