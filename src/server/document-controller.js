@@ -57,14 +57,15 @@ class DocumentController {
 
   async handleGetDocPage(req, res) {
     const { user } = req;
-    const { docKey, docSlug } = req.params;
+    const { docKey } = req.params;
+    const routeWildcardValue = urls.trimSlashes(req.params[0]);
 
     const doc = await this.documentService.getDocumentByKey(docKey);
     if (!doc) {
       throw new NotFound();
     }
 
-    if (doc.slug && docSlug !== doc.slug) {
+    if (doc.slug !== routeWildcardValue) {
       return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
     }
 
@@ -203,13 +204,7 @@ class DocumentController {
     );
 
     router.get(
-      '/docs/:docKey',
-      validateParams(getDocumentParamsSchema),
-      (req, res) => this.handleGetDocPage(req, res)
-    );
-
-    router.get(
-      '/docs/:docKey/:docSlug*',
+      '/docs/:docKey*',
       validateParams(getDocumentParamsSchema),
       (req, res) => this.handleGetDocPage(req, res)
     );

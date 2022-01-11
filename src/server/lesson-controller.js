@@ -19,7 +19,8 @@ export default class LessonController {
   }
 
   async handleGetLessonPage(req, res) {
-    const { lessonId, lessonSlug } = req.params;
+    const { lessonId } = req.params;
+    const routeWildcardValue = urls.trimSlashes(req.params[0]);
 
     const lesson = await this.lessonService.getLesson(lessonId);
 
@@ -27,7 +28,7 @@ export default class LessonController {
       throw new NotFound();
     }
 
-    if (lesson.slug && lessonSlug !== lesson.slug) {
+    if (lesson.slug !== routeWildcardValue) {
       return res.redirect(301, urls.getLessonUrl(lesson._id, lesson.slug));
     }
 
@@ -40,13 +41,7 @@ export default class LessonController {
     }
 
     router.get(
-      '/lessons/:lessonId',
-      [validateParams(getLessonParamsSchema)],
-      (req, res) => this.handleGetLessonPage(req, res)
-    );
-
-    router.get(
-      '/lessons/:lessonId/:lessonSlug*',
+      '/lessons/:lessonId*',
       [validateParams(getLessonParamsSchema)],
       (req, res) => this.handleGetLessonPage(req, res)
     );

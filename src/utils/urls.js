@@ -28,6 +28,14 @@ function removeLeadingSlash(path) {
   return String(path).replace(/^\/*/, '');
 }
 
+function trimSlashes(path) {
+  return removeLeadingSlash(removeTrailingSlash(path));
+}
+
+function encodeURIParts(path) {
+  return (path || '').split('/').map(x => encodeURIComponent(x)).join('/');
+}
+
 function concatParts(...parts) {
   return parts
     .filter(part => part || part === 0 || part === false)
@@ -52,7 +60,7 @@ function getUsersUrl() {
 }
 
 function getDocUrl(key, slug) {
-  return concatParts(docsPrefix, key, slug);
+  return concatParts(docsPrefix, encodeURIComponent(key), encodeURIParts(slug));
 }
 
 function getDocumentRevisionUrl(revisionId) {
@@ -146,7 +154,7 @@ function getRoomUrl(roomId) {
 }
 
 function getLessonUrl(id, slug) {
-  return concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIComponent(slug));
+  return concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIParts(slug));
 }
 
 export default {
@@ -154,6 +162,7 @@ export default {
   createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
+  trimSlashes,
   concatParts,
   getDocsUrl,
   getEditDocUrl,
