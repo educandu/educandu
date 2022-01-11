@@ -1,6 +1,6 @@
 import { validate } from '../validation.js';
-import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
-import { postRoomBodySchema, postRoomInvitationBodySchema } from './rooms-schemas.js';
+import { ROOM_ACCESS_LEVEL } from '../constants.js';
+import { postRoomBodySchema, postRoomInvitationBodySchema } from './room-schemas.js';
 
 describe('postRoomBodySchema', () => {
   let incompleteBody = null;

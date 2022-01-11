@@ -65,6 +65,10 @@ class StoreBase {
   deleteMany(...args) {
     return this.collection.deleteMany(...args);
   }
+
+  distinct(...args) {
+    return this.collection.distinct(...args);
+  }
 }
 
 export default StoreBase;

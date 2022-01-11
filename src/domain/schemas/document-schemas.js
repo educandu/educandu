@@ -88,3 +88,8 @@ export const documentDBSchema = joi.object({
   originUrl: joi.string().allow(null).allow(''),
   cdnResources: joi.array().items(joi.string()).required()
 });
+
+export const getDocumentParamsSchema = joi.object({
+  docKey: idOrKeySchema.required(),
+  docSlug: joi.string()
+}).unknown(true);

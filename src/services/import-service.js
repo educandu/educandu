@@ -94,7 +94,7 @@ class ImportService {
       createdBy: user._id,
       createdOn: new Date(),
       completedOn: null,
-      batchType: BATCH_TYPE.importDocuments,
+      batchType: BATCH_TYPE.documentImport,
       batchParams,
       errors: []
     };
@@ -102,7 +102,7 @@ class ImportService {
     const tasks = documentsToImport.map(doc => ({
       _id: uniqueId.create(),
       batchId: batch._id,
-      taskType: TASK_TYPE.importDocument,
+      taskType: TASK_TYPE.documentImport,
       processed: false,
       attempts: [],
       taskParams: {
@@ -126,7 +126,7 @@ class ImportService {
 
     try {
       const existingActiveBatch = await this.batchStore.findOne({
-        'batchType': BATCH_TYPE.importDocuments,
+        'batchType': BATCH_TYPE.documentImport,
         'batchParams.hostName': importSource.hostName,
         'completedOn': null
       });
@@ -182,7 +182,7 @@ class ImportService {
   }
 
   async getImportBatches() {
-    const batches = await this.batchStore.find({ batchType: BATCH_TYPE.importDocuments });
+    const batches = await this.batchStore.find({ batchType: BATCH_TYPE.documentImport });
 
     return Promise.all(batches.map(async batch => {
       const progress = await this._getProgressForBatch(batch);

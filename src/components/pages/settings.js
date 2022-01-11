@@ -1,19 +1,20 @@
 import PropTypes from 'prop-types';
-import { Alert, Input } from 'antd';
 import Markdown from '../markdown.js';
+import { Alert, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../../ui/error-helper.js';
 import { useBeforeunload } from 'react-beforeunload';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { useState, useCallback, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
 import SpecialPageSettings from '../settings/special-page-settings.js';
 import FooterLinksSettings from '../settings/footer-links-settings.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
@@ -22,6 +23,7 @@ const logger = new Logger(import.meta.url);
 function Settings({ initialState, PageTemplate }) {
   const { t } = useTranslation('settings');
   const settingApiClient = useService(SettingApiClient);
+  const documentApiClient = useService(DocumentApiClient);
   const [settings, setSettings] = useState(initialState.settings);
   const [dirtyKeys, setDirtyKeys] = useState([]);
   const [invalidKeys, setInvalidKeys] = useState([]);
@@ -72,6 +74,14 @@ function Settings({ initialState, PageTemplate }) {
     setSettings(lastSavedSettings);
     setDirtyKeys([]);
     setInvalidKeys([]);
+  };
+
+  const handleCreateDocumentRegenerationBatchClick = async () => {
+    try {
+      await documentApiClient.postDocumentRegenerationBatch();
+    } catch (error) {
+      handleApiError({ t, logger, error });
+    }
   };
 
   const headerActions = [];
@@ -142,6 +152,13 @@ function Settings({ initialState, PageTemplate }) {
           defaultTags={settings.defaultTags || []}
           onChange={handleDefaultTagsChange}
           />
+        <h2 className="SettingsPage-sectionHeader">{t('createDocumentRegenerationBatchHeader')}</h2>
+        <Button
+          className="SettingsPage-createDocumentRegenerationBatchButton"
+          onClick={handleCreateDocumentRegenerationBatchClick}
+          >
+          {t('createDocumentRegenerationBatchButton')}
+        </Button>
       </div>
     </PageTemplate>
   );

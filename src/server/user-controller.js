@@ -65,6 +65,7 @@ class UserController {
 
   handleGetLogoutPage(req, res) {
     req.logout();
+    res.clearCookie(this.serverConfig.sessionCookieName);
     return res.redirect(urls.getDefaultLogoutRedirectUrl());
   }
 
@@ -183,7 +184,7 @@ class UserController {
 
   registerMiddleware(router) {
     router.use(session({
-      name: 'SESSION_ID',
+      name: this.serverConfig.sessionCookieName,
       cookie: {
         httpOnly: true,
         domain: this.serverConfig.sessionCookieDomain

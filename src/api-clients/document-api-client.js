@@ -106,6 +106,16 @@ class DocumentApiClient {
       )
       .then(res => res.data);
   }
+
+  postDocumentRegenerationBatch() {
+    return this.httpClient
+      .post(
+        '/api/v1/docs/document-regeneration-batch',
+        null,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default DocumentApiClient;
