@@ -58,7 +58,7 @@ class DocumentController {
   async handleGetDocPage(req, res) {
     const { user } = req;
     const { docKey } = req.params;
-    const routeWildcardValue = urls.trimSlashes(req.params[0]);
+    const routeWildcardValue = urls.removeLeadingSlash(req.params[0]);
 
     const doc = await this.documentService.getDocumentByKey(docKey);
     if (!doc) {

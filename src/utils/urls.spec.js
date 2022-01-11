@@ -63,39 +63,6 @@ describe('order-store-base', () => {
 
   });
 
-  describe('trimSlashes', () => {
-    const testCases = [
-      {
-        path: null,
-        expectedResult: 'null'
-      },
-      {
-        path: 'some-path/some-other-path',
-        expectedResult: 'some-path/some-other-path'
-      },
-      {
-        path: '/some-path/some-other-path/',
-        expectedResult: 'some-path/some-other-path'
-      },
-      {
-        path: '///some-path/some-other-path///',
-        expectedResult: 'some-path/some-other-path'
-      }
-    ];
-
-    testCases.forEach(({ path, expectedResult }) => {
-      describe(`when path is '${path}'`, () => {
-        beforeEach(() => {
-          result = sut.trimSlashes(path);
-        });
-        it(`should return '${expectedResult}'`, () => {
-          expect(result).toBe(expectedResult);
-        });
-      });
-    });
-
-  });
-
   describe('concatParts', () => {
     const testCases = [
       {
@@ -167,6 +134,47 @@ describe('order-store-base', () => {
       describe(`when key is '${key}' and slug is '${slug}'`, () => {
         beforeEach(() => {
           result = sut.getDocUrl(key, slug);
+        });
+        it(`should return '${expectedResult}'`, () => {
+          expect(result).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('getLessonUrl', () => {
+    const testCases = [
+      {
+        id: 'id',
+        slug: null,
+        expectedResult: '/lessons/id'
+      },
+      {
+        id: 'id',
+        slug: 'slug',
+        expectedResult: '/lessons/id/slug'
+      },
+      {
+        id: 'id',
+        slug: 'slug',
+        expectedResult: '/lessons/id/slug'
+      },
+      {
+        id: 'id',
+        slug: 's l u g',
+        expectedResult: '/lessons/id/s%20l%20u%20g'
+      },
+      {
+        id: 'id',
+        slug: 's l u g-part1/slug-part-2',
+        expectedResult: '/lessons/id/s%20l%20u%20g-part1/slug-part-2'
+      }
+    ];
+
+    testCases.forEach(({ id, slug, expectedResult }) => {
+      describe(`when id is '${id}' and slug is '${slug}'`, () => {
+        beforeEach(() => {
+          result = sut.getLessonUrl(id, slug);
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);

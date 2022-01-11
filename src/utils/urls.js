@@ -28,10 +28,6 @@ function removeLeadingSlash(path) {
   return String(path).replace(/^\/*/, '');
 }
 
-function trimSlashes(path) {
-  return removeLeadingSlash(removeTrailingSlash(path));
-}
-
 function encodeURIParts(path) {
   return (path || '').split('/').map(x => encodeURIComponent(x)).join('/');
 }
@@ -162,7 +158,6 @@ export default {
   createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
-  trimSlashes,
   concatParts,
   getDocsUrl,
   getEditDocUrl,

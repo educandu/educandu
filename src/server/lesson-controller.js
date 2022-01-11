@@ -20,7 +20,7 @@ export default class LessonController {
 
   async handleGetLessonPage(req, res) {
     const { lessonId } = req.params;
-    const routeWildcardValue = urls.trimSlashes(req.params[0]);
+    const routeWildcardValue = urls.removeLeadingSlash(req.params[0]);
 
     const lesson = await this.lessonService.getLesson(lessonId);
 
