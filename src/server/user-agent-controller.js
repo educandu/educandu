@@ -11,11 +11,11 @@ class UserAgentController {
   }
 
   isUnsuportedSafari(useragent) {
-    if (!useragent.isSafari) {
-      return false;
+    if (useragent.isSafari) {
+      const majorVersion = parseInt(useragent.version.substr(0, 2), 10);
+      return majorVersion < 13;
     }
-    const majorVersion = parseInt(useragent.version.substr(0, 2), 10);
-    return majorVersion < 13;
+    return false;
   }
 
   handleDetectBrowserSupport(req, res, next) {
@@ -24,7 +24,7 @@ class UserAgentController {
     }
 
     if (req.useragent.isIE || this.isUnsuportedSafari(req.useragent)) {
-      logger.info(req.useragent);
+      logger.warn(`Browser not supported. Redirecting due to useragent being: ${JSON.stringify(req.useragent)}`);
       return res.redirect(301, `/${PAGE_NAME.browserNotSupported}`);
     }
 
