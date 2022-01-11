@@ -213,14 +213,16 @@
     "namespace": "lessonCreationModal",
     "language": "en",
     "resources": {
-      "newLesson": "New lesson"
+      "newLesson": "New lesson",
+      "titleRequired": "Please specify a lesson title"
     }
   },
   {
     "namespace": "lessonCreationModal",
     "language": "de",
     "resources": {
-      "newLesson": "Neuer Unterricht"
+      "newLesson": "Neue Unterrichtseinheit",
+      "titleRequired": "Bitte geben Sie einen Unterrichtseinheit Titel an"
     }
   },
   {

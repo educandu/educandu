@@ -1,12 +1,14 @@
+import express from 'express';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
-import { validateParams } from '../domain/validation-middleware.js';
-import { getLessonParamsSchema } from '../domain/schemas/lesson-schemas.js';
+import { validateBody, validateParams } from '../domain/validation-middleware.js';
+import { getLessonParamsSchema, postLessonBodySchema } from '../domain/schemas/lesson-schemas.js';
 
+const jsonParser = express.json();
 const { NotFound } = httpErrors;
 
 export default class LessonController {
@@ -35,6 +37,14 @@ export default class LessonController {
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson });
   }
 
+  async handlePostLesson(req, res) {
+    const { user } = req;
+    const { title, slug, language } = req.body;
+    const newLesson = await this.lessonService.createLesson({ user, title, slug, language });
+
+    return res.status(201).send(newLesson);
+  }
+
   registerPages(router) {
     if (!this.serverConfig.areRoomsEnabled) {
       return;
@@ -45,5 +55,12 @@ export default class LessonController {
       [validateParams(getLessonParamsSchema)],
       (req, res) => this.handleGetLessonPage(req, res)
     );
+
+    router.post(
+      '/api/v1/lessons',
+      [jsonParser, validateBody(postLessonBodySchema)],
+      (req, res) => this.handlePostLesson(req, res)
+    );
+
   }
 }

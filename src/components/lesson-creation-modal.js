@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
+import inputValidators from '../utils/input-validators.js';
 import LanguageSelect from './localization/language-select.js';
 import LessonApiClient from '../api-clients/lesson-api-client.js';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -28,17 +29,28 @@ function LessonCreationModal({ isVisible, onClose }) {
   const lessonApiClient = useService(LessonApiClient);
   const { t } = useTranslation('lessonCreationModal');
 
-  const lessonTitleValidationRules = [
+  const titleValidationRules = [
     {
       required: true,
-      message: t('lessonTitleRequired'),
+      message: t('titleRequired'),
       whitespace: true
+    }
+  ];
+
+  const slugValidationRules = [
+    {
+      validator: (rule, value) => {
+        return value && !inputValidators.isValidSlug(value)
+          ? Promise.reject(new Error(t('common:invalidSlug')))
+          : Promise.resolve();
+      }
     }
   ];
 
   const isFormValid = async () => {
     try {
       await formRef.current.validateFields(['title'], { force: true });
+      await formRef.current.validateFields(['slug'], { force: true });
       return true;
     } catch {
       return false;
@@ -62,6 +74,7 @@ function LessonCreationModal({ isVisible, onClose }) {
 
       if (formRef.current) {
         formRef.current.setFieldsValue({ title: newLesson.title });
+        formRef.current.setFieldsValue({ slug: newLesson.slug });
       }
     }
   }, [isVisible, createLessonState]);
@@ -114,15 +127,15 @@ function LessonCreationModal({ isVisible, onClose }) {
       visible={isVisible}
       okButtonProps={{ loading }}
       >
-      <Form name="new-lesson-form" ref={formRef} layout="vertical">
-        <FormItem label={t('common:title')} name="title" rules={lessonTitleValidationRules} initialValue={lesson.title}>
+      <Form name="new-lesson-form" ref={formRef} layout="vertical" initialValues={lesson}>
+        <FormItem label={t('common:title')} name="title" rules={titleValidationRules}>
           <Input onChange={handleTitleChange} />
         </FormItem>
-        <FormItem label={t('common:language')}>
+        <FormItem label={t('common:language')} name="language">
           <LanguageSelect value={lesson.language} onChange={handleLanguageChange} />
         </FormItem>
-        <FormItem label={t('common:slug')}>
-          <Input value={lesson.slug} onChange={handleSlugChange} />
+        <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules}>
+          <Input onChange={handleSlugChange} />
         </FormItem>
       </Form>
     </Modal>

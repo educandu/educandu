@@ -18,3 +18,10 @@ export const getLessonParamsSchema = joi.object({
   lessonId: idOrKeySchema.required(),
   lessonSlug: joi.string()
 }).unknown(true);
+
+export const postLessonBodySchema = joi.object({
+  title: joi.string().required(),
+  slug: slugSchema,
+  language: joi.string().case('lower').required(),
+  schedule: joi.object().allow(null)
+});
