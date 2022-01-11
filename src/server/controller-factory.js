@@ -8,6 +8,7 @@ import ErrorController from './error-controller.js';
 import StaticController from './static-controller.js';
 import ImportController from './import-controller.js';
 import ExportController from './export-controller.js';
+import LessonController from './lesson-controller.js';
 import MySpaceController from './my-space-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
@@ -26,7 +27,8 @@ const controllerTypes = [
   ImportController,
   ErrorController,
   RoomController,
-  MySpaceController
+  MySpaceController,
+  LessonController
 ];
 
 class ControllerFactory {

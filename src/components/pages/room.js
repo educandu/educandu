@@ -69,11 +69,7 @@ export default function Room({ PageTemplate, initialState }) {
   }
 
   const renderLesson = (lesson, index) => {
-    const urlParts = ['lessons', encodeURIComponent(lesson._id)];
-    if (lesson.slug) {
-      urlParts.push(encodeURIComponent(lesson.slug));
-    }
-    const url = urlParts.join('/');
+    const url = urls.getLessonUrl(lesson._id, lesson.slug);
 
     const hightlightedLessonIndex = 1;
 
@@ -82,7 +78,7 @@ export default function Room({ PageTemplate, initialState }) {
         {index === hightlightedLessonIndex && (<hr />)}
         <div className="Room-lessonInfo">
           <span className="Room-lessonWeek">{index === hightlightedLessonIndex && t('thisWeek')}</span>
-          <a rel="noopener noreferrer" target="_blank" href={url}>{lesson.title}</a>
+          <a href={url}>{lesson.title}</a>
         </div>
         {index === hightlightedLessonIndex && (<hr />)}
       </div>

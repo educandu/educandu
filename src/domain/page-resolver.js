@@ -22,7 +22,8 @@ const pageImporters = {
   [PAGE_NAME.importBatchCreation]: async () => (await import('../components/pages/import-batch-creation.js')).default,
   [PAGE_NAME.browserNotSupported]: async () => (await import('../components/pages/browser-not-supported.js')).default,
   [PAGE_NAME.room]: async () => (await import('../components/pages/room.js')).default,
-  [PAGE_NAME.roomMembershipConfirmation]: async () => (await import('../components/pages/room-membership-confirmation.js')).default
+  [PAGE_NAME.roomMembershipConfirmation]: async () => (await import('../components/pages/room-membership-confirmation.js')).default,
+  [PAGE_NAME.lesson]: async () => (await import('../components/pages/lesson.js')).default
 };
 
 async function resolveAll(promiseCreators) {

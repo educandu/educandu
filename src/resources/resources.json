@@ -1509,7 +1509,8 @@
       "importBatches": "Imports",
       "importBatchView": "Import details",
       "docs": "Documents",
-      "room": "Room - {roomName}"
+      "room": "Room - {roomName}",
+      "lesson": "Lesson - {lessonTitle}"
     }
   },
   {
@@ -1524,7 +1525,8 @@
       "importBatches": "Importe",
       "importBatchView": "Import-Details",
       "docs": "Dokumente",
-      "room": "Raum - {roomName}"
+      "room": "Raum - {roomName}",
+      "lesson": "Unterrichtseinheit - {lessonTitle}"
     }
   },
   {

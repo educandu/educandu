@@ -17,5 +17,6 @@ export const PAGE_NAME = {
   importBatches: 'import-batches',
   browserNotSupported: 'browser-not-supported',
   room: 'room',
-  roomMembershipConfirmation: 'room-membership-confirmation'
+  roomMembershipConfirmation: 'room-membership-confirmation',
+  lesson: 'lesson'
 };
