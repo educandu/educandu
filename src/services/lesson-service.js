@@ -1,4 +1,5 @@
 import Logger from '../common/logger.js';
+import uniqueId from '../utils/unique-id.js';
 import LessonStore from '../stores/lesson-store.js';
 
 const logger = new Logger(import.meta.url);
@@ -49,6 +50,25 @@ class LessonService {
     ]);
 
     return lessons;
+  }
+
+  async createLesson({ user, title, slug, language }) {
+    const lesson = {
+      _id: uniqueId.create(),
+      createdOn: new Date(),
+      createdBy: user._id,
+      updatedOn: new Date(),
+      title,
+      slug,
+      language,
+      sections: [],
+      cdnResources: [],
+      schedule: null
+    };
+
+    await this.lessonStore.save(lesson);
+
+    return lesson;
   }
 }
 

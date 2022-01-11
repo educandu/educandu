@@ -1,4 +1,3 @@
-
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import Logger from '../common/logger.js';
@@ -8,9 +7,9 @@ import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import inputValidators from '../utils/input-validators.js';
+import React, { useState, useRef, useEffect } from 'react';
 import LanguageSelect from './localization/language-select.js';
 import LessonApiClient from '../api-clients/lesson-api-client.js';
-import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 const FormItem = Form.Item;
 
@@ -25,9 +24,11 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
 
 function LessonCreationModal({ isVisible, onClose }) {
   const formRef = useRef(null);
-  const { language } = useLanguage();
+  const { language: uiLanguage } = useLanguage();
   const lessonApiClient = useService(LessonApiClient);
   const { t } = useTranslation('lessonCreationModal');
+
+  const [loading, setLoading] = useState(false);
 
   const titleValidationRules = [
     {
@@ -47,26 +48,18 @@ function LessonCreationModal({ isVisible, onClose }) {
     }
   ];
 
-  const createLessonState = useCallback(() => ({
+  const defaultLesson = {
     title: t('newLesson'),
     slug: '',
-    language: getDefaultLanguageFromUiLanguage(language),
+    language: getDefaultLanguageFromUiLanguage(uiLanguage),
     scheduling: null
-  }), [t, language]);
-
-  const [loading, setLoading] = useState(false);
-  const [lesson, setLesson] = useState(createLessonState());
+  };
 
   useEffect(() => {
-    if (isVisible) {
-      const newLesson = createLessonState();
-      setLesson(newLesson);
-
-      if (formRef.current) {
-        formRef.current.resetFields();
-      }
+    if (isVisible && formRef.current) {
+      formRef.current.resetFields();
     }
-  }, [isVisible, createLessonState]);
+  }, [isVisible]);
 
   const handleOk = () => {
     if (formRef.current) {
@@ -74,14 +67,16 @@ function LessonCreationModal({ isVisible, onClose }) {
     }
   };
 
-  const handleOnFinish = async () => {
+  const handleOnFinish = async ({ title, slug, language }) => {
     try {
       setLoading(true);
       const newLesson = await lessonApiClient.addLesson({
-        title: lesson.name,
-        slug: lesson.access,
+        title,
+        slug: slug || '',
+        language,
         scheduling: null
       });
+
       setLoading(false);
       onClose();
 
@@ -103,7 +98,7 @@ function LessonCreationModal({ isVisible, onClose }) {
       visible={isVisible}
       okButtonProps={{ loading }}
       >
-      <Form onFinish={handleOnFinish} name="new-lesson-form" ref={formRef} layout="vertical" initialValues={lesson}>
+      <Form onFinish={handleOnFinish} name="new-lesson-form" ref={formRef} layout="vertical" initialValues={defaultLesson}>
         <FormItem label={t('common:title')} name="title" rules={titleValidationRules}>
           <Input />
         </FormItem>

@@ -7,11 +7,11 @@ class LessonApiClient {
     this.httpClient = httpClient;
   }
 
-  addLesson({ name, access }) {
+  addLesson({ title, slug, language }) {
     return this.httpClient
       .post(
         '/api/v1/lessons',
-        { name, access },
+        { title, slug, language },
         { responseType: 'json' }
       )
       .then(res => res.data);
