@@ -9,6 +9,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import errorHelper from '../../ui/error-helper.js';
 import React, { useEffect, useState } from 'react';
 import { useService } from '../container-context.js';
+import { useBeforeunload } from 'react-beforeunload';
 import { ALERT_TYPE } from '../../domain/constants.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import ShallowUpdateList from '../shallow-update-list.js';
@@ -348,6 +349,12 @@ function EditDoc({ initialState, PageTemplate }) {
 
     setAlerts(newAlerts);
   }, [globalAlerts, initialState.proposedSections, t]);
+
+  useBeforeunload(event => {
+    if (isDirty) {
+      event.preventDefault();
+    }
+  });
 
   return (
     <PageTemplate headerActions={headerActions} alerts={alerts}>

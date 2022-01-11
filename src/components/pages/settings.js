@@ -4,6 +4,7 @@ import Markdown from '../markdown.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../../ui/error-helper.js';
+import { useBeforeunload } from 'react-beforeunload';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
@@ -97,6 +98,12 @@ function Settings({ initialState, PageTemplate }) {
   }
 
   const alerts = useGlobalAlerts();
+
+  useBeforeunload(event => {
+    if (dirtyKeys.length) {
+      event.preventDefault();
+    }
+  });
 
   return (
     <PageTemplate alerts={alerts} headerActions={headerActions}>
