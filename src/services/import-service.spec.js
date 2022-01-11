@@ -231,7 +231,7 @@ describe('import-service', () => {
             createdBy: user._id,
             createdOn: expect.any(Date),
             completedOn: null,
-            batchType: BATCH_TYPE.importDocuments,
+            batchType: BATCH_TYPE.documentImport,
             batchParams: {
               name: 'source-1',
               hostName: 'source1.com',
@@ -248,7 +248,7 @@ describe('import-service', () => {
           {
             _id: expect.stringMatching(/\w+/),
             batchId: expect.stringMatching(/\w+/),
-            taskType: TASK_TYPE.importDocument,
+            taskType: TASK_TYPE.documentImport,
             processed: false,
             attempts: [],
             taskParams: {
@@ -259,7 +259,7 @@ describe('import-service', () => {
           {
             _id: expect.stringMatching(/\w+/),
             batchId: expect.stringMatching(/\w+/),
-            taskType: TASK_TYPE.importDocument,
+            taskType: TASK_TYPE.documentImport,
             processed: false,
             attempts: [],
             taskParams: {
@@ -378,7 +378,7 @@ describe('import-service', () => {
           createdBy: user._id,
           createdOn: expect.any(Date),
           completedOn: null,
-          batchType: BATCH_TYPE.importDocuments,
+          batchType: BATCH_TYPE.documentImport,
           batchParams: {
             name: 'source-1',
             hostName: 'source1.com',
@@ -392,7 +392,7 @@ describe('import-service', () => {
           createdBy: user._id,
           createdOn: expect.any(Date),
           completedOn: null,
-          batchType: BATCH_TYPE.importDocuments,
+          batchType: BATCH_TYPE.documentImport,
           batchParams: {
             name: 'source-1',
             hostName: 'source2',
@@ -428,7 +428,7 @@ describe('import-service', () => {
         createdBy: user._id,
         createdOn: expect.any(Date),
         completedOn: null,
-        batchType: BATCH_TYPE.importDocuments,
+        batchType: BATCH_TYPE.documentImport,
         batchParams: {
           name: 'source-1',
           hostName: 'source1.com',
@@ -452,7 +452,7 @@ describe('import-service', () => {
               title: 'doc-1',
               updatedOn: expect.any(Date)
             },
-            taskType: 'import-document'
+            taskType: 'document-import'
           },
           {
             _id: expect.stringMatching(/\w+/),
@@ -469,7 +469,7 @@ describe('import-service', () => {
               title: 'doc-2',
               updatedOn: expect.any(Date)
             },
-            taskType: 'import-document'
+            taskType: 'document-import'
           }
         ])
       });

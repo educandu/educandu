@@ -1,13 +1,18 @@
 /* eslint-disable max-lines */
 import sinon from 'sinon';
+import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
+import TaskStore from '../stores/task-store.js';
 import DocumentService from './document-service.js';
-import { DOCUMENT_ORIGIN } from '../domain/constants.js';
+import DocumentLockStore from '../stores/document-lock-store.js';
+import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+
+const { BadRequest } = httpErrors;
 
 const createDefaultSection = () => ({
   key: uniqueId.create(),
@@ -22,12 +27,20 @@ describe('document-service', () => {
 
   let container;
   let user;
+
+  let taskStore;
+  let documentLockStore;
+
   let sut;
   let db;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
     user = await setupTestUser(container);
+
+    taskStore = container.get(TaskStore);
+    documentLockStore = container.get(DocumentLockStore);
+
     sut = container.get(DocumentService);
     db = container.get(Database);
   });
@@ -904,7 +917,7 @@ describe('document-service', () => {
 
   });
 
-  describe('whenSearchingByTags', () => {
+  describe('getDocumentsByTags', () => {
     let doc1 = null;
     let doc2 = null;
     let doc3 = null;
@@ -1036,6 +1049,115 @@ describe('document-service', () => {
 
         expect(results).toHaveLength(0);
       });
+    });
+  });
+
+  describe('createDocumentRegenerationBatch', () => {
+    let createdDocument;
+    let result;
+    let revision;
+    beforeEach(async () => {
+      revision = {
+        title: 'Title',
+        slug: 'my-doc',
+        language: 'en',
+        sections: [],
+        tags: ['tag-1']
+      };
+      result = await sut.createNewDocumentRevision({ doc: revision, user });
+      createdDocument = await db.documents.findOne({ key: result.key });
+    });
+
+    describe('when a running batch already exists', () => {
+      beforeEach(async () => {
+        await sut.createDocumentRegenerationBatch(user);
+      });
+
+      it('should return null', () => {
+        expect(() => sut.createDocumentRegenerationBatch(user)).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when a new batch is created', () => {
+      let batch = null;
+      beforeEach(async () => {
+        batch = await sut.createDocumentRegenerationBatch(user);
+      });
+
+      it('should create the new batch', () => {
+        expect(batch).toEqual({
+          _id: expect.stringMatching(/\w+/),
+          createdBy: user._id,
+          createdOn: now,
+          completedOn: null,
+          batchType: BATCH_TYPE.documentRegeneration,
+          batchParams: {},
+          errors: []
+        });
+      });
+
+      it('should create the according tasks', async () => {
+        const tasks = await taskStore.find({ batchId: batch._id });
+        expect(tasks).toEqual([
+          {
+            _id: expect.stringMatching(/\w+/),
+            batchId: batch._id,
+            taskType: TASK_TYPE.documentRegeneration,
+            processed: false,
+            attempts: [],
+            taskParams: {
+              key: createdDocument.key
+            }
+          }
+        ]);
+      });
+    });
+  });
+
+  describe('regenerateDocument', () => {
+    const lock = { _id: 'mylock' };
+
+    let regeneratedDocument;
+    let document;
+    let revision;
+
+    beforeEach(async () => {
+      sandbox.stub(documentLockStore, 'takeLock').resolves(lock);
+      sandbox.stub(documentLockStore, 'releaseLock');
+      revision = {
+        title: 'Title',
+        slug: 'my-doc',
+        language: 'en',
+        sections: [],
+        tags: ['tag-1']
+      };
+
+      document = await sut.createNewDocumentRevision({ doc: revision, user });
+
+      await db.documentRevisions.replaceOne(
+        { _id: document._id },
+        {
+          ...document,
+          slug: 'new-slug'
+        },
+        { upsert: true }
+      );
+
+      await sut.regenerateDocument(document.key);
+
+      regeneratedDocument = await db.documents.findOne({ _id: document.key });
+    });
+
+    it('should take a lock on the document', () => {
+      sinon.assert.calledWith(documentLockStore.takeLock, regeneratedDocument.key);
+    });
+
+    it('should release the lock on the document', () => {
+      sinon.assert.calledWith(documentLockStore.releaseLock, lock);
+    });
+
+    it('should save a new document', () => {
+      expect(regeneratedDocument.slug).toEqual('new-slug');
     });
   });
 });

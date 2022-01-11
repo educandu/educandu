@@ -162,7 +162,7 @@ describe('task-processor', () => {
       beforeEach(async () => {
         ctx = { cancellationRequested: false };
 
-        nextTask = { _id: taskId, taskType: TASK_TYPE.importDocument, processed: false, attempts: [] };
+        nextTask = { _id: taskId, taskType: TASK_TYPE.documentImport, processed: false, attempts: [] };
 
         taskLockStore.takeLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
@@ -187,7 +187,7 @@ describe('task-processor', () => {
       it('should call taskStore.save', () => {
         sinon.assert.calledWith(taskStore.save, {
           _id: taskId,
-          taskType: TASK_TYPE.importDocument,
+          taskType: TASK_TYPE.documentImport,
           processed: false,
           attempts: [
             {
@@ -214,7 +214,7 @@ describe('task-processor', () => {
 
         nextTask = {
           _id: taskId,
-          taskType: TASK_TYPE.importDocument,
+          taskType: TASK_TYPE.documentImport,
           processed: false,
           attempts: [
             {
@@ -248,7 +248,7 @@ describe('task-processor', () => {
       it('should call taskStore.save', () => {
         sinon.assert.calledWith(taskStore.save, {
           _id: taskId,
-          taskType: TASK_TYPE.importDocument,
+          taskType: TASK_TYPE.documentImport,
           processed: true,
           attempts: [
             {
@@ -275,7 +275,7 @@ describe('task-processor', () => {
         ctx = { cancellationRequested: false };
         nextTask = {
           _id: taskId,
-          taskType: TASK_TYPE.importDocument,
+          taskType: TASK_TYPE.documentImport,
           processed: false,
           attempts: []
         };
@@ -302,7 +302,7 @@ describe('task-processor', () => {
       it('should call taskStore.save', () => {
         sinon.assert.calledWith(taskStore.save, {
           _id: taskId,
-          taskType: TASK_TYPE.importDocument,
+          taskType: TASK_TYPE.documentImport,
           processed: true,
           attempts: [
             {
