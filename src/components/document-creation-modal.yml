@@ -7,3 +7,6 @@ copyTitleSuffix:
 copySlugSuffix:
   en: copy
   de: kopie
+titleRequired:
+  en: Please specify a document title
+  de: Bitte geben Sie einen Dokument Titel an

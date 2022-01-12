@@ -129,7 +129,8 @@
     "resources": {
       "newDocument": "New document",
       "copyTitleSuffix": "(copy)",
-      "copySlugSuffix": "copy"
+      "copySlugSuffix": "copy",
+      "titleRequired": "Please specify a document title"
     }
   },
   {
@@ -138,7 +139,8 @@
     "resources": {
       "newDocument": "Neues Dokument",
       "copyTitleSuffix": "(Kopie)",
-      "copySlugSuffix": "kopie"
+      "copySlugSuffix": "kopie",
+      "titleRequired": "Bitte geben Sie einen Dokument Titel an"
     }
   },
   {

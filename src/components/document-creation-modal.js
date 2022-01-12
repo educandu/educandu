@@ -7,6 +7,7 @@ import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { toTrimmedString } from '../utils/sanitize.js';
+import inputValidators from '../utils/input-validators.js';
 import React, { useEffect, useRef, useState } from 'react';
 import LanguageSelect from './localization/language-select.js';
 import { documentMetadataShape } from '../ui/default-prop-types.js';
@@ -29,13 +30,31 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
   const { t } = useTranslation('documentCreationModal');
   const documentApiClient = useService(DocumentApiClient);
 
+  const [loading, setLoading] = useState(false);
+
   const defaultDocument = {
     title: clonedDocument?.title ? `${clonedDocument.title} ${t('copyTitleSuffix')}` : t('newDocument'),
     slug: clonedDocument?.slug ? `${clonedDocument.slug}-${t('copySlugSuffix')}` : '',
     language: clonedDocument?.language || getDefaultLanguageFromUiLanguage(uiLanguage)
   };
 
-  const [loading, setLoading] = useState(false);
+  const titleValidationRules = [
+    {
+      required: true,
+      message: t('titleRequired'),
+      whitespace: true
+    }
+  ];
+
+  const slugValidationRules = [
+    {
+      validator: (rule, value) => {
+        return value && !inputValidators.isValidSlug(value)
+          ? Promise.reject(new Error(t('common:invalidSlug')))
+          : Promise.resolve();
+      }
+    }
+  ];
 
   useEffect(() => {
     if (isVisible && formRef.current) {
@@ -55,7 +74,7 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
       slug: toTrimmedString(slug) || '',
       language,
       sections: [],
-      tags: clonedDocument.tags ? [...clonedDocument.tags] : [],
+      tags: clonedDocument?.tags ? [...clonedDocument.tags] : [],
       archived: false
     };
   };
@@ -89,13 +108,13 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
       okButtonProps={{ loading }}
       >
       <Form onFinish={handleOnFinish} ref={formRef} name="new-document-form" layout="vertical">
-        <FormItem name="title" label={t('common:title')} initialValue={defaultDocument.title}>
+        <FormItem name="title" label={t('common:title')} initialValue={defaultDocument.title} rules={titleValidationRules}>
           <Input />
         </FormItem>
         <FormItem name="language" label={t('common:language')} initialValue={defaultDocument.language}>
           <LanguageSelect />
         </FormItem>
-        <FormItem name="slug" label={t('common:slug')} initialValue={defaultDocument.slug}>
+        <FormItem name="slug" label={t('common:slug')} initialValue={defaultDocument.slug} rules={slugValidationRules}>
           <Input />
         </FormItem>
       </Form>
