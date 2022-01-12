@@ -124,6 +124,24 @@
     }
   },
   {
+    "namespace": "documentCreationModal",
+    "language": "en",
+    "resources": {
+      "newDocument": "New document",
+      "copyTitleSuffix": "(copy)",
+      "copySlugSuffix": "copy"
+    }
+  },
+  {
+    "namespace": "documentCreationModal",
+    "language": "de",
+    "resources": {
+      "newDocument": "Neues Dokument",
+      "copyTitleSuffix": "(Kopie)",
+      "copySlugSuffix": "kopie"
+    }
+  },
+  {
     "namespace": "documentImportTable",
     "language": "en",
     "resources": {

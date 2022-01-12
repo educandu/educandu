@@ -1,0 +1,9 @@
+newDocument:
+  en: New document
+  de: Neues Dokument
+copyTitleSuffix:
+  en: (copy)
+  de: (Kopie)
+copySlugSuffix:
+  en: copy
+  de: kopie
