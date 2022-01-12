@@ -53,6 +53,12 @@ class LessonService {
   }
 
   async createLesson({ user, title, slug, language, schedule }) {
+    const mappedSchedule = schedule
+      ? {
+        startsOn: new Date(schedule.startsOn)
+      }
+      : null;
+
     const lesson = {
       _id: uniqueId.create(),
       createdOn: new Date(),
@@ -63,7 +69,7 @@ class LessonService {
       language,
       sections: [],
       cdnResources: [],
-      schedule
+      schedule: mappedSchedule
     };
 
     await this.lessonStore.save(lesson);

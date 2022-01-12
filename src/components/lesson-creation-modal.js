@@ -76,7 +76,7 @@ function LessonCreationModal({ isVisible, onClose }) {
         title,
         slug: slug || '',
         language,
-        schedule: startsOn ? { startsOn: startsOn.toDate() } : null
+        schedule: startsOn ? { startsOn: startsOn.toISOString() } : null
       });
 
       setLoading(false);
