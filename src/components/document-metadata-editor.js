@@ -35,12 +35,12 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
 
   const validateMetadata = metadata => {
     const isValidSlug = inputValidators.isValidSlug(metadata.slug);
-    setSlugValidationStatus(isValidSlug ? '' : 'error');
+    setSlugValidationStatus(isValidSlug ? '' : 'warning');
 
     const areValidTags = metadata.tags.length > 0 && metadata.tags.every(tag => inputValidators.isValidTag({ tag }));
     setTagsValidationStatus(areValidTags ? '' : 'error');
 
-    return isValidSlug && areValidTags;
+    return areValidTags;
   };
 
   useEffect(() => {

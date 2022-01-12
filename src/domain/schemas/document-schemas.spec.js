@@ -56,7 +56,7 @@ describe('createRevisionBodySchema', () => {
       description: 'a revision with an invalid slug',
       data: {
         ...documentRevision,
-        slug: 'trailing-slash/'
+        slug: null
       }
     },
     {

@@ -4,16 +4,9 @@ import { sectionDBSchema, slugSchema } from './shared-schemas.js';
 
 describe('slugSchema', () => {
   const testCases = [
-    { description: 'trailing slash', slug: 'slug/', shouldSucceed: false },
-    { description: 'double slash', slug: 'slug//slug', shouldSucceed: false },
-    { description: 'upper case characters', slug: 'SLUUUUG', shouldSucceed: false },
-    { description: 'slash followed by hyphon', slug: 'slug/-', shouldSucceed: true },
-    { description: 'trailing hyphon', slug: 'slug-', shouldSucceed: true },
-    { description: 'hypho slash hyphon', slug: 'slug-/-', shouldSucceed: true },
-    { description: 'lower case chars and digits group', slug: 'slug123', shouldSucceed: true },
-    { description: 'lower case chars and digits group separated by hyphon', slug: 'slug123-slug123', shouldSucceed: true },
-    { description: 'lower case chars and digits group separated by hyphon and slash', slug: 'slug123-slug123/abc', shouldSucceed: true },
-    { description: 'multiple valid groups separated by slashes', slug: 'slug123-slug123/abc-abc123-abc/def-def', shouldSucceed: true }
+    { description: 'empty string', slug: '', shouldSucceed: true },
+    { description: 'null value', slug: null, shouldSucceed: false },
+    { description: 'a normal string', slug: 'normal will be normal', shouldSucceed: true }
   ];
 
   testCases.forEach(({ description, slug, shouldSucceed }) => {
