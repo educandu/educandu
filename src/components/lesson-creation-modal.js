@@ -99,7 +99,7 @@ function LessonCreationModal({ isVisible, onClose }) {
   };
 
   const disabledTime = () => {
-    const disabledMorningHours = [...Array(24).keys()].splice(0, 7);
+    const disabledMorningHours = [...Array(7).keys()];
     const disabledEveningHours = [...Array(24).keys()].splice(21);
     const disabledMinutes = [...Array(60).keys()].filter(minute => minute % 5 !== 0);
 
