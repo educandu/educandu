@@ -98,11 +98,12 @@ function LessonCreationModal({ isVisible, onClose }) {
     return current && current <= yesterday;
   };
 
-  const disabledTime = () => {
-    const disabledMorningHours = [...Array(7).keys()];
-    const disabledEveningHours = [...Array(24).keys()].splice(21);
-    const disabledMinutes = [...Array(60).keys()].filter(minute => minute % 5 !== 0);
+  const disabledMorningHours = [...Array(7).keys()];
+  const disabledEveningHours = [...Array(24).keys()].splice(21);
+  const disabledMinutes = [...Array(60).keys()].filter(minute => minute % 5 !== 0);
+  const firstEnabledHour = disabledMorningHours[disabledMorningHours.length - 1] + 1;
 
+  const disabledTime = () => {
     return {
       disabledHours: () => [...disabledMorningHours, ...disabledEveningHours],
       disabledMinutes: () => disabledMinutes
@@ -135,7 +136,7 @@ function LessonCreationModal({ isVisible, onClose }) {
             format={dateTimeFormat}
             disabledDate={disabledDate}
             disabledTime={disabledTime}
-            showTime={{ defaultValue: moment('00:00', 'HH:mm'), format: 'HH:mm', hideDisabledOptions: true }}
+            showTime={{ defaultValue: moment(`${firstEnabledHour}:00`, 'HH:mm'), format: 'HH:mm', hideDisabledOptions: true }}
             />
         </FormItem>
       </Form>
