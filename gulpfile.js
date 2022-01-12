@@ -6,30 +6,36 @@ import gulp from 'gulp';
 import yaml from 'yaml';
 import { EOL } from 'os';
 import axios from 'axios';
-import semver from 'semver';
 import less from 'gulp-less';
 import csso from 'gulp-csso';
 import gulpif from 'gulp-if';
 import esbuild from 'esbuild';
 import inquirer from 'inquirer';
 import eslint from 'gulp-eslint';
-import { promisify } from 'util';
 import plumber from 'gulp-plumber';
-import ghreleases from 'ghreleases';
 import { promises as fs } from 'fs';
 import Graceful from 'node-graceful';
-import axiosRetry from 'axios-retry';
 import { MongoClient } from 'mongodb';
-import { cleanEnv, str } from 'envalid';
 import sourcemaps from 'gulp-sourcemaps';
-import gitSemverTags from 'git-semver-tags';
-import commitsBetween from 'commits-between';
 import { MongoDBStorage, Umzug } from 'umzug';
 import LessAutoprefix from 'less-plugin-autoprefix';
-import { cliArgs, glob, jest, kebabToCamel, MongoContainer, MinioContainer, MaildevContainer, NodeProcess, LoadBalancedNodeProcessGroup } from './dev/index.js';
-
-const JIRA_ISSUE_PATTERN = '(EDU|OMA|ELMU)-\\d+';
-const JIRA_BASE_URL = 'https://educandu.atlassian.net';
+import {
+  cliArgs,
+  createGithubRelease,
+  createLabelInJiraIssues,
+  createReleaseNotesFromCurrentTag,
+  ensureIsValidSemverTag,
+  glob,
+  getEnvAsString,
+  jest,
+  kebabToCamel,
+  MongoContainer,
+  MinioContainer,
+  MaildevContainer,
+  TunnelProxyContainer,
+  NodeProcess,
+  LoadBalancedNodeProcessGroup
+} from './dev/index.js';
 
 const supportedLanguages = ['en', 'de'];
 
@@ -243,25 +249,68 @@ export async function minioDown() {
 export const minioReset = gulp.series(minioDown, minioUp);
 
 export async function startServer() {
+  const { instances, tunnel } = cliArgs;
+
+  const tunnelToken = tunnel ? getEnvAsString('TUNNEL_TOKEN') : null;
+  const tunnelWebsiteDomain = tunnel ? getEnvAsString('TUNNEL_WEBSITE_DOMAIN') : null;
+  const tunnelWebsiteCdnDomain = tunnel ? getEnvAsString('TUNNEL_WEBSITE_CDN_DOMAIN') : null;
+
+  if (tunnel) {
+    console.log('Opening tunnel connections');
+    const websiteTunnel = new TunnelProxyContainer({
+      name: 'website-tunnel',
+      tunnelToken,
+      tunnelDomain: tunnelWebsiteDomain,
+      localPort: 3000
+    });
+
+    const websiteCdnTunnel = new TunnelProxyContainer({
+      name: 'website-cdn-tunnel',
+      tunnelToken,
+      tunnelDomain: tunnelWebsiteCdnDomain,
+      localPort: 10000
+    });
+
+    await Promise.all([
+      websiteTunnel.ensureIsRunning(),
+      websiteCdnTunnel.ensureIsRunning()
+    ]);
+
+    Graceful.on('exit', async () => {
+      console.log('Closing tunnel connections');
+      await Promise.all([
+        websiteTunnel.ensureIsRemoved(),
+        websiteCdnTunnel.ensureIsRemoved()
+      ]);
+    });
+  }
+
+  const env = {
+    TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
+    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : 'localhost',
+    TEST_APP_SESSION_COOKIE_NAME: 'LOCAL_SESSION_ID'
+  };
+
   currentCdnProxy = new NodeProcess({
     script: 'node_modules/@educandu/rooms-auth-lambda/src/dev-server/run.js',
     env: {
       ...process.env,
       PORT: 10000,
-      WEBSITE_BASE_URL: 'http://localhost:3000',
-      CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn'
+      WEBSITE_BASE_URL: tunnel ? `https://${tunnelWebsiteDomain}` : 'http://localhost:3000',
+      CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn',
+      SESSION_COOKIE_NAME: 'LOCAL_SESSION_ID'
     }
   });
 
-  await currentCdnProxy.start();
-
-  if (cliArgs.instances > 1) {
+  if (instances > 1) {
     currentApp = new LoadBalancedNodeProcessGroup({
       script: 'test-app/index.js',
+      jsx: true,
       loadBalancerPort: 3000,
       getNodeProcessPort: index => 4000 + index,
       instanceCount: cliArgs.instances,
       getInstanceEnv: index => ({
+        ...env,
         ...process.env,
         NODE_ENV: 'development',
         TEST_APP_PORT: (4000 + index).toString()
@@ -270,13 +319,20 @@ export async function startServer() {
   } else {
     currentApp = new NodeProcess({
       script: 'test-app/index.js',
-      env: { ...process.env, NODE_ENV: 'development' }
+      jsx: true,
+      env: {
+        ...env,
+        ...process.env,
+        NODE_ENV: 'development',
+        TEST_APP_PORT: (3000).toString()
+      }
     });
   }
 
-  await currentApp.start({
-    TEST_APP_SKIP_MAINTENANCE: false.toString()
-  });
+  await Promise.all([
+    currentCdnProxy.start(),
+    currentApp.start()
+  ]);
 }
 
 export async function restartServer() {
@@ -372,66 +428,30 @@ export async function migrate() {
 }
 
 export function verifySemverTag(done) {
-  if (!semver.valid(cliArgs.tag)) {
-    throw new Error(`Tag ${cliArgs.tag} is not a valid semver string`);
-  }
+  ensureIsValidSemverTag(cliArgs.tag);
   done();
 }
 
 export async function release() {
-  const { GITHUB_REPOSITORY, GITHUB_SERVER_URL, GITHUB_ACTOR, GITHUB_TOKEN } = cleanEnv(process.env, {
-    GITHUB_REPOSITORY: str(),
-    GITHUB_SERVER_URL: str(),
-    GITHUB_ACTOR: str(),
-    GITHUB_TOKEN: str()
+  const { currentTag, releaseNotes, jiraIssueKeys } = await createReleaseNotesFromCurrentTag({
+    jiraBaseUrl: cliArgs.jiraBaseUrl,
+    jiraProjectKeys: cliArgs.jiraProjectKeys.split(',')
   });
 
-  const [githubOrgaName, githubRepoName] = GITHUB_REPOSITORY.split('/');
-  const githubBaseUrl = `${GITHUB_SERVER_URL}/${githubOrgaName}/${githubRepoName}`;
-
-  const [currentTag, previousTag] = await promisify(gitSemverTags)();
-
-  const commits = previousTag
-    ? await commitsBetween({ from: previousTag, to: currentTag })
-    : await commitsBetween();
-
-  const commitListMarkdown = commits.map(commit => {
-    const message = commit.subject
-      .replace(/#\d+/g, num => `[\\${num}](${githubBaseUrl}/pull/${num.replace(/^#/, '')})`)
-      .replace(new RegExp(JIRA_ISSUE_PATTERN, 'g'), num => `[${num}](${JIRA_BASE_URL}/browse/${num})`);
-    const sha = `[${commit.commit.short}](${githubBaseUrl}/tree/${commit.commit.short})`;
-    return `* ${message} (${sha})${EOL}`;
-  }).join('');
-
-  const releaseNotes = previousTag
-    ? `${commitListMarkdown}${EOL}[View all changes](${githubBaseUrl}/compare/${previousTag}...${currentTag})${EOL}`
-    : commitListMarkdown;
-
-  console.log(`Creating Github release ${currentTag}`);
-  await promisify(ghreleases.create)({ user: GITHUB_ACTOR, token: GITHUB_TOKEN }, githubOrgaName, githubRepoName, {
-    // eslint-disable-next-line camelcase
-    tag_name: currentTag,
-    name: currentTag,
-    body: releaseNotes,
-    prerelease: !!semver.prerelease(currentTag)
+  await createGithubRelease({
+    githubToken: cliArgs.githubToken,
+    currentTag,
+    releaseNotes,
+    files: [path.resolve('./pack/lambda.zip')]
   });
 
-  const client = axios.create({ baseURL: JIRA_BASE_URL });
-  axiosRetry(client, { retries: 3 });
-
-  const issueKeys = [...new Set(releaseNotes.match(new RegExp(JIRA_ISSUE_PATTERN, 'g')) || [])].sort();
-  for (const issueKey of issueKeys) {
-    console.log(`Setting label ${currentTag} on JIRA issue ${issueKey}`);
-    try {
-      await client.put(
-        `/rest/api/3/issue/${encodeURIComponent(issueKey)}`,
-        { update: { labels: [{ add: currentTag }] } },
-        { responseType: 'json', auth: { username: cliArgs.jiraUser, password: cliArgs.jiraApiKey } }
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  await createLabelInJiraIssues({
+    jiraBaseUrl: cliArgs.jiraBaseUrl,
+    jiraUser: cliArgs.jiraUser,
+    jiraApiKey: cliArgs.jiraApiKey,
+    jiraIssueKeys,
+    label: currentTag
+  });
 }
 
 export const up = gulp.parallel(mongoUp, minioUp, maildevUp);

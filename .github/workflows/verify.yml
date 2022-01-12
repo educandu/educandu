@@ -46,5 +46,7 @@ jobs:
         run: ./node_modules/.bin/gulp lint
       - name: Test
         run: ./node_modules/.bin/gulp test
+      - name: Build
+        run: ./node_modules/.bin/gulp build
       - name: Codecov
         uses: codecov/codecov-action@v2

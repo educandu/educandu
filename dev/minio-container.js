@@ -17,6 +17,8 @@ export class MinioContainer extends DockerContainer {
     name = DEFAULT_MINIO_CONTAINER_NAME,
     image = DEFAULT_MINIO_IMAGE,
     env = {},
+    netHost = false,
+    cmd = [],
     onFirstRun = noop,
     startupGracePeriod = DEFAULT_STARTUP_GRACE_PERIOD
   }) {
@@ -32,6 +34,8 @@ export class MinioContainer extends DockerContainer {
         MINIO_BROWSER: 'on',
         ...env
       },
+      netHost,
+      cmd,
       onFirstRun: () => Promise.all([
         ...initialBuckets.map(bucketName => ensureMinioBucketExists({
           bucketName,

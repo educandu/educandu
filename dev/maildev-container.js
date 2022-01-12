@@ -11,6 +11,8 @@ export class MaildevContainer extends DockerContainer {
     name = DEFAULT_MAILDEV_CONTAINER_NAME,
     image = DEFAULT_MAILDEV_IMAGE,
     env = {},
+    netHost = false,
+    cmd = [],
     onFirstRun = noop,
     startupGracePeriod = DEFAULT_STARTUP_GRACE_PERIOD
   }) {
@@ -20,6 +22,8 @@ export class MaildevContainer extends DockerContainer {
       startupGracePeriod,
       portMappings: [`${smtpPort}:25`, `${frontendPort}:80`],
       env,
+      netHost,
+      cmd,
       onFirstRun
     });
   }
