@@ -549,7 +549,7 @@ class DocumentService {
       createdOn: new Date(),
       createdBy: userId || '',
       title: data.title || '',
-      slug: data.slug || '',
+      slug: data.slug?.trim() || '',
       language: data.language || '',
       sections,
       tags: data.tags || [],

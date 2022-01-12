@@ -49,7 +49,7 @@ describe('lessonDBSchema', () => {
       description: 'a lesson with an invalid slug',
       data: {
         ...lesson,
-        slug: 'trailing-slash/'
+        slug: null
       }
     },
     {
