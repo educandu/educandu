@@ -5,8 +5,8 @@ import { sectionDBSchema, slugSchema } from './shared-schemas.js';
 describe('slugSchema', () => {
   const testCases = [
     { description: 'empty string', slug: '', shouldSucceed: true },
-    { description: 'null value', slug: null, shouldSucceed: false },
-    { description: 'a normal string', slug: 'normal will be normal', shouldSucceed: true }
+    { description: 'a normal string', slug: 'normal will be normal', shouldSucceed: true },
+    { description: 'null value', slug: null, shouldSucceed: false }
   ];
 
   testCases.forEach(({ description, slug, shouldSucceed }) => {
