@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import Logger from '../common/logger.js';
-import { Form, Input, Modal } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
+import { useSettings } from './settings-context.js';
+import { Form, Input, Modal, Checkbox } from 'antd';
 import { toTrimmedString } from '../utils/sanitize.js';
 import inputValidators from '../utils/input-validators.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -26,11 +27,14 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
 
 function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
   const formRef = useRef(null);
+  const settings = useSettings();
   const { language: uiLanguage } = useLanguage();
   const { t } = useTranslation('documentCreationModal');
   const documentApiClient = useService(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
+
+  const defaultBlueprintDocumentKey = settings.blueprintDocument?.documentKey;
 
   const defaultDocument = {
     title: clonedDocument?.title ? `${clonedDocument.title} ${t('copyTitleSuffix')}` : t('newDocument'),
@@ -79,7 +83,7 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
     };
   };
 
-  const handleOnFinish = async ({ title, slug, language }) => {
+  const handleOnFinish = async ({ title, slug, language, useBlueprint }) => {
     try {
       setLoading(true);
 
@@ -89,7 +93,8 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
       setLoading(false);
       onClose();
 
-      window.location = urls.getEditDocUrl(documentRevision.key);
+      const blueprintKey = useBlueprint ? defaultBlueprintDocumentKey : clonedDocument?._id;
+      window.location = urls.getEditDocUrl(documentRevision.key, blueprintKey);
     } catch (error) {
       setLoading(false);
       errorHelper.handleApiError({ error, logger, t });
@@ -117,6 +122,11 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
         <FormItem name="slug" label={t('common:slug')} initialValue={defaultDocument.slug} rules={slugValidationRules}>
           <Input />
         </FormItem>
+        { defaultBlueprintDocumentKey && !clonedDocument && (
+          <FormItem name="useBlueprint" valuePropName="checked">
+            <Checkbox>{t('useBlueprint')}</Checkbox>
+          </FormItem>
+        )}
       </Form>
     </Modal>
   );

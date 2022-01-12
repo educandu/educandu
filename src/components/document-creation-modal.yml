@@ -10,3 +10,6 @@ copySlugSuffix:
 titleRequired:
   en: Please specify a document title
   de: Bitte geben Sie einen Dokument Titel an
+useBlueprint:
+  en: Use blueprint
+  de: Blueprint benutzen

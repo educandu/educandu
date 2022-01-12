@@ -22,3 +22,6 @@ createDocumentRegenerationBatchHeader:
 createDocumentRegenerationBatchButton:
   en: Regenerate documents
   de: Dokumente neu erstellen
+blueprintDocumentHeader:
+  en: Blueprint document
+  de: Blueprint document

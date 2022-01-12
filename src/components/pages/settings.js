@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useBeforeunload } from 'react-beforeunload';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
+import DocumentSelector from '../document-selector.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { useState, useCallback, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
@@ -38,6 +39,13 @@ function Settings({ initialState, PageTemplate }) {
 
   const handleAnnouncementChange = useCallback(event => {
     handleChange('announcement', event.target.value, true);
+  }, [handleChange]);
+
+  const handleBlueprintDocumentChange = useCallback(value => {
+    const urlPathSegments = value.split('/');
+    const documentKey = urlPathSegments[0] || '';
+    const documentSlug = urlPathSegments.slice(1).join('/') || '';
+    handleChange('blueprintDocument', { documentKey, documentSlug }, true);
   }, [handleChange]);
 
   const handleHelpPageChange = useCallback((value, { isValid }) => {
@@ -115,6 +123,10 @@ function Settings({ initialState, PageTemplate }) {
     }
   });
 
+  const blueprintDocumentURL = settings.blueprintDocument
+    ? `${settings.blueprintDocument.documentKey}/${settings.blueprintDocument.documentSlug}`
+    : '';
+
   return (
     <PageTemplate alerts={alerts} headerActions={headerActions}>
       <div className="SettingsPage">
@@ -129,6 +141,13 @@ function Settings({ initialState, PageTemplate }) {
             </Fragment>
           )}
         </section>
+        <h2 className="SettingsPage-sectionHeader">{t('blueprintDocumentHeader')}</h2>
+        <DocumentSelector
+          by="url"
+          documents={initialState.documents}
+          value={blueprintDocumentURL}
+          onChange={handleBlueprintDocumentChange}
+          />
         <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
         <SpecialPageSettings
           settings={settings.helpPage}

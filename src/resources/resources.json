@@ -130,7 +130,8 @@
       "newDocument": "New document",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
-      "titleRequired": "Please specify a document title"
+      "titleRequired": "Please specify a document title",
+      "useBlueprint": "Use blueprint"
     }
   },
   {
@@ -140,7 +141,8 @@
       "newDocument": "Neues Dokument",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
-      "titleRequired": "Bitte geben Sie einen Dokument Titel an"
+      "titleRequired": "Bitte geben Sie einen Dokument Titel an",
+      "useBlueprint": "Blueprint benutzen"
     }
   },
   {
@@ -712,7 +714,8 @@
       "footerLinksHeader": "Footer links",
       "defaultTagsHeader": "Default tags",
       "createDocumentRegenerationBatchHeader": "Trigger document recreation",
-      "createDocumentRegenerationBatchButton": "Regenerate documents"
+      "createDocumentRegenerationBatchButton": "Regenerate documents",
+      "blueprintDocumentHeader": "Blueprint document"
     }
   },
   {
@@ -726,7 +729,8 @@
       "footerLinksHeader": "Footer-Links",
       "defaultTagsHeader": "Vordefinierte Tags",
       "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung auslösen",
-      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen"
+      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
+      "blueprintDocumentHeader": "Blueprint document"
     }
   },
   {
