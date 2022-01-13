@@ -127,18 +127,14 @@
     "namespace": "documentImportTable",
     "language": "en",
     "resources": {
-      "importType": "Import type",
-      "title": "Title",
-      "language": "Language"
+      "importType": "Import type"
     }
   },
   {
     "namespace": "documentImportTable",
     "language": "de",
     "resources": {
-      "importType": "Import-Typ",
-      "title": "Titel",
-      "language": "Sprache"
+      "importType": "Import-Typ"
     }
   },
   {
@@ -146,9 +142,6 @@
     "language": "en",
     "resources": {
       "header": "Metadata",
-      "title": "Title",
-      "language": "Language",
-      "slug": "URL path",
       "unassigned": "unassigned",
       "tags": "Tags",
       "invalidTags": "At least one tag must be provided and all tags must be between 3 and 30 characters"
@@ -159,9 +152,6 @@
     "language": "de",
     "resources": {
       "header": "Metadaten",
-      "title": "Titel",
-      "language": "Sprache",
-      "slug": "URL-Pfad",
       "unassigned": "nicht zugewiesen",
       "tags": "Tags",
       "invalidTags": "Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein"
@@ -217,6 +207,24 @@
     "language": "de",
     "resources": {
       "profileWarning": "Ihr Benutzerprofil ist noch nicht vollständig.\nKlicken Sie <0>hier</0>, um Ihr Profil zu bearbeiten.\n"
+    }
+  },
+  {
+    "namespace": "lessonCreationModal",
+    "language": "en",
+    "resources": {
+      "newLesson": "New lesson",
+      "titleRequired": "Please specify a lesson title",
+      "startsOn": "Date"
+    }
+  },
+  {
+    "namespace": "lessonCreationModal",
+    "language": "de",
+    "resources": {
+      "newLesson": "Neue Unterrichtseinheit",
+      "titleRequired": "Bitte geben Sie einen Unterrichtseinheit Titel an",
+      "startsOn": "Datum"
     }
   },
   {
@@ -316,7 +324,6 @@
       "revision": "Revision",
       "date": "Date",
       "user": "User",
-      "language": "Language",
       "id": "ID",
       "restoredFrom": "Restored from",
       "permalink": "Permalink",
@@ -332,7 +339,6 @@
       "revision": "Revision",
       "date": "Datum",
       "user": "Benutzer",
-      "language": "Sprache",
       "id": "ID",
       "restoredFrom": "Wiederhergestellt aus",
       "permalink": "Permalink",
@@ -348,9 +354,6 @@
       "defaultDocumentTitle": "New document",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
-      "title": "Title",
-      "language": "Language",
-      "slug": "URL path",
       "user": "User info",
       "actions": "Actions",
       "clone": "Clone",
@@ -369,9 +372,6 @@
       "defaultDocumentTitle": "Neues Dokument",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
-      "title": "Titel",
-      "language": "Sprache",
-      "slug": "URL-Pfad",
       "user": "User-Info",
       "actions": "Aktionen",
       "clone": "Klonen",
@@ -667,22 +667,18 @@
     "namespace": "search",
     "language": "en",
     "resources": {
-      "title": "Title",
       "tags": "Tags",
       "refineSearch": "Filter by tags",
-      "searchResultPrefix": "Results for",
-      "language": "Language"
+      "searchResultPrefix": "Results for"
     }
   },
   {
     "namespace": "search",
     "language": "de",
     "resources": {
-      "title": "Titel",
       "tags": "Tags",
       "refineSearch": "Nach Tags filtern",
-      "searchResultPrefix": "Ergebnisse für",
-      "language": "Sprache"
+      "searchResultPrefix": "Ergebnisse für"
     }
   },
   {
@@ -964,7 +960,6 @@
     "language": "en",
     "resources": {
       "rank": "Rank",
-      "language": "Language",
       "linkTitle": "Link title",
       "urlPath": "URL path",
       "unknown": "Unknown"
@@ -975,7 +970,6 @@
     "language": "de",
     "resources": {
       "rank": "Rang",
-      "language": "Sprache",
       "linkTitle": "Link-Titel",
       "urlPath": "URL-Pfad",
       "unknown": "Unbekannt"
@@ -1090,7 +1084,6 @@
     "language": "en",
     "resources": {
       "name": "Annotation",
-      "title": "Title",
       "text": "Text"
     }
   },
@@ -1099,7 +1092,6 @@
     "language": "de",
     "resources": {
       "name": "Anmerkung",
-      "title": "Titel",
       "text": "Text"
     }
   },
@@ -1157,7 +1149,6 @@
       "reset": "Reset",
       "startAbcCode": "Start ABC code",
       "fullAbcCode": "Full ABC code",
-      "title": "Title",
       "maximumWidth": "Maximum width",
       "audioSource": "Audio source",
       "midi": "MIDI (auto)",
@@ -1181,7 +1172,6 @@
       "reset": "Zurücksetzen",
       "startAbcCode": "Vorgabe-ABC-Code",
       "fullAbcCode": "Lösungs-ABC-Code",
-      "title": "Titel",
       "maximumWidth": "Maximale Breite",
       "audioSource": "Audio-Quelle",
       "midi": "MIDI (auto)",
@@ -1454,7 +1444,9 @@
       "name": "Name",
       "access": "Access",
       "accessType_public": "public",
-      "accessType_private": "private"
+      "accessType_private": "private",
+      "title": "Title",
+      "slug": "URL path"
     }
   },
   {
@@ -1494,7 +1486,9 @@
       "name": "Name",
       "access": "Zugang",
       "accessType_public": "öffentlich",
-      "accessType_private": "privat"
+      "accessType_private": "privat",
+      "title": "Titel",
+      "slug": "URL-Pfad"
     }
   },
   {

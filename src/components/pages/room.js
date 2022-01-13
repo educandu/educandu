@@ -4,14 +4,15 @@ import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
-import { DeleteOutlined } from '@ant-design/icons';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { Space, List, Collapse, Button, Tabs } from 'antd';
+import LessonCreationModal from '../lesson-creation-modal.js';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
 
@@ -23,15 +24,17 @@ export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
-  const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
   const roomApiClient = useService(RoomApiClient);
+
+  const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
+  const [isLessonCreationModalVisible, setIsLessonCreationModalVisible] = useState(false);
 
   const { room, invitations, lessons } = initialState;
   const isRoomOwner = user._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
 
-  const handleOpenInvitationModalClick = event => {
-    setIsRoomInvitationModalOpen(true);
+  const handleCreateInvitationButtonClick = event => {
+    setIsRoomInvitationModalVisible(true);
     event.stopPropagation();
   };
 
@@ -49,12 +52,20 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleInvitationModalClose = wasNewInvitationCreated => {
-    setIsRoomInvitationModalOpen(false);
+    setIsRoomInvitationModalVisible(false);
 
     if (!wasNewInvitationCreated) {
       return;
     }
     window.location.reload();
+  };
+
+  const handleNewLessonClick = () => {
+    setIsLessonCreationModalVisible(true);
+  };
+
+  const handleLessonCreationModalClose = () => {
+    setIsLessonCreationModalVisible(false);
   };
 
   const headerActions = [];
@@ -106,7 +117,7 @@ export default function Room({ PageTemplate, initialState }) {
     <Collapse className="Room-sectionCollapse">
       <Collapse.Panel
         header={t('invitationsHeader', { count: invitations.length })}
-        extra={<Button onClick={handleOpenInvitationModalClick}>{t('createInvitationButton')}</Button>}
+        extra={<Button onClick={handleCreateInvitationButtonClick}>{t('createInvitationButton')}</Button>}
         >
         <List
           dataSource={invitations}
@@ -135,17 +146,22 @@ export default function Room({ PageTemplate, initialState }) {
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
           <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
             {lessons.map(renderLesson)}
+            {isRoomOwner && (
+              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewLessonClick} />
+            )}
           </TabPane>
 
           <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
             <span>{t('roomOwner')}: {room.owner.username}</span>
             {isPrivateRoom && renderRoomMembers()}
             {isPrivateRoom && isRoomOwner && renderRoomInvitations()}
-            <RoomInvitationCreationModal isVisible={isRoomInvitationModalOpen} onClose={handleInvitationModalClose} roomId={room._id} />
+            <RoomInvitationCreationModal isVisible={isRoomInvitationModalVisible} onClose={handleInvitationModalClose} roomId={room._id} />
           </TabPane>
 
           {isRoomOwner && (<TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3" />)}
         </Tabs>
+
+        <LessonCreationModal isVisible={isLessonCreationModalVisible} onClose={handleLessonCreationModalClose} />
       </div>
     </PageTemplate>);
 }

@@ -100,3 +100,9 @@ accessType_public:
 accessType_private:
   en: private
   de: privat
+title:
+  en: Title
+  de: Titel
+slug:
+  en: URL path
+  de: URL-Pfad

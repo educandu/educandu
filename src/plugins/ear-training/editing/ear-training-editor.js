@@ -180,7 +180,7 @@ class EarTrainingEditor extends React.Component {
     return (
       <div>
         <Form layout="horizontal">
-          <FormItem label={t('title')} {...formItemLayout}>
+          <FormItem label={t('common:title')} {...formItemLayout}>
             <Input value={content.title} onChange={this.handleTitleChanged} />
           </FormItem>
           <Form.Item label={t('maximumWidth')} {...formItemLayout}>
