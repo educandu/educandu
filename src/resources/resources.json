@@ -141,7 +141,7 @@
       "newDocument": "Neues Dokument",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
-      "titleRequired": "Bitte geben Sie einen Dokument Titel an",
+      "titleRequired": "Bitte geben Sie einen Dokumenttitel an",
       "useBlueprint": "Blueprint benutzen"
     }
   },
