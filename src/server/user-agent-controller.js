@@ -10,7 +10,14 @@ class UserAgentController {
     this.pageRenderer = pageRenderer;
   }
 
-  isUnsuportedSafari(useragent) {
+  isSpecificallyAllowedUserAgent(useragent) {
+    return (useragent.source || '').includes('Microsoft Office');
+  }
+
+  isUnsuportedUserAgent(useragent) {
+    if (useragent.isIE) {
+      return true;
+    }
     if (useragent.isSafari) {
       const majorVersion = parseInt(useragent.version.substr(0, 2), 10);
       return majorVersion < 13;
@@ -19,11 +26,15 @@ class UserAgentController {
   }
 
   handleDetectBrowserSupport(req, res, next) {
-    if (req.url.indexOf(PAGE_NAME.browserNotSupported) !== -1) {
+    if (req.url.includes(PAGE_NAME.browserNotSupported)) {
       return next();
     }
 
-    if (req.useragent.isIE || this.isUnsuportedSafari(req.useragent)) {
+    if (this.isSpecificallyAllowedUserAgent(req.useragent)) {
+      return next();
+    }
+
+    if (this.isUnsuportedUserAgent(req.useragent)) {
       logger.warn(`Browser not supported. Redirecting due to useragent being: ${JSON.stringify(req.useragent)}`);
       return res.redirect(301, `/${PAGE_NAME.browserNotSupported}`);
     }
