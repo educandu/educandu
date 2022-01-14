@@ -1,12 +1,3 @@
-username:
-  en: User name
-  de: Benutzername
-password:
-  en: Password
-  de: Kennwort
-logon:
-  en: Log on
-  de: Anmelden
 forgotPassword:
   en: Forgot your password?
   de: Kennwort vergessen?

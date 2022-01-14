@@ -6,11 +6,11 @@ import { Table, Popover, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import errorHelper from '../../ui/error-helper.js';
-import { useService } from '../container-context.js';
 import { userShape } from '../../ui/default-prop-types.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
 
@@ -50,7 +50,7 @@ function replaceUserById(users, newUser) {
 function Users({ initialState, PageTemplate }) {
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('users');
-  const userApiClient = useService(UserApiClient);
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
   const { internalUsers, externalUsers } = splitInternalAndExternalUsers(initialState);
   const [state, setState] = useState({ isSaving: false, internalUsers, externalUsers });
 

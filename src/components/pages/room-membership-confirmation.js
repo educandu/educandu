@@ -4,11 +4,11 @@ import urls from '../../utils/urls.js';
 import Countdown from '../countdown.js';
 import Logger from '../../common/logger.js';
 import React, { Fragment, useState } from 'react';
-import { useService } from '../container-context.js';
 import { useTranslation, Trans } from 'react-i18next';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -16,7 +16,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   const { t } = useTranslation('roomMembershipConfirmation');
   const [hasConfirmed, setHasConfirmed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const roomApiClient = useService(RoomApiClient);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const alerts = useGlobalAlerts();
 
   const { token, roomId, roomName, isValid } = initialState;

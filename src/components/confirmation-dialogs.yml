@@ -28,12 +28,15 @@ restoreDocumentRevisionConfirmation:
 confirmPassword:
   en: Password confirmation
   de: Kennwortbestätigung
-enterPassword:
-  en: Please enter a password
-  de: Bitte geben Sie ein Kennwort an
-password:
-  en: Passsword
-  de: Kennwort
-wrongPasswordProvided:
-  en: The wrong password was provided
-  de: Das Kennwort ist ungültig
+confirmWithPasswordTitle:
+  en: Confirmation required
+  de: Bestätigung erforderlich
+confirmWithPasswordDescription:
+  en: Please enter your password in order to continue this process.
+  de: Bitte geben Sie Ihr Kennwort an, um diesen Vorgang fortzusetzen.
+sessionExpiredTitle:
+  en: Your session has expired
+  de: Ihre Sitzung ist abgelaufen
+sessionExpiredDescription:
+  en: Your session has expired because you have been inactive for some time. Please login in order to continue this process.
+  de: Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen.

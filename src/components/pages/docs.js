@@ -14,6 +14,7 @@ import { DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageSelect from '../localization/language-select.js';
 import { Form, Input, Modal, Table, Button, Switch } from 'antd';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
@@ -43,8 +44,8 @@ function Docs({ initialState, PageTemplate }) {
   const { language } = useLanguage();
   const { t } = useTranslation('docs');
   const { formatDate } = useDateFormat();
-  const documentApiClient = useService(DocumentApiClient);
   const languageNameProvider = useService(LanguageNameProvider);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const createNewDocumentState = uiLanguage => {
     return {

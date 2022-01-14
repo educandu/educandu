@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Container } from '../common/di.js';
 import { UserProvider } from './user-context.js';
+import { DialogProvider } from './dialog-context.js';
 import { RequestProvider } from './request-context.js';
 import { LanguageProvider } from './language-context.js';
 import { SettingsProvider } from './settings-context.js';
@@ -32,11 +33,13 @@ function Root({
           <SettingsProvider value={settings}>
             <RequestProvider value={request}>
               <UserProvider value={user}>
-                <PageComponent
-                  initialState={initialState}
-                  PageTemplate={PageTemplateComponent}
-                  SiteLogo={SiteLogoComponent}
-                  />
+                <DialogProvider>
+                  <PageComponent
+                    initialState={initialState}
+                    PageTemplate={PageTemplateComponent}
+                    SiteLogo={SiteLogoComponent}
+                    />
+                </DialogProvider>
               </UserProvider>
             </RequestProvider>
           </SettingsProvider>

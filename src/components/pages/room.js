@@ -5,13 +5,13 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { Space, List, Collapse, Button, Tabs } from 'antd';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
 
@@ -24,7 +24,7 @@ export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
   const [isRoomInvitationModalOpen, setIsRoomInvitationModalOpen] = useState(false);
-  const roomApiClient = useService(RoomApiClient);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const { room, invitations, lessons } = initialState;
   const isRoomOwner = user._id === room.owner.key;

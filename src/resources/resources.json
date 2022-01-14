@@ -45,9 +45,10 @@
       "deleteAllRevisions": "Delete all existing revisions of this section",
       "restoreDocumentRevisionConfirmation": "Do you really want to restore the content of revision {revisionId}?",
       "confirmPassword": "Password confirmation",
-      "enterPassword": "Please enter a password",
-      "password": "Passsword",
-      "wrongPasswordProvided": "The wrong password was provided"
+      "confirmWithPasswordTitle": "Confirmation required",
+      "confirmWithPasswordDescription": "Please enter your password in order to continue this process.",
+      "sessionExpiredTitle": "Your session has expired",
+      "sessionExpiredDescription": "Your session has expired because you have been inactive for some time. Please login in order to continue this process."
     }
   },
   {
@@ -64,9 +65,10 @@
       "deleteAllRevisions": "Alle existierenden Revisionen dieses Abschnitts löschen",
       "restoreDocumentRevisionConfirmation": "Möchten Sie den Inhalt der Revision {revisionId} wirklich wiederherstellen?",
       "confirmPassword": "Kennwortbestätigung",
-      "enterPassword": "Bitte geben Sie ein Kennwort an",
-      "password": "Kennwort",
-      "wrongPasswordProvided": "Das Kennwort ist ungültig"
+      "confirmWithPasswordTitle": "Bestätigung erforderlich",
+      "confirmWithPasswordDescription": "Bitte geben Sie Ihr Kennwort an, um diesen Vorgang fortzusetzen.",
+      "sessionExpiredTitle": "Ihre Sitzung ist abgelaufen",
+      "sessionExpiredDescription": "Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen."
     }
   },
   {
@@ -217,6 +219,26 @@
     "language": "de",
     "resources": {
       "profileWarning": "Ihr Benutzerprofil ist noch nicht vollständig.\nKlicken Sie <0>hier</0>, um Ihr Profil zu bearbeiten.\n"
+    }
+  },
+  {
+    "namespace": "loginForm",
+    "language": "en",
+    "resources": {
+      "forgotPassword": "Forgot your password?",
+      "enterUsername": "Please enter your user name",
+      "enterPassword": "Please enter your password",
+      "logonFailed": "Logon failed. Please check your input."
+    }
+  },
+  {
+    "namespace": "loginForm",
+    "language": "de",
+    "resources": {
+      "forgotPassword": "Kennwort vergessen?",
+      "enterUsername": "Bitte geben Sie Ihren Benutzernamen an",
+      "enterPassword": "Bitte geben Sie Ihr Kennwort an",
+      "logonFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
     }
   },
   {
@@ -511,32 +533,6 @@
     "resources": {
       "searchInputPlaceholder": "Suchbegriffe",
       "searchButton": "Suchen"
-    }
-  },
-  {
-    "namespace": "login",
-    "language": "en",
-    "resources": {
-      "username": "User name",
-      "password": "Password",
-      "logon": "Log on",
-      "forgotPassword": "Forgot your password?",
-      "enterUsername": "Please enter your user name",
-      "enterPassword": "Please enter your password",
-      "logonFailed": "Logon failed. Please check your input."
-    }
-  },
-  {
-    "namespace": "login",
-    "language": "de",
-    "resources": {
-      "username": "Benutzername",
-      "password": "Kennwort",
-      "logon": "Anmelden",
-      "forgotPassword": "Kennwort vergessen?",
-      "enterUsername": "Bitte geben Sie Ihren Benutzernamen an",
-      "enterPassword": "Bitte geben Sie Ihr Kennwort an",
-      "logonFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
     }
   },
   {
@@ -1436,6 +1432,7 @@
       "hardDelete": "Delete irreversibly",
       "moveUp": "Move up",
       "moveDown": "Move down",
+      "confirm": "Confirm",
       "error": "Error",
       "language": "Language",
       "invalidSlug": "The URL path must contain only lower case letters, hyphons, slashes and digits",
@@ -1444,6 +1441,7 @@
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
       "accept": "Accept",
+      "logon": "Log on",
       "logoff": "Log off",
       "createdOn": "Created on",
       "completedOn": "Completed on",
@@ -1454,7 +1452,9 @@
       "name": "Name",
       "access": "Access",
       "accessType_public": "public",
-      "accessType_private": "private"
+      "accessType_private": "private",
+      "username": "User name",
+      "password": "Password"
     }
   },
   {
@@ -1476,6 +1476,7 @@
       "hardDelete": "Unwiderruflich löschen",
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
+      "confirm": "Bestätigen",
       "error": "Fehler",
       "language": "Sprache",
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
@@ -1484,6 +1485,7 @@
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
       "accept": "Akzeptieren",
+      "logon": "Anmelden",
       "logoff": "Abmelden",
       "createdOn": "Erstellt am",
       "completedOn": "Abgeschlossen am",
@@ -1494,7 +1496,9 @@
       "name": "Name",
       "access": "Zugang",
       "accessType_public": "öffentlich",
-      "accessType_private": "privat"
+      "accessType_private": "privat",
+      "username": "Benutzername",
+      "password": "Kennwort"
     }
   },
   {
