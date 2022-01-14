@@ -6,18 +6,18 @@ describe('api-helper', () => {
   describe('tryApiCallWithLoginFallback', () => {
     let result;
     let executeCall;
-    let onLoginRequested;
+    let onLoginRequired;
 
     beforeEach(() => {
       result = null;
       executeCall = sinon.stub();
-      onLoginRequested = sinon.stub();
+      onLoginRequired = sinon.stub();
     });
 
     describe('when the API call succeeds on the first try', () => {
       beforeEach(async () => {
         executeCall.resolves({ result: 'abc' });
-        result = await tryApiCallWithLoginFallback({ executeCall, onLoginRequested });
+        result = await tryApiCallWithLoginFallback({ executeCall, onLoginRequired });
       });
       it('returns the result of the first API call', () => {
         expect(result).toEqual({ result: 'abc' });
@@ -25,8 +25,8 @@ describe('api-helper', () => {
       it('does not execute the API call a second time', () => {
         sinon.assert.calledOnce(executeCall);
       });
-      it('does not invoce the re-login callback', () => {
-        sinon.assert.notCalled(onLoginRequested);
+      it('does not invoke the re-login callback', () => {
+        sinon.assert.notCalled(onLoginRequired);
       });
     });
 
@@ -37,8 +37,8 @@ describe('api-helper', () => {
             executeCall
               .onFirstCall().rejects({ code: ERROR_CODES.sessionExpired })
               .onSecondCall().resolves({ result: 'xyz' });
-            onLoginRequested.resolves(true);
-            result = await tryApiCallWithLoginFallback({ executeCall, onLoginRequested });
+            onLoginRequired.resolves(true);
+            result = await tryApiCallWithLoginFallback({ executeCall, onLoginRequired });
           });
           it('returns the result of the second API call', () => {
             expect(result).toEqual({ result: 'xyz' });
@@ -49,10 +49,10 @@ describe('api-helper', () => {
             executeCall
               .onFirstCall().rejects({ code: ERROR_CODES.sessionExpired })
               .onSecondCall().rejects(new Error('random'));
-            onLoginRequested.resolves(true);
+            onLoginRequired.resolves(true);
           });
           it('rejects with the thrown error', async () => {
-            await expect(() => tryApiCallWithLoginFallback({ executeCall, onLoginRequested })).rejects.toThrowError('random');
+            await expect(() => tryApiCallWithLoginFallback({ executeCall, onLoginRequired })).rejects.toThrowError('random');
           });
         });
       });
@@ -61,13 +61,13 @@ describe('api-helper', () => {
           executeCall
             .onFirstCall().rejects({ code: ERROR_CODES.sessionExpired })
             .onSecondCall().resolves({ result: 'xyz' });
-          onLoginRequested.resolves(false);
+          onLoginRequired.resolves(false);
         });
         it('rejects with a cancellation error', async () => {
-          await expect(() => tryApiCallWithLoginFallback({ executeCall, onLoginRequested })).rejects.toThrowError('cancelled');
+          await expect(() => tryApiCallWithLoginFallback({ executeCall, onLoginRequired })).rejects.toThrowError('cancelled');
         });
         it('does not execute the API call a second time', async () => {
-          await tryApiCallWithLoginFallback({ executeCall, onLoginRequested }).catch(() => {});
+          await tryApiCallWithLoginFallback({ executeCall, onLoginRequired }).catch(() => {});
           sinon.assert.calledOnce(executeCall);
         });
       });
@@ -78,15 +78,15 @@ describe('api-helper', () => {
         executeCall.rejects(new Error('random'));
       });
       it('rejects with the thrown error', async () => {
-        await expect(() => tryApiCallWithLoginFallback({ executeCall, onLoginRequested })).rejects.toThrowError('random');
+        await expect(() => tryApiCallWithLoginFallback({ executeCall, onLoginRequired })).rejects.toThrowError('random');
       });
       it('does not execute the API call a second time', async () => {
-        await tryApiCallWithLoginFallback({ executeCall, onLoginRequested }).catch(() => {});
+        await tryApiCallWithLoginFallback({ executeCall, onLoginRequired }).catch(() => {});
         sinon.assert.calledOnce(executeCall);
       });
-      it('does not invoce the re-login callback', async () => {
-        await tryApiCallWithLoginFallback({ executeCall, onLoginRequested }).catch(() => {});
-        sinon.assert.notCalled(onLoginRequested);
+      it('does not invoke the re-login callback', async () => {
+        await tryApiCallWithLoginFallback({ executeCall, onLoginRequired }).catch(() => {});
+        sinon.assert.notCalled(onLoginRequired);
       });
     });
   });

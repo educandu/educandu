@@ -3,46 +3,26 @@ import { ERROR_CODES } from '../domain/constants.js';
 import { useDialogs } from '../components/dialog-context.js';
 import { useService } from '../components/container-context.js';
 
-export async function tryApiCallWithLoginFallback({ executeCall, onLoginRequested }) {
-  let result = null;
-
-  let firstTryError = null;
+export async function tryApiCallWithLoginFallback({ executeCall, onLoginRequired }) {
   try {
-    result = await executeCall();
+    return await executeCall();
   } catch (err) {
-    firstTryError = err;
+    if (err?.code !== ERROR_CODES.sessionExpired) {
+      throw err;
+    }
   }
 
-  if (!firstTryError) {
-    return result;
-  }
-
-  if (firstTryError?.code !== ERROR_CODES.sessionExpired) {
-    throw firstTryError;
-  }
-
-  const shouldRetry = await onLoginRequested();
+  const shouldRetry = await onLoginRequired();
   if (!shouldRetry) {
     const cancellationError = new Error('Operation cancelled');
     cancellationError.code = ERROR_CODES.operationCancelled;
     throw cancellationError;
   }
 
-  let secondTryError = null;
-  try {
-    result = await executeCall();
-  } catch (err) {
-    secondTryError = err;
-  }
-
-  if (!secondTryError) {
-    return result;
-  }
-
-  throw secondTryError;
+  return executeCall();
 }
 
-function handleLoginRequested(dialogs) {
+function handleLoginRequired(dialogs) {
   return new Promise(resolve => {
     dialogs.reloginAfterSessionExpired(() => resolve(true), () => resolve(false));
   });
@@ -53,7 +33,7 @@ function createFunctionProxy(func, dialogs) {
     apply(target, thisArg, argumentsList) {
       return tryApiCallWithLoginFallback({
         executeCall: () => target.apply(thisArg, argumentsList),
-        onLoginRequested: () => handleLoginRequested(dialogs)
+        onLoginRequired: () => handleLoginRequired(dialogs)
       });
     }
   });

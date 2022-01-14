@@ -107,7 +107,7 @@ export default function LoginForm({
         {...formItemLayouts[layout].default}
         label={t('common:username')}
         name="username"
-        rules={fixedUsername ? usernameValidationRules : []}
+        rules={fixedUsername ? [] : usernameValidationRules}
         initialValue={fixedUsername || ''}
         hidden={!!fixedUsername}
         >
