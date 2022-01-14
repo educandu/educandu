@@ -4,6 +4,9 @@ announcementHeader:
 announcementPreview:
   en: Preview
   de: Vorschau
+homepageInfoHeader:
+  en: Homepage info
+  de: Help?
 helpPageHeader:
   en: Help page
   de: Hilfe-Seite

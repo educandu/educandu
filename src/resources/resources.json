@@ -705,6 +705,7 @@
     "resources": {
       "announcementHeader": "Announcement",
       "announcementPreview": "Preview",
+      "homepageInfoHeader": "Homepage info",
       "helpPageHeader": "Help page",
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
@@ -720,6 +721,7 @@
     "resources": {
       "announcementHeader": "Mitteilung",
       "announcementPreview": "Vorschau",
+      "homepageInfoHeader": "Help?",
       "helpPageHeader": "Hilfe-Seite",
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
