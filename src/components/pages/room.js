@@ -161,7 +161,11 @@ export default function Room({ PageTemplate, initialState }) {
           {isRoomOwner && (<TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3" />)}
         </Tabs>
 
-        <LessonCreationModal isVisible={isLessonCreationModalVisible} onClose={handleLessonCreationModalClose} />
+        <LessonCreationModal
+          roomId={room._id}
+          isVisible={isLessonCreationModalVisible}
+          onClose={handleLessonCreationModalClose}
+          />
       </div>
     </PageTemplate>);
 }

@@ -3,6 +3,7 @@ import { idOrKeySchema, slugSchema, sectionDBSchema } from './shared-schemas.js'
 
 export const lessonDBSchema = joi.object({
   _id: idOrKeySchema.required(),
+  roomId: idOrKeySchema.required(),
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
   updatedOn: joi.date().required(),
@@ -22,6 +23,7 @@ export const getLessonParamsSchema = joi.object({
 }).unknown(true);
 
 export const postLessonBodySchema = joi.object({
+  roomId: idOrKeySchema.required(),
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),

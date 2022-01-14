@@ -14,12 +14,7 @@ class LessonService {
   }
 
   async getLesson(lessonId) {
-    const lesson = await Promise.resolve({
-      _id: lessonId,
-      title: 'Hs Fuge und Konzert im Werk J. S. Bachs',
-      slug: 'fuge-und-konzert-bach'
-    });
-
+    const lesson = await this.lessonStore.findOne({ _id: lessonId });
     return lesson;
   }
 
@@ -52,7 +47,7 @@ class LessonService {
     return lessons;
   }
 
-  async createLesson({ user, title, slug, language, schedule }) {
+  async createLesson({ user, roomId, title, slug, language, schedule }) {
     const mappedSchedule = schedule
       ? {
         startsOn: new Date(schedule.startsOn)
@@ -61,6 +56,7 @@ class LessonService {
 
     const lesson = {
       _id: uniqueId.create(),
+      roomId,
       createdOn: new Date(),
       createdBy: user._id,
       updatedOn: new Date(),

@@ -23,7 +23,7 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
   }
 }
 
-function LessonCreationModal({ isVisible, onClose }) {
+function LessonCreationModal({ roomId, isVisible, onClose }) {
   const formRef = useRef(null);
   const { dateTimeFormat } = useDateFormat();
   const { language: uiLanguage } = useLanguage();
@@ -73,6 +73,7 @@ function LessonCreationModal({ isVisible, onClose }) {
       setLoading(true);
 
       const newLesson = await lessonApiClient.addLesson({
+        roomId,
         title,
         slug: slug || '',
         language,
@@ -146,7 +147,8 @@ function LessonCreationModal({ isVisible, onClose }) {
 
 LessonCreationModal.propTypes = {
   isVisible: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  roomId: PropTypes.string.isRequired
 };
 
 export default LessonCreationModal;
