@@ -49,16 +49,16 @@ function MySpace({ initialState, PageTemplate }) {
 
         <h1>{t('pageNames:mySpace')}</h1>
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
-          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="1">
-            <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
-          </TabPane>
-          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="2">
-            <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
-          </TabPane>
-          { clientConfig.areRoomsEnabled && (
-            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="3">
+          {clientConfig.areRoomsEnabled && (
+            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="1">
               <RoomsTab rooms={rooms} />
             </TabPane>)}
+          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="2">
+            <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
+          </TabPane>
+          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="3">
+            <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
+          </TabPane>
         </Tabs>
 
       </div>

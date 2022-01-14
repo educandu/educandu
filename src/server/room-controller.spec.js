@@ -74,12 +74,12 @@ describe('room-controller', () => {
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
       beforeEach(done => {
-        roomService.createOrUpdateInvitation.returns(Promise.resolve({
+        roomService.createOrUpdateInvitation.resolves({
           room,
           owner: user,
           invitation
-        }));
-        mailService.sendRoomInvitation.returns(Promise.resolve());
+        });
+        mailService.sendRoomInvitation.resolves();
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -146,12 +146,12 @@ describe('room-controller', () => {
     const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
     beforeEach(done => {
-      roomService.createOrUpdateInvitation.returns(Promise.resolve({
+      roomService.createOrUpdateInvitation.resolves({
         room,
         owner: user,
         invitation
-      }));
-      mailService.sendRoomInvitation.returns(Promise.resolve());
+      });
+      mailService.sendRoomInvitation.resolves();
 
       req = httpMocks.createRequest({
         protocol: 'https',

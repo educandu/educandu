@@ -147,7 +147,14 @@ export default function Room({ PageTemplate, initialState }) {
           <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
             {lessons.map(renderLesson)}
             {isRoomOwner && (
-              <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewLessonClick} />
+              <Button
+                className="Room-newLessonButton"
+                type="primary"
+                shape="circle"
+                icon={<PlusOutlined />}
+                size="large"
+                onClick={handleNewLessonClick}
+                />
             )}
           </TabPane>
 
@@ -161,7 +168,11 @@ export default function Room({ PageTemplate, initialState }) {
           {isRoomOwner && (<TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3" />)}
         </Tabs>
 
-        <LessonCreationModal isVisible={isLessonCreationModalVisible} onClose={handleLessonCreationModalClose} />
+        <LessonCreationModal
+          roomId={room._id}
+          isVisible={isLessonCreationModalVisible}
+          onClose={handleLessonCreationModalClose}
+          />
       </div>
     </PageTemplate>);
 }

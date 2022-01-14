@@ -1,8 +1,13 @@
-import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import LessonStore from '../stores/lesson-store.js';
 
-const logger = new Logger(import.meta.url);
+const roomLessonsProjection = {
+  _id: 1,
+  roomId: 1,
+  title: 1,
+  slug: 1,
+  schedule: 1
+};
 
 class LessonService {
   static get inject() {
@@ -14,45 +19,16 @@ class LessonService {
   }
 
   async getLesson(lessonId) {
-    const lesson = await Promise.resolve({
-      _id: lessonId,
-      title: 'Hs Fuge und Konzert im Werk J. S. Bachs',
-      slug: 'fuge-und-konzert-bach'
-    });
-
+    const lesson = await this.lessonStore.findOne({ _id: lessonId });
     return lesson;
   }
 
   async getLessons(roomId) {
-    logger.info(`Mocking lessons for room '${roomId}'`);
-    const lessons = await Promise.resolve([
-      {
-        _id: '6oRi271rzMTYp3f3XDg55m',
-        title: 'Hs Fuge und Konzert im Werk J. S. Bachs',
-        slug: 'fuge-und-konzert-bach'
-      },
-      {
-        _id: '7oRi271rzMTYp3f3XDg55m',
-        title: 'Ps (Romantischer) Chorsatz (GMR)'
-      },
-      {
-        _id: '8oRi271rzMTYp3f3XDg55m',
-        title: 'Hs Formfunktionen der Sonatenform'
-      },
-      {
-        _id: '9oRi271rzMTYp3f3XDg55m',
-        title: 'S Projekt (IM I)'
-      },
-      {
-        _id: '10Ri271rzMTYp3f3XDg55m',
-        title: 'Hs Pop-/Rockmusik - Analyse, Stilübung und Didaktik'
-      }
-    ]);
-
+    const lessons = await this.lessonStore.find({ roomId }, { projection: roomLessonsProjection });
     return lessons;
   }
 
-  async createLesson({ user, title, slug, language, schedule }) {
+  async createLesson({ user, roomId, title, slug, language, schedule }) {
     const mappedSchedule = schedule
       ? {
         startsOn: new Date(schedule.startsOn)
@@ -61,6 +37,7 @@ class LessonService {
 
     const lesson = {
       _id: uniqueId.create(),
+      roomId,
       createdOn: new Date(),
       createdBy: user._id,
       updatedOn: new Date(),
