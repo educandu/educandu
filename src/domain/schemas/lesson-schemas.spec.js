@@ -5,6 +5,7 @@ import { lessonDBSchema } from './lesson-schemas.js';
 describe('lessonDBSchema', () => {
   const lesson = {
     _id: uniqueId.create(),
+    roomId: uniqueId.create(),
     createdOn: new Date(),
     createdBy: uniqueId.create(),
     updatedOn: new Date(),

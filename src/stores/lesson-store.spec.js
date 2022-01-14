@@ -14,6 +14,7 @@ describe('lesson-store', () => {
     testLessonKey = uniqueId.create();
     validLesson = {
       _id: testLessonKey,
+      roomId: uniqueId.create(),
       createdOn: new Date(),
       createdBy: uniqueId.create(),
       updatedOn: new Date(),
