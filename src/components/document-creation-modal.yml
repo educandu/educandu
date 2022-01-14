@@ -1,0 +1,15 @@
+newDocument:
+  en: New document
+  de: Neues Dokument
+copyTitleSuffix:
+  en: (copy)
+  de: (Kopie)
+copySlugSuffix:
+  en: copy
+  de: kopie
+titleRequired:
+  en: Please specify a document title
+  de: Bitte geben Sie einen Dokument-Titel an
+useDefaultTemplateDocument:
+  en: Use default template
+  de: Standardvorlage benutzen

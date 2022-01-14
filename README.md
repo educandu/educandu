@@ -16,9 +16,7 @@ The educandu framework
  | --- | --- | --- | --- |
  | port | Port on which the project is run | `number`, mininum 1 | no, defaults to 80 |
  | mongoConnectionString | The URI for the project's MongoDB | `string` | yes |
- | skipMongoMigrations | Whether or not to run newly added MongoDB migration scripts on startup | `boolean` | no, defaults to `false` |
- | includeManualMigrations | Whether or not to include manual migrations when running migration scripts on startup | `boolean` | no, defaults to `false` |
- | skipMongoChecks | Whether or not to run MongoDB checks resulting in ensuring DB collections on startup | `boolean` | no, defaults to `false` |
+ | skipMaintenance | Whether or not to run MongoDB migrations and checks on startup | `boolean` | no, defaults to `false` |
  | cdnEndpoint | The URL of the AWS-hosted CDN | `string` | yes |
  | cdnRegion | The region of the AWS-hosted CDN | `string` | yes |
  | cdnAccessKey | The access key of the AWS-hosted CDN | `string` | yes |
@@ -58,9 +56,7 @@ import educandu from '@educandu/educandu';
 educandu({
   port: 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
-  skipMongoMigrations: process.env.TEST_APP_SKIP_MONGO_MIGRATIONS === true.toString(),
-  includeManualMigrations: process.env.TEST_APP_INCLUDE_MANUAL_MIGRATIONS === true.toString(),
-  skipMongoChecks: process.env.TEST_APP_SKIP_MONGO_CHECKS === true.toString(),
+  skipMaintenance: process.env.TEST_APP_SKIP_MAINTENANCE === true.toString(),
   cdnEndpoint: 'http://localhost:9000',
   cdnRegion: 'eu-central-1',
   cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
@@ -104,6 +100,7 @@ to the global-variables.less in educandu and consult the list there.
 $ yarn
 $ gulp                 # run the test application
 $ gulp --instances 3   # run 3 instances behind a load balancer
+$ gulp --tunnel        # run using the tunnel proxy
 ~~~
 
 This will build and start up the TestApp (in watch mode), which is set up to use educandu.

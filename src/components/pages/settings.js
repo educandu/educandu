@@ -3,16 +3,18 @@ import Markdown from '../markdown.js';
 import { Alert, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
+import DocumentSelector from '../document-selector.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { useState, useCallback, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
 import SpecialPageSettings from '../settings/special-page-settings.js';
 import FooterLinksSettings from '../settings/footer-links-settings.js';
-import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
@@ -37,6 +39,13 @@ function Settings({ initialState, PageTemplate }) {
 
   const handleAnnouncementChange = useCallback(event => {
     handleChange('announcement', event.target.value, true);
+  }, [handleChange]);
+
+  const handleTemplateDocumentChange = useCallback(value => {
+    const urlPathSegments = value.split('/');
+    const documentKey = urlPathSegments[0] || '';
+    const documentSlug = urlPathSegments.slice(1).join('/') || '';
+    handleChange('templateDocument', { documentKey, documentSlug }, true);
   }, [handleChange]);
 
   const handleHelpPageChange = useCallback((value, { isValid }) => {
@@ -108,6 +117,16 @@ function Settings({ initialState, PageTemplate }) {
 
   const alerts = useGlobalAlerts();
 
+  useBeforeunload(event => {
+    if (dirtyKeys.length) {
+      event.preventDefault();
+    }
+  });
+
+  const templateDocumentURL = settings.templateDocument
+    ? `${settings.templateDocument.documentKey}/${settings.templateDocument.documentSlug}`
+    : '';
+
   return (
     <PageTemplate alerts={alerts} headerActions={headerActions}>
       <div className="SettingsPage">
@@ -122,6 +141,13 @@ function Settings({ initialState, PageTemplate }) {
             </Fragment>
           )}
         </section>
+        <h2 className="SettingsPage-sectionHeader">{t('templateDocumentHeader')}</h2>
+        <DocumentSelector
+          by="url"
+          documents={initialState.documents}
+          value={templateDocumentURL}
+          onChange={handleTemplateDocumentChange}
+          />
         <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
         <SpecialPageSettings
           settings={settings.helpPage}

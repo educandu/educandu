@@ -76,7 +76,7 @@ function SpecialPageSettings({ settings, documents, onChange }) {
   );
 
   const columns = [
-    { title: t('language'), key: 'language', dataIndex: 'language', width: '200px', render: renderLanguage },
+    { title: t('common:language'), key: 'language', dataIndex: 'language', width: '200px', render: renderLanguage },
     { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', width: '450px', render: renderLinkTitle },
     { title: t('urlPath'), key: 'urlPath', dataIndex: 'urlPath', ellipsis: true, render: renderUrlPath }
   ];

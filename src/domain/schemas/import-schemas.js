@@ -10,7 +10,7 @@ const importedDocumentSchema = joi.object({
   updatedOn: joi.string().required(),
   importedRevision: idOrKeySchema.required().allow(null),
   importableRevision: idOrKeySchema.required(),
-  importType: joi.string().valid(DOCUMENT_IMPORT_TYPE.add, DOCUMENT_IMPORT_TYPE.update)
+  importType: joi.string().valid(...Object.values(DOCUMENT_IMPORT_TYPE))
 });
 
 export const getImportsQuerySchema = joi.object({

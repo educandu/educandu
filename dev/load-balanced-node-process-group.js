@@ -18,6 +18,7 @@ const colors = [
 export class LoadBalancedNodeProcessGroup {
   constructor({
     script,
+    jsx = false,
     loadBalancerPort,
     getNodeProcessPort,
     instanceCount = DEFAULT_INSTANCE_COUNT,
@@ -29,6 +30,7 @@ export class LoadBalancedNodeProcessGroup {
       downStreamPorts.push(getNodeProcessPort(index));
       this._processes.push(new NodeProcess({
         script,
+        jsx,
         env: getInstanceEnv(index),
         stdio: ['ignore', 'pipe', process.stderr]
       }));

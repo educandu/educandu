@@ -6,11 +6,13 @@ const docker = new Docker({ echo: false });
 export const DEFAULT_STARTUP_GRACE_PERIOD = isMac() ? 2500 : 1000;
 
 export class DockerContainer {
-  constructor({ name, image, portMappings = [], env = {}, onFirstRun = noop, startupGracePeriod = DEFAULT_STARTUP_GRACE_PERIOD }) {
+  constructor({ name, image, portMappings = [], env = {}, netHost = false, cmd = [], onFirstRun = noop, startupGracePeriod = DEFAULT_STARTUP_GRACE_PERIOD }) {
     this.name = name;
     this.image = image;
     this.portMappings = portMappings;
     this.env = env;
+    this.netHost = netHost;
+    this.cmd = cmd;
     this.onFirstRun = onFirstRun;
     this.startupGracePeriod = startupGracePeriod;
   }
@@ -31,15 +33,22 @@ export class DockerContainer {
   }
 
   async run() {
-    let runArgs = `--name ${this.name} -d`;
+    let dockerCmd = `run -d --name ${this.name}`;
+    if (this.netHost) {
+      dockerCmd += ' --net host';
+    }
     this.portMappings.forEach(portMapping => {
-      runArgs += ` -p ${portMapping}`;
+      dockerCmd += ` -p ${portMapping}`;
     });
     Object.entries(this.env).forEach(([key, value]) => {
-      runArgs += ` -e ${key}="${value}"`;
+      dockerCmd += ` -e ${key}="${value}"`;
     });
-    runArgs += ` ${this.image}`;
-    await docker.command(`run ${runArgs}`);
+    dockerCmd += ` ${this.image}`;
+    this.cmd.forEach(token => {
+      dockerCmd += ` ${token}`;
+    });
+    console.log('DOCKER CMD', dockerCmd);
+    await docker.command(dockerCmd);
     await delay(this.startupGracePeriod);
     await this.onFirstRun();
   }

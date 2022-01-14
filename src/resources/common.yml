@@ -53,8 +53,8 @@ language:
   en: Language
   de: Sprache
 invalidSlug:
-  en: The URL path must contain only lower case letters, hyphons, slashes and digits
-  de: Der URL-Pfad darf nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten
+  en: The URL path should contain only lower case letters, hyphens, slashes and digits
+  de: Der URL-Pfad sollte nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten
 archivedAlert:
   en: This document is archived and cannot be edited
   de: Dieses Dokument ist archiviert und kann nicht editiert werden
@@ -106,6 +106,12 @@ accessType_public:
 accessType_private:
   en: private
   de: privat
+title:
+  en: Title
+  de: Titel
+slug:
+  en: URL path
+  de: URL-Pfad
 username:
   en: User name
   de: Benutzername

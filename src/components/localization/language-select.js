@@ -50,14 +50,16 @@ function LanguageSelect({ size, value, languages, onChange }) {
 
 LanguageSelect.propTypes = {
   languages: PropTypes.arrayOf(PropTypes.string),
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
   size: PropTypes.oneOf(['small', 'middle', 'large']),
-  value: PropTypes.string.isRequired
+  value: PropTypes.string
 };
 
 LanguageSelect.defaultProps = {
   languages: null,
-  size: 'middle'
+  onChange: () => 'underlying binding done through ant design form',
+  size: 'middle',
+  value: 'underlying binding done through ant design form'
 };
 
 export default LanguageSelect;

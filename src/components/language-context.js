@@ -103,9 +103,12 @@ export function useLanguage() {
 
 export function useDateFormat() {
   const { locale } = useLanguage();
+
   return useMemo(() => {
+    const dateTimeFormat = locale === 'de-DE' ? 'DD.MM.YYYY, HH:mm' : 'MM/DD/YYYY, HH:mm';
     const dateLocale = locale === 'de-DE' ? dateLocales.deDE : dateLocales.enUS;
     const localePattern = 'P, p';
+
     const formatDate = (date, pattern) => {
       if (!date) {
         return '';
@@ -115,7 +118,8 @@ export function useDateFormat() {
     };
 
     return {
-      formatDate
+      formatDate,
+      dateTimeFormat
     };
   }, [locale]);
 }

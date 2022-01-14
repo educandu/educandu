@@ -15,6 +15,8 @@ export class MongoContainer extends DockerContainer {
     name = DEFAULT_MONGO_CONTAINER_NAME,
     image = DEFAULT_MONGO_IMAGE,
     env = {},
+    netHost = false,
+    cmd = [],
     onFirstRun = noop,
     startupGracePeriod = DEFAULT_STARTUP_GRACE_PERIOD
   }) {
@@ -38,6 +40,8 @@ export class MongoContainer extends DockerContainer {
         ...replicaSetEnvParams,
         ...env
       },
+      netHost,
+      cmd,
       onFirstRun
     });
   }

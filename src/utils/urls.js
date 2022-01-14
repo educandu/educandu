@@ -46,9 +46,9 @@ function getDocsUrl() {
   return docsPath;
 }
 
-function getEditDocUrl(docKey, blueprintKey = null) {
+function getEditDocUrl(docKey, templateDocumentKey = null) {
   const url = concatParts(editDocPrefix, docKey);
-  return blueprintKey ? `${url}?blueprintKey=${encodeURIComponent(blueprintKey)}` : url;
+  return templateDocumentKey ? `${url}?templateDocumentKey=${encodeURIComponent(templateDocumentKey)}` : url;
 }
 
 function getUsersUrl() {

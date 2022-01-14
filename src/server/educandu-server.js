@@ -11,11 +11,14 @@ import 'express-async-errors';
 
 const logger = new Logger(import.meta.url);
 
-class EducanduServer {
+const SYMBOL_MAINTENACE = Symbol('maintenance');
+
+export default class EducanduServer {
   static get inject() { return [ServerConfig, ControllerFactory]; }
 
   constructor(serverConfig, controllerFactory) {
     this.serverConfig = serverConfig;
+    this.controllerFactory = controllerFactory;
 
     this.server = null;
 
@@ -35,15 +38,29 @@ class EducanduServer {
     logger.info('Registering healthcheck');
     router.use((req, res, next) => {
       if (req.path === '/healthcheck') {
-        logger.info('Healthcheck was hit', req.headers);
-        return res.json({ status: 'OK' });
+        return res.json({
+          status: 'OK',
+          mode: req.app.locals[SYMBOL_MAINTENACE] ? 'maintenance' : 'ready'
+        });
       }
 
       return next();
     });
 
-    controllerFactory.registerAdditionalControllers(serverConfig.additionalControllers);
-    const controllers = controllerFactory.getAllControllers();
+    logger.info('Registering maintenance middleware');
+    router.use((req, res, next) => {
+      if (!req.app.locals[SYMBOL_MAINTENACE]) {
+        return next();
+      }
+
+      const message = 'Application is in maintenance mode. Please try again later.';
+      return req.accepts(['json', 'html']) === 'json'
+        ? res.status(503).json({ message })
+        : res.status(503).type('html').send(`<!DOCTYPE html><p>${message}</p>`);
+    });
+
+    this.controllerFactory.registerAdditionalControllers(this.serverConfig.additionalControllers);
+    const controllers = this.controllerFactory.getAllControllers();
 
     logger.info('Registering middlewares');
     controllers.filter(c => c.registerMiddleware).forEach(c => c.registerMiddleware(router));
@@ -58,34 +75,37 @@ class EducanduServer {
     controllers.filter(c => c.registerErrorHandler).forEach(c => c.registerErrorHandler(router));
   }
 
-  listen(cb) {
-    if (this.server) {
-      logger.info('Cannot start server, it is already listining');
-      Promise.resolve().then(() => cb(null, this.serverConfig.port));
-    } else {
-      logger.info('Starting server');
-      this.server = this.app.listen(this.serverConfig.port, err => err ? cb(err) : cb(null, this.serverConfig.port));
-    }
+  exitMaintenanceMode() {
+    this.app.locals[SYMBOL_MAINTENACE] = false;
+  }
 
-    return this.server;
+  listen({ maintenance = false }) {
+    this.app.locals[SYMBOL_MAINTENACE] = !!maintenance;
+    return new Promise((resolve, reject) => {
+      const { port } = this.serverConfig;
+      if (this.server) {
+        logger.info('Cannot start server, it is already listening');
+        resolve(port);
+      } else {
+        logger.info('Starting server');
+        this.server = this.app.listen(port, err => err ? reject(err) : resolve(port));
+      }
+    });
+  }
+
+  async close() {
+    if (this.server) {
+      logger.info('Closing server');
+      await util.promisify(this.server.close.bind(this.server))();
+      this.server = null;
+      logger.info('Server successfully closed');
+    }
   }
 
   [getDisposalInfo]() {
     return {
       priority: DISPOSAL_PRIORITY.server,
-      dispose: async () => {
-        if (this.server) {
-          logger.info('Closing server');
-          await util.promisify(this.server.close.bind(this.server))();
-          this.server = null;
-          logger.info('Server successfully closed');
-        } else {
-          logger.info('Cannot close server, it is not listening');
-          await Promise.resolve();
-        }
-      }
+      dispose: () => this.close()
     };
   }
 }
-
-export default EducanduServer;

@@ -8,13 +8,10 @@ import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
+import { Input, Table, Button, Switch } from 'antd';
 import { useService } from '../container-context.js';
-import { toTrimmedString } from '../../utils/sanitize.js';
 import { DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import LanguageSelect from '../localization/language-select.js';
-import { Form, Input, Modal, Table, Button, Switch } from 'antd';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
@@ -22,21 +19,13 @@ import LanguageNameProvider from '../../data/language-name-provider.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import DocumentCreationModal from '../document-creation-modal.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
 const { Search } = Input;
-const FormItem = Form.Item;
-
 const logger = new Logger(import.meta.url);
 
 const DEFAULT_FILTER_INPUT = '';
-const DEFAULT_DOCUMENT_SLUG = '';
-
-function getNewDocLanguageFromUiLanguage(uiLanguage) {
-  switch (uiLanguage) {
-    case 'de': return 'de';
-    default: return 'en';
-  }
-}
 
 function Docs({ initialState, PageTemplate }) {
   const user = useUser();
@@ -47,52 +36,16 @@ function Docs({ initialState, PageTemplate }) {
   const languageNameProvider = useService(LanguageNameProvider);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-  const createNewDocumentState = uiLanguage => {
-    return {
-      title: t('defaultDocumentTitle'),
-      slug: DEFAULT_DOCUMENT_SLUG,
-      language: getNewDocLanguageFromUiLanguage(uiLanguage),
-      blueprintKey: null,
-      tags: []
-    };
-  };
+  const [modalState, setModalState] = useState({
+    isVisible: false,
+    clonedDocument: null
+  });
 
   const [state, setState] = useState({
     filteredDocs: initialState.documents.slice(),
-    newDoc: createNewDocumentState(language),
     filterInput: DEFAULT_FILTER_INPUT,
-    isNewDocModalVisible: false,
     isLoading: false
   });
-
-  const mapToDocumentModel = newDocState => {
-    return {
-      title: toTrimmedString(newDocState.title) || t('defaultDocumentTitle'),
-      slug: toTrimmedString(newDocState.slug) || '',
-      language: newDocState.language,
-      sections: [],
-      tags: newDocState.tags ? [...newDocState.tags] : [],
-      archived: false
-    };
-  };
-
-  const handleNewDocumentClick = () => {
-    setState(prevState => ({ ...prevState, newDoc: createNewDocumentState(language), isNewDocModalVisible: true }));
-  };
-
-  const handleNewDocTitleChange = event => {
-    const { value } = event.target;
-    setState(prevState => ({ ...prevState, newDoc: { ...prevState.newDoc, title: value } }));
-  };
-
-  const handleNewDocLanguageChange = value => {
-    setState(prevState => ({ ...prevState, newDoc: { ...prevState.newDoc, language: value } }));
-  };
-
-  const handleNewDocSlugChange = event => {
-    const { value } = event.target;
-    setState(prevState => ({ ...prevState, newDoc: { ...prevState.newDoc, slug: value } }));
-  };
 
   const handleFilterInputChange = event => {
     const filterInput = event.target.value;
@@ -102,40 +55,16 @@ function Docs({ initialState, PageTemplate }) {
     setState(prevState => ({ ...prevState, filteredDocs, filterInput }));
   };
 
-  const handleOk = async () => {
-    try {
-      setState(prevState => ({ ...prevState, isLoading: true }));
-
-      const data = mapToDocumentModel(state.newDoc);
-
-      const { documentRevision } = await documentApiClient.saveDocument(data);
-
-      setState(prevState => ({ ...prevState, isNewDocModalVisible: false, isLoading: false }));
-
-      window.location = urls.getEditDocUrl(documentRevision.key, state.newDoc.blueprintKey || null);
-    } catch (error) {
-      setState(prevState => ({ ...prevState, isLoading: false }));
-      errorHelper.handleApiError({ error, logger, t });
-    }
-  };
-
-  const handleCancel = () => {
-    setState(prevState => ({ ...prevState, isNewDocModalVisible: false }));
+  const handleNewDocumentClick = () => {
+    setModalState({ isVisible: true, clonedDocument: null });
   };
 
   const handleCloneClick = doc => {
-    setState(prevState => ({
-      ...prevState,
-      newDoc: {
-        ...prevState.newDoc,
-        title: doc.title ? `${doc.title} ${t('copyTitleSuffix')}` : t('defaultDocumentTitle'),
-        language: doc.language,
-        slug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : DEFAULT_DOCUMENT_SLUG,
-        tags: doc.tags ? [...doc.tags] : [],
-        blueprintKey: doc.key
-      },
-      isNewDocModalVisible: true
-    }));
+    setModalState({ isVisible: true, clonedDocument: doc });
+  };
+
+  const handleDocumentCreationModalClose = () => {
+    setModalState({ isVisible: false, clonedDocument: null });
   };
 
   const handleDocumentDelete = async documentKey => {
@@ -237,14 +166,14 @@ function Docs({ initialState, PageTemplate }) {
 
   const columns = [
     {
-      title: t('title'),
+      title: t('common:title'),
       dataIndex: 'title',
       key: 'title',
       render: renderTitle,
       sorter: by(x => x.title)
     },
     {
-      title: t('language'),
+      title: t('common:language'),
       dataIndex: 'language',
       key: 'language',
       render: renderLanguage,
@@ -308,26 +237,11 @@ function Docs({ initialState, PageTemplate }) {
             <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />
           </Restricted>
         </aside>
-        <Modal
-          title={t('newDocument')}
-          visible={state.isNewDocModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          maskClosable={false}
-          okButtonProps={{ loading: state.isLoading }}
-          >
-          <Form name="new-document-form" layout="vertical">
-            <FormItem label={t('title')}>
-              <Input value={state.newDoc.title} onChange={handleNewDocTitleChange} />
-            </FormItem>
-            <FormItem label={t('language')}>
-              <LanguageSelect value={state.newDoc.language} onChange={handleNewDocLanguageChange} />
-            </FormItem>
-            <FormItem label={t('slug')}>
-              <Input addonBefore={urls.articlesPrefix} value={state.newDoc.slug} onChange={handleNewDocSlugChange} />
-            </FormItem>
-          </Form>
-        </Modal>
+        <DocumentCreationModal
+          isVisible={modalState.isVisible}
+          clonedDocument={modalState.clonedDocument}
+          onClose={handleDocumentCreationModalClose}
+          />
       </div>
     </PageTemplate>
   );

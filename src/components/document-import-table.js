@@ -62,14 +62,14 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
       shouldCellUpdate: (record, prevRecord) => record.importType !== prevRecord.importType
     },
     {
-      title: t('title'),
+      title: t('common:title'),
       key: 'title',
       sorter: by(x => x.title),
       render: (_text, record) => record.titleComponent,
       shouldCellUpdate: (record, prevRecord) => record.title !== prevRecord.title || record.url !== prevRecord.url
     },
     {
-      title: t('language'),
+      title: t('common:language'),
       key: 'language',
       width: '150px',
       sorter: by(x => x.language),
