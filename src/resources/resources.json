@@ -124,6 +124,28 @@
     }
   },
   {
+    "namespace": "documentCreationModal",
+    "language": "en",
+    "resources": {
+      "newDocument": "New document",
+      "copyTitleSuffix": "(copy)",
+      "copySlugSuffix": "copy",
+      "titleRequired": "Please specify a document title",
+      "useDefaultTemplateDocument": "Use default template"
+    }
+  },
+  {
+    "namespace": "documentCreationModal",
+    "language": "de",
+    "resources": {
+      "newDocument": "Neues Dokument",
+      "copyTitleSuffix": "(Kopie)",
+      "copySlugSuffix": "kopie",
+      "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
+      "useDefaultTemplateDocument": "Standardvorlage benutzen"
+    }
+  },
+  {
     "namespace": "documentImportTable",
     "language": "en",
     "resources": {
@@ -692,7 +714,8 @@
       "footerLinksHeader": "Footer links",
       "defaultTagsHeader": "Default tags",
       "createDocumentRegenerationBatchHeader": "Trigger document recreation",
-      "createDocumentRegenerationBatchButton": "Regenerate documents"
+      "createDocumentRegenerationBatchButton": "Regenerate documents",
+      "templateDocumentHeader": "Template for new documents"
     }
   },
   {
@@ -706,7 +729,8 @@
       "footerLinksHeader": "Footer-Links",
       "defaultTagsHeader": "Vordefinierte Tags",
       "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung auslösen",
-      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen"
+      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
+      "templateDocumentHeader": "Vorlage für neue Dokumente"
     }
   },
   {

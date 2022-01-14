@@ -79,22 +79,22 @@ class DocumentController {
       throw new NotFound();
     }
 
-    const { blueprintKey } = req.query;
+    const { templateDocumentKey } = req.query;
 
-    const blueprint = blueprintKey
-      ? await this.documentService.getCurrentDocumentRevisionByKey(blueprintKey)
+    const templateDocument = templateDocumentKey
+      ? await this.documentService.getCurrentDocumentRevisionByKey(templateDocumentKey)
       : null;
 
-    if (blueprintKey && !blueprint) {
+    if (templateDocumentKey && !templateDocument) {
       throw new NotFound();
     }
 
-    if (blueprint && revision.sections.length) {
+    if (templateDocument && revision.sections.length) {
       return res.redirect(302, urls.getEditDocUrl(req.params.docKey));
     }
 
-    const [documentRevision, blueprintRevision] = await this.clientDataMapper.mapDocsOrRevisions([revision, blueprint], req.user);
-    const proposedSections = blueprintRevision ? this.clientDataMapper.createProposedSections(blueprintRevision) : null;
+    const [documentRevision, templateDocumentRevision] = await this.clientDataMapper.mapDocsOrRevisions([revision, templateDocument], req.user);
+    const proposedSections = templateDocumentRevision ? this.clientDataMapper.createProposedSections(templateDocumentRevision) : null;
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.editDoc, { documentRevision, proposedSections });
   }
 
