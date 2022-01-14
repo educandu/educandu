@@ -34,7 +34,7 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
 
   const [loading, setLoading] = useState(false);
 
-  const defaultBlueprintDocumentKey = settings.blueprintDocument?.documentKey;
+  const defaultTemplateDocumentKey = settings.templateDocument?.documentKey;
 
   const defaultDocument = {
     title: clonedDocument?.title ? `${clonedDocument.title} ${t('copyTitleSuffix')}` : t('newDocument'),
@@ -83,7 +83,7 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
     };
   };
 
-  const handleOnFinish = async ({ title, slug, language, useBlueprint }) => {
+  const handleOnFinish = async ({ title, slug, language, useDefaultTemplateDocument }) => {
     try {
       setLoading(true);
 
@@ -93,8 +93,8 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
       setLoading(false);
       onClose();
 
-      const blueprintKey = useBlueprint ? defaultBlueprintDocumentKey : clonedDocument?._id;
-      window.location = urls.getEditDocUrl(documentRevision.key, blueprintKey);
+      const templateDocumentKey = useDefaultTemplateDocument ? defaultTemplateDocumentKey : clonedDocument?._id;
+      window.location = urls.getEditDocUrl(documentRevision.key, templateDocumentKey);
     } catch (error) {
       setLoading(false);
       errorHelper.handleApiError({ error, logger, t });
@@ -122,9 +122,9 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
         <FormItem name="slug" label={t('common:slug')} initialValue={defaultDocument.slug} rules={slugValidationRules}>
           <Input />
         </FormItem>
-        { defaultBlueprintDocumentKey && !clonedDocument && (
-          <FormItem name="useBlueprint" valuePropName="checked">
-            <Checkbox>{t('useBlueprint')}</Checkbox>
+        { defaultTemplateDocumentKey && !clonedDocument && (
+          <FormItem name="useDefaultTemplateDocument" valuePropName="checked">
+            <Checkbox>{t('useDefaultTemplateDocument')}</Checkbox>
           </FormItem>
         )}
       </Form>

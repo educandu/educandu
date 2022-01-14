@@ -41,11 +41,11 @@ function Settings({ initialState, PageTemplate }) {
     handleChange('announcement', event.target.value, true);
   }, [handleChange]);
 
-  const handleBlueprintDocumentChange = useCallback(value => {
+  const handleTemplateDocumentChange = useCallback(value => {
     const urlPathSegments = value.split('/');
     const documentKey = urlPathSegments[0] || '';
     const documentSlug = urlPathSegments.slice(1).join('/') || '';
-    handleChange('blueprintDocument', { documentKey, documentSlug }, true);
+    handleChange('templateDocument', { documentKey, documentSlug }, true);
   }, [handleChange]);
 
   const handleHelpPageChange = useCallback((value, { isValid }) => {
@@ -123,8 +123,8 @@ function Settings({ initialState, PageTemplate }) {
     }
   });
 
-  const blueprintDocumentURL = settings.blueprintDocument
-    ? `${settings.blueprintDocument.documentKey}/${settings.blueprintDocument.documentSlug}`
+  const templateDocumentURL = settings.templateDocument
+    ? `${settings.templateDocument.documentKey}/${settings.templateDocument.documentSlug}`
     : '';
 
   return (
@@ -141,12 +141,12 @@ function Settings({ initialState, PageTemplate }) {
             </Fragment>
           )}
         </section>
-        <h2 className="SettingsPage-sectionHeader">{t('blueprintDocumentHeader')}</h2>
+        <h2 className="SettingsPage-sectionHeader">{t('templateDocumentHeader')}</h2>
         <DocumentSelector
           by="url"
           documents={initialState.documents}
-          value={blueprintDocumentURL}
-          onChange={handleBlueprintDocumentChange}
+          value={templateDocumentURL}
+          onChange={handleTemplateDocumentChange}
           />
         <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
         <SpecialPageSettings

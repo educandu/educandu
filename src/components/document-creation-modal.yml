@@ -9,7 +9,7 @@ copySlugSuffix:
   de: kopie
 titleRequired:
   en: Please specify a document title
-  de: Bitte geben Sie einen Dokumenttitel an
-useBlueprint:
-  en: Use blueprint
-  de: Blueprint benutzen
+  de: Bitte geben Sie einen Dokument-Titel an
+useDefaultTemplateDocument:
+  en: Use default template
+  de: Standardvorlage benutzen
