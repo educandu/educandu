@@ -76,7 +76,14 @@ class PageRenderer extends PageRendererBase {
       contentProps: props
     });
 
-    return res.type('html').send(html);
+    return res
+      .type('html')
+      .set({
+        'Cache-Control': 'max-age=0, no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': 'Wed, 11 Jan 1984 05:00:00 GMT'
+      })
+      .send(html);
   }
 }
 
