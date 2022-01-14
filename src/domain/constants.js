@@ -51,3 +51,8 @@ export const SAVE_USER_RESULT = {
   duplicateEmail: 'duplicate-email',
   duplicateUsername: 'duplicate-username'
 };
+
+export const ERROR_CODES = {
+  sessionExpired: 'session-expired',
+  operationCancelled: 'operation-cancelled'
+};

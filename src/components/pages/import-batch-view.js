@@ -4,11 +4,11 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import ImportTypeIcon from '../import-type-icon.js';
-import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import { Table, Row, Space, Collapse, List } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import ImportApiClient from '../../api-clients/import-api-client.js';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
@@ -21,7 +21,7 @@ const logger = new Logger(import.meta.url);
 function ImportBatchView({ initialState, PageTemplate }) {
   const { t } = useTranslation('importBatchView');
   const { formatDate } = useDateFormat();
-  const importApiClient = useService(ImportApiClient);
+  const importApiClient = useSessionAwareApiClient(ImportApiClient);
 
   const [batch, setBatch] = useState(initialState.batch);
 

@@ -4,11 +4,11 @@ import urls from '../utils/urls.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
-import { useService } from './container-context.js';
 import { Form, Modal, Input, DatePicker } from 'antd';
 import inputValidators from '../utils/input-validators.js';
 import React, { useState, useRef, useEffect } from 'react';
 import LanguageSelect from './localization/language-select.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import LessonApiClient from '../api-clients/lesson-api-client.js';
 import { useDateFormat, useLanguage } from './language-context.js';
 
@@ -27,8 +27,8 @@ function LessonCreationModal({ roomId, isVisible, onClose }) {
   const formRef = useRef(null);
   const { dateTimeFormat } = useDateFormat();
   const { language: uiLanguage } = useLanguage();
-  const lessonApiClient = useService(LessonApiClient);
   const { t } = useTranslation('lessonCreationModal');
+  const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 
   const [loading, setLoading] = useState(false);
 

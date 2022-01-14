@@ -1,9 +1,9 @@
-import React from 'react';
-import { Modal, Input, Checkbox, Form } from 'antd';
+import LoginForm from './login-form.js';
+import React, { createRef } from 'react';
+import { Modal, Input, Checkbox } from 'antd';
 
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
-const FormItem = Form.Item;
 
 export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
   confirm({
@@ -156,88 +156,129 @@ export function confirmDocumentRevisionRestoration(
   dialog = confirm(createDialogProps());
 }
 
-export function confirmIdentityWithPassword({
-  t,
-  username,
-  userApiClient,
-  onOk,
-  onCancel = () => {}
-}) {
+export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
+  const formRef = createRef();
+
   let dialog = null;
+  let isLoggingIn = false;
   let createDialogProps = null;
-  let passwordValue = '';
-  let validationStatus = '';
-  let errorMessage = '';
 
-  const handleConfirmPassword = async password => {
-    try {
-      const { user } = await userApiClient.login({ username, password });
-      if (user) {
-        validationStatus = 'success';
-        errorMessage = '';
-        onOk();
-        return true;
-      }
-    } catch (error) {
-      Modal.error({ title: t('common:error'), content: error.message });
-      return false;
-    }
-
-    validationStatus = 'error';
-    errorMessage = t('confirmationDialogs:wrongPasswordProvided');
-    dialog.update(createDialogProps());
-    return false;
-  };
-
-  const handlePasswordChanged = e => {
-    passwordValue = e.target.value;
+  const handleLoginStarted = () => {
+    isLoggingIn = true;
     dialog.update(createDialogProps());
   };
 
-  const handleKeyUp = e => {
-    if (e.key !== 'Enter' || passwordValue === '') {
-      return;
-    }
-
-    errorMessage = '';
-    validationStatus = '';
+  const handleLoginSucceeded = () => {
+    isLoggingIn = false;
     dialog.update(createDialogProps());
-    handleConfirmPassword(passwordValue)
-      .then(isConfirmed => isConfirmed && dialog.destroy());
+    dialog.destroy();
+    dialog = null;
+    onOk();
   };
 
-  const createContent = () => (
-    <Form>
-      <FormItem
-        label={t('confirmationDialogs:confirmPassword')}
-        validateStatus={validationStatus}
-        help={errorMessage}
-        >
-        <Input
-          autoFocus
-          type="password"
-          onChange={handlePasswordChanged}
-          onKeyUp={handleKeyUp}
+  const handleLoginFailed = () => {
+    isLoggingIn = false;
+    dialog.update(createDialogProps());
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleOkClick = _close => {
+    formRef.current.submit();
+    return true;
+  };
+
+  function createContent() {
+    return (
+      <div>
+        <p>{t('confirmationDialogs:sessionExpiredDescription')}</p>
+        <LoginForm
+          formRef={formRef}
+          layout="vertical"
+          name="session-expired-login-form"
+          onLoginFailed={handleLoginFailed}
+          onLoginStarted={handleLoginStarted}
+          onLoginSucceeded={handleLoginSucceeded}
+          hidePasswordRecoveryLink
+          hideLoginButton
           />
-      </FormItem>
-    </Form>
-  );
+      </div>
+    );
+  }
 
   createDialogProps = () => ({
-    title: t('confirmationDialogs:areYouSure'),
+    title: t('confirmationDialogs:sessionExpiredTitle'),
     content: createContent(),
-    okType: 'danger',
-    cancelText: t('common:no'),
+    okText: t('common:logon'),
+    cancelText: t('common:cancel'),
+    onOk: handleOkClick,
     onCancel,
-    onOk: close => {
-      handleConfirmPassword(passwordValue).then(isConfirmed => isConfirmed && close());
-      return true;
-    },
-    okText: t('common:yes'),
     okButtonProps: {
-      disabled: !passwordValue?.length
+      loading: isLoggingIn
     }
   });
 
-  dialog = confirm(createDialogProps());
+  dialog = modal.confirm(createDialogProps());
+}
+
+export function confirmWithPassword(modal, t, username, onOk, onCancel = () => {}) {
+  const formRef = createRef();
+
+  let dialog = null;
+  let isLoggingIn = false;
+  let createDialogProps = null;
+
+  const handleLoginStarted = () => {
+    isLoggingIn = true;
+    dialog.update(createDialogProps());
+  };
+
+  const handleLoginSucceeded = () => {
+    isLoggingIn = false;
+    dialog.update(createDialogProps());
+    dialog.destroy();
+    dialog = null;
+    onOk();
+  };
+
+  const handleLoginFailed = () => {
+    isLoggingIn = false;
+    dialog.update(createDialogProps());
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleOkClick = _close => {
+    formRef.current.submit();
+    return true;
+  };
+
+  const createContent = () => (
+    <div>
+      <p>{t('confirmationDialogs:confirmWithPasswordDescription')}</p>
+      <LoginForm
+        formRef={formRef}
+        layout="vertical"
+        fixedUsername={username}
+        name="session-expired-login-form"
+        onLoginFailed={handleLoginFailed}
+        onLoginStarted={handleLoginStarted}
+        onLoginSucceeded={handleLoginSucceeded}
+        hidePasswordRecoveryLink
+        hideLoginButton
+        />
+    </div>
+  );
+
+  createDialogProps = () => ({
+    title: t('confirmationDialogs:confirmWithPasswordTitle'),
+    content: createContent(),
+    cancelText: t('common:cancel'),
+    onCancel,
+    onOk: handleOkClick,
+    okText: t('common:confirm'),
+    okButtonProps: {
+      loading: isLoggingIn
+    }
+  });
+
+  dialog = modal.confirm(createDialogProps());
 }

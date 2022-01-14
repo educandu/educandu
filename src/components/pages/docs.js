@@ -20,6 +20,7 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import DocumentCreationModal from '../document-creation-modal.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
@@ -32,8 +33,8 @@ function Docs({ initialState, PageTemplate }) {
   const { language } = useLanguage();
   const { t } = useTranslation('docs');
   const { formatDate } = useDateFormat();
-  const documentApiClient = useService(DocumentApiClient);
   const languageNameProvider = useService(LanguageNameProvider);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [modalState, setModalState] = useState({
     isVisible: false,

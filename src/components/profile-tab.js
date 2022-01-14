@@ -4,12 +4,13 @@ import memoizee from 'memoizee';
 import React, { useState } from 'react';
 import Logger from '../common/logger.js';
 import localeCompare from 'locale-compare';
-import { useUser } from './user-context.js';
 import errorHelper from '../ui/error-helper.js';
 import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { Trans, useTranslation } from 'react-i18next';
+import { useSetUser, useUser } from './user-context.js';
 import UserApiClient from '../api-clients/user-api-client.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import CountryNameProvider from '../data/country-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
@@ -30,10 +31,11 @@ const createCountryNames = memoizee((countryNameProvider, language) => {
 
 function ProfileTab({ formItemLayout, tailFormItemLayout }) {
   const user = useUser();
+  const setUser = useSetUser();
   const { language } = useLanguage();
   const { t } = useTranslation('profileTab');
-  const userApiClient = useService(UserApiClient);
   const countryNameProvider = useService(CountryNameProvider);
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const profile = user.profile || { country: '' };
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
@@ -44,7 +46,7 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
   const saveProfile = async profileToSave => {
     try {
       const { profile: newProfile } = await userApiClient.saveUserProfile({ profile: profileToSave });
-      user.profile = newProfile;
+      setUser({ ...user, profile: newProfile });
       message.success(t('updateSuccessMessage'));
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });

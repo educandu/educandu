@@ -10,6 +10,7 @@ import inputValidators from '../utils/input-validators.js';
 import { Input, Radio, Tag, Space, Select, Form } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import LanguageSelect from './localization/language-select.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { documentRevisionShape } from '../ui/default-prop-types.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
@@ -25,8 +26,8 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
   const settings = useSettings();
   const { language } = useLanguage();
   const { t } = useTranslation('documentMetadataEditor');
-  const documentApiClient = useService(DocumentApiClient);
   const languageNameProvider = useService(LanguageNameProvider);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [mode, setMode] = useState(MODE_PREVIEW);
   const [tagSuggestions, setTagSuggestions] = useState([]);

@@ -14,6 +14,7 @@ import { ALERT_TYPE } from '../../domain/constants.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import ShallowUpdateList from '../shallow-update-list.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentMetadataEditor from '../document-metadata-editor.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -55,7 +56,7 @@ function EditDoc({ initialState, PageTemplate }) {
 
   const { t } = useTranslation('editDoc');
   const infoFactory = useService(InfoFactory);
-  const documentApiClient = useService(DocumentApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const createStateFromDocumentRevision = (documentRevision, proposedSections = null) => {
     let proposedSectionKeys;

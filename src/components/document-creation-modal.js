@@ -3,7 +3,6 @@ import urls from '../utils/urls.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
-import { useService } from './container-context.js';
 import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
 import { Form, Input, Modal, Checkbox } from 'antd';
@@ -11,6 +10,7 @@ import { toTrimmedString } from '../utils/sanitize.js';
 import inputValidators from '../utils/input-validators.js';
 import React, { useEffect, useRef, useState } from 'react';
 import LanguageSelect from './localization/language-select.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { documentMetadataShape } from '../ui/default-prop-types.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 
@@ -30,7 +30,7 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
   const settings = useSettings();
   const { language: uiLanguage } = useLanguage();
   const { t } = useTranslation('documentCreationModal');
-  const documentApiClient = useService(DocumentApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
 

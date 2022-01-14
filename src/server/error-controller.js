@@ -1,6 +1,7 @@
 import urls from '../utils/urls.js';
 import createError from 'http-errors';
 import Logger from '../common/logger.js';
+import { ERROR_CODES } from '../domain/constants.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ErrorPageRenderer from './error-page-renderer.js';
@@ -22,6 +23,10 @@ class ErrorController {
     router.use((err, req, res, next) => {
       const isApiCall = this.acceptsJson(req);
       const consolidatedErr = this.consolidateError(err, req);
+
+      if (isApiCall && this.tryRespondToExpiredSession(req, res, consolidatedErr)) {
+        return;
+      }
 
       if (!isApiCall && this.tryRedirectToLogin(req, res, consolidatedErr)) {
         return;
@@ -64,6 +69,16 @@ class ErrorController {
     return req.accepts(['html', 'json']) === 'json';
   }
 
+  tryRespondToExpiredSession(req, res, err) {
+    if (!req.isAuthenticated() && req.cookies[this.serverConfig.sessionCookieName]) {
+      err.code = ERROR_CODES.sessionExpired;
+      res.status(401).json(err);
+      return true;
+    }
+
+    return false;
+  }
+
   tryRedirectToLogin(req, res, err) {
     if (err.status === 401 && !req.isAuthenticated()) {
       const url = urls.getLoginUrl(req.path);
@@ -83,7 +98,7 @@ class ErrorController {
   }
 
   errorToPlainObj(err) {
-    let keysToExpose = ['name', 'status', 'message'];
+    let keysToExpose = ['name', 'status', 'message', 'code'];
     if (err.expose) {
       keysToExpose = [...keysToExpose, 'stack', ...Object.keys(err)];
     }

@@ -1,15 +1,15 @@
 import Logger from '../common/logger.js';
 import EmailInput from './email-input.js';
-import { useUser } from './user-context.js';
 import { Form, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import UsernameInput from './username-input.js';
-import React, { useRef, useState } from 'react';
-import { useService } from './container-context.js';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDialogs } from './dialog-context.js';
+import { useSetUser, useUser } from './user-context.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import UserApiClient from '../api-clients/user-api-client.js';
-import { confirmIdentityWithPassword } from './confirmation-dialogs.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { formItemLayoutShape, tailFormItemLayoutShape } from '../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -18,17 +18,21 @@ const FormItem = Form.Item;
 
 function AccountTab({ formItemLayout, tailFormItemLayout }) {
   const user = useUser();
+  const setUser = useSetUser();
+  const dialogs = useDialogs();
   const { t } = useTranslation('accountTab');
-  const userApiClient = useService(UserApiClient);
+  const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const [state, setState] = useState({
-    username: user.username,
-    email: user.email,
     forbiddenEmails: [],
     forbiddenUsernames: []
   });
 
-  const formRef = useRef(null);
+  useEffect(() => {
+    setState(prev => ({ ...prev, username: user.username, email: user.email }));
+  }, [user]);
+
+  const formRef = useRef();
 
   const saveAccountData = async ({ username, email }) => {
     try {
@@ -36,7 +40,7 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
 
       switch (result) {
         case SAVE_USER_RESULT.success:
-          setState(prevState => ({ ...prevState, username: updatedUser.username, email: updatedUser.email }));
+          setUser(updatedUser);
           await message.success(t('updateSuccessMessage'));
           break;
         case SAVE_USER_RESULT.duplicateEmail:
@@ -56,18 +60,13 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
   };
 
   const handleAccountFinish = ({ username, email }) => {
-    confirmIdentityWithPassword({
-      t,
-      username: state.username,
-      onOk: () => saveAccountData({ username, email }),
-      userApiClient
-    });
+    dialogs.confirmWithPassword(user.username, () => saveAccountData({ username, email }));
   };
 
   const handleResetPasswordClick = async () => {
     try {
-      await userApiClient.requestPasswordReset({ email: state.email });
-      message.success(t('passwordResetEmailSent', { email: state.email }));
+      await userApiClient.requestPasswordReset({ email: user.email });
+      message.success(t('passwordResetEmailSent', { email: user.email }));
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     }

@@ -8,12 +8,13 @@ import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import DocumentImportTable from '../document-import-table.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import ImportApiClient from '../../api-clients/import-api-client.js';
 
 export default function ImportBatchCreation({ initialState, PageTemplate }) {
   const { t } = useTranslation('importBatchCreation');
   const clientConfig = useService(ClientConfig);
-  const importApiClient = useService(ImportApiClient);
+  const importApiClient = useSessionAwareApiClient(ImportApiClient);
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
   const [importableDocuments, setImportableDocuments] = useState([]);
   const [isFetchingImportableDocuments, setIsFetchingImportableDocuments] = useState(false);

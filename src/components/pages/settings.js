@@ -4,12 +4,12 @@ import { Alert, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useBeforeunload } from 'react-beforeunload';
-import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import DocumentSelector from '../document-selector.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { useState, useCallback, Fragment } from 'react';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import SettingApiClient from '../../api-clients/setting-api-client.js';
 import DefaultTagsSettings from '../settings/default-tags-settings.js';
@@ -23,8 +23,8 @@ const logger = new Logger(import.meta.url);
 
 function Settings({ initialState, PageTemplate }) {
   const { t } = useTranslation('settings');
-  const settingApiClient = useService(SettingApiClient);
-  const documentApiClient = useService(DocumentApiClient);
+  const settingApiClient = useSessionAwareApiClient(SettingApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
   const [settings, setSettings] = useState(initialState.settings);
   const [dirtyKeys, setDirtyKeys] = useState([]);
   const [invalidKeys, setInvalidKeys] = useState([]);

@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import { ERROR_CODES } from '../domain/constants.js';
 
 const tryToTranslateMessage = (error, t) => {
   if (error.status !== 400) {
@@ -10,18 +11,18 @@ const tryToTranslateMessage = (error, t) => {
 };
 
 export function handleApiError({ error, logger, t }) {
-  const err = error.response && error.response.body ? error.response.body : error;
+  const err = error.response?.body || error;
 
-  notification.error({
-    message: `${err.name || 'Fehler'}`,
-    description: tryToTranslateMessage(err, t) || err.message,
-    duration: 10
-  });
+  if (err.code !== ERROR_CODES.operationCancelled) {
+    notification.error({
+      message: `${err.name || 'Error'}`,
+      description: tryToTranslateMessage(err, t) || err.message,
+      duration: 10
+    });
+  }
 
   try {
-    if (logger) {
-      logger.error(err);
-    }
+    logger.error(err);
   } catch {
     // eslint-disable-next-line no-console
     console.error(err);

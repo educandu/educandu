@@ -43,6 +43,9 @@ moveUp:
 moveDown:
   en: Move down
   de: Nach unten verschieben
+confirm:
+  en: Confirm
+  de: Bestätigen
 error:
   en: Error
   de: Fehler
@@ -67,6 +70,9 @@ externalDocumentWarning:
 accept:
   en: Accept
   de: Akzeptieren
+logon:
+  en: Log on
+  de: Anmelden
 logoff:
   en: Log off
   de: Abmelden
@@ -106,3 +112,9 @@ title:
 slug:
   en: URL path
   de: URL-Pfad
+username:
+  en: User name
+  de: Benutzername
+password:
+  en: Password
+  de: Kennwort

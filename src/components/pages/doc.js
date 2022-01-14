@@ -12,6 +12,7 @@ import permissions from '../../domain/permissions.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { SECTION_ACTIONS } from '../../ui/section-actions.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
@@ -32,7 +33,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const { language } = useLanguage();
   const languageNameProvider = useService(LanguageNameProvider);
-  const documentApiClient = useService(DocumentApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [state, setState] = useState({
     revisions: [],
