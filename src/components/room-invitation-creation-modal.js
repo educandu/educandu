@@ -3,9 +3,9 @@ import Logger from '../common/logger.js';
 import { Form, Modal, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
-import { useService } from './container-context.js';
 import React, { useState, useRef } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 
 const FormItem = Form.Item;
 
@@ -13,7 +13,7 @@ const logger = new Logger(import.meta.url);
 
 function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
   const formRef = useRef(null);
-  const roomApiClient = useService(RoomApiClient);
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const { t } = useTranslation('roomInvitationCreationModal');
 
   const emailValidationRules = [
