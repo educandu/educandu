@@ -442,7 +442,7 @@ export async function release() {
     githubToken: cliArgs.githubToken,
     currentTag,
     releaseNotes,
-    files: [path.resolve('./pack/lambda.zip')]
+    files: []
   });
 
   await createLabelInJiraIssues({

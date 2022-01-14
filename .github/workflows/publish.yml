@@ -34,10 +34,10 @@ jobs:
         run: npm version --allow-same-version --git-tag-version=false ${{ steps.tag.outputs.tag }}
       - name: Authenticate with npm
         run: npm set //registry.npmjs.org/:_authToken ${{secrets.NPM_AUTH_TOKEN}}
-      - name: Publish to npm
-        run: npm publish
       - name: Build
         run: ./node_modules/.bin/gulp build
+      - name: Publish to npm
+        run: npm publish
       - name: Create Github release and tag JIRA issues
         run: |
           ./node_modules/.bin/gulp release \
