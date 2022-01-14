@@ -11,12 +11,6 @@ import { documentMetadataShape, documentRevisionShape, documentShape, settingsDo
 
 const FormItem = Form.Item;
 
-const hasValue = value => value && String(value).trim();
-
-const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error';
-
-const isValidPageListItem = item => [item.language, item.linkTitle, item.urlPath].every(hasValue);
-
 const settingsToPageList = (supportedLanguages, settings = {}) => {
   return supportedLanguages.map(supportedLanguage => {
     const setting = settings[supportedLanguage];
@@ -51,7 +45,7 @@ function SpecialPageSettings({ settings, documents, onChange }) {
   const handleChange = (index, key, value) => {
     const pageList = settingsToPageList(supportedLanguages, settings);
     const updatedPageList = pageList.map((item, idx) => idx !== index ? item : { ...item, [key]: value });
-    onChange(pageListToSettings(updatedPageList), { isValid: updatedPageList.every(isValidPageListItem) });
+    onChange(pageListToSettings(updatedPageList), { isValid: true });
   };
 
   const renderLanguage = (text, record) => (
@@ -59,13 +53,13 @@ function SpecialPageSettings({ settings, documents, onChange }) {
   );
 
   const renderLinkTitle = (text, record, index) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.linkTitle)} style={{ marginBottom: 0 }}>
+    <FormItem style={{ marginBottom: 0 }}>
       <Input value={record.linkTitle} onChange={event => handleChange(index, 'linkTitle', event.target.value)} />
     </FormItem>
   );
 
   const renderUrlPath = (text, record, index) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.urlPath)} style={{ marginBottom: 0 }}>
+    <FormItem style={{ marginBottom: 0 }}>
       <DocumentSelector
         by="url"
         documents={documents}

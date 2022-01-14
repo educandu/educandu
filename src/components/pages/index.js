@@ -4,8 +4,8 @@ import Markdown from '../markdown.js';
 import urls from '../../utils/urls.js';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useSettings } from '../settings-context.js';
+import { useGlobalAlerts } from '../../ui/global-alerts.js';
 
 function Index({ PageTemplate, SiteLogo }) {
   const settings = useSettings();
