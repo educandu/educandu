@@ -47,7 +47,6 @@ export class DockerContainer {
     this.cmd.forEach(token => {
       dockerCmd += ` ${token}`;
     });
-    console.log('DOCKER CMD', dockerCmd);
     await docker.command(dockerCmd);
     await delay(this.startupGracePeriod);
     await this.onFirstRun();

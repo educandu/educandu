@@ -5,14 +5,10 @@ import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import ImportTypeIcon from './import-type-icon.js';
 import { useService } from './container-context.js';
+import LanguageFlagAndName from './language-flag-and-name.js';
 import React, { useMemo, memo, useState, useEffect } from 'react';
 import { useDateFormat, useLanguage } from './language-context.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
-import CountryFlagAndName from './localization/country-flag-and-name.js';
-
-const getLanguageComponent = documentLanguageData => {
-  return <CountryFlagAndName code={documentLanguageData.flag} name={documentLanguageData.name} flagOnly />;
-};
 
 const getTitleComponent = (title, url) => {
   return url ? <a href={url} target="_blank" rel="noopener noreferrer" >{title}</a> : <span>{title}</span>;
@@ -32,7 +28,7 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
       titleComponent: getTitleComponent(doc.title, url),
       language: doc.language,
       languageLocalized: documentLanguageData.name,
-      languageComponent: getLanguageComponent(documentLanguageData),
+      languageComponent: <LanguageFlagAndName language={doc.language} flagOnly />,
       updatedOn: doc.updatedOn,
       updatedOnLocalized: formatDate(doc.updatedOn),
       importType: doc.importType,
