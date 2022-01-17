@@ -118,10 +118,13 @@ export default class RoomController {
       }
     }
 
-    const mappedRoom = await this.clientDataMapper.mapRoom(room);
     const lessons = await this.lessonService.getLessons(roomId);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, invitations, lessons });
+    const mappedRoom = await this.clientDataMapper.mapRoom(room);
+    const mappedLessons = this.clientDataMapper.mapLessons(lessons);
+    const mappedInvitations = this.clientDataMapper.mapRoomInvitations(invitations);
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations });
   }
 
   async handleAuthorizeResourcesAccess(req, res) {
