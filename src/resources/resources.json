@@ -907,7 +907,7 @@
     "language": "de",
     "resources": {
       "ownedRoomsHeader": "Meine Räume",
-      "joinedRoomsHeader": "Räume in denen ich Mitglied bin",
+      "joinedRoomsHeader": "Räume, in denen ich Mitglied bin",
       "joinedOn": "Eingetreten am"
     }
   },
