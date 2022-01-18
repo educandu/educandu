@@ -168,10 +168,12 @@ class ClientDataMapper {
 
   _mapRoomInvitation(rawInvitation) {
     const sentOn = rawInvitation.sentOn && rawInvitation.sentOn.toISOString();
+    const expires = rawInvitation.expires && rawInvitation.expires.toISOString();
 
     return {
       ...rawInvitation,
-      sentOn
+      sentOn,
+      expires
     };
   }
 

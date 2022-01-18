@@ -242,7 +242,7 @@ describe('client-data-mapper', () => {
     let invitations;
 
     beforeEach(async () => {
-      invitations = [{ roomId: 'roomId', sentOn: new Date() }];
+      invitations = [{ roomId: 'roomId', sentOn: new Date(), expires: new Date() }];
       result = await sut.mapRoomInvitations(invitations);
     });
 
@@ -250,7 +250,8 @@ describe('client-data-mapper', () => {
       expect(result).toEqual([
         {
           roomId: 'roomId',
-          sentOn: invitations[0].sentOn.toISOString()
+          sentOn: invitations[0].sentOn.toISOString(),
+          expires: invitations[0].expires.toISOString()
         }
       ]);
     });
