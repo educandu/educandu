@@ -1,16 +1,16 @@
-import { add } from 'date-fns';
+import moment from 'moment';
 import StoreBase from './store-base.js';
 import uniqueId from '../utils/unique-id.js';
 
 class LockStoreBase extends StoreBase {
-  constructor(collection, expirationTimeSpan = null) {
+  constructor(collection, expirationTimeInMinutes = null) {
     super(collection);
-    this.expirationTimeSpan = expirationTimeSpan;
+    this.expirationTimeInMinutes = expirationTimeInMinutes;
   }
 
   async takeLock(lockKey) {
     const sessionKey = uniqueId.create();
-    const expires = this.expirationTimeSpan ? add(new Date(), this.expirationTimeSpan) : null;
+    const expires = this.expirationTimeInMinutes ? moment().add(this.expirationTimeInMinutes, 'minutes').toDate() : null;
     await this.collection.insertOne({ _id: lockKey, sessionKey, expires });
     return { lockKey, sessionKey, expires };
   }

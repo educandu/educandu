@@ -71,6 +71,7 @@
     "memoizee": "^0.4.15",
     "mime": "^2.5.2",
     "minio": "^7.0.19",
+    "moment": "^2.29.1",
     "mongodb": "4.1.4",
     "multer": "^1.4.3",
     "node-graceful": "^3.1.0",

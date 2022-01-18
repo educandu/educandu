@@ -1,13 +1,13 @@
 import Database from '../stores/database.js';
 import LockStoreBase from './lock-store-base.js';
 
-const LOCK_EXPIRATION_TIME_SPAN = { minutes: 1 };
+const LOCK_EXPIRATION_TIME_IN_MINUTES = 1;
 
 class DocumentLockStore extends LockStoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.documentLocks, LOCK_EXPIRATION_TIME_SPAN);
+    super(db.documentLocks, LOCK_EXPIRATION_TIME_IN_MINUTES);
   }
 }
 

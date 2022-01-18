@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { add } from 'date-fns';
+import moment from 'moment';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
@@ -9,8 +9,8 @@ import PasswordResetRequestStore from '../stores/password-reset-request-store.js
 const DEFAULT_ROLE_NAME = ROLE.user;
 const DEFAULT_PROVIDER_NAME = 'educandu';
 const PASSWORD_SALT_ROUNDS = 1024;
-const PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN = { hours: 24 };
-const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN = { hours: 24 };
+const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
+const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 
 const logger = new Logger(import.meta.url);
 
@@ -140,7 +140,7 @@ class UserService {
     user.passwordHash = await this._hashPassword(password);
     user.email = lowerCasedEmail;
     user.roles = roles;
-    user.expires = verified ? null : add(new Date(), PENDING_USER_REGISTRATION_EXPIRATION_TIMESPAN);
+    user.expires = verified ? null : moment().add(PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS, 'hours').toDate();
     user.verificationCode = verified ? null : uniqueId.create();
 
     logger.info(`Creating new user with id ${user._id}`);
@@ -204,7 +204,7 @@ class UserService {
     const request = {
       _id: uniqueId.create(),
       userId: user._id,
-      expires: add(new Date(), PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_TIMESPAN)
+      expires: moment().add(PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS, 'hours').toDate()
     };
 
     logger.info(`Creating password reset request ${request._id} for user with id ${request.userId}`);

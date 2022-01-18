@@ -1,4 +1,4 @@
-import { add } from 'date-fns';
+import moment from 'moment';
 import httpErrors from 'http-errors';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
@@ -14,7 +14,7 @@ const { BadRequest, NotFound, Forbidden } = httpErrors;
 
 const logger = new Logger(import.meta.url);
 
-const PENDING_ROOM_INVITATION_EXPIRATION_TIMESPAN = { days: 7 };
+const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
 const roomInvitationProjection = {
   _id: 1,
@@ -110,7 +110,7 @@ export default class RoomService {
 
     invitation.sentOn = now;
     invitation.token = uniqueId.create();
-    invitation.expires = add(now, PENDING_ROOM_INVITATION_EXPIRATION_TIMESPAN);
+    invitation.expires = moment(now).add(PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS, 'days').toDate();
 
     logger.info(`Creating or updating room invitation with ID ${invitation._id}`);
     await this.roomInvitationStore.save(invitation);

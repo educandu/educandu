@@ -1,3 +1,5 @@
+import moment from 'moment';
+import 'moment/locale/de.js';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import { ConfigProvider } from 'antd';
@@ -15,18 +17,10 @@ import {
   UI_LANGUAGE_COOKIE_EXPIRES,
   getLocale
 } from '../resources/ui-language.js';
-import { format, parseISO } from 'date-fns';
-import deDeLocale from 'date-fns/locale/de/index.js';
-import enUsLocale from 'date-fns/locale/en-US/index.js';
 
 const antLocales = {
   enUS: enUSNs.default || enUSNs,
   deDE: deDENs.default || deDENs
-};
-
-const dateLocales = {
-  enUS: enUsLocale,
-  deDE: deDeLocale
 };
 
 const languageContext = React.createContext();
@@ -106,15 +100,13 @@ export function useDateFormat() {
 
   return useMemo(() => {
     const dateTimeFormat = locale === 'de-DE' ? 'DD.MM.YYYY, HH:mm' : 'MM/DD/YYYY, HH:mm';
-    const dateLocale = locale === 'de-DE' ? dateLocales.deDE : dateLocales.enUS;
-    const localePattern = 'P, p';
+    const localePattern = 'L, LT';
 
-    const formatDate = (date, pattern) => {
+    const formatDate = date => {
       if (!date) {
         return '';
       }
-      const dateInstance = date instanceof Date ? date : parseISO(date);
-      return format(dateInstance, pattern || localePattern, { locale: dateLocale });
+      return moment(date).locale(locale).format(localePattern);
     };
 
     return {
