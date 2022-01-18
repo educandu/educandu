@@ -24,15 +24,9 @@ educandu({
   exportApiKey: 'fe160daddb0c44c4963f63ce08272c86',
   importSources: [
     {
-      name: 'Educandu TestApp - local',
-      hostName: 'localhost:3000',
-      allowUnsecure: true,
-      apiKey: 'fe160daddb0c44c4963f63ce08272c86'
-    },
-    {
-      name: 'ELMU - staging',
-      hostName: 'staging.elmu.online',
-      apiKey: 'd5910b42afb948dcb0ae365104004b25'
+      name: 'ELMU - integration',
+      hostName: 'integration.elmu.online',
+      apiKey: '03a026b939154f41bb1dabf578a33e11'
     },
     {
       name: 'OMA - integration',

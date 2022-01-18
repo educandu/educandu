@@ -6,9 +6,12 @@ import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, set
 
 describe('client-data-mapper', () => {
   const sandbox = sinon.createSandbox();
-  let container;
-  let user;
+
   let userService;
+  let container;
+  let result;
+  let user1;
+  let user2;
   let sut;
 
   beforeAll(async () => {
@@ -18,42 +21,146 @@ describe('client-data-mapper', () => {
   });
 
   beforeEach(async () => {
-    user = await setupTestUser(container);
+    user1 = await setupTestUser(container, { username: 'user1', email: 'user1@test.com' });
+    user2 = await setupTestUser(container, { username: 'user2', email: 'user2@test.com' });
+  });
+
+  afterEach(async () => {
+    await pruneTestEnvironment(container);
+    sandbox.restore();
   });
 
   afterAll(async () => {
     await destroyTestEnvironment(container);
   });
 
-  afterEach(async () => {
-    await pruneTestEnvironment(container);
-  });
-
   describe('mapImportBatches', () => {
-    it('should map the user data', async () => {
-      const user2 = await setupTestUser(container, { username: 'test2', email: 'test2@x.com' });
-      const batches = await sut.mapImportBatches([{ createdBy: user._id }, { createdBy: user2._id }], user);
-      expect(batches[0].createdBy).toEqual({
-        _id: user._id,
-        key: user._id,
-        username: user.username
-      });
+    let batches;
 
-      expect(batches[1].createdBy).toEqual({
-        _id: user2._id,
-        key: user2._id,
-        username: user2.username
-      });
+    beforeEach(async () => {
+      batches = [
+        {
+          createdOn: new Date(),
+          completedOn: new Date(),
+          createdBy: user1._id,
+          tasks: [
+            {
+              taskParams: {
+                updatedOn: new Date()
+              },
+              attempts: [
+                {
+                  startedOn: new Date(),
+                  completedOn: new Date()
+                }
+              ]
+            }
+          ]
+        },
+        {
+          createdOn: new Date(),
+          completedOn: new Date(),
+          createdBy: user2._id,
+          tasks: [
+            {
+              attempts: []
+            }
+          ]
+        }
+      ];
+      result = await sut.mapImportBatches(batches, user1);
+    });
+
+    it('should map the batches', () => {
+      expect(result).toEqual([
+        {
+          createdOn: batches[0].createdOn.toISOString(),
+          completedOn: batches[0].completedOn.toISOString(),
+          createdBy: {
+            _id: user1._id,
+            key: user1._id,
+            username: user1.username
+          },
+          tasks: [
+            {
+              taskParams: {
+                updatedOn: batches[0].tasks[0].taskParams.updatedOn.toISOString()
+              },
+              attempts: [
+                {
+                  startedOn: batches[0].tasks[0].attempts[0].startedOn.toISOString(),
+                  completedOn: batches[0].tasks[0].attempts[0].completedOn.toISOString()
+                }
+              ]
+            }
+          ]
+        },
+        {
+          createdOn: batches[1].createdOn.toISOString(),
+          completedOn: batches[1].completedOn.toISOString(),
+          createdBy: {
+            _id: user2._id,
+            key: user2._id,
+            username: user2.username
+          },
+          tasks: [
+            {
+              attempts: []
+            }
+          ]
+        }
+      ]);
     });
   });
 
   describe('mapImportBatch', () => {
-    it('should map the user data', async () => {
-      const batch = await sut.mapImportBatch({ createdBy: user._id }, user);
-      expect(batch.createdBy).toEqual({
-        _id: user._id,
-        key: user._id,
-        username: user.username
+    let batch;
+
+    beforeEach(async () => {
+      batch = {
+        createdOn: new Date(),
+        completedOn: new Date(),
+        createdBy: user1._id,
+        tasks: [
+          {
+            taskParams: {
+              updatedOn: new Date()
+            },
+            attempts: [
+              {
+                startedOn: new Date(),
+                completedOn: new Date()
+              }
+            ]
+          }
+        ]
+      };
+
+      result = await sut.mapImportBatch(batch, user1);
+    });
+
+    it('should map the batch', () => {
+      expect(result).toEqual({
+        createdOn: batch.createdOn.toISOString(),
+        completedOn: batch.completedOn.toISOString(),
+        createdBy: {
+          _id: user1._id,
+          key: user1._id,
+          username: user1.username
+        },
+        tasks: [
+          {
+            taskParams: {
+              updatedOn: batch.tasks[0].taskParams.updatedOn.toISOString()
+            },
+            attempts: [
+              {
+                startedOn: batch.tasks[0].attempts[0].startedOn.toISOString(),
+                completedOn: batch.tasks[0].attempts[0].completedOn.toISOString()
+              }
+            ]
+          }
+        ]
       });
     });
   });
@@ -75,7 +182,7 @@ describe('client-data-mapper', () => {
       username: 'member2'
     };
 
-    const fakeRoom = {
+    const room = {
       _id: 'roomId',
       name: 'my room',
       owner: 'owner',
@@ -91,12 +198,11 @@ describe('client-data-mapper', () => {
       ],
       access: ROOM_ACCESS_LEVEL.public
     };
-    let result;
 
     beforeEach(async () => {
       sandbox.stub(userService, 'getUserById').resolves(owner);
       sandbox.stub(userService, 'getUsersByIds').resolves([member1, member2]);
-      result = await sut.mapRoom(fakeRoom, { roles: [ROLE.admin] });
+      result = await sut.mapRoom(room, { roles: [ROLE.admin] });
     });
 
     it('should call getUserById with "owner"', () => {
@@ -109,7 +215,7 @@ describe('client-data-mapper', () => {
 
     it('should return the mapped result', () => {
       expect(result).toEqual({
-        ...fakeRoom,
+        ...room,
         owner: {
           email: owner.email,
           username: owner.username,
@@ -118,22 +224,65 @@ describe('client-data-mapper', () => {
         },
         members: [
           {
-            userId: fakeRoom.members[0].userId,
+            userId: room.members[0].userId,
             username: member1.username,
-            joinedOn: fakeRoom.members[0].joinedOn
+            joinedOn: room.members[0].joinedOn.toISOString()
           },
           {
-            userId: fakeRoom.members[1].userId,
+            userId: room.members[1].userId,
             username: member2.username,
-            joinedOn: fakeRoom.members[1].joinedOn
+            joinedOn: room.members[1].joinedOn.toISOString()
           }
         ]
       });
     });
+  });
 
-    afterEach(async () => {
-      await pruneTestEnvironment(container);
-      sandbox.restore();
+  describe('mapRoomInvitations', () => {
+    let invitations;
+
+    beforeEach(async () => {
+      invitations = [{ roomId: 'roomId', sentOn: new Date(), expires: new Date() }];
+      result = await sut.mapRoomInvitations(invitations);
+    });
+
+    it('shoult map the invitations', () => {
+      expect(result).toEqual([
+        {
+          roomId: 'roomId',
+          sentOn: invitations[0].sentOn.toISOString(),
+          expires: invitations[0].expires.toISOString()
+        }
+      ]);
+    });
+  });
+
+  describe('mapLessons', () => {
+    let lessons;
+
+    beforeEach(async () => {
+      lessons = [
+        {
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          schedule: {
+            startsOn: new Date()
+          }
+        }
+      ];
+      result = await sut.mapLessons(lessons);
+    });
+
+    it('shoult map the lessons', () => {
+      expect(result).toEqual([
+        {
+          createdOn: lessons[0].createdOn.toISOString(),
+          updatedOn: lessons[0].updatedOn.toISOString(),
+          schedule: {
+            startsOn: lessons[0].schedule.startsOn.toISOString()
+          }
+        }
+      ]);
     });
   });
 });
