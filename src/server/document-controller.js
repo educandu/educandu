@@ -15,7 +15,6 @@ import {
   hardDeleteSectionBodySchema,
   hardDeleteDocumentBodySchema,
   restoreRevisionBodySchema,
-  getSearchDocumentsByTagsSchema,
   getDocumentParamsSchema
 } from '../domain/schemas/document-schemas.js';
 
@@ -96,12 +95,6 @@ class DocumentController {
     const [documentRevision, templateDocumentRevision] = await this.clientDataMapper.mapDocsOrRevisions([revision, templateDocument], req.user);
     const proposedSections = templateDocumentRevision ? this.clientDataMapper.createProposedSections(templateDocumentRevision) : null;
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.editDoc, { documentRevision, proposedSections });
-  }
-
-  async handleGetSearchPage(req, res) {
-    const { query } = req.query;
-    const docs = await this.documentService.getDocumentsByTags(query);
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.search, { docs });
   }
 
   async handlePostDoc(req, res) {
@@ -220,12 +213,6 @@ class DocumentController {
       '/edit/doc/:docKey',
       needsPermission(permissions.EDIT_DOC),
       (req, res) => this.handleGetEditDocPage(req, res)
-    );
-
-    router.get(
-      '/search',
-      validateQuery(getSearchDocumentsByTagsSchema),
-      (req, res) => this.handleGetSearchPage(req, res)
     );
   }
 

@@ -1,10 +1,10 @@
 import by from 'thenby';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
-import React, { useState, useEffect } from 'react';
-import CountryFlagAndName from './country-flag-and-name.js';
+import LanguageFlagAndName from '../language-flag-and-name.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 
 const Option = Select.Option;
@@ -15,8 +15,7 @@ function createLanguageList(languageNameProvider, language, languages) {
     .filter(([key]) => !languages || languages.includes(key))
     .map(([key, value]) => ({
       code: key,
-      name: value.name,
-      flag: value.flag
+      name: value.name
     }))
     .sort(by(x => x.name));
 }
@@ -41,7 +40,7 @@ function LanguageSelect({ size, value, languages, onChange }) {
       >
       {languageList.map(ln => (
         <Option key={ln.code} value={ln.code} title={ln.name}>
-          <CountryFlagAndName code={ln.flag} name={ln.name} />
+          <LanguageFlagAndName language={ln.code} />
         </Option>
       ))}
     </Select>

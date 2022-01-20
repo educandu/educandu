@@ -15,10 +15,6 @@ const documentRevisionAppendToSchema = joi.object({
   ancestorId: idOrKeySchema.required()
 });
 
-export const getSearchDocumentsByTagsSchema = joi.object({
-  query: joi.string().trim().min(3).required()
-});
-
 export const getRevisionsByKeyQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });

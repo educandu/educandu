@@ -36,16 +36,6 @@ const metadataProjection = {
   originUrl: 1
 };
 
-const searchResultsProjection = {
-  title: 1,
-  key: 1,
-  slug: 1,
-  updatedOn: 1,
-  tags: 1,
-  archived: 1,
-  language: 1
-};
-
 const getTagsQuery = searchString => [
   { $unwind: '$tags' },
   {
@@ -112,7 +102,7 @@ class DocumentService {
     return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: metadataProjection });
   }
 
-  async getDocumentsByTags(searchQuery) {
+  async getDocumentsMetadataByTags(searchQuery) {
     const tokens = searchQuery.trim().split(/\s+/);
 
     const positiveTokens = new Set(tokens
@@ -140,7 +130,7 @@ class DocumentService {
     }
 
     const documents = await this.documentStore
-      .find({ $and: queryConditions }, { projection: searchResultsProjection }) || [];
+      .find({ $and: queryConditions }, { projection: metadataProjection }) || [];
 
     return documents.map(document => ({
       ...document,

@@ -2,19 +2,16 @@ import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
-import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
-import { useLanguage } from './language-context.js';
 import { handleApiError } from '../ui/error-helper.js';
 import inputValidators from '../utils/input-validators.js';
 import { Input, Radio, Tag, Space, Select, Form } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
+import LanguageFlagAndName from './language-flag-and-name.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { documentRevisionShape } from '../ui/default-prop-types.js';
-import LanguageNameProvider from '../data/language-name-provider.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
-import CountryFlagAndName from './localization/country-flag-and-name.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -24,9 +21,7 @@ const MODE_PREVIEW = 'preview';
 
 function DocumentMetadataEditor({ documentRevision, onChanged }) {
   const settings = useSettings();
-  const { language } = useLanguage();
   const { t } = useTranslation('documentMetadataEditor');
-  const languageNameProvider = useService(LanguageNameProvider);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [mode, setMode] = useState(MODE_PREVIEW);
@@ -86,15 +81,13 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
   const mergedTags = new Set([...defaultTags, ...documentRevision.tags, ...tagSuggestions]);
 
   const renderComponent = () => {
-    const docLanguage = languageNameProvider.getData(language)[documentRevision.language];
-
     switch (mode) {
       case MODE_PREVIEW:
         return (
           <div>
             <span>{t('common:title')}:</span> <span>{documentRevision.title}</span>
             <br />
-            <span>{t('common:language')}:</span> <span><CountryFlagAndName code={docLanguage.flag} name={docLanguage.name} /></span>
+            <span>{t('common:language')}:</span> <span><LanguageFlagAndName language={documentRevision.language} /></span>
             <br />
             <span>{t('common:slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl(documentRevision.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
             <br />
