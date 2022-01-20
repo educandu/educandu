@@ -124,7 +124,12 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       sandbox.useFakeTimers(now);
-      createdRoom = await sut.createRoom({ name: 'my room', access: ROOM_ACCESS_LEVEL.public, user: myUser });
+      createdRoom = await sut.createRoom({
+        name: 'my room',
+        slug: '  my-room  ',
+        access: ROOM_ACCESS_LEVEL.public,
+        user: myUser
+      });
     });
 
     afterEach(() => {
@@ -135,6 +140,7 @@ describe('room-service', () => {
       expect(createdRoom).toEqual({
         _id: expect.stringMatching(/\w+/),
         name: 'my room',
+        slug: 'my-room',
         owner: myUser._id,
         access: ROOM_ACCESS_LEVEL.public,
         createdOn: now,

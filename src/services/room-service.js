@@ -60,10 +60,11 @@ export default class RoomService {
     return rooms;
   }
 
-  async createRoom({ name, access, user }) {
+  async createRoom({ name, slug, access, user }) {
     const newRoom = {
       _id: uniqueId.create(),
       name,
+      slug: slug?.trim() || '',
       access,
       owner: user._id,
       createdBy: user._id,

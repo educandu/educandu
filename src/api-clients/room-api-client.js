@@ -7,11 +7,11 @@ class RoomApiClient {
     this.httpClient = httpClient;
   }
 
-  addRoom({ name, access }) {
+  addRoom({ name, slug, access }) {
     return this.httpClient
       .post(
         '/api/v1/rooms',
-        { name, access },
+        { name, slug, access },
         { responseType: 'json' }
       )
       .then(res => res.data);

@@ -5,6 +5,7 @@ import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import { Form, Modal, Input, Radio } from 'antd';
+import inputValidators from '../utils/input-validators.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -21,7 +22,7 @@ function RoomCreationModal({ isVisible, onClose }) {
   const { t } = useTranslation('roomCreationModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
-  const roomNameValidationRules = [
+  const nameValidationRules = [
     {
       required: true,
       message: t('roomNameRequired'),
@@ -29,9 +30,19 @@ function RoomCreationModal({ isVisible, onClose }) {
     }
   ];
 
+  const slugValidationRules = [
+    {
+      validator: (rule, value) => {
+        return value && !inputValidators.isValidSlug(value)
+          ? Promise.reject(new Error(t('common:invalidSlug')))
+          : Promise.resolve();
+      }
+    }
+  ];
+
   const isFormValid = async () => {
     try {
-      await formRef.current.validateFields(['name'], { force: true });
+      await formRef.current.validateFields(['name, slug'], { force: true });
       return true;
     } catch {
       return false;
@@ -40,21 +51,21 @@ function RoomCreationModal({ isVisible, onClose }) {
 
   const createRoomState = useCallback(() => ({
     name: t('newRoom'),
+    slug: '',
     access: ROOM_ACCESS_LEVEL.private
   }), [t]);
 
-  const [state, setState] = useState({
-    loading: false,
-    room: createRoomState()
-  });
+  const [loading, setLoading] = useState(false);
+  const [room, setRoom] = useState(createRoomState());
 
   useEffect(() => {
     if (isVisible) {
-      const room = createRoomState();
-      setState(prevState => ({ ...prevState, room }));
+      const newRoom = createRoomState();
+      setRoom(newRoom);
 
       if (formRef.current) {
-        formRef.current.setFieldsValue({ name: room.name });
+        formRef.current.setFieldsValue({ name: newRoom.name });
+        formRef.current.setFieldsValue({ slug: newRoom.slug });
       }
     }
   }, [isVisible, createRoomState]);
@@ -66,15 +77,15 @@ function RoomCreationModal({ isVisible, onClose }) {
         return;
       }
 
-      setState(prevState => ({ ...prevState, loading: true }));
-      const room = await roomApiClient.addRoom({ name: state.room.name, access: state.room.access });
-      setState(prevState => ({ ...prevState, loading: false }));
+      setLoading(true);
+      const newRoom = await roomApiClient.addRoom({ name: room.name, slug: room.slug, access: room.access });
+      setLoading(false);
       onClose();
 
-      window.location = urls.getRoomUrl(room._id);
+      window.location = urls.getRoomUrl(newRoom._id);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
-      setState(prevState => ({ ...prevState, loading: false }));
+      setLoading(false);
     }
   };
 
@@ -82,12 +93,17 @@ function RoomCreationModal({ isVisible, onClose }) {
 
   const handleNameChange = event => {
     const { value } = event.target;
-    setState(prevState => ({ ...prevState, room: { ...prevState.room, name: value } }));
+    setRoom(prevState => ({ ...prevState, name: value }));
+  };
+
+  const handleSlugChange = event => {
+    const { value } = event.target;
+    setRoom(prevState => ({ ...prevState, slug: value }));
   };
 
   const handleAccessChange = event => {
     const { value } = event.target;
-    setState(prevState => ({ ...prevState, room: { ...prevState.room, access: value } }));
+    setRoom(prevState => ({ ...prevState, access: value }));
   };
 
   return (
@@ -97,14 +113,17 @@ function RoomCreationModal({ isVisible, onClose }) {
       onCancel={handleCancel}
       maskClosable={false}
       visible={isVisible}
-      okButtonProps={{ loading: state.loading }}
+      okButtonProps={{ loading }}
       >
       <Form name="new-room-form" ref={formRef} layout="vertical">
-        <FormItem label={t('common:name')} name="name" rules={roomNameValidationRules} initialValue={state.room.name}>
+        <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name}>
           <Input onChange={handleNameChange} />
         </FormItem>
+        <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug}>
+          <Input onChange={handleSlugChange} />
+        </FormItem>
         <FormItem label={t('common:access')}>
-          <RadioGroup value={state.room.access} onChange={handleAccessChange}>
+          <RadioGroup value={room.access} onChange={handleAccessChange}>
             <RadioButton value={ROOM_ACCESS_LEVEL.private}>{t('common:accessType_private')}</RadioButton>
             <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('common:accessType_public')}</RadioButton>
           </RadioGroup>

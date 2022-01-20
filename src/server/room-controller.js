@@ -52,8 +52,8 @@ export default class RoomController {
 
   async handlePostRoom(req, res) {
     const { user } = req;
-    const { name, access } = req.body;
-    const newRoom = await this.roomService.createRoom({ name, access, user });
+    const { name, slug, access } = req.body;
+    const newRoom = await this.roomService.createRoom({ name, slug, access, user });
 
     return res.status(201).send(newRoom);
   }
