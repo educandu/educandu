@@ -121,15 +121,6 @@ export const sectionShape = PropTypes.shape({
   content: PropTypes.object
 });
 
-export const searchResultShape = PropTypes.shape({
-  key: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  slug: PropTypes.string,
-  updatedOn: PropTypes.string.isRequired,
-  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
-  tagMatchCount: PropTypes.number.isRequired
-});
-
 const commonDocumentOrRevisionProps = {
   _id: PropTypes.string.isRequired,
   key: PropTypes.string.isRequired,

@@ -2,9 +2,9 @@ import firstBy from 'thenby';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
+import { Table, Tag, Select } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import { Table, Tag, Select, Form } from 'antd';
 import { useRequest } from '../request-context.js';
 import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
@@ -13,18 +13,7 @@ import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { searchResultShape } from '../../ui/default-prop-types.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
-
-function sortDocs(docs) {
-  return docs
-    .map(doc => ({
-      ...doc,
-      tags: [...new Set(doc.tags)], // Some docs have duplicate tags we don't want to render
-      tagsSet: new Set(doc.tags.map(tag => tag.toLowerCase()))
-    }))
-    .sort(firstBy(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
-}
 
 const logger = new Logger(import.meta.url);
 function Search({ PageTemplate }) {
@@ -33,8 +22,9 @@ function Search({ PageTemplate }) {
   const { formatDate } = useDateFormat();
 
   const [docs, setDocs] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
   const [filteredDocs, setFilteredDocs] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
   const [searchText, setSearchText] = useState(request.query.query);
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
@@ -45,7 +35,7 @@ function Search({ PageTemplate }) {
       try {
         history.replaceState(null, '', urls.getSearchUrl(searchText));
         const { result } = await searchApiClient.search(searchText);
-        setDocs(sortDocs(result));
+        setDocs(result);
       } catch (error) {
         handleApiError({ error, logger, t });
       } finally {
@@ -55,32 +45,25 @@ function Search({ PageTemplate }) {
   }, [searchText, searchApiClient, t]);
 
   useEffect(() => {
-    setFilteredDocs(docs.filter(doc => selectedTags.every(tag => doc.tagsSet.has(tag))));
+    const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
+    const allUniqueTags = [...new Set(allTags)];
+    const newTagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
+
+    setTagOptions(newTagOptions);
+  }, [docs]);
+
+  useEffect(() => {
+    const newFilteredDocs = docs
+      .filter(doc => selectedTags.every(selectedTag => doc.tags.some(docTag => docTag.toLowerCase() === selectedTag)))
+      .sort(firstBy(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
+
+    setFilteredDocs(newFilteredDocs);
   }, [docs, selectedTags]);
 
-  const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
-  const allUniqueTags = [...new Set(allTags)];
-  const tagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
-
-  const renderUpdatedOn = updatedOn => {
-    return <span>{formatDate(updatedOn)}</span>;
-  };
-
-  const renderTitle = (title, doc) => {
-    const url = urls.getDocUrl(doc.key, doc.slug);
-    return <a href={url}>{title}</a>;
-  };
-
+  const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
+  const renderTitle = (title, doc) => (<a href={urls.getDocUrl(doc.key, doc.slug)}>{title}</a>);
   const renderTags = tags => tags.map(tag => (<Tag key={tag}>{tag}</Tag>));
-
   const renderLanguage = lang => (<LanguageFlagAndName language={lang} />);
-
-  const searchPlaceholder = () => (
-    <div className="SearchPage-placeholderContainer">
-      {t('refineSearch')}
-      <SearchOutlined className="SearchPage-placeholderContainerIcon" />
-    </div>
-  );
 
   const columns = [
     {
@@ -101,7 +84,6 @@ function Search({ PageTemplate }) {
     },
     {
       title: t('common:language'),
-      className: 'SearchPage-searchTableLanguageColumn',
       dataIndex: 'language',
       render: renderLanguage
     }
@@ -118,18 +100,20 @@ function Search({ PageTemplate }) {
 
         <h1>{`${t('searchResultPrefix')}: ${searchText}`} </h1>
 
-        <div className="SearchPage-searchSelectContainer">
-          <Form.Item label={t('refineSearch')} >
-            <Select
-              mode="multiple"
-              tokenSeparators={[' ']}
-              value={selectedTags}
-              onChange={setSelectedTags}
-              placeholder={searchPlaceholder()}
-              options={tagOptions}
-              />
-          </Form.Item>
-        </div>
+        <Select
+          className="SearchPage-searchFilter"
+          mode="multiple"
+          tokenSeparators={[' ']}
+          value={selectedTags}
+          onChange={setSelectedTags}
+          options={tagOptions}
+          placeholder={(
+            <span className="SearchPage-placeholder">
+              <span>{t('refineSearch')}</span>
+              <SearchOutlined className="SearchPage-placeholderIcon" />
+            </span>
+          )}
+          />
 
         <Table
           bordered={false}
@@ -145,10 +129,7 @@ function Search({ PageTemplate }) {
 }
 
 Search.propTypes = {
-  PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.shape({
-    docs: PropTypes.arrayOf(searchResultShape)
-  }).isRequired
+  PageTemplate: PropTypes.func.isRequired
 };
 
 export default Search;

@@ -3,7 +3,6 @@ import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useSettings } from './settings-context.js';
-import { useLanguage } from './language-context.js';
 import { handleApiError } from '../ui/error-helper.js';
 import inputValidators from '../utils/input-validators.js';
 import { Input, Radio, Tag, Space, Select, Form } from 'antd';
@@ -22,7 +21,6 @@ const MODE_PREVIEW = 'preview';
 
 function DocumentMetadataEditor({ documentRevision, onChanged }) {
   const settings = useSettings();
-  const { language } = useLanguage();
   const { t } = useTranslation('documentMetadataEditor');
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
@@ -89,7 +87,7 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
           <div>
             <span>{t('common:title')}:</span> <span>{documentRevision.title}</span>
             <br />
-            <span>{t('common:language')}:</span> <span><LanguageFlagAndName language={language} /></span>
+            <span>{t('common:language')}:</span> <span><LanguageFlagAndName language={documentRevision.language} /></span>
             <br />
             <span>{t('common:slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl(documentRevision.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
             <br />
