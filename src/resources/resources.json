@@ -828,7 +828,7 @@
       "city": "Ort",
       "country": "Land",
       "updateSuccessMessage": "Ihr Profil wurde erfolgreich aktualisiert.",
-      "avatarDescription": "Profilbilder sind durch den Internetdienst <0>Gravatar</0> geführt.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass unsere Website keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
+      "avatarDescription": "Profilbilder werden durch den Internetdienst <0>Gravatar</0> verwaltet.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass unsere Website keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {
