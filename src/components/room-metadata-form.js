@@ -15,7 +15,7 @@ const RadioButton = Radio.Button;
 
 const logger = new Logger(import.meta.url);
 
-function RoomMetadataForm({ room, formRef, onSubmit }) {
+function RoomMetadataForm({ room, editMode, formRef, onSubmit }) {
   const { t } = useTranslation('roomMetadataForm');
 
   const nameValidationRules = [
@@ -53,7 +53,7 @@ function RoomMetadataForm({ room, formRef, onSubmit }) {
         <Input />
       </FormItem>
       <FormItem label={t('common:access')} name="access" initialValue={room.access}>
-        <RadioGroup>
+        <RadioGroup disabled={editMode}>
           <RadioButton value={ROOM_ACCESS_LEVEL.private}>{t('common:accessType_private')}</RadioButton>
           <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('common:accessType_public')}</RadioButton>
         </RadioGroup>
@@ -62,7 +62,12 @@ function RoomMetadataForm({ room, formRef, onSubmit }) {
   );
 }
 
+RoomMetadataForm.defaultProps = {
+  editMode: false
+};
+
 RoomMetadataForm.propTypes = {
+  editMode: PropTypes.bool,
   formRef: PropTypes.shape({
     current: PropTypes.object
   }).isRequired,

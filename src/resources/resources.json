@@ -644,7 +644,11 @@
       "membersTabTitle": "Room members",
       "settingsTabTitle": "Settings",
       "thisWeek": "This week",
-      "deleteRoomButton": "Delete room"
+      "deleteRoomButton": "Delete room",
+      "editRoomCardTitle": "Update room metadata",
+      "roomDangerZoneCardTitle": "Danger zone",
+      "deleteRoomTitle": "Delete this room",
+      "deleteRoomDescription": "All room data and resources will be deleted."
     }
   },
   {
@@ -660,7 +664,11 @@
       "membersTabTitle": "Raummitglieder",
       "settingsTabTitle": "Einstellungen",
       "thisWeek": "Diese Woche",
-      "deleteRoomButton": "Raum löschen"
+      "deleteRoomButton": "Raum löschen",
+      "editRoomCardTitle": "Raum Metadaten aktualizieren",
+      "roomDangerZoneCardTitle": "Gefahrenzone",
+      "deleteRoomTitle": "Dieser Raum löschen",
+      "deleteRoomDescription": "Alle Daten und Resourcen werden gelöscht."
     }
   },
   {
@@ -847,16 +855,14 @@
     "namespace": "roomCreationModal",
     "language": "en",
     "resources": {
-      "newRoom": "New room",
-      "roomNameRequired": "Please specify a room name"
+      "newRoom": "New room"
     }
   },
   {
     "namespace": "roomCreationModal",
     "language": "de",
     "resources": {
-      "newRoom": "Neuer Raum",
-      "roomNameRequired": "Bitte geben Sie einen Raumnamen an"
+      "newRoom": "Neuer Raum"
     }
   },
   {
@@ -873,6 +879,20 @@
     "resources": {
       "newRoomInvitation": "Neue Einladung",
       "emailRequired": "Bitte geben Sie eine E-Mail-Adresse an"
+    }
+  },
+  {
+    "namespace": "roomMetadataForm",
+    "language": "en",
+    "resources": {
+      "roomNameRequired": "Please specify a room name"
+    }
+  },
+  {
+    "namespace": "roomMetadataForm",
+    "language": "de",
+    "resources": {
+      "roomNameRequired": "Bitte geben Sie einen Raumnamen an"
     }
   },
   {
@@ -1475,7 +1495,8 @@
       "slug": "URL path",
       "username": "User name",
       "password": "Password",
-      "text": "Text"
+      "text": "Text",
+      "update": "Update"
     }
   },
   {
@@ -1522,7 +1543,8 @@
       "slug": "URL-Pfad",
       "username": "Benutzername",
       "password": "Kennwort",
-      "text": "Text"
+      "text": "Text",
+      "update": "Aktualisieren"
     }
   },
   {

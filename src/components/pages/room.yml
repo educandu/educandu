@@ -28,3 +28,15 @@ thisWeek:
 deleteRoomButton:
   en: Delete room
   de: Raum löschen
+editRoomCardTitle:
+  en: Update room metadata
+  de: Raum Metadaten aktualizieren
+roomDangerZoneCardTitle:
+  en: Danger zone
+  de: Gefahrenzone
+deleteRoomTitle:
+  en: Delete this room
+  de: Dieser Raum löschen
+deleteRoomDescription:
+  en: All room data and resources will be deleted.
+  de: Alle Daten und Resourcen werden gelöscht.
