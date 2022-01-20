@@ -23,14 +23,12 @@ function educanduFeatures(md) {
         if (token.type === 'link_open' || token.type === 'image') {
           let targetUrl = null;
           const attrToReplace = token.type === 'link_open' ? 'href' : 'src';
-          token.attrs.forEach(attr => {
-            if (attr[0] === attrToReplace) {
-              if (attr[1].startsWith('cdn://')) {
-                collectCdnUrl?.(attr[1].slice(6));
-                attr[1] = (cdnRootUrl || 'cdn:/') + attr[1].slice(5);
-              }
-              targetUrl = attr[1];
+          token.attrs.filter(attr => attr[0] === attrToReplace).forEach(attr => {
+            if (attr[1].startsWith('cdn://')) {
+              collectCdnUrl?.(attr[1].slice(6));
+              attr[1] = (cdnRootUrl || 'cdn:/') + attr[1].slice(5);
             }
+            targetUrl = attr[1];
           });
           if (renderMedia && token.type === 'image' && targetUrl) {
             const mediaType = getMediaType(targetUrl);
