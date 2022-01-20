@@ -1,3 +1,4 @@
+import htmlescape from 'htmlescape';
 import nodemailer from 'nodemailer';
 import Logger from '../common/logger.js';
 import ServerConfig from '../bootstrap/server-config.js';
@@ -29,7 +30,9 @@ class MailService {
       .join('\n\n');
 
     const html = this.translators
-      .map(t => t('mailService:registrationVerificationEmail.html', { username, verificationLink }))
+      .map(t => t('mailService:registrationVerificationEmail.html', {
+        username: htmlescape(username), verificationLink
+      }))
       .join('\n');
 
     const message = { from: this.emailSenderAddress, to: email, subject, text, html };
@@ -48,7 +51,9 @@ class MailService {
       .join('\n\n');
 
     const html = this.translators
-      .map(t => t('mailService:passwordResetEmail.html', { username, completionLink }))
+      .map(t => t('mailService:passwordResetEmail.html', {
+        username: htmlescape(username), completionLink
+      }))
       .join('\n');
 
     const message = { from: this.emailSenderAddress, to: email, subject, text, html };
@@ -67,7 +72,9 @@ class MailService {
       .join('\n\n');
 
     const html = this.translators
-      .map(t => t('mailService:roomInvitationEmail.html', { ownerName, roomName, invitationLink }))
+      .map(t => t('mailService:roomInvitationEmail.html', {
+        ownerName: htmlescape(ownerName), roomName: htmlescape(roomName), invitationLink
+      }))
       .join('\n');
 
     const message = { from: this.emailSenderAddress, to: email, subject, text, html };
@@ -86,7 +93,9 @@ class MailService {
       .join('\n\n');
 
     const html = this.translators
-      .map(t => t('mailService:roomDeletionNotificationEmail.html', { ownerName, roomName }))
+      .map(t => t('mailService:roomDeletionNotificationEmail.html', {
+        ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+      }))
       .join('\n');
 
     const message = { from: this.emailSenderAddress, to: email, subject, text, html };
