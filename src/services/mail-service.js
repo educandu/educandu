@@ -102,14 +102,7 @@ class MailService {
     return this._sendMail(message);
   }
 
-  _sanitizeText(translation) {
-    return translation.replaceAll('\\n', '\n');
-  }
-
   _sendMail(message) {
-    message.subject = this._sanitizeText(message.subject);
-    message.text = this._sanitizeText(message.text);
-
     logger.info(`Sending email with subject "${message.subject}"`);
     return this.transport.sendMail(message);
   }
