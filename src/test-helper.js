@@ -51,9 +51,10 @@ export async function setupTestEnvironment() {
   const randomId = uniqueId.create().toLowerCase();
 
   const region = 'eu-central-1';
-  const bucketName = `test-elmu-cdn-${randomId}`;
+  const bucketName = `test-educandu-cdn-${randomId}`;
 
   const container = await createContainer({
+    appName: 'test',
     mongoConnectionString: `mongodb://root:rootpw@localhost:27017/test-educandu-db-${randomId}?replicaSet=educandurs&authSource=admin`,
     cdnEndpoint: 'http://localhost:9000',
     cdnRegion: region,
