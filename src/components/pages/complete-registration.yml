@@ -1,6 +1,6 @@
 registrationSuccess:
-  en: Congratulations! You are now a successfully registered elmu user.
-  de: Gratulation! Sie sind nun ein elmu-User und haben Ihre Registrierung erfolgreich abgeschlossen.
+  en: Congratulations! You are now successfully registered.
+  de: Gratulation! Sie haben Ihre Registrierung erfolgreich abgeschlossen.
 registrationFailure:
   en: The confirmation code is invalid or expired.
   de: Der Registrierungs-Code ist ungültig oder abgelaufen.

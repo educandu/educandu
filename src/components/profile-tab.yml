@@ -30,15 +30,15 @@ updateSuccessMessage:
   de: Ihr Profil wurde erfolgreich aktualisiert.
 avatarDescription:
   en: |
-    ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.
+    Profile pictures are managed through the <0>Gravatar</0> internet service.
     A Gravatar is a globally recognized avatar, which is linked to your email address.
     This service can then be used by other websites to display a profile picture for a given email address.
-    Please note that ELMU has no influence on the use of your data by this service.
+    Please note that our website has no influence on the use of your data by this service.
     If you agree, you can create a profile <0>here</0>.
   de: |
-    ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <0>Gravatar</0>.
+    Profilbilder sind durch den Internetdienst <0>Gravatar</0> geführt.
     Ein Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.
     Dieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.
-    Beachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.
+    Beachten Sie bitte, dass unsere Website keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.
     Wenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.
 

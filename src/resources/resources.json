@@ -345,7 +345,7 @@
     "namespace": "completeRegistration",
     "language": "en",
     "resources": {
-      "registrationSuccess": "Congratulations! You are now a successfully registered elmu user.",
+      "registrationSuccess": "Congratulations! You are now successfully registered.",
       "registrationFailure": "The confirmation code is invalid or expired.",
       "homeLink": "Home",
       "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
@@ -355,7 +355,7 @@
     "namespace": "completeRegistration",
     "language": "de",
     "resources": {
-      "registrationSuccess": "Gratulation! Sie sind nun ein elmu-User und haben Ihre Registrierung erfolgreich abgeschlossen.",
+      "registrationSuccess": "Gratulation! Sie haben Ihre Registrierung erfolgreich abgeschlossen.",
       "registrationFailure": "Der Registrierungs-Code ist ungültig oder abgelaufen.",
       "homeLink": "Home",
       "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
@@ -811,7 +811,7 @@
       "city": "City",
       "country": "Country",
       "updateSuccessMessage": "Your profile was updated successfully.",
-      "avatarDescription": "ELMU does not manage profile pictures itself, but uses the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that ELMU has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
+      "avatarDescription": "Profile pictures are managed through the <0>Gravatar</0> internet service.\nA Gravatar is a globally recognized avatar, which is linked to your email address.\nThis service can then be used by other websites to display a profile picture for a given email address.\nPlease note that our website has no influence on the use of your data by this service.\nIf you agree, you can create a profile <0>here</0>.\n"
     }
   },
   {
@@ -828,7 +828,7 @@
       "city": "Ort",
       "country": "Land",
       "updateSuccessMessage": "Ihr Profil wurde erfolgreich aktualisiert.",
-      "avatarDescription": "ELMU verwaltet Profilbilder nicht selbst, sondern verwendet den Internetdienst <0>Gravatar</0>.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass ELMU keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
+      "avatarDescription": "Profilbilder sind durch den Internetdienst <0>Gravatar</0> geführt.\nEin Gravatar ist ein global verfügbarer Avatar (Globally Recognized Avatar), welcher mit Ihrer E-Mail-Adresse verknüpft ist.\nDieser Dienst kann dann von anderen Webseiten benutzt werden, um ein Profilbild zu einer E-Mail-Adresse anzuzeigen.\nBeachten Sie bitte, dass unsere Website keinen Einfluss auf die Verwendung Ihrer Daten bei diesem Dienst hat.\nWenn Sie damit einverstanden sind, können Sie <0>hier</0> ein Profil erstellen.\n"
     }
   },
   {
