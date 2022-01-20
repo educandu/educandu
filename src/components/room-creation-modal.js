@@ -7,9 +7,9 @@ import errorHelper from '../ui/error-helper.js';
 import { Form, Modal, Input, Radio } from 'antd';
 import inputValidators from '../utils/input-validators.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import React, { useState, useRef, useEffect } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -21,6 +21,14 @@ function RoomCreationModal({ isVisible, onClose }) {
   const formRef = useRef(null);
   const { t } = useTranslation('roomCreationModal');
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+
+  const [loading, setLoading] = useState(false);
+
+  const defaultRoom = {
+    name: t('newRoom'),
+    slug: '',
+    access: ROOM_ACCESS_LEVEL.private
+  };
 
   const nameValidationRules = [
     {
@@ -40,45 +48,22 @@ function RoomCreationModal({ isVisible, onClose }) {
     }
   ];
 
-  const isFormValid = async () => {
-    try {
-      await formRef.current.validateFields(['name, slug'], { force: true });
-      return true;
-    } catch {
-      return false;
+  useEffect(() => {
+    if (isVisible && formRef.current) {
+      formRef.current.resetFields();
+    }
+  }, [isVisible]);
+
+  const handleOk = () => {
+    if (formRef.current) {
+      formRef.current.submit();
     }
   };
 
-  const createRoomState = useCallback(() => ({
-    name: t('newRoom'),
-    slug: '',
-    access: ROOM_ACCESS_LEVEL.private
-  }), [t]);
-
-  const [loading, setLoading] = useState(false);
-  const [room, setRoom] = useState(createRoomState());
-
-  useEffect(() => {
-    if (isVisible) {
-      const newRoom = createRoomState();
-      setRoom(newRoom);
-
-      if (formRef.current) {
-        formRef.current.setFieldsValue({ name: newRoom.name });
-        formRef.current.setFieldsValue({ slug: newRoom.slug });
-      }
-    }
-  }, [isVisible, createRoomState]);
-
-  const handleOk = async () => {
+  const handleOnFinish = async ({ name, slug, access }) => {
     try {
-      const isValid = await isFormValid();
-      if (!isValid) {
-        return;
-      }
-
       setLoading(true);
-      const newRoom = await roomApiClient.addRoom({ name: room.name, slug: room.slug, access: room.access });
+      const newRoom = await roomApiClient.addRoom({ name, slug, access });
       setLoading(false);
       onClose();
 
@@ -91,21 +76,6 @@ function RoomCreationModal({ isVisible, onClose }) {
 
   const handleCancel = () => onClose();
 
-  const handleNameChange = event => {
-    const { value } = event.target;
-    setRoom(prevState => ({ ...prevState, name: value }));
-  };
-
-  const handleSlugChange = event => {
-    const { value } = event.target;
-    setRoom(prevState => ({ ...prevState, slug: value }));
-  };
-
-  const handleAccessChange = event => {
-    const { value } = event.target;
-    setRoom(prevState => ({ ...prevState, access: value }));
-  };
-
   return (
     <Modal
       title={t('newRoom')}
@@ -115,15 +85,15 @@ function RoomCreationModal({ isVisible, onClose }) {
       visible={isVisible}
       okButtonProps={{ loading }}
       >
-      <Form name="new-room-form" ref={formRef} layout="vertical">
-        <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name}>
-          <Input onChange={handleNameChange} />
+      <Form onFinish={handleOnFinish} name="new-room-form" ref={formRef} layout="vertical">
+        <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={defaultRoom.name}>
+          <Input />
         </FormItem>
-        <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug}>
-          <Input onChange={handleSlugChange} />
+        <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={defaultRoom.slug}>
+          <Input />
         </FormItem>
-        <FormItem label={t('common:access')}>
-          <RadioGroup value={room.access} onChange={handleAccessChange}>
+        <FormItem label={t('common:access')} name="access" initialValue={defaultRoom.access}>
+          <RadioGroup>
             <RadioButton value={ROOM_ACCESS_LEVEL.private}>{t('common:accessType_private')}</RadioButton>
             <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('common:accessType_public')}</RadioButton>
           </RadioGroup>
