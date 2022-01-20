@@ -94,7 +94,7 @@ class UserController {
     if (result === SAVE_USER_RESULT.success) {
       const { origin } = requestHelper.getHostInfo(req);
       const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
-      await this.mailService.sendRegistrationVerificationLink({ username, email, verificationLink });
+      await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
 
     res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
@@ -150,7 +150,7 @@ class UserController {
       const resetRequest = await this.userService.createPasswordResetRequest(user);
       const { origin } = requestHelper.getHostInfo(req);
       const completionLink = urls.concatParts(origin, urls.getCompletePasswordResetUrl(resetRequest._id));
-      await this.mailService.sendPasswordResetRequestCompletionLink({ username: user.username, email: user.email, completionLink });
+      await this.mailService.sendPasswordResetEmail({ username: user.username, email: user.email, completionLink });
     }
 
     res.send({});

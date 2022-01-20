@@ -69,7 +69,7 @@ export default class RoomController {
     const users = await this.userService.getUsersByIds(userIds);
 
     await Promise.all(users.map(({ email }) => {
-      return this.mailService.sendRoomDeletionNotification({ email, roomName, ownerName: user.username });
+      return this.mailService.sendRoomDeletionNotificationEmail({ email, roomName, ownerName: user.username });
     }));
 
     return res.status(200).end();
@@ -82,7 +82,7 @@ export default class RoomController {
 
     const { origin } = requestHelper.getHostInfo(req);
     const invitationLink = urls.concatParts(origin, urls.getRoomMembershipConfirmationUrl(invitation.token));
-    await this.mailService.sendRoomInvitation({ roomName: room.name, ownerName: owner.username, email, invitationLink });
+    await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.username, email, invitationLink });
 
     return res.status(201).send(invitation);
   }

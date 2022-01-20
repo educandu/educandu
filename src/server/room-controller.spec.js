@@ -37,8 +37,8 @@ describe('room-controller', () => {
       getLessons: sandbox.stub()
     };
     mailService = {
-      sendRoomInvitation: sandbox.stub(),
-      sendRoomDeletionNotification: sandbox.stub()
+      sendRoomInvitationEmail: sandbox.stub(),
+      sendRoomDeletionNotificationEmail: sandbox.stub()
     };
     user = {
       username: 'dagobert-the-third',
@@ -81,7 +81,7 @@ describe('room-controller', () => {
           owner: user,
           invitation
         });
-        mailService.sendRoomInvitation.resolves();
+        mailService.sendRoomInvitationEmail.resolves();
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -112,8 +112,8 @@ describe('room-controller', () => {
         });
       });
 
-      it('should have called mailService.sendRoomInvitation', () => {
-        sinon.assert.calledWith(mailService.sendRoomInvitation, {
+      it('should have called mailService.sendRoomInvitationEmail', () => {
+        sinon.assert.calledWith(mailService.sendRoomInvitationEmail, {
           roomName: 'Mein schöner Raum',
           ownerName: 'dagobert-the-third',
           email: 'invited@user.com',
@@ -153,7 +153,7 @@ describe('room-controller', () => {
         owner: user,
         invitation
       });
-      mailService.sendRoomInvitation.resolves();
+      mailService.sendRoomInvitationEmail.resolves();
 
       req = httpMocks.createRequest({
         protocol: 'https',
@@ -489,9 +489,9 @@ describe('room-controller', () => {
       sinon.assert.calledWith(userService.getUsersByIds, members.map(({ userId }) => userId));
     });
 
-    it('should call sendRoomDeletionNotification with the right emails', () => {
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotification, { email: 'email1', roomName, ownerName: user.username });
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotification, { email: 'email2', roomName, ownerName: user.username });
+    it('should call sendRoomDeletionNotificationEmail with the right emails', () => {
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: 'email1', roomName, ownerName: user.username });
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: 'email2', roomName, ownerName: user.username });
     });
 
     it('should return status 200 when all goes well', () => {

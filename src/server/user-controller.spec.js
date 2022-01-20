@@ -21,8 +21,8 @@ describe('user-controller', () => {
       createPasswordResetRequest: sandbox.stub()
     };
     mailService = {
-      sendRegistrationVerificationLink: sandbox.stub(),
-      sendPasswordResetRequestCompletionLink: sandbox.stub()
+      sendRegistrationVerificationEmail: sandbox.stub(),
+      sendPasswordResetEmail: sandbox.stub()
     };
     clientDataMapper = {
       dbUserToClientUser: sandbox.stub()
@@ -64,8 +64,8 @@ describe('user-controller', () => {
         expect(res.statusCode).toBe(200);
       });
 
-      it('should call sendRegistrationVerificationLink', () => {
-        sinon.assert.calledWith(mailService.sendRegistrationVerificationLink, {
+      it('should call sendRegistrationVerificationEmail', () => {
+        sinon.assert.calledWith(mailService.sendRegistrationVerificationEmail, {
           username: 'test1234',
           email: 'test@test.com',
           verificationLink: 'https://localhost/complete-registration/verificationCode'
@@ -99,8 +99,8 @@ describe('user-controller', () => {
         expect(res.statusCode).toBe(200);
       });
 
-      it('should not call mailService.sendRegistrationVerificationLink', () => {
-        sinon.assert.notCalled(mailService.sendRegistrationVerificationLink);
+      it('should not call mailService.sendRegistrationVerificationEmail', () => {
+        sinon.assert.notCalled(mailService.sendRegistrationVerificationEmail);
       });
 
       it('should not call clientDataMapper.dbUserToClientUser', () => {
@@ -290,8 +290,8 @@ describe('user-controller', () => {
         sinon.assert.calledWith(userService.createPasswordResetRequest, user);
       });
 
-      it('should call mailService.sendPasswordResetRequestCompletionLink', () => {
-        sinon.assert.calledWith(mailService.sendPasswordResetRequestCompletionLink, { username: user.username,
+      it('should call mailService.sendPasswordResetEmail', () => {
+        sinon.assert.calledWith(mailService.sendPasswordResetEmail, { username: user.username,
           email: user.email,
           completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
       });
@@ -328,8 +328,8 @@ describe('user-controller', () => {
         sinon.assert.notCalled(userService.createPasswordResetRequest);
       });
 
-      it('should not call mailService.sendPasswordResetRequestCompletionLink', () => {
-        sinon.assert.notCalled(mailService.sendPasswordResetRequestCompletionLink);
+      it('should not call mailService.sendPasswordResetEmail', () => {
+        sinon.assert.notCalled(mailService.sendPasswordResetEmail);
       });
 
       it('should set the status code on the response to 200', () => {

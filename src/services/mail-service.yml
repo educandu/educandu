@@ -1,0 +1,72 @@
+registrationVerificationEmail.subject:
+  en: Welcome to educandu!
+  de: Willkommen auf educandu!
+registrationVerificationEmail.text:
+  en: |
+    Welcome!
+
+    You have registered successfully with educandu as {username}.
+    Please confirm your registration here: {verificationLink}
+  de: |
+    Willkommen!
+
+    Sie haben sich erfolgreich als {username} auf educandu registriert.
+    Bitte bestätigen Sie Ihre Registrierung hier: {verificationLink}
+registrationVerificationEmail.html:
+  en: |
+    <p>Welcome!<br/><br/>You have registered successfully with educandu as {username}.<br/>Please confirm your registration here: <a href="{verificationLink}">confirm registration</a></p>
+  de: |
+    <p>Willkommen!<br/><br/>Sie haben sich erfolgreich als {username} auf educandu registriert.<br/>Bitte bestätigen Sie Ihre Registrierung hier: <a href="{verificationLink}">Registrierung bestätigen</a></p>
+passwordResetEmail.subject:
+  en: Your password for educandu
+  de: Ihr Kennwort auf educandu
+passwordResetEmail.text:
+  en: |
+    Hello {username}!
+
+    You want to change your password for educandu?
+    Please follow this link in order to change your password: {completionLink}
+  de: |
+    Hallo {username}!
+
+    Sie möchten Ihr Kennwort auf educandu ändern?
+    Zum Ändern Ihres Kennworts folgen Sie bitte diesem Link: {completionLink}
+passwordResetEmail.html:
+  en: |
+    <p>Hello {username}!<br/><br/>You want to change your password for educandu?<br/>Please click here in order to change your password: <a href="{completionLink}">change password</a>.</p>
+  de: |
+    <p>Hallo {username}!<br/><br/>Sie möchten Ihr Kennwort auf educandu ändern?<br/>Zum Ändern Ihres Kennworts klicken Sie bitte hier: <a href="{completionLink}">Kennwort ändern</a>.</p>
+roomInvitationEmail.subject:
+  en: You have been invited to a room
+  de: Sie wurden in einen Raum eingeladen
+roomInvitationEmail.text:
+  en: |
+    Hello!
+
+    User {ownerName} has invited you to the room {roomName}.
+    Please follow this link in order to confirm the invitation: {invitationLink}
+  de: |
+    Hallo!
+
+    Der Benutzer {ownerName} hat Sie in den Raum {roomName} eingeladen.
+    Um die Einladung zu bestätigen, folgen Sie bitte diesem Link: {invitationLink}
+roomInvitationEmail.html:
+  en: |
+    <p>Hello!<br/><br/>User <b>{ownerName}</b> has invited you to the room <b>{roomName}</b>.<br/>Please click here in order to confirm the invitation: <a href="{invitationLink}">Join room</a>.</p>
+  de: |
+    <p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Sie in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigen, klicken Sie bitte hier: <a href="{invitationLink}">Raum beitreten</a>.</p>
+roomDeletionNotificationEmail.subject:
+  en: A room you were a member of has been deleted
+  de: Ein Raum, in dem Sie Mitglied waren, wurde gelöscht
+roomDeletionNotificationEmail.text:
+  en: |
+    Hello!
+
+    User {ownerName} has deleted the room {roomName}.
+  de: |
+    Hallo!
+
+    Der Benutzer {ownerName} hat den Raum {roomName} gelöscht.
+roomDeletionNotificationEmail.html:
+  en: <p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>.
+  de: <p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.
