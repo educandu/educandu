@@ -18,31 +18,30 @@ function educanduFeatures(md) {
   md.core.ruler.after('inline', 'educandu-features', state => {
     const { cdnRootUrl, renderMedia, collectCdnUrl } = state.env;
 
-    state.tokens.filter(parentToken => parentToken.type === 'inline').forEach(parentToken => {
-      parentToken.children?.forEach(token => {
-        if (token.type === 'link_open' || token.type === 'image') {
-          let targetUrl = null;
-          const attrToReplace = token.type === 'link_open' ? 'href' : 'src';
-          token.attrs.filter(attr => attr[0] === attrToReplace).forEach(attr => {
-            if (attr[1].startsWith('cdn://')) {
-              collectCdnUrl?.(attr[1].slice(6));
-              attr[1] = (cdnRootUrl || 'cdn:/') + attr[1].slice(5);
-            }
-            targetUrl = attr[1];
-          });
-          if (renderMedia && token.type === 'image' && targetUrl) {
-            const mediaType = getMediaType(targetUrl);
-            if (mediaType === 'audio' || mediaType === 'video') {
-              token.type = 'media';
-              token.tag = mediaType;
-              token.attrs = [...token.attrs.filter(([name]) => name === 'src'), ['controls']];
-              token.children = null;
-              token.content = null;
-            }
-          }
+    const tokensToProcess = state.tokens
+      .filter(parentToken => parentToken.type === 'inline')
+      .flatMap(parentToken => parentToken.children || [])
+      .filter(childToken => childToken.type === 'link_open' || childToken.type === 'image');
+
+    for (const token of tokensToProcess) {
+      const attrName = token.type === 'link_open' ? 'href' : 'src';
+      let targetUrl = token.attrGet(attrName) || '';
+      if (targetUrl.startsWith('cdn://')) {
+        collectCdnUrl?.(targetUrl.slice(6));
+        targetUrl = (cdnRootUrl || 'cdn:/') + targetUrl.slice(5);
+        token.attrSet(attrName, targetUrl);
+      }
+      if (renderMedia && token.type === 'image' && targetUrl) {
+        const mediaType = getMediaType(targetUrl);
+        if (mediaType === 'audio' || mediaType === 'video') {
+          token.type = 'media';
+          token.tag = mediaType;
+          token.attrs = [['src', targetUrl], ['controls']];
+          token.children = null;
+          token.content = null;
         }
-      });
-    });
+      }
+    }
 
     return false;
   });
