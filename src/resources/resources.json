@@ -1106,7 +1106,7 @@
     "language": "en",
     "resources": {
       "name": "Annotation",
-      "text": "Text"
+      "renderMedia": "Render media"
     }
   },
   {
@@ -1114,7 +1114,7 @@
     "language": "de",
     "resources": {
       "name": "Anmerkung",
-      "text": "Text"
+      "renderMedia": "Medien wiedergeben"
     }
   },
   {
@@ -1355,14 +1355,16 @@
     "namespace": "markdown",
     "language": "en",
     "resources": {
-      "name": "Markdown"
+      "name": "Markdown",
+      "renderMedia": "Render media"
     }
   },
   {
     "namespace": "markdown",
     "language": "de",
     "resources": {
-      "name": "Markdown"
+      "name": "Markdown",
+      "renderMedia": "Medien wiedergeben"
     }
   },
   {
@@ -1472,7 +1474,8 @@
       "title": "Title",
       "slug": "URL path",
       "username": "User name",
-      "password": "Password"
+      "password": "Password",
+      "text": "Text"
     }
   },
   {
@@ -1518,7 +1521,8 @@
       "title": "Titel",
       "slug": "URL-Pfad",
       "username": "Benutzername",
-      "password": "Kennwort"
+      "password": "Kennwort",
+      "text": "Text"
     }
   },
   {

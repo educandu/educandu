@@ -88,7 +88,9 @@ function QuickTesterDisplay({ content }) {
             <div className="QuickTester-questionHeader">
               {t('questionHeader', { currentTest: currentIndex + 1, testsLength: tests.length })}
             </div>
-            <Markdown>{tests[currentIndex].question}</Markdown>
+            <div className="QuickTester-questionBody">
+              <Markdown inline>{tests[currentIndex].question}</Markdown>
+            </div>
           </div>
           <div className="QuickTester-answer">
             {answerDisplay}

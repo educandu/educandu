@@ -17,7 +17,8 @@ export default class Markdown {
 
   getDefaultContent() {
     return {
-      text: ''
+      text: '',
+      renderMedia: false
     };
   }
 

@@ -149,7 +149,7 @@ function Settings({ initialState, PageTemplate }) {
         <section className="SettingsPage-homepageInfo">
           <TextArea style={{ height: '100%' }} value={settings.homepageInfo} onChange={handleHomepageInfoChange} />
           <div className="SettingsPage-homepageInfoPreview">
-            <Markdown>{settings.homepageInfo}</Markdown>
+            <Markdown renderMedia>{settings.homepageInfo}</Markdown>
           </div>
         </section>
 

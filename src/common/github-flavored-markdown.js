@@ -1,42 +1,82 @@
-import memoizee from 'memoizee';
 import MarkdownIt from 'markdown-it';
-import replaceLink from 'markdown-it-replace-link';
+import { escapeHtml } from '../utils/string-utils.js';
 
-const getGfmForCdnRootUrl = memoizee(cdnRootUrl => {
-  let gfm;
-  if (cdnRootUrl) {
-    gfm = new MarkdownIt({
-      replaceLink: link => link.startsWith('cdn://') ? `${cdnRootUrl}/${link.substr(6)}` : link
+const audioUrlPattern = new RegExp(`\\.(${['aac', 'm4a', 'mp3', 'oga', 'ogg', 'wav'].join('|')})$`, 'i');
+const videoUrlPattern = new RegExp(`\\.(${['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg'].join('|')})$`, 'i');
+
+function getMediaType(url) {
+  if (audioUrlPattern.test(url)) {
+    return 'audio';
+  }
+  if (videoUrlPattern.test(url)) {
+    return 'video';
+  }
+  return 'image';
+}
+
+function educanduFeatures(md) {
+  md.core.ruler.after('inline', 'educandu-features', state => {
+    const { cdnRootUrl, renderMedia, collectCdnUrl } = state.env;
+
+    state.tokens.filter(parentToken => parentToken.type === 'inline').forEach(parentToken => {
+      parentToken.children?.forEach(token => {
+        if (token.type === 'link_open' || token.type === 'image') {
+          let targetUrl = null;
+          const attrToReplace = token.type === 'link_open' ? 'href' : 'src';
+          token.attrs.forEach(attr => {
+            if (attr[0] === attrToReplace) {
+              if (attr[1].startsWith('cdn://')) {
+                collectCdnUrl?.(attr[1].slice(6));
+                attr[1] = (cdnRootUrl || 'cdn:/') + attr[1].slice(5);
+              }
+              targetUrl = attr[1];
+            }
+          });
+          if (renderMedia && token.type === 'image' && targetUrl) {
+            const mediaType = getMediaType(targetUrl);
+            if (mediaType === 'audio' || mediaType === 'video') {
+              token.type = 'media';
+              token.tag = mediaType;
+              token.attrs = [...token.attrs.filter(([name]) => name === 'src'), ['controls']];
+              token.children = null;
+              token.content = null;
+            }
+          }
+        }
+      });
     });
-    gfm.use(replaceLink);
-  } else {
-    gfm = new MarkdownIt();
-  }
 
-  return gfm;
-});
+    return false;
+  });
+
+  md.renderer.rules.media = (tokens, index) => {
+    const token = tokens[index];
+
+    const attributes = token.attrs.reduce((accu, [name, value]) => {
+      return typeof value !== 'undefined' && value !== null
+        ? `${accu} ${escapeHtml(name)}="${escapeHtml(value)}"`
+        : `${accu} ${escapeHtml(name)}`;
+    }, '');
+
+    return `<${token.tag}${attributes}></${token.tag}>`;
+  };
+}
+
+const gfm = new MarkdownIt().use(educanduFeatures);
+
 class GithubFlavoredMarkdown {
-  render(markdown, { cdnRootUrl } = {}) {
-    return getGfmForCdnRootUrl(cdnRootUrl).render(markdown);
+  render(markdown, { cdnRootUrl, renderMedia } = {}) {
+    return gfm.render(markdown, { cdnRootUrl, renderMedia });
   }
 
-  renderInline(markdown, { cdnRootUrl } = {}) {
-    return getGfmForCdnRootUrl(cdnRootUrl).renderInline(markdown);
+  renderInline(markdown, { cdnRootUrl, renderMedia } = {}) {
+    return gfm.renderInline(markdown, { cdnRootUrl, renderMedia });
   }
 
   extractCdnResources(markdown) {
     const linkSet = new Set();
-    const extractor = new MarkdownIt({
-      replaceLink: link => {
-        if (link.startsWith('cdn://')) {
-          linkSet.add(link);
-        }
-        return link;
-      }
-    });
-    extractor.use(replaceLink);
-    extractor.render(markdown);
-    return [...linkSet].map(link => link.substr(6));
+    gfm.render(markdown, { collectCdnUrl: link => linkSet.add(link) });
+    return [...linkSet];
   }
 }
 

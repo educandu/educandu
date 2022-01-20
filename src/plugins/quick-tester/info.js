@@ -13,12 +13,12 @@ export default class QuickTester {
 
   getDefaultContent(t) {
     return {
-      title: `[${t('quickTester:titleLabel')}}`,
-      teaser: `[${t('quickTester:teaserLabel')}}`,
+      title: `[${t('quickTester:titleLabel')}]`,
+      teaser: `[${t('quickTester:teaserLabel')}]`,
       tests: [
         {
-          question: `[${t('quickTester:question')}}`,
-          answer: `[${t('quickTester:answer')}}`
+          question: `[${t('quickTester:question')}]`,
+          answer: `[${t('quickTester:answer')}]`
         }
       ]
     };

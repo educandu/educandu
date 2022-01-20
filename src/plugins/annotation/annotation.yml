@@ -1,6 +1,6 @@
 name:
   en: Annotation
   de: Anmerkung
-text:
-  en: Text
-  de: Text
+renderMedia:
+  en: Render media
+  de: Medien wiedergeben

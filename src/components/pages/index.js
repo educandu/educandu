@@ -60,7 +60,7 @@ function Index({ PageTemplate, SiteLogo }) {
         </div>
         {settings.homepageInfo && (
           <div className="IndexPage-homepageInfo">
-            <Markdown>{settings.homepageInfo}</Markdown>
+            <Markdown renderMedia>{settings.homepageInfo}</Markdown>
           </div>
         )}
       </div>
