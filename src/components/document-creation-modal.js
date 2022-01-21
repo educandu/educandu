@@ -6,7 +6,6 @@ import errorHelper from '../ui/error-helper.js';
 import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
 import { Form, Input, Modal, Checkbox } from 'antd';
-import { toTrimmedString } from '../utils/sanitize.js';
 import inputValidators from '../utils/input-validators.js';
 import React, { useEffect, useRef, useState } from 'react';
 import LanguageSelect from './localization/language-select.js';
@@ -74,8 +73,8 @@ function DocumentCreationModal({ isVisible, onClose, clonedDocument }) {
 
   const mapToDocumentModel = ({ title, slug, language }) => {
     return {
-      title: toTrimmedString(title),
-      slug: toTrimmedString(slug) || '',
+      title: (title || '').trim(),
+      slug: (slug || '').trim(),
       language,
       sections: [],
       tags: clonedDocument?.tags ? [...clonedDocument.tags] : [],

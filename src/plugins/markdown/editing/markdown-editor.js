@@ -1,44 +1,46 @@
 import React from 'react';
-import autoBind from 'auto-bind';
-import { Form, Input } from 'antd';
-import { withTranslation } from 'react-i18next';
+import { Checkbox, Form, Input } from 'antd';
+import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
+import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 
-const FormItem = Form.Item;
 const { TextArea } = Input;
 
-class MarkdownEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
+export default function MarkdownEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('markdown');
+  const { text, renderMedia } = content;
 
-  handleCurrentEditorValueChanged(event) {
-    const newValue = event.target.value;
-    this.changeContent({ text: newValue });
-  }
-
-  changeContent(newContentValues) {
-    const { content, onContentChanged } = this.props;
+  const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
-  }
+  };
 
-  render() {
-    const { content, t } = this.props;
-    const { text } = content;
+  const handleTextChanged = event => {
+    updateContent({ text: event.target.value });
+  };
 
-    return (
-      <FormItem {...validation.validateMarkdown(text, t)}>
-        <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
-      </FormItem>
-    );
-  }
+  const handleRenderMediaChanged = event => {
+    updateContent({ renderMedia: event.target.checked });
+  };
+
+  const formItemLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 14 }
+  };
+
+  return (
+    <div>
+      <Form>
+        <Form.Item label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
+          <TextArea value={text} onChange={handleTextChanged} autoSize={{ minRows: 3 }} />
+        </Form.Item>
+        <Form.Item label={t('renderMedia')} {...formItemLayout}>
+          <Checkbox checked={renderMedia} onChange={handleRenderMediaChanged} />
+        </Form.Item>
+      </Form>
+    </div>
+  );
 }
 
 MarkdownEditor.propTypes = {
-  ...translationProps,
   ...sectionEditorProps
 };
-
-export default withTranslation()(MarkdownEditor);

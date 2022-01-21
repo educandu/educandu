@@ -15,10 +15,11 @@ export default class Annotation {
     return t('annotation:name');
   }
 
-  getDefaultContent() {
+  getDefaultContent(t) {
     return {
-      title: '',
-      text: ''
+      title: `[${t('common:title')}]`,
+      text: `[${t('common:text')}]`,
+      renderMedia: false
     };
   }
 

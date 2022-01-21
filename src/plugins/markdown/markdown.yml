@@ -1,3 +1,6 @@
 name:
   en: Markdown
   de: Markdown
+renderMedia:
+  en: Render media
+  de: Medien wiedergeben
