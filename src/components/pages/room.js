@@ -140,7 +140,7 @@ export default function Room({ PageTemplate, initialState }) {
   const handleRoomMetadataFormSubmitted = async ({ name, slug }) => {
     try {
       const updatedRoom = { ...room, name, slug };
-      await roomApiClient.saveRoom(updatedRoom);
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug });
       setRoom(updatedRoom);
     } catch (error) {
       handleApiError({ error, logger, t });

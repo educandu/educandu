@@ -76,6 +76,11 @@ export default class RoomService {
     return newRoom;
   }
 
+  async updateRoom(room) {
+    await this.roomStore.save(room);
+    return room;
+  }
+
   async findOwnedRoomById({ roomId, ownerId }) {
     const room = await this.roomStore.findOne({ _id: roomId });
     if (room?.owner !== ownerId) {

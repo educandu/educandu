@@ -17,6 +17,16 @@ class RoomApiClient {
       .then(res => res.data);
   }
 
+  updateRoom({ roomId, name, slug }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/rooms/${encodeURIComponent(roomId)}`,
+        { name, slug },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   addRoomInvitation({ email, roomId }) {
     return this.httpClient
       .post(

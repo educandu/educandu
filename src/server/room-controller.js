@@ -17,6 +17,8 @@ import { validateBody, validateParams } from '../domain/validation-middleware.js
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
+  patchRoomBodySchema,
+  patchRoomParamsSchema,
   deleteRoomParamsSchema,
   postRoomInvitationBodySchema,
   postRoomInvitationConfirmBodySchema,
@@ -56,6 +58,27 @@ export default class RoomController {
     const newRoom = await this.roomService.createRoom({ name, slug, access, user });
 
     return res.status(201).send(newRoom);
+  }
+
+  async handlePatchRoom(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+    const { name, slug } = req.body;
+
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    if (room.owner !== user._id) {
+      throw new Forbidden();
+    }
+
+    const updatedRoom = { ...room, name, slug };
+    await this.roomService.updateRoom(updatedRoom);
+
+    return res.status(201).send(updatedRoom);
   }
 
   async handleDeleteRoom(req, res) {
@@ -152,6 +175,12 @@ export default class RoomController {
       '/api/v1/rooms',
       [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomBodySchema)],
       (req, res) => this.handlePostRoom(req, res)
+    );
+
+    router.patch(
+      '/api/v1/rooms/:roomId',
+      [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomBodySchema)],
+      (req, res) => this.handlePatchRoom(req, res)
     );
 
     router.delete(

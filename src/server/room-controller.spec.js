@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
@@ -7,7 +8,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import uniqueId from '../utils/unique-id.js';
 
-const { NotFound, Forbidden } = httpErrors;
+const { NotFound, Forbidden, BadRequest } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -31,6 +32,8 @@ describe('room-controller', () => {
       getRoomById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
+      createRoom: sandbox.stub(),
+      updateRoom: sandbox.stub(),
       deleteRoom: sandbox.stub()
     };
     lessonService = {
@@ -41,8 +44,8 @@ describe('room-controller', () => {
       sendRoomDeletionNotificationEmail: sandbox.stub()
     };
     user = {
-      username: 'dagobert-the-third',
-      _id: 'Ludwig the great'
+      _id: uniqueId.create(),
+      username: 'dagobert-the-third'
     };
     serverConfig = {
       areRoomsEnabled: true
@@ -69,9 +72,137 @@ describe('room-controller', () => {
     sandbox.restore();
   });
 
+  describe('handlePostRoom', () => {
+
+    describe('when the request data is valid', () => {
+      const createdRoom = {};
+
+      beforeEach(done => {
+        roomService.createRoom.resolves(createdRoom);
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handlePostRoom(req, res);
+      });
+
+      it('should respond with status code 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should respond with the created room', () => {
+        expect(res._getData()).toEqual(createdRoom);
+      });
+    });
+  });
+
+  describe('handlePatchRoom', () => {
+
+    describe('when the request data is valid', () => {
+      let room;
+
+      beforeEach(done => {
+        room = {
+          _id: uniqueId.create(),
+          owner: user._id,
+          name: 'name',
+          slug: 'slug',
+          access: ROOM_ACCESS_LEVEL.public
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        roomService.updateRoom.resolves();
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId: room._id },
+          body: { name: 'new name', slug: 'new-slug' }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handlePatchRoom(req, res);
+      });
+
+      it('should respond with status code 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should respond with the updated room', () => {
+        expect(res._getData()).toEqual({
+          ...room,
+          name: 'new name',
+          slug: 'new-slug'
+        });
+      });
+    });
+
+    describe('when the request contains an unknown room id', () => {
+      beforeEach(() => {
+        const roomId = uniqueId.create();
+
+        roomService.getRoomById.withArgs(roomId).resolves(null);
+        roomService.updateRoom.resolves();
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId },
+          body: { name: 'new name', slug: 'new-slug' }
+        });
+        req.user = user;
+
+        res = {};
+      });
+
+      it('should throw NotFound', () => {
+        expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the request is made by a user which is not the room owner', () => {
+      beforeEach(() => {
+        const room = {
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          name: 'name',
+          slug: 'slug',
+          access: ROOM_ACCESS_LEVEL.public
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        roomService.updateRoom.resolves();
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { roomId: room._id },
+          body: { name: 'new name', slug: 'new-slug' }
+        });
+        req.user = user;
+
+        res = {};
+      });
+
+      it('should throw Forbidden', () => {
+        expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+  });
+
   describe('handlePostRoomInvitation', () => {
 
-    describe('when all goes well', () => {
+    describe('when the request data is valid', () => {
       const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
@@ -122,9 +253,9 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the service call fails', () => {
+    describe('when the request data is invalid and causes a BadRequest', () => {
       beforeEach(() => {
-        roomService.createOrUpdateInvitation.returns(Promise.reject(new NotFound()));
+        roomService.createOrUpdateInvitation.returns(Promise.reject(new BadRequest()));
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -137,7 +268,7 @@ describe('room-controller', () => {
       });
 
       it('should propagate the error', () => {
-        expect(() => sut.handlePostRoomInvitation(req, res)).rejects.toThrow(NotFound);
+        expect(() => sut.handlePostRoomInvitation(req, res)).rejects.toThrow(BadRequest);
       });
     });
 
@@ -464,6 +595,7 @@ describe('room-controller', () => {
     const members = [{ userId: uniqueId.create() }, { userId: uniqueId.create() }];
     const roomName = 'my room';
     const users = [{ email: 'email1' }, { email: 'email2' }];
+
     beforeEach(done => {
       req = httpMocks.createRequest({
         protocol: 'https',
@@ -494,7 +626,7 @@ describe('room-controller', () => {
       sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: 'email2', roomName, ownerName: user.username });
     });
 
-    it('should return status 200 when all goes well', () => {
+    it('should return status 200', () => {
       expect(res.statusCode).toBe(200);
     });
   });

@@ -25,6 +25,15 @@ export const getRoomParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 });
 
+export const patchRoomParamsSchema = joi.object({
+  roomId: idOrKeySchema.required()
+});
+
+export const patchRoomBodySchema = joi.object({
+  name: joi.string().required(),
+  slug: slugSchema
+});
+
 export const deleteRoomParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 });
