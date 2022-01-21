@@ -12,8 +12,8 @@ import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Space, List, Collapse, Button, Tabs, Card } from 'antd';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { Space, List, Collapse, Button, Tabs, Card, message } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
 
@@ -29,6 +29,7 @@ export default function Room({ PageTemplate, initialState }) {
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const [room, setRoom] = useState(initialState.room);
+  const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
   const [isLessonCreationModalVisible, setIsLessonCreationModalVisible] = useState(false);
 
@@ -141,10 +142,17 @@ export default function Room({ PageTemplate, initialState }) {
     try {
       const updatedRoom = { ...room, name, slug };
       await roomApiClient.updateRoom({ roomId: room._id, name, slug });
+
       setRoom(updatedRoom);
+      setIsRoomUpdateButtonDisabled(true);
+      message.success(t('updateRoomSuccessMessage'));
     } catch (error) {
       handleApiError({ error, logger, t });
     }
+  };
+
+  const handleRoomMetadataFormFieldsChanged = () => {
+    setIsRoomUpdateButtonDisabled(false);
   };
 
   return (
@@ -175,9 +183,22 @@ export default function Room({ PageTemplate, initialState }) {
 
           {isRoomOwner && (
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
-              <Card className="Room-card" title={t('editRoomCardTitle')}>
-                <RoomMetadataForm formRef={formRef} room={room} onSubmit={handleRoomMetadataFormSubmitted} editMode />
-                <Button className="Room-cardEditButton" type="primary" onClick={handleUpdateRoomClick}>{t('common:update')}</Button>
+              <Card className="Room-card" title={t('updateRoomCardTitle')}>
+                <RoomMetadataForm
+                  formRef={formRef}
+                  room={room}
+                  onSubmit={handleRoomMetadataFormSubmitted}
+                  onFieldsChange={handleRoomMetadataFormFieldsChanged}
+                  editMode
+                  />
+                <Button
+                  className="Room-cardEditButton"
+                  type="primary"
+                  onClick={handleUpdateRoomClick}
+                  disabled={isRoomUpdateButtonDisabled}
+                  >
+                  {t('common:update')}
+                </Button>
               </Card>
 
               <Card className="Room-card Room-card--danger" title={t('roomDangerZoneCardTitle')}>

@@ -645,7 +645,8 @@
       "settingsTabTitle": "Settings",
       "thisWeek": "This week",
       "deleteRoomButton": "Delete room",
-      "editRoomCardTitle": "Update room metadata",
+      "updateRoomCardTitle": "Update room metadata",
+      "updateRoomSuccessMessage": "The room metadata was updated successfully.",
       "roomDangerZoneCardTitle": "Danger zone",
       "deleteRoomTitle": "Delete this room",
       "deleteRoomDescription": "All room data and resources will be deleted."
@@ -665,7 +666,8 @@
       "settingsTabTitle": "Einstellungen",
       "thisWeek": "Diese Woche",
       "deleteRoomButton": "Raum löschen",
-      "editRoomCardTitle": "Raum Metadaten aktualizieren",
+      "updateRoomCardTitle": "Raum Metadaten aktualizieren",
+      "updateRoomSuccessMessage": "Der Raum Metadaten wurde erfolgreich aktualisiert.",
       "roomDangerZoneCardTitle": "Gefahrenzone",
       "deleteRoomTitle": "Dieser Raum löschen",
       "deleteRoomDescription": "Alle Daten und Resourcen werden gelöscht."

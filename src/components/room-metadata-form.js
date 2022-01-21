@@ -1,10 +1,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Logger from '../common/logger.js';
 import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
-import errorHelper from '../ui/error-helper.js';
 import inputValidators from '../utils/input-validators.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { roomMetadataShape } from '../ui/default-prop-types.js';
@@ -13,9 +11,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-const logger = new Logger(import.meta.url);
-
-function RoomMetadataForm({ room, editMode, formRef, onSubmit }) {
+function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit }) {
   const { t } = useTranslation('roomMetadataForm');
 
   const nameValidationRules = [
@@ -36,16 +32,16 @@ function RoomMetadataForm({ room, editMode, formRef, onSubmit }) {
     }
   ];
 
-  const handleOnFinish = async ({ name, slug, access }) => {
-    try {
-      await onSubmit({ name, slug, access });
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
-    }
+  const handleFinish = async ({ name, slug, access }) => {
+    await onSubmit({ name, slug, access });
+  };
+
+  const handleFieldsChange = async (...args) => {
+    await onFieldsChange(...args);
   };
 
   return (
-    <Form onFinish={handleOnFinish} name="room-metadata-form" ref={formRef} layout="vertical">
+    <Form onFinish={handleFinish} onFieldsChange={handleFieldsChange} name="room-metadata-form" ref={formRef} layout="vertical">
       <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name}>
         <Input />
       </FormItem>
@@ -63,7 +59,8 @@ function RoomMetadataForm({ room, editMode, formRef, onSubmit }) {
 }
 
 RoomMetadataForm.defaultProps = {
-  editMode: false
+  editMode: false,
+  onFieldsChange: () => {}
 };
 
 RoomMetadataForm.propTypes = {
@@ -71,6 +68,7 @@ RoomMetadataForm.propTypes = {
   formRef: PropTypes.shape({
     current: PropTypes.object
   }).isRequired,
+  onFieldsChange: PropTypes.func,
   onSubmit: PropTypes.func.isRequired,
   room: roomMetadataShape.isRequired
 };
