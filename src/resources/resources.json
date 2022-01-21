@@ -1498,7 +1498,8 @@
       "username": "User name",
       "password": "Password",
       "text": "Text",
-      "update": "Update"
+      "update": "Update",
+      "description": "Description"
     }
   },
   {
@@ -1546,7 +1547,8 @@
       "username": "Benutzername",
       "password": "Kennwort",
       "text": "Text",
-      "update": "Aktualisieren"
+      "update": "Aktualisieren",
+      "description": "Beschreibung"
     }
   },
   {

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useBeforeunload } from 'react-beforeunload';
 import React, { useState, useCallback } from 'react';
 import permissions from '../../domain/permissions.js';
+import MarkdownTextarea from '../markdown-textarea.js';
 import DocumentSelector from '../document-selector.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
@@ -20,8 +21,6 @@ import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
-
-const { TextArea } = Input;
 
 function Settings({ initialState, PageTemplate }) {
   const { t } = useTranslation('settings');
@@ -146,12 +145,7 @@ function Settings({ initialState, PageTemplate }) {
         </section>
 
         <h2 className="SettingsPage-sectionHeader">{t('homepageInfoHeader')}</h2>
-        <section className="SettingsPage-homepageInfo">
-          <TextArea style={{ height: '100%' }} value={settings.homepageInfo} onChange={handleHomepageInfoChange} />
-          <div className="SettingsPage-homepageInfoPreview">
-            <Markdown renderMedia>{settings.homepageInfo}</Markdown>
-          </div>
-        </section>
+        <MarkdownTextarea value={settings.homepageInfo || ''} onChange={handleHomepageInfoChange} />
 
         <h2 className="SettingsPage-sectionHeader">{t('templateDocumentHeader')}</h2>
         <DocumentSelector
