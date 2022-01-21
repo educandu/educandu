@@ -1,23 +1,28 @@
 import React from 'react';
 import parse5 from 'parse5';
+import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
-import faviconData from '../../../favicon-data.json';
+import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 
-const toElementDefinition = ({ tagName, attrs }) => {
-  const props = attrs.reduce((accu, { name, value }) => {
-    accu[name] = value;
-    return accu;
-  }, {});
+const parseElementDefinitions = memoizee(html => {
+  const headElem = parse5.parse(html).childNodes[0].childNodes[0];
+  return headElem.childNodes
+    .filter(({ nodeName }) => !nodeName.startsWith('#'))
+    .map(({ tagName, attrs }) => {
+      const attributes = attrs.reduce((accu, { name, value }) => ({
+        ...accu,
+        [kebabCaseToCamelCase(name)]: value
+      }), {});
 
-  return { tagName, props };
-};
+      return { tagName, attributes };
+    });
+});
 
-const headElem = parse5.parse(faviconData.favicon.html_code).childNodes[0].childNodes[0];
-const faviconDefs = headElem.childNodes.filter(({ nodeName }) => !nodeName.startsWith('#')).map(toElementDefinition);
+function PageTemplate({ language, title, content, styles, scripts, additionalHeadHtml }) {
+  const additionalHeadElementDefinitions = parseElementDefinitions(additionalHeadHtml);
 
-function PageTemplate({ language, title, content, styles, scripts }) {
-  const faviconElements = faviconDefs.map(({ tagName, props }, index) => {
-    return React.createElement(tagName, { key: index.toString(), ...props });
+  const additionalHeadElements = additionalHeadElementDefinitions.map((elem, index) => {
+    return React.createElement(elem.tagName, { key: index.toString(), ...elem.attributes });
   });
 
   const styleElements = styles.map((style, index) => {
@@ -38,7 +43,7 @@ function PageTemplate({ language, title, content, styles, scripts }) {
         <title>{ title }</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        {faviconElements}
+        {additionalHeadElements}
         {styleElements}
       </head>
       <body>
@@ -50,6 +55,7 @@ function PageTemplate({ language, title, content, styles, scripts }) {
 }
 
 PageTemplate.propTypes = {
+  additionalHeadHtml: PropTypes.string,
   content: PropTypes.string.isRequired,
   language: PropTypes.string.isRequired,
   scripts: PropTypes.array,
@@ -58,6 +64,7 @@ PageTemplate.propTypes = {
 };
 
 PageTemplate.defaultProps = {
+  additionalHeadHtml: '',
   scripts: [],
   styles: []
 };

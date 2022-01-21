@@ -9,18 +9,16 @@ import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
 import { Input, Table, Button, Switch } from 'antd';
-import { useService } from '../container-context.js';
+import { useDateFormat } from '../language-context.js';
 import { DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { confirmDocumentDelete } from '../confirmation-dialogs.js';
-import { useDateFormat, useLanguage } from '../language-context.js';
-import { documentMetadataShape } from '../../ui/default-prop-types.js';
-import LanguageNameProvider from '../../data/language-name-provider.js';
-import DocumentApiClient from '../../api-clients/document-api-client.js';
-import CountryFlagAndName from '../localization/country-flag-and-name.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import LanguageFlagAndName from '../language-flag-and-name.js';
 import DocumentCreationModal from '../document-creation-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { confirmDocumentDelete } from '../confirmation-dialogs.js';
+import { documentMetadataShape } from '../../ui/default-prop-types.js';
+import DocumentApiClient from '../../api-clients/document-api-client.js';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
@@ -30,10 +28,8 @@ const DEFAULT_FILTER_INPUT = '';
 function Docs({ initialState, PageTemplate }) {
   const user = useUser();
   const alerts = useGlobalAlerts();
-  const { language } = useLanguage();
   const { t } = useTranslation('docs');
   const { formatDate } = useDateFormat();
-  const languageNameProvider = useService(LanguageNameProvider);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [modalState, setModalState] = useState({
@@ -114,8 +110,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const renderLanguage = documentLanguage => {
-    const lang = languageNameProvider.getData(language)[documentLanguage];
-    return <CountryFlagAndName code={lang.flag} name={`${documentLanguage} (${lang.name})`} flagOnly />;
+    return <LanguageFlagAndName language={documentLanguage} flagOnly />;
   };
 
   const renderUpdatedBy = (_user, doc) => {

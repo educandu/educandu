@@ -10,6 +10,7 @@ const defaultTaskProcessing = {
 };
 
 const configSchema = joi.object({
+  appName: joi.string().required(),
   port: joi.number().min(1).default(80),
   mongoConnectionString: joi.string().required(),
   skipMaintenance: joi.boolean().default(false),
@@ -52,7 +53,8 @@ const configSchema = joi.object({
   }).default(defaultTaskProcessing),
   additionalControllers: joi.array().items(joi.function().class()).default([]),
   consentCookieName: joi.string().default('COOKIECONSENT'),
-  areRoomsEnabled: joi.bool().default(false)
+  areRoomsEnabled: joi.bool().default(false),
+  additionalHeadHtml: joi.string().default('')
 });
 
 class ServerConfig {
@@ -70,6 +72,7 @@ class ServerConfig {
 
   exportClientConfigValues() {
     return {
+      appName: this.appName,
       cdnRootUrl: this.cdnRootUrl,
       disabledFeatures: this.disabledFeatures,
       importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),

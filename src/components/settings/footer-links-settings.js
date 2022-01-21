@@ -1,11 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
+import LanguageFlagAndName from '../language-flag-and-name.js';
 import SettingsDocumentsTable from './settings-documents-table.js';
-import LanguageNameProvider from '../../data/language-name-provider.js';
-import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const hasValue = value => value && String(value).trim();
@@ -13,11 +10,7 @@ const hasValue = value => value && String(value).trim();
 const isValidFooterLinkItem = item => [item.linkTitle, item.documentKey, item.documentSlug].every(hasValue);
 
 function FooterLinksSettings({ footerLinks, documents, onChange }) {
-  const { t } = useTranslation('footerLinksSettings');
-  const { language, supportedLanguages } = useLanguage();
-  const languageNameProvider = useService(LanguageNameProvider);
-
-  const languageNames = languageNameProvider.getData(language);
+  const { supportedLanguages } = useLanguage();
 
   const handleChange = (lang, items) => {
     const updatedFooterLinks = supportedLanguages.reduce((map, sl) => {
@@ -36,9 +29,8 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
         <React.Fragment key={lang}>
           {idx !== 0 && <br />}
           <h3>
-            <CountryFlagAndName
-              code={languageNames[lang]?.flag}
-              name={languageNames[lang]?.name || t('unknown')}
+            <LanguageFlagAndName
+              language={lang}
               />
           </h3>
           <SettingsDocumentsTable

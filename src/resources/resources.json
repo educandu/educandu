@@ -542,22 +542,6 @@
     }
   },
   {
-    "namespace": "index",
-    "language": "en",
-    "resources": {
-      "searchInputPlaceholder": "Search terms",
-      "searchButton": "Search"
-    }
-  },
-  {
-    "namespace": "index",
-    "language": "de",
-    "resources": {
-      "searchInputPlaceholder": "Suchbegriffe",
-      "searchButton": "Suchen"
-    }
-  },
-  {
     "namespace": "mySpace",
     "language": "en",
     "resources": {
@@ -909,6 +893,24 @@
       "ownedRoomsHeader": "Meine Räume",
       "joinedRoomsHeader": "Räume, in denen ich Mitglied bin",
       "joinedOn": "Eingetreten am"
+    }
+  },
+  {
+    "namespace": "searchBar",
+    "language": "en",
+    "resources": {
+      "searchPlaceholder": "Search terms",
+      "searchButtonText": "Search",
+      "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long"
+    }
+  },
+  {
+    "namespace": "searchBar",
+    "language": "de",
+    "resources": {
+      "searchPlaceholder": "Suchbegriffe",
+      "searchButtonText": "Suchen",
+      "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein"
     }
   },
   {

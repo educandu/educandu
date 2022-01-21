@@ -1,73 +1,69 @@
 import firstBy from 'thenby';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
+import SearchBar from '../search-bar.js';
+import { Table, Tag, Select } from 'antd';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import { Table, Tag, Select, Form } from 'antd';
-import React, { useMemo, useState } from 'react';
 import { useRequest } from '../request-context.js';
 import { SearchOutlined } from '@ant-design/icons';
-import { useService } from '../container-context.js';
+import React, { useEffect, useState } from 'react';
+import { useDateFormat } from '../language-context.js';
+import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { searchResultShape } from '../../ui/default-prop-types.js';
-import { useDateFormat, useLanguage } from '../language-context.js';
-import LanguageNameProvider from '../../data/language-name-provider.js';
-import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import LanguageFlagAndName from '../language-flag-and-name.js';
+import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import SearchApiClient from '../../api-clients/search-api-client.js';
 
-function Search({ initialState, PageTemplate }) {
+const logger = new Logger(import.meta.url);
+function Search({ PageTemplate }) {
+  const request = useRequest();
   const { t } = useTranslation('search');
-  const { language } = useLanguage();
-  const { docs } = initialState;
-  const { query } = useRequest();
-
-  const languageNameProvider = useService(LanguageNameProvider);
-  const languageData = languageNameProvider.getData(language);
   const { formatDate } = useDateFormat();
 
-  const sortedDocs = useMemo(
-    () => docs
-      .map(doc => ({
-        ...doc,
-        tags: [...new Set(doc.tags)], // Some docs have duplicate tags we don't want to render
-        tagsSet: new Set(doc.tags.map(tag => tag.toLowerCase()))
-      }))
-      .sort(firstBy(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc')),
-    [docs]
-  );
-
+  const [docs, setDocs] = useState([]);
+  const [filteredDocs, setFilteredDocs] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
-  const [filteredDocs, setFilteredDocs] = useState(sortedDocs);
+  const [isSearching, setIsSearching] = useState(true);
+  const [searchText, setSearchText] = useState(request.query.query);
+  const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
-  const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
-  const allUniqueTags = [...new Set(allTags)];
-  const tagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
+  useEffect(() => {
+    (async () => {
+      setIsSearching(true);
+      try {
+        history.replaceState(null, '', urls.getSearchUrl(searchText));
+        const { result } = await searchApiClient.search(searchText);
+        setDocs(result);
+      } catch (error) {
+        handleApiError({ error, logger, t });
+      } finally {
+        setIsSearching(false);
+      }
+    })();
+  }, [searchText, searchApiClient, t]);
 
-  const handleTagsChanged = selectedValues => {
-    const newFilteredDocs = sortedDocs
-      .filter(doc => selectedValues.every(tag => doc.tagsSet.has(tag)));
+  useEffect(() => {
+    const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
+    const allUniqueTags = [...new Set(allTags)];
+    const newTagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
+
+    setTagOptions(newTagOptions);
+  }, [docs]);
+
+  useEffect(() => {
+    const newFilteredDocs = docs
+      .filter(doc => selectedTags.every(selectedTag => doc.tags.some(docTag => docTag.toLowerCase() === selectedTag)))
+      .sort(firstBy(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
 
     setFilteredDocs(newFilteredDocs);
-    setSelectedTags(selectedValues);
-  };
+  }, [docs, selectedTags]);
 
-  const renderUpdatedOn = updatedOn => {
-    return <span>{formatDate(updatedOn)}</span>;
-  };
-
-  const renderTitle = (title, doc) => {
-    const url = urls.getDocUrl(doc.key, doc.slug);
-    return <a href={url}>{title}</a>;
-  };
-
+  const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
+  const renderTitle = (title, doc) => (<a href={urls.getDocUrl(doc.key, doc.slug)}>{title}</a>);
   const renderTags = tags => tags.map(tag => (<Tag key={tag}>{tag}</Tag>));
-
-  const renderLanguage = lang => <CountryFlagAndName code={languageData[lang]?.flag} name={languageData[lang]?.name || lang} />;
-
-  const searchPlaceholder = () => (
-    <div className="Search-placeholderContainer">
-      {t('refineSearch')}
-      <SearchOutlined className="Search-placeholderContainerIcon" />
-    </div>
-  );
+  const renderLanguage = lang => (<LanguageFlagAndName language={lang} />);
 
   const columns = [
     {
@@ -88,7 +84,6 @@ function Search({ initialState, PageTemplate }) {
     },
     {
       title: t('common:language'),
-      className: 'Search-searchTableLanguageColumn',
       dataIndex: 'language',
       render: renderLanguage
     }
@@ -98,38 +93,43 @@ function Search({ initialState, PageTemplate }) {
 
   return (
     <PageTemplate alerts={alerts}>
-      <h1>{`${t('searchResultPrefix')}: ${query.query}`} </h1>
+      <div className="SearchPage">
+        <div className="SearchPage-searchHeader">
+          <SearchBar initialValue={searchText} onSearch={setSearchText} />
+        </div>
 
-      <div className="Search-searchSelectContainer">
-        <Form.Item label={t('refineSearch')} >
-          <Select
-            mode="multiple"
-            tokenSeparators={[' ']}
-            value={selectedTags}
-            onChange={selectedValues => handleTagsChanged(selectedValues)}
-            placeholder={searchPlaceholder()}
-            options={tagOptions}
-            />
-        </Form.Item>
+        <h1>{`${t('searchResultPrefix')}: ${searchText}`} </h1>
+
+        <Select
+          className="SearchPage-searchFilter"
+          mode="multiple"
+          tokenSeparators={[' ']}
+          value={selectedTags}
+          onChange={setSelectedTags}
+          options={tagOptions}
+          placeholder={(
+            <span className="SearchPage-placeholder">
+              <span>{t('refineSearch')}</span>
+              <SearchOutlined className="SearchPage-placeholderIcon" />
+            </span>
+          )}
+          />
+
+        <Table
+          bordered={false}
+          pagination={false}
+          size="middle"
+          columns={columns}
+          dataSource={filteredDocs}
+          loading={isSearching}
+          />
       </div>
-
-      <Table
-        bordered={false}
-        pagination={false}
-        size="middle"
-        columns={columns}
-        dataSource={filteredDocs}
-        />
-
     </PageTemplate>
   );
 }
 
 Search.propTypes = {
-  PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.shape({
-    docs: PropTypes.arrayOf(searchResultShape)
-  }).isRequired
+  PageTemplate: PropTypes.func.isRequired
 };
 
 export default Search;

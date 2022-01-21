@@ -16,3 +16,7 @@ export function escapeHtml(str) {
     ? str.replace(HTML_ESCAPE_REPLACEMENT_PATTERN, c => HTML_REPLACEMENT_MAP[c])
     : str;
 }
+
+export function kebabCaseToCamelCase(str) {
+  return str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
+}

@@ -2,11 +2,9 @@ import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { Form, Input, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useService } from '../container-context.js';
 import { useLanguage } from '../language-context.js';
 import DocumentSelector from '../document-selector.js';
-import LanguageNameProvider from '../../data/language-name-provider.js';
-import CountryFlagAndName from '../localization/country-flag-and-name.js';
+import LanguageFlagAndName from '../language-flag-and-name.js';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
@@ -37,10 +35,7 @@ const pageListToSettings = pageList => {
 
 function SpecialPageSettings({ settings, documents, onChange }) {
   const { t } = useTranslation('specialPageSettings');
-  const { language, supportedLanguages } = useLanguage();
-  const languageNameProvider = useService(LanguageNameProvider);
-
-  const languageNames = languageNameProvider.getData(language);
+  const { supportedLanguages } = useLanguage();
 
   const handleChange = (index, key, value) => {
     const pageList = settingsToPageList(supportedLanguages, settings);
@@ -49,7 +44,7 @@ function SpecialPageSettings({ settings, documents, onChange }) {
   };
 
   const renderLanguage = (text, record) => (
-    <CountryFlagAndName code={languageNames[record.language]?.flag} name={languageNames[record.language]?.name || t('unknown')} />
+    <LanguageFlagAndName language={record.language} />
   );
 
   const renderLinkTitle = (text, record, index) => (

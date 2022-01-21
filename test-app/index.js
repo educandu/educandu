@@ -4,6 +4,7 @@ import bundleConfig from './bundles/bundle-config.js';
 import ArticleController from './article-controller.js';
 
 educandu({
+  appName: 'educandu',
   port: process.env.TEST_APP_PORT || 3000,
   mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   skipMaintenance: process.env.TEST_APP_SKIP_MAINTENANCE === true.toString(),
@@ -46,5 +47,6 @@ educandu({
     maxAttempts: 3
   },
   additionalControllers: [ArticleController],
+  additionalHeadHtml: '<link rel="icon" type="image/x-icon" href="/favicon.ico">',
   areRoomsEnabled: true
 });
