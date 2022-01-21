@@ -13,6 +13,10 @@ export function splitAt(text, ...indices) {
   return result;
 }
 
+export function kebabCaseToCamelCase(str) {
+  return str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
+}
+
 export default {
   getSearchTermIndex,
   splitAt

@@ -24,7 +24,7 @@ class PageRenderer extends PageRendererBase {
   }
 
   sendPage(req, res, pageName, initialState = {}) {
-    const title = 'elmu';
+    const title = this.serverConfig.appName;
     const language = req.language;
     const settings = req.settings;
     const container = this.container;
@@ -73,7 +73,8 @@ class PageRenderer extends PageRendererBase {
       styles,
       scripts,
       ContentRoot: Root,
-      contentProps: props
+      contentProps: props,
+      additionalHeadHtml: this.serverConfig.additionalHeadHtml
     });
 
     return res
