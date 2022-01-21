@@ -1,15 +1,57 @@
-.CookieConsentDrawer-contentContainer {
-  width: 100%;
-  display: flex; 
-  justify-content: center;
+@cookie-consent-drawer-padding: 15px 25px;
+
+.CookieConsentDrawer {
+  display: none;
+
+  &.is-enabled {
+    display: block;
+  }
 }
 
-.CookieConsentDrawer-content {
+.CookieConsentDrawer-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.CookieConsentDrawer-drawer {
+  background: fade(@global-warning-color, 85%);
   display: flex;
-  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 1001;
+}
+
+.CookieConsentDrawer-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: @cookie-consent-drawer-padding;
+  font-size: 42px;
+}
+
+.CookieConsentDrawer-consentText {
+  flex: 1 0 0%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: @cookie-consent-drawer-padding;
+  font-weight: bold;
 }
 
 .CookieConsentDrawer-acceptButton {
-  margin-left: auto;
-  margin-right: auto
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: @cookie-consent-drawer-padding;
 }
