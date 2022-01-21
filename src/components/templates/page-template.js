@@ -2,18 +2,20 @@ import React from 'react';
 import parse5 from 'parse5';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
+import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 
 const parseElementDefinitions = memoizee(html => {
   const headElem = parse5.parse(html).childNodes[0].childNodes[0];
-  return headElem.childNodes.filter(({ nodeName }) => !nodeName.startsWith('#')).map(({ tagName, attrs }) => {
-    const attributes = attrs.reduce((accu, { name, value }) => {
-      const camelCasedName = name.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
-      accu[camelCasedName] = value;
-      return accu;
-    }, {});
+  return headElem.childNodes
+    .filter(({ nodeName }) => !nodeName.startsWith('#'))
+    .map(({ tagName, attrs }) => {
+      const attributes = attrs.reduce((accu, { name, value }) => ({
+        ...accu,
+        [kebabCaseToCamelCase(name)]: value
+      }), {});
 
-    return { tagName, attributes };
-  });
+      return { tagName, attributes };
+    });
 });
 
 function PageTemplate({ language, title, content, styles, scripts, additionalHeadHtml }) {
