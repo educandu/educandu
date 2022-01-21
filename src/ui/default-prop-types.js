@@ -228,12 +228,19 @@ export const roomMemberShape = PropTypes.shape({
   username: PropTypes.string.isRequired
 });
 
-export const roomShape = PropTypes.shape({
-  _id: PropTypes.string.isRequired,
+export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
-  owner: roomOwnerShape.isRequired,
-  members: PropTypes.arrayOf(roomMemberShape),
+  slug: PropTypes.string,
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired
+};
+
+export const roomMetadataShape = PropTypes.shape(roomMetadataProps);
+
+export const roomShape = PropTypes.shape({
+  ...roomMetadataProps,
+  _id: PropTypes.string.isRequired,
+  owner: roomOwnerShape.isRequired,
+  members: PropTypes.arrayOf(roomMemberShape)
 });
 
 export const invitationShape = PropTypes.shape({

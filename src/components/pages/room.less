@@ -23,3 +23,34 @@
 .Room-newLessonButton {
   margin-top: 15px;
 }
+
+.Room-card {
+  margin-top: 40px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+
+  &.Room-card--danger {
+    border-color: @red-7;
+  }
+}
+
+.Room-cardEditButton {
+  margin-top: 20px;
+}
+
+.Room-cardDangerAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Room-cardDangerActionTitle {
+  display: block;
+  font-weight: bold;
+}
+
+.Room-cardDangerActionDescription {
+  display: block;
+}

@@ -60,10 +60,11 @@ export default class RoomService {
     return rooms;
   }
 
-  async createRoom({ name, access, user }) {
+  async createRoom({ name, slug, access, user }) {
     const newRoom = {
       _id: uniqueId.create(),
       name,
+      slug: slug?.trim() || '',
       access,
       owner: user._id,
       createdBy: user._id,
@@ -73,6 +74,11 @@ export default class RoomService {
 
     await this.roomStore.save(newRoom);
     return newRoom;
+  }
+
+  async updateRoom(room) {
+    await this.roomStore.save(room);
+    return room;
   }
 
   async findOwnedRoomById({ roomId, ownerId }) {
