@@ -30,16 +30,16 @@ deleteRoomButton:
   de: Raum löschen
 updateRoomCardTitle:
   en: Update room metadata
-  de: Raum Metadaten aktualizieren
+  de: Raum-Metadaten aktualisieren
 updateRoomSuccessMessage:
   en: The room metadata was updated successfully.
-  de: Der Raum Metadaten wurde erfolgreich aktualisiert.
+  de: Die Raum-Metadaten wurden erfolgreich aktualisiert.
 roomDangerZoneCardTitle:
   en: Danger zone
   de: Gefahrenzone
 deleteRoomTitle:
   en: Delete this room
-  de: Dieser Raum löschen
+  de: Diesen Raum löschen
 deleteRoomDescription:
   en: All room data and resources will be deleted.
-  de: Alle Daten und Resourcen werden gelöscht.
+  de: Alle Raum-Daten und -Ressourcen werden gelöscht.

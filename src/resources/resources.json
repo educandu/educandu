@@ -666,11 +666,11 @@
       "settingsTabTitle": "Einstellungen",
       "thisWeek": "Diese Woche",
       "deleteRoomButton": "Raum löschen",
-      "updateRoomCardTitle": "Raum Metadaten aktualizieren",
-      "updateRoomSuccessMessage": "Der Raum Metadaten wurde erfolgreich aktualisiert.",
+      "updateRoomCardTitle": "Raum-Metadaten aktualisieren",
+      "updateRoomSuccessMessage": "Die Raum-Metadaten wurden erfolgreich aktualisiert.",
       "roomDangerZoneCardTitle": "Gefahrenzone",
-      "deleteRoomTitle": "Dieser Raum löschen",
-      "deleteRoomDescription": "Alle Daten und Resourcen werden gelöscht."
+      "deleteRoomTitle": "Diesen Raum löschen",
+      "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht."
     }
   },
   {
