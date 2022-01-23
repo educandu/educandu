@@ -70,7 +70,8 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
       width: '150px',
       sorter: by(x => x.language),
       render: (_text, record) => record.languageComponent,
-      shouldCellUpdate: (record, prevRecord) => record.language !== prevRecord.language || record.languageLocalized !== prevRecord.languageLocalized
+      shouldCellUpdate: (record, prevRecord) => record.language !== prevRecord.language || record.languageLocalized !== prevRecord.languageLocalized,
+      responsive: ['md']
     },
     {
       title: t('common:updatedOn'),
@@ -78,7 +79,8 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
       width: '200px',
       sorter: by(x => x.updatedOn),
       render: (_text, record) => record.updatedOnLocalized,
-      shouldCellUpdate: (record, prevRecord) => record.updatedOn !== prevRecord.updatedOn
+      shouldCellUpdate: (record, prevRecord) => record.updatedOn !== prevRecord.updatedOn,
+      responsive: ['lg']
     }
   ], [t]);
 

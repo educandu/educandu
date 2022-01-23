@@ -1,5 +1,5 @@
 @default-page-template-header-content-min-height: 32px;
-@default-page-template-header-min-height: @default-page-template-header-content-min-height + (2* @global-content-padding);
+@default-page-template-header-min-height: @default-page-template-header-content-min-height + (2* @edu-content-padding);
 @default-page-template-header-z-index: 1;
 @default-page-template-content-z-index: 0;
 @default-page-template-footer-z-index: 0;
@@ -11,7 +11,7 @@
   min-height: 100vh;
   position: relative;
   flex-direction: column;
-  min-width: @global-min-page-width;
+  min-width: @edu-min-page-width;
   max-width: 100vw;
 }
 
@@ -22,14 +22,14 @@
   z-index: 1000;
   position: sticky;
   z-index: @default-page-template-header-z-index;
-  margin-bottom: @global-content-padding;
+  margin-bottom: @edu-content-padding;
 }
 
 .DefaultPageTemplate-header {
   display: flex;
   align-items: center;
   min-height: @default-page-template-header-min-height;
-  background-color: @global-primary-color;
+  background-color: @edu-primary-color;
 
   a {
     color: #fff;
@@ -38,7 +38,7 @@
 
 .DefaultPageTemplate-headerContent {
   display: block;
-  padding: @global-content-padding;
+  padding: @edu-content-padding;
 
   &.DefaultPageTemplate-headerContent--left {
     flex: 1 0 0%;
@@ -73,7 +73,7 @@
 
 .DefaultPageTemplate-loginButton {
   cursor: pointer;
-  margin-right: (2.5 * @global-button-spacing);
+  margin-right: (2.5 * @edu-button-spacing);
 }
 
 .DefaultPageTemplate-contentArea {
@@ -91,11 +91,11 @@
 .DefaultPageTemplate-content {
   margin: 0 auto;
   width: 100%;
-  min-width: @global-min-page-width;
-  max-width: @global-content-width-wide;
+  min-width: @edu-min-page-width;
+  max-width: @edu-content-width-wide;
 
   &.DefaultPageTemplate-content--fullScreen {
-    max-width: @global-content-width-narrow;
+    max-width: @edu-content-width-narrow;
   }
 }
 
@@ -105,7 +105,7 @@
   z-index: 1000;
   align-items: center;
   justify-content: center;
-  padding: @global-content-padding;
+  padding: @edu-content-padding;
   position: relative;
   z-index: @default-page-template-footer-z-index;
 }

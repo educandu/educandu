@@ -75,12 +75,14 @@ function Search({ PageTemplate }) {
     {
       title: t('tags'),
       dataIndex: 'tags',
-      render: renderTags
+      render: renderTags,
+      responsive: ['md']
     },
     {
       title: t('common:updatedOn'),
       dataIndex: 'updatedOn',
-      render: renderUpdatedOn
+      render: renderUpdatedOn,
+      responsive: ['lg']
     },
     {
       title: t('common:language'),

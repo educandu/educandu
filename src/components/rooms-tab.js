@@ -67,7 +67,8 @@ function RoomsTab({ rooms }) {
       render: renderCreatedOn,
       defaultSortOrder: 'descend',
       sorter: by(x => x.createdOn),
-      width: '200px'
+      width: '200px',
+      responsive: ['md']
     },
     {
       title: t('common:access'),
@@ -93,7 +94,8 @@ function RoomsTab({ rooms }) {
       key: 'owner',
       render: renderOwner,
       sorter: by(x => x.owner),
-      width: '200px'
+      width: '200px',
+      responsive: ['md']
     },
     {
       title: t('joinedOn'),
@@ -102,7 +104,8 @@ function RoomsTab({ rooms }) {
       render: renderJoinedOn,
       defaultSortOrder: 'descend',
       sorter: by(x => x.joinedOn),
-      width: '200px'
+      width: '200px',
+      responsive: ['lg']
     },
     {
       title: t('common:access'),

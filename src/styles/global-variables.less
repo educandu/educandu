@@ -1,20 +1,55 @@
-@global-font-family: sans-serif;
+// Font families
+@edu-font-family: sans-serif;
+@edu-code-family: monospace;
 
-//Headers
-@global-h1-font-size: 2em;
-@global-h2-font-size: 1.5em;
+// Font sizes
+@edu-font-size-base: 14px;
+@edu-font-size-lg: @edu-font-size-base + 2px;
+@edu-font-size-sm: @edu-font-size-base - 2px;
+@edu-heading-1-size: ceil(@edu-font-size-base * 2.71);
+@edu-heading-2-size: ceil(@edu-font-size-base * 2.14);
+@edu-heading-3-size: ceil(@edu-font-size-base * 1.71);
+@edu-heading-4-size: ceil(@edu-font-size-base * 1.42);
+@edu-heading-5-size: ceil(@edu-font-size-base * 1.14);
 
-//Layout
-@global-content-padding: 12px;
-@global-min-page-width: 200px;
-@global-content-width-wide: 1200px;
-@global-content-width-narrow: 800px;
-@global-button-spacing: 6px;
+// Layout
+@edu-content-padding: 12px;
+@edu-min-page-width: 200px;
+@edu-content-width-wide: 1200px;
+@edu-content-width-narrow: 800px;
+@edu-button-spacing: 6px;
 
-//Colors
-@global-primary-color: @blue-7;
-@global-text-color: @text-color;
-@global-heading-color: @heading-color;
-@global-error-color: @error-color;
-@global-warning-color: @warning-color;
-@global-success-color: @success-color;
+// Colors
+@edu-primary-color: @blue-6;
+@edu-info-color: @edu-primary-color;
+@edu-success-color: @green-6;
+@edu-processing-color: @edu-primary-color;
+@edu-error-color: @red-5;
+@edu-highlight-color: @red-5;
+@edu-warning-color: @gold-6;
+@edu-normal-color: #d9d9d9;
+@edu-white: #fff;
+@edu-black: #000;
+@edu-text-color: fade(@edu-black, 85%);
+@edu-text-color-secondary: fade(@edu-black, 45%);
+@edu-text-color-inverse: @edu-white;
+
+// Border radii
+@edu-border-radius-base: 2px;
+@edu-border-radius-sm: @edu-border-radius-base;
+
+// Responsiveness
+@edu-breakpoint-xs: 480px;
+@edu-breakpoint-sm: 576px;
+@edu-breakpoint-md: 768px;
+@edu-breakpoint-lg: 992px;
+@edu-breakpoint-xl: 1200px;
+@edu-breakpoint-xxl: 1600px;
+
+@edu-media-phone-portrait: %(~"screen and (max-width: %s)", @edu-breakpoint-sm - 0.01px);
+@edu-media-phone-landscape: %(~"screen and (min-width: %s) and (max-width: %s)", @edu-breakpoint-sm, @edu-breakpoint-md - 0.01px);
+@edu-media-phone-tablet: %(~"screen and (min-width: %s) and (max-width: %s)", @edu-breakpoint-md, @edu-breakpoint-lg - 0.01px);
+@edu-media-phone-desktop: %(~"screen and (min-width: %s)", @edu-breakpoint-lg);
+
+@edu-media-phone: %(~"screen and (max-width: %s)", @edu-breakpoint-md - 0.01px);
+@edu-media-not-phone: %(~"screen and (min-width: %s)", @edu-breakpoint-md);
