@@ -63,7 +63,7 @@ export default class RoomController {
   async handlePatchRoom(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const { name, slug } = req.body;
+    const { name, slug, description } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -75,7 +75,7 @@ export default class RoomController {
       throw new Forbidden();
     }
 
-    const updatedRoom = { ...room, name, slug };
+    const updatedRoom = { ...room, name, slug, description };
     await this.roomService.updateRoom(updatedRoom);
 
     return res.status(201).send(updatedRoom);

@@ -143,6 +143,7 @@ describe('room-service', () => {
         slug: 'my-room',
         owner: myUser._id,
         access: ROOM_ACCESS_LEVEL.public,
+        description: '',
         createdOn: now,
         createdBy: myUser._id,
         members: []

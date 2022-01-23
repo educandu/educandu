@@ -231,7 +231,8 @@ export const roomMemberShape = PropTypes.shape({
 export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
-  access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired
+  access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired,
+  description: PropTypes.string
 };
 
 export const roomMetadataShape = PropTypes.shape(roomMetadataProps);

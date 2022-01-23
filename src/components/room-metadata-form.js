@@ -37,8 +37,8 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     }
   ];
 
-  const handleFinish = async ({ name, slug, access }) => {
-    await onSubmit({ name, slug, access });
+  const handleFinish = async ({ name, slug, access, description }) => {
+    await onSubmit({ name, slug, access, description });
   };
 
   const handleFieldsChange = async (...args) => {

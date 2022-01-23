@@ -66,6 +66,7 @@ export default class RoomService {
       name,
       slug: slug?.trim() || '',
       access,
+      description: '',
       owner: user._id,
       createdBy: user._id,
       createdOn: new Date(),
@@ -77,7 +78,11 @@ export default class RoomService {
   }
 
   async updateRoom(room) {
-    await this.roomStore.save(room);
+    await this.roomStore.save({
+      ...room,
+      slug: room.slug || '',
+      description: room.description || ''
+    });
     return room;
   }
 
