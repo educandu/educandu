@@ -1,7 +1,11 @@
 .MarkdownTextarea {
   display: grid;
   gap: 5px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .MarkdownTextarea-preview {

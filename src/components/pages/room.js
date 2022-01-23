@@ -164,7 +164,6 @@ export default function Room({ PageTemplate, initialState }) {
             {lessons.map(renderLesson)}
             {isRoomOwner && (
               <Button
-                className="Room-newLessonButton"
                 type="primary"
                 shape="circle"
                 icon={<PlusOutlined />}

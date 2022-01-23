@@ -13,7 +13,7 @@ function MarkdownTextarea({ value, onChange }) {
 
   return (
     <div className="MarkdownTextarea">
-      <TextArea style={{ height: '100%' }} value={value} onChange={handleOnChange} />
+      <TextArea style={{ height: '100%', resize: 'none' }} value={value} onChange={handleOnChange} />
       <div className="MarkdownTextarea-preview">
         <Markdown renderMedia>{value}</Markdown>
       </div>
@@ -21,9 +21,14 @@ function MarkdownTextarea({ value, onChange }) {
   );
 }
 
+MarkdownTextarea.defaultProps = {
+  onChange: () => '',
+  value: ''
+};
+
 MarkdownTextarea.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired
+  onChange: PropTypes.func,
+  value: PropTypes.string
 };
 
 export default MarkdownTextarea;

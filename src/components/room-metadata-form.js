@@ -60,7 +60,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
         </RadioGroup>
       </FormItem>
       {editMode && (
-        <FormItem label={t('common:description')} name="description" initialValue={room.description || ''}>
+        <FormItem label={t('common:description')} name="description" initialValue={room.description}>
           <MarkdownTextarea />
         </FormItem>
       )}
