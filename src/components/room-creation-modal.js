@@ -45,7 +45,7 @@ function RoomCreationModal({ isVisible, onClose }) {
       setLoading(false);
       onClose();
 
-      window.location = urls.getRoomUrl(newRoom._id);
+      window.location = urls.getRoomUrl(newRoom._id, newRoom.slug);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
       setLoading(false);

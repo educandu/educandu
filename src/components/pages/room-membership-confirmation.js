@@ -19,7 +19,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const alerts = useGlobalAlerts();
 
-  const { token, roomId, roomName, isValid } = initialState;
+  const { token, roomId, roomName, roomSlug, isValid } = initialState;
 
   const handleConfirmButtonClick = async () => {
     try {
@@ -49,7 +49,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
           isRunning
           seconds={10}
           onComplete={() => {
-            window.location = urls.getRoomUrl(roomId);
+            window.location = urls.getRoomUrl(roomId, roomSlug);
           }}
           >
           {seconds => (
@@ -57,7 +57,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
               t={t}
               i18nKey="redirectMessage"
               values={{ roomName, seconds }}
-              components={[<a key="login-link" href={urls.getRoomUrl(roomId)} />]}
+              components={[<a key="login-link" href={urls.getRoomUrl(roomId, roomSlug)} />]}
               />
           )}
         </Countdown>
@@ -114,6 +114,7 @@ RoomMembershipConfirmation.propTypes = {
     token: PropTypes.string,
     roomId: PropTypes.string,
     roomName: PropTypes.string,
+    roomSlug: PropTypes.string,
     isValid: PropTypes.bool.isRequired
   }).isRequired
 };

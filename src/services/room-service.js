@@ -132,6 +132,7 @@ export default class RoomService {
   async verifyInvitationToken({ token, user }) {
     let roomId = null;
     let roomName = null;
+    let roomSlug = null;
     let isValid = false;
 
     const invitation = await this.roomInvitationStore.findOne({ token });
@@ -140,11 +141,12 @@ export default class RoomService {
       if (room) {
         roomId = room._id;
         roomName = room.name;
+        roomSlug = room.slug;
         isValid = true;
       }
     }
 
-    return { roomId, roomName, isValid };
+    return { roomId, roomName, roomSlug, isValid };
   }
 
   async confirmInvitation({ token, user }) {

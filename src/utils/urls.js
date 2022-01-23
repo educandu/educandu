@@ -145,8 +145,8 @@ function getImportDetailsUrl(batchId) {
   return concatParts(importBatchesPath, batchId);
 }
 
-function getRoomUrl(roomId) {
-  return concatParts(roomsPrefix, encodeURIComponent(roomId));
+function getRoomUrl(id, slug) {
+  return concatParts(roomsPrefix, encodeURIComponent(id), encodeURIParts(slug));
 }
 
 function getLessonUrl(id, slug) {
