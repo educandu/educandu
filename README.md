@@ -141,7 +141,7 @@ Educandu is released under the MIT License. See the bundled LICENSE file for det
 
 ---
 
-### About OER learning platform for music
+### OER learning platform for music
 
 #### Funded by 'Stiftung Innovation in der Hochschullehre'
 
