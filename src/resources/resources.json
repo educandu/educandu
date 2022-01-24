@@ -635,7 +635,8 @@
     "namespace": "room",
     "language": "en",
     "resources": {
-      "roomOwner": "Room owner",
+      "privateRoomSubtitle": "Private room",
+      "publicRoomSubtitle": "Public room",
       "expires": "Invitation expires on",
       "roomMembersHeader": "Room members ({count})",
       "invitationsHeader": "Outstanding invitations ({count})",
@@ -655,7 +656,8 @@
     "namespace": "room",
     "language": "de",
     "resources": {
-      "roomOwner": "Raum Eigentümer",
+      "privateRoomSubtitle": "Privatraum",
+      "publicRoomSubtitle": "öffentlicher Raum",
       "expires": "Einladung läuft ab am",
       "roomMembersHeader": "Raummitglieder ({count})",
       "invitationsHeader": "Ausstehende Einladungen ({count})",
@@ -1561,7 +1563,6 @@
       "importBatches": "Imports",
       "importBatchView": "Import details",
       "docs": "Documents",
-      "room": "Room - {roomName}",
       "lesson": "Lesson - {lessonTitle}"
     }
   },
@@ -1577,7 +1578,6 @@
       "importBatches": "Importe",
       "importBatchView": "Import-Details",
       "docs": "Dokumente",
-      "room": "Raum - {roomName}",
       "lesson": "Unterrichtseinheit - {lessonTitle}"
     }
   },

@@ -1,6 +1,9 @@
-roomOwner:
-  en: Room owner
-  de: Raum Eigentümer
+privateRoomSubtitle:
+  en: Private room
+  de: Privatraum
+publicRoomSubtitle:
+  en: Public room
+  de: öffentlicher Raum
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am

@@ -13,10 +13,10 @@ import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import { Space, List, Button, Tabs, Card, message } from 'antd';
 import RoomApiClient from '../../api-clients/room-api-client.js';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
+import { DeleteOutlined, LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 
 const { TabPane } = Tabs;
 
@@ -73,6 +73,29 @@ export default function Room({ PageTemplate, initialState }) {
     setIsLessonCreationModalVisible(false);
   };
 
+  const handleUpdateRoomClick = () => {
+    if (formRef.current) {
+      formRef.current.submit();
+    }
+  };
+
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, description }) => {
+    try {
+      const updatedRoom = { ...room, name, slug, description };
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug, description });
+
+      setRoom(updatedRoom);
+      setIsRoomUpdateButtonDisabled(true);
+      message.success(t('updateRoomSuccessMessage'));
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
+  const handleRoomMetadataFormFieldsChanged = () => {
+    setIsRoomUpdateButtonDisabled(false);
+  };
+
   const renderLesson = (lesson, index) => {
     const url = urls.getLessonUrl(lesson._id, lesson.slug);
 
@@ -90,20 +113,23 @@ export default function Room({ PageTemplate, initialState }) {
     );
   };
 
-  const renderRoomMembers = () => (
-    <Card className="Room-card" title={t('roomMembersHeader', { count: room.members.length })}>
-      <List
-        dataSource={room.members}
-        renderItem={member => (
-          <List.Item className="Room-membersRow">
-            <Space>
-              <span>{formatDate(member.joinedOn)}</span>
-              <span>{member.username}</span>
-            </Space>
-          </List.Item>)}
-        />
-    </Card>
-  );
+  const renderRoomMembers = () => {
+    const title = isRoomOwner && t('roomMembersHeader', { count: room.members.length });
+    return (
+      <Card className="Room-card" title={title}>
+        <List
+          dataSource={room.members}
+          renderItem={member => (
+            <List.Item className="Room-membersRow">
+              <Space>
+                <span>{formatDate(member.joinedOn)}</span>
+                <span>{member.username}</span>
+              </Space>
+            </List.Item>)}
+          />
+      </Card>
+    );
+  };
 
   const renderRoomInvitations = () => (
     <Card
@@ -139,54 +165,45 @@ export default function Room({ PageTemplate, initialState }) {
     </Card>
   );
 
-  const handleUpdateRoomClick = () => {
-    if (formRef.current) {
-      formRef.current.submit();
-    }
-  };
-
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, description }) => {
-    try {
-      const updatedRoom = { ...room, name, slug, description };
-      await roomApiClient.updateRoom({ roomId: room._id, name, slug, description });
-
-      setRoom(updatedRoom);
-      setIsRoomUpdateButtonDisabled(true);
-      message.success(t('updateRoomSuccessMessage'));
-    } catch (error) {
-      handleApiError({ error, logger, t });
-    }
-  };
-
-  const handleRoomMetadataFormFieldsChanged = () => {
-    setIsRoomUpdateButtonDisabled(false);
-  };
-
   return (
     <PageTemplate>
       <div className="Room">
-        <h1> {t('pageNames:room', { roomName: room.name })}</h1>
+        <h1 className="Room-title">{room.name}</h1>
+        <div className="Room-subtitle">
+          <div className="Room-subtitleIcon">
+            {room.access === ROOM_ACCESS_LEVEL.private ? <LockOutlined /> : <UnlockOutlined />}
+          </div>
+          <span>{t(`${room.access}RoomSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+        </div>
+
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
           <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
-            {room.description && <Markdown className="Room-description" renderMedia>{room.description}</Markdown>}
-            {lessons.map(renderLesson)}
-            {isRoomOwner && (
-              <Button
-                type="primary"
-                shape="circle"
-                icon={<PlusOutlined />}
-                size="large"
-                onClick={handleNewLessonClick}
-                />
-            )}
+            <Card
+              className="Room-card"
+              actions={isRoomOwner && [
+                <Button
+                  className="Room-cardButton"
+                  key="createLesson"
+                  type="primary"
+                  shape="circle"
+                  icon={<PlusOutlined />}
+                  size="large"
+                  onClick={handleNewLessonClick}
+                  />
+              ]}
+              >
+              {room.description && <Markdown className="Room-description" renderMedia>{room.description}</Markdown>}
+              {lessons.map(renderLesson)}
+            </Card>
           </TabPane>
 
-          <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
-            <span>{t('roomOwner')}: {room.owner.username}</span>
-            {isPrivateRoom && renderRoomMembers()}
-            {isPrivateRoom && isRoomOwner && renderRoomInvitations()}
-            <RoomInvitationCreationModal isVisible={isRoomInvitationModalVisible} onClose={handleInvitationModalClose} roomId={room._id} />
-          </TabPane>
+          {isPrivateRoom && (
+            <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
+              {renderRoomMembers()}
+              {isRoomOwner && renderRoomInvitations()}
+              <RoomInvitationCreationModal isVisible={isRoomInvitationModalVisible} onClose={handleInvitationModalClose} roomId={room._id} />
+            </TabPane>
+          )}
 
           {isRoomOwner && (
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
@@ -207,7 +224,6 @@ export default function Room({ PageTemplate, initialState }) {
                   {t('common:update')}
                 </Button>
               </Card>
-
               <Card className="Room-card Room-card--danger" title={t('roomDangerZoneCardTitle')}>
                 <div className="Room-cardDangerAction">
                   <div>
