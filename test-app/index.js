@@ -15,7 +15,6 @@ educandu({
   cdnBucketName: 'dev-educandu-cdn',
   cdnRootUrl: process.env.TEST_APP_CDN_ROOT_URL || 'http://localhost:10000',
   sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
-  sessionCookieDomain: process.env.TEST_APP_SESSION_COOKIE_DOMAIN || 'localhost',
   sessionCookieName: process.env.TEST_APP_SESSION_COOKIE_NAME || 'LOCAL_SESSION_ID',
   emailSenderAddress: 'educandu-test-app@test.com',
   smtpOptions: 'smtp://127.0.0.1:8025/?ignoreTLS=true',

@@ -287,7 +287,7 @@ export async function startServer() {
 
   const env = {
     TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
-    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : 'localhost',
+    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : null,
     TEST_APP_SESSION_COOKIE_NAME: 'LOCAL_SESSION_ID'
   };
 

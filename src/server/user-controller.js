@@ -10,7 +10,7 @@ import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import PageRenderer from '../server/page-renderer.js';
-import requestHelper from '../utils/request-helper.js';
+import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
@@ -200,6 +200,17 @@ class UserController {
         stringify: false // Do not serialize session data
       })
     }));
+
+    if (!this.serverConfig.sessionCookieDomain) {
+      router.use((req, res, next) => {
+        if (req.session?.cookie) {
+          const { domain } = getHostInfo(req);
+          req.session.cookie.domain = domain;
+        }
+
+        next();
+      });
+    }
 
     router.use(passport.initialize());
     router.use(passport.session());

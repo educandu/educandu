@@ -2,7 +2,8 @@ export function getHostInfo(req) {
   const proto = req.protocol;
   const host = req.headers.host;
   const origin = `${proto}://${host}`;
-  return { proto, host, origin };
+  const domain = host.split(':')[0];
+  return { proto, host, origin, domain };
 }
 
 export function expressReqToRequest(req) {

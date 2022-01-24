@@ -1,10 +1,10 @@
-@markdown-blockquote-color: @blue-7;
+@markdown-blockquote-color: fade(@edu-primary-color, 50%);
 @markdown-blockquote-background-color: @grey-1;
 @markdown-blockquote-shadow-color: @grey-6;
-@markdown-blockquote-quotations-color: @blue-3;
-@markdown-table-border-color: @grey-7;
+@markdown-blockquote-quotations-color: fade(@edu-primary-color, 20%);
+@markdown-table-border-color: fade(@edu-primary-color, 50%);
 @markdown-table-cell-text-color: @edu-text-color;
-@markdown-table-header-background-color: fade(@blue-2, 60%);
+@markdown-table-header-background-color: fade(@edu-primary-color, 20%);
 
 .Markdown {
   blockquote {
@@ -75,7 +75,9 @@
     font-weight: normal;
   }
 
-  img {
+  img,
+  video,
+  audio {
     max-width: 100%;
   }
 }
