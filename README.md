@@ -25,7 +25,7 @@ The educandu framework
  | cdnRootUrl | The root url of the CDN | `string` | yes |
  | sessionSecret | The unique ID of the user session | `string` | no, defaults to a generated unique id |
  | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
- | sessionCookieDomain | The domain attribute to be set on the session cookie | `string` | yes |
+ | sessionCookieDomain | The domain attribute to be set on the session cookie | `string` | no, defaults to the request's host header domain |
  | sessionCookieName | The name to be used for the session cookie | `string` | yes |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |

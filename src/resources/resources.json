@@ -702,7 +702,7 @@
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
       "defaultTagsHeader": "Default tags",
-      "createDocumentRegenerationBatchHeader": "Trigger document recreation",
+      "createDocumentRegenerationBatchHeader": "Document recreation",
       "createDocumentRegenerationBatchButton": "Regenerate documents",
       "templateDocumentHeader": "Template for new documents"
     }
@@ -718,7 +718,7 @@
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
       "defaultTagsHeader": "Vordefinierte Tags",
-      "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung auslösen",
+      "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung",
       "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
       "templateDocumentHeader": "Vorlage für neue Dokumente"
     }

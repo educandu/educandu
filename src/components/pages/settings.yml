@@ -20,8 +20,8 @@ defaultTagsHeader:
   en: Default tags
   de: Vordefinierte Tags
 createDocumentRegenerationBatchHeader:
-  en: Trigger document recreation
-  de: Dokumentwiederherstellung auslösen
+  en: Document recreation
+  de: Dokumentwiederherstellung
 createDocumentRegenerationBatchButton:
   en: Regenerate documents
   de: Dokumente neu erstellen

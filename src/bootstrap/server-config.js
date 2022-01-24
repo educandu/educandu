@@ -21,7 +21,7 @@ const configSchema = joi.object({
   cdnBucketName: joi.string().required(),
   cdnRootUrl: joi.string().required(),
   sessionSecret: joi.string().default(uniqueId.create()),
-  sessionCookieDomain: joi.string().required(),
+  sessionCookieDomain: joi.string(),
   sessionCookieName: joi.string().required(),
   sessionDurationInMinutes: joi.number().min(1).default(60),
   smtpOptions: joi.any().required(),
