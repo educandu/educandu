@@ -11,10 +11,10 @@ import { handleApiError } from '../../ui/error-helper.js';
 import LessonCreationModal from '../lesson-creation-modal.js';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
+import { Space, List, Button, Tabs, Card, message } from 'antd';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { Space, List, Collapse, Button, Tabs, Card, message } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
 
@@ -91,46 +91,52 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const renderRoomMembers = () => (
-    <Collapse className="Room-sectionCollapse">
-      <Collapse.Panel header={t('roomMembersHeader', { count: room.members.length })} >
-        <List
-          dataSource={room.members}
-          renderItem={member => (
-            <List.Item className="Room-sectionCollapseRow">
-              <Space>
-                <span>{formatDate(member.joinedOn)}</span>
-                <span>{member.username}</span>
-              </Space>
-            </List.Item>)}
-          />
-      </Collapse.Panel>
-    </Collapse>
+    <Card className="Room-card" title={t('roomMembersHeader', { count: room.members.length })}>
+      <List
+        dataSource={room.members}
+        renderItem={member => (
+          <List.Item className="Room-membersRow">
+            <Space>
+              <span>{formatDate(member.joinedOn)}</span>
+              <span>{member.username}</span>
+            </Space>
+          </List.Item>)}
+        />
+    </Card>
   );
 
   const renderRoomInvitations = () => (
-    <Collapse className="Room-sectionCollapse">
-      <Collapse.Panel
-        header={t('invitationsHeader', { count: invitations.length })}
-        extra={<Button onClick={handleCreateInvitationButtonClick}>{t('createInvitationButton')}</Button>}
-        >
-        <List
-          dataSource={invitations}
-          renderItem={invitation => (
-            <List.Item className="Room-sectionCollapseRow">
-              <Space>
-                <span>{formatDate(invitation.sentOn)}</span>
-                <span>{invitation.email}</span>
-              </Space>
-
-              <Space>
-                <span>{t('expires')}:</span>
-                <span>{formatDate(invitation.expires)}</span>
-              </Space>
-            </List.Item>
-          )}
+    <Card
+      className="Room-card"
+      title={t('invitationsHeader', { count: invitations.length })}
+      actions={[
+        <Button
+          className="Room-cardButton"
+          key="createRoomInvitation"
+          type="primary"
+          shape="circle"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={handleCreateInvitationButtonClick}
           />
-      </Collapse.Panel>
-    </Collapse>
+      ]}
+      >
+      <List
+        dataSource={invitations}
+        renderItem={invitation => (
+          <List.Item className="Room-membersRow">
+            <Space>
+              <span>{formatDate(invitation.sentOn)}</span>
+              <span>{invitation.email}</span>
+            </Space>
+            <Space>
+              <span>{t('expires')}:</span>
+              <span>{formatDate(invitation.expires)}</span>
+            </Space>
+          </List.Item>
+        )}
+        />
+    </Card>
   );
 
   const handleUpdateRoomClick = () => {

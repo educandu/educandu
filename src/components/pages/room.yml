@@ -4,9 +4,6 @@ roomOwner:
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am
-createInvitationButton:
-  en: Create an invitation
-  de: Einladung erstellen
 roomMembersHeader:
   en: Room members ({count})
   de: Raummitglieder ({count})

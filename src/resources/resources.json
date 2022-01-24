@@ -637,7 +637,6 @@
     "resources": {
       "roomOwner": "Room owner",
       "expires": "Invitation expires on",
-      "createInvitationButton": "Create an invitation",
       "roomMembersHeader": "Room members ({count})",
       "invitationsHeader": "Outstanding invitations ({count})",
       "lessonsTabTitle": "Lessons",
@@ -658,7 +657,6 @@
     "resources": {
       "roomOwner": "Raum Eigentümer",
       "expires": "Einladung läuft ab am",
-      "createInvitationButton": "Einladung erstellen",
       "roomMembersHeader": "Raummitglieder ({count})",
       "invitationsHeader": "Ausstehende Einladungen ({count})",
       "lessonsTabTitle": "Unterrichtseinheiten",

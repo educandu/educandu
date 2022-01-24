@@ -2,15 +2,6 @@
   .m-content;
 }
 
-.Room-sectionCollapse {
-  margin-top: 16px;
-}
-
-.Room-sectionCollapseRow {
-  display: flex;
-  justify-content: space-between;
-}
-
 .Room-description {
   margin-bottom: 40px;
 }
@@ -28,6 +19,11 @@
   margin-top: 15px;
 }
 
+.Room-membersRow {
+  display: flex;
+  justify-content: space-between;
+}
+
 .Room-card {
   margin-top: 40px;
 
@@ -38,6 +34,12 @@
   &.Room-card--danger {
     border-color: @red-7;
   }
+}
+
+.Room-cardButton {
+  display: block;
+  margin-left: auto;
+  margin-right: 20px;
 }
 
 .Room-cardDangerAction {
