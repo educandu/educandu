@@ -23,7 +23,7 @@ export const postRoomInvitationConfirmBodySchema = joi.object({
 
 export const getRoomParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
-});
+}).unknown(true);
 
 export const patchRoomParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
@@ -31,7 +31,8 @@ export const patchRoomParamsSchema = joi.object({
 
 export const patchRoomBodySchema = joi.object({
   name: joi.string().required(),
-  slug: slugSchema
+  slug: slugSchema,
+  description: joi.string().allow('')
 });
 
 export const deleteRoomParamsSchema = joi.object({

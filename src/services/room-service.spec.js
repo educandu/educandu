@@ -143,6 +143,7 @@ describe('room-service', () => {
         slug: 'my-room',
         owner: myUser._id,
         access: ROOM_ACCESS_LEVEL.public,
+        description: '',
         createdOn: now,
         createdBy: myUser._id,
         members: []
@@ -237,29 +238,32 @@ describe('room-service', () => {
     let invitation = null;
 
     beforeEach(async () => {
-      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      testRoom = await sut.createRoom({ name: 'room-name', slug: 'room-slug', access: ROOM_ACCESS_LEVEL.private, user: myUser });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
     it('should be valid if user and token are valid', async () => {
-      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: otherUser });
+      const { roomId, roomName, roomSlug, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: otherUser });
       expect(isValid).toBe(true);
       expect(roomId).toBe(testRoom._id);
       expect(roomName).toBe(testRoom.name);
+      expect(roomSlug).toBe(testRoom.slug);
     });
 
     it('should be invalid if user is valid but token is invalid', async () => {
-      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: '34z5c7z47z92234z592qz', user: otherUser });
+      const { roomId, roomName, roomSlug, isValid } = await sut.verifyInvitationToken({ token: '34z5c7z47z92234z592qz', user: otherUser });
       expect(isValid).toBe(false);
       expect(roomId).toBeNull();
       expect(roomName).toBeNull();
+      expect(roomSlug).toBeNull();
     });
 
     it('should be invalid if token is valid but user is invalid', async () => {
-      const { roomId, roomName, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
+      const { roomId, roomName, roomSlug, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
       expect(isValid).toBe(false);
       expect(roomId).toBeNull();
       expect(roomName).toBeNull();
+      expect(roomSlug).toBeNull();
     });
   });
 

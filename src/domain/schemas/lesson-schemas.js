@@ -18,8 +18,7 @@ export const lessonDBSchema = joi.object({
 });
 
 export const getLessonParamsSchema = joi.object({
-  lessonId: idOrKeySchema.required(),
-  lessonSlug: joi.string()
+  lessonId: idOrKeySchema.required()
 }).unknown(true);
 
 export const postLessonBodySchema = joi.object({

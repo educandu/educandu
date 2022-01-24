@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
+import MarkdownTextarea from './markdown-textarea.js';
 import inputValidators from '../utils/input-validators.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { roomMetadataShape } from '../ui/default-prop-types.js';
@@ -9,6 +10,11 @@ import { roomMetadataShape } from '../ui/default-prop-types.js';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
+
+const formInputLayouts = {
+  labelCol: { xs: { span: 12 }, sm: { span: 12 } },
+  wrapperCol: { xs: { span: 12 }, sm: { span: 12 } }
+};
 
 function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit }) {
   const { t } = useTranslation('roomMetadataForm');
@@ -23,7 +29,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
 
   const slugValidationRules = [
     {
-      validator: (rule, value) => {
+      validator: (_rule, value) => {
         return value && !inputValidators.isValidSlug(value)
           ? Promise.reject(new Error(t('common:invalidSlug')))
           : Promise.resolve();
@@ -31,8 +37,8 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     }
   ];
 
-  const handleFinish = async ({ name, slug, access }) => {
-    await onSubmit({ name, slug, access });
+  const handleFinish = async ({ name, slug, access, description }) => {
+    await onSubmit({ name, slug, access, description });
   };
 
   const handleFieldsChange = async (...args) => {
@@ -41,10 +47,10 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
 
   return (
     <Form onFinish={handleFinish} onFieldsChange={handleFieldsChange} name="room-metadata-form" ref={formRef} layout="vertical">
-      <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name}>
+      <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name} {...formInputLayouts}>
         <Input />
       </FormItem>
-      <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug}>
+      <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug} {...formInputLayouts}>
         <Input />
       </FormItem>
       <FormItem label={t('common:access')} name="access" initialValue={room.access}>
@@ -53,6 +59,11 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
           <RadioButton value={ROOM_ACCESS_LEVEL.public}>{t('common:accessType_public')}</RadioButton>
         </RadioGroup>
       </FormItem>
+      {editMode && (
+        <FormItem label={t('common:description')} name="description" initialValue={room.description}>
+          <MarkdownTextarea />
+        </FormItem>
+      )}
     </Form>
   );
 }

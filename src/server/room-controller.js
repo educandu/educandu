@@ -46,8 +46,8 @@ export default class RoomController {
     const { user } = req;
     const { token } = req.params;
 
-    const { roomId, roomName, isValid } = await this.roomService.verifyInvitationToken({ token, user });
-    const initialState = { token, roomId, roomName, isValid };
+    const { roomId, roomName, roomSlug, isValid } = await this.roomService.verifyInvitationToken({ token, user });
+    const initialState = { token, roomId, roomName, roomSlug, isValid };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.roomMembershipConfirmation, initialState);
   }
@@ -63,7 +63,7 @@ export default class RoomController {
   async handlePatchRoom(req, res) {
     const { user } = req;
     const { roomId } = req.params;
-    const { name, slug } = req.body;
+    const { name, slug, description } = req.body;
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -75,7 +75,7 @@ export default class RoomController {
       throw new Forbidden();
     }
 
-    const updatedRoom = { ...room, name, slug };
+    const updatedRoom = { ...room, name, slug, description };
     await this.roomService.updateRoom(updatedRoom);
 
     return res.status(201).send(updatedRoom);
@@ -121,10 +121,16 @@ export default class RoomController {
   async handleGetRoomPage(req, res) {
     const { roomId } = req.params;
     const { _id: userId } = req.user;
+    const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
+
     const room = await this.roomService.getRoomById(roomId);
 
     if (!room) {
       throw new NotFound();
+    }
+
+    if (room.slug !== routeWildcardValue) {
+      return res.redirect(301, urls.getRoomUrl(room._id, room.slug));
     }
 
     const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
@@ -214,7 +220,7 @@ export default class RoomController {
     }
 
     router.get(
-      '/rooms/:roomId',
+      '/rooms/:roomId*',
       [needsPermission(permissions.OWN_ROOMS), validateParams(getRoomParamsSchema)],
       (req, res) => this.handleGetRoomPage(req, res)
     );

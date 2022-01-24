@@ -203,7 +203,7 @@ describe('room-controller', () => {
   describe('handlePostRoomInvitation', () => {
 
     describe('when the request data is valid', () => {
-      const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+      const room = { roomId: uniqueId.create(), name: 'Mein schöner Raum' };
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
       beforeEach(done => {
@@ -275,7 +275,7 @@ describe('room-controller', () => {
   });
 
   describe('handlePostRoomInvitationConfirm', () => {
-    const room = { roomId: 'roomId', name: 'Mein schöner Raum' };
+    const room = { roomId: uniqueId.create(), name: 'Mein schöner Raum' };
     const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
     beforeEach(done => {
@@ -307,7 +307,13 @@ describe('room-controller', () => {
   describe('handleGetRoomPage', () => {
 
     describe('when the room is private', () => {
-      const room = { _id: 'roomId', name: 'Mein schöner Raum', owner: 'owner', access: ROOM_ACCESS_LEVEL.private };
+      const room = {
+        _id: uniqueId.create(),
+        name: 'Mein schöner Raum',
+        slug: 'room-slug',
+        owner: 'owner',
+        access: ROOM_ACCESS_LEVEL.private
+      };
       const mappedRoom = { ...room };
 
       beforeEach(() => {
@@ -317,7 +323,7 @@ describe('room-controller', () => {
 
       describe('and the request is made by the room owner', () => {
         const request = {
-          params: { roomId: 'roomId' },
+          params: { 0: `/${room.slug}`, roomId: room._id },
           user: { _id: 'owner' }
         };
 
@@ -340,7 +346,7 @@ describe('room-controller', () => {
         });
 
         it('should call getRoomById with roomId', () => {
-          sinon.assert.calledWith(roomService.getRoomById, 'roomId');
+          sinon.assert.calledWith(roomService.getRoomById, room._id);
         });
 
         it('should call mapRoom with the room returned by the service', () => {
@@ -348,7 +354,7 @@ describe('room-controller', () => {
         });
 
         it('should call getRoomInvitations', () => {
-          sinon.assert.calledWith(roomService.getRoomInvitations, 'roomId');
+          sinon.assert.calledWith(roomService.getRoomInvitations, room._id);
         });
 
         it('should call mapRoomInvitations with the invitations returned by the service', () => {
@@ -356,7 +362,7 @@ describe('room-controller', () => {
         });
 
         it('should call getLessons', () => {
-          sinon.assert.calledWith(lessonService.getLessons, 'roomId');
+          sinon.assert.calledWith(lessonService.getLessons, room._id);
         });
 
         it('should call mapLessons with the invitations returned by the service', () => {
@@ -376,7 +382,7 @@ describe('room-controller', () => {
 
       describe('and the request is made by a room member', () => {
         const request = {
-          params: { roomId: 'roomId' },
+          params: { 0: `/${room.slug}`, roomId: room._id },
           user: { _id: 'member' }
         };
 
@@ -395,7 +401,7 @@ describe('room-controller', () => {
         });
 
         it('should call getRoomById with roomId', () => {
-          sinon.assert.calledWith(roomService.getRoomById, 'roomId');
+          sinon.assert.calledWith(roomService.getRoomById, room._id);
         });
 
         it('should call mapRoom with the room returned by the service', () => {
@@ -407,7 +413,7 @@ describe('room-controller', () => {
         });
 
         it('should call getLessons', () => {
-          sinon.assert.calledWith(lessonService.getLessons, 'roomId');
+          sinon.assert.calledWith(lessonService.getLessons, room._id);
         });
 
         it('should call mapLessons with the invitations returned by the service', () => {
@@ -427,7 +433,7 @@ describe('room-controller', () => {
 
       describe('and the request is mabe by an unauthorized user', () => {
         const request = {
-          params: { roomId: 'roomId' },
+          params: { 0: `/${room.slug}`, roomId: room._id },
           user: { _id: 'randomGuy' }
         };
 
@@ -442,12 +448,19 @@ describe('room-controller', () => {
     });
 
     describe('when room is public', () => {
+      const room = {
+        _id: uniqueId.create(),
+        name: 'Mein schöner Raum',
+        slug: 'room-slug',
+        owner: 'owner',
+        access: ROOM_ACCESS_LEVEL.public
+      };
+
       const request = {
-        params: { roomId: 'roomId' },
+        params: { 0: `/${room.slug}`, roomId: room._id },
         user: { _id: 'someGuy' }
       };
 
-      const room = { _id: 'roomId', name: 'Mein schöner Raum', owner: 'owner', access: ROOM_ACCESS_LEVEL.public };
       const mappedRoom = { ...room };
 
       const lessons = [];
@@ -468,7 +481,7 @@ describe('room-controller', () => {
       });
 
       it('should call getRoomById with roomId', () => {
-        sinon.assert.calledWith(roomService.getRoomById, 'roomId');
+        sinon.assert.calledWith(roomService.getRoomById, room._id);
       });
 
       it('should not check if the room caller is the owner or a member', () => {
@@ -488,7 +501,7 @@ describe('room-controller', () => {
       });
 
       it('should call getLessons', () => {
-        sinon.assert.calledWith(lessonService.getLessons, 'roomId');
+        sinon.assert.calledWith(lessonService.getLessons, room._id);
       });
 
       it('should call mapLessons with the invitations returned by the service', () => {
@@ -508,7 +521,30 @@ describe('room-controller', () => {
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoomPage({ params: { roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoomPage({ params: { 0: '', roomId: 'abc' } }).rejects.toThrow(NotFound));
+      });
+    });
+
+    describe('when the room slug is different than the URL slug', () => {
+      const room = {
+        _id: uniqueId.create(),
+        name: 'Mein schöner Raum',
+        slug: 'room-slug'
+      };
+
+      beforeEach(done => {
+        req = { user, params: { 0: '/url-slug', roomId: room._id } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+
+        sut.handleGetRoomPage(req, res);
+      });
+
+      it('should redirect to the correct room url', () => {
+        expect(res.statusCode).toBe(301);
+        expect(res._getRedirectUrl()).toBe(`/rooms/${room._id}/room-slug`);
       });
     });
   });

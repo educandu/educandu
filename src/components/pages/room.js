@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import Markdown from '../markdown.js';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -138,10 +139,10 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, description }) => {
     try {
-      const updatedRoom = { ...room, name, slug };
-      await roomApiClient.updateRoom({ roomId: room._id, name, slug });
+      const updatedRoom = { ...room, name, slug, description };
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug, description });
 
       setRoom(updatedRoom);
       setIsRoomUpdateButtonDisabled(true);
@@ -161,10 +162,10 @@ export default function Room({ PageTemplate, initialState }) {
         <h1> {t('pageNames:room', { roomName: room.name })}</h1>
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
           <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
+            {room.description && <Markdown className="Room-description" renderMedia>{room.description}</Markdown>}
             {lessons.map(renderLesson)}
             {isRoomOwner && (
               <Button
-                className="Room-newLessonButton"
                 type="primary"
                 shape="circle"
                 icon={<PlusOutlined />}

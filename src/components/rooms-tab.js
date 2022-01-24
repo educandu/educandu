@@ -20,7 +20,7 @@ function RoomsTab({ rooms }) {
   const [isRoomCreationModalVisible, setIsRoomCreationModalVisible] = useState(false);
 
   const renderName = (name, room) => {
-    return <a href={urls.getRoomUrl(room._id)}>{name}</a>;
+    return <a href={urls.getRoomUrl(room._id, room.slug)}>{name}</a>;
   };
 
   const renderCreatedOn = createdOn => {
@@ -121,6 +121,7 @@ function RoomsTab({ rooms }) {
     _id: room._id,
     key: room._id,
     name: room.name,
+    slug: room.slug,
     createdOn: room.createdOn,
     access: room.access
   }));
@@ -133,6 +134,7 @@ function RoomsTab({ rooms }) {
       _id: room._id,
       key: room._id,
       name: room.name,
+      slug: room.slug,
       owner: room.owner,
       joinedOn,
       access: room.access
