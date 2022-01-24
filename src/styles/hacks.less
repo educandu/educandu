@@ -1,0 +1,7 @@
+// Ant 4.16.13 sets this to flex making icons appear at the top of the button,
+// setting it back to inline-block like in earlier ant versions fixes the problem.
+// The following hack has to stay here until this issue is fixed and published:
+// https://github.com/ant-design/ant-design/issues/32365
+&.ant-btn-icon-only > .anticon {
+  display: inline-block;
+}

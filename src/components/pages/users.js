@@ -180,13 +180,15 @@ function Users({ initialState, PageTemplate }) {
       title: () => t('expires'),
       dataIndex: 'expires',
       key: 'expires',
-      sorter: firstBy('expires')
+      sorter: firstBy('expires'),
+      responsive: ['lg']
     }, {
       title: () => t('lockedOut'),
       dataIndex: 'lockedOut',
       key: 'lockedOut',
       sorter: firstBy('lockedOut'),
-      render: renderLockedOutState
+      render: renderLockedOutState,
+      responsive: ['md']
     }, {
       title: () => t('roles'),
       dataIndex: 'roles',

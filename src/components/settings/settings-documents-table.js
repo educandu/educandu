@@ -98,7 +98,7 @@ function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
 
   const columns = [
     { title: t('rank'), key: 'rank', width: '64px', render: renderRank },
-    { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', width: '450px', render: renderLinkTitle },
+    { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', render: renderLinkTitle },
     { title: t('urlPath'), key: 'urlPath', dataIndex: 'urlPath', ellipsis: true, render: renderUrlPath },
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }
   ];

@@ -58,9 +58,9 @@ function ImportBatches({ initialState, PageTemplate }) {
   const columns = [
     { title: t('batchId'), key: '_id', dataIndex: '_id', width: '150px', render: renderId },
     { title: t('batchStatus'), width: '150px', render: renderStatus },
-    { title: t('common:createdOn'), width: '150px', dataIndex: 'createdOn', render: renderDate },
-    { title: t('common:completedOn'), width: '150px', dataIndex: 'completedOn', render: renderDate },
-    { title: t('common:createdBy'), width: '150px', dataIndex: 'createdBy', render: renderUser }
+    { title: t('common:createdOn'), width: '150px', dataIndex: 'createdOn', render: renderDate, responsive: ['md'] },
+    { title: t('common:completedOn'), width: '150px', dataIndex: 'completedOn', render: renderDate, responsive: ['md'] },
+    { title: t('common:createdBy'), width: '150px', dataIndex: 'createdBy', render: renderUser, responsive: ['lg'] }
   ];
 
   const getExtra = source => {

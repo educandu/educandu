@@ -172,7 +172,8 @@ function Docs({ initialState, PageTemplate }) {
       dataIndex: 'language',
       key: 'language',
       render: renderLanguage,
-      sorter: by(x => x.language)
+      sorter: by(x => x.language),
+      responsive: ['sm']
     },
     {
       title: t('common:updatedOn'),
@@ -180,21 +181,33 @@ function Docs({ initialState, PageTemplate }) {
       key: 'updatedOn',
       render: renderUpdatedOn,
       defaultSortOrder: 'descend',
-      sorter: by(x => x.updatedOn)
+      sorter: by(x => x.updatedOn),
+      responsive: ['lg']
     },
     {
       title: t('user'),
       dataIndex: 'user',
       key: 'user',
       render: renderUpdatedBy,
-      sorter: by(x => x.updatedBy.username)
+      sorter: by(x => x.updatedBy.username),
+      responsive: ['md']
     },
     {
       title: t('origin'),
       dataIndex: 'origin',
       key: 'origin',
       render: renderOrigin,
-      sorter: by(x => x.origin)
+      sorter: by(x => x.origin),
+      responsive: ['lg']
+    },
+    {
+      title: t('archived'),
+      dataIndex: 'archived',
+      key: 'archived',
+      render: renderArchived,
+      sorter: by(x => x.archived),
+      responsive: ['lg'],
+      needsPermission: permissions.MANAGE_ARCHIVED_DOCS
     },
     {
       title: t('actions'),
@@ -202,17 +215,7 @@ function Docs({ initialState, PageTemplate }) {
       key: 'actions',
       render: renderActions
     }
-  ];
-
-  if (hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS)) {
-    columns.push({
-      title: t('archived'),
-      dataIndex: 'archived',
-      key: 'archived',
-      render: renderArchived,
-      sorter: by(x => x.archived)
-    });
-  }
+  ].filter(column => !column.needsPermission || hasUserPermission(user, column.needsPermission));
 
   return (
     <PageTemplate alerts={alerts}>
