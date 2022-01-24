@@ -22,6 +22,9 @@ membersTabTitle:
 settingsTabTitle:
   en: Settings
   de: Einstellungen
+lessonsPlaceholder:
+  en: The room does not contain any lessons
+  de: Der Raum enthält keinen Unterrichtseinheiten
 thisWeek:
   en: This week
   de: Diese Woche

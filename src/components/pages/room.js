@@ -193,7 +193,7 @@ export default function Room({ PageTemplate, initialState }) {
               ]}
               >
               {room.description && <Markdown className="Room-description" renderMedia>{room.description}</Markdown>}
-              {lessons.map(renderLesson)}
+              {lessons.length ? lessons.map(renderLesson) : t('lessonsPlaceholder')}
             </Card>
           </TabPane>
 
