@@ -645,6 +645,7 @@
       "settingsTabTitle": "Settings",
       "lessonsPlaceholder": "The room does not contain any lessons",
       "thisWeek": "This week",
+      "notScheduled": "not scheduled",
       "deleteRoomButton": "Delete room",
       "updateRoomCardTitle": "Update room metadata",
       "updateRoomSuccessMessage": "The room metadata was updated successfully.",
@@ -667,6 +668,7 @@
       "settingsTabTitle": "Einstellungen",
       "lessonsPlaceholder": "Der Raum enthält keinen Unterrichtseinheiten",
       "thisWeek": "Diese Woche",
+      "notScheduled": "nicht geplant",
       "deleteRoomButton": "Raum löschen",
       "updateRoomCardTitle": "Raum-Metadaten aktualisieren",
       "updateRoomSuccessMessage": "Die Raum-Metadaten wurden erfolgreich aktualisiert.",
@@ -1501,7 +1503,14 @@
       "password": "Password",
       "text": "Text",
       "update": "Update",
-      "description": "Description"
+      "description": "Description",
+      "now": "now",
+      "in": "in",
+      "year": "{timeUnit, plural, =1 {# year} other {# years}}",
+      "month": "{timeUnit, plural, =1 {# month} other {# months}}",
+      "day": "{timeUnit, plural, =1 {# day} other {# days}}",
+      "hour": "{timeUnit, plural, =1 {# hour} other {# hours}}",
+      "minute": "{timeUnit, plural, =1 {# minute} other {# minutes}}"
     }
   },
   {
@@ -1550,7 +1559,14 @@
       "password": "Kennwort",
       "text": "Text",
       "update": "Aktualisieren",
-      "description": "Beschreibung"
+      "description": "Beschreibung",
+      "now": "jetzt",
+      "in": "in",
+      "year": "{timeUnit, plural, =1 {# Jahr} other {# Jahren}}",
+      "month": "{timeUnit, plural, =1 {# Monat} other {# Monaten}}",
+      "day": "{timeUnit, plural, =1 {# Tag} other {# Tagen}}",
+      "hour": "{timeUnit, plural, =1 {# Stunde} other {# Stunden}}",
+      "minute": "{timeUnit, plural, =1 {# Minute} other {# Minuten}}"
     }
   },
   {

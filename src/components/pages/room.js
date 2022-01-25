@@ -6,6 +6,7 @@ import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import { useDateFormat } from '../language-context.js';
+import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LessonCreationModal from '../lesson-creation-modal.js';
@@ -24,6 +25,7 @@ const logger = new Logger(import.meta.url);
 
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
+  const now = new Date();
   const formRef = useRef(null);
   const { t } = useTranslation('room');
   const { formatDate } = useDateFormat();
@@ -37,6 +39,7 @@ export default function Room({ PageTemplate, initialState }) {
   const { invitations, lessons } = initialState;
   const isRoomOwner = user._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+  const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 
   const handleCreateInvitationButtonClick = event => {
     setIsRoomInvitationModalVisible(true);
@@ -96,21 +99,22 @@ export default function Room({ PageTemplate, initialState }) {
     setIsRoomUpdateButtonDisabled(false);
   };
 
-  const renderLesson = (lesson, index) => {
+  const renderLesson = lesson => {
     const url = urls.getLessonUrl(lesson._id, lesson.slug);
 
-    const hightlightedLessonIndex = 1;
+    const startsOn = lesson.schedule?.startsOn;
+    const isUpcomingLesson = upcommingLesson._id === lesson._id;
+
+    const timeUntil = isUpcomingLesson ? lessonsUtils.getTranslatedTimeUntil({ from: now, until: startsOn, t }) : null;
 
     return (
       <div className="Room-lesson" key={lesson._id}>
-        {index === hightlightedLessonIndex && (<hr />)}
-        <div className="Room-lessonInfo">
-          <span className="Room-lessonWeek">{index === hightlightedLessonIndex && t('thisWeek')}</span>
-          <a href={url}>{lesson.title}</a>
+        <div className={`Room-lessonInfo ${isUpcomingLesson ? 'isHighlighted' : ''}`}>
+          <span className="Room-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
+          <a className="Room-lessonTitle" href={url}>{lesson.title}</a>
+          <span className="Room-lessonTimeUntil">{timeUntil}</span>
         </div>
-        {index === hightlightedLessonIndex && (<hr />)}
-      </div>
-    );
+      </div>);
   };
 
   const renderRoomMembers = () => {
@@ -122,7 +126,7 @@ export default function Room({ PageTemplate, initialState }) {
           renderItem={member => (
             <List.Item className="Room-membersRow">
               <Space>
-                <span>{formatDate(member.joinedOn)}</span>
+                <span className="Room-membersRowDate">{formatDate(member.joinedOn)}</span>
                 <span>{member.username}</span>
               </Space>
             </List.Item>)}
@@ -152,12 +156,12 @@ export default function Room({ PageTemplate, initialState }) {
         renderItem={invitation => (
           <List.Item className="Room-membersRow">
             <Space>
-              <span>{formatDate(invitation.sentOn)}</span>
+              <span className="Room-membersRowDate">{formatDate(invitation.sentOn)}</span>
               <span>{invitation.email}</span>
             </Space>
             <Space>
               <span>{t('expires')}:</span>
-              <span>{formatDate(invitation.expires)}</span>
+              <span className="Room-membersRowDate">{formatDate(invitation.expires)}</span>
             </Space>
           </List.Item>
         )}
