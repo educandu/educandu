@@ -59,12 +59,20 @@ const settingsDocumentProps = {
 
 export const settingsDocumentShape = PropTypes.shape(settingsDocumentProps);
 
+const settingsLicenseProps = {
+  name: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired
+};
+
+export const settingsLicenseShape = PropTypes.shape(settingsLicenseProps);
+
 export const settingsShape = PropTypes.shape({
   announcement: PropTypes.string,
   helpPage: PropTypes.objectOf(settingsDocumentShape),
   termsPage: PropTypes.objectOf(settingsDocumentShape),
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
-  defaultTags: PropTypes.arrayOf(PropTypes.string)
+  defaultTags: PropTypes.arrayOf(PropTypes.string),
+  license: PropTypes.shape(settingsLicenseProps)
 });
 
 export const settingsProps = {

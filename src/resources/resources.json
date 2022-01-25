@@ -704,7 +704,8 @@
       "defaultTagsHeader": "Default tags",
       "createDocumentRegenerationBatchHeader": "Document recreation",
       "createDocumentRegenerationBatchButton": "Regenerate documents",
-      "templateDocumentHeader": "Template for new documents"
+      "templateDocumentHeader": "Template for new documents",
+      "licenseHeader": "License"
     }
   },
   {
@@ -720,7 +721,8 @@
       "defaultTagsHeader": "Vordefinierte Tags",
       "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung",
       "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
-      "templateDocumentHeader": "Vorlage für neue Dokumente"
+      "templateDocumentHeader": "Vorlage für neue Dokumente",
+      "licenseHeader": "Lizenz"
     }
   },
   {
@@ -1234,7 +1236,6 @@
     "language": "en",
     "resources": {
       "name": "Iframe",
-      "url": "URL",
       "width": "Width",
       "height": "Height",
       "frame": "Frame"
@@ -1245,7 +1246,6 @@
     "language": "de",
     "resources": {
       "name": "Iframe",
-      "url": "URL",
       "width": "Breite",
       "height": "Höhe",
       "frame": "Rahmen"
@@ -1499,7 +1499,8 @@
       "password": "Password",
       "text": "Text",
       "update": "Update",
-      "description": "Description"
+      "description": "Description",
+      "url": "URL"
     }
   },
   {
@@ -1548,7 +1549,8 @@
       "password": "Kennwort",
       "text": "Text",
       "update": "Aktualisieren",
-      "description": "Beschreibung"
+      "description": "Beschreibung",
+      "url": "URL"
     }
   },
   {

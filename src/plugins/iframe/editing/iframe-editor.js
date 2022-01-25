@@ -59,7 +59,7 @@ class IframeEditor extends React.Component {
         <Form layout="horizontal">
           <FormItem
             {...formItemLayout}
-            label={t('url')}
+            label={t('common:url')}
             {...validation.validateUrl(url, t)}
             hasFeedback
             >
