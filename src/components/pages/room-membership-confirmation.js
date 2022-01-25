@@ -74,9 +74,6 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
             components={[<b key="room-name-bold" />]}
             />
         </p>
-        <p className="RoomMembershipConfirmationPage-disclaimer">
-          {t('invitationConfirmationDisclaimer')}
-        </p>
         <p>
           <Button type="primary" loading={isLoading} onClick={handleConfirmButtonClick}>
             {t('joinButton')}
