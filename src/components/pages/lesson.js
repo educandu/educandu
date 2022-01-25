@@ -1,19 +1,45 @@
-import React from 'react';
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { useTranslation } from 'react-i18next';
+import DocView from '../doc-view.js';
+import React, { Fragment } from 'react';
+import { EditOutlined } from '@ant-design/icons';
+import { useDateFormat } from '../language-context.js';
+import { EditControlPanel } from '../edit-control-panel.js';
 import { lessonShape } from '../../ui/default-prop-types.js';
 
 function Lesson({ PageTemplate, initialState }) {
-  const { t } = useTranslation('lesson');
+  const { formatDate } = useDateFormat();
 
   const { lesson } = initialState;
 
+  const loadScripts = () => new Promise(resolve => {
+    setTimeout(resolve, 200);
+  });
+
+  const startsOn = lesson.schedule?.startsOn
+    ? formatDate(lesson.schedule.startsOn)
+    : '';
+
+  const handleEditMetadataClick = () => {
+    // Show edit dialog here!
+  };
+
   return (
-    <PageTemplate>
-      <div className="Lesson">
-        <h1> {t('pageNames:lesson', { lessonTitle: lesson.title })}</h1>
-      </div>
-    </PageTemplate>);
+    <Fragment>
+      <PageTemplate>
+        <div className="Lesson">
+          <DocView documentOrRevision={lesson} />
+        </div>
+      </PageTemplate>
+      <EditControlPanel onEdit={() => loadScripts()}>
+        <span className="Lesson-editControlPanelItem">
+          <Button size="small" icon={<EditOutlined />} onClick={handleEditMetadataClick} ghost />
+        </span>
+        <span className="Lesson-editControlPanelItem">{startsOn}</span>
+        <span className="Lesson-editControlPanelItem">{lesson.title}</span>
+      </EditControlPanel>
+    </Fragment>
+  );
 }
 
 Lesson.propTypes = {

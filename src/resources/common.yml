@@ -10,6 +10,9 @@ save:
 cancel:
   en: Cancel
   de: Abbrechen
+close:
+  en: Close
+  de: Schließen
 select:
   en: Select
   de: Auswählen
