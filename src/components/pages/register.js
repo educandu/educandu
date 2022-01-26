@@ -39,11 +39,11 @@ function Register({ PageTemplate, SiteLogo }) {
           setUser(registeredUser);
           break;
         case SAVE_USER_RESULT.duplicateEmail:
-          setForbiddenEmails(prevState => [...prevState.forbiddenEmails, email.toLowerCase()]);
+          setForbiddenEmails(prevState => [...prevState, email.toLowerCase()]);
           formRef.current.validateFields(['email'], { force: true });
           break;
         case SAVE_USER_RESULT.duplicateUsername:
-          setForbiddenUsernames(prevState => [...prevState.forbiddenUsernames, username.toLowerCase()]);
+          setForbiddenUsernames(prevState => [...prevState, username.toLowerCase()]);
           formRef.current.validateFields(['username'], { force: true });
           break;
         default:
