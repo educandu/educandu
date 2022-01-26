@@ -11,6 +11,7 @@ const { NotFound, Forbidden, BadRequest } = httpErrors;
 describe('lesson-controller', () => {
   const sandbox = sinon.createSandbox();
 
+  let clientDataMapper;
   let lessonService;
   let serverConfig;
   let pageRenderer;
@@ -28,12 +29,16 @@ describe('lesson-controller', () => {
       areRoomsEnabled: true
     };
     lessonService = {
-      getLesson: sandbox.stub(),
-      createLesson: sandbox.stub()
+      getLessonById: sandbox.stub(),
+      createLesson: sandbox.stub(),
+      updateLesson: sandbox.stub()
     };
     roomService = {
       getRoomById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub()
+    };
+    clientDataMapper = {
+      mapLesson: sandbox.stub()
     };
     pageRenderer = {
       sendPage: sandbox.stub()
@@ -44,7 +49,7 @@ describe('lesson-controller', () => {
     roomId = uniqueId.create();
     res = {};
 
-    sut = new LessonController(serverConfig, lessonService, roomService, pageRenderer);
+    sut = new LessonController(serverConfig, lessonService, roomService, clientDataMapper, pageRenderer);
   });
 
   afterEach(() => {
@@ -54,12 +59,13 @@ describe('lesson-controller', () => {
   describe('handleGetLessonPage', () => {
     let room;
     let lesson;
+    let mappedLesson;
 
     describe('when the lesson does not exist', () => {
       beforeEach(() => {
         req = { user, params: { 0: '', lessonId: uniqueId.create() } };
 
-        lessonService.getLesson.withArgs(lessonId).resolves(null);
+        lessonService.getLessonById.withArgs(lessonId).resolves(null);
       });
 
       it('should throw NotFound', async () => {
@@ -75,7 +81,7 @@ describe('lesson-controller', () => {
 
         lesson = { _id: lessonId, slug: 'lesson-slug' };
 
-        lessonService.getLesson.withArgs(lessonId).resolves(lesson);
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
 
         sut.handleGetLessonPage(req, res);
       });
@@ -92,7 +98,7 @@ describe('lesson-controller', () => {
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [] };
 
-        lessonService.getLesson.withArgs(lessonId).resolves(lesson);
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
       });
 
@@ -106,15 +112,17 @@ describe('lesson-controller', () => {
         req = { user, params: { 0: '/slug', lessonId } };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: user._id, members: [] };
+        mappedLesson = { ...lesson };
 
-        lessonService.getLesson.withArgs(lessonId).resolves(lesson);
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
+        clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
 
         return sut.handleGetLessonPage(req, res);
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson, roomOwner: room.owner });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, roomOwner: room.owner });
       });
     });
 
@@ -123,9 +131,11 @@ describe('lesson-controller', () => {
         req = { user, params: { 0: '/slug', lessonId } };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [{ userId: user._id }] };
+        mappedLesson = { ...lesson };
 
-        lessonService.getLesson.withArgs(lessonId).resolves(lesson);
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
+        clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
 
         return sut.handleGetLessonPage(req, res);
       });
@@ -140,15 +150,17 @@ describe('lesson-controller', () => {
         req = { user, params: { 0: '/slug', lessonId } };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.public, owner: uniqueId.create(), members: [] };
+        mappedLesson = { ...lesson };
 
-        lessonService.getLesson.withArgs(lessonId).resolves(lesson);
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
+        clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
 
         return sut.handleGetLessonPage(req, res);
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson, roomOwner: room.owner });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, roomOwner: room.owner });
       });
     });
   });
@@ -208,6 +220,120 @@ describe('lesson-controller', () => {
       it('should return the lesson', () => {
         expect(res.statusCode).toBe(201);
         expect(res._getData()).toBe(newLesson);
+      });
+    });
+  });
+
+  describe('handlePatchLesson', () => {
+
+    describe('when the request data is valid', () => {
+      let room;
+      let lesson;
+      let requestBody;
+      let updatedLesson;
+
+      beforeEach(done => {
+        room = { _id: uniqueId.create(), owner: user._id };
+        lesson = {
+          _id: uniqueId.create(),
+          roomId: room._id,
+          title: 'title',
+          slug: 'slug',
+          language: 'language',
+          schedule: {
+            startsOn: new Date().toISOString()
+          }
+        };
+        requestBody = {
+          title: 'new title',
+          slug: 'new-slug',
+          language: 'new language',
+          schedule: { startsOn: new Date().toISOString() }
+        };
+        updatedLesson = {
+          ...lesson,
+          ...requestBody
+        };
+
+        lessonService.getLessonById.withArgs(lesson._id).resolves(lesson);
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        lessonService.updateLesson.resolves(updatedLesson);
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { lessonId: lesson._id },
+          body: { ...requestBody }
+        });
+        req.user = user;
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handlePatchLesson(req, res);
+      });
+
+      it('should respond with status code 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should call lessonService.updateLesson', () => {
+        sinon.assert.calledWith(lessonService.updateLesson, { ...lesson, ...requestBody });
+      });
+
+      it('should respond with the updated lesson', () => {
+        expect(res._getData()).toEqual(updatedLesson);
+      });
+    });
+
+    describe('when the request contains an unknown lesson id', () => {
+      beforeEach(() => {
+        lessonService.getLessonById.withArgs(lessonId).resolves(null);
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { lessonId },
+          body: { title: 'new title', slug: 'new-slug', language: 'new language' }
+        });
+        req.user = user;
+
+        res = {};
+      });
+
+      it('should throw NotFound', () => {
+        expect(() => sut.handlePatchLesson(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the request is made by a user which is not the lesson\'s room owner', () => {
+      beforeEach(() => {
+        const room = {
+          _id: uniqueId.create(),
+          owner: uniqueId.create()
+        };
+        const lesson = {
+          _id: uniqueId.create(),
+          roomId: room._id
+        };
+
+        lessonService.getLessonById.withArgs(lesson._id).resolves(lesson);
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { lessonId: lesson._id },
+          body: { title: 'new title', slug: 'new-slug', language: 'new language' }
+
+        });
+        req.user = user;
+
+        res = {};
+      });
+
+      it('should throw Forbidden', () => {
+        expect(() => sut.handlePatchLesson(req, res)).rejects.toThrow(Forbidden);
       });
     });
   });

@@ -9,15 +9,15 @@ import { useDateFormat } from '../language-context.js';
 import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import LessonCreationModal from '../lesson-creation-modal.js';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import { Space, List, Button, Tabs, Card, message } from 'antd';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
-import { roomShape, invitationShape, lessonShape } from '../../ui/default-prop-types.js';
+import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { DeleteOutlined, LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
+import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
@@ -34,7 +34,7 @@ export default function Room({ PageTemplate, initialState }) {
   const [room, setRoom] = useState(initialState.room);
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
-  const [isLessonCreationModalVisible, setIsLessonCreationModalVisible] = useState(false);
+  const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
   const { invitations, lessons } = initialState;
   const isRoomOwner = user._id === room.owner.key;
@@ -69,11 +69,11 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleNewLessonClick = () => {
-    setIsLessonCreationModalVisible(true);
+    setIsLessonMetadataModalVisible(true);
   };
 
-  const handleLessonCreationModalClose = () => {
-    setIsLessonCreationModalVisible(false);
+  const handleLessonMetadataModalClose = () => {
+    setIsLessonMetadataModalVisible(false);
   };
 
   const handleUpdateRoomClick = () => {
@@ -247,10 +247,11 @@ export default function Room({ PageTemplate, initialState }) {
           </Tabs>
         )}
 
-        <LessonCreationModal
-          roomId={room._id}
-          isVisible={isLessonCreationModalVisible}
-          onClose={handleLessonCreationModalClose}
+        <LessonMetadataModal
+          lesson={{ roomId: room._id }}
+          mode={LESSON_MODAL_MODE.create}
+          isVisible={isLessonMetadataModalVisible}
+          onClose={handleLessonMetadataModalClose}
           />
       </div>
     </PageTemplate>);
@@ -261,6 +262,6 @@ Room.propTypes = {
   initialState: PropTypes.shape({
     room: roomShape.isRequired,
     invitations: PropTypes.arrayOf(invitationShape).isRequired,
-    lessons: PropTypes.arrayOf(lessonShape).isRequired
+    lessons: PropTypes.arrayOf(lessonMetadataShape).isRequired
   }).isRequired
 };

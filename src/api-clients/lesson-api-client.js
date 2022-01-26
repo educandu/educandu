@@ -16,6 +16,16 @@ class LessonApiClient {
       )
       .then(res => res.data);
   }
+
+  updateLesson({ lessonId, title, slug, language, schedule }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/lessons/${encodeURIComponent(lessonId)}`,
+        { title, slug, language, schedule },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default LessonApiClient;

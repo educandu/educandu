@@ -75,9 +75,7 @@ export default class RoomController {
       throw new Forbidden();
     }
 
-    const updatedRoom = { ...room, name, slug, description };
-    await this.roomService.updateRoom(updatedRoom);
-
+    const updatedRoom = await this.roomService.updateRoom({ ...room, name, slug, description });
     return res.status(201).send(updatedRoom);
   }
 
