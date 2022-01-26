@@ -1,9 +1,9 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import React, { Fragment, useEffect, useState } from 'react';
 import { CloseOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
 
 export function EditControlPanel({ children, onEdit, onSave, onClose }) {
   const { t } = useTranslation();

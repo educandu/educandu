@@ -6,9 +6,9 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
+import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import { getLessonParamsSchema, postLessonBodySchema } from '../domain/schemas/lesson-schemas.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 
 const jsonParser = express.json();
 const { NotFound, BadRequest, Forbidden } = httpErrors;
@@ -46,7 +46,7 @@ export default class LessonController {
       throw new Forbidden();
     }
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson, roomOwner: room.owner });
   }
 
   async handlePostLesson(req, res) {

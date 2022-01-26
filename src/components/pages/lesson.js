@@ -2,15 +2,18 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import DocView from '../doc-view.js';
 import React, { Fragment } from 'react';
+import { useUser } from '../user-context.js';
 import { EditOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../language-context.js';
 import { EditControlPanel } from '../edit-control-panel.js';
 import { lessonShape } from '../../ui/default-prop-types.js';
 
 function Lesson({ PageTemplate, initialState }) {
+  const user = useUser();
   const { formatDate } = useDateFormat();
 
-  const { lesson } = initialState;
+  const { lesson, roomOwner } = initialState;
+  const isRoomOwner = user._id === roomOwner;
 
   const loadScripts = () => new Promise(resolve => {
     setTimeout(resolve, 200);
@@ -31,13 +34,15 @@ function Lesson({ PageTemplate, initialState }) {
           <DocView documentOrRevision={lesson} />
         </div>
       </PageTemplate>
-      <EditControlPanel onEdit={() => loadScripts()}>
-        <span className="Lesson-editControlPanelItem">
-          <Button size="small" icon={<EditOutlined />} onClick={handleEditMetadataClick} ghost />
-        </span>
-        <span className="Lesson-editControlPanelItem">{startsOn}</span>
-        <span className="Lesson-editControlPanelItem">{lesson.title}</span>
-      </EditControlPanel>
+      {isRoomOwner && (
+        <EditControlPanel onEdit={() => loadScripts()}>
+          <span className="Lesson-editControlPanelItem">
+            <Button size="small" icon={<EditOutlined />} onClick={handleEditMetadataClick} ghost />
+          </span>
+          <span className="Lesson-editControlPanelItem">{startsOn}</span>
+          <span className="Lesson-editControlPanelItem">{lesson.title}</span>
+        </EditControlPanel>
+      )}
     </Fragment>
   );
 }
@@ -45,7 +50,8 @@ function Lesson({ PageTemplate, initialState }) {
 Lesson.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    lesson: lessonShape.isRequired
+    lesson: lessonShape.isRequired,
+    roomOwner: PropTypes.string.isRequired
   }).isRequired
 };
 
