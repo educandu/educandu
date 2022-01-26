@@ -138,7 +138,7 @@ class ImageTilesEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, t } = this.props;
+    const { sectionContainerId, content, t } = this.props;
     const { tiles, maxWidth, maxTilesPerRow, hoverEffect } = content;
 
     const formItemLayout = {
@@ -183,7 +183,7 @@ class ImageTilesEditor extends React.Component {
                   </div>
                 </div>
                 <div className="Panel-content">
-                  <TileEditor {...tile} index={index} onChange={this.handleTileChange} docKey={docKey} />
+                  <TileEditor {...tile} index={index} onChange={this.handleTileChange} sectionContainerId={sectionContainerId} />
                 </div>
               </div>
             </div>

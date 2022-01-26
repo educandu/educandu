@@ -56,7 +56,7 @@ class EarTrainingSoundEditor extends React.Component {
   }
 
   render() {
-    const { docKey, sound, t } = this.props;
+    const { sectionContainerId, sound, t } = this.props;
 
     const sourceRow = (
       <tr>
@@ -101,8 +101,8 @@ class EarTrainingSoundEditor extends React.Component {
                   />
                 <CdnFilePicker
                   rootPrefix="media"
-                  uploadPrefix={`media/${docKey}`}
-                  initialPrefix={`media/${docKey}`}
+                  uploadPrefix={`media/${sectionContainerId}`}
+                  initialPrefix={`media/${sectionContainerId}`}
                   fileName={sound.url}
                   onFileNameChanged={this.handleInternalUrlFileNameChanged}
                   />
@@ -151,8 +151,8 @@ class EarTrainingSoundEditor extends React.Component {
 EarTrainingSoundEditor.propTypes = {
   ...translationProps,
   ...clientConfigProps,
-  docKey: PropTypes.string.isRequired,
   onSoundChanged: PropTypes.func.isRequired,
+  sectionContainerId: PropTypes.string.isRequired,
   sound: PropTypes.shape({
     type: PropTypes.string.isRequired,
     url: PropTypes.string,

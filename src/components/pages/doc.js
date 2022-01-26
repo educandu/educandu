@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import DocView from '../doc-view.js';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
+import SectionsView from '../sections-view.js';
 import { Button, Slider, message } from 'antd';
 import CreditsFooter from '../credits-footer.js';
 import React, { useEffect, useState } from 'react';
@@ -267,8 +267,8 @@ function Doc({ initialState, PageTemplate }) {
     <PageTemplate headerActions={headerActions} alerts={alerts}>
       <div className="DocPage">
         { state.revisions.length > 0 && revisionPicker}
-        <DocView
-          documentOrRevision={state.currentDocOrRevision}
+        <SectionsView
+          sections={state.currentDocOrRevision.sections}
           onAction={isSectionHardDeletionAllowed ? handleAction : null}
           />
       </div>

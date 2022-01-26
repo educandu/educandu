@@ -55,7 +55,7 @@ class TileEditor extends React.Component {
   }
 
   render() {
-    const { docKey, clientConfig, image, description, link, t } = this.props;
+    const { sectionContainerId, clientConfig, image, description, link, t } = this.props;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -85,8 +85,8 @@ class TileEditor extends React.Component {
                 />
               <CdnFilePicker
                 rootPrefix="media"
-                uploadPrefix={`media/${docKey}`}
-                initialPrefix={`media/${docKey}`}
+                uploadPrefix={`media/${sectionContainerId}`}
+                initialPrefix={`media/${sectionContainerId}`}
                 fileName={image.url}
                 onFileNameChanged={this.handleInternalImageUrlFileNameChanged}
                 />
@@ -121,7 +121,6 @@ TileEditor.propTypes = {
   ...translationProps,
   ...clientConfigProps,
   description: PropTypes.string,
-  docKey: PropTypes.string.isRequired,
   image: PropTypes.shape({
     type: PropTypes.string.isRequired,
     url: PropTypes.string
@@ -131,7 +130,8 @@ TileEditor.propTypes = {
     type: PropTypes.string.isRequired,
     url: PropTypes.string
   }).isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  sectionContainerId: PropTypes.string.isRequired
 };
 
 TileEditor.defaultProps = {
