@@ -232,7 +232,7 @@
     }
   },
   {
-    "namespace": "lessonCreationModal",
+    "namespace": "lessonMetadataModal",
     "language": "en",
     "resources": {
       "newLesson": "New lesson",
@@ -241,7 +241,7 @@
     }
   },
   {
-    "namespace": "lessonCreationModal",
+    "namespace": "lessonMetadataModal",
     "language": "de",
     "resources": {
       "newLesson": "Neue Unterrichtseinheit",

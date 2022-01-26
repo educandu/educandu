@@ -1,18 +1,20 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
 import { useUser } from '../user-context.js';
 import { EditOutlined } from '@ant-design/icons';
+import React, { Fragment, useState } from 'react';
 import { useDateFormat } from '../language-context.js';
 import { EditControlPanel } from '../edit-control-panel.js';
 import { lessonShape } from '../../ui/default-prop-types.js';
+import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 
 function Lesson({ PageTemplate, initialState }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
 
-  const { lesson, roomOwner } = initialState;
-  const isRoomOwner = user._id === roomOwner;
+  const isRoomOwner = user._id === initialState.roomOwner;
+  const [lesson, setLesson] = useState(initialState.lesson);
+  const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
   const loadScripts = () => new Promise(resolve => {
     setTimeout(resolve, 200);
@@ -23,7 +25,21 @@ function Lesson({ PageTemplate, initialState }) {
     : '';
 
   const handleEditMetadataClick = () => {
-    // Show edit dialog here!
+    setIsLessonMetadataModalVisible(true);
+  };
+
+  const handleLessonMetadataModalSave = updatedLesson => {
+    setLesson(prevState => ({
+      ...prevState,
+      title: updatedLesson.title,
+      slug: updatedLesson.slug,
+      language: updatedLesson.language,
+      schedule: updatedLesson.schedule
+    }));
+  };
+
+  const handleLessonMetadataModalClose = () => {
+    setIsLessonMetadataModalVisible(false);
   };
 
   return (
@@ -32,13 +48,23 @@ function Lesson({ PageTemplate, initialState }) {
         <div className="Lesson" />
       </PageTemplate>
       {isRoomOwner && (
-        <EditControlPanel onEdit={() => loadScripts()}>
-          <span className="Lesson-editControlPanelItem">
-            <Button size="small" icon={<EditOutlined />} onClick={handleEditMetadataClick} ghost />
-          </span>
-          <span className="Lesson-editControlPanelItem">{startsOn}</span>
-          <span className="Lesson-editControlPanelItem">{lesson.title}</span>
-        </EditControlPanel>
+        <Fragment>
+          <EditControlPanel onEdit={() => loadScripts()}>
+            <span className="Lesson-editControlPanelItem">
+              <Button size="small" icon={<EditOutlined />} onClick={handleEditMetadataClick} ghost />
+            </span>
+            <span className="Lesson-editControlPanelItem">{startsOn}</span>
+            <span className="Lesson-editControlPanelItem">{lesson.title}</span>
+          </EditControlPanel>
+
+          <LessonMetadataModal
+            lesson={lesson}
+            mode={LESSON_MODAL_MODE.update}
+            isVisible={isLessonMetadataModalVisible}
+            onSave={handleLessonMetadataModalSave}
+            onClose={handleLessonMetadataModalClose}
+            />
+        </Fragment>
       )}
     </Fragment>
   );

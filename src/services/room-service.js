@@ -78,12 +78,13 @@ export default class RoomService {
   }
 
   async updateRoom(room) {
-    await this.roomStore.save({
+    const updatedRoom = {
       ...room,
       slug: room.slug || '',
       description: room.description || ''
-    });
-    return room;
+    };
+    await this.roomStore.save(updatedRoom);
+    return updatedRoom;
   }
 
   async findOwnedRoomById({ roomId, ownerId }) {

@@ -98,6 +98,10 @@ class ClientDataMapper {
     return invitations.map(invitation => this._mapRoomInvitation(invitation));
   }
 
+  mapLesson(lesson) {
+    return this._mapLesson(lesson);
+  }
+
   mapLessons(lessons) {
     return lessons.map(lesson => this._mapLesson(lesson));
   }

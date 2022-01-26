@@ -258,8 +258,21 @@ export const invitationShape = PropTypes.shape({
   expires: PropTypes.string.isRequired
 });
 
-export const lessonShape = PropTypes.shape({
+export const lessonMetadataProps = {
   _id: PropTypes.string.isRequired,
+  roomId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  slug: PropTypes.string
+  slug: PropTypes.string,
+  language: PropTypes.string.isRequired,
+  schedule: PropTypes.shape({
+    startsOn: PropTypes.string
+  })
+};
+
+export const lessonMetadataShape = PropTypes.shape({
+  ...lessonMetadataProps
+});
+
+export const lessonShape = PropTypes.shape({
+  ...lessonMetadataProps
 });

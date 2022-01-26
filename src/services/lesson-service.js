@@ -7,6 +7,7 @@ const roomLessonsProjection = {
   roomId: 1,
   title: 1,
   slug: 1,
+  language: 1,
   schedule: 1
 };
 
@@ -19,7 +20,7 @@ class LessonService {
     this.lessonStore = lessonStore;
   }
 
-  async getLesson(lessonId) {
+  async getLessonById(lessonId) {
     const lesson = await this.lessonStore.findOne({ _id: lessonId });
     return lesson;
   }
@@ -53,6 +54,20 @@ class LessonService {
     await this.lessonStore.save(lesson);
 
     return lesson;
+  }
+
+  async updateLesson(lesson) {
+    const mappedSchedule = lesson.schedule
+      ? { startsOn: new Date(lesson.schedule.startsOn) }
+      : null;
+
+    const updatedLesson = {
+      ...lesson,
+      slug: lesson.slug || '',
+      schedule: mappedSchedule
+    };
+    await this.lessonStore.save(updatedLesson);
+    return updatedLesson;
   }
 }
 

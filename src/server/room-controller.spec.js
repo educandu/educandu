@@ -107,6 +107,8 @@ describe('room-controller', () => {
 
     describe('when the request data is valid', () => {
       let room;
+      let requestBody;
+      let updatedRoom;
 
       beforeEach(done => {
         room = {
@@ -114,17 +116,27 @@ describe('room-controller', () => {
           owner: user._id,
           name: 'name',
           slug: 'slug',
-          access: ROOM_ACCESS_LEVEL.public
+          access: ROOM_ACCESS_LEVEL.public,
+          description: 'description'
+        };
+        requestBody = {
+          name: 'new name',
+          slug: 'new-slug',
+          description: 'new description'
+        };
+        updatedRoom = {
+          ...room,
+          ...requestBody
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
-        roomService.updateRoom.resolves();
+        roomService.updateRoom.resolves(updatedRoom);
 
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
           params: { roomId: room._id },
-          body: { name: 'new name', slug: 'new-slug' }
+          body: { ...requestBody }
         });
         req.user = user;
 
@@ -138,12 +150,12 @@ describe('room-controller', () => {
         expect(res.statusCode).toBe(201);
       });
 
+      it('should call roomService.updateRoom', () => {
+        sinon.assert.calledWith(roomService.updateRoom, { ...room, ...requestBody });
+      });
+
       it('should respond with the updated room', () => {
-        expect(res._getData()).toEqual({
-          ...room,
-          name: 'new name',
-          slug: 'new-slug'
-        });
+        expect(res._getData()).toEqual(updatedRoom);
       });
     });
 
@@ -152,7 +164,6 @@ describe('room-controller', () => {
         const roomId = uniqueId.create();
 
         roomService.getRoomById.withArgs(roomId).resolves(null);
-        roomService.updateRoom.resolves();
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -181,7 +192,6 @@ describe('room-controller', () => {
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
-        roomService.updateRoom.resolves();
 
         req = httpMocks.createRequest({
           protocol: 'https',

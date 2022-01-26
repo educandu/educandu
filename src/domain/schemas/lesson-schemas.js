@@ -30,3 +30,16 @@ export const postLessonBodySchema = joi.object({
     startsOn: joi.string().required()
   }).allow(null)
 });
+
+export const patchLessonParamsSchema = joi.object({
+  lessonId: idOrKeySchema.required()
+});
+
+export const patchLessonBodySchema = joi.object({
+  title: joi.string().required(),
+  slug: slugSchema,
+  language: joi.string().case('lower').required(),
+  schedule: joi.object({
+    startsOn: joi.string().required()
+  }).allow(null)
+});

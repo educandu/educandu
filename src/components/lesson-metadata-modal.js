@@ -10,11 +10,17 @@ import React, { useState, useRef, useEffect } from 'react';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import LessonApiClient from '../api-clients/lesson-api-client.js';
+import { lessonMetadataShape } from '../ui/default-prop-types.js';
 import { useDateFormat, useLanguage } from './language-context.js';
 
 const FormItem = Form.Item;
 
 const logger = new Logger(import.meta.url);
+
+export const LESSON_MODAL_MODE = {
+  create: 'create',
+  update: 'update'
+};
 
 function getDefaultLanguageFromUiLanguage(uiLanguage) {
   switch (uiLanguage) {
@@ -23,11 +29,11 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
   }
 }
 
-function LessonCreationModal({ roomId, isVisible, onClose }) {
+function LessonMetadataModal({ lesson, mode, isVisible, onSave, onClose }) {
   const formRef = useRef(null);
   const { dateTimeFormat } = useDateFormat();
   const { language: uiLanguage } = useLanguage();
-  const { t } = useTranslation('lessonCreationModal');
+  const { t } = useTranslation('lessonMetadataModal');
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 
   const [loading, setLoading] = useState(false);
@@ -50,10 +56,11 @@ function LessonCreationModal({ roomId, isVisible, onClose }) {
     }
   ];
 
-  const defaultLesson = {
-    title: t('newLesson'),
-    slug: '',
-    language: getDefaultLanguageFromUiLanguage(uiLanguage)
+  const initialValues = {
+    title: lesson.title || t('newLesson'),
+    slug: lesson.slug || '',
+    language: lesson.language || getDefaultLanguageFromUiLanguage(uiLanguage),
+    startsOn: lesson.schedule?.startsOn ? moment(lesson.schedule?.startsOn) : null
   };
 
   useEffect(() => {
@@ -72,18 +79,26 @@ function LessonCreationModal({ roomId, isVisible, onClose }) {
     try {
       setLoading(true);
 
-      const newLesson = await lessonApiClient.addLesson({
-        roomId,
+      const mappedLesson = {
+        lessonId: lesson._id,
+        roomId: lesson.roomId,
         title,
         slug: slug || '',
         language,
         schedule: startsOn ? { startsOn: startsOn.toISOString() } : null
-      });
+      };
+
+      const response = mode === LESSON_MODAL_MODE.create
+        ? await lessonApiClient.addLesson(mappedLesson)
+        : await lessonApiClient.updateLesson(mappedLesson);
 
       setLoading(false);
+      onSave(response);
       onClose();
 
-      window.location = urls.getLessonUrl(newLesson._id);
+      if (mode === LESSON_MODAL_MODE.create) {
+        window.location = urls.getLessonUrl(response._id);
+      }
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
       setLoading(false);
@@ -120,7 +135,7 @@ function LessonCreationModal({ roomId, isVisible, onClose }) {
       visible={isVisible}
       okButtonProps={{ loading }}
       >
-      <Form onFinish={handleOnFinish} name="new-lesson-form" ref={formRef} layout="vertical" initialValues={defaultLesson}>
+      <Form onFinish={handleOnFinish} name="new-lesson-form" ref={formRef} layout="vertical" initialValues={initialValues}>
         <FormItem label={t('common:title')} name="title" rules={titleValidationRules}>
           <Input />
         </FormItem>
@@ -145,10 +160,19 @@ function LessonCreationModal({ roomId, isVisible, onClose }) {
   );
 }
 
-LessonCreationModal.propTypes = {
+LessonMetadataModal.propTypes = {
   isVisible: PropTypes.bool.isRequired,
+  lesson: PropTypes.oneOfType([
+    PropTypes.shape({ roomId: PropTypes.string.isRequired }),
+    lessonMetadataShape
+  ]).isRequired,
+  mode: PropTypes.oneOf(Object.values(LESSON_MODAL_MODE)).isRequired,
   onClose: PropTypes.func.isRequired,
-  roomId: PropTypes.string.isRequired
+  onSave: PropTypes.func
 };
 
-export default LessonCreationModal;
+LessonMetadataModal.defaultProps = {
+  onSave: () => {}
+};
+
+export default LessonMetadataModal;
