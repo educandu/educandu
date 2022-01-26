@@ -109,7 +109,7 @@ export default function Room({ PageTemplate, initialState }) {
 
     return (
       <div className="Room-lesson" key={lesson._id}>
-        <div className={`Room-lessonInfo ${isUpcomingLesson ? 'isHighlighted' : ''}`}>
+        <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
           <span className="Room-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
           <a className="Room-lessonTitle" href={url}>{lesson.title}</a>
           <span className="Room-lessonTimeUntil">{timeUntil}</span>
