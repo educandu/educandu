@@ -12,23 +12,36 @@ function GridSelector({ items, selectedItemKey, onSelectionChange }) {
     }
   }, [selectedItemKey]);
 
-  const handleFocusCapture = event => {
-    const itemKey = event.target.getAttribute('data-item-key');
-    if (itemKey && itemKey !== selectedItemKey) {
-      onSelectionChange?.(itemKey, false);
+  const handleKeyUp = event => {
+    if (event.key === 'Enter' && selectedItemKey) {
+      onSelectionChange(selectedItemKey, true);
     }
   };
 
+  const handleItemFocus = itemKey => {
+    if (itemKey !== selectedItemKey) {
+      onSelectionChange(itemKey, false);
+    }
+  };
+
+  const handleItemDoubleClick = itemKey => {
+    onSelectionChange(itemKey, true);
+  };
+
   return (
-    <ul ref={listRef} className="GridSelector" onFocusCapture={handleFocusCapture}>
+    <ul
+      ref={listRef}
+      className="GridSelector"
+      onKeyUp={handleKeyUp}
+      >
       {items.map((item, index) => (
         <li
           key={item.key}
           tabIndex={index + 1}
           data-item-key={item.key}
-          className={classNames('GridSelector-item', { 'GridSelector-item--selected': item.key === selectedItemKey })}
-          onKeyUp={event => event.key === 'Enter' && onSelectionChange?.(item.key, true)}
-          onDoubleClick={() => onSelectionChange?.(item.key, true)}
+          onFocus={() => handleItemFocus(item.key)}
+          className={classNames('GridSelector-item', { 'is-selected': item.key === selectedItemKey })}
+          onDoubleClick={() => handleItemDoubleClick(item.key)}
           >
           <div className="GridSelector-itemIcon">{item.icon}</div>
           <div className="GridSelector-itemLabel">{item.label}</div>

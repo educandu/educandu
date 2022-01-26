@@ -1,10 +1,11 @@
-import PropTypes from 'prop-types';
 import { Modal } from 'antd';
-import React, { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import InfoFactory from '../plugins/info-factory.js';
-import { useService } from './container-context.js';
+import PropTypes from 'prop-types';
 import GridSelector from './grid-selector.js';
+import { useTranslation } from 'react-i18next';
+import React, { useMemo, useState } from 'react';
+import { useService } from './container-context.js';
+import InfoFactory from '../plugins/info-factory.js';
+import { QuestionOutlined } from '@ant-design/icons';
 
 function PluginSelectorDialog({ visible, onSelected, onCancel }) {
   const { t } = useTranslation('pluginSelectorDialog');
@@ -15,7 +16,7 @@ function PluginSelectorDialog({ visible, onSelected, onCancel }) {
       .map(typeName => infoFactory.createInfo(typeName))
       .map(info => ({
         key: info.type,
-        icon: info.getIcon?.(t) || null,
+        icon: info.getIcon?.(t) || <QuestionOutlined />,
         label: info.getName(t)
       }));
   }, [infoFactory, t]);
@@ -36,8 +37,19 @@ function PluginSelectorDialog({ visible, onSelected, onCancel }) {
   };
 
   return (
-    <Modal visible={visible} onOk={handleOk} onCancel={handleCancel} title={t('title')} okButtonProps={{ disabled: !selectedPluginType }} destroyOnClose>
-      <GridSelector items={pluginItems} selectedItemKey={selectedPluginType} onSelectionChange={handleSelectionChange} />
+    <Modal
+      visible={visible}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      title={t('title')}
+      okButtonProps={{ disabled: !selectedPluginType }}
+      destroyOnClose
+      >
+      <GridSelector
+        items={pluginItems}
+        selectedItemKey={selectedPluginType}
+        onSelectionChange={handleSelectionChange}
+        />
     </Modal>
   );
 }
