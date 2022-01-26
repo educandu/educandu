@@ -1,6 +1,6 @@
 privateRoomSubtitle:
   en: Private room
-  de: Privatraum
+  de: privater Raum
 publicRoomSubtitle:
   en: Public room
   de: öffentlicher Raum
@@ -24,13 +24,13 @@ settingsTabTitle:
   de: Einstellungen
 lessonsPlaceholder:
   en: The room does not contain any lessons
-  de: Der Raum enthält keinen Unterrichtseinheiten
+  de: Der Raum enthält keine Unterrichtseinheiten
 thisWeek:
   en: This week
   de: Diese Woche
 notScheduled:
   en: not scheduled
-  de: nicht geplant
+  de: nicht terminiert
 deleteRoomButton:
   en: Delete room
   de: Raum löschen
