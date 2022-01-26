@@ -600,7 +600,7 @@
       "emailIsInvalid": "Ihre Eingabe ist keine gültige E-Mail-Adresse",
       "email": "E-Mail-Adresse",
       "requestReset": "Reset anfordern",
-      "resetInProgressConfirmation": "Ihre Anfrage wurde ist bei uns eingegangen.",
+      "resetInProgressConfirmation": "Ihre Anfrage ist bei uns eingegangen.",
       "resetInProgressNextSteps": "Falls die von Ihnen angegebene E-Mail-Adresse bei uns registriert ist, werden Sie in Kürze eine\nNachricht von uns erhalten mit den nächsten Schritte, um ein neues Kennwort zu generieren.\n",
       "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
     }
@@ -773,7 +773,6 @@
     "namespace": "passwordInput",
     "language": "en",
     "resources": {
-      "password": "Passsword",
       "passwordConfirmation": "Password confirmation",
       "enterPassword": "Please enter a password",
       "passwordIsInvalid": "The password must be at least {length} characters long and contain at least one letter and one number",
@@ -785,7 +784,6 @@
     "namespace": "passwordInput",
     "language": "de",
     "resources": {
-      "password": "Kennwort",
       "passwordConfirmation": "Kennwortbestätigung",
       "enterPassword": "Bitte geben Sie ein Kennwort an",
       "passwordIsInvalid": "Das Kennwort muss mindestens {length} Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten",
@@ -1477,6 +1475,7 @@
       "no": "No",
       "save": "Save",
       "cancel": "Cancel",
+      "close": "Close",
       "select": "Select",
       "back": "Back",
       "preview": "Preview",
@@ -1527,6 +1526,7 @@
       "no": "Nein",
       "save": "Speichern",
       "cancel": "Abbrechen",
+      "close": "Schließen",
       "select": "Auswählen",
       "back": "Zurück",
       "preview": "Vorschau",

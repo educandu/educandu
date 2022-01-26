@@ -114,7 +114,7 @@ describe('lesson-controller', () => {
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson, roomOwner: room.owner });
       });
     });
 
@@ -131,7 +131,7 @@ describe('lesson-controller', () => {
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson, roomOwner: room.owner });
       });
     });
 
@@ -148,7 +148,7 @@ describe('lesson-controller', () => {
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson, roomOwner: room.owner });
       });
     });
   });

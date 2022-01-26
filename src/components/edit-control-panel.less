@@ -1,0 +1,51 @@
+@control-panel-content-height: 24px;
+@control-panel-padding: @edu-content-padding;
+@control-panel-height: @control-panel-content-height + (2 * @control-panel-padding);
+
+.EditControlPanel {
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  position: sticky;
+  bottom: 0;
+  left: %(~"calc(100% - %s)", @control-panel-height * 2);
+  height: @control-panel-height;
+  width: @control-panel-height;
+  padding-left: @control-panel-padding;
+  padding-right: @control-panel-padding;
+  color: @edu-white;
+  background-color: @edu-primary-color;
+  transition: width 500ms ease;
+
+  &.is-expanded {
+    width: 100%;
+  }
+}
+
+.EditControlPanel-children {
+  flex: 1 0 0%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.EditControlPanel-buttonGroup {
+  flex: none;
+  display: grid;
+  grid-auto-flow: column;
+  gap: @edu-button-spacing;
+  padding-left: @control-panel-padding;
+}
+
+.EditControlPanel-button {
+  .m-icon-button;
+}
+
+.EditControlPanel-penButton {
+  .m-no-spinner-background;
+  color: lighten(@edu-primary-color, 50%);
+
+  &:hover, &:focus {
+    color: @edu-white;
+  }
+}
