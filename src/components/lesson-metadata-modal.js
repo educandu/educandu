@@ -128,7 +128,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onClose }) {
 
   return (
     <Modal
-      title={t('newLesson')}
+      title={mode === LESSON_MODAL_MODE.create ? t('newLesson') : t('editLesson')}
       onOk={handleOk}
       onCancel={handleCancel}
       maskClosable={false}

@@ -1,6 +1,9 @@
 newLesson:
   en: New lesson
   de: Neue Unterrichtseinheit
+editLesson:
+  en: Edit lesson
+  de: Unterrichtseinheit bearbeiten
 titleRequired:
   en: Please specify a lesson title
   de: Bitte geben Sie einen Unterrichtseinheit Titel an
