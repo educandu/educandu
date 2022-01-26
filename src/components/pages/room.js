@@ -169,6 +169,26 @@ export default function Room({ PageTemplate, initialState }) {
     </Card>
   );
 
+  const renderRoomLessonsCard = () => (
+    <Card
+      className="Room-card"
+      actions={isRoomOwner && [
+        <Button
+          className="Room-cardButton"
+          key="createLesson"
+          type="primary"
+          shape="circle"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={handleNewLessonClick}
+          />
+      ]}
+      >
+      {room.description && <Markdown className="Room-description" renderMedia>{room.description}</Markdown>}
+      {lessons.length ? lessons.map(renderLesson) : t('lessonsPlaceholder')}
+    </Card>
+  );
+
   return (
     <PageTemplate>
       <div className="Room">
@@ -180,36 +200,22 @@ export default function Room({ PageTemplate, initialState }) {
           <span>{t(`${room.access}RoomSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
         </div>
 
-        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
-          <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
-            <Card
-              className="Room-card"
-              actions={isRoomOwner && [
-                <Button
-                  className="Room-cardButton"
-                  key="createLesson"
-                  type="primary"
-                  shape="circle"
-                  icon={<PlusOutlined />}
-                  size="large"
-                  onClick={handleNewLessonClick}
-                  />
-              ]}
-              >
-              {room.description && <Markdown className="Room-description" renderMedia>{room.description}</Markdown>}
-              {lessons.length ? lessons.map(renderLesson) : t('lessonsPlaceholder')}
-            </Card>
-          </TabPane>
+        {!isRoomOwner && renderRoomLessonsCard()}
 
-          {isPrivateRoom && (
-            <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
-              {renderRoomMembers()}
-              {isRoomOwner && renderRoomInvitations()}
-              <RoomInvitationCreationModal isVisible={isRoomInvitationModalVisible} onClose={handleInvitationModalClose} roomId={room._id} />
+        {isRoomOwner && (
+          <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
+            <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
+              {renderRoomLessonsCard()}
             </TabPane>
-          )}
 
-          {isRoomOwner && (
+            {isPrivateRoom && (
+              <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
+                {renderRoomMembers()}
+                {renderRoomInvitations()}
+                <RoomInvitationCreationModal isVisible={isRoomInvitationModalVisible} onClose={handleInvitationModalClose} roomId={room._id} />
+              </TabPane>
+            )}
+
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
               <Card className="Room-card" title={t('updateRoomCardTitle')}>
                 <RoomMetadataForm
@@ -238,8 +244,8 @@ export default function Room({ PageTemplate, initialState }) {
                 </div>
               </Card>
             </TabPane>
-          )}
-        </Tabs>
+          </Tabs>
+        )}
 
         <LessonCreationModal
           roomId={room._id}
