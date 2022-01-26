@@ -14,6 +14,25 @@ export default function CookieConsentDrawer() {
   const { consentCookieName } = useService(ClientConfig);
 
   useEffect(() => {
+    if (!isVisible) {
+      return () => {};
+    }
+
+    const handler = event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    };
+
+    document.body.addEventListener('keydown', handler, { capture: true });
+    document.body.addEventListener('keyup', handler, { capture: true });
+
+    return () => {
+      document.body.removeEventListener('keydown', handler, { capture: true });
+      document.body.removeEventListener('keyup', handler, { capture: true });
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
     const consentCookie = cookie.get(consentCookieName);
     if (!consentCookie) {
       lastActiveElementRef.current = document.activeElement;
