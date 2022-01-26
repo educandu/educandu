@@ -9,6 +9,7 @@ import permissions from '../../domain/permissions.js';
 import MarkdownTextarea from '../markdown-textarea.js';
 import DocumentSelector from '../document-selector.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import LicenseSettings from '../settings/license-settings.js';
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
@@ -67,6 +68,10 @@ function Settings({ initialState, PageTemplate }) {
 
   const handleDefaultTagsChange = useCallback((value, { isValid }) => {
     handleChange('defaultTags', value, isValid);
+  }, [handleChange]);
+
+  const handleLicenseChange = useCallback((value, { isValid }) => {
+    handleChange('license', value, isValid);
   }, [handleChange]);
 
   const handleSaveClick = async () => {
@@ -180,6 +185,12 @@ function Settings({ initialState, PageTemplate }) {
         <DefaultTagsSettings
           defaultTags={settings.defaultTags || []}
           onChange={handleDefaultTagsChange}
+          />
+
+        <h2 className="SettingsPage-sectionHeader">{t('licenseHeader')}</h2>
+        <LicenseSettings
+          license={settings.license}
+          onChange={handleLicenseChange}
           />
 
         <h2 className="SettingsPage-sectionHeader">{t('createDocumentRegenerationBatchHeader')}</h2>

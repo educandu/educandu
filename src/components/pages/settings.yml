@@ -28,3 +28,6 @@ createDocumentRegenerationBatchButton:
 templateDocumentHeader:
   en: Template for new documents
   de: Vorlage für neue Dokumente
+licenseHeader:
+  en: License
+  de: Lizenz

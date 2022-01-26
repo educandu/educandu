@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
+import { useSettings } from './settings-context.js';
 import { useDateFormat } from './language-context.js';
 import { DOCUMENT_TYPE } from '../domain/constants.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
@@ -29,6 +30,7 @@ function renderRevisionAuthor(revision, t) {
 
 function CreditsFooter({ documentOrRevision, type }) {
   const request = useRequest();
+  const settings = useSettings();
   const { t } = useTranslation('creditsFooter');
   const { formatDate } = useDateFormat();
 
@@ -44,15 +46,20 @@ function CreditsFooter({ documentOrRevision, type }) {
   return (
     <div className="CreditsFooter">
       <p>
-        <b>{t('license')}:</b> <a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.de">CC BY-SA 3.0 DE</a>
-        <br />
+        {settings.license?.name && settings.license?.url && (
+          <Fragment>
+            <b>{t('license')}:</b> <a href={settings.license.url}>{settings.license.name}</a>
+            <br />
+          </Fragment>
+        )}
         <b>{t('source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
         <br />
         {originalUrl && (
           <Fragment>
             <b>{t('originalSource')}:</b> {renderOriginalUrl()}
             <br />
-          </Fragment>)}
+          </Fragment>
+        )}
         {type === DOCUMENT_TYPE.document ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
       </p>
     </div>
