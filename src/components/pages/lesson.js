@@ -1,6 +1,5 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import DocView from '../doc-view.js';
 import React, { Fragment } from 'react';
 import { useUser } from '../user-context.js';
 import { EditOutlined } from '@ant-design/icons';
@@ -30,9 +29,7 @@ function Lesson({ PageTemplate, initialState }) {
   return (
     <Fragment>
       <PageTemplate>
-        <div className="Lesson">
-          <DocView documentOrRevision={lesson} />
-        </div>
+        <div className="Lesson" />
       </PageTemplate>
       {isRoomOwner && (
         <EditControlPanel onEdit={() => loadScripts()}>
