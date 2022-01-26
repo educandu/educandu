@@ -46,6 +46,10 @@ export default class RoomController {
     const { user } = req;
     const { token } = req.params;
 
+    if (!user) {
+      return res.redirect(urls.getLoginUrl(req.path));
+    }
+
     const { roomId, roomName, roomSlug, isValid } = await this.roomService.verifyInvitationToken({ token, user });
     const initialState = { token, roomId, roomName, roomSlug, isValid };
 
@@ -118,8 +122,12 @@ export default class RoomController {
 
   async handleGetRoomPage(req, res) {
     const { roomId } = req.params;
-    const { _id: userId } = req.user;
+    const userId = req.user?._id;
     const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
+
+    if (!userId) {
+      return res.redirect(urls.getLoginUrl(req.path));
+    }
 
     const room = await this.roomService.getRoomById(roomId);
 

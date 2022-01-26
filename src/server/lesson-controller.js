@@ -38,6 +38,10 @@ export default class LessonController {
     const { lessonId } = req.params;
     const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
 
+    if (!user) {
+      return res.redirect(urls.getLoginUrl(req.path));
+    }
+
     const lesson = await this.lessonService.getLessonById(lessonId);
 
     if (!lesson) {

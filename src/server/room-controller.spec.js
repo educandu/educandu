@@ -316,6 +316,25 @@ describe('room-controller', () => {
 
   describe('handleGetRoomPage', () => {
 
+    describe('when user is not provided (session expired)', () => {
+      const room = { _id: uniqueId.create(), slug: 'room-slug' };
+      beforeEach(done => {
+        req = {
+          params: { 0: `/${room.slug}`, roomId: room._id },
+          path: `/rooms/${room._id}`
+        };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleGetRoomPage(req, res);
+      });
+
+      it('should redirect to the login page with keeping the room page referrence', () => {
+        expect(res.statusCode).toBe(302);
+        expect(res._getRedirectUrl()).toBe(`/login?redirect=%2Frooms%2F${room._id}`);
+      });
+    });
+
     describe('when the room is private', () => {
       const room = {
         _id: uniqueId.create(),

@@ -61,6 +61,24 @@ describe('lesson-controller', () => {
     let lesson;
     let mappedLesson;
 
+    describe('when user is not provided (session expired)', () => {
+      beforeEach(done => {
+        req = {
+          params: { 0: '', lessonId },
+          path: `/lessons/${lessonId}`
+        };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleGetLessonPage(req, res);
+      });
+
+      it('should redirect to the login page with keeping the lesson page referrence', () => {
+        expect(res.statusCode).toBe(302);
+        expect(res._getRedirectUrl()).toBe(`/login?redirect=%2Flessons%2F${lessonId}`);
+      });
+    });
+
     describe('when the lesson does not exist', () => {
       beforeEach(() => {
         req = { user, params: { 0: '', lessonId: uniqueId.create() } };
