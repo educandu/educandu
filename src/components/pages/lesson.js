@@ -2,6 +2,7 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useUser } from '../user-context.js';
+import SectionsView from '../sections-view.js';
 import { EditOutlined } from '@ant-design/icons';
 import { useDateFormat } from '../language-context.js';
 import { EditControlPanel } from '../edit-control-panel.js';
@@ -29,7 +30,12 @@ function Lesson({ PageTemplate, initialState }) {
   return (
     <Fragment>
       <PageTemplate>
-        <div className="Lesson" />
+        <div className="Lesson">
+          <SectionsView
+            sections={lesson.sections}
+            sectionsContainerId={lesson._id}
+            />
+        </div>
       </PageTemplate>
       {isRoomOwner && (
         <EditControlPanel onEdit={() => loadScripts()}>
