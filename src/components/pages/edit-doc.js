@@ -1,7 +1,7 @@
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
-import { Menu, Button, Dropdown } from 'antd';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import SectionEditor from '../section-editor.js';
@@ -20,6 +20,7 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PlusOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { documentRevisionShape, sectionShape } from '../../ui/default-prop-types.js';
+import PluginSelectorDialog from '../plugin-selector-dialog.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -84,6 +85,7 @@ function EditDoc({ initialState, PageTemplate }) {
 
   const { documentRevision, proposedSections } = initialState;
   const [state, setState] = useState(createStateFromDocumentRevision(documentRevision, proposedSections));
+  const [isPluginSelectorDialogVisible, setIsPluginSelectorDialogVisible] = useState(false);
 
   const mergeStateFromNewDocumentRevision = (prevState, newDocumentRevision) => {
     const updatedRevision = cloneDeep(newDocumentRevision);
@@ -218,24 +220,8 @@ function EditDoc({ initialState, PageTemplate }) {
     });
   };
 
-  const handleNewSectionClick = pluginInfo => {
-    const newSection = {
-      key: uniqueId.create(),
-      revision: null,
-      type: pluginInfo.type,
-      deletedOn: null,
-      deletedBy: null,
-      deletedBecause: null,
-      content: pluginInfo.getDefaultContent(t)
-    };
-    setState(prevState => ({
-      ...prevState,
-      editedDocumentRevision: {
-        ...prevState.editedDocumentRevision,
-        sections: [...prevState.editedDocumentRevision.sections, newSection]
-      },
-      isDirty: true
-    }));
+  const handleNewSectionClick = () => {
+    setIsPluginSelectorDialogVisible(true);
   };
 
   const handleSaveClick = async () => {
@@ -297,27 +283,33 @@ function EditDoc({ initialState, PageTemplate }) {
     }
   };
 
-  const availablePlugins = infoFactory.getRegisteredTypes()
-    .map(typeName => infoFactory.createInfo(typeName))
-    .map(info => ({ info, handleNew: handleNewSectionClick.bind(this, info) }));
+  const handlePluginTypeSelected = pluginType => {
+    const pluginInfo = infoFactory.createInfo(pluginType);
+    const newSection = {
+      key: uniqueId.create(),
+      revision: null,
+      type: pluginInfo.type,
+      deletedOn: null,
+      deletedBy: null,
+      deletedBecause: null,
+      content: pluginInfo.getDefaultContent(t)
+    };
+    setState(prevState => ({
+      ...prevState,
+      editedDocumentRevision: {
+        ...prevState.editedDocumentRevision,
+        sections: [...prevState.editedDocumentRevision.sections, newSection]
+      },
+      isDirty: true
+    }));
+    setIsPluginSelectorDialogVisible(false);
+  };
+
+  const handlePluginTypeSelectionCancel = () => {
+    setIsPluginSelectorDialogVisible(false);
+  };
 
   const { editedDocumentRevision, isDirty, invalidSectionKeys, proposedSectionKeys, invalidMetadata } = state;
-
-  const newSectionMenu = (
-    <Menu>
-      {availablePlugins.map(({ info, handleNew }) => (
-        <Menu.Item key={info.type}>
-          <a rel="noopener noreferrer" onClick={handleNew}>{info.getName(t)}</a>
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
-
-  const newSectionDropdown = (
-    <Dropdown key="new-section-dropdown" overlay={newSectionMenu} placement="topCenter">
-      <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" />
-    </Dropdown>
-  );
 
   const headerActions = [];
   if (isDirty && !invalidSectionKeys.length && !invalidMetadata) {
@@ -410,9 +402,10 @@ function EditDoc({ initialState, PageTemplate }) {
           </Droppable>
         </DragDropContext>
         <aside className="EditDocPage-addSectionButton">
-          {newSectionDropdown}
+          <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewSectionClick} />
         </aside>
       </div>
+      <PluginSelectorDialog visible={isPluginSelectorDialogVisible} onSelected={handlePluginTypeSelected} onCancel={handlePluginTypeSelectionCancel} />
     </PageTemplate>
   );
 }

@@ -1,4 +1,6 @@
+import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 export default class Annotation {
@@ -13,6 +15,10 @@ export default class Annotation {
 
   getName(t) {
     return t('annotation:name');
+  }
+
+  getIcon() {
+    return <InfoCircleOutlined />;
   }
 
   getDefaultContent(t) {

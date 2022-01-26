@@ -1,4 +1,6 @@
+import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { NumberOutlined } from '@ant-design/icons';
 
 export default class AbcNotation {
   static get typeName() { return 'abc-notation'; }
@@ -9,6 +11,10 @@ export default class AbcNotation {
 
   getName(t) {
     return t('abcNotation:name');
+  }
+
+  getIcon() {
+    return <NumberOutlined />;
   }
 
   getDefaultContent() {

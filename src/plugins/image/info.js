@@ -1,5 +1,7 @@
+import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PictureOutlined } from '@ant-design/icons';
 
 export default class Image {
   static get typeName() { return 'image'; }
@@ -10,6 +12,10 @@ export default class Image {
 
   getName(t) {
     return t('image:name');
+  }
+
+  getIcon() {
+    return <PictureOutlined />;
   }
 
   getDefaultContent() {

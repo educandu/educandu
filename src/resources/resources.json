@@ -794,6 +794,20 @@
     }
   },
   {
+    "namespace": "pluginSelectorDialog",
+    "language": "en",
+    "resources": {
+      "title": "Select plugin"
+    }
+  },
+  {
+    "namespace": "pluginSelectorDialog",
+    "language": "de",
+    "resources": {
+      "title": "Plugin auswählen"
+    }
+  },
+  {
     "namespace": "profileTab",
     "language": "en",
     "resources": {
@@ -1191,7 +1205,7 @@
     "namespace": "earTraining",
     "language": "en",
     "resources": {
-      "name": "Ear training exercise",
+      "name": "Ear training",
       "nextExercise": "Next exercise",
       "solve": "Solve",
       "reset": "Reset",
@@ -1214,7 +1228,7 @@
     "namespace": "earTraining",
     "language": "de",
     "resources": {
-      "name": "Gehörbildungsübung",
+      "name": "Gehörbildung",
       "nextExercise": "Nächste Übung",
       "solve": "Auflösen",
       "reset": "Zurücksetzen",

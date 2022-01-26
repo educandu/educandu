@@ -1,0 +1,41 @@
+@grid-selector-icon-size: 32px;
+@grid-selector-item-width: 3 * @grid-selector-icon-size;
+
+.GridSelector {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: @edu-button-spacing;
+  grid-template-columns: repeat(auto-fill, minmax(min(@grid-selector-item-width, 100%), 1fr));
+}
+
+.GridSelector-item {
+  display: grid;
+  grid-auto-flow: row;
+  align-items: center;
+  justify-items: center;
+  gap: 2px;
+  height: auto;
+  width: 100%;
+  margin: 0;
+  padding: @edu-button-spacing;
+  border: 1px solid transparent;
+  border-radius: @edu-border-radius-base;
+  cursor: pointer;
+  user-select: none;
+
+  &.is-selected {
+    .m-selected-item();
+    .m-hide-browser-keyboard-focus();
+
+    &:focus, &:focus-within {
+      .m-selected-item-focused();
+    }
+  }
+}
+
+.GridSelector-itemIcon {
+  font-size: @grid-selector-icon-size;
+}
+
+.GridSelector-itemLabel {}

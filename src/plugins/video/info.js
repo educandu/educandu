@@ -1,5 +1,7 @@
+import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { VideoCameraOutlined } from '@ant-design/icons';
 
 export default class Video {
   static get typeName() { return 'video'; }
@@ -10,6 +12,10 @@ export default class Video {
 
   getName(t) {
     return t('video:name');
+  }
+
+  getIcon() {
+    return <VideoCameraOutlined />;
   }
 
   getDefaultContent() {

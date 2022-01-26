@@ -1,4 +1,6 @@
+import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { MergeCellsOutlined } from '@ant-design/icons';
 import { MEDIA_KIND, MEDIA_TYPE } from './constants.js';
 
 export default class Anavis {
@@ -10,6 +12,10 @@ export default class Anavis {
 
   getName(t) {
     return t('anavis:name');
+  }
+
+  getIcon() {
+    return <MergeCellsOutlined />;
   }
 
   getDefaultContent(t) {

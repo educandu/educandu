@@ -1,4 +1,6 @@
+import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { GlobalOutlined } from '@ant-design/icons';
 
 export default class Iframe {
   static get typeName() { return 'iframe'; }
@@ -9,6 +11,10 @@ export default class Iframe {
 
   getName(t) {
     return t('iframe:name');
+  }
+
+  getIcon() {
+    return <GlobalOutlined />;
   }
 
   getDefaultContent() {
