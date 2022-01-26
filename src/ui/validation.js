@@ -6,7 +6,7 @@ const URL_SECURE_PROTO_REGEX = /^https:\/\/.+$/;
 
 export const MARKDOWN_REGEX_BOLD_OR_ITALIC_WITHIN_HEADERS = /^[#]+\s*[_*]+.+[_*]+\s*[#]*\s*$/m;
 
-export function validateUrl(url, t, { allowEmpty = false, allowInsecure = false } = {}) {
+export function validateUrl(url, t, { allowEmpty = false, allowInsecure = false } = { allowEmpty: false, allowInsecure: false }) {
   let validateStatus;
   let help;
 
