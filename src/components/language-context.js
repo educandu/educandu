@@ -3,6 +3,7 @@ import 'moment/locale/de.js';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import { ConfigProvider } from 'antd';
+import cookie from '../common/cookie.js';
 import enUSNs from 'antd/lib/locale/en_US.js';
 import deDENs from 'antd/lib/locale/de_DE.js';
 import { I18nextProvider } from 'react-i18next';
@@ -40,7 +41,7 @@ function determineAntdLocale(language) {
 }
 
 function setLanguageCookie(language) {
-  document.cookie = `${UI_LANGUAGE_COOKIE_NAME}=${encodeURIComponent(language)}; expires=${UI_LANGUAGE_COOKIE_EXPIRES}`;
+  cookie.set(UI_LANGUAGE_COOKIE_NAME, language, UI_LANGUAGE_COOKIE_EXPIRES);
 }
 
 const createLanguageAndLocale = memoizee(language => {
