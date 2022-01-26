@@ -11,7 +11,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-const formInputLayouts = {
+const editModeFormInputLayouts = {
   labelCol: { xs: { span: 12 }, sm: { span: 12 } },
   wrapperCol: { xs: { span: 12 }, sm: { span: 12 } }
 };
@@ -45,12 +45,14 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
     await onFieldsChange(...args);
   };
 
+  const formInputsLayouts = editMode ? editModeFormInputLayouts : {};
+
   return (
     <Form onFinish={handleFinish} onFieldsChange={handleFieldsChange} name="room-metadata-form" ref={formRef} layout="vertical">
-      <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name} {...formInputLayouts}>
+      <FormItem label={t('common:name')} name="name" rules={nameValidationRules} initialValue={room.name} {...formInputsLayouts}>
         <Input />
       </FormItem>
-      <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug} {...formInputLayouts}>
+      <FormItem label={t('common:slug')} name="slug" rules={slugValidationRules} initialValue={room.slug} {...formInputsLayouts}>
         <Input />
       </FormItem>
       <FormItem label={t('common:access')} name="access" initialValue={room.access}>

@@ -1,6 +1,6 @@
 import sut from './input-validators.js';
 
-describe.only('input-validators', () => {
+describe('input-validators', () => {
 
   describe('isValidPassword', () => {
     let result;

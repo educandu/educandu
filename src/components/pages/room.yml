@@ -1,12 +1,12 @@
-roomOwner:
-  en: Room owner
-  de: Raum Eigentümer
+privateRoomSubtitle:
+  en: Private room
+  de: privater Raum
+publicRoomSubtitle:
+  en: Public room
+  de: öffentlicher Raum
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am
-createInvitationButton:
-  en: Create an invitation
-  de: Einladung erstellen
 roomMembersHeader:
   en: Room members ({count})
   de: Raummitglieder ({count})
@@ -22,9 +22,15 @@ membersTabTitle:
 settingsTabTitle:
   en: Settings
   de: Einstellungen
+lessonsPlaceholder:
+  en: The room does not contain any lessons
+  de: Der Raum enthält keine Unterrichtseinheiten
 thisWeek:
   en: This week
   de: Diese Woche
+notScheduled:
+  en: not scheduled
+  de: nicht terminiert
 deleteRoomButton:
   en: Delete room
   de: Raum löschen

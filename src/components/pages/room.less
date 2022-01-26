@@ -1,31 +1,69 @@
+@room-date-label-width: 150px;
+
 .Room {
   .m-content;
 }
 
-.Room-sectionCollapse {
-  margin-top: 16px;
+.Room-title {
+  margin-bottom: 0;
 }
 
-.Room-sectionCollapseRow {
+.Room-subtitle {
   display: flex;
-  justify-content: space-between;
+  font-size: 13px;
+  padding-left: 20px;
+}
+
+.Room-subtitleIcon {
+  padding-right: 8px;
 }
 
 .Room-description {
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .Room-lessonInfo {
   display: flex;
-  padding: 10px 0;
+  flex-wrap: wrap;
+  padding: 10px;
+
+  &.isHighlighted {
+    border: 1px solid fade(@edu-primary-color, 10%);
+    background-color: fade(@edu-primary-color, 5%);
+    border-left: none;
+    border-right: none;
+  }
 }
 
-.Room-lessonWeek {
-  width: 150px;
+.Room-lessonStartsOn {
+  flex: 0 1 @room-date-label-width;
+}
+
+.Room-lessonTitle {
+  flex: 1 1 auto;
+  padding-left: 15px;
+}
+
+.Room-lessonTimeUntil {
+  flex: 0 1 auto;
+  font-size: 13px;
+  margin-left: auto;
+  margin-right: 0;
+  padding-left: 15px;
 }
 
 .Room-newLessonButton {
   margin-top: 15px;
+}
+
+.Room-membersRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Room-membersRowDate {
+  display: block;
+  width: @room-date-label-width;
 }
 
 .Room-card {
@@ -38,6 +76,12 @@
   &.Room-card--danger {
     border-color: @red-7;
   }
+}
+
+.Room-cardButton {
+  display: block;
+  margin-left: 20px;
+  margin-right: auto;
 }
 
 .Room-cardDangerAction {

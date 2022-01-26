@@ -1,3 +1,4 @@
+import by from 'thenby';
 import uniqueId from '../utils/unique-id.js';
 import LessonStore from '../stores/lesson-store.js';
 
@@ -25,7 +26,7 @@ class LessonService {
 
   async getLessons(roomId) {
     const lessons = await this.lessonStore.find({ roomId }, { projection: roomLessonsProjection });
-    return lessons;
+    return lessons.sort(by(l => l.schedule?.startsOn));
   }
 
   async createLesson({ user, roomId, title, slug, language, schedule }) {
