@@ -23,7 +23,7 @@ const FormItem = Form.Item;
 function Register({ PageTemplate, SiteLogo }) {
   const formRef = useRef(null);
   const settings = useSettings();
-  const language = useLanguage();
+  const { language } = useLanguage();
   const { t } = useTranslation('register');
   const userApiClient = useService(UserApiClient);
 
@@ -92,6 +92,8 @@ function Register({ PageTemplate, SiteLogo }) {
     }
   ];
 
+  const termsPage = settings.termsPage?.[language];
+
   const registrationForm = (
     <div className="RegisterPage-form">
       <Form ref={formRef} onFinish={handleFinish} scrollToFirstError>
@@ -106,10 +108,8 @@ function Register({ PageTemplate, SiteLogo }) {
               components={[
                 <a
                   key="terms-link"
-                  title={settings.termsPage?.[language]?.linkTitle || null}
-                  href={settings.termsPage?.[language]?.documentKey
-                    ? urls.getDocUrl(settings.termsPage[language].documentKey, settings.termsPage[language].documentSlug)
-                    : '#'}
+                  title={termsPage?.linkTitle || null}
+                  href={termsPage?.documentKey ? urls.getDocUrl(termsPage.documentKey, termsPage.documentSlug) : '#'}
                   />
               ]}
               />
