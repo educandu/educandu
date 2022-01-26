@@ -1,5 +1,7 @@
+import React from 'react';
 import { IMAGE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { AppstoreOutlined } from '@ant-design/icons';
 
 export default class ImageTiles {
   static get typeName() { return 'image-tiles'; }
@@ -10,6 +12,10 @@ export default class ImageTiles {
 
   getName(t) {
     return t('imageTiles:name');
+  }
+
+  getIcon() {
+    return <AppstoreOutlined />;
   }
 
   getDefaultContent() {

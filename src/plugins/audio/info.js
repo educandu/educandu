@@ -1,5 +1,7 @@
+import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { SoundOutlined } from '@ant-design/icons';
 
 export default class Audio {
   static get typeName() { return 'audio'; }
@@ -10,6 +12,10 @@ export default class Audio {
 
   getName(t) {
     return t('audio:name');
+  }
+
+  getIcon() {
+    return <SoundOutlined />;
   }
 
   getDefaultContent() {

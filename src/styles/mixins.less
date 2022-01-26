@@ -26,3 +26,14 @@
     margin-right: 0;
   }
 }
+
+.m-selected-item {
+  color: @edu-primary-color;
+  border-color: @edu-primary-color;
+  background-color: @edu-selection-background-color;
+}
+
+.m-selected-item-focused {
+  .m-selected-item();
+  box-shadow: 0 0 0 @edu-border-radius-base @edu-selection-background-color;
+}

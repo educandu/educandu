@@ -1,4 +1,6 @@
+import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { CheckSquareOutlined } from '@ant-design/icons';
 
 export default class QuickTester {
   static get typeName() { return 'quick-tester'; }
@@ -9,6 +11,10 @@ export default class QuickTester {
 
   getName(t) {
     return t('quickTester:name');
+  }
+
+  getIcon() {
+    return <CheckSquareOutlined />;
   }
 
   getDefaultContent(t) {

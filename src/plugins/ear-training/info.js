@@ -1,6 +1,7 @@
-import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
+import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-
+import { AudioOutlined } from '@ant-design/icons';
+import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
 export default class EarTraining {
   static get typeName() { return 'ear-training'; }
 
@@ -10,6 +11,10 @@ export default class EarTraining {
 
   getName(t) {
     return t('earTraining:name');
+  }
+
+  getIcon() {
+    return <AudioOutlined />;
   }
 
   getDefaultContent() {

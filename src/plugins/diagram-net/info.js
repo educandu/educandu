@@ -1,4 +1,6 @@
+import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { PieChartOutlined } from '@ant-design/icons';
 
 export default class DiagramNet {
   static get typeName() { return 'diagram-net'; }
@@ -9,6 +11,10 @@ export default class DiagramNet {
 
   getName(t) {
     return t('diagramNet:name');
+  }
+
+  getIcon() {
+    return <PieChartOutlined />;
   }
 
   getDefaultContent() {
