@@ -133,7 +133,7 @@ class ImageEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientConfig, t } = this.props;
+    const { sectionContainerId, content, clientConfig, t } = this.props;
     const { sourceType, sourceUrl, maxWidth, text, effect } = content;
 
     const effectType = effect?.type || EFFECT_TYPE.none;
@@ -167,8 +167,8 @@ class ImageEditor extends React.Component {
                   />
                 <CdnFilePicker
                   rootPrefix="media"
-                  uploadPrefix={`media/${docKey}`}
-                  initialPrefix={`media/${docKey}`}
+                  uploadPrefix={`media/${sectionContainerId}`}
+                  initialPrefix={`media/${sectionContainerId}`}
                   fileName={sourceUrl}
                   onFileNameChanged={this.handleInternalSourceUrlFileNameChanged}
                   />
@@ -209,8 +209,8 @@ class ImageEditor extends React.Component {
                         />
                       <CdnFilePicker
                         rootPrefix="media"
-                        uploadPrefix={`media/${docKey}`}
-                        initialPrefix={`media/${docKey}`}
+                        uploadPrefix={`media/${sectionContainerId}`}
+                        initialPrefix={`media/${sectionContainerId}`}
                         fileName={effect.sourceUrl}
                         onFileNameChanged={this.handleEffectInternalSourceUrlFileNameChanged}
                         />

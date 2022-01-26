@@ -294,7 +294,7 @@ class AnavisEditor extends React.Component {
   }
 
   render() {
-    const { docKey, content, clientConfig, t } = this.props;
+    const { sectionContainerId, content, clientConfig, t } = this.props;
     const { width, parts, media } = content;
     const { kind, type, url, text, aspectRatio } = media;
 
@@ -330,8 +330,8 @@ class AnavisEditor extends React.Component {
                   />
                 <CdnFilePicker
                   rootPrefix="media"
-                  uploadPrefix={`media/${docKey}`}
-                  initialPrefix={`media/${docKey}`}
+                  uploadPrefix={`media/${sectionContainerId}`}
+                  initialPrefix={`media/${sectionContainerId}`}
                   fileName={url}
                   onFileNameChanged={this.handleInternalUrlFileNameChanged}
                   />

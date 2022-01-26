@@ -11,7 +11,7 @@ import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import SectionActionDropdown from './section-action-dropdown.js';
 
-function SectionDisplay({ docKey, section, onAction }) {
+function SectionDisplay({ section, onAction }) {
   const infoFactory = useService(InfoFactory);
   const [isMouseOver, setIsMouseOver] = React.useState(false);
   const [isDropDownVisible, setIsDropDownVisible] = React.useState(false);
@@ -46,14 +46,7 @@ function SectionDisplay({ docKey, section, onAction }) {
 
   const getDisplayComponent = () => {
     const DisplayComponent = rendererFactory.createRenderer(section.type).getDisplayComponent();
-
-    return (
-      <DisplayComponent
-        docKey={docKey}
-        sectionKey={section.key}
-        content={section.content}
-        />
-    );
+    return <DisplayComponent content={section.content} />;
   };
 
   let displayComponent;
@@ -79,7 +72,6 @@ function SectionDisplay({ docKey, section, onAction }) {
 }
 
 SectionDisplay.propTypes = {
-  docKey: PropTypes.string.isRequired,
   onAction: PropTypes.func,
   section: sectionShape.isRequired
 };

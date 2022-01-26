@@ -397,7 +397,7 @@ function EditDoc({ initialState, PageTemplate }) {
                             isInvalid={invalidSectionKeys.includes(section.key)}
                             isProposed={proposedSectionKeys.includes(section.key)}
                             section={section}
-                            documentRevision={editedDocumentRevision}
+                            sectionContainerId={editedDocumentRevision.key}
                             />
                         </section>
                       )}

@@ -8,13 +8,12 @@ export const translationProps = {
 };
 
 export const sectionDisplayProps = {
-  docKey: PropTypes.string.isRequired,
-  sectionKey: PropTypes.string.isRequired,
   content: PropTypes.any
 };
 
 export const sectionEditorProps = {
   ...sectionDisplayProps,
+  sectionContainerId: PropTypes.string.isRequired,
   onContentChanged: PropTypes.func.isRequired
 };
 

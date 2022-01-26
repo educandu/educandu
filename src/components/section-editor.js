@@ -7,10 +7,10 @@ import { useService } from './container-context.js';
 import InfoFactory from '../plugins/info-factory.js';
 import { Menu, Radio, Button, Dropdown } from 'antd';
 import EditorFactory from '../plugins/editor-factory.js';
+import { sectionShape } from '../ui/default-prop-types.js';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import { confirmSectionDelete } from './confirmation-dialogs.js';
-import { documentRevisionShape, sectionShape } from '../ui/default-prop-types.js';
 import {
   SettingOutlined,
   ArrowUpOutlined,
@@ -33,6 +33,7 @@ const SECTION_MENU_KEY_DUPLICATE = 'duplicate';
 
 function SectionEditor({
   section,
+  sectionContainerId,
   onSectionMovedUp,
   onSectionMovedDown,
   onSectionDeleted,
@@ -40,7 +41,6 @@ function SectionEditor({
   onSectionRefused,
   onContentChanged,
   onSectionApproved,
-  documentRevision,
   dragHandleProps,
   isHighlighted,
   isProposed,
@@ -100,8 +100,7 @@ function SectionEditor({
       const DisplayComponent = rendererFactory.createRenderer(section.type).getDisplayComponent();
       return (
         <DisplayComponent
-          docKey={documentRevision.key}
-          sectionKey={section.key}
+          sectionContainerId={sectionContainerId}
           content={section.content}
           />
       );
@@ -111,8 +110,7 @@ function SectionEditor({
       const EditorComponent = editorFactory.createEditor(section.type).getEditorComponent();
       return (
         <EditorComponent
-          docKey={documentRevision.key}
-          sectionKey={section.key}
+          sectionContainerId={sectionContainerId}
           content={section.content}
           onContentChanged={handleContentChange}
           />
@@ -216,7 +214,6 @@ function SectionEditor({
 }
 
 SectionEditor.propTypes = {
-  documentRevision: documentRevisionShape.isRequired,
   dragHandleProps: PropTypes.object,
   isHighlighted: PropTypes.bool,
   isInvalid: PropTypes.bool.isRequired,
@@ -228,7 +225,8 @@ SectionEditor.propTypes = {
   onSectionMovedDown: PropTypes.func.isRequired,
   onSectionMovedUp: PropTypes.func.isRequired,
   onSectionRefused: PropTypes.func.isRequired,
-  section: sectionShape.isRequired
+  section: sectionShape.isRequired,
+  sectionContainerId: PropTypes.string.isRequired
 };
 
 SectionEditor.defaultProps = {

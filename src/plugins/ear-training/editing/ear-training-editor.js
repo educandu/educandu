@@ -89,7 +89,7 @@ class EarTrainingEditor extends React.Component {
     this.expandedRowRender = (record, index) => (
       <EarTrainingSoundEditor
         testIndex={index}
-        docKey={this.props.docKey}
+        sectionContainerId={this.props.sectionContainerId}
         sound={record.sound || { ...defaultSound }}
         onSoundChanged={this.handleSoundChanged}
         />
