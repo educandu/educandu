@@ -269,7 +269,6 @@ function Doc({ initialState, PageTemplate }) {
         { state.revisions.length > 0 && revisionPicker}
         <SectionsView
           sections={state.currentDocOrRevision.sections}
-          sectionsContainerId={state.currentDocOrRevision.key}
           onAction={isSectionHardDeletionAllowed ? handleAction : null}
           />
       </div>

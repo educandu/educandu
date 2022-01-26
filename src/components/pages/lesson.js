@@ -49,7 +49,6 @@ function Lesson({ PageTemplate, initialState }) {
         <div className="Lesson">
           <SectionsView
             sections={lesson.sections}
-            sectionsContainerId={lesson._id}
             />
         </div>
       </PageTemplate>
