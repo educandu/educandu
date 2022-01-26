@@ -61,12 +61,12 @@ export function LanguageProvider({ value, children }) {
   }, [i18n, value]);
 
   useEffect(() => {
-    i18n.on('languageChanged', lng => {
-      if (!SUPPORTED_UI_LANGUAGES.includes(lng)) {
-        throw new Error(`Not a supported language: ${lng}!`);
+    i18n.on('languageChanged', language => {
+      if (!SUPPORTED_UI_LANGUAGES.includes(language)) {
+        throw new Error(`Not a supported language: ${language}!`);
       }
-      setLanguageCookie(lng);
-      setAntdLocale(determineAntdLocale(lng));
+      setLanguageCookie(language);
+      setAntdLocale(determineAntdLocale(language));
     });
     return () => i18n.off('languageChanged');
   }, [i18n]);
@@ -102,15 +102,12 @@ export function useDateFormat() {
     const dateTimeFormat = locale === 'de-DE' ? 'DD.MM.YYYY, HH:mm' : 'MM/DD/YYYY, HH:mm';
     const localePattern = 'L, LT';
 
-    const formatDate = date => {
-      if (!date) {
-        return '';
-      }
-      return moment(date).locale(locale).format(localePattern);
-    };
+    const formatDate = date => date ? moment(date).locale(locale).format(localePattern) : '';
+    const formatTimeTo = date => date ? moment().locale(locale).to(date) : '';
 
     return {
       formatDate,
+      formatTimeTo,
       dateTimeFormat
     };
   }, [locale]);

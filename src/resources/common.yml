@@ -127,24 +127,3 @@ update:
 description:
   en: Description
   de: Beschreibung
-now:
-  en: now
-  de: jetzt
-in:
-  en: in
-  de: in
-year:
-  en: '{timeUnit, plural, =1 {# year} other {# years}}'
-  de: '{timeUnit, plural, =1 {# Jahr} other {# Jahren}}'
-month:
-  en: '{timeUnit, plural, =1 {# month} other {# months}}'
-  de: '{timeUnit, plural, =1 {# Monat} other {# Monaten}}'
-day:
-  en: '{timeUnit, plural, =1 {# day} other {# days}}'
-  de: '{timeUnit, plural, =1 {# Tag} other {# Tagen}}'
-hour:
-  en: '{timeUnit, plural, =1 {# hour} other {# hours}}'
-  de: '{timeUnit, plural, =1 {# Stunde} other {# Stunden}}'
-minute:
-  en: '{timeUnit, plural, =1 {# minute} other {# minutes}}'
-  de: '{timeUnit, plural, =1 {# Minute} other {# Minuten}}'

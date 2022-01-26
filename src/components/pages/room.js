@@ -28,7 +28,7 @@ export default function Room({ PageTemplate, initialState }) {
   const now = new Date();
   const formRef = useRef(null);
   const { t } = useTranslation('room');
-  const { formatDate } = useDateFormat();
+  const { formatDate, formatTimeTo } = useDateFormat();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
 
   const [room, setRoom] = useState(initialState.room);
@@ -103,9 +103,9 @@ export default function Room({ PageTemplate, initialState }) {
     const url = urls.getLessonUrl(lesson._id, lesson.slug);
 
     const startsOn = lesson.schedule?.startsOn;
-    const isUpcomingLesson = upcommingLesson._id === lesson._id;
+    const isUpcomingLesson = upcommingLesson?._id === lesson._id;
 
-    const timeUntil = isUpcomingLesson ? lessonsUtils.getTranslatedTimeUntil({ from: now, until: startsOn, t }) : null;
+    const timeUntil = isUpcomingLesson ? formatTimeTo(startsOn) : null;
 
     return (
       <div className="Room-lesson" key={lesson._id}>
