@@ -611,7 +611,6 @@
     "resources": {
       "confirmationSuccess": "Congratulations! You are now a member of room <0>{roomName}</0>.",
       "invitationConfirmation": "Please click on the button in order to join room <0>{roomName}</0>.",
-      "invitationConfirmationDisclaimer": "By clicking on the button you give your consent to ???",
       "joinButton": "Join room",
       "invalidOrExpiredInvitationCode": "The invitation code is invalid or expired.",
       "homeLink": "Home",
@@ -624,7 +623,6 @@
     "resources": {
       "confirmationSuccess": "Gratulation! Sie sind nun ein Mitglied des Raumes <0>{roomName}</0>.",
       "invitationConfirmation": "Bitte klicken Sie auf den Button, um dem Raum <0>{roomName}</0> beizutreten.",
-      "invitationConfirmationDisclaimer": "Mit Klick auf den Button erklären Sie sich damit einverstanden, dass ???",
       "joinButton": "Raum beitreten",
       "invalidOrExpiredInvitationCode": "Der Einladungs-Code ist ungültig oder abgelaufen.",
       "homeLink": "Home",
