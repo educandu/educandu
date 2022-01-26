@@ -49,7 +49,7 @@ class PasswordInput extends React.Component {
 
     return (
       <React.Fragment>
-        <FormItem {...formItemLayout} label={t('password')} name="password" rules={passwordValidationRules}>
+        <FormItem {...formItemLayout} label={t('common:password')} name="password" rules={passwordValidationRules}>
           <Input type="password" />
         </FormItem>
         <FormItem {...formItemLayout} label={t('passwordConfirmation')} name="confirm" rules={passwordConfirmationValidationRules} dependencies={['password']}>
