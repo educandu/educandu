@@ -41,7 +41,7 @@ function determineAntdLocale(language) {
 }
 
 function setLanguageCookie(language) {
-  cookie.set(UI_LANGUAGE_COOKIE_NAME, encodeURIComponent(language), UI_LANGUAGE_COOKIE_EXPIRES);
+  cookie.set(UI_LANGUAGE_COOKIE_NAME, language, UI_LANGUAGE_COOKIE_EXPIRES);
 }
 
 const createLanguageAndLocale = memoizee(language => {
