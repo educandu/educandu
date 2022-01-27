@@ -257,7 +257,7 @@ describe('client-data-mapper', () => {
     });
   });
 
-  describe('mapLessons', () => {
+  describe('mapLessonsMetadata', () => {
     let lessons;
 
     beforeEach(async () => {
@@ -267,35 +267,20 @@ describe('client-data-mapper', () => {
           updatedOn: new Date(),
           schedule: {
             startsOn: new Date()
-          },
-          sections: [
-            {
-              key: 'key',
-              type: 'type',
-              content: 'content',
-              other: 'other'
-            }
-          ]
+          }
         }
       ];
-      result = await sut.mapLessons(lessons);
+      result = await sut.mapLessonsMetadata(lessons);
     });
 
-    it('should map the lessons', () => {
+    it('should map the lessons metadata', () => {
       expect(result).toEqual([
         {
           createdOn: lessons[0].createdOn.toISOString(),
           updatedOn: lessons[0].updatedOn.toISOString(),
           schedule: {
             startsOn: lessons[0].schedule.startsOn.toISOString()
-          },
-          sections: [
-            {
-              key: 'key',
-              type: 'type',
-              content: 'content'
-            }
-          ]
+          }
         }
       ]);
     });

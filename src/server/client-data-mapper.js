@@ -102,8 +102,8 @@ class ClientDataMapper {
     return this._mapLesson(lesson);
   }
 
-  mapLessons(lessons) {
-    return lessons.map(lesson => this._mapLesson(lesson));
+  mapLessonsMetadata(lessons) {
+    return lessons.map(lesson => this._mapLessonMetadata(lesson));
   }
 
   _mapUser(user, allowedUserFields) {
@@ -190,17 +190,25 @@ class ClientDataMapper {
     };
   }
 
-  _mapLesson(rawLesson) {
+  _mapLessonMetadata(rawLesson) {
     const createdOn = rawLesson.createdOn && rawLesson.createdOn.toISOString();
     const updatedOn = rawLesson.updatedOn && rawLesson.updatedOn.toISOString();
     const schedule = rawLesson.schedule && this._mapLessonSchedule(rawLesson.schedule);
-    const sections = rawLesson.sections.map(section => this._mapLessonSection(section));
 
     return {
       ...rawLesson,
       createdOn,
       updatedOn,
-      schedule,
+      schedule
+    };
+  }
+
+  _mapLesson(rawLesson) {
+    const sections = rawLesson.sections.map(section => this._mapLessonSection(section));
+
+    return {
+      ...rawLesson,
+      ...this._mapLessonMetadata(rawLesson),
       sections
     };
   }
