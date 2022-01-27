@@ -1,0 +1,30 @@
+@section-display-new-min-height: 36px;
+@section-display-new-editable-padding-top: 40px;
+@section-display-new-action-button-margin: 2px;
+
+.SectionDisplayNew {
+  border: 1px dotted transparent;
+  position: relative;
+  padding: @edu-content-padding;
+  min-height: @section-display-new-min-height;
+
+  &.is-editable {
+    padding: @edu-content-padding;
+    padding-top: @section-display-new-editable-padding-top;
+    border-color: @grey-7;
+    min-height: @section-display-new-min-height + @section-display-new-editable-padding-top;
+
+    margin-bottom: 30px;
+  }
+}
+
+.SectionDisplayNew-actions {
+  display: flex;
+  position: absolute;
+  top: @section-display-new-action-button-margin;
+  right: @section-display-new-action-button-margin;
+}
+
+.SectionDisplayNew-actionButton{
+  margin-left: @section-display-new-action-button-margin;
+}
