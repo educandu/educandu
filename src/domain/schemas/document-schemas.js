@@ -1,14 +1,5 @@
 import joi from 'joi';
-import { idOrKeySchema, slugSchema, sectionDBSchema } from './shared-schemas.js';
-
-const sectionSchema = joi.object({
-  key: idOrKeySchema.required(),
-  type: joi.string().required(),
-  content: joi.alternatives().try(
-    joi.object().required(),
-    joi.any().valid(null).required()
-  ).required()
-});
+import { idOrKeySchema, slugSchema, sectionSchema, sectionDBSchema } from './shared-schemas.js';
 
 const documentRevisionAppendToSchema = joi.object({
   key: idOrKeySchema.required(),

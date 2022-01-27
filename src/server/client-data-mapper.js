@@ -194,16 +194,26 @@ class ClientDataMapper {
     const createdOn = rawLesson.createdOn && rawLesson.createdOn.toISOString();
     const updatedOn = rawLesson.updatedOn && rawLesson.updatedOn.toISOString();
     const schedule = rawLesson.schedule && this._mapLessonSchedule(rawLesson.schedule);
+    const sections = rawLesson.sections.map(section => this._mapLessonSection(section));
 
     return {
       ...rawLesson,
       createdOn,
       updatedOn,
-      schedule
+      schedule,
+      sections
     };
   }
 
-  _mapSection(section, userMap, allowedUserFields) {
+  _mapLessonSection(section) {
+    return {
+      key: section.key,
+      type: section.type,
+      content: section.content
+    };
+  }
+
+  _mapDocumentSection(section, userMap, allowedUserFields) {
     return {
       ...section,
       deletedBy: section.deletedBy ? this._mapUser(userMap.get(section.deletedBy), allowedUserFields) : section.deletedBy
@@ -227,7 +237,7 @@ class ClientDataMapper {
           result[key] = value.map(c => this._mapUser(userMap.get(c), allowedUserFields));
           break;
         case 'sections':
-          result[key] = value.map(s => this._mapSection(s, userMap, allowedUserFields));
+          result[key] = value.map(s => this._mapDocumentSection(s, userMap, allowedUserFields));
           break;
         case 'cdnResources':
           break;

@@ -267,20 +267,35 @@ describe('client-data-mapper', () => {
           updatedOn: new Date(),
           schedule: {
             startsOn: new Date()
-          }
+          },
+          sections: [
+            {
+              key: 'key',
+              type: 'type',
+              content: 'content',
+              other: 'other'
+            }
+          ]
         }
       ];
       result = await sut.mapLessons(lessons);
     });
 
-    it('shoult map the lessons', () => {
+    it('should map the lessons', () => {
       expect(result).toEqual([
         {
           createdOn: lessons[0].createdOn.toISOString(),
           updatedOn: lessons[0].updatedOn.toISOString(),
           schedule: {
             startsOn: lessons[0].schedule.startsOn.toISOString()
-          }
+          },
+          sections: [
+            {
+              key: 'key',
+              type: 'type',
+              content: 'content'
+            }
+          ]
         }
       ]);
     });

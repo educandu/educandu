@@ -15,7 +15,8 @@ import {
   getLessonParamsSchema,
   postLessonBodySchema,
   patchLessonParamsSchema,
-  patchLessonBodySchema
+  patchLessonMetadataBodySchema,
+  patchLessonSectionsBodySchema
 } from '../domain/schemas/lesson-schemas.js';
 
 const jsonParser = express.json();
@@ -78,10 +79,32 @@ export default class LessonController {
     return res.status(201).send(newLesson);
   }
 
-  async handlePatchLesson(req, res) {
-    const { user } = req;
+  async handlePatchLessonMetadata(req, res) {
     const { lessonId } = req.params;
     const { title, slug, language, schedule } = req.body;
+
+    await this._authorizeLessonAccess(req);
+
+    const updatedLesson = await this.lessonService.updateLessonMetadata(
+      lessonId,
+      { title, slug, language, schedule }
+    );
+    return res.status(201).send(updatedLesson);
+  }
+
+  async handlePatchLessonSections(req, res) {
+    const { lessonId } = req.params;
+    const { sections } = req.body;
+
+    await this._authorizeLessonAccess(req);
+
+    const updatedLesson = await this.lessonService.updateLessonSections(lessonId, { sections });
+    return res.status(201).send(updatedLesson);
+  }
+
+  async _authorizeLessonAccess(req) {
+    const { user } = req;
+    const { lessonId } = req.params;
 
     const lesson = await this.lessonService.getLessonById(lessonId);
 
@@ -94,9 +117,6 @@ export default class LessonController {
     if (room.owner !== user._id) {
       throw new Forbidden();
     }
-
-    const updatedLesson = await this.lessonService.updateLesson({ ...lesson, title, slug, language, schedule });
-    return res.status(201).send(updatedLesson);
   }
 
   registerPages(router) {
@@ -117,9 +137,15 @@ export default class LessonController {
     );
 
     router.patch(
-      '/api/v1/lessons/:lessonId',
-      [needsPermission(permissions.OWN_LESSONS), jsonParser, validateParams(patchLessonParamsSchema), validateBody(patchLessonBodySchema)],
-      (req, res) => this.handlePatchLesson(req, res)
+      '/api/v1/lessons/:lessonId/metadata',
+      [needsPermission(permissions.OWN_LESSONS), jsonParser, validateParams(patchLessonParamsSchema), validateBody(patchLessonMetadataBodySchema)],
+      (req, res) => this.handlePatchLessonMetadata(req, res)
+    );
+
+    router.patch(
+      '/api/v1/lessons/:lessonId/sections',
+      [needsPermission(permissions.OWN_LESSONS), jsonParser, validateParams(patchLessonParamsSchema), validateBody(patchLessonSectionsBodySchema)],
+      (req, res) => this.handlePatchLessonSections(req, res)
     );
   }
 }

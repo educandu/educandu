@@ -17,3 +17,12 @@ export const sectionDBSchema = joi.object({
     joi.any().allow(null).required()
   ).required()
 });
+
+export const sectionSchema = joi.object({
+  key: idOrKeySchema.required(),
+  type: joi.string().required(),
+  content: joi.alternatives().try(
+    joi.object().required(),
+    joi.any().valid(null).required()
+  ).required()
+});
