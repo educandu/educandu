@@ -7,7 +7,7 @@ import { useService } from './container-context.js';
 import InfoFactory from '../plugins/info-factory.js';
 import { QuestionOutlined } from '@ant-design/icons';
 
-function PluginSelectorDialog({ visible, onSelected, onCancel }) {
+function PluginSelectorDialog({ visible, onSelect, onCancel }) {
   const { t } = useTranslation('pluginSelectorDialog');
   const infoFactory = useService(InfoFactory);
 
@@ -24,7 +24,7 @@ function PluginSelectorDialog({ visible, onSelected, onCancel }) {
   const [selectedPluginType, setSelectedPluginType] = useState(pluginItems[0]?.key || null);
 
   const handleOk = () => {
-    onSelected?.(selectedPluginType);
+    onSelect(selectedPluginType);
   };
 
   const handleCancel = () => onCancel?.();
@@ -32,7 +32,7 @@ function PluginSelectorDialog({ visible, onSelected, onCancel }) {
   const handleSelectionChange = (type, isConfirmed) => {
     setSelectedPluginType(type);
     if (isConfirmed) {
-      onSelected(type);
+      onSelect(type);
     }
   };
 
@@ -56,13 +56,13 @@ function PluginSelectorDialog({ visible, onSelected, onCancel }) {
 
 PluginSelectorDialog.propTypes = {
   onCancel: PropTypes.func,
-  onSelected: PropTypes.func,
+  onSelect: PropTypes.func,
   visible: PropTypes.bool
 };
 
 PluginSelectorDialog.defaultProps = {
   onCancel: () => {},
-  onSelected: () => {},
+  onSelect: () => {},
   visible: false
 };
 

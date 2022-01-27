@@ -2,14 +2,21 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
 import InfoFactory from '../plugins/info-factory.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
-import { ArrowDownOutlined, ArrowUpOutlined, DeleteOutlined, DragOutlined, EditOutlined, SnippetsOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  DeleteOutlined,
+  DragOutlined,
+  EditOutlined,
+  SnippetsOutlined
+} from '@ant-design/icons';
 
 function SectionDisplayNew({
   section,

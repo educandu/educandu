@@ -3,16 +3,19 @@ import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
+import uniqueId from '../../utils/unique-id.js';
 import { EditOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
-import { moveItem } from '../../utils/array-utils.js';
+import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
+import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import SectionsDisplayNew from '../sections-display-new.js';
 import { EditControlPanel } from '../edit-control-panel.js';
 import { lessonShape } from '../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { insertItemAt, moveItem } from '../../utils/array-utils.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 
@@ -20,8 +23,9 @@ const logger = new Logger(import.meta.url);
 
 function Lesson({ PageTemplate, initialState }) {
   const user = useUser();
-  const { formatDate } = useDateFormat();
   const { t } = useTranslation();
+  const { formatDate } = useDateFormat();
+  const infoFactory = useService(InfoFactory);
 
   const isRoomOwner = user._id === initialState.roomOwner;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
@@ -85,6 +89,17 @@ function Lesson({ PageTemplate, initialState }) {
     setCurrentSections(reorderedSections);
   };
 
+  const handleSectionInserted = (pluginType, index) => {
+    const pluginInfo = infoFactory.createInfo(pluginType);
+    const newSection = {
+      key: uniqueId.create(),
+      type: pluginType,
+      content: pluginInfo.getDefaultContent(t)
+    };
+    const newSections = insertItemAt(currentSections, newSection, index);
+    setCurrentSections(newSections);
+  };
+
   return (
     <Fragment>
       <PageTemplate>
@@ -93,6 +108,7 @@ function Lesson({ PageTemplate, initialState }) {
             sections={currentSections}
             canEdit={isInEditMode}
             onSectionMoved={handleSectionMoved}
+            onSectionInserted={handleSectionInserted}
             />
         </div>
       </PageTemplate>

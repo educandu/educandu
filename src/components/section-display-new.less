@@ -12,16 +12,20 @@
   &.is-editable {
     padding: @edu-content-padding;
     padding-top: @section-display-new-editable-padding-top;
-    border-color: @grey-7;
+    border-color: @grey-5;
     min-height: @section-display-new-min-height + @section-display-new-editable-padding-top;
-  }
 
-  &.is-dragged {
-    border: 1px solid @grey-6;
-  }
+    &:hover {
+      border: 1px solid @grey-6;
+    }
 
-  &.is-other-section-dragged {
-    opacity: 0.60;
+    &.is-dragged {
+      border: 1px solid @grey-6;
+    }
+
+    &.is-other-section-dragged {
+      opacity: 0.60;
+    }
   }
 }
 

@@ -20,6 +20,24 @@ export const moveItem = (items, fromIndex, toIndex) => {
   return result;
 };
 
+export function insertItemAt(items, item, index) {
+  const lastIndex = items.length - 1;
+
+  if (index === lastIndex + 1) {
+    return [...items, item];
+  }
+
+  if (index === 0) {
+    return [item, ...items];
+  }
+
+  if (index > 0 && index <= lastIndex) {
+    return [...items.slice(0, index), item, ...items.slice(index)];
+  }
+
+  return items;
+}
+
 export function removeItemAt(items, index) {
   const lastIndex = items.length - 1;
   if (index < 0 || index > lastIndex) {
