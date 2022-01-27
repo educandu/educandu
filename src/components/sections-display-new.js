@@ -1,13 +1,18 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import ShallowUpdateList from './shallow-update-list.js';
+import React, { useState } from 'react';
 import SectionDisplayNew from './section-display-new.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function SectionsDisplayNew({ sections, canEdit, onSectionMoved }) {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
 
   const handleDragEnd = ({ source, destination }) => {
+    setIsDragging(false);
     if (destination) {
       onSectionMoved(source.index, destination.index);
     }
@@ -21,45 +26,50 @@ function SectionsDisplayNew({ sections, canEdit, onSectionMoved }) {
     }
   };
 
-  const renderSection = (section, index, dragHandleProps) => (
-    <SectionDisplayNew
+  const renderSection = ({ section, index, dragHandleProps, isDragged }) => {
+    return (<SectionDisplayNew
       key={section.key}
       section={section}
       canEdit={!!dragHandleProps && canEdit}
       dragHandleProps={dragHandleProps}
+      isDragged={isDragged}
+      isOtherSectionDragged={isDragging && !isDragged}
       onSectionMoveUp={() => handleSectionMoved(index, index - 1)}
       onSectionMoveDown={() => handleSectionMoved(index, index + 1)}
-      />
-  );
+      />);
+  };
 
   if (!canEdit) {
-    return sections.map((section, index) => renderSection(section, index));
+    return sections.map((section, index) => renderSection({ section, index }));
   }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <Droppable droppableId="droppable" ignoreContainerClipping>
         {droppableProvided => (
           <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-            <ShallowUpdateList items={sections}>
-              {(section, index) => (
-                <Draggable key={section.key} draggableId={section.key} index={index}>
-                  {(draggableProvided, draggableState) => (
-                    <div
-                      key={section.key}
-                      ref={draggableProvided.innerRef}
-                      {...draggableProvided.draggableProps}
-                      style={{
-                        userSelect: draggableState.isDragging ? 'none' : null,
-                        ...draggableProvided.draggableProps.style
-                      }}
-                      >
-                      {renderSection(section, index, draggableProvided.dragHandleProps)}
-                    </div>
-                  )}
-                </Draggable>
-              )}
-            </ShallowUpdateList>
+            {sections.map((section, index) => (
+              <Draggable key={section.key} draggableId={section.key} index={index}>
+                {(draggableProvided, draggableState) => (
+                  <div
+                    key={section.key}
+                    ref={draggableProvided.innerRef}
+                    {...draggableProvided.draggableProps}
+                    style={{
+                      userSelect: draggableState.isDragging ? 'none' : null,
+                      ...draggableProvided.draggableProps.style
+                    }}
+                    >
+                    {renderSection({
+                      section,
+                      index,
+                      dragHandleProps: draggableProvided.dragHandleProps,
+                      isDragged: draggableState.isDragging
+                    })}
+                  </div>
+                )}
+              </Draggable>
+            ))}
             {droppableProvided.placeholder}
           </div>
         )}

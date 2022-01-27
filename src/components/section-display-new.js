@@ -9,14 +9,26 @@ import { sectionShape } from '../ui/default-prop-types.js';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import { ArrowDownOutlined, ArrowUpOutlined, DeleteOutlined, DragOutlined, EditOutlined, SnippetsOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
-function SectionDisplayNew({ section, canEdit, dragHandleProps, onSectionMoveUp, onSectionMoveDown }) {
+function SectionDisplayNew({
+  section,
+  canEdit,
+  dragHandleProps,
+  isDragged,
+  isOtherSectionDragged,
+  onSectionMoveUp,
+  onSectionMoveDown
+}) {
+  const { t } = useTranslation();
   const infoFactory = useService(InfoFactory);
   const rendererFactory = useService(RendererFactory);
 
   const sectionClasses = classNames({
     'SectionDisplayNew': true,
-    'is-editable': canEdit
+    'is-editable': canEdit,
+    'is-dragged': isDragged,
+    'is-other-section-dragged': isOtherSectionDragged
   });
 
   const actions = [
@@ -75,8 +87,10 @@ function SectionDisplayNew({ section, canEdit, dragHandleProps, onSectionMoveUp,
       {canEdit && (
         <Fragment>
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--left">
-            <Button size="small" icon={<DragOutlined />} {...dragHandleProps} />
-            <span>{section.type}</span>
+            <div className="SectionDisplayNew-sectionInfo" {...dragHandleProps}>
+              <DragOutlined />
+              <span>{infoFactory.createInfo(section.type).getName(t)}</span>
+            </div>
           </div>
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
             {actions.map(renderAction)}
@@ -91,13 +105,17 @@ function SectionDisplayNew({ section, canEdit, dragHandleProps, onSectionMoveUp,
 SectionDisplayNew.propTypes = {
   canEdit: PropTypes.bool.isRequired,
   dragHandleProps: PropTypes.object,
+  isDragged: PropTypes.bool,
+  isOtherSectionDragged: PropTypes.bool,
   onSectionMoveDown: PropTypes.func.isRequired,
   onSectionMoveUp: PropTypes.func.isRequired,
   section: sectionShape.isRequired
 };
 
 SectionDisplayNew.defaultProps = {
-  dragHandleProps: {}
+  dragHandleProps: {},
+  isDragged: false,
+  isOtherSectionDragged: false
 };
 
 export default SectionDisplayNew;
