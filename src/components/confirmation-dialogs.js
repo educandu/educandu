@@ -5,6 +5,18 @@ import { Modal, Input, Checkbox } from 'antd';
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
 
+export function confirmDiscardUnsavedChanges(t, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:discardUnsavedChanges'),
+    okText: t('common:ok'),
+    okType: 'danger',
+    cancelText: t('common:cancel'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmSectionDelete(t, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),

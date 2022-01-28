@@ -33,12 +33,33 @@
   flex: none;
   display: grid;
   grid-auto-flow: column;
-  gap: @edu-button-spacing;
+  gap: 1.5 * @edu-button-spacing;
   padding-left: @control-panel-padding;
+  align-items: center;
 }
 
 .EditControlPanel-button {
   .m-icon-button;
+
+  &.ant-btn:disabled {
+    color: fade(@edu-white, 60%);
+    border-color: fade(@edu-white, 60%);
+  }
+}
+
+.EditControlPanel-statusIcon {
+
+  &.EditControlPanel-statusIcon--saved {
+    color: inherit;
+  }
+
+  &.EditControlPanel-statusIcon--dirty {
+    color: @gold-6
+  }
+
+  &.EditControlPanel-statusIcon--invalid {
+    color: @yellow-6
+  }
 }
 
 .EditControlPanel-penButton {

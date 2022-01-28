@@ -36,6 +36,7 @@
     "language": "en",
     "resources": {
       "areYouSure": "Are you sure?",
+      "discardUnsavedChanges": "All unsaved changes will be lost.",
       "deleteSectionConfirmation": "Do you really want to delete the section?",
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
@@ -56,6 +57,7 @@
     "language": "de",
     "resources": {
       "areYouSure": "Sind Sie sicher?",
+      "discardUnsavedChanges": "Alle nicht gespeicherten Änderungen werden verworfen.",
       "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
@@ -177,6 +179,24 @@
       "unassigned": "nicht zugewiesen",
       "tags": "Tags",
       "invalidTags": "Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein"
+    }
+  },
+  {
+    "namespace": "editControlPanel",
+    "language": "en",
+    "resources": {
+      "statusIconTooltipSaved": "There are no unsaved changes",
+      "statusIconTooltipDirty": "There are unsaved changes",
+      "statusIconTooltipInvalid": "Please correct all errors before saving"
+    }
+  },
+  {
+    "namespace": "editControlPanel",
+    "language": "de",
+    "resources": {
+      "statusIconTooltipSaved": "Keine ungespeicherten Änderungen",
+      "statusIconTooltipDirty": "Änderungen nicht gespeichert",
+      "statusIconTooltipInvalid": "Bitte korrigieren Sie alle Fehler vor dem Speichern"
     }
   },
   {
@@ -1471,6 +1491,7 @@
     "resources": {
       "yes": "Yes",
       "no": "No",
+      "ok": "OK",
       "save": "Save",
       "cancel": "Cancel",
       "close": "Close",
@@ -1523,6 +1544,7 @@
     "resources": {
       "yes": "Ja",
       "no": "Nein",
+      "ok": "OK",
       "save": "Speichern",
       "cancel": "Abbrechen",
       "close": "Schließen",

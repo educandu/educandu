@@ -1,0 +1,9 @@
+statusIconTooltipSaved:
+  en: There are no unsaved changes
+  de: Keine ungespeicherten Änderungen
+statusIconTooltipDirty:
+  en: There are unsaved changes
+  de: Änderungen nicht gespeichert
+statusIconTooltipInvalid:
+  en: Please correct all errors before saving
+  de: Bitte korrigieren Sie alle Fehler vor dem Speichern
