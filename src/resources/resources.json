@@ -365,7 +365,6 @@
     "namespace": "doc",
     "language": "en",
     "resources": {
-      "revision": "Revision",
       "date": "Date",
       "user": "User",
       "id": "ID",
@@ -380,7 +379,6 @@
     "namespace": "doc",
     "language": "de",
     "resources": {
-      "revision": "Revision",
       "date": "Datum",
       "user": "Benutzer",
       "id": "ID",
@@ -956,8 +954,7 @@
     "language": "en",
     "resources": {
       "type": "Type",
-      "key": "Key",
-      "revision": "Revision"
+      "key": "Key"
     }
   },
   {
@@ -965,8 +962,7 @@
     "language": "de",
     "resources": {
       "type": "Typ",
-      "key": "Schlüssel",
-      "revision": "Revision"
+      "key": "Schlüssel"
     }
   },
   {
@@ -1494,6 +1490,7 @@
       "language": "Language",
       "invalidSlug": "The URL path should contain only lower case letters, hyphens, slashes and digits",
       "archivedAlert": "This document is archived and cannot be edited",
+      "revision": "Revision",
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
@@ -1545,6 +1542,7 @@
       "language": "Sprache",
       "invalidSlug": "Der URL-Pfad sollte nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
+      "revision": "Revision",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",

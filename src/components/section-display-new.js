@@ -112,6 +112,15 @@ function SectionDisplayNew({
       />
   );
 
+  const renderSectionInfo = () => {
+    const sectionInfo = [
+      infoFactory.createInfo(section.type).getName(t),
+      section.revision ? `${t('common:revision')}: ${section.revision}` : null
+    ].filter(s => s).join(' | ');
+
+    return (<span>{sectionInfo}</span>);
+  };
+
   return (
     <section className={sectionClasses}>
       {canEdit && (
@@ -119,7 +128,7 @@ function SectionDisplayNew({
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--left">
             <div className="SectionDisplayNew-sectionInfo" {...dragHandleProps}>
               <DragOutlined />
-              <span>{infoFactory.createInfo(section.type).getName(t)}</span>
+              {renderSectionInfo()}
             </div>
           </div>
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
