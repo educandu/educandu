@@ -19,7 +19,7 @@ import { lessonShape } from '../../ui/default-prop-types.js';
 import { confirmSectionDelete } from '../confirmation-dialogs.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
-import { insertItemAt, moveItem, removeItemAt } from '../../utils/array-utils.js';
+import { insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -88,6 +88,17 @@ function Lesson({ PageTemplate, initialState }) {
     setIsLessonMetadataModalVisible(false);
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const handleSectionContentChange = (index, newContent, isInvalid) => {
+    const modifiedSection = {
+      ...currentSections[index],
+      content: newContent
+    };
+
+    const newSections = replaceItemAt(currentSections, index, modifiedSection);
+    setCurrentSections(newSections);
+  };
+
   const handleSectionMoved = (sourceIndex, destinationIndex) => {
     const reorderedSections = moveItem(currentSections, sourceIndex, destinationIndex);
     setCurrentSections(reorderedSections);
@@ -128,7 +139,9 @@ function Lesson({ PageTemplate, initialState }) {
         <div className="Lesson">
           <SectionsDisplayNew
             sections={currentSections}
+            sectionsContainerId={lesson._id}
             canEdit={isInEditMode}
+            onSectionContentChange={handleSectionContentChange}
             onSectionMoved={handleSectionMoved}
             onSectionInserted={handleSectionInserted}
             onSectionDuplicated={handleSectionDuplicated}

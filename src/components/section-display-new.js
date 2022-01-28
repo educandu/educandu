@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Tooltip } from 'antd';
-import React, { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
 import InfoFactory from '../plugins/info-factory.js';
+import EditorFactory from '../plugins/editor-factory.js';
 import { sectionShape } from '../ui/default-prop-types.js';
+import React, { Fragment, useMemo, useState } from 'react';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import {
@@ -21,6 +22,7 @@ import {
 
 function SectionDisplayNew({
   section,
+  sectionContainerId,
   canEdit,
   dragHandleProps,
   isDragged,
@@ -28,10 +30,12 @@ function SectionDisplayNew({
   onSectionDuplicate,
   onSectionDelete,
   onSectionMoveUp,
-  onSectionMoveDown
+  onSectionMoveDown,
+  onSectionContentChange
 }) {
   const { t } = useTranslation();
   const infoFactory = useService(InfoFactory);
+  const editorFactory = useService(EditorFactory);
   const rendererFactory = useService(RendererFactory);
 
   const sectionClasses = classNames({
@@ -50,7 +54,7 @@ function SectionDisplayNew({
       icon: <EditOutlined key="edit" />,
       handleAction: () => setIsEditing(true),
       isVisible: !isEditing,
-      isEnabled: !isEditing
+      isEnabled: !isEditing && !!section.content
     },
     {
       type: 'preview',
@@ -94,18 +98,39 @@ function SectionDisplayNew({
     }
   ].filter(action => action.isVisible);
 
-  const getDisplayComponent = () => {
-    const DisplayComponent = rendererFactory.createRenderer(section.type).getDisplayComponent();
-    return <DisplayComponent content={section.content} />;
+  const getDisplayComponent = useMemo(() => () => {
+    try {
+      return rendererFactory.createRenderer(section.type).getDisplayComponent();
+    } catch (error) {
+      return NotSupportedSection;
+    }
+  }, [rendererFactory, section.type]);
+
+  const getEditorComponent = useMemo(() => () => {
+    try {
+      return editorFactory.createEditor(section.type).getEditorComponent();
+    } catch (error) {
+      return NotSupportedSection;
+    }
+  }, [editorFactory, section.type]);
+
+  const renderDisplayComponent = () => {
+    if (section.content) {
+      const DisplayComponent = getDisplayComponent();
+      return <DisplayComponent content={section.content} />;
+    }
+
+    return <DeletedSection section={section} />;
   };
 
-  let displayComponent;
-  if (section.content) {
-    const isSupportedPlugin = infoFactory.getRegisteredTypes().includes(section.type);
-    displayComponent = isSupportedPlugin ? getDisplayComponent() : (<NotSupportedSection />);
-  } else {
-    displayComponent = (<DeletedSection section={section} />);
-  }
+  const renderEditorComponent = () => {
+    if (!section.content) {
+      throw new Error('Cannot edit a deleted section');
+    }
+
+    const EditorComponent = getEditorComponent();
+    return <EditorComponent sectionContainerId={sectionContainerId} content={section.content} onContentChanged={onSectionContentChange} />;
+  };
 
   const renderAction = (action, index) => (
     <Tooltip key={index} title={action.title} placement="topRight">
@@ -143,7 +168,7 @@ function SectionDisplayNew({
           </div>
         </Fragment>
       )}
-      {displayComponent}
+      {isEditing ? renderEditorComponent() : renderDisplayComponent()}
     </section>
   );
 }
@@ -153,11 +178,13 @@ SectionDisplayNew.propTypes = {
   dragHandleProps: PropTypes.object,
   isDragged: PropTypes.bool,
   isOtherSectionDragged: PropTypes.bool,
+  onSectionContentChange: PropTypes.func.isRequired,
   onSectionDelete: PropTypes.func.isRequired,
   onSectionDuplicate: PropTypes.func.isRequired,
   onSectionMoveDown: PropTypes.func.isRequired,
   onSectionMoveUp: PropTypes.func.isRequired,
-  section: sectionShape.isRequired
+  section: sectionShape.isRequired,
+  sectionContainerId: PropTypes.string.isRequired
 };
 
 SectionDisplayNew.defaultProps = {

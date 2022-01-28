@@ -9,11 +9,13 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function SectionsDisplayNew({
   sections,
+  sectionsContainerId,
   canEdit,
   onSectionMoved,
   onSectionInserted,
   onSectionDuplicated,
-  onSectionDeleted
+  onSectionDeleted,
+  onSectionContentChange
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [currentNewSectionIndex, setCurrentNewSectionIndex] = useState(-1);
@@ -54,6 +56,7 @@ function SectionsDisplayNew({
     return (<SectionDisplayNew
       key={section.key}
       section={section}
+      sectionContainerId={sectionsContainerId}
       canEdit={!!dragHandleProps && canEdit}
       dragHandleProps={dragHandleProps}
       isDragged={isDragged}
@@ -62,6 +65,7 @@ function SectionsDisplayNew({
       onSectionDuplicate={() => onSectionDuplicated(index)}
       onSectionMoveUp={() => handleSectionMoved(index, index - 1)}
       onSectionMoveDown={() => handleSectionMoved(index, index + 1)}
+      onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
       />);
   };
 
@@ -131,11 +135,13 @@ function SectionsDisplayNew({
 
 SectionsDisplayNew.propTypes = {
   canEdit: PropTypes.bool.isRequired,
+  onSectionContentChange: PropTypes.func.isRequired,
   onSectionDeleted: PropTypes.func.isRequired,
   onSectionDuplicated: PropTypes.func.isRequired,
   onSectionInserted: PropTypes.func.isRequired,
   onSectionMoved: PropTypes.func.isRequired,
-  sections: PropTypes.arrayOf(sectionShape).isRequired
+  sections: PropTypes.arrayOf(sectionShape).isRequired,
+  sectionsContainerId: PropTypes.string.isRequired
 };
 
 export default SectionsDisplayNew;
