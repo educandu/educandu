@@ -27,7 +27,7 @@ import {
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
-const { NotFound, Forbidden } = httpErrors;
+const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
 export default class RoomController {
   static get inject() { return [ServerConfig, RoomService, UserService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
@@ -125,11 +125,8 @@ export default class RoomController {
     const userId = req.user?._id;
     const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
 
-    if (!userId) {
-      return res.redirect(urls.getLoginUrl(req.path));
-    }
-
     const room = await this.roomService.getRoomById(roomId);
+    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
 
     if (!room) {
       throw new NotFound();
@@ -139,7 +136,10 @@ export default class RoomController {
       return res.redirect(301, urls.getRoomUrl(room._id, room.slug));
     }
 
-    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+    if (isPrivateRoom && !userId) {
+      throw new Unauthorized();
+    }
+
     let invitations = [];
 
     if (isPrivateRoom) {
@@ -227,7 +227,7 @@ export default class RoomController {
 
     router.get(
       '/rooms/:roomId*',
-      [needsPermission(permissions.OWN_ROOMS), validateParams(getRoomParamsSchema)],
+      validateParams(getRoomParamsSchema),
       (req, res) => this.handleGetRoomPage(req, res)
     );
 

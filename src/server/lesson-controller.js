@@ -20,7 +20,7 @@ import {
 } from '../domain/schemas/lesson-schemas.js';
 
 const jsonParser = express.json();
-const { NotFound, BadRequest, Forbidden } = httpErrors;
+const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
 
 export default class LessonController {
   static get inject() { return [ServerConfig, LessonService, RoomService, ClientDataMapper, PageRenderer]; }
@@ -38,10 +38,6 @@ export default class LessonController {
     const { lessonId } = req.params;
     const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
 
-    if (!user) {
-      return res.redirect(urls.getLoginUrl(req.path));
-    }
-
     const lesson = await this.lessonService.getLessonById(lessonId);
 
     if (!lesson) {
@@ -54,7 +50,11 @@ export default class LessonController {
 
     const room = await this.roomService.getRoomById(lesson.roomId);
     const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
-    const isRoomOwnerOrMember = room.owner === user._id || room.members.find(member => member.userId === user._id);
+    const isRoomOwnerOrMember = user && (room.owner === user._id || room.members.find(member => member.userId === user._id));
+
+    if (isPrivateRoom && !user) {
+      throw new Unauthorized();
+    }
 
     if (isPrivateRoom && !isRoomOwnerOrMember) {
       throw new Forbidden();
@@ -87,7 +87,7 @@ export default class LessonController {
     const { lessonId } = req.params;
     const { title, slug, language, schedule } = req.body;
 
-    await this._authorizeLessonAccess(req);
+    await this._authorizeLessonWriteAccess(req);
 
     const updatedLesson = await this.lessonService.updateLessonMetadata(
       lessonId,
@@ -100,13 +100,13 @@ export default class LessonController {
     const { lessonId } = req.params;
     const { sections } = req.body;
 
-    await this._authorizeLessonAccess(req);
+    await this._authorizeLessonWriteAccess(req);
 
     const updatedLesson = await this.lessonService.updateLessonSections(lessonId, { sections });
     return res.status(201).send(updatedLesson);
   }
 
-  async _authorizeLessonAccess(req) {
+  async _authorizeLessonWriteAccess(req) {
     const { user } = req;
     const { lessonId } = req.params;
 

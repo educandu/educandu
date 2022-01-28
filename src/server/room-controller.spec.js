@@ -8,7 +8,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import uniqueId from '../utils/unique-id.js';
 
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -317,21 +317,15 @@ describe('room-controller', () => {
   describe('handleGetRoomPage', () => {
 
     describe('when user is not provided (session expired)', () => {
-      const room = { _id: uniqueId.create(), slug: 'room-slug' };
-      beforeEach(done => {
-        req = {
-          params: { 0: `/${room.slug}`, roomId: room._id },
-          path: `/rooms/${room._id}`
-        };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+      beforeEach(() => {
+        const room = { _id: uniqueId.create(), slug: '', access: ROOM_ACCESS_LEVEL.private };
+        roomService.getRoomById.resolves(room);
 
-        sut.handleGetRoomPage(req, res);
+        req = { params: { 0: '', roomId: room._id } };
       });
 
-      it('should redirect to the login page with keeping the room page referrence', () => {
-        expect(res.statusCode).toBe(302);
-        expect(res._getRedirectUrl()).toBe(`/login?redirect=%2Frooms%2F${room._id}`);
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetRoomPage(req, {})).rejects.toThrow(Unauthorized);
       });
     });
 

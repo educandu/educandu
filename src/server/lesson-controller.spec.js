@@ -6,7 +6,7 @@ import uniqueId from '../utils/unique-id.js';
 import LessonController from './lesson-controller.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('lesson-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -62,20 +62,17 @@ describe('lesson-controller', () => {
     let mappedLesson;
 
     describe('when user is not provided (session expired)', () => {
-      beforeEach(done => {
-        req = {
-          params: { 0: '', lessonId },
-          path: `/lessons/${lessonId}`
-        };
-        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+      beforeEach(() => {
+        req = { params: { 0: '', lessonId } };
+        room = { _id: roomId, access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [] };
+        lesson = { _id: lessonId, slug: '', roomId };
 
-        sut.handleGetLessonPage(req, res);
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
       });
 
-      it('should redirect to the login page with keeping the lesson page referrence', () => {
-        expect(res.statusCode).toBe(302);
-        expect(res._getRedirectUrl()).toBe(`/login?redirect=%2Flessons%2F${lessonId}`);
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetLessonPage(req, {})).rejects.toThrow(Unauthorized);
       });
     });
 
