@@ -7,7 +7,6 @@ export const slugSchema = joi.string().allow('').required();
 
 export const sectionSchema = joi.object({
   key: idOrKeySchema.required(),
-  revision: idOrKeySchema.allow(null),
   type: joi.string().required(),
   content: joi.alternatives().try(
     joi.object().required(),
