@@ -1,5 +1,5 @@
 import { PAGE_NAME } from './page-name.js';
-import { isBrowser } from '../ui/browser-helper.js';
+import { resolveAll } from '../utils/promise-utils.js';
 import DefaultSiteLogoComponent from '../components/default-site-logo.js';
 import DefaultPageTemplateComponent from '../components/default-page-template.js';
 
@@ -25,24 +25,6 @@ const pageImporters = {
   [PAGE_NAME.roomMembershipConfirmation]: async () => (await import('../components/pages/room-membership-confirmation.js')).default,
   [PAGE_NAME.lesson]: async () => (await import('../components/pages/lesson.js')).default
 };
-
-async function resolveAll(promiseCreators) {
-  // eslint-disable-next-line no-process-env
-  if (!isBrowser() && process.env.EDUCANDU_TEST === true.toString()) {
-    // Resolve sequentially in the test runner,
-    // because otherwise Jest bursts into flames:
-    // https://github.com/facebook/jest/issues/11434
-    const results = [];
-    for (const promiseCreator of promiseCreators) {
-      // eslint-disable-next-line no-await-in-loop
-      results.push(await promiseCreator());
-    }
-    return results;
-  }
-
-  // Otherwise we can resolve everything in parallel:
-  return Promise.all(promiseCreators.map(promiseCreator => promiseCreator()));
-}
 
 export default class PageResolver {
   constructor(bundleConfig) {

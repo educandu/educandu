@@ -1,18 +1,24 @@
 class PluginFactoryBase {
-  constructor(container, plugins) {
-    this.factories = plugins.reduce((map, plugin) => {
-      map.set(plugin.typeName, () => container.get(plugin));
-      return map;
-    }, new Map());
+  constructor(container) {
+    this.container = container;
+    this.factories = new Map();
   }
 
   getRegisteredTypes() {
-    return Array.from(this.factories.keys());
+    return [...this.factories.keys()];
+  }
+
+  registerPlugin(plugin) {
+    this.factories.set(plugin.typeName, () => this.container.get(plugin));
   }
 
   _getInstance(pluginType) {
     const factory = this.factories.get(pluginType);
-    return factory && factory();
+    if (!factory) {
+      throw new Error(`Plugin type '${pluginType}' is not registered.`);
+    }
+
+    return factory();
   }
 }
 

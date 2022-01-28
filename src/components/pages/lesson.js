@@ -1,4 +1,5 @@
 import { Button } from 'antd';
+import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
@@ -11,6 +12,7 @@ import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import EditorFactory from '../../plugins/editor-factory.js';
 import SectionsDisplayNew from '../sections-display-new.js';
 import { EditControlPanel } from '../edit-control-panel.js';
 import { lessonShape } from '../../ui/default-prop-types.js';
@@ -22,11 +24,14 @@ import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal
 
 const logger = new Logger(import.meta.url);
 
+const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
+
 function Lesson({ PageTemplate, initialState }) {
   const user = useUser();
   const { t } = useTranslation();
   const { formatDate } = useDateFormat();
   const infoFactory = useService(InfoFactory);
+  const editorFactory = useService(EditorFactory);
 
   const isRoomOwner = user._id === initialState.roomOwner;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
@@ -36,13 +41,11 @@ function Lesson({ PageTemplate, initialState }) {
   const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
-  const handleEdit = () => new Promise(resolve => {
-    setTimeout(() => {
-      setIsInEditMode(true);
-      setCurrentSections(cloneDeep(lesson.sections));
-      resolve();
-    }, 200);
-  });
+  const handleEdit = async () => {
+    await ensureEditorsAreLoaded(editorFactory);
+    setIsInEditMode(true);
+    setCurrentSections(cloneDeep(lesson.sections));
+  };
 
   const handleSave = async () => {
     try {

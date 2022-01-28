@@ -34,7 +34,8 @@ class InfoFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }
 
   constructor(container) {
-    super(container, infos);
+    super(container);
+    infos.forEach(info => this.registerPlugin(info));
   }
 
   createInfo(pluginType) {
