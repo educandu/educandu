@@ -1,6 +1,6 @@
-import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Button, Tooltip } from 'antd';
 import React, { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DeletedSection from './deleted-section.js';
@@ -45,42 +45,42 @@ function SectionDisplayNew({
 
   const actions = [
     {
-      label: 'edit',
+      title: t('common:edit'),
       icon: <EditOutlined key="edit" />,
       handleAction: () => setIsEditing(true),
       isVisible: !isEditing,
       isEnabled: !isEditing
     },
     {
-      label: 'preview',
+      title: t('common:preview'),
       icon: <EyeOutlined key="preview" />,
       handleAction: () => setIsEditing(false),
       isVisible: isEditing,
       isEnabled: isEditing
     },
     {
-      label: 'duplicate',
+      title: t('common:duplicate'),
       icon: <SnippetsOutlined key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
       isVisible: true,
       isEnabled: !isEditing
     },
     {
-      label: 'delete',
+      title: t('common:delete'),
       icon: <DeleteOutlined key="delete" />,
       handleAction: () => onSectionDelete(),
       isVisible: true,
       isEnabled: true
     },
     {
-      label: 'moveUp',
+      title: t('common:moveUp'),
       icon: <ArrowUpOutlined key="moveUp" />,
       handleAction: () => onSectionMoveUp(),
       isVisible: true,
       isEnabled: true
     },
     {
-      label: 'moveDown',
+      title: t('common:moveDown'),
       icon: <ArrowDownOutlined key="moveDown" />,
       handleAction: () => onSectionMoveDown(),
       isVisible: true,
@@ -102,14 +102,15 @@ function SectionDisplayNew({
   }
 
   const renderAction = (action, index) => (
-    <Button
-      key={index}
-      className="SectionDisplayNew-actionButton"
-      size="small"
-      icon={action.icon}
-      onClick={action.handleAction}
-      disabled={!action.isEnabled}
-      />
+    <Tooltip key={index} title={action.title} placement="topRight">
+      <Button
+        className="SectionDisplayNew-actionButton"
+        size="small"
+        icon={action.icon}
+        onClick={action.handleAction}
+        disabled={!action.isEnabled}
+        />
+    </Tooltip>
   );
 
   const renderSectionInfo = () => {
