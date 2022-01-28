@@ -17,11 +17,21 @@ class LessonApiClient {
       .then(res => res.data);
   }
 
-  updateLesson({ lessonId, title, slug, language, schedule }) {
+  updateLessonMetadata({ lessonId, title, slug, language, schedule }) {
     return this.httpClient
       .patch(
-        `/api/v1/lessons/${encodeURIComponent(lessonId)}`,
+        `/api/v1/lessons/${encodeURIComponent(lessonId)}/metadata`,
         { title, slug, language, schedule },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  updateLessonSections({ lessonId, sections }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/lessons/${encodeURIComponent(lessonId)}/sections`,
+        { sections },
         { responseType: 'json' }
       )
       .then(res => res.data);

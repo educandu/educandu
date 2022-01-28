@@ -56,17 +56,34 @@ class LessonService {
     return lesson;
   }
 
-  async updateLesson(lesson) {
-    const mappedSchedule = lesson.schedule
-      ? { startsOn: new Date(lesson.schedule.startsOn) }
+  async updateLessonMetadata(lessonId, { title, slug, language, schedule }) {
+    const mappedSchedule = schedule
+      ? { startsOn: new Date(schedule.startsOn) }
       : null;
 
-    const updatedLesson = {
-      ...lesson,
-      slug: lesson.slug || '',
-      schedule: mappedSchedule
-    };
-    await this.lessonStore.save(updatedLesson);
+    await this.lessonStore.updateOne({ _id: lessonId }, {
+      $set: {
+        title,
+        slug: slug || '',
+        language,
+        schedule: mappedSchedule,
+        updatedOn: new Date()
+      }
+    });
+
+    const updatedLesson = this.getLessonById(lessonId);
+    return updatedLesson;
+  }
+
+  async updateLessonSections(lessonId, { sections }) {
+    await this.lessonStore.updateOne({ _id: lessonId }, {
+      $set: {
+        sections,
+        updatedOn: new Date()
+      }
+    });
+
+    const updatedLesson = this.getLessonById(lessonId);
     return updatedLesson;
   }
 }

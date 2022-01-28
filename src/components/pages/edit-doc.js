@@ -288,7 +288,7 @@ function EditDoc({ initialState, PageTemplate }) {
     const newSection = {
       key: uniqueId.create(),
       revision: null,
-      type: pluginInfo.type,
+      type: pluginType,
       deletedOn: null,
       deletedBy: null,
       deletedBecause: null,
@@ -405,7 +405,7 @@ function EditDoc({ initialState, PageTemplate }) {
           <Button type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewSectionClick} />
         </aside>
       </div>
-      <PluginSelectorDialog visible={isPluginSelectorDialogVisible} onSelected={handlePluginTypeSelected} onCancel={handlePluginTypeSelectionCancel} />
+      <PluginSelectorDialog visible={isPluginSelectorDialogVisible} onSelect={handlePluginTypeSelected} onCancel={handlePluginTypeSelectionCancel} />
     </PageTemplate>
   );
 }

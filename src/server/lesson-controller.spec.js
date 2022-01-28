@@ -31,7 +31,7 @@ describe('lesson-controller', () => {
     lessonService = {
       getLessonById: sandbox.stub(),
       createLesson: sandbox.stub(),
-      updateLesson: sandbox.stub()
+      updateLessonMetadata: sandbox.stub()
     };
     roomService = {
       getRoomById: sandbox.stub(),
@@ -224,7 +224,7 @@ describe('lesson-controller', () => {
     });
   });
 
-  describe('handlePatchLesson', () => {
+  describe('handlePatchLessonMetadata', () => {
 
     describe('when the request data is valid', () => {
       let room;
@@ -257,7 +257,7 @@ describe('lesson-controller', () => {
 
         lessonService.getLessonById.withArgs(lesson._id).resolves(lesson);
         roomService.getRoomById.withArgs(room._id).resolves(room);
-        lessonService.updateLesson.resolves(updatedLesson);
+        lessonService.updateLessonMetadata.resolves(updatedLesson);
 
         req = httpMocks.createRequest({
           protocol: 'https',
@@ -270,15 +270,15 @@ describe('lesson-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
-        sut.handlePatchLesson(req, res);
+        sut.handlePatchLessonMetadata(req, res);
       });
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
       });
 
-      it('should call lessonService.updateLesson', () => {
-        sinon.assert.calledWith(lessonService.updateLesson, { ...lesson, ...requestBody });
+      it('should call lessonService.updateLessonMetadata', () => {
+        sinon.assert.calledWith(lessonService.updateLessonMetadata, lesson._id, { ...requestBody });
       });
 
       it('should respond with the updated lesson', () => {
@@ -302,7 +302,7 @@ describe('lesson-controller', () => {
       });
 
       it('should throw NotFound', () => {
-        expect(() => sut.handlePatchLesson(req, res)).rejects.toThrow(NotFound);
+        expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(NotFound);
       });
     });
 
@@ -333,7 +333,7 @@ describe('lesson-controller', () => {
       });
 
       it('should throw Forbidden', () => {
-        expect(() => sut.handlePatchLesson(req, res)).rejects.toThrow(Forbidden);
+        expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(Forbidden);
       });
     });
   });

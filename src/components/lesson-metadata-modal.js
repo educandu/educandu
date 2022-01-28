@@ -90,7 +90,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onClose }) {
 
       const response = mode === LESSON_MODAL_MODE.create
         ? await lessonApiClient.addLesson(mappedLesson)
-        : await lessonApiClient.updateLesson(mappedLesson);
+        : await lessonApiClient.updateLessonMetadata(mappedLesson);
 
       setLoading(false);
       onSave(response);
@@ -134,6 +134,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onClose }) {
       maskClosable={false}
       visible={isVisible}
       okButtonProps={{ loading }}
+      okText={t('common:save')}
       >
       <Form onFinish={handleOnFinish} name="new-lesson-form" ref={formRef} layout="vertical" initialValues={initialValues}>
         <FormItem label={t('common:title')} name="title" rules={titleValidationRules}>

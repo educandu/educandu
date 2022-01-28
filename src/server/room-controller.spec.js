@@ -53,7 +53,7 @@ describe('room-controller', () => {
 
     clientDataMapper = {
       mapRoom: sandbox.stub(),
-      mapLessons: sandbox.stub(),
+      mapLessonsMetadata: sandbox.stub(),
       mapRoomInvitations: sandbox.stub()
     };
 
@@ -349,7 +349,7 @@ describe('room-controller', () => {
           lessonService.getLessons.resolves(lessons);
           roomService.getRoomInvitations.resolves(invitations);
 
-          clientDataMapper.mapLessons.returns(mappedLessons);
+          clientDataMapper.mapLessonsMetadata.returns(mappedLessons);
           clientDataMapper.mapRoomInvitations.returns(mappedInvitations);
 
           await sut.handleGetRoomPage(request, {});
@@ -375,8 +375,8 @@ describe('room-controller', () => {
           sinon.assert.calledWith(lessonService.getLessons, room._id);
         });
 
-        it('should call mapLessons with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMapper.mapLessons, lessons);
+        it('should call mapLessonsMetadata with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMapper.mapLessonsMetadata, lessons);
         });
 
         it('should call pageRenderer with the right parameters', () => {
@@ -404,7 +404,7 @@ describe('room-controller', () => {
           roomService.isRoomOwnerOrMember.resolves(true);
           lessonService.getLessons.resolves(lessons);
 
-          clientDataMapper.mapLessons.returns(mappedLessons);
+          clientDataMapper.mapLessonsMetadata.returns(mappedLessons);
           clientDataMapper.mapRoomInvitations.returns(mappedInvitations);
 
           await sut.handleGetRoomPage(request, {});
@@ -426,8 +426,8 @@ describe('room-controller', () => {
           sinon.assert.calledWith(lessonService.getLessons, room._id);
         });
 
-        it('should call mapLessons with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMapper.mapLessons, lessons);
+        it('should call mapLessonsMetadata with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMapper.mapLessonsMetadata, lessons);
         });
 
         it('should call pageRenderer with the right parameters', () => {
@@ -481,7 +481,7 @@ describe('room-controller', () => {
         lessonService.getLessons.resolves(lessons);
 
         clientDataMapper.mapRoom.resolves(mappedRoom);
-        clientDataMapper.mapLessons.returns(mappedLessons);
+        clientDataMapper.mapLessonsMetadata.returns(mappedLessons);
         clientDataMapper.mapRoomInvitations.returns([]);
       });
 
@@ -514,8 +514,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(lessonService.getLessons, room._id);
       });
 
-      it('should call mapLessons with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMapper.mapLessons, lessons);
+      it('should call mapLessonsMetadata with the invitations returned by the service', () => {
+        sinon.assert.calledWith(clientDataMapper.mapLessonsMetadata, lessons);
       });
 
       it('should call pageRenderer with the right parameters', () => {

@@ -257,7 +257,7 @@ describe('client-data-mapper', () => {
     });
   });
 
-  describe('mapLessons', () => {
+  describe('mapLessonsMetadata', () => {
     let lessons;
 
     beforeEach(async () => {
@@ -270,10 +270,10 @@ describe('client-data-mapper', () => {
           }
         }
       ];
-      result = await sut.mapLessons(lessons);
+      result = await sut.mapLessonsMetadata(lessons);
     });
 
-    it('shoult map the lessons', () => {
+    it('should map the lessons metadata', () => {
       expect(result).toEqual([
         {
           createdOn: lessons[0].createdOn.toISOString(),

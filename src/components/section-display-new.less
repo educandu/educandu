@@ -1,0 +1,60 @@
+@section-display-new-min-height: 36px;
+@section-display-new-editable-padding-top: 40px;
+@section-display-new-action-button-margin: 2px;
+
+.SectionDisplayNew {
+  background-color: @edu-white;
+  border: 1px dotted transparent;
+  position: relative;
+  padding: @edu-content-padding;
+  min-height: @section-display-new-min-height;
+
+  &.is-editable {
+    padding: @edu-content-padding;
+    padding-top: @section-display-new-editable-padding-top;
+    border-color: @grey-5;
+    min-height: @section-display-new-min-height + @section-display-new-editable-padding-top;
+
+    &:hover {
+      border: 1px solid @grey-6;
+    }
+
+    &.is-dragged {
+      border: 1px solid @grey-6;
+    }
+
+    &.is-other-section-dragged {
+      opacity: 0.60;
+    }
+  }
+}
+
+.SectionDisplayNew-actions {
+  display: flex;
+  position: absolute;
+  top: @section-display-new-action-button-margin;
+
+  &.SectionDisplayNew-actions--left {
+    left: @section-display-new-action-button-margin;
+  }
+
+  &.SectionDisplayNew-actions--right {
+    right: @section-display-new-action-button-margin;
+  }
+}
+
+.SectionDisplayNew-actionButton{
+  margin-left: @section-display-new-action-button-margin;
+}
+
+.SectionDisplayNew-sectionInfo {
+  display: grid;
+  gap: 5px;
+  align-items: center;
+  grid-auto-flow: column;
+  padding: 0 5px;
+  height: @edu-control-height-sm;
+  border: 1px solid @grey-5;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-white;
+}

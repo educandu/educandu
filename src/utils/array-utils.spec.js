@@ -1,4 +1,11 @@
-import { swapItemsAt, removeItemAt, ensureIsIncluded, ensureIsExcluded, shuffleItems } from './array-utils.js';
+import {
+  swapItemsAt,
+  insertItemAt,
+  removeItemAt,
+  ensureIsIncluded,
+  ensureIsExcluded,
+  shuffleItems
+} from './array-utils.js';
 
 describe('array-utils', () => {
 
@@ -23,6 +30,30 @@ describe('array-utils', () => {
       const input = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       const result = swapItemsAt(input, 4, 4);
       expect(result).toBe(input);
+    });
+  });
+
+  describe('insertItemAt', () => {
+    it('does not mutate the original array', () => {
+      const items = [0, 1, 2, 3];
+      const result = insertItemAt(items, 4, 2);
+      expect(result).not.toBe(items);
+      expect(items).toEqual([0, 1, 2, 3]);
+    });
+    it('adds the item at the beginning', () => {
+      const items = [0, 1, 2, 3];
+      const result = insertItemAt(items, -1, 0);
+      expect(result).toEqual([-1, 0, 1, 2, 3]);
+    });
+    it('adds the item in the middle', () => {
+      const items = [0, 1, 2, 3];
+      const result = insertItemAt(items, 1.5, 2);
+      expect(result).toEqual([0, 1, 1.5, 2, 3]);
+    });
+    it('adds the item at the end', () => {
+      const items = [0, 1, 2, 3];
+      const result = insertItemAt(items, 4, 4);
+      expect(result).toEqual([0, 1, 2, 3, 4]);
     });
   });
 

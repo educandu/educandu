@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { idOrKeySchema, slugSchema, sectionDBSchema } from './shared-schemas.js';
+import { idOrKeySchema, slugSchema, sectionSchema, sectionDBSchema } from './shared-schemas.js';
 
 export const lessonDBSchema = joi.object({
   _id: idOrKeySchema.required(),
@@ -35,11 +35,15 @@ export const patchLessonParamsSchema = joi.object({
   lessonId: idOrKeySchema.required()
 });
 
-export const patchLessonBodySchema = joi.object({
+export const patchLessonMetadataBodySchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
   schedule: joi.object({
     startsOn: joi.string().required()
   }).allow(null)
+});
+
+export const patchLessonSectionsBodySchema = joi.object({
+  sections: joi.array().items(sectionSchema)
 });

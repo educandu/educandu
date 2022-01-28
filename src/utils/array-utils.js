@@ -13,6 +13,31 @@ export function swapItemsAt(items, index1, index2) {
   return result;
 }
 
+export const moveItem = (items, fromIndex, toIndex) => {
+  const result = [...items];
+  const [removed] = result.splice(fromIndex, 1);
+  result.splice(toIndex, 0, removed);
+  return result;
+};
+
+export function insertItemAt(items, item, index) {
+  const lastIndex = items.length - 1;
+
+  if (index === lastIndex + 1) {
+    return [...items, item];
+  }
+
+  if (index === 0) {
+    return [item, ...items];
+  }
+
+  if (index > 0 && index <= lastIndex) {
+    return [...items.slice(0, index), item, ...items.slice(index)];
+  }
+
+  return items;
+}
+
 export function removeItemAt(items, index) {
   const lastIndex = items.length - 1;
   if (index < 0 || index > lastIndex) {

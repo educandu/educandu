@@ -148,7 +148,7 @@ export default class RoomController {
     const lessons = await this.lessonService.getLessons(roomId);
 
     const mappedRoom = await this.clientDataMapper.mapRoom(room);
-    const mappedLessons = this.clientDataMapper.mapLessons(lessons);
+    const mappedLessons = this.clientDataMapper.mapLessonsMetadata(lessons);
     const mappedInvitations = this.clientDataMapper.mapRoomInvitations(invitations);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations });
