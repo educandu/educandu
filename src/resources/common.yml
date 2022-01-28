@@ -4,6 +4,9 @@
 "no":
   en: "No"
   de: Nein
+ok:
+  en: OK
+  de: OK
 save:
   en: Save
   de: Speichern

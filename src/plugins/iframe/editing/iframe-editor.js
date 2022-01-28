@@ -41,7 +41,7 @@ class IframeEditor extends React.Component {
   changeContent(newContentValues) {
     const { content, onContentChanged, t } = this.props;
     const newContent = { ...content, ...newContentValues };
-    const isValid = validation.validateUrl(newContent.url, t).validateStatus === 'success';
+    const isValid = validation.validateUrl(newContent.url, t).validateStatus !== 'error';
     onContentChanged(newContent, !isValid);
   }
 

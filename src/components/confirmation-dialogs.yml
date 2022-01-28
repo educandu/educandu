@@ -1,6 +1,9 @@
 areYouSure:
   en: Are you sure?
   de: Sind Sie sicher?
+discardUnsavedChanges:
+  en: All unsaved changes will be lost.
+  de: Alle nicht gespeicherten Änderungen werden verworfen.
 deleteSectionConfirmation:
   en: Do you really want to delete the section?
   de: Möchten Sie den Abschnitt wirklich löschen?
