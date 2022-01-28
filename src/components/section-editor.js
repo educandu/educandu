@@ -65,7 +65,7 @@ function SectionEditor({
         onSectionMovedDown(section.key);
         break;
       case SECTION_MENU_KEY_DELETE:
-        confirmSectionDelete(t, section, () => onSectionDeleted(section.key));
+        confirmSectionDelete(t, () => onSectionDeleted(section.key));
         break;
       case SECTION_MENU_KEY_DUPLICATE:
         onSectionDuplicated(section.key);
@@ -160,7 +160,7 @@ function SectionEditor({
             <span>{t('key')}:</span>&nbsp;<b>{section.key}</b>
           </span>
           <span style={{ display: 'inline-block', marginRight: '1em' }}>
-            <span>{t('revision')}:</span>&nbsp;<b>{section.revision || 'N/A'}</b>
+            <span>{t('common:revision')}:</span>&nbsp;<b>{section.revision || 'N/A'}</b>
           </span>
         </div>
         <div style={{ flex: 'none' }}>

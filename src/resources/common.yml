@@ -61,6 +61,9 @@ invalidSlug:
 archivedAlert:
   en: This document is archived and cannot be edited
   de: Dieses Dokument ist archiviert und kann nicht editiert werden
+revision:
+  en: Revision
+  de: Revision
 viewRevisions:
   en: View revisions
   de: Revisionen ansehen

@@ -24,7 +24,8 @@ describe('document-service', () => {
 
       beforeEach(() => {
         const container = new Container();
-        const sut = new PluginFactoryBase(container, [Plugin]);
+        const sut = new PluginFactoryBase(container);
+        sut.registerPlugin(Plugin);
         result = sut._getInstance(Plugin.typeName);
       });
 
@@ -38,7 +39,8 @@ describe('document-service', () => {
 
       beforeEach(() => {
         const container = new Container();
-        const sut = new PluginFactoryBase(container, [Plugin]);
+        const sut = new PluginFactoryBase(container);
+        sut.registerPlugin(Plugin);
         result = [sut._getInstance(Plugin.typeName), sut._getInstance(Plugin.typeName)];
       });
 
@@ -48,17 +50,18 @@ describe('document-service', () => {
     });
 
     describe('when called with the type of an unregistered plugin', () => {
+      let sut;
       const Plugin1 = createPluginType({ typeName: 'plugin-1' });
       const Plugin2 = createPluginType({ typeName: 'plugin-2' });
 
       beforeEach(() => {
         const container = new Container();
-        const sut = new PluginFactoryBase(container, [Plugin1]);
-        result = sut._getInstance(Plugin2.typeName);
+        sut = new PluginFactoryBase(container);
+        sut.registerPlugin(Plugin1);
       });
 
-      it('returns undefined', () => {
-        expect(result).toBeUndefined();
+      it('throws an error', () => {
+        expect(() => sut._getInstance(Plugin2.typeName)).toThrow();
       });
     });
 
@@ -67,7 +70,8 @@ describe('document-service', () => {
 
       beforeEach(() => {
         const container = new Container();
-        const sut = new PluginFactoryBase(container, [Plugin]);
+        const sut = new PluginFactoryBase(container);
+        sut.registerPlugin(Plugin);
         result = sut._getInstance(Plugin.typeName);
       });
 
@@ -84,7 +88,8 @@ describe('document-service', () => {
 
       beforeEach(() => {
         const container = new Container();
-        const sut = new PluginFactoryBase(container, [Plugin]);
+        const sut = new PluginFactoryBase(container);
+        sut.registerPlugin(Plugin);
         result = sut._getInstance(Plugin.typeName);
       });
 

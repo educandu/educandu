@@ -5,7 +5,7 @@ import { Modal, Input, Checkbox } from 'antd';
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
 
-export function confirmSectionDelete(t, section, onOk, onCancel = () => {}) {
+export function confirmSectionDelete(t, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
     content: t('confirmationDialogs:deleteSectionConfirmation'),

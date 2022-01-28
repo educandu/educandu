@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { idOrKeySchema, slugSchema, sectionSchema, sectionDBSchema } from './shared-schemas.js';
+import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 
 const documentRevisionAppendToSchema = joi.object({
   key: idOrKeySchema.required(),
@@ -37,6 +37,19 @@ export const hardDeleteDocumentBodySchema = joi.object({
   documentKey: idOrKeySchema.required()
 });
 
+export const documentSectionDBSchema = joi.object({
+  revision: idOrKeySchema.required(),
+  key: idOrKeySchema.required(),
+  deletedOn: joi.date().allow(null).required(),
+  deletedBy: idOrKeySchema.allow(null).required(),
+  deletedBecause: joi.string().allow(null).required(),
+  type: joi.string().required(),
+  content: joi.alternatives().try(
+    joi.object().required(),
+    joi.any().allow(null).required()
+  ).required()
+});
+
 export const documentRevisionDBSchema = joi.object({
   _id: idOrKeySchema.required(),
   key: idOrKeySchema.required(),
@@ -46,7 +59,7 @@ export const documentRevisionDBSchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  sections: joi.array().items(sectionDBSchema).required(),
+  sections: joi.array().items(documentSectionDBSchema).required(),
   restoredFrom: joi.string().allow(null).allow('').required(),
   tags: joi.array().items(joi.string()).required(),
   archived: joi.bool().required(),
@@ -67,7 +80,7 @@ export const documentDBSchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  sections: joi.array().items(sectionDBSchema).required(),
+  sections: joi.array().items(documentSectionDBSchema).required(),
   contributors: joi.array().items(joi.string()).required(),
   tags: joi.array().items(joi.string()).required(),
   archived: joi.bool().required(),

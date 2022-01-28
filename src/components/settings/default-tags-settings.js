@@ -40,7 +40,7 @@ function DefaultTagsSettings({ defaultTags, onChange }) {
   const handleChange = (index, value) => {
     const rows = mapTagsToTableRows(defaultTags);
     const updatedRow = { key: index, tag: value.trim() };
-    fireOnChange(replaceItemAt(rows, index, updatedRow));
+    fireOnChange(replaceItemAt(rows, updatedRow, index));
   };
 
   const renderRank = (text, record, index) => (

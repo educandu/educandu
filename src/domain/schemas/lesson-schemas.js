@@ -1,5 +1,14 @@
 import joi from 'joi';
-import { idOrKeySchema, slugSchema, sectionSchema, sectionDBSchema } from './shared-schemas.js';
+import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
+
+export const lessonSectionDBSchema = joi.object({
+  key: idOrKeySchema.required(),
+  type: joi.string().required(),
+  content: joi.alternatives().try(
+    joi.object().required(),
+    joi.any().allow(null).required()
+  ).required()
+});
 
 export const lessonDBSchema = joi.object({
   _id: idOrKeySchema.required(),
@@ -10,7 +19,7 @@ export const lessonDBSchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  sections: joi.array().items(sectionDBSchema).required(),
+  sections: joi.array().items(lessonSectionDBSchema).required(),
   cdnResources: joi.array().items(joi.string()).required(),
   schedule: joi.object({
     startsOn: joi.date().required()

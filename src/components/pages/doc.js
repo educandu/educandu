@@ -69,7 +69,7 @@ function Doc({ initialState, PageTemplate }) {
 
     return (
       <div>
-        <div>{t('revision')}: <b>{index + 1}</b></div>
+        <div>{t('common:revision')}: <b>{index + 1}</b></div>
         <div>{t('date')}: <b>{formatDate(revision.createdOn)}</b></div>
         <div>{t('common:language')}: <b>{languageName}</b></div>
         <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
@@ -165,7 +165,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const revisionPicker = (
     <div className="DocPage-revisionPicker">
-      <div className="DocPage-revisionPickerLabel">{t('revision')}:</div>
+      <div className="DocPage-revisionPickerLabel">{t('common:revision')}:</div>
       <div className="DocPage-revisionPickerSlider">
         <Slider
           min={0}

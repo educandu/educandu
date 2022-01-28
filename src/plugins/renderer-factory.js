@@ -34,7 +34,8 @@ class RendererFactory extends PluginFactoryBase {
   static get inject() { return [Container]; }
 
   constructor(container) {
-    super(container, renderers);
+    super(container);
+    renderers.forEach(renderer => this.registerPlugin(renderer));
   }
 
   createRenderer(pluginType) {

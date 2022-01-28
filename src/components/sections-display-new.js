@@ -7,7 +7,16 @@ import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-function SectionsDisplayNew({ sections, canEdit, onSectionMoved, onSectionInserted }) {
+function SectionsDisplayNew({
+  sections,
+  sectionsContainerId,
+  canEdit,
+  onSectionMoved,
+  onSectionInserted,
+  onSectionDuplicated,
+  onSectionDeleted,
+  onSectionContentChange
+}) {
   const [isDragging, setIsDragging] = useState(false);
   const [currentNewSectionIndex, setCurrentNewSectionIndex] = useState(-1);
 
@@ -47,12 +56,16 @@ function SectionsDisplayNew({ sections, canEdit, onSectionMoved, onSectionInsert
     return (<SectionDisplayNew
       key={section.key}
       section={section}
+      sectionContainerId={sectionsContainerId}
       canEdit={!!dragHandleProps && canEdit}
       dragHandleProps={dragHandleProps}
       isDragged={isDragged}
       isOtherSectionDragged={isDragging && !isDragged}
+      onSectionDelete={() => onSectionDeleted(index)}
+      onSectionDuplicate={() => onSectionDuplicated(index)}
       onSectionMoveUp={() => handleSectionMoved(index, index - 1)}
       onSectionMoveDown={() => handleSectionMoved(index, index + 1)}
+      onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
       />);
   };
 
@@ -122,9 +135,13 @@ function SectionsDisplayNew({ sections, canEdit, onSectionMoved, onSectionInsert
 
 SectionsDisplayNew.propTypes = {
   canEdit: PropTypes.bool.isRequired,
+  onSectionContentChange: PropTypes.func.isRequired,
+  onSectionDeleted: PropTypes.func.isRequired,
+  onSectionDuplicated: PropTypes.func.isRequired,
   onSectionInserted: PropTypes.func.isRequired,
   onSectionMoved: PropTypes.func.isRequired,
-  sections: PropTypes.arrayOf(sectionShape).isRequired
+  sections: PropTypes.arrayOf(sectionShape).isRequired,
+  sectionsContainerId: PropTypes.string.isRequired
 };
 
 export default SectionsDisplayNew;
