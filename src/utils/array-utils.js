@@ -47,7 +47,7 @@ export function removeItemAt(items, index) {
   return items.filter((t, i) => i !== index);
 }
 
-export function replaceItemAt(items, index, newItem) {
+export function replaceItemAt(items, newItem, index) {
   if (!items || index < 0 || index > (items.length - 1)) {
     return items;
   }

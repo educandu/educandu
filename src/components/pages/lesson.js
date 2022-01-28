@@ -95,7 +95,7 @@ function Lesson({ PageTemplate, initialState }) {
       content: newContent
     };
 
-    const newSections = replaceItemAt(currentSections, index, modifiedSection);
+    const newSections = replaceItemAt(currentSections, modifiedSection, index);
     setCurrentSections(newSections);
   };
 
