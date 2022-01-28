@@ -100,6 +100,14 @@ function Lesson({ PageTemplate, initialState }) {
     );
   };
 
+  const handleSectionDuplicated = index => {
+    const duplicatedSection = cloneDeep(currentSections[index]);
+    duplicatedSection.key = uniqueId.create();
+
+    const expandedSections = insertItemAt(currentSections, duplicatedSection, index + 1);
+    setCurrentSections(expandedSections);
+  };
+
   const handleSectionInserted = (pluginType, index) => {
     const pluginInfo = infoFactory.createInfo(pluginType);
     const newSection = {
@@ -120,6 +128,7 @@ function Lesson({ PageTemplate, initialState }) {
             canEdit={isInEditMode}
             onSectionMoved={handleSectionMoved}
             onSectionInserted={handleSectionInserted}
+            onSectionDuplicated={handleSectionDuplicated}
             onSectionDeleted={handleSectionDeleted}
             />
         </div>

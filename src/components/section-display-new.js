@@ -25,6 +25,7 @@ function SectionDisplayNew({
   dragHandleProps,
   isDragged,
   isOtherSectionDragged,
+  onSectionDuplicate,
   onSectionDelete,
   onSectionMoveUp,
   onSectionMoveDown
@@ -60,7 +61,7 @@ function SectionDisplayNew({
     {
       label: 'duplicate',
       icon: <SnippetsOutlined key="duplicate" />,
-      handleAction: () => { },
+      handleAction: () => onSectionDuplicate(),
       isVisible: true,
       isEnabled: !isEditing
     },
@@ -137,6 +138,7 @@ SectionDisplayNew.propTypes = {
   isDragged: PropTypes.bool,
   isOtherSectionDragged: PropTypes.bool,
   onSectionDelete: PropTypes.func.isRequired,
+  onSectionDuplicate: PropTypes.func.isRequired,
   onSectionMoveDown: PropTypes.func.isRequired,
   onSectionMoveUp: PropTypes.func.isRequired,
   section: sectionShape.isRequired
