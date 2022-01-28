@@ -17,11 +17,7 @@ describe('lessonDBSchema', () => {
     sections: [
       {
         key: 'JD9fjjdj00e8jfkjdhjHNFLD436',
-        revision: uniqueId.create(),
         type: 'markdown',
-        deletedOn: null,
-        deletedBy: null,
-        deletedBecause: null,
         content: {
           text: 'Hello world!'
         }
@@ -98,13 +94,13 @@ describe('lessonDBSchema', () => {
   ];
 
   validTestCases.forEach(({ description, data }) => {
-    describe(`When called with ${description}`, () => {
+    describe(`when called with ${description}`, () => {
       it('should pass validation', () => expect(() => validate(data, lessonDBSchema)).not.toThrow());
     });
   });
 
   invalidTestCases.forEach(({ description, data }) => {
-    describe(`When called with ${description}`, () => {
+    describe(`when called with ${description}`, () => {
       it('should fail validation', () => expect(() => validate(data, lessonDBSchema)).toThrow());
     });
   });
