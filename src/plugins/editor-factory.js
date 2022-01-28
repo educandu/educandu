@@ -31,6 +31,7 @@ class EditorFactory extends PluginFactoryBase {
     if (!this.areEditorsLoaded) {
       const editors = await resolveAll(pluginImporters);
       editors.forEach(editor => this.registerPlugin(editor));
+      this.areEditorsLoaded = true;
     }
   }
 
