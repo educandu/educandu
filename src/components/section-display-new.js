@@ -45,6 +45,7 @@ function SectionDisplayNew({
 
   const actions = [
     {
+      type: 'edit',
       title: t('common:edit'),
       icon: <EditOutlined key="edit" />,
       handleAction: () => setIsEditing(true),
@@ -52,6 +53,7 @@ function SectionDisplayNew({
       isEnabled: !isEditing
     },
     {
+      type: 'preview',
       title: t('common:preview'),
       icon: <EyeOutlined key="preview" />,
       handleAction: () => setIsEditing(false),
@@ -59,6 +61,7 @@ function SectionDisplayNew({
       isEnabled: isEditing
     },
     {
+      type: 'duplicate',
       title: t('common:duplicate'),
       icon: <SnippetsOutlined key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
@@ -66,6 +69,7 @@ function SectionDisplayNew({
       isEnabled: !isEditing
     },
     {
+      type: 'delete',
       title: t('common:delete'),
       icon: <DeleteOutlined key="delete" />,
       handleAction: () => onSectionDelete(),
@@ -73,6 +77,7 @@ function SectionDisplayNew({
       isEnabled: true
     },
     {
+      type: 'moveUp',
       title: t('common:moveUp'),
       icon: <ArrowUpOutlined key="moveUp" />,
       handleAction: () => onSectionMoveUp(),
@@ -80,6 +85,7 @@ function SectionDisplayNew({
       isEnabled: true
     },
     {
+      type: 'moveDown',
       title: t('common:moveDown'),
       icon: <ArrowDownOutlined key="moveDown" />,
       handleAction: () => onSectionMoveDown(),
@@ -104,7 +110,7 @@ function SectionDisplayNew({
   const renderAction = (action, index) => (
     <Tooltip key={index} title={action.title} placement="topRight">
       <Button
-        className="SectionDisplayNew-actionButton"
+        className={`SectionDisplayNew-actionButton SectionDisplayNew-actionButton--${action.type}`}
         size="small"
         icon={action.icon}
         onClick={action.handleAction}
