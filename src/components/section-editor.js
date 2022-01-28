@@ -65,7 +65,7 @@ function SectionEditor({
         onSectionMovedDown(section.key);
         break;
       case SECTION_MENU_KEY_DELETE:
-        confirmSectionDelete(t, section, () => onSectionDeleted(section.key));
+        confirmSectionDelete(t, () => onSectionDeleted(section.key));
         break;
       case SECTION_MENU_KEY_DUPLICATE:
         onSectionDuplicated(section.key);

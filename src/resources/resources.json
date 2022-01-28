@@ -40,7 +40,7 @@
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
-      "thisActionIsIrreversible": "This Action is irreversible!",
+      "thisActionIsIrreversible": "This action is irreversible!",
       "pleaseSpecifyAReason": "Please specify a reason",
       "deleteAllRevisions": "Delete all existing revisions of this section",
       "restoreDocumentRevisionConfirmation": "Do you really want to restore the content of revision {revisionId}?",

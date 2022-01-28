@@ -14,7 +14,7 @@ deleteCdnDocumentConfirmation:
   en: Do you really want to delete the CDN file "{fileName}"?
   de: Möchten Sie die Datei "{fileName}" wirklich vom CDN löschen?
 thisActionIsIrreversible:
-  en: This Action is irreversible!
+  en: This action is irreversible!
   de: Diese Aktion ist unwiderrufbar!
 pleaseSpecifyAReason:
   en: Please specify a reason

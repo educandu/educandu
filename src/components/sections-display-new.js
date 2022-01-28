@@ -7,7 +7,7 @@ import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-function SectionsDisplayNew({ sections, canEdit, onSectionMoved, onSectionInserted }) {
+function SectionsDisplayNew({ sections, canEdit, onSectionMoved, onSectionInserted, onSectionDeleted }) {
   const [isDragging, setIsDragging] = useState(false);
   const [currentNewSectionIndex, setCurrentNewSectionIndex] = useState(-1);
 
@@ -51,6 +51,7 @@ function SectionsDisplayNew({ sections, canEdit, onSectionMoved, onSectionInsert
       dragHandleProps={dragHandleProps}
       isDragged={isDragged}
       isOtherSectionDragged={isDragging && !isDragged}
+      onSectionDelete={() => onSectionDeleted(index)}
       onSectionMoveUp={() => handleSectionMoved(index, index - 1)}
       onSectionMoveDown={() => handleSectionMoved(index, index + 1)}
       />);
@@ -122,6 +123,7 @@ function SectionsDisplayNew({ sections, canEdit, onSectionMoved, onSectionInsert
 
 SectionsDisplayNew.propTypes = {
   canEdit: PropTypes.bool.isRequired,
+  onSectionDeleted: PropTypes.func.isRequired,
   onSectionInserted: PropTypes.func.isRequired,
   onSectionMoved: PropTypes.func.isRequired,
   sections: PropTypes.arrayOf(sectionShape).isRequired

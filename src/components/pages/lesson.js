@@ -14,9 +14,10 @@ import { handleApiError } from '../../ui/error-helper.js';
 import SectionsDisplayNew from '../sections-display-new.js';
 import { EditControlPanel } from '../edit-control-panel.js';
 import { lessonShape } from '../../ui/default-prop-types.js';
+import { confirmSectionDelete } from '../confirmation-dialogs.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { insertItemAt, moveItem } from '../../utils/array-utils.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import { insertItemAt, moveItem, removeItemAt } from '../../utils/array-utils.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 
 const logger = new Logger(import.meta.url);
@@ -89,6 +90,16 @@ function Lesson({ PageTemplate, initialState }) {
     setCurrentSections(reorderedSections);
   };
 
+  const handleSectionDeleted = index => {
+    confirmSectionDelete(
+      t,
+      () => {
+        const reducedSections = removeItemAt(currentSections, index);
+        setCurrentSections(reducedSections);
+      }
+    );
+  };
+
   const handleSectionInserted = (pluginType, index) => {
     const pluginInfo = infoFactory.createInfo(pluginType);
     const newSection = {
@@ -109,6 +120,7 @@ function Lesson({ PageTemplate, initialState }) {
             canEdit={isInEditMode}
             onSectionMoved={handleSectionMoved}
             onSectionInserted={handleSectionInserted}
+            onSectionDeleted={handleSectionDeleted}
             />
         </div>
       </PageTemplate>

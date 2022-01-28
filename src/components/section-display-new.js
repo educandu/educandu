@@ -25,6 +25,7 @@ function SectionDisplayNew({
   dragHandleProps,
   isDragged,
   isOtherSectionDragged,
+  onSectionDelete,
   onSectionMoveUp,
   onSectionMoveDown
 }) {
@@ -66,7 +67,7 @@ function SectionDisplayNew({
     {
       label: 'delete',
       icon: <DeleteOutlined key="delete" />,
-      handleAction: () => { },
+      handleAction: () => onSectionDelete(),
       isVisible: true,
       isEnabled: true
     },
@@ -135,6 +136,7 @@ SectionDisplayNew.propTypes = {
   dragHandleProps: PropTypes.object,
   isDragged: PropTypes.bool,
   isOtherSectionDragged: PropTypes.bool,
+  onSectionDelete: PropTypes.func.isRequired,
   onSectionMoveDown: PropTypes.func.isRequired,
   onSectionMoveUp: PropTypes.func.isRequired,
   section: sectionShape.isRequired
