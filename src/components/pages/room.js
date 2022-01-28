@@ -37,7 +37,7 @@ export default function Room({ PageTemplate, initialState }) {
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
   const { invitations, lessons } = initialState;
-  const isRoomOwner = user._id === room.owner.key;
+  const isRoomOwner = user?._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 

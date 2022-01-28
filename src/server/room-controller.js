@@ -47,7 +47,7 @@ export default class RoomController {
     const { token } = req.params;
 
     if (!user) {
-      return res.redirect(urls.getLoginUrl(req.path));
+      throw new Unauthorized();
     }
 
     const { roomId, roomName, roomSlug, isValid } = await this.roomService.verifyInvitationToken({ token, user });

@@ -33,7 +33,7 @@ function Lesson({ PageTemplate, initialState }) {
   const infoFactory = useService(InfoFactory);
   const editorFactory = useService(EditorFactory);
 
-  const isRoomOwner = user._id === initialState.roomOwner;
+  const isRoomOwner = user?._id === initialState.roomOwner;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 
   const [isInEditMode, setIsInEditMode] = useState(false);
