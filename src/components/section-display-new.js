@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
@@ -15,6 +15,7 @@ import {
   DeleteOutlined,
   DragOutlined,
   EditOutlined,
+  EyeOutlined,
   SnippetsOutlined
 } from '@ant-design/icons';
 
@@ -38,33 +39,52 @@ function SectionDisplayNew({
     'is-other-section-dragged': isOtherSectionDragged
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const actions = [
     {
       label: 'edit',
       icon: <EditOutlined key="edit" />,
-      handleAction: () => { }
+      handleAction: () => setIsEditing(true),
+      isVisible: !isEditing,
+      isEnabled: !isEditing
+    },
+    {
+      label: 'preview',
+      icon: <EyeOutlined key="preview" />,
+      handleAction: () => setIsEditing(false),
+      isVisible: isEditing,
+      isEnabled: isEditing
     },
     {
       label: 'duplicate',
       icon: <SnippetsOutlined key="duplicate" />,
-      handleAction: () => { }
+      handleAction: () => { },
+      isVisible: true,
+      isEnabled: !isEditing
     },
     {
       label: 'delete',
       icon: <DeleteOutlined key="delete" />,
-      handleAction: () => { }
+      handleAction: () => { },
+      isVisible: true,
+      isEnabled: true
     },
     {
       label: 'moveUp',
       icon: <ArrowUpOutlined key="moveUp" />,
-      handleAction: () => onSectionMoveUp()
+      handleAction: () => onSectionMoveUp(),
+      isVisible: true,
+      isEnabled: true
     },
     {
       label: 'moveDown',
       icon: <ArrowDownOutlined key="moveDown" />,
-      handleAction: () => onSectionMoveDown()
+      handleAction: () => onSectionMoveDown(),
+      isVisible: true,
+      isEnabled: true
     }
-  ];
+  ].filter(action => action.isVisible);
 
   const getDisplayComponent = () => {
     const DisplayComponent = rendererFactory.createRenderer(section.type).getDisplayComponent();
@@ -86,6 +106,7 @@ function SectionDisplayNew({
       size="small"
       icon={action.icon}
       onClick={action.handleAction}
+      disabled={!action.isEnabled}
       />
   );
 
