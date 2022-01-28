@@ -6,7 +6,7 @@ import uniqueId from '../utils/unique-id.js';
 import LessonController from './lesson-controller.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('lesson-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -60,6 +60,21 @@ describe('lesson-controller', () => {
     let room;
     let lesson;
     let mappedLesson;
+
+    describe('when user is not provided (session expired)', () => {
+      beforeEach(() => {
+        req = { params: { 0: '', lessonId } };
+        room = { _id: roomId, access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [] };
+        lesson = { _id: lessonId, slug: '', roomId };
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+      });
+
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetLessonPage(req, {})).rejects.toThrow(Unauthorized);
+      });
+    });
 
     describe('when the lesson does not exist', () => {
       beforeEach(() => {

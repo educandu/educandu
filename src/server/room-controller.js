@@ -27,7 +27,7 @@ import {
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
-const { NotFound, Forbidden } = httpErrors;
+const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
 export default class RoomController {
   static get inject() { return [ServerConfig, RoomService, UserService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
@@ -45,6 +45,10 @@ export default class RoomController {
   async handleGetRoomMembershipConfirmationPage(req, res) {
     const { user } = req;
     const { token } = req.params;
+
+    if (!user) {
+      throw new Unauthorized();
+    }
 
     const { roomId, roomName, roomSlug, isValid } = await this.roomService.verifyInvitationToken({ token, user });
     const initialState = { token, roomId, roomName, roomSlug, isValid };
@@ -118,10 +122,11 @@ export default class RoomController {
 
   async handleGetRoomPage(req, res) {
     const { roomId } = req.params;
-    const { _id: userId } = req.user;
+    const userId = req.user?._id;
     const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
 
     const room = await this.roomService.getRoomById(roomId);
+    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
 
     if (!room) {
       throw new NotFound();
@@ -131,7 +136,10 @@ export default class RoomController {
       return res.redirect(301, urls.getRoomUrl(room._id, room.slug));
     }
 
-    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+    if (isPrivateRoom && !userId) {
+      throw new Unauthorized();
+    }
+
     let invitations = [];
 
     if (isPrivateRoom) {
@@ -219,7 +227,7 @@ export default class RoomController {
 
     router.get(
       '/rooms/:roomId*',
-      [needsPermission(permissions.OWN_ROOMS), validateParams(getRoomParamsSchema)],
+      validateParams(getRoomParamsSchema),
       (req, res) => this.handleGetRoomPage(req, res)
     );
 

@@ -8,7 +8,7 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import uniqueId from '../utils/unique-id.js';
 
-const { NotFound, Forbidden, BadRequest } = httpErrors;
+const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
@@ -315,6 +315,19 @@ describe('room-controller', () => {
   });
 
   describe('handleGetRoomPage', () => {
+
+    describe('when user is not provided (session expired)', () => {
+      beforeEach(() => {
+        const room = { _id: uniqueId.create(), slug: '', access: ROOM_ACCESS_LEVEL.private };
+        roomService.getRoomById.resolves(room);
+
+        req = { params: { 0: '', roomId: room._id } };
+      });
+
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetRoomPage(req, {})).rejects.toThrow(Unauthorized);
+      });
+    });
 
     describe('when the room is private', () => {
       const room = {
