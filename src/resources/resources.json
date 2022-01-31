@@ -126,28 +126,6 @@
     }
   },
   {
-    "namespace": "documentCreationModal",
-    "language": "en",
-    "resources": {
-      "newDocument": "New document",
-      "copyTitleSuffix": "(copy)",
-      "copySlugSuffix": "copy",
-      "titleRequired": "Please specify a document title",
-      "useDefaultTemplateDocument": "Use default template"
-    }
-  },
-  {
-    "namespace": "documentCreationModal",
-    "language": "de",
-    "resources": {
-      "newDocument": "Neues Dokument",
-      "copyTitleSuffix": "(Kopie)",
-      "copySlugSuffix": "kopie",
-      "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
-      "useDefaultTemplateDocument": "Standardvorlage benutzen"
-    }
-  },
-  {
     "namespace": "documentImportTable",
     "language": "en",
     "resources": {
@@ -179,6 +157,26 @@
       "unassigned": "nicht zugewiesen",
       "tags": "Tags",
       "invalidTags": "Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein"
+    }
+  },
+  {
+    "namespace": "documentMetadataModal",
+    "language": "en",
+    "resources": {
+      "newDocument": "New document",
+      "editDocument": "Edit document",
+      "titleRequired": "Please specify a document title",
+      "useTemplateDocument": "Use default template"
+    }
+  },
+  {
+    "namespace": "documentMetadataModal",
+    "language": "de",
+    "resources": {
+      "newDocument": "Neues Dokument",
+      "editDocument": "Dokument bearbeiten",
+      "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
+      "useTemplateDocument": "Standardvorlage benutzen"
     }
   },
   {
@@ -1530,6 +1528,7 @@
       "accessType_private": "private",
       "title": "Title",
       "slug": "URL path",
+      "tags": "Tags",
       "username": "User name",
       "password": "Password",
       "text": "Text",
@@ -1583,6 +1582,7 @@
       "accessType_private": "privat",
       "title": "Titel",
       "slug": "URL-Pfad",
+      "tags": "Tags",
       "username": "Benutzername",
       "password": "Kennwort",
       "text": "Text",

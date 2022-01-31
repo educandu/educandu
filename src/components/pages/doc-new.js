@@ -20,6 +20,7 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
+import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -41,6 +42,7 @@ function Doc({ initialState, PageTemplate }) {
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [currentSections, setCurrentSections] = useState(cloneDeep(doc.sections));
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState([]);
+  const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
 
   const isExternalDocument = doc.origin.startsWith(DOCUMENT_ORIGIN.external);
 
@@ -72,7 +74,30 @@ function Doc({ initialState, PageTemplate }) {
   }, [globalAlerts, doc, isExternalDocument, t]);
 
   const handleMetadataEdit = () => {
-    // SetIsLessonMetadataModalVisible(true);
+    setIsDocumentMetadataModalVisible(true);
+  };
+
+  const handleDocumentMetadataModalSave = async ({ title, slug, language, tags }) => {
+    const { documentRevision } = await documentApiClient.saveDocument({
+      title,
+      slug,
+      language,
+      tags,
+      sections: latestRevision.sections,
+      appendTo: {
+        key: latestRevision.key,
+        ancestorId: latestRevision._id
+      }
+    });
+    const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
+
+    setDoc(latestDoc);
+    setLatestRevision(documentRevision);
+    setIsDocumentMetadataModalVisible(false);
+  };
+
+  const handleDocumentMetadataModalClose = () => {
+    setIsDocumentMetadataModalVisible(false);
   };
 
   const handleEdit = async () => {
@@ -86,31 +111,8 @@ function Doc({ initialState, PageTemplate }) {
     setCurrentSections(cloneDeep(newLatestRevision.sections));
   };
 
-  const updateLatestRevision = newRevision => {
-    const currentSectionKeys = currentSections.map(s => s.key);
-
-    if (newRevision.sections.some(s => !currentSectionKeys.includes(s.key))) {
-      throw new Error('Updated sections do not match exiting sections');
-    }
-
-    const newPendingTemplateSectionKeys = [];
-    const mergedSections = currentSections.map(currentSection => {
-      const updatedSection = newRevision.sections.find(s => s.key === currentSection.key);
-      if (updatedSection) {
-        return updatedSection;
-      }
-
-      newPendingTemplateSectionKeys.push(currentSection.key);
-      return currentSection;
-    });
-
-    setLatestRevision(newRevision);
-    setCurrentSections(cloneDeep(mergedSections));
-    setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
-  };
-
   const handleSave = async () => {
-    const data = {
+    const mappedDocumentRevision = {
       title: latestRevision.title,
       slug: latestRevision.slug,
       language: latestRevision.language,
@@ -127,10 +129,31 @@ function Doc({ initialState, PageTemplate }) {
     };
 
     try {
-      const response = await documentApiClient.saveDocument(data);
+      const { documentRevision: newRevision } = await documentApiClient.saveDocument(mappedDocumentRevision);
+
+      const currentSectionKeys = currentSections.map(s => s.key);
+      if (newRevision.sections.some(s => !currentSectionKeys.includes(s.key))) {
+        throw new Error('Updated sections do not match exiting sections');
+      }
+
+      const newPendingTemplateSectionKeys = [];
+      const mergedSections = currentSections.map(currentSection => {
+        const updatedSection = newRevision.sections.find(s => s.key === currentSection.key);
+        if (updatedSection) {
+          return updatedSection;
+        }
+
+        newPendingTemplateSectionKeys.push(currentSection.key);
+        return currentSection;
+      });
+
+      const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
 
       setIsDirty(false);
-      updateLatestRevision(response.documentRevision);
+      setDoc(latestDoc);
+      setLatestRevision(newRevision);
+      setCurrentSections(cloneDeep(mergedSections));
+      setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -138,10 +161,7 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleClose = () => {
     return new Promise(resolve => {
-      const exitEditMode = async () => {
-        const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
-
-        setDoc(latestDoc);
+      const exitEditMode = () => {
         setPendingTemplateSectionKeys([]);
         setCurrentSections(latestRevision.sections);
 
@@ -258,6 +278,14 @@ function Doc({ initialState, PageTemplate }) {
           )}
           />
       </Restricted>
+
+      <DocumentMetadataModal
+        initialDocumentMetadata={doc}
+        isVisible={isDocumentMetadataModalVisible}
+        mode={DOCUMENT_METADATA_MODAL_MODE.update}
+        onSave={handleDocumentMetadataModalSave}
+        onClose={handleDocumentMetadataModalClose}
+        />
     </Fragment>
   );
 }

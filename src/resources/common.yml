@@ -121,6 +121,9 @@ title:
 slug:
   en: URL path
   de: URL-Pfad
+tags:
+  en: Tags
+  de: Tags
 username:
   en: User name
   de: Benutzername

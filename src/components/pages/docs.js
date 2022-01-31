@@ -9,32 +9,51 @@ import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
 import { Input, Table, Button, Switch } from 'antd';
-import { useDateFormat } from '../language-context.js';
+import { useSettings } from '../settings-context.js';
 import { DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';
-import DocumentCreationModal from '../document-creation-modal.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
+import { useDateFormat, useLanguage } from '../language-context.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
 
 const DEFAULT_FILTER_INPUT = '';
 
+function getDefaultLanguageFromUiLanguage(uiLanguage) {
+  switch (uiLanguage) {
+    case 'de': return 'de';
+    default: return 'en';
+  }
+}
+
+function getDefaultDocumentMetadata(t, uiLanguage) {
+  return {
+    title: t('newDocument'),
+    slug: '',
+    tags: [],
+    language: getDefaultLanguageFromUiLanguage(uiLanguage)
+  };
+}
+
 function Docs({ initialState, PageTemplate }) {
   const user = useUser();
+  const settings = useSettings();
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('docs');
   const { formatDate } = useDateFormat();
+  const { language: uiLanguage } = useLanguage();
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [modalState, setModalState] = useState({
     isVisible: false,
-    clonedDocument: null
+    initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
   });
 
   const [state, setState] = useState({
@@ -52,15 +71,43 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleNewDocumentClick = () => {
-    setModalState({ isVisible: true, clonedDocument: null });
+    setModalState({
+      isVisible: true,
+      templateDocumentKey: settings.templateDocument?.documentKey,
+      initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
+    });
   };
 
   const handleCloneClick = doc => {
-    setModalState({ isVisible: true, clonedDocument: doc });
+    setModalState({
+      isVisible: true,
+      templateDocumentKey: null,
+      initialDocumentMetadata: {
+        title: `${doc.title} ${t('copyTitleSuffix')}`,
+        slug: `${doc.slug}-${t('copySlugSuffix')}`,
+        tags: [...doc.tags],
+        language: doc.language
+      }
+    });
   };
 
-  const handleDocumentCreationModalClose = () => {
-    setModalState({ isVisible: false, clonedDocument: null });
+  const handleDocumentMetadataModalSave = async ({ title, slug, language, tags, templateDocumentKey }) => {
+    const { documentRevision } = await documentApiClient.saveDocument({ title, slug, language, tags, sections: [] });
+    setModalState({
+      isVisible: false,
+      templateDocumentKey: settings.templateDocument?.documentKey,
+      initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
+    });
+
+    window.location = urls.getEditDocUrl(documentRevision.key, templateDocumentKey || modalState.clonedDocument?.key);
+  };
+
+  const handleDocumentMetadataModalClose = () => {
+    setModalState({
+      isVisible: false,
+      templateDocumentKey: settings.templateDocument?.documentKey,
+      initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
+    });
   };
 
   const handleDocumentDelete = async documentKey => {
@@ -235,10 +282,13 @@ function Docs({ initialState, PageTemplate }) {
             <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />
           </Restricted>
         </aside>
-        <DocumentCreationModal
+        <DocumentMetadataModal
+          initialDocumentMetadata={modalState.initialDocumentMetadata}
           isVisible={modalState.isVisible}
-          clonedDocument={modalState.clonedDocument}
-          onClose={handleDocumentCreationModalClose}
+          templateDocumentKey={modalState.templateDocumentKey}
+          mode={DOCUMENT_METADATA_MODAL_MODE.create}
+          onSave={handleDocumentMetadataModalSave}
+          onClose={handleDocumentMetadataModalClose}
           />
       </div>
     </PageTemplate>
