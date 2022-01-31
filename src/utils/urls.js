@@ -15,7 +15,6 @@ const docsPrefix = '/docs/';
 const roomsPrefix = '/rooms/';
 const revisionPrefix = '/revs/';
 const lessonsPrefix = '/lessons/';
-const editDocPrefix = '/edit/doc/';
 const completeRegistrationPrefix = '/complete-registration/';
 const completePasswordResetPrefix = '/complete-password-reset/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
@@ -46,17 +45,14 @@ function getDocsUrl() {
   return docsPath;
 }
 
-function getEditDocUrl(docKey, templateDocumentKey = null) {
-  const url = concatParts(editDocPrefix, docKey);
-  return templateDocumentKey ? `${url}?templateDocumentKey=${encodeURIComponent(templateDocumentKey)}` : url;
-}
-
 function getUsersUrl() {
   return usersPath;
 }
 
-function getDocUrl(key, slug) {
-  return concatParts(docsPrefix, encodeURIComponent(key), encodeURIParts(slug));
+function getDocUrl({ key, slug, view, templateDocumentKey }) {
+  const url = concatParts(docsPrefix, encodeURIComponent(key), encodeURIParts(slug));
+  const queryParams = new URLSearchParams([['view', view], ['templateDocumentKey', templateDocumentKey]].filter(([, value]) => value)).toString();
+  return queryParams ? `${url}?${queryParams}` : url;
 }
 
 function getDocumentRevisionUrl(revisionId) {
@@ -160,7 +156,6 @@ export default {
   removeLeadingSlash,
   concatParts,
   getDocsUrl,
-  getEditDocUrl,
   getUsersUrl,
   getDocUrl,
   getDocumentRevisionUrl,

@@ -109,7 +109,7 @@ function Register({ PageTemplate, SiteLogo }) {
                 <a
                   key="terms-link"
                   title={termsPage?.linkTitle || null}
-                  href={termsPage?.documentKey ? urls.getDocUrl(termsPage.documentKey, termsPage.documentSlug) : '#'}
+                  href={termsPage?.documentKey ? urls.getDocUrl({ key: termsPage.documentKey, slug: termsPage.documentSlug }) : '#'}
                   />
               ]}
               />

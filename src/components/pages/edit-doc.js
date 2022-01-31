@@ -274,7 +274,7 @@ function EditDoc({ initialState, PageTemplate }) {
   };
 
   const handleCancelClick = () => {
-    window.location = urls.getDocUrl(state.editedDocumentRevision.key, state.editedDocumentRevision.slug);
+    window.location = urls.getDocUrl({ key: state.editedDocumentRevision.key, slug: state.editedDocumentRevision.slug });
   };
 
   const handleDragEnd = ({ source, destination }) => {

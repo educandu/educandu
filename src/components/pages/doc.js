@@ -42,7 +42,7 @@ function Doc({ initialState, PageTemplate }) {
   });
 
   const handleEditClick = () => {
-    window.location = urls.getEditDocUrl(state.currentDocOrRevision.key);
+    window.location = urls.getDocUrl({ key: state.currentDocOrRevision });
   };
 
   const handleViewRevionsClick = async () => {
