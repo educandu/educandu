@@ -193,6 +193,8 @@ function Lesson({ PageTemplate, initialState }) {
       {isRoomOwner && (
         <Fragment>
           <EditControlPanel
+            canClose
+            canCancel={false}
             onEdit={handleEdit}
             onMetadataEdit={handleMetadataEdit}
             onSave={handleSave}
