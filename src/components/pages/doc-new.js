@@ -32,7 +32,6 @@ const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEdi
 // ToDo:
 // - set alerts from edit-doc page
 // - delete edit-doc page
-// - expand document-controller tests for getEditPage
 
 function Doc({ initialState, PageTemplate }) {
   const request = useRequest();
