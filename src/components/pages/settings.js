@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
+import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import { Alert, Input, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useBeforeunload } from 'react-beforeunload';
-import React, { useState, useCallback } from 'react';
 import permissions from '../../domain/permissions.js';
 import MarkdownTextarea from '../markdown-textarea.js';
 import DocumentSelector from '../document-selector.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LicenseSettings from '../settings/license-settings.js';
-import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import React, { useState, useCallback, Fragment } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import errorHelper, { handleApiError } from '../../ui/error-helper.js';
 import SettingApiClient from '../../api-clients/setting-api-client.js';
@@ -18,8 +18,10 @@ import DefaultTagsSettings from '../settings/default-tags-settings.js';
 import SpecialPageSettings from '../settings/special-page-settings.js';
 import FooterLinksSettings from '../settings/footer-links-settings.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
+import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -30,7 +32,6 @@ function Settings({ initialState, PageTemplate }) {
   const [settings, setSettings] = useState(initialState.settings);
   const [dirtyKeys, setDirtyKeys] = useState([]);
   const [invalidKeys, setInvalidKeys] = useState([]);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [lastSavedSettings, setLastSavedSettings] = useState(initialState.settings);
 
   const handleChange = useCallback((key, value, isValid) => {
@@ -74,24 +75,32 @@ function Settings({ initialState, PageTemplate }) {
     handleChange('license', value, isValid);
   }, [handleChange]);
 
-  const handleSaveClick = async () => {
+  const handleSave = async () => {
     const changedSettings = dirtyKeys.reduce((map, key) => ({ ...map, [key]: settings[key] }), {});
     try {
-      setIsUpdating(true);
       await settingApiClient.saveSettings({ settings: changedSettings });
       setLastSavedSettings({ ...initialState.settings, ...changedSettings });
       setDirtyKeys([]);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
-    } finally {
-      setIsUpdating(false);
     }
   };
 
-  const handleCancelClick = () => {
-    setSettings(lastSavedSettings);
-    setDirtyKeys([]);
-    setInvalidKeys([]);
+  const handleCancel = () => {
+    return new Promise(resolve => {
+      const exitEditMode = () => {
+        setSettings(lastSavedSettings);
+        setDirtyKeys([]);
+        setInvalidKeys([]);
+        resolve(true);
+      };
+
+      if (dirtyKeys.length) {
+        confirmDiscardUnsavedChanges(t, exitEditMode, () => resolve(false));
+      } else {
+        exitEditMode();
+      }
+    });
   };
 
   const handleCreateDocumentRegenerationBatchClick = async () => {
@@ -102,29 +111,6 @@ function Settings({ initialState, PageTemplate }) {
     }
   };
 
-  const headerActions = [];
-  if (dirtyKeys.length) {
-    if (!invalidKeys.length) {
-      headerActions.push({
-        key: 'save',
-        type: 'primary',
-        icon: SaveOutlined,
-        text: t('common:save'),
-        loading: isUpdating,
-        permission: permissions.EDIT_SETTINGS,
-        handleClick: handleSaveClick
-      });
-    }
-
-    headerActions.push({
-      key: 'close',
-      icon: CloseOutlined,
-      text: t('common:cancel'),
-      disabled: isUpdating,
-      handleClick: handleCancelClick
-    });
-  }
-
   const alerts = useGlobalAlerts();
 
   useBeforeunload(event => {
@@ -133,75 +119,96 @@ function Settings({ initialState, PageTemplate }) {
     }
   });
 
+  let controlStatus;
+  if (invalidKeys.length) {
+    controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
+  } else if (dirtyKeys.length) {
+    controlStatus = EDIT_CONTROL_PANEL_STATUS.dirty;
+  } else {
+    controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
+  }
+
   const templateDocumentURL = settings.templateDocument
     ? `${settings.templateDocument.documentKey}/${settings.templateDocument.documentSlug}`
     : '';
 
   return (
-    <PageTemplate alerts={alerts} headerActions={headerActions}>
-      <div className="SettingsPage">
-        <h1>{t('pageNames:settings')}</h1>
+    <Fragment>
+      <PageTemplate alerts={alerts}>
+        <div className="SettingsPage">
+          <h1>{t('pageNames:settings')}</h1>
 
-        <h2 className="SettingsPage-sectionHeader">{t('announcementHeader')}</h2>
-        <section className="SettingsPage-section SettingsPage-section--announcement">
-          <Input value={settings.announcement} onChange={handleAnnouncementChange} />
-          <span className="SettingsPage-announcementPreview">{t('announcementPreview')}</span>
-          <Alert type="warning" message={<Markdown inline>{settings.announcement}</Markdown>} banner />
-        </section>
+          <h2 className="SettingsPage-sectionHeader">{t('announcementHeader')}</h2>
+          <section className="SettingsPage-section SettingsPage-section--announcement">
+            <Input value={settings.announcement} onChange={handleAnnouncementChange} />
+            <span className="SettingsPage-announcementPreview">{t('announcementPreview')}</span>
+            <Alert type="warning" message={<Markdown inline>{settings.announcement}</Markdown>} banner />
+          </section>
 
-        <h2 className="SettingsPage-sectionHeader">{t('homepageInfoHeader')}</h2>
-        <MarkdownTextarea value={settings.homepageInfo || ''} onChange={handleHomepageInfoChange} />
+          <h2 className="SettingsPage-sectionHeader">{t('homepageInfoHeader')}</h2>
+          <MarkdownTextarea value={settings.homepageInfo || ''} onChange={handleHomepageInfoChange} />
 
-        <h2 className="SettingsPage-sectionHeader">{t('templateDocumentHeader')}</h2>
-        <DocumentSelector
-          by="url"
-          documents={initialState.documents}
-          value={templateDocumentURL}
-          onChange={handleTemplateDocumentChange}
+          <h2 className="SettingsPage-sectionHeader">{t('templateDocumentHeader')}</h2>
+          <DocumentSelector
+            by="url"
+            documents={initialState.documents}
+            value={templateDocumentURL}
+            onChange={handleTemplateDocumentChange}
+            />
+
+          <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
+          <SpecialPageSettings
+            settings={settings.helpPage}
+            documents={initialState.documents}
+            onChange={handleHelpPageChange}
+            />
+
+          <h2 className="SettingsPage-sectionHeader">{t('termsPageHeader')}</h2>
+          <SpecialPageSettings
+            settings={settings.termsPage}
+            documents={initialState.documents}
+            onChange={handleTermsPageChange}
+            />
+
+          <h2 className="SettingsPage-sectionHeader">{t('footerLinksHeader')}</h2>
+          <FooterLinksSettings
+            footerLinks={settings.footerLinks}
+            documents={initialState.documents}
+            onChange={handleFooterLinksChange}
+            />
+
+          <h2 className="SettingsPage-sectionHeader">{t('defaultTagsHeader')}</h2>
+          <DefaultTagsSettings
+            defaultTags={settings.defaultTags || []}
+            onChange={handleDefaultTagsChange}
+            />
+
+          <h2 className="SettingsPage-sectionHeader">{t('licenseHeader')}</h2>
+          <LicenseSettings
+            license={settings.license}
+            onChange={handleLicenseChange}
+            />
+
+          <h2 className="SettingsPage-sectionHeader">{t('createDocumentRegenerationBatchHeader')}</h2>
+          <Button
+            className="SettingsPage-createDocumentRegenerationBatchButton"
+            onClick={handleCreateDocumentRegenerationBatchClick}
+            >
+            {t('createDocumentRegenerationBatchButton')}
+          </Button>
+        </div>
+      </PageTemplate>
+
+      <Restricted to={permissions.EDIT_SETTINGS}>
+        <EditControlPanel
+          canCancel
+          canClose={false}
+          status={controlStatus}
+          onSave={handleSave}
+          onCancel={handleCancel}
           />
-
-        <h2 className="SettingsPage-sectionHeader">{t('helpPageHeader')}</h2>
-        <SpecialPageSettings
-          settings={settings.helpPage}
-          documents={initialState.documents}
-          onChange={handleHelpPageChange}
-          />
-
-        <h2 className="SettingsPage-sectionHeader">{t('termsPageHeader')}</h2>
-        <SpecialPageSettings
-          settings={settings.termsPage}
-          documents={initialState.documents}
-          onChange={handleTermsPageChange}
-          />
-
-        <h2 className="SettingsPage-sectionHeader">{t('footerLinksHeader')}</h2>
-        <FooterLinksSettings
-          footerLinks={settings.footerLinks}
-          documents={initialState.documents}
-          onChange={handleFooterLinksChange}
-          />
-
-        <h2 className="SettingsPage-sectionHeader">{t('defaultTagsHeader')}</h2>
-        <DefaultTagsSettings
-          defaultTags={settings.defaultTags || []}
-          onChange={handleDefaultTagsChange}
-          />
-
-        <h2 className="SettingsPage-sectionHeader">{t('licenseHeader')}</h2>
-        <LicenseSettings
-          license={settings.license}
-          onChange={handleLicenseChange}
-          />
-
-        <h2 className="SettingsPage-sectionHeader">{t('createDocumentRegenerationBatchHeader')}</h2>
-        <Button
-          className="SettingsPage-createDocumentRegenerationBatchButton"
-          onClick={handleCreateDocumentRegenerationBatchClick}
-          >
-          {t('createDocumentRegenerationBatchButton')}
-        </Button>
-      </div>
-    </PageTemplate>
+      </Restricted>
+    </Fragment>
   );
 }
 

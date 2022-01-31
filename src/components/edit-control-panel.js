@@ -9,7 +9,8 @@ import {
   SaveOutlined,
   CloudOutlined,
   CloudUploadOutlined,
-  WarningOutlined
+  WarningOutlined,
+  UndoOutlined
 } from '@ant-design/icons';
 
 export const EDIT_CONTROL_PANEL_STATUS = {
@@ -19,19 +20,24 @@ export const EDIT_CONTROL_PANEL_STATUS = {
   none: 'none'
 };
 
-function EditControlPanel({ children, onEdit, onSave, onClose, status }) {
+function EditControlPanel({ canCancel, canClose, metadata, onEdit, onMetadataEdit, onSave, onCancel, onClose, status }) {
   const { t } = useTranslation('editControlPanel');
   const [isLoading, setIsLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!canClose);
   const [isExpandedContentVisible, setIsExpandedContentVisible] = useState(false);
 
   useEffect(() => {
+    if (!canClose) {
+      setIsExpandedContentVisible(true);
+      return;
+    }
+
     if (isExpanded) {
       setTimeout(() => setIsExpandedContentVisible(true), 500);
     } else {
       setIsExpandedContentVisible(false);
     }
-  }, [isExpanded]);
+  }, [canClose, isExpanded]);
 
   const handleEditClick = async () => {
     try {
@@ -48,10 +54,14 @@ function EditControlPanel({ children, onEdit, onSave, onClose, status }) {
   };
 
   const handleCloseClick = async () => {
-    const canClose = await onClose();
-    if (canClose) {
+    const canBeClosed = await onClose();
+    if (canBeClosed) {
       setIsExpanded(false);
     }
+  };
+
+  const handleCancelClick = () => {
+    onCancel();
   };
 
   const renderStatusIcon = () => {
@@ -88,13 +98,25 @@ function EditControlPanel({ children, onEdit, onSave, onClose, status }) {
   const renderExpandedContent = () => {
     return (
       <Fragment>
-        <div className="EditControlPanel-children">
-          {children}
+        <div className="EditControlPanel-metadata">
+          { metadata && (
+            <Fragment>
+              <span className="EditControlPanel-metadataEditButton">
+                <Button size="small" icon={<EditOutlined />} onClick={onMetadataEdit} ghost />
+              </span>
+              {metadata}
+            </Fragment>
+          )}
         </div>
         <div className="EditControlPanel-buttonGroup">
           {renderStatusIcon()}
           <Button disabled={status !== EDIT_CONTROL_PANEL_STATUS.dirty} className="EditControlPanel-button" size="small" icon={<SaveOutlined />} onClick={handleSaveClick} ghost>{t('common:save')}</Button>
-          <Button className="EditControlPanel-button" size="small" icon={<CloseOutlined />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
+          { canCancel && (
+            <Button disabled={status === EDIT_CONTROL_PANEL_STATUS.saved} className="EditControlPanel-button" size="small" icon={<UndoOutlined />} onClick={handleCancelClick} ghost>{t('common:cancel')}</Button>
+          )}
+          { canClose && (
+            <Button className="EditControlPanel-button" size="small" icon={<CloseOutlined />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
+          )}
         </div>
       </Fragment>
 
@@ -116,17 +138,25 @@ function EditControlPanel({ children, onEdit, onSave, onClose, status }) {
 }
 
 EditControlPanel.propTypes = {
-  children: PropTypes.node,
+  canCancel: PropTypes.bool,
+  canClose: PropTypes.bool,
+  metadata: PropTypes.node,
+  onCancel: PropTypes.func,
   onClose: PropTypes.func,
   onEdit: PropTypes.func,
+  onMetadataEdit: PropTypes.func,
   onSave: PropTypes.func,
   status: PropTypes.oneOf(Object.values(EDIT_CONTROL_PANEL_STATUS))
 };
 
 EditControlPanel.defaultProps = {
-  children: null,
-  onClose: () => {},
-  onEdit: () => {},
+  canCancel: true,
+  canClose: true,
+  metadata: null,
+  onCancel: () => {},
+  onClose: () => Promise.resolve(true),
+  onEdit: () => Promise.resolve(),
+  onMetadataEdit: () => {},
   onSave: () => {},
   status: EDIT_CONTROL_PANEL_STATUS.none
 };
