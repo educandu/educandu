@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
-import { withUser } from './user-context.js';
+import { useUser } from './user-context.js';
 import { userProps } from '../ui/default-prop-types.js';
 import { hasUserPermission } from '../domain/permissions.js';
 
-function Restricted({ to, user, children }) {
+function Restricted({ to, children }) {
+  const user = useUser();
+
   if (!to) {
     return children;
   }
@@ -26,4 +28,4 @@ Restricted.defaultProps = {
   children: null
 };
 
-export default withUser(Restricted);
+export default Restricted;
