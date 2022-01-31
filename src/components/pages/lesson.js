@@ -1,11 +1,9 @@
-import { Button } from 'antd';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
-import { EditOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useService } from '../container-context.js';
@@ -93,7 +91,7 @@ function Lesson({ PageTemplate, initialState }) {
     ? formatDate(lesson.schedule.startsOn)
     : '';
 
-  const handleEditMetadataClick = () => {
+  const handleMetadataEdit = () => {
     setIsLessonMetadataModalVisible(true);
   };
 
@@ -194,13 +192,19 @@ function Lesson({ PageTemplate, initialState }) {
       </PageTemplate>
       {isRoomOwner && (
         <Fragment>
-          <EditControlPanel onEdit={handleEdit} onSave={handleSave} onClose={handleClose} status={controlStatus}>
-            <span className="Lesson-editControlPanelItem">
-              <Button size="small" icon={<EditOutlined />} onClick={handleEditMetadataClick} ghost />
-            </span>
-            <span className="Lesson-editControlPanelItem">{startsOn}</span>
-            <span className="Lesson-editControlPanelItem">{lesson.title}</span>
-          </EditControlPanel>
+          <EditControlPanel
+            onEdit={handleEdit}
+            onMetadataEdit={handleMetadataEdit}
+            onSave={handleSave}
+            onClose={handleClose}
+            status={controlStatus}
+            metadata={(
+              <Fragment >
+                <span className="Lesson-editControlPanelItem">{startsOn}</span>
+                <span className="Lesson-editControlPanelItem">{lesson.title}</span>
+              </Fragment>
+            )}
+            />
 
           <LessonMetadataModal
             lesson={lesson}

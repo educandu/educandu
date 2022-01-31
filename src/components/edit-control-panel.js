@@ -19,7 +19,7 @@ export const EDIT_CONTROL_PANEL_STATUS = {
   none: 'none'
 };
 
-function EditControlPanel({ children, onEdit, onSave, onClose, status }) {
+function EditControlPanel({ metadata, onEdit, onMetadataEdit, onSave, onClose, status }) {
   const { t } = useTranslation('editControlPanel');
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -88,8 +88,15 @@ function EditControlPanel({ children, onEdit, onSave, onClose, status }) {
   const renderExpandedContent = () => {
     return (
       <Fragment>
-        <div className="EditControlPanel-children">
-          {children}
+        <div className="EditControlPanel-metadata">
+          { metadata && (
+            <Fragment>
+              <span className="EditControlPanel-metadataEditButton">
+                <Button size="small" icon={<EditOutlined />} onClick={onMetadataEdit} ghost />
+              </span>
+              {metadata}
+            </Fragment>
+          )}
         </div>
         <div className="EditControlPanel-buttonGroup">
           {renderStatusIcon()}
@@ -116,17 +123,19 @@ function EditControlPanel({ children, onEdit, onSave, onClose, status }) {
 }
 
 EditControlPanel.propTypes = {
-  children: PropTypes.node,
+  metadata: PropTypes.node,
   onClose: PropTypes.func,
   onEdit: PropTypes.func,
+  onMetadataEdit: PropTypes.func,
   onSave: PropTypes.func,
   status: PropTypes.oneOf(Object.values(EDIT_CONTROL_PANEL_STATUS))
 };
 
 EditControlPanel.defaultProps = {
-  children: null,
+  metadata: null,
   onClose: () => {},
   onEdit: () => {},
+  onMetadataEdit: () => {},
   onSave: () => {},
   status: EDIT_CONTROL_PANEL_STATUS.none
 };
