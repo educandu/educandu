@@ -48,6 +48,24 @@ function Lesson({ PageTemplate, initialState }) {
   const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
+  const handleMetadataEdit = () => {
+    setIsLessonMetadataModalVisible(true);
+  };
+
+  const handleLessonMetadataModalSave = updatedLesson => {
+    setLesson(prevState => ({
+      ...prevState,
+      title: updatedLesson.title,
+      slug: updatedLesson.slug,
+      language: updatedLesson.language,
+      schedule: updatedLesson.schedule
+    }));
+  };
+
+  const handleLessonMetadataModalClose = () => {
+    setIsLessonMetadataModalVisible(false);
+  };
+
   const handleEdit = async () => {
     await ensureEditorsAreLoaded(editorFactory);
     setIsInEditMode(true);
@@ -87,28 +105,6 @@ function Lesson({ PageTemplate, initialState }) {
     });
   };
 
-  const startsOn = lesson.schedule?.startsOn
-    ? formatDate(lesson.schedule.startsOn)
-    : '';
-
-  const handleMetadataEdit = () => {
-    setIsLessonMetadataModalVisible(true);
-  };
-
-  const handleLessonMetadataModalSave = updatedLesson => {
-    setLesson(prevState => ({
-      ...prevState,
-      title: updatedLesson.title,
-      slug: updatedLesson.slug,
-      language: updatedLesson.language,
-      schedule: updatedLesson.schedule
-    }));
-  };
-
-  const handleLessonMetadataModalClose = () => {
-    setIsLessonMetadataModalVisible(false);
-  };
-
   const handleSectionContentChange = (index, newContent, isInvalid) => {
     const modifiedSection = {
       ...currentSections[index],
@@ -127,17 +123,16 @@ function Lesson({ PageTemplate, initialState }) {
     setIsDirty(true);
   };
 
-  const handleSectionDeleted = index => {
-    confirmSectionDelete(
-      t,
-      () => {
-        const section = currentSections[index];
-        const reducedSections = removeItemAt(currentSections, index);
-        setInvalidSectionKeys(keys => ensureIsExcluded(keys, section.key));
-        setCurrentSections(reducedSections);
-        setIsDirty(true);
-      }
-    );
+  const handleSectionInserted = (pluginType, index) => {
+    const pluginInfo = infoFactory.createInfo(pluginType);
+    const newSection = {
+      key: uniqueId.create(),
+      type: pluginType,
+      content: pluginInfo.getDefaultContent(t)
+    };
+    const newSections = insertItemAt(currentSections, newSection, index);
+    setCurrentSections(newSections);
+    setIsDirty(true);
   };
 
   const handleSectionDuplicated = index => {
@@ -153,16 +148,17 @@ function Lesson({ PageTemplate, initialState }) {
     }
   };
 
-  const handleSectionInserted = (pluginType, index) => {
-    const pluginInfo = infoFactory.createInfo(pluginType);
-    const newSection = {
-      key: uniqueId.create(),
-      type: pluginType,
-      content: pluginInfo.getDefaultContent(t)
-    };
-    const newSections = insertItemAt(currentSections, newSection, index);
-    setCurrentSections(newSections);
-    setIsDirty(true);
+  const handleSectionDeleted = index => {
+    confirmSectionDelete(
+      t,
+      () => {
+        const section = currentSections[index];
+        const reducedSections = removeItemAt(currentSections, index);
+        setInvalidSectionKeys(keys => ensureIsExcluded(keys, section.key));
+        setCurrentSections(reducedSections);
+        setIsDirty(true);
+      }
+    );
   };
 
   let controlStatus;
@@ -174,10 +170,14 @@ function Lesson({ PageTemplate, initialState }) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
   }
 
+  const startsOn = lesson.schedule?.startsOn
+    ? formatDate(lesson.schedule.startsOn)
+    : '';
+
   return (
     <Fragment>
       <PageTemplate>
-        <div className="Lesson">
+        <div className="LessonPage">
           <SectionsDisplayNew
             sections={currentSections}
             sectionsContainerId={lesson._id}
@@ -202,8 +202,8 @@ function Lesson({ PageTemplate, initialState }) {
             status={controlStatus}
             metadata={(
               <Fragment >
-                <span className="Lesson-editControlPanelItem">{startsOn}</span>
-                <span className="Lesson-editControlPanelItem">{lesson.title}</span>
+                <span className="LessonPage-editControlPanelItem">{startsOn}</span>
+                <span className="LessonPage-editControlPanelItem">{lesson.title}</span>
               </Fragment>
             )}
             />

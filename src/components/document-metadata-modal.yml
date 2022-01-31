@@ -1,15 +1,12 @@
 newDocument:
   en: New document
   de: Neues Dokument
-copyTitleSuffix:
-  en: (copy)
-  de: (Kopie)
-copySlugSuffix:
-  en: copy
-  de: kopie
+editDocument:
+  en: Edit document
+  de: Dokument bearbeiten
 titleRequired:
   en: Please specify a document title
   de: Bitte geben Sie einen Dokument-Titel an
-useDefaultTemplateDocument:
+useTemplateDocument:
   en: Use default template
   de: Standardvorlage benutzen

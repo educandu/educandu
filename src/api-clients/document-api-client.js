@@ -7,6 +7,15 @@ class DocumentApiClient {
     this.httpClient = httpClient;
   }
 
+  getDocument(key) {
+    return this.httpClient
+      .get(
+        `/api/v1/docs/${encodeURIComponent(key)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   saveDocument(data) {
     return this.httpClient
       .post(

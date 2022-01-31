@@ -10,6 +10,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
+  getDocByKeyParamsSchema,
   getRevisionsByKeyQuerySchema,
   createRevisionBodySchema,
   hardDeleteSectionBodySchema,
@@ -69,7 +70,7 @@ class DocumentController {
     }
 
     const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, user);
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: mappedDoc, type: DOCUMENT_TYPE.document });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDoc });
   }
 
   async handleGetEditDocPage(req, res) {
@@ -151,6 +152,19 @@ class DocumentController {
 
     const documentRevisions = await this.clientDataMapper.mapDocsOrRevisions(revisions, user);
     return res.send({ documentRevisions });
+  }
+
+  async handleGetDoc(req, res) {
+    const { user } = req;
+    const { key } = req.params;
+
+    const doc = await this.documentService.getDocumentByKey(key);
+    if (!doc) {
+      throw new NotFound();
+    }
+
+    const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, user);
+    return res.send({ doc: mappedDoc });
   }
 
   async handleDeleteDocSection(req, res) {
@@ -245,6 +259,12 @@ class DocumentController {
       '/api/v1/docs',
       [needsPermission(permissions.VIEW_DOCS), validateQuery(getRevisionsByKeyQuerySchema)],
       (req, res) => this.handleGetDocs(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/:key',
+      [needsPermission(permissions.VIEW_DOCS), validateParams(getDocByKeyParamsSchema)],
+      (req, res) => this.handleGetDoc(req, res)
     );
 
     router.delete(

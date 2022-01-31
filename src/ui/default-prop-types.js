@@ -146,6 +146,13 @@ export const documentMetadataShape = PropTypes.shape({
   updatedBy: userInDocShape.isRequired
 });
 
+export const documentMetadataEditShape = PropTypes.shape({
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
+  language: PropTypes.string.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired
+});
+
 export const documentShape = PropTypes.shape({
   ...commonDocumentOrRevisionProps,
   revision: PropTypes.string.isRequired,

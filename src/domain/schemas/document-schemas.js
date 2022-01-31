@@ -10,6 +10,10 @@ export const getRevisionsByKeyQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });
 
+export const getDocByKeyParamsSchema = joi.object({
+  key: idOrKeySchema.required()
+});
+
 export const createRevisionBodySchema = joi.object({
   title: joi.string().required(),
   slug: slugSchema,
