@@ -78,17 +78,22 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleDocumentMetadataModalSave = async ({ title, slug, language, tags }) => {
-    const { documentRevision } = await documentApiClient.saveDocument({
+    const mappedDocumentRevision = {
       title,
       slug,
       language,
       tags,
-      sections: latestRevision.sections,
+      sections: latestRevision.sections.map(section => ({
+        key: section.key,
+        type: section.type,
+        content: section.content
+      })),
       appendTo: {
         key: latestRevision.key,
         ancestorId: latestRevision._id
       }
-    });
+    };
+    const { documentRevision } = await documentApiClient.saveDocument(mappedDocumentRevision);
     const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
 
     setDoc(latestDoc);

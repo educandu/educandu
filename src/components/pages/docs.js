@@ -33,12 +33,17 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
   }
 }
 
-function getDefaultDocumentMetadata(t, uiLanguage) {
+function getDefaultModalState({ t, uiLanguage, settings }) {
   return {
-    title: t('newDocument'),
-    slug: '',
-    tags: [],
-    language: getDefaultLanguageFromUiLanguage(uiLanguage)
+    isVisible: false,
+    mode: DOCUMENT_METADATA_MODAL_MODE.create,
+    templateDocumentKey: settings.templateDocument?.documentKey,
+    initialDocumentMetadata: {
+      title: t('newDocument'),
+      slug: '',
+      tags: [],
+      language: getDefaultLanguageFromUiLanguage(uiLanguage)
+    }
   };
 }
 
@@ -49,12 +54,10 @@ function Docs({ initialState, PageTemplate }) {
   const { t } = useTranslation('docs');
   const { formatDate } = useDateFormat();
   const { language: uiLanguage } = useLanguage();
+  const [clonedDocument, setClonedDocument] = useState(null);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-  const [modalState, setModalState] = useState({
-    isVisible: false,
-    initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
-  });
+  const [modalState, setModalState] = useState(getDefaultModalState({ t, uiLanguage, settings }));
 
   const [state, setState] = useState({
     filteredDocs: initialState.documents.slice(),
@@ -71,20 +74,21 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleNewDocumentClick = () => {
+    setClonedDocument(null);
     setModalState({
-      isVisible: true,
-      templateDocumentKey: settings.templateDocument?.documentKey,
-      initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
+      ...getDefaultModalState({ t, uiLanguage, settings }),
+      isVisible: true
     });
   };
 
   const handleCloneClick = doc => {
+    setClonedDocument(doc);
     setModalState({
       isVisible: true,
       templateDocumentKey: null,
       initialDocumentMetadata: {
         title: `${doc.title} ${t('copyTitleSuffix')}`,
-        slug: `${doc.slug}-${t('copySlugSuffix')}`,
+        slug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : '',
         tags: [...doc.tags],
         language: doc.language
       }
@@ -93,21 +97,13 @@ function Docs({ initialState, PageTemplate }) {
 
   const handleDocumentMetadataModalSave = async ({ title, slug, language, tags, templateDocumentKey }) => {
     const { documentRevision } = await documentApiClient.saveDocument({ title, slug, language, tags, sections: [] });
-    setModalState({
-      isVisible: false,
-      templateDocumentKey: settings.templateDocument?.documentKey,
-      initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
-    });
+    setModalState(getDefaultModalState({ t, uiLanguage, settings }));
 
-    window.location = urls.getEditDocUrl(documentRevision.key, templateDocumentKey || modalState.clonedDocument?.key);
+    window.location = urls.getEditDocUrl(documentRevision.key, templateDocumentKey || clonedDocument?.key);
   };
 
   const handleDocumentMetadataModalClose = () => {
-    setModalState({
-      isVisible: false,
-      templateDocumentKey: settings.templateDocument?.documentKey,
-      initialDocumentMetadata: getDefaultDocumentMetadata(t, uiLanguage)
-    });
+    setModalState(getDefaultModalState({ t, uiLanguage, settings }));
   };
 
   const handleDocumentDelete = async documentKey => {

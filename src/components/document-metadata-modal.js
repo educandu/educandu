@@ -70,12 +70,12 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
     }
   }, [isVisible]);
 
-  const handleTagSuggestionsRefresh = async tagSuggestionsQuery => {
+  const handleTagSearch = async typedInTag => {
     try {
-      if (tagSuggestionsQuery.length !== 3) {
+      if (typedInTag.length !== 3) {
         return;
       }
-      const tagSuggestions = await documentApiClient.getRevisionTagSuggestions(tagSuggestionsQuery);
+      const tagSuggestions = await documentApiClient.getRevisionTagSuggestions(typedInTag);
       const newTagOptions = composeTagOptions(defaultTags, initialDocumentMetadata?.tags, tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {
@@ -118,7 +118,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
       maskClosable={false}
       okButtonProps={{ loading }}
       >
-      <Form onFinish={handleOnFinish} ref={formRef} name="new-document-form" layout="vertical" initialValues={initialDocumentMetadata}>
+      <Form onFinish={handleOnFinish} ref={formRef} name="document-metadata-form" layout="vertical" initialValues={initialDocumentMetadata}>
         <FormItem name="title" label={t('common:title')} rules={titleValidationRules}>
           <Input />
         </FormItem>
@@ -132,7 +132,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
           <Select
             mode="tags"
             tokenSeparators={[' ', '\t']}
-            onSearch={handleTagSuggestionsRefresh}
+            onSearch={handleTagSearch}
             options={tagOptions}
             />
         </FormItem>
