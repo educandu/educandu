@@ -8,17 +8,18 @@ import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import React, { Fragment, useState } from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
+import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import { useDateFormat } from '../language-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import SectionsDisplayNew from '../sections-display-new.js';
-import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { lessonShape, roomShape } from '../../ui/default-prop-types.js';
+import { LESSON_VIEW, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
@@ -37,19 +38,22 @@ const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEdi
 
 function Lesson({ PageTemplate, initialState }) {
   const user = useUser();
+  const request = useRequest();
   const { t } = useTranslation();
   const { formatDate } = useDateFormat();
   const infoFactory = useService(InfoFactory);
   const editorFactory = useService(EditorFactory);
+
+  const startsInEditMode = request.query.view === LESSON_VIEW.edit;
 
   const { room } = initialState;
   const isRoomOwner = user?._id === room.owner._id;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 
   const [isDirty, setIsDirty] = useState(false);
-  const [isInEditMode, setIsInEditMode] = useState(false);
   const [lesson, setLesson] = useState(initialState.lesson);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
+  const [isInEditMode, setIsInEditMode] = useState(startsInEditMode);
   const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
@@ -75,6 +79,8 @@ function Lesson({ PageTemplate, initialState }) {
     await ensureEditorsAreLoaded(editorFactory);
     setIsInEditMode(true);
     setCurrentSections(cloneDeep(lesson.sections));
+
+    history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW.edit }));
   };
 
   const handleSave = async () => {
@@ -99,6 +105,9 @@ function Lesson({ PageTemplate, initialState }) {
         setIsInEditMode(false);
         setInvalidSectionKeys([]);
         setCurrentSections(cloneDeep(lesson.sections));
+
+        history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
+
         resolve(true);
       };
 
@@ -209,6 +218,7 @@ function Lesson({ PageTemplate, initialState }) {
           <EditControlPanel
             canClose
             canCancel={false}
+            startExpanded={startsInEditMode}
             onEdit={handleEdit}
             onMetadataEdit={handleMetadataEdit}
             onSave={handleSave}

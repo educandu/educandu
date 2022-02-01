@@ -31,6 +31,10 @@ function encodeURIParts(path) {
   return (path || '').split('/').map(x => encodeURIComponent(x)).join('/');
 }
 
+function composeQueryString(keyValuePairs) {
+  return new URLSearchParams(keyValuePairs.filter(([, value]) => value)).toString();
+}
+
 function concatParts(...parts) {
   return parts
     .filter(part => part || part === 0 || part === false)
@@ -51,8 +55,8 @@ function getUsersUrl() {
 
 function getDocUrl({ key, slug, view, templateDocumentKey }) {
   const url = concatParts(docsPrefix, encodeURIComponent(key), encodeURIParts(slug));
-  const queryParams = new URLSearchParams([['view', view], ['templateDocumentKey', templateDocumentKey]].filter(([, value]) => value)).toString();
-  return queryParams ? `${url}?${queryParams}` : url;
+  const queryString = composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);
+  return queryString ? `${url}?${queryString}` : url;
 }
 
 function getDocumentRevisionUrl(revisionId) {
@@ -145,8 +149,10 @@ function getRoomUrl(id, slug) {
   return concatParts(roomsPrefix, encodeURIComponent(id), encodeURIParts(slug));
 }
 
-function getLessonUrl(id, slug) {
-  return concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIParts(slug));
+function getLessonUrl({ id, slug, view }) {
+  const url = concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIParts(slug));
+  const queryString = composeQueryString([['view', view]]);
+  return queryString ? `${url}?${queryString}` : url;
 }
 
 export default {

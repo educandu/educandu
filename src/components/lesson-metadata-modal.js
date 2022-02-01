@@ -97,7 +97,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onClose }) {
       onClose();
 
       if (mode === LESSON_MODAL_MODE.create) {
-        window.location = urls.getLessonUrl(response._id);
+        window.location = urls.getLessonUrl({ id: response._id });
       }
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
