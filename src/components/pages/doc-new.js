@@ -30,12 +30,11 @@ const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEdi
 
 // eslint-disable-next-line no-warning-comments
 // ToDo:
-// - set alerts from edit-doc page
 // - delete edit-doc page
 
 function Doc({ initialState, PageTemplate }) {
   const request = useRequest();
-  const { t } = useTranslation('doc');
+  const { t } = useTranslation('docNew');
   const globalAlerts = useGlobalAlerts();
   const [alerts, setAlerts] = useState([]);
   const infoFactory = useService(InfoFactory);
@@ -53,8 +52,6 @@ function Doc({ initialState, PageTemplate }) {
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
-  const isExternalDocument = doc.origin.startsWith(DOCUMENT_ORIGIN.external);
-
   useEffect(() => {
     const newAlerts = [...globalAlerts];
 
@@ -66,7 +63,7 @@ function Doc({ initialState, PageTemplate }) {
       });
     }
 
-    if (isExternalDocument) {
+    if (doc.origin.startsWith(DOCUMENT_ORIGIN.external)) {
       newAlerts.push({
         message:
           (<Trans
@@ -79,8 +76,16 @@ function Doc({ initialState, PageTemplate }) {
       });
     }
 
+    if (isInEditMode && initialState.templateSections?.length) {
+      newAlerts.push({
+        message: t('proposedSectionsAlert'),
+        type: ALERT_TYPE.info,
+        showInFullScreen: false
+      });
+    }
+
     setAlerts(newAlerts);
-  }, [globalAlerts, doc, isExternalDocument, t]);
+  }, [globalAlerts, doc, isInEditMode, initialState.templateSections, t]);
 
   const handleMetadataEdit = () => {
     setIsDocumentMetadataModalVisible(true);
