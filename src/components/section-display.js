@@ -18,7 +18,7 @@ function SectionDisplay({ section, onAction }) {
   const rendererFactory = useService(RendererFactory);
 
   const sectionClasses = classNames({
-    'Section': true,
+    'SectionDisplay': true,
     'is-active': onAction && (isMouseOver || isDropDownVisible)
   });
 
@@ -26,7 +26,7 @@ function SectionDisplay({ section, onAction }) {
 
   if (onAction) {
     const actionsClasses = classNames({
-      'Section-actions': true,
+      'SectionDisplay-actions': true,
       'is-active': isMouseOver || isDropDownVisible
     });
 

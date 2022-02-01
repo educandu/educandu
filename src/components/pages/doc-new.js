@@ -29,10 +29,6 @@ const logger = new Logger(import.meta.url);
 
 const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
 
-// eslint-disable-next-line no-warning-comments
-// ToDo:
-// - delete edit-doc page
-
 function Doc({ initialState, PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('docNew');

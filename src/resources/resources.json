@@ -458,20 +458,6 @@
     }
   },
   {
-    "namespace": "editDoc",
-    "language": "en",
-    "resources": {
-      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the page.\n"
-    }
-  },
-  {
-    "namespace": "editDoc",
-    "language": "de",
-    "resources": {
-      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Seite verlassen.\n"
-    }
-  },
-  {
     "namespace": "importBatchCreation",
     "language": "en",
     "resources": {
