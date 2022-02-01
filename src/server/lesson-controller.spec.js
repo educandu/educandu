@@ -38,7 +38,8 @@ describe('lesson-controller', () => {
       isRoomOwnerOrMember: sandbox.stub()
     };
     clientDataMapper = {
-      mapLesson: sandbox.stub()
+      mapLesson: sandbox.stub(),
+      mapRoom: sandbox.stub()
     };
     pageRenderer = {
       sendPage: sandbox.stub()
@@ -60,6 +61,7 @@ describe('lesson-controller', () => {
     let room;
     let lesson;
     let mappedLesson;
+    let mappedRoom;
 
     describe('when user is not provided (session expired)', () => {
       beforeEach(() => {
@@ -128,16 +130,18 @@ describe('lesson-controller', () => {
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: user._id, members: [] };
         mappedLesson = { ...lesson };
+        mappedRoom = { ...room, owner: { _id: room.owner } };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
         clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
+        clientDataMapper.mapRoom.withArgs(room, user).resolves(mappedRoom);
 
         return sut.handleGetLessonPage(req, res);
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, roomOwner: room.owner });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom });
       });
     });
 
@@ -147,16 +151,18 @@ describe('lesson-controller', () => {
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [{ userId: user._id }] };
         mappedLesson = { ...lesson };
+        mappedRoom = { ...room, owner: { _id: room.owner } };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
         clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
+        clientDataMapper.mapRoom.withArgs(room, user).resolves(mappedRoom);
 
         return sut.handleGetLessonPage(req, res);
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson, roomOwner: room.owner });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom });
       });
     });
 
@@ -166,16 +172,18 @@ describe('lesson-controller', () => {
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.public, owner: uniqueId.create(), members: [] };
         mappedLesson = { ...lesson };
+        mappedRoom = { ...room, owner: { _id: room.owner } };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
         clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
+        clientDataMapper.mapRoom.withArgs(room, user).resolves(mappedRoom);
 
         return sut.handleGetLessonPage(req, res);
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, roomOwner: room.owner });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom });
       });
     });
   });

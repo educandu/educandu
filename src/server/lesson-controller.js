@@ -61,7 +61,8 @@ export default class LessonController {
     }
 
     const mappedLesson = this.clientDataMapper.mapLesson(lesson);
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson: mappedLesson, roomOwner: room.owner });
+    const mappedRoom = await this.clientDataMapper.mapRoom(room, user);
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson: mappedLesson, room: mappedRoom });
   }
 
   async handlePostLesson(req, res) {

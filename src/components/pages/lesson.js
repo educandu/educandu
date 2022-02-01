@@ -1,5 +1,7 @@
 import memoizee from 'memoizee';
+import { Breadcrumb } from 'antd';
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +14,11 @@ import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import SectionsDisplayNew from '../sections-display-new.js';
-import { lessonShape } from '../../ui/default-prop-types.js';
+import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import { lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
@@ -38,7 +42,8 @@ function Lesson({ PageTemplate, initialState }) {
   const infoFactory = useService(InfoFactory);
   const editorFactory = useService(EditorFactory);
 
-  const isRoomOwner = user?._id === initialState.roomOwner;
+  const { room } = initialState;
+  const isRoomOwner = user?._id === room.owner._id;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 
   const [isDirty, setIsDirty] = useState(false);
@@ -178,6 +183,15 @@ function Lesson({ PageTemplate, initialState }) {
     <Fragment>
       <PageTemplate>
         <div className="LessonPage">
+          <div className="LessonPage-breadcrumbs">
+            <Breadcrumb>
+              <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
+                {room.access === ROOM_ACCESS_LEVEL.private ? <LockOutlined /> : <GlobalOutlined />}
+                <span>{room.name}</span>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
+            </Breadcrumb>
+          </div>
           <SectionsDisplayNew
             sections={currentSections}
             sectionsContainerId={lesson._id}
@@ -225,7 +239,7 @@ Lesson.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     lesson: lessonShape.isRequired,
-    roomOwner: PropTypes.string.isRequired
+    room: roomShape.isRequired
   }).isRequired
 };
 
