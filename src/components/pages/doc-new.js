@@ -46,7 +46,7 @@ function Doc({ initialState, PageTemplate }) {
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
-  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState(initialState.templateSections || []);
+  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
   useEffect(() => {
@@ -84,6 +84,12 @@ function Doc({ initialState, PageTemplate }) {
     setAlerts(newAlerts);
   }, [globalAlerts, doc, isInEditMode, pendingTemplateSectionKeys, t]);
 
+  useEffect(() => {
+    if (startsInEditMode || isInEditMode) {
+      ensureEditorsAreLoaded(editorFactory);
+    }
+  }, [startsInEditMode, isInEditMode, editorFactory]);
+
   const handleMetadataEdit = () => {
     setIsDocumentMetadataModalVisible(true);
   };
@@ -117,7 +123,6 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleEdit = async () => {
-    await ensureEditorsAreLoaded(editorFactory);
     const { documentRevisions: revisions } = await documentApiClient.getDocumentRevisions(doc.key);
 
     const newLatestRevision = revisions[revisions.length - 1];
@@ -256,6 +261,18 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
+  const handlePendingSectionApplied = index => {
+    const appliedSectionKey = currentSections[index].key;
+    setPendingTemplateSectionKeys(prevKeys => ensureIsExcluded(prevKeys, appliedSectionKey));
+    setIsDirty(true);
+  };
+
+  const handlePendingSectionDiscarded = index => {
+    const discardedSection = currentSections[index];
+    setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
+    setIsDirty(true);
+  };
+
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -271,8 +288,11 @@ function Doc({ initialState, PageTemplate }) {
         <div className="DocPage">
           <SectionsDisplayNew
             sections={currentSections}
+            pendingSectionKeys={pendingTemplateSectionKeys}
             sectionsContainerId={doc.key}
             canEdit={isInEditMode}
+            onPendingSectionApplied={handlePendingSectionApplied}
+            onPendingSectionDiscarded={handlePendingSectionDiscarded}
             onSectionContentChange={handleSectionContentChange}
             onSectionMoved={handleSectionMoved}
             onSectionInserted={handleSectionInserted}
