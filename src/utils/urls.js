@@ -134,7 +134,7 @@ function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
 }
 
 function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
-  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getDocUrl(key, slug));
+  return concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ key, slug }));
 }
 
 function getImportDetailsUrl(batchId) {
