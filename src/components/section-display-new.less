@@ -86,7 +86,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: @edu-selection-background-color;
+  background-color: @edu-white;
+  opacity: 70%;
+
+  &.SectionDisplayNew-overlay--withButtons {
+    background-color: @edu-selection-background-color;
+    opacity: 100%;
+  }
 }
 
 .SectionDisplayNew-overlayButton {
@@ -95,7 +101,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-
+  box-shadow: 0px 0px 8px @grey-7;
 
   &.SectionDisplayNew-overlayButton--apply {
     color: @edu-white;

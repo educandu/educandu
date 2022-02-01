@@ -174,26 +174,29 @@ function SectionDisplayNew({
             {actions.map(renderAction)}
           </div>
           { isPending && (
-            <div className="SectionDisplayNew-overlay">
-              <Tooltip title={t('common:apply')}>
-                <Button
-                  type="link"
-                  onClick={onPendingSectionApplied}
-                  className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply"
-                  >
-                  <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
-                </Button>
-              </Tooltip>
-              <Tooltip title={t('common:discard')}>
-                <Button
-                  type="link"
-                  onClick={onPendingSectionDiscarded}
-                  className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard"
-                  >
-                  <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
-                </Button>
-              </Tooltip>
-            </div>
+            <Fragment>
+              <div className="SectionDisplayNew-overlay" />
+              <div className="SectionDisplayNew-overlay SectionDisplayNew-overlay--withButtons">
+                <Tooltip title={t('common:apply')}>
+                  <Button
+                    type="link"
+                    onClick={onPendingSectionApplied}
+                    className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply"
+                    >
+                    <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
+                  </Button>
+                </Tooltip>
+                <Tooltip title={t('common:discard')}>
+                  <Button
+                    type="link"
+                    onClick={onPendingSectionDiscarded}
+                    className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard"
+                    >
+                    <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
+                  </Button>
+                </Tooltip>
+              </div>
+            </Fragment>
           )}
         </Fragment>
       )}
