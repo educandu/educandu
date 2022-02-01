@@ -1,5 +1,6 @@
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import uniqueId from '../../utils/unique-id.js';
@@ -47,9 +48,9 @@ function Doc({ initialState, PageTemplate }) {
   const [doc, setDoc] = useState(initialState.doc);
   const [isInEditMode, setIsInEditMode] = useState(startsInEditMode);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
-  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState([]);
   const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
+  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState(initialState.templateSections || []);
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
   useEffect(() => {
@@ -76,7 +77,7 @@ function Doc({ initialState, PageTemplate }) {
       });
     }
 
-    if (isInEditMode && initialState.templateSections?.length) {
+    if (isInEditMode && pendingTemplateSectionKeys?.length) {
       newAlerts.push({
         message: t('proposedSectionsAlert'),
         type: ALERT_TYPE.info,
@@ -85,7 +86,7 @@ function Doc({ initialState, PageTemplate }) {
     }
 
     setAlerts(newAlerts);
-  }, [globalAlerts, doc, isInEditMode, initialState.templateSections, t]);
+  }, [globalAlerts, doc, isInEditMode, pendingTemplateSectionKeys, t]);
 
   const handleMetadataEdit = () => {
     setIsDocumentMetadataModalVisible(true);
@@ -128,6 +129,8 @@ function Doc({ initialState, PageTemplate }) {
     setIsInEditMode(true);
     setLatestRevision(newLatestRevision);
     setCurrentSections(cloneDeep(newLatestRevision.sections));
+
+    history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: DOC_VIEW.edit }));
   };
 
   const handleSave = async () => {
@@ -187,6 +190,8 @@ function Doc({ initialState, PageTemplate }) {
         setIsDirty(false);
         setIsInEditMode(false);
         setInvalidSectionKeys([]);
+
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
 
         resolve(true);
       };

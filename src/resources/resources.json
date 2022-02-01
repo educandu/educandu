@@ -383,14 +383,14 @@
     "namespace": "docNew",
     "language": "en",
     "resources": {
-      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the page.\n"
+      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the curent view.\n"
     }
   },
   {
     "namespace": "docNew",
     "language": "de",
     "resources": {
-      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Seite verlassen.\n"
+      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n"
     }
   },
   {
