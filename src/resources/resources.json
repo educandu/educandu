@@ -383,7 +383,7 @@
     "namespace": "docNew",
     "language": "en",
     "resources": {
-      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the curent view.\n"
+      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n"
     }
   },
   {

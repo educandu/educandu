@@ -264,7 +264,7 @@ function Doc({ initialState, PageTemplate }) {
   }
 
   return (
-    <PageTemplate headerActions={headerActions} alerts={alerts}>
+    <PageTemplate alerts={alerts}>
       <div className="DocPage">
         { state.revisions.length > 0 && revisionPicker}
         <SectionsView
