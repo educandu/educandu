@@ -84,6 +84,12 @@ function Doc({ initialState, PageTemplate }) {
     setAlerts(newAlerts);
   }, [globalAlerts, doc, isInEditMode, pendingTemplateSectionKeys, t]);
 
+  useEffect(() => {
+    if (startsInEditMode || isInEditMode) {
+      ensureEditorsAreLoaded(editorFactory);
+    }
+  }, [startsInEditMode, isInEditMode, editorFactory]);
+
   const handleMetadataEdit = () => {
     setIsDocumentMetadataModalVisible(true);
   };
@@ -117,7 +123,6 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleEdit = async () => {
-    await ensureEditorsAreLoaded(editorFactory);
     const { documentRevisions: revisions } = await documentApiClient.getDocumentRevisions(doc.key);
 
     const newLatestRevision = revisions[revisions.length - 1];
