@@ -76,3 +76,48 @@
   border-radius: @edu-border-radius-base;
   background-color: @edu-white;
 }
+
+.SectionDisplayNew-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: @edu-selection-background-color;
+}
+
+.SectionDisplayNew-overlayButton {
+  display: block;
+  margin: 0 7px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  &.SectionDisplayNew-overlayButton--apply {
+    border: 1px solid darken(@edu-apply-color, 5%);
+    background-color: @edu-apply-color;
+    color: @edu-white;
+  }
+
+  &.SectionDisplayNew-overlayButton--discard {
+    border: 1px solid darken(@edu-discard-color, 5%);
+    background-color: @edu-discard-color;
+    color: @edu-white;
+  }
+}
+
+.SectionDisplayNew-overlayButtonIcon {
+  display: flex;
+  justify-content: center;
+  font-size: 140%;
+  line-height: 70%;
+  text-align: center;
+}
+
+.SectionDisplayNew-overlayButtonText {
+  font-size: 80%;
+  text-align: center;
+}

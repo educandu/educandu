@@ -13,6 +13,8 @@ import NotSupportedSection from './not-supported-section.js';
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
+  CheckOutlined,
+  CloseOutlined,
   DeleteOutlined,
   DragOutlined,
   EditOutlined,
@@ -155,6 +157,8 @@ function SectionDisplayNew({
 
   return (
     <section className={sectionClasses}>
+      {isEditing ? renderEditorComponent() : renderDisplayComponent()}
+
       {canEdit && (
         <Fragment>
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--left">
@@ -166,9 +170,16 @@ function SectionDisplayNew({
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
             {actions.map(renderAction)}
           </div>
+          <div className="SectionDisplayNew-overlay">
+            <Button type="link" className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply">
+              <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
+            </Button>
+            <Button type="link" className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard">
+              <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
+            </Button>
+          </div>
         </Fragment>
       )}
-      {isEditing ? renderEditorComponent() : renderDisplayComponent()}
     </section>
   );
 }
