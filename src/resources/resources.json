@@ -968,22 +968,6 @@
     }
   },
   {
-    "namespace": "sectionEditor",
-    "language": "en",
-    "resources": {
-      "type": "Type",
-      "key": "Key"
-    }
-  },
-  {
-    "namespace": "sectionEditor",
-    "language": "de",
-    "resources": {
-      "type": "Typ",
-      "key": "Schlüssel"
-    }
-  },
-  {
     "namespace": "defaultTagsSettings",
     "language": "en",
     "resources": {
