@@ -10,6 +10,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 function SectionsDisplayNew({
   sections,
   sectionsContainerId,
+  pendingSectionKeys,
   canEdit,
   onSectionMoved,
   onSectionInserted,
@@ -61,6 +62,7 @@ function SectionsDisplayNew({
       dragHandleProps={dragHandleProps}
       isDragged={isDragged}
       isOtherSectionDragged={isDragging && !isDragged}
+      isPending={pendingSectionKeys.includes(section.key)}
       onSectionDelete={() => onSectionDeleted(index)}
       onSectionDuplicate={() => onSectionDuplicated(index)}
       onSectionMoveUp={() => handleSectionMoved(index, index - 1)}
@@ -140,8 +142,13 @@ SectionsDisplayNew.propTypes = {
   onSectionDuplicated: PropTypes.func.isRequired,
   onSectionInserted: PropTypes.func.isRequired,
   onSectionMoved: PropTypes.func.isRequired,
+  pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   sectionsContainerId: PropTypes.string.isRequired
+};
+
+SectionsDisplayNew.defaultProps = {
+  pendingSectionKeys: []
 };
 
 export default SectionsDisplayNew;

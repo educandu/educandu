@@ -96,16 +96,27 @@
   height: 40px;
   border-radius: 50%;
 
+
   &.SectionDisplayNew-overlayButton--apply {
-    border: 1px solid darken(@edu-apply-color, 5%);
-    background-color: @edu-apply-color;
     color: @edu-white;
+    background-color: @edu-apply-color;
+    border: 1px solid darken(@edu-apply-color, 5%);
+
+    &:hover {
+      background-color: darken(@edu-apply-color, 15%);
+      border: 1px solid darken(@edu-apply-color, 20%);
+    }
   }
 
   &.SectionDisplayNew-overlayButton--discard {
-    border: 1px solid darken(@edu-discard-color, 5%);
-    background-color: @edu-discard-color;
     color: @edu-white;
+    background-color: @edu-discard-color;
+    border: 1px solid darken(@edu-discard-color, 5%);
+
+    &:hover {
+      background-color: darken(@edu-discard-color, 15%);
+      border: 1px solid darken(@edu-discard-color, 20%);
+    }
   }
 }
 

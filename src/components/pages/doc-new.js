@@ -46,7 +46,7 @@ function Doc({ initialState, PageTemplate }) {
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
-  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState(initialState.templateSections || []);
+  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
   useEffect(() => {
@@ -82,6 +82,8 @@ function Doc({ initialState, PageTemplate }) {
     }
 
     setAlerts(newAlerts);
+
+    console.log('pendingTemplateSectionKeys', pendingTemplateSectionKeys);
   }, [globalAlerts, doc, isInEditMode, pendingTemplateSectionKeys, t]);
 
   const handleMetadataEdit = () => {
@@ -271,6 +273,7 @@ function Doc({ initialState, PageTemplate }) {
         <div className="DocPage">
           <SectionsDisplayNew
             sections={currentSections}
+            pendingSectionKeys={pendingTemplateSectionKeys}
             sectionsContainerId={doc.key}
             canEdit={isInEditMode}
             onSectionContentChange={handleSectionContentChange}

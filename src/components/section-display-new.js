@@ -29,6 +29,7 @@ function SectionDisplayNew({
   dragHandleProps,
   isDragged,
   isOtherSectionDragged,
+  isPending,
   onSectionDuplicate,
   onSectionDelete,
   onSectionMoveUp,
@@ -170,14 +171,20 @@ function SectionDisplayNew({
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
             {actions.map(renderAction)}
           </div>
-          <div className="SectionDisplayNew-overlay">
-            <Button type="link" className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply">
-              <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
-            </Button>
-            <Button type="link" className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard">
-              <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
-            </Button>
-          </div>
+          { isPending && (
+            <div className="SectionDisplayNew-overlay">
+              <Tooltip title={t('common:apply')}>
+                <Button type="link" className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply">
+                  <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
+                </Button>
+              </Tooltip>
+              <Tooltip title={t('common:discard')}>
+                <Button type="link" className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard">
+                  <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
+                </Button>
+              </Tooltip>
+            </div>
+          )}
         </Fragment>
       )}
     </section>
@@ -189,6 +196,7 @@ SectionDisplayNew.propTypes = {
   dragHandleProps: PropTypes.object,
   isDragged: PropTypes.bool,
   isOtherSectionDragged: PropTypes.bool,
+  isPending: PropTypes.bool,
   onSectionContentChange: PropTypes.func.isRequired,
   onSectionDelete: PropTypes.func.isRequired,
   onSectionDuplicate: PropTypes.func.isRequired,
@@ -201,7 +209,8 @@ SectionDisplayNew.propTypes = {
 SectionDisplayNew.defaultProps = {
   dragHandleProps: {},
   isDragged: false,
-  isOtherSectionDragged: false
+  isOtherSectionDragged: false,
+  isPending: false
 };
 
 export default SectionDisplayNew;
