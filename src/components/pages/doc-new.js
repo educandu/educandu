@@ -82,8 +82,6 @@ function Doc({ initialState, PageTemplate }) {
     }
 
     setAlerts(newAlerts);
-
-    console.log('pendingTemplateSectionKeys', pendingTemplateSectionKeys);
   }, [globalAlerts, doc, isInEditMode, pendingTemplateSectionKeys, t]);
 
   const handleMetadataEdit = () => {
@@ -258,6 +256,18 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
+  const handlePendingSectionApplied = index => {
+    const appliedSectionKey = currentSections[index].key;
+    setPendingTemplateSectionKeys(prevKeys => ensureIsExcluded(prevKeys, appliedSectionKey));
+    setIsDirty(true);
+  };
+
+  const handlePendingSectionDiscarded = index => {
+    const discardedSection = currentSections[index];
+    setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
+    setIsDirty(true);
+  };
+
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -276,6 +286,8 @@ function Doc({ initialState, PageTemplate }) {
             pendingSectionKeys={pendingTemplateSectionKeys}
             sectionsContainerId={doc.key}
             canEdit={isInEditMode}
+            onPendingSectionApplied={handlePendingSectionApplied}
+            onPendingSectionDiscarded={handlePendingSectionDiscarded}
             onSectionContentChange={handleSectionContentChange}
             onSectionMoved={handleSectionMoved}
             onSectionInserted={handleSectionInserted}

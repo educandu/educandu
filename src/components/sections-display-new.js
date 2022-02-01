@@ -12,6 +12,8 @@ function SectionsDisplayNew({
   sectionsContainerId,
   pendingSectionKeys,
   canEdit,
+  onPendingSectionApplied,
+  onPendingSectionDiscarded,
   onSectionMoved,
   onSectionInserted,
   onSectionDuplicated,
@@ -63,6 +65,8 @@ function SectionsDisplayNew({
       isDragged={isDragged}
       isOtherSectionDragged={isDragging && !isDragged}
       isPending={pendingSectionKeys.includes(section.key)}
+      onPendingSectionApplied={() => onPendingSectionApplied(index)}
+      onPendingSectionDiscarded={() => onPendingSectionDiscarded(index)}
       onSectionDelete={() => onSectionDeleted(index)}
       onSectionDuplicate={() => onSectionDuplicated(index)}
       onSectionMoveUp={() => handleSectionMoved(index, index - 1)}
@@ -137,6 +141,8 @@ function SectionsDisplayNew({
 
 SectionsDisplayNew.propTypes = {
   canEdit: PropTypes.bool.isRequired,
+  onPendingSectionApplied: PropTypes.func,
+  onPendingSectionDiscarded: PropTypes.func,
   onSectionContentChange: PropTypes.func.isRequired,
   onSectionDeleted: PropTypes.func.isRequired,
   onSectionDuplicated: PropTypes.func.isRequired,
@@ -148,6 +154,8 @@ SectionsDisplayNew.propTypes = {
 };
 
 SectionsDisplayNew.defaultProps = {
+  onPendingSectionApplied: () => {},
+  onPendingSectionDiscarded: () => {},
   pendingSectionKeys: []
 };
 
