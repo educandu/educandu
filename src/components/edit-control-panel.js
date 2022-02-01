@@ -20,14 +20,14 @@ export const EDIT_CONTROL_PANEL_STATUS = {
   none: 'none'
 };
 
-function EditControlPanel({ canCancel, canClose, metadata, onEdit, onMetadataEdit, onSave, onCancel, onClose, status }) {
+function EditControlPanel({ startExpanded, canCancel, canClose, metadata, onEdit, onMetadataEdit, onSave, onCancel, onClose, status }) {
   const { t } = useTranslation('editControlPanel');
   const [isLoading, setIsLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(!canClose);
+  const [isExpanded, setIsExpanded] = useState(!canClose || startExpanded);
   const [isExpandedContentVisible, setIsExpandedContentVisible] = useState(false);
 
   useEffect(() => {
-    if (!canClose) {
+    if (!canClose || startExpanded) {
       setIsExpandedContentVisible(true);
       return;
     }
@@ -37,7 +37,7 @@ function EditControlPanel({ canCancel, canClose, metadata, onEdit, onMetadataEdi
     } else {
       setIsExpandedContentVisible(false);
     }
-  }, [canClose, isExpanded]);
+  }, [canClose, startExpanded, isExpanded]);
 
   const handleEditClick = async () => {
     try {
@@ -146,6 +146,7 @@ EditControlPanel.propTypes = {
   onEdit: PropTypes.func,
   onMetadataEdit: PropTypes.func,
   onSave: PropTypes.func,
+  startExpanded: PropTypes.bool,
   status: PropTypes.oneOf(Object.values(EDIT_CONTROL_PANEL_STATUS))
 };
 
@@ -158,6 +159,7 @@ EditControlPanel.defaultProps = {
   onEdit: () => Promise.resolve(),
   onMetadataEdit: () => {},
   onSave: () => {},
+  startExpanded: false,
   status: EDIT_CONTROL_PANEL_STATUS.none
 };
 

@@ -1,10 +1,12 @@
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
+import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import uniqueId from '../../utils/unique-id.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import { Trans, useTranslation } from 'react-i18next';
@@ -14,12 +16,12 @@ import EditorFactory from '../../plugins/editor-factory.js';
 import SectionsDisplayNew from '../sections-display-new.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import { documentShape } from '../../ui/default-prop-types.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
+import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW } from '../../domain/constants.js';
+import { documentRevisionShape, documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 
@@ -28,23 +30,24 @@ const logger = new Logger(import.meta.url);
 const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
 
 function Doc({ initialState, PageTemplate }) {
-  const { t } = useTranslation('doc');
+  const request = useRequest();
+  const { t } = useTranslation('docNew');
   const globalAlerts = useGlobalAlerts();
   const [alerts, setAlerts] = useState([]);
   const infoFactory = useService(InfoFactory);
   const editorFactory = useService(EditorFactory);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
+  const startsInEditMode = request.query.view === DOC_VIEW.edit;
+
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
-  const [isInEditMode, setIsInEditMode] = useState(false);
-  const [latestRevision, setLatestRevision] = useState(null);
+  const [isInEditMode, setIsInEditMode] = useState(startsInEditMode);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
-  const [currentSections, setCurrentSections] = useState(cloneDeep(doc.sections));
-  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState([]);
+  const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
-
-  const isExternalDocument = doc.origin.startsWith(DOCUMENT_ORIGIN.external);
+  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState(initialState.templateSections || []);
+  const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
   useEffect(() => {
     const newAlerts = [...globalAlerts];
@@ -57,7 +60,7 @@ function Doc({ initialState, PageTemplate }) {
       });
     }
 
-    if (isExternalDocument) {
+    if (doc.origin.startsWith(DOCUMENT_ORIGIN.external)) {
       newAlerts.push({
         message:
           (<Trans
@@ -70,8 +73,16 @@ function Doc({ initialState, PageTemplate }) {
       });
     }
 
+    if (isInEditMode && pendingTemplateSectionKeys?.length) {
+      newAlerts.push({
+        message: t('proposedSectionsAlert'),
+        type: ALERT_TYPE.info,
+        showInFullScreen: false
+      });
+    }
+
     setAlerts(newAlerts);
-  }, [globalAlerts, doc, isExternalDocument, t]);
+  }, [globalAlerts, doc, isInEditMode, pendingTemplateSectionKeys, t]);
 
   const handleMetadataEdit = () => {
     setIsDocumentMetadataModalVisible(true);
@@ -114,6 +125,8 @@ function Doc({ initialState, PageTemplate }) {
     setIsInEditMode(true);
     setLatestRevision(newLatestRevision);
     setCurrentSections(cloneDeep(newLatestRevision.sections));
+
+    history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: DOC_VIEW.edit }));
   };
 
   const handleSave = async () => {
@@ -173,6 +186,8 @@ function Doc({ initialState, PageTemplate }) {
         setIsDirty(false);
         setIsInEditMode(false);
         setInvalidSectionKeys([]);
+
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
 
         resolve(true);
       };
@@ -273,6 +288,7 @@ function Doc({ initialState, PageTemplate }) {
         <EditControlPanel
           canClose
           canCancel={false}
+          startExpanded={startsInEditMode}
           onEdit={handleEdit}
           onMetadataEdit={handleMetadataEdit}
           onSave={handleSave}
@@ -298,7 +314,9 @@ function Doc({ initialState, PageTemplate }) {
 Doc.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    doc: documentShape.isRequired
+    doc: documentShape.isRequired,
+    latestRevision: documentRevisionShape,
+    templateSections: PropTypes.arrayOf(sectionShape)
   }).isRequired
 };
 

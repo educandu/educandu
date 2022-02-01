@@ -3,9 +3,9 @@ import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { DOCUMENT_TYPE } from '../domain/constants.js';
 import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
+import { DOCUMENT_TYPE, DOC_VIEW } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -16,7 +16,8 @@ import {
   hardDeleteSectionBodySchema,
   hardDeleteDocumentBodySchema,
   restoreRevisionBodySchema,
-  getDocumentParamsSchema
+  getDocumentParamsSchema,
+  getDocumentQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
 const { NotFound } = httpErrors;
@@ -58,6 +59,7 @@ class DocumentController {
   async handleGetDocPage(req, res) {
     const { user } = req;
     const { docKey } = req.params;
+    const { view, templateDocumentKey } = req.query;
     const routeWildcardValue = urls.removeLeadingSlash(req.params[0]);
 
     const doc = await this.documentService.getDocumentByKey(docKey);
@@ -66,36 +68,31 @@ class DocumentController {
     }
 
     if (doc.slug !== routeWildcardValue) {
-      return res.redirect(301, urls.getDocUrl(doc.key, doc.slug));
+      return res.redirect(301, urls.getDocUrl({ key: doc.key, slug: doc.slug, view, templateDocumentKey }));
     }
-
-    const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, user);
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDoc });
-  }
-
-  async handleGetEditDocPage(req, res) {
-    const revision = await this.documentService.getCurrentDocumentRevisionByKey(req.params.docKey);
-    if (!revision) {
-      throw new NotFound();
-    }
-
-    const { templateDocumentKey } = req.query;
 
     const templateDocument = templateDocumentKey
-      ? await this.documentService.getCurrentDocumentRevisionByKey(templateDocumentKey)
+      ? await this.documentService.getDocumentByKey(templateDocumentKey)
       : null;
 
     if (templateDocumentKey && !templateDocument) {
       throw new NotFound();
     }
 
-    if (templateDocument && revision.sections.length) {
-      return res.redirect(302, urls.getEditDocUrl(req.params.docKey));
+    if (templateDocument && doc.sections.length) {
+      return res.redirect(302, urls.getDocUrl({ key: doc.key, slug: doc.slug }));
     }
 
-    const [documentRevision, templateDocumentRevision] = await this.clientDataMapper.mapDocsOrRevisions([revision, templateDocument], req.user);
-    const proposedSections = templateDocumentRevision ? this.clientDataMapper.createProposedSections(templateDocumentRevision) : null;
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.editDoc, { documentRevision, proposedSections });
+    let mappedLatestRevision = null;
+    if (view === DOC_VIEW.edit) {
+      const latestRevision = await this.documentService.getDocumentRevisionById(doc.revision);
+      mappedLatestRevision = await this.clientDataMapper.mapDocOrRevision(latestRevision, user);
+    }
+
+    const [mappedDocument, mappedTemplateDocument] = await this.clientDataMapper.mapDocsOrRevisions([doc, templateDocument], user);
+    const templateSections = mappedTemplateDocument ? this.clientDataMapper.createProposedSections(mappedTemplateDocument) : [];
+
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, latestRevision: mappedLatestRevision, templateSections });
   }
 
   async handlePostDoc(req, res) {
@@ -219,14 +216,8 @@ class DocumentController {
 
     router.get(
       '/docs/:docKey*',
-      validateParams(getDocumentParamsSchema),
+      [validateParams(getDocumentParamsSchema), validateQuery(getDocumentQuerySchema)],
       (req, res) => this.handleGetDocPage(req, res)
-    );
-
-    router.get(
-      '/edit/doc/:docKey',
-      needsPermission(permissions.EDIT_DOC),
-      (req, res) => this.handleGetEditDocPage(req, res)
     );
   }
 

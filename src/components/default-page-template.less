@@ -28,6 +28,7 @@
 .DefaultPageTemplate-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   min-height: @default-page-template-header-min-height;
   background-color: @edu-primary-color;
 
@@ -41,21 +42,12 @@
   padding: @edu-content-padding;
 
   &.DefaultPageTemplate-headerContent--left {
-    flex: 1 0 0%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
   }
 
-  &.DefaultPageTemplate-headerContent--center {
-    flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   &.DefaultPageTemplate-headerContent--right {
-    flex: 1 0 0%;
     display: flex;
     align-items: center;
     justify-content: flex-end;

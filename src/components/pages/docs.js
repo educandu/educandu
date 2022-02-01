@@ -10,12 +10,12 @@ import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
 import { Input, Table, Button, Switch } from 'antd';
 import { useSettings } from '../settings-context.js';
-import { DOCUMENT_ORIGIN } from '../../domain/constants.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW } from '../../domain/constants.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -99,7 +99,12 @@ function Docs({ initialState, PageTemplate }) {
     const { documentRevision } = await documentApiClient.saveDocument({ title, slug, language, tags, sections: [] });
     setModalState(getDefaultModalState({ t, uiLanguage, settings }));
 
-    window.location = urls.getEditDocUrl(documentRevision.key, templateDocumentKey || clonedDocument?.key);
+    window.location = urls.getDocUrl({
+      key: documentRevision.key,
+      slug: documentRevision.slug,
+      view: DOC_VIEW.edit,
+      templateDocumentKey: templateDocumentKey || clonedDocument?.key
+    });
   };
 
   const handleDocumentMetadataModalClose = () => {
@@ -145,7 +150,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const renderTitle = (title, doc) => {
-    return <a href={urls.getDocUrl(doc.key, doc.slug)}>{title}</a>;
+    return <a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>;
   };
 
   const renderUpdatedOn = updatedOn => {

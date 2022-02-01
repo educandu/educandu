@@ -61,7 +61,7 @@ function Search({ PageTemplate }) {
   }, [docs, selectedTags]);
 
   const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
-  const renderTitle = (title, doc) => (<a href={urls.getDocUrl(doc.key, doc.slug)}>{title}</a>);
+  const renderTitle = (title, doc) => (<a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>);
   const renderTags = tags => tags.map(tag => (<Tag key={tag}>{tag}</Tag>));
   const renderLanguage = lang => (<LanguageFlagAndName language={lang} />);
 

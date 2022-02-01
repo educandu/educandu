@@ -42,7 +42,7 @@ function Doc({ initialState, PageTemplate }) {
   });
 
   const handleEditClick = () => {
-    window.location = urls.getEditDocUrl(state.currentDocOrRevision.key);
+    window.location = urls.getDocUrl({ key: state.currentDocOrRevision });
   };
 
   const handleViewRevionsClick = async () => {
@@ -264,7 +264,7 @@ function Doc({ initialState, PageTemplate }) {
   }
 
   return (
-    <PageTemplate headerActions={headerActions} alerts={alerts}>
+    <PageTemplate alerts={alerts}>
       <div className="DocPage">
         { state.revisions.length > 0 && revisionPicker}
         <SectionsView

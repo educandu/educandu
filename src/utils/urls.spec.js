@@ -127,13 +127,20 @@ describe('order-store-base', () => {
         key: 'key',
         slug: 's l u g-part1/slug-part-2',
         expectedResult: '/docs/key/s%20l%20u%20g-part1/slug-part-2'
+      },
+      {
+        key: 'key',
+        slug: 'slug',
+        view: 'edit',
+        templateDocumentKey: 'XrF7z7jyDrNFkvH7eyj5T',
+        expectedResult: '/docs/key/slug?view=edit&templateDocumentKey=XrF7z7jyDrNFkvH7eyj5T'
       }
     ];
 
-    testCases.forEach(({ key, slug, expectedResult }) => {
+    testCases.forEach(({ key, slug, view, templateDocumentKey, expectedResult }) => {
       describe(`when key is '${key}' and slug is '${slug}'`, () => {
         beforeEach(() => {
-          result = sut.getDocUrl(key, slug);
+          result = sut.getDocUrl({ key, slug, view, templateDocumentKey });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);

@@ -4,9 +4,7 @@ import Root from '../components/root.js';
 import Logger from '../common/logger.js';
 import { Container } from '../common/di.js';
 import ClientConfig from './client-config.js';
-import { PAGE_NAME } from '../domain/page-name.js';
 import PageResolver from '../domain/page-resolver.js';
-import EditorFactory from '../plugins/editor-factory.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 const logger = new Logger(import.meta.url);
@@ -25,12 +23,6 @@ export async function hydrateApp({ bundleConfig }) {
 
   const pageResolver = new PageResolver(bundleConfig);
   container.registerInstance(PageResolver, pageResolver);
-
-  // This block can be removed after the old edit doc page is gone:
-  if (window.__pageName__ === PAGE_NAME.editDoc) {
-    const editorFactory = container.get(EditorFactory);
-    await editorFactory.ensureEditorsAreLoaded();
-  }
 
   logger.info('Resolving entry point');
   const {

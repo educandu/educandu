@@ -380,6 +380,20 @@
     }
   },
   {
+    "namespace": "docNew",
+    "language": "en",
+    "resources": {
+      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n"
+    }
+  },
+  {
+    "namespace": "docNew",
+    "language": "de",
+    "resources": {
+      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n"
+    }
+  },
+  {
     "namespace": "doc",
     "language": "en",
     "resources": {
@@ -441,20 +455,6 @@
       "origin": "Quelle",
       "originInternal": "intern",
       "originExternal": "extern"
-    }
-  },
-  {
-    "namespace": "editDoc",
-    "language": "en",
-    "resources": {
-      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the page.\n"
-    }
-  },
-  {
-    "namespace": "editDoc",
-    "language": "de",
-    "resources": {
-      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Seite verlassen.\n"
     }
   },
   {
@@ -965,22 +965,6 @@
       "searchPlaceholder": "Suchbegriffe",
       "searchButtonText": "Suchen",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein"
-    }
-  },
-  {
-    "namespace": "sectionEditor",
-    "language": "en",
-    "resources": {
-      "type": "Type",
-      "key": "Key"
-    }
-  },
-  {
-    "namespace": "sectionEditor",
-    "language": "de",
-    "resources": {
-      "type": "Typ",
-      "key": "Schlüssel"
     }
   },
   {

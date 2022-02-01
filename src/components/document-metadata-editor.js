@@ -89,7 +89,7 @@ function DocumentMetadataEditor({ documentRevision, onChanged }) {
             <br />
             <span>{t('common:language')}:</span> <span><LanguageFlagAndName language={documentRevision.language} /></span>
             <br />
-            <span>{t('common:slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl(documentRevision.key, documentRevision.slug)}</span> : <i>({t('unassigned')})</i>}
+            <span>{t('common:slug')}:</span> {documentRevision.slug ? <span>{urls.getDocUrl({ key: documentRevision.key, slug: documentRevision.slug })}</span> : <i>({t('unassigned')})</i>}
             <br />
             <span>{t('tags')}</span>: {documentRevision.tags.map(item => (<Space key={item}><Tag key={item}>{item}</Tag></Space>))}
           </div>

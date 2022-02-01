@@ -7,7 +7,6 @@ export const PAGE_NAME = {
   completePasswordReset: 'complete-password-reset',
   docs: 'docs',
   users: 'users',
-  editDoc: 'edit-doc',
   settings: 'settings',
   doc: 'doc',
   index: 'index',

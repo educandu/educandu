@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { DOC_VIEW } from '../constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 
 const documentRevisionAppendToSchema = joi.object({
@@ -97,3 +98,8 @@ export const getDocumentParamsSchema = joi.object({
   docKey: idOrKeySchema.required(),
   docSlug: joi.string()
 }).unknown(true);
+
+export const getDocumentQuerySchema = joi.object({
+  view: joi.string().valid(...Object.values(DOC_VIEW)),
+  templateDocumentKey: idOrKeySchema
+});

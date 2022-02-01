@@ -229,6 +229,10 @@ class ClientDataMapper {
   }
 
   _mapDocOrRevision(docOrRevision, userMap, allowedUserFields) {
+    if (!docOrRevision) {
+      return docOrRevision;
+    }
+
     const result = {};
 
     for (const [key, value] of Object.entries(docOrRevision)) {

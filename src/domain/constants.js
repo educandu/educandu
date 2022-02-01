@@ -56,3 +56,8 @@ export const ERROR_CODES = {
   sessionExpired: 'session-expired',
   operationCancelled: 'operation-cancelled'
 };
+
+export const DOC_VIEW = {
+  edit: 'edit',
+  history: 'history'
+};
