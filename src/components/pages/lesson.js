@@ -19,8 +19,8 @@ import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { lessonShape, roomShape } from '../../ui/default-prop-types.js';
-import { LESSON_VIEW, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
+import { LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
 import {
@@ -44,7 +44,7 @@ function Lesson({ PageTemplate, initialState }) {
   const infoFactory = useService(InfoFactory);
   const editorFactory = useService(EditorFactory);
 
-  const startsInEditMode = request.query.view === LESSON_VIEW.edit;
+  const startsInEditMode = request.query.view === LESSON_VIEW_QUERY_PARAM.edit;
 
   const { room } = initialState;
   const isRoomOwner = user?._id === room.owner._id;
@@ -80,7 +80,7 @@ function Lesson({ PageTemplate, initialState }) {
     setIsInEditMode(true);
     setCurrentSections(cloneDeep(lesson.sections));
 
-    history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW.edit }));
+    history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
   };
 
   const handleSave = async () => {

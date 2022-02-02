@@ -62,6 +62,6 @@ export const DOC_VIEW = {
   history: 'history'
 };
 
-export const LESSON_VIEW = {
+export const LESSON_VIEW_QUERY_PARAM = {
   edit: 'edit'
 };
