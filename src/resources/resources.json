@@ -261,7 +261,7 @@
       "sequenceIntervall": "Interval",
       "sequenceCount": "Number",
       "sequenceInfoBoxHeader": "Lesson sequences",
-      "sequenceInfoBoxDescription": "Here you can create multiple lessons at once.\nThe date specified above is used as the first appointment.\nA sequential number is appended to the title or URL path for each lesson.\n"
+      "sequenceInfoBoxDescription": "Here you can create multiple lessons at once.\nThe date specified above is used as the first scheduling.\nA sequential number is appended to the title or URL path for each lesson.\n"
     }
   },
   {

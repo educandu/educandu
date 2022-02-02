@@ -25,7 +25,7 @@ sequenceInfoBoxHeader:
 sequenceInfoBoxDescription:
   en: |
     Here you can create multiple lessons at once.
-    The date specified above is used as the first appointment.
+    The date specified above is used as the first scheduling.
     A sequential number is appended to the title or URL path for each lesson.
   de: |
     Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.
