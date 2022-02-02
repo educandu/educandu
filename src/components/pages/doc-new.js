@@ -308,7 +308,7 @@ function Doc({ initialState, PageTemplate }) {
         <EditControlPanel
           canClose
           canCancel={false}
-          startExpanded={startsInEditMode}
+          startOpen={startsInEditMode}
           onEdit={handleEdit}
           onMetadataEdit={handleMetadataEdit}
           onSave={handleSave}
