@@ -45,7 +45,7 @@ export default class LessonController {
     }
 
     if (lesson.slug !== routeWildcardValue) {
-      return res.redirect(301, urls.getLessonUrl(lesson._id, lesson.slug));
+      return res.redirect(301, urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
     }
 
     const room = await this.roomService.getRoomById(lesson.roomId);

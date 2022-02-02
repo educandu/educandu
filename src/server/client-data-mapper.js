@@ -224,6 +224,7 @@ class ClientDataMapper {
   _mapDocumentSection(section, userMap, allowedUserFields) {
     return {
       ...section,
+      deletedOn: section.deletedOn ? section.deletedOn.toISOString() : section.deletedOn,
       deletedBy: section.deletedBy ? this._mapUser(userMap.get(section.deletedBy), allowedUserFields) : section.deletedBy
     };
   }

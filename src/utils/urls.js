@@ -31,10 +31,15 @@ function encodeURIParts(path) {
   return (path || '').split('/').map(x => encodeURIComponent(x)).join('/');
 }
 
+function composeQueryString(keyValuePairs) {
+  return new URLSearchParams(keyValuePairs.filter(([, value]) => value)).toString();
+}
+
 function concatParts(...parts) {
-  return parts
-    .filter(part => part || part === 0 || part === false)
-    .reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
+  const nonEmptyParts = parts.map(part => part?.toString() || '').filter(part => part);
+  return nonEmptyParts.length
+    ? nonEmptyParts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`)
+    : '';
 }
 
 function createRedirectUrl(path, redirect) {
@@ -49,10 +54,18 @@ function getUsersUrl() {
   return usersPath;
 }
 
-function getDocUrl({ key, slug, view, templateDocumentKey }) {
-  const url = concatParts(docsPrefix, encodeURIComponent(key), encodeURIParts(slug));
-  const queryParams = new URLSearchParams([['view', view], ['templateDocumentKey', templateDocumentKey]].filter(([, value]) => value)).toString();
-  return queryParams ? `${url}?${queryParams}` : url;
+function getDocUrl({ keyAndSlug, key, slug, view, templateDocumentKey }) {
+  if (keyAndSlug && (key || slug)) {
+    throw new Error('Key and slug can either be set separately or combined, but not both');
+  }
+
+  const keyAndSlugPart = keyAndSlug
+    ? encodeURIParts(keyAndSlug)
+    : concatParts(encodeURIComponent(key), encodeURIParts(slug));
+
+  const url = concatParts(docsPrefix, keyAndSlugPart);
+  const queryString = composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);
+  return queryString ? `${url}?${queryString}` : url;
 }
 
 function getDocumentRevisionUrl(revisionId) {
@@ -134,7 +147,7 @@ function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
 }
 
 function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
-  return concatParts(getImportSourceBaseUrl({ hostName, allowUnsecure }), getDocUrl(key, slug));
+  return concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ key, slug }));
 }
 
 function getImportDetailsUrl(batchId) {
@@ -145,8 +158,10 @@ function getRoomUrl(id, slug) {
   return concatParts(roomsPrefix, encodeURIComponent(id), encodeURIParts(slug));
 }
 
-function getLessonUrl(id, slug) {
-  return concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIParts(slug));
+function getLessonUrl({ id, slug, view }) {
+  const url = concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIParts(slug));
+  const queryString = composeQueryString([['view', view]]);
+  return queryString ? `${url}?${queryString}` : url;
 }
 
 export default {

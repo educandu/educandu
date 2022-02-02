@@ -13,6 +13,8 @@ import NotSupportedSection from './not-supported-section.js';
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
+  CheckOutlined,
+  CloseOutlined,
   DeleteOutlined,
   DragOutlined,
   EditOutlined,
@@ -27,6 +29,9 @@ function SectionDisplayNew({
   dragHandleProps,
   isDragged,
   isOtherSectionDragged,
+  isPending,
+  onPendingSectionApplied,
+  onPendingSectionDiscarded,
   onSectionDuplicate,
   onSectionDelete,
   onSectionMoveUp,
@@ -155,6 +160,8 @@ function SectionDisplayNew({
 
   return (
     <section className={sectionClasses}>
+      {isEditing ? renderEditorComponent() : renderDisplayComponent()}
+
       {canEdit && (
         <Fragment>
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--left">
@@ -166,9 +173,33 @@ function SectionDisplayNew({
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
             {actions.map(renderAction)}
           </div>
+          { isPending && (
+            <Fragment>
+              <div className="SectionDisplayNew-overlay" />
+              <div className="SectionDisplayNew-overlay SectionDisplayNew-overlay--withButtons">
+                <Tooltip title={t('common:apply')}>
+                  <Button
+                    type="link"
+                    onClick={onPendingSectionApplied}
+                    className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply"
+                    >
+                    <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
+                  </Button>
+                </Tooltip>
+                <Tooltip title={t('common:discard')}>
+                  <Button
+                    type="link"
+                    onClick={onPendingSectionDiscarded}
+                    className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard"
+                    >
+                    <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
+                  </Button>
+                </Tooltip>
+              </div>
+            </Fragment>
+          )}
         </Fragment>
       )}
-      {isEditing ? renderEditorComponent() : renderDisplayComponent()}
     </section>
   );
 }
@@ -178,6 +209,9 @@ SectionDisplayNew.propTypes = {
   dragHandleProps: PropTypes.object,
   isDragged: PropTypes.bool,
   isOtherSectionDragged: PropTypes.bool,
+  isPending: PropTypes.bool,
+  onPendingSectionApplied: PropTypes.func,
+  onPendingSectionDiscarded: PropTypes.func,
   onSectionContentChange: PropTypes.func.isRequired,
   onSectionDelete: PropTypes.func.isRequired,
   onSectionDuplicate: PropTypes.func.isRequired,
@@ -190,7 +224,10 @@ SectionDisplayNew.propTypes = {
 SectionDisplayNew.defaultProps = {
   dragHandleProps: {},
   isDragged: false,
-  isOtherSectionDragged: false
+  isOtherSectionDragged: false,
+  isPending: false,
+  onPendingSectionApplied: () => {},
+  onPendingSectionDiscarded: () => {}
 };
 
 export default SectionDisplayNew;

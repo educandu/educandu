@@ -66,6 +66,10 @@ describe('order-store-base', () => {
   describe('concatParts', () => {
     const testCases = [
       {
+        parts: [null, ''],
+        expectedResult: ''
+      },
+      {
         parts: ['abc', 'def', 'ghi'],
         expectedResult: 'abc/def/ghi'
       },
@@ -115,8 +119,8 @@ describe('order-store-base', () => {
       },
       {
         key: 'key',
-        slug: 'slug',
-        expectedResult: '/docs/key/slug'
+        slug: 'slug/slugathor',
+        expectedResult: '/docs/key/slug/slugathor'
       },
       {
         key: 'key',
@@ -134,17 +138,27 @@ describe('order-store-base', () => {
         view: 'edit',
         templateDocumentKey: 'XrF7z7jyDrNFkvH7eyj5T',
         expectedResult: '/docs/key/slug?view=edit&templateDocumentKey=XrF7z7jyDrNFkvH7eyj5T'
+      },
+      {
+        keyAndSlug: 'key/slug/slugathor',
+        expectedResult: '/docs/key/slug/slugathor'
       }
     ];
 
-    testCases.forEach(({ key, slug, view, templateDocumentKey, expectedResult }) => {
-      describe(`when key is '${key}' and slug is '${slug}'`, () => {
+    testCases.forEach(({ keyAndSlug, key, slug, view, templateDocumentKey, expectedResult }) => {
+      describe(`when keyAndSlug is '${keyAndSlug}', key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
         beforeEach(() => {
-          result = sut.getDocUrl({ key, slug, view, templateDocumentKey });
+          result = sut.getDocUrl({ keyAndSlug, key, slug, view, templateDocumentKey });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);
         });
+      });
+    });
+
+    describe('when keyAndSlug and key is provided', () => {
+      it('should throw an error', () => {
+        expect(() => sut.getDocUrl({ keyAndSlug: 'key/slug/slugathor', key: 'key' })).toThrow();
       });
     });
   });
@@ -175,13 +189,19 @@ describe('order-store-base', () => {
         id: 'id',
         slug: 's l u g-part1/slug-part-2',
         expectedResult: '/lessons/id/s%20l%20u%20g-part1/slug-part-2'
+      },
+      {
+        id: 'id',
+        slug: 'lesson-slug',
+        view: 'edit',
+        expectedResult: '/lessons/id/lesson-slug?view=edit'
       }
     ];
 
-    testCases.forEach(({ id, slug, expectedResult }) => {
-      describe(`when id is '${id}' and slug is '${slug}'`, () => {
+    testCases.forEach(({ id, slug, view, expectedResult }) => {
+      describe(`when id is '${id}', slug is '${slug}' and view is '${view}'`, () => {
         beforeEach(() => {
-          result = sut.getLessonUrl(id, slug);
+          result = sut.getLessonUrl({ id, slug, view });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);

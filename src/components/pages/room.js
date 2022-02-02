@@ -73,7 +73,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const handleLessonMetadataModalSave = createdLessons => {
-    window.location = urls.getLessonUrl(createdLessons[0]._id);
+    window.location = urls.getLessonUrl({ id: createdLessons[0]._id, slug: createdLessons[0].slug });
     setIsLessonMetadataModalVisible(false);
   };
 
@@ -105,7 +105,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const renderLesson = lesson => {
-    const url = urls.getLessonUrl(lesson._id, lesson.slug);
+    const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
 
     const startsOn = lesson.schedule?.startsOn;
     const isUpcomingLesson = upcommingLesson?._id === lesson._id;
