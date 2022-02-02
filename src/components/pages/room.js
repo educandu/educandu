@@ -100,7 +100,7 @@ export default function Room({ PageTemplate, initialState }) {
   };
 
   const renderLesson = lesson => {
-    const url = urls.getLessonUrl(lesson._id, lesson.slug);
+    const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
 
     const startsOn = lesson.schedule?.startsOn;
     const isUpcomingLesson = upcommingLesson?._id === lesson._id;

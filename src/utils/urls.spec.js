@@ -138,7 +138,7 @@ describe('order-store-base', () => {
     ];
 
     testCases.forEach(({ key, slug, view, templateDocumentKey, expectedResult }) => {
-      describe(`when key is '${key}' and slug is '${slug}'`, () => {
+      describe(`when key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
         beforeEach(() => {
           result = sut.getDocUrl({ key, slug, view, templateDocumentKey });
         });
@@ -175,13 +175,19 @@ describe('order-store-base', () => {
         id: 'id',
         slug: 's l u g-part1/slug-part-2',
         expectedResult: '/lessons/id/s%20l%20u%20g-part1/slug-part-2'
+      },
+      {
+        id: 'id',
+        slug: 'lesson-slug',
+        view: 'edit',
+        expectedResult: '/lessons/id/lesson-slug?view=edit'
       }
     ];
 
-    testCases.forEach(({ id, slug, expectedResult }) => {
-      describe(`when id is '${id}' and slug is '${slug}'`, () => {
+    testCases.forEach(({ id, slug, view, expectedResult }) => {
+      describe(`when id is '${id}', slug is '${slug}' and view is '${view}'`, () => {
         beforeEach(() => {
-          result = sut.getLessonUrl(id, slug);
+          result = sut.getLessonUrl({ id, slug, view });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);
