@@ -24,8 +24,8 @@ function EditControlPanel({
   canCancel,
   canClose,
   metadata,
-  onEdit,
-  onMetadataEdit,
+  onOpen,
+  onMetadataOpen,
   onSave,
   onCancel,
   onClose,
@@ -33,7 +33,7 @@ function EditControlPanel({
 }) {
   const { t } = useTranslation('editControlPanel');
 
-  const handleOpen = () => onEdit();
+  const handleOpen = () => onOpen();
 
   const handleClose = () => onClose();
 
@@ -75,7 +75,7 @@ function EditControlPanel({
   const renderMetadata = () => metadata && (
     <span className="EditControlPanel-leftSide">
       <span className="EditControlPanel-leftSideButton">
-        <Button size="small" icon={<EditOutlined />} onClick={onMetadataEdit} ghost />
+        <Button size="small" icon={<EditOutlined />} onClick={onMetadataOpen} ghost />
       </span>
       {metadata}
     </span>
@@ -96,6 +96,7 @@ function EditControlPanel({
       className="EditControlPanel"
       startOpen={startOpen}
       openIcon={<EditOutlined />}
+      openIconPosition={2}
       canClose={canClose}
       onOpen={handleOpen}
       onClose={handleClose}
@@ -111,8 +112,8 @@ EditControlPanel.propTypes = {
   metadata: PropTypes.node,
   onCancel: PropTypes.func,
   onClose: PropTypes.func,
-  onEdit: PropTypes.func,
-  onMetadataEdit: PropTypes.func,
+  onMetadataOpen: PropTypes.func,
+  onOpen: PropTypes.func,
   onSave: PropTypes.func,
   startOpen: PropTypes.bool,
   status: PropTypes.oneOf(Object.values(EDIT_CONTROL_PANEL_STATUS))
@@ -124,8 +125,8 @@ EditControlPanel.defaultProps = {
   metadata: null,
   onCancel: () => {},
   onClose: () => Promise.resolve(true),
-  onEdit: () => Promise.resolve(),
-  onMetadataEdit: () => {},
+  onMetadataOpen: () => {},
+  onOpen: () => Promise.resolve(),
   onSave: () => {},
   startOpen: false,
   status: EDIT_CONTROL_PANEL_STATUS.none

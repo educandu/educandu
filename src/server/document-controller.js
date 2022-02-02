@@ -5,9 +5,9 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
-import { DOCUMENT_TYPE, DOC_VIEW } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import { DOCUMENT_TYPE, DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   getDocByKeyParamsSchema,
@@ -84,7 +84,7 @@ class DocumentController {
     }
 
     let mappedLatestRevision = null;
-    if (view === DOC_VIEW.edit) {
+    if (view === DOC_VIEW_QUERY_PARAM.edit) {
       const latestRevision = await this.documentService.getDocumentRevisionById(doc.revision);
       mappedLatestRevision = await this.clientDataMapper.mapDocOrRevision(latestRevision, user);
     }

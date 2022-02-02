@@ -57,7 +57,7 @@ function Lesson({ PageTemplate, initialState }) {
   const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
-  const handleMetadataEdit = () => {
+  const handleEditMetadataOpen = () => {
     setIsLessonMetadataModalVisible(true);
   };
 
@@ -76,7 +76,7 @@ function Lesson({ PageTemplate, initialState }) {
     setIsLessonMetadataModalVisible(false);
   };
 
-  const handleEdit = async () => {
+  const handleEditOpen = async () => {
     await ensureEditorsAreLoaded(editorFactory);
     setIsInEditMode(true);
     setCurrentSections(cloneDeep(lesson.sections));
@@ -84,7 +84,7 @@ function Lesson({ PageTemplate, initialState }) {
     history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
   };
 
-  const handleSave = async () => {
+  const handleEditSave = async () => {
     try {
       const updatedLesson = await lessonApiClient.updateLessonSections({
         lessonId: lesson._id,
@@ -99,7 +99,7 @@ function Lesson({ PageTemplate, initialState }) {
     }
   };
 
-  const handleClose = () => {
+  const handleEditClose = () => {
     return new Promise(resolve => {
       const exitEditMode = () => {
         setIsDirty(false);
@@ -219,11 +219,11 @@ function Lesson({ PageTemplate, initialState }) {
           <EditControlPanel
             canClose
             canCancel={false}
-            startExpanded={startsInEditMode}
-            onEdit={handleEdit}
-            onMetadataEdit={handleMetadataEdit}
-            onSave={handleSave}
-            onClose={handleClose}
+            startOpen={startsInEditMode}
+            onOpen={handleEditOpen}
+            onMetadataOpen={handleEditMetadataOpen}
+            onSave={handleEditSave}
+            onClose={handleEditClose}
             status={controlStatus}
             metadata={(
               <Fragment >

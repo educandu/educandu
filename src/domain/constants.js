@@ -57,7 +57,7 @@ export const ERROR_CODES = {
   operationCancelled: 'operation-cancelled'
 };
 
-export const DOC_VIEW = {
+export const DOC_VIEW_QUERY_PARAM = {
   edit: 'edit',
   history: 'history'
 };

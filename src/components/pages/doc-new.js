@@ -16,18 +16,25 @@ import EditorFactory from '../../plugins/editor-factory.js';
 import SectionsDisplayNew from '../sections-display-new.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { Fragment, useEffect, useState } from 'react';
+import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
-import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW } from '../../domain/constants.js';
 import { documentRevisionShape, documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
 
 const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
+
+const VIEW = {
+  display: 'display',
+  edit: DOC_VIEW_QUERY_PARAM.edit,
+  history: DOC_VIEW_QUERY_PARAM.history
+};
 
 function Doc({ initialState, PageTemplate }) {
   const request = useRequest();
@@ -38,11 +45,11 @@ function Doc({ initialState, PageTemplate }) {
   const editorFactory = useService(EditorFactory);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-  const startsInEditMode = request.query.view === DOC_VIEW.edit;
+  const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
-  const [isInEditMode, setIsInEditMode] = useState(startsInEditMode);
+  const [view, setView] = useState(initialView);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
@@ -73,7 +80,7 @@ function Doc({ initialState, PageTemplate }) {
       });
     }
 
-    if (isInEditMode && pendingTemplateSectionKeys?.length) {
+    if (view === VIEW.edit && pendingTemplateSectionKeys?.length) {
       newAlerts.push({
         message: t('proposedSectionsAlert'),
         type: ALERT_TYPE.info,
@@ -82,15 +89,31 @@ function Doc({ initialState, PageTemplate }) {
     }
 
     setAlerts(newAlerts);
-  }, [globalAlerts, doc, isInEditMode, pendingTemplateSectionKeys, t]);
+  }, [globalAlerts, doc, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
-    if (startsInEditMode || isInEditMode) {
+    if (initialView === VIEW.edit || view === VIEW.edit) {
       ensureEditorsAreLoaded(editorFactory);
     }
-  }, [startsInEditMode, isInEditMode, editorFactory]);
+  }, [initialView, view, editorFactory]);
 
-  const handleMetadataEdit = () => {
+  useEffect(() => {
+    switch (view) {
+      case VIEW.display:
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
+        break;
+      case VIEW.edit:
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.edit }));
+        break;
+      case VIEW.history:
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.history }));
+        break;
+      default:
+        break;
+    }
+  }, [doc.key, doc.slug, view]);
+
+  const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalVisible(true);
   };
 
@@ -122,19 +145,17 @@ function Doc({ initialState, PageTemplate }) {
     setIsDocumentMetadataModalVisible(false);
   };
 
-  const handleEdit = async () => {
+  const handleEditOpen = async () => {
     const { documentRevisions: revisions } = await documentApiClient.getDocumentRevisions(doc.key);
 
     const newLatestRevision = revisions[revisions.length - 1];
 
-    setIsInEditMode(true);
+    setView(VIEW.edit);
     setLatestRevision(newLatestRevision);
     setCurrentSections(cloneDeep(newLatestRevision.sections));
-
-    history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: DOC_VIEW.edit }));
   };
 
-  const handleSave = async () => {
+  const handleEditSave = async () => {
     const mappedDocumentRevision = {
       title: latestRevision.title,
       slug: latestRevision.slug,
@@ -182,18 +203,15 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
-  const handleClose = () => {
+  const handleEditClose = () => {
     return new Promise(resolve => {
       const exitEditMode = () => {
         setPendingTemplateSectionKeys([]);
         setCurrentSections(latestRevision.sections);
 
         setIsDirty(false);
-        setIsInEditMode(false);
+        setView(VIEW.display);
         setInvalidSectionKeys([]);
-
-        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
-
         resolve(true);
       };
 
@@ -273,6 +291,15 @@ function Doc({ initialState, PageTemplate }) {
     setIsDirty(true);
   };
 
+  const handleHistoryOpen = () => {
+    setView(VIEW.history);
+  };
+
+  const handleHistoryClose = () => {
+    setView(VIEW.display);
+    return true;
+  };
+
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -290,7 +317,7 @@ function Doc({ initialState, PageTemplate }) {
             sections={currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
             sectionsContainerId={doc.key}
-            canEdit={isInEditMode}
+            canEdit={view === VIEW.edit}
             onPendingSectionApplied={handlePendingSectionApplied}
             onPendingSectionDiscarded={handlePendingSectionDiscarded}
             onSectionContentChange={handleSectionContentChange}
@@ -305,14 +332,19 @@ function Doc({ initialState, PageTemplate }) {
         </aside>
       </PageTemplate>
       <Restricted to={permissions.EDIT_DOC}>
+        <HistoryControlPanel
+          startOpen={initialView === VIEW.history}
+          onOpen={handleHistoryOpen}
+          onClose={handleHistoryClose}
+          />
         <EditControlPanel
           canClose
           canCancel={false}
-          startOpen={startsInEditMode}
-          onEdit={handleEdit}
-          onMetadataEdit={handleMetadataEdit}
-          onSave={handleSave}
-          onClose={handleClose}
+          startOpen={initialView === VIEW.edit}
+          onOpen={handleEditOpen}
+          onMetadataOpen={handleEditMetadataOpen}
+          onSave={handleEditSave}
+          onClose={handleEditClose}
           status={controlStatus}
           metadata={(
             <span className="DocPage-editControlPanelItem">{doc.title}</span>

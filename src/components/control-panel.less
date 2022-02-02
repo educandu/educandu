@@ -8,15 +8,24 @@
   justify-content: center;
   position: sticky;
   bottom: 0;
-  left: %(~"calc(100% - %s)", @control-panel-height * 2);
   height: @control-panel-height;
   width: @control-panel-height;
   color: @edu-white;
   background-color: @edu-primary-color;
   transition: width 500ms ease;
+  z-index: @z-index-overlay-layer;
+
+  &.ControlPanel--position1 {
+    left: %(~"calc(100% - %s)", @control-panel-height * 3 + 2);
+  }
+
+  &.ControlPanel--position2 {
+    left: %(~"calc(100% - %s)", @control-panel-height * 2);
+  }
 
   &.is-open {
     width: 100%;
+    z-index: @z-index-sticky-content-layer;
   }
 }
 
