@@ -17,7 +17,7 @@ function HistoryControlPanel({
       className="HistoryControlPanel"
       startOpen={startOpen}
       openIcon={<HistoryOutlined />}
-      openIconPosition={1}
+      openIconPositionFromRight={2}
       canClose
       onOpen={handleOpen}
       onClose={handleClose}

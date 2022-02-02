@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 function ControlPanel({
   startOpen,
   openIcon,
-  openIconPosition,
+  openIconPositionFromRight,
   canClose,
   onOpen,
   onClose,
@@ -74,7 +74,7 @@ function ControlPanel({
   };
 
   return (
-    <div className={classNames('ControlPanel', `ControlPanel--position${openIconPosition}`, { 'is-open': isOpen })}>
+    <div className={classNames('ControlPanel', `ControlPanel--position${openIconPositionFromRight}`, { 'is-open': isOpen })}>
       {isOpen && isContentVisible && renderContent()}
       {!isOpen && renderOpenButton()}
     </div>
@@ -87,7 +87,7 @@ ControlPanel.propTypes = {
   onClose: PropTypes.func,
   onOpen: PropTypes.func,
   openIcon: PropTypes.node.isRequired,
-  openIconPosition: PropTypes.oneOf([1, 2]),
+  openIconPositionFromRight: PropTypes.oneOf([1, 2]),
   rightSideContent: PropTypes.node,
   startOpen: PropTypes.bool
 };
@@ -97,7 +97,7 @@ ControlPanel.defaultProps = {
   leftSideContent: null,
   onClose: () => Promise.resolve(true),
   onOpen: () => Promise.resolve(),
-  openIconPosition: 2,
+  openIconPositionFromRight: 1,
   rightSideContent: null,
   startOpen: false
 };

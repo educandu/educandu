@@ -96,7 +96,7 @@ function EditControlPanel({
       className="EditControlPanel"
       startOpen={startOpen}
       openIcon={<EditOutlined />}
-      openIconPosition={2}
+      openIconPositionFromRight={1}
       canClose={canClose}
       onOpen={handleOpen}
       onClose={handleClose}
