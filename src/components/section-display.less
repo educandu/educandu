@@ -9,8 +9,7 @@
   padding: @edu-content-padding;
   min-height: @section-display-min-height;
 
-  &.is-editable,
-  &.is-hard-deletable {
+  &.is-editable {
     padding: @edu-content-padding;
     padding-top: @section-display-editable-padding-top;
     border-color: @grey-5;
@@ -26,6 +25,16 @@
 
     &.is-other-section-dragged {
       opacity: 0.60;
+    }
+  }
+
+  &.is-hard-deletable {
+    &:hover {
+      border: 1px solid @grey-6;
+    }
+
+    &:hover .SectionDisplay-actionButton--hardDelete {
+      visibility: visible;
     }
   }
 }
@@ -63,6 +72,12 @@
       color: @red-8;
       border-color: @red-8;
     }
+  }
+
+  &.SectionDisplay-actionButton--hardDelete {
+    visibility: hidden;
+    color: @red-8;
+    border-color: @red-8;
   }
 }
 

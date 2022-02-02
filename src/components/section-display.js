@@ -158,7 +158,7 @@ function SectionDisplay({
   const renderHardDeleteAction = () => (
     <Tooltip title={t('common:hardDelete')} placement="topRight">
       <Button
-        className="SectionDisplay-actionButton SectionDisplay-actionButton--delete"
+        className="SectionDisplay-actionButton SectionDisplay-actionButton--hardDelete"
         size="small"
         icon={<ThunderboltOutlined />}
         onClick={onSectionHardDelete}
