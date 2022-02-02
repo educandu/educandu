@@ -258,7 +258,7 @@
       "titleRequired": "Please specify a lesson title",
       "startsOn": "Date",
       "createSequence": "Create sequence",
-      "sequenceIntervall": "Interval",
+      "sequenceInterval": "Interval",
       "sequenceCount": "Number",
       "sequenceInfoBoxHeader": "Lesson sequences",
       "sequenceInfoBoxDescription": "Here you can create multiple lessons at once.\nThe date specified above is used as the first scheduling.\nA sequential number is appended to the title or URL path for each lesson.\n"
@@ -273,7 +273,7 @@
       "titleRequired": "Bitte geben Sie einen Unterrichtseinheit Titel an",
       "startsOn": "Datum",
       "createSequence": "Reihe anlegen",
-      "sequenceIntervall": "Intervall",
+      "sequenceInterval": "Intervall",
       "sequenceCount": "Anzahl",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
       "sequenceInfoBoxDescription": "Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jede Unterrichtseinheit eine laufende Nummer angehängt.\n"

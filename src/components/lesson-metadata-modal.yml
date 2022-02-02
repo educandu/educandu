@@ -13,7 +13,7 @@ startsOn:
 createSequence:
   en: Create sequence
   de: Reihe anlegen
-sequenceIntervall:
+sequenceInterval:
   en: Interval
   de: Intervall
 sequenceCount:
