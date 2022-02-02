@@ -146,7 +146,7 @@ describe('order-store-base', () => {
     ];
 
     testCases.forEach(({ keyAndSlug, key, slug, view, templateDocumentKey, expectedResult }) => {
-      describe(`when keyAndSlug is '${key}', key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
+      describe(`when keyAndSlug is '${keyAndSlug}', key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
         beforeEach(() => {
           result = sut.getDocUrl({ keyAndSlug, key, slug, view, templateDocumentKey });
         });
