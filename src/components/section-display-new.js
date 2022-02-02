@@ -19,7 +19,8 @@ import {
   DragOutlined,
   EditOutlined,
   EyeOutlined,
-  SnippetsOutlined
+  SnippetsOutlined,
+  ThunderboltOutlined
 } from '@ant-design/icons';
 
 function SectionDisplayNew({
@@ -157,9 +158,9 @@ function SectionDisplayNew({
   const renderHardDeleteAction = () => (
     <Tooltip title={t('common:hardDelete')} placement="topRight">
       <Button
-        className="SectionDisplayNew-actionButton SectionDisplayNew-actionButton--hardDelete"
+        className="SectionDisplayNew-actionButton SectionDisplayNew-actionButton--delete"
         size="small"
-        icon={<DeleteOutlined />}
+        icon={<ThunderboltOutlined />}
         onClick={onSectionHardDelete}
         />
     </Tooltip>
