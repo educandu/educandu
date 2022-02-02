@@ -45,10 +45,12 @@ function SectionDisplayNew({
   const editorFactory = useService(EditorFactory);
   const rendererFactory = useService(RendererFactory);
 
+  const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
+
   const sectionClasses = classNames({
     'SectionDisplayNew': true,
     'is-editable': canEdit,
-    'is-hard-deletable': canHardDelete,
+    'is-hard-deletable': isHardDeleteEnabled,
     'is-dragged': isDragged,
     'is-other-section-dragged': isOtherSectionDragged
   });
@@ -215,7 +217,7 @@ function SectionDisplayNew({
         </Fragment>
       )}
 
-      {canHardDelete && (
+      {isHardDeleteEnabled && (
         <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
           {renderHardDeleteAction()}
         </div>
