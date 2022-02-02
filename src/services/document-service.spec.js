@@ -315,6 +315,7 @@ describe('document-service', () => {
           title: 'Title 1',
           slug: 'my-doc-1',
           language: 'en',
+          createdOn: new Date().toISOString(),
           createdBy: userId1,
           sections: [
             {
@@ -324,7 +325,8 @@ describe('document-service', () => {
               content: {
                 type: VIDEO_SOURCE_TYPE.internal,
                 url: 'media/video-1.mp4'
-              }
+              },
+              deletedOn: new Date().toISOString()
             }
           ],
           tags: ['tag-1']
@@ -335,6 +337,7 @@ describe('document-service', () => {
           title: 'Title 2',
           slug: 'my-doc-2',
           language: 'en',
+          createdOn: new Date().toISOString(),
           createdBy: userId1,
           sections: [
             {
@@ -369,11 +372,12 @@ describe('document-service', () => {
             sections: [
               {
                 ...revisions[0].sections[0],
-                revision: expect.stringMatching(/\w+/)
+                revision: expect.stringMatching(/\w+/),
+                deletedOn: new Date(revisions[0].sections[0].deletedOn)
               }
             ],
             order: 1,
-            createdOn: now,
+            createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -389,7 +393,7 @@ describe('document-service', () => {
               }
             ],
             order: 2,
-            createdOn: now,
+            createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -408,7 +412,7 @@ describe('document-service', () => {
           ...revisions[1],
           _id: documentKey,
           revision: revisions[1]._id,
-          createdOn: now,
+          createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
           updatedOn: now,
           updatedBy: revisions[1].createdBy,
@@ -421,14 +425,10 @@ describe('document-service', () => {
     });
 
     describe('when it is the second revision', () => {
-      let secondTick;
       let updatedDocument;
 
       beforeEach(async () => {
         await sut.copyDocumentRevisions({ revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-
-        secondTick = new Date(sandbox.clock.tick(1000));
-
         await sut.copyDocumentRevisions({ revisions: [revisions[1]], ancestorId: revisions[0]._id, origin: 'external/origin.url', originUrl: 'https://origin.url' });
         updatedDocument = await db.documents.findOne({ key: documentKey });
       });
@@ -441,11 +441,12 @@ describe('document-service', () => {
             sections: [
               {
                 ...revisions[0].sections[0],
-                revision: expect.stringMatching(/\w+/)
+                revision: expect.stringMatching(/\w+/),
+                deletedOn: new Date(revisions[0].sections[0].deletedOn)
               }
             ],
             order: 1,
-            createdOn: now,
+            createdOn: new Date(revisions[0].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -461,7 +462,7 @@ describe('document-service', () => {
               }
             ],
             order: 2,
-            createdOn: secondTick,
+            createdOn: new Date(revisions[1].createdOn),
             origin: 'external/origin.url',
             originUrl: 'https://origin.url',
             restoredFrom: '',
@@ -486,9 +487,9 @@ describe('document-service', () => {
           ],
           _id: documentKey,
           revision: revisions[1]._id,
-          createdOn: now,
+          createdOn: new Date(revisions[1].createdOn),
           createdBy: revisions[1].createdBy,
-          updatedOn: secondTick,
+          updatedOn: new Date(revisions[1].createdOn),
           updatedBy: revisions[1].createdBy,
           order: 2,
           archived: false,

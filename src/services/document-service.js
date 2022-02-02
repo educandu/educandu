@@ -531,17 +531,24 @@ class DocumentService {
   _buildDocumentRevision({ data, revisionId, documentKey, userId, order, restoredFrom, sections }) {
     logger.info(`Creating new revision for document key ${documentKey} with order ${order}`);
 
+    const createdOn = data.createdOn ? new Date(data.createdOn) : new Date();
+
+    const mappedSections = sections.map(section => ({
+      ...section,
+      deletedOn: section.deletedOn ? new Date(section.deletedOn) : section.deletedOn
+    }));
+
     return {
       _id: revisionId || uniqueId.create(),
       key: documentKey,
       order,
       restoredFrom: restoredFrom || '',
-      createdOn: new Date(),
+      createdOn,
       createdBy: userId || '',
       title: data.title || '',
       slug: data.slug?.trim() || '',
       language: data.language || '',
-      sections,
+      sections: mappedSections,
       tags: data.tags || [],
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
