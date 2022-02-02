@@ -256,7 +256,12 @@
       "newLesson": "New lesson",
       "editLesson": "Edit lesson",
       "titleRequired": "Please specify a lesson title",
-      "startsOn": "Date"
+      "startsOn": "Date",
+      "createSequence": "Create sequence",
+      "sequenceIntervall": "Interval",
+      "sequenceCount": "Number",
+      "sequenceInfoBoxHeader": "Lesson sequences",
+      "sequenceInfoBoxDescription": "Here you can create multiple lessons at once.\nThe date specified above is used as the first scheduling.\nA sequential number is appended to the title or URL path for each lesson.\n"
     }
   },
   {
@@ -266,7 +271,12 @@
       "newLesson": "Neue Unterrichtseinheit",
       "editLesson": "Unterrichtseinheit bearbeiten",
       "titleRequired": "Bitte geben Sie einen Unterrichtseinheit Titel an",
-      "startsOn": "Datum"
+      "startsOn": "Datum",
+      "createSequence": "Reihe anlegen",
+      "sequenceIntervall": "Intervall",
+      "sequenceCount": "Anzahl",
+      "sequenceInfoBoxHeader": "Veranstaltungsreihen",
+      "sequenceInfoBoxDescription": "Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jede Unterrichtseinheit eine laufende Nummer angehängt.\n"
     }
   },
   {
@@ -1518,7 +1528,11 @@
       "text": "Text",
       "update": "Update",
       "description": "Description",
-      "url": "URL"
+      "url": "URL",
+      "daily": "daily",
+      "weekly": "weekly",
+      "monthly": "monthly",
+      "yearly": "yearly"
     }
   },
   {
@@ -1572,7 +1586,11 @@
       "text": "Text",
       "update": "Aktualisieren",
       "description": "Beschreibung",
-      "url": "URL"
+      "url": "URL",
+      "daily": "täglich",
+      "weekly": "wöchentlich",
+      "monthly": "monatlich",
+      "yearly": "jährlich"
     }
   },
   {

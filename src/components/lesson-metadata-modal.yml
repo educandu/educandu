@@ -10,3 +10,24 @@ titleRequired:
 startsOn:
   en: Date
   de: Datum
+createSequence:
+  en: Create sequence
+  de: Reihe anlegen
+sequenceIntervall:
+  en: Interval
+  de: Intervall
+sequenceCount:
+  en: Number
+  de: Anzahl
+sequenceInfoBoxHeader:
+  en: Lesson sequences
+  de: Veranstaltungsreihen
+sequenceInfoBoxDescription:
+  en: |
+    Here you can create multiple lessons at once.
+    The date specified above is used as the first scheduling.
+    A sequential number is appended to the title or URL path for each lesson.
+  de: |
+    Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.
+    Das oben angegebenen Datum wird dabei als erster Termin verwendet.
+    An den Titel bzw. URL-Pfad wird für jede Unterrichtseinheit eine laufende Nummer angehängt.

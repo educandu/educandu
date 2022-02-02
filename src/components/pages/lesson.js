@@ -69,9 +69,10 @@ function Lesson({ PageTemplate, initialState }) {
       language: updatedLesson.language,
       schedule: updatedLesson.schedule
     }));
+    setIsLessonMetadataModalVisible(false);
   };
 
-  const handleLessonMetadataModalClose = () => {
+  const handleLessonMetadataModalCancel = () => {
     setIsLessonMetadataModalVisible(false);
   };
 
@@ -237,7 +238,7 @@ function Lesson({ PageTemplate, initialState }) {
             mode={LESSON_MODAL_MODE.update}
             isVisible={isLessonMetadataModalVisible}
             onSave={handleLessonMetadataModalSave}
-            onClose={handleLessonMetadataModalClose}
+            onCancel={handleLessonMetadataModalCancel}
             />
         </Fragment>
       )}

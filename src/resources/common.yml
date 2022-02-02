@@ -142,3 +142,15 @@ description:
 url:
   en: URL
   de: URL
+daily:
+  en: daily
+  de: täglich
+weekly:
+  en: weekly
+  de: wöchentlich
+monthly:
+  en: monthly
+  de: monatlich
+yearly:
+  en: yearly
+  de: jährlich
