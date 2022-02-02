@@ -38,7 +38,7 @@ function CreditsFooter({ documentOrRevision, type }) {
   const citation = t('citation', { title: documentOrRevision.title });
   const url = `${request.hostInfo.origin}${request.path}`;
   const originalUrl = documentOrRevision.originUrl;
-  const date = formatDate(new Date().toISOString());
+  const date = formatDate(request.timestamp);
 
   const renderUrl = () => (<a rel="noopener noreferrer" target="_blank" href={url}>{url}</a>);
   const renderOriginalUrl = () => (<a rel="noopener noreferrer" target="_blank" href={originalUrl}>{originalUrl}</a>);
