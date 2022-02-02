@@ -1,3 +1,5 @@
+import cloneDeep from './clone-deep.js';
+
 export function getHostInfo(req) {
   const proto = req.protocol;
   const host = req.headers.host;
@@ -12,8 +14,9 @@ export function expressReqToRequest(req) {
     path: req.path,
     protocol: req.protocol,
     originalUrl: req.originalUrl,
-    query: JSON.parse(JSON.stringify(req.query)),
-    hostInfo: getHostInfo(req)
+    query: cloneDeep(req.query),
+    hostInfo: getHostInfo(req),
+    timestamp: new Date().toISOString()
   };
 }
 
