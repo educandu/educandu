@@ -1,7 +1,9 @@
+import { message } from 'antd';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
+import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
 import uniqueId from '../../utils/unique-id.js';
 import CreditsFooter from '../credits-footer.js';
@@ -20,10 +22,10 @@ import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
-import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
 import { documentRevisionShape, documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import { confirmDiscardUnsavedChanges, confirmDocumentRevisionRestoration, confirmSectionDelete } from '../confirmation-dialogs.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -45,12 +47,15 @@ function Doc({ initialState, PageTemplate }) {
   const editorFactory = useService(EditorFactory);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
+  const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
   const [view, setView] = useState(initialView);
+  const [historyRevisions, setHistoryRevisions] = useState([]);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
+  const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
@@ -67,7 +72,7 @@ function Doc({ initialState, PageTemplate }) {
       });
     }
 
-    if (doc.origin.startsWith(DOCUMENT_ORIGIN.external)) {
+    if (isExternalDocument) {
       newAlerts.push({
         message:
           (<Trans
@@ -89,13 +94,25 @@ function Doc({ initialState, PageTemplate }) {
     }
 
     setAlerts(newAlerts);
-  }, [globalAlerts, doc, view, pendingTemplateSectionKeys, t]);
+  }, [globalAlerts, doc, view, isExternalDocument, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
     if (initialView === VIEW.edit || view === VIEW.edit) {
       ensureEditorsAreLoaded(editorFactory);
     }
-  }, [initialView, view, editorFactory]);
+
+    if (initialView === VIEW.history) {
+      (async () => {
+        try {
+          const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+          setHistoryRevisions(documentRevisions);
+          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+        } catch (error) {
+          handleApiError({ error, t, logger });
+        }
+      })();
+    }
+  }, [initialView, doc.key, view, t, editorFactory, documentApiClient]);
 
   useEffect(() => {
     switch (view) {
@@ -291,13 +308,64 @@ function Doc({ initialState, PageTemplate }) {
     setIsDirty(true);
   };
 
-  const handleHistoryOpen = () => {
-    setView(VIEW.history);
+  const handleHistoryOpen = async () => {
+    try {
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+      setHistoryRevisions(documentRevisions);
+      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+      setView(VIEW.history);
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
   };
 
   const handleHistoryClose = () => {
+    setHistoryRevisions([]);
+    setSelectedHistoryRevision(null);
     setView(VIEW.display);
     return true;
+  };
+
+  const handlePermalinkRequest = async () => {
+    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(setSelectedHistoryRevision._id));
+    try {
+      await clipboardCopy(permalinkUrl);
+      message.success(t('permalinkCopied'));
+    } catch (error) {
+      const msg = (
+        <span>
+          <span>{t('permalinkCouldNotBeCopied')}:</span>
+          <br />
+          <a href={permalinkUrl}>{permalinkUrl}</a>
+        </span>
+      );
+      message.error(msg, 10);
+    }
+  };
+
+  const handleSelectedRevisionChange = index => {
+    setSelectedHistoryRevision(historyRevisions[index]);
+  };
+
+  const handleRestoreRevision = () => {
+    confirmDocumentRevisionRestoration(
+      t,
+      selectedHistoryRevision,
+      async () => {
+        try {
+          const { documentRevisions } = await documentApiClient.restoreDocumentRevision({
+            documentKey: selectedHistoryRevision.key,
+            revisionId: selectedHistoryRevision._id
+          });
+
+          setHistoryRevisions(documentRevisions);
+          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+        } catch (error) {
+          handleApiError({ error, logger, t });
+          throw error;
+        }
+      }
+    );
   };
 
   let controlStatus;
@@ -333,9 +401,15 @@ function Doc({ initialState, PageTemplate }) {
       </PageTemplate>
       <Restricted to={permissions.EDIT_DOC}>
         <HistoryControlPanel
+          revisions={historyRevisions}
+          selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
           startOpen={initialView === VIEW.history}
           onOpen={handleHistoryOpen}
           onClose={handleHistoryClose}
+          canRestoreRevisions={!isExternalDocument}
+          onPermalinkRequest={handlePermalinkRequest}
+          onSelectedRevisionChange={handleSelectedRevisionChange}
+          onRestoreRevision={handleRestoreRevision}
           />
         <EditControlPanel
           canClose

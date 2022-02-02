@@ -5,3 +5,9 @@ proposedSectionsAlert:
   de: |
     Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene
     Abschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.
+permalinkCopied:
+  en: The permalink was copied to the clipboard
+  de: Der Permalink wurde in die Zwischenablage kopiert
+permalinkCouldNotBeCopied:
+  en: The permalink could not be copied to the clipboard
+  de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
