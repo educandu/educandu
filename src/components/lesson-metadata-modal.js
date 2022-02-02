@@ -23,7 +23,7 @@ export const LESSON_MODAL_MODE = {
   update: 'update'
 };
 
-const LESSON_SEQUENCE_INTERVALL = {
+const LESSON_SEQUENCE_INTERVAL = {
   daily: 'daily',
   weekly: 'weekly',
   monthly: 'monthly',
@@ -80,12 +80,12 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
     language: lesson.language || getDefaultLanguageFromUiLanguage(uiLanguage),
     startsOn: lesson.schedule?.startsOn ? moment(lesson.schedule?.startsOn) : null,
     enableSequence: false,
-    sequenceIntervall: LESSON_SEQUENCE_INTERVALL.weekly,
+    sequenceInterval: LESSON_SEQUENCE_INTERVAL.weekly,
     sequenceCount: 3
   };
 
-  const lessonSequenceIntervallOptions = useMemo(() => {
-    return Object.values(LESSON_SEQUENCE_INTERVALL).map(value => ({ value, label: t(`common:${value}`) }));
+  const lessonSequenceIntervalOptions = useMemo(() => {
+    return Object.values(LESSON_SEQUENCE_INTERVAL).map(value => ({ value, label: t(`common:${value}`) }));
   }, [t]);
 
   useEffect(() => {
@@ -107,10 +107,10 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
   };
 
   const handleValuesChange = (_, { startsOn }) => {
-    setHasStartDate(startsOn);
+    setHasStartDate(!!startsOn);
   };
 
-  const handleFinish = async ({ title, slug, language, startsOn, enableSequence, sequenceIntervall, sequenceCount }) => {
+  const handleFinish = async ({ title, slug, language, startsOn, enableSequence, sequenceInterval, sequenceCount }) => {
     try {
       setLoading(true);
 
@@ -131,7 +131,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
             lessonId: null,
             title: `${mappedLesson.title} (${i + 1})`,
             slug: `${mappedLesson.slug || 'lesson'}/${i + 1}`,
-            schedule: { startsOn: moment(startsOn).add(i, MOMENT_INTERVAL_UNITS[sequenceIntervall]).toISOString() }
+            schedule: { startsOn: moment(startsOn).add(i, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString() }
           }))
           : [mappedLesson];
 
@@ -171,7 +171,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
     };
   };
 
-  const handleRepetitionsCollapseChange = ([value]) => {
+  const handleSequenceCollapseChange = ([value]) => {
     setIsSequenceExpanded(value === 'sequence');
     formRef.current?.setFieldsValue({ enableSequence: value === 'sequence' });
   };
@@ -210,14 +210,14 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
           <Checkbox />
         </FormItem>
         {mode === LESSON_MODAL_MODE.create && (
-          <Collapse className="LessonMetadataModal-sequenceCollapse" activeKey={isSequenceExpanded ? ['sequence'] : []} onChange={handleRepetitionsCollapseChange} ghost>
+          <Collapse className="LessonMetadataModal-sequenceCollapse" activeKey={isSequenceExpanded ? ['sequence'] : []} onChange={handleSequenceCollapseChange} ghost>
             <CollapsePanel header={t('createSequence')} key="sequence" forceRender>
               <Alert className="LessonMetadataModal-sequenceInfo" message={t('sequenceInfoBoxHeader')} description={t('sequenceInfoBoxDescription')} type="info" showIcon />
-              <FormItem label={t('sequenceIntervall')} name="sequenceIntervall" rules={[]}>
-                <Select options={lessonSequenceIntervallOptions} disabled={!hasStartDate} />
+              <FormItem label={t('sequenceInterval')} name="sequenceInterval">
+                <Select options={lessonSequenceIntervalOptions} disabled={!hasStartDate} />
               </FormItem>
-              <FormItem label={t('sequenceCount')} name="sequenceCount" rules={[]}>
-                <InputNumber style={{ width: '100%' }} disabled={!hasStartDate} min={1} />
+              <FormItem label={t('sequenceCount')} name="sequenceCount" rules={[{ type: 'integer', min: 1, max: 100 }]}>
+                <InputNumber style={{ width: '100%' }} disabled={!hasStartDate} min={1} max={100} />
               </FormItem>
             </CollapsePanel>
           </Collapse>
