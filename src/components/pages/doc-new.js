@@ -5,12 +5,12 @@ import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
+import { useUser } from '../user-context.js';
 import uniqueId from '../../utils/unique-id.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
-import permissions from '../../domain/permissions.js';
 import { Trans, useTranslation } from 'react-i18next';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
@@ -21,12 +21,18 @@ import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { ALERT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { documentRevisionShape, documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { confirmDiscardUnsavedChanges, confirmDocumentRevisionRestoration, confirmSectionDelete } from '../confirmation-dialogs.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import {
+  confirmDiscardUnsavedChanges,
+  confirmDocumentRevisionRestoration,
+  confirmSectionDelete,
+  confirmSectionHardDelete
+} from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -39,6 +45,7 @@ const VIEW = {
 };
 
 function Doc({ initialState, PageTemplate }) {
+  const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('docNew');
   const globalAlerts = useGlobalAlerts();
@@ -49,6 +56,9 @@ function Doc({ initialState, PageTemplate }) {
 
   const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
   const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
+
+  const isEditViewAllowed = !isExternalDocument && !initialState.doc.archived;
+  const isHardDeletionAllowed = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
 
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
@@ -252,13 +262,13 @@ function Doc({ initialState, PageTemplate }) {
     setIsDirty(true);
   };
 
-  const handleSectionMoved = (sourceIndex, destinationIndex) => {
+  const handleSectionMove = (sourceIndex, destinationIndex) => {
     const reorderedSections = moveItem(currentSections, sourceIndex, destinationIndex);
     setCurrentSections(reorderedSections);
     setIsDirty(true);
   };
 
-  const handleSectionInserted = (pluginType, index) => {
+  const handleSectionInsert = (pluginType, index) => {
     const pluginInfo = infoFactory.createInfo(pluginType);
     const newSection = {
       key: uniqueId.create(),
@@ -270,7 +280,7 @@ function Doc({ initialState, PageTemplate }) {
     setIsDirty(true);
   };
 
-  const handleSectionDuplicated = index => {
+  const handleSectionDuplicate = index => {
     const originalSection = currentSections[index];
     const duplicatedSection = cloneDeep(originalSection);
     duplicatedSection.key = uniqueId.create();
@@ -283,7 +293,7 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
-  const handleSectionDeleted = index => {
+  const handleSectionDelete = index => {
     confirmSectionDelete(
       t,
       () => {
@@ -296,13 +306,13 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
-  const handlePendingSectionApplied = index => {
+  const handlePendingSectionApply = index => {
     const appliedSectionKey = currentSections[index].key;
     setPendingTemplateSectionKeys(prevKeys => ensureIsExcluded(prevKeys, appliedSectionKey));
     setIsDirty(true);
   };
 
-  const handlePendingSectionDiscarded = index => {
+  const handlePendingSectionDiscard = index => {
     const discardedSection = currentSections[index];
     setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
     setIsDirty(true);
@@ -368,6 +378,33 @@ function Doc({ initialState, PageTemplate }) {
     );
   };
 
+  const hardDeleteSection = async ({ section, reason, deleteAllRevisions }) => {
+    const documentKey = doc.key;
+    const sectionKey = section.key;
+    const sectionRevision = section.revision;
+
+    try {
+      await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+
+    const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);
+
+    setHistoryRevisions(documentRevisions);
+    setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+  };
+
+  const handleSectionHardDelete = index => {
+    confirmSectionHardDelete(
+      t,
+      async ({ reason, deleteAllRevisions }) => {
+        const section = selectedHistoryRevision.sections[index];
+        await hardDeleteSection({ section, reason, deleteAllRevisions });
+      }
+    );
+  };
+
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -386,13 +423,15 @@ function Doc({ initialState, PageTemplate }) {
             pendingSectionKeys={pendingTemplateSectionKeys}
             sectionsContainerId={doc.key}
             canEdit={view === VIEW.edit}
-            onPendingSectionApplied={handlePendingSectionApplied}
-            onPendingSectionDiscarded={handlePendingSectionDiscarded}
+            canHardDelete={isHardDeletionAllowed && view === VIEW.history}
+            onPendingSectionApply={handlePendingSectionApply}
+            onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
-            onSectionMoved={handleSectionMoved}
-            onSectionInserted={handleSectionInserted}
-            onSectionDuplicated={handleSectionDuplicated}
-            onSectionDeleted={handleSectionDeleted}
+            onSectionMove={handleSectionMove}
+            onSectionInsert={handleSectionInsert}
+            onSectionDuplicate={handleSectionDuplicate}
+            onSectionDelete={handleSectionDelete}
+            onSectionHardDelete={handleSectionHardDelete}
             />
         </div>
         <aside className="Content">
@@ -411,19 +450,21 @@ function Doc({ initialState, PageTemplate }) {
           onSelectedRevisionChange={handleSelectedRevisionChange}
           onRestoreRevision={handleRestoreRevision}
           />
-        <EditControlPanel
-          canClose
-          canCancel={false}
-          startOpen={initialView === VIEW.edit}
-          onOpen={handleEditOpen}
-          onMetadataOpen={handleEditMetadataOpen}
-          onSave={handleEditSave}
-          onClose={handleEditClose}
-          status={controlStatus}
-          metadata={(
-            <span className="DocPage-editControlPanelItem">{doc.title}</span>
-          )}
-          />
+        {isEditViewAllowed && (
+          <EditControlPanel
+            canClose
+            canCancel={false}
+            startOpen={initialView === VIEW.edit}
+            onOpen={handleEditOpen}
+            onMetadataOpen={handleEditMetadataOpen}
+            onSave={handleEditSave}
+            onClose={handleEditClose}
+            status={controlStatus}
+            metadata={(
+              <span className="DocPage-editControlPanelItem">{doc.title}</span>
+            )}
+            />
+        )}
       </Restricted>
 
       <DocumentMetadataModal

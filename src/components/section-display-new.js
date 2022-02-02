@@ -26,17 +26,19 @@ function SectionDisplayNew({
   section,
   sectionContainerId,
   canEdit,
+  canHardDelete,
   dragHandleProps,
   isDragged,
   isOtherSectionDragged,
   isPending,
-  onPendingSectionApplied,
-  onPendingSectionDiscarded,
+  onPendingSectionApply,
+  onPendingSectionDiscard,
   onSectionDuplicate,
   onSectionDelete,
   onSectionMoveUp,
   onSectionMoveDown,
-  onSectionContentChange
+  onSectionContentChange,
+  onSectionHardDelete
 }) {
   const { t } = useTranslation();
   const infoFactory = useService(InfoFactory);
@@ -46,13 +48,14 @@ function SectionDisplayNew({
   const sectionClasses = classNames({
     'SectionDisplayNew': true,
     'is-editable': canEdit,
+    'is-hard-deletable': canHardDelete,
     'is-dragged': isDragged,
     'is-other-section-dragged': isOtherSectionDragged
   });
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const actions = [
+  const editActions = [
     {
       type: 'edit',
       title: t('common:edit'),
@@ -137,7 +140,7 @@ function SectionDisplayNew({
     return <EditorComponent sectionContainerId={sectionContainerId} content={section.content} onContentChanged={onSectionContentChange} />;
   };
 
-  const renderAction = (action, index) => (
+  const renderEditAction = (action, index) => (
     <Tooltip key={index} title={action.title} placement="topRight">
       <Button
         className={`SectionDisplayNew-actionButton SectionDisplayNew-actionButton--${action.type}`}
@@ -145,6 +148,17 @@ function SectionDisplayNew({
         icon={action.icon}
         onClick={action.handleAction}
         disabled={!action.isEnabled}
+        />
+    </Tooltip>
+  );
+
+  const renderHardDeleteAction = () => (
+    <Tooltip title={t('common:hardDelete')} placement="topRight">
+      <Button
+        className="SectionDisplayNew-actionButton SectionDisplayNew-actionButton--hardDelete"
+        size="small"
+        icon={<DeleteOutlined />}
+        onClick={onSectionHardDelete}
         />
     </Tooltip>
   );
@@ -171,7 +185,7 @@ function SectionDisplayNew({
             </div>
           </div>
           <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
-            {actions.map(renderAction)}
+            {editActions.map(renderEditAction)}
           </div>
           { isPending && (
             <Fragment>
@@ -180,7 +194,7 @@ function SectionDisplayNew({
                 <Tooltip title={t('common:apply')}>
                   <Button
                     type="link"
-                    onClick={onPendingSectionApplied}
+                    onClick={onPendingSectionApply}
                     className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply"
                     >
                     <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
@@ -189,7 +203,7 @@ function SectionDisplayNew({
                 <Tooltip title={t('common:discard')}>
                   <Button
                     type="link"
-                    onClick={onPendingSectionDiscarded}
+                    onClick={onPendingSectionDiscard}
                     className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard"
                     >
                     <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
@@ -200,34 +214,50 @@ function SectionDisplayNew({
           )}
         </Fragment>
       )}
+
+      {canHardDelete && (
+        <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
+          {renderHardDeleteAction()}
+        </div>
+      )}
     </section>
   );
 }
 
 SectionDisplayNew.propTypes = {
-  canEdit: PropTypes.bool.isRequired,
+  canEdit: PropTypes.bool,
+  canHardDelete: PropTypes.bool,
   dragHandleProps: PropTypes.object,
   isDragged: PropTypes.bool,
   isOtherSectionDragged: PropTypes.bool,
   isPending: PropTypes.bool,
-  onPendingSectionApplied: PropTypes.func,
-  onPendingSectionDiscarded: PropTypes.func,
-  onSectionContentChange: PropTypes.func.isRequired,
-  onSectionDelete: PropTypes.func.isRequired,
-  onSectionDuplicate: PropTypes.func.isRequired,
-  onSectionMoveDown: PropTypes.func.isRequired,
-  onSectionMoveUp: PropTypes.func.isRequired,
+  onPendingSectionApply: PropTypes.func,
+  onPendingSectionDiscard: PropTypes.func,
+  onSectionContentChange: PropTypes.func,
+  onSectionDelete: PropTypes.func,
+  onSectionDuplicate: PropTypes.func,
+  onSectionHardDelete: PropTypes.func,
+  onSectionMoveDown: PropTypes.func,
+  onSectionMoveUp: PropTypes.func,
   section: sectionShape.isRequired,
   sectionContainerId: PropTypes.string.isRequired
 };
 
 SectionDisplayNew.defaultProps = {
+  canEdit: false,
+  canHardDelete: false,
   dragHandleProps: {},
   isDragged: false,
   isOtherSectionDragged: false,
   isPending: false,
-  onPendingSectionApplied: () => {},
-  onPendingSectionDiscarded: () => {}
+  onPendingSectionApply: () => {},
+  onPendingSectionDiscard: () => {},
+  onSectionContentChange: () => {},
+  onSectionDelete: () => {},
+  onSectionDuplicate: () => {},
+  onSectionHardDelete: () => {},
+  onSectionMoveDown: () => {},
+  onSectionMoveUp: () => {}
 };
 
 export default SectionDisplayNew;

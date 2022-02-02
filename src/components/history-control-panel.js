@@ -93,7 +93,7 @@ function HistoryControlPanel({
         >
         {t('permalink')}
       </Button>
-      {!canRestoreRevisions && (
+      {canRestoreRevisions && (
         <Restricted to={permissions.RESTORE_DOC_REVISIONS}>
           <Button
             className="HistoryControlPanel-button"
