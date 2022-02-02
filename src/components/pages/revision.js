@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CreditsFooter from '../credits-footer.js';
-import SectionsDisplayNew from '../sections-display-new.js';
+import SectionsDisplay from '../sections-display.js';
 import { documentRevisionShape } from '../../ui/default-prop-types.js';
 
 function Revision({ initialState, PageTemplate }) {
@@ -10,7 +10,7 @@ function Revision({ initialState, PageTemplate }) {
   return (
     <PageTemplate >
       <div className="RevisionPage">
-        <SectionsDisplayNew
+        <SectionsDisplay
           sections={revision.sections}
           sectionsContainerId={revision.key}
           canEdit={false}

@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 import { Button, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
-import SectionDisplayNew from './section-display-new.js';
+import SectionDisplay from './section-display.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-function SectionsDisplayNew({
+function SectionsDisplay({
   sections,
   sectionsContainerId,
   pendingSectionKeys,
@@ -58,7 +58,7 @@ function SectionsDisplayNew({
   };
 
   const renderSection = ({ section, index, dragHandleProps, isDragged }) => {
-    return (<SectionDisplayNew
+    return (<SectionDisplay
       key={section.key}
       section={section}
       sectionContainerId={sectionsContainerId}
@@ -143,7 +143,7 @@ function SectionsDisplayNew({
   );
 }
 
-SectionsDisplayNew.propTypes = {
+SectionsDisplay.propTypes = {
   canEdit: PropTypes.bool,
   canHardDelete: PropTypes.bool,
   onPendingSectionApply: PropTypes.func,
@@ -159,7 +159,7 @@ SectionsDisplayNew.propTypes = {
   sectionsContainerId: PropTypes.string.isRequired
 };
 
-SectionsDisplayNew.defaultProps = {
+SectionsDisplay.defaultProps = {
   canEdit: false,
   canHardDelete: false,
   onPendingSectionApply: () => {},
@@ -173,4 +173,4 @@ SectionsDisplayNew.defaultProps = {
   pendingSectionKeys: []
 };
 
-export default SectionsDisplayNew;
+export default SectionsDisplay;

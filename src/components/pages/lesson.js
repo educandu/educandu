@@ -9,11 +9,11 @@ import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
+import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../language-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
-import SectionsDisplayNew from '../sections-display-new.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -208,7 +208,7 @@ function Lesson({ PageTemplate, initialState }) {
               <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
             </Breadcrumb>
           </div>
-          <SectionsDisplayNew
+          <SectionsDisplay
             sections={currentSections}
             sectionsContainerId={lesson._id}
             canEdit={isInEditMode}

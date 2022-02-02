@@ -11,11 +11,11 @@ import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
+import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
-import SectionsDisplayNew from '../sections-display-new.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
@@ -47,7 +47,7 @@ const VIEW = {
 function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
-  const { t } = useTranslation('docNew');
+  const { t } = useTranslation('doc');
   const globalAlerts = useGlobalAlerts();
   const [alerts, setAlerts] = useState([]);
   const infoFactory = useService(InfoFactory);
@@ -418,7 +418,7 @@ function Doc({ initialState, PageTemplate }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="DocPage">
-          <SectionsDisplayNew
+          <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
             sectionsContainerId={doc.key}

@@ -1,20 +1,20 @@
-@section-display-new-min-height: 36px;
-@section-display-new-editable-padding-top: 40px;
-@section-display-new-action-button-margin: 2px;
+@section-display-min-height: 36px;
+@section-display-editable-padding-top: 40px;
+@section-display-action-button-margin: 2px;
 
-.SectionDisplayNew {
+.SectionDisplay {
   background-color: @edu-white;
   border: 1px dotted transparent;
   position: relative;
   padding: @edu-content-padding;
-  min-height: @section-display-new-min-height;
+  min-height: @section-display-min-height;
 
   &.is-editable,
   &.is-hard-deletable {
     padding: @edu-content-padding;
-    padding-top: @section-display-new-editable-padding-top;
+    padding-top: @section-display-editable-padding-top;
     border-color: @grey-5;
-    min-height: @section-display-new-min-height + @section-display-new-editable-padding-top;
+    min-height: @section-display-min-height + @section-display-editable-padding-top;
 
     &:hover {
       border: 1px solid @grey-6;
@@ -30,26 +30,26 @@
   }
 }
 
-.SectionDisplayNew-actions {
+.SectionDisplay-actions {
   display: flex;
   line-height: 18px; // fixes misaligned button when disabled
   position: absolute;
-  top: @section-display-new-action-button-margin;
+  top: @section-display-action-button-margin;
 
-  &.SectionDisplayNew-actions--left {
-    left: @section-display-new-action-button-margin;
+  &.SectionDisplay-actions--left {
+    left: @section-display-action-button-margin;
   }
 
-  &.SectionDisplayNew-actions--right {
-    right: @section-display-new-action-button-margin;
+  &.SectionDisplay-actions--right {
+    right: @section-display-action-button-margin;
   }
 }
 
-.SectionDisplayNew-actionButton {
-  margin-left: @section-display-new-action-button-margin;
+.SectionDisplay-actionButton {
+  margin-left: @section-display-action-button-margin;
 
-  &.SectionDisplayNew-actionButton--edit,
-  &.SectionDisplayNew-actionButton--preview {
+  &.SectionDisplay-actionButton--edit,
+  &.SectionDisplay-actionButton--preview {
     color: @green-8;
     &:hover, &:active, &:focus {
       color: @green-8;
@@ -57,7 +57,7 @@
     }
   }
 
-  &.SectionDisplayNew-actionButton--delete {
+  &.SectionDisplay-actionButton--delete {
     color: @red-8;
     &:hover, &:active, &:focus {
       color: @red-8;
@@ -66,7 +66,7 @@
   }
 }
 
-.SectionDisplayNew-sectionInfo {
+.SectionDisplay-sectionInfo {
   display: grid;
   gap: 5px;
   align-items: center;
@@ -78,7 +78,7 @@
   background-color: @edu-white;
 }
 
-.SectionDisplayNew-overlay {
+.SectionDisplay-overlay {
   position: absolute;
   top: 0;
   right: 0;
@@ -90,13 +90,13 @@
   background-color: @edu-white;
   opacity: 70%;
 
-  &.SectionDisplayNew-overlay--withButtons {
+  &.SectionDisplay-overlay--withButtons {
     background-color: @edu-selection-background-color;
     opacity: 100%;
   }
 }
 
-.SectionDisplayNew-overlayButton {
+.SectionDisplay-overlayButton {
   display: block;
   margin: 0 7px;
   width: 40px;
@@ -104,7 +104,7 @@
   border-radius: 50%;
   box-shadow: 0px 0px 8px @grey-7;
 
-  &.SectionDisplayNew-overlayButton--apply {
+  &.SectionDisplay-overlayButton--apply {
     color: @edu-white;
     background-color: @edu-apply-color;
     border: 1px solid darken(@edu-apply-color, 5%);
@@ -115,7 +115,7 @@
     }
   }
 
-  &.SectionDisplayNew-overlayButton--discard {
+  &.SectionDisplay-overlayButton--discard {
     color: @edu-white;
     background-color: @edu-discard-color;
     border: 1px solid darken(@edu-discard-color, 5%);
@@ -127,7 +127,7 @@
   }
 }
 
-.SectionDisplayNew-overlayButtonIcon {
+.SectionDisplay-overlayButtonIcon {
   display: flex;
   justify-content: center;
   font-size: 140%;
@@ -135,7 +135,7 @@
   text-align: center;
 }
 
-.SectionDisplayNew-overlayButtonText {
+.SectionDisplay-overlayButtonText {
   font-size: 80%;
   text-align: center;
 }

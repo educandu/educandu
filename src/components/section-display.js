@@ -23,7 +23,7 @@ import {
   ThunderboltOutlined
 } from '@ant-design/icons';
 
-function SectionDisplayNew({
+function SectionDisplay({
   section,
   sectionContainerId,
   canEdit,
@@ -49,7 +49,7 @@ function SectionDisplayNew({
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
 
   const sectionClasses = classNames({
-    'SectionDisplayNew': true,
+    'SectionDisplay': true,
     'is-editable': canEdit,
     'is-hard-deletable': isHardDeleteEnabled,
     'is-dragged': isDragged,
@@ -146,7 +146,7 @@ function SectionDisplayNew({
   const renderEditAction = (action, index) => (
     <Tooltip key={index} title={action.title} placement="topRight">
       <Button
-        className={`SectionDisplayNew-actionButton SectionDisplayNew-actionButton--${action.type}`}
+        className={`SectionDisplay-actionButton SectionDisplay-actionButton--${action.type}`}
         size="small"
         icon={action.icon}
         onClick={action.handleAction}
@@ -158,7 +158,7 @@ function SectionDisplayNew({
   const renderHardDeleteAction = () => (
     <Tooltip title={t('common:hardDelete')} placement="topRight">
       <Button
-        className="SectionDisplayNew-actionButton SectionDisplayNew-actionButton--delete"
+        className="SectionDisplay-actionButton SectionDisplay-actionButton--delete"
         size="small"
         icon={<ThunderboltOutlined />}
         onClick={onSectionHardDelete}
@@ -181,35 +181,35 @@ function SectionDisplayNew({
 
       {canEdit && (
         <Fragment>
-          <div className="SectionDisplayNew-actions SectionDisplayNew-actions--left">
-            <div className="SectionDisplayNew-sectionInfo" {...dragHandleProps}>
+          <div className="SectionDisplay-actions SectionDisplay-actions--left">
+            <div className="SectionDisplay-sectionInfo" {...dragHandleProps}>
               <DragOutlined />
               {renderSectionInfo()}
             </div>
           </div>
-          <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
+          <div className="SectionDisplay-actions SectionDisplay-actions--right">
             {editActions.map(renderEditAction)}
           </div>
           { isPending && (
             <Fragment>
-              <div className="SectionDisplayNew-overlay" />
-              <div className="SectionDisplayNew-overlay SectionDisplayNew-overlay--withButtons">
+              <div className="SectionDisplay-overlay" />
+              <div className="SectionDisplay-overlay SectionDisplay-overlay--withButtons">
                 <Tooltip title={t('common:apply')}>
                   <Button
                     type="link"
                     onClick={onPendingSectionApply}
-                    className="SectionDisplayNew-overlayButton SectionDisplayNew-overlayButton--apply"
+                    className="SectionDisplay-overlayButton SectionDisplay-overlayButton--apply"
                     >
-                    <div className="SectionDisplayNew-overlayButtonIcon"><CheckOutlined /></div>
+                    <div className="SectionDisplay-overlayButtonIcon"><CheckOutlined /></div>
                   </Button>
                 </Tooltip>
                 <Tooltip title={t('common:discard')}>
                   <Button
                     type="link"
                     onClick={onPendingSectionDiscard}
-                    className="SectionDisplayNew-overlayButton  SectionDisplayNew-overlayButton--discard"
+                    className="SectionDisplay-overlayButton  SectionDisplay-overlayButton--discard"
                     >
-                    <div className="SectionDisplayNew-overlayButtonIcon"><CloseOutlined /></div>
+                    <div className="SectionDisplay-overlayButtonIcon"><CloseOutlined /></div>
                   </Button>
                 </Tooltip>
               </div>
@@ -219,7 +219,7 @@ function SectionDisplayNew({
       )}
 
       {isHardDeleteEnabled && (
-        <div className="SectionDisplayNew-actions SectionDisplayNew-actions--right">
+        <div className="SectionDisplay-actions SectionDisplay-actions--right">
           {renderHardDeleteAction()}
         </div>
       )}
@@ -227,7 +227,7 @@ function SectionDisplayNew({
   );
 }
 
-SectionDisplayNew.propTypes = {
+SectionDisplay.propTypes = {
   canEdit: PropTypes.bool,
   canHardDelete: PropTypes.bool,
   dragHandleProps: PropTypes.object,
@@ -246,7 +246,7 @@ SectionDisplayNew.propTypes = {
   sectionContainerId: PropTypes.string.isRequired
 };
 
-SectionDisplayNew.defaultProps = {
+SectionDisplay.defaultProps = {
   canEdit: false,
   canHardDelete: false,
   dragHandleProps: {},
@@ -263,4 +263,4 @@ SectionDisplayNew.defaultProps = {
   onSectionMoveUp: () => {}
 };
 
-export default SectionDisplayNew;
+export default SectionDisplay;

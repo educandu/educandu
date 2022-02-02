@@ -408,7 +408,7 @@
     }
   },
   {
-    "namespace": "docNew",
+    "namespace": "doc",
     "language": "en",
     "resources": {
       "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
@@ -417,7 +417,7 @@
     }
   },
   {
-    "namespace": "docNew",
+    "namespace": "doc",
     "language": "de",
     "resources": {
       "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n",
