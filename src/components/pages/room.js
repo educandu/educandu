@@ -72,7 +72,12 @@ export default function Room({ PageTemplate, initialState }) {
     setIsLessonMetadataModalVisible(true);
   };
 
-  const handleLessonMetadataModalClose = () => {
+  const handleLessonMetadataModalSave = createdLessons => {
+    window.location = urls.getLessonUrl(createdLessons[0]._id);
+    setIsLessonMetadataModalVisible(false);
+  };
+
+  const handleLessonMetadataModalCancel = () => {
     setIsLessonMetadataModalVisible(false);
   };
 
@@ -251,7 +256,8 @@ export default function Room({ PageTemplate, initialState }) {
           lesson={{ roomId: room._id }}
           mode={LESSON_MODAL_MODE.create}
           isVisible={isLessonMetadataModalVisible}
-          onClose={handleLessonMetadataModalClose}
+          onSave={handleLessonMetadataModalSave}
+          onCancel={handleLessonMetadataModalCancel}
           />
       </div>
     </PageTemplate>);

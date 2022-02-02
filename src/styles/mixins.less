@@ -47,3 +47,14 @@
   .m-selected-item();
   box-shadow: 0 0 0 @edu-border-radius-base @edu-selection-background-color;
 }
+
+// Mixin for Antd Collapse components to remove left indentation and paddings:
+.m-antd-collapse-without-padding {
+  & > .ant-collapse-item > .ant-collapse-header {
+    padding: 0;
+  }
+
+  & > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
+    padding: @edu-content-padding 0 0 0;
+  }
+}

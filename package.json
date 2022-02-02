@@ -44,7 +44,7 @@
     "decompress": "^4.2.1",
     "del": "^6.0.0",
     "dropperx": "^1.0.1",
-    "esbuild": "^0.13.9",
+    "esbuild": "^0.14.16",
     "escape-string-regexp": "^5.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
