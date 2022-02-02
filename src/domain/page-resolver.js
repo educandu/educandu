@@ -6,6 +6,7 @@ import DefaultPageTemplateComponent from '../components/default-page-template.js
 const pageImporters = {
   [PAGE_NAME.doc]: async () => (await import('../components/pages/doc-new.js')).default,
   [PAGE_NAME.docs]: async () => (await import('../components/pages/docs.js')).default,
+  [PAGE_NAME.revision]: async () => (await import('../components/pages/revision.js')).default,
   [PAGE_NAME.login]: async () => (await import('../components/pages/login.js')).default,
   [PAGE_NAME.users]: async () => (await import('../components/pages/users.js')).default,
   [PAGE_NAME.index]: async () => (await import('../components/pages/index.js')).default,

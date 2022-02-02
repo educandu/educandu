@@ -9,6 +9,7 @@ export const PAGE_NAME = {
   users: 'users',
   settings: 'settings',
   doc: 'doc',
+  revision: 'revision',
   index: 'index',
   search: 'search',
   importBatchCreation: 'import-batch-creation',

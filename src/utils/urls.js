@@ -135,6 +135,7 @@ function getResetPasswordUrl() {
 function createFullyQualifiedUrl(pathname) {
   const url = new URL(document.location);
   url.pathname = pathname;
+  url.search = '';
   return url.href;
 }
 

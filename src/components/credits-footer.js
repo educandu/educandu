@@ -1,47 +1,55 @@
-import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
 import { useSettings } from './settings-context.js';
 import { useDateFormat } from './language-context.js';
-import { DOCUMENT_TYPE } from '../domain/constants.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
-function renderUser(user) {
-  return user.email
-    ? <a href={`mailto:${user.email}`}>{user.username}</a>
-    : <span>{user.username}</span>;
-}
+function CreditsFooter({ doc, revision }) {
+  if (!doc && !revision) {
+    throw new Error('One of \'doc\' or \'revision\' is required by \'CreditsFooter\' component.');
+  }
 
-function renderDocumentContributors(doc, t) {
-  const cons = doc.contributors.map((user, index) => (
-    <Fragment key={user._id}>
-      {index !== 0 && ', '}
-      {renderUser(user)}
-    </Fragment>
-  ));
-
-  return !!doc.contributors.length && <span><b>{t('contributionsBy')}:</b> {cons}</span>;
-}
-
-function renderRevisionAuthor(revision, t) {
-  return <span><b>{t('revisionBy')}:</b> {renderUser(revision.createdBy)}</span>;
-}
-
-function CreditsFooter({ documentOrRevision, type }) {
   const request = useRequest();
   const settings = useSettings();
   const { t } = useTranslation('creditsFooter');
   const { formatDate } = useDateFormat();
 
+  const title = doc?.title || revision?.title;
+  const originalUrl = doc?.originUrl || revision?.originUrl;
+
   const currentHost = request.hostInfo.host;
-  const citation = t('citation', { title: documentOrRevision.title });
+  const citation = t('citation', { title });
   const url = `${request.hostInfo.origin}${request.path}`;
-  const originalUrl = documentOrRevision.originUrl;
   const date = formatDate(request.timestamp);
 
   const renderUrl = () => (<a rel="noopener noreferrer" target="_blank" href={url}>{url}</a>);
   const renderOriginalUrl = () => (<a rel="noopener noreferrer" target="_blank" href={originalUrl}>{originalUrl}</a>);
+
+  const renderUser = user => {
+    return user.email
+      ? <a href={`mailto:${user.email}`}>{user.username}</a>
+      : <span>{user.username}</span>;
+  };
+
+  const renderDocumentContributors = () => {
+    if (!doc.contributors.length) {
+      return null;
+    }
+
+    const mappedContributors = doc.contributors.map((user, index) => (
+      <Fragment key={user._id}>
+        {index !== 0 && ', '}
+        {renderUser(user)}
+      </Fragment>
+    ));
+
+    return <span><b>{t('contributionsBy')}:</b> {mappedContributors}</span>;
+  };
+
+  const renderRevisionAuthor = () => (
+    <span><b>{t('revisionBy')}:</b> {renderUser(revision.createdBy)}</span>
+  );
 
   return (
     <div className="CreditsFooter">
@@ -60,15 +68,21 @@ function CreditsFooter({ documentOrRevision, type }) {
             <br />
           </Fragment>
         )}
-        {type === DOCUMENT_TYPE.document ? renderDocumentContributors(documentOrRevision, t) : renderRevisionAuthor(documentOrRevision, t)}
+        {doc && renderDocumentContributors()}
+        {revision && renderRevisionAuthor()}
       </p>
     </div>
   );
 }
 
 CreditsFooter.propTypes = {
-  documentOrRevision: PropTypes.oneOfType([documentShape, documentRevisionShape]).isRequired,
-  type: PropTypes.oneOf(Object.values(DOCUMENT_TYPE)).isRequired
+  doc: documentShape,
+  revision: documentRevisionShape
+};
+
+CreditsFooter.defaultProps = {
+  doc: null,
+  revision: null
 };
 
 export default CreditsFooter;

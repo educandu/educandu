@@ -35,12 +35,6 @@ export const ALERT_TYPE = {
   error: 'error'
 };
 
-export const DOCUMENT_TYPE = {
-  revision: 'revision',
-  document: 'document',
-  permalinkedRevision: 'permalinked-revision'
-};
-
 export const ROOM_ACCESS_LEVEL = {
   public: 'public',
   private: 'private'

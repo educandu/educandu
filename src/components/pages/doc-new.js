@@ -22,9 +22,9 @@ import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
+import { ALERT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { documentRevisionShape, documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
-import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { confirmDiscardUnsavedChanges, confirmDocumentRevisionRestoration, confirmSectionDelete } from '../confirmation-dialogs.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 
@@ -327,7 +327,7 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handlePermalinkRequest = async () => {
-    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(setSelectedHistoryRevision._id));
+    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(selectedHistoryRevision._id));
     try {
       await clipboardCopy(permalinkUrl);
       message.success(t('permalinkCopied'));
@@ -382,7 +382,7 @@ function Doc({ initialState, PageTemplate }) {
       <PageTemplate alerts={alerts}>
         <div className="DocPage">
           <SectionsDisplayNew
-            sections={currentSections}
+            sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
             sectionsContainerId={doc.key}
             canEdit={view === VIEW.edit}
@@ -396,7 +396,7 @@ function Doc({ initialState, PageTemplate }) {
             />
         </div>
         <aside className="Content">
-          <CreditsFooter documentOrRevision={doc} type={DOCUMENT_TYPE.document} />
+          <CreditsFooter doc={doc} />
         </aside>
       </PageTemplate>
       <Restricted to={permissions.EDIT_DOC}>
