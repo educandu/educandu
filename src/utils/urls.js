@@ -36,9 +36,10 @@ function composeQueryString(keyValuePairs) {
 }
 
 function concatParts(...parts) {
-  return parts
-    .filter(part => part || part === 0 || part === false)
-    .reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`);
+  const nonEmptyParts = parts.map(part => part?.toString() || '').filter(part => part);
+  return nonEmptyParts.length
+    ? nonEmptyParts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`)
+    : '';
 }
 
 function createRedirectUrl(path, redirect) {
@@ -53,8 +54,16 @@ function getUsersUrl() {
   return usersPath;
 }
 
-function getDocUrl({ key, slug, view, templateDocumentKey }) {
-  const url = concatParts(docsPrefix, encodeURIComponent(key), encodeURIParts(slug));
+function getDocUrl({ keyAndSlug, key, slug, view, templateDocumentKey }) {
+  if (keyAndSlug && (key || slug)) {
+    throw new Error('Key and slug can either be set separately or combined, but not both');
+  }
+
+  const keyAndSlugPart = keyAndSlug
+    ? encodeURIParts(keyAndSlug)
+    : concatParts(encodeURIComponent(key), encodeURIParts(slug));
+
+  const url = concatParts(docsPrefix, keyAndSlugPart);
   const queryString = composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);
   return queryString ? `${url}?${queryString}` : url;
 }

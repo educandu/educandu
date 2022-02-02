@@ -66,6 +66,10 @@ describe('order-store-base', () => {
   describe('concatParts', () => {
     const testCases = [
       {
+        parts: [null, ''],
+        expectedResult: ''
+      },
+      {
         parts: ['abc', 'def', 'ghi'],
         expectedResult: 'abc/def/ghi'
       },
@@ -115,8 +119,8 @@ describe('order-store-base', () => {
       },
       {
         key: 'key',
-        slug: 'slug',
-        expectedResult: '/docs/key/slug'
+        slug: 'slug/slugathor',
+        expectedResult: '/docs/key/slug/slugathor'
       },
       {
         key: 'key',
@@ -134,17 +138,27 @@ describe('order-store-base', () => {
         view: 'edit',
         templateDocumentKey: 'XrF7z7jyDrNFkvH7eyj5T',
         expectedResult: '/docs/key/slug?view=edit&templateDocumentKey=XrF7z7jyDrNFkvH7eyj5T'
+      },
+      {
+        keyAndSlug: 'key/slug/slugathor',
+        expectedResult: '/docs/key/slug/slugathor'
       }
     ];
 
-    testCases.forEach(({ key, slug, view, templateDocumentKey, expectedResult }) => {
-      describe(`when key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
+    testCases.forEach(({ keyAndSlug, key, slug, view, templateDocumentKey, expectedResult }) => {
+      describe(`when keyAndSlug is '${key}', key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
         beforeEach(() => {
-          result = sut.getDocUrl({ key, slug, view, templateDocumentKey });
+          result = sut.getDocUrl({ keyAndSlug, key, slug, view, templateDocumentKey });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);
         });
+      });
+    });
+
+    describe('when keyAndSlug and key is provided', () => {
+      it('should throw an error', () => {
+        expect(() => sut.getDocUrl({ keyAndSlug: 'key/slug/slugathor', key: 'key' })).toThrow();
       });
     });
   });
