@@ -426,34 +426,6 @@
     }
   },
   {
-    "namespace": "doc",
-    "language": "en",
-    "resources": {
-      "date": "Date",
-      "user": "User",
-      "id": "ID",
-      "restoredFrom": "Restored from",
-      "permalink": "Permalink",
-      "permalinkCopied": "The permalink was copied to the clipboard",
-      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
-      "restore": "Restore"
-    }
-  },
-  {
-    "namespace": "doc",
-    "language": "de",
-    "resources": {
-      "date": "Datum",
-      "user": "Benutzer",
-      "id": "ID",
-      "restoredFrom": "Wiederhergestellt aus",
-      "permalink": "Permalink",
-      "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
-      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
-      "restore": "Wiederherstellen"
-    }
-  },
-  {
     "namespace": "docs",
     "language": "en",
     "resources": {

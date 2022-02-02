@@ -7,7 +7,9 @@ import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
 import { useDateFormat, useLanguage } from './language-context.js';
+import { documentRevisionShape } from '../ui/default-prop-types.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
+
 import { HistoryOutlined, PaperClipOutlined, ReloadOutlined } from '@ant-design/icons';
 
 function HistoryControlPanel({
@@ -130,7 +132,7 @@ HistoryControlPanel.propTypes = {
   onPermalinkRequest: PropTypes.func,
   onRestoreRevision: PropTypes.func,
   onSelectedRevisionChange: PropTypes.func,
-  revisions: PropTypes.arrayOf(PropTypes.object),
+  revisions: PropTypes.arrayOf(documentRevisionShape),
   selectedRevisionIndex: PropTypes.number,
   startOpen: PropTypes.bool
 };
