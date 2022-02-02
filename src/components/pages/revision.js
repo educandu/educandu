@@ -5,7 +5,7 @@ import SectionsDisplay from '../sections-display.js';
 import { documentRevisionShape } from '../../ui/default-prop-types.js';
 
 function Revision({ initialState, PageTemplate }) {
-  const { revision } = initialState.revision;
+  const { revision } = initialState;
 
   return (
     <PageTemplate >
