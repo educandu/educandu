@@ -75,7 +75,9 @@ function EditControlPanel({
   const renderMetadata = () => metadata && (
     <span className="EditControlPanel-leftSide">
       <span className="EditControlPanel-leftSideButton">
-        <Button size="small" icon={<EditOutlined />} onClick={onMetadataOpen} ghost />
+        <Tooltip title={t('editMetadata')} placement="topLeft">
+          <Button size="small" icon={<EditOutlined />} onClick={onMetadataOpen} ghost />
+        </Tooltip>
       </span>
       {metadata}
     </span>

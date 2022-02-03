@@ -130,7 +130,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
             ...cloneDeep(mappedLesson),
             lessonId: null,
             title: `${mappedLesson.title} (${i + 1})`,
-            slug: `${mappedLesson.slug || 'lesson'}/${i + 1}`,
+            slug: mappedLesson.slug ? `${mappedLesson.slug}/${i + 1}` : '',
             schedule: { startsOn: moment(startsOn).add(i, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString() }
           }))
           : [mappedLesson];
