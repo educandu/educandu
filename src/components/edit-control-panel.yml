@@ -7,3 +7,6 @@ statusIconTooltipDirty:
 statusIconTooltipInvalid:
   en: Please correct all errors before saving
   de: Bitte korrigieren Sie alle Fehler vor dem Speichern
+editMetadata:
+  en: Edit metadata
+  de: Metadaten bearbeiten

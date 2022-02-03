@@ -185,7 +185,8 @@
     "resources": {
       "statusIconTooltipSaved": "There are no unsaved changes",
       "statusIconTooltipDirty": "There are unsaved changes",
-      "statusIconTooltipInvalid": "Please correct all errors before saving"
+      "statusIconTooltipInvalid": "Please correct all errors before saving",
+      "editMetadata": "Edit metadata"
     }
   },
   {
@@ -194,7 +195,8 @@
     "resources": {
       "statusIconTooltipSaved": "Keine ungespeicherten Änderungen",
       "statusIconTooltipDirty": "Änderungen nicht gespeichert",
-      "statusIconTooltipInvalid": "Bitte korrigieren Sie alle Fehler vor dem Speichern"
+      "statusIconTooltipInvalid": "Bitte korrigieren Sie alle Fehler vor dem Speichern",
+      "editMetadata": "Metadaten bearbeiten"
     }
   },
   {
