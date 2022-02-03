@@ -31,8 +31,7 @@ function HistoryControlPanel({
   const isSelectedRevisionLatestRevision = selectedRevisionIndex === revisions.length - 1;
 
   const marks = revisions.reduce((accu, _item, index) => {
-    const text = index === 0 || index === revisions.length - 1 ? (index + 1).toString() : '';
-    accu[index] = <span className="HistoryControlPanel-sliderMark">{text}</span>;
+    accu[index] = '';
     return accu;
   }, {});
 
