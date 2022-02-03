@@ -4,6 +4,7 @@
 @control-panel-height: @control-panel-content-height + (2 * @control-panel-padding);
 
 .ControlPanel {
+  .m-inverted-button;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,7 +13,6 @@
   bottom: 0;
   height: @control-panel-height;
   width: @control-panel-height;
-  color: @edu-white;
   background-color: @edu-primary-color;
   transition: width 500ms ease;
   z-index: @edu-z-index-overlay-layer;
@@ -56,21 +56,11 @@
 
 .ControlPanel-closeButton {
   .m-icon-button;
-
-  &.ant-btn:disabled {
-    color: fade(@edu-white, 60%);
-    border-color: fade(@edu-white, 60%);
-  }
 }
 
 .ControlPanel-openButton {
   .m-no-spinner-background;
   height: @control-panel-height;
   width: @control-panel-height;
-  color: lighten(@edu-primary-color, 50%);
-
-  &:hover, &:focus {
-    color: @edu-white;
-  }
 }
 

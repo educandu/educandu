@@ -159,8 +159,8 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
             <div className="DefaultPageTemplate-loginButton">
               <Login />
             </div>
-            <LinkPopover items={pageMenuItems} trigger="hover" placement="bottomRight">
-              <Button className="DefaultPageTemplate-headerButton" icon={<MenuOutlined />} />
+            <LinkPopover items={pageMenuItems} trigger="click" placement="bottomRight">
+              <Button className="DefaultPageTemplate-headerButton" icon={<MenuOutlined />} ghost />
             </LinkPopover>
           </div>
         </div>

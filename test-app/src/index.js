@@ -1,53 +1,45 @@
-/* eslint-disable no-process-env */
-
+import url from 'url';
 import path from 'path';
+import parseBool from 'parseboolean';
 import educandu from '../../src/index.js';
-import bundleConfig from './client/bundle-config.js';
-import ArticleController from './article-controller.js';
+import bundleConfig from './bundles/bundle-config.js';
 
-educandu({
+// eslint-disable-next-line no-process-env
+const processEnv = process.env;
+
+const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
+
+const config = {
   appName: 'educandu',
-  port: process.env.TEST_APP_PORT || 3000,
-  mongoConnectionString: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
-  skipMaintenance: process.env.TEST_APP_SKIP_MAINTENANCE === true.toString(),
-  cdnEndpoint: 'http://localhost:9000',
-  cdnRegion: 'eu-central-1',
-  cdnAccessKey: 'UVDXF41PYEAX0PXD8826',
-  cdnSecretKey: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
-  cdnBucketName: 'dev-educandu-cdn',
-  cdnRootUrl: process.env.TEST_APP_CDN_ROOT_URL || 'http://localhost:10000',
-  sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
-  sessionCookieName: process.env.TEST_APP_SESSION_COOKIE_NAME || 'LOCAL_SESSION_ID',
-  emailSenderAddress: 'educandu-test-app@test.com',
-  smtpOptions: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   bundleConfig,
-  publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
+  port: Number(processEnv.TEST_APP_PORT) || 3000,
+  publicFolders: ['../dist', '../static'].map(x => path.resolve(thisDir, x)),
   resources: ['./test-app/src/resource-overrides.json'].map(x => path.resolve(x)),
-  exportApiKey: 'fe160daddb0c44c4963f63ce08272c86',
-  importSources: [
-    {
-      name: 'ELMU - integration',
-      hostName: 'integration.elmu.online',
-      apiKey: '03a026b939154f41bb1dabf578a33e11'
-    },
-    {
-      name: 'OMA - integration',
-      hostName: 'integration.openmusic.academy',
-      apiKey: '9e88fd8288ed4738813aaf764df005c4'
-    }
-  ],
-  initialUser: {
-    username: 'test',
-    password: 'test',
-    email: 'test@test.com'
-  },
-  exposeErrorDetails: true,
+  sessionDurationInMinutes: Number(processEnv.TEST_APP_SESSION_DURATION_IN_MINUTES) || 60,
+  skipMaintenance: parseBool(processEnv.TEST_APP_SKIP_MAINTENANCE || false.toString()),
+  mongoConnectionString: processEnv.TEST_APP_WEB_CONNECTION_STRING,
+  cdnEndpoint: processEnv.TEST_APP_CDN_ENDPOINT,
+  cdnRegion: processEnv.TEST_APP_CDN_REGION,
+  cdnAccessKey: processEnv.TEST_APP_CDN_ACCESS_KEY,
+  cdnSecretKey: processEnv.TEST_APP_CDN_SECRET_KEY,
+  cdnBucketName: processEnv.TEST_APP_CDN_BUCKET_NAME,
+  cdnRootUrl: processEnv.TEST_APP_CDN_ROOT_URL,
+  sessionSecret: processEnv.TEST_APP_SESSION_SECRET,
+  sessionCookieDomain: processEnv.TEST_APP_SESSION_COOKIE_DOMAIN,
+  sessionCookieName: processEnv.TEST_APP_SESSION_COOKIE_NAME,
+  emailSenderAddress: processEnv.TEST_APP_EMAIL_SENDER_ADDRESS,
+  smtpOptions: processEnv.TEST_APP_SMTP_OPTIONS,
+  initialUser: processEnv.TEST_APP_INITIAL_USER ? JSON.parse(processEnv.TEST_APP_INITIAL_USER) : null,
+  exposeErrorDetails: parseBool(processEnv.TEST_APP_EXPOSE_ERROR_DETAILS || false.toString()),
+  exportApiKey: processEnv.TEST_APP_EXPORT_API_KEY,
+  importSources: JSON.parse(processEnv.TEST_APP_IMPORT_SOURCES || '[]'),
   taskProcessing: {
-    isEnabled: false,
+    isEnabled: true,
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
   },
-  additionalControllers: [ArticleController],
-  additionalHeadHtml: '<link rel="icon" type="image/x-icon" href="/favicon.ico">',
-  areRoomsEnabled: true
-});
+  additionalControllers: [],
+  areRoomsEnabled: parseBool(processEnv.TEST_APP_ARE_ROOMS_ENABLED || false.toString())
+};
+
+educandu(config);

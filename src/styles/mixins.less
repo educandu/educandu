@@ -11,6 +11,59 @@
   .m-fullscreen
 }
 
+.m-inverted-button {
+  color: @edu-text-color-inverse;
+
+  a {
+    color: hardlight(@edu-primary-color, @grey-4);
+
+    &:hover, &:focus, &:active {
+      color: @edu-text-color-inverse;
+    }
+
+    &:visited {
+      color: hardlight(@edu-primary-color, @grey-4);
+    }
+  }
+
+  .m-create-button-rules(@prop) {
+    @{prop}: @edu-text-color-inverse;
+
+    &:hover, &:focus {
+      @{prop}: @edu-text-color-inverse;
+    }
+
+    &:active {
+      @{prop}: @edu-text-color-inverse;
+    }
+
+    &:visited {
+      @{prop}: @edu-text-color-inverse;
+    }
+
+    &:disabled {
+      @{prop}: hardlight(@edu-primary-color, @grey-6);
+    }
+  }
+
+  .m-create-active-background {
+    &:hover, &:focus, &:active {
+      background-color: softlight(@edu-primary-color, @grey-6);
+    }
+  }
+
+  .ant-btn.ant-btn-link {
+    .m-create-button-rules(color);
+    .m-create-active-background();
+  }
+
+  .ant-btn.ant-btn-background-ghost {
+    .m-create-button-rules(color);
+    .m-create-button-rules(border-color);
+    .m-create-active-background();
+  }
+}
+
 .m-icon-button {
   &.ant-btn > span:not([role="img"]) {
     @media @edu-media-phone {

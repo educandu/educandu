@@ -1,14 +1,15 @@
-@import url('../../dist/styles/main.less');
+@import url('../../src/styles/main.less');
 
-@import (css) url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+// Font override:
+@import url('./bundles/lato-font.less');
 
 @testapp-primary-color: #0d6868;
 
-// Overrides
+// Override educandu styles:
 @edu-font-family: 'Lato', sans-serif;
 @edu-primary-color: @testapp-primary-color;
-@edu-success-color: #369911;
+@edu-processing-color: @testapp-primary-color;
 @edu-info-color: lighten(@testapp-primary-color, 12%);
-@edu-warning-color: #fa8c16;
+@edu-success-color: #369911;
 @edu-error-color: #b11200;
-@edu-processing-color: @green-9;
+@edu-warning-color: #fa8c16;

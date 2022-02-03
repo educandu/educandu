@@ -43,6 +43,32 @@ let bundler = null;
 let currentApp = null;
 let currentCdnProxy = null;
 
+const localEnv = {
+  TEST_APP_WEB_CONNECTION_STRING: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
+  TEST_APP_CDN_ENDPOINT: 'http://localhost:9000',
+  TEST_APP_CDN_REGION: 'eu-central-1',
+  TEST_APP_CDN_ACCESS_KEY: 'UVDXF41PYEAX0PXD8826',
+  TEST_APP_CDN_SECRET_KEY: 'SXtajmM3uahrQ1ALECh3Z3iKT76s2s5GBJlbQMZx',
+  TEST_APP_CDN_BUCKET_NAME: 'dev-educandu-cdn',
+  TEST_APP_CDN_ROOT_URL: 'http://localhost:9000/dev-educandu-cdn',
+  TEST_APP_SESSION_SECRET: 'd4340515fa834498b3ab1aba1e4d9013',
+  TEST_APP_SESSION_COOKIE_DOMAIN: 'localhost',
+  TEST_APP_SESSION_COOKIE_NAME: 'SESSION_ID_TEST_APP_LOCAL',
+  TEST_APP_EMAIL_SENDER_ADDRESS: 'educandu-test-app@test.com',
+  TEST_APP_SMTP_OPTIONS: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
+  TEST_APP_INITIAL_USER: JSON.stringify({ username: 'test', password: 'test', email: 'test@test.com' }),
+  TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
+  TEST_APP_ARE_ROOMS_ENABLED: true.toString(),
+  TEST_APP_IMPORT_SOURCES: JSON.stringify([
+    {
+      name: 'ELMU - integration',
+      hostName: 'integration.elmu.online',
+      apiKey: '03a026b939154f41bb1dabf578a33e11'
+    }
+  ]),
+  TEST_APP_SKIP_MAINTENANCE: false.toString()
+};
+
 const mongoContainer = new MongoContainer({
   port: 27017,
   rootUser: 'root',
@@ -144,7 +170,7 @@ export async function buildTestAppJs() {
     await bundler.rebuild();
   } else {
     bundler = await esbuild.build({
-      entryPoints: ['./test-app/src/client/main.js'],
+      entryPoints: ['./test-app/src/bundles/main.js'],
       target: ['esnext', 'chrome95', 'firefox93', 'safari13', 'edge95'],
       format: 'esm',
       bundle: true,
@@ -286,9 +312,9 @@ export async function startServer() {
   }
 
   const env = {
+    ...localEnv,
     TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
-    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : null,
-    TEST_APP_SESSION_COOKIE_NAME: 'LOCAL_SESSION_ID'
+    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : localEnv.TEST_APP_SESSION_COOKIE_DOMAIN
   };
 
   currentCdnProxy = new NodeProcess({
@@ -298,7 +324,7 @@ export async function startServer() {
       PORT: 10000,
       WEBSITE_BASE_URL: tunnel ? `https://${tunnelWebsiteDomain}` : 'http://localhost:3000',
       CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn',
-      SESSION_COOKIE_NAME: 'LOCAL_SESSION_ID'
+      SESSION_COOKIE_NAME: localEnv.TEST_APP_SESSION_COOKIE_DOMAIN
     }
   });
 
