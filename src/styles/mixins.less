@@ -47,8 +47,10 @@
   }
 
   .m-create-active-background {
-    &:hover, &:focus, &:active {
-      background-color: softlight(@edu-primary-color, @grey-6);
+    &:not(:disabled) {
+      &:hover, &:focus, &:active {
+        background-color: softlight(@edu-primary-color, @grey-6);
+      }
     }
   }
 

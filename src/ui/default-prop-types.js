@@ -105,7 +105,8 @@ export const userProps = {
 
 export const uiLanguageProps = {
   uiLanguage: PropTypes.string.isRequired,
-  uiLocale: PropTypes.string.isRequired
+  uiLocale: PropTypes.string.isRequired,
+  formatDate: PropTypes.func.isRequired
 };
 
 export const pageNameProps = {
