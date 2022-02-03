@@ -1,6 +1,8 @@
+/* eslint-disable no-process-env */
+
 import path from 'path';
-import educandu from '../src/index.js';
-import bundleConfig from './bundles/bundle-config.js';
+import educandu from '../../src/index.js';
+import bundleConfig from './client/bundle-config.js';
 import ArticleController from './article-controller.js';
 
 educandu({
@@ -20,7 +22,7 @@ educandu({
   smtpOptions: 'smtp://127.0.0.1:8025/?ignoreTLS=true',
   bundleConfig,
   publicFolders: ['./test-app/dist', './test-app/static'].map(x => path.resolve(x)),
-  resources: ['./test-app/resource-overrides.json'].map(x => path.resolve(x)),
+  resources: ['./test-app/src/resource-overrides.json'].map(x => path.resolve(x)),
   exportApiKey: 'fe160daddb0c44c4963f63ce08272c86',
   importSources: [
     {

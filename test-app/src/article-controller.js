@@ -1,6 +1,6 @@
 import httpErrors from 'http-errors';
-import urls from '../src/utils/urls.js';
-import DocumentStore from '../src/stores/document-store.js';
+import urls from '../../src/utils/urls.js';
+import DocumentStore from '../../src/stores/document-store.js';
 
 const { NotFound } = httpErrors;
 

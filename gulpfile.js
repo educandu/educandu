@@ -81,14 +81,14 @@ export async function clean() {
 }
 
 export function lint() {
-  return gulp.src(['*.js', 'src/**/*.js', 'scripts/**/*.js'], { base: './' })
+  return gulp.src(['*.js', 'src/**/*.js', 'test-app/src/**/*.js', 'scripts/**/*.js'], { base: './' })
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(gulpif(!currentApp, eslint.failAfterError()));
 }
 
 export function fix() {
-  return gulp.src(['*.js', 'src/**/*.js', 'scripts/**/*.js'], { base: './' })
+  return gulp.src(['*.js', 'src/**/*.js', 'test-app/src/**/*.js', 'scripts/**/*.js'], { base: './' })
     .pipe(eslint({ fix: true }))
     .pipe(eslint.format())
     .pipe(gulpif(file => file.eslint?.fixed, gulp.dest('./')))
@@ -130,7 +130,7 @@ export function copyToDist() {
 export const build = gulp.parallel(copyToDist, buildJs);
 
 export function buildTestAppCss() {
-  return gulp.src('test-app/main.less')
+  return gulp.src('test-app/src/main.less')
     .pipe(gulpif(!!currentApp, plumber()))
     .pipe(sourcemaps.init())
     .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix({ browsers: ['last 2 versions', 'Safari >= 13'] })] }))
@@ -144,7 +144,7 @@ export async function buildTestAppJs() {
     await bundler.rebuild();
   } else {
     bundler = await esbuild.build({
-      entryPoints: ['./test-app/bundles/main.js'],
+      entryPoints: ['./test-app/src/client/main.js'],
       target: ['esnext', 'chrome95', 'firefox93', 'safari13', 'edge95'],
       format: 'esm',
       bundle: true,
@@ -152,7 +152,7 @@ export async function buildTestAppJs() {
       incremental: !!currentApp,
       minify: cliArgs.optimize,
       loader: { '.js': 'jsx' },
-      inject: ['./test-app/polyfills.js'],
+      inject: ['./test-app/src/polyfills.js'],
       metafile: cliArgs.optimize,
       sourcemap: true,
       sourcesContent: true,
@@ -304,7 +304,7 @@ export async function startServer() {
 
   if (instances > 1) {
     currentApp = new LoadBalancedNodeProcessGroup({
-      script: 'test-app/index.js',
+      script: 'test-app/src/index.js',
       jsx: true,
       loadBalancerPort: 3000,
       getNodeProcessPort: index => 4000 + index,
@@ -318,7 +318,7 @@ export async function startServer() {
     });
   } else {
     currentApp = new NodeProcess({
-      script: 'test-app/index.js',
+      script: 'test-app/src/index.js',
       jsx: true,
       env: {
         ...env,
@@ -463,8 +463,8 @@ export const serve = gulp.series(gulp.parallel(up, build), buildTestApp, startSe
 export const verify = gulp.series(lint, test, build);
 
 export function setupWatchers(done) {
-  gulp.watch(['src/**/*.{js,json}', 'test-app/**/*.{js,json}', '!test-app/dist/**'], gulp.series(buildTestAppJs, restartServer));
-  gulp.watch(['src/**/*.less', 'test-app/**/*.less'], gulp.series(copyToDist, buildTestAppCss));
+  gulp.watch(['src/**/*.{js,json}', 'test-app/src/**/*.{js,json}'], gulp.series(buildTestAppJs, restartServer));
+  gulp.watch(['src/**/*.less', 'test-app/src/**/*.less'], gulp.series(copyToDist, buildTestAppCss));
   gulp.watch(['src/**/*.yml'], buildTranslations);
   done();
 }
