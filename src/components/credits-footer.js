@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
 import { useSettings } from './settings-context.js';
-import { useDateFormat } from './language-context.js';
+import { useDateFormat } from './locale-context.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
 function CreditsFooter({ doc, revision }) {

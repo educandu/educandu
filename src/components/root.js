@@ -4,7 +4,7 @@ import { Container } from '../common/di.js';
 import { UserProvider } from './user-context.js';
 import { DialogProvider } from './dialog-context.js';
 import { RequestProvider } from './request-context.js';
-import { LanguageProvider } from './language-context.js';
+import { LocaleProvider } from './locale-context.js';
 import { SettingsProvider } from './settings-context.js';
 import { PageNameProvider } from './page-name-context.js';
 import { useReloadPersistedWindow } from '../ui/hooks.js';
@@ -17,7 +17,7 @@ function Root({
   container,
   initialState,
   settings,
-  language,
+  uiLanguage,
   pageName,
   PageComponent,
   PageTemplateComponent,
@@ -29,7 +29,7 @@ function Root({
   return (
     <ContainerProvider value={container}>
       <PageNameProvider value={pageName}>
-        <LanguageProvider value={language}>
+        <LocaleProvider value={uiLanguage}>
           <SettingsProvider value={settings}>
             <RequestProvider value={request}>
               <UserProvider value={user}>
@@ -43,7 +43,7 @@ function Root({
               </UserProvider>
             </RequestProvider>
           </SettingsProvider>
-        </LanguageProvider>
+        </LocaleProvider>
       </PageNameProvider>
     </ContainerProvider>
   );
@@ -59,7 +59,7 @@ Root.propTypes = {
   container: PropTypes.instanceOf(Container).isRequired,
   /* eslint-disable-next-line react/forbid-prop-types */
   initialState: PropTypes.any,
-  language: PropTypes.string.isRequired
+  uiLanguage: PropTypes.string.isRequired
 };
 
 Root.defaultProps = {

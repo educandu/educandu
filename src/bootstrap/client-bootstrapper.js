@@ -34,7 +34,7 @@ export async function hydrateApp({ bundleConfig }) {
   const props = {
     user: window.__user__,
     request: window.__request__,
-    language: window.__language__,
+    uiLanguage: window.__uiLanguage__,
     settings: window.__settings__,
     pageName: window.__pageName__,
     container,

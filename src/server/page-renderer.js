@@ -25,7 +25,7 @@ class PageRenderer extends PageRendererBase {
 
   sendPage(req, res, pageName, initialState = {}) {
     const title = this.serverConfig.appName;
-    const language = req.language;
+    const uiLanguage = req.uiLanguage;
     const settings = req.settings;
     const container = this.container;
     const clientConfig = this.clientConfig;
@@ -44,7 +44,7 @@ class PageRenderer extends PageRendererBase {
       user: cloneDeep(user),
       container,
       initialState: cloneDeep(initialState),
-      language,
+      uiLanguage,
       pageName,
       settings: cloneDeep(settings),
       PageComponent,
@@ -56,7 +56,7 @@ class PageRenderer extends PageRendererBase {
       `window.__user__=${htmlescape(user)};`,
       `window.__request__=${htmlescape(request)};`,
       `window.__pageName__=${htmlescape(pageName)};`,
-      `window.__language__=${htmlescape(language)};`,
+      `window.__uiLanguage__=${htmlescape(uiLanguage)};`,
       `window.__settings__=${htmlescape(settings)};`,
       `window.__resources__=${htmlescape(resources)};`,
       `window.__initalState__=${htmlescape(initialState)};`,
@@ -68,7 +68,7 @@ class PageRenderer extends PageRendererBase {
     const scripts = [{ content: inlineScript }, { src: '/main.js' }];
 
     const html = this.renderHtml({
-      language,
+      uiLanguage,
       title,
       styles,
       scripts,

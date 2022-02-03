@@ -6,15 +6,15 @@ import { useTranslation } from 'react-i18next';
 import ImportTypeIcon from './import-type-icon.js';
 import { useService } from './container-context.js';
 import LanguageFlagAndName from './language-flag-and-name.js';
+import { useDateFormat, useLocale } from './locale-context.js';
 import React, { useMemo, memo, useState, useEffect } from 'react';
-import { useDateFormat, useLanguage } from './language-context.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 
 const getTitleComponent = (title, url) => {
   return url ? <a href={url} target="_blank" rel="noopener noreferrer" >{title}</a> : <span>{title}</span>;
 };
 
-function createRecords(importableDocuments, t, formatDate, languageNameProvider, language, importSourceBaseUrl) {
+function createRecords(importableDocuments, formatDate, languageNameProvider, language, importSourceBaseUrl) {
   const languagesData = languageNameProvider.getData(language);
 
   return importableDocuments.map(doc => {
@@ -38,15 +38,15 @@ function createRecords(importableDocuments, t, formatDate, languageNameProvider,
 }
 
 function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading, onSelectedKeysChange }) {
-  const { language } = useLanguage();
+  const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const [records, setRecords] = useState([]);
   const { t } = useTranslation('documentImportTable');
   const languageNameProvider = useService(LanguageNameProvider);
 
   useEffect(() => {
-    setRecords(createRecords(importableDocuments, t, formatDate, languageNameProvider, language, importSourceBaseUrl));
-  }, [importableDocuments, t, formatDate, languageNameProvider, language, importSourceBaseUrl]);
+    setRecords(createRecords(importableDocuments, formatDate, languageNameProvider, uiLanguage, importSourceBaseUrl));
+  }, [importableDocuments, t, formatDate, languageNameProvider, uiLanguage, importSourceBaseUrl]);
 
   const columns = useMemo(() => [
     {

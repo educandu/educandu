@@ -2,19 +2,19 @@ import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { Form, Input, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../language-context.js';
+import { useLocale } from '../locale-context.js';
 import DocumentSelector from '../document-selector.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';
 import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
-const settingsToPageList = (supportedLanguages, settings = {}) => {
-  return supportedLanguages.map(supportedLanguage => {
-    const setting = settings[supportedLanguage];
+const settingsToPageList = (supportedUiLanguages, settings = {}) => {
+  return supportedUiLanguages.map(uiLanguage => {
+    const setting = settings[uiLanguage];
     return {
-      key: supportedLanguage,
-      language: supportedLanguage,
+      key: uiLanguage,
+      language: uiLanguage,
       linkTitle: setting?.linkTitle || '',
       urlPath: [setting?.documentKey || '', setting?.documentSlug || ''].filter(x => x).join('/') || ''
     };
@@ -35,10 +35,10 @@ const pageListToSettings = pageList => {
 
 function SpecialPageSettings({ settings, documents, onChange }) {
   const { t } = useTranslation('specialPageSettings');
-  const { supportedLanguages } = useLanguage();
+  const { supportedUiLanguages } = useLocale();
 
   const handleChange = (index, key, value) => {
-    const pageList = settingsToPageList(supportedLanguages, settings);
+    const pageList = settingsToPageList(supportedUiLanguages, settings);
     const updatedPageList = pageList.map((item, idx) => idx !== index ? item : { ...item, [key]: value });
     onChange(pageListToSettings(updatedPageList), { isValid: true });
   };
@@ -70,7 +70,7 @@ function SpecialPageSettings({ settings, documents, onChange }) {
     { title: t('urlPath'), key: 'urlPath', dataIndex: 'urlPath', ellipsis: true, render: renderUrlPath }
   ];
 
-  const data = settingsToPageList(supportedLanguages, settings);
+  const data = settingsToPageList(supportedUiLanguages, settings);
 
   return (
     <Form>

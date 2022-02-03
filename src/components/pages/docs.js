@@ -12,9 +12,9 @@ import { Input, Table, Button, Switch } from 'antd';
 import { useSettings } from '../settings-context.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';
+import { useDateFormat, useLocale } from '../locale-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
-import { useDateFormat, useLanguage } from '../language-context.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -52,8 +52,8 @@ function Docs({ initialState, PageTemplate }) {
   const settings = useSettings();
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('docs');
+  const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
-  const { language: uiLanguage } = useLanguage();
   const [clonedDocument, setClonedDocument] = useState(null);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 

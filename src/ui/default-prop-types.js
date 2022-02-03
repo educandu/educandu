@@ -103,9 +103,9 @@ export const userProps = {
   user: userShape
 };
 
-export const languageProps = {
-  language: PropTypes.string.isRequired,
-  locale: PropTypes.string.isRequired
+export const uiLanguageProps = {
+  uiLanguage: PropTypes.string.isRequired,
+  uiLocale: PropTypes.string.isRequired
 };
 
 export const pageNameProps = {

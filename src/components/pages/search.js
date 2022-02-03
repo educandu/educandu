@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { useDateFormat } from '../language-context.js';
+import { useDateFormat } from '../locale-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';

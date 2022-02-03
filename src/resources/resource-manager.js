@@ -29,10 +29,6 @@ class ResourceManager {
     return this._resourceBundles;
   }
 
-  getSupportedLanguages() {
-    return SUPPORTED_UI_LANGUAGES;
-  }
-
   createI18n(initialLanguage) {
     const instance = i18next.createInstance();
     instance.use(initReactI18next);

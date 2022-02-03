@@ -15,13 +15,13 @@ class ErrorPageRenderer extends PageRendererBase {
   sendPage(req, res, error) {
     const title = this.serverConfig.appName;
     const settings = req.settings;
-    const language = req.language;
-    const i18n = this.resourceManager.createI18n(language);
-    const props = { error, settings, language, i18n };
+    const uiLanguage = req.uiLanguage;
+    const i18n = this.resourceManager.createI18n(uiLanguage);
+    const props = { error, settings, uiLanguage, i18n };
     const styles = [{ href: '/main.css' }];
 
     const html = this.renderHtml({
-      language,
+      uiLanguage,
       title,
       styles,
       ContentRoot: ErrorPage,

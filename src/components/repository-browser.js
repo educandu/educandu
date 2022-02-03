@@ -11,13 +11,13 @@ import { withUser } from './user-context.js';
 import pathHelper from '../ui/path-helper.js';
 import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
-import { withLanguage } from './language-context.js';
+import { withLocale } from './locale-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
-import { translationProps, languageProps, userProps } from '../ui/default-prop-types.js';
+import { translationProps, uiLanguageProps, userProps } from '../ui/default-prop-types.js';
 import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
@@ -120,7 +120,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.language !== prevProps.language) {
+    if (this.props.uiLanguage !== prevProps.uiLanguage) {
       const { currentPathSegments, selectedRowKeys } = this.state;
       this.refreshFiles(currentPathSegments, selectedRowKeys);
     }
@@ -573,7 +573,7 @@ class RepositoryBrowser extends React.Component {
 
 RepositoryBrowser.propTypes = {
   ...userProps,
-  ...languageProps,
+  ...uiLanguageProps,
   ...translationProps,
   cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
   initialPrefix: PropTypes.string,
@@ -590,6 +590,6 @@ RepositoryBrowser.defaultProps = {
   uploadPrefix: null
 };
 
-export default withTranslation('repositoryBrowser')(withLanguage(withUser(inject({
+export default withTranslation('repositoryBrowser')(withLocale(withUser(inject({
   cdnApiClient: CdnApiClient
 }, RepositoryBrowser))));

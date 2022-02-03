@@ -7,9 +7,9 @@ import React, { useState } from 'react';
 import LinkPopover from './link-popover.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from './locale-context.js';
 import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
-import { useLanguage } from './language-context.js';
 import { useSettings } from './settings-context.js';
 import DefaultSiteLogo from './default-site-logo.js';
 import UiLanguageDialog from './ui-language-dialog.js';
@@ -32,10 +32,10 @@ import {
 function DefaultPageTemplate({ children, fullScreen, alerts }) {
   const user = useUser();
   const settings = useSettings();
-  const { language } = useLanguage();
+  const { uiLanguage } = useLocale();
   const { t } = useTranslation('page');
   const clientConfig = useService(ClientConfig);
-  const helpPage = settings?.helpPage?.[language];
+  const helpPage = settings?.helpPage?.[uiLanguage];
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
 
   const handleUiLanguageDialogClose = () => {
@@ -110,7 +110,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
       showWhen: !!helpPage
     },
     {
-      key: 'language',
+      key: 'ui-language',
       onClick: () => setIsUiLanguageDialogVisible(true),
       text: t('common:language'),
       icon: GlobalOutlined,
@@ -173,7 +173,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
       </main>
       <footer className="DefaultPageTemplate-footer">
         <div className="DefaultPageTemplate-footerContent">
-          {(settings?.footerLinks?.[language] || []).map((fl, index) => (
+          {(settings?.footerLinks?.[uiLanguage] || []).map((fl, index) => (
             <span key={index.toString()} className="DefaultPageTemplate-footerLink">
               <a href={urls.getDocUrl({ key: fl.documentKey, slug: fl.documentSlug })}>{fl.linkTitle}</a>
             </span>

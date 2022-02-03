@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import { Table, Collapse, Button } from 'antd';
-import { useDateFormat } from '../language-context.js';
+import { useDateFormat } from '../locale-context.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { importBatchShape, importSourceShape } from '../../ui/default-prop-types.js';
 

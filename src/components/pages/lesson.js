@@ -10,7 +10,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
-import { useDateFormat } from '../language-context.js';
+import { useDateFormat } from '../locale-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
