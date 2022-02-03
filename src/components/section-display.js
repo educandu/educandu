@@ -175,6 +175,10 @@ function SectionDisplay({
     return (<span>{sectionInfo}</span>);
   };
 
+  const renderSectionRevision = () => (
+    <span>{section.revision ? `${t('common:revision')}: ${section.revision}` : null}</span>
+  );
+
   return (
     <section className={sectionClasses}>
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
@@ -219,9 +223,16 @@ function SectionDisplay({
       )}
 
       {isHardDeleteEnabled && (
-        <div className="SectionDisplay-actions SectionDisplay-actions--right">
-          {renderHardDeleteAction()}
-        </div>
+        <Fragment>
+          <div className="SectionDisplay-actions SectionDisplay-actions--left">
+            <div className="SectionDisplay-sectionInfo SectionDisplay-sectionInfo--hardDelete">
+              {renderSectionRevision()}
+            </div>
+          </div>
+          <div className="SectionDisplay-actions SectionDisplay-actions--right">
+            {renderHardDeleteAction()}
+          </div>
+        </Fragment>
       )}
     </section>
   );
