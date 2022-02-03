@@ -435,7 +435,7 @@ function Doc({ initialState, PageTemplate }) {
             />
         </div>
         <aside className="Content">
-          <CreditsFooter doc={doc} />
+          <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
         </aside>
       </PageTemplate>
       <Restricted to={permissions.EDIT_DOC}>
