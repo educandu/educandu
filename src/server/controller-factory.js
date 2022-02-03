@@ -13,6 +13,7 @@ import LessonController from './lesson-controller.js';
 import MySpaceController from './my-space-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
+import RevisionController from './revision-controller.js';
 import UserAgentController from './user-agent-controller.js';
 
 const controllerTypes = [
@@ -30,7 +31,8 @@ const controllerTypes = [
   ErrorController,
   RoomController,
   MySpaceController,
-  LessonController
+  LessonController,
+  RevisionController
 ];
 
 class ControllerFactory {

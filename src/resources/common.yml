@@ -55,6 +55,9 @@ confirm:
 error:
   en: Error
   de: Fehler
+date:
+  en: Date
+  de: Datum
 language:
   en: Language
   de: Sprache
@@ -124,6 +127,12 @@ slug:
 tags:
   en: Tags
   de: Tags
+id:
+  en: ID
+  de: ID
+user:
+  en: User
+  de: Benutzer
 username:
   en: User name
   de: Benutzername

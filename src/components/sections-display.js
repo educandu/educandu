@@ -2,23 +2,25 @@ import PropTypes from 'prop-types';
 import { Button, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
-import SectionDisplayNew from './section-display-new.js';
+import SectionDisplay from './section-display.js';
 import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-function SectionsDisplayNew({
+function SectionsDisplay({
   sections,
   sectionsContainerId,
   pendingSectionKeys,
   canEdit,
-  onPendingSectionApplied,
-  onPendingSectionDiscarded,
-  onSectionMoved,
-  onSectionInserted,
-  onSectionDuplicated,
-  onSectionDeleted,
-  onSectionContentChange
+  canHardDelete,
+  onPendingSectionApply,
+  onPendingSectionDiscard,
+  onSectionMove,
+  onSectionInsert,
+  onSectionDuplicate,
+  onSectionDelete,
+  onSectionContentChange,
+  onSectionHardDelete
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [currentNewSectionIndex, setCurrentNewSectionIndex] = useState(-1);
@@ -30,15 +32,15 @@ function SectionsDisplayNew({
   const handleDragEnd = ({ source, destination }) => {
     setIsDragging(false);
     if (destination) {
-      onSectionMoved(source.index, destination.index);
+      onSectionMove(source.index, destination.index);
     }
   };
 
-  const handleSectionMoved = (sourceIndex, destinationIndex) => {
+  const handleSectionMove = (sourceIndex, destinationIndex) => {
     if (sourceIndex !== destinationIndex
         && destinationIndex >= 0
         && destinationIndex <= (sections.length - 1)) {
-      onSectionMoved(sourceIndex, destinationIndex);
+      onSectionMove(sourceIndex, destinationIndex);
     }
   };
 
@@ -47,7 +49,7 @@ function SectionsDisplayNew({
   };
 
   const handlePluginSelectorDialogSelect = pluginType => {
-    onSectionInserted(pluginType, currentNewSectionIndex);
+    onSectionInsert(pluginType, currentNewSectionIndex);
     setCurrentNewSectionIndex(-1);
   };
 
@@ -56,22 +58,24 @@ function SectionsDisplayNew({
   };
 
   const renderSection = ({ section, index, dragHandleProps, isDragged }) => {
-    return (<SectionDisplayNew
+    return (<SectionDisplay
       key={section.key}
       section={section}
       sectionContainerId={sectionsContainerId}
       canEdit={!!dragHandleProps && canEdit}
+      canHardDelete={canHardDelete}
       dragHandleProps={dragHandleProps}
       isDragged={isDragged}
       isOtherSectionDragged={isDragging && !isDragged}
       isPending={pendingSectionKeys.includes(section.key)}
-      onPendingSectionApplied={() => onPendingSectionApplied(index)}
-      onPendingSectionDiscarded={() => onPendingSectionDiscarded(index)}
-      onSectionDelete={() => onSectionDeleted(index)}
-      onSectionDuplicate={() => onSectionDuplicated(index)}
-      onSectionMoveUp={() => handleSectionMoved(index, index - 1)}
-      onSectionMoveDown={() => handleSectionMoved(index, index + 1)}
+      onPendingSectionApply={() => onPendingSectionApply(index)}
+      onPendingSectionDiscard={() => onPendingSectionDiscard(index)}
+      onSectionDelete={() => onSectionDelete(index)}
+      onSectionDuplicate={() => onSectionDuplicate(index)}
+      onSectionMoveUp={() => handleSectionMove(index, index - 1)}
+      onSectionMoveDown={() => handleSectionMove(index, index + 1)}
       onSectionContentChange={(newContent, isInvalid) => onSectionContentChange(index, newContent, isInvalid)}
+      onSectionHardDelete={() => onSectionHardDelete(index)}
       />);
   };
 
@@ -139,24 +143,34 @@ function SectionsDisplayNew({
   );
 }
 
-SectionsDisplayNew.propTypes = {
-  canEdit: PropTypes.bool.isRequired,
-  onPendingSectionApplied: PropTypes.func,
-  onPendingSectionDiscarded: PropTypes.func,
-  onSectionContentChange: PropTypes.func.isRequired,
-  onSectionDeleted: PropTypes.func.isRequired,
-  onSectionDuplicated: PropTypes.func.isRequired,
-  onSectionInserted: PropTypes.func.isRequired,
-  onSectionMoved: PropTypes.func.isRequired,
+SectionsDisplay.propTypes = {
+  canEdit: PropTypes.bool,
+  canHardDelete: PropTypes.bool,
+  onPendingSectionApply: PropTypes.func,
+  onPendingSectionDiscard: PropTypes.func,
+  onSectionContentChange: PropTypes.func,
+  onSectionDelete: PropTypes.func,
+  onSectionDuplicate: PropTypes.func,
+  onSectionHardDelete: PropTypes.func,
+  onSectionInsert: PropTypes.func,
+  onSectionMove: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   sectionsContainerId: PropTypes.string.isRequired
 };
 
-SectionsDisplayNew.defaultProps = {
-  onPendingSectionApplied: () => {},
-  onPendingSectionDiscarded: () => {},
+SectionsDisplay.defaultProps = {
+  canEdit: false,
+  canHardDelete: false,
+  onPendingSectionApply: () => {},
+  onPendingSectionDiscard: () => {},
+  onSectionContentChange: () => {},
+  onSectionDelete: () => {},
+  onSectionDuplicate: () => {},
+  onSectionHardDelete: () => {},
+  onSectionInsert: () => {},
+  onSectionMove: () => {},
   pendingSectionKeys: []
 };
 
-export default SectionsDisplayNew;
+export default SectionsDisplay;

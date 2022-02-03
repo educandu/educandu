@@ -6,15 +6,15 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
-import React, { Fragment, useState } from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
+import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../language-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
-import SectionsDisplayNew from '../sections-display-new.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
@@ -57,7 +57,13 @@ function Lesson({ PageTemplate, initialState }) {
   const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
-  const handleMetadataEdit = () => {
+  useEffect(() => {
+    if (startsInEditMode) {
+      ensureEditorsAreLoaded(editorFactory);
+    }
+  }, [startsInEditMode, editorFactory]);
+
+  const handleEditMetadataOpen = () => {
     setIsLessonMetadataModalVisible(true);
   };
 
@@ -76,7 +82,7 @@ function Lesson({ PageTemplate, initialState }) {
     setIsLessonMetadataModalVisible(false);
   };
 
-  const handleEdit = async () => {
+  const handleEditOpen = async () => {
     await ensureEditorsAreLoaded(editorFactory);
     setIsInEditMode(true);
     setCurrentSections(cloneDeep(lesson.sections));
@@ -84,7 +90,7 @@ function Lesson({ PageTemplate, initialState }) {
     history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
   };
 
-  const handleSave = async () => {
+  const handleEditSave = async () => {
     try {
       const updatedLesson = await lessonApiClient.updateLessonSections({
         lessonId: lesson._id,
@@ -99,7 +105,7 @@ function Lesson({ PageTemplate, initialState }) {
     }
   };
 
-  const handleClose = () => {
+  const handleEditClose = () => {
     return new Promise(resolve => {
       const exitEditMode = () => {
         setIsDirty(false);
@@ -132,13 +138,13 @@ function Lesson({ PageTemplate, initialState }) {
     setIsDirty(true);
   };
 
-  const handleSectionMoved = (sourceIndex, destinationIndex) => {
+  const handleSectionMove = (sourceIndex, destinationIndex) => {
     const reorderedSections = moveItem(currentSections, sourceIndex, destinationIndex);
     setCurrentSections(reorderedSections);
     setIsDirty(true);
   };
 
-  const handleSectionInserted = (pluginType, index) => {
+  const handleSectionInsert = (pluginType, index) => {
     const pluginInfo = infoFactory.createInfo(pluginType);
     const newSection = {
       key: uniqueId.create(),
@@ -150,7 +156,7 @@ function Lesson({ PageTemplate, initialState }) {
     setIsDirty(true);
   };
 
-  const handleSectionDuplicated = index => {
+  const handleSectionDuplicate = index => {
     const originalSection = currentSections[index];
     const duplicatedSection = cloneDeep(originalSection);
     duplicatedSection.key = uniqueId.create();
@@ -163,7 +169,7 @@ function Lesson({ PageTemplate, initialState }) {
     }
   };
 
-  const handleSectionDeleted = index => {
+  const handleSectionDelete = index => {
     confirmSectionDelete(
       t,
       () => {
@@ -202,15 +208,15 @@ function Lesson({ PageTemplate, initialState }) {
               <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
             </Breadcrumb>
           </div>
-          <SectionsDisplayNew
+          <SectionsDisplay
             sections={currentSections}
             sectionsContainerId={lesson._id}
             canEdit={isInEditMode}
             onSectionContentChange={handleSectionContentChange}
-            onSectionMoved={handleSectionMoved}
-            onSectionInserted={handleSectionInserted}
-            onSectionDuplicated={handleSectionDuplicated}
-            onSectionDeleted={handleSectionDeleted}
+            onSectionMove={handleSectionMove}
+            onSectionInsert={handleSectionInsert}
+            onSectionDuplicate={handleSectionDuplicate}
+            onSectionDelete={handleSectionDelete}
             />
         </div>
       </PageTemplate>
@@ -219,11 +225,11 @@ function Lesson({ PageTemplate, initialState }) {
           <EditControlPanel
             canClose
             canCancel={false}
-            startExpanded={startsInEditMode}
-            onEdit={handleEdit}
-            onMetadataEdit={handleMetadataEdit}
-            onSave={handleSave}
-            onClose={handleClose}
+            startOpen={startsInEditMode}
+            onOpen={handleEditOpen}
+            onMetadataOpen={handleEditMetadataOpen}
+            onSave={handleEditSave}
+            onClose={handleEditClose}
             status={controlStatus}
             metadata={(
               <Fragment >

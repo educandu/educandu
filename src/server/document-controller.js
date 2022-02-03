@@ -5,7 +5,7 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
-import { DOCUMENT_TYPE, DOC_VIEW } from '../domain/constants.js';
+import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -33,20 +33,6 @@ class DocumentController {
     this.documentService = documentService;
     this.clientDataMapper = clientDataMapper;
     this.pageRenderer = pageRenderer;
-  }
-
-  handleGetArticlePage(req, res) {
-    res.redirect(301, urls.getDocumentRevisionUrl(req.params.id));
-  }
-
-  async handleGetRevisionPage(req, res) {
-    const revision = await this.documentService.getDocumentRevisionById(req.params.id);
-    if (!revision) {
-      throw new NotFound();
-    }
-
-    const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { currentDocOrRevision: documentRevision, type: DOCUMENT_TYPE.permalinkedRevision });
   }
 
   async handleGetDocsPage(req, res) {
@@ -84,7 +70,7 @@ class DocumentController {
     }
 
     let mappedLatestRevision = null;
-    if (view === DOC_VIEW.edit) {
+    if (view === DOC_VIEW_QUERY_PARAM.edit) {
       const latestRevision = await this.documentService.getDocumentRevisionById(doc.revision);
       mappedLatestRevision = await this.clientDataMapper.mapDocOrRevision(latestRevision, user);
     }
@@ -198,16 +184,6 @@ class DocumentController {
   }
 
   registerPages(router) {
-    router.get(
-      '/revs/articles/:id',
-      (req, res) => this.handleGetArticlePage(req, res)
-    );
-
-    router.get(
-      '/revs/:id',
-      (req, res) => this.handleGetRevisionPage(req, res)
-    );
-
     router.get(
       '/docs',
       needsPermission(permissions.VIEW_DOCS),

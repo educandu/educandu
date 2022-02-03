@@ -1,26 +1,164 @@
-@section-min-height: 36px;
-@active-section-border-width: 1px;
-@active-section-border-color: @grey-7;
+@section-display-min-height: 36px;
+@section-display-editable-padding-top: 40px;
+@section-display-action-button-margin: 2px;
 
 .SectionDisplay {
-  border: none;
+  background-color: @edu-white;
+  border: 1px dotted transparent;
   position: relative;
   padding: @edu-content-padding;
-  min-height: @section-min-height;
+  min-height: @section-display-min-height;
 
-  &.is-active {
-    padding: @edu-content-padding - @active-section-border-width;
-    border: @active-section-border-width dashed @active-section-border-color;
+  &.is-editable {
+    padding: @edu-content-padding;
+    padding-top: @section-display-editable-padding-top;
+    border-color: @grey-5;
+    min-height: @section-display-min-height + @section-display-editable-padding-top;
+
+    &:hover {
+      border: 1px solid @grey-6;
+    }
+
+    &.is-dragged {
+      border: 1px solid @grey-6;
+    }
+
+    &.is-other-section-dragged {
+      opacity: 0.60;
+    }
+  }
+
+  &.is-hard-deletable {
+    &:hover {
+      border: 1px solid @grey-6;
+    }
+
+    &:hover .SectionDisplay-actionButton--hardDelete {
+      display: block;
+    }
+
+    &:hover .SectionDisplay-sectionInfo--hardDelete {
+      display: grid;
+    }
   }
 }
 
 .SectionDisplay-actions {
-  display: none;
+  display: flex;
+  line-height: 18px; // fixes misaligned button when disabled
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: @section-display-action-button-margin;
 
-  &.is-active {
-    display: block;
+  &.SectionDisplay-actions--left {
+    left: @section-display-action-button-margin;
   }
+
+  &.SectionDisplay-actions--right {
+    right: @section-display-action-button-margin;
+  }
+}
+
+.SectionDisplay-actionButton {
+  margin-left: @section-display-action-button-margin;
+
+  &.SectionDisplay-actionButton--edit,
+  &.SectionDisplay-actionButton--preview {
+    color: @green-8;
+    &:hover, &:active, &:focus {
+      color: @green-8;
+      border-color: @green-8;
+    }
+  }
+
+  &.SectionDisplay-actionButton--delete {
+    color: @red-8;
+    &:hover, &:active, &:focus {
+      color: @red-8;
+      border-color: @red-8;
+    }
+  }
+
+  &.SectionDisplay-actionButton--hardDelete {
+    display: none;
+    color: @red-8;
+    border-color: @red-8;
+  }
+}
+
+.SectionDisplay-sectionInfo {
+  display: grid;
+  gap: 5px;
+  align-items: center;
+  grid-auto-flow: column;
+  padding: 0 5px;
+  height: @edu-control-height-sm;
+  border: 1px solid @grey-5;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-white;
+
+  &.SectionDisplay-sectionInfo--hardDelete {
+    display: none;
+  }
+}
+
+.SectionDisplay-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: @edu-white;
+  opacity: 70%;
+
+  &.SectionDisplay-overlay--withButtons {
+    background-color: @edu-selection-background-color;
+    opacity: 100%;
+  }
+}
+
+.SectionDisplay-overlayButton {
+  display: block;
+  margin: 0 7px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 8px @grey-7;
+
+  &.SectionDisplay-overlayButton--apply {
+    color: @edu-white;
+    background-color: @edu-apply-color;
+    border: 1px solid darken(@edu-apply-color, 5%);
+
+    &:hover {
+      background-color: darken(@edu-apply-color, 15%);
+      border: 1px solid darken(@edu-apply-color, 20%);
+    }
+  }
+
+  &.SectionDisplay-overlayButton--discard {
+    color: @edu-white;
+    background-color: @edu-discard-color;
+    border: 1px solid darken(@edu-discard-color, 5%);
+
+    &:hover {
+      background-color: darken(@edu-discard-color, 15%);
+      border: 1px solid darken(@edu-discard-color, 20%);
+    }
+  }
+}
+
+.SectionDisplay-overlayButtonIcon {
+  display: flex;
+  justify-content: center;
+  font-size: 140%;
+  line-height: 70%;
+  text-align: center;
+}
+
+.SectionDisplay-overlayButtonText {
+  font-size: 80%;
+  text-align: center;
 }

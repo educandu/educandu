@@ -1,24 +1,13 @@
-date:
-  en: Date
-  de: Datum
-user:
-  en: User
-  de: Benutzer
-id:
-  en: ID
-  de: ID
-restoredFrom:
-  en: Restored from
-  de: Wiederhergestellt aus
-permalink:
-  en: Permalink
-  de: Permalink
+proposedSectionsAlert:
+  en: |
+    Apply or discard the proposed sections. Unapplied sections are
+    only visible until you leave the current view.
+  de: |
+    Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene
+    Abschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.
 permalinkCopied:
   en: The permalink was copied to the clipboard
   de: Der Permalink wurde in die Zwischenablage kopiert
 permalinkCouldNotBeCopied:
   en: The permalink could not be copied to the clipboard
   de: Der Permalink konnte nicht in die Zwischenablage kopiert werden
-restore:
-  en: Restore
-  de: Wiederherstellen

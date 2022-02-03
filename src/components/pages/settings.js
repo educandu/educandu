@@ -75,7 +75,7 @@ function Settings({ initialState, PageTemplate }) {
     handleChange('license', value, isValid);
   }, [handleChange]);
 
-  const handleSave = async () => {
+  const handleEditSave = async () => {
     const changedSettings = dirtyKeys.reduce((map, key) => ({ ...map, [key]: settings[key] }), {});
     try {
       await settingApiClient.saveSettings({ settings: changedSettings });
@@ -86,7 +86,7 @@ function Settings({ initialState, PageTemplate }) {
     }
   };
 
-  const handleCancel = () => {
+  const handleEditCancel = () => {
     return new Promise(resolve => {
       const exitEditMode = () => {
         setSettings(lastSavedSettings);
@@ -204,8 +204,8 @@ function Settings({ initialState, PageTemplate }) {
           canCancel
           canClose={false}
           status={controlStatus}
-          onSave={handleSave}
-          onCancel={handleCancel}
+          onSave={handleEditSave}
+          onCancel={handleEditCancel}
           />
       </Restricted>
     </Fragment>

@@ -35,12 +35,6 @@ export const ALERT_TYPE = {
   error: 'error'
 };
 
-export const DOCUMENT_TYPE = {
-  revision: 'revision',
-  document: 'document',
-  permalinkedRevision: 'permalinked-revision'
-};
-
 export const ROOM_ACCESS_LEVEL = {
   public: 'public',
   private: 'private'
@@ -57,7 +51,7 @@ export const ERROR_CODES = {
   operationCancelled: 'operation-cancelled'
 };
 
-export const DOC_VIEW = {
+export const DOC_VIEW_QUERY_PARAM = {
   edit: 'edit',
   history: 'history'
 };

@@ -1,50 +1,28 @@
-@control-panel-content-height: @edu-control-height-sm;
-@control-panel-padding: @edu-content-padding;
-@control-panel-height: @control-panel-content-height + (2 * @control-panel-padding);
-
 .EditControlPanel {
-  display: flex;
-  align-items: center;
-  justify-content: stretch;
-  position: sticky;
-  bottom: 0;
-  left: %(~"calc(100% - %s)", @control-panel-height * 2);
-  height: @control-panel-height;
-  width: @control-panel-height;
-  padding-left: @control-panel-padding;
-  padding-right: @control-panel-padding;
-  color: @edu-white;
-  background-color: @edu-primary-color;
-  transition: width 500ms ease;
-
-  &.is-expanded {
-    width: 100%;
-  }
 }
 
-.EditControlPanel-metadata {
-  flex: 1 0 0%;
+.EditControlPanel-leftSide {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.EditControlPanel-metadataEditButton {
+.EditControlPanel-leftSideButton {
   display: inline-block;
   vertical-align: bottom;
   padding-right: 6px;
 }
 
-.EditControlPanel-buttonGroup {
-  flex: none;
+.EditControlPanel-rightSide {
   display: grid;
+  align-items: center;
   grid-auto-flow: column;
   gap: 1.5 * @edu-button-spacing;
-  padding-left: @control-panel-padding;
-  align-items: center;
+  padding-right: 1.5 * @edu-button-spacing;
+  padding-left: @edu-content-padding;
 }
 
-.EditControlPanel-button {
+.EditControlPanel-rightSideButton {
   .m-icon-button;
 
   &.ant-btn:disabled {
@@ -67,13 +45,3 @@
     color: @yellow-6
   }
 }
-
-.EditControlPanel-penButton {
-  .m-no-spinner-background;
-  color: lighten(@edu-primary-color, 50%);
-
-  &:hover, &:focus {
-    color: @edu-white;
-  }
-}
-

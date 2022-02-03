@@ -1,0 +1,36 @@
+.HistoryControlPanel {
+}
+
+.HistoryControlPanel-leftSide {
+  flex: 1 0 0%;
+  display: flex;
+  align-items: center;
+  padding-right: 2 * @edu-content-padding;
+}
+
+.HistoryControlPanel-sliderLabel {
+  padding-right: @edu-content-padding;
+}
+
+.HistoryControlPanel-slider {
+  flex: 1 0 0%;
+  margin: 6px;
+}
+
+.HistoryControlPanel-rightSide {
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  gap: 1.5 * @edu-button-spacing;
+  padding-right: 1.5 * @edu-button-spacing;
+  padding-left: @edu-content-padding;
+}
+
+.HistoryControlPanel-button {
+  .m-icon-button;
+
+  &.ant-btn:disabled {
+    color: fade(@edu-white, 60%);
+    border-color: fade(@edu-white, 60%);
+  }
+}

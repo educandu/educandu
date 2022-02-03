@@ -1,90 +1,343 @@
+import { message } from 'antd';
+import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
-import SectionsView from '../sections-view.js';
-import { Button, Slider, message } from 'antd';
+import { useUser } from '../user-context.js';
+import uniqueId from '../../utils/unique-id.js';
 import CreditsFooter from '../credits-footer.js';
-import React, { useEffect, useState } from 'react';
+import cloneDeep from '../../utils/clone-deep.js';
+import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
-import permissions from '../../domain/permissions.js';
+import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
+import InfoFactory from '../../plugins/info-factory.js';
+import { handleApiError } from '../../ui/error-helper.js';
+import EditorFactory from '../../plugins/editor-factory.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { SECTION_ACTIONS } from '../../ui/section-actions.js';
+import React, { Fragment, useEffect, useState } from 'react';
+import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { useDateFormat, useLanguage } from '../language-context.js';
-import errorHelper, { handleApiError } from '../../ui/error-helper.js';
-import LanguageNameProvider from '../../data/language-name-provider.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import { confirmDocumentRevisionRestoration } from '../confirmation-dialogs.js';
-import { documentRevisionShape, documentShape } from '../../ui/default-prop-types.js';
-import { ALERT_TYPE, DOCUMENT_TYPE, DOCUMENT_ORIGIN } from '../../domain/constants.js';
-import { PaperClipOutlined, ReloadOutlined, EditOutlined, SlidersOutlined, FormOutlined } from '@ant-design/icons';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
+import { ALERT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import { documentRevisionShape, documentShape, sectionShape } from '../../ui/default-prop-types.js';
+import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
+import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import {
+  confirmDiscardUnsavedChanges,
+  confirmDocumentRevisionRestoration,
+  confirmSectionDelete,
+  confirmSectionHardDelete
+} from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
 
+const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
+
+const VIEW = {
+  display: 'display',
+  edit: DOC_VIEW_QUERY_PARAM.edit,
+  history: DOC_VIEW_QUERY_PARAM.history
+};
+
 function Doc({ initialState, PageTemplate }) {
+  const user = useUser();
+  const request = useRequest();
+  const { t } = useTranslation('doc');
   const globalAlerts = useGlobalAlerts();
   const [alerts, setAlerts] = useState([]);
-
-  const { t } = useTranslation('doc');
-  const { formatDate } = useDateFormat();
-
-  const { language } = useLanguage();
-  const languageNameProvider = useService(LanguageNameProvider);
+  const infoFactory = useService(InfoFactory);
+  const editorFactory = useService(EditorFactory);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-  const [state, setState] = useState({
-    revisions: [],
-    currentDocOrRevision: initialState.currentDocOrRevision,
-    type: initialState.type
-  });
+  const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
+  const initialView = Object.values(VIEW).find(v => v === request.query.view) || VIEW.display;
 
-  const handleEditClick = () => {
-    window.location = urls.getDocUrl({ key: state.currentDocOrRevision });
+  const isEditViewAllowed = !isExternalDocument && !initialState.doc.archived;
+  const isHardDeletionAllowed = hasUserPermission(user, permissions.HARD_DELETE_SECTION);
+
+  const [isDirty, setIsDirty] = useState(false);
+  const [doc, setDoc] = useState(initialState.doc);
+  const [view, setView] = useState(initialView);
+  const [historyRevisions, setHistoryRevisions] = useState([]);
+  const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
+  const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
+  const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
+  const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
+  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
+  const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
+
+  useEffect(() => {
+    const newAlerts = [...globalAlerts];
+
+    if (doc.archived) {
+      newAlerts.push({
+        message: t('common:archivedAlert'),
+        type: ALERT_TYPE.warning,
+        showInFullScreen: false
+      });
+    }
+
+    if (isExternalDocument) {
+      newAlerts.push({
+        message:
+          (<Trans
+            t={t}
+            i18nKey="common:externalDocumentWarning"
+            components={[<a key="external-document-warning" href={doc.originUrl} />]}
+            />),
+        type: 'warning',
+        showInFullScreen: false
+      });
+    }
+
+    if (view === VIEW.edit && pendingTemplateSectionKeys?.length) {
+      newAlerts.push({
+        message: t('proposedSectionsAlert'),
+        type: ALERT_TYPE.info,
+        showInFullScreen: false
+      });
+    }
+
+    setAlerts(newAlerts);
+  }, [globalAlerts, doc, view, isExternalDocument, pendingTemplateSectionKeys, t]);
+
+  useEffect(() => {
+    if (initialView === VIEW.edit || view === VIEW.edit) {
+      ensureEditorsAreLoaded(editorFactory);
+    }
+
+    if (initialView === VIEW.history) {
+      (async () => {
+        try {
+          const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+          setHistoryRevisions(documentRevisions);
+          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+        } catch (error) {
+          handleApiError({ error, t, logger });
+        }
+      })();
+    }
+  }, [initialView, doc.key, view, t, editorFactory, documentApiClient]);
+
+  useEffect(() => {
+    switch (view) {
+      case VIEW.display:
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
+        break;
+      case VIEW.edit:
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.edit }));
+        break;
+      case VIEW.history:
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.history }));
+        break;
+      default:
+        break;
+    }
+  }, [doc.key, doc.slug, view]);
+
+  const handleEditMetadataOpen = () => {
+    setIsDocumentMetadataModalVisible(true);
   };
 
-  const handleViewRevionsClick = async () => {
-    const { key: docKey } = state.currentDocOrRevision;
+  const handleDocumentMetadataModalSave = async ({ title, slug, language, tags }) => {
+    const mappedDocumentRevision = {
+      title,
+      slug,
+      language,
+      tags,
+      sections: latestRevision.sections.map(section => ({
+        key: section.key,
+        type: section.type,
+        content: section.content
+      })),
+      appendTo: {
+        key: latestRevision.key,
+        ancestorId: latestRevision._id
+      }
+    };
+    const { documentRevision } = await documentApiClient.saveDocument(mappedDocumentRevision);
+    const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
+
+    setDoc(latestDoc);
+    setLatestRevision(documentRevision);
+    setIsDocumentMetadataModalVisible(false);
+  };
+
+  const handleDocumentMetadataModalClose = () => {
+    setIsDocumentMetadataModalVisible(false);
+  };
+
+  const handleEditOpen = async () => {
+    const { documentRevisions: revisions } = await documentApiClient.getDocumentRevisions(doc.key);
+
+    const newLatestRevision = revisions[revisions.length - 1];
+
+    setView(VIEW.edit);
+    setLatestRevision(newLatestRevision);
+    setCurrentSections(cloneDeep(newLatestRevision.sections));
+  };
+
+  const handleEditSave = async () => {
+    const mappedDocumentRevision = {
+      title: latestRevision.title,
+      slug: latestRevision.slug,
+      language: latestRevision.language,
+      tags: latestRevision.tags,
+      sections: currentSections.filter(s => !pendingTemplateSectionKeys.includes(s.key)).map(s => ({
+        key: s.key,
+        type: s.type,
+        content: s.content
+      })),
+      appendTo: {
+        key: latestRevision.key,
+        ancestorId: latestRevision._id
+      }
+    };
+
     try {
-      const { documentRevisions } = await documentApiClient.getDocumentRevisions(docKey);
-      setState({
-        currentDocOrRevision: documentRevisions[documentRevisions.length - 1],
-        revisions: documentRevisions,
-        type: DOCUMENT_TYPE.revision
+      const { documentRevision: newRevision } = await documentApiClient.saveDocument(mappedDocumentRevision);
+
+      const currentSectionKeys = currentSections.map(s => s.key);
+      if (newRevision.sections.some(s => !currentSectionKeys.includes(s.key))) {
+        throw new Error('Updated sections do not match exiting sections');
+      }
+
+      const newPendingTemplateSectionKeys = [];
+      const mergedSections = currentSections.map(currentSection => {
+        const updatedSection = newRevision.sections.find(s => s.key === currentSection.key);
+        if (updatedSection) {
+          return updatedSection;
+        }
+
+        newPendingTemplateSectionKeys.push(currentSection.key);
+        return currentSection;
       });
+
+      const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
+
+      setIsDirty(false);
+      setDoc(latestDoc);
+      setLatestRevision(newRevision);
+      setCurrentSections(cloneDeep(mergedSections));
+      setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
+  const handleEditClose = () => {
+    return new Promise(resolve => {
+      const exitEditMode = () => {
+        setPendingTemplateSectionKeys([]);
+        setCurrentSections(latestRevision.sections);
+
+        setIsDirty(false);
+        setView(VIEW.display);
+        setInvalidSectionKeys([]);
+        resolve(true);
+      };
+
+      if (isDirty) {
+        confirmDiscardUnsavedChanges(t, exitEditMode, () => resolve(false));
+      } else {
+        exitEditMode();
+      }
+    });
+  };
+
+  const handleSectionContentChange = (index, newContent, isInvalid) => {
+    const modifiedSection = {
+      ...currentSections[index],
+      content: newContent
+    };
+
+    const newSections = replaceItemAt(currentSections, modifiedSection, index);
+    setCurrentSections(newSections);
+    setInvalidSectionKeys(keys => isInvalid ? ensureIsIncluded(keys, modifiedSection.key) : ensureIsExcluded(keys, modifiedSection.key));
+    setIsDirty(true);
+  };
+
+  const handleSectionMove = (sourceIndex, destinationIndex) => {
+    const reorderedSections = moveItem(currentSections, sourceIndex, destinationIndex);
+    setCurrentSections(reorderedSections);
+    setIsDirty(true);
+  };
+
+  const handleSectionInsert = (pluginType, index) => {
+    const pluginInfo = infoFactory.createInfo(pluginType);
+    const newSection = {
+      key: uniqueId.create(),
+      type: pluginType,
+      content: pluginInfo.getDefaultContent(t)
+    };
+    const newSections = insertItemAt(currentSections, newSection, index);
+    setCurrentSections(newSections);
+    setIsDirty(true);
+  };
+
+  const handleSectionDuplicate = index => {
+    const originalSection = currentSections[index];
+    const duplicatedSection = cloneDeep(originalSection);
+    duplicatedSection.key = uniqueId.create();
+
+    const expandedSections = insertItemAt(currentSections, duplicatedSection, index + 1);
+    setCurrentSections(expandedSections);
+    setIsDirty(true);
+    if (invalidSectionKeys.includes(originalSection.key)) {
+      setInvalidSectionKeys(keys => ensureIsIncluded(keys, duplicatedSection.key));
+    }
+  };
+
+  const handleSectionDelete = index => {
+    confirmSectionDelete(
+      t,
+      () => {
+        const section = currentSections[index];
+        const reducedSections = removeItemAt(currentSections, index);
+        setInvalidSectionKeys(keys => ensureIsExcluded(keys, section.key));
+        setCurrentSections(reducedSections);
+        setIsDirty(true);
+      }
+    );
+  };
+
+  const handlePendingSectionApply = index => {
+    const appliedSectionKey = currentSections[index].key;
+    setPendingTemplateSectionKeys(prevKeys => ensureIsExcluded(prevKeys, appliedSectionKey));
+    setIsDirty(true);
+  };
+
+  const handlePendingSectionDiscard = index => {
+    const discardedSection = currentSections[index];
+    setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
+    setIsDirty(true);
+  };
+
+  const handleHistoryOpen = async () => {
+    try {
+      const { documentRevisions } = await documentApiClient.getDocumentRevisions(doc.key);
+      setHistoryRevisions(documentRevisions);
+      setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
+      setView(VIEW.history);
     } catch (error) {
       handleApiError({ error, t, logger });
     }
   };
 
-  const handleViewDocumentClick = () => {
-    window.location.reload();
-  };
-
-  const formatRevisionTooltip = index => {
-    const revision = state.revisions[index];
-    const languageName = languageNameProvider.getData(language)[revision.language].name;
-
-    return (
-      <div>
-        <div>{t('common:revision')}: <b>{index + 1}</b></div>
-        <div>{t('date')}: <b>{formatDate(revision.createdOn)}</b></div>
-        <div>{t('common:language')}: <b>{languageName}</b></div>
-        <div>{t('user')}: <b>{revision.createdBy.username}</b></div>
-        <div>{t('id')}: <b>{revision._id}</b></div>
-        {revision.restoredFrom && <div style={{ whiteSpace: 'nowrap' }}>{t('restoredFrom')}: <b>{revision.restoredFrom}</b></div>}
-      </div>
-    );
-  };
-
-  const handleIndexChanged = index => {
-    setState(prevState => ({ ...prevState, currentDocOrRevision: prevState.revisions[index] }));
+  const handleHistoryClose = () => {
+    setHistoryRevisions([]);
+    setSelectedHistoryRevision(null);
+    setView(VIEW.display);
+    return true;
   };
 
   const handlePermalinkRequest = async () => {
-    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(state.currentDocOrRevision._id));
+    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(selectedHistoryRevision._id));
     try {
       await clipboardCopy(permalinkUrl);
       message.success(t('permalinkCopied'));
@@ -100,190 +353,137 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
-  const handleRestoreButtonClick = () => {
+  const handleSelectedRevisionChange = index => {
+    setSelectedHistoryRevision(historyRevisions[index]);
+  };
+
+  const handleRestoreRevision = () => {
     confirmDocumentRevisionRestoration(
       t,
-      state.currentDocOrRevision,
+      selectedHistoryRevision,
       async () => {
         try {
           const { documentRevisions } = await documentApiClient.restoreDocumentRevision({
-            documentKey: state.currentDocOrRevision.key,
-            revisionId: state.currentDocOrRevision._id
+            documentKey: selectedHistoryRevision.key,
+            revisionId: selectedHistoryRevision._id
           });
 
-          setState({
-            revisions: documentRevisions,
-            currentDocOrRevision: documentRevisions[documentRevisions.length - 1],
-            type: DOCUMENT_TYPE.revision
-          });
+          setHistoryRevisions(documentRevisions);
+          setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
         } catch (error) {
-          errorHelper.handleApiError({ error, logger, t });
+          handleApiError({ error, logger, t });
           throw error;
         }
       }
     );
   };
 
-  const hardDelete = async ({ sectionKey, sectionRevision, reason, deleteAllRevisions }) => {
-    const documentKey = state.currentDocOrRevision.key;
+  const hardDeleteSection = async ({ section, reason, deleteAllRevisions }) => {
+    const documentKey = doc.key;
+    const sectionKey = section.key;
+    const sectionRevision = section.revision;
+
     try {
       await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
     } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
+      handleApiError({ error, logger, t });
     }
 
     const { documentRevisions } = await documentApiClient.getDocumentRevisions(documentKey);
-    setState(prevState => ({
-      revisions: documentRevisions,
-      currentDocOrRevision: documentRevisions.find(revision => revision._id === prevState.currentDocOrRevision._id),
-      type: DOCUMENT_TYPE.revision
-    }));
+
+    setHistoryRevisions(documentRevisions);
+    setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
   };
 
-  const handleAction = ({ name, data }) => {
-    switch (name) {
-      case SECTION_ACTIONS.hardDelete:
-        return hardDelete(data);
-      default:
-        throw new Error(`Unknown action ${name}`);
-    }
+  const handleSectionHardDelete = index => {
+    confirmSectionHardDelete(
+      t,
+      async ({ reason, deleteAllRevisions }) => {
+        const section = selectedHistoryRevision.sections[index];
+        await hardDeleteSection({ section, reason, deleteAllRevisions });
+      }
+    );
   };
 
-  const marks = state.revisions.reduce((accu, _item, index) => {
-    accu[index] = index === 0 || index === state.revisions.length - 1 ? (index + 1).toString() : '';
-    return accu;
-  }, {});
-
-  const currentRevisionIndex = state.revisions.indexOf(state.currentDocOrRevision);
-  const isCurrentRevisionLatestRevision = currentRevisionIndex === state.revisions.length - 1;
-
-  const isExternalDocument = state.currentDocOrRevision.origin.startsWith(DOCUMENT_ORIGIN.external);
-  const isEditingDisabled = state.currentDocOrRevision.archived || isExternalDocument || state.type !== DOCUMENT_TYPE.document;
-  const isViewRevisionsButtonVisible = state.type === DOCUMENT_TYPE.document;
-  const isViewDocumentButtonVisible = state.type === DOCUMENT_TYPE.revision;
-  const isSectionHardDeletionAllowed = state.type === DOCUMENT_TYPE.revision && !isExternalDocument;
-
-  const revisionPicker = (
-    <div className="DocPage-revisionPicker">
-      <div className="DocPage-revisionPickerLabel">{t('common:revision')}:</div>
-      <div className="DocPage-revisionPickerSlider">
-        <Slider
-          min={0}
-          max={state.revisions.length - 1}
-          value={currentRevisionIndex}
-          step={null}
-          marks={marks}
-          onChange={handleIndexChanged}
-          tipFormatter={formatRevisionTooltip}
-          />
-      </div>
-      <div className="DocPage-revisionPickerButtons">
-        <Button
-          className="DocPage-revisionPickerButton"
-          type="primary"
-          icon={<PaperClipOutlined />}
-          onClick={handlePermalinkRequest}
-          >
-          {t('permalink')}
-        </Button>
-        {!isExternalDocument && (
-          <Restricted to={permissions.RESTORE_DOC_REVISIONS}>
-            <Button
-              className="DocPage-revisionPickerButton"
-              type="primary"
-              icon={<ReloadOutlined />}
-              onClick={handleRestoreButtonClick}
-              disabled={isCurrentRevisionLatestRevision}
-              >
-              {t('restore')}
-            </Button>
-          </Restricted>
-        )}
-      </div>
-    </div>
-  );
-
-  useEffect(() => {
-    const newAlerts = [...globalAlerts];
-
-    if (state.currentDocOrRevision.archived) {
-      newAlerts.push({
-        message: t('common:archivedAlert'),
-        type: ALERT_TYPE.warning,
-        showInFullScreen: false
-      });
-    }
-
-    if (isExternalDocument) {
-      newAlerts.push({
-        message:
-          (<Trans
-            t={t}
-            i18nKey="common:externalDocumentWarning"
-            components={[<a key="external-document-warning" href={state.currentDocOrRevision.originUrl} />]}
-            />),
-        type: 'warning',
-        showInFullScreen: false
-      });
-    }
-
-    setAlerts(newAlerts);
-  }, [globalAlerts, state.currentDocOrRevision, isExternalDocument, t]);
-
-  const headerActions = [];
-  if (!isEditingDisabled) {
-    headerActions.push({
-      key: 'edit',
-      type: 'primary',
-      icon: EditOutlined,
-      text: t('common:edit'),
-      permission: permissions.EDIT_DOC,
-      handleClick: handleEditClick
-    });
-  }
-  if (isViewRevisionsButtonVisible) {
-    headerActions.push({
-      key: 'viewRevisions',
-      type: 'primary',
-      icon: SlidersOutlined,
-      text: t('common:viewRevisions'),
-      permission: permissions.VIEW_DOCS,
-      handleClick: handleViewRevionsClick
-    });
-  }
-
-  if (isViewDocumentButtonVisible) {
-    headerActions.push({
-      key: 'viewDocument',
-      type: 'primary',
-      icon: FormOutlined,
-      text: t('common:viewDocument'),
-      permission: permissions.VIEW_DOCS,
-      handleClick: handleViewDocumentClick
-    });
+  let controlStatus;
+  if (invalidSectionKeys.length) {
+    controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
+  } else if (isDirty) {
+    controlStatus = EDIT_CONTROL_PANEL_STATUS.dirty;
+  } else {
+    controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
   }
 
   return (
-    <PageTemplate alerts={alerts}>
-      <div className="DocPage">
-        { state.revisions.length > 0 && revisionPicker}
-        <SectionsView
-          sections={state.currentDocOrRevision.sections}
-          onAction={isSectionHardDeletionAllowed ? handleAction : null}
+    <Fragment>
+      <PageTemplate alerts={alerts}>
+        <div className="DocPage">
+          <SectionsDisplay
+            sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
+            pendingSectionKeys={pendingTemplateSectionKeys}
+            sectionsContainerId={doc.key}
+            canEdit={view === VIEW.edit}
+            canHardDelete={isHardDeletionAllowed && view === VIEW.history}
+            onPendingSectionApply={handlePendingSectionApply}
+            onPendingSectionDiscard={handlePendingSectionDiscard}
+            onSectionContentChange={handleSectionContentChange}
+            onSectionMove={handleSectionMove}
+            onSectionInsert={handleSectionInsert}
+            onSectionDuplicate={handleSectionDuplicate}
+            onSectionDelete={handleSectionDelete}
+            onSectionHardDelete={handleSectionHardDelete}
+            />
+        </div>
+        <aside className="Content">
+          <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
+        </aside>
+      </PageTemplate>
+      <Restricted to={permissions.EDIT_DOC}>
+        <HistoryControlPanel
+          revisions={historyRevisions}
+          selectedRevisionIndex={historyRevisions.indexOf(selectedHistoryRevision)}
+          startOpen={initialView === VIEW.history}
+          onOpen={handleHistoryOpen}
+          onClose={handleHistoryClose}
+          canRestoreRevisions={!isExternalDocument}
+          onPermalinkRequest={handlePermalinkRequest}
+          onSelectedRevisionChange={handleSelectedRevisionChange}
+          onRestoreRevision={handleRestoreRevision}
           />
-      </div>
-      <aside className="Content">
-        <CreditsFooter documentOrRevision={state.currentDocOrRevision} type={state.type} />
-      </aside>
-    </PageTemplate>
+        {isEditViewAllowed && (
+          <EditControlPanel
+            canClose
+            canCancel={false}
+            startOpen={initialView === VIEW.edit}
+            onOpen={handleEditOpen}
+            onMetadataOpen={handleEditMetadataOpen}
+            onSave={handleEditSave}
+            onClose={handleEditClose}
+            status={controlStatus}
+            metadata={(
+              <span className="DocPage-editControlPanelItem">{doc.title}</span>
+            )}
+            />
+        )}
+      </Restricted>
+
+      <DocumentMetadataModal
+        initialDocumentMetadata={doc}
+        isVisible={isDocumentMetadataModalVisible}
+        mode={DOCUMENT_METADATA_MODAL_MODE.update}
+        onSave={handleDocumentMetadataModalSave}
+        onClose={handleDocumentMetadataModalClose}
+        />
+    </Fragment>
   );
 }
 
 Doc.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    currentDocOrRevision: PropTypes.oneOfType([documentRevisionShape, documentShape]),
-    type: PropTypes.oneOf(Object.values(DOCUMENT_TYPE))
+    doc: documentShape.isRequired,
+    latestRevision: documentRevisionShape,
+    templateSections: PropTypes.arrayOf(sectionShape)
   }).isRequired
 };
 

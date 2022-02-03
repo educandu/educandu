@@ -15,10 +15,10 @@ import LanguageFlagAndName from '../language-flag-and-name.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { useDateFormat, useLanguage } from '../language-context.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW } from '../../domain/constants.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 
 const { Search } = Input;
@@ -102,7 +102,7 @@ function Docs({ initialState, PageTemplate }) {
     window.location = urls.getDocUrl({
       key: documentRevision.key,
       slug: documentRevision.slug,
-      view: DOC_VIEW.edit,
+      view: DOC_VIEW_QUERY_PARAM.edit,
       templateDocumentKey: templateDocumentKey || clonedDocument?.key
     });
   };

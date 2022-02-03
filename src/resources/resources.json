@@ -218,6 +218,24 @@
     }
   },
   {
+    "namespace": "historyControlPanel",
+    "language": "en",
+    "resources": {
+      "restoredFrom": "Restored from",
+      "permalink": "Permalink",
+      "restore": "Restore"
+    }
+  },
+  {
+    "namespace": "historyControlPanel",
+    "language": "de",
+    "resources": {
+      "restoredFrom": "Wiederhergestellt aus",
+      "permalink": "Permalink",
+      "restore": "Wiederherstellen"
+    }
+  },
+  {
     "namespace": "importTypeIcon",
     "language": "en",
     "resources": {
@@ -390,45 +408,21 @@
     }
   },
   {
-    "namespace": "docNew",
-    "language": "en",
-    "resources": {
-      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n"
-    }
-  },
-  {
-    "namespace": "docNew",
-    "language": "de",
-    "resources": {
-      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n"
-    }
-  },
-  {
     "namespace": "doc",
     "language": "en",
     "resources": {
-      "date": "Date",
-      "user": "User",
-      "id": "ID",
-      "restoredFrom": "Restored from",
-      "permalink": "Permalink",
+      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
       "permalinkCopied": "The permalink was copied to the clipboard",
-      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard",
-      "restore": "Restore"
+      "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard"
     }
   },
   {
     "namespace": "doc",
     "language": "de",
     "resources": {
-      "date": "Datum",
-      "user": "Benutzer",
-      "id": "ID",
-      "restoredFrom": "Wiederhergestellt aus",
-      "permalink": "Permalink",
+      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n",
       "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
-      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden",
-      "restore": "Wiederherstellen"
+      "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
     }
   },
   {
@@ -1500,6 +1494,7 @@
       "moveDown": "Move down",
       "confirm": "Confirm",
       "error": "Error",
+      "date": "Date",
       "language": "Language",
       "invalidSlug": "The URL path should contain only lower case letters, hyphens, slashes and digits",
       "archivedAlert": "This document is archived and cannot be edited",
@@ -1523,6 +1518,8 @@
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
+      "id": "ID",
+      "user": "User",
       "username": "User name",
       "password": "Password",
       "text": "Text",
@@ -1558,6 +1555,7 @@
       "moveDown": "Nach unten verschieben",
       "confirm": "Bestätigen",
       "error": "Fehler",
+      "date": "Datum",
       "language": "Sprache",
       "invalidSlug": "Der URL-Pfad sollte nur Kleinbuchstaben, Bindestriche, Schrägstriche und Ziffern enthalten",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
@@ -1581,6 +1579,8 @@
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",
+      "id": "ID",
+      "user": "Benutzer",
       "username": "Benutzername",
       "password": "Kennwort",
       "text": "Text",

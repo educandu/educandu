@@ -1,0 +1,76 @@
+@control-panel-gap: 4px;
+@control-panel-padding: @edu-content-padding;
+@control-panel-content-height: @edu-control-height-sm;
+@control-panel-height: @control-panel-content-height + (2 * @control-panel-padding);
+
+.ControlPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: %(~"calc(100% - %s)", @control-panel-height);
+  bottom: 0;
+  height: @control-panel-height;
+  width: @control-panel-height;
+  color: @edu-white;
+  background-color: @edu-primary-color;
+  transition: width 500ms ease;
+  z-index: @z-index-overlay-layer;
+
+  &.ControlPanel--position1 {
+    left: %(~"calc(100% - %s)", @control-panel-height * 2);
+  }
+
+  &.ControlPanel--position2 {
+    left: %(~"calc(100% - %s)", @control-panel-height * 3 + @control-panel-gap);
+  }
+
+  &.is-open {
+    width: 100%;
+    z-index: @z-index-sticky-content-layer;
+  }
+}
+
+.ControlPanel-content {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: @control-panel-padding;
+  padding-right: @control-panel-padding;
+}
+
+.ControlPanel-contentLeft {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.ControlPanel-contentRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ControlPanel-closeButton {
+  .m-icon-button;
+
+  &.ant-btn:disabled {
+    color: fade(@edu-white, 60%);
+    border-color: fade(@edu-white, 60%);
+  }
+}
+
+.ControlPanel-openButton {
+  .m-no-spinner-background;
+  height: @control-panel-height;
+  width: @control-panel-height;
+  color: lighten(@edu-primary-color, 50%);
+
+  &:hover, &:focus {
+    color: @edu-white;
+  }
+}
+
