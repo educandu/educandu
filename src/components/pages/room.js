@@ -245,7 +245,7 @@ export default function Room({ PageTemplate, initialState }) {
                     <span className="Room-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
                     <span className="Room-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
                   </div>
-                  <Button type="primary" icon={<DeleteOutlined />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
+                  <Button className="Room-cardDangerActionButton" type="primary" icon={<DeleteOutlined />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
                 </div>
               </Card>
             </TabPane>

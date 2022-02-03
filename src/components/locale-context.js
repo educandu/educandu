@@ -117,7 +117,8 @@ export function useDateFormat() {
 export function withLocale(Component) {
   return function UserInjector(props) {
     const { uiLanguage, uiLocale } = useLocale();
-    return <Component {...props} uiLanguage={uiLanguage} uiLocale={uiLocale} />;
+    const { formatDate } = useDateFormat();
+    return <Component {...props} uiLanguage={uiLanguage} uiLocale={uiLocale} formatDate={formatDate} />;
   };
 }
 
