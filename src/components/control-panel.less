@@ -15,7 +15,7 @@
   color: @edu-white;
   background-color: @edu-primary-color;
   transition: width 500ms ease;
-  z-index: @z-index-overlay-layer;
+  z-index: @edu-z-index-overlay-layer;
 
   &.ControlPanel--position1 {
     left: %(~"calc(100% - %s)", @control-panel-height * 2);
@@ -27,7 +27,7 @@
 
   &.is-open {
     width: 100%;
-    z-index: @z-index-sticky-content-layer;
+    z-index: @edu-z-index-sticky-content-layer;
   }
 }
 
