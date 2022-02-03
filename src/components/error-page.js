@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import { settingsProps } from '../ui/default-prop-types.js';
 
-function ErrorPage({ error, settings, language, i18n }) {
+function ErrorPage({ error, settings, uiLanguage, i18n }) {
   const backHtml = `<a onclick="window.history.back();">${i18n.t('common:back')}</a>`;
   return (
     <div className="ErrorPage">
@@ -26,7 +26,7 @@ function ErrorPage({ error, settings, language, i18n }) {
       </main>
       <footer className="ErrorPage-footer">
         <div className="ErrorPage-footerContent">
-          {(settings.footerLinks?.[language] || []).map((fl, index) => (
+          {(settings.footerLinks?.[uiLanguage] || []).map((fl, index) => (
             <span key={index.toString()} className="ErrorPage-footerLink">
               <a href={urls.getDocUrl({ key: fl.documentKey, slug: fl.documentSlug })}>{fl.linkTitle}</a>
             </span>
@@ -41,7 +41,7 @@ ErrorPage.propTypes = {
   ...settingsProps,
   error: PropTypes.object.isRequired,
   i18n: PropTypes.object.isRequired,
-  language: PropTypes.string.isRequired
+  uiLanguage: PropTypes.string.isRequired
 };
 
 export default ErrorPage;

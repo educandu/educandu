@@ -6,7 +6,7 @@ import ControlPanel from './control-panel.js';
 import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
-import { useDateFormat, useLanguage } from './language-context.js';
+import { useDateFormat, useLocale } from './locale-context.js';
 import { documentRevisionShape } from '../ui/default-prop-types.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
 
@@ -23,7 +23,7 @@ function HistoryControlPanel({
   onSelectedRevisionChange,
   onRestoreRevision
 }) {
-  const { language } = useLanguage();
+  const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('historyControlPanel');
   const languageNameProvider = useService(LanguageNameProvider);
@@ -41,7 +41,7 @@ function HistoryControlPanel({
 
   const formatRevisionTooltip = index => {
     const revision = revisions[index];
-    const languageName = languageNameProvider.getData(language)[revision.language].name;
+    const languageName = languageNameProvider.getData(uiLanguage)[revision.language].name;
 
     return (
       <div>

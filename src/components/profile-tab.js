@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 import Logger from '../common/logger.js';
 import localeCompare from 'locale-compare';
 import errorHelper from '../ui/error-helper.js';
+import { useLocale } from './locale-context.js';
 import { useService } from './container-context.js';
-import { useLanguage } from './language-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { useSetUser, useUser } from './user-context.js';
 import UserApiClient from '../api-clients/user-api-client.js';
@@ -23,23 +23,23 @@ const Option = Select.Option;
 
 const AVATAR_SIZE = 256;
 
-const createCountryNames = memoizee((countryNameProvider, language) => {
-  return Object.entries(countryNameProvider.getData(language))
+const createCountryNames = memoizee((countryNameProvider, uiLanguage) => {
+  return Object.entries(countryNameProvider.getData(uiLanguage))
     .map(([key, name]) => ({ key, name }))
-    .sort(by(x => x.name, { cmp: localeCompare(language) }));
+    .sort(by(x => x.name, { cmp: localeCompare(uiLanguage) }));
 }, { max: 1 });
 
 function ProfileTab({ formItemLayout, tailFormItemLayout }) {
   const user = useUser();
   const setUser = useSetUser();
-  const { language } = useLanguage();
+  const { uiLanguage } = useLocale();
   const { t } = useTranslation('profileTab');
   const countryNameProvider = useService(CountryNameProvider);
   const userApiClient = useSessionAwareApiClient(UserApiClient);
 
   const profile = user.profile || { country: '' };
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
-  const gravatarRagistrationUrl = `https://${language}.gravatar.com/`;
+  const gravatarRagistrationUrl = `https://${uiLanguage}.gravatar.com/`;
 
   const [showAvatarDescription, setShowAvatarDescription] = useState(false);
 
@@ -126,7 +126,7 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
           allowClear
           autoComplete="none"
           >
-          {createCountryNames(countryNameProvider, language).map(cn => (
+          {createCountryNames(countryNameProvider, uiLanguage).map(cn => (
             <Option key={cn.key} value={cn.key} title={cn.name}>
               <CountryFlagAndName code={cn.key} name={cn.name} />
             </Option>

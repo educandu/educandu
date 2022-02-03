@@ -24,33 +24,33 @@ const antLocales = {
   deDE: deDENs.default || deDENs
 };
 
-const languageContext = React.createContext();
+const localeContext = React.createContext();
 
-const ActualLanguageProvider = languageContext.Provider;
+const ActualLocaleProvider = localeContext.Provider;
 
-function createI18n(resourceManager, language) {
-  return resourceManager.createI18n(language);
+function createI18n(resourceManager, uiLanguage) {
+  return resourceManager.createI18n(uiLanguage);
 }
 
-function determineAntdLocale(language) {
-  switch (language) {
+function determineAntdLocale(uiLanguage) {
+  switch (uiLanguage) {
     case UI_LANGUAGE_EN: return antLocales.enUS;
     case UI_LANGUAGE_DE: return antLocales.deDE;
-    default: throw new Error(`No locale data for language ${language}!`);
+    default: throw new Error(`No locale data for language ${uiLanguage}!`);
   }
 }
 
-function setLanguageCookie(language) {
-  cookie.set(UI_LANGUAGE_COOKIE_NAME, language, UI_LANGUAGE_COOKIE_EXPIRES);
+function setUiLanguageCookie(uiLanguage) {
+  cookie.set(UI_LANGUAGE_COOKIE_NAME, uiLanguage, UI_LANGUAGE_COOKIE_EXPIRES);
 }
 
-const createLanguageAndLocale = memoizee(language => {
-  const supportedLanguages = SUPPORTED_UI_LANGUAGES;
-  const locale = getLocale(language);
-  return { supportedLanguages, language, locale };
+const createUiLanguageAndLocale = memoizee(uiLanguage => {
+  const supportedUiLanguages = SUPPORTED_UI_LANGUAGES;
+  const uiLocale = getLocale(uiLanguage);
+  return { supportedUiLanguages, uiLanguage, uiLocale };
 });
 
-export function LanguageProvider({ value, children }) {
+export function LocaleProvider({ value, children }) {
   const resourceManager = useService(ResourceManager);
   const [i18n] = useState(createI18n(resourceManager, value));
   const [antdLocale, setAntdLocale] = useState(determineAntdLocale(i18n.language));
@@ -62,69 +62,68 @@ export function LanguageProvider({ value, children }) {
   }, [i18n, value]);
 
   useEffect(() => {
-    i18n.on('languageChanged', language => {
-      if (!SUPPORTED_UI_LANGUAGES.includes(language)) {
-        throw new Error(`Not a supported language: ${language}!`);
+    i18n.on('languageChanged', newUiLanguage => {
+      if (!SUPPORTED_UI_LANGUAGES.includes(newUiLanguage)) {
+        throw new Error(`Not a supported language: ${newUiLanguage}!`);
       }
-      setLanguageCookie(language);
-      setAntdLocale(determineAntdLocale(language));
+      setUiLanguageCookie(newUiLanguage);
+      setAntdLocale(determineAntdLocale(newUiLanguage));
     });
     return () => i18n.off('languageChanged');
   }, [i18n]);
 
   return (
-    <ActualLanguageProvider value={i18n.language}>
+    <ActualLocaleProvider value={i18n.language}>
       <I18nextProvider i18n={i18n}>
         <ConfigProvider locale={antdLocale}>
           { children }
         </ConfigProvider>
       </I18nextProvider>
-    </ActualLanguageProvider>
+    </ActualLocaleProvider>
   );
 }
 
-LanguageProvider.propTypes = {
+LocaleProvider.propTypes = {
   children: PropTypes.node,
   value: PropTypes.string.isRequired
 };
 
-LanguageProvider.defaultProps = {
+LocaleProvider.defaultProps = {
   children: null
 };
 
-export function useLanguage() {
-  return createLanguageAndLocale(useContext(languageContext));
+export function useLocale() {
+  return createUiLanguageAndLocale(useContext(localeContext));
 }
 
 export function useDateFormat() {
-  const { locale } = useLanguage();
+  const { uiLocale } = useLocale();
 
   return useMemo(() => {
-    const dateTimeFormat = locale === 'de-DE' ? 'DD.MM.YYYY, HH:mm' : 'MM/DD/YYYY, HH:mm';
+    const dateTimeFormat = uiLocale === 'de-DE' ? 'DD.MM.YYYY, HH:mm' : 'MM/DD/YYYY, HH:mm';
     const localePattern = 'L, LT';
 
-    const formatDate = date => date ? moment(date).locale(locale).format(localePattern) : '';
-    const formatTimeTo = date => date ? moment().locale(locale).to(date) : '';
+    const formatDate = date => date ? moment(date).locale(uiLocale).format(localePattern) : '';
+    const formatTimeTo = date => date ? moment().locale(uiLocale).to(date) : '';
 
     return {
       formatDate,
       formatTimeTo,
       dateTimeFormat
     };
-  }, [locale]);
+  }, [uiLocale]);
 }
 
-export function withLanguage(Component) {
+export function withLocale(Component) {
   return function UserInjector(props) {
-    const { language, locale } = useLanguage();
-    const { formatDate } = useDateFormat();
-    return <Component {...props} language={language} locale={locale} formatDate={formatDate} />;
+    const { uiLanguage, uiLocale } = useLocale();
+    return <Component {...props} uiLanguage={uiLanguage} uiLocale={uiLocale} />;
   };
 }
 
 export default {
-  LanguageProvider,
-  withLanguage,
-  useLanguage,
+  LocaleProvider,
+  withLocale,
+  useLocale,
   useDateFormat
 };

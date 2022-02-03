@@ -2,9 +2,9 @@ import autoBind from 'auto-bind';
 import { withTranslation } from 'react-i18next';
 import { Form, Button, Modal, Spin } from 'antd';
 import React, { Fragment, createRef } from 'react';
-import { withLanguage } from '../../../components/language-context.js';
+import { withLocale } from '../../../components/locale-context.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
-import { sectionEditorProps, translationProps, languageProps } from '../../../ui/default-prop-types.js';
+import { sectionEditorProps, translationProps, uiLanguageProps } from '../../../ui/default-prop-types.js';
 
 const createEmbeddedEditorUrl = lang => [
   'https://embed.diagrams.net/',
@@ -107,9 +107,9 @@ class DiagramNetEditor extends React.Component {
   }
 
   handleEditClick() {
-    const { language } = this.props;
+    const { uiLanguage } = this.props;
     this.setState({
-      iframeUrl: createEmbeddedEditorUrl(language),
+      iframeUrl: createEmbeddedEditorUrl(uiLanguage),
       isEditorReady: false
     });
   }
@@ -170,8 +170,8 @@ class DiagramNetEditor extends React.Component {
 
 DiagramNetEditor.propTypes = {
   ...translationProps,
-  ...languageProps,
+  ...uiLanguageProps,
   ...sectionEditorProps
 };
 
-export default withTranslation('diagramNet')(withLanguage(DiagramNetEditor));
+export default withTranslation('diagramNet')(withLocale(DiagramNetEditor));

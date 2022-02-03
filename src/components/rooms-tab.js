@@ -8,7 +8,7 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../domain/permissions.js';
-import { useDateFormat } from './language-context.js';
+import { useDateFormat } from './locale-context.js';
 import { roomShape } from '../ui/default-prop-types.js';
 import RoomCreationModal from './room-creation-modal.js';
 

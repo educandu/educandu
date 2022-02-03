@@ -4,7 +4,7 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import ImportTypeIcon from '../import-type-icon.js';
-import { useDateFormat } from '../language-context.js';
+import { useDateFormat } from '../locale-context.js';
 import { Table, Row, Space, Collapse, List } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';

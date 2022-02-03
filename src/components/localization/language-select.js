@@ -1,9 +1,9 @@
 import by from 'thenby';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
+import { useLocale } from '../locale-context.js';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
-import { useLanguage } from '../language-context.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 
@@ -21,12 +21,12 @@ function createLanguageList(languageNameProvider, language, languages) {
 }
 
 function LanguageSelect({ size, value, languages, onChange }) {
-  const { language } = useLanguage();
+  const { uiLanguage } = useLocale();
   const languageNameProvider = useService(LanguageNameProvider);
-  const [languageList, setLanguageList] = useState(createLanguageList(languageNameProvider, language, languages));
+  const [languageList, setLanguageList] = useState(createLanguageList(languageNameProvider, uiLanguage, languages));
   useEffect(() => {
-    setLanguageList(createLanguageList(languageNameProvider, language, languages));
-  }, [languageNameProvider, language, languages]);
+    setLanguageList(createLanguageList(languageNameProvider, uiLanguage, languages));
+  }, [languageNameProvider, uiLanguage, languages]);
 
   return (
     <Select

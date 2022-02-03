@@ -7,10 +7,10 @@ import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';
 import PasswordInput from '../password-input.js';
 import UsernameInput from '../username-input.js';
+import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
-import { useLanguage } from '../language-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { SAVE_USER_RESULT } from '../../domain/constants.js';
@@ -23,7 +23,7 @@ const FormItem = Form.Item;
 function Register({ PageTemplate, SiteLogo }) {
   const formRef = useRef(null);
   const settings = useSettings();
-  const { language } = useLanguage();
+  const { uiLanguage } = useLocale();
   const { t } = useTranslation('register');
   const userApiClient = useService(UserApiClient);
 
@@ -92,7 +92,7 @@ function Register({ PageTemplate, SiteLogo }) {
     }
   ];
 
-  const termsPage = settings.termsPage?.[language];
+  const termsPage = settings.termsPage?.[uiLanguage];
 
   const registrationForm = (
     <div className="RegisterPage-form">

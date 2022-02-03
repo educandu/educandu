@@ -18,7 +18,7 @@ const parseElementDefinitions = memoizee(html => {
     });
 });
 
-function PageTemplate({ language, title, content, styles, scripts, additionalHeadHtml }) {
+function PageTemplate({ uiLanguage, title, content, styles, scripts, additionalHeadHtml }) {
   const additionalHeadElementDefinitions = parseElementDefinitions(additionalHeadHtml);
 
   const additionalHeadElements = additionalHeadElementDefinitions.map((elem, index) => {
@@ -38,7 +38,7 @@ function PageTemplate({ language, title, content, styles, scripts, additionalHea
   });
 
   return (
-    <html language={language}>
+    <html language={uiLanguage}>
       <head>
         <title>{ title }</title>
         <meta charSet="utf-8" />
@@ -57,10 +57,10 @@ function PageTemplate({ language, title, content, styles, scripts, additionalHea
 PageTemplate.propTypes = {
   additionalHeadHtml: PropTypes.string,
   content: PropTypes.string.isRequired,
-  language: PropTypes.string.isRequired,
   scripts: PropTypes.array,
   styles: PropTypes.array,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  uiLanguage: PropTypes.string.isRequired
 };
 
 PageTemplate.defaultProps = {

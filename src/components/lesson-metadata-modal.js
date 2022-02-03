@@ -7,9 +7,9 @@ import errorHelper from '../ui/error-helper.js';
 import inputValidators from '../utils/input-validators.js';
 import LanguageSelect from './localization/language-select.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import { useDateFormat, useLocale } from './locale-context.js';
 import LessonApiClient from '../api-clients/lesson-api-client.js';
 import { lessonMetadataShape } from '../ui/default-prop-types.js';
-import { useDateFormat, useLanguage } from './language-context.js';
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Form, Modal, Input, DatePicker, Collapse, Select, InputNumber, Checkbox, Alert } from 'antd';
 
@@ -47,7 +47,7 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
 function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
   const formRef = useRef(null);
   const { dateTimeFormat } = useDateFormat();
-  const { language: uiLanguage } = useLanguage();
+  const { uiLanguage } = useLocale();
   const { t } = useTranslation('lessonMetadataModal');
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 

@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import { Modal, Radio } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from './language-context.js';
+import { useLocale } from './locale-context.js';
 import LanguageFlagAndName from './language-flag-and-name.js';
 
 function UiLanguageDialog({ visible, onClose }) {
   const { t, i18n } = useTranslation('uiLanguageDialog');
-  const { supportedLanguages, language } = useLanguage();
-  const [selectedLanguage, setSelectedLanguage] = useState(language);
+  const { supportedUiLanguages, uiLanguage } = useLocale();
+  const [selectedLanguage, setSelectedLanguage] = useState(uiLanguage);
 
   const handleOk = () => {
     i18n.changeLanguage(selectedLanguage);
@@ -25,7 +25,7 @@ function UiLanguageDialog({ visible, onClose }) {
     <Modal visible={visible} onOk={handleOk} onCancel={handleCancel} title={t('title')}>
       <div className="UiLanguageDialog-explanation">{t('explanation')}</div>
       <Radio.Group className="UiLanguageDialog-languageSwitch" value={selectedLanguage} onChange={handleLanguageChange}>
-        {supportedLanguages.map(lang => (
+        {supportedUiLanguages.map(lang => (
           <div key={lang}>
             <Radio.Button className="UiLanguageDialog-languageButton" value={lang}>
               <div className="UiLanguageDialog-languageButtonContent">
