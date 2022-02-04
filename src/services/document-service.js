@@ -1,5 +1,4 @@
 import httpErrors from 'http-errors';
-import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
@@ -8,6 +7,7 @@ import BatchStore from '../stores/batch-store.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
+import { createSectionRevision } from './section-helper.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
@@ -352,45 +352,11 @@ class DocumentService {
         ancestorRevision = null;
       }
 
-      const newSections = doc.sections.map(section => {
-        const sectionKey = section.key;
-        const ancestorSection = ancestorRevision?.sections.find(s => s.key === sectionKey) || null;
-
-        if (ancestorSection) {
-          logger.info(`Found ancestor section with key ${sectionKey}`);
-
-          if (ancestorSection.type !== section.type) {
-            throw new Error(`Ancestor section has type ${ancestorSection.type} and cannot be changed to ${section.type}`);
-          }
-
-          if (ancestorSection.deletedOn && section.content) {
-            throw new Error(`Ancestor section with key ${sectionKey} is deleted and cannot be changed`);
-          }
-
-          // If not changed, re-use existing revision:
-          if (deepEqual(ancestorSection.content, section.content)) {
-            logger.info(`Section has not changed compared to ancestor section with revision ${ancestorSection.revision}, using the existing`);
-            return cloneDeep(ancestorSection);
-          }
-        }
-
-        if (!section.content && !restoredFrom) {
-          throw new Error('Sections that are not deleted must specify a content');
-        }
-
-        logger.info(`Creating new revision for section key ${sectionKey}`);
-
-        // Create a new section revision:
-        return {
-          revision: uniqueId.create(),
-          key: sectionKey,
-          deletedOn: null,
-          deletedBy: null,
-          deletedBecause: null,
-          type: section.type,
-          content: section.content && cloneDeep(section.content)
-        };
-      });
+      const newSections = doc.sections.map(section => createSectionRevision({
+        section,
+        ancestorSection: ancestorRevision?.sections.find(s => s.key === section.key) || null,
+        isRestoreOperation: !!restoredFrom
+      }));
 
       const order = await this.documentOrderStore.getNextOrder();
       const newDocumentRevision = this._buildDocumentRevision({ data: doc, documentKey, userId, order, restoredFrom, sections: newSections });

@@ -568,63 +568,197 @@ describe('document-service', () => {
         ]);
       });
 
-      describe('and the second revision is restored', () => {
-        let result;
+      describe('and no section has been hard-deleted', () => {
+        describe('and the second document revision is restored', () => {
+          let result;
 
+          beforeEach(async () => {
+            result = await sut.restoreDocumentRevision({
+              documentKey: initialDocumentRevisions[1].key,
+              revisionId: initialDocumentRevisions[1]._id,
+              user
+            });
+          });
+
+          it('should create another revision', () => {
+            expect(result).toHaveLength(4);
+          });
+
+          it('should set a new _id', () => {
+            expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
+          });
+
+          it('should restore the key', () => {
+            expect(result[3].key).toBe(initialDocumentRevisions[1].key);
+          });
+
+          it('should restore the title', () => {
+            expect(result[3].title).toBe(initialDocumentRevisions[1].title);
+          });
+
+          it('should restore the slug', () => {
+            expect(result[3].slug).toBe(initialDocumentRevisions[1].slug);
+          });
+
+          it('should set "restoredFrom" to the restored revision ID', () => {
+            expect(result[3].restoredFrom).toBe(initialDocumentRevisions[1]._id);
+          });
+
+          it('should preserve section keys', () => {
+            expect(result[3].sections[0].key).toBe(initialDocumentRevisions[1].sections[0].key);
+            expect(result[3].sections[1].key).toBe(initialDocumentRevisions[1].sections[1].key);
+          });
+
+          it('should restore the section content', () => {
+            expect(result[3].sections[0].content).toEqual(initialDocumentRevisions[1].sections[0].content);
+            expect(result[3].sections[1].content).toEqual(initialDocumentRevisions[1].sections[1].content);
+          });
+
+          it('should keep the section revision if the content has not changed in between', () => {
+            expect(result[3].sections[0].revision).toBe(initialDocumentRevisions[1].sections[0].revision);
+          });
+
+          it('should assign a new section revision if the content has changed in between', () => {
+            expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
+          });
+        });
+      });
+
+      describe('and a changed section has been hard-deleted in the second document revision only', () => {
         beforeEach(async () => {
-          result = await sut.restoreDocumentRevision({
+          await sut.hardDeleteSection({
             documentKey: initialDocumentRevisions[1].key,
-            revisionId: initialDocumentRevisions[1]._id,
+            sectionKey: initialDocumentRevisions[1].sections[1].key,
+            sectionRevision: initialDocumentRevisions[1].sections[1].revision,
+            reason: 'This is a test',
+            deleteAllRevisions: false,
             user
           });
         });
 
-        it('should create another revision', () => {
-          expect(result).toHaveLength(4);
+        describe('and the second document revision is restored', () => {
+          let result;
+
+          beforeEach(async () => {
+            result = await sut.restoreDocumentRevision({
+              documentKey: initialDocumentRevisions[1].key,
+              revisionId: initialDocumentRevisions[1]._id,
+              user
+            });
+          });
+
+          it('should create another revision', () => {
+            expect(result).toHaveLength(4);
+          });
+
+          it('should set a new _id', () => {
+            expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
+          });
+
+          it('should restore the key', () => {
+            expect(result[3].key).toBe(initialDocumentRevisions[1].key);
+          });
+
+          it('should restore the title', () => {
+            expect(result[3].title).toBe(initialDocumentRevisions[1].title);
+          });
+
+          it('should restore the slug', () => {
+            expect(result[3].slug).toBe(initialDocumentRevisions[1].slug);
+          });
+
+          it('should set "restoredFrom" to the restored revision ID', () => {
+            expect(result[3].restoredFrom).toBe(initialDocumentRevisions[1]._id);
+          });
+
+          it('should preserve section keys', () => {
+            expect(result[3].sections[0].key).toBe(initialDocumentRevisions[1].sections[0].key);
+            expect(result[3].sections[1].key).toBe(initialDocumentRevisions[1].sections[1].key);
+          });
+
+          it('should "restore" the deleted section content', () => {
+            expect(result[3].sections[0].content).toEqual(initialDocumentRevisions[1].sections[0].content);
+            expect(result[3].sections[1].content).toBeNull();
+          });
+
+          it('should keep the section revision if the content has not changed in between', () => {
+            expect(result[3].sections[0].revision).toBe(initialDocumentRevisions[1].sections[0].revision);
+          });
+
+          it('should assign a new section revision for the "re-deleted" section', () => {
+            expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
+          });
+        });
+      });
+
+      describe('and a changed section has been hard-deleted in the third document revision only', () => {
+        beforeEach(async () => {
+          await sut.hardDeleteSection({
+            documentKey: initialDocumentRevisions[2].key,
+            sectionKey: initialDocumentRevisions[2].sections[1].key,
+            sectionRevision: initialDocumentRevisions[2].sections[1].revision,
+            reason: 'This is a test',
+            deleteAllRevisions: false,
+            user
+          });
         });
 
-        it('should set a new _id', () => {
-          expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
-        });
+        describe('and the second document revision is restored', () => {
+          let result;
 
-        it('should restore the key', () => {
-          expect(result[3].key).toBe(initialDocumentRevisions[1].key);
-        });
+          beforeEach(async () => {
+            result = await sut.restoreDocumentRevision({
+              documentKey: initialDocumentRevisions[1].key,
+              revisionId: initialDocumentRevisions[1]._id,
+              user
+            });
+          });
 
-        it('should restore the title', () => {
-          expect(result[3].title).toBe(initialDocumentRevisions[1].title);
-        });
+          it('should create another revision', () => {
+            expect(result).toHaveLength(4);
+          });
 
-        it('should restore the slug', () => {
-          expect(result[3].slug).toBe(initialDocumentRevisions[1].slug);
-        });
+          it('should set a new _id', () => {
+            expect(result[3]._id).not.toBe(initialDocumentRevisions[1]._id);
+          });
 
-        it('should set "restoredFrom" to the restored revision ID', () => {
-          expect(result[3].restoredFrom).toBe(initialDocumentRevisions[1]._id);
-        });
+          it('should restore the key', () => {
+            expect(result[3].key).toBe(initialDocumentRevisions[1].key);
+          });
 
-        it('should preserve section keys', () => {
-          expect(result[3].sections[0].key).toBe(initialDocumentRevisions[1].sections[0].key);
-          expect(result[3].sections[1].key).toBe(initialDocumentRevisions[1].sections[1].key);
-        });
+          it('should restore the title', () => {
+            expect(result[3].title).toBe(initialDocumentRevisions[1].title);
+          });
 
-        it('should restore the section content', () => {
-          expect(result[3].sections[0].content).toEqual(initialDocumentRevisions[1].sections[0].content);
-          expect(result[3].sections[1].content).toEqual(initialDocumentRevisions[1].sections[1].content);
-        });
+          it('should restore the slug', () => {
+            expect(result[3].slug).toBe(initialDocumentRevisions[1].slug);
+          });
 
-        it('should keep the section revision if the content has not changed in between', () => {
-          expect(result[3].sections[0].revision).toBe(initialDocumentRevisions[1].sections[0].revision);
-        });
+          it('should set "restoredFrom" to the restored revision ID', () => {
+            expect(result[3].restoredFrom).toBe(initialDocumentRevisions[1]._id);
+          });
 
-        it('should assign a new section revision if the content has changed in between', () => {
-          expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
-        });
+          it('should preserve section keys', () => {
+            expect(result[3].sections[0].key).toBe(initialDocumentRevisions[1].sections[0].key);
+            expect(result[3].sections[1].key).toBe(initialDocumentRevisions[1].sections[1].key);
+          });
 
+          it('should restore the section content', () => {
+            expect(result[3].sections[0].content).toEqual(initialDocumentRevisions[1].sections[0].content);
+            expect(result[3].sections[1].content).toEqual(initialDocumentRevisions[1].sections[1].content);
+          });
+
+          it('should keep the section revision if the content has not changed in between', () => {
+            expect(result[3].sections[0].revision).toBe(initialDocumentRevisions[1].sections[0].revision);
+          });
+
+          it('should assign a new section revision for the "revived" section', () => {
+            expect(result[3].sections[1].revision).not.toBe(initialDocumentRevisions[1].sections[1].revision);
+          });
+        });
       });
 
     });
-
   });
 
   describe('setArchivedState', () => {

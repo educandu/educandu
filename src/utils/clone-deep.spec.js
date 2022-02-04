@@ -12,7 +12,8 @@ describe('clone-deep', () => {
     booleanProp: true,
     dateProp: new Date(),
     dateAsStringProp: new Date().toISOString(),
-    functionProp: () => 'function response',
+    functionResponse: 'function response',
+    functionProp() { return this.functionResponse; },
     simpleArrayProp: [1, 2, 3],
     deepArrayProp: [[1], [[2]], { prop: 3 }],
     simpleObjectProp: {
@@ -71,5 +72,9 @@ describe('clone-deep', () => {
   it('should clone deep object contents, and not copy them as reference', () => {
     expect(clone.deepObjectProp.objectProp).toEqual(original.deepObjectProp.objectProp);
     expect(clone.deepObjectProp.objectProp).not.toBe(original.deepObjectProp.objectProp);
+  });
+
+  it('should throw for non-plain JS objects', () => {
+    expect(() => cloneDeep({ prop: new Set() })).toThrow();
   });
 });
