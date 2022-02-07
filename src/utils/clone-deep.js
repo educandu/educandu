@@ -38,7 +38,7 @@ function cloneDeep(value) {
     }, {});
   }
 
-  return value;
+  throw new Error(`Cannot clone value of type ${Object.prototype.toString.call(value)}`);
 }
 
 export default cloneDeep;
