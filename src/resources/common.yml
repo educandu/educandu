@@ -163,3 +163,15 @@ monthly:
 yearly:
   en: yearly
   de: jährlich
+click:
+  en: Click
+  de: Klick
+ctrl:
+  en: Ctrl
+  de: Strg
+shift:
+  en: Shift
+  de: Umschalt
+alt:
+  en: Alt
+  de: Alt
