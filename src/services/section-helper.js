@@ -19,6 +19,19 @@ function checkPlausibility({ section, ancestorSection = null }) {
   }
 }
 
+function createNewSectionRevisionFrom(data) {
+  const isDeleted = !data.content;
+  return {
+    revision: uniqueId.create(),
+    key: data.key,
+    deletedOn: isDeleted ? new Date(data.deletedOn.getTime()) : null,
+    deletedBy: isDeleted ? data.deletedBy : null,
+    deletedBecause: isDeleted ? data.deletedBecause : null,
+    type: data.type,
+    content: isDeleted ? null : cloneDeep(data.content)
+  };
+}
+
 export function createSectionRevision({ section, ancestorSection = null, isRestoreOperation = false }) {
   checkPlausibility({ section, ancestorSection });
 
@@ -45,15 +58,7 @@ export function createSectionRevision({ section, ancestorSection = null, isResto
 
       // Otherwise we start a new revision:
       logger.info(`Creating new revision for section key ${section.key}`);
-      return {
-        revision: uniqueId.create(),
-        key: section.key,
-        deletedOn: cloneDeep(section.deletedOn),
-        deletedBy: cloneDeep(section.deletedBy),
-        deletedBecause: section.deletedBecause,
-        type: section.type,
-        content: null
-      };
+      return createNewSectionRevisionFrom(section);
     }
 
     // (b) ... the continuation of a hard-deleted ancestor section
@@ -75,15 +80,7 @@ export function createSectionRevision({ section, ancestorSection = null, isResto
 
       // In this case we start a new revision:
       logger.info(`Creating new revision for section key ${section.key}`);
-      return {
-        revision: uniqueId.create(),
-        key: section.key,
-        deletedOn: null,
-        deletedBy: null,
-        deletedBecause: null,
-        type: section.type,
-        content: cloneDeep(section.content)
-      };
+      return createNewSectionRevisionFrom(section);
     }
 
     // For all other cases we do not allow "reviving" sections
@@ -100,13 +97,5 @@ export function createSectionRevision({ section, ancestorSection = null, isResto
 
   // Create a new section revision:
   logger.info(`Creating new revision for section key ${section.key}`);
-  return {
-    revision: uniqueId.create(),
-    key: section.key,
-    deletedOn: null,
-    deletedBy: null,
-    deletedBecause: null,
-    type: section.type,
-    content: cloneDeep(section.content)
-  };
+  return createNewSectionRevisionFrom(section);
 }
