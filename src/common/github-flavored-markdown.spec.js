@@ -53,7 +53,8 @@ describe('GithubFlavoredMarkdown', () => {
       const result = sut.extractCdnResources([
         '[Click here](cdn://media/my-file.png)',
         '* Image inside a **bold section ![Alt text](cdn://media/another-file.png) within** a list item',
-        '[Go to Google](https://google.com)'
+        '[Go to Google](https://google.com)',
+        '[Missing image](cdn://)'
       ].join('\n\n'));
       expect(result).toEqual(['media/my-file.png', 'media/another-file.png']);
     });
