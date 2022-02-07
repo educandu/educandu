@@ -1,11 +1,11 @@
 import { Button } from 'antd';
 import classNames from 'classnames';
-import cookie from '../common/cookie.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
 import { WarningOutlined } from '@ant-design/icons';
 import ClientConfig from '../bootstrap/client-config.js';
 import React, { useEffect, useState, useRef } from 'react';
+import { getCookie, setLongLastingCookie } from '../common/cookie.js';
 
 export default function CookieConsentDrawer() {
   const lastActiveElementRef = useRef(null);
@@ -33,7 +33,7 @@ export default function CookieConsentDrawer() {
   }, [isVisible]);
 
   useEffect(() => {
-    const consentCookie = cookie.get(consentCookieName);
+    const consentCookie = getCookie(consentCookieName);
     if (!consentCookie) {
       lastActiveElementRef.current = document.activeElement;
       setIsVisible(true);
@@ -41,7 +41,7 @@ export default function CookieConsentDrawer() {
   }, [consentCookieName]);
 
   const handleAcceptButtonClick = () => {
-    cookie.set(consentCookieName, 'true', { expires: 365 });
+    setLongLastingCookie(consentCookieName, 'true');
     setIsVisible(false);
     lastActiveElementRef.current?.focus?.();
     lastActiveElementRef.current = null;

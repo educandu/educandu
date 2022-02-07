@@ -1,14 +1,12 @@
-import cookie from '../common/cookie.js';
 import Markdown from '../components/markdown.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import React, { useEffect, useState } from 'react';
-import { ALERT_TYPE } from '../domain/constants.js';
 import { useUser } from '../components/user-context.js';
 import { useSettings } from '../components/settings-context.js';
 import { usePageName } from '../components/page-name-context.js';
+import { getCookie, setSessionCookie } from '../common/cookie.js';
+import { ALERT_TYPE, ANNOUNCEMENT_COOKIE_NAME } from '../domain/constants.js';
 import InsufficientProfileWarning, { isProfileInsufficient } from '../components/insufficient-profile-warning.js';
-
-const ANNONCEMENT_COOKIE = 'ANNOUNCEMENT_SHOWN';
 
 function getGlobalAlerts(pageName, user, settings) {
   const globalAlerts = [];
@@ -21,13 +19,13 @@ function getGlobalAlerts(pageName, user, settings) {
     });
   }
 
-  if (!cookie.get(ANNONCEMENT_COOKIE) && settings.announcement) {
+  if (!getCookie(ANNOUNCEMENT_COOKIE_NAME) && settings.announcement) {
     globalAlerts.push({
       message: <Markdown inline>{settings.announcement}</Markdown>,
       type: ALERT_TYPE.warning,
       showInFullScreen: true,
       closable: true,
-      onClose: () => cookie.set(ANNONCEMENT_COOKIE, 'true')
+      onClose: () => setSessionCookie(ANNOUNCEMENT_COOKIE_NAME, 'true')
     });
   }
 
