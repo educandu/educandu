@@ -62,9 +62,9 @@ function Doc({ initialState, PageTemplate }) {
 
   const [isDirty, setIsDirty] = useState(false);
   const [doc, setDoc] = useState(initialState.doc);
-  const [view, setView] = useState(initialView);
   const [historyRevisions, setHistoryRevisions] = useState([]);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
+  const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
   const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
@@ -138,7 +138,7 @@ function Doc({ initialState, PageTemplate }) {
       default:
         break;
     }
-  }, [doc.key, doc.slug, view]);
+  }, [user, doc.key, doc.slug, view]);
 
   const handleEditMetadataOpen = () => {
     setIsDocumentMetadataModalVisible(true);

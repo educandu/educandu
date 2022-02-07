@@ -53,7 +53,7 @@ function Lesson({ PageTemplate, initialState }) {
   const [isDirty, setIsDirty] = useState(false);
   const [lesson, setLesson] = useState(initialState.lesson);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
-  const [isInEditMode, setIsInEditMode] = useState(startsInEditMode);
+  const [isInEditMode, setIsInEditMode] = useState(user ? startsInEditMode : false);
   const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
@@ -62,6 +62,14 @@ function Lesson({ PageTemplate, initialState }) {
       ensureEditorsAreLoaded(editorFactory);
     }
   }, [startsInEditMode, editorFactory]);
+
+  useEffect(() => {
+    if (isInEditMode) {
+      history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
+    } else {
+      history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
+    }
+  }, [isInEditMode, lesson._id, lesson.slug]);
 
   const handleEditMetadataOpen = () => {
     setIsLessonMetadataModalVisible(true);
@@ -86,8 +94,6 @@ function Lesson({ PageTemplate, initialState }) {
     await ensureEditorsAreLoaded(editorFactory);
     setIsInEditMode(true);
     setCurrentSections(cloneDeep(lesson.sections));
-
-    history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
   };
 
   const handleEditSave = async () => {
@@ -112,9 +118,6 @@ function Lesson({ PageTemplate, initialState }) {
         setIsInEditMode(false);
         setInvalidSectionKeys([]);
         setCurrentSections(cloneDeep(lesson.sections));
-
-        history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
-
         resolve(true);
       };
 
