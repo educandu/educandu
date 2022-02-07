@@ -59,7 +59,11 @@ class GithubFlavoredMarkdown {
 
   extractCdnResources(markdown) {
     const linkSet = new Set();
-    gfm.render(markdown, { collectCdnUrl: link => linkSet.add(link) });
+    gfm.render(markdown, { collectCdnUrl: link => {
+      if (link) {
+        linkSet.add(link);
+      }
+    } });
     return [...linkSet];
   }
 }

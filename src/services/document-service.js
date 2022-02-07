@@ -555,9 +555,12 @@ class DocumentService {
       ...sections.reduce((cdnResources, section) => {
         const info = this.infoFactory.createInfo(section.type);
         if (info && section.content) {
-          info.getCdnResources(section.content).forEach(resource => {
-            cdnResources.add(resource);
-          });
+          info.getCdnResources(section.content)
+            .forEach(resource => {
+              if (resource) {
+                cdnResources.add(resource);
+              }
+            });
         }
         return cdnResources;
       }, new Set())
