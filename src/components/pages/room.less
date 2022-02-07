@@ -35,6 +35,16 @@
   }
 }
 
+.Room-lessonDeleteButton {
+  .m-icon-button;
+  color: @edu-danger-color;
+  margin-right: @edu-content-padding;
+
+  &:hover, &:active, &:visited {
+    color: @edu-danger-color;
+  }
+}
+
 .Room-lessonStartsOn {
   flex: 0 1 @room-date-label-width;
 }
@@ -74,7 +84,7 @@
   }
 
   &.Room-card--danger {
-    border-color: @red-7;
+    border-color: @edu-danger-color;
   }
 }
 

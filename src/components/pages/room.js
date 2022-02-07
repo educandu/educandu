@@ -9,12 +9,14 @@ import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
+import { ensureIsExcluded } from '../../utils/array-utils.js';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
-import { confirmRoomDelete } from '../confirmation-dialogs.js';
-import { Space, List, Button, Tabs, Card, message } from 'antd';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import { Space, List, Button, Tabs, Card, message, Tooltip } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { DeleteOutlined, LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
@@ -30,13 +32,15 @@ export default function Room({ PageTemplate, initialState }) {
   const { t } = useTranslation('room');
   const { formatDate, formatTimeTo } = useDateFormat();
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+  const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 
   const [room, setRoom] = useState(initialState.room);
+  const [lessons, setLessons] = useState(initialState.lessons);
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
-  const { invitations, lessons } = initialState;
+  const { invitations } = initialState;
   const isRoomOwner = user?._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
@@ -108,6 +112,13 @@ export default function Room({ PageTemplate, initialState }) {
     setIsRoomUpdateButtonDisabled(false);
   };
 
+  const handleDeleteLessonClick = lesson => {
+    confirmLessonDelete(t, lesson.title, async () => {
+      await lessonApiClient.deleteLesson(lesson._id);
+      setLessons(ensureIsExcluded(lessons, lesson));
+    });
+  };
+
   const renderLesson = lesson => {
     const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
 
@@ -119,6 +130,15 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="Room-lesson" key={lesson._id}>
         <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
+          <Tooltip title={t('common:delete')}>
+            <Button
+              type="link"
+              size="small"
+              icon={<DeleteOutlined />}
+              className="Room-lessonDeleteButton"
+              onClick={() => handleDeleteLessonClick(lesson)}
+              />
+          </Tooltip>
           <span className="Room-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
           <a className="Room-lessonTitle" href={url}>{lesson.title}</a>
           <span className="Room-lessonTimeUntil">{timeUntil}</span>
