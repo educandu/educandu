@@ -36,6 +36,15 @@ class LessonApiClient {
       )
       .then(res => res.data);
   }
+
+  deleteLesson(lessonId) {
+    return this.httpClient
+      .delete(
+        `/api/v1/lessons/${encodeURIComponent(lessonId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default LessonApiClient;

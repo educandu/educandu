@@ -56,3 +56,7 @@ export const patchLessonMetadataBodySchema = joi.object({
 export const patchLessonSectionsBodySchema = joi.object({
   sections: joi.array().items(sectionSchema)
 });
+
+export const deleteLessonParamsSchema = joi.object({
+  lessonId: idOrKeySchema.required()
+});

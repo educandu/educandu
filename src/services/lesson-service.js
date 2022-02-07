@@ -88,6 +88,10 @@ class LessonService {
     await this.lessonStore.save(updatedLesson);
     return updatedLesson;
   }
+
+  async deleteLesson(lessonId) {
+    await this.lessonStore.deleteOne({ _id: lessonId });
+  }
 }
 
 export default LessonService;

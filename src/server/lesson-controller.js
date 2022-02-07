@@ -15,6 +15,7 @@ import {
   getLessonParamsSchema,
   postLessonBodySchema,
   patchLessonParamsSchema,
+  deleteLessonParamsSchema,
   patchLessonMetadataBodySchema,
   patchLessonSectionsBodySchema
 } from '../domain/schemas/lesson-schemas.js';
@@ -107,6 +108,31 @@ export default class LessonController {
     return res.status(201).send(updatedLesson);
   }
 
+  async handleDeleteLesson(req, res) {
+    const { user } = req;
+    const { lessonId } = req.params;
+
+    const lesson = await this.lessonService.getLessonById(lessonId);
+
+    if (!lesson) {
+      throw new NotFound();
+    }
+
+    const room = await this.roomService.getRoomById(lesson.roomId);
+
+    if (!room) {
+      throw new NotFound(`Unknown room id '${lesson.roomId}'`);
+    }
+
+    if (user._id !== room.owner) {
+      throw new Forbidden();
+    }
+
+    await this.lessonService.deleteLesson(lessonId, user);
+
+    return res.status(200).end();
+  }
+
   async _authorizeLessonWriteAccess(req) {
     const { user } = req;
     const { lessonId } = req.params;
@@ -124,16 +150,10 @@ export default class LessonController {
     }
   }
 
-  registerPages(router) {
+  registerApi(router) {
     if (!this.serverConfig.areRoomsEnabled) {
       return;
     }
-
-    router.get(
-      '/lessons/:lessonId*',
-      [validateParams(getLessonParamsSchema)],
-      (req, res) => this.handleGetLessonPage(req, res)
-    );
 
     router.post(
       '/api/v1/lessons',
@@ -152,5 +172,24 @@ export default class LessonController {
       [needsPermission(permissions.OWN_LESSONS), jsonParser, validateParams(patchLessonParamsSchema), validateBody(patchLessonSectionsBodySchema)],
       (req, res) => this.handlePatchLessonSections(req, res)
     );
+
+    router.delete(
+      '/api/v1/lessons/:lessonId',
+      [needsPermission(permissions.OWN_LESSONS), validateParams(deleteLessonParamsSchema)],
+      (req, res) => this.handleDeleteLesson(req, res)
+    );
   }
+
+  registerPages(router) {
+    if (!this.serverConfig.areRoomsEnabled) {
+      return;
+    }
+
+    router.get(
+      '/lessons/:lessonId*',
+      [validateParams(getLessonParamsSchema)],
+      (req, res) => this.handleGetLessonPage(req, res)
+    );
+  }
+
 }

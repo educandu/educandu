@@ -31,7 +31,8 @@ describe('lesson-controller', () => {
     lessonService = {
       getLessonById: sandbox.stub(),
       createLesson: sandbox.stub(),
-      updateLessonMetadata: sandbox.stub()
+      updateLessonMetadata: sandbox.stub(),
+      deleteLesson: sandbox.stub()
     };
     roomService = {
       getRoomById: sandbox.stub(),
@@ -361,4 +362,71 @@ describe('lesson-controller', () => {
     });
   });
 
+  describe('handleDeleteLesson', () => {
+    let room;
+    let lesson;
+
+    describe('when the lessonId is unknown', () => {
+      beforeEach(() => {
+        req = { user, params: { lessonId } };
+        lesson = null;
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(sut.handleDeleteLesson(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the roomId is unknown', () => {
+      beforeEach(() => {
+        req = { user, params: { lessonId } };
+        lesson = { _id: lessonId };
+        room = null;
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(sut.handleDeleteLesson(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the user is not the owner of the room containing the lesson', () => {
+      beforeEach(() => {
+        req = { user, params: { lessonId } };
+        lesson = { _id: lessonId, roomId };
+        room = { _id: roomId, owner: uniqueId.create() };
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(sut.handleDeleteLesson(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the user is the owner of the room containing the lesson', () => {
+      beforeEach(done => {
+        room = { _id: roomId, owner: user._id };
+        lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+
+        req = { user, params: { lessonId } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+
+        sut.handleDeleteLesson(req, res);
+      });
+
+      it('should call lessonService.deleteLesson', () => {
+        sinon.assert.calledWith(lessonService.deleteLesson, lessonId);
+      });
+    });
+  });
 });
