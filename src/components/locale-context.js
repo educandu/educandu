@@ -3,21 +3,15 @@ import 'moment/locale/de.js';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import { ConfigProvider } from 'antd';
-import cookie from '../common/cookie.js';
 import enUSNs from 'antd/lib/locale/en_US.js';
 import deDENs from 'antd/lib/locale/de_DE.js';
 import { I18nextProvider } from 'react-i18next';
 import { useService } from './container-context.js';
+import { setLongLastingCookie } from '../common/cookie.js';
 import ResourceManager from '../resources/resource-manager.js';
+import { UI_LANGUAGE_COOKIE_NAME } from '../domain/constants.js';
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import {
-  SUPPORTED_UI_LANGUAGES,
-  UI_LANGUAGE_EN,
-  UI_LANGUAGE_DE,
-  UI_LANGUAGE_COOKIE_NAME,
-  UI_LANGUAGE_COOKIE_EXPIRES,
-  getLocale
-} from '../resources/ui-language.js';
+import { SUPPORTED_UI_LANGUAGES, UI_LANGUAGE_EN, UI_LANGUAGE_DE, getLocale } from '../resources/ui-language.js';
 
 const antLocales = {
   enUS: enUSNs.default || enUSNs,
@@ -41,7 +35,7 @@ function determineAntdLocale(uiLanguage) {
 }
 
 function setUiLanguageCookie(uiLanguage) {
-  cookie.set(UI_LANGUAGE_COOKIE_NAME, uiLanguage, UI_LANGUAGE_COOKIE_EXPIRES);
+  setLongLastingCookie(UI_LANGUAGE_COOKIE_NAME, uiLanguage);
 }
 
 const createUiLanguageAndLocale = memoizee(uiLanguage => {

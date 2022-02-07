@@ -1,7 +1,9 @@
 import iso3166 from '@unly/iso3166-1';
 import Logger from '../common/logger.js';
 import acceptLanguageParser from 'accept-language-parser';
-import { SUPPORTED_UI_LANGUAGES, DEFAULT_UI_LANGUAGE, UI_LANGUAGE_COOKIE_NAME, UI_LANGUAGE_COOKIE_EXPIRES } from '../resources/ui-language.js';
+import { UI_LANGUAGE_COOKIE_NAME } from '../domain/constants.js';
+import { getLongLastingExpirationDateFromNow } from '../common/cookie.js';
+import { SUPPORTED_UI_LANGUAGES, DEFAULT_UI_LANGUAGE } from '../resources/ui-language.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -10,7 +12,7 @@ class I18nController {
   handleDetectUiLanguage(req, res, next) {
     const uiLanguage = this._detectLanguageFromRequest(req);
     req.uiLanguage = uiLanguage;
-    res.cookie(UI_LANGUAGE_COOKIE_NAME, uiLanguage, { expires: UI_LANGUAGE_COOKIE_EXPIRES });
+    res.cookie(UI_LANGUAGE_COOKIE_NAME, uiLanguage, { expires: getLongLastingExpirationDateFromNow(), sameSite: 'lax' });
     next();
   }
 

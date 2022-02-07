@@ -1,10 +1,11 @@
 /* eslint no-process-env: off */
 
-import cookie from './cookie.js';
+import { getCookie } from './cookie.js';
 import { isBrowser } from '../ui/browser-helper.js';
+import { LOG_LEVEL_COOKIE_NAME } from '../domain/constants.js';
 
 const getServerLevel = () => process.env.EDUCANDU_LOG_LEVEL || 'debug';
-const getBrowserLevel = () => cookie.get('EDUCANDU_LOG_LEVEL') || 'debug';
+const getBrowserLevel = () => getCookie(LOG_LEVEL_COOKIE_NAME) || 'debug';
 
 const shortenNodeUrl = url => {
   const index = url.indexOf('/src/');
