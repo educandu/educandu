@@ -63,6 +63,14 @@ function Lesson({ PageTemplate, initialState }) {
     }
   }, [startsInEditMode, editorFactory]);
 
+  useEffect(() => {
+    if (isInEditMode) {
+      history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
+    } else {
+      history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
+    }
+  }, [isInEditMode, lesson._id, lesson.slug]);
+
   const handleEditMetadataOpen = () => {
     setIsLessonMetadataModalVisible(true);
   };
@@ -86,8 +94,6 @@ function Lesson({ PageTemplate, initialState }) {
     await ensureEditorsAreLoaded(editorFactory);
     setIsInEditMode(true);
     setCurrentSections(cloneDeep(lesson.sections));
-
-    history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view: LESSON_VIEW_QUERY_PARAM.edit }));
   };
 
   const handleEditSave = async () => {
@@ -112,9 +118,6 @@ function Lesson({ PageTemplate, initialState }) {
         setIsInEditMode(false);
         setInvalidSectionKeys([]);
         setCurrentSections(cloneDeep(lesson.sections));
-
-        history.replaceState(null, '', urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
-
         resolve(true);
       };
 

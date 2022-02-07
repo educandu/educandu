@@ -4,11 +4,11 @@ import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import React, { useEffect, useRef, useState } from 'react';
 import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import { confirmRoomDelete } from '../confirmation-dialogs.js';
 import { Space, List, Button, Tabs, Card, message } from 'antd';
@@ -40,6 +40,10 @@ export default function Room({ PageTemplate, initialState }) {
   const isRoomOwner = user?._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
+
+  useEffect(() => {
+    history.replaceState(null, '', urls.getRoomUrl(room._id, room.slug));
+  }, [room._id, room.slug]);
 
   const handleCreateInvitationButtonClick = event => {
     setIsRoomInvitationModalVisible(true);
