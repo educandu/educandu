@@ -53,7 +53,7 @@ function Lesson({ PageTemplate, initialState }) {
   const [isDirty, setIsDirty] = useState(false);
   const [lesson, setLesson] = useState(initialState.lesson);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
-  const [isInEditMode, setIsInEditMode] = useState(startsInEditMode);
+  const [isInEditMode, setIsInEditMode] = useState(user ? startsInEditMode : false);
   const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
