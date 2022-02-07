@@ -1531,7 +1531,11 @@
       "daily": "daily",
       "weekly": "weekly",
       "monthly": "monthly",
-      "yearly": "yearly"
+      "yearly": "yearly",
+      "click": "Click",
+      "ctrl": "Ctrl",
+      "shift": "Shift",
+      "alt": "Alt"
     }
   },
   {
@@ -1592,7 +1596,11 @@
       "daily": "täglich",
       "weekly": "wöchentlich",
       "monthly": "monatlich",
-      "yearly": "jährlich"
+      "yearly": "jährlich",
+      "click": "Klick",
+      "ctrl": "Strg",
+      "shift": "Umschalt",
+      "alt": "Alt"
     }
   },
   {

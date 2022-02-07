@@ -61,7 +61,7 @@ function SectionDisplay({
   const editActions = [
     {
       type: 'edit',
-      title: t('common:edit'),
+      title: `${t('common:edit')} (${t('common:ctrl')}+${t('common:click')})`,
       icon: <EditOutlined key="edit" />,
       handleAction: () => setIsEditing(true),
       isVisible: !isEditing,
@@ -69,7 +69,7 @@ function SectionDisplay({
     },
     {
       type: 'preview',
-      title: t('common:preview'),
+      title: `${t('common:preview')} (${t('common:ctrl')}+${t('common:click')})`,
       icon: <EyeOutlined key="preview" />,
       handleAction: () => setIsEditing(false),
       isVisible: isEditing,
@@ -77,7 +77,7 @@ function SectionDisplay({
     },
     {
       type: 'duplicate',
-      title: t('common:duplicate'),
+      title: `${t('common:duplicate')} (${t('common:shift')}+${t('common:ctrl')}+${t('common:click')})`,
       icon: <SnippetsOutlined key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
       isVisible: true,
@@ -85,7 +85,7 @@ function SectionDisplay({
     },
     {
       type: 'delete',
-      title: t('common:delete'),
+      title: `${t('common:delete')} (${t('common:shift')}+${t('common:ctrl')}+${t('common:alt')}+${t('common:click')})`,
       icon: <DeleteOutlined key="delete" />,
       handleAction: () => onSectionDelete(),
       isVisible: true,
@@ -179,8 +179,22 @@ function SectionDisplay({
     <span>{section.revision ? `${t('common:revision')}: ${section.revision}` : null}</span>
   );
 
+  const handleSectionClick = event => {
+    if (canEdit && event.ctrlKey) {
+      if (event.shiftKey) {
+        if (event.altKey) {
+          onSectionDelete();
+        } else {
+          onSectionDuplicate();
+        }
+      } else {
+        setIsEditing(!isEditing);
+      }
+    }
+  };
+
   return (
-    <section className={sectionClasses}>
+    <section className={sectionClasses} onClick={handleSectionClick}>
       {isEditing ? renderEditorComponent() : renderDisplayComponent()}
 
       {canEdit && (
