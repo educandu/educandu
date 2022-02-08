@@ -1,10 +1,9 @@
 import React from 'react';
-import autoBind from 'auto-bind';
 import { TESTS_ORDER } from '../constants.js';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Form, Input, Table, Button, Radio } from 'antd';
+import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
@@ -12,158 +11,147 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ButtonGroup = Button.Group;
 
-class QuickTesterEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
+function QuickTesterEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('quickTester');
 
-    this.columns = [
-      {
-        width: 80,
-        key: 'upDown',
-        render: (upDown, item, index) => (
-          <ButtonGroup>
-            <Button
-              disabled={index === 0}
-              icon={<ArrowUpOutlined />}
-              onClick={() => this.handleUpCircleButtonClick(index)}
-              />
-            <Button
-              disabled={index === this.props.content.tests.length - 1}
-              icon={<ArrowDownOutlined />}
-              onClick={() => this.handleDownCircleButtonClick(index)}
-              />
-          </ButtonGroup>
-        )
-      }, {
-        title: () => this.props.t('question'),
-        dataIndex: 'question',
-        key: 'question',
-        render: (question, item, index) => (
-          <Input
-            value={question}
-            onChange={event => this.handleInputQuestionChanged(index, event.target.value)}
-            />
-        )
-      }, {
-        title: () => this.props.t('answer'),
-        dataIndex: 'answer',
-        key: 'answer',
-        render: (answer, item, index) => (
-          <Input
-            value={answer}
-            onChange={event => this.handleInputAnswerChanged(index, event.target.value)}
-            />
-        )
-      }, {
-        title: (
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={this.handleAddButtonClick}
-            />
-        ),
-        width: 48,
-        key: 'button',
-        render: (value, item, index) => (
-          <Button
-            disabled={this.props.content.tests.length < 2}
-            type="danger"
-            icon={<DeleteOutlined />}
-            onClick={() => this.handleDeleteButtonClick(index)}
-            />
-        )
-      }
-    ];
-  }
+  const formItemLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 14 }
+  };
+  const { tests, testsOrder, teaser, title } = content;
+  const dataSource = tests.map((test, i) => ({ key: i, ...test }));
 
-  changeContent(newContentValues) {
-    const { content, onContentChanged } = this.props;
+  const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
-  }
+  };
 
-  handleTeaserValueChanged(event) {
+  const handleTeaserValueChanged = event => {
     const { value } = event.target;
-    this.changeContent({ teaser: value });
-  }
+    changeContent({ teaser: value });
+  };
 
-  handleTitleValueChanged(event) {
+  const handleTitleValueChanged = event => {
     const { value } = event.target;
-    this.changeContent({ title: value });
-  }
+    changeContent({ title: value });
+  };
 
-  handleInputQuestionChanged(index, newValue) {
-    const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((t, i) => i === index ? { question: newValue, answer: t.answer } : t);
-    this.changeContent({ tests: newTests });
-  }
+  const handleInputQuestionChanged = (index, newValue) => {
+    const newTests = tests.map((test, i) => i === index ? { question: newValue, answer: test.answer } : test);
+    changeContent({ tests: newTests });
+  };
 
-  handleInputAnswerChanged(index, newValue) {
-    const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((t, i) => i === index ? { question: t.question, answer: newValue } : t);
-    this.changeContent({ tests: newTests });
-  }
+  const handleInputAnswerChanged = (index, newValue) => {
+    const newTests = tests.map((test, i) => i === index ? { question: test.question, answer: newValue } : test);
+    changeContent({ tests: newTests });
+  };
 
-  handleDeleteButtonClick(index) {
-    const oldTests = this.props.content.tests;
-    const newTests = removeItemAt(oldTests, index);
-    this.changeContent({ tests: newTests });
-  }
+  const handleDeleteButtonClick = index => {
+    const newTests = removeItemAt(tests, index);
+    changeContent({ tests: newTests });
+  };
 
-  handleAddButtonClick() {
-    const { content, t } = this.props;
-    const newTests = content.tests.slice();
+  const handleAddButtonClick = () => {
+    const newTests = tests.slice();
     newTests.push({ question: `[${t('quickTester:question')}]`, answer: `[${t('quickTester:answer')}]` });
-    this.changeContent({ tests: newTests });
-  }
+    changeContent({ tests: newTests });
+  };
 
-  handleUpCircleButtonClick(index) {
-    const newTests = swapItemsAt(this.props.content.tests, index, index - 1);
-    this.changeContent({ tests: newTests });
-  }
+  const handleUpCircleButtonClick = index => {
+    const newTests = swapItemsAt(tests, index, index - 1);
+    changeContent({ tests: newTests });
+  };
 
-  handleDownCircleButtonClick(index) {
-    const newTests = swapItemsAt(this.props.content.tests, index, index + 1);
-    this.changeContent({ tests: newTests });
-  }
+  const handleDownCircleButtonClick = index => {
+    const newTests = swapItemsAt(tests, index, index + 1);
+    changeContent({ tests: newTests });
+  };
 
-  handleTestsOrderChanged(event) {
-    this.changeContent({ testsOrder: event.target.value });
-  }
+  const handleTestsOrderChanged = event => {
+    changeContent({ testsOrder: event.target.value });
+  };
 
-  render() {
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14 }
-    };
-    const { content, t } = this.props;
-    const dataSource = content.tests.map((test, i) => ({ key: i, ...test }));
+  const columns = [
+    {
+      width: 80,
+      key: 'upDown',
+      render: (upDown, item, index) => (
+        <ButtonGroup>
+          <Button
+            disabled={index === 0}
+            icon={<ArrowUpOutlined />}
+            onClick={() => handleUpCircleButtonClick(index)}
+            />
+          <Button
+            disabled={index === tests.length - 1}
+            icon={<ArrowDownOutlined />}
+            onClick={() => handleDownCircleButtonClick(index)}
+            />
+        </ButtonGroup>
+      )
+    }, {
+      title: () => t('question'),
+      dataIndex: 'question',
+      key: 'question',
+      render: (question, item, index) => (
+        <Input
+          value={question}
+          onChange={event => handleInputQuestionChanged(index, event.target.value)}
+          />
+      )
+    }, {
+      title: () => t('answer'),
+      dataIndex: 'answer',
+      key: 'answer',
+      render: (answer, item, index) => (
+        <Input
+          value={answer}
+          onChange={event => handleInputAnswerChanged(index, event.target.value)}
+          />
+      )
+    }, {
+      title: (
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAddButtonClick}
+          />
+      ),
+      width: 48,
+      key: 'button',
+      render: (value, item, index) => (
+        <Button
+          disabled={tests.length < 2}
+          type="danger"
+          icon={<DeleteOutlined />}
+          onClick={() => handleDeleteButtonClick(index)}
+          />
+      )
+    }
+  ];
 
-    return (
-      <div>
-        <Form layout="horizontal">
-          <FormItem label={`${t('teaserLabel')}:`} {...formItemLayout}>
-            <Input value={content.teaser} onChange={this.handleTeaserValueChanged} />
-          </FormItem>
-          <FormItem label={`${t('common:title')}:`} {...formItemLayout}>
-            <Input value={content.title} onChange={this.handleTitleValueChanged} />
-          </FormItem>
-          <FormItem label={t('testsOrder')} {...formItemLayout}>
-            <RadioGroup value={content.testsOrder} onChange={this.handleTestsOrderChanged}>
-              <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
-              <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
-            </RadioGroup>
-          </FormItem>
-        </Form>
-        <Table dataSource={dataSource} columns={this.columns} pagination={false} size="small" />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Form layout="horizontal">
+        <FormItem label={`${t('teaserLabel')}:`} {...formItemLayout}>
+          <Input value={teaser} onChange={handleTeaserValueChanged} />
+        </FormItem>
+        <FormItem label={`${t('common:title')}:`} {...formItemLayout}>
+          <Input value={title} onChange={handleTitleValueChanged} />
+        </FormItem>
+        <FormItem label={t('testsOrder')} {...formItemLayout}>
+          <RadioGroup value={testsOrder} onChange={handleTestsOrderChanged}>
+            <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
+            <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
+          </RadioGroup>
+        </FormItem>
+      </Form>
+      <Table dataSource={dataSource} columns={columns} pagination={false} size="small" />
+    </div>
+  );
 }
 
 QuickTesterEditor.propTypes = {
-  ...sectionEditorProps,
-  ...translationProps
+  ...sectionEditorProps
 };
 
-export default withTranslation('quickTester')(QuickTesterEditor);
+export default QuickTesterEditor;
