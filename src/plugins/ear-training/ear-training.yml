@@ -10,6 +10,9 @@ solve:
 reset:
   en: Reset
   de: Zurücksetzen
+titleLabel:
+  en: Title
+  de: Titel
 startAbcCode:
   en: Start ABC code
   de: Vorgabe-ABC-Code
@@ -44,7 +47,7 @@ testsOrder:
   en: Display order
   de: Anzeigereihenfolge
 testsOrderGiven:
-  en: as given
+  en: as specified
   de: wie angegeben
 testsOrderRandom:
   en: random

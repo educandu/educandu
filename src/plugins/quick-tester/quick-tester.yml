@@ -19,3 +19,12 @@ teaserLabel:
 titleLabel:
   en: Title
   de: Titel
+testsOrder:
+  en: Display order
+  de: Anzeigereihenfolge
+testsOrderGiven:
+  en: as specified
+  de: wie angegeben
+testsOrderRandom:
+  en: random
+  de: zufällig

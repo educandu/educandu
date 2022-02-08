@@ -20,9 +20,8 @@ class EarTrainingSoundEditor extends React.Component {
   }
 
   changeSound(newValues) {
-    const { sound, testIndex, onSoundChanged } = this.props;
+    const { sound, onSoundChanged } = this.props;
     onSoundChanged({
-      testIndex,
       sound: { ...sound, ...newValues }
     });
   }
@@ -157,8 +156,7 @@ EarTrainingSoundEditor.propTypes = {
     type: PropTypes.string.isRequired,
     url: PropTypes.string,
     text: PropTypes.string
-  }).isRequired,
-  testIndex: PropTypes.number.isRequired
+  }).isRequired
 };
 
 export default withTranslation('earTraining')(inject({

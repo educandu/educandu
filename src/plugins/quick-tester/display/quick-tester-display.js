@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
+import { TESTS_ORDER } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../../components/markdown.js';
 import { shuffleItems } from '../../../utils/array-utils.js';
@@ -10,22 +11,22 @@ function QuickTesterDisplay({ content }) {
   const { t } = useTranslation('quickTester');
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [isAnswerVisible, setIsAnswerVisible] = React.useState(false);
-  const [tests, setTests] = React.useState(shuffleItems(content.tests));
+  const [tests, setTests] = React.useState(shuffleItems(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests));
 
   React.useEffect(() => {
     setCurrentIndex(-1);
     setIsAnswerVisible(false);
-    setTests(shuffleItems(content.tests));
-  }, [content.tests]);
+    setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
+  }, [content.tests, content.testsOrder]);
 
   const showAnswer = React.useCallback(() => {
     setIsAnswerVisible(true);
-  }, [setIsAnswerVisible]);
+  }, []);
 
   const moveToIndex = React.useCallback(valOrFunc => {
     setIsAnswerVisible(false);
     setCurrentIndex(valOrFunc);
-  }, [setIsAnswerVisible, setCurrentIndex]);
+  }, []);
 
   const movePrevious = React.useCallback(() => {
     moveToIndex(i => i - 1);
@@ -40,9 +41,9 @@ function QuickTesterDisplay({ content }) {
   }, [moveToIndex]);
 
   const restart = React.useCallback(() => {
-    setTests(shuffleItems(content.tests));
+    setTests(shuffleItems(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests));
     moveToIndex(content.tests.length ? 0 : -1);
-  }, [setTests, content.tests, moveToIndex]);
+  }, [content.tests, content.testsOrder, moveToIndex]);
 
   const percentDone = React.useMemo(() => {
     return tests.length
@@ -101,7 +102,7 @@ function QuickTesterDisplay({ content }) {
             className="QuickTester-button"
             shape="circle"
             icon={<LeftOutlined />}
-            disabled={currentIndex === 0}
+            disabled={currentIndex < 1}
             onClick={movePrevious}
             />
           <Button
@@ -114,7 +115,7 @@ function QuickTesterDisplay({ content }) {
             className="QuickTester-button"
             shape="circle"
             icon={<RightOutlined />}
-            disabled={!isAnswerVisible || currentIndex === tests.length - 1}
+            disabled={!isAnswerVisible || currentIndex > tests.length - 2}
             onClick={moveNext}
             />
         </div>

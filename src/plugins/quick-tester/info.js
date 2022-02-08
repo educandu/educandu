@@ -1,4 +1,5 @@
 import React from 'react';
+import { TESTS_ORDER } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { CheckSquareOutlined } from '@ant-design/icons';
 
@@ -26,7 +27,8 @@ export default class QuickTester {
           question: `[${t('quickTester:question')}]`,
           answer: `[${t('quickTester:answer')}]`
         }
-      ]
+      ],
+      testsOrder: TESTS_ORDER.given
     };
   }
 
