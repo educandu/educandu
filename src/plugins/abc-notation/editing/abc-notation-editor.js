@@ -1,74 +1,64 @@
 import React from 'react';
-import autoBind from 'auto-bind';
 import { Form, Input, Switch } from 'antd';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const { TextArea } = Input;
 
-class AbcNotationEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
+function AbcNotationEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('abcNotation');
+  const { abcCode, maxWidth, displayMidi, text } = content;
 
-  handleCurrentAbcCodeChanged(event) {
-    const newValue = event.target.value;
-    this.changeContent({ abcCode: newValue });
-  }
+  const formItemLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 14 }
+  };
 
-  handleDisplayMidiChanged(checked) {
-    this.changeContent({ displayMidi: !!checked });
-  }
-
-  handleMaxWidthChanged(newValue) {
-    this.changeContent({ maxWidth: newValue });
-  }
-
-  handleCurrentTextChanged(event) {
-    const newValue = event.target.value;
-    this.changeContent({ text: newValue });
-  }
-
-  changeContent(newContentValues) {
-    const { content, onContentChanged } = this.props;
+  const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
-  }
+  };
 
-  render() {
-    const { content, t } = this.props;
-    const { abcCode, maxWidth, displayMidi, text } = content;
+  const handleCurrentAbcCodeChanged = event => {
+    const newValue = event.target.value;
+    changeContent({ abcCode: newValue });
+  };
 
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14 }
-    };
+  const handleDisplayMidiChanged = checked => {
+    changeContent({ displayMidi: !!checked });
+  };
 
-    return (
-      <div>
-        <Form layout="horizontal">
-          <Form.Item label={t('abcCode')} {...formItemLayout}>
-            <TextArea value={abcCode} onChange={this.handleCurrentAbcCodeChanged} autoSize={{ minRows: 5 }} />
-          </Form.Item>
-          <Form.Item label={t('midiSound')} {...formItemLayout}>
-            <Switch checked={!!displayMidi} onChange={this.handleDisplayMidiChanged} />
-          </Form.Item>
-          <Form.Item label={t('maximumWidth')} {...formItemLayout}>
-            <ObjectMaxWidthSlider defaultValue={100} value={maxWidth} onChange={this.handleMaxWidthChanged} />
-          </Form.Item>
-          <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleCurrentTextChanged} autoSize={{ minRows: 3 }} />
-          </Form.Item>
-        </Form>
-      </div>
-    );
-  }
+  const handleMaxWidthChanged = newValue => {
+    changeContent({ maxWidth: newValue });
+  };
+
+  const handleCurrentTextChanged = event => {
+    const newValue = event.target.value;
+    changeContent({ text: newValue });
+  };
+
+  return (
+    <div>
+      <Form layout="horizontal">
+        <Form.Item label={t('abcCode')} {...formItemLayout}>
+          <TextArea value={abcCode} onChange={handleCurrentAbcCodeChanged} autoSize={{ minRows: 5 }} />
+        </Form.Item>
+        <Form.Item label={t('midiSound')} {...formItemLayout}>
+          <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />
+        </Form.Item>
+        <Form.Item label={t('maximumWidth')} {...formItemLayout}>
+          <ObjectMaxWidthSlider defaultValue={100} value={maxWidth} onChange={handleMaxWidthChanged} />
+        </Form.Item>
+        <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+          <TextArea value={text} onChange={handleCurrentTextChanged} autoSize={{ minRows: 3 }} />
+        </Form.Item>
+      </Form>
+    </div>
+  );
 }
 
 AbcNotationEditor.propTypes = {
-  ...translationProps,
   ...sectionEditorProps
 };
 
-export default withTranslation('abcNotation')(AbcNotationEditor);
+export default AbcNotationEditor;
