@@ -1,22 +1,22 @@
-import React from 'react';
 import { Button } from 'antd';
-import autoBind from 'auto-bind';
-import PropTypes from 'prop-types';
 import { Piano } from 'react-piano';
 import { RadialChart } from 'react-vis';
-import { withTranslation } from 'react-i18next';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import SoundfontProvider from './soundfont-provider.js';
 import DimensionsProvider from './dimensions-provider.js';
 import { shuffleItems } from '../../../utils/array-utils.js';
-import { inject } from '../../../components/container-context.js';
+import { useService } from '../../../components/container-context.js';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import AudioContextProvider from '../../../common/audio-context-provider.js';
-import { sectionDisplayProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const soundfontHostname = 'https://d1pzp51pvbm36p.cloudfront.net';
 
-const TEST_STATE_YELLOW = 'TestStateYellow';
-const TEST_STATE_GREEN = 'TestStateGreen';
-const TEST_STATE_RED = 'TestStateRed';
+const TEST_STATE = {
+  yellow: 'TestStateYellow',
+  green: 'TestStateGreen',
+  red: 'TestStateRed'
+};
 
 const pushIfNotLast = (arr, value) => {
   return arr[arr.length - 1] === value
@@ -24,48 +24,38 @@ const pushIfNotLast = (arr, value) => {
     : [...arr, value];
 };
 
-class IntervalTrainerDisplay extends React.Component {
-  constructor(props) {
-    super(props);
+function IntervalTrainerDisplay({ content }) {
+  const { t } = useTranslation('intervalTrainer');
 
-    autoBind(this);
+  const audioContextProvider = useService(AudioContextProvider);
+  const audioContext = audioContextProvider.getAudioContext();
 
-    this.audioContext = props.audioContextProvider.getAudioContext();
+  const createTestStateFromProps = shuffle => {
+    return (shuffle ? shuffleItems(content.tests) : content.tests).map(test => ({
+      ...test,
+      inputs: [],
+      cancelled: false,
+      state: TEST_STATE.yellow
+    }));
+  };
 
-    this.state = {
-      ...this.createTestStateFromProps(props, false),
-      keyboardShortcuts: [].slice.call(props.content.keyboardShortcuts).map((k, i) => ({
-        midiNumber: i + this.props.content.keyboardOffset,
-        key: k
-      }))
-    };
-  }
+  const [tests, setTests] = useState(createTestStateFromProps(false));
+  const [showStats, setShowStats] = useState(false);
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
 
-  createTestStateFromProps(props, shuffle) {
-    const { tests } = props.content;
-    return {
-      tests: (shuffle ? shuffleItems(tests) : tests).map(test => ({
-        ...test,
-        inputs: [],
-        cancelled: false,
-        state: TEST_STATE_YELLOW
-      })),
-      currentTestIndex: 0,
-      showStats: false
-    };
-  }
+  const keyboardShortcuts = [].slice.call(content.keyboardShortcuts).map((k, i) => ({
+    midiNumber: i + content.keyboardOffset,
+    key: k
+  }));
 
-  handlePlayNoteInput(midiNumber) {
-    const { tests, currentTestIndex } = this.state;
+  const handlePlayNoteInput = midiNumber => {
     const originalTest = tests[currentTestIndex];
 
-    if (originalTest.state === TEST_STATE_GREEN || originalTest.cancelled) {
+    if (originalTest.state === TEST_STATE.green || originalTest.cancelled) {
       return;
     }
 
-    const { content } = this.props;
-    const { keyboardOffset } = content;
-    const normalizedMidiNumber = midiNumber - keyboardOffset;
+    const normalizedMidiNumber = midiNumber - content.keyboardOffset;
 
     const updatedTest = {
       ...originalTest,
@@ -85,39 +75,35 @@ class IntervalTrainerDisplay extends React.Component {
       const offset1 = correctValues[0] - inputValues[0];
       const offset2 = correctValues[1] - inputValues[1];
       updatedTest.state = offset1 % 12 === 0 && offset1 === offset2
-        ? TEST_STATE_GREEN
-        : TEST_STATE_RED;
+        ? TEST_STATE.green
+        : TEST_STATE.red;
 
     } else {
-      updatedTest.state = TEST_STATE_YELLOW;
+      updatedTest.state = TEST_STATE.yellow;
     }
 
-    this.setState({ tests: tests.map((t, i) => i === currentTestIndex ? updatedTest : t) });
-  }
+    setTests(tests.map((test, i) => i === currentTestIndex ? updatedTest : test));
+  };
 
-  handleNextClick() {
-    this.setState(prevState => ({ currentTestIndex: prevState.currentTestIndex + 1 }));
-  }
+  const handleNextClick = () => {
+    setCurrentTestIndex(prevIndex => prevIndex + 1);
+  };
 
-  handleResolveClick() {
-    const { tests, currentTestIndex } = this.state;
+  const handleResolveClick = () => {
     const originalTest = tests[currentTestIndex];
-    const updatedTest = { ...originalTest, cancelled: true, state: TEST_STATE_GREEN };
-    this.setState({ tests: tests.map((t, i) => i === currentTestIndex ? updatedTest : t) });
-  }
+    const updatedTest = { ...originalTest, cancelled: true, state: TEST_STATE.green };
+    setTests(tests.map((test, i) => i === currentTestIndex ? updatedTest : test));
+  };
 
-  handleStatsClick() {
-    this.setState({ showStats: true });
-  }
+  const handleStatsClick = () => {
+    setShowStats(true);
+  };
 
-  handleResetClick() {
-    this.setState(this.createTestStateFromProps(this.props, true));
-  }
+  const handleResetClick = () => {
+    setTests(createTestStateFromProps(true));
+  };
 
-  renderNoteLabel({ keyboardShortcut, midiNumber, isAccidental }) {
-    const { content } = this.props;
-    const { tests, currentTestIndex } = this.state;
-
+  const renderNoteLabel = ({ keyboardShortcut, midiNumber, isAccidental }) => {
     const test = tests[currentTestIndex];
 
     let userInputs;
@@ -129,21 +115,20 @@ class IntervalTrainerDisplay extends React.Component {
       userInputs = [];
     }
 
-    const { keyboardOffset } = content;
-    const normalizedMidiNumber = midiNumber - keyboardOffset;
+    const normalizedMidiNumber = midiNumber - content.keyboardOffset;
     const isUserSelectedNote = userInputs.includes(normalizedMidiNumber);
 
     const dotClasses = ['IntervalTrainer-keyLabelDot'];
 
     if (isUserSelectedNote) {
       switch (test.state) {
-        case TEST_STATE_YELLOW:
+        case TEST_STATE.yellow:
           dotClasses.push('IntervalTrainer-keyLabelDot--yellow');
           break;
-        case TEST_STATE_GREEN:
+        case TEST_STATE.green:
           dotClasses.push('IntervalTrainer-keyLabelDot--green');
           break;
-        case TEST_STATE_RED:
+        case TEST_STATE.red:
           dotClasses.push('IntervalTrainer-keyLabelDot--red');
           break;
         default:
@@ -159,10 +144,9 @@ class IntervalTrainerDisplay extends React.Component {
         <div className="IntervalTrainer-keyLabelShortcut">{(keyboardShortcut || '').toUpperCase()}</div>
       </div>
     );
-  }
+  };
 
-  renderStatElement(tests) {
-    const { t } = this.props;
+  const renderStatElement = () => {
     const results = tests.reduce((stats, test) => {
       if (test.cancelled) {
         stats.failures += 1;
@@ -215,23 +199,22 @@ class IntervalTrainerDisplay extends React.Component {
         </div>
       </div>
     );
-  }
+  };
 
-  renderQuestionElement(currentTestIndex, currentTest) {
-    const { t } = this.props;
+  const renderQuestionElement = () => {
     return (
       <div className="IntervalTrainer-question">
         <span>{t('taskNumber', { number: currentTestIndex + 1 })}:</span>
         <br />
-        <i>{currentTest.question}</i>
+        <i>{tests[currentTestIndex].question}</i>
       </div>
     );
-  }
+  };
 
-  renderKeyboardElement(keyboardStart, keyboardEnd, keyboardOffset, keyboardShortcuts) {
+  const renderKeyboardElement = () => {
     const noteRange = {
-      first: keyboardStart + keyboardOffset,
-      last: keyboardEnd + keyboardOffset
+      first: content.keyboardStart + content.keyboardOffset,
+      last: content.keyboardEnd + content.keyboardOffset
     };
 
     return (
@@ -239,9 +222,9 @@ class IntervalTrainerDisplay extends React.Component {
         {({ containerWidth }) => (
           <SoundfontProvider
             instrumentName="acoustic_grand_piano"
-            audioContext={this.audioContext}
+            audioContext={audioContext}
             hostname={soundfontHostname}
-            offset={keyboardOffset || 0}
+            offset={content.keyboardOffset || 0}
             render={({ isLoading, playNote, stopNote }) => (
               <Piano
                 noteRange={noteRange}
@@ -250,57 +233,47 @@ class IntervalTrainerDisplay extends React.Component {
                 stopNote={stopNote}
                 disabled={isLoading}
                 keyboardShortcuts={keyboardShortcuts}
-                renderNoteLabel={this.renderNoteLabel}
-                onPlayNoteInput={this.handlePlayNoteInput}
+                renderNoteLabel={renderNoteLabel}
+                onPlayNoteInput={handlePlayNoteInput}
                 />
             )}
             />
         )}
       </DimensionsProvider>
     );
-  }
+  };
 
-  render() {
-    const { content, t } = this.props;
-    const { tests, showStats, currentTestIndex, keyboardShortcuts } = this.state;
-    const { keyboardStart, keyboardEnd, keyboardOffset, title } = content;
-
-    const test = tests[currentTestIndex];
-    if (!test) {
-      return (
-        <div className="IntervalTrainer">
-          {t('noTests')}
-        </div>
-      );
-    }
-
-    const showResolveButton = test.state !== TEST_STATE_GREEN;
-    const showNextButton = test.state === TEST_STATE_GREEN && currentTestIndex < tests.length - 1;
-    const showStatsButton = test.state === TEST_STATE_GREEN && currentTestIndex === tests.length - 1 && !showStats;
-
+  const currentTest = tests[currentTestIndex];
+  if (!currentTest) {
     return (
       <div className="IntervalTrainer">
-        <h2 className="IntervalTrainer-header">{title}</h2>
-        {!showStats && this.renderQuestionElement(currentTestIndex, test)}
-        {!showStats && this.renderKeyboardElement(keyboardStart, keyboardEnd, keyboardOffset, keyboardShortcuts)}
-        {showStats && this.renderStatElement(tests)}
-        <div className="IntervalTrainer-footer">
-          {showNextButton && <Button type="ghost" onClick={this.handleNextClick}>{t('next')}</Button>}
-          {showResolveButton && <Button type="ghost" onClick={this.handleResolveClick}>{t('solve')}</Button>}
-          {showStatsButton && <Button type="ghost" onClick={this.handleStatsClick}>{t('statistics')}</Button>}
-          {showStats && <Button type="ghost" onClick={this.handleResetClick}>{t('restart')}</Button>}
-        </div>
+        {t('noTests')}
       </div>
     );
   }
+
+  const showResolveButton = currentTest.state !== TEST_STATE.green;
+  const showNextButton = currentTest.state === TEST_STATE.green && currentTestIndex < tests.length - 1;
+  const showStatsButton = currentTest.state === TEST_STATE.green && currentTestIndex === tests.length - 1 && !showStats;
+
+  return (
+    <div className="IntervalTrainer">
+      <h2 className="IntervalTrainer-header">{content.title}</h2>
+      {!showStats && renderQuestionElement()}
+      {!showStats && renderKeyboardElement()}
+      {showStats && renderStatElement()}
+      <div className="IntervalTrainer-footer">
+        {showNextButton && <Button type="ghost" onClick={handleNextClick}>{t('next')}</Button>}
+        {showResolveButton && <Button type="ghost" onClick={handleResolveClick}>{t('solve')}</Button>}
+        {showStatsButton && <Button type="ghost" onClick={handleStatsClick}>{t('statistics')}</Button>}
+        {showStats && <Button type="ghost" onClick={handleResetClick}>{t('restart')}</Button>}
+      </div>
+    </div>
+  );
 }
 
 IntervalTrainerDisplay.propTypes = {
-  ...translationProps,
-  ...sectionDisplayProps,
-  audioContextProvider: PropTypes.instanceOf(AudioContextProvider).isRequired
+  ...sectionDisplayProps
 };
 
-export default withTranslation('intervalTrainer')(inject({
-  audioContextProvider: AudioContextProvider
-}, IntervalTrainerDisplay));
+export default IntervalTrainerDisplay;
