@@ -1,7 +1,8 @@
 import LoginForm from './login-form.js';
 import React, { createRef } from 'react';
-import { Modal, Input, Checkbox } from 'antd';
+import { Modal, Input, Checkbox, Form } from 'antd';
 
+const FormItem = Form.Item;
 const confirm = Modal.confirm;
 const TextArea = Input.TextArea;
 
@@ -83,17 +84,16 @@ export function confirmSectionHardDelete(
   onCancel = () => {}
 ) {
   let dialog = null;
-  let reason = '';
-  let deleteAllRevisions = false;
   let createDialogProps = null;
+  const formRef = React.createRef();
 
-  const handleReasonChange = event => {
-    reason = event.target.value;
-    dialog.update(createDialogProps());
+  const handleOk = () => {
+    const reason = formRef.current.getFieldValue('reason');
+    const deleteAllRevisions = formRef.current.getFieldValue('deleteAllRevisions');
+    onOk({ reason, deleteAllRevisions });
   };
 
-  const handleDeleteAllRevisionsChange = event => {
-    deleteAllRevisions = event.target.checked;
+  const updateDialog = () => {
     dialog.update(createDialogProps());
   };
 
@@ -109,34 +109,38 @@ export function confirmSectionHardDelete(
         <br />
         <span>{t('confirmationDialogs:pleaseSpecifyAReason')}:</span>
         <br />
-        <TextArea
-          value={reason}
-          onChange={handleReasonChange}
-          />
-        <br />
-        <br />
-        <Checkbox
-          checked={deleteAllRevisions}
-          onChange={handleDeleteAllRevisionsChange}
-          >
-          {t('confirmationDialogs:deleteAllRevisions')}
-        </Checkbox>
+        <Form ref={formRef}>
+          <FormItem name="reason" initialValue="">
+            <TextArea onChange={updateDialog} />
+          </FormItem>
+          <br />
+          <br />
+          <FormItem name="deleteAllRevisions" initialValue={false} valuePropName="checked">
+            <Checkbox>
+              {t('confirmationDialogs:deleteAllRevisions')}
+            </Checkbox>
+          </FormItem>
+        </Form>
       </div>
     );
   }
 
-  createDialogProps = () => ({
-    title: t('confirmationDialogs:areYouSure'),
-    content: createContent(),
-    okText: t('common:yes'),
-    okType: 'danger',
-    cancelText: t('common:no'),
-    onOk: () => onOk({ reason, deleteAllRevisions }),
-    onCancel,
-    okButtonProps: {
-      disabled: reason.length < 3
-    }
-  });
+  createDialogProps = () => {
+    const isOkDisabled = (formRef?.current?.getFieldValue('reason')?.length || 0) < 3;
+
+    return {
+      title: t('confirmationDialogs:areYouSure'),
+      content: createContent(),
+      okText: t('common:yes'),
+      okType: 'danger',
+      cancelText: t('common:no'),
+      onOk: handleOk,
+      onCancel,
+      okButtonProps: {
+        disabled: isOkDisabled
+      }
+    };
+  };
 
   dialog = confirm(createDialogProps());
 }
