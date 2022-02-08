@@ -1,13 +1,12 @@
-import React from 'react';
-import autoBind from 'auto-bind';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
+import React, { useEffect, useRef, useState } from 'react';
 import { shuffleItems } from '../../../utils/array-utils.js';
 import AudioPlayer from '../../../components/audio-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import { inject } from '../../../components/container-context.js';
+import { useService } from '../../../components/container-context.js';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
-import { sectionDisplayProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const abcOptions = {
   paddingtop: 0,
@@ -22,134 +21,105 @@ const midiOptions = {
   generateInline: true
 };
 
-class EarTrainingDisplay extends React.Component {
-  constructor(props) {
-    super(props);
+function EarTrainingDisplay({ content }) {
+  const { t } = useTranslation('earTraining');
+  const clientConfig = useService(ClientConfig);
+  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
 
-    autoBind(this);
+  const abcContainerRef = useRef();
+  const midiContainerRef = useRef();
 
-    this.abcjs = null;
-    this.canRenderAbc = false;
-    this.abcContainerRef = React.createRef();
-    this.midiContainerRef = React.createRef();
+  const { title, maxWidth } = content;
+  const [abcjs, setAbcjs] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [tests, setTests] = useState(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
 
-    const { content } = this.props;
+  useEffect(() => {
+    (async () => {
+      const abcjsModule = await import('abcjs/midi.js');
+      setAbcjs(abcjsModule.default);
+    })();
+  });
 
-    this.state = {
-      title: content.title,
-      maxWidth: content.maxWidth,
-      tests: content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests,
-      currentIndex: 0,
-      showResult: false
-    };
-  }
-
-  async componentDidMount() {
-    this.canRenderAbc = true;
-    const { default: abcjs } = await import('abcjs/midi.js');
-    this.abcjs = abcjs;
-
-    if (this.canRenderAbc) {
-      const { tests, currentIndex, showResult } = this.state;
+  useEffect(() => {
+    if (abcjs) {
       const currentTest = tests[currentIndex];
-      this.abcjs.renderAbc(this.abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
-      this.abcjs.renderMidi(this.midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
+      abcjs.renderAbc(abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
+      abcjs.renderMidi(midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
     }
-  }
+  }, [abcjs, tests, currentIndex, showResult]);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.abcjs) {
-      const { tests, currentIndex, showResult } = this.state;
-      const currentTest = tests[currentIndex];
-      this.abcjs.renderAbc(this.abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
-      if (tests !== prevState.tests || currentIndex !== prevState.currentIndex) {
-        this.abcjs.renderMidi(this.midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
-      }
-    }
-  }
+  const handleResultClick = () => {
+    setShowResult(true);
+  };
 
-  componentWillUnmount() {
-    this.canRenderAbc = false;
-  }
+  const handleNextClick = () => {
+    setCurrentIndex(currentIndex + 1);
+    setShowResult(false);
+  };
 
-  handleResultClick() {
-    this.setState({ showResult: true });
-  }
+  const handleResetClick = () => {
+    setCurrentIndex(0);
+    setShowResult(false);
+    setTests(shuffleItems(tests));
+  };
 
-  handleNextClick() {
-    const { currentIndex } = this.state;
-    this.setState({ currentIndex: currentIndex + 1, showResult: false });
-  }
-
-  handleResetClick() {
-    const { tests } = this.state;
-    this.setState({ tests: shuffleItems(tests), currentIndex: 0, showResult: false });
-  }
-
-  render() {
-    const { clientConfig, githubFlavoredMarkdown, t } = this.props;
-    const { title, maxWidth, tests, currentIndex, showResult } = this.state;
-
+  const renderSoundPlayer = () => {
+    let soundUrl = null;
+    let legendHtml = '';
+    let soundType = SOUND_TYPE.midi;
     const currentTest = tests[currentIndex];
 
-    let soundType;
-    let soundUrl;
-    let legendHtml;
     if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.internal) {
       soundType = SOUND_TYPE.internal;
       soundUrl = currentTest.sound.url ? `${clientConfig.cdnRootUrl}/${currentTest.sound.url}` : null;
       legendHtml = currentTest.sound.text || '';
-    } else if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.external) {
+    }
+
+    if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.external) {
       soundType = SOUND_TYPE.external;
       soundUrl = currentTest.sound.url || null;
       legendHtml = currentTest.sound.text || '';
-    } else {
-      soundType = SOUND_TYPE.midi;
-      soundUrl = null;
-      legendHtml = '';
     }
 
-    const soundPlayer = soundType === SOUND_TYPE.midi
-      ? <div ref={this.midiContainerRef} />
+    return soundType === SOUND_TYPE.midi
+      ? <div ref={midiContainerRef} />
       : <AudioPlayer soundUrl={soundUrl} legendHtml={legendHtml} />;
+  };
 
+  const renderButtons = () => {
     const buttons = [];
-
     if (showResult && currentIndex < tests.length - 1) {
-      buttons.push(<button key="next" type="button" onClick={this.handleNextClick}>{t('nextExercise')}</button>);
+      buttons.push(<button key="next" type="button" onClick={handleNextClick}>{t('nextExercise')}</button>);
     }
-
-    if (currentTest && !showResult) {
-      buttons.push(<button key="result" type="button" onClick={this.handleResultClick}>{t('solve')}</button>);
+    if (tests[currentIndex] && !showResult) {
+      buttons.push(<button key="result" type="button" onClick={handleResultClick}>{t('solve')}</button>);
     }
+    buttons.push(<button key="reset" type="button" onClick={handleResetClick}>{t('reset')}</button>);
 
-    buttons.push(<button key="reset" type="button" onClick={this.handleResetClick}>{t('reset')}</button>);
+    return buttons;
+  };
 
-    return (
-      <div className="EarTraining fa5">
-        <div className={`EarTraining-testWrapper u-max-width-${maxWidth || 100}`}>
-          <h3
-            className="EarTraining-header"
-            dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(title) }}
-            />
-          <div ref={this.abcContainerRef} />
-          {soundPlayer}
-          <div className="EarTraining-buttons">
-            {buttons}
-          </div>
+  return (
+    <div className="EarTraining fa5">
+      <div className={`EarTraining-testWrapper u-max-width-${maxWidth || 100}`}>
+        <h3
+          className="EarTraining-header"
+          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(title) }}
+          />
+        <div ref={abcContainerRef} />
+        {renderSoundPlayer()}
+        <div className="EarTraining-buttons">
+          {renderButtons()}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 EarTrainingDisplay.propTypes = {
-  ...translationProps,
-  ...sectionDisplayProps,
-  ...clientConfigProps
+  ...sectionDisplayProps
 };
 
-export default withTranslation('earTraining')(inject({
-  githubFlavoredMarkdown: GithubFlavoredMarkdown,
-  clientConfig: ClientConfig
-}, EarTrainingDisplay));
+export default EarTrainingDisplay;
