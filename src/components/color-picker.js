@@ -1,7 +1,9 @@
 import React from 'react';
 import { Dropdown } from 'antd';
 import PropTypes from 'prop-types';
-import SwatchesPicker from 'react-color/lib/Swatches.js';
+import SwatchesPickerNs from 'react-color/lib/Swatches.js';
+
+const SwatchesPicker = SwatchesPickerNs.default || SwatchesPickerNs;
 
 function ColorPicker({ color, colors, onChange, placement, width }) {
   const picker = (
@@ -9,7 +11,7 @@ function ColorPicker({ color, colors, onChange, placement, width }) {
       width={width}
       colors={colors}
       color={color}
-      onChange={({ hex }) => onChange && onChange(hex)}
+      onChange={({ hex }) => onChange(hex)}
       />
   );
 
@@ -32,8 +34,8 @@ ColorPicker.propTypes = {
 
 ColorPicker.defaultProps = {
   color: null,
-  colors: null,
-  onChange: null,
+  colors: [],
+  onChange: () => {},
   placement: 'bottomLeft',
   width: 320
 };
