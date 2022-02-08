@@ -5,6 +5,7 @@ import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
+import LessonStore from '../stores/lesson-store.js';
 import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
@@ -24,15 +25,18 @@ const roomInvitationProjection = {
 };
 
 export default class RoomService {
-  static get inject() { return [RoomStore, RoomLockStore, RoomInvitationStore, UserService, Cdn, TransactionRunner]; }
+  static get inject() {
+    return [RoomStore, RoomLockStore, RoomInvitationStore, LessonStore, UserService, Cdn, TransactionRunner];
+  }
 
-  constructor(roomStore, roomLockStore, roomInvitationStore, userService, cdn, transactionRunner) {
-    this.roomStore = roomStore;
-    this.roomLockStore = roomLockStore;
-    this.roomInvitationStore = roomInvitationStore;
-    this.userService = userService;
+  constructor(roomStore, roomLockStore, roomInvitationStore, lessonStore, userService, cdn, transactionRunner) {
     this.cdn = cdn;
+    this.roomStore = roomStore;
+    this.userService = userService;
+    this.lessonStore = lessonStore;
+    this.roomLockStore = roomLockStore;
     this.transactionRunner = transactionRunner;
+    this.roomInvitationStore = roomInvitationStore;
   }
 
   getRoomById(roomId) {
@@ -208,8 +212,9 @@ export default class RoomService {
     }
 
     await this.transactionRunner.run(async session => {
-      await this.roomStore.deleteOne({ _id: roomId }, { session });
+      await this.lessonStore.deleteMany({ roomId }, { session });
       await this.roomInvitationStore.deleteMany({ roomId }, { session });
+      await this.roomStore.deleteOne({ _id: roomId }, { session });
     });
 
     try {
