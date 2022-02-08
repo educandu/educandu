@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'antd';
+import { TESTS_ORDER } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../../components/markdown.js';
 import { shuffleItems } from '../../../utils/array-utils.js';
@@ -7,57 +8,60 @@ import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 function QuickTesterDisplay({ content }) {
+  const [tests, setTests] = useState([]);
   const { t } = useTranslation('quickTester');
-  const [currentIndex, setCurrentIndex] = React.useState(-1);
-  const [isAnswerVisible, setIsAnswerVisible] = React.useState(false);
-  const [tests, setTests] = React.useState(shuffleItems(content.tests));
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentTestIndex, setCurrentTestIndex] = useState(-1);
+  const [isAnswerVisible, setIsAnswerVisible] = useState(false);
 
-  React.useEffect(() => {
-    setCurrentIndex(-1);
+  const restart = useCallback(() => {
+    setCurrentTestIndex(0);
     setIsAnswerVisible(false);
-    setTests(shuffleItems(content.tests));
-  }, [content.tests]);
+    setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
+  }, [content.tests, content.testsOrder]);
 
-  const showAnswer = React.useCallback(() => {
+  useEffect(() => {
+    if (isOpen) {
+      restart();
+    }
+
+  }, [isOpen, restart]);
+
+  const showAnswer = () => {
     setIsAnswerVisible(true);
-  }, [setIsAnswerVisible]);
+  };
 
-  const moveToIndex = React.useCallback(valOrFunc => {
+  const movePrevious = () => {
     setIsAnswerVisible(false);
-    setCurrentIndex(valOrFunc);
-  }, [setIsAnswerVisible, setCurrentIndex]);
+    setCurrentTestIndex(i => i - 1);
+  };
 
-  const movePrevious = React.useCallback(() => {
-    moveToIndex(i => i - 1);
-  }, [moveToIndex]);
+  const moveNext = () => {
+    setIsAnswerVisible(false);
+    setCurrentTestIndex(i => i + 1);
+  };
 
-  const moveNext = React.useCallback(() => {
-    moveToIndex(i => i + 1);
-  }, [moveToIndex]);
+  const open = () => {
+    setIsOpen(true);
+  };
 
-  const close = React.useCallback(() => {
-    moveToIndex(-1);
-  }, [moveToIndex]);
+  const close = () => {
+    setIsOpen(false);
+  };
 
-  const restart = React.useCallback(() => {
-    setTests(shuffleItems(content.tests));
-    moveToIndex(content.tests.length ? 0 : -1);
-  }, [setTests, content.tests, moveToIndex]);
+  const percentDone = tests.length
+    ? Math.max(0, Math.min(100, Math.round(((currentTestIndex + 1) / tests.length) * 100)))
+    : 100;
 
-  const percentDone = React.useMemo(() => {
-    return tests.length
-      ? Math.max(0, Math.min(100, Math.round(((currentIndex + 1) / tests.length) * 100)))
-      : 100;
-  }, [currentIndex, tests.length]);
-
-  if (currentIndex === -1 || !tests.length) {
+  if (!isOpen || !tests.length) {
     return (
       <div className="QuickTester">
         <div className="QuickTester-content">
           <Markdown
             tag="a"
             className="QuickTester-initLink"
-            onClick={restart}
+            disabled={!content.tests.length}
+            onClick={open}
             inline
             >
             {content.teaser}
@@ -68,7 +72,7 @@ function QuickTesterDisplay({ content }) {
   }
 
   const answerDisplay = isAnswerVisible
-    ? <Markdown inline>{tests[currentIndex].answer}</Markdown>
+    ? <Markdown inline>{tests[currentTestIndex].answer}</Markdown>
     : <Button type="primary" size="large" onClick={showAnswer}>{t('showAnswer')}</Button>;
 
   return (
@@ -86,10 +90,10 @@ function QuickTesterDisplay({ content }) {
         <div className="QuickTester-test">
           <div className="QuickTester-question">
             <div className="QuickTester-questionHeader">
-              {t('questionHeader', { currentTest: currentIndex + 1, testsLength: tests.length })}
+              {t('questionHeader', { currentTest: currentTestIndex + 1, testsLength: tests.length })}
             </div>
             <div className="QuickTester-questionBody">
-              <Markdown inline>{tests[currentIndex].question}</Markdown>
+              <Markdown inline>{tests[currentTestIndex].question}</Markdown>
             </div>
           </div>
           <div className="QuickTester-answer">
@@ -101,7 +105,7 @@ function QuickTesterDisplay({ content }) {
             className="QuickTester-button"
             shape="circle"
             icon={<LeftOutlined />}
-            disabled={currentIndex === 0}
+            disabled={currentTestIndex < 1}
             onClick={movePrevious}
             />
           <Button
@@ -114,7 +118,7 @@ function QuickTesterDisplay({ content }) {
             className="QuickTester-button"
             shape="circle"
             icon={<RightOutlined />}
-            disabled={!isAnswerVisible || currentIndex === tests.length - 1}
+            disabled={!isAnswerVisible || currentTestIndex > tests.length - 2}
             onClick={moveNext}
             />
         </div>

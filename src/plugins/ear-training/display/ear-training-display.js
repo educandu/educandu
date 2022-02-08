@@ -1,7 +1,7 @@
 import React from 'react';
 import autoBind from 'auto-bind';
-import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
 import { withTranslation } from 'react-i18next';
+import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
 import { shuffleItems } from '../../../utils/array-utils.js';
 import AudioPlayer from '../../../components/audio-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';

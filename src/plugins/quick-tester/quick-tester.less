@@ -1,11 +1,11 @@
 @quick-tester-panel-padding: 6px 12px;
-@quick-tester-border-color: @blue-9;
-@quick-tester-color: @blue-9;
-@quick-tester-background-color: @blue-1;
-@quick-tester-background-hover-color: @blue-2;
-@quick-tester-header-color: @blue-1;
-@quick-tester-header-background-color: @blue-9;
-@quick-tester-progress-background-color: @lime-8;
+@quick-tester-border-color: @edu-primary-color;
+@quick-tester-color: @edu-primary-color;
+@quick-tester-background-color: fade(@edu-selection-background-color, 20%);
+@quick-tester-background-hover-color: @edu-selection-background-color;
+@quick-tester-header-color: @edu-text-color-inverse;
+@quick-tester-header-background-color: @edu-primary-color;
+@quick-tester-progress-background-color: @edu-success-color;
 
 .QuickTester {}
 
@@ -52,6 +52,7 @@
 }
 
 .QuickTester-closeButton {
+  .m-inverted-button();
   grid-column: 3;
   text-align: right;
 }

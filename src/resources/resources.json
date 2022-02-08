@@ -1226,7 +1226,7 @@
       "internalUrl": "Internal URL",
       "copyrightInfos": "Copyright infos",
       "testsOrder": "Display order",
-      "testsOrderGiven": "as given",
+      "testsOrderGiven": "as specified",
       "testsOrderRandom": "random"
     }
   },
@@ -1421,7 +1421,9 @@
       "question": "Question",
       "answer": "Answer",
       "teaserLabel": "Link text",
-      "titleLabel": "Title"
+      "testsOrder": "Display order",
+      "testsOrderGiven": "as specified",
+      "testsOrderRandom": "random"
     }
   },
   {
@@ -1434,7 +1436,9 @@
       "question": "Frage",
       "answer": "Antwort",
       "teaserLabel": "Link-Text",
-      "titleLabel": "Titel"
+      "testsOrder": "Anzeigereihenfolge",
+      "testsOrderGiven": "wie angegeben",
+      "testsOrderRandom": "zufällig"
     }
   },
   {

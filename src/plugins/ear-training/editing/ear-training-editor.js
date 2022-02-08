@@ -29,16 +29,14 @@ class EarTrainingEditor extends React.Component {
         render: (upDown, item, index) => (
           <ButtonGroup>
             <Button
-              data-index={index}
               disabled={index === 0}
               icon={<ArrowUpOutlined />}
-              onClick={this.handleUpCircleButtonClick}
+              onClick={() => this.handleUpCircleButtonClick(index)}
               />
             <Button
-              data-index={index}
               disabled={index === this.props.content.tests.length - 1}
               icon={<ArrowDownOutlined />}
-              onClick={this.handleDownCircleButtonClick}
+              onClick={() => this.handleDownCircleButtonClick(index)}
               />
           </ButtonGroup>
         )
@@ -47,9 +45,8 @@ class EarTrainingEditor extends React.Component {
         key: 'startAbcCode',
         render: (val, item, index) => (
           <TextArea
-            data-index={index}
             value={item.startAbcCode}
-            onChange={this.handleStartAbcCodeChanged}
+            onChange={event => this.handleStartAbcCodeChanged(index, event.target.value)}
             rows={6}
             />
         )
@@ -58,9 +55,8 @@ class EarTrainingEditor extends React.Component {
         key: 'fullAbcCode',
         render: (val, item, index) => (
           <TextArea
-            data-index={index}
             value={item.fullAbcCode}
-            onChange={this.handleFullAbcCodeChanged}
+            onChange={event => this.handleFullAbcCodeChanged(index, event.target.value)}
             rows={6}
             />
         )
@@ -76,22 +72,20 @@ class EarTrainingEditor extends React.Component {
         key: 'button',
         render: (value, item, index) => (
           <Button
-            data-index={index}
             type="danger"
             icon={<DeleteOutlined />}
             disabled={this.props.content.tests.length < 2}
-            onClick={this.handleDeletButtonClick}
+            onClick={() => this.handleDeleteButtonClick(index)}
             />
         )
       }
     ];
 
-    this.expandedRowRender = (record, index) => (
+    this.renderExpandedRow = (record, index) => (
       <EarTrainingSoundEditor
-        testIndex={index}
         sectionContainerId={this.props.sectionContainerId}
         sound={record.sound || { ...defaultSound }}
-        onSoundChanged={this.handleSoundChanged}
+        onSoundChanged={newValue => this.handleSoundChanged(index, newValue)}
         />
     );
   }
@@ -110,31 +104,25 @@ class EarTrainingEditor extends React.Component {
     this.changeContent({ maxWidth: newValue });
   }
 
-  handleStartAbcCodeChanged(event) {
-    const { value, dataset } = event.target;
-    const index = Number.parseInt(dataset.index, 10);
+  handleStartAbcCodeChanged(index, newValue) {
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((test, i) => i === index ? { ...test, startAbcCode: value } : test);
+    const newTests = oldTests.map((test, i) => i === index ? { ...test, startAbcCode: newValue } : test);
     this.changeContent({ tests: newTests });
   }
 
-  handleFullAbcCodeChanged(event) {
-    const { value, dataset } = event.target;
-    const index = Number.parseInt(dataset.index, 10);
+  handleFullAbcCodeChanged(index, newValue) {
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((test, i) => i === index ? { ...test, fullAbcCode: value } : test);
+    const newTests = oldTests.map((test, i) => i === index ? { ...test, fullAbcCode: newValue } : test);
     this.changeContent({ tests: newTests });
   }
 
-  handleSoundChanged({ testIndex, sound }) {
+  handleSoundChanged(index, newValue) {
     const oldTests = this.props.content.tests;
-    const newTests = oldTests.map((test, i) => i === testIndex ? { ...test, sound } : test);
+    const newTests = oldTests.map((test, i) => i === index ? { ...test, sound: newValue } : test);
     this.changeContent({ tests: newTests });
   }
 
-  handleDeletButtonClick(event) {
-    const { dataset } = event.target;
-    const index = Number.parseInt(dataset.index, 10);
+  handleDeleteButtonClick(index) {
     const oldTests = this.props.content.tests;
     const newTests = removeItemAt(oldTests, index);
     this.changeContent({ tests: newTests });
@@ -146,16 +134,12 @@ class EarTrainingEditor extends React.Component {
     this.changeContent({ tests: newTests });
   }
 
-  handleUpCircleButtonClick(event) {
-    const { dataset } = event.currentTarget;
-    const index = Number.parseInt(dataset.index, 10);
+  handleUpCircleButtonClick(index) {
     const newTests = swapItemsAt(this.props.content.tests, index, index - 1);
     this.changeContent({ tests: newTests });
   }
 
-  handleDownCircleButtonClick(event) {
-    const { dataset } = event.currentTarget;
-    const index = Number.parseInt(dataset.index, 10);
+  handleDownCircleButtonClick(index) {
     const newTests = swapItemsAt(this.props.content.tests, index, index + 1);
     this.changeContent({ tests: newTests });
   }
@@ -170,12 +154,8 @@ class EarTrainingEditor extends React.Component {
       wrapperCol: { span: 14 }
     };
     const { content, t } = this.props;
-    const dataSource = content.tests.map((test, i) => ({
-      key: i,
-      startAbcCode: test.startAbcCode,
-      fullAbcCode: test.fullAbcCode,
-      sound: test.sound
-    }));
+    const dataSource = content.tests.map((test, i) => ({ key: i, ...test }));
+    const expandedRowKeys = dataSource.map(record => record.key);
 
     return (
       <div>
@@ -199,8 +179,8 @@ class EarTrainingEditor extends React.Component {
           expandable={{
             expandIconColumnIndex: -1,
             expandedRowClassName: () => 'EarTraining-expandedEditorRow',
-            expandedRowRender: this.expandedRowRender,
-            expandedRowKeys: dataSource.map(record => record.key)
+            expandedRowRender: this.renderExpandedRow,
+            expandedRowKeys
           }}
           pagination={false}
           size="small"
