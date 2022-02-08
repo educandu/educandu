@@ -1,58 +1,55 @@
 import React from 'react';
-import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
-import { withUser } from './user-context.js';
-import { withTranslation } from 'react-i18next';
-import { userProps, translationProps, formItemLayoutShape } from '../ui/default-prop-types.js';
+import { useUser } from './user-context.js';
+import { useTranslation } from 'react-i18next';
+import { formItemLayoutShape } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
-class UsernameInput extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
+function UsernameInput({ forbiddenUsernames, formItemLayout }) {
+  const user = useUser();
+  const { t } = useTranslation('usernameInput');
 
-  render() {
-    const { forbiddenUsernames, formItemLayout, user, t } = this.props;
-
-    const validationRules = [
-      {
-        required: true,
-        message: t('enterUsername'),
-        whitespace: true
-      },
-      {
-        validator: (rule, value) => {
-          const minLength = 6;
-          return value && value.trim().length < minLength
-            ? Promise.reject(new Error(t('usernameIsTooShort', { length: minLength })))
-            : Promise.resolve();
-        }
-      },
-      {
-        validator: (rule, value) => {
-          return value && forbiddenUsernames.includes(value.toLowerCase())
-            ? Promise.reject(new Error(t('usernameIsInUse')))
-            : Promise.resolve();
-        }
+  const validationRules = [
+    {
+      required: true,
+      message: t('enterUsername'),
+      whitespace: true
+    },
+    {
+      validator: (rule, value) => {
+        const minLength = 6;
+        return value && value.trim().length < minLength
+          ? Promise.reject(new Error(t('usernameIsTooShort', { length: minLength })))
+          : Promise.resolve();
       }
-    ];
+    },
+    {
+      validator: (rule, value) => {
+        return value && forbiddenUsernames.includes(value.toLowerCase())
+          ? Promise.reject(new Error(t('usernameIsInUse')))
+          : Promise.resolve();
+      }
+    }
+  ];
 
-    return (
-      <FormItem {...formItemLayout} label={t('username')} name="username" initialValue={user?.username || ''} rules={validationRules}>
-        <Input />
-      </FormItem>
-    );
-  }
+  return (
+    <FormItem
+      {...formItemLayout}
+      name="username"
+      label={t('username')}
+      rules={validationRules}
+      initialValue={user?.username || ''}
+      >
+      <Input />
+    </FormItem>
+  );
 }
 
 UsernameInput.propTypes = {
-  ...userProps,
-  ...translationProps,
   forbiddenUsernames: PropTypes.array.isRequired,
   formItemLayout: formItemLayoutShape.isRequired
 };
 
-export default withTranslation('usernameInput')(withUser(UsernameInput));
+export default UsernameInput;
