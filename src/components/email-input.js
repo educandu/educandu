@@ -11,9 +11,7 @@ function EmailInput({ forbiddenEmails, formItemLayout }) {
   const user = useUser();
   const { t } = useTranslation('emailInput');
 
-  const normalize = email => {
-    return email ? email.toLowerCase() : email;
-  };
+  const normalize = value => value ? value.toLowerCase() : value;
 
   const handleOnChange = event => {
     const element = event.target;
@@ -35,7 +33,7 @@ function EmailInput({ forbiddenEmails, formItemLayout }) {
     },
     {
       validator: (rule, value) => {
-        return value && forbiddenEmails.includes(value.toLowerCase())
+        return value && forbiddenEmails.includes(normalize(value))
           ? Promise.reject(new Error(t('emailIsInUse')))
           : Promise.resolve();
       }
