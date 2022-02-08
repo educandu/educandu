@@ -127,6 +127,10 @@ class QuickTesterEditor extends React.Component {
     this.changeContent({ tests: newTests });
   }
 
+  handleTestsOrderChanged(event) {
+    this.changeContent({ testsOrder: event.target.value });
+  }
+
   render() {
     const formItemLayout = {
       labelCol: { span: 4 },
