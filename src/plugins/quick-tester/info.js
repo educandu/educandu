@@ -20,7 +20,7 @@ export default class QuickTester {
 
   getDefaultContent(t) {
     return {
-      title: `[${t('quickTester:titleLabel')}]`,
+      title: `[${t('common:title')}]`,
       teaser: `[${t('quickTester:teaserLabel')}]`,
       tests: [
         {

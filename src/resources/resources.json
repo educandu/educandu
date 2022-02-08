@@ -1215,7 +1215,6 @@
       "nextExercise": "Next exercise",
       "solve": "Solve",
       "reset": "Reset",
-      "titleLabel": "Title",
       "startAbcCode": "Start ABC code",
       "fullAbcCode": "Full ABC code",
       "maximumWidth": "Maximum width",
@@ -1239,7 +1238,6 @@
       "nextExercise": "Nächste Übung",
       "solve": "Auflösen",
       "reset": "Zurücksetzen",
-      "titleLabel": "Titel",
       "startAbcCode": "Vorgabe-ABC-Code",
       "fullAbcCode": "Lösungs-ABC-Code",
       "maximumWidth": "Maximale Breite",
@@ -1423,7 +1421,6 @@
       "question": "Question",
       "answer": "Answer",
       "teaserLabel": "Link text",
-      "titleLabel": "Title",
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
       "testsOrderRandom": "random"
@@ -1439,7 +1436,6 @@
       "question": "Frage",
       "answer": "Antwort",
       "teaserLabel": "Link-Text",
-      "titleLabel": "Titel",
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
       "testsOrderRandom": "zufällig"

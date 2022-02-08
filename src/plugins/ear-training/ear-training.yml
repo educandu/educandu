@@ -10,9 +10,6 @@ solve:
 reset:
   en: Reset
   de: Zurücksetzen
-titleLabel:
-  en: Title
-  de: Titel
 startAbcCode:
   en: Start ABC code
   de: Vorgabe-ABC-Code

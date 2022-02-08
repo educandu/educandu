@@ -145,7 +145,7 @@ class QuickTesterEditor extends React.Component {
           <FormItem label={`${t('teaserLabel')}:`} {...formItemLayout}>
             <Input value={content.teaser} onChange={this.handleTeaserValueChanged} />
           </FormItem>
-          <FormItem label={`${t('titleLabel')}:`} {...formItemLayout}>
+          <FormItem label={`${t('common:title')}:`} {...formItemLayout}>
             <Input value={content.title} onChange={this.handleTitleValueChanged} />
           </FormItem>
           <FormItem label={t('testsOrder')} {...formItemLayout}>

@@ -16,9 +16,6 @@ answer:
 teaserLabel:
   en: Link text
   de: Link-Text
-titleLabel:
-  en: Title
-  de: Titel
 testsOrder:
   en: Display order
   de: Anzeigereihenfolge

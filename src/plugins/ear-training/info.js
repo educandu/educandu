@@ -20,7 +20,7 @@ export default class EarTraining {
 
   getDefaultContent(t) {
     return {
-      title: `[${t('earTraining:titleLabel')}]`,
+      title: `[${t('common:title')}]`,
       maxWidth: 100,
       tests: [
         {
