@@ -17,9 +17,9 @@ import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
@@ -52,6 +52,7 @@ function Doc({ initialState, PageTemplate }) {
   const [alerts, setAlerts] = useState([]);
   const infoFactory = useService(InfoFactory);
   const editorFactory = useService(EditorFactory);
+  const sectionHardDeletionFormRef = useRef(null);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
@@ -398,6 +399,7 @@ function Doc({ initialState, PageTemplate }) {
   const handleSectionHardDelete = index => {
     confirmSectionHardDelete(
       t,
+      sectionHardDeletionFormRef,
       async ({ reason, deleteAllRevisions }) => {
         const section = selectedHistoryRevision.sections[index];
         await hardDeleteSection({ section, reason, deleteAllRevisions });
