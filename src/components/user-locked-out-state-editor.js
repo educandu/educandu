@@ -1,32 +1,22 @@
 import React from 'react';
 import { Switch } from 'antd';
-import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { userShape } from './../ui/default-prop-types.js';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
-class UserLockedOutStateEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
-
-  handleLockedOutStateChange(newLockedOutState) {
-    const { user, onLockedOutStateChange } = this.props;
+function UserLockedOutStateEditor({ user, onLockedOutStateChange }) {
+  const handleLockedOutStateChange = newLockedOutState => {
     onLockedOutStateChange(user, newLockedOutState);
-  }
+  };
 
-  render() {
-    const { user } = this.props;
-    return (
-      <Switch
-        checkedChildren={<CheckOutlined />}
-        unCheckedChildren={<CloseOutlined />}
-        checked={user.lockedOut}
-        onChange={this.handleLockedOutStateChange}
-        />
-    );
-  }
+  return (
+    <Switch
+      checkedChildren={<CheckOutlined />}
+      unCheckedChildren={<CloseOutlined />}
+      checked={user.lockedOut}
+      onChange={handleLockedOutStateChange}
+      />
+  );
 }
 
 UserLockedOutStateEditor.propTypes = {
