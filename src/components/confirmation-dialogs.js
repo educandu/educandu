@@ -80,12 +80,12 @@ export function confirmCdnFileDelete(t, fileName, onOk, onCancel = () => {}) {
 
 export function confirmSectionHardDelete(
   t,
-  formRef,
   onOk,
   onCancel = () => {}
 ) {
   let dialog = null;
   let createDialogProps = null;
+  const formRef = React.createRef();
 
   const handleOk = () => {
     const reason = formRef.current.getFieldValue('reason');
