@@ -992,20 +992,6 @@
     }
   },
   {
-    "namespace": "footerLinksSettings",
-    "language": "en",
-    "resources": {
-      "unknown": "Unknown"
-    }
-  },
-  {
-    "namespace": "footerLinksSettings",
-    "language": "de",
-    "resources": {
-      "unknown": "Unbekannt"
-    }
-  },
-  {
     "namespace": "settingsDocumentsTable",
     "language": "en",
     "resources": {
@@ -1537,7 +1523,8 @@
       "click": "Click",
       "ctrl": "Ctrl",
       "shift": "Shift",
-      "alt": "Alt"
+      "alt": "Alt",
+      "unknown": "Unknown"
     }
   },
   {
@@ -1602,7 +1589,8 @@
       "click": "Klick",
       "ctrl": "Strg",
       "shift": "Umschalt",
-      "alt": "Alt"
+      "alt": "Alt",
+      "unknown": "Unbekannt"
     }
   },
   {

@@ -110,19 +110,11 @@ function SectionDisplay({
   ].filter(action => action.isVisible);
 
   const getDisplayComponent = useMemo(() => () => {
-    try {
-      return rendererFactory.createRenderer(section.type).getDisplayComponent();
-    } catch (error) {
-      return NotSupportedSection;
-    }
+    return rendererFactory.tryCreateRenderer(section.type)?.getDisplayComponent() || NotSupportedSection;
   }, [rendererFactory, section.type]);
 
   const getEditorComponent = useMemo(() => () => {
-    try {
-      return editorFactory.createEditor(section.type).getEditorComponent();
-    } catch (error) {
-      return NotSupportedSection;
-    }
+    return editorFactory.tryCreateEditor(section.type)?.getEditorComponent() || NotSupportedSection;
   }, [editorFactory, section.type]);
 
   const renderDisplayComponent = () => {
@@ -168,7 +160,7 @@ function SectionDisplay({
 
   const renderSectionInfo = () => {
     const sectionInfo = [
-      infoFactory.createInfo(section.type).getName(t),
+      infoFactory.tryCreateInfo(section.type)?.getName(t) || `${t('common:unknown')} (${section.type})`,
       section.revision ? `${t('common:revision')}: ${section.revision}` : null
     ].filter(s => s).join(' | ');
 

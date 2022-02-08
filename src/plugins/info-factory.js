@@ -38,6 +38,10 @@ class InfoFactory extends PluginFactoryBase {
     infos.forEach(info => this.registerPlugin(info));
   }
 
+  tryCreateInfo(pluginType) {
+    return this._tryGetInstance(pluginType);
+  }
+
   createInfo(pluginType) {
     return this._getInstance(pluginType);
   }

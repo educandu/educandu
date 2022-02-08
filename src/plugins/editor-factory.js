@@ -35,6 +35,10 @@ class EditorFactory extends PluginFactoryBase {
     }
   }
 
+  tryCreateEditor(pluginType) {
+    return this._tryGetInstance(pluginType);
+  }
+
   createEditor(pluginType) {
     return this._getInstance(pluginType);
   }

@@ -38,6 +38,10 @@ class RendererFactory extends PluginFactoryBase {
     renderers.forEach(renderer => this.registerPlugin(renderer));
   }
 
+  tryCreateRenderer(pluginType) {
+    return this._tryGetInstance(pluginType);
+  }
+
   createRenderer(pluginType) {
     return this._getInstance(pluginType);
   }

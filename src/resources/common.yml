@@ -175,3 +175,6 @@ shift:
 alt:
   en: Alt
   de: Alt
+unknown:
+  en: Unknown
+  de: Unbekannt
