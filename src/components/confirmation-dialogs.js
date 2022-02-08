@@ -310,3 +310,15 @@ export function confirmWithPassword(modal, t, username, onOk, onCancel = () => {
 
   dialog = modal.confirm(createDialogProps());
 }
+
+export function confirmDeleteImageTile(t, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:confirmDeleteImageTile'),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
