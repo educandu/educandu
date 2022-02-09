@@ -16,9 +16,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, sectionContainerId }) {
   const clientConfig = useService(ClientConfig);
 
   const changeSound = newValues => {
-    onSoundChanged({
-      sound: { ...sound, ...newValues }
-    });
+    onSoundChanged({ ...sound, ...newValues });
   };
 
   const handleSoundTypeChanged = event => {
