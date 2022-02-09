@@ -12,13 +12,18 @@ class PluginFactoryBase {
     this.factories.set(plugin.typeName, () => this.container.get(plugin));
   }
 
-  _getInstance(pluginType) {
+  _tryGetInstance(pluginType) {
     const factory = this.factories.get(pluginType);
-    if (!factory) {
+    return factory?.() || null;
+  }
+
+  _getInstance(pluginType) {
+    const instance = this._tryGetInstance(pluginType);
+    if (!instance) {
       throw new Error(`Plugin type '${pluginType}' is not registered.`);
     }
 
-    return factory();
+    return instance;
   }
 }
 

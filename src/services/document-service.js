@@ -553,7 +553,7 @@ class DocumentService {
   _getCdnResources(sections) {
     return [
       ...sections.reduce((cdnResources, section) => {
-        const info = this.infoFactory.createInfo(section.type);
+        const info = this.infoFactory.tryCreateInfo(section.type);
         if (info && section.content) {
           info.getCdnResources(section.content)
             .forEach(resource => {
