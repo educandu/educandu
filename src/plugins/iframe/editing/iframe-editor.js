@@ -1,10 +1,9 @@
 import React from 'react';
-import autoBind from 'auto-bind';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import { Form, Input, Slider, Checkbox } from 'antd';
+import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
-import { sectionEditorProps, translationProps } from '../../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
@@ -14,83 +13,74 @@ const marks = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].reduce((all, v
   return { ...all, [val]: node };
 }, {});
 
-class IframeEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
+function IframeEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('iframe');
 
-  handleExternalUrlValueChanged(event) {
-    const { value } = event.target;
-    this.changeContent({ url: value });
-  }
+  const { url, width } = content;
+  const formItemLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 14 }
+  };
 
-  handleWidthValueChanged(value) {
-    this.changeContent({ width: value });
-  }
-
-  handleHeightValueChanged(value) {
-    this.changeContent({ height: value });
-  }
-
-  handleIsBorderVisibleValueChanged(event) {
-    const { checked } = event.target;
-    this.changeContent({ isBorderVisible: checked });
-  }
-
-  changeContent(newContentValues) {
-    const { content, onContentChanged, t } = this.props;
+  const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
     const isValid = validation.validateUrl(newContent.url, t).validateStatus !== 'error';
     onContentChanged(newContent, !isValid);
-  }
+  };
 
-  render() {
-    const { content, t } = this.props;
-    const { url, width } = content;
+  const handleExternalUrlValueChanged = event => {
+    const { value } = event.target;
+    changeContent({ url: value });
+  };
 
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14 }
-    };
+  const handleWidthValueChanged = value => {
+    changeContent({ width: value });
+  };
 
-    return (
-      <div>
-        <Form layout="horizontal">
-          <FormItem
-            {...formItemLayout}
-            label={t('common:url')}
-            {...validation.validateUrl(url, t)}
-            hasFeedback
-            >
-            <Input value={url} onChange={this.handleExternalUrlValueChanged} />
-          </FormItem>
-          <Form.Item label={t('width')} {...formItemLayout}>
-            <ObjectMaxWidthSlider value={width} onChange={this.handleWidthValueChanged} />
-          </Form.Item>
-          <Form.Item label={t('height')} {...formItemLayout}>
-            <Slider
-              min={100}
-              max={1000}
-              marks={marks}
-              step={10}
-              value={content.height}
-              onChange={this.handleHeightValueChanged}
-              tipFormatter={tipFormatter}
-              />
-          </Form.Item>
-          <Form.Item label={t('frame')} {...formItemLayout}>
-            <Checkbox checked={content.isBorderVisible} onChange={this.handleIsBorderVisibleValueChanged} />
-          </Form.Item>
-        </Form>
-      </div>
-    );
-  }
+  const handleHeightValueChanged = value => {
+    changeContent({ height: value });
+  };
+
+  const handleIsBorderVisibleValueChanged = event => {
+    const { checked } = event.target;
+    changeContent({ isBorderVisible: checked });
+  };
+
+  return (
+    <div>
+      <Form layout="horizontal">
+        <FormItem
+          {...formItemLayout}
+          label={t('common:url')}
+          {...validation.validateUrl(url, t)}
+          hasFeedback
+          >
+          <Input value={url} onChange={handleExternalUrlValueChanged} />
+        </FormItem>
+        <Form.Item label={t('width')} {...formItemLayout}>
+          <ObjectMaxWidthSlider value={width} onChange={handleWidthValueChanged} />
+        </Form.Item>
+        <Form.Item label={t('height')} {...formItemLayout}>
+          <Slider
+            min={100}
+            max={1000}
+            marks={marks}
+            step={10}
+            value={content.height}
+            onChange={handleHeightValueChanged}
+            tipFormatter={tipFormatter}
+            />
+        </Form.Item>
+        <Form.Item label={t('frame')} {...formItemLayout}>
+          <Checkbox checked={content.isBorderVisible} onChange={handleIsBorderVisibleValueChanged} />
+        </Form.Item>
+      </Form>
+    </div>
+  );
 }
 
 IframeEditor.propTypes = {
-  ...translationProps,
   ...sectionEditorProps
 };
 
-export default withTranslation('iframe')(IframeEditor);
+export default IframeEditor;

@@ -50,7 +50,8 @@
       "confirmWithPasswordTitle": "Confirmation required",
       "confirmWithPasswordDescription": "Please enter your password in order to continue this process.",
       "sessionExpiredTitle": "Your session has expired",
-      "sessionExpiredDescription": "Your session has expired because you have been inactive for some time. Please login in order to continue this process."
+      "sessionExpiredDescription": "Your session has expired because you have been inactive for some time. Please login in order to continue this process.",
+      "confirmDeleteImageTile": "Do you really want to delete this tile?"
     }
   },
   {
@@ -72,7 +73,8 @@
       "confirmWithPasswordTitle": "Bestätigung erforderlich",
       "confirmWithPasswordDescription": "Bitte geben Sie Ihr Kennwort an, um diesen Vorgang fortzusetzen.",
       "sessionExpiredTitle": "Ihre Sitzung ist abgelaufen",
-      "sessionExpiredDescription": "Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen."
+      "sessionExpiredDescription": "Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen.",
+      "confirmDeleteImageTile": "Möchten Sie diese Kachel löschen?"
     }
   },
   {

@@ -2,12 +2,15 @@ import React from 'react';
 import { SOURCE_TYPE } from '../constants.js';
 import AudioPlayer from '../../../components/audio-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import { inject } from '../../../components/container-context.js';
-import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
+import { useService } from '../../../components/container-context.js';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 
-function AudioDisplay({ content, clientConfig }) {
-
+function AudioDisplay({ content }) {
   let soundUrl;
+  const legendHtml = content.text || '';
+
+  const clientConfig = useService(ClientConfig);
+
   switch (content.type) {
     case SOURCE_TYPE.external:
       soundUrl = content.url || null;
@@ -20,8 +23,6 @@ function AudioDisplay({ content, clientConfig }) {
       break;
   }
 
-  const legendHtml = content.text || '';
-
   return (
     <div className="Audio">
       <AudioPlayer soundUrl={soundUrl} legendHtml={legendHtml} />
@@ -30,10 +31,7 @@ function AudioDisplay({ content, clientConfig }) {
 }
 
 AudioDisplay.propTypes = {
-  ...sectionDisplayProps,
-  ...clientConfigProps
+  ...sectionDisplayProps
 };
 
-export default inject({
-  clientConfig: ClientConfig
-}, AudioDisplay);
+export default AudioDisplay;

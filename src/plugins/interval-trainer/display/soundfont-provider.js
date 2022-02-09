@@ -1,99 +1,67 @@
 // See https://github.com/danigb/soundfont-player
 // for more documentation on prop options.
 
-import React from 'react';
-import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import Soundfont from 'soundfont-player';
+import { useEffect, useState } from 'react';
 import AudioContextProvider from '../../../common/audio-context-provider.js';
 
-class SoundfontProvider extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-    this.canReceiveInstrument = false;
-    this.state = {
-      activeAudioNodes: {},
-      instrument: null
-    };
-  }
+function SoundfontProvider({ format, soundfont, instrumentName, hostname, audioContext, render }) {
+  const [instrument, setInstrument] = useState(null);
+  const [activeAudioNodes, setActiveAudioNodes] = useState({});
 
-  componentDidMount() {
-    this.canReceiveInstrument = true;
-    this.loadInstrument(this.props.instrumentName);
-  }
+  useEffect(() => {
+    (async () => {
+      // Re-trigger loading state
+      setInstrument(null);
+      const soundfontInstrument = await Soundfont.instrument(audioContext, instrumentName, {
+        format,
+        soundfont,
+        nameToUrl: (name, currentSoundfont, currentFormat) => `${hostname}/${currentSoundfont}/${name}-${currentFormat}.js`
+      });
+      setInstrument(soundfontInstrument);
+    })();
+  }, [format, soundfont, hostname, instrumentName, audioContext]);
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.instrumentName !== this.props.instrumentName) {
-      this.loadInstrument(this.props.instrumentName);
-    }
-  }
-
-  componentWillUnmount() {
-    this.canReceiveInstrument = false;
-  }
-
-  async loadInstrument(instrumentName) {
-    // Re-trigger loading state
-    this.setState({ instrument: null });
-    const instrument = await Soundfont.instrument(this.props.audioContext, instrumentName, {
-      format: this.props.format,
-      soundfont: this.props.soundfont,
-      nameToUrl: (name, soundfont, format) => `${this.props.hostname}/${soundfont}/${name}-${format}.js`
-    });
-    if (this.canReceiveInstrument) {
-      this.setState({ instrument });
-    }
-  }
-
-  async playNote(midiNumber) {
-    await this.props.audioContext.resume();
-    const audioNode = this.state.instrument.play(midiNumber);
-    this.setState(prevState => ({
-      activeAudioNodes: {
-        ...prevState.activeAudioNodes,
-        [midiNumber]: audioNode
-      }
+  const playNote = async midiNumber => {
+    await audioContext.resume();
+    const audioNode = instrument.play(midiNumber);
+    setActiveAudioNodes(prevState => ({
+      ...prevState,
+      [midiNumber]: audioNode
     }));
-  }
+  };
 
-  async stopNote(midiNumber) {
-    await this.props.audioContext.resume();
-    if (!this.state.activeAudioNodes[midiNumber]) {
+  const stopNote = async midiNumber => {
+    await audioContext.resume();
+    if (!activeAudioNodes[midiNumber]) {
       return;
     }
-    const audioNode = this.state.activeAudioNodes[midiNumber];
+    const audioNode = activeAudioNodes[midiNumber];
     audioNode.stop();
-    this.setState(prevState => ({
-      activeAudioNodes: {
-        ...prevState.activeAudioNodes,
-        [midiNumber]: null
-      }
+    setActiveAudioNodes(prevState => ({
+      ...prevState,
+      [midiNumber]: null
     }));
-  }
+  };
 
   // Clear any residual notes that don't get called with stopNote
-  async stopAllNotes() {
-    await this.props.audioContext.resume();
-    const activeAudioNodes = Object.values(this.state.activeAudioNodes);
-    activeAudioNodes.forEach(node => {
+  const stopAllNotes = async () => {
+    await audioContext.resume();
+    Object.values(activeAudioNodes).forEach(node => {
       if (node) {
         node.stop();
       }
     });
-    this.setState({
-      activeAudioNodes: {}
-    });
-  }
+    setActiveAudioNodes({});
+  };
 
-  render() {
-    return this.props.render({
-      isLoading: !this.state.instrument,
-      playNote: this.playNote,
-      stopNote: this.stopNote,
-      stopAllNotes: this.stopAllNotes
-    });
-  }
+  return render({
+    isLoading: !instrument,
+    playNote,
+    stopNote,
+    stopAllNotes
+  });
 }
 
 SoundfontProvider.propTypes = {

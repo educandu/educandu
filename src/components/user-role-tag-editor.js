@@ -1,19 +1,12 @@
 import React from 'react';
 import { Tag } from 'antd';
-import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import { userShape } from './../ui/default-prop-types.js';
 
 const { CheckableTag } = Tag;
 
-class UserRoleTagEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
-
-  handleRoleChange() {
-    const { user, roleName, onRoleChange } = this.props;
+function UserRoleTagEditor({ user, roleName, onRoleChange }) {
+  const handleRoleChange = () => {
     let newRoles;
     if (user.roles.includes(roleName)) {
       newRoles = user.roles.filter(x => x !== roleName);
@@ -21,21 +14,18 @@ class UserRoleTagEditor extends React.Component {
       newRoles = [...user.roles, roleName];
     }
     onRoleChange(user, newRoles);
-  }
+  };
 
-  render() {
-    const { roleName, user } = this.props;
-    const isUserInRole = user.roles.includes(roleName);
-    return (
-      <CheckableTag
-        key={roleName}
-        checked={isUserInRole}
-        onChange={this.handleRoleChange}
-        >
-        {roleName}
-      </CheckableTag>
-    );
-  }
+  const isUserInRole = user.roles.includes(roleName);
+  return (
+    <CheckableTag
+      key={roleName}
+      checked={isUserInRole}
+      onChange={handleRoleChange}
+      >
+      {roleName}
+    </CheckableTag>
+  );
 }
 
 UserRoleTagEditor.propTypes = {

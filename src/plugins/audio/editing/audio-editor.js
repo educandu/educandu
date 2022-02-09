@@ -1,109 +1,97 @@
 import React from 'react';
-import autoBind from 'auto-bind';
 import { Form, Input, Radio } from 'antd';
 import { SOURCE_TYPE } from '../constants.js';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import { inject } from '../../../components/container-context.js';
 import CdnFilePicker from '../../../components/cdn-file-picker.js';
-import { sectionEditorProps, clientConfigProps, translationProps } from '../../../ui/default-prop-types.js';
+import { useService } from '../../../components/container-context.js';
+import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const { TextArea } = Input;
 
-class AudioEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    autoBind(this);
-  }
+function AudioEditor({ sectionContainerId, content, onContentChanged }) {
+  const { t } = useTranslation('audio');
+  const clientConfig = useService(ClientConfig);
 
-  handleExternalUrlValueChanged(event) {
-    const { value } = event.target;
-    this.changeContent({ url: value });
-  }
+  const { type, url, text } = content;
 
-  handleInternalUrlValueChanged(e) {
-    this.changeContent({ url: e.target.value });
-  }
+  const formItemLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 14 }
+  };
 
-  handleInternalUrlFileNameChanged(value) {
-    this.changeContent({ url: value });
-  }
-
-  handleTypeValueChanged(event) {
-    const { value } = event.target;
-    this.changeContent({ type: value, url: '' });
-  }
-
-  changeContent(newContentValues) {
-    const { content, onContentChanged } = this.props;
+  const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
-  }
+  };
 
-  handleCurrentEditorValueChanged(event) {
+  const handleExternalUrlValueChanged = event => {
+    const { value } = event.target;
+    changeContent({ url: value });
+  };
+
+  const handleInternalUrlValueChanged = e => {
+    changeContent({ url: e.target.value });
+  };
+
+  const handleInternalUrlFileNameChanged = value => {
+    changeContent({ url: value });
+  };
+
+  const handleTypeValueChanged = event => {
+    const { value } = event.target;
+    changeContent({ type: value, url: '' });
+  };
+  const handleCurrentEditorValueChanged = event => {
     const newValue = event.target.value;
-    this.changeContent({ text: newValue });
-  }
+    changeContent({ text: newValue });
+  };
 
-  render() {
-    const { sectionContainerId, content, clientConfig, t } = this.props;
-    const { type, url, text } = content;
-
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14 }
-    };
-
-    return (
-      <div>
-        <Form layout="horizontal">
-          <FormItem label={t('source')} {...formItemLayout}>
-            <RadioGroup value={type} onChange={this.handleTypeValueChanged}>
-              <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
-              <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
-            </RadioGroup>
+  return (
+    <div>
+      <Form layout="horizontal">
+        <FormItem label={t('source')} {...formItemLayout}>
+          <RadioGroup value={type} onChange={handleTypeValueChanged}>
+            <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
+          </RadioGroup>
+        </FormItem>
+        {type === 'external' && (
+          <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
+            <Input value={url} onChange={handleExternalUrlValueChanged} />
           </FormItem>
-          {type === 'external' && (
-            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
-              <Input value={url} onChange={this.handleExternalUrlValueChanged} />
-            </FormItem>
-          )}
-          {type === 'internal' && (
-            <FormItem label={t('internalUrl')} {...formItemLayout}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Input
-                  addonBefore={`${clientConfig.cdnRootUrl}/`}
-                  value={url}
-                  onChange={this.handleInternalUrlValueChanged}
-                  />
-                <CdnFilePicker
-                  rootPrefix="media"
-                  uploadPrefix={`media/${sectionContainerId}`}
-                  initialPrefix={`media/${sectionContainerId}`}
-                  fileName={url}
-                  onFileNameChanged={this.handleInternalUrlFileNameChanged}
-                  />
-              </div>
-            </FormItem>
-          )}
-          <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
-            <TextArea value={text} onChange={this.handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
-          </Form.Item>
-        </Form>
-      </div>
-    );
-  }
+        )}
+        {type === 'internal' && (
+          <FormItem label={t('internalUrl')} {...formItemLayout}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Input
+                addonBefore={`${clientConfig.cdnRootUrl}/`}
+                value={url}
+                onChange={handleInternalUrlValueChanged}
+                />
+              <CdnFilePicker
+                rootPrefix="media"
+                uploadPrefix={`media/${sectionContainerId}`}
+                initialPrefix={`media/${sectionContainerId}`}
+                fileName={url}
+                onFileNameChanged={handleInternalUrlFileNameChanged}
+                />
+            </div>
+          </FormItem>
+        )}
+        <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+          <TextArea value={text} onChange={handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
+        </Form.Item>
+      </Form>
+    </div>
+  );
 }
 
 AudioEditor.propTypes = {
-  ...translationProps,
-  ...sectionEditorProps,
-  ...clientConfigProps
+  ...sectionEditorProps
 };
 
-export default withTranslation('audio')(inject({
-  clientConfig: ClientConfig
-}, AudioEditor));
+export default AudioEditor;

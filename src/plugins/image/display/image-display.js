@@ -1,87 +1,82 @@
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { Fragment } from 'react';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import { inject } from '../../../components/container-context.js';
+import { useService } from '../../../components/container-context.js';
 import { EFFECT_TYPE, ORIENTATION, SOURCE_TYPE } from '../constants.js';
+import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
-import { sectionDisplayProps, clientConfigProps } from '../../../ui/default-prop-types.js';
 
-function getSource(sourceType, url, cdnRootUrl) {
-  switch (sourceType) {
-    case SOURCE_TYPE.external:
-      return url || null;
-    case SOURCE_TYPE.internal:
-      return url ? `${cdnRootUrl}/${url}` : null;
-    default:
-      return null;
-  }
-}
+function ImageDisplay({ content }) {
+  const maxWidth = content.maxWidth || 100;
+  const { text, sourceType, sourceUrl, effect } = content;
 
-const hoverEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => (
-  <div className="Image-secondary">
-    <img
-      className={`Image-img u-max-width-${content.maxWidth || 100}`}
-      src={getSource(content.effect.sourceType, content.effect.sourceUrl, clientConfig.cdnRootUrl)}
-      />
-    <div
-      className="Image-copyrightInfo"
-      dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.effect.text || '') }}
-      />
-  </div>
-);
+  const clientConfig = useService(ClientConfig);
+  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
 
-const revealEffect = ({ content, githubFlavoredMarkdown, clientConfig }) => {
-  const { effect } = content;
-  return (
+  const getSource = (type, url) => {
+    switch (type) {
+      case SOURCE_TYPE.external:
+        return url || null;
+      case SOURCE_TYPE.internal:
+        return url ? `${clientConfig.cdnRootUrl}/${url}` : null;
+      default:
+        return null;
+    }
+  };
+
+  const renderRevealEffect = () => (
     <Fragment>
       <ReactCompareSlider
         position={effect.startPosition}
         portrait={effect.orientation === ORIENTATION.vertical}
-        className={`Image-img u-max-width-${content.maxWidth || 100}`}
-        itemOne={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl, clientConfig.cdnRootUrl)} />}
-        itemTwo={<ReactCompareSliderImage src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)} />}
+        className={`Image-img u-max-width-${maxWidth}`}
+        itemOne={<ReactCompareSliderImage src={getSource(effect.sourceType, effect.sourceUrl)} />}
+        itemTwo={<ReactCompareSliderImage src={getSource(sourceType, sourceUrl)} />}
         />
       <div className="Image-copyrightInfo">
-        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }} />
-        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.effect.text || '') }} />
+        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }} />
+        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }} />
       </div>
     </Fragment>
   );
-};
 
-function ImageDisplay({ content, clientConfig, githubFlavoredMarkdown }) {
-  const configs = { content, githubFlavoredMarkdown, clientConfig };
+  const renderHoverEffect = () => (
+    <div className="Image-secondary">
+      <img
+        className={`Image-img u-max-width-${maxWidth}`}
+        src={getSource(effect.sourceType, effect.sourceUrl)}
+        />
+      <div
+        className="Image-copyrightInfo"
+        dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }}
+        />
+    </div>
+  );
 
-  if (content.effect?.type === EFFECT_TYPE.reveal) {
-    return revealEffect(configs);
+  if (effect?.type === EFFECT_TYPE.reveal) {
+    return renderRevealEffect();
   }
 
   return (
-    <div className={classNames('Image', { 'Image--hoverable': content.effect })}>
+    <div className={classNames('Image', { 'Image--hoverable': effect })}>
       <div className="Image-primary">
         <img
-          className={`Image-img u-max-width-${content.maxWidth || 100}`}
-          src={getSource(content.sourceType, content.sourceUrl, clientConfig.cdnRootUrl)}
+          className={`Image-img u-max-width-${maxWidth}`}
+          src={getSource(sourceType, sourceUrl)}
           />
         <div
           className="Image-copyrightInfo"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }}
+          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }}
           />
       </div>
-      {content.effect && hoverEffect(configs)}
+      {effect && renderHoverEffect()}
     </div>
   );
 }
 
 ImageDisplay.propTypes = {
-  ...sectionDisplayProps,
-  ...clientConfigProps,
-  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired
+  ...sectionDisplayProps
 };
 
-export default inject({
-  clientConfig: ClientConfig,
-  githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, ImageDisplay);
+export default ImageDisplay;
