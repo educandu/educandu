@@ -1,41 +1,27 @@
-/* eslint-disable no-console, no-process-env, require-atomic-updates, no-await-in-loop */
-import url from 'url';
 import del from 'del';
-import path from 'path';
 import gulp from 'gulp';
-import yaml from 'yaml';
-import { EOL } from 'os';
-import axios from 'axios';
-import less from 'gulp-less';
-import csso from 'gulp-csso';
-import gulpif from 'gulp-if';
-import esbuild from 'esbuild';
-import inquirer from 'inquirer';
-import eslint from 'gulp-eslint';
-import plumber from 'gulp-plumber';
-import { promises as fs } from 'fs';
 import Graceful from 'node-graceful';
-import { MongoClient } from 'mongodb';
-import sourcemaps from 'gulp-sourcemaps';
-import { MongoDBStorage, Umzug } from 'umzug';
-import LessAutoprefix from 'less-plugin-autoprefix';
 import {
+  buildTranslationsJson,
   cliArgs,
   createGithubRelease,
   createLabelInJiraIssues,
   createReleaseNotesFromCurrentTag,
+  downloadJson,
   ensureIsValidSemverTag,
-  glob,
+  esbuild,
+  eslint,
   getEnvAsString,
   jest,
-  kebabToCamel,
-  MongoContainer,
-  MinioContainer,
+  less,
+  LoadBalancedNodeProcessGroup,
   MaildevContainer,
-  TunnelProxyContainer,
+  MinioContainer,
+  MongoContainer,
   NodeProcess,
-  LoadBalancedNodeProcessGroup
-} from './dev/index.js';
+  runInteractiveMigrations,
+  TunnelProxyContainer
+} from '@educandu/dev-tools';
 
 const supportedLanguages = ['en', 'de'];
 
@@ -43,7 +29,7 @@ let bundler = null;
 let currentApp = null;
 let currentCdnProxy = null;
 
-const localEnv = {
+const testAppEnv = {
   TEST_APP_WEB_CONNECTION_STRING: 'mongodb://root:rootpw@localhost:27017/dev-educandu-db?replicaSet=educandurs&authSource=admin',
   TEST_APP_CDN_ENDPOINT: 'http://localhost:9000',
   TEST_APP_CDN_REGION: 'eu-central-1',
@@ -59,13 +45,7 @@ const localEnv = {
   TEST_APP_INITIAL_USER: JSON.stringify({ username: 'test', password: 'test', email: 'test@test.com' }),
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
   TEST_APP_ARE_ROOMS_ENABLED: true.toString(),
-  TEST_APP_IMPORT_SOURCES: JSON.stringify([
-    {
-      name: 'ELMU - integration',
-      hostName: 'integration.elmu.online',
-      apiKey: '03a026b939154f41bb1dabf578a33e11'
-    }
-  ]),
+  TEST_APP_IMPORT_SOURCES: JSON.stringify([{ name: 'ELMU - Integration', hostName: 'integration.elmu.online', apiKey: '03a026b939154f41bb1dabf578a33e11' }]),
   TEST_APP_SKIP_MAINTENANCE: false.toString()
 };
 
@@ -94,31 +74,16 @@ Graceful.on('exit', async () => {
   await currentCdnProxy?.waitForExit();
 });
 
-const downloadCountryList = async lang => {
-  const res = await axios.get(
-    `https://raw.githubusercontent.com/umpirsky/country-list/master/data/${encodeURIComponent(lang)}/country.json`,
-    { responseType: 'json' }
-  );
-  await fs.writeFile(`./src/data/country-names/${lang}.json`, JSON.stringify(res.data, null, 2), 'utf8');
-};
-
 export async function clean() {
-  await del(['.tmp', 'dist', 'coverage', 'reports', 'test-app/dist']);
+  await del(['.test', 'dist', 'coverage', 'test-app/dist']);
 }
 
-export function lint() {
-  return gulp.src(['*.js', 'src/**/*.js', 'test-app/src/**/*.js', 'scripts/**/*.js'], { base: './' })
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(gulpif(!currentApp, eslint.failAfterError()));
+export async function lint() {
+  await eslint.lint(['*.js', 'src/**/*.js', 'migrations/**/*.js', 'test-app/src/**/*.js'], { failOnError: !currentApp });
 }
 
-export function fix() {
-  return gulp.src(['*.js', 'src/**/*.js', 'test-app/src/**/*.js', 'scripts/**/*.js'], { base: './' })
-    .pipe(eslint({ fix: true }))
-    .pipe(eslint.format())
-    .pipe(gulpif(file => file.eslint?.fixed, gulp.dest('./')))
-    .pipe(eslint.failAfterError());
+export async function fix() {
+  await eslint.fix(['*.js', 'src/**/*.js', 'migrations/**/*.js', 'test-app/src/**/*.js']);
 }
 
 export function test() {
@@ -134,114 +99,50 @@ export function testWatch() {
 }
 
 export async function buildJs() {
-  const jsFiles = await glob('src/**/*.js', { ignore: 'src/**/*.spec.js' });
-  Promise.all(jsFiles.map(jsFile => {
-    return esbuild.build({
-      entryPoints: [jsFile],
-      target: ['esnext'],
-      format: 'esm',
-      loader: { '.js': 'jsx' },
-      sourcemap: true,
-      sourcesContent: true,
-      outfile: path.resolve('./dist', path.relative('src', jsFile))
-    });
-  }));
+  await esbuild.transpileDir({ inputDir: 'src', outputDir: 'dist', ignore: '**/*.spec.js' });
 }
 
 export function copyToDist() {
-  return gulp.src(['src/**', '!src/**/*.{js,yml}'], { base: 'src' })
-    .pipe(gulp.dest('dist'));
+  return gulp.src(['src/**', '!src/**/*.{js,yml}'], { base: 'src' }).pipe(gulp.dest('dist'));
 }
 
 export const build = gulp.parallel(copyToDist, buildJs);
 
-export function buildTestAppCss() {
-  return gulp.src('test-app/src/main.less')
-    .pipe(gulpif(!!currentApp, plumber()))
-    .pipe(sourcemaps.init())
-    .pipe(less({ javascriptEnabled: true, plugins: [new LessAutoprefix({ browsers: ['last 2 versions', 'Safari >= 13'] })] }))
-    .pipe(gulpif(cliArgs.optimize, csso()))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('test-app/dist'));
+export async function buildTestAppCss() {
+  await less.compile({
+    inputFile: 'test-app/src/main.less',
+    outputFile: 'test-app/dist/main.css',
+    optimize: !!cliArgs.optimize
+  });
 }
 
 export async function buildTestAppJs() {
-  if (bundler && bundler.rebuild) {
+  if (bundler?.rebuild) {
     await bundler.rebuild();
   } else {
-    bundler = await esbuild.build({
+    // eslint-disable-next-line require-atomic-updates
+    bundler = await esbuild.bundle({
       entryPoints: ['./test-app/src/bundles/main.js'],
-      target: ['esnext', 'chrome95', 'firefox93', 'safari13', 'edge95'],
-      format: 'esm',
-      bundle: true,
-      splitting: true,
+      outdir: './test-app/dist',
+      minify: !!cliArgs.optimize,
       incremental: !!currentApp,
-      minify: cliArgs.optimize,
-      loader: { '.js': 'jsx' },
       inject: ['./test-app/src/polyfills.js'],
-      metafile: cliArgs.optimize,
-      sourcemap: true,
-      sourcesContent: true,
-      outdir: './test-app/dist'
+      metaFilePath: './test-app/dist/meta.json'
     });
-
-    if (bundler.metafile) {
-      const bundles = Object.entries(bundler.metafile.outputs)
-        .map(([name, { bytes }]) => ({ name, bytes }))
-        .filter(x => x.name.endsWith('.js'));
-
-      const formatBytes = bytes => `${(bytes / 1000).toFixed(2)} kB`;
-      bundles.forEach(({ name, bytes }) => console.log(`${name}: ${formatBytes(bytes)}`));
-      console.log(`TOTAL: ${formatBytes(bundles.reduce((sum, { bytes }) => sum + bytes, 0))}`);
-
-      await fs.writeFile('./test-app/dist/meta.json', JSON.stringify(bundler.metafile, null, 2), 'utf8');
-    }
   }
 }
 
 export async function buildTranslations() {
-  const filePaths = await glob('./src/**/*.yml');
-
-  const bundleGroups = await Promise.all(filePaths.map(async filePath => {
-    const namespace = kebabToCamel(path.basename(filePath, '.yml'));
-    const content = await fs.readFile(filePath, 'utf8');
-    const resources = yaml.parse(content);
-
-    if (!resources) {
-      return [];
-    }
-
-    const bundlesByLanguage = {};
-    const resourceKeys = Object.keys(resources);
-
-    resourceKeys.forEach(resourceKey => {
-      const languages = Object.keys(resources[resourceKey]);
-      languages.forEach(language => {
-        let languageBundle = bundlesByLanguage[language];
-        if (!languageBundle) {
-          languageBundle = {
-            namespace,
-            language,
-            resources: {}
-          };
-          bundlesByLanguage[language] = languageBundle;
-        }
-        languageBundle.resources[resourceKey] = resources[resourceKey][language];
-      });
-    });
-
-    return Object.values(bundlesByLanguage);
-  }));
-
-  const result = bundleGroups.flatMap(x => x);
-
-  await fs.writeFile('./src/resources/resources.json', JSON.stringify(result, null, 2), 'utf8');
+  await buildTranslationsJson({ pattern: './src/**/*.yml', outputFile: './src/resources/resources.json' });
 }
 
 export const buildTestApp = gulp.parallel(buildTestAppCss, buildTranslations, buildTestAppJs);
 
 export async function countriesUpdate() {
-  await Promise.all(supportedLanguages.map(downloadCountryList));
+  await Promise.all(supportedLanguages.map(lang => downloadJson(
+    `https://raw.githubusercontent.com/umpirsky/country-list/master/data/${encodeURIComponent(lang)}/country.json`,
+    `./src/data/country-names/${lang}.json`
+  )));
 }
 
 export async function maildevUp() {
@@ -252,8 +153,6 @@ export async function maildevDown() {
   await maildevContainer.ensureIsRemoved();
 }
 
-export const maildevReset = gulp.series(maildevDown, maildevUp);
-
 export async function mongoUp() {
   await mongoContainer.ensureIsRunning();
 }
@@ -261,8 +160,6 @@ export async function mongoUp() {
 export async function mongoDown() {
   await mongoContainer.ensureIsRemoved();
 }
-
-export const mongoReset = gulp.series(mongoDown, mongoUp);
 
 export async function minioUp() {
   await minioContainer.ensureIsRunning();
@@ -272,8 +169,6 @@ export async function minioDown() {
   await minioContainer.ensureIsRemoved();
 }
 
-export const minioReset = gulp.series(minioDown, minioUp);
-
 export async function startServer() {
   const { instances, tunnel } = cliArgs;
 
@@ -282,6 +177,7 @@ export async function startServer() {
   const tunnelWebsiteCdnDomain = tunnel ? getEnvAsString('TUNNEL_WEBSITE_CDN_DOMAIN') : null;
 
   if (tunnel) {
+    // eslint-disable-next-line no-console
     console.log('Opening tunnel connections');
     const websiteTunnel = new TunnelProxyContainer({
       name: 'website-tunnel',
@@ -303,6 +199,7 @@ export async function startServer() {
     ]);
 
     Graceful.on('exit', async () => {
+      // eslint-disable-next-line no-console
       console.log('Closing tunnel connections');
       await Promise.all([
         websiteTunnel.ensureIsRemoved(),
@@ -311,20 +208,21 @@ export async function startServer() {
     });
   }
 
-  const env = {
-    ...localEnv,
+  const finalTestAppEnv = {
+    NODE_ENV: 'development',
+    ...testAppEnv,
     TEST_APP_CDN_ROOT_URL: tunnel ? `https://${tunnelWebsiteCdnDomain}` : 'http://localhost:10000',
-    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : localEnv.TEST_APP_SESSION_COOKIE_DOMAIN
+    TEST_APP_SESSION_COOKIE_DOMAIN: tunnel ? tunnelWebsiteDomain : testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN
   };
 
   currentCdnProxy = new NodeProcess({
     script: 'node_modules/@educandu/rooms-auth-lambda/src/dev-server/run.js',
     env: {
-      ...process.env,
+      NODE_ENV: 'development',
       PORT: 10000,
       WEBSITE_BASE_URL: tunnel ? `https://${tunnelWebsiteDomain}` : 'http://localhost:3000',
       CDN_BASE_URL: 'http://localhost:9000/dev-educandu-cdn',
-      SESSION_COOKIE_NAME: localEnv.TEST_APP_SESSION_COOKIE_DOMAIN
+      SESSION_COOKIE_NAME: testAppEnv.TEST_APP_SESSION_COOKIE_DOMAIN
     }
   });
 
@@ -336,9 +234,7 @@ export async function startServer() {
       getNodeProcessPort: index => 4000 + index,
       instanceCount: cliArgs.instances,
       getInstanceEnv: index => ({
-        ...env,
-        ...process.env,
-        NODE_ENV: 'development',
+        ...finalTestAppEnv,
         TEST_APP_PORT: (4000 + index).toString()
       })
     });
@@ -347,9 +243,7 @@ export async function startServer() {
       script: 'test-app/src/index.js',
       jsx: true,
       env: {
-        ...env,
-        ...process.env,
-        NODE_ENV: 'development',
+        ...finalTestAppEnv,
         TEST_APP_PORT: (3000).toString()
       }
     });
@@ -368,89 +262,10 @@ export async function restartServer() {
 }
 
 export async function migrate() {
-  let mongoClient;
-
-  try {
-    const MIGRATION_FILE_NAME_PATTERN = /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/;
-    const migrationFiles = await glob('migrations/*.js');
-
-    const migrationInfos = migrationFiles
-      .filter(fileName => MIGRATION_FILE_NAME_PATTERN.test(path.basename(fileName)))
-      .sort()
-      .map(fileName => ({
-        name: path.basename(fileName, '.js'),
-        filePath: path.resolve(fileName)
-      }));
-
-    const { connectionString } = await inquirer.prompt([
-      {
-        message: 'Connection string:',
-        name: 'connectionString',
-        type: 'input',
-        filter: s => (s || '').trim(),
-        validate: s => !s || !s.trim() ? 'Please provide a value' : true
-      }
-    ]);
-
-    mongoClient = await MongoClient.connect(connectionString, { useUnifiedTopology: true });
-
-    await Promise.all(migrationInfos.map(async info => {
-      const Migration = (await import(url.pathToFileURL(info.filePath).href)).default;
-      const instance = new Migration(mongoClient.db(), mongoClient);
-      instance.name = info.name;
-      info.migration = instance;
-    }));
-
-    const umzug = new Umzug({
-      migrations: migrationInfos.map(info => info.migration),
-      storage: new MongoDBStorage({ collection: mongoClient.db().collection('migrations') }),
-      logger: console
-    });
-
-    umzug.on('migrated', ({ name }) => console.log(`Finished migrating ${name}`));
-
-    const executedMigrationNames = (await umzug.executed()).map(migration => migration.name);
-
-    migrationInfos.forEach(info => {
-      info.isExecuted = executedMigrationNames.includes(info.name);
-    });
-
-    const migrationChoices = migrationInfos.map(info => ({
-      name: `${info.isExecuted ? '🔄' : '  '} ${info.name}`,
-      value: info.name
-    }));
-
-    const { migrationsToRun, isConfirmed } = await inquirer.prompt([
-      {
-        message: 'Migrations to run:',
-        name: 'migrationsToRun',
-        type: 'checkbox',
-        choices: migrationChoices,
-        pageSize: migrationChoices.length + 1,
-        loop: false
-      },
-      {
-        when: currentAnswers => !!currentAnswers.migrationsToRun.length,
-        message: currentAnswers => [
-          'You have selected the follwing migrations:',
-          ...currentAnswers.migrationsToRun,
-          'Do you want to run them now?'
-        ].join(EOL),
-        name: 'isConfirmed',
-        type: 'confirm'
-      }
-    ]);
-
-    if (!isConfirmed) {
-      console.log('No migration will be run, quitting');
-      return;
-    }
-
-    console.log(`Running ${migrationsToRun.length} ${migrationsToRun.length === 1 ? 'migration' : 'migrations'}`);
-    await umzug.up({ migrations: migrationsToRun, rerun: 'ALLOW' });
-  } finally {
-    await mongoClient?.close();
-  }
+  await runInteractiveMigrations({
+    migrationsDirectory: 'migrations',
+    migrationFileNamePattern: /^educandu-\d{4}-\d{2}-\d{2}-.*(?<!\.spec)(?<!\.specs)(?<!\.test)\.js$/
+  });
 }
 
 export function verifySemverTag(done) {

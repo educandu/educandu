@@ -11,7 +11,7 @@ import { createContainer, disposeContainer } from './bootstrap/server-bootstrapp
 import { ROLE, DOCUMENT_ORIGIN, ROOM_ACCESS_LEVEL, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
-  const tempDir = url.fileURLToPath(new URL('../.tmp/', import.meta.url).href);
+  const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);
   try {
     await fs.mkdir(tempDir);
   } catch (err) {
