@@ -108,17 +108,8 @@ export function useDateFormat() {
   }, [uiLocale]);
 }
 
-export function withLocale(Component) {
-  return function UserInjector(props) {
-    const { uiLanguage, uiLocale } = useLocale();
-    const { formatDate } = useDateFormat();
-    return <Component {...props} uiLanguage={uiLanguage} uiLocale={uiLocale} formatDate={formatDate} />;
-  };
-}
-
 export default {
   LocaleProvider,
-  withLocale,
   useLocale,
   useDateFormat
 };
