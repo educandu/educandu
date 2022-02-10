@@ -141,6 +141,14 @@ function ImportBatchView({ initialState, PageTemplate }) {
             <span>{renderBatchStatus(batch)}</span>
           </Space>
         </Row>
+        {batch.batchParams?.name && (
+          <Row>
+            <Space>
+              <span>{t('batchSource')}:</span>
+              <span>{batch.batchParams?.name}</span>
+            </Space>
+          </Row>
+        )}
         <Row>
           <Space>
             <span>{t('common:createdOn')}:</span>

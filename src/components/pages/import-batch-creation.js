@@ -44,6 +44,18 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
     }
   };
 
+  const renderImportButton = () => (
+    <Button
+      type="primary"
+      className="ImportBatchCreationPage-importButton"
+      disabled={!selectedDocumentKeys.length}
+      loading={isCreatingNewImportBatch}
+      onClick={handleImportClick}
+      >
+      {t('importButton')}
+    </Button>
+  );
+
   useEffect(() => {
     const getDocuments = async () => {
       setIsFetchingImportableDocuments(true);
@@ -69,23 +81,14 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
         <div><a href="/import-batches">{t('backToImports')}</a></div>
         <h1>{t('pageNames:importBatchCreation')}</h1>
         <h2> {t('source')}: {importSource?.name} </h2>
-        <br />
-        <br />
+        {renderImportButton()}
         <DocumentImportTable
           importableDocuments={importableDocuments}
           importSourceBaseUrl={importSourceBaseUrl}
           loading={isFetchingImportableDocuments}
           onSelectedKeysChange={setSelectedDocumentKeys}
           />
-        <br />
-        <Button
-          type="primary"
-          disabled={!selectedDocumentKeys.length}
-          loading={isCreatingNewImportBatch}
-          onClick={handleImportClick}
-          >
-          {t('importButton')}
-        </Button>
+        {renderImportButton()}
       </div>
     </PageTemplate>
   );

@@ -19,6 +19,9 @@ taskStatusFailed:
 taskStatusDoneWithWarnings:
   en: Done (with warnings)
   de: Abgeschlossen (mit Warnungen)
+batchSource:
+  en: Batch source
+  de: Chargenquelle
 batchStatus:
   en: Batch status
   de: Chargenstatus
