@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Tooltip } from 'antd';
+import React, { useState } from 'react';
 import ControlPanel from './control-panel.js';
 import { useTranslation } from 'react-i18next';
 import {
@@ -33,13 +33,19 @@ function EditControlPanel({
 }) {
   const { t } = useTranslation('editControlPanel');
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleOpen = () => onOpen();
 
   const handleClose = () => onClose();
 
   const handleCancel = () => onCancel();
 
-  const handleSave = () => onSave();
+  const handleSave = async () => {
+    setIsSaving(true);
+    await onSave();
+    setIsSaving(false);
+  };
 
   const renderStatusIcon = () => {
     switch (status) {
@@ -86,9 +92,30 @@ function EditControlPanel({
   const renderButtons = () => (
     <div className="EditControlPanel-rightSide">
       {renderStatusIcon()}
-      <Button disabled={status !== EDIT_CONTROL_PANEL_STATUS.dirty} className="EditControlPanel-rightSideButton" size="small" icon={<SaveOutlined />} onClick={handleSave} ghost>{t('common:save')}</Button>
+
+      <Button
+        ghost
+        size="small"
+        loading={isSaving}
+        onClick={handleSave}
+        icon={<SaveOutlined />}
+        className="EditControlPanel-rightSideButton"
+        disabled={status !== EDIT_CONTROL_PANEL_STATUS.dirty}
+        >
+        {t('common:save')}
+      </Button>
+
       {canCancel && (
-      <Button disabled={status === EDIT_CONTROL_PANEL_STATUS.saved} className="EditControlPanel-rightSideButton" size="small" icon={<UndoOutlined />} onClick={handleCancel} ghost>{t('common:cancel')}</Button>
+        <Button
+          ghost
+          size="small"
+          onClick={handleCancel}
+          icon={<UndoOutlined />}
+          className="EditControlPanel-rightSideButton"
+          disabled={status === EDIT_CONTROL_PANEL_STATUS.saved}
+          >
+          {t('common:cancel')}
+        </Button>
       )}
     </div>
   );
