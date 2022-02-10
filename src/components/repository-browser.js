@@ -7,13 +7,13 @@ import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
-import { withUser } from './user-context.js';
+import { useUser } from './user-context.js';
 import pathHelper from '../ui/path-helper.js';
 import { inject } from './container-context.js';
 import { withTranslation } from 'react-i18next';
-import { withLocale } from './locale-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import CdnApiClient from '../api-clients/cdn-api-client.js';
+import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
@@ -21,6 +21,21 @@ import { translationProps, uiLanguageProps, userProps } from '../ui/default-prop
 import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
+
+function withLocale(Component) {
+  return function UserInjector(props) {
+    const { uiLanguage, uiLocale } = useLocale();
+    const { formatDate } = useDateFormat();
+    return <Component {...props} uiLanguage={uiLanguage} uiLocale={uiLocale} formatDate={formatDate} />;
+  };
+}
+
+function withUser(Component) {
+  return function UserInjector(props) {
+    const user = useUser();
+    return <Component {...props} user={user} />;
+  };
+}
 
 class RepositoryBrowser extends React.Component {
   constructor(props) {
@@ -590,6 +605,6 @@ RepositoryBrowser.defaultProps = {
   uploadPrefix: null
 };
 
-export default withTranslation('repositoryBrowser')(withLocale(withUser(inject({
+export default withTranslation('repositoryBrowser')(withUser(withLocale(inject({
   cdnApiClient: CdnApiClient
 }, RepositoryBrowser))));

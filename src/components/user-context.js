@@ -14,13 +14,6 @@ export function useSetUser() {
   return setUser;
 }
 
-export function withUser(Component) {
-  return function UserInjector(props) {
-    const user = useUser();
-    return <Component {...props} user={user} />;
-  };
-}
-
 export function UserProvider({ value, children }) {
   const [user, setUser] = useState(value);
   useEffect(() => setUser(value), [value]);
@@ -44,6 +37,5 @@ UserProvider.defaultProps = {
 
 export default {
   UserProvider,
-  useUser,
-  withUser
+  useUser
 };
