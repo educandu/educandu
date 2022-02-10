@@ -152,13 +152,6 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
     }
   };
 
-  const disabledDate = current => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    return current && current <= yesterday;
-  };
-
   const disabledMorningHours = [...Array(7).keys()];
   const disabledEveningHours = [...Array(24).keys()].splice(21);
   const disabledMinutes = [...Array(60).keys()].filter(minute => minute % 5 !== 0);
@@ -201,7 +194,6 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
             inputReadOnly
             style={{ width: '100%' }}
             format={dateTimeFormat}
-            disabledDate={disabledDate}
             disabledTime={disabledTime}
             showTime={{ defaultValue: moment(`${firstEnabledHour}:00`, 'HH:mm'), format: 'HH:mm', hideDisabledOptions: true }}
             />
