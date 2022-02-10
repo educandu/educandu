@@ -1,8 +1,9 @@
+/* eslint-disable camelcase, no-await-in-loop, no-console */
+
 import { promises as fs } from 'fs';
 
-const IMAGE_TILE_SECTION_TYPE = 'image-tiles'
+const IMAGE_TILE_SECTION_TYPE = 'image-tiles';
 
-// eslint-disable-next-line camelcase
 export default class Educandu_2021_12_29_01_repair_image_tiles {
   constructor(db) {
     this.db = db;
@@ -29,10 +30,10 @@ export default class Educandu_2021_12_29_01_repair_image_tiles {
         console.log(documentLinkInfo);
         console.log('Number of tile sections', tiles.length, 'tile index: ', documentLinkInfo.tileIndex, 'revision', docOrRevision._id);
       }
-      // eslint-disable-next-line no-await-in-loop
+
       const doc = await this.db.collection('documents').findOne({ slug: documentLinkInfo.url });
 
-      const linkType= tiles[documentLinkInfo.tileIndex]?.link.type;
+      const linkType = tiles[documentLinkInfo.tileIndex]?.link.type;
 
       if (linkType !== 'internal') {
         console.log(`Document info tile is not of expected type, but of type ${linkType}`);
@@ -44,7 +45,6 @@ export default class Educandu_2021_12_29_01_repair_image_tiles {
         tiles[documentLinkInfo.tileIndex].link.url = doc.key;
       }
 
-      // eslint-disable-next-line no-await-in-loop
       await this.db.collection(collectionName).replaceOne({ _id: docOrRevision._id }, docOrRevision);
     }
   }
@@ -57,7 +57,6 @@ export default class Educandu_2021_12_29_01_repair_image_tiles {
       const revData = revsData[i];
 
       console.log(`Processing revision ${i} of ${revsData.length} document key`, revData.documentKey);
-      // eslint-disable-next-line no-await-in-loop
       await this.fixTile('documentRevisions', revData);
     }
 
@@ -68,7 +67,6 @@ export default class Educandu_2021_12_29_01_repair_image_tiles {
       const docData = docsData[i];
 
       console.log(`Processing document ${i} of ${docsData.length} document key`, docData.documentKey);
-      // eslint-disable-next-line no-await-in-loop
       await this.fixTile('documents', docData);
     }
   }
