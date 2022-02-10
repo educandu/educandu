@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "The educandu framework",
   "type": "module",
+  "main": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
     "./*": "./dist/*"
