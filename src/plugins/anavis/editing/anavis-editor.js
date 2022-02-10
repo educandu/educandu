@@ -118,26 +118,22 @@ function AnavisEditor({ sectionContainerId, content, onContentChanged }) {
     changeContent({ width: newValue });
   };
 
-  const handleNameInputChanged = event => {
-    const { value, dataset } = event.target;
-    const index = Number.parseInt(dataset.index, 10);
-    const newParts = parts.map((part, i) => i === index ? { ...part, name: value } : part);
+  const handleNameInputChanged = (index, newValue) => {
+    const newParts = parts.map((part, i) => i === index ? { ...part, name: newValue } : part);
     changeContent({ parts: newParts });
   };
 
-  const handleColorInputChanged = (value, index) => {
-    const newParts = parts.map((part, i) => i === index ? { ...part, color: value } : part);
+  const handleColorInputChanged = (index, newValue) => {
+    const newParts = parts.map((part, i) => i === index ? { ...part, color: newValue } : part);
     changeContent({ parts: newParts });
   };
 
-  const handleLengthInputChanged = (value, index) => {
-    const newParts = parts.map((part, i) => i === index ? { ...part, length: Number.parseInt(value, 10) } : part);
+  const handleLengthInputChanged = (index, newValue) => {
+    const newParts = parts.map((part, i) => i === index ? { ...part, length: Number.parseInt(newValue, 10) } : part);
     changeContent({ parts: newParts });
   };
 
-  const handleDeleteButtonClick = event => {
-    const { dataset } = event.target;
-    const index = Number.parseInt(dataset.index, 10);
+  const handleDeleteButtonClick = index => {
     const newParts = removeItemAt(parts, index);
     changeContent({ parts: newParts });
   };
@@ -166,16 +162,12 @@ function AnavisEditor({ sectionContainerId, content, onContentChanged }) {
     changeContent({ parts: newParts });
   };
 
-  const handleUpCircleButtonClick = event => {
-    const { dataset } = event.target;
-    const index = Number.parseInt(dataset.index, 10);
+  const handleUpCircleButtonClick = index => {
     const newParts = swapItemsAt(parts, index, index - 1);
     changeContent({ parts: newParts });
   };
 
-  const handleDownCircleButtonClick = event => {
-    const { dataset } = event.target;
-    const index = Number.parseInt(dataset.index, 10);
+  const handleDownCircleButtonClick = index => {
     const newParts = swapItemsAt(parts, index, index + 1);
     changeContent({ parts: newParts });
   };
@@ -237,16 +229,14 @@ function AnavisEditor({ sectionContainerId, content, onContentChanged }) {
       render: (upDown, item, index) => (
         <ButtonGroup>
           <Button
-            data-index={index}
             disabled={index === 0}
             icon={<ArrowUpOutlined />}
-            onClick={handleUpCircleButtonClick}
+            onClick={() => handleUpCircleButtonClick(index)}
             />
           <Button
-            data-index={index}
             disabled={index === parts.length - 1}
             icon={<ArrowDownOutlined />}
-            onClick={handleDownCircleButtonClick}
+            onClick={() => handleDownCircleButtonClick(index)}
             />
         </ButtonGroup>
       )
@@ -255,14 +245,22 @@ function AnavisEditor({ sectionContainerId, content, onContentChanged }) {
       dataIndex: 'name',
       key: 'name',
       render: (name, item, index) => (
-        <Input data-index={index} value={name} onChange={handleNameInputChanged} />
+        <Input
+          value={name}
+          onChange={event => handleNameInputChanged(index, event.target.value)}
+          />
       )
     }, {
       title: () => t('color'),
       dataIndex: 'color',
       key: 'color',
       render: (color, item, index) => (
-        <ColorPicker width={382} colors={COLOR_SWATCHES} color={color} onChange={value => handleColorInputChanged(value, index)} />
+        <ColorPicker
+          width={382}
+          colors={COLOR_SWATCHES}
+          color={color}
+          onChange={value => handleColorInputChanged(index, value)}
+          />
       )
     }, {
       title: () => t('length'),
@@ -277,18 +275,26 @@ function AnavisEditor({ sectionContainerId, content, onContentChanged }) {
           precision={0}
           value={length}
           parser={value => Number.parseInt(value, 10) || 0}
-          formatter={value => value ? value.toString() : ''}
-          onChange={value => handleLengthInputChanged(value, index)}
+          formatter={value => value?.toString() || ''}
+          onChange={value => handleLengthInputChanged(index, value)}
           />
       )
     }, {
       title: (
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAddPartButtonClick} />
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAddPartButtonClick}
+          />
       ),
       width: 48,
       key: 'button',
       render: (value, item, index) => (
-        <Button data-index={index} type="danger" icon={<DeleteOutlined />} onClick={handleDeleteButtonClick} />
+        <Button
+          type="danger"
+          icon={<DeleteOutlined />}
+          onClick={() => handleDeleteButtonClick(index)}
+          />
       )
     }
   ];
