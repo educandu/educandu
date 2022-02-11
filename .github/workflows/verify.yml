@@ -19,7 +19,7 @@ jobs:
           MINIO_BROWSER: "on"
           MINIO_DOMAIN: "localhost"
       mongo:
-        image: bitnami/mongodb:4.2.17-debian-10-r23
+        image: educandu/mongo:5.0.6-multiplatform
         ports:
           - 27017:27017
         env:
