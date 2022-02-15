@@ -127,7 +127,7 @@ class UserService {
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingUser = await this.userStore.findOne({ $or: [{ username }, { email: lowerCasedEmail }] });
+    const existingUser = await this.userStore.findOne({ $or: [{ $and: [{ username, provider }] }, { email: lowerCasedEmail }] });
     if (existingUser) {
       return existingUser.email === lowerCasedEmail
         ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
