@@ -51,8 +51,8 @@ export default class PageResolver {
 
     return {
       PageComponent,
+      HomePageLogoComponent,
       PageTemplateComponent: PageTemplateComponent || DefaultPageTemplateComponent,
-      HomePageLogoComponent: HomePageLogoComponent || DefaultSiteLogoComponent,
       SiteLogoComponent: SiteLogoComponent || DefaultSiteLogoComponent
     };
   }
