@@ -59,6 +59,7 @@ export default function CdnFilePicker(props) {
         title={t('modalTitle')}
         onOk={handleApply}
         onCancel={handleCancel}
+        bodyStyle={{ maxHeight: 'calc(90vh - 110px)', overflowY: 'auto' }}
         footer={[
           <Button
             key="back"
@@ -75,6 +76,7 @@ export default function CdnFilePicker(props) {
             {t('common:apply')}
           </Button>
         ]}
+        centered
         >
         <RepositoryBrowser
           rootPrefix={rootPrefix}
