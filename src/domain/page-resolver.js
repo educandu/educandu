@@ -37,15 +37,22 @@ export default class PageResolver {
       throw new Error(`Invalid page name: '${pageName}'`);
     }
 
-    const [PageComponent, PageTemplateComponent, SiteLogoComponent] = await resolveAll([
+    const [
+      PageComponent,
+      PageTemplateComponent,
+      HomePageLogoComponent,
+      SiteLogoComponent
+    ] = await resolveAll([
       pageImporters[pageName],
       () => this.bundleConfig.getPageTemplateComponent(pageName),
+      () => this.bundleConfig.getHomePageLogoComponent(pageName),
       () => this.bundleConfig.getSiteLogoComponent(pageName)
     ]);
 
     return {
       PageComponent,
       PageTemplateComponent: PageTemplateComponent || DefaultPageTemplateComponent,
+      HomePageLogoComponent: HomePageLogoComponent || DefaultSiteLogoComponent,
       SiteLogoComponent: SiteLogoComponent || DefaultSiteLogoComponent
     };
   }
