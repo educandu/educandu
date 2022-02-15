@@ -1,12 +1,12 @@
 import Database from './database.js';
 import StoreBase from './store-base.js';
 
-class BatchStore extends StoreBase {
+class StoragePlanStore extends StoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.batches);
+    super(db.storagePlans);
   }
 }
 
-export default BatchStore;
+export default StoragePlanStore;
