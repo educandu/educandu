@@ -27,8 +27,22 @@ function CreditsFooter({ doc, revision }) {
 
   const date = formatDate(request.timestamp);
 
-  const renderUrl = () => (<a rel="noopener noreferrer" target="_blank" href={url}>{url}</a>);
-  const renderOriginalUrl = () => (<a rel="noopener noreferrer" target="_blank" href={originalUrl}>{originalUrl}</a>);
+  const renderLongUrlText = urlText => {
+    const parts = urlText.split(/(?<!\w)\b/);
+    return (
+      <Fragment>
+        {parts.map((part, index) => (
+          <Fragment key={index.toString()}>
+            {!!index && <wbr />}
+            {part}
+          </Fragment>
+        ))}
+      </Fragment>
+    );
+  };
+
+  const renderUrl = () => (<a rel="noopener noreferrer" target="_blank" href={url}>{renderLongUrlText(url)}</a>);
+  const renderOriginalUrl = () => (<a rel="noopener noreferrer" target="_blank" href={originalUrl}>{renderLongUrlText(originalUrl)}</a>);
 
   const renderUser = user => {
     return user.email
