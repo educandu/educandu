@@ -6,7 +6,7 @@ import SearchBar from '../search-bar.js';
 import { useSettings } from '../settings-context.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 
-function Index({ PageTemplate, SiteLogo }) {
+function Index({ PageTemplate, HomePageLogo, SiteLogo }) {
   const settings = useSettings();
 
   const handleSearch = searchText => {
@@ -19,7 +19,7 @@ function Index({ PageTemplate, SiteLogo }) {
     <PageTemplate alerts={alerts} fullScreen>
       <div className="IndexPage">
         <div className="IndexPage-title">
-          <SiteLogo readonly />
+          {HomePageLogo ? <HomePageLogo /> : <SiteLogo readonly />}
         </div>
         <div className="IndexPage-search">
           <SearchBar onSearch={handleSearch} autoFocus />
@@ -35,8 +35,13 @@ function Index({ PageTemplate, SiteLogo }) {
 }
 
 Index.propTypes = {
+  HomePageLogo: PropTypes.func,
   PageTemplate: PropTypes.func.isRequired,
   SiteLogo: PropTypes.func.isRequired
+};
+
+Index.defaultProps = {
+  HomePageLogo: null
 };
 
 export default Index;
