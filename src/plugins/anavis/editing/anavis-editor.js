@@ -19,7 +19,7 @@ const RadioButton = Radio.Button;
 const TextArea = Input.TextArea;
 const ButtonGroup = Button.Group;
 
-function AnavisEditor({ sectionContainerId, content, onContentChanged }) {
+function AnavisEditor({ content, onContentChanged, publicStorage }) {
   const { t } = useTranslation('anavis');
   const clientConfig = useService(ClientConfig);
 
@@ -323,9 +323,7 @@ function AnavisEditor({ sectionContainerId, content, onContentChanged }) {
                 onChange={handleInternalUrlValueChanged}
                 />
               <CdnFilePicker
-                rootPrefix="media"
-                uploadPrefix={`media/${sectionContainerId}`}
-                initialPrefix={`media/${sectionContainerId}`}
+                publicStorage={publicStorage}
                 fileName={url}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
                 />

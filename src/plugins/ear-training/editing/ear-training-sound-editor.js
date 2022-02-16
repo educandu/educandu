@@ -4,6 +4,7 @@ import { Input, Radio } from 'antd';
 import { SOUND_TYPE } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import ClientConfig from '../../../bootstrap/client-config.js';
+import { storageShape } from '../../../ui/default-prop-types.js';
 import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
 
@@ -11,7 +12,7 @@ const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function EarTrainingSoundEditor({ sound, onSoundChanged, sectionContainerId }) {
+function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage }) {
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
 
@@ -86,9 +87,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, sectionContainerId }) {
             onChange={handleInternalUrlChanged}
             />
           <CdnFilePicker
-            rootPrefix="media"
-            uploadPrefix={`media/${sectionContainerId}`}
-            initialPrefix={`media/${sectionContainerId}`}
+            publicStorage={publicStorage}
             fileName={sound.url}
             onFileNameChanged={handleInternalUrlFileNameChanged}
             />
@@ -133,7 +132,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, sectionContainerId }) {
 
 EarTrainingSoundEditor.propTypes = {
   onSoundChanged: PropTypes.func.isRequired,
-  sectionContainerId: PropTypes.string.isRequired,
+  publicStorage: storageShape.isRequired,
   sound: PropTypes.shape({
     type: PropTypes.string.isRequired,
     url: PropTypes.string,

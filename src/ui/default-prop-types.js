@@ -13,7 +13,6 @@ export const sectionDisplayProps = {
 
 export const sectionEditorProps = {
   ...sectionDisplayProps,
-  sectionContainerId: PropTypes.string.isRequired,
   onContentChanged: PropTypes.func.isRequired
 };
 
@@ -282,4 +281,10 @@ export const lessonMetadataShape = PropTypes.shape({
 
 export const lessonShape = PropTypes.shape({
   ...lessonMetadataProps
+});
+
+export const storageShape = PropTypes.shape({
+  rootPath: PropTypes.string.isRequired,
+  initialPath: PropTypes.string,
+  uploadPath: PropTypes.string
 });

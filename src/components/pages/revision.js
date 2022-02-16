@@ -7,12 +7,18 @@ import { documentRevisionShape } from '../../ui/default-prop-types.js';
 function Revision({ initialState, PageTemplate }) {
   const { revision } = initialState;
 
+  const publicStorage = {
+    rootPath: 'media',
+    initialPath: `media/${revision.key}`,
+    uploadPath: `media/${revision.key}`
+  };
+
   return (
     <PageTemplate >
       <div className="RevisionPage">
         <SectionsDisplay
           sections={revision.sections}
-          sectionsContainerId={revision.key}
+          publicStorage={publicStorage}
           canEdit={false}
           />
       </div>

@@ -198,6 +198,12 @@ function Lesson({ PageTemplate, initialState }) {
     ? formatDate(lesson.schedule.startsOn)
     : '';
 
+  const publicStorage = {
+    rootPath: 'media',
+    initialPath: `media/${lesson._id}`,
+    uploadPath: `media/${lesson._id}`
+  };
+
   return (
     <Fragment>
       <PageTemplate>
@@ -213,7 +219,7 @@ function Lesson({ PageTemplate, initialState }) {
           </div>
           <SectionsDisplay
             sections={currentSections}
-            sectionsContainerId={lesson._id}
+            publicStorage={publicStorage}
             canEdit={isInEditMode}
             onSectionContentChange={handleSectionContentChange}
             onSectionMove={handleSectionMove}

@@ -3,14 +3,14 @@ import { Button, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import SectionDisplay from './section-display.js';
-import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
+import { sectionShape, storageShape } from '../ui/default-prop-types.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function SectionsDisplay({
   sections,
-  sectionsContainerId,
   pendingSectionKeys,
+  publicStorage,
   canEdit,
   canHardDelete,
   onPendingSectionApply,
@@ -61,7 +61,7 @@ function SectionsDisplay({
     return (<SectionDisplay
       key={section.key}
       section={section}
-      sectionContainerId={sectionsContainerId}
+      publicStorage={publicStorage}
       canEdit={!!dragHandleProps && canEdit}
       canHardDelete={canHardDelete}
       dragHandleProps={dragHandleProps}
@@ -155,8 +155,8 @@ SectionsDisplay.propTypes = {
   onSectionInsert: PropTypes.func,
   onSectionMove: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
-  sections: PropTypes.arrayOf(sectionShape).isRequired,
-  sectionsContainerId: PropTypes.string.isRequired
+  publicStorage: storageShape.isRequired,
+  sections: PropTypes.arrayOf(sectionShape).isRequired
 };
 
 SectionsDisplay.defaultProps = {

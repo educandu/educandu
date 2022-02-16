@@ -14,7 +14,7 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-function ImageEditor({ content, onContentChanged, sectionContainerId }) {
+function ImageEditor({ content, onContentChanged, publicStorage }) {
   const { t } = useTranslation('image');
   const clientConfig = useService(ClientConfig);
 
@@ -155,9 +155,7 @@ function ImageEditor({ content, onContentChanged, sectionContainerId }) {
                 onChange={handleInternalSourceUrlValueChanged}
                 />
               <CdnFilePicker
-                rootPrefix="media"
-                uploadPrefix={`media/${sectionContainerId}`}
-                initialPrefix={`media/${sectionContainerId}`}
+                publicStorage={publicStorage}
                 fileName={sourceUrl}
                 onFileNameChanged={handleInternalSourceUrlFileNameChanged}
                 />
@@ -197,9 +195,7 @@ function ImageEditor({ content, onContentChanged, sectionContainerId }) {
                       onChange={handleEffectInternalSourceUrlValueChanged}
                       />
                     <CdnFilePicker
-                      rootPrefix="media"
-                      uploadPrefix={`media/${sectionContainerId}`}
-                      initialPrefix={`media/${sectionContainerId}`}
+                      publicStorage={publicStorage}
                       fileName={effect.sourceUrl}
                       onFileNameChanged={handleEffectInternalSourceUrlFileNameChanged}
                       />
