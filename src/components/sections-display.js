@@ -4,8 +4,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import SectionDisplay from './section-display.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
-import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
 
 function SectionsDisplay({
   sections,

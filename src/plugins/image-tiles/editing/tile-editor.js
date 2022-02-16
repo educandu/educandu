@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import { filePickerStorageShape } from '../../../ui/default-prop-types.js';
 import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
+import { filePickerStorageShape } from '../../../ui/default-prop-types.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
