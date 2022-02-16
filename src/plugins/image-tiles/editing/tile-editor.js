@@ -8,12 +8,13 @@ import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
+import { filePickerStorageShape } from '../../../ui/default-prop-types.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
-function TileEditor({ index, image, description, link, sectionContainerId, onChange }) {
+function TileEditor({ index, image, description, link, publicStorage, onChange }) {
   const { t } = useTranslation('imageTiles');
   const clientConfig = useService(ClientConfig);
 
@@ -77,9 +78,7 @@ function TileEditor({ index, image, description, link, sectionContainerId, onCha
               onChange={handleInternalImageUrlValueChanged}
               />
             <CdnFilePicker
-              rootPrefix="media"
-              uploadPrefix={`media/${sectionContainerId}`}
-              initialPrefix={`media/${sectionContainerId}`}
+              publicStorage={publicStorage}
               fileName={image.url}
               onFileNameChanged={handleInternalImageUrlFileNameChanged}
               />
@@ -121,7 +120,7 @@ TileEditor.propTypes = {
     url: PropTypes.string
   }).isRequired,
   onChange: PropTypes.func.isRequired,
-  sectionContainerId: PropTypes.string.isRequired
+  publicStorage: filePickerStorageShape.isRequired
 };
 
 TileEditor.defaultProps = {

@@ -6,10 +6,10 @@ import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
 import InfoFactory from '../plugins/info-factory.js';
 import EditorFactory from '../plugins/editor-factory.js';
-import { sectionShape } from '../ui/default-prop-types.js';
 import React, { Fragment, useMemo, useState } from 'react';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
+import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
@@ -25,7 +25,7 @@ import {
 
 function SectionDisplay({
   section,
-  sectionContainerId,
+  publicStorage,
   canEdit,
   canHardDelete,
   dragHandleProps,
@@ -132,7 +132,7 @@ function SectionDisplay({
     }
 
     const EditorComponent = getEditorComponent();
-    return <EditorComponent sectionContainerId={sectionContainerId} content={section.content} onContentChanged={onSectionContentChange} />;
+    return <EditorComponent publicStorage={publicStorage} content={section.content} onContentChanged={onSectionContentChange} />;
   };
 
   const renderEditAction = (action, index) => (
@@ -259,8 +259,8 @@ SectionDisplay.propTypes = {
   onSectionHardDelete: PropTypes.func,
   onSectionMoveDown: PropTypes.func,
   onSectionMoveUp: PropTypes.func,
-  section: sectionShape.isRequired,
-  sectionContainerId: PropTypes.string.isRequired
+  publicStorage: filePickerStorageShape.isRequired,
+  section: sectionShape.isRequired
 };
 
 SectionDisplay.defaultProps = {

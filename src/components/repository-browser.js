@@ -17,7 +17,7 @@ import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
-import { translationProps, uiLanguageProps, userProps } from '../ui/default-prop-types.js';
+import { filePickerStorageShape, translationProps, uiLanguageProps, userProps } from '../ui/default-prop-types.js';
 import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
@@ -45,16 +45,17 @@ class RepositoryBrowser extends React.Component {
     this.browserRef = React.createRef();
     this.filterTextInputRef = React.createRef();
 
-    const rootPathSegments = pathHelper.getPathSegments(props.rootPrefix);
-    const uploadPathSegments = props.uploadPrefix ? pathHelper.getPathSegments(props.uploadPrefix) : rootPathSegments;
-    const initialPathSegments = props.initialPrefix ? pathHelper.getPathSegments(props.initialPrefix) : rootPathSegments;
+    const { publicStorage } = props;
+    const rootPathSegments = pathHelper.getPathSegments(publicStorage.rootPath);
+    const uploadPathSegments = publicStorage.uploadPath ? pathHelper.getPathSegments(publicStorage.uploadPath) : rootPathSegments;
+    const initialPathSegments = publicStorage.initialPath ? pathHelper.getPathSegments(publicStorage.initialPath) : rootPathSegments;
 
     if (!pathHelper.isInPath(uploadPathSegments, rootPathSegments)) {
-      throw new Error(`${props.uploadPrefix} is not a subpath of root ${props.rootPrefix}`);
+      throw new Error(`${publicStorage.uploadPath} is not a subpath of root ${publicStorage.rootPath}`);
     }
 
     if (!pathHelper.isInPath(initialPathSegments, rootPathSegments)) {
-      throw new Error(`${props.initialPrefix} is not a subpath of root ${props.rootPrefix}`);
+      throw new Error(`${publicStorage.initialPath} is not a subpath of root ${publicStorage.rootPath}`);
     }
 
     this.state = {
@@ -591,18 +592,14 @@ RepositoryBrowser.propTypes = {
   ...uiLanguageProps,
   ...translationProps,
   cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
-  initialPrefix: PropTypes.string,
   onSelectionChanged: PropTypes.func,
-  rootPrefix: PropTypes.string.isRequired,
-  selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE]),
-  uploadPrefix: PropTypes.string
+  publicStorage: filePickerStorageShape.isRequired,
+  selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE])
 };
 
 RepositoryBrowser.defaultProps = {
-  initialPrefix: null,
   onSelectionChanged: () => {},
-  selectionMode: selection.NONE,
-  uploadPrefix: null
+  selectionMode: selection.NONE
 };
 
 export default withTranslation('repositoryBrowser')(withUser(withLocale(inject({

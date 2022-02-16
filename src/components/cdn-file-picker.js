@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import selection from '../ui/selection.js';
 import { useTranslation } from 'react-i18next';
 import RepositoryBrowser from './repository-browser.js';
+import { filePickerStorageShape } from '../ui/default-prop-types.js';
 
-export default function CdnFilePicker(props) {
+function CdnFilePicker({ publicStorage, onFileNameChanged }) {
   const { t } = useTranslation('cdnFilePicker');
 
   const [state, setState] = useState({
@@ -14,7 +15,6 @@ export default function CdnFilePicker(props) {
   });
 
   const applySelection = currentSelectedFile => {
-    const { onFileNameChanged } = props;
     onFileNameChanged(currentSelectedFile);
 
     setState(prevState => ({ ...prevState, isModalVisible: false }));
@@ -42,7 +42,6 @@ export default function CdnFilePicker(props) {
     }
   };
 
-  const { rootPrefix, uploadPrefix, initialPrefix } = props;
   const { isModalVisible, currentSelectedFile } = state;
 
   return (
@@ -79,9 +78,7 @@ export default function CdnFilePicker(props) {
         centered
         >
         <RepositoryBrowser
-          rootPrefix={rootPrefix}
-          uploadPrefix={uploadPrefix}
-          initialPrefix={initialPrefix}
+          publicStorage={publicStorage}
           selectionMode={selection.SINGLE}
           onSelectionChanged={handleSelectionChanged}
           />
@@ -91,14 +88,12 @@ export default function CdnFilePicker(props) {
 }
 
 CdnFilePicker.propTypes = {
-  initialPrefix: PropTypes.string,
   onFileNameChanged: PropTypes.func,
-  rootPrefix: PropTypes.string.isRequired,
-  uploadPrefix: PropTypes.string
+  publicStorage: filePickerStorageShape.isRequired
 };
 
 CdnFilePicker.defaultProps = {
-  initialPrefix: null,
-  onFileNameChanged: () => {},
-  uploadPrefix: null
+  onFileNameChanged: () => {}
 };
+
+export default CdnFilePicker;

@@ -27,7 +27,7 @@ const marks = possibleValues.reduce((all, val) => {
 }, {});
 const tipFormatter = val => `${val}`;
 
-function ImageTilesEditor({ content, onContentChanged, sectionContainerId }) {
+function ImageTilesEditor({ content, onContentChanged, publicStorage }) {
   const { t } = useTranslation('imageTiles');
 
   const { tiles, maxWidth, maxTilesPerRow, hoverEffect } = content;
@@ -158,7 +158,7 @@ function ImageTilesEditor({ content, onContentChanged, sectionContainerId }) {
                 </div>
               </div>
               <div className="Panel-content">
-                <TileEditor {...tile} index={index} onChange={handleTileChange} sectionContainerId={sectionContainerId} />
+                <TileEditor {...tile} index={index} onChange={handleTileChange} publicStorage={publicStorage} />
               </div>
             </div>
           </div>

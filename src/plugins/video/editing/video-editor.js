@@ -14,7 +14,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const TextArea = Input.TextArea;
 
-function VideoEditor({ content, onContentChanged, sectionContainerId }) {
+function VideoEditor({ content, onContentChanged, publicStorage }) {
   const { t } = useTranslation('video');
   const clientConfig = useService(ClientConfig);
 
@@ -95,9 +95,7 @@ function VideoEditor({ content, onContentChanged, sectionContainerId }) {
                 onChange={handleInternalUrlChanged}
                 />
               <CdnFilePicker
-                rootPrefix="media"
-                uploadPrefix={`media/${sectionContainerId}`}
-                initialPrefix={`media/${sectionContainerId}`}
+                publicStorage={publicStorage}
                 fileName={url}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
                 />

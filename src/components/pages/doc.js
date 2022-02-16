@@ -414,6 +414,12 @@ function Doc({ initialState, PageTemplate }) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.saved;
   }
 
+  const publicStorage = {
+    rootPath: 'media',
+    initialPath: `media/${doc.key}`,
+    uploadPath: `media/${doc.key}`
+  };
+
   return (
     <Fragment>
       <PageTemplate alerts={alerts}>
@@ -421,7 +427,7 @@ function Doc({ initialState, PageTemplate }) {
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
-            sectionsContainerId={doc.key}
+            publicStorage={publicStorage}
             canEdit={view === VIEW.edit}
             canHardDelete={isHardDeletionAllowed && view === VIEW.history}
             onPendingSectionApply={handlePendingSectionApply}
