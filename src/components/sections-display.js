@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import SectionDisplay from './section-display.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
-import { sectionShape, storageShape } from '../ui/default-prop-types.js';
+import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function SectionsDisplay({
@@ -155,7 +155,7 @@ SectionsDisplay.propTypes = {
   onSectionInsert: PropTypes.func,
   onSectionMove: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
-  publicStorage: storageShape.isRequired,
+  publicStorage: filePickerStorageShape.isRequired,
   sections: PropTypes.arrayOf(sectionShape).isRequired
 };
 

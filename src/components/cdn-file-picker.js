@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import selection from '../ui/selection.js';
 import { useTranslation } from 'react-i18next';
 import RepositoryBrowser from './repository-browser.js';
-import { storageShape } from '../ui/default-prop-types.js';
+import { filePickerStorageShape } from '../ui/default-prop-types.js';
 
 function CdnFilePicker({ publicStorage, onFileNameChanged }) {
   const { t } = useTranslation('cdnFilePicker');
@@ -89,7 +89,7 @@ function CdnFilePicker({ publicStorage, onFileNameChanged }) {
 
 CdnFilePicker.propTypes = {
   onFileNameChanged: PropTypes.func,
-  publicStorage: storageShape.isRequired
+  publicStorage: filePickerStorageShape.isRequired
 };
 
 CdnFilePicker.defaultProps = {

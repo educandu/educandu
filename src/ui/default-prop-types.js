@@ -283,7 +283,7 @@ export const lessonShape = PropTypes.shape({
   ...lessonMetadataProps
 });
 
-export const storageShape = PropTypes.shape({
+export const filePickerStorageShape = PropTypes.shape({
   rootPath: PropTypes.string.isRequired,
   initialPath: PropTypes.string,
   uploadPath: PropTypes.string

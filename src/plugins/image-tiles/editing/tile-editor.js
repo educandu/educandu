@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import { storageShape } from '../../../ui/default-prop-types.js';
+import { filePickerStorageShape } from '../../../ui/default-prop-types.js';
 import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
 
@@ -120,7 +120,7 @@ TileEditor.propTypes = {
     url: PropTypes.string
   }).isRequired,
   onChange: PropTypes.func.isRequired,
-  publicStorage: storageShape.isRequired
+  publicStorage: filePickerStorageShape.isRequired
 };
 
 TileEditor.defaultProps = {

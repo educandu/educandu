@@ -17,7 +17,7 @@ import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
-import { storageShape, translationProps, uiLanguageProps, userProps } from '../ui/default-prop-types.js';
+import { filePickerStorageShape, translationProps, uiLanguageProps, userProps } from '../ui/default-prop-types.js';
 import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Icon = iconsNs.default || iconsNs;
@@ -593,7 +593,7 @@ RepositoryBrowser.propTypes = {
   ...translationProps,
   cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
   onSelectionChanged: PropTypes.func,
-  publicStorage: storageShape.isRequired,
+  publicStorage: filePickerStorageShape.isRequired,
   selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE])
 };
 

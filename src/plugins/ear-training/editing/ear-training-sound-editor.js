@@ -4,7 +4,7 @@ import { Input, Radio } from 'antd';
 import { SOUND_TYPE } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import { storageShape } from '../../../ui/default-prop-types.js';
+import { filePickerStorageShape } from '../../../ui/default-prop-types.js';
 import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
 
@@ -132,7 +132,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage }) {
 
 EarTrainingSoundEditor.propTypes = {
   onSoundChanged: PropTypes.func.isRequired,
-  publicStorage: storageShape.isRequired,
+  publicStorage: filePickerStorageShape.isRequired,
   sound: PropTypes.shape({
     type: PropTypes.string.isRequired,
     url: PropTypes.string,

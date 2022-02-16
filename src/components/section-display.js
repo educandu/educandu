@@ -9,7 +9,7 @@ import EditorFactory from '../plugins/editor-factory.js';
 import React, { Fragment, useMemo, useState } from 'react';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
-import { sectionShape, storageShape } from '../ui/default-prop-types.js';
+import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
@@ -259,7 +259,7 @@ SectionDisplay.propTypes = {
   onSectionHardDelete: PropTypes.func,
   onSectionMoveDown: PropTypes.func,
   onSectionMoveUp: PropTypes.func,
-  publicStorage: storageShape.isRequired,
+  publicStorage: filePickerStorageShape.isRequired,
   section: sectionShape.isRequired
 };
 
