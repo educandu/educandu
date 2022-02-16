@@ -4,6 +4,7 @@ import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
+import { getDefaultStorage } from '../domain/storage.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { ROLE, SAVE_USER_RESULT } from '../domain/constants.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
@@ -150,11 +151,11 @@ class UserService {
       throw new NotFound(`Storage plan with ID '${storagePlanId}' could not be found`);
     }
 
-    const oldStorage = user.storage || { plan: null, usedStorageInBytes: 0, reminders: [] };
-    if (oldStorage.plan) {
+    if (user.storage?.plan) {
       throw new BadRequest('Switching from existing storage plans is not yet supported');
     }
 
+    const oldStorage = user.storage || getDefaultStorage();
     const newStorage = { ...oldStorage, plan: plan._id };
     user.storage = newStorage;
     await this.saveUser(user);

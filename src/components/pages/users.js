@@ -5,16 +5,17 @@ import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
+import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { Table, Popover, Tabs, Select } from 'antd';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { getDefaultStorage } from '../../domain/storage.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
 import { userShape, storagePlanShape } from '../../ui/default-prop-types.js';
-import { useLocale } from '../locale-context.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -46,7 +47,7 @@ function splitInternalAndExternalUsers(allUsers) {
   return { internalUsers, externalUsers };
 }
 
-function replaceUserById(users, newUser) {
+function replaceUser(users, newUser) {
   return users.map(user => user._id === newUser._id ? newUser : user);
 }
 
@@ -112,7 +113,7 @@ function Users({ initialState, PageTemplate }) {
 
     setState(prevState => ({
       ...prevState,
-      internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: newRoles }),
+      internalUsers: replaceUser(prevState.internalUsers, { ...user, roles: newRoles }),
       isSaving: true
     }));
 
@@ -122,7 +123,7 @@ function Users({ initialState, PageTemplate }) {
       errorHelper.handleApiError({ error, logger, t });
       setState(prevState => ({
         ...prevState,
-        internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: oldRoles })
+        internalUsers: replaceUser(prevState.internalUsers, { ...user, roles: oldRoles })
       }));
     } finally {
       setState(prevState => ({ ...prevState, isSaving: false }));
@@ -147,7 +148,7 @@ function Users({ initialState, PageTemplate }) {
 
     setState(prevState => ({
       ...prevState,
-      internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: newLockedOut }),
+      internalUsers: replaceUser(prevState.internalUsers, { ...user, lockedOut: newLockedOut }),
       isSaving: true
     }));
 
@@ -157,7 +158,7 @@ function Users({ initialState, PageTemplate }) {
       errorHelper.handleApiError({ error, logger, t });
       setState(prevState => ({
         ...prevState,
-        internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: oldLockedOut })
+        internalUsers: replaceUser(prevState.internalUsers, { ...user, lockedOut: oldLockedOut })
       }));
     } finally {
       setState(prevState => ({ ...prevState, isSaving: false }));
@@ -166,20 +167,15 @@ function Users({ initialState, PageTemplate }) {
 
   const handleStoragePlanChange = async (user, newStoragePlanId) => {
     const oldStorage = user.storage;
-    const newStorage = oldStorage
-      ? {
-        ...oldStorage,
-        plan: newStoragePlanId
-      }
-      : {
-        plan: newStoragePlanId,
-        usedStorageInBytes: 0,
-        reminders: []
-      };
+    const newStorage = {
+      // eslint-disable-next-line no-extra-parens
+      ...(oldStorage || getDefaultStorage()),
+      plan: newStoragePlanId
+    };
 
     setState(prevState => ({
       ...prevState,
-      internalUsers: replaceUserById(prevState.internalUsers, { ...user, storage: newStorage }),
+      internalUsers: replaceUser(prevState.internalUsers, { ...user, storage: newStorage }),
       isSaving: true
     }));
 
@@ -192,7 +188,7 @@ function Users({ initialState, PageTemplate }) {
     } finally {
       setState(prevState => ({
         ...prevState,
-        internalUsers: replaceUserById(prevState.internalUsers, { ...user, storage: finalStorage }),
+        internalUsers: replaceUser(prevState.internalUsers, { ...user, storage: finalStorage }),
         isSaving: false
       }));
     }
@@ -205,11 +201,11 @@ function Users({ initialState, PageTemplate }) {
   const renderStorage = (_storage, user) => {
     return (
       <Select
+        className="UsersPage-storagePlanSelect"
         placeholder={t('selectPlan')}
         value={user.storage?.plan}
         onChange={value => handleStoragePlanChange(user, value)}
         disabled={!!user.storage?.plan}
-        style={{ width: '100%' }}
         >
         {initialState.storagePlans.map(plan => (
           <Option key={plan._id} value={plan._id} label={plan.name}>
