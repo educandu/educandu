@@ -1,5 +1,6 @@
 import firstBy from 'thenby';
 import PropTypes from 'prop-types';
+import prettyBytes from 'pretty-bytes';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -13,10 +14,12 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
 import { userShape, storagePlanShape } from '../../ui/default-prop-types.js';
+import { useLocale } from '../locale-context.js';
 
 const logger = new Logger(import.meta.url);
 
 const { TabPane } = Tabs;
+const { Option } = Select;
 
 const availableRoles = Object.values(ROLE);
 
@@ -48,13 +51,12 @@ function replaceUserById(users, newUser) {
 }
 
 function Users({ initialState, PageTemplate }) {
+  const { locale } = useLocale();
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('users');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const { internalUsers, externalUsers } = splitInternalAndExternalUsers(initialState.users);
   const [state, setState] = useState({ isSaving: false, internalUsers, externalUsers });
-
-  const storagePlanOptions = initialState.storagePlans.map(plan => ({ label: plan.name, value: plan._id }));
 
   const renderUsername = (username, user) => {
     const { profile } = user;
@@ -204,12 +206,20 @@ function Users({ initialState, PageTemplate }) {
     return (
       <Select
         placeholder={t('selectPlan')}
-        options={storagePlanOptions}
         value={user.storage?.plan}
         onChange={value => handleStoragePlanChange(user, value)}
         disabled={!!user.storage?.plan}
         style={{ width: '100%' }}
-        />
+        >
+        {initialState.storagePlans.map(plan => (
+          <Option key={plan._id} value={plan._id} label={plan.name}>
+            <div className="UsersPage-storagePlanOption">
+              <div className="UsersPage-storagePlanOptionName">{plan.name}</div>
+              <div className="UsersPage-storagePlanOptionSize">{prettyBytes(plan.maxSizeInBytes, { locale })}</div>
+            </div>
+          </Option>
+        ))}
+      </Select>
     );
   };
 
