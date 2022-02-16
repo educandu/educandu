@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import RepositoryBrowser from './repository-browser.js';
 import { filePickerStorageShape } from '../ui/default-prop-types.js';
 
-function CdnFilePicker({ publicStorage, onFileNameChanged }) {
+function CdnFilePicker({ publicStorage, privateStorage, onFileNameChanged }) {
   const { t } = useTranslation('cdnFilePicker');
 
   const [state, setState] = useState({
@@ -79,6 +79,7 @@ function CdnFilePicker({ publicStorage, onFileNameChanged }) {
         >
         <RepositoryBrowser
           publicStorage={publicStorage}
+          privateStorage={privateStorage}
           selectionMode={selection.SINGLE}
           onSelectionChanged={handleSelectionChanged}
           />
@@ -89,11 +90,13 @@ function CdnFilePicker({ publicStorage, onFileNameChanged }) {
 
 CdnFilePicker.propTypes = {
   onFileNameChanged: PropTypes.func,
+  privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired
 };
 
 CdnFilePicker.defaultProps = {
-  onFileNameChanged: () => {}
+  onFileNameChanged: () => {},
+  privateStorage: null
 };
 
 export default CdnFilePicker;

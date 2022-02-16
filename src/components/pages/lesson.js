@@ -198,11 +198,21 @@ function Lesson({ PageTemplate, initialState }) {
     ? formatDate(lesson.schedule.startsOn)
     : '';
 
+  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+
   const publicStorage = {
     rootPath: 'media',
     initialPath: `media/${lesson._id}`,
     uploadPath: `media/${lesson._id}`
   };
+
+  const privateStorage = isPrivateRoom && !!user.storage?.plan
+    ? {
+      rootPath: `rooms/${room._id}/media`,
+      initialPath: `rooms/${room._id}/media`,
+      uploadPath: `rooms/${room._id}/media`
+    }
+    : null;
 
   return (
     <Fragment>
@@ -211,7 +221,7 @@ function Lesson({ PageTemplate, initialState }) {
           <div className="LessonPage-breadcrumbs">
             <Breadcrumb>
               <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
-                {room.access === ROOM_ACCESS_LEVEL.private ? <LockOutlined /> : <GlobalOutlined />}
+                {isPrivateRoom ? <LockOutlined /> : <GlobalOutlined />}
                 <span>{room.name}</span>
               </Breadcrumb.Item>
               <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
@@ -220,6 +230,7 @@ function Lesson({ PageTemplate, initialState }) {
           <SectionsDisplay
             sections={currentSections}
             publicStorage={publicStorage}
+            privateStorage={privateStorage}
             canEdit={isInEditMode}
             onSectionContentChange={handleSectionContentChange}
             onSectionMove={handleSectionMove}

@@ -11,6 +11,7 @@ function SectionsDisplay({
   sections,
   pendingSectionKeys,
   publicStorage,
+  privateStorage,
   canEdit,
   canHardDelete,
   onPendingSectionApply,
@@ -62,6 +63,7 @@ function SectionsDisplay({
       key={section.key}
       section={section}
       publicStorage={publicStorage}
+      privateStorage={privateStorage}
       canEdit={!!dragHandleProps && canEdit}
       canHardDelete={canHardDelete}
       dragHandleProps={dragHandleProps}
@@ -155,6 +157,7 @@ SectionsDisplay.propTypes = {
   onSectionInsert: PropTypes.func,
   onSectionMove: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
+  privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
   sections: PropTypes.arrayOf(sectionShape).isRequired
 };
@@ -170,7 +173,8 @@ SectionsDisplay.defaultProps = {
   onSectionHardDelete: () => {},
   onSectionInsert: () => {},
   onSectionMove: () => {},
-  pendingSectionKeys: []
+  pendingSectionKeys: [],
+  privateStorage: null
 };
 
 export default SectionsDisplay;

@@ -12,7 +12,7 @@ const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage }) {
+function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
 
@@ -88,6 +88,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage }) {
             />
           <CdnFilePicker
             publicStorage={publicStorage}
+            privateStorage={privateStorage}
             fileName={sound.url}
             onFileNameChanged={handleInternalUrlFileNameChanged}
             />
@@ -132,12 +133,17 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage }) {
 
 EarTrainingSoundEditor.propTypes = {
   onSoundChanged: PropTypes.func.isRequired,
+  privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
   sound: PropTypes.shape({
     type: PropTypes.string.isRequired,
     url: PropTypes.string,
     text: PropTypes.string
   }).isRequired
+};
+
+EarTrainingSoundEditor.defaultProps = {
+  privateStorage: null
 };
 
 export default EarTrainingSoundEditor;

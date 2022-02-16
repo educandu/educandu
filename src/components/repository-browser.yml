@@ -25,3 +25,9 @@ moreActions:
 uploadFiles:
   en: Upload files
   de: Dateien hochladen
+publicStorage:
+  en: Public storage
+  de: Öffentlicher Speicher
+privateStorage:
+  en: Private storage
+  de: Privater Speicher

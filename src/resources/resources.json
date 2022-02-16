@@ -885,7 +885,9 @@
       "lastModifiedText": "Date",
       "action": "Action",
       "moreActions": "More Actions",
-      "uploadFiles": "Upload files"
+      "uploadFiles": "Upload files",
+      "publicStorage": "Public storage",
+      "privateStorage": "Private storage"
     }
   },
   {
@@ -900,7 +902,9 @@
       "lastModifiedText": "Datum",
       "action": "Aktion",
       "moreActions": "Weitere Aktionen",
-      "uploadFiles": "Dateien hochladen"
+      "uploadFiles": "Dateien hochladen",
+      "publicStorage": "Öffentlicher Speicher",
+      "privateStorage": "Privater Speicher"
     }
   },
   {
