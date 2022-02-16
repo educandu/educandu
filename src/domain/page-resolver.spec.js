@@ -29,7 +29,7 @@ describe('page-resolver', () => {
           } = await sut.getPageComponentInfo(pageName);
 
           expect(PageComponent).toBeInstanceOf(Function);
-          expect(HomePageLogoComponent).toBeInstanceOf(Function);
+          expect(HomePageLogoComponent).toBeNull();
           expect(SiteLogoComponent).toBeInstanceOf(Function);
         });
       });
@@ -50,7 +50,7 @@ describe('page-resolver', () => {
         } = await sut.getPageComponentInfo(PAGE_NAME.index);
 
         expect(PageTemplateComponent).toBe(DefaultPageTemplate);
-        expect(HomePageLogoComponent).toBe(DefaultSiteLogo);
+        expect(HomePageLogoComponent).toBe(null);
         expect(SiteLogoComponent).toBe(DefaultSiteLogo);
       });
     });
@@ -107,7 +107,7 @@ describe('page-resolver', () => {
           } = sut.getCachedPageComponentInfo(pageName);
 
           expect(PageComponent).toBeInstanceOf(Function);
-          expect(HomePageLogoComponent).toBeInstanceOf(Function);
+          expect(HomePageLogoComponent).toBeNull();
           expect(SiteLogoComponent).toBeInstanceOf(Function);
         });
       });
@@ -129,7 +129,7 @@ describe('page-resolver', () => {
         } = sut.getCachedPageComponentInfo(PAGE_NAME.index);
 
         expect(PageTemplateComponent).toBe(DefaultPageTemplate);
-        expect(HomePageLogoComponent).toBe(DefaultSiteLogo);
+        expect(HomePageLogoComponent).toBeNull();
         expect(SiteLogoComponent).toBe(DefaultSiteLogo);
       });
     });
