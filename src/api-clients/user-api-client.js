@@ -95,6 +95,16 @@ class UserApiClient {
       )
       .then(res => res.data);
   }
+
+  saveUserStoragePlan({ userId, storagePlanId }) {
+    return this.httpClient
+      .post(
+        `/api/v1/users/${encodeURIComponent(userId)}/storagePlan`,
+        { storagePlanId },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default UserApiClient;

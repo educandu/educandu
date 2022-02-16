@@ -78,6 +78,11 @@ export const settingsProps = {
   settings: settingsShape.isRequired
 };
 
+export const storagePlanShape = PropTypes.shape({
+  _id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired
+});
+
 export const userProfileShape = PropTypes.shape({
   city: PropTypes.string,
   country: PropTypes.string,

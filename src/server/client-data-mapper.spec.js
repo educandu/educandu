@@ -34,6 +34,51 @@ describe('client-data-mapper', () => {
     await destroyTestEnvironment(container);
   });
 
+  describe('dbUserToClientUser', () => {
+    let dbUser;
+
+    beforeEach(() => {
+      dbUser = {
+        _id: 'k991UQneLdmDGrAgqR7s6q',
+        provider: 'educandu',
+        username: 'test',
+        passwordHash: '$2b$04$9elh9hoLz/8p8lJaqdSl5.aN2bse1lqDDKCZn2gEft3bIscnEP2Ke',
+        email: 'test@test.com',
+        roles: ['user', 'admin'],
+        expires: null,
+        verificationCode: null,
+        lockedOut: false,
+        profile: null,
+        storage: {
+          plan: 'lkdkgfj',
+          usedStorageInBytes: 0,
+          reminders: [
+            {
+              timestamp: new Date(),
+              createdBy: 'kjghdskjhgfdsf'
+            }
+          ]
+        }
+      };
+      result = sut.dbUserToClientUser(dbUser);
+    });
+
+    it('should map the user from the database', () => {
+      expect(result).toStrictEqual({
+        _id: 'k991UQneLdmDGrAgqR7s6q',
+        provider: 'educandu',
+        username: 'test',
+        email: 'test@test.com',
+        roles: ['user', 'admin'],
+        profile: null,
+        storage: {
+          plan: 'lkdkgfj',
+          usedStorageInBytes: 0
+        }
+      });
+    });
+  });
+
   describe('mapImportBatches', () => {
     let batches;
 

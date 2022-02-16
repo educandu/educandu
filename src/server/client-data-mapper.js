@@ -21,7 +21,13 @@ class ClientDataMapper {
       username: user.username,
       email: user.email,
       roles: user.roles,
-      profile: user.profile
+      profile: user.profile,
+      storage: user.storage
+        ? {
+          plan: user.storage.plan,
+          usedStorageInBytes: user.storage.usedStorageInBytes
+        }
+        : null
     };
   }
 

@@ -1,10 +1,14 @@
 import bcrypt from 'bcrypt';
 import moment from 'moment';
+import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
 import { ROLE, SAVE_USER_RESULT } from '../domain/constants.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
+
+const { BadRequest, NotFound } = httpErrors;
 
 const DEFAULT_ROLE_NAME = ROLE.user;
 const DEFAULT_PROVIDER_NAME = 'educandu';
@@ -15,11 +19,20 @@ const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 const logger = new Logger(import.meta.url);
 
 class UserService {
-  static get inject() { return [UserStore, PasswordResetRequestStore]; }
+  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore]; }
 
-  constructor(userStore, passwordResetRequestStore) {
+  constructor(userStore, storagePlanStore, passwordResetRequestStore) {
     this.userStore = userStore;
+    this.storagePlanStore = storagePlanStore;
     this.passwordResetRequestStore = passwordResetRequestStore;
+  }
+
+  getAllStoragePlans() {
+    return this.storagePlanStore.find();
+  }
+
+  getStoragePlanById(id) {
+    return this.storagePlanStore.findOne({ _id: id });
   }
 
   getAllUsers() {
@@ -122,6 +135,30 @@ class UserService {
     user.lockedOut = lockedOut;
     await this.saveUser(user);
     return user.lockedOut;
+  }
+
+  async updateUserStoragePlan(userId, storagePlanId) {
+    logger.info(`Updating storage plan for user with id ${userId}: ${storagePlanId}`);
+
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new NotFound(`User with ID '${userId}' could not be found`);
+    }
+
+    const plan = await this.getStoragePlanById(storagePlanId);
+    if (!plan) {
+      throw new NotFound(`Storage plan with ID '${storagePlanId}' could not be found`);
+    }
+
+    const oldStorage = user.storage || { plan: null, usedStorageInBytes: 0, reminders: [] };
+    if (oldStorage.plan) {
+      throw new BadRequest('Switching from existing storage plans is not yet supported');
+    }
+
+    const newStorage = { ...oldStorage, plan: plan._id };
+    user.storage = newStorage;
+    await this.saveUser(user);
+    return newStorage;
   }
 
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
@@ -254,7 +291,8 @@ class UserService {
       expires: null,
       verificationCode: null,
       lockedOut: false,
-      profile: null
+      profile: null,
+      storage: null
     };
   }
 }

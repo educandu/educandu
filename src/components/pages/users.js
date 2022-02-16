@@ -2,17 +2,17 @@ import firstBy from 'thenby';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
-import { Table, Popover, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import errorHelper from '../../ui/error-helper.js';
-import { userShape } from '../../ui/default-prop-types.js';
+import { Table, Popover, Tabs, Select } from 'antd';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
+import { userShape, storagePlanShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -51,8 +51,10 @@ function Users({ initialState, PageTemplate }) {
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('users');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
-  const { internalUsers, externalUsers } = splitInternalAndExternalUsers(initialState);
+  const { internalUsers, externalUsers } = splitInternalAndExternalUsers(initialState.users);
   const [state, setState] = useState({ isSaving: false, internalUsers, externalUsers });
+
+  const storagePlanOptions = initialState.storagePlans.map(plan => ({ label: plan.name, value: plan._id }));
 
   const renderUsername = (username, user) => {
     const { profile } = user;
@@ -160,8 +162,55 @@ function Users({ initialState, PageTemplate }) {
     }
   };
 
+  const handleStoragePlanChange = async (user, newStoragePlanId) => {
+    const oldStorage = user.storage;
+    const newStorage = oldStorage
+      ? {
+        ...oldStorage,
+        plan: newStoragePlanId
+      }
+      : {
+        plan: newStoragePlanId,
+        usedStorageInBytes: 0,
+        reminders: []
+      };
+
+    setState(prevState => ({
+      ...prevState,
+      internalUsers: replaceUserById(prevState.internalUsers, { ...user, storage: newStorage }),
+      isSaving: true
+    }));
+
+    let finalStorage;
+    try {
+      finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      finalStorage = oldStorage;
+    } finally {
+      setState(prevState => ({
+        ...prevState,
+        internalUsers: replaceUserById(prevState.internalUsers, { ...user, storage: finalStorage }),
+        isSaving: false
+      }));
+    }
+  };
+
   const renderLockedOutState = (_lockedOut, user) => {
     return <UserLockedOutStateEditor user={user} onLockedOutStateChange={handleLockedOutStateChange} />;
+  };
+
+  const renderStorage = (_storage, user) => {
+    return (
+      <Select
+        placeholder={t('selectPlan')}
+        options={storagePlanOptions}
+        value={user.storage?.plan}
+        onChange={value => handleStoragePlanChange(user, value)}
+        disabled={!!user.storage?.plan}
+        style={{ width: '100%' }}
+        />
+    );
   };
 
   const internalUserTableColumns = [
@@ -194,6 +243,12 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'roles',
       key: 'roles',
       render: renderRoleTags
+    }, {
+      title: () => t('storage'),
+      dataIndex: 'storage',
+      key: 'storage',
+      render: renderStorage,
+      responsive: ['md']
     }
   ];
 
@@ -244,7 +299,10 @@ function Users({ initialState, PageTemplate }) {
 
 Users.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.arrayOf(userShape).isRequired
+  initialState: PropTypes.shape({
+    users: PropTypes.arrayOf(userShape).isRequired,
+    storagePlans: PropTypes.arrayOf(storagePlanShape).isRequired
+  }).isRequired
 };
 
 export default Users;

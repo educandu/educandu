@@ -1,5 +1,6 @@
 import joi from 'joi';
 import { ROLE } from '../constants.js';
+import { idOrKeySchema } from './shared-schemas.js';
 
 const usernameSchema = joi.string().min(6);
 const passwordSchema = joi.string().min(8).pattern(/^(?=.*[A-Za-z])(?=.*\d).*$/);
@@ -43,4 +44,8 @@ export const postUserRolesBodySchema = joi.object({
 
 export const postUserLockedOutBodySchema = joi.object({
   lockedOut: joi.boolean().required()
+});
+
+export const postUserStoragePlanBodySchema = joi.object({
+  storagePlanId: idOrKeySchema.required()
 });
