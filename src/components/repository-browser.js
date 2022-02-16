@@ -5,6 +5,7 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
+import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
 import { useUser } from './user-context.js';
@@ -12,6 +13,7 @@ import pathHelper from '../ui/path-helper.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
+import { handleApiError } from '../ui/error-helper.js';
 import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
@@ -27,6 +29,8 @@ import {
   LockOutlined,
   GlobalOutlined
 } from '@ant-design/icons';
+
+const logger = new Logger(import.meta.url);
 
 class RepositoryBrowser extends React.Component {
   constructor(props) {
@@ -258,27 +262,32 @@ class RepositoryBrowser extends React.Component {
 
     this.resetDragging();
 
-    const { currentDropTarget, currentPathSegments } = this.state;
+    const { currentDropTarget } = this.state;
     const files = event.dataTransfer && event.dataTransfer.files ? Array.from(event.dataTransfer.files) : null;
     if (!currentDropTarget || !files || !files.length) {
       return;
     }
 
-    const pathSegments = currentDropTarget === '*'
-      ? currentPathSegments
-      : pathHelper.getPathSegments(currentDropTarget);
-
-    await this.uploadFiles(pathSegments, files);
+    await this.uploadFiles(files);
   }
 
   async refreshFiles(pathSegments, keysToSelect) {
     this.setState({ isRefreshing: true });
 
-    const { cdnApiClient } = this.props;
+    const { cdnApiClient, t } = this.props;
     const { initialPathSegments, uploadPathSegments } = this.state.currentLocation;
     const prefix = pathHelper.getPrefix(pathSegments);
-    const result = await cdnApiClient.getObjects(prefix);
-    const recordsFromCdn = this.convertObjectsToRecords(result.objects);
+
+    let objects;
+    try {
+      const result = await cdnApiClient.getObjects(prefix);
+      objects = result.objects;
+    } catch (error) {
+      handleApiError({ error, logger, t });
+      objects = [];
+    }
+
+    const recordsFromCdn = this.convertObjectsToRecords(objects);
     const recordsWithVirtualPaths = this.ensureVirtualFolders(pathSegments, recordsFromCdn, [initialPathSegments, uploadPathSegments]);
     const selectedRowKeys = selection.removeInvalidKeys(keysToSelect, recordsWithVirtualPaths.map(r => r.key));
 
@@ -290,14 +299,18 @@ class RepositoryBrowser extends React.Component {
     });
   }
 
-  async uploadFiles(pathSegments, files, { onProgress } = {}) {
+  async uploadFiles(files, { onProgress } = {}) {
     this.increaseCurrentUploadCount();
 
-    const { cdnApiClient } = this.props;
+    const { cdnApiClient, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = pathHelper.getPrefix(currentPathSegments);
 
-    await cdnApiClient.uploadFiles(files, prefix, { onProgress });
+    try {
+      await cdnApiClient.uploadFiles(files, prefix, { onProgress });
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
 
     this.decreaseCurrentUploadCount();
 
@@ -305,14 +318,18 @@ class RepositoryBrowser extends React.Component {
   }
 
   async handleDeleteFile(fileName) {
-    const { cdnApiClient, onSelectionChanged } = this.props;
+    const { cdnApiClient, onSelectionChanged, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = pathHelper.getPrefix(currentPathSegments);
     const objectName = `${prefix}${fileName}`;
 
-    await cdnApiClient.deleteCdnObject(prefix, fileName);
-    if (selectedRowKeys.includes(objectName)) {
-      onSelectionChanged([], true);
+    try {
+      await cdnApiClient.deleteCdnObject(prefix, fileName);
+      if (selectedRowKeys.includes(objectName)) {
+        onSelectionChanged([], true);
+      }
+    } catch (error) {
+      handleApiError({ error, logger, t });
     }
 
     await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key !== objectName));
@@ -427,8 +444,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   async onCustomUpload({ file, onProgress, onSuccess }) {
-    const { currentPathSegments } = this.state;
-    const result = await this.uploadFiles(currentPathSegments, [file], { onProgress });
+    const result = await this.uploadFiles([file], { onProgress });
     onSuccess(result);
   }
 
