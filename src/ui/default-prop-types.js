@@ -93,6 +93,15 @@ export const userProfileShape = PropTypes.shape({
   streetSupplement: PropTypes.string
 });
 
+export const userStorageShape = PropTypes.shape({
+  plan: PropTypes.string,
+  usedStorageInBytes: PropTypes.number,
+  reminders: PropTypes.arrayOf(PropTypes.shape({
+    timestamp: PropTypes.string.isRequired,
+    createdBy: PropTypes.string.isRequired
+  }))
+});
+
 export const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   provider: PropTypes.string.isRequired,
@@ -101,7 +110,8 @@ export const userShape = PropTypes.shape({
   roles: PropTypes.arrayOf(PropTypes.string).isRequired,
   expires: PropTypes.string,
   lockedOut: PropTypes.bool,
-  profile: userProfileShape
+  profile: userProfileShape,
+  storage: userStorageShape
 });
 
 export const userProps = {
