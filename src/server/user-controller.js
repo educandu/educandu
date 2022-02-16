@@ -10,7 +10,6 @@ import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import PageRenderer from '../server/page-renderer.js';
-import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
@@ -19,6 +18,7 @@ import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
+import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import {
   postUserBodySchema,
@@ -27,7 +27,8 @@ import {
   postUserPasswordResetRequestBodySchema,
   postUserPasswordResetCompletionBodySchema,
   postUserRolesBodySchema,
-  postUserLockedOutBodySchema
+  postUserLockedOutBodySchema,
+  postUserStoragePlanBodySchema
 } from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
@@ -77,7 +78,8 @@ class UserController {
   }
 
   async handleGetUsersPage(req, res) {
-    const initialState = await this.userService.getAllUsers();
+    const [users, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.userService.getAllStoragePlans()]);
+    const initialState = { users, storagePlans };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
   }
 
@@ -182,6 +184,13 @@ class UserController {
     return res.send({ lockedOut: newLockedOutState });
   }
 
+  async handlePostUserStoragePlan(req, res) {
+    const { userId } = req.params;
+    const { storagePlanId } = req.body;
+    const newStorage = await this.userService.updateUserStoragePlan(userId, storagePlanId);
+    return res.send(newStorage);
+  }
+
   registerMiddleware(router) {
     router.use(session({
       name: this.serverConfig.sessionCookieName,
@@ -278,6 +287,8 @@ class UserController {
     router.post('/api/v1/users/:userId/roles', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserRolesBodySchema)], (req, res) => this.handlePostUserRoles(req, res));
 
     router.post('/api/v1/users/:userId/lockedOut', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserLockedOutBodySchema)], (req, res) => this.handlePostUserLockedOut(req, res));
+
+    router.post('/api/v1/users/:userId/storagePlan', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserStoragePlanBodySchema)], (req, res) => this.handlePostUserStoragePlan(req, res));
   }
 }
 

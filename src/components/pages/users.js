@@ -1,22 +1,26 @@
 import firstBy from 'thenby';
 import PropTypes from 'prop-types';
+import prettyBytes from 'pretty-bytes';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
-import { Table, Popover, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
+import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
-import { userShape } from '../../ui/default-prop-types.js';
+import { Table, Popover, Tabs, Select } from 'antd';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { getDefaultStorage } from '../../domain/storage.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
+import { userShape, storagePlanShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
 const { TabPane } = Tabs;
+const { Option } = Select;
 
 const availableRoles = Object.values(ROLE);
 
@@ -43,15 +47,16 @@ function splitInternalAndExternalUsers(allUsers) {
   return { internalUsers, externalUsers };
 }
 
-function replaceUserById(users, newUser) {
+function replaceUser(users, newUser) {
   return users.map(user => user._id === newUser._id ? newUser : user);
 }
 
 function Users({ initialState, PageTemplate }) {
+  const { locale } = useLocale();
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('users');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
-  const { internalUsers, externalUsers } = splitInternalAndExternalUsers(initialState);
+  const { internalUsers, externalUsers } = splitInternalAndExternalUsers(initialState.users);
   const [state, setState] = useState({ isSaving: false, internalUsers, externalUsers });
 
   const renderUsername = (username, user) => {
@@ -108,7 +113,7 @@ function Users({ initialState, PageTemplate }) {
 
     setState(prevState => ({
       ...prevState,
-      internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: newRoles }),
+      internalUsers: replaceUser(prevState.internalUsers, { ...user, roles: newRoles }),
       isSaving: true
     }));
 
@@ -118,7 +123,7 @@ function Users({ initialState, PageTemplate }) {
       errorHelper.handleApiError({ error, logger, t });
       setState(prevState => ({
         ...prevState,
-        internalUsers: replaceUserById(prevState.internalUsers, { ...user, roles: oldRoles })
+        internalUsers: replaceUser(prevState.internalUsers, { ...user, roles: oldRoles })
       }));
     } finally {
       setState(prevState => ({ ...prevState, isSaving: false }));
@@ -143,7 +148,7 @@ function Users({ initialState, PageTemplate }) {
 
     setState(prevState => ({
       ...prevState,
-      internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: newLockedOut }),
+      internalUsers: replaceUser(prevState.internalUsers, { ...user, lockedOut: newLockedOut }),
       isSaving: true
     }));
 
@@ -153,15 +158,65 @@ function Users({ initialState, PageTemplate }) {
       errorHelper.handleApiError({ error, logger, t });
       setState(prevState => ({
         ...prevState,
-        internalUsers: replaceUserById(prevState.internalUsers, { ...user, lockedOut: oldLockedOut })
+        internalUsers: replaceUser(prevState.internalUsers, { ...user, lockedOut: oldLockedOut })
       }));
     } finally {
       setState(prevState => ({ ...prevState, isSaving: false }));
     }
   };
 
+  const handleStoragePlanChange = async (user, newStoragePlanId) => {
+    const oldStorage = user.storage;
+    const newStorage = {
+      // eslint-disable-next-line no-extra-parens
+      ...(oldStorage || getDefaultStorage()),
+      plan: newStoragePlanId
+    };
+
+    setState(prevState => ({
+      ...prevState,
+      internalUsers: replaceUser(prevState.internalUsers, { ...user, storage: newStorage }),
+      isSaving: true
+    }));
+
+    let finalStorage;
+    try {
+      finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      finalStorage = oldStorage;
+    } finally {
+      setState(prevState => ({
+        ...prevState,
+        internalUsers: replaceUser(prevState.internalUsers, { ...user, storage: finalStorage }),
+        isSaving: false
+      }));
+    }
+  };
+
   const renderLockedOutState = (_lockedOut, user) => {
     return <UserLockedOutStateEditor user={user} onLockedOutStateChange={handleLockedOutStateChange} />;
+  };
+
+  const renderStorage = (_storage, user) => {
+    return (
+      <Select
+        className="UsersPage-storagePlanSelect"
+        placeholder={t('selectPlan')}
+        value={user.storage?.plan}
+        onChange={value => handleStoragePlanChange(user, value)}
+        disabled={!!user.storage?.plan}
+        >
+        {initialState.storagePlans.map(plan => (
+          <Option key={plan._id} value={plan._id} label={plan.name}>
+            <div className="UsersPage-storagePlanOption">
+              <div className="UsersPage-storagePlanOptionName">{plan.name}</div>
+              <div className="UsersPage-storagePlanOptionSize">{prettyBytes(plan.maxSizeInBytes, { locale })}</div>
+            </div>
+          </Option>
+        ))}
+      </Select>
+    );
   };
 
   const internalUserTableColumns = [
@@ -194,6 +249,12 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'roles',
       key: 'roles',
       render: renderRoleTags
+    }, {
+      title: () => t('storage'),
+      dataIndex: 'storage',
+      key: 'storage',
+      render: renderStorage,
+      responsive: ['md']
     }
   ];
 
@@ -244,7 +305,10 @@ function Users({ initialState, PageTemplate }) {
 
 Users.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
-  initialState: PropTypes.arrayOf(userShape).isRequired
+  initialState: PropTypes.shape({
+    users: PropTypes.arrayOf(userShape).isRequired,
+    storagePlans: PropTypes.arrayOf(storagePlanShape).isRequired
+  }).isRequired
 };
 
 export default Users;

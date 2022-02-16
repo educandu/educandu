@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useUser } from './user-context.js';
-import { userProps } from '../ui/default-prop-types.js';
 import { hasUserPermission } from '../domain/permissions.js';
 
 function Restricted({ to, children }) {
@@ -16,7 +15,6 @@ function Restricted({ to, children }) {
 }
 
 Restricted.propTypes = {
-  ...userProps,
   children: PropTypes.node,
   to: PropTypes.oneOfType([
     PropTypes.string,
