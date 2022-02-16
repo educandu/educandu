@@ -7,3 +7,9 @@ accountTabTitle:
 roomsTabTitle:
   en: Rooms
   de: Räume
+storagePlanLabel:
+  en: storage plan
+  de: Speicherplan
+usedStorageLabel:
+  en: Used
+  de: Benutzt

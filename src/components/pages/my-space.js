@@ -4,20 +4,23 @@ import PropTypes from 'prop-types';
 import RoomsTab from '../rooms-tab.js';
 import ProfileTab from '../profile-tab.js';
 import AccountTab from '../account-tab.js';
+import { useUser } from '../user-context.js';
+import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
-import { roomShape } from '../../ui/default-prop-types.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { roomShape, storagePlanShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
 function MySpace({ initialState, PageTemplate }) {
+  const user = useUser();
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('mySpace');
   const clientConfig = useService(ClientConfig);
 
-  const { rooms } = initialState;
+  const { rooms, storagePlan } = initialState;
 
   const formItemLayout = {
     labelCol: {
@@ -59,6 +62,13 @@ function MySpace({ initialState, PageTemplate }) {
           <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="3">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
+          {user.storage && (
+            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="4">
+              <h5>{`"${storagePlan.name}" ${t('storagePlanLabel')}`}</h5>
+              <span className="MySpacePage-usedStorage">{t('usedStorageLabel')}:</span>
+              <UsedStorage usedBytes={user.storage.usedStorageInBytes} maxBytes={storagePlan.maxSizeInBytes} />
+            </TabPane>
+          )}
         </Tabs>
 
       </div>
@@ -69,7 +79,8 @@ function MySpace({ initialState, PageTemplate }) {
 MySpace.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    rooms: PropTypes.arrayOf(roomShape).isRequired
+    rooms: PropTypes.arrayOf(roomShape).isRequired,
+    storagePlan: storagePlanShape
   }).isRequired
 };
 

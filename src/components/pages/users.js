@@ -15,7 +15,7 @@ import UserApiClient from '../../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
-import { userShape, storagePlanShape } from '../../ui/default-prop-types.js';
+import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -250,7 +250,7 @@ function Users({ initialState, PageTemplate }) {
       key: 'roles',
       render: renderRoleTags
     }, {
-      title: () => t('storage'),
+      title: () => t('common:storage'),
       dataIndex: 'storage',
       key: 'storage',
       render: renderStorage,
@@ -307,7 +307,7 @@ Users.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     users: PropTypes.arrayOf(userShape).isRequired,
-    storagePlans: PropTypes.arrayOf(storagePlanShape).isRequired
+    storagePlans: PropTypes.arrayOf(baseStoragePlanShape).isRequired
   }).isRequired
 };
 
