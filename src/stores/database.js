@@ -19,6 +19,7 @@ import documentsSpec from './collection-specs/documents.js';
 import roomLocksSpec from './collection-specs/room-locks.js';
 import taskLocksSpec from './collection-specs/task-locks.js';
 import batchLocksSpec from './collection-specs/batch-locks.js';
+import storagePlansSpec from './collection-specs/storage-plans.js';
 import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
 import documentLocksSpec from './collection-specs/document-locks.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
@@ -41,6 +42,7 @@ const collectionSpecs = [
   documentsSpec,
   taskLocksSpec,
   batchLocksSpec,
+  storagePlansSpec,
   documentLocksSpec,
   documentOrdersSpec,
   maintenanceLocksSpec,
