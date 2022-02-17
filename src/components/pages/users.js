@@ -1,20 +1,25 @@
-import firstBy from 'thenby';
+import by from 'thenby';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
-import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
+import UsedStorage from '../used-storage.js';
+import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
-import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
-import { Table, Popover, Tabs, Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { replaceItem } from '../../utils/array-utils.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { getDefaultStorage } from '../../domain/storage.js';
+import { Table, Popover, Tabs, Select, Button } from 'antd';
+import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
+import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import CountryFlagAndName from '../localization/country-flag-and-name.js';
 import UserLockedOutStateEditor from '../user-locked-out-state-editor.js';
+import { confirmAllPrivateRoomsDelete } from '../confirmation-dialogs.js';
 import { userShape, baseStoragePlanShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -26,38 +31,201 @@ const availableRoles = Object.values(ROLE);
 
 const TABS = {
   internalUsers: 'internal-users',
-  externalUsers: 'external-users'
+  externalUsers: 'external-users',
+  storageUsers: 'storage-users'
 };
 
-function splitInternalAndExternalUsers(allUsers) {
+function createUserSubsets(users, storagePlans) {
+  const storagePlansById = new Map(storagePlans.map(plan => [plan._id, plan]));
+
   const internalUsers = [];
   const externalUsers = [];
-  for (const user of allUsers) {
-    const matches = (/^external\/(.+)$/).exec(user.provider);
-    if (matches) {
-      externalUsers.push({
-        ...user,
-        importSource: matches[1]
-      });
+  const storageUsers = [];
+
+  for (const user of users) {
+    const enrichedUserObject = {
+      ...user,
+      storagePlan: storagePlansById.get(user.storage?.plan) || null,
+      importSource: (/^external\/(.+)$/).exec(user.provider)?.[1] || null
+    };
+
+    if (enrichedUserObject.importSource) {
+      externalUsers.push(enrichedUserObject);
     } else {
-      internalUsers.push(user);
+      internalUsers.push(enrichedUserObject);
+    }
+
+    if (user.storage || user.storagePlan) {
+      storageUsers.push(enrichedUserObject);
     }
   }
 
-  return { internalUsers, externalUsers };
-}
-
-function replaceUser(users, newUser) {
-  return users.map(user => user._id === newUser._id ? newUser : user);
+  return { internalUsers, externalUsers, storageUsers };
 }
 
 function Users({ initialState, PageTemplate }) {
+  const executingUser = useUser();
   const { locale } = useLocale();
+  const { formatDate } = useDateFormat();
   const alerts = useGlobalAlerts();
   const { t } = useTranslation('users');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
-  const { internalUsers, externalUsers } = splitInternalAndExternalUsers(initialState.users);
-  const [state, setState] = useState({ isSaving: false, internalUsers, externalUsers });
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [users, setUsers] = useState(initialState.users);
+  const [usersById, setUsersById] = useState(new Map());
+  const [internalUsers, setInternalUsers] = useState([]);
+  const [externalUsers, setExternalUsers] = useState([]);
+  const [storageUsers, setStorageUsers] = useState([]);
+
+  useEffect(() => {
+    const subsets = createUserSubsets(users, initialState.storagePlans);
+    setUsersById(new Map(users.map(user => [user._id, user])));
+    setInternalUsers(subsets.internalUsers);
+    setExternalUsers(subsets.externalUsers);
+    setStorageUsers(subsets.storageUsers);
+  }, [users, initialState.storagePlans]);
+
+  const handleRoleChange = async (user, newRoles) => {
+    const oldRoles = user.roles;
+
+    setIsSaving(true);
+    setUsers(oldUsers => replaceItem(oldUsers, { ...user, roles: newRoles }));
+
+    try {
+      await userApiClient.saveUserRoles({ userId: user._id, roles: newRoles });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      setUsers(oldUsers => replaceItem(oldUsers, { ...user, roles: oldRoles }));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleLockedOutStateChange = async (user, newLockedOut) => {
+    const oldLockedOut = user.lockedOut;
+
+    setIsSaving(true);
+    setUsers(oldUsers => replaceItem(oldUsers, { ...user, lockedOut: newLockedOut }));
+
+    try {
+      await userApiClient.saveUserLockedOutState({ userId: user._id, lockedOut: newLockedOut });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      setUsers(oldUsers => replaceItem(oldUsers, { ...user, lockedOut: oldLockedOut }));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleStoragePlanChange = async (user, newStoragePlanId) => {
+    const oldStorage = user.storage;
+
+    const storageBlueprint = oldStorage || getDefaultStorage();
+    const newStorage = {
+      ...storageBlueprint,
+      plan: newStoragePlanId
+    };
+
+    setIsSaving(true);
+    setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
+
+    let finalStorage;
+    try {
+      finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      finalStorage = oldStorage;
+    } finally {
+      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
+      setIsSaving(false);
+    }
+  };
+
+  const handleAddReminderClick = async user => {
+    const oldStorage = user.storage;
+
+    const storageBlueprint = oldStorage || getDefaultStorage();
+    const newStorage = {
+      ...storageBlueprint,
+      reminders: [
+        ...storageBlueprint.reminders,
+        {
+          timestamp: new Date().toISOString(),
+          createdBy: executingUser._id
+        }
+      ]
+    };
+
+    setIsSaving(true);
+    setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
+
+    let finalStorage;
+    try {
+      finalStorage = await userApiClient.addUserStorageReminder({ userId: user._id });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      finalStorage = oldStorage;
+    } finally {
+      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
+      setIsSaving(false);
+    }
+  };
+
+  const handleRemoveRemindersClick = async user => {
+    const oldStorage = user.storage;
+
+    const storageBlueprint = oldStorage || getDefaultStorage();
+    const newStorage = {
+      ...storageBlueprint,
+      reminders: []
+    };
+
+    setIsSaving(true);
+    setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
+
+    let finalStorage;
+    try {
+      finalStorage = await userApiClient.removeUserStorageReminders({ userId: user._id });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+      finalStorage = oldStorage;
+    } finally {
+      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteAllPrivateRoomsClick = user => {
+    confirmAllPrivateRoomsDelete(t, user.username, async () => {
+      const oldStorage = user.storage;
+
+      const storageBlueprint = oldStorage || getDefaultStorage();
+      const newStorage = storageBlueprint.plan
+        ? {
+          ...storageBlueprint,
+          usedStorageInBytes: 0,
+          reminders: []
+        }
+        : null;
+
+      setIsSaving(true);
+      setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
+
+      let finalStorage;
+      try {
+        await roomApiClient.deleteAllPrivateRoomsForUser({ ownerId: user._id });
+        finalStorage = await userApiClient.removeUserStorageReminders({ userId: user._id });
+      } catch (error) {
+        errorHelper.handleApiError({ error, logger, t });
+        finalStorage = oldStorage;
+      } finally {
+        setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: finalStorage }));
+        setIsSaving(false);
+      }
+    });
+  };
 
   const renderUsername = (username, user) => {
     const { profile } = user;
@@ -108,29 +276,11 @@ function Users({ initialState, PageTemplate }) {
     return <b>{username}</b>;
   };
 
-  const handleRoleChange = async (user, newRoles) => {
-    const oldRoles = user.roles;
-
-    setState(prevState => ({
-      ...prevState,
-      internalUsers: replaceUser(prevState.internalUsers, { ...user, roles: newRoles }),
-      isSaving: true
-    }));
-
-    try {
-      await userApiClient.saveUserRoles({ userId: user._id, roles: newRoles });
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
-      setState(prevState => ({
-        ...prevState,
-        internalUsers: replaceUser(prevState.internalUsers, { ...user, roles: oldRoles })
-      }));
-    } finally {
-      setState(prevState => ({ ...prevState, isSaving: false }));
-    }
+  const renderEmail = email => {
+    return <a href={`mailto:${encodeURI(email)}`}>{email}</a>;
   };
 
-  const renderRoleTags = (_userRoles, user) => {
+  const renderRoleTags = (_, user) => {
     return availableRoles.map(role => {
       return (
         <UserRoleTagEditor
@@ -143,67 +293,17 @@ function Users({ initialState, PageTemplate }) {
     });
   };
 
-  const handleLockedOutStateChange = async (user, newLockedOut) => {
-    const oldLockedOut = user.lockedOut;
-
-    setState(prevState => ({
-      ...prevState,
-      internalUsers: replaceUser(prevState.internalUsers, { ...user, lockedOut: newLockedOut }),
-      isSaving: true
-    }));
-
-    try {
-      await userApiClient.saveUserLockedOutState({ userId: user._id, lockedOut: newLockedOut });
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
-      setState(prevState => ({
-        ...prevState,
-        internalUsers: replaceUser(prevState.internalUsers, { ...user, lockedOut: oldLockedOut })
-      }));
-    } finally {
-      setState(prevState => ({ ...prevState, isSaving: false }));
-    }
-  };
-
-  const handleStoragePlanChange = async (user, newStoragePlanId) => {
-    const oldStorage = user.storage;
-    const newStorage = {
-      // eslint-disable-next-line no-extra-parens
-      ...(oldStorage || getDefaultStorage()),
-      plan: newStoragePlanId
-    };
-
-    setState(prevState => ({
-      ...prevState,
-      internalUsers: replaceUser(prevState.internalUsers, { ...user, storage: newStorage }),
-      isSaving: true
-    }));
-
-    let finalStorage;
-    try {
-      finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId });
-    } catch (error) {
-      errorHelper.handleApiError({ error, logger, t });
-      finalStorage = oldStorage;
-    } finally {
-      setState(prevState => ({
-        ...prevState,
-        internalUsers: replaceUser(prevState.internalUsers, { ...user, storage: finalStorage }),
-        isSaving: false
-      }));
-    }
-  };
-
-  const renderLockedOutState = (_lockedOut, user) => {
+  const renderLockedOutState = (_, user) => {
     return <UserLockedOutStateEditor user={user} onLockedOutStateChange={handleLockedOutStateChange} />;
   };
 
-  const renderStorage = (_storage, user) => {
+  const renderStorage = (_, user) => {
     return (
       <Select
+        size="small"
         className="UsersPage-storagePlanSelect"
         placeholder={t('selectPlan')}
-        value={user.storage?.plan}
+        value={user.storage?.plan || null}
         onChange={value => handleStoragePlanChange(user, value)}
         disabled={!!user.storage?.plan}
         >
@@ -219,29 +319,85 @@ function Users({ initialState, PageTemplate }) {
     );
   };
 
+  const renderStorageSpace = (_, user) => {
+    return (
+      <UsedStorage usedBytes={user.storage?.usedStorageInBytes || 0} maxBytes={user.storagePlan?.maxSizeInBytes || 0} />
+    );
+  };
+
+  const renderReminders = (_, user) => {
+    if (!user.storage?.reminders?.length) {
+      return null;
+    }
+
+    return (
+      <ol className="UsersPage-reminders">
+        {user.storage.reminders.map(reminder => (
+          <li key={reminder.timestamp}>
+            {formatDate(reminder.timestamp)} ({usersById.get(reminder.createdBy)?.username || t('common:unknown')})
+          </li>
+        ))}
+      </ol>
+    );
+  };
+
+  const renderActions = (_, user) => {
+    return (
+      <div className="UsersPage-actions">
+        <Button
+          type="link"
+          size="small"
+          className="UsersPage-actionButton"
+          onClick={() => handleAddReminderClick(user)}
+          >
+          {t('addReminder')}
+        </Button>
+        {!!user.storage?.reminders?.length && (
+        <Button
+          type="link"
+          size="small"
+          className="UsersPage-actionButton"
+          onClick={() => handleRemoveRemindersClick(user)}
+          >
+          {t('removeAllReminders')}
+        </Button>
+        )}
+        <Button
+          type="link"
+          size="small"
+          className="UsersPage-actionButton"
+          onClick={() => handleDeleteAllPrivateRoomsClick(user)}
+          >
+          {t('deleteAllPrivateRooms')}
+        </Button>
+      </div>
+    );
+  };
+
   const internalUserTableColumns = [
     {
-      title: () => t('username'),
+      title: () => t('common:username'),
       dataIndex: 'username',
       key: 'username',
-      sorter: firstBy('username'),
+      sorter: by(x => x.username),
       render: renderUsername
     }, {
       title: () => t('common:email'),
       dataIndex: 'email',
       key: 'email',
-      sorter: firstBy('email')
+      render: renderEmail,
+      sorter: by(x => x.email)
     }, {
       title: () => t('expires'),
       dataIndex: 'expires',
       key: 'expires',
-      sorter: firstBy('expires'),
+      sorter: by(x => x.expires),
       responsive: ['lg']
     }, {
       title: () => t('lockedOut'),
       dataIndex: 'lockedOut',
       key: 'lockedOut',
-      sorter: firstBy('lockedOut'),
+      sorter: by(x => x.lockedOut),
       render: renderLockedOutState,
       responsive: ['md']
     }, {
@@ -254,22 +410,66 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'storage',
       key: 'storage',
       render: renderStorage,
+      sorter: by(x => x.storagePlan?.name),
       responsive: ['md']
     }
   ];
 
   const externalUserTableColumns = [
     {
-      title: () => t('username'),
+      title: () => t('common:username'),
       dataIndex: 'username',
       key: 'username',
-      sorter: firstBy('username'),
+      sorter: by(x => x.username),
       render: renderUsername
     }, {
       title: () => t('importSource'),
       dataIndex: 'importSource',
       key: 'importSource',
-      sorter: firstBy('importSource')
+      sorter: by(x => x.importSource)
+    }
+  ];
+
+  const storageUserTableColumns = [
+    {
+      title: () => t('common:username'),
+      dataIndex: 'username',
+      key: 'username',
+      sorter: by(x => x.username),
+      render: renderUsername
+    }, {
+      title: () => t('common:email'),
+      dataIndex: 'email',
+      key: 'email',
+      render: renderEmail,
+      sorter: by(x => x.email)
+    }, {
+      title: () => t('common:storage'),
+      dataIndex: 'storage',
+      key: 'storage',
+      render: renderStorage,
+      sorter: by(x => x.storagePlan?.name),
+      responsive: ['md']
+    }, {
+      title: () => t('storageSpace'),
+      dataIndex: 'storageSpace',
+      key: 'storageSpace',
+      render: renderStorageSpace,
+      sorter: by(x => x.storage?.usedStorageInBytes),
+      responsive: ['md']
+    }, {
+      title: () => t('reminders'),
+      dataIndex: 'reminders',
+      key: 'reminders',
+      render: renderReminders,
+      sorter: by(x => x.reminders?.length),
+      responsive: ['lg']
+    }, {
+      title: () => t('common:actions'),
+      dataIndex: 'actions',
+      key: 'actions',
+      render: renderActions,
+      responsive: ['lg']
     }
   ];
 
@@ -277,21 +477,30 @@ function Users({ initialState, PageTemplate }) {
     <PageTemplate alerts={alerts}>
       <div className="UsersPage">
         <h1>{t('pageNames:users')}</h1>
-        <Tabs className="Tabs" defaultActiveKey={TABS.internalUsers} type="line" size="large" disabled={state.isSaving}>
+        <Tabs className="Tabs" defaultActiveKey={TABS.internalUsers} type="line" size="large" disabled={isSaving}>
           <TabPane className="Tabs-tabPane" tab={t('internalUsers')} key={TABS.internalUsers}>
             <Table
-              dataSource={state.internalUsers}
+              dataSource={internalUsers}
               columns={internalUserTableColumns}
               rowKey="_id"
               size="middle"
-              loading={state.isSaving}
+              loading={isSaving}
               bordered
               />
           </TabPane>
           <TabPane className="Tabs-tabPane" tab={t('externalUsers')} key={TABS.externalUsers}>
             <Table
-              dataSource={state.externalUsers}
+              dataSource={externalUsers}
               columns={externalUserTableColumns}
+              rowKey="_id"
+              size="middle"
+              bordered
+              />
+          </TabPane>
+          <TabPane className="Tabs-tabPane" tab={t('storageUsers')} key={TABS.storageUsers}>
+            <Table
+              dataSource={storageUsers}
+              columns={storageUserTableColumns}
               rowKey="_id"
               size="middle"
               bordered

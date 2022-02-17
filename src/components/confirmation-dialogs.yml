@@ -10,6 +10,9 @@ deleteSectionConfirmation:
 deleteDocumentConfirmation:
   en: Do you really want to delete document "{title}"?
   de: Möchten Sie das Dokument "{title}" wirklich löschen?
+deleteAllPrivateRoomsConfirmation:
+  en: Do you really want to delete all private rooms owned by user "{ownerName}"?
+  de: Möchten Sie wirklich alle privaten Räume von Benutzer "{ownerName}" löschen?
 deleteRoomConfirmation:
   en: Do you really want to delete room "{roomName}"?
   de: Möchten Sie den Raum "{roomName}" wirklich löschen?

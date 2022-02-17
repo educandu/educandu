@@ -10,7 +10,7 @@ class ClientDataMapper {
     this.userService = userService;
   }
 
-  dbUserToClientUser(user) {
+  mapWebsiteUser(user) {
     if (!user) {
       return null;
     }
@@ -29,6 +29,22 @@ class ClientDataMapper {
         }
         : null
     };
+  }
+
+  mapUsersForAdminArea(users) {
+    return users.map(user => ({
+      ...user,
+      expires: user.expires ? user.expires.toISOString() : user.expires,
+      storage: user.storage
+        ? {
+          ...user.storage,
+          reminders: user.storage.reminders.map(reminder => ({
+            ...reminder,
+            timestamp: reminder.timestamp.toISOString()
+          }))
+        }
+        : user.storage
+    }));
   }
 
   createProposedSections(documentRevision) {

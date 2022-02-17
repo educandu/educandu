@@ -12,6 +12,7 @@ describe('user-service', () => {
   let user;
   let container;
   let storagePlan;
+  let executingUser;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -28,6 +29,7 @@ describe('user-service', () => {
     storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxSizeInBytes: 500 * 1000 * 1000 };
     await db.storagePlans.insertOne(storagePlan);
     user = await setupTestUser(container, { username: 'John Doe', email: 'john-doe@test.com' });
+    executingUser = await setupTestUser(container, { username: 'Emilia Watson', email: 'emilia-watson@test.com' });
   });
 
   afterEach(async () => {
@@ -99,6 +101,71 @@ describe('user-service', () => {
 
       it('should update the usedStorageInBytes', () => {
         expect(result.storage.usedStorageInBytes).toBe(1000);
+      });
+    });
+  });
+
+  describe('addUserStorageReminder', () => {
+    describe('when called with the ID of a non-existent user', () => {
+      it('should throw a not found error', () => {
+        expect(() => sut.addUserStorageReminder('non-existent-user-id', executingUser._id)).rejects.toThrowError(NotFound);
+      });
+    });
+    describe('when called with the ID of a user that has no storage assigned yet', () => {
+      let result;
+      beforeEach(async () => {
+        result = await sut.addUserStorageReminder(user._id, executingUser._id);
+      });
+      it('should create a new default storage and add the reminder', () => {
+        expect(result.reminders).toHaveLength(1);
+      });
+    });
+    describe('when called with the ID of a user that has already a reminder', () => {
+      let result;
+      beforeEach(async () => {
+        await db.users.updateOne(
+          { _id: user._id },
+          { $set: { storage: { plan: 'some-other-plan-id', usedStorageInBytes: 0, reminders: [{ timestamp: new Date(), createdBy: executingUser._id }] } } }
+        );
+        result = await sut.addUserStorageReminder(user._id, executingUser._id);
+      });
+      it('should append a new reminder', () => {
+        expect(result.reminders).toHaveLength(2);
+      });
+    });
+  });
+
+  describe('deleteUserStorageReminders', () => {
+    describe('when called with the ID of a non-existent user', () => {
+      it('should throw a not found error', () => {
+        expect(() => sut.deleteUserStorageReminders('non-existent-user-id', storagePlan._id)).rejects.toThrowError(NotFound);
+      });
+    });
+    describe('when called with the ID of a user that has no storage assigned yet', () => {
+      let result;
+      beforeEach(async () => {
+        result = await sut.deleteUserStorageReminders(user._id, storagePlan._id);
+      });
+      it('should create a new default storage with an empty reminder array', () => {
+        expect(result.reminders).toHaveLength(0);
+      });
+    });
+    describe('when called with the ID of a user that has reminders', () => {
+      let result;
+      beforeEach(async () => {
+        const existingReminders = [
+          { timestamp: new Date(), createdBy: executingUser._id },
+          { timestamp: new Date(), createdBy: executingUser._id },
+          { timestamp: new Date(), createdBy: executingUser._id }
+        ];
+        await db.users.updateOne(
+          { _id: user._id },
+          { $set: { storage: { plan: 'some-other-plan-id', usedStorageInBytes: 0, reminders: existingReminders } } }
+        );
+        result = await sut.deleteUserStorageReminders(user._id, storagePlan._id);
+      });
+      it('should replace them with an empty array', () => {
+        expect(result.reminders).toHaveLength(0);
       });
     });
   });

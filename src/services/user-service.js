@@ -179,6 +179,48 @@ class UserService {
     return user;
   }
 
+  async addUserStorageReminder(userId, executingUser) {
+    logger.info(`Adding storage reminder for user with id ${userId}`);
+
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new NotFound(`User with ID '${userId}' could not be found`);
+    }
+
+    const oldStorage = user.storage || getDefaultStorage();
+    const newStorage = {
+      ...oldStorage,
+      reminders: [
+        ...oldStorage.reminders,
+        {
+          timestamp: new Date(),
+          createdBy: executingUser._id
+        }
+      ]
+    };
+    user.storage = newStorage;
+    await this.saveUser(user);
+    return newStorage;
+  }
+
+  async deleteUserStorageReminders(userId) {
+    logger.info(`Deleting storage reminders for user with id ${userId}`);
+
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new NotFound(`User with ID '${userId}' could not be found`);
+    }
+
+    const oldStorage = user.storage || getDefaultStorage();
+    const newStorage = {
+      ...oldStorage,
+      reminders: []
+    };
+    user.storage = newStorage;
+    await this.saveUser(user);
+    return newStorage;
+  }
+
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 

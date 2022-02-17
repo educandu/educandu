@@ -13,13 +13,13 @@ describe('path-helper', () => {
 
   describe('getStoragePathType', () => {
     const testCases = [
-      { path: 'root/media/resourceId', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: 'mediatech/resourceId', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: 'media/resourceId', expectedResult: STORAGE_PATH_TYPE.public },
-      { path: '/root/rooms/media', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: '/media/rooms/media', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: '/root/rooms/roomId/media', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: 'rooms/roomId/media', expectedResult: STORAGE_PATH_TYPE.private }
+      { path: 'root/media/resourceId/', expectedResult: STORAGE_PATH_TYPE.unknown },
+      { path: 'mediatech/resourceId/', expectedResult: STORAGE_PATH_TYPE.unknown },
+      { path: 'media/resourceId/', expectedResult: STORAGE_PATH_TYPE.public },
+      { path: '/root/rooms/media/', expectedResult: STORAGE_PATH_TYPE.unknown },
+      { path: '/media/rooms/media/', expectedResult: STORAGE_PATH_TYPE.unknown },
+      { path: '/root/rooms/roomId/media/', expectedResult: STORAGE_PATH_TYPE.unknown },
+      { path: 'rooms/roomId/media/', expectedResult: STORAGE_PATH_TYPE.private }
     ];
 
     testCases.forEach(({ path, expectedResult }) => {

@@ -1,6 +1,3 @@
-username:
-  en: Username
-  de: Benutzername
 expires:
   en: Expires
   de: Verfallsdatum
@@ -43,6 +40,24 @@ internalUsers:
 externalUsers:
   en: External users
   de: Externe Benutzer
+storageUsers:
+  en: Users with storage
+  de: Benutzer mit Speicher
 selectPlan:
   en: Select plan
   de: Plan auswählen
+addReminder:
+  en: Add reminder
+  de: Erinnerung hinzufügen
+removeAllReminders:
+  en: Remove reminders
+  de: Erinnerungen entfernen
+deleteAllPrivateRooms:
+  en: Delete private rooms
+  de: Private Räume löschen
+storageSpace:
+  en: Storage space
+  de: Speicherplatz
+reminders:
+  en: Reminders
+  de: Erinnerungen

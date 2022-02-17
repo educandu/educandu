@@ -15,11 +15,11 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
-import { validateBody } from '../domain/validation-middleware.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
+import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -28,7 +28,8 @@ import {
   postUserPasswordResetCompletionBodySchema,
   postUserRolesBodySchema,
   postUserLockedOutBodySchema,
-  postUserStoragePlanBodySchema
+  postUserStoragePlanBodySchema,
+  userIdParamsSchema
 } from '../domain/schemas/user-schemas.js';
 
 const jsonParser = express.json();
@@ -78,8 +79,8 @@ class UserController {
   }
 
   async handleGetUsersPage(req, res) {
-    const [users, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.userService.getAllStoragePlans()]);
-    const initialState = { users, storagePlans };
+    const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.userService.getAllStoragePlans()]);
+    const initialState = { users: this.clientDataMapper.mapUsersForAdminArea(rawUsers), storagePlans };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
   }
 
@@ -99,7 +100,7 @@ class UserController {
       await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
 
-    res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
+    res.send({ result, user: user ? this.clientDataMapper.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserAccount(req, res) {
@@ -109,7 +110,7 @@ class UserController {
 
     const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
 
-    res.send({ result, user: user ? this.clientDataMapper.dbUserToClientUser(user) : null });
+    res.send({ result, user: user ? this.clientDataMapper.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserProfile(req, res) {
@@ -139,7 +140,7 @@ class UserController {
           return next(loginError);
         }
 
-        return res.send({ user: this.clientDataMapper.dbUserToClientUser(user) });
+        return res.send({ user: this.clientDataMapper.mapWebsiteUser(user) });
       });
     })(req, res, next);
   }
@@ -188,6 +189,19 @@ class UserController {
     const { userId } = req.params;
     const { storagePlanId } = req.body;
     const newStorage = await this.userService.updateUserStoragePlan(userId, storagePlanId);
+    return res.send(newStorage);
+  }
+
+  async handlePostUserStorageReminder(req, res) {
+    const { user } = req;
+    const { userId } = req.params;
+    const newStorage = await this.userService.addUserStorageReminder(userId, user);
+    return res.send(newStorage);
+  }
+
+  async handleDeleteUserStorageReminders(req, res) {
+    const { userId } = req.params;
+    const newStorage = await this.userService.deleteUserStorageReminders(userId);
     return res.send(newStorage);
   }
 
@@ -270,25 +284,77 @@ class UserController {
   }
 
   registerApi(router) {
-    router.get('/api/v1/users', needsPermission(permissions.EDIT_USERS), (req, res) => this.handleGetUsers(req, res));
+    router.get(
+      '/api/v1/users',
+      needsPermission(permissions.EDIT_USERS),
+      (req, res) => this.handleGetUsers(req, res)
+    );
 
-    router.post('/api/v1/users', [jsonParser, validateBody(postUserBodySchema)], (req, res) => this.handlePostUser(req, res));
+    router.post(
+      '/api/v1/users',
+      [jsonParser, validateBody(postUserBodySchema)],
+      (req, res) => this.handlePostUser(req, res)
+    );
 
-    router.post('/api/v1/users/request-password-reset', [jsonParser, validateBody(postUserPasswordResetRequestBodySchema)], (req, res) => this.handlePostUserPasswordResetRequest(req, res));
+    router.post(
+      '/api/v1/users/request-password-reset',
+      [jsonParser, validateBody(postUserPasswordResetRequestBodySchema)],
+      (req, res) => this.handlePostUserPasswordResetRequest(req, res)
+    );
 
-    router.post('/api/v1/users/complete-password-reset', [jsonParser, validateBody(postUserPasswordResetCompletionBodySchema)], (req, res) => this.handlePostUserPasswordResetCompletion(req, res));
+    router.post(
+      '/api/v1/users/complete-password-reset',
+      [jsonParser, validateBody(postUserPasswordResetCompletionBodySchema)],
+      (req, res) => this.handlePostUserPasswordResetCompletion(req, res)
+    );
 
-    router.post('/api/v1/users/account', [needsAuthentication(), jsonParser, validateBody(postUserAccountBodySchema)], (req, res) => this.handlePostUserAccount(req, res));
+    router.post(
+      '/api/v1/users/account',
+      [needsAuthentication(), jsonParser, validateBody(postUserAccountBodySchema)],
+      (req, res) => this.handlePostUserAccount(req, res)
+    );
 
-    router.post('/api/v1/users/profile', [needsAuthentication(), jsonParser, validateBody(postUserProfileBodySchema)], (req, res) => this.handlePostUserProfile(req, res));
+    router.post(
+      '/api/v1/users/profile',
+      [needsAuthentication(), jsonParser, validateBody(postUserProfileBodySchema)],
+      (req, res) => this.handlePostUserProfile(req, res)
+    );
 
-    router.post('/api/v1/users/login', jsonParser, (req, res, next) => this.handlePostUserLogin(req, res, next));
+    router.post(
+      '/api/v1/users/login',
+      jsonParser,
+      (req, res, next) => this.handlePostUserLogin(req, res, next)
+    );
 
-    router.post('/api/v1/users/:userId/roles', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserRolesBodySchema)], (req, res) => this.handlePostUserRoles(req, res));
+    router.post(
+      '/api/v1/users/:userId/roles',
+      [needsPermission(permissions.EDIT_USERS), jsonParser, validateParams(userIdParamsSchema), validateBody(postUserRolesBodySchema)],
+      (req, res) => this.handlePostUserRoles(req, res)
+    );
 
-    router.post('/api/v1/users/:userId/lockedOut', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserLockedOutBodySchema)], (req, res) => this.handlePostUserLockedOut(req, res));
+    router.post(
+      '/api/v1/users/:userId/lockedOut',
+      [needsPermission(permissions.EDIT_USERS), jsonParser, validateParams(userIdParamsSchema), validateBody(postUserLockedOutBodySchema)],
+      (req, res) => this.handlePostUserLockedOut(req, res)
+    );
 
-    router.post('/api/v1/users/:userId/storagePlan', [needsPermission(permissions.EDIT_USERS), jsonParser, validateBody(postUserStoragePlanBodySchema)], (req, res) => this.handlePostUserStoragePlan(req, res));
+    router.post(
+      '/api/v1/users/:userId/storagePlan',
+      [needsPermission(permissions.EDIT_USERS), jsonParser, validateParams(userIdParamsSchema), validateBody(postUserStoragePlanBodySchema)],
+      (req, res) => this.handlePostUserStoragePlan(req, res)
+    );
+
+    router.post(
+      '/api/v1/users/:userId/storageReminders',
+      [needsPermission(permissions.EDIT_USERS), validateParams(userIdParamsSchema)],
+      (req, res) => this.handlePostUserStorageReminder(req, res)
+    );
+
+    router.delete(
+      '/api/v1/users/:userId/storageReminders',
+      [needsPermission(permissions.EDIT_USERS), validateParams(userIdParamsSchema)],
+      (req, res) => this.handleDeleteUserStorageReminders(req, res)
+    );
   }
 }
 
