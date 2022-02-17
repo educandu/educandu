@@ -37,6 +37,7 @@ describe('cdn-service', () => {
   beforeEach(async () => {
     sandbox.stub(cdn, 'listObjects');
     sandbox.stub(cdn, 'uploadObject');
+    sandbox.stub(cdn, 'deleteObject');
     sandbox.stub(roomService, 'getIdsOfPrivateRoomsOwnedByUser');
 
     roomId = uniqueId.create();
@@ -138,19 +139,15 @@ describe('cdn-service', () => {
         ];
         allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
 
-        user.storage = { plan: storagePlan._id, usedStorageInBytes: oldFiles[0].size + oldFiles[1].size, reminders: [] };
+        const usedStorageInBytes = oldFiles.reduce((totalSize, file) => totalSize + file.size, 0);
+        user.storage = { plan: storagePlan._id, usedStorageInBytes, reminders: [] };
         await db.users.updateOne({ _id: user._id }, { $set: { storage: user.storage } });
 
-        cdn.uploadObject.resolves();
         roomService.getIdsOfPrivateRoomsOwnedByUser.withArgs(user._id).resolves(allOwnedPrivateRoomIds);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` })
-          .resolves([
-            { size: oldFiles[0].size },
-            { size: files[0].size },
-            { size: files[1].size }
-          ]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` })
-          .resolves([{ size: oldFiles[1].size }]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` }).resolves([oldFiles[0], files[0], files[1]]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` }).resolves([oldFiles[1]]);
+
+        cdn.uploadObject.resolves();
 
         await sut.uploadFiles({ prefix, files, user });
       });
@@ -170,6 +167,91 @@ describe('cdn-service', () => {
         const updatedUser = await db.users.findOne({ _id: user._id });
         expect(updatedUser.storage.usedStorageInBytes)
           .toBe(oldFiles[0].size + oldFiles[1].size + files[0].size + files[1].size);
+      });
+    });
+  });
+
+  describe('deleteObject', () => {
+    let fileToDelete;
+
+    describe('when the storage type is unknown', () => {
+      beforeEach(() => {
+        prefix = 'other-path/media';
+        fileToDelete = { name: 'file1.jpeg' };
+      });
+
+      it('should throw an error', async () => {
+        await expect(() => sut.deleteObject({ prefix, objectName: fileToDelete.name, user }))
+          .rejects.toThrowError(`Invalid storage path '${prefix}'`);
+      });
+    });
+
+    describe('when the storage type is public', () => {
+      beforeEach(async () => {
+        prefix = 'media/';
+        fileToDelete = { name: 'file.jpeg' };
+
+        user.storage = { plan: storagePlan._id, usedStorageInBytes: 2 * 1000 * 1000, reminders: [] };
+        await db.users.updateOne({ _id: user._id }, { $set: { storage: user.storage } });
+
+        cdn.deleteObject.resolves();
+
+        await sut.deleteObject({ prefix, objectName: fileToDelete.name, user });
+      });
+
+      it('should call cdn.deleteObject', () => {
+        sinon.assert.calledWith(cdn.deleteObject, `${prefix}${fileToDelete.name}`);
+      });
+
+      it('should not call cdn.listObjects', () => {
+        sinon.assert.notCalled(cdn.listObjects);
+      });
+
+      it('should not update the user\'s usedStorageInBytes', async () => {
+        const updatedUser = await db.users.findOne({ _id: user._id });
+        expect(updatedUser.storage.usedStorageInBytes).toBe(user.storage.usedStorageInBytes);
+      });
+    });
+
+    describe('when the storage type is private', () => {
+      let allOwnedPrivateRoomIds;
+
+      beforeEach(async () => {
+        prefix = `rooms/${roomId}/media/`;
+        fileToDelete = { name: 'file.jpeg', size: 1 * 1000 * 1000 };
+
+        files = [
+          { size: 1 * 1000 * 1000 },
+          { size: 1 * 1000 * 1000 },
+          fileToDelete
+        ];
+        allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
+
+        const usedStorageInBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+        user.storage = { plan: storagePlan._id, usedStorageInBytes, reminders: [] };
+        await db.users.updateOne({ _id: user._id }, { $set: { storage: user.storage } });
+
+        roomService.getIdsOfPrivateRoomsOwnedByUser.withArgs(user._id).resolves(allOwnedPrivateRoomIds);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` }).resolves([files[0]]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` }).resolves([files[1]]);
+
+        cdn.deleteObject.resolves();
+
+        await sut.deleteObject({ prefix, objectName: fileToDelete.name, user });
+      });
+
+      it('should call cdn.deleteObject', () => {
+        sinon.assert.calledWith(cdn.deleteObject, `${prefix}${fileToDelete.name}`);
+      });
+
+      it('should call cdn.listObjects for each room', () => {
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` });
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` });
+      });
+
+      it('should update the user\'s usedStorageInBytes', async () => {
+        const updatedUser = await db.users.findOne({ _id: user._id });
+        expect(updatedUser.storage.usedStorageInBytes).toBe(files[0].size + files[1].size);
       });
     });
   });

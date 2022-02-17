@@ -49,8 +49,19 @@ export default class CdnService {
     return objects;
   }
 
-  async deleteObject({ prefix, objectName }) {
+  async deleteObject({ prefix, objectName, user }) {
+    const storagePathType = getStoragePathType(prefix);
+
+    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+      throw new Error(`Invalid storage path '${prefix}'`);
+    }
+
     await this.cdn.deleteObject(urls.concatParts(prefix, objectName));
+
+    if (storagePathType === STORAGE_PATH_TYPE.private) {
+      const usedStorageInBytes = await this._getUsedPrivateStorageSizeInBytes(user._id);
+      await this.userService.updateUserUsedStorage(user._id, usedStorageInBytes);
+    }
   }
 
   async _getUsedPrivateStorageSizeInBytes(userId) {

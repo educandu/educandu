@@ -33,10 +33,11 @@ class CdnController {
   }
 
   async handleDeleteCdnObject(req, res) {
+    const { user } = req;
     const { prefix } = req.query;
     const { objectName } = req.params;
 
-    await this.cdnService.deleteObject({ prefix, objectName });
+    await this.cdnService.deleteObject({ prefix, objectName, user });
 
     return res.sendStatus(200);
   }
