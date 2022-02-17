@@ -1,12 +1,11 @@
 import os from 'os';
 import multer from 'multer';
 import express from 'express';
-import urls from '../utils/urls.js';
 import parseBool from 'parseboolean';
-import Cdn from '../repositories/cdn.js';
-import createHttpError from 'http-errors';
+import httpErrors from 'http-errors';
 import permissions from '../domain/permissions.js';
-import fileNameHelper from '../utils/file-name-helper.js';
+import CdnService from '../services/cdn-service.js';
+import RoomService from '../services/room-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/cdn-schemas.js';
@@ -14,17 +13,20 @@ import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
-class CdnController {
-  static get inject() { return [Cdn]; }
+const { BadRequest, Unauthorized } = httpErrors;
 
-  constructor(cdn) {
-    this.cdn = cdn;
+class CdnController {
+  static get inject() { return [CdnService, RoomService]; }
+
+  constructor(cdnService, roomService) {
+    this.cdnService = cdnService;
+    this.roomService = roomService;
   }
 
   async handleGetCdnObject(req, res) {
     const prefix = req.query.prefix;
     const recursive = parseBool(req.query.recursive);
-    const objects = await this.cdn.listObjects({ prefix, recursive });
+    const objects = await this.cdnService.listObjects({ prefix, recursive });
 
     return res.send({ objects });
   }
@@ -33,25 +35,40 @@ class CdnController {
     const prefix = req.query.prefix;
     const objectName = req.params.objectName;
 
-    await this.cdn.deleteObject(urls.concatParts(prefix, objectName));
+    await this.cdnService.deleteObject({ prefix, objectName });
 
     return res.sendStatus(200);
   }
 
   async handlePostCdnObject(req, res) {
-    if (req.files && req.files.length) {
-      const uploads = req.files.map(async file => {
-        const cdnFileName = fileNameHelper.buildCdnFileName(file.originalname, req.body.prefix);
-        await this.cdn.uploadObject(cdnFileName, file.path, {});
-      });
-      await Promise.all(uploads);
-    } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
-      // If no file but a prefix ending with `/` is provided, create a folder instead of a file:
-      await this.cdn.uploadEmptyObject(req.body.prefix, {});
-    } else {
-      createHttpError(400);
+    const { user } = req;
+    const privateStorageMatch = req.body.prefix.match(/rooms\/(.+)\/media/);
+
+    const isUploadingToPublicStorage = req.body.prefix.startsWith('media/');
+    const isUploadingToPrivateStorage = !!privateStorageMatch;
+
+    if (!req.files?.length) {
+      throw new BadRequest('No files provided');
     }
 
+    if (!isUploadingToPublicStorage && !isUploadingToPrivateStorage) {
+      throw new BadRequest('Invalid storage path');
+    }
+
+    if (isUploadingToPrivateStorage) {
+      const roomId = privateStorageMatch[1];
+      const room = this.roomService.getRoomById(roomId);
+
+      if (!room) {
+        throw new BadRequest('Invalid room id');
+      }
+
+      if (user._id !== room.owner) {
+        throw new Unauthorized();
+      }
+    }
+
+    await this.cdnService.uploadFiles({ prefix: req.body.prefix, files: req.files });
     return res.send({});
   }
 
