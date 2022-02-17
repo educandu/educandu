@@ -8,6 +8,7 @@ import CdnService from '../services/cdn-service.js';
 import RoomService from '../services/room-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
+import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
 import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/cdn-schemas.js';
 
 const jsonParser = express.json();
@@ -32,8 +33,8 @@ class CdnController {
   }
 
   async handleDeleteCdnObject(req, res) {
-    const prefix = req.query.prefix;
-    const objectName = req.params.objectName;
+    const { prefix } = req.query;
+    const { objectName } = req.params;
 
     await this.cdnService.deleteObject({ prefix, objectName });
 
@@ -41,34 +42,32 @@ class CdnController {
   }
 
   async handlePostCdnObject(req, res) {
-    const { user } = req;
-    const privateStorageMatch = req.body.prefix.match(/rooms\/(.+)\/media/);
+    const { user, files } = req;
+    const { prefix } = req.body;
+    const storagePathType = getStoragePathType(prefix);
 
-    const isUploadingToPublicStorage = req.body.prefix.startsWith('media/');
-    const isUploadingToPrivateStorage = !!privateStorageMatch;
-
-    if (!req.files?.length) {
+    if (!files?.length) {
       throw new BadRequest('No files provided');
     }
 
-    if (!isUploadingToPublicStorage && !isUploadingToPrivateStorage) {
-      throw new BadRequest('Invalid storage path');
+    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+      throw new BadRequest(`Invalid storage path '${prefix}'`);
     }
 
-    if (isUploadingToPrivateStorage) {
-      const roomId = privateStorageMatch[1];
-      const room = this.roomService.getRoomById(roomId);
+    if (storagePathType === STORAGE_PATH_TYPE.private) {
+      const roomId = getRoomIdFromPrivateStoragePath(prefix);
+      const room = await this.roomService.getRoomById(roomId);
 
       if (!room) {
-        throw new BadRequest('Invalid room id');
+        throw new BadRequest(`Unknown room id '${roomId}'`);
       }
 
       if (user._id !== room.owner) {
-        throw new Unauthorized();
+        throw new Unauthorized(`User is not authorized to upload to room '${roomId}'`);
       }
     }
 
-    await this.cdnService.uploadFiles({ prefix: req.body.prefix, files: req.files });
+    await this.cdnService.uploadFiles({ prefix, files, user });
     return res.send({});
   }
 

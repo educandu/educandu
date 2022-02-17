@@ -162,6 +162,23 @@ class UserService {
     return newStorage;
   }
 
+  async updateUserUsedStorage(userId, usedStorageInBytes) {
+    logger.info(`Updating usedStorageInBytes for user with id ${userId}: ${usedStorageInBytes}`);
+
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new NotFound(`User with ID '${userId}' could not be found`);
+    }
+
+    if (!user.storage?.plan) {
+      throw new BadRequest(`User with ID '${userId}' does not have storage plan allocated`);
+    }
+
+    user.storage = { ...user.storage, usedStorageInBytes };
+    await this.saveUser(user);
+    return user;
+  }
+
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
