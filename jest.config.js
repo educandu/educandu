@@ -1,6 +1,6 @@
 export default {
   testEnvironment: 'node',
-  testTimeout: 10000,
+  testTimeout: 15000,
   setupFiles: ['<rootDir>/src/test-setup.js'],
   coveragePathIgnorePatterns: [
     '<rootDir>/[^/]\\.js',

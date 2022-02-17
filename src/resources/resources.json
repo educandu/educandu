@@ -575,7 +575,10 @@
     "resources": {
       "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
-      "roomsTabTitle": "Rooms"
+      "roomsTabTitle": "Rooms",
+      "storagePlanLabel": "storage plan",
+      "noStoragePlanLabel": "No storage plan",
+      "usedStorageLabel": "Used"
     }
   },
   {
@@ -584,7 +587,10 @@
     "resources": {
       "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
-      "roomsTabTitle": "Räume"
+      "roomsTabTitle": "Räume",
+      "storagePlanLabel": "Speicherplan",
+      "noStoragePlanLabel": "Kein Speicherplan",
+      "usedStorageLabel": "Benutzt"
     }
   },
   {
@@ -776,7 +782,6 @@
       "importSource": "Import source",
       "internalUsers": "Internal users",
       "externalUsers": "External users",
-      "storage": "Storage",
       "selectPlan": "Select plan"
     }
   },
@@ -799,7 +804,6 @@
       "importSource": "Import-Quelle",
       "internalUsers": "Interne Benutzer",
       "externalUsers": "Externe Benutzer",
-      "storage": "Speicher",
       "selectPlan": "Plan auswählen"
     }
   },
@@ -1540,7 +1544,8 @@
       "ctrl": "Ctrl",
       "shift": "Shift",
       "alt": "Alt",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "storage": "Storage"
     }
   },
   {
@@ -1606,7 +1611,8 @@
       "ctrl": "Strg",
       "shift": "Umschalt",
       "alt": "Alt",
-      "unknown": "Unbekannt"
+      "unknown": "Unbekannt",
+      "storage": "Speicher"
     }
   },
   {

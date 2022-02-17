@@ -43,9 +43,6 @@ internalUsers:
 externalUsers:
   en: External users
   de: Externe Benutzer
-storage:
-  en: Storage
-  de: Speicher
 selectPlan:
   en: Select plan
   de: Plan auswählen
