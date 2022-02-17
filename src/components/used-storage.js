@@ -7,7 +7,7 @@ import { useLocale } from './locale-context.js';
 function UsedStorage({ usedBytes, maxBytes }) {
   const { uiLocale } = useLocale();
 
-  const percent = usedBytes * 100 / maxBytes;
+  const percent = maxBytes ? usedBytes * 100 / maxBytes : 100;
   const displayedPercent = `${Math.round(percent)} %`;
   const status = percent >= 95 ? 'exception' : 'normal';
 
@@ -26,8 +26,12 @@ function UsedStorage({ usedBytes, maxBytes }) {
 }
 
 UsedStorage.propTypes = {
-  maxBytes: PropTypes.number.isRequired,
+  maxBytes: PropTypes.number,
   usedBytes: PropTypes.number.isRequired
+};
+
+UsedStorage.defaultProps = {
+  maxBytes: 0
 };
 
 export default UsedStorage;

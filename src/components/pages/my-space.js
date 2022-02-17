@@ -46,6 +46,8 @@ function MySpace({ initialState, PageTemplate }) {
     }
   };
 
+  const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
+
   return (
     <PageTemplate alerts={alerts} disableProfileWarning>
       <div className="MySpacePage">
@@ -64,10 +66,10 @@ function MySpace({ initialState, PageTemplate }) {
           </TabPane>
           {user.storage && (
             <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="4">
-              <h5>{`"${storagePlan.name}" ${t('storagePlanLabel')}`}</h5>
+              <h5>{storagePlanName}</h5>
               <div className="MySpacePage-usedStorage">
                 <span className="MySpacePage-usedStorageLabel">{t('usedStorageLabel')}:</span>
-                <UsedStorage usedBytes={user.storage.usedStorageInBytes} maxBytes={storagePlan.maxSizeInBytes} />
+                <UsedStorage usedBytes={user.storage.usedStorageInBytes} maxBytes={storagePlan?.maxSizeInBytes} />
               </div>
             </TabPane>
           )}

@@ -577,6 +577,7 @@
       "accountTabTitle": "Account",
       "roomsTabTitle": "Rooms",
       "storagePlanLabel": "storage plan",
+      "noStoragePlanLabel": "No storage plan",
       "usedStorageLabel": "Used"
     }
   },
@@ -588,6 +589,7 @@
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",
       "storagePlanLabel": "Speicherplan",
+      "noStoragePlanLabel": "Kein Speicherplan",
       "usedStorageLabel": "Benutzt"
     }
   },
