@@ -16,7 +16,7 @@ const ButtonGroup = Button.Group;
 
 const defaultSound = { type: SOUND_TYPE.midi, url: null, text: null };
 
-function EarTrainingEditor({ content, onContentChanged, publicStorage }) {
+function EarTrainingEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('earTraining');
 
   const { tests } = content;
@@ -85,6 +85,7 @@ function EarTrainingEditor({ content, onContentChanged, publicStorage }) {
   const renderExpandedRow = (record, index) => (
     <EarTrainingSoundEditor
       publicStorage={publicStorage}
+      privateStorage={privateStorage}
       sound={record.sound || { ...defaultSound }}
       onSoundChanged={newValue => handleSoundChanged(index, newValue)}
       />

@@ -13,7 +13,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const { TextArea } = Input;
 
-function AudioEditor({ content, onContentChanged, publicStorage }) {
+function AudioEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('audio');
   const clientConfig = useService(ClientConfig);
 
@@ -74,6 +74,7 @@ function AudioEditor({ content, onContentChanged, publicStorage }) {
                 />
               <CdnFilePicker
                 publicStorage={publicStorage}
+                privateStorage={privateStorage}
                 fileName={url}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
                 />

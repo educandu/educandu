@@ -26,6 +26,7 @@ import {
 function SectionDisplay({
   section,
   publicStorage,
+  privateStorage,
   canEdit,
   canHardDelete,
   dragHandleProps,
@@ -132,7 +133,14 @@ function SectionDisplay({
     }
 
     const EditorComponent = getEditorComponent();
-    return <EditorComponent publicStorage={publicStorage} content={section.content} onContentChanged={onSectionContentChange} />;
+    return (
+      <EditorComponent
+        publicStorage={publicStorage}
+        privateStorage={privateStorage}
+        content={section.content}
+        onContentChanged={onSectionContentChange}
+        />
+    );
   };
 
   const renderEditAction = (action, index) => (
@@ -259,6 +267,7 @@ SectionDisplay.propTypes = {
   onSectionHardDelete: PropTypes.func,
   onSectionMoveDown: PropTypes.func,
   onSectionMoveUp: PropTypes.func,
+  privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
   section: sectionShape.isRequired
 };
@@ -277,7 +286,8 @@ SectionDisplay.defaultProps = {
   onSectionDuplicate: () => {},
   onSectionHardDelete: () => {},
   onSectionMoveDown: () => {},
-  onSectionMoveUp: () => {}
+  onSectionMoveUp: () => {},
+  privateStorage: null
 };
 
 export default SectionDisplay;

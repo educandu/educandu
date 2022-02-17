@@ -5,37 +5,32 @@ import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
+import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
 import { useUser } from './user-context.js';
 import pathHelper from '../ui/path-helper.js';
-import { inject } from './container-context.js';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { useService } from './container-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
+import { handleApiError } from '../ui/error-helper.js';
 import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { Input, Table, Upload, Button, message, Breadcrumb } from 'antd';
-import { filePickerStorageShape, translationProps, uiLanguageProps, userProps } from '../ui/default-prop-types.js';
-import { default as iconsNs, FolderOutlined, FileOutlined, CloseOutlined, UploadOutlined, HomeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
+import { Input, Table, Upload, Button, message, Breadcrumb, Select } from 'antd';
+import {
+  FolderOutlined,
+  FileOutlined,
+  CloseOutlined,
+  UploadOutlined,
+  DeleteOutlined,
+  LockOutlined,
+  GlobalOutlined
+} from '@ant-design/icons';
 
-const Icon = iconsNs.default || iconsNs;
-
-function withLocale(Component) {
-  return function UserInjector(props) {
-    const { uiLanguage, uiLocale } = useLocale();
-    const { formatDate } = useDateFormat();
-    return <Component {...props} uiLanguage={uiLanguage} uiLocale={uiLocale} formatDate={formatDate} />;
-  };
-}
-
-function withUser(Component) {
-  return function UserInjector(props) {
-    const user = useUser();
-    return <Component {...props} user={user} />;
-  };
-}
+const logger = new Logger(import.meta.url);
 
 class RepositoryBrowser extends React.Component {
   constructor(props) {
@@ -45,18 +40,23 @@ class RepositoryBrowser extends React.Component {
     this.browserRef = React.createRef();
     this.filterTextInputRef = React.createRef();
 
-    const { publicStorage } = props;
-    const rootPathSegments = pathHelper.getPathSegments(publicStorage.rootPath);
-    const uploadPathSegments = publicStorage.uploadPath ? pathHelper.getPathSegments(publicStorage.uploadPath) : rootPathSegments;
-    const initialPathSegments = publicStorage.initialPath ? pathHelper.getPathSegments(publicStorage.initialPath) : rootPathSegments;
+    const locations = [
+      {
+        ...this.createPathSegments(props.publicStorage),
+        isPrivate: false,
+        key: 'public'
+      }
+    ];
 
-    if (!pathHelper.isInPath(uploadPathSegments, rootPathSegments)) {
-      throw new Error(`${publicStorage.uploadPath} is not a subpath of root ${publicStorage.rootPath}`);
+    if (props.privateStorage) {
+      locations.push({
+        ...this.createPathSegments(props.privateStorage),
+        isPrivate: true,
+        key: 'private'
+      });
     }
 
-    if (!pathHelper.isInPath(initialPathSegments, rootPathSegments)) {
-      throw new Error(`${publicStorage.initialPath} is not a subpath of root ${publicStorage.rootPath}`);
-    }
+    const currentLocation = locations[0];
 
     this.state = {
       records: [],
@@ -66,10 +66,9 @@ class RepositoryBrowser extends React.Component {
       currentUploadCount: 0,
       currentDropTarget: null,
       currentUploadMessage: null,
-      currentPathSegments: initialPathSegments,
-      lockedPathSegmentsCount: rootPathSegments.length,
-      initialPathSegments,
-      uploadPathSegments
+      currentPathSegments: currentLocation.initialPathSegments,
+      locations,
+      currentLocation
     };
 
     this.columns = [
@@ -145,6 +144,22 @@ class RepositoryBrowser extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('dragover', this.handleWindowDragOverOrDrop);
     window.removeEventListener('drop', this.handleWindowDragOverOrDrop);
+  }
+
+  createPathSegments(storage) {
+    const rootPathSegments = pathHelper.getPathSegments(storage.rootPath);
+    const uploadPathSegments = storage.uploadPath ? pathHelper.getPathSegments(storage.uploadPath) : rootPathSegments;
+    const initialPathSegments = storage.initialPath ? pathHelper.getPathSegments(storage.initialPath) : rootPathSegments;
+
+    if (!pathHelper.isInPath(uploadPathSegments, rootPathSegments)) {
+      throw new Error(`${storage.uploadPath} is not a subpath of root ${storage.rootPath}`);
+    }
+
+    if (!pathHelper.isInPath(initialPathSegments, rootPathSegments)) {
+      throw new Error(`${storage.initialPath} is not a subpath of root ${storage.rootPath}`);
+    }
+
+    return { rootPathSegments, uploadPathSegments, initialPathSegments };
   }
 
   increaseCurrentUploadCount() {
@@ -247,27 +262,32 @@ class RepositoryBrowser extends React.Component {
 
     this.resetDragging();
 
-    const { currentDropTarget, currentPathSegments } = this.state;
+    const { currentDropTarget } = this.state;
     const files = event.dataTransfer && event.dataTransfer.files ? Array.from(event.dataTransfer.files) : null;
     if (!currentDropTarget || !files || !files.length) {
       return;
     }
 
-    const pathSegments = currentDropTarget === '*'
-      ? currentPathSegments
-      : pathHelper.getPathSegments(currentDropTarget);
-
-    await this.uploadFiles(pathSegments, files);
+    await this.uploadFiles(files);
   }
 
   async refreshFiles(pathSegments, keysToSelect) {
     this.setState({ isRefreshing: true });
 
-    const { cdnApiClient } = this.props;
-    const { initialPathSegments, uploadPathSegments } = this.state;
+    const { cdnApiClient, t } = this.props;
+    const { initialPathSegments, uploadPathSegments } = this.state.currentLocation;
     const prefix = pathHelper.getPrefix(pathSegments);
-    const result = await cdnApiClient.getObjects(prefix);
-    const recordsFromCdn = this.convertObjectsToRecords(result.objects);
+
+    let objects;
+    try {
+      const result = await cdnApiClient.getObjects(prefix);
+      objects = result.objects;
+    } catch (error) {
+      handleApiError({ error, logger, t });
+      objects = [];
+    }
+
+    const recordsFromCdn = this.convertObjectsToRecords(objects);
     const recordsWithVirtualPaths = this.ensureVirtualFolders(pathSegments, recordsFromCdn, [initialPathSegments, uploadPathSegments]);
     const selectedRowKeys = selection.removeInvalidKeys(keysToSelect, recordsWithVirtualPaths.map(r => r.key));
 
@@ -279,14 +299,18 @@ class RepositoryBrowser extends React.Component {
     });
   }
 
-  async uploadFiles(pathSegments, files, { onProgress } = {}) {
+  async uploadFiles(files, { onProgress } = {}) {
     this.increaseCurrentUploadCount();
 
-    const { cdnApiClient } = this.props;
+    const { cdnApiClient, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = pathHelper.getPrefix(currentPathSegments);
 
-    await cdnApiClient.uploadFiles(files, prefix, { onProgress });
+    try {
+      await cdnApiClient.uploadFiles(files, prefix, { onProgress });
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
 
     this.decreaseCurrentUploadCount();
 
@@ -294,14 +318,18 @@ class RepositoryBrowser extends React.Component {
   }
 
   async handleDeleteFile(fileName) {
-    const { cdnApiClient, onSelectionChanged } = this.props;
+    const { cdnApiClient, onSelectionChanged, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = pathHelper.getPrefix(currentPathSegments);
     const objectName = `${prefix}${fileName}`;
 
-    await cdnApiClient.deleteCdnObject(prefix, fileName);
-    if (selectedRowKeys.includes(objectName)) {
-      onSelectionChanged([], true);
+    try {
+      await cdnApiClient.deleteCdnObject(prefix, fileName);
+      if (selectedRowKeys.includes(objectName)) {
+        onSelectionChanged([], true);
+      }
+    } catch (error) {
+      handleApiError({ error, logger, t });
     }
 
     await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key !== objectName));
@@ -416,8 +444,7 @@ class RepositoryBrowser extends React.Component {
   }
 
   async onCustomUpload({ file, onProgress, onSuccess }) {
-    const { currentPathSegments } = this.state;
-    const result = await this.uploadFiles(currentPathSegments, [file], { onProgress });
+    const result = await this.uploadFiles([file], { onProgress });
     onSuccess(result);
   }
 
@@ -467,15 +494,12 @@ class RepositoryBrowser extends React.Component {
     );
   }
 
-  createBreadcrumbItemData({ pathSegments, lockedPathSegmentsCount, icon }) {
-    const isEnabled = pathSegments.length >= lockedPathSegmentsCount;
-
+  createBreadcrumbItemData({ pathSegments, isEnabled }) {
     const data = {
       key: pathHelper.getPrefix(pathSegments),
       text: pathSegments[pathSegments.length - 1] || '',
       segments: pathSegments,
-      isEnabled,
-      icon
+      isEnabled
     };
 
     if (isEnabled) {
@@ -485,48 +509,87 @@ class RepositoryBrowser extends React.Component {
     return data;
   }
 
-  renderBreadCrumbItem({ key, text, isEnabled, icon, onClick }) {
-    const content = (
-      <span>
-        {icon && <Icon component={icon} />}
-        {icon && text && ' '}
-        {text}
-      </span>
-    );
-
+  renderBreadCrumbItem({ key, text, isEnabled, onClick }) {
     return (
       <Breadcrumb.Item key={key}>
-        {isEnabled ? (<a onClick={onClick}>{content}</a>) : content}
+        {isEnabled ? (<a onClick={onClick}>{text}</a>) : text}
       </Breadcrumb.Item>
     );
   }
 
-  renderBreadCrumbs(pathSegments, lockedPathSegmentsCount) {
-    const rootSegment = this.createBreadcrumbItemData({
-      pathSegments: [],
-      lockedPathSegmentsCount,
-      icon: HomeOutlined
-    });
+  renderBreadCrumbs(currentPathSegments, currentLocation) {
+    const { t } = this.props;
+    const lockedPathSegmentsCount = currentLocation.rootPathSegments.length;
 
-    const items = pathSegments.reduce((list, segment) => {
-      const prevItemSegments = list[list.length - 1].segments;
+    const rootOptions = this.state.locations.map(location => ({
+      label: t(location.isPrivate ? 'privateStorage' : 'publicStorage'),
+      icon: location.isPrivate ? <LockOutlined /> : <GlobalOutlined />,
+      value: location.key
+    }));
+
+    let rootBreadCrumb;
+    if (rootOptions.length > 1) {
+      rootBreadCrumb = (
+        <Breadcrumb.Item key="root">
+          <Select
+            value={currentLocation.key}
+            onChange={this.handleLocationChange}
+            bordered={false}
+            size="small"
+            >
+            {rootOptions.map(opt => (
+              <Select.Option key={opt.value} label={opt.label} value={opt.value}>
+                {opt.icon}&nbsp;&nbsp;{opt.label}
+              </Select.Option>
+            ))}
+          </Select>
+        </Breadcrumb.Item>
+      );
+    } else {
+      rootBreadCrumb = (
+        <Breadcrumb.Item key="root">
+          {rootOptions[0].icon}&nbsp;&nbsp;{rootOptions[0].label}
+        </Breadcrumb.Item>
+      );
+    }
+
+    const items = currentPathSegments.reduce((list, segment) => {
+      const prevItemSegments = list[list.length - 1]?.segments || [];
+      const thisItemSegments = [...prevItemSegments, segment];
       const newItemData = this.createBreadcrumbItemData({
-        pathSegments: [...prevItemSegments, segment],
-        lockedPathSegmentsCount
+        pathSegments: thisItemSegments,
+        isEnabled: thisItemSegments.length >= lockedPathSegmentsCount
       });
       return [...list, newItemData];
-    }, [rootSegment]);
+    }, []);
 
     return (
       <Breadcrumb>
+        {rootBreadCrumb}
         {items.map(this.renderBreadCrumbItem)}
       </Breadcrumb>
     );
   }
 
+  handleLocationChange(newLocationKey) {
+    const { locations, selectedRowKeys } = this.state;
+    const { onSelectionChanged } = this.props;
+
+    const newLocation = locations.find(location => location.key === newLocationKey);
+    this.setState({
+      selectedRowKeys: [],
+      currentLocation: newLocation,
+      currentPathSegments: newLocation.initialPathSegments
+    });
+
+    onSelectionChanged([]);
+    this.refreshFiles(newLocation.initialPathSegments, selectedRowKeys);
+  }
+
   render() {
     const { t } = this.props;
-    const { records, currentPathSegments, uploadPathSegments, lockedPathSegmentsCount, currentDropTarget, filterText } = this.state;
+    const { records, currentPathSegments, currentLocation, currentDropTarget, filterText } = this.state;
+    const { uploadPathSegments } = currentLocation;
 
     const normalizedFilterText = filterText.toLowerCase().trim();
     const filteredRecords = records.filter(r => r.displayName && r.displayName.toLowerCase().includes(normalizedFilterText));
@@ -549,7 +612,7 @@ class RepositoryBrowser extends React.Component {
       <div className="RepositoryBrowser">
         <div className="RepositoryBrowser-header">
           <div className="RepositoryBrowser-headerBreadCrumbs">
-            {this.renderBreadCrumbs(currentPathSegments, lockedPathSegmentsCount)}
+            {this.renderBreadCrumbs(currentPathSegments, currentLocation)}
           </div>
           <div className="RepositoryBrowser-headerButtons">
             <Input
@@ -589,19 +652,37 @@ class RepositoryBrowser extends React.Component {
 
 RepositoryBrowser.propTypes = {
   ...userProps,
-  ...uiLanguageProps,
-  ...translationProps,
   cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
+  formatDate: PropTypes.func.isRequired,
   onSelectionChanged: PropTypes.func,
+  privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
-  selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE])
+  selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE]),
+  t: PropTypes.func.isRequired,
+  uiLanguage: PropTypes.string.isRequired
 };
 
 RepositoryBrowser.defaultProps = {
   onSelectionChanged: () => {},
+  privateStorage: null,
   selectionMode: selection.NONE
 };
 
-export default withTranslation('repositoryBrowser')(withUser(withLocale(inject({
-  cdnApiClient: CdnApiClient
-}, RepositoryBrowser))));
+export default function RepositoryBrowserWrapper({ ...props }) {
+  const { t } = useTranslation('repositoryBrowser');
+  const cdnApiClient = useService(CdnApiClient);
+  const { uiLanguage } = useLocale();
+  const { formatDate } = useDateFormat();
+  const user = useUser();
+
+  return (
+    <RepositoryBrowser
+      cdnApiClient={cdnApiClient}
+      uiLanguage={uiLanguage}
+      formatDate={formatDate}
+      user={user}
+      t={t}
+      {...props}
+      />
+  );
+}

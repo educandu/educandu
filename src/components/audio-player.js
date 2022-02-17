@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { inject } from './container-context.js';
+import { useService } from './container-context.js';
 import GithubFlavoredMarkdown from '../common/github-flavored-markdown.js';
 
-function AudioPlayer({ soundUrl, legendHtml, githubFlavoredMarkdown }) {
+function AudioPlayer({ soundUrl, legendHtml }) {
+  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
   return (
     <div className="AudioPlayer">
       <div className="AudioPlayer-player">
@@ -18,7 +19,6 @@ function AudioPlayer({ soundUrl, legendHtml, githubFlavoredMarkdown }) {
 }
 
 AudioPlayer.propTypes = {
-  githubFlavoredMarkdown: PropTypes.instanceOf(GithubFlavoredMarkdown).isRequired,
   legendHtml: PropTypes.string,
   soundUrl: PropTypes.string
 };
@@ -28,6 +28,4 @@ AudioPlayer.defaultProps = {
   soundUrl: ''
 };
 
-export default inject({
-  githubFlavoredMarkdown: GithubFlavoredMarkdown
-}, AudioPlayer);
+export default AudioPlayer;

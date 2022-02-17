@@ -9,17 +9,7 @@ export function useService(dependecy) {
   return container.get(dependecy);
 }
 
-export function inject(dependencies, Component) {
-  const createInjectedProps = container => Object.entries(dependencies).reduce((all, entry) => ({ ...all, [entry[0]]: container.get(entry[1]) }), {});
-
-  return function InjectingComponent(props) {
-    const container = useContext(containerContext);
-    return <Component {...props} {...createInjectedProps(container)} />;
-  };
-}
-
 export default {
   ContainerProvider,
-  useService,
-  inject
+  useService
 };

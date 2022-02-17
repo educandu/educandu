@@ -14,7 +14,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const TextArea = Input.TextArea;
 
-function VideoEditor({ content, onContentChanged, publicStorage }) {
+function VideoEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('video');
   const clientConfig = useService(ClientConfig);
 
@@ -96,6 +96,7 @@ function VideoEditor({ content, onContentChanged, publicStorage }) {
                 />
               <CdnFilePicker
                 publicStorage={publicStorage}
+                privateStorage={privateStorage}
                 fileName={url}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
                 />

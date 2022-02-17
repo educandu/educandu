@@ -2,10 +2,11 @@ import PropTypes from 'prop-types';
 import { PAGE_NAME } from '../domain/page-name.js';
 import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../domain/constants.js';
 
-export const translationProps = {
-  i18n: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired
-};
+export const filePickerStorageShape = PropTypes.shape({
+  rootPath: PropTypes.string.isRequired,
+  initialPath: PropTypes.string,
+  uploadPath: PropTypes.string
+});
 
 export const sectionDisplayProps = {
   content: PropTypes.any
@@ -13,7 +14,9 @@ export const sectionDisplayProps = {
 
 export const sectionEditorProps = {
   ...sectionDisplayProps,
-  onContentChanged: PropTypes.func.isRequired
+  onContentChanged: PropTypes.func.isRequired,
+  privateStorage: filePickerStorageShape,
+  publicStorage: filePickerStorageShape.isRequired
 };
 
 export const importSourceProps = {
@@ -115,12 +118,6 @@ export const userShape = PropTypes.shape({
 
 export const userProps = {
   user: userShape
-};
-
-export const uiLanguageProps = {
-  uiLanguage: PropTypes.string.isRequired,
-  uiLocale: PropTypes.string.isRequired,
-  formatDate: PropTypes.func.isRequired
 };
 
 export const pageNameProps = {
@@ -296,10 +293,4 @@ export const lessonMetadataShape = PropTypes.shape({
 
 export const lessonShape = PropTypes.shape({
   ...lessonMetadataProps
-});
-
-export const filePickerStorageShape = PropTypes.shape({
-  rootPath: PropTypes.string.isRequired,
-  initialPath: PropTypes.string,
-  uploadPath: PropTypes.string
 });

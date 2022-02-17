@@ -14,7 +14,7 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
-function TileEditor({ index, image, description, link, publicStorage, onChange }) {
+function TileEditor({ index, image, description, link, publicStorage, privateStorage, onChange }) {
   const { t } = useTranslation('imageTiles');
   const clientConfig = useService(ClientConfig);
 
@@ -79,6 +79,7 @@ function TileEditor({ index, image, description, link, publicStorage, onChange }
               />
             <CdnFilePicker
               publicStorage={publicStorage}
+              privateStorage={privateStorage}
               fileName={image.url}
               onFileNameChanged={handleInternalImageUrlFileNameChanged}
               />
@@ -120,11 +121,13 @@ TileEditor.propTypes = {
     url: PropTypes.string
   }).isRequired,
   onChange: PropTypes.func.isRequired,
+  privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired
 };
 
 TileEditor.defaultProps = {
-  description: null
+  description: null,
+  privateStorage: null
 };
 
 export default TileEditor;
