@@ -65,8 +65,10 @@ function MySpace({ initialState, PageTemplate }) {
           {user.storage && (
             <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="4">
               <h5>{`"${storagePlan.name}" ${t('storagePlanLabel')}`}</h5>
-              <span className="MySpacePage-usedStorage">{t('usedStorageLabel')}:</span>
-              <UsedStorage usedBytes={user.storage.usedStorageInBytes} maxBytes={storagePlan.maxSizeInBytes} />
+              <div className="MySpacePage-usedStorage">
+                <span className="MySpacePage-usedStorageLabel">{t('usedStorageLabel')}:</span>
+                <UsedStorage usedBytes={user.storage.usedStorageInBytes} maxBytes={storagePlan.maxSizeInBytes} />
+              </div>
             </TabPane>
           )}
         </Tabs>

@@ -1,40 +1,27 @@
 import React from 'react';
 import { Progress } from 'antd';
 import PropTypes from 'prop-types';
-
-function convertBytesToHigherUnit(bytes) {
-  const kilobytes = bytes / 1000;
-  if (kilobytes < 1000) {
-    return `${kilobytes} KB`;
-  }
-  const megabytes = kilobytes / 1000;
-  if (megabytes < 1000) {
-    return `${megabytes} MB`;
-  }
-  const gigabytes = megabytes / 1000;
-  return `${gigabytes} GB`;
-}
+import prettyBytes from 'pretty-bytes';
+import { useLocale } from './locale-context.js';
 
 function UsedStorage({ usedBytes, maxBytes }) {
-  const format = percent => `${percent} %`;
+  const { uiLocale } = useLocale();
+
   const percent = usedBytes * 100 / maxBytes;
+  const displayedPercent = `${Math.round(percent)} %`;
   const status = percent >= 95 ? 'exception' : 'normal';
 
-  const maxSpace = convertBytesToHigherUnit(maxBytes);
-  const usedSpace = convertBytesToHigherUnit(usedBytes);
+  const maxSpace = prettyBytes(maxBytes, { locale: uiLocale });
+  const usedSpace = prettyBytes(usedBytes, { locale: uiLocale });
 
   return (
     <div className="UsedStorage">
-      <Progress
-        className="UserStorage-progress"
-        strokeLinecap="square"
-        percent={percent}
-        status={status}
-        format={format}
-        />
-      <span className="UsedStorage-value">{`${usedSpace} / ${maxSpace}`}</span>
+      <div className="UsedStorage-progress">
+        <Progress strokeLinecap="square" percent={percent} status={status} showInfo={false} />
+        <span className="UserStorage-progressPercentage">{displayedPercent}</span>
+      </div>
+      <span className="UsedStorage-occupiedSpace">{`${usedSpace} / ${maxSpace}`}</span>
     </div>
-
   );
 }
 
