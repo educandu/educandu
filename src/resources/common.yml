@@ -62,8 +62,8 @@ language:
   en: Language
   de: Sprache
 invalidSlug:
-  en: The URL path can contain only lower case letters, digits and hyphens. Individual parts can be separated by slashes.
-  de: Der URL-Pfad darf nur Kleinbuchstaben, Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
+  en: The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.
+  de: Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.
 archivedAlert:
   en: This document is archived and cannot be edited
   de: Dieses Dokument ist archiviert und kann nicht editiert werden
