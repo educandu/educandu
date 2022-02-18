@@ -122,6 +122,46 @@ describe('room-service', () => {
     });
   });
 
+  describe('getIdsOfPrivateRoomsOwnedByUser', () => {
+    beforeEach(async () => {
+      const rooms = [
+        {
+          _id: 'Room 1',
+          owner: myUser._id,
+          access: ROOM_ACCESS_LEVEL.private
+        },
+        {
+          _id: 'Room 2',
+          owner: myUser._id,
+          access: ROOM_ACCESS_LEVEL.public
+        },
+        {
+          _id: 'Room 3',
+          owner: otherUser._id,
+          access: ROOM_ACCESS_LEVEL.private
+        },
+        {
+          _id: 'Room 4',
+          owner: otherUser._id,
+          access: ROOM_ACCESS_LEVEL.public
+        },
+        {
+          _id: 'Room 5',
+          owner: myUser._id,
+          access: ROOM_ACCESS_LEVEL.private
+        }
+      ];
+      await Promise.all(rooms.map(room => createTestRoom(container, room)));
+
+      result = await sut.getIdsOfPrivateRoomsOwnedByUser(myUser._id);
+    });
+
+    it('should return the ids of all privately owned rooms', () => {
+      expect(result).toHaveLength(2);
+      expect(result).toEqual(expect.arrayContaining(['Room 1', 'Room 5']));
+    });
+  });
+
   describe('createRoom', () => {
     let createdRoom;
 

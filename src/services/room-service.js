@@ -59,6 +59,14 @@ export default class RoomService {
     return rooms;
   }
 
+  async getIdsOfPrivateRoomsOwnedByUser(userId) {
+    const roomsProjection = await this.roomStore.find(
+      { $and: [{ owner: userId }, { access: ROOM_ACCESS_LEVEL.private }] },
+      { projection: { _id: 1 } }
+    );
+    return roomsProjection.map(projection => projection._id);
+  }
+
   async getRoomsOwnedOrJoinedByUser(userId) {
     const rooms = await this._getRooms({ ownerId: userId, memberId: userId });
     return rooms;

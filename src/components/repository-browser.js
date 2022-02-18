@@ -9,7 +9,6 @@ import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
 import { useUser } from './user-context.js';
-import pathHelper from '../ui/path-helper.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
@@ -18,6 +17,7 @@ import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select } from 'antd';
 import {
@@ -147,15 +147,15 @@ class RepositoryBrowser extends React.Component {
   }
 
   createPathSegments(storage) {
-    const rootPathSegments = pathHelper.getPathSegments(storage.rootPath);
-    const uploadPathSegments = storage.uploadPath ? pathHelper.getPathSegments(storage.uploadPath) : rootPathSegments;
-    const initialPathSegments = storage.initialPath ? pathHelper.getPathSegments(storage.initialPath) : rootPathSegments;
+    const rootPathSegments = getPathSegments(storage.rootPath);
+    const uploadPathSegments = storage.uploadPath ? getPathSegments(storage.uploadPath) : rootPathSegments;
+    const initialPathSegments = storage.initialPath ? getPathSegments(storage.initialPath) : rootPathSegments;
 
-    if (!pathHelper.isInPath(uploadPathSegments, rootPathSegments)) {
+    if (!isSubPath({ pathSegments: rootPathSegments, subPathSegments: uploadPathSegments })) {
       throw new Error(`${storage.uploadPath} is not a subpath of root ${storage.rootPath}`);
     }
 
-    if (!pathHelper.isInPath(initialPathSegments, rootPathSegments)) {
+    if (!isSubPath({ pathSegments: rootPathSegments, subPathSegments: initialPathSegments })) {
       throw new Error(`${storage.initialPath} is not a subpath of root ${storage.rootPath}`);
     }
 
@@ -276,7 +276,7 @@ class RepositoryBrowser extends React.Component {
 
     const { cdnApiClient, t } = this.props;
     const { initialPathSegments, uploadPathSegments } = this.state.currentLocation;
-    const prefix = pathHelper.getPrefix(pathSegments);
+    const prefix = getPrefix(pathSegments);
 
     let objects;
     try {
@@ -304,7 +304,7 @@ class RepositoryBrowser extends React.Component {
 
     const { cdnApiClient, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
-    const prefix = pathHelper.getPrefix(currentPathSegments);
+    const prefix = getPrefix(currentPathSegments);
 
     try {
       await cdnApiClient.uploadFiles(files, prefix, { onProgress });
@@ -320,7 +320,7 @@ class RepositoryBrowser extends React.Component {
   async handleDeleteFile(fileName) {
     const { cdnApiClient, onSelectionChanged, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
-    const prefix = pathHelper.getPrefix(currentPathSegments);
+    const prefix = getPrefix(currentPathSegments);
     const objectName = `${prefix}${fileName}`;
 
     try {
@@ -338,8 +338,10 @@ class RepositoryBrowser extends React.Component {
   ensureVirtualFolders(currentPathSegments, existingRecords, virtualFolderPathSegments) {
     let result = existingRecords.slice();
     for (const segments of virtualFolderPathSegments) {
-      if (segments.length > currentPathSegments.length && pathHelper.isInPath(segments, currentPathSegments)) {
-        const assumedDirectoryPath = pathHelper.getPrefix(segments.slice(0, currentPathSegments.length + 1));
+      if (segments.length > currentPathSegments.length
+        && isSubPath({ pathSegments: currentPathSegments, subPathSegments: segments })
+      ) {
+        const assumedDirectoryPath = getPrefix(segments.slice(0, currentPathSegments.length + 1));
         if (!result.find(rec => rec.isDirectory && rec.path === assumedDirectoryPath)) {
           result = result.concat(this.convertObjectsToRecords([{ prefix: assumedDirectoryPath, isVirtual: true }]));
         }
@@ -352,7 +354,7 @@ class RepositoryBrowser extends React.Component {
     const { t, locale, formatDate } = this.props;
     return objects.map(obj => {
       const path = `${obj.prefix || ''}${obj.name || ''}`;
-      const segments = pathHelper.getPathSegments(path);
+      const segments = getPathSegments(path);
       const isDirectory = !obj.name;
       const category = isDirectory ? mimeTypeHelper.CATEGORY_FOLDER : mimeTypeHelper.getCategory(obj.name);
       const record = {
@@ -402,7 +404,7 @@ class RepositoryBrowser extends React.Component {
     const { onSelectionChanged } = this.props;
     this.setState({ selectedRowKeys: [] });
     onSelectionChanged([]);
-    return this.refreshFiles(pathHelper.getPathSegments(record.path), selectedRowKeys);
+    return this.refreshFiles(getPathSegments(record.path), selectedRowKeys);
   }
 
   handleDeleteClick(fileName) {
@@ -496,7 +498,7 @@ class RepositoryBrowser extends React.Component {
 
   createBreadcrumbItemData({ pathSegments, isEnabled }) {
     const data = {
-      key: pathHelper.getPrefix(pathSegments),
+      key: getPrefix(pathSegments),
       text: pathSegments[pathSegments.length - 1] || '',
       segments: pathSegments,
       isEnabled
@@ -594,8 +596,8 @@ class RepositoryBrowser extends React.Component {
     const normalizedFilterText = filterText.toLowerCase().trim();
     const filteredRecords = records.filter(r => r.displayName && r.displayName.toLowerCase().includes(normalizedFilterText));
 
-    const currentPrefix = pathHelper.getPrefix(currentPathSegments);
-    const canUpload = pathHelper.isInPath(currentPathSegments, uploadPathSegments);
+    const currentPrefix = getPrefix(currentPathSegments);
+    const canUpload = isSubPath({ pathSegments: uploadPathSegments, subPathSegments: currentPathSegments });
 
     const browserClassNames = classNames({
       'RepositoryBrowser-browser': true,

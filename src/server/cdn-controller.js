@@ -1,57 +1,74 @@
 import os from 'os';
 import multer from 'multer';
 import express from 'express';
-import urls from '../utils/urls.js';
 import parseBool from 'parseboolean';
-import Cdn from '../repositories/cdn.js';
-import createHttpError from 'http-errors';
+import httpErrors from 'http-errors';
 import permissions from '../domain/permissions.js';
-import fileNameHelper from '../utils/file-name-helper.js';
+import CdnService from '../services/cdn-service.js';
+import RoomService from '../services/room-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
+import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
 import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/cdn-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
-class CdnController {
-  static get inject() { return [Cdn]; }
+const { BadRequest, Unauthorized } = httpErrors;
 
-  constructor(cdn) {
-    this.cdn = cdn;
+class CdnController {
+  static get inject() { return [CdnService, RoomService]; }
+
+  constructor(cdnService, roomService) {
+    this.cdnService = cdnService;
+    this.roomService = roomService;
   }
 
   async handleGetCdnObject(req, res) {
     const prefix = req.query.prefix;
     const recursive = parseBool(req.query.recursive);
-    const objects = await this.cdn.listObjects({ prefix, recursive });
+    const objects = await this.cdnService.listObjects({ prefix, recursive });
 
     return res.send({ objects });
   }
 
   async handleDeleteCdnObject(req, res) {
-    const prefix = req.query.prefix;
-    const objectName = req.params.objectName;
+    const { user } = req;
+    const { prefix } = req.query;
+    const { objectName } = req.params;
 
-    await this.cdn.deleteObject(urls.concatParts(prefix, objectName));
+    await this.cdnService.deleteObject({ prefix, objectName, user });
 
     return res.sendStatus(200);
   }
 
   async handlePostCdnObject(req, res) {
-    if (req.files && req.files.length) {
-      const uploads = req.files.map(async file => {
-        const cdnFileName = fileNameHelper.buildCdnFileName(file.originalname, req.body.prefix);
-        await this.cdn.uploadObject(cdnFileName, file.path, {});
-      });
-      await Promise.all(uploads);
-    } else if (req.body.prefix && req.body.prefix[req.body.prefix.length - 1] === '/') {
-      // If no file but a prefix ending with `/` is provided, create a folder instead of a file:
-      await this.cdn.uploadEmptyObject(req.body.prefix, {});
-    } else {
-      createHttpError(400);
+    const { user, files } = req;
+    const { prefix } = req.body;
+    const storagePathType = getStoragePathType(prefix);
+
+    if (!files?.length) {
+      throw new BadRequest('No files provided');
     }
 
+    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+      throw new BadRequest(`Invalid storage path '${prefix}'`);
+    }
+
+    if (storagePathType === STORAGE_PATH_TYPE.private) {
+      const roomId = getRoomIdFromPrivateStoragePath(prefix);
+      const room = await this.roomService.getRoomById(roomId);
+
+      if (!room) {
+        throw new BadRequest(`Unknown room id '${roomId}'`);
+      }
+
+      if (user._id !== room.owner) {
+        throw new Unauthorized(`User is not authorized to upload to room '${roomId}'`);
+      }
+    }
+
+    await this.cdnService.uploadFiles({ prefix, files, user });
     return res.send({});
   }
 

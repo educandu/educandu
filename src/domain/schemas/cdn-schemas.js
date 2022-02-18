@@ -15,5 +15,5 @@ export const deleteObjectParamSchema = joi.object({
 });
 
 export const postObjectsBodySchema = joi.object({
-  prefix: joi.string()
+  prefix: joi.string().required()
 });
