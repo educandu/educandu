@@ -55,7 +55,7 @@ function createUserSubsets(users, storagePlans) {
       internalUsers.push(enrichedUserObject);
     }
 
-    if (user.storage || user.storagePlan) {
+    if (user.storage?.plan || user.storage?.usedStorageInBytes) {
       storageUsers.push(enrichedUserObject);
     }
   }
@@ -187,7 +187,7 @@ function Users({ initialState, PageTemplate }) {
 
     let finalStorage;
     try {
-      finalStorage = await userApiClient.removeUserStorageReminders({ userId: user._id });
+      finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
       finalStorage = oldStorage;
@@ -216,7 +216,7 @@ function Users({ initialState, PageTemplate }) {
       let finalStorage;
       try {
         await roomApiClient.deleteAllPrivateRoomsForUser({ ownerId: user._id });
-        finalStorage = await userApiClient.removeUserStorageReminders({ userId: user._id });
+        finalStorage = await userApiClient.deleteAllUserStorageReminders({ userId: user._id });
       } catch (error) {
         errorHelper.handleApiError({ error, logger, t });
         finalStorage = oldStorage;

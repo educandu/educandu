@@ -199,9 +199,9 @@ class UserController {
     return res.send(newStorage);
   }
 
-  async handleDeleteUserStorageReminders(req, res) {
+  async handleDeleteAllUserStorageReminders(req, res) {
     const { userId } = req.params;
-    const newStorage = await this.userService.deleteUserStorageReminders(userId);
+    const newStorage = await this.userService.deleteAllUserStorageReminders(userId);
     return res.send(newStorage);
   }
 
@@ -353,7 +353,7 @@ class UserController {
     router.delete(
       '/api/v1/users/:userId/storageReminders',
       [needsPermission(permissions.EDIT_USERS), validateParams(userIdParamsSchema)],
-      (req, res) => this.handleDeleteUserStorageReminders(req, res)
+      (req, res) => this.handleDeleteAllUserStorageReminders(req, res)
     );
   }
 }

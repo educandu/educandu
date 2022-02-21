@@ -20,7 +20,7 @@ describe('user-controller', () => {
       getUserByEmailAddress: sandbox.stub(),
       createPasswordResetRequest: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
-      deleteUserStorageReminders: sandbox.stub()
+      deleteAllUserStorageReminders: sandbox.stub()
     };
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),
@@ -380,7 +380,7 @@ describe('user-controller', () => {
     });
   });
 
-  describe('handleDeleteUserStorageReminders', () => {
+  describe('handleDeleteAllUserStorageReminders', () => {
     let req;
     let res;
     const serviceResponse = { reminders: [{ timestamp: new Date(), createdBy: '12345' }] };
@@ -396,13 +396,13 @@ describe('user-controller', () => {
 
       res.on('end', done);
 
-      userService.deleteUserStorageReminders.resolves(serviceResponse);
+      userService.deleteAllUserStorageReminders.resolves(serviceResponse);
 
-      sut.handleDeleteUserStorageReminders(req, res);
+      sut.handleDeleteAllUserStorageReminders(req, res);
     });
 
-    it('should call userService.deleteUserStorageReminders', () => {
-      sinon.assert.calledWith(userService.deleteUserStorageReminders, 'abcde');
+    it('should call userService.deleteAllUserStorageReminders', () => {
+      sinon.assert.calledWith(userService.deleteAllUserStorageReminders, 'abcde');
     });
 
     it('should set the status code on the response to 200', () => {

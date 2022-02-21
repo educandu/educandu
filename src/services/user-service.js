@@ -203,8 +203,8 @@ class UserService {
     return newStorage;
   }
 
-  async deleteUserStorageReminders(userId) {
-    logger.info(`Deleting storage reminders for user with id ${userId}`);
+  async deleteAllUserStorageReminders(userId) {
+    logger.info(`Deleting all storage reminders for user with id ${userId}`);
 
     const user = await this.getUserById(userId);
     if (!user) {

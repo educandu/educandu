@@ -116,7 +116,7 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  removeUserStorageReminders({ userId }) {
+  deleteAllUserStorageReminders({ userId }) {
     return this.httpClient
       .delete(
         `/api/v1/users/${encodeURIComponent(userId)}/storageReminders`,

@@ -96,7 +96,7 @@ export default class RoomController {
     }));
   }
 
-  async handleDeleteRooms(req, res) {
+  async handleDeleteAllRoomsForUser(req, res) {
     const { user } = req;
     const { ownerId, access } = req.query;
 
@@ -216,8 +216,8 @@ export default class RoomController {
 
     router.delete(
       '/api/v1/rooms',
-      [needsPermission(permissions.OWN_ROOMS), validateQuery(deleteRoomsQuerySchema)],
-      (req, res) => this.handleDeleteRooms(req, res)
+      [needsPermission(permissions.DELETE_FOREIGN_ROOMS), validateQuery(deleteRoomsQuerySchema)],
+      (req, res) => this.handleDeleteAllRoomsForUser(req, res)
     );
 
     router.delete(

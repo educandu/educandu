@@ -650,7 +650,7 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handleDeleteRooms', () => {
+  describe('handleDeleteAllRoomsForUser', () => {
     const userJacky = [{ _id: uniqueId.create(), email: 'jacky@test.com' }];
     const userClare = [{ _id: uniqueId.create(), email: 'clare@test.com' }];
     const userDrake = [{ _id: uniqueId.create(), email: 'drake@test.com' }];
@@ -669,12 +669,12 @@ describe('room-controller', () => {
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       res.on('end', done);
 
-      roomService.getRoomsOwnedByUser.resolves([roomA, roomB]);
+      roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB, roomC]);
       roomService.deleteRoom.withArgs(roomA._id, user).resolves(roomA);
       roomService.deleteRoom.withArgs(roomB._id, user).resolves(roomB);
       userService.getUsersByIds.callsFake(ids => Promise.resolve(ids.map(id => [userJacky, userClare, userDrake].find(x => x._id === id))));
 
-      sut.handleDeleteRooms(req, res);
+      sut.handleDeleteAllRoomsForUser(req, res);
     });
 
     it('should call delete room for each room on roomService', () => {
