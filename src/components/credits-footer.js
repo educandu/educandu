@@ -6,6 +6,8 @@ import { useSettings } from './settings-context.js';
 import { useDateFormat } from './locale-context.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
 
+const ZERO_WIDTH_SPACE = '\u200B';
+
 function CreditsFooter({ doc, revision }) {
   if (!doc && !revision) {
     throw new Error('One of \'doc\' or \'revision\' is required by \'CreditsFooter\' component.');
@@ -28,7 +30,7 @@ function CreditsFooter({ doc, revision }) {
   const date = formatDate(request.timestamp);
 
   const renderLongUrlText = urlText => {
-    const parts = urlText.split(/(?<!\w)\b/);
+    const parts = urlText.replace(/[^\w]\b/g, c => `${c}${ZERO_WIDTH_SPACE}`).split(ZERO_WIDTH_SPACE);
     return (
       <Fragment>
         {parts.map((part, index) => (
