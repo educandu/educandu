@@ -10,11 +10,11 @@ import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
-import { useService } from './container-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
 import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { useDateFormat, useLocale } from './locale-context.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
@@ -672,7 +672,7 @@ RepositoryBrowser.defaultProps = {
 
 export default function RepositoryBrowserWrapper({ ...props }) {
   const { t } = useTranslation('repositoryBrowser');
-  const cdnApiClient = useService(CdnApiClient);
+  const cdnApiClient = useSessionAwareApiClient(CdnApiClient);
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const user = useUser();
