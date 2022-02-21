@@ -51,7 +51,7 @@ describe('client-data-mapper', () => {
         profile: null,
         storage: {
           plan: 'lkdkgfj',
-          usedStorageInBytes: 0,
+          usedBytes: 0,
           reminders: [
             {
               timestamp: new Date(),
@@ -73,7 +73,7 @@ describe('client-data-mapper', () => {
         profile: null,
         storage: {
           plan: 'lkdkgfj',
-          usedStorageInBytes: 0
+          usedBytes: 0
         }
       });
     });

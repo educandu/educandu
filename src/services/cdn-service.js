@@ -39,16 +39,16 @@ export default class CdnService {
     }
 
     const storagePlan = await this.userService.getStoragePlanById(user.storage.plan);
-    const requiredStorageInBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
-    const availableStorageInBytes = storagePlan.maxSizeInBytes - user.storage.usedStorageInBytes;
+    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+    const availableBytes = storagePlan.maxBytes - user.storage.usedBytes;
 
-    if (availableStorageInBytes < requiredStorageInBytes) {
-      throw new Error(`Not enough storage space: available ${prettyBytes(availableStorageInBytes)}, required ${prettyBytes(requiredStorageInBytes)}`);
+    if (availableBytes < requiredBytes) {
+      throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
     }
 
     await this._uploadFiles(files, prefix);
-    const usedStorageInBytes = await this._getUsedPrivateStorageSizeInBytes(user._id);
-    await this.userService.updateUserUsedStorage(user._id, usedStorageInBytes);
+    const usedBytes = await this._getUsedPrivateStorageUsedBytes(user._id);
+    await this.userService.updateUserUsedStorage(user._id, usedBytes);
   }
 
   async listObjects({ prefix, recursive }) {
@@ -77,8 +77,8 @@ export default class CdnService {
     await this.cdn.deleteObjects(allObjectsToDelete.map(obj => obj.fullObjectName));
 
     if (allObjectsToDelete.some(x => x.storagePathType === STORAGE_PATH_TYPE.private)) {
-      const usedStorageInBytes = await this._getUsedPrivateStorageSizeInBytes(user._id);
-      await this.userService.updateUserUsedStorage(user._id, usedStorageInBytes);
+      const usedBytes = await this._getUsedPrivateStorageUsedBytes(user._id);
+      await this.userService.updateUserUsedStorage(user._id, usedBytes);
     }
   }
 
@@ -94,7 +94,7 @@ export default class CdnService {
     return roomsProjection.map(projection => projection._id);
   }
 
-  async _getUsedPrivateStorageSizeInBytes(userId) {
+  async _getUsedPrivateStorageUsedBytes(userId) {
     const privateRoomsIds = await this.getIdsOfPrivateRoomsOwnedByUser(userId);
     const storagePaths = privateRoomsIds.map(getPrivateStoragePathForRoomId);
 
