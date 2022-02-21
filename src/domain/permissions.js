@@ -16,6 +16,7 @@ const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
 const MANAGE_EXPORT = 'manage-export';
 const OWN_ROOMS = 'own-rooms';
+const DELETE_FOREIGN_ROOMS = 'delete-foreign-rooms';
 const OWN_LESSONS = 'own-lessons';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
 const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
@@ -37,6 +38,7 @@ const rolesForPermission = {
   [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
   [MANAGE_IMPORT]: [ROLE.admin],
   [OWN_ROOMS]: [ROLE.admin, ROLE.user],
+  [DELETE_FOREIGN_ROOMS]: [ROLE.admin],
   [OWN_LESSONS]: [ROLE.admin, ROLE.user],
   [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user],
   [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user],
@@ -66,6 +68,7 @@ export default {
   MANAGE_EXPORT,
   DELETE_CDN_FILE,
   OWN_ROOMS,
+  DELETE_FOREIGN_ROOMS,
   OWN_LESSONS,
   AUTORIZE_ROOMS_RESOURCES,
   JOIN_PRIVATE_ROOMS,

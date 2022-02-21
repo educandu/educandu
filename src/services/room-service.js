@@ -1,7 +1,7 @@
 import moment from 'moment';
 import httpErrors from 'http-errors';
-import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
+import CdnService from './cdn-service.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
@@ -26,12 +26,12 @@ const roomInvitationProjection = {
 
 export default class RoomService {
   static get inject() {
-    return [RoomStore, RoomLockStore, RoomInvitationStore, LessonStore, UserService, Cdn, TransactionRunner];
+    return [RoomStore, RoomLockStore, RoomInvitationStore, LessonStore, UserService, CdnService, TransactionRunner];
   }
 
-  constructor(roomStore, roomLockStore, roomInvitationStore, lessonStore, userService, cdn, transactionRunner) {
-    this.cdn = cdn;
+  constructor(roomStore, roomLockStore, roomInvitationStore, lessonStore, userService, cdnService, transactionRunner) {
     this.roomStore = roomStore;
+    this.cdnService = cdnService;
     this.userService = userService;
     this.lessonStore = lessonStore;
     this.roomLockStore = roomLockStore;
@@ -59,12 +59,9 @@ export default class RoomService {
     return rooms;
   }
 
-  async getIdsOfPrivateRoomsOwnedByUser(userId) {
-    const roomsProjection = await this.roomStore.find(
-      { $and: [{ owner: userId }, { access: ROOM_ACCESS_LEVEL.private }] },
-      { projection: { _id: 1 } }
-    );
-    return roomsProjection.map(projection => projection._id);
+  async getRoomsOwnedByUser(userId) {
+    const rooms = await this._getRooms({ ownerId: userId });
+    return rooms;
   }
 
   async getRoomsOwnedOrJoinedByUser(userId) {
@@ -226,8 +223,7 @@ export default class RoomService {
     });
 
     try {
-      const objectList = await this.cdn.listObjects({ prefix: `/rooms/${roomId}`, recursive: true });
-      await this.cdn.deleteObjects(objectList.map(({ name }) => name));
+      await this.cdnService.deleteAllObjectsWithPrefix({ prefix: `rooms/${roomId}/`, user });
     } catch (error) {
       logger.error(error);
     }

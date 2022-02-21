@@ -49,3 +49,7 @@ export const postUserLockedOutBodySchema = joi.object({
 export const postUserStoragePlanBodySchema = joi.object({
   storagePlanId: idOrKeySchema.required()
 });
+
+export const userIdParamsSchema = joi.object({
+  userId: idOrKeySchema.required()
+});

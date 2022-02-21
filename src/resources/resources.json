@@ -39,6 +39,7 @@
       "discardUnsavedChanges": "All unsaved changes will be lost.",
       "deleteSectionConfirmation": "Do you really want to delete the section?",
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
+      "deleteAllPrivateRoomsConfirmation": "Do you really want to delete all private rooms owned by user \"{ownerName}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteLessonConfirmation": "Do you really want to delete lesson \"{lessonName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
@@ -62,6 +63,7 @@
       "discardUnsavedChanges": "Alle nicht gespeicherten Änderungen werden verworfen.",
       "deleteSectionConfirmation": "Möchten Sie den Abschnitt wirklich löschen?",
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
+      "deleteAllPrivateRoomsConfirmation": "Möchten Sie wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
       "deleteLessonConfirmation": "Möchten Sie die Unterrichtseinheit \"{lessonName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
@@ -439,7 +441,6 @@
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "user": "User info",
-      "actions": "Actions",
       "clone": "Clone",
       "archived": "Archived",
       "enterSearchTerm": "Enter search term",
@@ -457,7 +458,6 @@
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
       "user": "User-Info",
-      "actions": "Aktionen",
       "clone": "Klonen",
       "archived": "Archiviert",
       "enterSearchTerm": "Suchbegriff eingeben",
@@ -767,7 +767,6 @@
     "namespace": "users",
     "language": "en",
     "resources": {
-      "username": "Username",
       "expires": "Expires",
       "lockedOut": "Locked Out",
       "roles": "Roles",
@@ -782,14 +781,19 @@
       "importSource": "Import source",
       "internalUsers": "Internal users",
       "externalUsers": "External users",
-      "selectPlan": "Select plan"
+      "storageUsers": "Users with storage",
+      "selectPlan": "Select plan",
+      "addReminder": "Add reminder",
+      "removeAllReminders": "Remove reminders",
+      "deleteAllPrivateRooms": "Delete private rooms",
+      "storageSpace": "Storage space",
+      "reminders": "Reminders"
     }
   },
   {
     "namespace": "users",
     "language": "de",
     "resources": {
-      "username": "Benutzername",
       "expires": "Verfallsdatum",
       "lockedOut": "Ausgesperrt",
       "roles": "Rollen",
@@ -804,7 +808,13 @@
       "importSource": "Import-Quelle",
       "internalUsers": "Interne Benutzer",
       "externalUsers": "Externe Benutzer",
-      "selectPlan": "Plan auswählen"
+      "storageUsers": "Benutzer mit Speicher",
+      "selectPlan": "Plan auswählen",
+      "addReminder": "Erinnerung hinzufügen",
+      "removeAllReminders": "Erinnerungen entfernen",
+      "deleteAllPrivateRooms": "Private Räume löschen",
+      "storageSpace": "Speicherplatz",
+      "reminders": "Erinnerungen"
     }
   },
   {
@@ -1545,7 +1555,8 @@
       "shift": "Shift",
       "alt": "Alt",
       "unknown": "Unknown",
-      "storage": "Storage"
+      "storage": "Storage",
+      "actions": "Actions"
     }
   },
   {
@@ -1612,7 +1623,8 @@
       "shift": "Umschalt",
       "alt": "Alt",
       "unknown": "Unbekannt",
-      "storage": "Speicher"
+      "storage": "Speicher",
+      "actions": "Aktionen"
     }
   },
   {

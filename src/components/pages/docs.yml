@@ -10,9 +10,6 @@ copySlugSuffix:
 user:
   en: User info
   de: User-Info
-actions:
-  en: Actions
-  de: Aktionen
 clone:
   en: Clone
   de: Klonen

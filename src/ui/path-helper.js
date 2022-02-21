@@ -1,4 +1,4 @@
-const privateCdnPathPattern = /^rooms\/(.+)\/media/;
+const privateCdnPathPattern = /^rooms\/([^/]+)\/media\//;
 
 export const STORAGE_PATH_TYPE = {
   unknown: 'unknown',
@@ -37,4 +37,14 @@ export function getPrefix(segments) {
 export function isSubPath({ pathSegments, subPathSegments }) {
   return pathSegments.length <= subPathSegments.length
     && pathSegments.every((part, index) => part === subPathSegments[index]);
+}
+
+export function getObjectNameWithoutPrefixFromStoragePath(path) {
+  const segments = getPathSegments(path);
+  return segments[segments.length - 1];
+}
+
+export function getPrefixFromStoragePath(path) {
+  const segments = getPathSegments(path);
+  return getPrefix(segments.slice(0, -1));
 }

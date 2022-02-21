@@ -35,6 +35,11 @@ export const patchRoomBodySchema = joi.object({
   description: joi.string().allow('')
 });
 
+export const deleteRoomsQuerySchema = joi.object({
+  ownerId: idOrKeySchema.required(),
+  access: joi.string().valid(...Object.values(ROOM_ACCESS_LEVEL))
+});
+
 export const deleteRoomParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 });

@@ -13,7 +13,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { validateBody, validateParams } from '../domain/validation-middleware.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
   getRoomParamsSchema,
@@ -23,7 +23,8 @@ import {
   postRoomInvitationBodySchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
-  getRoomMembershipConfirmationParamsSchema
+  getRoomMembershipConfirmationParamsSchema,
+  deleteRoomsQuerySchema
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
@@ -83,10 +84,7 @@ export default class RoomController {
     return res.status(201).send(updatedRoom);
   }
 
-  async handleDeleteRoom(req, res) {
-    const { user } = req;
-    const { roomId } = req.params;
-
+  async _deleteRoom(roomId, user) {
     const { members, name: roomName } = await this.roomService.deleteRoom(roomId, user);
 
     const userIds = members.map(({ userId }) => userId);
@@ -96,6 +94,27 @@ export default class RoomController {
     await Promise.all(users.map(({ email }) => {
       return this.mailService.sendRoomDeletionNotificationEmail({ email, roomName, ownerName: user.username });
     }));
+  }
+
+  async handleDeleteAllRoomsForUser(req, res) {
+    const { user } = req;
+    const { ownerId, access } = req.query;
+
+    const rooms = await this.roomService.getRoomsOwnedByUser(ownerId);
+    const roomIdsToDelete = rooms.filter(room => !access || room.access === access).map(room => room._id);
+    for (const roomId of roomIdsToDelete) {
+      // eslint-disable-next-line no-await-in-loop
+      await this._deleteRoom(roomId, user);
+    }
+
+    return res.status(200).end();
+  }
+
+  async handleDeleteRoom(req, res) {
+    const { user } = req;
+    const { roomId } = req.params;
+
+    await this._deleteRoom(roomId, user);
 
     return res.status(200).end();
   }
@@ -193,6 +212,12 @@ export default class RoomController {
       '/api/v1/rooms/:roomId',
       [needsPermission(permissions.OWN_ROOMS), jsonParser, validateParams(patchRoomParamsSchema), validateBody(patchRoomBodySchema)],
       (req, res) => this.handlePatchRoom(req, res)
+    );
+
+    router.delete(
+      '/api/v1/rooms',
+      [needsPermission(permissions.DELETE_FOREIGN_ROOMS), validateQuery(deleteRoomsQuerySchema)],
+      (req, res) => this.handleDeleteAllRoomsForUser(req, res)
     );
 
     router.delete(

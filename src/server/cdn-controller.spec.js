@@ -54,7 +54,7 @@ describe('cdn-controller', () => {
 
     describe('when storage path type is unknown', () => {
       beforeEach(() => {
-        req = { user, files: [{}], body: { prefix: 'other-path/media' } };
+        req = { user, files: [{}], body: { prefix: 'other-path/media/' } };
         res = {};
       });
 
@@ -65,7 +65,7 @@ describe('cdn-controller', () => {
 
     describe('when storage path type is private but the room ID is unknown', () => {
       beforeEach(() => {
-        req = { user, files: [{}], body: { prefix: 'rooms/some-room-id/media' } };
+        req = { user, files: [{}], body: { prefix: 'rooms/some-room-id/media/' } };
         res = {};
       });
 
@@ -77,7 +77,7 @@ describe('cdn-controller', () => {
     describe('when storage path type is private but user is not the room owner', () => {
       beforeEach(() => {
         room.owner = uniqueId.create();
-        req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media` } };
+        req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media/` } };
         res = {};
       });
 
@@ -89,7 +89,7 @@ describe('cdn-controller', () => {
     describe('when storage path type is private and the user is the room owner', () => {
       beforeEach(done => {
         room.owner = user._id;
-        req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media` } };
+        req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media/` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 

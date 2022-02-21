@@ -105,6 +105,25 @@ class UserApiClient {
       )
       .then(res => res.data);
   }
+
+  addUserStorageReminder({ userId }) {
+    return this.httpClient
+      .post(
+        `/api/v1/users/${encodeURIComponent(userId)}/storageReminders`,
+        null,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  deleteAllUserStorageReminders({ userId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/users/${encodeURIComponent(userId)}/storageReminders`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default UserApiClient;

@@ -258,7 +258,7 @@ function Docs({ initialState, PageTemplate }) {
       needsPermission: permissions.MANAGE_ARCHIVED_DOCS
     },
     {
-      title: t('actions'),
+      title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
       render: renderActions

@@ -29,6 +29,7 @@ describe('room-controller', () => {
     roomService = {
       createOrUpdateInvitation: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
+      getRoomsOwnedByUser: sandbox.stub(),
       getRoomById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
@@ -646,6 +647,67 @@ describe('room-controller', () => {
       it('should return status 200', () => {
         expect(res.statusCode).toBe(200);
       });
+    });
+  });
+
+  describe('handleDeleteAllRoomsForUser', () => {
+    const userJacky = [{ _id: uniqueId.create(), email: 'jacky@test.com' }];
+    const userClare = [{ _id: uniqueId.create(), email: 'clare@test.com' }];
+    const userDrake = [{ _id: uniqueId.create(), email: 'drake@test.com' }];
+    const roomA = { _id: uniqueId.create(), name: 'Room A', access: ROOM_ACCESS_LEVEL.private, members: [{ userId: userJacky._id }, { userId: userClare._id }] };
+    const roomB = { _id: uniqueId.create(), name: 'Room B', access: ROOM_ACCESS_LEVEL.private, members: [{ userId: userClare._id }, { userId: userDrake._id }] };
+    const roomC = { _id: uniqueId.create(), name: 'Room C', access: ROOM_ACCESS_LEVEL.public, members: [{ userId: userJacky._id }, { userId: userDrake._id }] };
+
+    beforeEach(done => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'educandu.dev' },
+        query: { ownerId: user._id, access: ROOM_ACCESS_LEVEL.private }
+      });
+      req.user = user;
+
+      res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+      res.on('end', done);
+
+      roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB, roomC]);
+      roomService.deleteRoom.withArgs(roomA._id, user).resolves(roomA);
+      roomService.deleteRoom.withArgs(roomB._id, user).resolves(roomB);
+      userService.getUsersByIds.callsFake(ids => Promise.resolve(ids.map(id => [userJacky, userClare, userDrake].find(x => x._id === id))));
+
+      sut.handleDeleteAllRoomsForUser(req, res);
+    });
+
+    it('should call delete room for each room on roomService', () => {
+      sinon.assert.calledWith(roomService.deleteRoom, roomA._id, user);
+      sinon.assert.calledWith(roomService.deleteRoom, roomB._id, user);
+    });
+
+    it('should not call delete room for rooms with a different access level', () => {
+      sinon.assert.neverCalledWith(roomService.deleteRoom, roomC._id, user);
+    });
+
+    it('should call getUsersByIds for each room with the right ids', () => {
+      sinon.assert.calledWith(userService.getUsersByIds, roomA.members.map(({ userId }) => userId));
+      sinon.assert.calledWith(userService.getUsersByIds, roomB.members.map(({ userId }) => userId));
+    });
+
+    it('should call sendRoomDeletionNotificationEmail with the right emails', () => {
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userJacky.email, roomName: roomA.name, ownerName: user.username });
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userClare.email, roomName: roomA.name, ownerName: user.username });
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userClare.email, roomName: roomB.name, ownerName: user.username });
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userDrake.email, roomName: roomB.name, ownerName: user.username });
+    });
+
+    it('should not call sendRoomDeletionNotificationEmail with the emails for rooms with a different access level', () => {
+      sinon.assert.neverCalledWith(mailService.sendRoomDeletionNotificationEmail, {
+        email: sinon.match.string,
+        roomName: roomC.name,
+        ownerName: user.username
+      });
+    });
+
+    it('should return status 200', () => {
+      expect(res.statusCode).toBe(200);
     });
   });
 

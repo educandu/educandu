@@ -58,6 +58,10 @@ export function replaceItemAt(items, newItem, index) {
   return result;
 }
 
+export function replaceItem(items, newItem, keyToMatch = '_id') {
+  return items.map(item => item[keyToMatch] === newItem[keyToMatch] ? newItem : item);
+}
+
 export function ensureIsIncluded(items, item) {
   return items.includes(item) ? items : [...items, item];
 }

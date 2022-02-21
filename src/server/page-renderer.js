@@ -30,7 +30,7 @@ class PageRenderer extends PageRendererBase {
     const container = this.container;
     const clientConfig = this.clientConfig;
     const request = requestHelper.expressReqToRequest(req);
-    const user = this.clientDataMapper.dbUserToClientUser(req.user);
+    const user = this.clientDataMapper.mapWebsiteUser(req.user);
     const resources = this.resourceManager.getAllResourceBundles();
 
     const {

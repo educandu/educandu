@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
-import Cdn from '../repositories/cdn.js';
+import CdnService from './cdn-service.js';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
@@ -16,12 +16,12 @@ const { BadRequest, NotFound, Forbidden } = httpErrors;
 describe('room-service', () => {
   let db;
   let sut;
-  let cdn;
   let myUser;
   let result;
   let container;
   let otherUser;
   let roomStore;
+  let cdnService;
   let lessonStore;
   let roomLockStore;
   let roomInvitationStore;
@@ -32,8 +32,8 @@ describe('room-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
 
-    cdn = container.get(Cdn);
     roomStore = container.get(RoomStore);
+    cdnService = container.get(CdnService);
     lessonStore = container.get(LessonStore);
     roomLockStore = container.get(RoomLockStore);
     roomInvitationStore = container.get(RoomInvitationStore);
@@ -49,10 +49,9 @@ describe('room-service', () => {
   beforeEach(async () => {
     sandbox.useFakeTimers(now);
 
-    sandbox.stub(cdn, 'listObjects');
-    sandbox.stub(cdn, 'deleteObjects');
     sandbox.stub(roomLockStore, 'takeLock');
     sandbox.stub(roomLockStore, 'releaseLock');
+    sandbox.stub(cdnService, 'deleteAllObjectsWithPrefix');
 
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
@@ -119,46 +118,6 @@ describe('room-service', () => {
       it('should return all joined rooms', () => {
         expect(result.map(room => room.name)).toEqual(['Room 4']);
       });
-    });
-  });
-
-  describe('getIdsOfPrivateRoomsOwnedByUser', () => {
-    beforeEach(async () => {
-      const rooms = [
-        {
-          _id: 'Room 1',
-          owner: myUser._id,
-          access: ROOM_ACCESS_LEVEL.private
-        },
-        {
-          _id: 'Room 2',
-          owner: myUser._id,
-          access: ROOM_ACCESS_LEVEL.public
-        },
-        {
-          _id: 'Room 3',
-          owner: otherUser._id,
-          access: ROOM_ACCESS_LEVEL.private
-        },
-        {
-          _id: 'Room 4',
-          owner: otherUser._id,
-          access: ROOM_ACCESS_LEVEL.public
-        },
-        {
-          _id: 'Room 5',
-          owner: myUser._id,
-          access: ROOM_ACCESS_LEVEL.private
-        }
-      ];
-      await Promise.all(rooms.map(room => createTestRoom(container, room)));
-
-      result = await sut.getIdsOfPrivateRoomsOwnedByUser(myUser._id);
-    });
-
-    it('should return the ids of all privately owned rooms', () => {
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(expect.arrayContaining(['Room 1', 'Room 5']));
     });
   });
 
@@ -473,12 +432,9 @@ describe('room-service', () => {
 
     describe('when the room can be deleted', () => {
       let invitationDetails;
-      const cdnNameObject1 = `/rooms/${roomId}/object1`;
-      const cdnNameObject2 = `/rooms/${roomId}/object2`;
 
       beforeEach(async () => {
-        cdn.listObjects.resolves([{ name: cdnNameObject1 }, { name: cdnNameObject2 }]);
-        cdn.deleteObjects.resolves();
+        cdnService.deleteAllObjectsWithPrefix.resolves();
 
         invitationDetails = await sut.createOrUpdateInvitation({ roomId, email: otherUser.email, user: myUser });
 
@@ -516,12 +472,8 @@ describe('room-service', () => {
         expect(lesson).toBeNull();
       });
 
-      it('should call cdn.listObjects', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `/rooms/${roomId}`, recursive: true });
-      });
-
-      it('should call cdn.deleteObjects', () => {
-        sinon.assert.calledWith(cdn.deleteObjects, [cdnNameObject1, cdnNameObject2]);
+      it('should call cdnService.deleteAllObjectsWithPrefix', () => {
+        sinon.assert.calledWith(cdnService.deleteAllObjectsWithPrefix, { prefix: `rooms/${roomId}/`, user: myUser });
       });
     });
   });

@@ -18,14 +18,16 @@ describe('user-controller', () => {
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
       getUserByEmailAddress: sandbox.stub(),
-      createPasswordResetRequest: sandbox.stub()
+      createPasswordResetRequest: sandbox.stub(),
+      addUserStorageReminder: sandbox.stub(),
+      deleteAllUserStorageReminders: sandbox.stub()
     };
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),
       sendPasswordResetEmail: sandbox.stub()
     };
     clientDataMapper = {
-      dbUserToClientUser: sandbox.stub()
+      mapWebsiteUser: sandbox.stub()
     };
     const serverConfig = {};
     const database = {};
@@ -55,7 +57,7 @@ describe('user-controller', () => {
         res.on('end', done);
 
         userService.createUser.resolves({ result: SAVE_USER_RESULT.success, user: { verificationCode: 'verificationCode' } });
-        clientDataMapper.dbUserToClientUser.returns(mappedUser);
+        clientDataMapper.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUser(req, res);
       });
@@ -103,8 +105,8 @@ describe('user-controller', () => {
         sinon.assert.notCalled(mailService.sendRegistrationVerificationEmail);
       });
 
-      it('should not call clientDataMapper.dbUserToClientUser', () => {
-        sinon.assert.notCalled(clientDataMapper.dbUserToClientUser);
+      it('should not call clientDataMapper.mapWebsiteUser', () => {
+        sinon.assert.notCalled(clientDataMapper.mapWebsiteUser);
       });
 
       it('should return the result object', () => {
@@ -134,7 +136,7 @@ describe('user-controller', () => {
         res.on('end', done);
 
         userService.updateUserAccount.resolves({ result: SAVE_USER_RESULT.success, user: {} });
-        clientDataMapper.dbUserToClientUser.returns(mappedUser);
+        clientDataMapper.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUserAccount(req, res);
       });
@@ -175,8 +177,8 @@ describe('user-controller', () => {
         expect(res.statusCode).toBe(200);
       });
 
-      it('should not call clientDataMapper.dbUserToClientUser', () => {
-        sinon.assert.notCalled(clientDataMapper.dbUserToClientUser);
+      it('should not call clientDataMapper.mapWebsiteUser', () => {
+        sinon.assert.notCalled(clientDataMapper.mapWebsiteUser);
       });
 
       it('should return the result object', () => {
@@ -342,4 +344,75 @@ describe('user-controller', () => {
       });
     });
   });
+
+  describe('handlePostUserStorageReminder', () => {
+    let req;
+    let res;
+    const serviceResponse = { reminders: [{ timestamp: new Date(), createdBy: '12345' }] };
+
+    beforeEach(done => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' },
+        user: { _id: '12345' },
+        params: { userId: 'abcde' }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+      res.on('end', done);
+
+      userService.addUserStorageReminder.resolves(serviceResponse);
+
+      sut.handlePostUserStorageReminder(req, res);
+    });
+
+    it('should call userService.addUserStorageReminder', () => {
+      sinon.assert.calledWith(userService.addUserStorageReminder, 'abcde', { _id: '12345' });
+    });
+
+    it('should set the status code on the response to 200', () => {
+      expect(res.statusCode).toBe(200);
+    });
+
+    it('should return the result object', () => {
+      const response = res._getData();
+      expect(response).toBe(serviceResponse);
+    });
+  });
+
+  describe('handleDeleteAllUserStorageReminders', () => {
+    let req;
+    let res;
+    const serviceResponse = { reminders: [{ timestamp: new Date(), createdBy: '12345' }] };
+
+    beforeEach(done => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' },
+        user: { _id: '12345' },
+        params: { userId: 'abcde' }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+      res.on('end', done);
+
+      userService.deleteAllUserStorageReminders.resolves(serviceResponse);
+
+      sut.handleDeleteAllUserStorageReminders(req, res);
+    });
+
+    it('should call userService.deleteAllUserStorageReminders', () => {
+      sinon.assert.calledWith(userService.deleteAllUserStorageReminders, 'abcde');
+    });
+
+    it('should set the status code on the response to 200', () => {
+      expect(res.statusCode).toBe(200);
+    });
+
+    it('should return the result object', () => {
+      const response = res._getData();
+      expect(response).toBe(serviceResponse);
+    });
+  });
+
 });

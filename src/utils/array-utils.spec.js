@@ -4,7 +4,9 @@ import {
   removeItemAt,
   ensureIsIncluded,
   ensureIsExcluded,
-  shuffleItems
+  shuffleItems,
+  replaceItemAt,
+  replaceItem
 } from './array-utils.js';
 
 describe('array-utils', () => {
@@ -73,6 +75,46 @@ describe('array-utils', () => {
       const input = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       const result = removeItemAt(input, 10);
       expect(result).toBe(input);
+    });
+  });
+
+  describe('replaceItemAt', () => {
+    it('does not mutate the original array', () => {
+      const input = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const result = replaceItemAt(input, 37, 4);
+      expect(result).not.toBe(input);
+      expect(input).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    });
+    it('replaces the item on the correct index', () => {
+      const input = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const result = replaceItemAt(input, 37, 4);
+      expect(result).toEqual([0, 1, 2, 3, 37, 5, 6, 7, 8, 9]);
+    });
+    it('returns the original array if the index is out of range', () => {
+      const input = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const result = replaceItemAt(input, 37, 10);
+      expect(result).toBe(input);
+    });
+  });
+
+  describe('replaceItem', () => {
+    it('does not mutate the original array', () => {
+      const input = [{ _id: 0, prop: 'a1' }, { _id: 1, prop: 'a2' }, { _id: 2, prop: 'a3' }];
+      const result = replaceItem(input, { _id: 1, prop: 'b' });
+      expect(result).not.toBe(input);
+      expect(input).toEqual([{ _id: 0, prop: 'a1' }, { _id: 1, prop: 'a2' }, { _id: 2, prop: 'a3' }]);
+    });
+    it('replaces the correct item', () => {
+      const input = [{ _id: 0, prop: 'a1' }, { _id: 1, prop: 'a2' }, { _id: 2, prop: 'a3' }];
+      const result = replaceItem(input, { _id: 1, prop: 'b' });
+      expect(result).not.toBe(input);
+      expect(result).toEqual([{ _id: 0, prop: 'a1' }, { _id: 1, prop: 'b' }, { _id: 2, prop: 'a3' }]);
+    });
+    it('uses the third parameter to match the item', () => {
+      const input = [{ _id: 0, prop: 'a1' }, { _id: 1, prop: 'a2' }, { _id: 2, prop: 'a3' }];
+      const result = replaceItem(input, { _id: 24, prop: 'a2' }, 'prop');
+      expect(result).not.toBe(input);
+      expect(result).toEqual([{ _id: 0, prop: 'a1' }, { _id: 24, prop: 'a2' }, { _id: 2, prop: 'a3' }]);
     });
   });
 

@@ -34,7 +34,7 @@ describe('client-data-mapper', () => {
     await destroyTestEnvironment(container);
   });
 
-  describe('dbUserToClientUser', () => {
+  describe('mapWebsiteUser', () => {
     let dbUser;
 
     beforeEach(() => {
@@ -60,7 +60,7 @@ describe('client-data-mapper', () => {
           ]
         }
       };
-      result = sut.dbUserToClientUser(dbUser);
+      result = sut.mapWebsiteUser(dbUser);
     });
 
     it('should map the user from the database', () => {
