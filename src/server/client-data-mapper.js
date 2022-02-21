@@ -25,7 +25,7 @@ class ClientDataMapper {
       storage: user.storage
         ? {
           plan: user.storage.plan,
-          usedStorageInBytes: user.storage.usedStorageInBytes
+          usedBytes: user.storage.usedBytes
         }
         : null
     };

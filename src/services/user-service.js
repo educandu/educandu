@@ -162,8 +162,8 @@ class UserService {
     return newStorage;
   }
 
-  async updateUserUsedStorage(userId, usedStorageInBytes) {
-    logger.info(`Updating usedStorageInBytes for user with id ${userId}: ${usedStorageInBytes}`);
+  async updateUserUsedStorage(userId, usedBytes) {
+    logger.info(`Updating usedBytes for user with id ${userId}: ${usedBytes}`);
 
     const user = await this.getUserById(userId);
     if (!user) {
@@ -174,7 +174,7 @@ class UserService {
       throw new BadRequest(`User with ID '${userId}' does not have storage plan allocated`);
     }
 
-    user.storage = { ...user.storage, usedStorageInBytes };
+    user.storage = { ...user.storage, usedBytes };
     await this.saveUser(user);
     return user;
   }

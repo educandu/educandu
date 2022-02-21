@@ -91,7 +91,7 @@ export const baseStoragePlanShape = PropTypes.shape({
 
 export const storagePlanShape = PropTypes.shape({
   ...baseStoragePlanProps,
-  maxSizeInBytes: PropTypes.number.isRequired
+  maxBytes: PropTypes.number.isRequired
 });
 
 export const userProfileShape = PropTypes.shape({
@@ -106,7 +106,7 @@ export const userProfileShape = PropTypes.shape({
 
 export const userStorageShape = PropTypes.shape({
   plan: PropTypes.string,
-  usedStorageInBytes: PropTypes.number,
+  usedBytes: PropTypes.number,
   reminders: PropTypes.arrayOf(PropTypes.shape({
     timestamp: PropTypes.string.isRequired,
     createdBy: PropTypes.string.isRequired

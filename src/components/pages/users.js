@@ -55,7 +55,7 @@ function createUserSubsets(users, storagePlans) {
       internalUsers.push(enrichedUserObject);
     }
 
-    if (user.storage?.plan || user.storage?.usedStorageInBytes) {
+    if (user.storage?.plan || user.storage?.usedBytes) {
       storageUsers.push(enrichedUserObject);
     }
   }
@@ -205,7 +205,7 @@ function Users({ initialState, PageTemplate }) {
       const newStorage = storageBlueprint.plan
         ? {
           ...storageBlueprint,
-          usedStorageInBytes: 0,
+          usedBytes: 0,
           reminders: []
         }
         : null;
@@ -311,7 +311,7 @@ function Users({ initialState, PageTemplate }) {
           <Option key={plan._id} value={plan._id} label={plan.name}>
             <div className="UsersPage-storagePlanOption">
               <div className="UsersPage-storagePlanOptionName">{plan.name}</div>
-              <div className="UsersPage-storagePlanOptionSize">{prettyBytes(plan.maxSizeInBytes, { locale })}</div>
+              <div className="UsersPage-storagePlanOptionSize">{prettyBytes(plan.maxBytes, { locale })}</div>
             </div>
           </Option>
         ))}
@@ -321,7 +321,7 @@ function Users({ initialState, PageTemplate }) {
 
   const renderStorageSpace = (_, user) => {
     return (
-      <UsedStorage usedBytes={user.storage?.usedStorageInBytes || 0} maxBytes={user.storagePlan?.maxSizeInBytes || 0} />
+      <UsedStorage usedBytes={user.storage?.usedBytes || 0} maxBytes={user.storagePlan?.maxBytes || 0} />
     );
   };
 
@@ -455,7 +455,7 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'storageSpace',
       key: 'storageSpace',
       render: renderStorageSpace,
-      sorter: by(x => x.storage?.usedStorageInBytes),
+      sorter: by(x => x.storage?.usedBytes),
       responsive: ['md']
     }, {
       title: () => t('reminders'),

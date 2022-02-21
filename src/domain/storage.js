@@ -1,7 +1,7 @@
 export function getDefaultStorage() {
   return {
     plan: null,
-    usedStorageInBytes: 0,
+    usedBytes: 0,
     reminders: []
   };
 }

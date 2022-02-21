@@ -42,7 +42,7 @@ describe('cdn-service', () => {
     sandbox.stub(cdn, 'deleteObjects');
 
     roomId = uniqueId.create();
-    storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxSizeInBytes: 10 * 1000 * 1000 };
+    storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 10 * 1000 * 1000 };
     await db.storagePlans.insertOne(storagePlan);
 
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
@@ -100,7 +100,7 @@ describe('cdn-service', () => {
 
         await db.users.updateOne(
           { _id: myUser._id },
-          { $set: { storage: { plan: null, usedStorageInBytes: 0, reminders: [] } } }
+          { $set: { storage: { plan: null, usedBytes: 0, reminders: [] } } }
         );
       });
 
@@ -118,7 +118,7 @@ describe('cdn-service', () => {
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 5 * 1000 * 1000 }
         ];
 
-        myUser.storage = { plan: storagePlan._id, usedStorageInBytes: 2 * 1000 * 1000, reminders: [] };
+        myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
       });
 
@@ -145,8 +145,8 @@ describe('cdn-service', () => {
         ];
         allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
 
-        const usedStorageInBytes = oldFiles.reduce((totalSize, file) => totalSize + file.size, 0);
-        myUser.storage = { plan: storagePlan._id, usedStorageInBytes, reminders: [] };
+        const usedBytes = oldFiles.reduce((totalSize, file) => totalSize + file.size, 0);
+        myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.find.resolves(allOwnedPrivateRoomIds.map(id => ({ _id: id })));
@@ -169,9 +169,9 @@ describe('cdn-service', () => {
         sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` });
       });
 
-      it('should update the user\'s usedStorageInBytes', async () => {
+      it('should update the user\'s usedBytes', async () => {
         const updatedUser = await db.users.findOne({ _id: myUser._id });
-        expect(updatedUser.storage.usedStorageInBytes)
+        expect(updatedUser.storage.usedBytes)
           .toBe(oldFiles[0].size + oldFiles[1].size + files[0].size + files[1].size);
       });
     });
@@ -201,7 +201,7 @@ describe('cdn-service', () => {
         prefix = 'media/';
         fileToDelete = { name: 'file.jpeg' };
 
-        myUser.storage = { plan: storagePlan._id, usedStorageInBytes: 2 * 1000 * 1000, reminders: [] };
+        myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         cdn.deleteObjects.resolves();
@@ -217,9 +217,9 @@ describe('cdn-service', () => {
         sinon.assert.notCalled(cdn.listObjects);
       });
 
-      it('should not update the user\'s usedStorageInBytes', async () => {
+      it('should not update the user\'s usedBytes', async () => {
         const updatedUser = await db.users.findOne({ _id: myUser._id });
-        expect(updatedUser.storage.usedStorageInBytes).toBe(myUser.storage.usedStorageInBytes);
+        expect(updatedUser.storage.usedBytes).toBe(myUser.storage.usedBytes);
       });
     });
 
@@ -237,8 +237,8 @@ describe('cdn-service', () => {
         ];
         allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
 
-        const usedStorageInBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
-        myUser.storage = { plan: storagePlan._id, usedStorageInBytes, reminders: [] };
+        const usedBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+        myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.find.resolves(allOwnedPrivateRoomIds.map(id => ({ _id: id })));
@@ -259,9 +259,9 @@ describe('cdn-service', () => {
         sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` });
       });
 
-      it('should update the user\'s usedStorageInBytes', async () => {
+      it('should update the user\'s usedBytes', async () => {
         const updatedUser = await db.users.findOne({ _id: myUser._id });
-        expect(updatedUser.storage.usedStorageInBytes).toBe(files[0].size + files[1].size);
+        expect(updatedUser.storage.usedBytes).toBe(files[0].size + files[1].size);
       });
     });
   });

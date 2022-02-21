@@ -70,7 +70,7 @@ function MySpace({ initialState, PageTemplate }) {
               <div className="MySpacePage-usedStorage">
                 <span className="MySpacePage-usedStorageLabel">{t('usedStorageLabel')}:</span>
                 <span className="MySpacePage-usedStorageBar">
-                  <UsedStorage usedBytes={user.storage.usedStorageInBytes} maxBytes={storagePlan?.maxSizeInBytes} />
+                  <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} />
                 </span>
               </div>
             </TabPane>

@@ -18,7 +18,7 @@ export default class Educandu_2022_02_15_01_add_storage_plans {
     await this.db.collection('storagePlans').insertOne({
       _id: 'bAaLpGNskfCZ4MBfGiDCQg',
       name: 'basic',
-      maxSizeInBytes: 500 * 1000 * 1000
+      maxBytes: 500 * 1000 * 1000
     });
   }
 
