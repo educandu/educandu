@@ -5,8 +5,8 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import TaskStore from '../stores/task-store.js';
+import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
-import DocumentLockStore from '../stores/document-lock-store.js';
 import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
@@ -29,7 +29,7 @@ describe('document-service', () => {
   let user;
 
   let taskStore;
-  let documentLockStore;
+  let lockStore;
 
   let sut;
   let db;
@@ -39,7 +39,7 @@ describe('document-service', () => {
     user = await setupTestUser(container);
 
     taskStore = container.get(TaskStore);
-    documentLockStore = container.get(DocumentLockStore);
+    lockStore = container.get(LockStore);
 
     sut = container.get(DocumentService);
     db = container.get(Database);
@@ -1257,8 +1257,8 @@ describe('document-service', () => {
     let revision;
 
     beforeEach(async () => {
-      sandbox.stub(documentLockStore, 'takeLock').resolves(lock);
-      sandbox.stub(documentLockStore, 'releaseLock');
+      sandbox.stub(lockStore, 'takeDocumentLock').resolves(lock);
+      sandbox.stub(lockStore, 'releaseLock');
       revision = {
         title: 'Title',
         slug: 'my-doc',
@@ -1284,11 +1284,11 @@ describe('document-service', () => {
     });
 
     it('should take a lock on the document', () => {
-      sinon.assert.calledWith(documentLockStore.takeLock, regeneratedDocument.key);
+      sinon.assert.calledWith(lockStore.takeDocumentLock, regeneratedDocument.key);
     });
 
     it('should release the lock on the document', () => {
-      sinon.assert.calledWith(documentLockStore.releaseLock, lock);
+      sinon.assert.calledWith(lockStore.releaseLock, lock);
     });
 
     it('should save a new document', () => {

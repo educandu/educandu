@@ -11,20 +11,16 @@ import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';
 import tasksSpec from './collection-specs/tasks.js';
 import roomsSpec from './collection-specs/rooms.js';
+import locksSpec from './collection-specs/locks.js';
 import lessonsSpec from './collection-specs/lessons.js';
 import batchesSpec from './collection-specs/batches.js';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
-import roomLocksSpec from './collection-specs/room-locks.js';
-import taskLocksSpec from './collection-specs/task-locks.js';
-import batchLocksSpec from './collection-specs/batch-locks.js';
 import storagePlansSpec from './collection-specs/storage-plans.js';
 import { DISPOSAL_PRIORITY, getDisposalInfo } from '../common/di.js';
-import documentLocksSpec from './collection-specs/document-locks.js';
 import documentOrdersSpec from './collection-specs/document-orders.js';
 import roomInvitationsSpec from './collection-specs/room-invitations.js';
-import maintenanceLocksSpec from './collection-specs/maintenance-locks.js';
 import documentRevisionsSpec from './collection-specs/document-revisions.js';
 import passwordResetRequestsSpec from './collection-specs/password-reset-requests.js';
 
@@ -36,21 +32,17 @@ const logger = new Logger(import.meta.url);
 const collectionSpecs = [
   usersSpec,
   tasksSpec,
+  locksSpec,
   batchesSpec,
   settingsSpec,
   sessionsSpec,
   documentsSpec,
-  taskLocksSpec,
-  batchLocksSpec,
   storagePlansSpec,
-  documentLocksSpec,
   documentOrdersSpec,
-  maintenanceLocksSpec,
   documentRevisionsSpec,
   passwordResetRequestsSpec,
   roomInvitationsSpec,
   roomsSpec,
-  roomLocksSpec,
   lessonsSpec
 ];
 

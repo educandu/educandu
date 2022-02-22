@@ -3,13 +3,13 @@ import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import TaskStore from '../stores/task-store.js';
+import LockStore from '../stores/lock-store.js';
 import BatchStore from '../stores/batch-store.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import { createSectionRevision } from './section-helper.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import DocumentLockStore from '../stores/document-lock-store.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
@@ -74,22 +74,22 @@ class DocumentService {
     return [
       DocumentRevisionStore,
       DocumentOrderStore,
-      DocumentLockStore,
       DocumentStore,
       BatchStore,
       TaskStore,
+      LockStore,
       TransactionRunner,
       InfoFactory
     ];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentLockStore, documentStore, batchStore, taskStore, transactionRunner, infoFactory) {
+  constructor(documentRevisionStore, documentOrderStore, documentStore, batchStore, taskStore, lockStore, transactionRunner, infoFactory) {
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
-    this.documentLockStore = documentLockStore;
     this.documentStore = documentStore;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
+    this.lockStore = lockStore;
     this.transactionRunner = transactionRunner;
     this.infoFactory = infoFactory;
   }
@@ -211,7 +211,7 @@ class DocumentService {
 
       logger.info(`Hard deleting sections with section key ${sectionKey} in documents with key ${documentKey}`);
 
-      lock = await this.documentLockStore.takeLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentKey);
 
       const revisionsBeforeDelete = await this._getAllDocumentRevisionsByKey(documentKey);
 
@@ -259,7 +259,7 @@ class DocumentService {
 
     } finally {
       if (lock) {
-        await this.documentLockStore.releaseLock(lock);
+        await this.lockStore.releaseLock(lock);
       }
     }
   }
@@ -273,7 +273,7 @@ class DocumentService {
 
     let lock;
     try {
-      lock = await this.documentLockStore.takeLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentKey);
 
       logger.info(`Hard deleting external document '${documentKey}'`);
 
@@ -284,7 +284,7 @@ class DocumentService {
 
     } finally {
       if (lock) {
-        await this.documentLockStore.releaseLock(lock);
+        await this.lockStore.releaseLock(lock);
       }
     }
   }
@@ -330,7 +330,7 @@ class DocumentService {
 
       logger.info(`Creating new document revision for document key ${documentKey}`);
 
-      lock = await this.documentLockStore.takeLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentKey);
 
       if (isAppendedRevision) {
         existingDocumentRevisions = await this._getAllDocumentRevisionsByKey(documentKey);
@@ -373,7 +373,7 @@ class DocumentService {
 
     } finally {
       if (lock) {
-        await this.documentLockStore.releaseLock(lock);
+        await this.lockStore.releaseLock(lock);
       }
     }
   }
@@ -384,7 +384,7 @@ class DocumentService {
     const documentKey = revisions[0].key;
 
     try {
-      lock = await this.documentLockStore.takeLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentKey);
 
       await this.transactionRunner.run(async session => {
 
@@ -428,7 +428,7 @@ class DocumentService {
       return newDocumentRevisions;
     } finally {
       if (lock) {
-        await this.documentLockStore.releaseLock(lock);
+        await this.lockStore.releaseLock(lock);
       }
     }
   }
@@ -437,7 +437,7 @@ class DocumentService {
     let lock;
 
     try {
-      lock = await this.documentLockStore.takeLock(documentKey);
+      lock = await this.lockStore.takeDocumentLock(documentKey);
 
       await this.transactionRunner.run(async session => {
         const existingDocumentRevisions = await this._getAllDocumentRevisionsByKey(documentKey, session);
@@ -449,7 +449,7 @@ class DocumentService {
       });
     } finally {
       if (lock) {
-        await this.documentLockStore.releaseLock(lock);
+        await this.lockStore.releaseLock(lock);
       }
     }
   }

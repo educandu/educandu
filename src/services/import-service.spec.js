@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import Database from '../stores/database.js';
+import LockStore from '../stores/lock-store.js';
 import TaskStore from '../stores/task-store.js';
 import ImportService from './import-service.js';
 import DocumentStore from '../stores/document-store.js';
-import BatchLockStore from '../stores/batch-lock-store.js';
 import ExportApiClient from '../api-clients/export-api-client.js';
 import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -279,15 +279,15 @@ describe('import-service', () => {
 
     describe('when there is an existing lock for the same import source', () => {
       let lock;
-      let batchLockStore;
+      let lockStore;
 
       beforeEach(async () => {
-        batchLockStore = container.get(BatchLockStore);
-        lock = await batchLockStore.takeLock(importSource.hostName);
+        lockStore = container.get(LockStore);
+        lock = await lockStore.takeBatchLock(importSource.hostName);
       });
 
       afterEach(async () => {
-        await batchLockStore.releaseLock(lock);
+        await lockStore.releaseLock(lock);
       });
 
       it('should fail the concurrency check', async () => {

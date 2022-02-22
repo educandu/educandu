@@ -1,20 +1,20 @@
 import Logger from '../common/logger.js';
+import LockStore from '../stores/lock-store.js';
 import TaskStore from '../stores/task-store.js';
 import { serializeError } from 'serialize-error';
 import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import TaskLockStore from '../stores/task-lock-store.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 
 const logger = new Logger(import.meta.url);
 
 export default class TaskProcessor {
-  static get inject() { return [TaskStore, TaskLockStore, DocumentImportTaskProcessor, DocumentRegenerationTaskProcessor, ServerConfig]; }
+  static get inject() { return [TaskStore, LockStore, DocumentImportTaskProcessor, DocumentRegenerationTaskProcessor, ServerConfig]; }
 
-  constructor(taskStore, taskLockStore, documentImportTaskProcessor, documentRegenerationTaskProcessor, serverConfig) {
+  constructor(taskStore, lockStore, documentImportTaskProcessor, documentRegenerationTaskProcessor, serverConfig) {
     this.taskStore = taskStore;
-    this.taskLockStore = taskLockStore;
+    this.lockStore = lockStore;
     this.serverConfig = serverConfig;
 
     this.taskProcessors = {
@@ -26,7 +26,7 @@ export default class TaskProcessor {
   async process(taskId, batchParams, ctx) {
     let lock;
     try {
-      lock = await this.taskLockStore.takeLock(taskId);
+      lock = await this.lockStore.takeTaskLock(taskId);
     } catch (err) {
       logger.debug(`Failed to take lock for task ${taskId}, will return`);
       return;
@@ -76,7 +76,7 @@ export default class TaskProcessor {
       logger.debug('Saving task');
       await this.taskStore.save(nextTask);
     } finally {
-      await this.taskLockStore.releaseLock(lock);
+      await this.lockStore.releaseLock(lock);
     }
   }
 }

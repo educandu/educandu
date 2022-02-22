@@ -1,18 +1,18 @@
 import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
-import MaintenanceLockStore from '../stores/maintenance-lock-store.js';
+import LockStore from '../stores/lock-store.js';
 
 const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 
 const logger = new Logger(import.meta.url);
 
 export default class MaintenanceService {
-  static get inject() { return [Database, MaintenanceLockStore]; }
+  static get inject() { return [Database, LockStore]; }
 
-  constructor(database, maintenanceLockStore) {
+  constructor(database, lockStore) {
     this.database = database;
-    this.maintenanceLockStore = maintenanceLockStore;
+    this.lockStore = lockStore;
   }
 
   async runMaintenance() {
@@ -21,7 +21,7 @@ export default class MaintenanceService {
       let lock;
       try {
         // eslint-disable-next-line no-await-in-loop
-        lock = await this.maintenanceLockStore.takeLock(MaintenanceService.MAINTENANCE_LOCK_KEY);
+        lock = await this.lockStore.takeMaintenanceLock(MaintenanceService.MAINTENANCE_LOCK_KEY);
 
         logger.info('Starting database migrations');
         // eslint-disable-next-line no-await-in-loop
@@ -45,7 +45,7 @@ export default class MaintenanceService {
       } finally {
         if (lock) {
           // eslint-disable-next-line no-await-in-loop
-          await this.maintenanceLockStore.releaseLock(lock);
+          await this.lockStore.releaseLock(lock);
         }
       }
     }

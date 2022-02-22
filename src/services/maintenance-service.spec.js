@@ -6,25 +6,25 @@ describe('maintenance-service', () => {
 
   let sut;
   let database;
-  let maintenanceLockStore;
+  let lockStore;
 
   beforeAll(() => {
     database = {
       runMigrationScripts: () => Promise.reject(new Error('not stubbed')),
       checkDb: () => Promise.reject(new Error('not stubbed'))
     };
-    maintenanceLockStore = {
-      takeLock: () => Promise.reject(new Error('not stubbed')),
+    lockStore = {
+      takeMaintenanceLock: () => Promise.reject(new Error('not stubbed')),
       releaseLock: () => Promise.reject(new Error('not stubbed'))
     };
-    sut = new MaintenanceService(database, maintenanceLockStore);
+    sut = new MaintenanceService(database, lockStore);
   });
 
   beforeEach(() => {
     sandbox.stub(database, 'runMigrationScripts');
     sandbox.stub(database, 'checkDb');
-    sandbox.stub(maintenanceLockStore, 'takeLock');
-    sandbox.stub(maintenanceLockStore, 'releaseLock');
+    sandbox.stub(lockStore, 'takeMaintenanceLock');
+    sandbox.stub(lockStore, 'releaseLock');
   });
 
   afterEach(() => {
@@ -35,8 +35,8 @@ describe('maintenance-service', () => {
 
     describe('when no lock is taken', () => {
       beforeEach(async () => {
-        maintenanceLockStore.takeLock.resolves({});
-        maintenanceLockStore.releaseLock.resolves({});
+        lockStore.takeMaintenanceLock.resolves({});
+        lockStore.releaseLock.resolves({});
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
 
@@ -44,11 +44,11 @@ describe('maintenance-service', () => {
       });
 
       it('should have tried to take the lock', () => {
-        sinon.assert.calledOnce(maintenanceLockStore.takeLock);
+        sinon.assert.calledOnce(lockStore.takeMaintenanceLock);
       });
 
       it('should have released the lock', () => {
-        sinon.assert.calledOnce(maintenanceLockStore.releaseLock);
+        sinon.assert.calledOnce(lockStore.releaseLock);
       });
 
       it('should have run the migrations', () => {
@@ -63,11 +63,11 @@ describe('maintenance-service', () => {
     describe('when the lock is already taken on first try', () => {
       beforeEach(async () => {
         sandbox.stub(MaintenanceService, 'MAINTENANCE_LOCK_INTERVAL_IN_SEC').value(0);
-        maintenanceLockStore.takeLock
+        lockStore.takeMaintenanceLock
           .onFirstCall().rejects({ code: 11000 })
           .onSecondCall().resolves({});
 
-        maintenanceLockStore.releaseLock.resolves({});
+        lockStore.releaseLock.resolves({});
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
 
@@ -75,11 +75,11 @@ describe('maintenance-service', () => {
       });
 
       it('should have tried to take the lock twice', () => {
-        sinon.assert.calledTwice(maintenanceLockStore.takeLock);
+        sinon.assert.calledTwice(lockStore.takeMaintenanceLock);
       });
 
       it('should have released the lock once', () => {
-        sinon.assert.calledOnce(maintenanceLockStore.releaseLock);
+        sinon.assert.calledOnce(lockStore.releaseLock);
       });
 
       it('should have run the migrations once', () => {
@@ -95,8 +95,8 @@ describe('maintenance-service', () => {
       let caughtError;
 
       beforeEach(async () => {
-        maintenanceLockStore.takeLock.resolves({});
-        maintenanceLockStore.releaseLock.resolves({});
+        lockStore.takeMaintenanceLock.resolves({});
+        lockStore.releaseLock.resolves({});
         database.runMigrationScripts.rejects(new Error('Migration failed'));
         database.checkDb.resolves();
 
@@ -113,11 +113,11 @@ describe('maintenance-service', () => {
       });
 
       it('should have tried to take the lock', () => {
-        sinon.assert.calledOnce(maintenanceLockStore.takeLock);
+        sinon.assert.calledOnce(lockStore.takeMaintenanceLock);
       });
 
       it('should have released the lock', () => {
-        sinon.assert.calledOnce(maintenanceLockStore.releaseLock);
+        sinon.assert.calledOnce(lockStore.releaseLock);
       });
 
       it('should have tried run the migrations', () => {
