@@ -22,12 +22,10 @@ class ClientDataMapper {
       email: user.email,
       roles: user.roles,
       profile: user.profile,
-      storage: user.storage
-        ? {
-          plan: user.storage.plan,
-          usedBytes: user.storage.usedBytes
-        }
-        : null
+      storage: {
+        plan: user.storage.plan,
+        usedBytes: user.storage.usedBytes
+      }
     };
   }
 
@@ -35,15 +33,13 @@ class ClientDataMapper {
     return users.map(user => ({
       ...user,
       expires: user.expires ? user.expires.toISOString() : user.expires,
-      storage: user.storage
-        ? {
-          ...user.storage,
-          reminders: user.storage.reminders.map(reminder => ({
-            ...reminder,
-            timestamp: reminder.timestamp.toISOString()
-          }))
-        }
-        : user.storage
+      storage: {
+        ...user.storage,
+        reminders: user.storage.reminders.map(reminder => ({
+          ...reminder,
+          timestamp: reminder.timestamp.toISOString()
+        }))
+      }
     }));
   }
 

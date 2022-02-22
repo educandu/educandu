@@ -206,7 +206,7 @@ function Lesson({ PageTemplate, initialState }) {
     uploadPath: `media/${lesson._id}`
   };
 
-  const privateStorage = isPrivateRoom && !!user.storage?.plan
+  const privateStorage = isPrivateRoom && !!user.storage.plan
     ? {
       rootPath: `rooms/${room._id}/media`,
       initialPath: `rooms/${room._id}/media`,

@@ -4,7 +4,6 @@ import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
-import { getDefaultStorage } from '../domain/storage.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { ROLE, SAVE_USER_RESULT } from '../domain/constants.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
@@ -151,12 +150,11 @@ class UserService {
       throw new NotFound(`Storage plan with ID '${storagePlanId}' could not be found`);
     }
 
-    if (user.storage?.plan) {
+    if (user.storage.plan) {
       throw new BadRequest('Switching from existing storage plans is not yet supported');
     }
 
-    const oldStorage = user.storage || getDefaultStorage();
-    const newStorage = { ...oldStorage, plan: plan._id };
+    const newStorage = { ...user.storage, plan: plan._id };
     user.storage = newStorage;
     await this.saveUser(user);
     return newStorage;
@@ -170,7 +168,7 @@ class UserService {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
 
-    if (!user.storage?.plan) {
+    if (!user.storage.plan) {
       throw new BadRequest(`User with ID '${userId}' does not have storage plan allocated`);
     }
 
@@ -187,11 +185,10 @@ class UserService {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
 
-    const oldStorage = user.storage || getDefaultStorage();
     const newStorage = {
-      ...oldStorage,
+      ...user.storage,
       reminders: [
-        ...oldStorage.reminders,
+        ...user.storage.reminders,
         {
           timestamp: new Date(),
           createdBy: executingUser._id
@@ -211,9 +208,8 @@ class UserService {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
 
-    const oldStorage = user.storage || getDefaultStorage();
     const newStorage = {
-      ...oldStorage,
+      ...user.storage,
       reminders: []
     };
     user.storage = newStorage;
@@ -352,7 +348,11 @@ class UserService {
       verificationCode: null,
       lockedOut: false,
       profile: null,
-      storage: null
+      storage: {
+        plan: null,
+        usedBytes: 0,
+        reminders: []
+      }
     };
   }
 }

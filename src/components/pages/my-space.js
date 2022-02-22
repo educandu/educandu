@@ -64,7 +64,7 @@ function MySpace({ initialState, PageTemplate }) {
           <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="3">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
-          {user.storage && (
+          {user.storage.usedBytes && (
             <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="4">
               <h5>{storagePlanName}</h5>
               <div className="MySpacePage-usedStorage">

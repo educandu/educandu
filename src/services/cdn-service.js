@@ -34,7 +34,7 @@ export default class CdnService {
       return;
     }
 
-    if (!user.storage?.plan) {
+    if (!user.storage.plan) {
       throw new Error('Cannot upload to private storage without a storage plan');
     }
 

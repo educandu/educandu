@@ -21,7 +21,7 @@ class UserController {
     const { user } = req;
 
     let storagePlan = null;
-    if (user.storage?.plan) {
+    if (user.storage.plan) {
       storagePlan = await this.userService.getStoragePlanById(user.storage.plan);
     }
 
