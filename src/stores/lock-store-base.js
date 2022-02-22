@@ -6,20 +6,14 @@ class LockStoreBase extends StoreBase {
   async takeLock({ type, key, expirationTimeInMinutes }) {
     const expires = expirationTimeInMinutes ? moment().add(expirationTimeInMinutes, 'minutes').toDate() : null;
 
-    const lock = {
-      _id: uniqueId.create(),
-      type,
-      key,
-      sessionKey: uniqueId.create(),
-      expires
-    };
+    const lock = { _id: uniqueId.create(), type, key, expires };
 
     await this.collection.insertOne(lock);
     return lock;
   }
 
   async releaseLock(lock) {
-    await this.collection.deleteOne({ type: lock.type, key: lock.key, sessionKey: lock.sessionKey });
+    await this.collection.deleteOne({ type: lock.type, key: lock.key });
   }
 }
 
