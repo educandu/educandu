@@ -101,7 +101,7 @@ class UserController {
   }
 
   async handleGetCompletePasswordResetPage(req, res) {
-    const resetRequest = await this.passwordResetRequestStore.getPasswordResetRequestById(req.params.passwordResetRequestId);
+    const resetRequest = await this.passwordResetRequestStore.getRequestById(req.params.passwordResetRequestId);
     const passwordResetRequestId = (resetRequest || {})._id;
     const initialState = { passwordResetRequestId };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);

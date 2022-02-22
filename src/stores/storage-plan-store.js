@@ -1,19 +1,18 @@
 import Database from './database.js';
-import StoreBase from './store-base.js';
 
-class StoragePlanStore extends StoreBase {
+class StoragePlanStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.storagePlans);
+    this.collection = db.storagePlans;
   }
 
   getAllStoragePlans() {
-    return this.find();
+    return this.collection.find().toArray();
   }
 
   getStoragePlanById(id, { session } = {}) {
-    return this.findOne({ _id: id }, { session });
+    return this.collection.findOne({ _id: id }, { session });
   }
 }
 

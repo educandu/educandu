@@ -1,27 +1,25 @@
 import Database from './database.js';
-import StoreBase from './store-base.js';
-
-class UserStore extends StoreBase {
+class UserStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.users);
+    this.collection = db.users;
   }
 
   getAllUsers() {
-    return this.find();
+    return this.collection.find().toArray();
   }
 
   findUserByUsername({ provider, username }, { session } = {}) {
-    return this.findOne({ username, provider }, { session });
+    return this.collection.findOne({ username, provider }, { session });
   }
 
   findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {
-    return this.findOne({ provider, verificationCode }, { session });
+    return this.collection.findOne({ provider, verificationCode }, { session });
   }
 
   findUserByUsernameOrEmail({ provider, username, email }, { session } = {}) {
-    return this.findOne({
+    return this.collection.findOne({
       $and: [
         { provider },
         { $or: [{ username }, { email }] }
@@ -30,7 +28,7 @@ class UserStore extends StoreBase {
   }
 
   findDifferentUserByUsernameOrEmail({ userId, provider, username, email }, { session } = {}) {
-    return this.findOne({
+    return this.collection.findOne({
       $and: [
         { _id: { $ne: userId } },
         { provider },
@@ -40,19 +38,21 @@ class UserStore extends StoreBase {
   }
 
   getUserById(id, { session } = {}) {
-    return this.findOne({ _id: id }, { session });
+    return this.collection.findOne({ _id: id }, { session });
   }
 
   getUsersByIds(ids, { session } = {}) {
-    return ids.length ? this.find({ _id: { $in: ids } }, { session }) : Promise.resolve([]);
+    return ids.length
+      ? this.collection.find({ _id: { $in: ids } }, { session }).toArray()
+      : Promise.resolve([]);
   }
 
   getUserByEmailAddress(email, { session } = {}) {
-    return this.findOne({ email: email.toLowerCase() }, { session });
+    return this.collection.findOne({ email: email.toLowerCase() }, { session });
   }
 
   saveUser(user, { session } = {}) {
-    return this.save(user, { session });
+    return this.collection.replaceOne({ _id: user._id }, user, { session, upsert: true });
   }
 }
 

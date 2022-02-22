@@ -23,7 +23,7 @@ describe('user-controller', () => {
       getAllStoragePlans: sandbox.stub()
     };
     passwordResetRequestStore = {
-      getPasswordResetRequestById: sandbox.stub()
+      getRequestById: sandbox.stub()
     };
     userService = {
       createUser: sandbox.stub(),

@@ -234,13 +234,13 @@ class UserService {
     };
 
     logger.info(`Creating password reset request ${request._id} for user with id ${request.userId}`);
-    await this.passwordResetRequestStore.save(request);
+    await this.passwordResetRequestStore.saveRequest(request);
     return request;
   }
 
   async completePasswordResetRequest(passwordResetRequestId, password) {
     logger.info(`Completing password reset request ${passwordResetRequestId}`);
-    const request = await this.passwordResetRequestStore.getPasswordResetRequestById(passwordResetRequestId);
+    const request = await this.passwordResetRequestStore.getRequestById(passwordResetRequestId);
     if (!request) {
       logger.info(`No password reset request has been found for id ${passwordResetRequestId}. Aborting request`);
       return false;
@@ -257,7 +257,7 @@ class UserService {
     logger.info(`Updating user ${user._id} with new password`);
     await this.userStore.saveUser(user);
     logger.info(`Deleting password reset request ${passwordResetRequestId}`);
-    await this.passwordResetRequestStore.deletePasswordResetRequestById(passwordResetRequestId);
+    await this.passwordResetRequestStore.deleteRequestById(passwordResetRequestId);
     return user;
   }
 
