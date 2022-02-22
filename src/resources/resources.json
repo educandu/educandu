@@ -132,32 +132,13 @@
     }
   },
   {
-    "namespace": "documentMetadataEditor",
-    "language": "en",
-    "resources": {
-      "header": "Metadata",
-      "unassigned": "unassigned",
-      "tags": "Tags",
-      "invalidTags": "At least one tag must be provided and all tags must be between 3 and 30 characters"
-    }
-  },
-  {
-    "namespace": "documentMetadataEditor",
-    "language": "de",
-    "resources": {
-      "header": "Metadaten",
-      "unassigned": "nicht zugewiesen",
-      "tags": "Tags",
-      "invalidTags": "Mindestens ein Tag muss angegeben werden und Tags dürfen nicht kürzer als 3 und nicht länger als 30 Zeichen sein"
-    }
-  },
-  {
     "namespace": "documentMetadataModal",
     "language": "en",
     "resources": {
       "newDocument": "New document",
       "editDocument": "Edit document",
       "titleRequired": "Please specify a document title",
+      "descriptionTooLong": "The description cannot have more than 1000 characters",
       "useTemplateDocument": "Use default template"
     }
   },
@@ -168,6 +149,7 @@
       "newDocument": "Neues Dokument",
       "editDocument": "Dokument bearbeiten",
       "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
+      "descriptionTooLong": "Die Beschreibung darf nicht länger als 1000 Zeichen sein",
       "useTemplateDocument": "Standardvorlage benutzen"
     }
   },

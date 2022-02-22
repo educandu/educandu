@@ -12,6 +12,7 @@ import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
+const TextArea = Input.TextArea;
 
 const logger = new Logger(import.meta.url);
 
@@ -41,6 +42,13 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
       required: true,
       message: t('titleRequired'),
       whitespace: true
+    }
+  ];
+
+  const descriptionValidationRules = [
+    {
+      max: 1000,
+      message: t('descriptionTooLong')
     }
   ];
 
@@ -89,13 +97,14 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
     }
   };
 
-  const handleOnFinish = async ({ title, slug, language, tags, useTemplateDocument }) => {
+  const handleOnFinish = async ({ title, description, slug, language, tags, useTemplateDocument }) => {
     try {
       setLoading(true);
 
       await onSave({
         title: (title || '').trim(),
         slug: (slug || '').trim(),
+        description: (description || '').trim(),
         language,
         tags,
         templateDocumentKey: useTemplateDocument ? templateDocumentKey : null
@@ -121,6 +130,9 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
       <Form onFinish={handleOnFinish} ref={formRef} name="document-metadata-form" layout="vertical" initialValues={initialDocumentMetadata}>
         <FormItem name="title" label={t('common:title')} rules={titleValidationRules}>
           <Input />
+        </FormItem>
+        <FormItem name="description" label={t('common:description')} rules={descriptionValidationRules}>
+          <TextArea autoSize={{ minRows: 3, maxRows: 10 }} />
         </FormItem>
         <FormItem name="language" label={t('common:language')}>
           <LanguageSelect />

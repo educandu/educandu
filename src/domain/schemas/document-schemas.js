@@ -17,6 +17,7 @@ export const getDocByKeyParamsSchema = joi.object({
 
 export const createRevisionBodySchema = joi.object({
   title: joi.string().required(),
+  description: joi.string().allow('').max(1000).required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
   sections: joi.array().items(sectionSchema).required(),
@@ -62,6 +63,7 @@ export const documentRevisionDBSchema = joi.object({
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
   title: joi.string().required(),
+  description: joi.string().allow('').max(1000).required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
   sections: joi.array().items(documentSectionDBSchema).required(),
@@ -83,6 +85,7 @@ export const documentDBSchema = joi.object({
   updatedOn: joi.date().required(),
   updatedBy: idOrKeySchema.required(),
   title: joi.string().required(),
+  description: joi.string().allow('').max(1000).required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
   sections: joi.array().items(documentSectionDBSchema).required(),
