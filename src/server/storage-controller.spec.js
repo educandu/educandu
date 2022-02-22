@@ -10,7 +10,7 @@ const { BadRequest, Unauthorized } = httpErrors;
 describe('storage-controller', () => {
   const sandbox = sinon.createSandbox();
 
-  let cdnService;
+  let storageService;
   let roomService;
 
   let user;
@@ -20,7 +20,7 @@ describe('storage-controller', () => {
   let sut;
 
   beforeEach(() => {
-    cdnService = {
+    storageService = {
       uploadFiles: sandbox.stub()
     };
     roomService = {
@@ -33,7 +33,7 @@ describe('storage-controller', () => {
     roomService.getRoomById.resolves(null);
     roomService.getRoomById.withArgs(room._id).resolves(room);
 
-    sut = new StorageController(cdnService, roomService);
+    sut = new StorageController(storageService, roomService);
   });
 
   afterEach(() => {
@@ -96,8 +96,8 @@ describe('storage-controller', () => {
         sut.handlePostCdnObject(req, res);
       });
 
-      it('should call cdnService.uploadFiles', () => {
-        sinon.assert.calledWith(cdnService.uploadFiles, { prefix: req.body.prefix, files: req.files, user });
+      it('should call storageService.uploadFiles', () => {
+        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, user });
       });
 
       it('should return 200', () => {

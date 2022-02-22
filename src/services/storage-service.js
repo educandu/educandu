@@ -13,7 +13,7 @@ import {
   STORAGE_PATH_TYPE
 } from '../ui/path-helper.js';
 
-export default class CdnService {
+export default class StorageService {
   static get inject() { return [Cdn, RoomStore, UserService]; }
 
   constructor(cdn, roomStore, userService) {

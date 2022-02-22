@@ -4,8 +4,8 @@ import express from 'express';
 import parseBool from 'parseboolean';
 import httpErrors from 'http-errors';
 import permissions from '../domain/permissions.js';
-import CdnService from '../services/cdn-service.js';
 import RoomService from '../services/room-service.js';
+import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
@@ -17,17 +17,17 @@ const multipartParser = multer({ dest: os.tmpdir() });
 const { BadRequest, Unauthorized } = httpErrors;
 
 class StorageController {
-  static get inject() { return [CdnService, RoomService]; }
+  static get inject() { return [StorageService, RoomService]; }
 
-  constructor(cdnService, roomService) {
-    this.cdnService = cdnService;
+  constructor(storageService, roomService) {
+    this.storageService = storageService;
     this.roomService = roomService;
   }
 
   async handleGetCdnObject(req, res) {
     const prefix = req.query.prefix;
     const recursive = parseBool(req.query.recursive);
-    const objects = await this.cdnService.listObjects({ prefix, recursive });
+    const objects = await this.storageService.listObjects({ prefix, recursive });
 
     return res.send({ objects });
   }
@@ -37,7 +37,7 @@ class StorageController {
     const { prefix } = req.query;
     const { objectName } = req.params;
 
-    await this.cdnService.deleteObject({ prefix, objectName, user });
+    await this.storageService.deleteObject({ prefix, objectName, user });
 
     return res.sendStatus(200);
   }
@@ -68,7 +68,7 @@ class StorageController {
       }
     }
 
-    await this.cdnService.uploadFiles({ prefix, files, user });
+    await this.storageService.uploadFiles({ prefix, files, user });
     return res.send({});
   }
 
