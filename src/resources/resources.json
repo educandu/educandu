@@ -18,20 +18,6 @@
     }
   },
   {
-    "namespace": "storageFilePicker",
-    "language": "en",
-    "resources": {
-      "modalTitle": "File browser"
-    }
-  },
-  {
-    "namespace": "storageFilePicker",
-    "language": "de",
-    "resources": {
-      "modalTitle": "Dateibrowser"
-    }
-  },
-  {
     "namespace": "confirmationDialogs",
     "language": "en",
     "resources": {
@@ -888,40 +874,6 @@
     }
   },
   {
-    "namespace": "storageBrowser",
-    "language": "en",
-    "resources": {
-      "fileUpload": "File upload",
-      "searchFilter": "Search filter",
-      "displayNameText": "Name",
-      "categoryText": "Type",
-      "sizeText": "Size",
-      "lastModifiedText": "Date",
-      "action": "Action",
-      "moreActions": "More Actions",
-      "uploadFiles": "Upload files",
-      "publicStorage": "Public storage",
-      "privateStorage": "Private storage"
-    }
-  },
-  {
-    "namespace": "storageBrowser",
-    "language": "de",
-    "resources": {
-      "fileUpload": "Datei-Upload",
-      "searchFilter": "Suchfilter",
-      "displayNameText": "Name",
-      "categoryText": "Typ",
-      "sizeText": "Größe",
-      "lastModifiedText": "Datum",
-      "action": "Aktion",
-      "moreActions": "Weitere Aktionen",
-      "uploadFiles": "Dateien hochladen",
-      "publicStorage": "Öffentlicher Speicher",
-      "privateStorage": "Privater Speicher"
-    }
-  },
-  {
     "namespace": "roomCreationModal",
     "language": "en",
     "resources": {
@@ -1053,6 +1005,54 @@
       "linkTitle": "Link-Titel",
       "urlPath": "URL-Pfad",
       "unknown": "Unbekannt"
+    }
+  },
+  {
+    "namespace": "storageBrowser",
+    "language": "en",
+    "resources": {
+      "fileUpload": "File upload",
+      "searchFilter": "Search filter",
+      "displayNameText": "Name",
+      "categoryText": "Type",
+      "sizeText": "Size",
+      "lastModifiedText": "Date",
+      "action": "Action",
+      "moreActions": "More Actions",
+      "uploadFiles": "Upload files",
+      "publicStorage": "Public storage",
+      "privateStorage": "Private storage"
+    }
+  },
+  {
+    "namespace": "storageBrowser",
+    "language": "de",
+    "resources": {
+      "fileUpload": "Datei-Upload",
+      "searchFilter": "Suchfilter",
+      "displayNameText": "Name",
+      "categoryText": "Typ",
+      "sizeText": "Größe",
+      "lastModifiedText": "Datum",
+      "action": "Aktion",
+      "moreActions": "Weitere Aktionen",
+      "uploadFiles": "Dateien hochladen",
+      "publicStorage": "Öffentlicher Speicher",
+      "privateStorage": "Privater Speicher"
+    }
+  },
+  {
+    "namespace": "storageFilePicker",
+    "language": "en",
+    "resources": {
+      "modalTitle": "File browser"
+    }
+  },
+  {
+    "namespace": "storageFilePicker",
+    "language": "de",
+    "resources": {
+      "modalTitle": "Dateibrowser"
     }
   },
   {
