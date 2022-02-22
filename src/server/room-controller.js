@@ -2,9 +2,9 @@ import express from 'express';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
+import UserStore from '../stores/user-store.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
-import UserService from '../services/user-service.js';
 import RoomService from '../services/room-service.js';
 import MailService from '../services/mail-service.js';
 import ClientDataMapper from './client-data-mapper.js';
@@ -31,12 +31,12 @@ const jsonParser = express.json();
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, UserService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, UserStore, RoomService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
 
-  constructor(serverConfig, roomService, userService, lessonService, mailService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, userStore, roomService, lessonService, mailService, clientDataMapper, pageRenderer) {
     this.serverConfig = serverConfig;
     this.roomService = roomService;
-    this.userService = userService;
+    this.userStore = userStore;
     this.lessonService = lessonService;
     this.mailService = mailService;
     this.clientDataMapper = clientDataMapper;
@@ -89,7 +89,7 @@ export default class RoomController {
 
     const userIds = members.map(({ userId }) => userId);
 
-    const users = await this.userService.getUsersByIds(userIds);
+    const users = await this.userStore.getUsersByIds(userIds);
 
     await Promise.all(users.map(({ email }) => {
       return this.mailService.sendRoomDeletionNotificationEmail({ email, roomName, ownerName: user.username });

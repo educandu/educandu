@@ -7,6 +7,14 @@ class PasswordResetRequestStore extends StoreBase {
   constructor(db) {
     super(db.passwordResetRequests);
   }
+
+  getPasswordResetRequestById(id) {
+    return this.findOne({ _id: id });
+  }
+
+  deletePasswordResetRequestById(id) {
+    return this.deleteOne({ _id: id });
+  }
 }
 
 export default PasswordResetRequestStore;

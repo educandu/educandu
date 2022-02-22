@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import UserService from '../services/user-service.js';
+import UserStore from '../stores/user-store.js';
 import ClientDataMapper from './client-data-mapper.js';
 import { ROLE, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -7,7 +7,7 @@ import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, set
 describe('client-data-mapper', () => {
   const sandbox = sinon.createSandbox();
 
-  let userService;
+  let userStore;
   let container;
   let result;
   let user1;
@@ -16,7 +16,7 @@ describe('client-data-mapper', () => {
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    userService = container.get(UserService);
+    userStore = container.get(UserStore);
     sut = container.get(ClientDataMapper);
   });
 
@@ -245,17 +245,17 @@ describe('client-data-mapper', () => {
     };
 
     beforeEach(async () => {
-      sandbox.stub(userService, 'getUserById').resolves(owner);
-      sandbox.stub(userService, 'getUsersByIds').resolves([member1, member2]);
+      sandbox.stub(userStore, 'getUserById').resolves(owner);
+      sandbox.stub(userStore, 'getUsersByIds').resolves([member1, member2]);
       result = await sut.mapRoom(room, { roles: [ROLE.admin] });
     });
 
     it('should call getUserById with "owner"', () => {
-      sinon.assert.calledWith(userService.getUserById, 'owner');
+      sinon.assert.calledWith(userStore.getUserById, 'owner');
     });
 
     it('should call getUsersById with "[member1, memeber2]"', () => {
-      sinon.assert.calledWith(userService.getUsersByIds, ['member1', 'member2']);
+      sinon.assert.calledWith(userStore.getUsersByIds, ['member1', 'member2']);
     });
 
     it('should return the mapped result', () => {

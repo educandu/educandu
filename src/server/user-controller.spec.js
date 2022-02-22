@@ -7,17 +7,28 @@ import { SAVE_USER_RESULT } from '../domain/constants.js';
 describe('user-controller', () => {
 
   const sandbox = sinon.createSandbox();
+  let passwordResetRequestStore;
+  let storagePlanStore;
   let clientDataMapper;
   let userService;
   let mailService;
+  let userStore;
   let sut;
 
   beforeEach(() => {
+    userStore = {
+      getUserByEmailAddress: sandbox.stub()
+    };
+    storagePlanStore = {
+      getAllStoragePlans: sandbox.stub()
+    };
+    passwordResetRequestStore = {
+      getPasswordResetRequestById: sandbox.stub()
+    };
     userService = {
       createUser: sandbox.stub(),
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
-      getUserByEmailAddress: sandbox.stub(),
       createPasswordResetRequest: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
       deleteAllUserStorageReminders: sandbox.stub()
@@ -33,7 +44,17 @@ describe('user-controller', () => {
     const database = {};
     const pageRenderer = {};
 
-    sut = new UserController(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer);
+    sut = new UserController(
+      serverConfig,
+      database,
+      userStore,
+      storagePlanStore,
+      passwordResetRequestStore,
+      userService,
+      mailService,
+      clientDataMapper,
+      pageRenderer
+    );
   });
 
   afterEach(() => {
@@ -282,7 +303,7 @@ describe('user-controller', () => {
 
         res.on('end', done);
 
-        userService.getUserByEmailAddress.resolves(user);
+        userStore.getUserByEmailAddress.resolves(user);
         userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId' });
 
         sut.handlePostUserPasswordResetRequest(req, res);
@@ -321,7 +342,7 @@ describe('user-controller', () => {
 
         res.on('end', done);
 
-        userService.getUserByEmailAddress.resolves(null);
+        userStore.getUserByEmailAddress.resolves(null);
 
         sut.handlePostUserPasswordResetRequest(req, res);
       });

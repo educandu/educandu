@@ -5,6 +5,7 @@ import UserService from './user-service.js';
 import RoomStore from '../stores/room-store.js';
 import fileNameHelper from '../utils/file-name-helper.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
 import {
   getObjectNameWithoutPrefixFromStoragePath,
   getPrefixFromStoragePath,
@@ -14,12 +15,13 @@ import {
 } from '../ui/path-helper.js';
 
 export default class StorageService {
-  static get inject() { return [Cdn, RoomStore, UserService]; }
+  static get inject() { return [Cdn, RoomStore, StoragePlanStore, UserService]; }
 
-  constructor(cdn, roomStore, userService) {
+  constructor(cdn, roomStore, storagePlanStore, userService) {
     this.cdn = cdn;
     this.roomStore = roomStore;
     this.userService = userService;
+    this.storagePlanStore = storagePlanStore;
   }
 
   async uploadFiles({ prefix, files, user }) {
@@ -38,7 +40,7 @@ export default class StorageService {
       throw new Error('Cannot upload to private storage without a storage plan');
     }
 
-    const storagePlan = await this.userService.getStoragePlanById(user.storage.plan);
+    const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.plan);
     const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
     const availableBytes = storagePlan.maxBytes - user.storage.usedBytes;
 

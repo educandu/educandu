@@ -3,10 +3,10 @@ import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
+import uniqueId from '../utils/unique-id.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
-import uniqueId from '../utils/unique-id.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -19,13 +19,17 @@ describe('room-controller', () => {
   let serverConfig;
   let clientDataMapper;
   let pageRenderer;
-  let userService;
+  let userStore;
   let user;
   let req;
   let res;
   let sut;
 
   beforeEach(() => {
+    userStore = {
+      getUsersByIds: sandbox.stub()
+    };
+
     roomService = {
       createOrUpdateInvitation: sandbox.stub(),
       confirmInvitation: sandbox.stub(),
@@ -61,12 +65,7 @@ describe('room-controller', () => {
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-
-    userService = {
-      getUsersByIds: sandbox.stub()
-    };
-
-    sut = new RoomController(serverConfig, roomService, userService, lessonService, mailService, clientDataMapper, pageRenderer);
+    sut = new RoomController(serverConfig, userStore, roomService, lessonService, mailService, clientDataMapper, pageRenderer);
   });
 
   afterEach(() => {
@@ -672,7 +671,7 @@ describe('room-controller', () => {
       roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB, roomC]);
       roomService.deleteRoom.withArgs(roomA._id, user).resolves(roomA);
       roomService.deleteRoom.withArgs(roomB._id, user).resolves(roomB);
-      userService.getUsersByIds.callsFake(ids => Promise.resolve(ids.map(id => [userJacky, userClare, userDrake].find(x => x._id === id))));
+      userStore.getUsersByIds.callsFake(ids => Promise.resolve(ids.map(id => [userJacky, userClare, userDrake].find(x => x._id === id))));
 
       sut.handleDeleteAllRoomsForUser(req, res);
     });
@@ -687,8 +686,8 @@ describe('room-controller', () => {
     });
 
     it('should call getUsersByIds for each room with the right ids', () => {
-      sinon.assert.calledWith(userService.getUsersByIds, roomA.members.map(({ userId }) => userId));
-      sinon.assert.calledWith(userService.getUsersByIds, roomB.members.map(({ userId }) => userId));
+      sinon.assert.calledWith(userStore.getUsersByIds, roomA.members.map(({ userId }) => userId));
+      sinon.assert.calledWith(userStore.getUsersByIds, roomB.members.map(({ userId }) => userId));
     });
 
     it('should call sendRoomDeletionNotificationEmail with the right emails', () => {
@@ -729,7 +728,7 @@ describe('room-controller', () => {
       res.on('end', done);
 
       roomService.deleteRoom.resolves({ members, name: roomName });
-      userService.getUsersByIds.resolves(users);
+      userStore.getUsersByIds.resolves(users);
 
       sut.handleDeleteRoom(req, res);
     });
@@ -739,7 +738,7 @@ describe('room-controller', () => {
     });
 
     it('should call getUsersByIds with the right ids', () => {
-      sinon.assert.calledWith(userService.getUsersByIds, members.map(({ userId }) => userId));
+      sinon.assert.calledWith(userStore.getUsersByIds, members.map(({ userId }) => userId));
     });
 
     it('should call sendRoomDeletionNotificationEmail with the right emails', () => {

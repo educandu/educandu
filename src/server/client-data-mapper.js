@@ -1,12 +1,14 @@
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import UserStore from '../stores/user-store.js';
 import privateData from '../domain/private-data.js';
 import UserService from '../services/user-service.js';
 
 class ClientDataMapper {
-  static get inject() { return [UserService]; }
+  static get inject() { return [UserStore, UserService]; }
 
-  constructor(userService) {
+  constructor(userStore, userService) {
+    this.userStore = userStore;
     this.userService = userService;
   }
 
@@ -69,7 +71,7 @@ class ClientDataMapper {
 
   async mapImportBatches(batches, user) {
     const userIdSet = new Set(batches.map(batch => batch.createdBy));
-    const users = await this.userService.getUsersByIds(Array.from(userIdSet));
+    const users = await this.userStore.getUsersByIds(Array.from(userIdSet));
     const allowedUserFields = privateData.getAllowedUserFields(user);
 
     if (users.length !== userIdSet.size) {
@@ -81,7 +83,7 @@ class ClientDataMapper {
   }
 
   async mapImportBatch(batch, user) {
-    const users = await this.userService.getUsersByIds([batch.createdBy]);
+    const users = await this.userStore.getUsersByIds([batch.createdBy]);
     const allowedUserFields = privateData.getAllowedUserFields(user);
 
     if (users.length !== 1) {
@@ -95,10 +97,10 @@ class ClientDataMapper {
     const allowedUserFields = privateData.getAllowedUserFields(user);
     const mappedRoom = cloneDeep(room);
 
-    const owner = await this.userService.getUserById(room.owner);
+    const owner = await this.userStore.getUserById(room.owner);
     mappedRoom.owner = this._mapUser(owner, allowedUserFields);
 
-    const memberUsers = await this.userService.getUsersByIds(room.members.map(member => member.userId));
+    const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 
     mappedRoom.members = room.members.map(member => {
       const memberDetails = memberUsers.find(memberUser => member.userId === memberUser._id);
@@ -290,7 +292,7 @@ class ClientDataMapper {
 
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {
     const idSet = this.userService.extractUserIdSetFromDocsOrRevisions(docsOrRevisions);
-    const users = await this.userService.getUsersByIds(Array.from(idSet));
+    const users = await this.userStore.getUsersByIds(Array.from(idSet));
     if (users.length !== idSet.size) {
       throw new Error(`Was searching for ${idSet.size} users, but found ${users.length}`);
     }

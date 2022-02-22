@@ -1,10 +1,10 @@
 import moment from 'moment';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
-import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
+import UserStore from '../stores/user-store.js';
 import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
@@ -19,15 +19,15 @@ const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
 export default class RoomService {
   static get inject() {
-    return [RoomStore, RoomInvitationStore, LessonStore, LockStore, UserService, StorageService, TransactionRunner];
+    return [RoomStore, RoomInvitationStore, LessonStore, LockStore, UserStore, StorageService, TransactionRunner];
   }
 
-  constructor(roomStore, roomInvitationStore, lessonStore, lockStore, userService, storageService, transactionRunner) {
+  constructor(roomStore, roomInvitationStore, lessonStore, lockStore, userStore, storageService, transactionRunner) {
     this.roomStore = roomStore;
     this.lockStore = lockStore;
-    this.storageService = storageService;
-    this.userService = userService;
+    this.userStore = userStore;
     this.lessonStore = lessonStore;
+    this.storageService = storageService;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
   }
@@ -119,7 +119,7 @@ export default class RoomService {
       throw new BadRequest(`Room with ID '${roomId}' is public, therefore invitations cannot be sent`);
     }
 
-    const owner = await this.userService.getUserById(room.owner);
+    const owner = await this.userStore.getUserById(room.owner);
 
     if (owner.email.toLowerCase() === lowerCasedEmail) {
       throw new BadRequest('Invited user is the same as room owner');
