@@ -15,8 +15,24 @@ class RoomInvitationStore extends StoreBase {
     super(db.roomInvitations);
   }
 
+  getRoomInvitationByToken({ token }, { session } = {}) {
+    return this.findOne({ token }, { session });
+  }
+
+  getRoomInvitationByRoomIdAndEmail({ roomId, email }, { session } = {}) {
+    return this.findOne({ roomId, email }, { session });
+  }
+
   getRoomInvitationMetadataByRoomId({ roomId }, { session } = {}) {
-    return this.find({ roomId }, { projection: roomInvitationMetadataProjection, session });
+    return this.find({ roomId }, { session, projection: roomInvitationMetadataProjection });
+  }
+
+  deleteRoomInvitationById({ roomInvitationId }, { session } = {}) {
+    return this.deleteOne({ _id: roomInvitationId }, { session });
+  }
+
+  deleteRoomInvitationsByRoomId({ roomId }, { session } = {}) {
+    return this.deleteMany({ roomId }, { session });
   }
 }
 
