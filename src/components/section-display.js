@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { isMacOs } from '../ui/browser-helper.js';
 import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
 import InfoFactory from '../plugins/info-factory.js';
@@ -59,10 +60,29 @@ function SectionDisplay({
 
   const [isEditing, setIsEditing] = useState(false);
 
+  const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
+
+  const composeShortcutText = parts => parts.map(part => t(`common:${part}`)).join(' + ');
+
+  const renderActionTooltip = (action, shortcutParts = []) => {
+    const macOSShortcutParts = shortcutParts.map(part => macOSKeyMappings[part] || part);
+    return (
+      <div className="SectionDisplay-actionTooltip">
+        <div className="SectionDisplay-actionTooltipTitle">{t(`common:${action}`)}</div>
+        {!!shortcutParts.length && (
+          <Fragment>
+            <div className="SectionDisplay-actionTooltipSubtext">Windows: {composeShortcutText(shortcutParts)}</div>
+            <div className="SectionDisplay-actionTooltipSubtext">Mac: {composeShortcutText(macOSShortcutParts)}</div>
+          </Fragment>
+        )}
+      </div>
+    );
+  };
+
   const editActions = [
     {
       type: 'edit',
-      title: `${t('common:edit')} (${t('common:ctrl')}+${t('common:click')})`,
+      tooltip: renderActionTooltip('edit', ['ctrl', 'click']),
       icon: <EditOutlined key="edit" />,
       handleAction: () => setIsEditing(true),
       isVisible: !isEditing,
@@ -70,7 +90,7 @@ function SectionDisplay({
     },
     {
       type: 'preview',
-      title: `${t('common:preview')} (${t('common:ctrl')}+${t('common:click')})`,
+      tooltip: renderActionTooltip('preview', ['ctrl', 'click']),
       icon: <EyeOutlined key="preview" />,
       handleAction: () => setIsEditing(false),
       isVisible: isEditing,
@@ -78,7 +98,7 @@ function SectionDisplay({
     },
     {
       type: 'duplicate',
-      title: `${t('common:duplicate')} (${t('common:shift')}+${t('common:ctrl')}+${t('common:click')})`,
+      tooltip: renderActionTooltip('duplicate', ['shift', 'ctrl', 'click']),
       icon: <SnippetsOutlined key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
       isVisible: true,
@@ -86,7 +106,7 @@ function SectionDisplay({
     },
     {
       type: 'delete',
-      title: `${t('common:delete')} (${t('common:shift')}+${t('common:ctrl')}+${t('common:alt')}+${t('common:click')})`,
+      tooltip: renderActionTooltip('delete', ['shift', 'ctrl', 'alt', 'click']),
       icon: <DeleteOutlined key="delete" />,
       handleAction: () => onSectionDelete(),
       isVisible: true,
@@ -94,7 +114,7 @@ function SectionDisplay({
     },
     {
       type: 'moveUp',
-      title: t('common:moveUp'),
+      tooltip: renderActionTooltip('moveUp'),
       icon: <ArrowUpOutlined key="moveUp" />,
       handleAction: () => onSectionMoveUp(),
       isVisible: true,
@@ -102,7 +122,7 @@ function SectionDisplay({
     },
     {
       type: 'moveDown',
-      title: t('common:moveDown'),
+      tooltip: renderActionTooltip('moveDown'),
       icon: <ArrowDownOutlined key="moveDown" />,
       handleAction: () => onSectionMoveDown(),
       isVisible: true,
@@ -144,7 +164,7 @@ function SectionDisplay({
   };
 
   const renderEditAction = (action, index) => (
-    <Tooltip key={index} title={action.title} placement="topRight">
+    <Tooltip key={index} title={action.tooltip} placement="topRight">
       <Button
         className={`SectionDisplay-actionButton SectionDisplay-actionButton--${action.type}`}
         size="small"
@@ -180,7 +200,9 @@ function SectionDisplay({
   );
 
   const handleSectionClick = event => {
-    if (canEdit && event.ctrlKey) {
+    const ctrlKeyIsPressed = event.ctrlKey;
+    const commandKeyIsPressed = isMacOs() && event.metaKey;
+    if (canEdit && (ctrlKeyIsPressed || commandKeyIsPressed)) {
       if (event.shiftKey) {
         if (event.altKey) {
           onSectionDelete();

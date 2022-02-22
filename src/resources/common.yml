@@ -169,12 +169,18 @@ click:
 ctrl:
   en: Ctrl
   de: Strg
+cmd:
+  en: Cmd
+  de: Cmd
 shift:
   en: Shift
   de: Umschalt
 alt:
   en: Alt
   de: Alt
+opt:
+  en: Opt
+  de: Opt
 unknown:
   en: Unknown
   de: Unbekannt
