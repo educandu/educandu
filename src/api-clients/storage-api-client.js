@@ -1,6 +1,6 @@
 import HttpClient from './http-client.js';
 
-class CdnApiClient {
+class StorageApiClient {
   static inject() { return [HttpClient]; }
 
   constructor(httpClient) {
@@ -10,7 +10,7 @@ class CdnApiClient {
   getObjects(prefix) {
     return this.httpClient
       .get(
-        `/api/v1/cdn/objects?prefix=${encodeURIComponent(prefix)}`,
+        `/api/v1/storage/objects?prefix=${encodeURIComponent(prefix)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
@@ -24,7 +24,7 @@ class CdnApiClient {
 
     const request = this.httpClient
       .post(
-        '/api/v1/cdn/objects',
+        '/api/v1/storage/objects',
         formData,
         {
           responseType: 'json',
@@ -39,11 +39,11 @@ class CdnApiClient {
   deleteCdnObject(prefix, fileName) {
     return this.httpClient
       .delete(
-        `/api/v1/cdn/objects/${fileName}?prefix=${encodeURIComponent(prefix)}`,
+        `/api/v1/storage/objects/${fileName}?prefix=${encodeURIComponent(prefix)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 }
 
-export default CdnApiClient;
+export default StorageApiClient;

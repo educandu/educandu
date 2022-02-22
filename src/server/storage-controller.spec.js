@@ -3,11 +3,11 @@ import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
-import CdnController from './cdn-controller.js';
+import StorageController from './storage-controller.js';
 
 const { BadRequest, Unauthorized } = httpErrors;
 
-describe('cdn-controller', () => {
+describe('storage-controller', () => {
   const sandbox = sinon.createSandbox();
 
   let cdnService;
@@ -33,7 +33,7 @@ describe('cdn-controller', () => {
     roomService.getRoomById.resolves(null);
     roomService.getRoomById.withArgs(room._id).resolves(room);
 
-    sut = new CdnController(cdnService, roomService);
+    sut = new StorageController(cdnService, roomService);
   });
 
   afterEach(() => {

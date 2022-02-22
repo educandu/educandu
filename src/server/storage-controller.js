@@ -9,14 +9,14 @@ import RoomService from '../services/room-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
-import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/cdn-schemas.js';
+import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/storage-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 const { BadRequest, Unauthorized } = httpErrors;
 
-class CdnController {
+class StorageController {
   static get inject() { return [CdnService, RoomService]; }
 
   constructor(cdnService, roomService) {
@@ -74,23 +74,23 @@ class CdnController {
 
   registerApi(router) {
     router.get(
-      '/api/v1/cdn/objects',
+      '/api/v1/storage/objects',
       [needsPermission(permissions.VIEW_FILES), jsonParser, validateQuery(getObjectsQuerySchema)],
       (req, res) => this.handleGetCdnObject(req, res)
     );
 
     router.delete(
-      '/api/v1/cdn/objects/:objectName',
+      '/api/v1/storage/objects/:objectName',
       [needsPermission(permissions.DELETE_CDN_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
 
     router.post(
-      '/api/v1/cdn/objects',
+      '/api/v1/storage/objects',
       [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)],
       (req, res) => this.handlePostCdnObject(req, res)
     );
   }
 }
 
-export default CdnController;
+export default StorageController;

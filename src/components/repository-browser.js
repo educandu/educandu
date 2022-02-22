@@ -12,10 +12,10 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
-import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
+import StorageApiClient from '../api-clients/storage-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
@@ -274,13 +274,13 @@ class RepositoryBrowser extends React.Component {
   async refreshFiles(pathSegments, keysToSelect) {
     this.setState({ isRefreshing: true });
 
-    const { cdnApiClient, t } = this.props;
+    const { storageApiClient, t } = this.props;
     const { initialPathSegments, uploadPathSegments } = this.state.currentLocation;
     const prefix = getPrefix(pathSegments);
 
     let objects;
     try {
-      const result = await cdnApiClient.getObjects(prefix);
+      const result = await storageApiClient.getObjects(prefix);
       objects = result.objects;
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -302,12 +302,12 @@ class RepositoryBrowser extends React.Component {
   async uploadFiles(files, { onProgress } = {}) {
     this.increaseCurrentUploadCount();
 
-    const { cdnApiClient, t } = this.props;
+    const { storageApiClient, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = getPrefix(currentPathSegments);
 
     try {
-      await cdnApiClient.uploadFiles(files, prefix, { onProgress });
+      await storageApiClient.uploadFiles(files, prefix, { onProgress });
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -318,13 +318,13 @@ class RepositoryBrowser extends React.Component {
   }
 
   async handleDeleteFile(fileName) {
-    const { cdnApiClient, onSelectionChanged, t } = this.props;
+    const { storageApiClient, onSelectionChanged, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = getPrefix(currentPathSegments);
     const objectName = `${prefix}${fileName}`;
 
     try {
-      await cdnApiClient.deleteCdnObject(prefix, fileName);
+      await storageApiClient.deleteCdnObject(prefix, fileName);
       if (selectedRowKeys.includes(objectName)) {
         onSelectionChanged([], true);
       }
@@ -654,7 +654,7 @@ class RepositoryBrowser extends React.Component {
 
 RepositoryBrowser.propTypes = {
   ...userProps,
-  cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
+  storageApiClient: PropTypes.instanceOf(StorageApiClient).isRequired,
   formatDate: PropTypes.func.isRequired,
   onSelectionChanged: PropTypes.func,
   privateStorage: filePickerStorageShape,
@@ -672,14 +672,14 @@ RepositoryBrowser.defaultProps = {
 
 export default function RepositoryBrowserWrapper({ ...props }) {
   const { t } = useTranslation('repositoryBrowser');
-  const cdnApiClient = useSessionAwareApiClient(CdnApiClient);
+  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const user = useUser();
 
   return (
     <RepositoryBrowser
-      cdnApiClient={cdnApiClient}
+      storageApiClient={storageApiClient}
       uiLanguage={uiLanguage}
       formatDate={formatDate}
       user={user}
