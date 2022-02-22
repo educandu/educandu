@@ -18,14 +18,14 @@
     }
   },
   {
-    "namespace": "cdnFilePicker",
+    "namespace": "storageFilePicker",
     "language": "en",
     "resources": {
       "modalTitle": "File browser"
     }
   },
   {
-    "namespace": "cdnFilePicker",
+    "namespace": "storageFilePicker",
     "language": "de",
     "resources": {
       "modalTitle": "Dateibrowser"

@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import ColorPicker from '../../../components/color-picker.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
+import StorageFilePicker from '../../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -322,7 +322,7 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
                 value={url}
                 onChange={handleInternalUrlValueChanged}
                 />
-              <CdnFilePicker
+              <StorageFilePicker
                 publicStorage={publicStorage}
                 privateStorage={privateStorage}
                 fileName={url}

@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION } from '../constants.js';
+import StorageFilePicker from '../../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
 
 const RadioButton = Radio.Button;
@@ -154,7 +154,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
                 value={sourceUrl}
                 onChange={handleInternalSourceUrlValueChanged}
                 />
-              <CdnFilePicker
+              <StorageFilePicker
                 publicStorage={publicStorage}
                 privateStorage={privateStorage}
                 fileName={sourceUrl}
@@ -195,7 +195,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
                       value={effect.sourceUrl}
                       onChange={handleEffectInternalSourceUrlValueChanged}
                       />
-                    <CdnFilePicker
+                    <StorageFilePicker
                       publicStorage={publicStorage}
                       privateStorage={privateStorage}
                       fileName={effect.sourceUrl}
