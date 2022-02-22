@@ -86,12 +86,8 @@ export default class StorageService {
     await this.deleteObjects({ paths: [urls.concatParts(prefix, objectName)], user });
   }
 
-  async getIdsOfPrivateRoomsOwnedByUser(userId) {
-    const roomsProjection = await this.roomStore.find(
-      { $and: [{ owner: userId }, { access: ROOM_ACCESS_LEVEL.private }] },
-      { projection: { _id: 1 } }
-    );
-    return roomsProjection.map(projection => projection._id);
+  getIdsOfPrivateRoomsOwnedByUser(userId) {
+    return this.roomStore.getRoomIdsByOwnerIdAndAccess({ ownerId: userId, access: ROOM_ACCESS_LEVEL.private });
   }
 
   async _getUsedPrivateStorageUsedBytes(userId) {

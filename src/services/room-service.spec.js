@@ -89,7 +89,7 @@ describe('room-service', () => {
     });
 
     it('should write it to the database', async () => {
-      const retrievedRoom = await roomStore.getRoomById({ roomId: createdRoom._id });
+      const retrievedRoom = await roomStore.getRoomById(createdRoom._id);
       expect(retrievedRoom).toEqual(createdRoom);
     });
   });
@@ -284,7 +284,7 @@ describe('room-service', () => {
     const roomId = uniqueId.create();
 
     beforeEach(async () => {
-      await roomStore.save({
+      await roomStore.saveRoom({
         _id: roomId,
         name: 'my room',
         access: ROOM_ACCESS_LEVEL.private,
@@ -319,7 +319,7 @@ describe('room-service', () => {
     const lessonId = uniqueId.create();
 
     beforeEach(async () => {
-      await roomStore.save({
+      await roomStore.saveRoom({
         _id: roomId,
         name: 'my room',
         access: ROOM_ACCESS_LEVEL.private,
@@ -371,14 +371,14 @@ describe('room-service', () => {
       });
 
       it('should delete the room', async () => {
-        const formerRoom = await roomStore.findOne({ _id: roomId });
+        const formerRoom = await roomStore.getRoomById(roomId);
         expect(formerRoom).toBeNull();
       });
 
       it('should delete the invitations', async () => {
         const { invitation } = invitationDetails;
 
-        const formerInvitation = await roomInvitationStore.findOne({ token: invitation.token });
+        const formerInvitation = await roomInvitationStore.getRoomInvitationByToken(invitation.token);
         expect(formerInvitation).toBeNull();
       });
 

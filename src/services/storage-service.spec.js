@@ -56,7 +56,7 @@ describe('storage-service', () => {
 
   describe('uploadFiles', () => {
     beforeEach(() => {
-      sandbox.stub(roomStore, 'find');
+      sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
     });
 
     describe('when the storage type is unknown', () => {
@@ -149,7 +149,7 @@ describe('storage-service', () => {
         myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
-        roomStore.find.resolves(allOwnedPrivateRoomIds.map(id => ({ _id: id })));
+        roomStore.getRoomIdsByOwnerIdAndAccess.resolves(allOwnedPrivateRoomIds);
         cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` }).resolves([oldFiles[0], files[0], files[1]]);
         cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` }).resolves([oldFiles[1]]);
 
@@ -181,7 +181,7 @@ describe('storage-service', () => {
     let fileToDelete;
 
     beforeEach(() => {
-      sandbox.stub(roomStore, 'find');
+      sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
     });
 
     describe('when the storage type is unknown', () => {
@@ -241,7 +241,7 @@ describe('storage-service', () => {
         myUser.storage = { plan: storagePlan._id, usedBytes, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
-        roomStore.find.resolves(allOwnedPrivateRoomIds.map(id => ({ _id: id })));
+        roomStore.getRoomIdsByOwnerIdAndAccess.resolves(allOwnedPrivateRoomIds);
         cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` }).resolves([files[0]]);
         cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` }).resolves([files[1]]);
 

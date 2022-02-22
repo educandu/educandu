@@ -58,7 +58,7 @@ describe('room-store', () => {
 
     describe('when called with a user that both owns rooms and has joined rooms', () => {
       beforeEach(async () => {
-        result = await sut.getRoomsOwnedOrJoinedByUser({ userId: myUser._id });
+        result = await sut.getRoomsOwnedOrJoinedByUser(myUser._id);
       });
 
       it('should return all owned and joined rooms', () => {
@@ -69,7 +69,7 @@ describe('room-store', () => {
 
     describe('when called with a user that only owns rooms', () => {
       beforeEach(async () => {
-        result = await sut.getRoomsOwnedOrJoinedByUser({ userId: otherUser._id });
+        result = await sut.getRoomsOwnedOrJoinedByUser(otherUser._id);
       });
 
       it('should return all owned rooms', () => {
@@ -80,7 +80,7 @@ describe('room-store', () => {
 
     describe('when called with a user that has only joined rooms', () => {
       beforeEach(async () => {
-        result = await sut.getRoomsOwnedOrJoinedByUser({ userId: onlyJoiningUser._id });
+        result = await sut.getRoomsOwnedOrJoinedByUser(onlyJoiningUser._id);
       });
 
       it('should return all joined rooms', () => {

@@ -1,5 +1,4 @@
 import Database from './database.js';
-import StoreBase from './store-base.js';
 
 const roomInvitationMetadataProjection = {
   _id: 1,
@@ -8,31 +7,35 @@ const roomInvitationMetadataProjection = {
   expires: 1
 };
 
-class RoomInvitationStore extends StoreBase {
+class RoomInvitationStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.roomInvitations);
+    this.collection = db.roomInvitations;
   }
 
-  getRoomInvitationByToken({ token }, { session } = {}) {
-    return this.findOne({ token }, { session });
+  getRoomInvitationByToken(token, { session } = {}) {
+    return this.collection.findOne({ token }, { session });
   }
 
   getRoomInvitationByRoomIdAndEmail({ roomId, email }, { session } = {}) {
-    return this.findOne({ roomId, email }, { session });
+    return this.collection.findOne({ roomId, email }, { session });
   }
 
-  getRoomInvitationMetadataByRoomId({ roomId }, { session } = {}) {
-    return this.find({ roomId }, { session, projection: roomInvitationMetadataProjection });
+  getRoomInvitationMetadataByRoomId(roomId, { session } = {}) {
+    return this.collection.find({ roomId }, { session, projection: roomInvitationMetadataProjection }).toArray();
   }
 
-  deleteRoomInvitationById({ roomInvitationId }, { session } = {}) {
-    return this.deleteOne({ _id: roomInvitationId }, { session });
+  saveRoomInvitation(roomInvitation, { session } = {}) {
+    return this.collection.replaceOne({ _id: roomInvitation._id }, roomInvitation, { session, upsert: true });
   }
 
-  deleteRoomInvitationsByRoomId({ roomId }, { session } = {}) {
-    return this.deleteMany({ roomId }, { session });
+  deleteRoomInvitationById(roomInvitationId, { session } = {}) {
+    return this.collection.deleteOne({ _id: roomInvitationId }, { session });
+  }
+
+  deleteRoomInvitationsByRoomId(roomId, { session } = {}) {
+    return this.collection.deleteMany({ roomId }, { session });
   }
 }
 

@@ -33,15 +33,15 @@ export default class RoomService {
   }
 
   getRoomById(roomId) {
-    return this.roomStore.getRoomById({ roomId });
+    return this.roomStore.getRoomById(roomId);
   }
 
   getRoomsOwnedByUser(userId) {
-    return this.roomStore.getRoomsByOwnerId({ ownerId: userId });
+    return this.roomStore.getRoomsByOwnerId(userId);
   }
 
   getRoomsOwnedOrJoinedByUser(userId) {
-    return this.roomStore.getRoomsOwnedOrJoinedByUser({ userId });
+    return this.roomStore.getRoomsOwnedOrJoinedByUser(userId);
   }
 
   async isRoomOwnerOrMember(roomId, userId) {
@@ -62,7 +62,7 @@ export default class RoomService {
       members: []
     };
 
-    await this.roomStore.save(newRoom);
+    await this.roomStore.saveRoom(newRoom);
     return newRoom;
   }
 
@@ -72,12 +72,12 @@ export default class RoomService {
       slug: room.slug || '',
       description: room.description || ''
     };
-    await this.roomStore.save(updatedRoom);
+    await this.roomStore.saveRoom(updatedRoom);
     return updatedRoom;
   }
 
   async deleteRoom(roomId, user) {
-    const room = await this.roomStore.getRoomById({ roomId });
+    const room = await this.roomStore.getRoomById(roomId);
 
     if (!room) {
       throw new NotFound();
@@ -89,8 +89,8 @@ export default class RoomService {
 
     await this.transactionRunner.run(async session => {
       await this.lessonStore.deleteMany({ roomId }, { session });
-      await this.roomInvitationStore.deleteRoomInvitationsByRoomId({ roomId }, { session });
-      await this.roomStore.deleteRoomById({ roomId }, { session });
+      await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
+      await this.roomStore.deleteRoomById(roomId, { session });
     });
 
     try {
@@ -103,7 +103,7 @@ export default class RoomService {
   }
 
   getRoomInvitations(roomId) {
-    return this.roomInvitationStore.getRoomInvitationMetadataByRoomId({ roomId });
+    return this.roomInvitationStore.getRoomInvitationMetadataByRoomId(roomId);
   }
 
   async createOrUpdateInvitation({ roomId, email, user }) {
@@ -139,7 +139,7 @@ export default class RoomService {
     invitation.expires = moment(now).add(PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS, 'days').toDate();
 
     logger.info(`Creating or updating room invitation with ID ${invitation._id}`);
-    await this.roomInvitationStore.save(invitation);
+    await this.roomInvitationStore.saveRoomInvitation(invitation);
 
     return { room, owner, invitation };
   }
@@ -150,9 +150,9 @@ export default class RoomService {
     let roomSlug = null;
     let isValid = false;
 
-    const invitation = await this.roomInvitationStore.getRoomInvitationByToken({ token });
+    const invitation = await this.roomInvitationStore.getRoomInvitationByToken(token);
     if (invitation?.email === user.email) {
-      const room = await this.roomStore.getRoomById({ roomId: invitation.roomId });
+      const room = await this.roomStore.getRoomById(invitation.roomId);
       if (room) {
         roomId = room._id;
         roomName = room.name;
@@ -165,7 +165,7 @@ export default class RoomService {
   }
 
   async confirmInvitation({ token, user }) {
-    const invitation = await this.roomInvitationStore.getRoomInvitationByToken({ token });
+    const invitation = await this.roomInvitationStore.getRoomInvitationByToken(token);
     if (invitation?.email !== user.email) {
       throw new NotFound();
     }
@@ -190,7 +190,7 @@ export default class RoomService {
           await this.roomStore.appendRoomMember({ roomId: invitation.roomId, member: newMember }, { session });
         }
 
-        await this.roomInvitationStore.deleteRoomInvitationById({ roomInvitationId: invitation._id }, { session });
+        await this.roomInvitationStore.deleteRoomInvitationById(invitation._id, { session });
       } finally {
         this.lockStore.releaseLock(lock);
       }
