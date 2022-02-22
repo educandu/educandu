@@ -11,7 +11,6 @@ import React, { useEffect, useState } from 'react';
 import { replaceItem } from '../../utils/array-utils.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { getDefaultStorage } from '../../domain/storage.js';
 import { Table, Popover, Tabs, Select, Button } from 'antd';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
@@ -45,7 +44,7 @@ function createUserSubsets(users, storagePlans) {
   for (const user of users) {
     const enrichedUserObject = {
       ...user,
-      storagePlan: storagePlansById.get(user.storage?.plan) || null,
+      storagePlan: storagePlansById.get(user.storage.plan) || null,
       importSource: (/^external\/(.+)$/).exec(user.provider)?.[1] || null
     };
 
@@ -55,7 +54,7 @@ function createUserSubsets(users, storagePlans) {
       internalUsers.push(enrichedUserObject);
     }
 
-    if (user.storage?.plan || user.storage?.usedBytes) {
+    if (user.storage.plan || user.storage.usedBytes || user.storage.reminders.length) {
       storageUsers.push(enrichedUserObject);
     }
   }
@@ -122,9 +121,8 @@ function Users({ initialState, PageTemplate }) {
   const handleStoragePlanChange = async (user, newStoragePlanId) => {
     const oldStorage = user.storage;
 
-    const storageBlueprint = oldStorage || getDefaultStorage();
     const newStorage = {
-      ...storageBlueprint,
+      ...oldStorage,
       plan: newStoragePlanId
     };
 
@@ -146,11 +144,10 @@ function Users({ initialState, PageTemplate }) {
   const handleAddReminderClick = async user => {
     const oldStorage = user.storage;
 
-    const storageBlueprint = oldStorage || getDefaultStorage();
     const newStorage = {
-      ...storageBlueprint,
+      ...oldStorage,
       reminders: [
-        ...storageBlueprint.reminders,
+        ...oldStorage.reminders,
         {
           timestamp: new Date().toISOString(),
           createdBy: executingUser._id
@@ -176,9 +173,8 @@ function Users({ initialState, PageTemplate }) {
   const handleRemoveRemindersClick = async user => {
     const oldStorage = user.storage;
 
-    const storageBlueprint = oldStorage || getDefaultStorage();
     const newStorage = {
-      ...storageBlueprint,
+      ...oldStorage,
       reminders: []
     };
 
@@ -201,14 +197,11 @@ function Users({ initialState, PageTemplate }) {
     confirmAllPrivateRoomsDelete(t, user.username, async () => {
       const oldStorage = user.storage;
 
-      const storageBlueprint = oldStorage || getDefaultStorage();
-      const newStorage = storageBlueprint.plan
-        ? {
-          ...storageBlueprint,
-          usedBytes: 0,
-          reminders: []
-        }
-        : null;
+      const newStorage = {
+        plan: oldStorage.plan,
+        usedBytes: 0,
+        reminders: []
+      };
 
       setIsSaving(true);
       setUsers(oldUsers => replaceItem(oldUsers, { ...user, storage: newStorage }));
@@ -303,9 +296,9 @@ function Users({ initialState, PageTemplate }) {
         size="small"
         className="UsersPage-storagePlanSelect"
         placeholder={t('selectPlan')}
-        value={user.storage?.plan || null}
+        value={user.storage.plan}
         onChange={value => handleStoragePlanChange(user, value)}
-        disabled={!!user.storage?.plan}
+        disabled={!!user.storage.plan}
         >
         {initialState.storagePlans.map(plan => (
           <Option key={plan._id} value={plan._id} label={plan.name}>
@@ -321,12 +314,12 @@ function Users({ initialState, PageTemplate }) {
 
   const renderStorageSpace = (_, user) => {
     return (
-      <UsedStorage usedBytes={user.storage?.usedBytes || 0} maxBytes={user.storagePlan?.maxBytes || 0} />
+      <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={user.storagePlan.maxBytes} />
     );
   };
 
   const renderReminders = (_, user) => {
-    if (!user.storage?.reminders?.length) {
+    if (!user.storage.reminders.length) {
       return null;
     }
 
@@ -352,7 +345,7 @@ function Users({ initialState, PageTemplate }) {
           >
           {t('addReminder')}
         </Button>
-        {!!user.storage?.reminders?.length && (
+        {!!user.storage.reminders.length && (
         <Button
           type="link"
           size="small"
@@ -455,14 +448,14 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'storageSpace',
       key: 'storageSpace',
       render: renderStorageSpace,
-      sorter: by(x => x.storage?.usedBytes),
+      sorter: by(x => x.storage.usedBytes),
       responsive: ['md']
     }, {
       title: () => t('reminders'),
       dataIndex: 'reminders',
       key: 'reminders',
       render: renderReminders,
-      sorter: by(x => x.reminders?.length),
+      sorter: by(x => x.reminders.length),
       responsive: ['lg']
     }, {
       title: () => t('common:actions'),
