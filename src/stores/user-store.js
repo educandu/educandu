@@ -12,8 +12,31 @@ class UserStore extends StoreBase {
     return this.find();
   }
 
-  findUser({ username, provider }, { session } = {}) {
+  findUserByUsername({ provider, username }, { session } = {}) {
     return this.findOne({ username, provider }, { session });
+  }
+
+  findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {
+    return this.findOne({ provider, verificationCode }, { session });
+  }
+
+  findUserByUsernameOrEmail({ provider, username, email }, { session } = {}) {
+    return this.findOne({
+      $and: [
+        { provider },
+        { $or: [{ username }, { email }] }
+      ]
+    }, { session });
+  }
+
+  findDifferentUserByUsernameOrEmail({ userId, provider, username, email }, { session } = {}) {
+    return this.findOne({
+      $and: [
+        { _id: { $ne: userId } },
+        { provider },
+        { $or: [{ username }, { email }] }
+      ]
+    }, { session });
   }
 
   getUserById(id, { session } = {}) {

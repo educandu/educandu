@@ -35,12 +35,8 @@ class UserService {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
-    const otherExistingUser = await this.userStore.findOne({
-      $and: [
-        { _id: { $ne: userId } },
-        { provider },
-        { $or: [{ username }, { email: lowerCasedEmail }] }
-      ]
+    const otherExistingUser = await this.userStore.findDifferentUserByUsernameOrEmail({
+      userId, provider, username, email: lowerCasedEmail
     });
 
     if (otherExistingUser) {
@@ -165,7 +161,7 @@ class UserService {
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingUser = await this.userStore.findOne({ $or: [{ $and: [{ username, provider }] }, { email: lowerCasedEmail }] });
+    const existingUser = await this.userStore.findUserByUsernameOrEmail({ provider, username, email: lowerCasedEmail });
     if (existingUser) {
       return existingUser.email === lowerCasedEmail
         ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
@@ -200,7 +196,7 @@ class UserService {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
-      user = await this.userStore.findOne({ verificationCode, provider });
+      user = await this.userStore.findUserByVerificationCode({ provider, verificationCode });
       if (user) {
         logger.info(`Found user with id ${user._id}`);
         user.expires = null;
@@ -217,7 +213,7 @@ class UserService {
   }
 
   async authenticateUser(username, password, provider = DEFAULT_PROVIDER_NAME) {
-    const user = await this.userStore.findUser({ username, provider });
+    const user = await this.userStore.findUserByUsername({ username, provider });
     if (!user || user.expires || user.lockedOut) {
       return false;
     }
