@@ -1,11 +1,41 @@
 import Database from './database.js';
-import StoreBase from './store-base.js';
 
-class RoomInvitationStore extends StoreBase {
+const roomInvitationMetadataProjection = {
+  _id: 1,
+  email: 1,
+  sentOn: 1,
+  expires: 1
+};
+
+class RoomInvitationStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.roomInvitations);
+    this.collection = db.roomInvitations;
+  }
+
+  getRoomInvitationByToken(token, { session } = {}) {
+    return this.collection.findOne({ token }, { session });
+  }
+
+  getRoomInvitationByRoomIdAndEmail({ roomId, email }, { session } = {}) {
+    return this.collection.findOne({ roomId, email }, { session });
+  }
+
+  getRoomInvitationMetadataByRoomId(roomId, { session } = {}) {
+    return this.collection.find({ roomId }, { session, projection: roomInvitationMetadataProjection }).toArray();
+  }
+
+  saveRoomInvitation(roomInvitation, { session } = {}) {
+    return this.collection.replaceOne({ _id: roomInvitation._id }, roomInvitation, { session, upsert: true });
+  }
+
+  deleteRoomInvitationById(roomInvitationId, { session } = {}) {
+    return this.collection.deleteOne({ _id: roomInvitationId }, { session });
+  }
+
+  deleteRoomInvitationsByRoomId(roomId, { session } = {}) {
+    return this.collection.deleteMany({ roomId }, { session });
   }
 }
 

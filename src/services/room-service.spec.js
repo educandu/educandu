@@ -9,7 +9,7 @@ import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
+import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest, NotFound, Forbidden } = httpErrors;
 
@@ -62,65 +62,6 @@ describe('room-service', () => {
     await pruneTestEnvironment(container);
   });
 
-  describe('getRoomsOwnedOrJoinedByUser', () => {
-    beforeEach(async () => {
-      const rooms = [
-        {
-          name: 'Room 1',
-          owner: myUser._id
-        },
-        {
-          name: 'Room 2',
-          owner: otherUser._id,
-          members: [{ userId: myUser._id, joinedOn: now }]
-        },
-        {
-          name: 'Room 3',
-          owner: otherUser._id,
-          members: []
-        },
-        {
-          name: 'Room 4',
-          owner: otherUser._id,
-          members: [{ userId: 'onlyJoiningUser', joinedOn: now }]
-        }
-      ];
-      await Promise.all(rooms.map(room => createTestRoom(container, room)));
-    });
-
-    describe('when called with a user that both owns rooms and has joined rooms', () => {
-      beforeEach(async () => {
-        result = await sut.getRoomsOwnedOrJoinedByUser(myUser._id);
-      });
-
-      it('should return all owned and joined rooms', () => {
-        expect(result).toHaveLength(2);
-        expect(result.map(room => room.name)).toEqual(expect.arrayContaining(['Room 1', 'Room 2']));
-      });
-    });
-
-    describe('when called with a user that only owns rooms', () => {
-      beforeEach(async () => {
-        result = await sut.getRoomsOwnedOrJoinedByUser(otherUser._id);
-      });
-
-      it('should return all owned rooms', () => {
-        expect(result).toHaveLength(3);
-        expect(result.map(room => room.name)).toEqual(expect.arrayContaining(['Room 2', 'Room 3', 'Room 4']));
-      });
-    });
-
-    describe('when called with a user that has only joined rooms', () => {
-      beforeEach(async () => {
-        result = await sut.getRoomsOwnedOrJoinedByUser('onlyJoiningUser');
-      });
-
-      it('should return all joined rooms', () => {
-        expect(result.map(room => room.name)).toEqual(['Room 4']);
-      });
-    });
-  });
-
   describe('createRoom', () => {
     let createdRoom;
 
@@ -147,34 +88,9 @@ describe('room-service', () => {
       });
     });
 
-    describe('when retrieving the room', () => {
-      it('should retrieve the room', async () => {
-        const retrievedRoom = await sut.getRoomById(createdRoom._id);
-        expect(retrievedRoom).toEqual(createdRoom);
-      });
-    });
-  });
-
-  describe('findOwnedRoomById', () => {
-    let myRoom = null;
-    let otherRoom = null;
-
-    beforeEach(async () => {
-      [myRoom, otherRoom] = await Promise.all([
-        sut.createRoom({ name: 'my room', access: ROOM_ACCESS_LEVEL.public, user: myUser }),
-        sut.createRoom({ name: 'not my room', access: ROOM_ACCESS_LEVEL.public, user: otherUser })
-      ]);
-    });
-
-    it('should find rooms owned by the specified user ID', async () => {
-      const room = await sut.findOwnedRoomById({ roomId: myRoom._id, ownerId: myUser._id });
-      expect(room.name).toBe('my room');
-    });
-
-    it('should throw when trying to find rooms owned by other users', async () => {
-      await expect(async () => {
-        await sut.findOwnedRoomById({ roomId: otherRoom._id, ownerId: myUser._id });
-      }).rejects.toThrow(NotFound);
+    it('should write it to the database', async () => {
+      const retrievedRoom = await roomStore.getRoomById(createdRoom._id);
+      expect(retrievedRoom).toEqual(createdRoom);
     });
   });
 
@@ -368,7 +284,7 @@ describe('room-service', () => {
     const roomId = uniqueId.create();
 
     beforeEach(async () => {
-      await roomStore.save({
+      await roomStore.saveRoom({
         _id: roomId,
         name: 'my room',
         access: ROOM_ACCESS_LEVEL.private,
@@ -403,7 +319,7 @@ describe('room-service', () => {
     const lessonId = uniqueId.create();
 
     beforeEach(async () => {
-      await roomStore.save({
+      await roomStore.saveRoom({
         _id: roomId,
         name: 'my room',
         access: ROOM_ACCESS_LEVEL.private,
@@ -455,14 +371,14 @@ describe('room-service', () => {
       });
 
       it('should delete the room', async () => {
-        const formerRoom = await roomStore.findOne({ _id: roomId });
+        const formerRoom = await roomStore.getRoomById(roomId);
         expect(formerRoom).toBeNull();
       });
 
       it('should delete the invitations', async () => {
         const { invitation } = invitationDetails;
 
-        const formerInvitation = await roomInvitationStore.findOne({ token: invitation.token });
+        const formerInvitation = await roomInvitationStore.getRoomInvitationByToken(invitation.token);
         expect(formerInvitation).toBeNull();
       });
 

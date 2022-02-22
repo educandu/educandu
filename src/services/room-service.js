@@ -17,13 +17,6 @@ const logger = new Logger(import.meta.url);
 
 const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
-const roomInvitationProjection = {
-  _id: 1,
-  email: 1,
-  sentOn: 1,
-  expires: 1
-};
-
 export default class RoomService {
   static get inject() {
     return [RoomStore, RoomInvitationStore, LessonStore, LockStore, UserService, StorageService, TransactionRunner];
@@ -40,33 +33,20 @@ export default class RoomService {
   }
 
   getRoomById(roomId) {
-    return this.roomStore.findOne({ _id: roomId });
+    return this.roomStore.getRoomById(roomId);
   }
 
-  async _getRooms({ ownerId, memberId }) {
-    const orFilters = [];
-
-    if (ownerId) {
-      orFilters.push({ owner: ownerId });
-    }
-    if (memberId) {
-      orFilters.push({ members: { $elemMatch: { userId: memberId } } });
-    }
-
-    const filter = orFilters.length === 1 ? orFilters[0] : { $or: orFilters };
-
-    const rooms = await this.roomStore.find(filter);
-    return rooms;
+  getRoomsOwnedByUser(userId) {
+    return this.roomStore.getRoomsByOwnerId(userId);
   }
 
-  async getRoomsOwnedByUser(userId) {
-    const rooms = await this._getRooms({ ownerId: userId });
-    return rooms;
+  getRoomsOwnedOrJoinedByUser(userId) {
+    return this.roomStore.getRoomsOwnedOrJoinedByUser(userId);
   }
 
-  async getRoomsOwnedOrJoinedByUser(userId) {
-    const rooms = await this._getRooms({ ownerId: userId, memberId: userId });
-    return rooms;
+  async isRoomOwnerOrMember(roomId, userId) {
+    const room = await this.roomStore.getRoomsByIdOwnedOrJoinedByUser({ roomId, userId });
+    return !!room;
   }
 
   async createRoom({ name, slug, access, user }) {
@@ -82,7 +62,7 @@ export default class RoomService {
       members: []
     };
 
-    await this.roomStore.save(newRoom);
+    await this.roomStore.saveRoom(newRoom);
     return newRoom;
   }
 
@@ -92,24 +72,49 @@ export default class RoomService {
       slug: room.slug || '',
       description: room.description || ''
     };
-    await this.roomStore.save(updatedRoom);
+    await this.roomStore.saveRoom(updatedRoom);
     return updatedRoom;
   }
 
-  async findOwnedRoomById({ roomId, ownerId }) {
-    const room = await this.roomStore.findOne({ _id: roomId });
-    if (room?.owner !== ownerId) {
-      throw new NotFound(`A room with ID '${roomId}' owned by '${ownerId}' could not be found`);
+  async deleteRoom(roomId, user) {
+    const room = await this.roomStore.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    if (room.owner !== user._id) {
+      throw new Forbidden();
+    }
+
+    await this.transactionRunner.run(async session => {
+      await this.lessonStore.deleteMany({ roomId }, { session });
+      await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
+      await this.roomStore.deleteRoomById(roomId, { session });
+    });
+
+    try {
+      await this.storageService.deleteAllObjectsWithPrefix({ prefix: `rooms/${roomId}/`, user });
+    } catch (error) {
+      logger.error(error);
     }
 
     return room;
+  }
+
+  getRoomInvitations(roomId) {
+    return this.roomInvitationStore.getRoomInvitationMetadataByRoomId(roomId);
   }
 
   async createOrUpdateInvitation({ roomId, email, user }) {
     const now = new Date();
     const lowerCasedEmail = email.toLowerCase();
 
-    const room = await this.findOwnedRoomById({ roomId, ownerId: user._id });
+    const room = await this.roomStore.getRoomByIdAndOwnerId({ roomId, ownerId: user._id });
+    if (!room) {
+      throw new NotFound(`A room with ID '${roomId}' owned by '${user._id}' could not be found`);
+    }
+
     if (room.access === ROOM_ACCESS_LEVEL.public) {
       throw new BadRequest(`Room with ID '${roomId}' is public, therefore invitations cannot be sent`);
     }
@@ -120,7 +125,7 @@ export default class RoomService {
       throw new BadRequest('Invited user is the same as room owner');
     }
 
-    let invitation = await this.roomInvitationStore.findOne({ roomId, email: lowerCasedEmail });
+    let invitation = await this.roomInvitationStore.getRoomInvitationByRoomIdAndEmail({ roomId, email: lowerCasedEmail });
     if (!invitation) {
       invitation = {
         _id: uniqueId.create(),
@@ -134,7 +139,7 @@ export default class RoomService {
     invitation.expires = moment(now).add(PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS, 'days').toDate();
 
     logger.info(`Creating or updating room invitation with ID ${invitation._id}`);
-    await this.roomInvitationStore.save(invitation);
+    await this.roomInvitationStore.saveRoomInvitation(invitation);
 
     return { room, owner, invitation };
   }
@@ -145,9 +150,9 @@ export default class RoomService {
     let roomSlug = null;
     let isValid = false;
 
-    const invitation = await this.roomInvitationStore.findOne({ token });
+    const invitation = await this.roomInvitationStore.getRoomInvitationByToken(token);
     if (invitation?.email === user.email) {
-      const room = await this.roomStore.findOne({ _id: invitation.roomId });
+      const room = await this.roomStore.getRoomById(invitation.roomId);
       if (room) {
         roomId = room._id;
         roomName = room.name;
@@ -160,7 +165,7 @@ export default class RoomService {
   }
 
   async confirmInvitation({ token, user }) {
-    const invitation = await this.roomInvitationStore.findOne({ token });
+    const invitation = await this.roomInvitationStore.getRoomInvitationByToken(token);
     if (invitation?.email !== user.email) {
       throw new NotFound();
     }
@@ -176,58 +181,19 @@ export default class RoomService {
       try {
         lock = await this.lockStore.takeRoomLock(invitation.roomId);
 
-        const roomContainingNewMember = await this.roomStore.findOne(
-          { '_id': invitation.roomId, 'members.userId': newMember.userId },
+        const roomContainingNewMember = await this.roomStore.getRoomByIdJoinedByUser(
+          { roomId: invitation.roomId, userId: newMember.userId },
           { session }
         );
 
         if (!roomContainingNewMember) {
-          await this.roomStore.updateOne(
-            { _id: invitation.roomId },
-            { $push: { members: newMember } },
-            { session }
-          );
+          await this.roomStore.appendRoomMember({ roomId: invitation.roomId, member: newMember }, { session });
         }
 
-        await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
+        await this.roomInvitationStore.deleteRoomInvitationById(invitation._id, { session });
       } finally {
         this.lockStore.releaseLock(lock);
       }
     });
-  }
-
-  async isRoomOwnerOrMember(roomId, userId) {
-    const room = await this.roomStore.findOne({ $and: [{ _id: roomId }, { $or: [{ 'members.userId': userId }, { owner: userId }] }] });
-    return !!room;
-  }
-
-  getRoomInvitations(roomId) {
-    return this.roomInvitationStore.find({ roomId }, { projection: roomInvitationProjection });
-  }
-
-  async deleteRoom(roomId, user) {
-    const room = await this.roomStore.findOne({ _id: roomId });
-
-    if (!room) {
-      throw new NotFound();
-    }
-
-    if (room.owner !== user._id) {
-      throw new Forbidden();
-    }
-
-    await this.transactionRunner.run(async session => {
-      await this.lessonStore.deleteMany({ roomId }, { session });
-      await this.roomInvitationStore.deleteMany({ roomId }, { session });
-      await this.roomStore.deleteOne({ _id: roomId }, { session });
-    });
-
-    try {
-      await this.storageService.deleteAllObjectsWithPrefix({ prefix: `rooms/${roomId}/`, user });
-    } catch (error) {
-      logger.error(error);
-    }
-
-    return room;
   }
 }
