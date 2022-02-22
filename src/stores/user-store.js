@@ -1,4 +1,5 @@
 import Database from './database.js';
+
 class UserStore {
   static get inject() { return [Database]; }
 

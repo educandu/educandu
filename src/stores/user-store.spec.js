@@ -83,13 +83,6 @@ describe('user-store', () => {
   });
 
   describe('findUserByUsernameOrEmail', () => {
-    // BeforeEach(async () => {
-    //   await Promise.all([
-    //     setupTestUser(container, { username: user.username, email: 'james@jameson.com' }),
-    //     setupTestUser(container, { name: 'minnie', email: 'minnie@mouse.com' })
-    //   ]);
-    // });
-
     describe('when provider doesn\'t match', () => {
       beforeEach(async () => {
         result = await sut.findUserByUsernameOrEmail({ provider: 'unknown', username: user.username, email: user.email });
