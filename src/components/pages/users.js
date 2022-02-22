@@ -54,7 +54,7 @@ function createUserSubsets(users, storagePlans) {
       internalUsers.push(enrichedUserObject);
     }
 
-    if (user.storage.plan || user.storage.usedBytes) {
+    if (user.storage.plan || user.storage.usedBytes || user.storage.reminders.length) {
       storageUsers.push(enrichedUserObject);
     }
   }
