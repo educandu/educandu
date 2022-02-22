@@ -8,12 +8,12 @@ class PasswordResetRequestStore extends StoreBase {
     super(db.passwordResetRequests);
   }
 
-  getPasswordResetRequestById(id) {
-    return this.findOne({ _id: id });
+  getPasswordResetRequestById(id, { session } = {}) {
+    return this.findOne({ _id: id }, { session });
   }
 
-  deletePasswordResetRequestById(id) {
-    return this.deleteOne({ _id: id });
+  deletePasswordResetRequestById(id, { session } = {}) {
+    return this.deleteOne({ _id: id }, { session });
   }
 }
 

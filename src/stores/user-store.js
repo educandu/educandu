@@ -12,24 +12,24 @@ class UserStore extends StoreBase {
     return this.find();
   }
 
-  findUser({ username, provider }) {
-    return this.findOne({ username, provider });
+  findUser({ username, provider }, { session } = {}) {
+    return this.findOne({ username, provider }, { session });
   }
 
-  getUserById(id) {
-    return this.findOne({ _id: id });
+  getUserById(id, { session } = {}) {
+    return this.findOne({ _id: id }, { session });
   }
 
-  getUsersByIds(ids) {
-    return ids.length ? this.find({ _id: { $in: ids } }) : Promise.resolve([]);
+  getUsersByIds(ids, { session } = {}) {
+    return ids.length ? this.find({ _id: { $in: ids } }, { session }) : Promise.resolve([]);
   }
 
-  getUserByEmailAddress(email) {
-    return this.findOne({ email: email.toLowerCase() });
+  getUserByEmailAddress(email, { session } = {}) {
+    return this.findOne({ email: email.toLowerCase() }, { session });
   }
 
-  saveUser(user) {
-    return this.save(user);
+  saveUser(user, { session } = {}) {
+    return this.save(user, { session });
   }
 }
 

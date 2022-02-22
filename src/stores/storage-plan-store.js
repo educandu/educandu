@@ -12,8 +12,8 @@ class StoragePlanStore extends StoreBase {
     return this.find();
   }
 
-  getStoragePlanById(id) {
-    return this.findOne({ _id: id });
+  getStoragePlanById(id, { session } = {}) {
+    return this.findOne({ _id: id }, { session });
   }
 }
 
