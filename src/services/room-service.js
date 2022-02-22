@@ -77,7 +77,7 @@ export default class RoomService {
   }
 
   async deleteRoom(roomId, user) {
-    const room = await this.roomStore.findOne({ _id: roomId });
+    const room = await this.roomStore.getRoomById({ roomId });
 
     if (!room) {
       throw new NotFound();
