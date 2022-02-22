@@ -1,5 +1,7 @@
+import moment from 'moment';
 import Database from './database.js';
-import LockStoreBase from './lock-store-base.js';
+import StoreBase from './store-base.js';
+import uniqueId from '../utils/unique-id.js';
 
 const LOCK_TYPE = {
   room: 'room',
@@ -9,7 +11,7 @@ const LOCK_TYPE = {
   maintenance: 'maintenance'
 };
 
-class LockStore extends LockStoreBase {
+class LockStore extends StoreBase {
   static get inject() { return [Database]; }
 
   constructor(db) {
@@ -17,23 +19,36 @@ class LockStore extends LockStoreBase {
   }
 
   takeRoomLock(key) {
-    return this.takeLock({ type: LOCK_TYPE.room, key, expirationTimeInMinutes: 1 });
+    return this._takeLock({ type: LOCK_TYPE.room, key, expirationTimeInMinutes: 1 });
   }
 
   takeTaskLock(key) {
-    return this.takeLock({ type: LOCK_TYPE.task, key, expirationTimeInMinutes: 10 });
+    return this._takeLock({ type: LOCK_TYPE.task, key, expirationTimeInMinutes: 10 });
   }
 
   takeBatchLock(key) {
-    return this.takeLock({ type: LOCK_TYPE.batch, key, expirationTimeInMinutes: 1 });
+    return this._takeLock({ type: LOCK_TYPE.batch, key, expirationTimeInMinutes: 1 });
   }
 
   takeDocumentLock(key) {
-    return this.takeLock({ type: LOCK_TYPE.document, key, expirationTimeInMinutes: 1 });
+    return this._takeLock({ type: LOCK_TYPE.document, key, expirationTimeInMinutes: 1 });
   }
 
   takeMaintenanceLock(key) {
-    return this.takeLock({ type: LOCK_TYPE.maintenance, key, expirationTimeInMinutes: 30 });
+    return this._takeLock({ type: LOCK_TYPE.maintenance, key, expirationTimeInMinutes: 30 });
+  }
+
+  async releaseLock(lock) {
+    await this.collection.deleteOne({ type: lock.type, key: lock.key });
+  }
+
+  async _takeLock({ type, key, expirationTimeInMinutes }) {
+    const expires = expirationTimeInMinutes ? moment().add(expirationTimeInMinutes, 'minutes').toDate() : null;
+
+    const lock = { _id: uniqueId.create(), type, key, expires };
+
+    await this.collection.insertOne(lock);
+    return lock;
   }
 }
 
