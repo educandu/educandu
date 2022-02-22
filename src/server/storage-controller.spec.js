@@ -3,14 +3,14 @@ import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
-import CdnController from './cdn-controller.js';
+import StorageController from './storage-controller.js';
 
 const { BadRequest, Unauthorized } = httpErrors;
 
-describe('cdn-controller', () => {
+describe('storage-controller', () => {
   const sandbox = sinon.createSandbox();
 
-  let cdnService;
+  let storageService;
   let roomService;
 
   let user;
@@ -20,7 +20,7 @@ describe('cdn-controller', () => {
   let sut;
 
   beforeEach(() => {
-    cdnService = {
+    storageService = {
       uploadFiles: sandbox.stub()
     };
     roomService = {
@@ -33,7 +33,7 @@ describe('cdn-controller', () => {
     roomService.getRoomById.resolves(null);
     roomService.getRoomById.withArgs(room._id).resolves(room);
 
-    sut = new CdnController(cdnService, roomService);
+    sut = new StorageController(storageService, roomService);
   });
 
   afterEach(() => {
@@ -96,8 +96,8 @@ describe('cdn-controller', () => {
         sut.handlePostCdnObject(req, res);
       });
 
-      it('should call cdnService.uploadFiles', () => {
-        sinon.assert.calledWith(cdnService.uploadFiles, { prefix: req.body.prefix, files: req.files, user });
+      it('should call storageService.uploadFiles', () => {
+        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, user });
       });
 
       it('should return 200', () => {

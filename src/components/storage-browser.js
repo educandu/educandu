@@ -12,10 +12,10 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
-import CdnApiClient from '../api-clients/cdn-api-client.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
+import StorageApiClient from '../api-clients/storage-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
@@ -32,7 +32,7 @@ import {
 
 const logger = new Logger(import.meta.url);
 
-class RepositoryBrowser extends React.Component {
+class StorageBrowser extends React.Component {
   constructor(props) {
     super(props);
     autoBind(this);
@@ -109,7 +109,7 @@ class RepositoryBrowser extends React.Component {
       }
     ];
 
-    if (hasUserPermission(this.props.user, permissions.DELETE_CDN_FILE)) {
+    if (hasUserPermission(this.props.user, permissions.DELETE_STORAGE_FILE)) {
       this.columns.push({
         dataIndex: 'isDirectory',
         key: 'displayName',
@@ -274,13 +274,13 @@ class RepositoryBrowser extends React.Component {
   async refreshFiles(pathSegments, keysToSelect) {
     this.setState({ isRefreshing: true });
 
-    const { cdnApiClient, t } = this.props;
+    const { storageApiClient, t } = this.props;
     const { initialPathSegments, uploadPathSegments } = this.state.currentLocation;
     const prefix = getPrefix(pathSegments);
 
     let objects;
     try {
-      const result = await cdnApiClient.getObjects(prefix);
+      const result = await storageApiClient.getObjects(prefix);
       objects = result.objects;
     } catch (error) {
       handleApiError({ error, logger, t });
@@ -302,12 +302,12 @@ class RepositoryBrowser extends React.Component {
   async uploadFiles(files, { onProgress } = {}) {
     this.increaseCurrentUploadCount();
 
-    const { cdnApiClient, t } = this.props;
+    const { storageApiClient, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = getPrefix(currentPathSegments);
 
     try {
-      await cdnApiClient.uploadFiles(files, prefix, { onProgress });
+      await storageApiClient.uploadFiles(files, prefix, { onProgress });
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -318,13 +318,13 @@ class RepositoryBrowser extends React.Component {
   }
 
   async handleDeleteFile(fileName) {
-    const { cdnApiClient, onSelectionChanged, t } = this.props;
+    const { storageApiClient, onSelectionChanged, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
     const prefix = getPrefix(currentPathSegments);
     const objectName = `${prefix}${fileName}`;
 
     try {
-      await cdnApiClient.deleteCdnObject(prefix, fileName);
+      await storageApiClient.deleteCdnObject(prefix, fileName);
       if (selectedRowKeys.includes(objectName)) {
         onSelectionChanged([], true);
       }
@@ -453,28 +453,28 @@ class RepositoryBrowser extends React.Component {
   getRowClassName(record) {
     const { selectedRowKeys, currentDropTarget } = this.state;
     return classNames({
-      'RepositoryBrowser-tableRow': true,
-      'RepositoryBrowser-tableRow--selected': selectedRowKeys.includes(record.key),
-      'RepositoryBrowser-tableRow--dropTarget': record.path === currentDropTarget
+      'StorageBrowser-tableRow': true,
+      'StorageBrowser-tableRow--selected': selectedRowKeys.includes(record.key),
+      'StorageBrowser-tableRow--dropTarget': record.path === currentDropTarget
     });
   }
 
   renderDeleteColumn(isDirectory) {
-    return isDirectory ? null : (<DeleteOutlined className="RepositoryBrowser-tableDeleteCell" />);
+    return isDirectory ? null : (<DeleteOutlined className="StorageBrowser-tableDeleteCell" />);
   }
 
   renderNameColumn(text, record) {
     const { filterText } = this.state;
     const normalizedFilterText = filterText.toLowerCase().trim();
     const icon = record.isDirectory
-      ? <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--folder"><FolderOutlined /></span>
-      : <span className="RepositoryBrowser-browserRecordIcon RepositoryBrowser-browserRecordIcon--file"><FileOutlined /></span>;
+      ? <span className="StorageBrowser-browserRecordIcon StorageBrowser-browserRecordIcon--folder"><FolderOutlined /></span>
+      : <span className="StorageBrowser-browserRecordIcon StorageBrowser-browserRecordIcon--file"><FileOutlined /></span>;
 
     return (
-      <span className="RepositoryBrowser-browserRecordText">
+      <span className="StorageBrowser-browserRecordText">
         {icon}
         &nbsp;&nbsp;&nbsp;
-        <Highlighter search={normalizedFilterText} matchClass="RepositoryBrowser-browserRecordText is-highlighted">{text}</Highlighter>
+        <Highlighter search={normalizedFilterText} matchClass="StorageBrowser-browserRecordText is-highlighted">{text}</Highlighter>
       </span>
     );
   }
@@ -600,23 +600,23 @@ class RepositoryBrowser extends React.Component {
     const canUpload = isSubPath({ pathSegments: uploadPathSegments, subPathSegments: currentPathSegments });
 
     const browserClassNames = classNames({
-      'RepositoryBrowser-browser': true,
-      'RepositoryBrowser-browser--dropTarget': canUpload && currentDropTarget === currentPrefix
+      'StorageBrowser-browser': true,
+      'StorageBrowser-browser--dropTarget': canUpload && currentDropTarget === currentPrefix
     });
 
-    const suffix = normalizedFilterText ? <CloseOutlined className="RepositoryBrowser-filterClearButton" onClick={this.handleFilterTextClear} /> : null;
+    const suffix = normalizedFilterText ? <CloseOutlined className="StorageBrowser-filterClearButton" onClick={this.handleFilterTextClear} /> : null;
     const filterTextInputClassNames = classNames({
-      'RepositoryBrowser-filterInput': true,
+      'StorageBrowser-filterInput': true,
       'is-active': !!normalizedFilterText
     });
 
     return (
-      <div className="RepositoryBrowser">
-        <div className="RepositoryBrowser-header">
-          <div className="RepositoryBrowser-headerBreadCrumbs">
+      <div className="StorageBrowser">
+        <div className="StorageBrowser-header">
+          <div className="StorageBrowser-headerBreadCrumbs">
             {this.renderBreadCrumbs(currentPathSegments, currentLocation)}
           </div>
-          <div className="RepositoryBrowser-headerButtons">
+          <div className="StorageBrowser-headerButtons">
             <Input
               suffix={suffix}
               value={filterText}
@@ -652,34 +652,34 @@ class RepositoryBrowser extends React.Component {
   }
 }
 
-RepositoryBrowser.propTypes = {
+StorageBrowser.propTypes = {
   ...userProps,
-  cdnApiClient: PropTypes.instanceOf(CdnApiClient).isRequired,
   formatDate: PropTypes.func.isRequired,
   onSelectionChanged: PropTypes.func,
   privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
   selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE]),
+  storageApiClient: PropTypes.instanceOf(StorageApiClient).isRequired,
   t: PropTypes.func.isRequired,
   uiLanguage: PropTypes.string.isRequired
 };
 
-RepositoryBrowser.defaultProps = {
+StorageBrowser.defaultProps = {
   onSelectionChanged: () => {},
   privateStorage: null,
   selectionMode: selection.NONE
 };
 
-export default function RepositoryBrowserWrapper({ ...props }) {
-  const { t } = useTranslation('repositoryBrowser');
-  const cdnApiClient = useSessionAwareApiClient(CdnApiClient);
+export default function StorageBrowserWrapper({ ...props }) {
+  const { t } = useTranslation('storageBrowser');
+  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const user = useUser();
 
   return (
-    <RepositoryBrowser
-      cdnApiClient={cdnApiClient}
+    <StorageBrowser
+      storageApiClient={storageApiClient}
       uiLanguage={uiLanguage}
       formatDate={formatDate}
       user={user}

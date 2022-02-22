@@ -1,13 +1,13 @@
 import sinon from 'sinon';
 import Cdn from '../repositories/cdn.js';
-import CdnService from './cdn-service.js';
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
+import StorageService from './storage-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
-describe('cdn-service', () => {
+describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
 
   let storagePlan;
@@ -28,7 +28,7 @@ describe('cdn-service', () => {
     cdn = container.get(Cdn);
     roomStore = container.get(RoomStore);
 
-    sut = container.get(CdnService);
+    sut = container.get(StorageService);
     db = container.get(Database);
   });
 

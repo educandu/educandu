@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
-import CdnService from './cdn-service.js';
 import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
+import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
 import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
@@ -21,9 +21,9 @@ describe('room-service', () => {
   let container;
   let otherUser;
   let roomStore;
-  let cdnService;
   let lessonStore;
   let roomLockStore;
+  let storageService;
   let roomInvitationStore;
 
   const now = new Date();
@@ -33,9 +33,9 @@ describe('room-service', () => {
     container = await setupTestEnvironment();
 
     roomStore = container.get(RoomStore);
-    cdnService = container.get(CdnService);
     lessonStore = container.get(LessonStore);
     roomLockStore = container.get(RoomLockStore);
+    storageService = container.get(StorageService);
     roomInvitationStore = container.get(RoomInvitationStore);
 
     sut = container.get(RoomService);
@@ -51,7 +51,7 @@ describe('room-service', () => {
 
     sandbox.stub(roomLockStore, 'takeLock');
     sandbox.stub(roomLockStore, 'releaseLock');
-    sandbox.stub(cdnService, 'deleteAllObjectsWithPrefix');
+    sandbox.stub(storageService, 'deleteAllObjectsWithPrefix');
 
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
@@ -434,7 +434,7 @@ describe('room-service', () => {
       let invitationDetails;
 
       beforeEach(async () => {
-        cdnService.deleteAllObjectsWithPrefix.resolves();
+        storageService.deleteAllObjectsWithPrefix.resolves();
 
         invitationDetails = await sut.createOrUpdateInvitation({ roomId, email: otherUser.email, user: myUser });
 
@@ -472,8 +472,8 @@ describe('room-service', () => {
         expect(lesson).toBeNull();
       });
 
-      it('should call cdnService.deleteAllObjectsWithPrefix', () => {
-        sinon.assert.calledWith(cdnService.deleteAllObjectsWithPrefix, { prefix: `rooms/${roomId}/`, user: myUser });
+      it('should call storageService.deleteAllObjectsWithPrefix', () => {
+        sinon.assert.calledWith(storageService.deleteAllObjectsWithPrefix, { prefix: `rooms/${roomId}/`, user: myUser });
       });
     });
   });

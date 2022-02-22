@@ -4,30 +4,30 @@ import express from 'express';
 import parseBool from 'parseboolean';
 import httpErrors from 'http-errors';
 import permissions from '../domain/permissions.js';
-import CdnService from '../services/cdn-service.js';
 import RoomService from '../services/room-service.js';
+import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
-import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/cdn-schemas.js';
+import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/storage-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 const { BadRequest, Unauthorized } = httpErrors;
 
-class CdnController {
-  static get inject() { return [CdnService, RoomService]; }
+class StorageController {
+  static get inject() { return [StorageService, RoomService]; }
 
-  constructor(cdnService, roomService) {
-    this.cdnService = cdnService;
+  constructor(storageService, roomService) {
+    this.storageService = storageService;
     this.roomService = roomService;
   }
 
   async handleGetCdnObject(req, res) {
     const prefix = req.query.prefix;
     const recursive = parseBool(req.query.recursive);
-    const objects = await this.cdnService.listObjects({ prefix, recursive });
+    const objects = await this.storageService.listObjects({ prefix, recursive });
 
     return res.send({ objects });
   }
@@ -37,7 +37,7 @@ class CdnController {
     const { prefix } = req.query;
     const { objectName } = req.params;
 
-    await this.cdnService.deleteObject({ prefix, objectName, user });
+    await this.storageService.deleteObject({ prefix, objectName, user });
 
     return res.sendStatus(200);
   }
@@ -68,29 +68,29 @@ class CdnController {
       }
     }
 
-    await this.cdnService.uploadFiles({ prefix, files, user });
+    await this.storageService.uploadFiles({ prefix, files, user });
     return res.send({});
   }
 
   registerApi(router) {
     router.get(
-      '/api/v1/cdn/objects',
+      '/api/v1/storage/objects',
       [needsPermission(permissions.VIEW_FILES), jsonParser, validateQuery(getObjectsQuerySchema)],
       (req, res) => this.handleGetCdnObject(req, res)
     );
 
     router.delete(
-      '/api/v1/cdn/objects/:objectName',
-      [needsPermission(permissions.DELETE_CDN_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
+      '/api/v1/storage/objects/:objectName',
+      [needsPermission(permissions.DELETE_STORAGE_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
 
     router.post(
-      '/api/v1/cdn/objects',
+      '/api/v1/storage/objects',
       [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)],
       (req, res) => this.handlePostCdnObject(req, res)
     );
   }
 }
 
-export default CdnController;
+export default StorageController;

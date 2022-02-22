@@ -4,9 +4,9 @@ import { SOURCE_TYPE } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
-import CdnFilePicker from '../../../components/cdn-file-picker.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
+import StorageFilePicker from '../../../components/storage-file-picker.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -72,7 +72,7 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
                 value={url}
                 onChange={handleInternalUrlValueChanged}
                 />
-              <CdnFilePicker
+              <StorageFilePicker
                 publicStorage={publicStorage}
                 privateStorage={privateStorage}
                 fileName={url}
