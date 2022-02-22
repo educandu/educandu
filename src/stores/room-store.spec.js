@@ -1,4 +1,3 @@
-import sinon from 'sinon';
 import RoomStore from './room-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
@@ -9,9 +8,6 @@ describe('room-store', () => {
   let container;
   let otherUser;
   let onlyJoiningUser;
-
-  const now = new Date();
-  const sandbox = sinon.createSandbox();
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -29,7 +25,6 @@ describe('room-store', () => {
   });
 
   afterEach(async () => {
-    sandbox.restore();
     await pruneTestEnvironment(container);
   });
 
@@ -45,7 +40,7 @@ describe('room-store', () => {
         {
           name: 'Room 2',
           owner: otherUser._id,
-          members: [{ userId: myUser._id, joinedOn: now }]
+          members: [{ userId: myUser._id, joinedOn: new Date() }]
         },
         {
           name: 'Room 3',
@@ -55,7 +50,7 @@ describe('room-store', () => {
         {
           name: 'Room 4',
           owner: otherUser._id,
-          members: [{ userId: onlyJoiningUser._id, joinedOn: now }]
+          members: [{ userId: onlyJoiningUser._id, joinedOn: new Date() }]
         }
       ];
       await Promise.all(rooms.map(room => createTestRoom(container, room)));
