@@ -109,7 +109,7 @@ class RepositoryBrowser extends React.Component {
       }
     ];
 
-    if (hasUserPermission(this.props.user, permissions.DELETE_CDN_FILE)) {
+    if (hasUserPermission(this.props.user, permissions.DELETE_STORAGE_FILE)) {
       this.columns.push({
         dataIndex: 'isDirectory',
         key: 'displayName',

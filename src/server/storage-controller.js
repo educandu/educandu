@@ -81,7 +81,7 @@ class StorageController {
 
     router.delete(
       '/api/v1/storage/objects/:objectName',
-      [needsPermission(permissions.DELETE_CDN_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
+      [needsPermission(permissions.DELETE_STORAGE_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
 
