@@ -3,7 +3,7 @@ import { Modal, Button } from 'antd';
 import React, { useState } from 'react';
 import selection from '../ui/selection.js';
 import { useTranslation } from 'react-i18next';
-import RepositoryBrowser from './repository-browser.js';
+import StorageBrowser from './storage-browser.js';
 import { filePickerStorageShape } from '../ui/default-prop-types.js';
 
 function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged }) {
@@ -77,7 +77,7 @@ function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged })
         ]}
         centered
         >
-        <RepositoryBrowser
+        <StorageBrowser
           publicStorage={publicStorage}
           privateStorage={privateStorage}
           selectionMode={selection.SINGLE}

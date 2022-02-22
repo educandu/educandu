@@ -888,7 +888,7 @@
     }
   },
   {
-    "namespace": "repositoryBrowser",
+    "namespace": "storageBrowser",
     "language": "en",
     "resources": {
       "fileUpload": "File upload",
@@ -905,7 +905,7 @@
     }
   },
   {
-    "namespace": "repositoryBrowser",
+    "namespace": "storageBrowser",
     "language": "de",
     "resources": {
       "fileUpload": "Datei-Upload",
