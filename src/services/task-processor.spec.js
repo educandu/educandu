@@ -1,9 +1,9 @@
 import sinon from 'sinon';
+import LockStore from '../stores/lock-store.js';
 import TaskStore from '../stores/task-store.js';
-import { serializeError } from 'serialize-error';
 import TaskProcessor from './task-processor.js';
+import { serializeError } from 'serialize-error';
 import { TASK_TYPE } from '../domain/constants.js';
-import TaskLockStore from '../stores/task-lock-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
@@ -17,14 +17,14 @@ describe('task-processor', () => {
   let ctx;
   let container;
   let taskStore;
-  let taskLockStore;
+  let lockStore;
   let serverConfig;
   let documentImportTaskProcessor;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
     taskStore = container.get(TaskStore);
-    taskLockStore = container.get(TaskLockStore);
+    lockStore = container.get(LockStore);
     serverConfig = container.get(ServerConfig);
     documentImportTaskProcessor = container.get(DocumentImportTaskProcessor);
     sut = container.get(TaskProcessor);
@@ -34,8 +34,8 @@ describe('task-processor', () => {
     sandbox.useFakeTimers(now);
     sandbox.stub(taskStore, 'findOne');
     sandbox.stub(taskStore, 'save');
-    sandbox.stub(taskLockStore, 'takeLock');
-    sandbox.stub(taskLockStore, 'releaseLock');
+    sandbox.stub(lockStore, 'takeTaskLock');
+    sandbox.stub(lockStore, 'releaseLock');
     sandbox.stub(documentImportTaskProcessor, 'process');
     sandbox.stub(serverConfig, 'taskProcessing').value({ maxAttempts: 2 });
   });
@@ -58,13 +58,13 @@ describe('task-processor', () => {
     describe('when taking the lock fails', () => {
       beforeEach(async () => {
         ctx = { cancellationRequested: false };
-        taskLockStore.takeLock.rejects('Lock already taken');
+        lockStore.takeTaskLock.rejects('Lock already taken');
 
         await sut.process(taskId, batchParams, ctx);
       });
 
-      it('should call taskLockStore.takeLock', () => {
-        sinon.assert.calledOnce(taskLockStore.takeLock);
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should not call taskStore.findOne', () => {
@@ -79,22 +79,22 @@ describe('task-processor', () => {
         sinon.assert.notCalled(taskStore.save);
       });
 
-      it('should not call taskLockStore.releaseLock', () => {
-        sinon.assert.notCalled(taskLockStore.releaseLock);
+      it('should not call lockStore.releaseLock', () => {
+        sinon.assert.notCalled(lockStore.releaseLock);
       });
     });
 
     describe('when task already processed', () => {
       beforeEach(async () => {
         ctx = { cancellationRequested: false };
-        taskLockStore.takeLock.resolves(lock);
+        lockStore.takeTaskLock.resolves(lock);
         taskStore.findOne.resolves(null);
 
         await sut.process(taskId, batchParams, ctx);
       });
 
-      it('should call taskLockStore.takeLock', () => {
-        sinon.assert.calledOnce(taskLockStore.takeLock);
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.findOne', () => {
@@ -109,8 +109,8 @@ describe('task-processor', () => {
         sinon.assert.notCalled(taskStore.save);
       });
 
-      it('should call taskLockStore.releaseLock', () => {
-        sinon.assert.calledWith(taskLockStore.releaseLock, lock);
+      it('should call lockStore.releaseLock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -121,7 +121,7 @@ describe('task-processor', () => {
         ctx = { cancellationRequested: false };
         nextTask = { _id: taskId, taskType: 'abc', attempts: [] };
 
-        taskLockStore.takeLock.resolves(lock);
+        lockStore.takeTaskLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
 
         try {
@@ -131,8 +131,8 @@ describe('task-processor', () => {
         }
       });
 
-      it('should call taskLockStore.takeLock', () => {
-        sinon.assert.calledOnce(taskLockStore.takeLock);
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.findOne', () => {
@@ -147,8 +147,8 @@ describe('task-processor', () => {
         sinon.assert.notCalled(taskStore.save);
       });
 
-      it('should call taskLockStore.releaseLock', () => {
-        sinon.assert.calledWith(taskLockStore.releaseLock, lock);
+      it('should call lockStore.releaseLock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
 
       it('should throw an error', () => {
@@ -164,7 +164,7 @@ describe('task-processor', () => {
 
         nextTask = { _id: taskId, taskType: TASK_TYPE.documentImport, processed: false, attempts: [] };
 
-        taskLockStore.takeLock.resolves(lock);
+        lockStore.takeTaskLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
         expectedError = new Error('Processing failure 1');
         documentImportTaskProcessor.process.rejects(expectedError);
@@ -172,8 +172,8 @@ describe('task-processor', () => {
         await sut.process(taskId, batchParams, ctx);
       });
 
-      it('should call taskLockStore.takeLock', () => {
-        sinon.assert.calledOnce(taskLockStore.takeLock);
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.findOne', () => {
@@ -199,8 +199,8 @@ describe('task-processor', () => {
         });
       });
 
-      it('should call taskLockStore.releaseLock', () => {
-        sinon.assert.calledWith(taskLockStore.releaseLock, lock);
+      it('should call lockStore.releaseLock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -226,15 +226,15 @@ describe('task-processor', () => {
         };
         nextTick = new Date(sandbox.clock.tick(1000));
 
-        taskLockStore.takeLock.resolves(lock);
+        lockStore.takeTaskLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
         documentImportTaskProcessor.process.rejects(expectedErrors[1]);
 
         await sut.process(taskId, batchParams, ctx);
       });
 
-      it('should call taskLockStore.takeLock', () => {
-        sinon.assert.calledOnce(taskLockStore.takeLock);
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.findOne', () => {
@@ -265,8 +265,8 @@ describe('task-processor', () => {
         });
       });
 
-      it('should call taskLockStore.releaseLock', () => {
-        sinon.assert.calledWith(taskLockStore.releaseLock, lock);
+      it('should call lockStore.releaseLock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -280,15 +280,15 @@ describe('task-processor', () => {
           attempts: []
         };
 
-        taskLockStore.takeLock.resolves(lock);
+        lockStore.takeTaskLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
         documentImportTaskProcessor.process.resolves();
 
         await sut.process(taskId, batchParams, ctx);
       });
 
-      it('should call taskLockStore.takeLock', () => {
-        sinon.assert.calledOnce(taskLockStore.takeLock);
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.findOne', () => {
@@ -314,8 +314,8 @@ describe('task-processor', () => {
         });
       });
 
-      it('should call taskLockStore.releaseLock', () => {
-        sinon.assert.calledWith(taskLockStore.releaseLock, lock);
+      it('should call lockStore.releaseLock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -324,15 +324,15 @@ describe('task-processor', () => {
         nextTask = { _id: taskId };
         ctx = { cancellationRequested: true };
 
-        taskLockStore.takeLock.resolves(lock);
+        lockStore.takeTaskLock.resolves(lock);
         taskStore.findOne.resolves(nextTask);
         documentImportTaskProcessor.process.resolves();
 
         await sut.process(taskId, batchParams, ctx);
       });
 
-      it('should call taskLockStore.takeLock', () => {
-        sinon.assert.calledOnce(taskLockStore.takeLock);
+      it('should call lockStore.takeTaskLock', () => {
+        sinon.assert.calledOnce(lockStore.takeTaskLock);
       });
 
       it('should call taskStore.findOne', () => {
@@ -347,8 +347,8 @@ describe('task-processor', () => {
         sinon.assert.notCalled(taskStore.save);
       });
 
-      it('should call taskLockStore.releaseLock', () => {
-        sinon.assert.calledWith(taskLockStore.releaseLock, lock);
+      it('should call lockStore.releaseLock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
     });
   });

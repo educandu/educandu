@@ -4,9 +4,9 @@ import Logger from '../common/logger.js';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
+import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
-import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
@@ -26,15 +26,15 @@ const roomInvitationProjection = {
 
 export default class RoomService {
   static get inject() {
-    return [RoomStore, RoomLockStore, RoomInvitationStore, LessonStore, UserService, StorageService, TransactionRunner];
+    return [RoomStore, RoomInvitationStore, LessonStore, LockStore, UserService, StorageService, TransactionRunner];
   }
 
-  constructor(roomStore, roomLockStore, roomInvitationStore, lessonStore, userService, storageService, transactionRunner) {
+  constructor(roomStore, roomInvitationStore, lessonStore, lockStore, userService, storageService, transactionRunner) {
     this.roomStore = roomStore;
+    this.lockStore = lockStore;
+    this.storageService = storageService;
     this.userService = userService;
     this.lessonStore = lessonStore;
-    this.roomLockStore = roomLockStore;
-    this.storageService = storageService;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
   }
@@ -174,7 +174,7 @@ export default class RoomService {
       let lock;
 
       try {
-        lock = await this.roomLockStore.takeLock(invitation.roomId);
+        lock = await this.lockStore.takeRoomLock(invitation.roomId);
 
         const roomContainingNewMember = await this.roomStore.findOne(
           { '_id': invitation.roomId, 'members.userId': newMember.userId },
@@ -191,7 +191,7 @@ export default class RoomService {
 
         await this.roomInvitationStore.deleteOne({ _id: invitation._id }, { session });
       } finally {
-        this.roomLockStore.releaseLock(lock);
+        this.lockStore.releaseLock(lock);
       }
     });
   }

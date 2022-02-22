@@ -4,9 +4,9 @@ import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import TaskStore from '../stores/task-store.js';
+import LockStore from '../stores/lock-store.js';
 import BatchStore from '../stores/batch-store.js';
 import DocumentStore from '../stores/document-store.js';
-import BatchLockStore from '../stores/batch-lock-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import ExportApiClient from '../api-clients/export-api-client.js';
 import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
@@ -30,16 +30,16 @@ const CONCURRENT_BATCH_ERROR_MESSAGE = 'Cannot create a new batch while another 
 
 class ImportService {
   static get inject() {
-    return [DocumentStore, ExportApiClient, TransactionRunner, BatchStore, TaskStore, BatchLockStore, UserStore];
+    return [DocumentStore, ExportApiClient, TransactionRunner, BatchStore, TaskStore, LockStore, UserStore];
   }
 
-  constructor(documentStore, exportApiClient, transactionRunner, batchStore, taskStore, batchLockStore, userStore) {
+  constructor(documentStore, exportApiClient, transactionRunner, batchStore, taskStore, lockStore, userStore) {
     this.documentStore = documentStore;
     this.exportApiClient = exportApiClient;
     this.transactionRunner = transactionRunner;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
-    this.batchLockStore = batchLockStore;
+    this.lockStore = lockStore;
     this.userStore = userStore;
   }
 
@@ -119,7 +119,7 @@ class ImportService {
 
     let lock;
     try {
-      lock = await this.batchLockStore.takeLock(importSource.hostName);
+      lock = await this.lockStore.takeBatchLock(importSource.hostName);
     } catch (error) {
       throw new BadRequest(CONCURRENT_BATCH_ERROR_MESSAGE);
     }
@@ -142,7 +142,7 @@ class ImportService {
       });
 
     } finally {
-      await this.batchLockStore.releaseLock(lock);
+      await this.lockStore.releaseLock(lock);
     }
 
     return batch;

@@ -4,9 +4,9 @@ import RoomService from './room-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
+import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
-import RoomLockStore from '../stores/room-lock-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
@@ -21,8 +21,8 @@ describe('room-service', () => {
   let container;
   let otherUser;
   let roomStore;
+  let lockStore;
   let lessonStore;
-  let roomLockStore;
   let storageService;
   let roomInvitationStore;
 
@@ -32,9 +32,9 @@ describe('room-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
 
+    lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
     lessonStore = container.get(LessonStore);
-    roomLockStore = container.get(RoomLockStore);
     storageService = container.get(StorageService);
     roomInvitationStore = container.get(RoomInvitationStore);
 
@@ -49,8 +49,8 @@ describe('room-service', () => {
   beforeEach(async () => {
     sandbox.useFakeTimers(now);
 
-    sandbox.stub(roomLockStore, 'takeLock');
-    sandbox.stub(roomLockStore, 'releaseLock');
+    sandbox.stub(lockStore, 'takeRoomLock');
+    sandbox.stub(lockStore, 'releaseLock');
     sandbox.stub(storageService, 'deleteAllObjectsWithPrefix');
 
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
@@ -286,18 +286,17 @@ describe('room-service', () => {
       const lock = { key: 'room' };
 
       beforeEach(async () => {
-
-        roomLockStore.takeLock.resolves(lock);
-        roomLockStore.releaseLock.resolves();
+        lockStore.takeRoomLock.resolves(lock);
+        lockStore.releaseLock.resolves();
         await sut.confirmInvitation({ token: invitation.token, user: otherUser });
       });
 
       it('should take a lock on the room', () => {
-        sinon.assert.calledWith(roomLockStore.takeLock, invitation.roomId);
+        sinon.assert.calledWith(lockStore.takeRoomLock, invitation.roomId);
       });
 
       it('should release the lock on the room', () => {
-        sinon.assert.calledWith(roomLockStore.releaseLock, lock);
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
 
       it('should add the user as a room member if user and token are valid', async () => {
