@@ -101,7 +101,7 @@ function getRoomMembershipConfirmationUrl(token) {
 }
 
 function getDefaultLoginRedirectUrl() {
-  return homePath;
+  return mySpacePath;
 }
 
 function getDefaultLogoutRedirectUrl() {

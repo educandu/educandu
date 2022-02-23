@@ -73,27 +73,42 @@ class UserController {
   }
 
   handleGetRegisterPage(req, res) {
+    if (req.isAuthenticated()) {
+      return res.redirect(urls.getDefaultLoginRedirectUrl());
+    }
+
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.register, {});
   }
 
-  handleGetResetPasswordPage(req, res) {
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.resetPassword, {});
-  }
-
   async handleCompleteRegistrationPage(req, res) {
+    if (req.isAuthenticated()) {
+      return res.redirect(urls.getDefaultLoginRedirectUrl());
+    }
+
     const user = await this.userService.verifyUser(req.params.verificationCode);
     const initialState = { user };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completeRegistration, initialState);
   }
 
   handleGetLoginPage(req, res) {
+    if (req.isAuthenticated()) {
+      return res.redirect(urls.getDefaultLoginRedirectUrl());
+    }
+
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
   }
 
   handleGetLogoutPage(req, res) {
-    req.logout();
-    res.clearCookie(this.serverConfig.sessionCookieName);
+    if (req.isAuthenticated()) {
+      req.logout();
+      res.clearCookie(this.serverConfig.sessionCookieName);
+    }
+
     return res.redirect(urls.getDefaultLogoutRedirectUrl());
+  }
+
+  handleGetResetPasswordPage(req, res) {
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.resetPassword, {});
   }
 
   async handleGetCompletePasswordResetPage(req, res) {
