@@ -138,7 +138,7 @@
       "newDocument": "New document",
       "editDocument": "Edit document",
       "titleRequired": "Please specify a document title",
-      "descriptionTooLong": "The description cannot have more than 1000 characters",
+      "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
       "useTemplateDocument": "Use default template"
     }
   },
@@ -149,7 +149,7 @@
       "newDocument": "Neues Dokument",
       "editDocument": "Dokument bearbeiten",
       "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
-      "descriptionTooLong": "Die Beschreibung darf nicht länger als 1000 Zeichen sein",
+      "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "useTemplateDocument": "Standardvorlage benutzen"
     }
   },

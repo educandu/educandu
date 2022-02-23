@@ -8,8 +8,8 @@ titleRequired:
   en: Please specify a document title
   de: Bitte geben Sie einen Dokument-Titel an
 descriptionTooLong:
-  en: The description cannot have more than 1000 characters
-  de: Die Beschreibung darf nicht länger als 1000 Zeichen sein
+  en: The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}
+  de: Die Beschreibung darf nicht länger als {maxChars} Zeichen sein
 useTemplateDocument:
   en: Use default template
   de: Standardvorlage benutzen

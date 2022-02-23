@@ -10,6 +10,7 @@ import LanguageSelect from './localization/language-select.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
+import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 const TextArea = Input.TextArea;
@@ -47,8 +48,8 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
 
   const descriptionValidationRules = [
     {
-      max: 1000,
-      message: t('descriptionTooLong')
+      max: maxDocumentDescriptionLength,
+      message: t('descriptionTooLong', { maxChars: maxDocumentDescriptionLength })
     }
   ];
 

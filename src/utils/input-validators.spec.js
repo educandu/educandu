@@ -6,15 +6,15 @@ describe('input-validators', () => {
     let result;
 
     const testCases = [
-      { password: null, minLength: 4, expectedResult: false },
-      { password: 'abc', minLength: 4, expectedResult: false },
-      { password: 'abcd', minLength: 4, expectedResult: false },
-      { password: '1234', minLength: 4, expectedResult: false },
+      { password: null, expectedResult: false },
+      { password: 'abc', expectedResult: false },
+      { password: 'abcd', expectedResult: false },
+      { password: '1234', expectedResult: false },
       { password: 'abc1', expectedResult: false },
-      { password: 'abc1', minLength: 4, expectedResult: true },
-      { password: 'abc1d', minLength: 4, expectedResult: true },
-      { password: 'a__1', minLength: 4, expectedResult: true },
-      { password: '!!ä1', minLength: 4, expectedResult: false },
+      { password: 'abc1abc1', expectedResult: true },
+      { password: 'abc1defgh', expectedResult: true },
+      { password: 'a______1', expectedResult: true },
+      { password: '!!ä1', expectedResult: false },
       { password: 'abcd123', expectedResult: false },
       { password: 'abcd1234', expectedResult: true }
     ];
@@ -22,7 +22,7 @@ describe('input-validators', () => {
     testCases.forEach(({ password, minLength, expectedResult }) => {
       describe(`with password='${password}' and minLength=${minLength}`, () => {
         beforeEach(() => {
-          result = sut.isValidPassword({ password, minLength });
+          result = sut.isValidPassword(password);
         });
         it(`should return ${expectedResult}`, () => {
           expect(result).toBe(expectedResult);
