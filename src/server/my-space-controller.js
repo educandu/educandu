@@ -1,20 +1,20 @@
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
-import UserService from '../services/user-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import ClientDataMapper from '../server/client-data-mapper.js';
+import StorageService from '../services/storage-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class UserController {
-  static get inject() { return [ServerConfig, PageRenderer, UserService, RoomService, ClientDataMapper]; }
+  static get inject() { return [ServerConfig, PageRenderer, RoomService, StorageService, ClientDataMappingService]; }
 
-  constructor(serverConfig, pageRenderer, userService, roomService, clientDataMapper) {
+  constructor(serverConfig, pageRenderer, roomService, storageService, clientDataMappingService) {
     this.serverConfig = serverConfig;
-    this.userService = userService;
     this.roomService = roomService;
     this.pageRenderer = pageRenderer;
-    this.clientDataMapper = clientDataMapper;
+    this.storageService = storageService;
+    this.clientDataMappingService = clientDataMappingService;
   }
 
   async handleGetMySpacePage(req, res) {
@@ -22,14 +22,14 @@ class UserController {
 
     let storagePlan = null;
     if (user.storage.plan) {
-      storagePlan = await this.userService.getStoragePlanById(user.storage.plan);
+      storagePlan = await this.storageService.getStoragePlanById(user.storage.plan);
     }
 
     let rooms = [];
     if (this.serverConfig.areRoomsEnabled) {
       rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
     }
-    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMapper.mapRoom(room, user)));
+    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
 
     const initialState = { storagePlan, rooms: mappedRooms };
 

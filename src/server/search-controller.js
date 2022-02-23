@@ -1,16 +1,16 @@
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import { validateQuery } from '../domain/validation-middleware.js';
 import { getSearchQuerySchema } from '../domain/schemas/search-schemas.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 export default class SearchController {
-  static get inject() { return [DocumentService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(documentService, clientDataMapper, pageRenderer) {
+  constructor(documentService, clientDataMappingService, pageRenderer) {
     this.documentService = documentService;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
   }
 
@@ -21,7 +21,7 @@ export default class SearchController {
   async handleGetSearchResult(req, res) {
     const { query } = req.query;
     const docs = await this.documentService.getDocumentsMetadataByTags(query);
-    const result = await this.clientDataMapper.mapDocsOrRevisions(docs, req.user);
+    const result = await this.clientDataMappingService.mapDocsOrRevisions(docs, req.user);
     return res.send({ result });
   }
 

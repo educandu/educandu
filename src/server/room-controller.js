@@ -4,15 +4,15 @@ import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
-import UserService from '../services/user-service.js';
 import RoomService from '../services/room-service.js';
+import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
-import ClientDataMapper from './client-data-mapper.js';
 import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   postRoomBodySchema,
@@ -20,27 +20,27 @@ import {
   patchRoomBodySchema,
   patchRoomParamsSchema,
   deleteRoomParamsSchema,
+  deleteRoomsQuerySchema,
   postRoomInvitationBodySchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
-  getRoomMembershipConfirmationParamsSchema,
-  deleteRoomsQuerySchema
+  getRoomMembershipConfirmationParamsSchema
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
 const { NotFound, Forbidden, Unauthorized } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, UserService, LessonService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, RoomService, LessonService, UserService, MailService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(serverConfig, roomService, userService, lessonService, mailService, clientDataMapper, pageRenderer) {
-    this.serverConfig = serverConfig;
+  constructor(serverConfig, roomService, lessonService, userService, mailService, clientDataMappingService, pageRenderer) {
     this.roomService = roomService;
     this.userService = userService;
-    this.lessonService = lessonService;
     this.mailService = mailService;
-    this.clientDataMapper = clientDataMapper;
+    this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
+    this.lessonService = lessonService;
+    this.clientDataMappingService = clientDataMappingService;
   }
 
   async handleGetRoomMembershipConfirmationPage(req, res) {
@@ -174,9 +174,9 @@ export default class RoomController {
 
     const lessons = await this.lessonService.getLessons(roomId);
 
-    const mappedRoom = await this.clientDataMapper.mapRoom(room);
-    const mappedLessons = this.clientDataMapper.mapLessonsMetadata(lessons);
-    const mappedInvitations = this.clientDataMapper.mapRoomInvitations(invitations);
+    const mappedRoom = await this.clientDataMappingService.mapRoom(room);
+    const mappedLessons = this.clientDataMappingService.mapLessonsMetadata(lessons);
+    const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations });
   }

@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import UserService from './user-service.js';
+import UserStore from '../stores/user-store.js';
 import ExportService from './export-service.js';
 import DocumentService from './document-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
@@ -12,8 +12,8 @@ describe('export-service', () => {
 
   let documentService;
   let serverConfig;
-  let userService;
   let container;
+  let userStore;
   let user;
   let sut;
 
@@ -23,7 +23,7 @@ describe('export-service', () => {
 
     serverConfig = container.get(ServerConfig);
     documentService = container.get(DocumentService);
-    userService = container.get(UserService);
+    userStore = container.get(UserStore);
     sut = container.get(ExportService);
   });
 
@@ -33,8 +33,7 @@ describe('export-service', () => {
 
   beforeEach(() => {
     sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.root.url');
-    sandbox.stub(userService, 'extractUserIdSetFromDocsOrRevisions');
-    sandbox.stub(userService, 'getUsersByIds');
+    sandbox.stub(userStore, 'getUsersByIds');
     sandbox.stub(documentService, 'getAllDocumentRevisionsByKey');
   });
 
@@ -83,13 +82,12 @@ describe('export-service', () => {
   describe('getDocumentExport', () => {
     let result;
 
-    const rev1 = { _id: '1', order: 1 };
+    const rev1 = { _id: '1', order: 1, createdBy: 'user1' };
     const rev2 = { _id: '2', order: 2 };
     const rev3 = { _id: '3', order: 3 };
 
     beforeEach(() => {
-      userService.extractUserIdSetFromDocsOrRevisions.returns(new Set(['user1']));
-      userService.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
+      userStore.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
       documentService.getAllDocumentRevisionsByKey.resolves([rev2, rev3, rev1]);
     });
 
@@ -128,10 +126,6 @@ describe('export-service', () => {
     describe('with toRevision = \'2\'', () => {
       beforeEach(async () => {
         result = await sut.getDocumentExport({ key: 'abc', toRevision: '2' });
-      });
-
-      it('should call userService.extractUserIdSetFromDocsOrRevisions', () => {
-        sinon.assert.calledWith(userService.extractUserIdSetFromDocsOrRevisions, [rev1, rev2]);
       });
 
       it('should return revisions', () => {

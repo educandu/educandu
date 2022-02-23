@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import Cdn from './repositories/cdn.js';
 import Database from './stores/database.js';
 import uniqueId from './utils/unique-id.js';
+import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
@@ -117,6 +118,7 @@ export async function destroyTestEnvironment(container) {
 }
 
 export async function setupTestUser(container, userValues) {
+  const userStore = container.get(UserStore);
   const userService = container.get(UserService);
 
   const username = userValues?.username || 'test';
@@ -134,7 +136,7 @@ export async function setupTestUser(container, userValues) {
   verifiedUser.roles = roles;
   verifiedUser.profile = profile || null;
   verifiedUser.lockedOut = lockedOut || false;
-  await userService.saveUser(verifiedUser);
+  await userStore.saveUser(verifiedUser);
   return verifiedUser;
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 import express from 'express';
 import passport from 'passport';
 import urls from '../utils/urls.js';
@@ -10,16 +11,18 @@ import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import PageRenderer from '../server/page-renderer.js';
-import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
+import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
+import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -36,15 +39,37 @@ const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
 
 class UserController {
-  static get inject() { return [ServerConfig, Database, UserService, MailService, ClientDataMapper, PageRenderer]; }
+  static get inject() {
+    return [
+      ServerConfig,
+      Database,
+      UserService,
+      StorageService,
+      PasswordResetRequestService,
+      MailService,
+      ClientDataMappingService,
+      PageRenderer
+    ];
+  }
 
-  constructor(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer) {
-    this.serverConfig = serverConfig;
+  constructor(
+    serverConfig,
+    database,
+    userService,
+    storageService,
+    passwordResetRequestService,
+    mailService,
+    clientDataMappingService,
+    pageRenderer
+  ) {
     this.database = database;
     this.userService = userService;
     this.mailService = mailService;
-    this.clientDataMapper = clientDataMapper;
+    this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
+    this.clientDataMappingService = clientDataMappingService;
+    this.storageService = storageService;
+    this.passwordResetRequestService = passwordResetRequestService;
   }
 
   handleGetRegisterPage(req, res) {
@@ -72,15 +97,15 @@ class UserController {
   }
 
   async handleGetCompletePasswordResetPage(req, res) {
-    const resetRequest = await this.userService.getPasswordResetRequestById(req.params.passwordResetRequestId);
+    const resetRequest = await this.passwordResetRequestService.getRequestById(req.params.passwordResetRequestId);
     const passwordResetRequestId = (resetRequest || {})._id;
     const initialState = { passwordResetRequestId };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
   }
 
   async handleGetUsersPage(req, res) {
-    const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.userService.getAllStoragePlans()]);
-    const initialState = { users: this.clientDataMapper.mapUsersForAdminArea(rawUsers), storagePlans };
+    const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
+    const initialState = { users: this.clientDataMappingService.mapUsersForAdminArea(rawUsers), storagePlans };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
   }
 
@@ -100,7 +125,7 @@ class UserController {
       await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
 
-    res.send({ result, user: user ? this.clientDataMapper.mapWebsiteUser(user) : null });
+    res.send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserAccount(req, res) {
@@ -110,7 +135,7 @@ class UserController {
 
     const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
 
-    res.send({ result, user: user ? this.clientDataMapper.mapWebsiteUser(user) : null });
+    res.send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserProfile(req, res) {
@@ -140,7 +165,7 @@ class UserController {
           return next(loginError);
         }
 
-        return res.send({ user: this.clientDataMapper.mapWebsiteUser(user) });
+        return res.send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
       });
     })(req, res, next);
   }

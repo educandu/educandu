@@ -3,11 +3,11 @@ import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
 import { DOC_VIEW_QUERY_PARAM } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   getDocByKeyParamsSchema,
@@ -27,17 +27,17 @@ const jsonParserLargePayload = express.json({ limit: '2MB' });
 const getDocumentsQueryFilter = user => ({ includeArchived: hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS) });
 
 class DocumentController {
-  static get inject() { return [DocumentService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(documentService, clientDataMapper, pageRenderer) {
+  constructor(documentService, clientDataMappingService, pageRenderer) {
     this.documentService = documentService;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
   }
 
   async handleGetDocsPage(req, res) {
     const allDocs = await this.documentService.getAllDocumentsMetadata(getDocumentsQueryFilter(req.user));
-    const documents = await this.clientDataMapper.mapDocsOrRevisions(allDocs, req.user);
+    const documents = await this.clientDataMappingService.mapDocsOrRevisions(allDocs, req.user);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents });
   }
@@ -72,11 +72,11 @@ class DocumentController {
     let mappedLatestRevision = null;
     if (view === DOC_VIEW_QUERY_PARAM.edit) {
       const latestRevision = await this.documentService.getDocumentRevisionById(doc.revision);
-      mappedLatestRevision = await this.clientDataMapper.mapDocOrRevision(latestRevision, user);
+      mappedLatestRevision = await this.clientDataMappingService.mapDocOrRevision(latestRevision, user);
     }
 
-    const [mappedDocument, mappedTemplateDocument] = await this.clientDataMapper.mapDocsOrRevisions([doc, templateDocument], user);
-    const templateSections = mappedTemplateDocument ? this.clientDataMapper.createProposedSections(mappedTemplateDocument) : [];
+    const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
+    const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument) : [];
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, latestRevision: mappedLatestRevision, templateSections });
   }
@@ -87,7 +87,7 @@ class DocumentController {
       throw new NotFound();
     }
 
-    const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
+    const documentRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
     return res.send({ documentRevision });
   }
 
@@ -100,7 +100,7 @@ class DocumentController {
       throw new NotFound();
     }
 
-    const documentRevisions = await this.clientDataMapper.mapDocsOrRevisions(revisions, user);
+    const documentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(revisions, user);
     return res.send({ documentRevisions });
   }
 
@@ -110,7 +110,7 @@ class DocumentController {
       throw new NotFound();
     }
 
-    const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
+    const documentRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
     return res.send({ documentRevision });
   }
 
@@ -120,7 +120,7 @@ class DocumentController {
       throw new NotFound();
     }
 
-    const documentRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
+    const documentRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
     return res.send({ documentRevision });
   }
 
@@ -133,7 +133,7 @@ class DocumentController {
       throw new NotFound();
     }
 
-    const documentRevisions = await this.clientDataMapper.mapDocsOrRevisions(revisions, user);
+    const documentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(revisions, user);
     return res.send({ documentRevisions });
   }
 
@@ -146,7 +146,7 @@ class DocumentController {
       throw new NotFound();
     }
 
-    const mappedDoc = await this.clientDataMapper.mapDocOrRevision(doc, user);
+    const mappedDoc = await this.clientDataMappingService.mapDocOrRevision(doc, user);
     return res.send({ doc: mappedDoc });
   }
 

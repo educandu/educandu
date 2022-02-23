@@ -5,11 +5,11 @@ import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
-import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import {
   getLessonParamsSchema,
@@ -24,13 +24,13 @@ const jsonParser = express.json();
 const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
 
 export default class LessonController {
-  static get inject() { return [ServerConfig, LessonService, RoomService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [ServerConfig, LessonService, RoomService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(serverConfig, lessonService, roomService, clientDataMapper, pageRenderer) {
+  constructor(serverConfig, lessonService, roomService, clientDataMappingService, pageRenderer) {
     this.serverConfig = serverConfig;
     this.lessonService = lessonService;
     this.roomService = roomService;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
   }
 
@@ -61,8 +61,8 @@ export default class LessonController {
       throw new Forbidden();
     }
 
-    const mappedLesson = this.clientDataMapper.mapLesson(lesson);
-    const mappedRoom = await this.clientDataMapper.mapRoom(room, user);
+    const mappedLesson = this.clientDataMappingService.mapLesson(lesson);
+    const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson: mappedLesson, room: mappedRoom });
   }
 

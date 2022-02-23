@@ -1,11 +1,22 @@
 import Database from './database.js';
-import StoreBase from './store-base.js';
 
-class PasswordResetRequestStore extends StoreBase {
+class PasswordResetRequestStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.passwordResetRequests);
+    this.collection = db.passwordResetRequests;
+  }
+
+  getRequestById(id, { session } = {}) {
+    return this.collection.findOne({ _id: id }, { session });
+  }
+
+  deleteRequestById(id, { session } = {}) {
+    return this.collection.deleteOne({ _id: id }, { session });
+  }
+
+  saveRequest(request, { session } = {}) {
+    return this.collection.replaceOne({ _id: request._id }, request, { session, upsert: true });
   }
 }
 

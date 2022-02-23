@@ -7,7 +7,9 @@ import { SAVE_USER_RESULT } from '../domain/constants.js';
 describe('user-controller', () => {
 
   const sandbox = sinon.createSandbox();
-  let clientDataMapper;
+  let passwordResetRequestService;
+  let storageService;
+  let clientDataMappingService;
   let userService;
   let mailService;
   let sut;
@@ -18,22 +20,37 @@ describe('user-controller', () => {
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
       getUserByEmailAddress: sandbox.stub(),
-      createPasswordResetRequest: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
+      createPasswordResetRequest: sandbox.stub(),
       deleteAllUserStorageReminders: sandbox.stub()
+    };
+    storageService = {
+      getAllStoragePlans: sandbox.stub()
+    };
+    passwordResetRequestService = {
+      getRequestById: sandbox.stub()
     };
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),
       sendPasswordResetEmail: sandbox.stub()
     };
-    clientDataMapper = {
+    clientDataMappingService = {
       mapWebsiteUser: sandbox.stub()
     };
     const serverConfig = {};
     const database = {};
     const pageRenderer = {};
 
-    sut = new UserController(serverConfig, database, userService, mailService, clientDataMapper, pageRenderer);
+    sut = new UserController(
+      serverConfig,
+      database,
+      userService,
+      storageService,
+      passwordResetRequestService,
+      mailService,
+      clientDataMappingService,
+      pageRenderer
+    );
   });
 
   afterEach(() => {
@@ -57,7 +74,7 @@ describe('user-controller', () => {
         res.on('end', done);
 
         userService.createUser.resolves({ result: SAVE_USER_RESULT.success, user: { verificationCode: 'verificationCode' } });
-        clientDataMapper.mapWebsiteUser.returns(mappedUser);
+        clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUser(req, res);
       });
@@ -105,8 +122,8 @@ describe('user-controller', () => {
         sinon.assert.notCalled(mailService.sendRegistrationVerificationEmail);
       });
 
-      it('should not call clientDataMapper.mapWebsiteUser', () => {
-        sinon.assert.notCalled(clientDataMapper.mapWebsiteUser);
+      it('should not call clientDataMappingService.mapWebsiteUser', () => {
+        sinon.assert.notCalled(clientDataMappingService.mapWebsiteUser);
       });
 
       it('should return the result object', () => {
@@ -136,7 +153,7 @@ describe('user-controller', () => {
         res.on('end', done);
 
         userService.updateUserAccount.resolves({ result: SAVE_USER_RESULT.success, user: {} });
-        clientDataMapper.mapWebsiteUser.returns(mappedUser);
+        clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUserAccount(req, res);
       });
@@ -177,8 +194,8 @@ describe('user-controller', () => {
         expect(res.statusCode).toBe(200);
       });
 
-      it('should not call clientDataMapper.mapWebsiteUser', () => {
-        sinon.assert.notCalled(clientDataMapper.mapWebsiteUser);
+      it('should not call clientDataMappingService.mapWebsiteUser', () => {
+        sinon.assert.notCalled(clientDataMappingService.mapWebsiteUser);
       });
 
       it('should return the result object', () => {

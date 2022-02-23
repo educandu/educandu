@@ -27,75 +27,28 @@ class UserService {
     this.passwordResetRequestStore = passwordResetRequestStore;
   }
 
-  getAllStoragePlans() {
-    return this.storagePlanStore.find();
-  }
-
-  getStoragePlanById(id) {
-    return this.storagePlanStore.findOne({ _id: id });
-  }
-
   getAllUsers() {
-    return this.userStore.find();
+    return this.userStore.getAllUsers();
   }
 
   getUserById(id) {
-    return this.userStore.findOne({ _id: id });
+    return this.userStore.getUserById(id);
   }
 
   getUsersByIds(ids) {
-    return ids.length
-      ? this.userStore.find({ _id: { $in: ids } })
-      : Promise.resolve([]);
+    return this.userStore.getUsersByIds(ids);
   }
 
   getUserByEmailAddress(email) {
-    return this.userStore.findOne({ email: email.toLowerCase() });
-  }
-
-  extractUserIdSetFromDocsOrRevisions(docsOrRevisions) {
-    return docsOrRevisions.reduce((set, docOrRev) => this._fillUserIdSetForDocOrRevision(docOrRev, set), new Set());
-  }
-
-  _fillUserIdSetForDocOrRevision(docOrRev, set) {
-    if (docOrRev.createdBy) {
-      set.add(docOrRev.createdBy);
-    }
-    if (docOrRev.updatedBy) {
-      set.add(docOrRev.updatedBy);
-    }
-    if (docOrRev.contributors) {
-      docOrRev.contributors.forEach(c => set.add(c));
-    }
-    if (docOrRev.sections) {
-      docOrRev.sections.forEach(s => {
-        if (s.deletedBy) {
-          set.add(s.deletedBy);
-        }
-      });
-    }
-    return set;
-  }
-
-  findUser(username, provider = DEFAULT_PROVIDER_NAME) {
-    return this.userStore.findOne({ username, provider });
-  }
-
-  saveUser(user) {
-    logger.info(`Saving user with id ${user._id}`);
-    return this.userStore.save(user);
+    return this.userStore.getUserByEmailAddress(email);
   }
 
   async updateUserAccount({ userId, provider, username, email }) {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
-    const otherExistingUser = await this.userStore.findOne({
-      $and: [
-        { _id: { $ne: userId } },
-        { provider },
-        { $or: [{ username }, { email: lowerCasedEmail }] }
-      ]
+    const otherExistingUser = await this.userStore.findDifferentUserByUsernameOrEmail({
+      userId, provider, username, email: lowerCasedEmail
     });
 
     if (otherExistingUser) {
@@ -104,48 +57,48 @@ class UserService {
         : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
     }
 
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     const updatedUser = { ...user, username, email: lowerCasedEmail };
 
-    await this.saveUser(updatedUser);
+    await this.userStore.saveUser(updatedUser);
     return { result: SAVE_USER_RESULT.success, user: updatedUser };
   }
 
   async updateUserProfile(userId, newProfile) {
     logger.info(`Updating profile for user with id ${userId}`);
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     user.profile = newProfile;
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return user.profile;
   }
 
   async updateUserRoles(userId, newRoles) {
     logger.info(`Updating roles for user with id ${userId}: ${newRoles}`);
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     const roleSet = new Set(newRoles || []);
     roleSet.add(DEFAULT_ROLE_NAME);
     user.roles = Array.from(roleSet.values());
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return user.roles;
   }
 
   async updateUserLockedOutState(userId, lockedOut) {
     logger.info(`Updating locked out state for user with id ${userId}: ${lockedOut}`);
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     user.lockedOut = lockedOut;
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return user.lockedOut;
   }
 
   async updateUserStoragePlan(userId, storagePlanId) {
     logger.info(`Updating storage plan for user with id ${userId}: ${storagePlanId}`);
 
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     if (!user) {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
 
-    const plan = await this.getStoragePlanById(storagePlanId);
+    const plan = await this.storagePlanStore.getStoragePlanById(storagePlanId);
     if (!plan) {
       throw new NotFound(`Storage plan with ID '${storagePlanId}' could not be found`);
     }
@@ -156,14 +109,14 @@ class UserService {
 
     const newStorage = { ...user.storage, plan: plan._id };
     user.storage = newStorage;
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return newStorage;
   }
 
   async updateUserUsedStorage(userId, usedBytes) {
     logger.info(`Updating usedBytes for user with id ${userId}: ${usedBytes}`);
 
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     if (!user) {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
@@ -173,14 +126,14 @@ class UserService {
     }
 
     user.storage = { ...user.storage, usedBytes };
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return user;
   }
 
   async addUserStorageReminder(userId, executingUser) {
     logger.info(`Adding storage reminder for user with id ${userId}`);
 
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     if (!user) {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
@@ -196,14 +149,14 @@ class UserService {
       ]
     };
     user.storage = newStorage;
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return newStorage;
   }
 
   async deleteAllUserStorageReminders(userId) {
     logger.info(`Deleting all storage reminders for user with id ${userId}`);
 
-    const user = await this.getUserById(userId);
+    const user = await this.userStore.getUserById(userId);
     if (!user) {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
@@ -213,14 +166,14 @@ class UserService {
       reminders: []
     };
     user.storage = newStorage;
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return newStorage;
   }
 
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingUser = await this.userStore.findOne({ $or: [{ $and: [{ username, provider }] }, { email: lowerCasedEmail }] });
+    const existingUser = await this.userStore.findUserByUsernameOrEmail({ provider, username, email: lowerCasedEmail });
     if (existingUser) {
       return existingUser.email === lowerCasedEmail
         ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
@@ -237,7 +190,7 @@ class UserService {
     user.verificationCode = verified ? null : uniqueId.create();
 
     logger.info(`Creating new user with id ${user._id}`);
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     return { result: SAVE_USER_RESULT.success, user };
   }
 
@@ -248,19 +201,19 @@ class UserService {
       username,
       provider: `external/${hostName}`
     };
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
   }
 
   async verifyUser(verificationCode, provider = DEFAULT_PROVIDER_NAME) {
     logger.info(`Verifying user with verification code ${verificationCode}`);
     let user = null;
     try {
-      user = await this.userStore.findOne({ verificationCode, provider });
+      user = await this.userStore.findUserByVerificationCode({ provider, verificationCode });
       if (user) {
         logger.info(`Found user with id ${user._id}`);
         user.expires = null;
         user.verificationCode = null;
-        await this.saveUser(user);
+        await this.userStore.saveUser(user);
       } else {
         logger.info(`No user found for verification code ${verificationCode}`);
       }
@@ -272,21 +225,13 @@ class UserService {
   }
 
   async authenticateUser(username, password, provider = DEFAULT_PROVIDER_NAME) {
-    const user = await this.findUser(username, provider);
+    const user = await this.userStore.findUserByUsername({ username, provider });
     if (!user || user.expires || user.lockedOut) {
       return false;
     }
 
     const match = await bcrypt.compare(password, user.passwordHash);
     return match ? user : false;
-  }
-
-  getPasswordResetRequestById(id) {
-    return this.passwordResetRequestStore.findOne({ _id: id });
-  }
-
-  deletePasswordResetRequestById(id) {
-    return this.passwordResetRequestStore.deleteOne({ _id: id });
   }
 
   async createPasswordResetRequest(user) {
@@ -301,19 +246,19 @@ class UserService {
     };
 
     logger.info(`Creating password reset request ${request._id} for user with id ${request.userId}`);
-    await this.savePasswordResetRequest(request);
+    await this.passwordResetRequestStore.saveRequest(request);
     return request;
   }
 
   async completePasswordResetRequest(passwordResetRequestId, password) {
     logger.info(`Completing password reset request ${passwordResetRequestId}`);
-    const request = await this.getPasswordResetRequestById(passwordResetRequestId);
+    const request = await this.passwordResetRequestStore.getRequestById(passwordResetRequestId);
     if (!request) {
       logger.info(`No password reset request has been found for id ${passwordResetRequestId}. Aborting request`);
       return false;
     }
 
-    const user = await this.getUserById(request.userId);
+    const user = await this.userStore.getUserById(request.userId);
     if (!user) {
       logger.info(`No user has been found for id ${passwordResetRequestId}. Aborting request`);
       return false;
@@ -322,14 +267,10 @@ class UserService {
     user.passwordHash = await this._hashPassword(password);
 
     logger.info(`Updating user ${user._id} with new password`);
-    await this.saveUser(user);
+    await this.userStore.saveUser(user);
     logger.info(`Deleting password reset request ${passwordResetRequestId}`);
-    await this.deletePasswordResetRequestById(passwordResetRequestId);
+    await this.passwordResetRequestStore.deleteRequestById(passwordResetRequestId);
     return user;
-  }
-
-  savePasswordResetRequest(request) {
-    return this.passwordResetRequestStore.save(request);
   }
 
   _hashPassword(password) {
