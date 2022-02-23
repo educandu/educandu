@@ -313,6 +313,7 @@ describe('document-service', () => {
           _id: uniqueId.create(),
           key: documentKey,
           title: 'Title 1',
+          description: 'Description 1',
           slug: 'my-doc-1',
           language: 'en',
           createdOn: new Date().toISOString(),
@@ -335,6 +336,7 @@ describe('document-service', () => {
           _id: uniqueId.create(),
           key: documentKey,
           title: 'Title 2',
+          description: 'Description 2',
           slug: 'my-doc-2',
           language: 'en',
           createdOn: new Date().toISOString(),
@@ -1060,6 +1062,7 @@ describe('document-service', () => {
     beforeEach(async () => {
       doc1 = await createTestDocument(container, user, {
         title: 'Doc 1',
+        description: 'Description 1',
         slug: 'doc-1',
         sections: [],
         tags: ['music', 'instructor', 'Dj.D', 'Cretu'],
@@ -1069,6 +1072,7 @@ describe('document-service', () => {
 
       doc2 = await createTestDocument(container, user, {
         title: 'Doc 2',
+        description: 'Description 2',
         slug: 'doc-2',
         sections: [],
         tags: ['Music', 'Instructor', 'Goga'],
@@ -1078,6 +1082,7 @@ describe('document-service', () => {
 
       doc3 = await createTestDocument(container, user, {
         title: 'Doc 3',
+        description: 'Description 3',
         slug: 'doc-3',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
@@ -1087,6 +1092,7 @@ describe('document-service', () => {
 
       await createTestDocument(container, user, {
         title: 'Doc 4',
+        description: 'Description 4',
         slug: 'doc-4',
         sections: [],
         tags: ['Wolf', 'gang', 'from', 'Beat', 'oven', 'music'],
@@ -1194,6 +1200,7 @@ describe('document-service', () => {
     beforeEach(async () => {
       revision = {
         title: 'Title',
+        description: 'Description',
         slug: 'my-doc',
         language: 'en',
         sections: [],
@@ -1261,6 +1268,7 @@ describe('document-service', () => {
       sandbox.stub(lockStore, 'releaseLock');
       revision = {
         title: 'Title',
+        description: 'Description',
         slug: 'my-doc',
         language: 'en',
         sections: [],

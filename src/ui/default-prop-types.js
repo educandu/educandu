@@ -154,6 +154,7 @@ const commonDocumentOrRevisionProps = {
   key: PropTypes.string.isRequired,
   order: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   createdOn: PropTypes.string.isRequired,
@@ -169,6 +170,7 @@ export const documentMetadataShape = PropTypes.shape({
 
 export const documentMetadataEditShape = PropTypes.shape({
   title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired

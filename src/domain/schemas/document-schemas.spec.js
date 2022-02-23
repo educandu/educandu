@@ -5,6 +5,7 @@ import { createRevisionBodySchema, documentSectionDBSchema } from './document-sc
 describe('createRevisionBodySchema', () => {
   const documentRevision = {
     title: 'My Title',
+    description: 'My Description',
     slug: 'my-slug',
     language: 'en',
     sections: [
@@ -65,6 +66,13 @@ describe('createRevisionBodySchema', () => {
       data: {
         ...documentRevision,
         title: ''
+      }
+    },
+    {
+      description: 'a revision with an invalid description',
+      data: {
+        ...documentRevision,
+        description: 'a'.repeat(1001)
       }
     },
     {

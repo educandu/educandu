@@ -144,9 +144,10 @@ function Doc({ initialState, PageTemplate }) {
     setIsDocumentMetadataModalVisible(true);
   };
 
-  const handleDocumentMetadataModalSave = async ({ title, slug, language, tags }) => {
+  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags }) => {
     const mappedDocumentRevision = {
       title,
+      description,
       slug,
       language,
       tags,
@@ -185,6 +186,7 @@ function Doc({ initialState, PageTemplate }) {
   const handleEditSave = async () => {
     const mappedDocumentRevision = {
       title: latestRevision.title,
+      description: latestRevision.description,
       slug: latestRevision.slug,
       language: latestRevision.language,
       tags: latestRevision.tags,

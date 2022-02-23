@@ -160,6 +160,7 @@ export function createTestDocument(container, user, document) {
   return documentService.createNewDocumentRevision({
     doc: {
       title: document.title ?? 'Title',
+      description: document.description ?? 'Description',
       slug: document.slug ?? 'my-doc',
       language: document.language ?? 'en',
       sections: document.sections ?? [],
@@ -183,6 +184,7 @@ export async function createTestRevisions(container, user, revisions) {
     createdRevisions.push(await documentService.createNewDocumentRevision({
       doc: {
         title: revision.title ?? lastCreatedRevision?.title ?? 'Title',
+        description: revision.description ?? lastCreatedRevision?.description ?? 'Description',
         slug: revision.slug ?? lastCreatedRevision?.slug ?? 'my-doc',
         language: revision.language ?? lastCreatedRevision?.language ?? 'en',
         sections: (revision.sections ?? lastCreatedRevision?.sections ?? []).map(s => ({

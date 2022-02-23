@@ -8,9 +8,9 @@ import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
-import { Input, Table, Button, Switch } from 'antd';
 import { useSettings } from '../settings-context.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { Input, Table, Button, Switch, Tooltip } from 'antd';
 import LanguageFlagAndName from '../language-flag-and-name.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -40,6 +40,7 @@ function getDefaultModalState({ t, uiLanguage, settings }) {
     templateDocumentKey: settings.templateDocument?.documentKey,
     initialDocumentMetadata: {
       title: t('newDocument'),
+      description: '',
       slug: '',
       tags: [],
       language: getDefaultLanguageFromUiLanguage(uiLanguage)
@@ -88,6 +89,7 @@ function Docs({ initialState, PageTemplate }) {
       templateDocumentKey: null,
       initialDocumentMetadata: {
         title: `${doc.title} ${t('copyTitleSuffix')}`,
+        description: doc.description,
         slug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : '',
         tags: [...doc.tags],
         language: doc.language
@@ -95,8 +97,8 @@ function Docs({ initialState, PageTemplate }) {
     });
   };
 
-  const handleDocumentMetadataModalSave = async ({ title, slug, language, tags, templateDocumentKey }) => {
-    const { documentRevision } = await documentApiClient.saveDocument({ title, slug, language, tags, sections: [] });
+  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags, templateDocumentKey }) => {
+    const { documentRevision } = await documentApiClient.saveDocument({ title, description, slug, language, tags, sections: [] });
     setModalState(getDefaultModalState({ t, uiLanguage, settings }));
 
     window.location = urls.getDocUrl({
@@ -150,7 +152,11 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const renderTitle = (title, doc) => {
-    return <a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>;
+    return (
+      <Tooltip title={doc.description}>
+        <a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>
+      </Tooltip>
+    );
   };
 
   const renderUpdatedOn = updatedOn => {

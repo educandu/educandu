@@ -3,6 +3,7 @@ import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import inputValidators from '../utils/input-validators.js';
 import { formItemLayoutShape } from '../ui/default-prop-types.js';
+import { minPasswordLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
 
@@ -16,9 +17,8 @@ function PasswordInput({ formItemLayout }) {
     },
     {
       validator: (rule, value) => {
-        const minLength = 8;
-        return value && !inputValidators.isValidPassword({ password: value, minLength })
-          ? Promise.reject(new Error(t('passwordIsInvalid', { length: minLength })))
+        return value && !inputValidators.isValidPassword(value)
+          ? Promise.reject(new Error(t('passwordIsInvalid', { length: minPasswordLength })))
           : Promise.resolve();
       }
     }

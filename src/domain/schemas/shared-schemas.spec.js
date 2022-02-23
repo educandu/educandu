@@ -3,8 +3,8 @@ import { slugSchema } from './shared-schemas.js';
 
 describe('slugSchema', () => {
   const testCases = [
-    { description: 'empty string', slug: '', shouldSucceed: true },
-    { description: 'a normal string', slug: 'normal will be normal', shouldSucceed: true },
+    { description: 'empty slug', slug: '', shouldSucceed: true },
+    { description: 'a normal slug', slug: 'normal/will-be/normal', shouldSucceed: true },
     { description: 'null value', slug: null, shouldSucceed: false }
   ];
 

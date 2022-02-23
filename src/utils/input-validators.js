@@ -1,16 +1,14 @@
-const slugValidationPattern = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
+import { slugValidationPattern, passwordValidationPattern, minPasswordLength, tagValidationPattern } from '../domain/validation-constants.js';
 
-function isValidPassword({ password, minLength = 8 }) {
-  const minOneLetterAndOneDigitPattern = /^(?=.*[A-Za-z])(?=.*\d).*$/;
+function isValidPassword(password) {
   const sanitizedPassword = (password || '').trim();
-
-  return sanitizedPassword.length >= minLength && minOneLetterAndOneDigitPattern.test(sanitizedPassword);
+  return sanitizedPassword.length >= minPasswordLength && passwordValidationPattern.test(sanitizedPassword);
 }
 
 function isValidTag({ tag, allTags = [] }) {
   const trimmedTag = (tag || '').trim();
 
-  if (trimmedTag.length < 3 || trimmedTag.length > 30 || (/\s/).test(trimmedTag)) {
+  if (!tagValidationPattern.test(trimmedTag)) {
     return false;
   }
 
@@ -28,6 +26,5 @@ function isValidSlug(slug) {
 export default {
   isValidPassword,
   isValidTag,
-  isValidSlug,
-  slugValidationPattern
+  isValidSlug
 };
