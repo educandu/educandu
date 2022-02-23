@@ -1,5 +1,3 @@
-/* eslint no-process-env: off */
-
 import { getCookie } from './cookie.js';
 import { isBrowser } from '../ui/browser-helper.js';
 import { LOG_LEVEL_COOKIE_NAME } from '../domain/constants.js';
@@ -23,37 +21,60 @@ const shortenBrowserUrl = url => {
 const logLevels = {
   fatal: {
     rank: 1,
-    applyBrowserColor: text => `\u001b[31m${text}\u001b[0m`,
-    applyServerColor: text => `\u001b[31m${text}\u001b[0m`
+    serverLevelColor: '[31m',
+    serverMessageColor: '[0m',
+    browserLevelStyle: 'color: #f5222d; font-weight: bold',
+    browserMessageStyle: 'color: inherit'
   },
   error: {
     rank: 2,
-    applyBrowserColor: text => `\u001b[31m${text}\u001b[0m`,
-    applyServerColor: text => `\u001b[31m${text}\u001b[0m`
+    serverLevelColor: '[31m',
+    serverMessageColor: '[0m',
+    browserLevelStyle: 'color: #f5222d',
+    browserMessageStyle: 'color: inherit'
   },
   warn: {
     rank: 3,
-    applyBrowserColor: text => `\u001b[31m${text}\u001b[0m`,
-    applyServerColor: text => `\u001b[33m${text}\u001b[0m`
+    serverLevelColor: '[31m',
+    serverMessageColor: '[0m',
+    browserLevelStyle: 'color: #d46b08',
+    browserMessageStyle: 'color: inherit'
   },
   info: {
     rank: 4,
-    applyBrowserColor: text => `\u001b[34m${text}\u001b[0m`,
-    applyServerColor: text => `\u001b[34m${text}\u001b[0m`
+    serverLevelColor: '[34m',
+    serverMessageColor: '[0m',
+    browserLevelStyle: 'color: #096dd9',
+    browserMessageStyle: 'color: inherit'
   },
   debug: {
     rank: 5,
-    applyBrowserColor: text => `\u001b[30m${text}\u001b[0m`,
-    applyServerColor: text => `\u001b[37m${text}\u001b[0m`
+    serverLevelColor: '[37m',
+    serverMessageColor: '[0m',
+    browserLevelStyle: 'color: #40a9ff',
+    browserMessageStyle: 'color: inherit'
   }
 };
 
 const logLevel = isBrowser() ? getBrowserLevel() : getServerLevel();
 const logLevelRank = logLevels[logLevel]?.rank || logLevels.error.rank;
 
+const logInBrowserConsole = (level, timestamp, path, args) => {
+  const { browserLevelStyle, browserMessageStyle } = logLevels[level];
+  // eslint-disable-next-line no-console
+  console.log(`%c${level}%c [${timestamp}] [${path}]`, browserLevelStyle, browserMessageStyle, ...args);
+};
+
+const logInServerConsole = (level, timestamp, path, args) => {
+  const { serverLevelColor, serverMessageColor } = logLevels[level];
+  // eslint-disable-next-line no-console
+  console.log(`\u001b${serverLevelColor}${level}\u001b${serverMessageColor} [${timestamp}] [${path}]`, ...args);
+};
+
 class Logger {
   constructor(name) {
     this.callerPath = isBrowser() ? shortenBrowserUrl(name) : shortenNodeUrl(name);
+    this.logFunction = isBrowser() ? logInBrowserConsole : logInServerConsole;
   }
 
   fatal(...args) {
@@ -86,14 +107,8 @@ class Logger {
       return;
     }
 
-    const coloredLogLevel = isBrowser()
-      ? logLevels[messageLogLevel].applyBrowserColor(messageLogLevel)
-      : logLevels[messageLogLevel].applyServerColor(messageLogLevel);
-
     const timestamp = new Date().toISOString();
-
-    // eslint-disable-next-line no-console
-    console.log(`${coloredLogLevel}`, `[${timestamp}] [${this.callerPath}]`, ...args);
+    this.logFunction(messageLogLevel, timestamp, this.callerPath, args);
   }
 
 }
