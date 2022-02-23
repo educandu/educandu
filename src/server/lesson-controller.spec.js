@@ -32,7 +32,7 @@ describe('lesson-controller', () => {
       getLessonById: sandbox.stub(),
       createLesson: sandbox.stub(),
       updateLessonMetadata: sandbox.stub(),
-      deleteLesson: sandbox.stub()
+      deleteLessonById: sandbox.stub()
     };
     roomService = {
       getRoomById: sandbox.stub(),
@@ -424,8 +424,8 @@ describe('lesson-controller', () => {
         sut.handleDeleteLesson(req, res);
       });
 
-      it('should call lessonService.deleteLesson', () => {
-        sinon.assert.calledWith(lessonService.deleteLesson, lessonId);
+      it('should call lessonService.deleteLessonById', () => {
+        sinon.assert.calledWith(lessonService.deleteLessonById, lessonId);
       });
     });
   });

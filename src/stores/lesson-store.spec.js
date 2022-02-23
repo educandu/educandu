@@ -27,19 +27,19 @@ describe('lesson-store', () => {
     };
   });
 
-  afterAll(async () => {
-    await destroyTestEnvironment(container);
-  });
-
   afterEach(async () => {
     await pruneTestEnvironment(container);
   });
 
-  describe('save', () => {
-    it('should save a valid lesson', async () => {
-      await sut.save(validLesson);
+  afterAll(async () => {
+    await destroyTestEnvironment(container);
+  });
 
-      const savedItem = await sut.findOne({ _id: testLessonKey });
+  describe('saveLesson', () => {
+    it('should save a valid lesson', async () => {
+      await sut.saveLesson(validLesson);
+
+      const savedItem = await sut.getLessonById(testLessonKey);
       expect(savedItem).toEqual(validLesson);
     });
 
@@ -50,11 +50,11 @@ describe('lesson-store', () => {
 
       delete invalidLesson.createdBy;
 
-      expect(() => sut.save(invalidLesson)).toThrow();
+      expect(() => sut.saveLesson(invalidLesson)).rejects.toThrow();
     });
   });
 
-  describe('saveMany', () => {
+  describe('saveLessons', () => {
     it('should save an array of valid lessons', async () => {
       const anotherKey = uniqueId.create();
       const validLesson2 = {
@@ -63,9 +63,9 @@ describe('lesson-store', () => {
         title: 'title 2'
       };
 
-      await sut.saveMany([validLesson, validLesson2]);
+      await sut.saveLessons([validLesson, validLesson2]);
 
-      const savedItems = await sut.find({ _id: { $in: [testLessonKey, anotherKey] } });
+      const savedItems = await sut.getLessonsById([testLessonKey, anotherKey]);
       savedItems.sort((a, b) => a.title > b.title ? 1 : -1);
 
       expect([validLesson, validLesson2]).toEqual(savedItems);
@@ -79,7 +79,7 @@ describe('lesson-store', () => {
 
       delete invalidLesson.createdBy;
 
-      expect(() => sut.saveMany([invalidLesson, validLesson])).toThrow();
+      expect(() => sut.saveLessons([invalidLesson, validLesson])).rejects.toThrow();
     });
   });
 

@@ -178,13 +178,13 @@ export default class RoomController {
       }
     }
 
-    const lessons = await this.lessonService.getLessons(roomId);
+    const lessonsMetadata = await this.lessonService.getLessonsMetadata(roomId);
 
     const mappedRoom = await this.clientDataMappingService.mapRoom(room);
-    const mappedLessons = this.clientDataMappingService.mapLessonsMetadata(lessons);
+    const mappedLessonMetadata = this.clientDataMappingService.mapLessonsMetadata(lessonsMetadata);
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, lessons: mappedLessonMetadata, invitations: mappedInvitations });
   }
 
   async handleAuthorizeResourcesAccess(req, res) {

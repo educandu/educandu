@@ -38,7 +38,7 @@ describe('room-controller', () => {
       updateRoom: sandbox.stub()
     };
     lessonService = {
-      getLessons: sandbox.stub()
+      getLessonsMetadata: sandbox.stub()
     };
     userService = {
       getUserById: sandbox.stub()
@@ -329,7 +329,7 @@ describe('room-controller', () => {
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
 
-          lessonService.getLessons.resolves(lessons);
+          lessonService.getLessonsMetadata.resolves(lessons);
           roomService.getRoomInvitations.resolves(invitations);
 
           clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
@@ -354,8 +354,8 @@ describe('room-controller', () => {
           sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
         });
 
-        it('should call getLessons', () => {
-          sinon.assert.calledWith(lessonService.getLessons, room._id);
+        it('should call getLessonsMetadata', () => {
+          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
         });
 
         it('should call mapLessonsMetadata with the invitations returned by the service', () => {
@@ -385,7 +385,7 @@ describe('room-controller', () => {
 
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
-          lessonService.getLessons.resolves(lessons);
+          lessonService.getLessonsMetadata.resolves(lessons);
 
           clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
           clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
@@ -405,8 +405,8 @@ describe('room-controller', () => {
           sinon.assert.notCalled(roomService.getRoomInvitations);
         });
 
-        it('should call getLessons', () => {
-          sinon.assert.calledWith(lessonService.getLessons, room._id);
+        it('should call getLessonsMetadata', () => {
+          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
         });
 
         it('should call mapLessonsMetadata with the invitations returned by the service', () => {
@@ -461,7 +461,7 @@ describe('room-controller', () => {
 
       beforeEach(() => {
         roomService.getRoomById.resolves(room);
-        lessonService.getLessons.resolves(lessons);
+        lessonService.getLessonsMetadata.resolves(lessons);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
@@ -469,7 +469,7 @@ describe('room-controller', () => {
       });
 
       beforeEach(async () => {
-        lessonService.getLessons.resolves(lessons);
+        lessonService.getLessonsMetadata.resolves(lessons);
         await sut.handleGetRoomPage(request, {});
       });
 
@@ -493,8 +493,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
       });
 
-      it('should call getLessons', () => {
-        sinon.assert.calledWith(lessonService.getLessons, room._id);
+      it('should call getLessonsMetadata', () => {
+        sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
       });
 
       it('should call mapLessonsMetadata with the invitations returned by the service', () => {
