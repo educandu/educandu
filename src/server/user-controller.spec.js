@@ -9,7 +9,7 @@ describe('user-controller', () => {
   const sandbox = sinon.createSandbox();
   let passwordResetRequestService;
   let storageService;
-  let clientDataMapper;
+  let clientDataMappingService;
   let userService;
   let mailService;
   let sut;
@@ -34,7 +34,7 @@ describe('user-controller', () => {
       sendRegistrationVerificationEmail: sandbox.stub(),
       sendPasswordResetEmail: sandbox.stub()
     };
-    clientDataMapper = {
+    clientDataMappingService = {
       mapWebsiteUser: sandbox.stub()
     };
     const serverConfig = {};
@@ -48,7 +48,7 @@ describe('user-controller', () => {
       storageService,
       passwordResetRequestService,
       mailService,
-      clientDataMapper,
+      clientDataMappingService,
       pageRenderer
     );
   });
@@ -74,7 +74,7 @@ describe('user-controller', () => {
         res.on('end', done);
 
         userService.createUser.resolves({ result: SAVE_USER_RESULT.success, user: { verificationCode: 'verificationCode' } });
-        clientDataMapper.mapWebsiteUser.returns(mappedUser);
+        clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUser(req, res);
       });
@@ -122,8 +122,8 @@ describe('user-controller', () => {
         sinon.assert.notCalled(mailService.sendRegistrationVerificationEmail);
       });
 
-      it('should not call clientDataMapper.mapWebsiteUser', () => {
-        sinon.assert.notCalled(clientDataMapper.mapWebsiteUser);
+      it('should not call clientDataMappingService.mapWebsiteUser', () => {
+        sinon.assert.notCalled(clientDataMappingService.mapWebsiteUser);
       });
 
       it('should return the result object', () => {
@@ -153,7 +153,7 @@ describe('user-controller', () => {
         res.on('end', done);
 
         userService.updateUserAccount.resolves({ result: SAVE_USER_RESULT.success, user: {} });
-        clientDataMapper.mapWebsiteUser.returns(mappedUser);
+        clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUserAccount(req, res);
       });
@@ -194,8 +194,8 @@ describe('user-controller', () => {
         expect(res.statusCode).toBe(200);
       });
 
-      it('should not call clientDataMapper.mapWebsiteUser', () => {
-        sinon.assert.notCalled(clientDataMapper.mapWebsiteUser);
+      it('should not call clientDataMappingService.mapWebsiteUser', () => {
+        sinon.assert.notCalled(clientDataMappingService.mapWebsiteUser);
       });
 
       it('should return the result object', () => {

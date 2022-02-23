@@ -11,7 +11,7 @@ const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 describe('lesson-controller', () => {
   const sandbox = sinon.createSandbox();
 
-  let clientDataMapper;
+  let clientDataMappingService;
   let lessonService;
   let serverConfig;
   let pageRenderer;
@@ -38,7 +38,7 @@ describe('lesson-controller', () => {
       getRoomById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub()
     };
-    clientDataMapper = {
+    clientDataMappingService = {
       mapLesson: sandbox.stub(),
       mapRoom: sandbox.stub()
     };
@@ -51,7 +51,7 @@ describe('lesson-controller', () => {
     roomId = uniqueId.create();
     res = {};
 
-    sut = new LessonController(serverConfig, lessonService, roomService, clientDataMapper, pageRenderer);
+    sut = new LessonController(serverConfig, lessonService, roomService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -135,8 +135,8 @@ describe('lesson-controller', () => {
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
-        clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
-        clientDataMapper.mapRoom.withArgs(room, user).resolves(mappedRoom);
+        clientDataMappingService.mapLesson.withArgs(lesson).returns(mappedLesson);
+        clientDataMappingService.mapRoom.withArgs(room, user).resolves(mappedRoom);
 
         return sut.handleGetLessonPage(req, res);
       });
@@ -156,8 +156,8 @@ describe('lesson-controller', () => {
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
-        clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
-        clientDataMapper.mapRoom.withArgs(room, user).resolves(mappedRoom);
+        clientDataMappingService.mapLesson.withArgs(lesson).returns(mappedLesson);
+        clientDataMappingService.mapRoom.withArgs(room, user).resolves(mappedRoom);
 
         return sut.handleGetLessonPage(req, res);
       });
@@ -177,8 +177,8 @@ describe('lesson-controller', () => {
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
-        clientDataMapper.mapLesson.withArgs(lesson).returns(mappedLesson);
-        clientDataMapper.mapRoom.withArgs(room, user).resolves(mappedRoom);
+        clientDataMappingService.mapLesson.withArgs(lesson).returns(mappedLesson);
+        clientDataMappingService.mapRoom.withArgs(room, user).resolves(mappedRoom);
 
         return sut.handleGetLessonPage(req, res);
       });

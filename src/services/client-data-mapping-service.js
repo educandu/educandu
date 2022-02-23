@@ -2,14 +2,13 @@ import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import privateData from '../domain/private-data.js';
-import UserService from '../services/user-service.js';
+import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
-class ClientDataMapper {
-  static get inject() { return [UserStore, UserService]; }
+class ClientDataMappingService {
+  static get inject() { return [UserStore]; }
 
-  constructor(userStore, userService) {
+  constructor(userStore) {
     this.userStore = userStore;
-    this.userService = userService;
   }
 
   mapWebsiteUser(user) {
@@ -291,14 +290,14 @@ class ClientDataMapper {
   }
 
   async _getUserMapForDocsOrRevisions(docsOrRevisions) {
-    const idSet = this.userService.extractUserIdSetFromDocsOrRevisions(docsOrRevisions);
-    const users = await this.userStore.getUsersByIds(Array.from(idSet));
-    if (users.length !== idSet.size) {
-      throw new Error(`Was searching for ${idSet.size} users, but found ${users.length}`);
+    const userIds = extractUserIdsFromDocsOrRevisions(docsOrRevisions);
+    const users = await this.userStore.getUsersByIds(userIds);
+    if (users.length !== userIds.length) {
+      throw new Error(`Was searching for ${userIds.length} users, but found ${users.length}`);
     }
 
     return new Map(users.map(u => [u._id, u]));
   }
 }
 
-export default ClientDataMapper;
+export default ClientDataMappingService;

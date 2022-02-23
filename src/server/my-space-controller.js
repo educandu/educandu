@@ -3,18 +3,18 @@ import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
-import ClientDataMapper from '../server/client-data-mapper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class UserController {
-  static get inject() { return [ServerConfig, PageRenderer, RoomService, StorageService, ClientDataMapper]; }
+  static get inject() { return [ServerConfig, PageRenderer, RoomService, StorageService, ClientDataMappingService]; }
 
-  constructor(serverConfig, pageRenderer, roomService, storageService, clientDataMapper) {
+  constructor(serverConfig, pageRenderer, roomService, storageService, clientDataMappingService) {
     this.serverConfig = serverConfig;
     this.roomService = roomService;
     this.pageRenderer = pageRenderer;
     this.storageService = storageService;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
   }
 
   async handleGetMySpacePage(req, res) {
@@ -29,7 +29,7 @@ class UserController {
     if (this.serverConfig.areRoomsEnabled) {
       rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
     }
-    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMapper.mapRoom(room, user)));
+    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
 
     const initialState = { storagePlan, rooms: mappedRooms };
 

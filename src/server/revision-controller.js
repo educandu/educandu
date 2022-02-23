@@ -2,17 +2,17 @@ import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import ClientDataMapper from './client-data-mapper.js';
 import DocumentService from '../services/document-service.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 const { NotFound } = httpErrors;
 
 class RevisionController {
-  static get inject() { return [DocumentService, ClientDataMapper, PageRenderer]; }
+  static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(documentService, clientDataMapper, pageRenderer) {
+  constructor(documentService, clientDataMappingService, pageRenderer) {
     this.documentService = documentService;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
     this.pageRenderer = pageRenderer;
   }
 
@@ -27,7 +27,7 @@ class RevisionController {
       throw new NotFound();
     }
 
-    const mappedRevision = await this.clientDataMapper.mapDocOrRevision(revision, req.user);
+    const mappedRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.revision, { revision: mappedRevision });
   }
 

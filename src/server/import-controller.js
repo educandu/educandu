@@ -3,10 +3,10 @@ import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ImportService from '../services/import-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import { createImportBatchQuerySchema, getImportsQuerySchema, importBatchViewParamsSchema, postImportBatchBodySchema } from '../domain/schemas/import-schemas.js';
 
@@ -15,18 +15,18 @@ const { NotFound } = httpErrors;
 const jsonParserLargePayload = express.json({ limit: '2MB' });
 
 class ImportController {
-  static get inject() { return [ServerConfig, PageRenderer, ImportService, ClientDataMapper]; }
+  static get inject() { return [ServerConfig, PageRenderer, ImportService, ClientDataMappingService]; }
 
-  constructor(serverConfig, pageRenderer, importService, clientDataMapper) {
+  constructor(serverConfig, pageRenderer, importService, clientDataMappingService) {
     this.serverConfig = serverConfig;
     this.importService = importService;
     this.pageRenderer = pageRenderer;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
   }
 
   async handleGetImportBatchesPage(req, res) {
     const rawBatches = await this.importService.getImportBatches();
-    const batches = await this.clientDataMapper.mapImportBatches(rawBatches, req.user);
+    const batches = await this.clientDataMappingService.mapImportBatches(rawBatches, req.user);
     const importSources = this.serverConfig.importSources.slice();
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatches, { batches, importSources });
@@ -48,7 +48,7 @@ class ImportController {
       throw new NotFound(`Batch with ID '${batchId}' could not be found`);
     }
 
-    const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
+    const batch = await this.clientDataMappingService.mapImportBatch(rawBatch, req.user);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.importBatchView, { batch });
   }
@@ -68,7 +68,7 @@ class ImportController {
   async handleGetImportBatch(req, res) {
     const { batchId } = req.params;
     const rawBatch = await this.importService.getImportBatchDetails(batchId);
-    const batch = await this.clientDataMapper.mapImportBatch(rawBatch, req.user);
+    const batch = await this.clientDataMappingService.mapImportBatch(rawBatch, req.user);
 
     res.send({ batch });
   }

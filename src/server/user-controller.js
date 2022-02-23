@@ -11,7 +11,6 @@ import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import PageRenderer from '../server/page-renderer.js';
-import ClientDataMapper from './client-data-mapper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
@@ -21,6 +20,7 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import {
@@ -47,7 +47,7 @@ class UserController {
       StorageService,
       PasswordResetRequestService,
       MailService,
-      ClientDataMapper,
+      ClientDataMappingService,
       PageRenderer
     ];
   }
@@ -59,7 +59,7 @@ class UserController {
     storageService,
     passwordResetRequestService,
     mailService,
-    clientDataMapper,
+    clientDataMappingService,
     pageRenderer
   ) {
     this.database = database;
@@ -67,7 +67,7 @@ class UserController {
     this.mailService = mailService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
     this.storageService = storageService;
     this.passwordResetRequestService = passwordResetRequestService;
   }
@@ -105,7 +105,7 @@ class UserController {
 
   async handleGetUsersPage(req, res) {
     const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
-    const initialState = { users: this.clientDataMapper.mapUsersForAdminArea(rawUsers), storagePlans };
+    const initialState = { users: this.clientDataMappingService.mapUsersForAdminArea(rawUsers), storagePlans };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
   }
 
@@ -125,7 +125,7 @@ class UserController {
       await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
 
-    res.send({ result, user: user ? this.clientDataMapper.mapWebsiteUser(user) : null });
+    res.send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserAccount(req, res) {
@@ -135,7 +135,7 @@ class UserController {
 
     const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
 
-    res.send({ result, user: user ? this.clientDataMapper.mapWebsiteUser(user) : null });
+    res.send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserProfile(req, res) {
@@ -165,7 +165,7 @@ class UserController {
           return next(loginError);
         }
 
-        return res.send({ user: this.clientDataMapper.mapWebsiteUser(user) });
+        return res.send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
       });
     })(req, res, next);
   }

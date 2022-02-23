@@ -11,7 +11,7 @@ describe('document-controller', () => {
   const sandbox = sinon.createSandbox();
 
   let documentService;
-  let clientDataMapper;
+  let clientDataMappingService;
   let pageRenderer;
 
   let user;
@@ -27,7 +27,7 @@ describe('document-controller', () => {
       createDocumentRegenerationBatch: sandbox.stub()
     };
 
-    clientDataMapper = {
+    clientDataMappingService = {
       mapDocOrRevision: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
       createProposedSections: sandbox.stub()
@@ -40,7 +40,7 @@ describe('document-controller', () => {
     user = { _id: uniqueId.create() };
     doc = { key: uniqueId.create(), slug: '', sections: [] };
 
-    sut = new DocumentController(documentService, clientDataMapper, pageRenderer);
+    sut = new DocumentController(documentService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -156,8 +156,8 @@ describe('document-controller', () => {
         documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
         documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
 
-        clientDataMapper.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
-        clientDataMapper.createProposedSections.returns(templateSections);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.createProposedSections.returns(templateSections);
         pageRenderer.sendPage.resolves();
 
         sut.handleGetDocPage(req, res);
@@ -167,12 +167,12 @@ describe('document-controller', () => {
         sinon.assert.notCalled(documentService.getDocumentRevisionById);
       });
 
-      it('should call clientDataMapper.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMapper.mapDocsOrRevisions, [doc, templateDocument], user);
+      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
       });
 
-      it('should call clientDataMapper.createProposedSections', () => {
-        sinon.assert.calledWith(clientDataMapper.createProposedSections, mappedTemplateDocument);
+      it('should call clientDataMappingService.createProposedSections', () => {
+        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument);
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -213,10 +213,10 @@ describe('document-controller', () => {
 
         documentService.getDocumentRevisionById.resolves(documentRevision);
 
-        clientDataMapper.mapDocOrRevision.resolves(mappedDocumentRevision);
-        clientDataMapper.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
+        clientDataMappingService.mapDocOrRevision.resolves(mappedDocumentRevision);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
 
-        clientDataMapper.createProposedSections.returns(templateSections);
+        clientDataMappingService.createProposedSections.returns(templateSections);
         pageRenderer.sendPage.resolves();
 
         sut.handleGetDocPage(req, res);
@@ -226,16 +226,16 @@ describe('document-controller', () => {
         sinon.assert.calledWith(documentService.getDocumentRevisionById, doc.revision);
       });
 
-      it('should call clientDataMapper.mapDocOrRevision', () => {
-        sinon.assert.calledWith(clientDataMapper.mapDocOrRevision, documentRevision, user);
+      it('should call clientDataMappingService.mapDocOrRevision', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocOrRevision, documentRevision, user);
       });
 
-      it('should call clientDataMapper.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMapper.mapDocsOrRevisions, [doc, templateDocument], user);
+      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
       });
 
-      it('should call clientDataMapper.createProposedSections', () => {
-        sinon.assert.calledWith(clientDataMapper.createProposedSections, mappedTemplateDocument);
+      it('should call clientDataMappingService.createProposedSections', () => {
+        sinon.assert.calledWith(clientDataMappingService.createProposedSections, mappedTemplateDocument);
       });
 
       it('should call pageRenderer.sendPage', () => {
@@ -272,8 +272,8 @@ describe('document-controller', () => {
 
         documentService.getDocumentRevisionById.resolves(documentRevision);
 
-        clientDataMapper.mapDocOrRevision.resolves(mappedDocumentRevision);
-        clientDataMapper.mapDocsOrRevisions.resolves([mappedDocument, null]);
+        clientDataMappingService.mapDocOrRevision.resolves(mappedDocumentRevision);
+        clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, null]);
 
         pageRenderer.sendPage.resolves();
 
@@ -284,16 +284,16 @@ describe('document-controller', () => {
         sinon.assert.calledWith(documentService.getDocumentRevisionById, doc.revision);
       });
 
-      it('should call clientDataMapper.mapDocOrRevision', () => {
-        sinon.assert.calledWith(clientDataMapper.mapDocOrRevision, documentRevision, user);
+      it('should call clientDataMappingService.mapDocOrRevision', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocOrRevision, documentRevision, user);
       });
 
-      it('should call clientDataMapper.mapDocsOrRevisions', () => {
-        sinon.assert.calledWith(clientDataMapper.mapDocsOrRevisions, [doc, null], user);
+      it('should call clientDataMappingService.mapDocsOrRevisions', () => {
+        sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, null], user);
       });
 
-      it('should not call clientDataMapper.createProposedSections', () => {
-        sinon.assert.notCalled(clientDataMapper.createProposedSections);
+      it('should not call clientDataMappingService.createProposedSections', () => {
+        sinon.assert.notCalled(clientDataMappingService.createProposedSections);
       });
 
       it('should call pageRenderer.sendPage', () => {

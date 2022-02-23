@@ -4,21 +4,21 @@ import { Container } from '../common/di.js';
 import cloneDeep from '../utils/clone-deep.js';
 import PageResolver from '../domain/page-resolver.js';
 import requestHelper from '../utils/request-helper.js';
-import ClientDataMapper from './client-data-mapper.js';
 import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import ResourceManager from '../resources/resource-manager.js';
+import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class PageRenderer extends PageRendererBase {
-  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMapper, ResourceManager, PageResolver]; }
+  static get inject() { return [Container, ServerConfig, ClientConfig, ClientDataMappingService, ResourceManager, PageResolver]; }
 
-  constructor(container, serverConfig, clientConfig, clientDataMapper, resourceManager, pageResolver) {
+  constructor(container, serverConfig, clientConfig, clientDataMappingService, resourceManager, pageResolver) {
     super();
     this.container = container;
     this.serverConfig = serverConfig;
     this.clientConfig = clientConfig;
-    this.clientDataMapper = clientDataMapper;
+    this.clientDataMappingService = clientDataMappingService;
     this.resourceManager = resourceManager;
     this.pageResolver = pageResolver;
   }
@@ -30,7 +30,7 @@ class PageRenderer extends PageRendererBase {
     const container = this.container;
     const clientConfig = this.clientConfig;
     const request = requestHelper.expressReqToRequest(req);
-    const user = this.clientDataMapper.mapWebsiteUser(req.user);
+    const user = this.clientDataMappingService.mapWebsiteUser(req.user);
     const resources = this.resourceManager.getAllResourceBundles();
 
     const {

@@ -1,11 +1,11 @@
 import by from 'thenby';
 import httpErrors from 'http-errors';
-import UserService from './user-service.js';
 import UserStore from '../stores/user-store.js';
 import DocumentService from './document-service.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
+import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
 const { BadRequest } = httpErrors;
 
@@ -21,11 +21,10 @@ const exportableDocumentsProjection = {
 const lastUpdatedFirst = [['updatedOn', -1]];
 
 class ExportService {
-  static get inject() { return [ServerConfig, DocumentStore, UserStore, DocumentService, UserService]; }
+  static get inject() { return [ServerConfig, DocumentStore, UserStore, DocumentService]; }
 
-  constructor(serverConfig, documentStore, userStore, documentService, userService) {
+  constructor(serverConfig, documentStore, userStore, documentService) {
     this.userStore = userStore;
-    this.userService = userService;
     this.serverConfig = serverConfig;
     this.documentStore = documentStore;
     this.documentService = documentService;
@@ -50,12 +49,12 @@ class ExportService {
 
     const revisionsToExport = revisions.slice(0, lastRevisionIndex + 1);
 
-    const userIdSet = this.userService.extractUserIdSetFromDocsOrRevisions(revisionsToExport);
-    const users = (await this.userStore.getUsersByIds(Array.from(userIdSet)))
+    const userIds = extractUserIdsFromDocsOrRevisions(revisionsToExport);
+    const users = (await this.userStore.getUsersByIds(userIds))
       .map(({ _id, username }) => ({ _id, username }));
 
-    if (userIdSet.size !== users.length) {
-      throw new Error(`Was searching for ${userIdSet.size} users in document ${key} up to revision '${toRevision}', but found ${users.length}`);
+    if (users.length !== userIds.length) {
+      throw new Error(`Was searching for ${users.length} users in document ${key} up to revision '${toRevision}', but found ${userIds.length}`);
     }
 
     return { revisions: revisionsToExport, users, cdnRootUrl: this.serverConfig.cdnRootUrl };

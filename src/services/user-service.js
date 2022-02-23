@@ -43,10 +43,6 @@ class UserService {
     return this.userStore.getUserByEmailAddress(email);
   }
 
-  extractUserIdSetFromDocsOrRevisions(docsOrRevisions) {
-    return docsOrRevisions.reduce((set, docOrRev) => this._fillUserIdSetForDocOrRevision(docOrRev, set), new Set());
-  }
-
   async updateUserAccount({ userId, provider, username, email }) {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
@@ -299,26 +295,6 @@ class UserService {
         reminders: []
       }
     };
-  }
-
-  _fillUserIdSetForDocOrRevision(docOrRev, set) {
-    if (docOrRev.createdBy) {
-      set.add(docOrRev.createdBy);
-    }
-    if (docOrRev.updatedBy) {
-      set.add(docOrRev.updatedBy);
-    }
-    if (docOrRev.contributors) {
-      docOrRev.contributors.forEach(c => set.add(c));
-    }
-    if (docOrRev.sections) {
-      docOrRev.sections.forEach(s => {
-        if (s.deletedBy) {
-          set.add(s.deletedBy);
-        }
-      });
-    }
-    return set;
   }
 }
 

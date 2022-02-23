@@ -13,7 +13,7 @@ const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
 
-  let clientDataMapper;
+  let clientDataMappingService;
   let lessonService;
   let serverConfig;
   let pageRenderer;
@@ -55,7 +55,7 @@ describe('room-controller', () => {
       areRoomsEnabled: true
     };
 
-    clientDataMapper = {
+    clientDataMappingService = {
       mapRoom: sandbox.stub(),
       mapLessonsMetadata: sandbox.stub(),
       mapRoomInvitations: sandbox.stub()
@@ -64,7 +64,7 @@ describe('room-controller', () => {
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    sut = new RoomController(serverConfig, roomService, lessonService, userService, mailService, clientDataMapper, pageRenderer);
+    sut = new RoomController(serverConfig, roomService, lessonService, userService, mailService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -340,7 +340,7 @@ describe('room-controller', () => {
 
       beforeEach(() => {
         roomService.getRoomById.resolves(room);
-        clientDataMapper.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
       });
 
       describe('and the request is made by the room owner', () => {
@@ -361,8 +361,8 @@ describe('room-controller', () => {
           lessonService.getLessons.resolves(lessons);
           roomService.getRoomInvitations.resolves(invitations);
 
-          clientDataMapper.mapLessonsMetadata.returns(mappedLessons);
-          clientDataMapper.mapRoomInvitations.returns(mappedInvitations);
+          clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
+          clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
           await sut.handleGetRoomPage(request, {});
         });
@@ -372,7 +372,7 @@ describe('room-controller', () => {
         });
 
         it('should call mapRoom with the room returned by the service', () => {
-          sinon.assert.calledWith(clientDataMapper.mapRoom, room);
+          sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
         });
 
         it('should call getRoomInvitations', () => {
@@ -380,7 +380,7 @@ describe('room-controller', () => {
         });
 
         it('should call mapRoomInvitations with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMapper.mapRoomInvitations, invitations);
+          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
         });
 
         it('should call getLessons', () => {
@@ -388,7 +388,7 @@ describe('room-controller', () => {
         });
 
         it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMapper.mapLessonsMetadata, lessons);
+          sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
         });
 
         it('should call pageRenderer with the right parameters', () => {
@@ -416,8 +416,8 @@ describe('room-controller', () => {
           roomService.isRoomOwnerOrMember.resolves(true);
           lessonService.getLessons.resolves(lessons);
 
-          clientDataMapper.mapLessonsMetadata.returns(mappedLessons);
-          clientDataMapper.mapRoomInvitations.returns(mappedInvitations);
+          clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
+          clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
 
           await sut.handleGetRoomPage(request, {});
         });
@@ -427,7 +427,7 @@ describe('room-controller', () => {
         });
 
         it('should call mapRoom with the room returned by the service', () => {
-          sinon.assert.calledWith(clientDataMapper.mapRoom, room);
+          sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
         });
 
         it('should not call getRoomInvitations', () => {
@@ -439,7 +439,7 @@ describe('room-controller', () => {
         });
 
         it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-          sinon.assert.calledWith(clientDataMapper.mapLessonsMetadata, lessons);
+          sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
         });
 
         it('should call pageRenderer with the right parameters', () => {
@@ -492,9 +492,9 @@ describe('room-controller', () => {
         roomService.getRoomById.resolves(room);
         lessonService.getLessons.resolves(lessons);
 
-        clientDataMapper.mapRoom.resolves(mappedRoom);
-        clientDataMapper.mapLessonsMetadata.returns(mappedLessons);
-        clientDataMapper.mapRoomInvitations.returns([]);
+        clientDataMappingService.mapRoom.resolves(mappedRoom);
+        clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
+        clientDataMappingService.mapRoomInvitations.returns([]);
       });
 
       beforeEach(async () => {
@@ -511,7 +511,7 @@ describe('room-controller', () => {
       });
 
       it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMapper.mapRoom, room);
+        sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
       });
 
       it('should not call getRoomInvitations', () => {
@@ -519,7 +519,7 @@ describe('room-controller', () => {
       });
 
       it('should call mapRoomInvitations with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMapper.mapRoomInvitations, []);
+        sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
       });
 
       it('should call getLessons', () => {
@@ -527,7 +527,7 @@ describe('room-controller', () => {
       });
 
       it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMapper.mapLessonsMetadata, lessons);
+        sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
       });
 
       it('should call pageRenderer with the right parameters', () => {

@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import UserStore from '../stores/user-store.js';
-import ClientDataMapper from './client-data-mapper.js';
 import { ROLE, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import ClientDataMappingService from './client-data-mapping-service.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
-describe('client-data-mapper', () => {
+describe('client-data-mapping-service', () => {
   const sandbox = sinon.createSandbox();
 
   let userStore;
@@ -17,7 +17,7 @@ describe('client-data-mapper', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
-    sut = container.get(ClientDataMapper);
+    sut = container.get(ClientDataMappingService);
   });
 
   beforeEach(async () => {
