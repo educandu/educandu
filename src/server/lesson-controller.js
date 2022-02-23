@@ -130,7 +130,7 @@ export default class LessonController {
 
     await this.lessonService.deleteLesson(lessonId, user);
 
-    return res.status(200).end();
+    return res.send({});
   }
 
   async _authorizeLessonWriteAccess(req) {

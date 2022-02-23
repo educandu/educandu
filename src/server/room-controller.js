@@ -107,7 +107,7 @@ export default class RoomController {
       await this._deleteRoom(roomId, user);
     }
 
-    return res.status(200).end();
+    return res.send({});
   }
 
   async handleDeleteRoom(req, res) {
@@ -116,7 +116,7 @@ export default class RoomController {
 
     await this._deleteRoom(roomId, user);
 
-    return res.status(200).end();
+    return res.send({});
   }
 
   async handlePostRoomInvitation(req, res) {

@@ -38,7 +38,7 @@ export default class EducanduServer {
     logger.info('Registering healthcheck');
     router.use((req, res, next) => {
       if (req.path === '/healthcheck') {
-        return res.json({
+        return res.send({
           status: 'OK',
           mode: req.app.locals[SYMBOL_MAINTENACE] ? 'maintenance' : 'ready'
         });

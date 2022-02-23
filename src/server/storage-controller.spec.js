@@ -100,8 +100,8 @@ describe('storage-controller', () => {
         sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, user });
       });
 
-      it('should return 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should return 201', () => {
+        expect(res.statusCode).toBe(201);
       });
     });
   });

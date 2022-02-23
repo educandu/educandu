@@ -2,6 +2,7 @@
 import express from 'express';
 import passport from 'passport';
 import urls from '../utils/urls.js';
+import httpErrors from 'http-errors';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passportLocal from 'passport-local';
@@ -34,6 +35,8 @@ import {
   postUserStoragePlanBodySchema,
   userIdParamsSchema
 } from '../domain/schemas/user-schemas.js';
+
+const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -140,7 +143,7 @@ class UserController {
       await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
 
-    res.send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
+    res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserAccount(req, res) {
@@ -150,7 +153,7 @@ class UserController {
 
     const { result, user } = await this.userService.updateUserAccount({ userId, provider, username, email });
 
-    res.send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
+    res.status(201).send({ result, user: user ? this.clientDataMappingService.mapWebsiteUser(user) : null });
   }
 
   async handlePostUserProfile(req, res) {
@@ -158,11 +161,10 @@ class UserController {
     const { profile } = req.body;
     const savedProfile = await this.userService.updateUserProfile(userId, profile);
     if (!savedProfile) {
-      res.status(404).send('Invalid user id');
-      return;
+      throw new NotFound();
     }
 
-    res.send({ profile: savedProfile });
+    res.status(201).send({ profile: savedProfile });
   }
 
   handlePostUserLogin(req, res, next) {
@@ -172,7 +174,7 @@ class UserController {
       }
 
       if (!user) {
-        return res.send({ user: null });
+        return res.status(201).send({ user: null });
       }
 
       return req.login(user, loginError => {
@@ -180,7 +182,7 @@ class UserController {
           return next(loginError);
         }
 
-        return res.send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
+        return res.status(201).send({ user: this.clientDataMappingService.mapWebsiteUser(user) });
       });
     })(req, res, next);
   }
@@ -196,18 +198,17 @@ class UserController {
       await this.mailService.sendPasswordResetEmail({ username: user.username, email: user.email, completionLink });
     }
 
-    res.send({});
+    res.status(201).send({});
   }
 
   async handlePostUserPasswordResetCompletion(req, res) {
     const { passwordResetRequestId, password } = req.body;
     const user = await this.userService.completePasswordResetRequest(passwordResetRequestId, password);
     if (!user) {
-      res.status(404).send('User not found');
-      return;
+      throw new NotFound();
     }
 
-    res.send({ user });
+    res.status(201).send({ user });
 
   }
 
@@ -215,28 +216,28 @@ class UserController {
     const { userId } = req.params;
     const { roles } = req.body;
     const newRoles = await this.userService.updateUserRoles(userId, roles);
-    return res.send({ roles: newRoles });
+    return res.status(201).send({ roles: newRoles });
   }
 
   async handlePostUserLockedOut(req, res) {
     const { userId } = req.params;
     const { lockedOut } = req.body;
     const newLockedOutState = await this.userService.updateUserLockedOutState(userId, lockedOut);
-    return res.send({ lockedOut: newLockedOutState });
+    return res.status(201).send({ lockedOut: newLockedOutState });
   }
 
   async handlePostUserStoragePlan(req, res) {
     const { userId } = req.params;
     const { storagePlanId } = req.body;
     const newStorage = await this.userService.updateUserStoragePlan(userId, storagePlanId);
-    return res.send(newStorage);
+    return res.status(201).send(newStorage);
   }
 
   async handlePostUserStorageReminder(req, res) {
     const { user } = req;
     const { userId } = req.params;
     const newStorage = await this.userService.addUserStorageReminder(userId, user);
-    return res.send(newStorage);
+    return res.status(201).send(newStorage);
   }
 
   async handleDeleteAllUserStorageReminders(req, res) {
