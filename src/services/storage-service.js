@@ -3,6 +3,7 @@ import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
+import LockStore from '../stores/lock-store.js';
 import LessonStore from '../stores/lesson-store.js';
 import fileNameHelper from '../utils/file-name-helper.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
@@ -17,10 +18,11 @@ import {
 } from '../ui/path-helper.js';
 
 export default class StorageService {
-  static get inject() { return [Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, TransactionRunner]; }
+  static get inject() { return [Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, LockStore, TransactionRunner]; }
 
-  constructor(cdn, roomStore, roomInvitationStore, lessonStore, storagePlanStore, userStore, transactionRunner) {
+  constructor(cdn, roomStore, roomInvitationStore, lessonStore, storagePlanStore, userStore, lockStore, transactionRunner) {
     this.cdn = cdn;
+    this.lockStore = lockStore;
     this.roomStore = roomStore;
     this.userStore = userStore;
     this.lessonStore = lessonStore;
@@ -61,8 +63,14 @@ export default class StorageService {
       throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
     }
 
-    await this._uploadFiles(files, prefix);
-    await this._updateUserUsedBytes(user._id);
+    let lock;
+    try {
+      lock = await this.lockStore.takeUserLock(user._id);
+      await this._uploadFiles(files, prefix);
+      await this._updateUserUsedBytes(user._id);
+    } finally {
+      this.lockStore.releaseLock(lock);
+    }
   }
 
   async listObjects({ prefix, recursive }) {
@@ -71,24 +79,39 @@ export default class StorageService {
   }
 
   async deleteObject({ prefix, objectName, userId }) {
-    await this._deleteObjects([urls.concatParts(prefix, objectName)]);
-    if (getStoragePathType(prefix) === STORAGE_PATH_TYPE.private) {
-      await this._updateUserUsedBytes(userId);
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeUserLock(userId);
+      await this._deleteObjects([urls.concatParts(prefix, objectName)]);
+
+      if (getStoragePathType(prefix) === STORAGE_PATH_TYPE.private) {
+        await this._updateUserUsedBytes(userId);
+      }
+    } finally {
+      this.lockStore.releaseLock(lock);
     }
   }
 
   async deleteRoomAndResources({ roomId, roomOwnerId }) {
-    await this.transactionRunner.run(async session => {
-      await this.lessonStore.deleteLessonsByRoomId(roomId, { session });
-      await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
-      await this.roomStore.deleteRoomById(roomId, { session });
-    });
+    let lock;
 
-    // Has to go into lock
-    const roomPrivateStorageObjects = await this.listObjects({ prefix: getPrivateStoragePathForRoomId(roomId), recursive: true });
-    if (roomPrivateStorageObjects.length) {
-      await this._deleteObjects(roomPrivateStorageObjects.map(({ name }) => name));
-      await this._updateUserUsedBytes(roomOwnerId);
+    try {
+      lock = await this.lockStore.takeUserLock(roomOwnerId);
+
+      await this.transactionRunner.run(async session => {
+        await this.lessonStore.deleteLessonsByRoomId(roomId, { session });
+        await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
+        await this.roomStore.deleteRoomById(roomId, { session });
+      });
+
+      const roomPrivateStorageObjects = await this.listObjects({ prefix: getPrivateStoragePathForRoomId(roomId), recursive: true });
+      if (roomPrivateStorageObjects.length) {
+        await this._deleteObjects(roomPrivateStorageObjects.map(({ name }) => name));
+        await this._updateUserUsedBytes(roomOwnerId);
+      }
+    } finally {
+      this.lockStore.releaseLock(lock);
     }
   }
 

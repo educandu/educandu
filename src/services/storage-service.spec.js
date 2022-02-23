@@ -3,6 +3,7 @@ import Cdn from '../repositories/cdn.js';
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
+import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
@@ -16,6 +17,7 @@ describe('storage-service', () => {
   let lessonStore;
   let storagePlan;
   let roomStore;
+  let lockStore;
   let container;
   let prefix;
   let roomId;
@@ -29,6 +31,7 @@ describe('storage-service', () => {
     container = await setupTestEnvironment();
 
     cdn = container.get(Cdn);
+    lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
     lessonStore = container.get(LessonStore);
     roomInvitationStore = container.get(RoomInvitationStore);
@@ -45,6 +48,8 @@ describe('storage-service', () => {
     sandbox.stub(cdn, 'listObjects');
     sandbox.stub(cdn, 'uploadObject');
     sandbox.stub(cdn, 'deleteObjects');
+    sandbox.stub(lockStore, 'releaseLock');
+    sandbox.stub(lockStore, 'takeUserLock');
     sandbox.stub(lessonStore, 'deleteLessonsByRoomId');
     sandbox.stub(roomStore, 'deleteRoomById');
     sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
@@ -63,6 +68,14 @@ describe('storage-service', () => {
   });
 
   describe('uploadFiles', () => {
+    let lock;
+
+    beforeEach(() => {
+      lock = { id: uniqueId.create() };
+      lockStore.takeUserLock.resolves(lock);
+      lockStore.releaseLock.resolves();
+    });
+
     describe('when the storage type is unknown', () => {
       beforeEach(() => {
         prefix = 'other-path/media/';
@@ -87,10 +100,18 @@ describe('storage-service', () => {
         await sut.uploadFiles({ prefix, files, user: myUser });
       });
 
+      it('should not take the lock on the user record', () => {
+        sinon.assert.notCalled(lockStore.takeUserLock);
+      });
+
       it('should call cdn.uploadObject for each file', () => {
         sinon.assert.calledTwice(cdn.uploadObject);
         sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file1-(.+)\.jpeg/), files[0].path, {});
         sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file2-(.+)\.jpeg/), files[1].path, {});
+      });
+
+      it('should not release the lock', () => {
+        sinon.assert.notCalled(lockStore.releaseLock);
       });
     });
 
@@ -163,6 +184,10 @@ describe('storage-service', () => {
         await sut.uploadFiles({ prefix, files, user: myUser });
       });
 
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
       it('should call cdn.uploadObject for each file', () => {
         sinon.assert.calledTwice(cdn.uploadObject);
         sinon.assert.calledWith(cdn.uploadObject, sinon.match(/rooms\/(.+)\/media\/file1-(.+)\.jpeg/), files[0].path, {});
@@ -179,11 +204,22 @@ describe('storage-service', () => {
         expect(updatedUser.storage.usedBytes)
           .toBe(oldFiles[0].size + oldFiles[1].size + files[0].size + files[1].size);
       });
+
+      it('should release the lock', () => {
+        sinon.assert.called(lockStore.releaseLock);
+      });
     });
   });
 
   describe('deleteObject', () => {
+    let lock;
     let fileToDelete;
+
+    beforeEach(() => {
+      lock = { id: uniqueId.create() };
+      lockStore.takeUserLock.resolves(lock);
+      lockStore.releaseLock.resolves();
+    });
 
     describe('when the storage type is unknown', () => {
       beforeEach(() => {
@@ -211,6 +247,10 @@ describe('storage-service', () => {
         await sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id });
       });
 
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
       it('should call cdn.deleteObjects', () => {
         sinon.assert.calledWith(cdn.deleteObjects, [`${prefix}${fileToDelete.name}`]);
       });
@@ -226,6 +266,10 @@ describe('storage-service', () => {
       it('should not update the user\'s usedBytes', async () => {
         const updatedUser = await db.users.findOne({ _id: myUser._id });
         expect(updatedUser.storage.usedBytes).toBe(myUser.storage.usedBytes);
+      });
+
+      it('should release the lock', () => {
+        sinon.assert.called(lockStore.releaseLock);
       });
     });
 
@@ -256,6 +300,10 @@ describe('storage-service', () => {
         await sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id });
       });
 
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
       it('should call cdn.deleteObjects', () => {
         sinon.assert.calledWith(cdn.deleteObjects, [`${prefix}${fileToDelete.name}`]);
       });
@@ -269,14 +317,23 @@ describe('storage-service', () => {
         const updatedUser = await db.users.findOne({ _id: myUser._id });
         expect(updatedUser.storage.usedBytes).toBe(files[0].size + files[1].size);
       });
+
+      it('should release the lock', () => {
+        sinon.assert.called(lockStore.releaseLock);
+      });
     });
   });
 
   describe('deleteRoomAndResources', () => {
+    let lock;
     let remainingPrivateRoom;
     let filesFromRemainingPrivateRoom;
 
     beforeEach(async () => {
+      lock = { id: uniqueId.create() };
+      lockStore.takeUserLock.resolves(lock);
+      lockStore.releaseLock.resolves();
+
       lessonStore.deleteLessonsByRoomId.resolves();
       roomInvitationStore.deleteRoomInvitationsByRoomId.resolves();
       roomStore.deleteRoomById.resolves();
@@ -297,6 +354,10 @@ describe('storage-service', () => {
       cdn.listObjects.withArgs({ prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
 
       await sut.deleteRoomAndResources({ roomId, roomOwnerId: myUser._id });
+    });
+
+    it('should take the lock on the user record', () => {
+      sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
     });
 
     it('should call lessonStore.deleteLessonsByRoomId', () => {
@@ -330,6 +391,10 @@ describe('storage-service', () => {
     it('should update the user\'s usedBytes', async () => {
       const updatedUser = await db.users.findOne({ _id: myUser._id });
       expect(updatedUser.storage.usedBytes).toBe(filesFromRemainingPrivateRoom[0].size);
+    });
+
+    it('should release the lock', () => {
+      sinon.assert.called(lockStore.releaseLock);
     });
   });
 
