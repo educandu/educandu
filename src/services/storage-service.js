@@ -1,7 +1,7 @@
 import urls from '../utils/urls.js';
 import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
-import UserService from './user-service.js';
+import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import fileNameHelper from '../utils/file-name-helper.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
@@ -15,12 +15,12 @@ import {
 } from '../ui/path-helper.js';
 
 export default class StorageService {
-  static get inject() { return [Cdn, RoomStore, StoragePlanStore, UserService]; }
+  static get inject() { return [Cdn, RoomStore, StoragePlanStore, UserStore]; }
 
-  constructor(cdn, roomStore, storagePlanStore, userService) {
+  constructor(cdn, roomStore, storagePlanStore, userStore) {
     this.cdn = cdn;
     this.roomStore = roomStore;
-    this.userService = userService;
+    this.userStore = userStore;
     this.storagePlanStore = storagePlanStore;
   }
 
@@ -58,7 +58,7 @@ export default class StorageService {
 
     await this._uploadFiles(files, prefix);
     const usedBytes = await this._getUsedPrivateStorageUsedBytes(user._id);
-    await this.userService.updateUserUsedStorage(user._id, usedBytes);
+    await this._updateUserUsedBytes(user._id, usedBytes);
   }
 
   async listObjects({ prefix, recursive }) {
@@ -88,7 +88,7 @@ export default class StorageService {
 
     if (allObjectsToDelete.some(x => x.storagePathType === STORAGE_PATH_TYPE.private)) {
       const usedBytes = await this._getUsedPrivateStorageUsedBytes(user._id);
-      await this.userService.updateUserUsedStorage(user._id, usedBytes);
+      await this._updateUserUsedBytes(user._id, usedBytes);
     }
   }
 
@@ -124,5 +124,13 @@ export default class StorageService {
       await this.cdn.uploadObject(cdnFileName, file.path, {});
     });
     await Promise.all(uploads);
+  }
+
+  async _updateUserUsedBytes(userId, usedBytes) {
+    const user = await this.userStore.getUserById(userId);
+    user.storage = { ...user.storage, usedBytes };
+
+    await this.userStore.saveUser(user);
+    return user;
   }
 }
