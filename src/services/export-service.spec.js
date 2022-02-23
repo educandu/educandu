@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import UserStore from '../stores/user-store.js';
 import ExportService from './export-service.js';
-import DocumentService from './document-service.js';
+import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -10,7 +10,7 @@ describe('export-service', () => {
 
   const sandbox = sinon.createSandbox();
 
-  let documentService;
+  let documentStore;
   let serverConfig;
   let container;
   let userStore;
@@ -22,8 +22,8 @@ describe('export-service', () => {
     user = await setupTestUser(container);
 
     serverConfig = container.get(ServerConfig);
-    documentService = container.get(DocumentService);
     userStore = container.get(UserStore);
+    documentStore = container.get(DocumentStore);
     sut = container.get(ExportService);
   });
 
@@ -34,7 +34,7 @@ describe('export-service', () => {
   beforeEach(() => {
     sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.root.url');
     sandbox.stub(userStore, 'getUsersByIds');
-    sandbox.stub(documentService, 'getAllDocumentRevisionsByKey');
+    sandbox.stub(documentStore, 'getAllDocumentRevisionsByKey');
   });
 
   afterEach(async () => {
@@ -88,7 +88,7 @@ describe('export-service', () => {
 
     beforeEach(() => {
       userStore.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
-      documentService.getAllDocumentRevisionsByKey.resolves([rev2, rev3, rev1]);
+      documentStore.getAllDocumentRevisionsByKey.resolves([rev2, rev3, rev1]);
     });
 
     describe('with toRevision = null', () => {
