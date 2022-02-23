@@ -81,7 +81,7 @@ class ErrorController {
 
   tryRedirectToLogin(req, res, err) {
     if (err.status === 401 && !req.isAuthenticated()) {
-      const url = urls.getLoginUrl(req.path);
+      const url = urls.getLoginUrl(req.originalUrl);
       res.redirect(url);
       return true;
     }
