@@ -5,13 +5,12 @@ import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
-import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 
-const { BadRequest, NotFound, Forbidden } = httpErrors;
+const { BadRequest, NotFound } = httpErrors;
 
 const logger = new Logger(import.meta.url);
 
@@ -19,15 +18,14 @@ const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
 export default class RoomService {
   static get inject() {
-    return [RoomStore, RoomInvitationStore, LessonStore, LockStore, UserStore, StorageService, TransactionRunner];
+    return [RoomStore, RoomInvitationStore, LessonStore, LockStore, UserStore, TransactionRunner];
   }
 
-  constructor(roomStore, roomInvitationStore, lessonStore, lockStore, userStore, storageService, transactionRunner) {
+  constructor(roomStore, roomInvitationStore, lessonStore, lockStore, userStore, transactionRunner) {
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.userStore = userStore;
     this.lessonStore = lessonStore;
-    this.storageService = storageService;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
   }
@@ -74,32 +72,6 @@ export default class RoomService {
     };
     await this.roomStore.saveRoom(updatedRoom);
     return updatedRoom;
-  }
-
-  async deleteRoom(roomId, user) {
-    const room = await this.roomStore.getRoomById(roomId);
-
-    if (!room) {
-      throw new NotFound();
-    }
-
-    if (room.owner !== user._id) {
-      throw new Forbidden();
-    }
-
-    await this.transactionRunner.run(async session => {
-      await this.lessonStore.deleteMany({ roomId }, { session });
-      await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
-      await this.roomStore.deleteRoomById(roomId, { session });
-    });
-
-    try {
-      await this.storageService.deleteAllObjectsWithPrefix({ prefix: `rooms/${roomId}/`, user });
-    } catch (error) {
-      logger.error(error);
-    }
-
-    return room;
   }
 
   getRoomInvitations(roomId) {

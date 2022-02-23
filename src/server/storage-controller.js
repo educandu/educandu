@@ -37,7 +37,7 @@ class StorageController {
     const { prefix } = req.query;
     const { objectName } = req.params;
 
-    await this.storageService.deleteObject({ prefix, objectName, user });
+    await this.storageService.deleteObject({ prefix, objectName, userId: user._id });
 
     return res.send({});
   }

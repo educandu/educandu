@@ -5,13 +5,10 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import StorageService from './storage-service.js';
-import LessonStore from '../stores/lesson-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
-import RoomInvitationStore from '../stores/room-invitation-store.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
-const { BadRequest, NotFound, Forbidden } = httpErrors;
+const { BadRequest, NotFound } = httpErrors;
 
 describe('room-service', () => {
   let db;
@@ -22,9 +19,6 @@ describe('room-service', () => {
   let otherUser;
   let roomStore;
   let lockStore;
-  let lessonStore;
-  let storageService;
-  let roomInvitationStore;
 
   const now = new Date();
   const sandbox = sinon.createSandbox();
@@ -34,9 +28,6 @@ describe('room-service', () => {
 
     lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
-    lessonStore = container.get(LessonStore);
-    storageService = container.get(StorageService);
-    roomInvitationStore = container.get(RoomInvitationStore);
 
     sut = container.get(RoomService);
     db = container.get(Database);
@@ -51,7 +42,6 @@ describe('room-service', () => {
 
     sandbox.stub(lockStore, 'takeRoomLock');
     sandbox.stub(lockStore, 'releaseLock');
-    sandbox.stub(storageService, 'deleteAllObjectsWithPrefix');
 
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
     otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
@@ -314,82 +304,4 @@ describe('room-service', () => {
     });
   });
 
-  describe('deleteRoom', () => {
-    const roomId = uniqueId.create();
-    const lessonId = uniqueId.create();
-
-    beforeEach(async () => {
-      await roomStore.saveRoom({
-        _id: roomId,
-        name: 'my room',
-        access: ROOM_ACCESS_LEVEL.private,
-        owner: myUser._id,
-        members: [
-          {
-            userId: otherUser._id,
-            joinedOn: new Date()
-          }
-        ]
-      });
-    });
-
-    describe('when the room does not exist', () => {
-      it('should throw a not found exception', () => {
-        expect(() => sut.deleteRoom('badIdBadIdITellYou', myUser)).rejects.toThrow(NotFound);
-      });
-    });
-
-    describe('when another user except the owner tries to delete', () => {
-      it('should throw a forbidden exception', () => {
-        expect(() => sut.deleteRoom(roomId, otherUser)).rejects.toThrow(Forbidden);
-      });
-    });
-
-    describe('when the room can be deleted', () => {
-      let invitationDetails;
-
-      beforeEach(async () => {
-        storageService.deleteAllObjectsWithPrefix.resolves();
-
-        invitationDetails = await sut.createOrUpdateInvitation({ roomId, email: otherUser.email, user: myUser });
-
-        await lessonStore.save({
-          _id: lessonId,
-          title: 'my lesson',
-          slug: '',
-          roomId,
-          createdOn: now,
-          createdBy: myUser._id,
-          updatedOn: now,
-          language: 'de',
-          sections: [],
-          cdnResources: [],
-          schedule: null
-        });
-
-        await sut.deleteRoom(roomId, myUser);
-      });
-
-      it('should delete the room', async () => {
-        const formerRoom = await roomStore.getRoomById(roomId);
-        expect(formerRoom).toBeNull();
-      });
-
-      it('should delete the invitations', async () => {
-        const { invitation } = invitationDetails;
-
-        const formerInvitation = await roomInvitationStore.getRoomInvitationByToken(invitation.token);
-        expect(formerInvitation).toBeNull();
-      });
-
-      it('should delete the room lessons', async () => {
-        const lesson = await lessonStore.findOne({ _id: lessonId });
-        expect(lesson).toBeNull();
-      });
-
-      it('should call storageService.deleteAllObjectsWithPrefix', () => {
-        sinon.assert.calledWith(storageService.deleteAllObjectsWithPrefix, { prefix: `rooms/${roomId}/`, user: myUser });
-      });
-    });
-  });
 });

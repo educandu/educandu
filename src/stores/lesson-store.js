@@ -19,6 +19,10 @@ class LessonStore extends StoreBase {
     items.forEach(item => validate(item, lessonDBSchema));
     return super.saveMany(items);
   }
+
+  async deleteLessonsByRoomId(roomId, { session } = {}) {
+    await this.deleteMany({ roomId }, { session });
+  }
 }
 
 export default LessonStore;

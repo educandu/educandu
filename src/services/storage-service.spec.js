@@ -4,15 +4,18 @@ import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import RoomStore from '../stores/room-store.js';
 import StorageService from './storage-service.js';
+import LessonStore from '../stores/lesson-store.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
-import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import RoomInvitationStore from '../stores/room-invitation-store.js';
+import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
 
+  let roomInvitationStore;
+  let lessonStore;
   let storagePlan;
   let roomStore;
-  let otherUser;
   let container;
   let prefix;
   let roomId;
@@ -27,6 +30,8 @@ describe('storage-service', () => {
 
     cdn = container.get(Cdn);
     roomStore = container.get(RoomStore);
+    lessonStore = container.get(LessonStore);
+    roomInvitationStore = container.get(RoomInvitationStore);
 
     sut = container.get(StorageService);
     db = container.get(Database);
@@ -40,13 +45,16 @@ describe('storage-service', () => {
     sandbox.stub(cdn, 'listObjects');
     sandbox.stub(cdn, 'uploadObject');
     sandbox.stub(cdn, 'deleteObjects');
+    sandbox.stub(lessonStore, 'deleteLessonsByRoomId');
+    sandbox.stub(roomStore, 'deleteRoomById');
+    sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
+    sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId');
 
     roomId = uniqueId.create();
     storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 10 * 1000 * 1000 };
     await db.storagePlans.insertOne(storagePlan);
 
     myUser = await setupTestUser(container, { username: 'Me', email: 'i@myself.com' });
-    otherUser = await setupTestUser(container, { username: 'Goofy', email: 'goofy@ducktown.com' });
   });
 
   afterEach(async () => {
@@ -55,10 +63,6 @@ describe('storage-service', () => {
   });
 
   describe('uploadFiles', () => {
-    beforeEach(() => {
-      sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
-    });
-
     describe('when the storage type is unknown', () => {
       beforeEach(() => {
         prefix = 'other-path/media/';
@@ -150,8 +154,9 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerIdAndAccess.resolves(allOwnedPrivateRoomIds);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` }).resolves([oldFiles[0], files[0], files[1]]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` }).resolves([oldFiles[1]]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true }).resolves([oldFiles[0], files[0], files[1]]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true }).resolves([oldFiles[1]]);
+        cdn.listObjects.resolves([]);
 
         cdn.uploadObject.resolves();
 
@@ -165,8 +170,8 @@ describe('storage-service', () => {
       });
 
       it('should call cdn.listObjects for each room', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` });
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` });
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true });
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -180,10 +185,6 @@ describe('storage-service', () => {
   describe('deleteObject', () => {
     let fileToDelete;
 
-    beforeEach(() => {
-      sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
-    });
-
     describe('when the storage type is unknown', () => {
       beforeEach(() => {
         prefix = 'other-path/media/';
@@ -191,7 +192,7 @@ describe('storage-service', () => {
       });
 
       it('should throw an error', async () => {
-        await expect(() => sut.deleteObject({ prefix, objectName: fileToDelete.name, user: myUser }))
+        await expect(() => sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id }))
           .rejects.toThrowError(`Invalid storage path '${prefix}'`);
       });
     });
@@ -205,12 +206,17 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         cdn.deleteObjects.resolves();
+        roomStore.getRoomIdsByOwnerIdAndAccess.resolves([]);
 
-        await sut.deleteObject({ prefix, objectName: fileToDelete.name, user: myUser });
+        await sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id });
       });
 
       it('should call cdn.deleteObjects', () => {
         sinon.assert.calledWith(cdn.deleteObjects, [`${prefix}${fileToDelete.name}`]);
+      });
+
+      it('should not call roomStore.getRoomIdsByOwnerIdAndAccess', () => {
+        sinon.assert.notCalled(roomStore.getRoomIdsByOwnerIdAndAccess);
       });
 
       it('should not call cdn.listObjects', () => {
@@ -242,12 +248,12 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         roomStore.getRoomIdsByOwnerIdAndAccess.resolves(allOwnedPrivateRoomIds);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` }).resolves([files[0]]);
-        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` }).resolves([files[1]]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true }).resolves([files[0]]);
+        cdn.listObjects.withArgs({ prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true }).resolves([files[1]]);
 
         cdn.deleteObjects.resolves();
 
-        await sut.deleteObject({ prefix, objectName: fileToDelete.name, user: myUser });
+        await sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id });
       });
 
       it('should call cdn.deleteObjects', () => {
@@ -255,8 +261,8 @@ describe('storage-service', () => {
       });
 
       it('should call cdn.listObjects for each room', () => {
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/` });
-        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/` });
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[0]}/media/`, recursive: true });
+        sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${allOwnedPrivateRoomIds[1]}/media/`, recursive: true });
       });
 
       it('should update the user\'s usedBytes', async () => {
@@ -266,45 +272,64 @@ describe('storage-service', () => {
     });
   });
 
-  describe('getIdsOfPrivateRoomsOwnedByUser', () => {
-    let result;
+  describe('deleteRoomAndResources', () => {
+    let remainingPrivateRoom;
+    let filesFromRemainingPrivateRoom;
 
     beforeEach(async () => {
-      const rooms = [
-        {
-          _id: 'Room 1',
-          owner: myUser._id,
-          access: ROOM_ACCESS_LEVEL.private
-        },
-        {
-          _id: 'Room 2',
-          owner: myUser._id,
-          access: ROOM_ACCESS_LEVEL.public
-        },
-        {
-          _id: 'Room 3',
-          owner: otherUser._id,
-          access: ROOM_ACCESS_LEVEL.private
-        },
-        {
-          _id: 'Room 4',
-          owner: otherUser._id,
-          access: ROOM_ACCESS_LEVEL.public
-        },
-        {
-          _id: 'Room 5',
-          owner: myUser._id,
-          access: ROOM_ACCESS_LEVEL.private
-        }
-      ];
-      await Promise.all(rooms.map(room => createTestRoom(container, room)));
+      lessonStore.deleteLessonsByRoomId.resolves();
+      roomInvitationStore.deleteRoomInvitationsByRoomId.resolves();
+      roomStore.deleteRoomById.resolves();
 
-      result = await sut.getIdsOfPrivateRoomsOwnedByUser(myUser._id);
+      remainingPrivateRoom = { _id: uniqueId.create() };
+
+      const filesFromRoomBeingDeleted = [
+        { name: `rooms/${roomId}/media/file1`, size: 1 * 1000 * 1000 },
+        { name: `rooms/${roomId}/media/file2`, size: 2 * 1000 * 1000 }
+      ];
+
+      filesFromRemainingPrivateRoom = [{ name: `rooms/${remainingPrivateRoom._id}/media/filex`, size: 3 * 1000 * 1000 }];
+
+      cdn.listObjects.resolves([]);
+      cdn.listObjects.withArgs({ prefix: `rooms/${roomId}/media/`, recursive: true }).resolves(filesFromRoomBeingDeleted);
+      cdn.deleteObjects.resolves();
+      roomStore.getRoomIdsByOwnerIdAndAccess.resolves([remainingPrivateRoom._id]);
+      cdn.listObjects.withArgs({ prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true }).resolves(filesFromRemainingPrivateRoom);
+
+      await sut.deleteRoomAndResources({ roomId, roomOwnerId: myUser._id });
     });
 
-    it('should return the ids of all privately owned rooms', () => {
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(expect.arrayContaining(['Room 1', 'Room 5']));
+    it('should call lessonStore.deleteLessonsByRoomId', () => {
+      sinon.assert.calledWith(lessonStore.deleteLessonsByRoomId, roomId, { session: sinon.match.object });
+    });
+
+    it('should call roomInvitationStore.deleteRoomInvitationsByRoomId', () => {
+      sinon.assert.calledWith(roomInvitationStore.deleteRoomInvitationsByRoomId, roomId, { session: sinon.match.object });
+    });
+
+    it('should call roomStore.deleteRoomById', () => {
+      sinon.assert.calledWith(roomStore.deleteRoomById, roomId, { session: sinon.match.object });
+    });
+
+    it('should call cdn.listObjects for the room being deleted', () => {
+      sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${roomId}/media/`, recursive: true });
+    });
+
+    it('should call cdn.deleteObjects', () => {
+      sinon.assert.calledWith(cdn.deleteObjects, [`rooms/${roomId}/media/file1`, `rooms/${roomId}/media/file2`]);
+    });
+
+    it('should call roomStore.getRoomIdsByOwnerIdAndAccess', () => {
+      sinon.assert.calledWith(roomStore.getRoomIdsByOwnerIdAndAccess, { ownerId: myUser._id, access: ROOM_ACCESS_LEVEL.private });
+    });
+
+    it('should call cdn.listObjects for the remaining private room', () => {
+      sinon.assert.calledWith(cdn.listObjects, { prefix: `rooms/${remainingPrivateRoom._id}/media/`, recursive: true });
+    });
+
+    it('should update the user\'s usedBytes', async () => {
+      const updatedUser = await db.users.findOne({ _id: myUser._id });
+      expect(updatedUser.storage.usedBytes).toBe(filesFromRemainingPrivateRoom[0].size);
     });
   });
 

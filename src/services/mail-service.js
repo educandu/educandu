@@ -1,6 +1,7 @@
 import htmlescape from 'htmlescape';
 import nodemailer from 'nodemailer';
 import Logger from '../common/logger.js';
+import UserStore from '../stores/user-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { SUPPORTED_UI_LANGUAGES } from '../resources/ui-language.js';
@@ -8,9 +9,10 @@ import { SUPPORTED_UI_LANGUAGES } from '../resources/ui-language.js';
 const logger = new Logger(import.meta.url);
 
 class MailService {
-  static get inject() { return [ServerConfig, ResourceManager]; }
+  static get inject() { return [ServerConfig, UserStore, ResourceManager]; }
 
-  constructor(serverConfig, resourceManager) {
+  constructor(serverConfig, userStore, resourceManager) {
+    this.userStore = userStore;
     this.resourceManager = resourceManager;
     this.emailSenderAddress = serverConfig.emailSenderAddress;
     this.transport = nodemailer.createTransport(serverConfig.smtpOptions);
@@ -81,7 +83,16 @@ class MailService {
     return this._sendMail(message);
   }
 
-  sendRoomDeletionNotificationEmail({ email, ownerName, roomName }) {
+  async sendRoomDeletionNotificationEmails({ roomName, ownerName, roomMembers }) {
+    const userIds = roomMembers.map(({ userId }) => userId);
+    const users = await this.userStore.getUsersByIds(userIds);
+
+    await Promise.all(users.map(({ email }) => {
+      return this._sendRoomDeletionNotificationEmail({ email, roomName, ownerName });
+    }));
+  }
+
+  _sendRoomDeletionNotificationEmail({ email, ownerName, roomName }) {
     logger.info(`Sending delete notification to ${email}`);
 
     const subject = this.translators
