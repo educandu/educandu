@@ -24,6 +24,14 @@ export default class StorageService {
     this.storagePlanStore = storagePlanStore;
   }
 
+  getAllStoragePlans() {
+    return this.storagePlanStore.getAllStoragePlans();
+  }
+
+  getStoragePlanById(id) {
+    return this.storagePlanStore.getStoragePlanById(id);
+  }
+
   async uploadFiles({ prefix, files, user }) {
     const storagePathType = getStoragePathType(prefix);
 

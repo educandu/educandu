@@ -1,7 +1,6 @@
 import Graceful from 'node-graceful';
 import Logger from './common/logger.js';
 import { ROLE } from './domain/constants.js';
-import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import ServerConfig from './bootstrap/server-config.js';
 import TaskScheduler from './services/task-scheduler.js';
@@ -45,7 +44,6 @@ export default async function educandu(options) {
     const educanduServer = container.get(EducanduServer);
     const serverConfig = container.get(ServerConfig);
     const userService = container.get(UserService);
-    const userStore = container.get(UserStore);
 
     logger.info('Starting application');
 
@@ -62,7 +60,7 @@ export default async function educandu(options) {
     }
 
     if (serverConfig.initialUser) {
-      const existingUser = await userStore.getUserByEmailAddress(serverConfig.initialUser.email);
+      const existingUser = await userService.getUserByEmailAddress(serverConfig.initialUser.email);
       if (existingUser) {
         logger.info('User with initial user email address already exists, skipping creation');
       } else {

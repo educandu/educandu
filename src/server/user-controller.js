@@ -6,7 +6,6 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
-import UserStore from '../stores/user-store.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
 import UserService from '../services/user-service.js';
@@ -17,13 +16,13 @@ import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
-import StoragePlanStore from '../stores/storage-plan-store.js';
+import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
 import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
-import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
+import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import {
   postUserBodySchema,
   postUserAccountBodySchema,
@@ -44,10 +43,9 @@ class UserController {
     return [
       ServerConfig,
       Database,
-      UserStore,
-      StoragePlanStore,
-      PasswordResetRequestStore,
       UserService,
+      StorageService,
+      PasswordResetRequestService,
       MailService,
       ClientDataMapper,
       PageRenderer
@@ -57,23 +55,21 @@ class UserController {
   constructor(
     serverConfig,
     database,
-    userStore,
-    storagePlanStore,
-    passwordResetRequestStore,
     userService,
+    storageService,
+    passwordResetRequestService,
     mailService,
     clientDataMapper,
     pageRenderer
   ) {
     this.database = database;
-    this.userStore = userStore;
     this.userService = userService;
     this.mailService = mailService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.clientDataMapper = clientDataMapper;
-    this.storagePlanStore = storagePlanStore;
-    this.passwordResetRequestStore = passwordResetRequestStore;
+    this.storageService = storageService;
+    this.passwordResetRequestService = passwordResetRequestService;
   }
 
   handleGetRegisterPage(req, res) {
@@ -101,20 +97,20 @@ class UserController {
   }
 
   async handleGetCompletePasswordResetPage(req, res) {
-    const resetRequest = await this.passwordResetRequestStore.getRequestById(req.params.passwordResetRequestId);
+    const resetRequest = await this.passwordResetRequestService.getRequestById(req.params.passwordResetRequestId);
     const passwordResetRequestId = (resetRequest || {})._id;
     const initialState = { passwordResetRequestId };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.completePasswordReset, initialState);
   }
 
   async handleGetUsersPage(req, res) {
-    const [rawUsers, storagePlans] = await Promise.all([this.userStore.getAllUsers(), this.storagePlanStore.getAllStoragePlans()]);
+    const [rawUsers, storagePlans] = await Promise.all([this.userService.getAllUsers(), this.storageService.getAllStoragePlans()]);
     const initialState = { users: this.clientDataMapper.mapUsersForAdminArea(rawUsers), storagePlans };
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.users, initialState);
   }
 
   async handleGetUsers(req, res) {
-    const result = await this.userStore.getAllUsers();
+    const result = await this.userService.getAllUsers();
     res.send({ users: result });
   }
 
@@ -176,7 +172,7 @@ class UserController {
 
   async handlePostUserPasswordResetRequest(req, res) {
     const { email } = req.body;
-    const user = await this.userStore.getUserByEmailAddress(email);
+    const user = await this.userService.getUserByEmailAddress(email);
 
     if (user) {
       const resetRequest = await this.userService.createPasswordResetRequest(user);
@@ -288,7 +284,7 @@ class UserController {
 
     passport.deserializeUser(async (input, cb) => {
       try {
-        const user = await this.userStore.getUserById(input._id);
+        const user = await this.userService.getUserById(input._id);
         return cb(null, user);
       } catch (err) {
         return cb(err);

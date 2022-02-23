@@ -27,6 +27,22 @@ class UserService {
     this.passwordResetRequestStore = passwordResetRequestStore;
   }
 
+  getAllUsers() {
+    return this.userStore.getAllUsers();
+  }
+
+  getUserById(id) {
+    return this.userStore.getUserById(id);
+  }
+
+  getUsersByIds(ids) {
+    return this.userStore.getUsersByIds(ids);
+  }
+
+  getUserByEmailAddress(email) {
+    return this.userStore.getUserByEmailAddress(email);
+  }
+
   extractUserIdSetFromDocsOrRevisions(docsOrRevisions) {
     return docsOrRevisions.reduce((set, docOrRev) => this._fillUserIdSetForDocOrRevision(docOrRev, set), new Set());
   }

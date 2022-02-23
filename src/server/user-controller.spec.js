@@ -7,31 +7,28 @@ import { SAVE_USER_RESULT } from '../domain/constants.js';
 describe('user-controller', () => {
 
   const sandbox = sinon.createSandbox();
-  let passwordResetRequestStore;
-  let storagePlanStore;
+  let passwordResetRequestService;
+  let storageService;
   let clientDataMapper;
   let userService;
   let mailService;
-  let userStore;
   let sut;
 
   beforeEach(() => {
-    userStore = {
-      getUserByEmailAddress: sandbox.stub()
-    };
-    storagePlanStore = {
-      getAllStoragePlans: sandbox.stub()
-    };
-    passwordResetRequestStore = {
-      getRequestById: sandbox.stub()
-    };
     userService = {
       createUser: sandbox.stub(),
       updateUserAccount: sandbox.stub(),
       updateUserProfile: sandbox.stub(),
-      createPasswordResetRequest: sandbox.stub(),
+      getUserByEmailAddress: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
+      createPasswordResetRequest: sandbox.stub(),
       deleteAllUserStorageReminders: sandbox.stub()
+    };
+    storageService = {
+      getAllStoragePlans: sandbox.stub()
+    };
+    passwordResetRequestService = {
+      getRequestById: sandbox.stub()
     };
     mailService = {
       sendRegistrationVerificationEmail: sandbox.stub(),
@@ -47,10 +44,9 @@ describe('user-controller', () => {
     sut = new UserController(
       serverConfig,
       database,
-      userStore,
-      storagePlanStore,
-      passwordResetRequestStore,
       userService,
+      storageService,
+      passwordResetRequestService,
       mailService,
       clientDataMapper,
       pageRenderer
@@ -303,7 +299,7 @@ describe('user-controller', () => {
 
         res.on('end', done);
 
-        userStore.getUserByEmailAddress.resolves(user);
+        userService.getUserByEmailAddress.resolves(user);
         userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId' });
 
         sut.handlePostUserPasswordResetRequest(req, res);
@@ -342,7 +338,7 @@ describe('user-controller', () => {
 
         res.on('end', done);
 
-        userStore.getUserByEmailAddress.resolves(null);
+        userService.getUserByEmailAddress.resolves(null);
 
         sut.handlePostUserPasswordResetRequest(req, res);
       });

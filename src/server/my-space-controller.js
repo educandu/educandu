@@ -2,18 +2,18 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import StoragePlanStore from '../stores/storage-plan-store.js';
+import StorageService from '../services/storage-service.js';
 import ClientDataMapper from '../server/client-data-mapper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 
 class UserController {
-  static get inject() { return [ServerConfig, PageRenderer, RoomService, StoragePlanStore, ClientDataMapper]; }
+  static get inject() { return [ServerConfig, PageRenderer, RoomService, StorageService, ClientDataMapper]; }
 
-  constructor(serverConfig, pageRenderer, roomService, storagePlanStore, clientDataMapper) {
+  constructor(serverConfig, pageRenderer, roomService, storageService, clientDataMapper) {
     this.serverConfig = serverConfig;
     this.roomService = roomService;
     this.pageRenderer = pageRenderer;
-    this.storagePlanStore = storagePlanStore;
+    this.storageService = storageService;
     this.clientDataMapper = clientDataMapper;
   }
 
@@ -22,7 +22,7 @@ class UserController {
 
     let storagePlan = null;
     if (user.storage.plan) {
-      storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.plan);
+      storagePlan = await this.storageService.getStoragePlanById(user.storage.plan);
     }
 
     let rooms = [];
