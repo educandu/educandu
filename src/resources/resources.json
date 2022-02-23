@@ -1552,8 +1552,10 @@
       "yearly": "yearly",
       "click": "Click",
       "ctrl": "Ctrl",
+      "cmd": "Cmd",
       "shift": "Shift",
       "alt": "Alt",
+      "opt": "Opt",
       "unknown": "Unknown",
       "storage": "Storage",
       "actions": "Actions"
@@ -1620,8 +1622,10 @@
       "yearly": "jährlich",
       "click": "Klick",
       "ctrl": "Strg",
+      "cmd": "Cmd",
       "shift": "Umschalt",
       "alt": "Alt",
+      "opt": "Opt",
       "unknown": "Unbekannt",
       "storage": "Speicher",
       "actions": "Aktionen"

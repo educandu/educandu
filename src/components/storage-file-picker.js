@@ -44,8 +44,10 @@ function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged })
 
   const { isModalVisible, currentSelectedFile } = state;
 
+  const handleModalOverlayClick = event => event.stopPropagation();
+
   return (
-    <div>
+    <div className="StorageFilePicker">
       <Button
         type="primary"
         onClick={handleSelectButtonClick}
@@ -60,23 +62,16 @@ function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged })
         onCancel={handleCancel}
         bodyStyle={{ maxHeight: 'calc(90vh - 110px)', overflowY: 'auto' }}
         footer={[
-          <Button
-            key="back"
-            onClick={handleCancel}
-            >
+          <Button key="back" onClick={handleCancel}>
             {t('common:cancel')}
           </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            onClick={handleApply}
-            disabled={!currentSelectedFile}
-            >
+          <Button key="submit" type="primary" onClick={handleApply} disabled={!currentSelectedFile}>
             {t('common:apply')}
           </Button>
         ]}
         centered
         >
+        <div className="StorageFilePicker-eventCapturingModalOverlay" onClick={handleModalOverlayClick} />
         <StorageBrowser
           publicStorage={publicStorage}
           privateStorage={privateStorage}
