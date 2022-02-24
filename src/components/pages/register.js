@@ -1,20 +1,21 @@
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Countdown from '../countdown.js';
-import EmailInput from '../email-input.js';
 import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';
-import PasswordInput from '../password-input.js';
-import UsernameInput from '../username-input.js';
 import { useLocale } from '../locale-context.js';
+import EmailFormItem from '../email-form-item.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
 import { Trans, useTranslation } from 'react-i18next';
+import UsernameFormItem from '../username-form-item.js';
+import PasswordFormItem from '../password-form-item.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { SAVE_USER_RESULT } from '../../domain/constants.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
+import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -97,9 +98,10 @@ function Register({ PageTemplate, SiteLogo }) {
   const registrationForm = (
     <div className="RegisterPage-form">
       <Form ref={formRef} onFinish={handleFinish} scrollToFirstError>
-        <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={forbiddenUsernames} />
-        <EmailInput formItemLayout={formItemLayout} forbiddenEmails={forbiddenEmails} />
-        <PasswordInput formItemLayout={formItemLayout} />
+        <UsernameFormItem name="username" usernamesInUse={forbiddenUsernames} {...formItemLayout} />
+        <EmailFormItem name="email" emailsInUse={forbiddenEmails} {...formItemLayout} />
+        <PasswordFormItem name="password" {...formItemLayout} />
+        <PasswordConfirmationFormItem name="confirm" passwordFormItemName="password" {...formItemLayout} />
         <FormItem {...tailFormItemLayout} name="agreement" valuePropName="checked" rules={agreementValidationRules}>
           <Checkbox>
             <Trans

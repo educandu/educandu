@@ -4,12 +4,13 @@ import urls from '../../utils/urls.js';
 import Countdown from '../countdown.js';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
-import PasswordInput from '../password-input.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
+import PasswordFormItem from '../password-form-item.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
+import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -62,7 +63,8 @@ function CompletePasswordReset({ initialState, PageTemplate, SiteLogo }) {
   const completionForm = (
     <div className="CompletePasswordResetPage-form">
       <Form onFinish={handleFinish} scrollToFirstError>
-        <PasswordInput formItemLayout={formItemLayout} />
+        <PasswordFormItem name="password" {...formItemLayout} />
+        <PasswordConfirmationFormItem name="confirm" passwordFormItemName="password" {...formItemLayout} />
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">{t('savePassword')}</Button>
         </FormItem>
