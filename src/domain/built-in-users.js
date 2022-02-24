@@ -5,5 +5,10 @@ export const exportUser = Object.freeze({
   username: 'export-user',
   provider: 'builtin/export',
   roles: [],
-  permissions: [permissions.MANAGE_EXPORT]
+  permissions: [permissions.MANAGE_EXPORT],
+  storage: {
+    plan: null,
+    usedBytes: 0,
+    reminders: []
+  }
 });
