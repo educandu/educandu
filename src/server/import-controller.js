@@ -83,7 +83,7 @@ class ImportController {
     }
 
     const batch = await this.importService.createImportBatch({ importSource, documentsToImport, user });
-    res.send({ batch });
+    res.status(201).send({ batch });
   }
 
   registerPages(app) {

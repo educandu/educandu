@@ -88,7 +88,7 @@ class DocumentController {
     }
 
     const documentRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
-    return res.send({ documentRevision });
+    return res.status(201).send({ documentRevision });
   }
 
   async handlePostDocRestoreRevision(req, res) {
@@ -101,7 +101,7 @@ class DocumentController {
     }
 
     const documentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(revisions, user);
-    return res.send({ documentRevisions });
+    return res.status(201).send({ documentRevisions });
   }
 
   async handlePatchDocArchive(req, res) {
@@ -153,14 +153,14 @@ class DocumentController {
   async handleDeleteDocSection(req, res) {
     const { user } = req;
     const { documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
-    const result = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
-    return res.send(result);
+    await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
+    return res.send({});
   }
 
   async handleDeleteDoc(req, res) {
     const { documentKey } = req.body;
-    const result = await this.documentService.hardDeleteDocument(documentKey);
-    return res.send(result);
+    await this.documentService.hardDeleteDocument(documentKey);
+    return res.send({});
   }
 
   async handleGetDocRevisionTags(req, res) {

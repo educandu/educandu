@@ -1,8 +1,11 @@
 import sinon from 'sinon';
 import events from 'events';
+import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import UserController from './user-controller.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
+
+const { NotFound } = httpErrors;
 
 describe('user-controller', () => {
 
@@ -79,8 +82,8 @@ describe('user-controller', () => {
         sut.handlePostUser(req, res);
       });
 
-      it('should set the status code on the response to 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
       });
 
       it('should call sendRegistrationVerificationEmail', () => {
@@ -114,8 +117,8 @@ describe('user-controller', () => {
         sut.handlePostUser(req, res);
       });
 
-      it('should set the status code on the response to 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
       });
 
       it('should not call mailService.sendRegistrationVerificationEmail', () => {
@@ -162,8 +165,8 @@ describe('user-controller', () => {
         sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', username: 'test1234', email: 'test@test.com' });
       });
 
-      it('should set the status code on the response to 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
       });
 
       it('should return the result object', () => {
@@ -190,8 +193,8 @@ describe('user-controller', () => {
         sut.handlePostUserAccount(req, res);
       });
 
-      it('should set the status code on the response to 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
       });
 
       it('should not call clientDataMappingService.mapWebsiteUser', () => {
@@ -234,8 +237,8 @@ describe('user-controller', () => {
         sinon.assert.calledWith(userService.updateUserProfile, 1234, profile);
       });
 
-      it('should set the status code on the response to 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
       });
 
       it('should return the result object', () => {
@@ -247,7 +250,7 @@ describe('user-controller', () => {
     describe('with invalid user id', () => {
       const profile = { firstName: 'john', lastName: 'doe' };
 
-      beforeEach(done => {
+      beforeEach(() => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -255,25 +258,11 @@ describe('user-controller', () => {
           body: { profile }
         });
         res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
-
-        res.on('end', done);
-
         userService.updateUserProfile.resolves(null);
-
-        sut.handlePostUserProfile(req, res);
       });
 
-      it('should call userService.updateUserProfile', () => {
-        sinon.assert.calledWith(userService.updateUserProfile, 1234, profile);
-      });
-
-      it('should set the status code on the response to 404', () => {
-        expect(res.statusCode).toBe(404);
-      });
-
-      it('should return the result object', () => {
-        const response = res._getData();
-        expect(response).toEqual('Invalid user id');
+      it('should throw a not found error', () => {
+        expect(() => sut.handlePostUserProfile(req, res)).rejects.toThrowError(NotFound);
       });
     });
   });
@@ -315,8 +304,8 @@ describe('user-controller', () => {
           completionLink: 'https://localhost/complete-password-reset/resetRequestId' });
       });
 
-      it('should set the status code on the response to 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
       });
 
       it('should return the result object', () => {
@@ -351,8 +340,8 @@ describe('user-controller', () => {
         sinon.assert.notCalled(mailService.sendPasswordResetEmail);
       });
 
-      it('should set the status code on the response to 200', () => {
-        expect(res.statusCode).toBe(200);
+      it('should set the status code on the response to 201', () => {
+        expect(res.statusCode).toBe(201);
       });
 
       it('should return the result object', () => {
@@ -387,8 +376,8 @@ describe('user-controller', () => {
       sinon.assert.calledWith(userService.addUserStorageReminder, 'abcde', { _id: '12345' });
     });
 
-    it('should set the status code on the response to 200', () => {
-      expect(res.statusCode).toBe(200);
+    it('should set the status code on the response to 201', () => {
+      expect(res.statusCode).toBe(201);
     });
 
     it('should return the result object', () => {

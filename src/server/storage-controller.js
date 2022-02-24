@@ -39,7 +39,7 @@ class StorageController {
 
     await this.storageService.deleteObject({ prefix, objectName, user });
 
-    return res.sendStatus(200);
+    return res.send({});
   }
 
   async handlePostCdnObject(req, res) {
@@ -69,7 +69,7 @@ class StorageController {
     }
 
     await this.storageService.uploadFiles({ prefix, files, user });
-    return res.send({});
+    return res.status(201).send({});
   }
 
   registerApi(router) {
