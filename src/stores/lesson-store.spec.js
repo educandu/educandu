@@ -43,14 +43,14 @@ describe('lesson-store', () => {
       expect(savedItem).toEqual(validLesson);
     });
 
-    it('should throw on an invalid lesson', () => {
+    it('should throw on an invalid lesson', async () => {
       const invalidLesson = {
         ...validLesson
       };
 
       delete invalidLesson.createdBy;
 
-      expect(() => sut.saveLesson(invalidLesson)).rejects.toThrow();
+      await expect(() => sut.saveLesson(invalidLesson)).rejects.toThrow();
     });
   });
 
@@ -72,14 +72,14 @@ describe('lesson-store', () => {
 
     });
 
-    it('should throw on an array with an invalid lesson', () => {
+    it('should throw on an array with an invalid lesson', async () => {
       const invalidLesson = {
         ...validLesson
       };
 
       delete invalidLesson.createdBy;
 
-      expect(() => sut.saveLessons([invalidLesson, validLesson])).rejects.toThrow();
+      await expect(() => sut.saveLessons([invalidLesson, validLesson])).rejects.toThrow();
     });
   });
 

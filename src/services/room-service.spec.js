@@ -100,8 +100,8 @@ describe('room-service', () => {
       expect(invitation.token).toBeDefined();
     });
 
-    it('should throw a bad request if the owner invites themselves', () => {
-      expect(() => sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser })).rejects.toThrow(BadRequest);
+    it('should throw a bad request if the owner invites themselves', async () => {
+      await expect(() => sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: myUser.email, user: myUser })).rejects.toThrow(BadRequest);
     });
 
     it('should update an invitation if it already exists', async () => {

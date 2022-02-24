@@ -158,8 +158,8 @@ describe('room-controller', () => {
         res = {};
       });
 
-      it('should throw NotFound', () => {
-        expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(NotFound);
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(NotFound);
       });
     });
 
@@ -179,8 +179,8 @@ describe('room-controller', () => {
         res = {};
       });
 
-      it('should throw Forbidden', () => {
-        expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handlePatchRoom(req, res)).rejects.toThrow(Forbidden);
       });
     });
   });
@@ -252,8 +252,8 @@ describe('room-controller', () => {
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       });
 
-      it('should propagate the error', () => {
-        expect(() => sut.handlePostRoomInvitation(req, res)).rejects.toThrow(BadRequest);
+      it('should propagate the error', async () => {
+        await expect(() => sut.handlePostRoomInvitation(req, res)).rejects.toThrow(BadRequest);
       });
     });
 
@@ -434,8 +434,8 @@ describe('room-controller', () => {
           roomService.isRoomOwnerOrMember.resolves(false);
         });
 
-        it('should throw a forbidden exception', () => {
-          expect(() => sut.handleGetRoomPage(request, res)).rejects.toThrow(Forbidden);
+        it('should throw a forbidden exception', async () => {
+          await expect(() => sut.handleGetRoomPage(request, res)).rejects.toThrow(Forbidden);
         });
       });
     });
@@ -513,8 +513,8 @@ describe('room-controller', () => {
     });
 
     describe('when the room does not exist', () => {
-      it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoomPage({ params: { 0: '', roomId: 'abc' } })).rejects.toThrow(NotFound);
+      it('should throw a not found exception', async () => {
+        await expect(() => sut.handleGetRoomPage({ params: { 0: '', roomId: 'abc' } })).rejects.toThrow(NotFound);
       });
     });
 
@@ -683,8 +683,8 @@ describe('room-controller', () => {
         res = {};
       });
 
-      it('should throw NotFound', () => {
-        expect(() => sut.handleDeleteOwnRoom(req, res)).rejects.toThrow(NotFound);
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleDeleteOwnRoom(req, res)).rejects.toThrow(NotFound);
       });
     });
 
@@ -703,8 +703,8 @@ describe('room-controller', () => {
         res = {};
       });
 
-      it('should throw Forbidden', () => {
-        expect(() => sut.handleDeleteOwnRoom(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleDeleteOwnRoom(req, res)).rejects.toThrow(Forbidden);
       });
     });
 
