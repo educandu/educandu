@@ -192,7 +192,12 @@ class DocumentController {
 
     router.get(
       '/docs/:docKey*',
-      [validateParams(getDocumentParamsSchema), validateQuery(getDocumentQuerySchema)],
+      validateParams(getDocumentParamsSchema),
+      validateQuery(getDocumentQuerySchema),
+      needsPermission({
+        value: permissions.EDIT_DOC,
+        condition: req => Object.values(DOC_VIEW_QUERY_PARAM).includes(req.query.view)
+      }),
       (req, res) => this.handleGetDocPage(req, res)
     );
   }
