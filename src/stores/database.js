@@ -5,7 +5,6 @@ import path from 'path';
 import glob from 'glob';
 import memoizee from 'memoizee';
 import { promisify } from 'util';
-import { MongoClient } from 'mongodb';
 import Logger from '../common/logger.js';
 import { Umzug, MongoDBStorage } from 'umzug';
 import usersSpec from './collection-specs/users.js';
@@ -14,6 +13,7 @@ import roomsSpec from './collection-specs/rooms.js';
 import locksSpec from './collection-specs/locks.js';
 import lessonsSpec from './collection-specs/lessons.js';
 import batchesSpec from './collection-specs/batches.js';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 import settingsSpec from './collection-specs/settings.js';
 import sessionsSpec from './collection-specs/sessions.js';
 import documentsSpec from './collection-specs/documents.js';
@@ -55,7 +55,8 @@ class Database {
 
   async connect() {
     logger.info('Trying to connect to MongoDB');
-    this._mongoClient = await MongoClient.connect(this._connectionString, { useUnifiedTopology: true });
+    const mongoOptions = { useUnifiedTopology: true, serverApi: ServerApiVersion.v1 };
+    this._mongoClient = await MongoClient.connect(this._connectionString, mongoOptions);
     logger.info('Successfully connected to MongoDB');
     this._db = this._mongoClient.db();
     collectionSpecs.forEach(spec => {
