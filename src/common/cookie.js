@@ -1,4 +1,5 @@
 import cookie from 'js-cookie';
+import { COOKIE_SAME_SITE_POLICY } from '../domain/constants.js';
 
 const LONG_LASTING_COOKIE_EXPIRATION_TIME_IN_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -11,9 +12,9 @@ export function getCookie(name) {
 }
 
 export function setLongLastingCookie(name, value) {
-  cookie.set(name, value, { expires: getLongLastingExpirationDateFromNow(), sameSite: 'lax' });
+  cookie.set(name, value, { expires: getLongLastingExpirationDateFromNow(), sameSite: COOKIE_SAME_SITE_POLICY });
 }
 
 export function setSessionCookie(name, value) {
-  cookie.set(name, value, { sameSite: 'lax' });
+  cookie.set(name, value, { sameSite: COOKIE_SAME_SITE_POLICY });
 }
