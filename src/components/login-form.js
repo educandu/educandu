@@ -79,6 +79,10 @@ export default function LoginForm({
     login({ username, password });
   };
 
+  const handlePressEnter = () => {
+    form.submit();
+  };
+
   const usernameValidationRules = [
     {
       required: true,
@@ -111,7 +115,7 @@ export default function LoginForm({
         initialValue={fixedUsername || ''}
         hidden={!!fixedUsername}
         >
-        <Input />
+        <Input onPressEnter={handlePressEnter} />
       </Form.Item>
       <Form.Item
         {...formItemLayouts[layout].default}
@@ -119,7 +123,7 @@ export default function LoginForm({
         name="password"
         rules={passwordValidationRules}
         >
-        <Input type="password" />
+        <Input type="password" onPressEnter={handlePressEnter} />
       </Form.Item>
       <Form.Item
         {...formItemLayouts[layout].tail}
