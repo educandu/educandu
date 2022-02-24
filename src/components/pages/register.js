@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Countdown from '../countdown.js';
-import EmailInput from '../email-input.js';
 import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';
 import PasswordInput from '../password-input.js';
 import UsernameInput from '../username-input.js';
 import { useLocale } from '../locale-context.js';
+import EmailFormItem from '../email-form-item.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { useSettings } from '../settings-context.js';
@@ -98,7 +98,7 @@ function Register({ PageTemplate, SiteLogo }) {
     <div className="RegisterPage-form">
       <Form ref={formRef} onFinish={handleFinish} scrollToFirstError>
         <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={forbiddenUsernames} />
-        <EmailInput formItemLayout={formItemLayout} forbiddenEmails={forbiddenEmails} />
+        <EmailFormItem name="email" emailsInUse={forbiddenEmails} {...formItemLayout} />
         <PasswordInput formItemLayout={formItemLayout} />
         <FormItem {...tailFormItemLayout} name="agreement" valuePropName="checked" rules={agreementValidationRules}>
           <Checkbox>

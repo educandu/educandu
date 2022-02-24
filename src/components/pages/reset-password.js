@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
+import { Form, Button } from 'antd';
 import urls from '../../utils/urls.js';
 import Countdown from '../countdown.js';
 import React, { useState } from 'react';
-import { Form, Input, Button } from 'antd';
 import Logger from '../../common/logger.js';
+import EmailFormItem from '../email-form-item.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
@@ -58,23 +59,10 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
     }
   };
 
-  const emailValidationRules = [
-    {
-      required: true,
-      message: t('enterEmail')
-    },
-    {
-      type: 'email',
-      message: t('emailIsInvalid')
-    }
-  ];
-
   const resetRequestForm = (
     <div className="ResetPasswordPage-form">
       <Form onFinish={handleFinish} scrollToFirstError>
-        <FormItem {...formItemLayout} label={t('email')} name="email" rules={emailValidationRules}>
-          <Input />
-        </FormItem>
+        <EmailFormItem name="email" {...formItemLayout} />
         <FormItem {...tailFormItemLayout}>
           <Button type="primary" htmlType="submit">{t('requestReset')}</Button>
         </FormItem>

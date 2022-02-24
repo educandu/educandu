@@ -1,17 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
-import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
-import { formItemLayoutShape } from '../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
-function EmailInput({ forbiddenEmails, formItemLayout }) {
-  const user = useUser();
-  const { t } = useTranslation('emailInput');
+const normalizeEmail = value => value?.toLowerCase();
 
-  const normalize = value => value ? value.toLowerCase() : value;
+function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
+  const { t } = useTranslation('emailFormItem');
 
   const handleOnChange = event => {
     const element = event.target;
@@ -32,8 +29,8 @@ function EmailInput({ forbiddenEmails, formItemLayout }) {
       message: t('emailIsInvalid')
     },
     {
-      validator: (rule, value) => {
-        return value && forbiddenEmails.includes(normalize(value))
+      validator: (_rule, value) => {
+        return value && emailsInUse.includes(normalizeEmail(value))
           ? Promise.reject(new Error(t('emailIsInUse')))
           : Promise.resolve();
       }
@@ -42,21 +39,24 @@ function EmailInput({ forbiddenEmails, formItemLayout }) {
 
   return (
     <FormItem
-      {...formItemLayout}
+      name={name}
       label={t('email')}
-      name="email"
-      initialValue={user?.email || ''}
-      normalize={normalize}
       rules={validationRules}
+      normalize={normalizeEmail}
+      {...formItemProps}
       >
       <Input onChange={handleOnChange} />
     </FormItem>
   );
 }
 
-EmailInput.propTypes = {
-  forbiddenEmails: PropTypes.array.isRequired,
-  formItemLayout: formItemLayoutShape.isRequired
+EmailFormItem.propTypes = {
+  emailsInUse: PropTypes.array,
+  name: PropTypes.string.isRequired
 };
 
-export default EmailInput;
+EmailFormItem.defaultProps = {
+  emailsInUse: []
+};
+
+export default EmailFormItem;

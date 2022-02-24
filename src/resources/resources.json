@@ -174,7 +174,7 @@
     }
   },
   {
-    "namespace": "emailInput",
+    "namespace": "emailFormItem",
     "language": "en",
     "resources": {
       "email": "Email address",
@@ -184,7 +184,7 @@
     }
   },
   {
-    "namespace": "emailInput",
+    "namespace": "emailFormItem",
     "language": "de",
     "resources": {
       "email": "E-Mail-Adresse",

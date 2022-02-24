@@ -1,13 +1,12 @@
+import { Form, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
-import { Form, Modal, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
 import React, { useState, useRef } from 'react';
+import EmailFormItem from './email-form-item.js';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-
-const FormItem = Form.Item;
 
 const logger = new Logger(import.meta.url);
 
@@ -16,13 +15,6 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
   const { t } = useTranslation('roomInvitationCreationModal');
 
-  const emailValidationRules = [
-    {
-      required: true,
-      message: t('emailRequired'),
-      whitespace: true
-    }
-  ];
   const initialFormValues = { email: null };
   const [isLoading, setIsLoading] = useState(false);
 
@@ -61,9 +53,7 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
       okButtonProps={{ loading: isLoading }}
       >
       <Form name="new-room-invitation-form" initialValues={initialFormValues} onFinish={handleFormFinish} ref={formRef} layout="vertical">
-        <FormItem label={t('common:email')} name="email" rules={emailValidationRules}>
-          <Input />
-        </FormItem>
+        <EmailFormItem name="email" />
       </Form>
     </Modal>
   );
