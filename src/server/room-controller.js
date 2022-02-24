@@ -151,7 +151,6 @@ export default class RoomController {
     const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
 
     const room = await this.roomService.getRoomById(roomId);
-    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
 
     if (!room) {
       throw new NotFound();
@@ -161,6 +160,7 @@ export default class RoomController {
       return res.redirect(301, urls.getRoomUrl(room._id, room.slug));
     }
 
+    const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
     if (isPrivateRoom && !userId) {
       throw new Unauthorized();
     }

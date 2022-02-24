@@ -514,7 +514,7 @@ describe('room-controller', () => {
 
     describe('when the room does not exist', () => {
       it('should throw a not found exception', () => {
-        expect(() => sut.handleGetRoomPage({ params: { 0: '', roomId: 'abc' } }).rejects.toThrow(NotFound));
+        expect(() => sut.handleGetRoomPage({ params: { 0: '', roomId: 'abc' } })).rejects.toThrow(NotFound);
       });
     });
 
