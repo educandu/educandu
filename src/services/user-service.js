@@ -35,10 +35,6 @@ class UserService {
     return this.userStore.getUserById(id);
   }
 
-  getUsersByIds(ids) {
-    return this.userStore.getUsersByIds(ids);
-  }
-
   getUserByEmailAddress(email) {
     return this.userStore.getUserByEmailAddress(email);
   }

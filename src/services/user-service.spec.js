@@ -69,42 +69,6 @@ describe('user-service', () => {
     });
   });
 
-  describe('updateUserUsedStorage', () => {
-    describe('when called with the ID of a non-existent user', () => {
-      it('should throw a not found error', () => {
-        expect(() => sut.updateUserUsedStorage('non-existent-user-id', 0)).rejects.toThrowError(NotFound);
-      });
-    });
-
-    describe('when called with the ID of a user that does not have a storage plan', () => {
-      beforeEach(async () => {
-        await db.users.updateOne(
-          { _id: user._id },
-          { $set: { storage: { plan: null, usedBytes: 0, reminders: [] } } }
-        );
-      });
-
-      it('should throw a bad request error', () => {
-        expect(() => sut.updateUserUsedStorage(user._id, storagePlan._id)).rejects.toThrowError(BadRequest);
-      });
-    });
-
-    describe('when called with the ID of a user that has a storage plan', () => {
-      let result;
-      beforeEach(async () => {
-        await db.users.updateOne(
-          { _id: user._id },
-          { $set: { storage: { plan: storagePlan._id, usedBytes: 0, reminders: [] } } }
-        );
-        result = await sut.updateUserUsedStorage(user._id, 1000);
-      });
-
-      it('should update the usedBytes', () => {
-        expect(result.storage.usedBytes).toBe(1000);
-      });
-    });
-  });
-
   describe('addUserStorageReminder', () => {
     describe('when called with the ID of a non-existent user', () => {
       it('should throw a not found error', () => {

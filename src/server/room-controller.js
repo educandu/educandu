@@ -11,6 +11,7 @@ import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
@@ -28,18 +29,19 @@ import {
 } from '../domain/schemas/room-schemas.js';
 
 const jsonParser = express.json();
-const { NotFound, Forbidden, Unauthorized } = httpErrors;
+const { NotFound, Forbidden, Unauthorized, BadRequest } = httpErrors;
 
 export default class RoomController {
-  static get inject() { return [ServerConfig, RoomService, LessonService, UserService, MailService, ClientDataMappingService, PageRenderer]; }
+  static get inject() { return [ServerConfig, RoomService, LessonService, UserService, StorageService, MailService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(serverConfig, roomService, lessonService, userService, mailService, clientDataMappingService, pageRenderer) {
+  constructor(serverConfig, roomService, lessonService, userService, storageService, mailService, clientDataMappingService, pageRenderer) {
     this.roomService = roomService;
     this.userService = userService;
     this.mailService = mailService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
     this.lessonService = lessonService;
+    this.storageService = storageService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
@@ -84,37 +86,41 @@ export default class RoomController {
     return res.status(201).send(updatedRoom);
   }
 
-  async _deleteRoom(roomId, user) {
-    const { members, name: roomName } = await this.roomService.deleteRoom(roomId, user);
-
-    const userIds = members.map(({ userId }) => userId);
-
-    const users = await this.userService.getUsersByIds(userIds);
-
-    await Promise.all(users.map(({ email }) => {
-      return this.mailService.sendRoomDeletionNotificationEmail({ email, roomName, ownerName: user.username });
-    }));
-  }
-
-  async handleDeleteAllRoomsForUser(req, res) {
-    const { user } = req;
+  async handleDeleteRoomsForUser(req, res) {
     const { ownerId, access } = req.query;
 
+    const roomOwner = await this.userService.getUserById(ownerId);
+
+    if (!roomOwner) {
+      throw new BadRequest(`Unknown room owner with ID '${ownerId}'`);
+    }
+
     const rooms = await this.roomService.getRoomsOwnedByUser(ownerId);
-    const roomIdsToDelete = rooms.filter(room => !access || room.access === access).map(room => room._id);
-    for (const roomId of roomIdsToDelete) {
+    const roomsToDelete = rooms.filter(room => !access || room.access === access);
+
+    for (const room of roomsToDelete) {
       // eslint-disable-next-line no-await-in-loop
-      await this._deleteRoom(roomId, user);
+      await this._deleteRoom({ room, roomOwner });
     }
 
     return res.send({});
   }
 
-  async handleDeleteRoom(req, res) {
+  async handleDeleteOwnRoom(req, res) {
     const { user } = req;
     const { roomId } = req.params;
 
-    await this._deleteRoom(roomId, user);
+    const room = await this.roomService.getRoomById(roomId);
+
+    if (!room) {
+      throw new NotFound();
+    }
+
+    if (room.owner !== user._id) {
+      throw new Forbidden();
+    }
+
+    await this._deleteRoom({ room, roomOwner: user });
 
     return res.send({});
   }
@@ -172,13 +178,13 @@ export default class RoomController {
       }
     }
 
-    const lessons = await this.lessonService.getLessons(roomId);
+    const lessonsMetadata = await this.lessonService.getLessonsMetadata(roomId);
 
     const mappedRoom = await this.clientDataMappingService.mapRoom(room);
-    const mappedLessons = this.clientDataMappingService.mapLessonsMetadata(lessons);
+    const mappedLessonMetadata = this.clientDataMappingService.mapLessonsMetadata(lessonsMetadata);
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(invitations);
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.room, { room: mappedRoom, lessons: mappedLessonMetadata, invitations: mappedInvitations });
   }
 
   async handleAuthorizeResourcesAccess(req, res) {
@@ -195,6 +201,15 @@ export default class RoomController {
     }
 
     return res.status(200).end();
+  }
+
+  async _deleteRoom({ room, roomOwner }) {
+    await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: roomOwner._id });
+    await this.mailService.sendRoomDeletionNotificationEmails({
+      roomName: room.name,
+      ownerName: roomOwner.username,
+      roomMembers: room.members
+    });
   }
 
   registerApi(router) {
@@ -217,13 +232,13 @@ export default class RoomController {
     router.delete(
       '/api/v1/rooms',
       [needsPermission(permissions.DELETE_FOREIGN_ROOMS), validateQuery(deleteRoomsQuerySchema)],
-      (req, res) => this.handleDeleteAllRoomsForUser(req, res)
+      (req, res) => this.handleDeleteRoomsForUser(req, res)
     );
 
     router.delete(
       '/api/v1/rooms/:roomId',
       [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomParamsSchema)],
-      (req, res) => this.handleDeleteRoom(req, res)
+      (req, res) => this.handleDeleteOwnRoom(req, res)
     );
 
     router.post(

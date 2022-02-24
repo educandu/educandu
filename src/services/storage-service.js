@@ -1,27 +1,34 @@
 import urls from '../utils/urls.js';
 import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
-import UserService from './user-service.js';
+import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
+import LockStore from '../stores/lock-store.js';
+import LessonStore from '../stores/lesson-store.js';
 import fileNameHelper from '../utils/file-name-helper.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
+import TransactionRunner from '../stores/transaction-runner.js';
+import RoomInvitationStore from '../stores/room-invitation-store.js';
 import {
-  getObjectNameWithoutPrefixFromStoragePath,
-  getPrefixFromStoragePath,
   getPrivateStoragePathForRoomId,
+  getPrefixFromStoragePath,
   getStoragePathType,
   STORAGE_PATH_TYPE
 } from '../ui/path-helper.js';
 
 export default class StorageService {
-  static get inject() { return [Cdn, RoomStore, StoragePlanStore, UserService]; }
+  static get inject() { return [Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, LockStore, TransactionRunner]; }
 
-  constructor(cdn, roomStore, storagePlanStore, userService) {
+  constructor(cdn, roomStore, roomInvitationStore, lessonStore, storagePlanStore, userStore, lockStore, transactionRunner) {
     this.cdn = cdn;
+    this.lockStore = lockStore;
     this.roomStore = roomStore;
-    this.userService = userService;
+    this.userStore = userStore;
+    this.lessonStore = lessonStore;
     this.storagePlanStore = storagePlanStore;
+    this.transactionRunner = transactionRunner;
+    this.roomInvitationStore = roomInvitationStore;
   }
 
   getAllStoragePlans() {
@@ -32,33 +39,41 @@ export default class StorageService {
     return this.storagePlanStore.getStoragePlanById(id);
   }
 
-  async uploadFiles({ prefix, files, user }) {
-    const storagePathType = getStoragePathType(prefix);
+  async uploadFiles({ prefix, files, userId }) {
+    let lock;
 
-    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
-      throw new Error(`Invalid storage path '${prefix}'`);
-    }
+    try {
+      lock = await this.lockStore.takeUserLock(userId);
 
-    if (storagePathType === STORAGE_PATH_TYPE.public) {
+      const user = await this.userStore.getUserById(userId);
+      const storagePathType = getStoragePathType(prefix);
+
+      if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+        throw new Error(`Invalid storage path '${prefix}'`);
+      }
+
+      if (storagePathType === STORAGE_PATH_TYPE.public) {
+        await this._uploadFiles(files, prefix);
+        return;
+      }
+
+      if (!user.storage.plan) {
+        throw new Error('Cannot upload to private storage without a storage plan');
+      }
+
+      const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.plan);
+      const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+      const availableBytes = storagePlan.maxBytes - user.storage.usedBytes;
+
+      if (availableBytes < requiredBytes) {
+        throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
+      }
+
       await this._uploadFiles(files, prefix);
-      return;
+      await this._updateUserUsedBytes(user._id);
+    } finally {
+      this.lockStore.releaseLock(lock);
     }
-
-    if (!user.storage.plan) {
-      throw new Error('Cannot upload to private storage without a storage plan');
-    }
-
-    const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.plan);
-    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
-    const availableBytes = storagePlan.maxBytes - user.storage.usedBytes;
-
-    if (availableBytes < requiredBytes) {
-      throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
-    }
-
-    await this._uploadFiles(files, prefix);
-    const usedBytes = await this._getUsedPrivateStorageUsedBytes(user._id);
-    await this.userService.updateUserUsedStorage(user._id, usedBytes);
   }
 
   async listObjects({ prefix, recursive }) {
@@ -66,42 +81,45 @@ export default class StorageService {
     return objects;
   }
 
-  async deleteAllObjectsWithPrefix({ prefix, user }) {
-    const objectList = await this.listObjects({ prefix, recursive: true });
-    await this.deleteObjects({ paths: objectList.map(({ name }) => name), user });
-  }
+  async deleteObject({ prefix, objectName, userId }) {
+    let lock;
 
-  async deleteObjects({ paths, user }) {
-    const allObjectsToDelete = paths.map(path => ({
-      fullObjectName: path,
-      prefix: getPrefixFromStoragePath(path),
-      objectNameWithoutPrefix: getObjectNameWithoutPrefixFromStoragePath(path),
-      storagePathType: getStoragePathType(path)
-    }));
+    try {
+      lock = await this.lockStore.takeUserLock(userId);
+      await this._deleteObjects([urls.concatParts(prefix, objectName)]);
 
-    const objectWithUnknownPathType = allObjectsToDelete.find(obj => obj.storagePathType === STORAGE_PATH_TYPE.unknown);
-    if (objectWithUnknownPathType) {
-      throw new Error(`Invalid storage path '${objectWithUnknownPathType.prefix}'`);
-    }
-
-    await this.cdn.deleteObjects(allObjectsToDelete.map(obj => obj.fullObjectName));
-
-    if (allObjectsToDelete.some(x => x.storagePathType === STORAGE_PATH_TYPE.private)) {
-      const usedBytes = await this._getUsedPrivateStorageUsedBytes(user._id);
-      await this.userService.updateUserUsedStorage(user._id, usedBytes);
+      if (getStoragePathType(prefix) === STORAGE_PATH_TYPE.private) {
+        await this._updateUserUsedBytes(userId);
+      }
+    } finally {
+      this.lockStore.releaseLock(lock);
     }
   }
 
-  async deleteObject({ prefix, objectName, user }) {
-    await this.deleteObjects({ paths: [urls.concatParts(prefix, objectName)], user });
+  async deleteRoomAndResources({ roomId, roomOwnerId }) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeUserLock(roomOwnerId);
+
+      await this.transactionRunner.run(async session => {
+        await this.lessonStore.deleteLessonsByRoomId(roomId, { session });
+        await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
+        await this.roomStore.deleteRoomById(roomId, { session });
+      });
+
+      const roomPrivateStorageObjects = await this.listObjects({ prefix: getPrivateStoragePathForRoomId(roomId), recursive: true });
+      if (roomPrivateStorageObjects.length) {
+        await this._deleteObjects(roomPrivateStorageObjects.map(({ name }) => name));
+        await this._updateUserUsedBytes(roomOwnerId);
+      }
+    } finally {
+      this.lockStore.releaseLock(lock);
+    }
   }
 
-  getIdsOfPrivateRoomsOwnedByUser(userId) {
-    return this.roomStore.getRoomIdsByOwnerIdAndAccess({ ownerId: userId, access: ROOM_ACCESS_LEVEL.private });
-  }
-
-  async _getUsedPrivateStorageUsedBytes(userId) {
-    const privateRoomsIds = await this.getIdsOfPrivateRoomsOwnedByUser(userId);
+  async _calculateUserUsedBytes(userId) {
+    const privateRoomsIds = await this.roomStore.getRoomIdsByOwnerIdAndAccess({ ownerId: userId, access: ROOM_ACCESS_LEVEL.private });
     const storagePaths = privateRoomsIds.map(getPrivateStoragePathForRoomId);
 
     let totalSize = 0;
@@ -114,7 +132,7 @@ export default class StorageService {
   }
 
   async _getFolderSize(prefix) {
-    const objects = await this.cdn.listObjects({ prefix });
+    const objects = await this.cdn.listObjects({ prefix, recursive: true });
     return objects.reduce((totalSize, obj) => totalSize + obj.size, 0);
   }
 
@@ -124,5 +142,29 @@ export default class StorageService {
       await this.cdn.uploadObject(cdnFileName, file.path, {});
     });
     await Promise.all(uploads);
+  }
+
+  async _updateUserUsedBytes(userId) {
+    const usedBytes = await this._calculateUserUsedBytes(userId);
+    const user = await this.userStore.getUserById(userId);
+    user.storage = { ...user.storage, usedBytes };
+
+    await this.userStore.saveUser(user);
+    return user;
+  }
+
+  async _deleteObjects(paths) {
+    const allObjectsToDelete = paths.map(path => ({
+      fullObjectName: path,
+      prefix: getPrefixFromStoragePath(path),
+      storagePathType: getStoragePathType(path)
+    }));
+
+    const objectWithUnknownPathType = allObjectsToDelete.find(obj => obj.storagePathType === STORAGE_PATH_TYPE.unknown);
+    if (objectWithUnknownPathType) {
+      throw new Error(`Invalid storage path '${objectWithUnknownPathType.prefix}'`);
+    }
+
+    await this.cdn.deleteObjects(allObjectsToDelete.map(obj => obj.fullObjectName));
   }
 }

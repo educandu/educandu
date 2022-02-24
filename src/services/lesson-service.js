@@ -2,15 +2,6 @@ import by from 'thenby';
 import uniqueId from '../utils/unique-id.js';
 import LessonStore from '../stores/lesson-store.js';
 
-const roomLessonsProjection = {
-  _id: 1,
-  roomId: 1,
-  title: 1,
-  slug: 1,
-  language: 1,
-  schedule: 1
-};
-
 class LessonService {
   static get inject() {
     return [LessonStore];
@@ -21,12 +12,12 @@ class LessonService {
   }
 
   async getLessonById(lessonId) {
-    const lesson = await this.lessonStore.findOne({ _id: lessonId });
+    const lesson = await this.lessonStore.getLessonById(lessonId);
     return lesson;
   }
 
-  async getLessons(roomId) {
-    const lessons = await this.lessonStore.find({ roomId }, { projection: roomLessonsProjection });
+  async getLessonsMetadata(roomId) {
+    const lessons = await this.lessonStore.getLessonsMetadataByRoomId(roomId);
     return lessons.sort(by(l => l.schedule?.startsOn));
   }
 
@@ -51,7 +42,7 @@ class LessonService {
       schedule: mappedSchedule
     };
 
-    await this.lessonStore.save(lesson);
+    await this.lessonStore.saveLesson(lesson);
 
     return lesson;
   }
@@ -72,7 +63,7 @@ class LessonService {
       updatedOn: new Date()
     };
 
-    await this.lessonStore.save(updatedLesson);
+    await this.lessonStore.saveLesson(updatedLesson);
     return updatedLesson;
   }
 
@@ -85,12 +76,12 @@ class LessonService {
       updatedOn: new Date()
     };
 
-    await this.lessonStore.save(updatedLesson);
+    await this.lessonStore.saveLesson(updatedLesson);
     return updatedLesson;
   }
 
-  async deleteLesson(lessonId) {
-    await this.lessonStore.deleteOne({ _id: lessonId });
+  async deleteLessonById(lessonId) {
+    await this.lessonStore.deleteLessonById(lessonId);
   }
 }
 

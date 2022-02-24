@@ -128,7 +128,7 @@ export default class LessonController {
       throw new Forbidden();
     }
 
-    await this.lessonService.deleteLesson(lessonId, user);
+    await this.lessonService.deleteLessonById(lessonId, user);
 
     return res.send({});
   }

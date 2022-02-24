@@ -14,6 +14,7 @@ describe('room-controller', () => {
   const sandbox = sinon.createSandbox();
 
   let clientDataMappingService;
+  let storageService;
   let lessonService;
   let serverConfig;
   let pageRenderer;
@@ -34,18 +35,20 @@ describe('room-controller', () => {
       isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
-      updateRoom: sandbox.stub(),
-      deleteRoom: sandbox.stub()
+      updateRoom: sandbox.stub()
     };
     lessonService = {
-      getLessons: sandbox.stub()
+      getLessonsMetadata: sandbox.stub()
     };
     userService = {
-      getUsersByIds: sandbox.stub()
+      getUserById: sandbox.stub()
+    };
+    storageService = {
+      deleteRoomAndResources: sandbox.stub()
     };
     mailService = {
       sendRoomInvitationEmail: sandbox.stub(),
-      sendRoomDeletionNotificationEmail: sandbox.stub()
+      sendRoomDeletionNotificationEmails: sandbox.stub()
     };
     user = {
       _id: uniqueId.create(),
@@ -64,7 +67,7 @@ describe('room-controller', () => {
     pageRenderer = {
       sendPage: sandbox.stub()
     };
-    sut = new RoomController(serverConfig, roomService, lessonService, userService, mailService, clientDataMappingService, pageRenderer);
+    sut = new RoomController(serverConfig, roomService, lessonService, userService, storageService, mailService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {
@@ -79,13 +82,7 @@ describe('room-controller', () => {
       beforeEach(done => {
         roomService.createRoom.resolves(createdRoom);
 
-        req = httpMocks.createRequest({
-          protocol: 'https',
-          headers: { host: 'educandu.dev' },
-          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public }
-        });
-        req.user = user;
-
+        req = { user, body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -131,14 +128,7 @@ describe('room-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
         roomService.updateRoom.resolves(updatedRoom);
 
-        req = httpMocks.createRequest({
-          protocol: 'https',
-          headers: { host: 'educandu.dev' },
-          params: { roomId: room._id },
-          body: { ...requestBody }
-        });
-        req.user = user;
-
+        req = { user, params: { roomId: room._id }, body: { ...requestBody } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -164,14 +154,7 @@ describe('room-controller', () => {
 
         roomService.getRoomById.withArgs(roomId).resolves(null);
 
-        req = httpMocks.createRequest({
-          protocol: 'https',
-          headers: { host: 'educandu.dev' },
-          params: { roomId },
-          body: { name: 'new name', slug: 'new-slug' }
-        });
-        req.user = user;
-
+        req = { user, params: { roomId }, body: { name: 'new name', slug: 'new-slug' } };
         res = {};
       });
 
@@ -192,14 +175,7 @@ describe('room-controller', () => {
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
 
-        req = httpMocks.createRequest({
-          protocol: 'https',
-          headers: { host: 'educandu.dev' },
-          params: { roomId: room._id },
-          body: { name: 'new name', slug: 'new-slug' }
-        });
-        req.user = user;
-
+        req = { user, params: { roomId: room._id }, body: { name: 'new name', slug: 'new-slug' } };
         res = {};
       });
 
@@ -295,13 +271,7 @@ describe('room-controller', () => {
       });
       mailService.sendRoomInvitationEmail.resolves();
 
-      req = httpMocks.createRequest({
-        protocol: 'https',
-        headers: { host: 'educandu.dev' },
-        body: { token: invitation.token }
-      });
-      req.user = user;
-
+      req = { user, body: { token: invitation.token } };
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       res.on('end', done);
 
@@ -321,10 +291,11 @@ describe('room-controller', () => {
         roomService.getRoomById.resolves(room);
 
         req = { params: { 0: '', roomId: room._id } };
+        res = {};
       });
 
       it('should throw Unauthorized', async () => {
-        await expect(() => sut.handleGetRoomPage(req, {})).rejects.toThrow(Unauthorized);
+        await expect(() => sut.handleGetRoomPage(req, res)).rejects.toThrow(Unauthorized);
       });
     });
 
@@ -358,7 +329,7 @@ describe('room-controller', () => {
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
 
-          lessonService.getLessons.resolves(lessons);
+          lessonService.getLessonsMetadata.resolves(lessons);
           roomService.getRoomInvitations.resolves(invitations);
 
           clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
@@ -383,8 +354,8 @@ describe('room-controller', () => {
           sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
         });
 
-        it('should call getLessons', () => {
-          sinon.assert.calledWith(lessonService.getLessons, room._id);
+        it('should call getLessonsMetadata', () => {
+          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
         });
 
         it('should call mapLessonsMetadata with the invitations returned by the service', () => {
@@ -414,7 +385,7 @@ describe('room-controller', () => {
 
         beforeEach(async () => {
           roomService.isRoomOwnerOrMember.resolves(true);
-          lessonService.getLessons.resolves(lessons);
+          lessonService.getLessonsMetadata.resolves(lessons);
 
           clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
           clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
@@ -434,8 +405,8 @@ describe('room-controller', () => {
           sinon.assert.notCalled(roomService.getRoomInvitations);
         });
 
-        it('should call getLessons', () => {
-          sinon.assert.calledWith(lessonService.getLessons, room._id);
+        it('should call getLessonsMetadata', () => {
+          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
         });
 
         it('should call mapLessonsMetadata with the invitations returned by the service', () => {
@@ -490,7 +461,7 @@ describe('room-controller', () => {
 
       beforeEach(() => {
         roomService.getRoomById.resolves(room);
-        lessonService.getLessons.resolves(lessons);
+        lessonService.getLessonsMetadata.resolves(lessons);
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
@@ -498,7 +469,7 @@ describe('room-controller', () => {
       });
 
       beforeEach(async () => {
-        lessonService.getLessons.resolves(lessons);
+        lessonService.getLessonsMetadata.resolves(lessons);
         await sut.handleGetRoomPage(request, {});
       });
 
@@ -522,8 +493,8 @@ describe('room-controller', () => {
         sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
       });
 
-      it('should call getLessons', () => {
-        sinon.assert.calledWith(lessonService.getLessons, room._id);
+      it('should call getLessonsMetadata', () => {
+        sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
       });
 
       it('should call mapLessonsMetadata with the invitations returned by the service', () => {
@@ -648,7 +619,7 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handleDeleteAllRoomsForUser', () => {
+  describe('handleDeleteRoomsForUser', () => {
     const userJacky = [{ _id: uniqueId.create(), email: 'jacky@test.com' }];
     const userClare = [{ _id: uniqueId.create(), email: 'clare@test.com' }];
     const userDrake = [{ _id: uniqueId.create(), email: 'drake@test.com' }];
@@ -657,50 +628,37 @@ describe('room-controller', () => {
     const roomC = { _id: uniqueId.create(), name: 'Room C', access: ROOM_ACCESS_LEVEL.public, members: [{ userId: userJacky._id }, { userId: userDrake._id }] };
 
     beforeEach(done => {
-      req = httpMocks.createRequest({
-        protocol: 'https',
-        headers: { host: 'educandu.dev' },
-        query: { ownerId: user._id, access: ROOM_ACCESS_LEVEL.private }
-      });
-      req.user = user;
-
+      req = { user, query: { ownerId: user._id, access: ROOM_ACCESS_LEVEL.private } };
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       res.on('end', done);
 
+      userService.getUserById.withArgs(user._id).resolves(user);
       roomService.getRoomsOwnedByUser.withArgs(user._id).resolves([roomA, roomB, roomC]);
-      roomService.deleteRoom.withArgs(roomA._id, user).resolves(roomA);
-      roomService.deleteRoom.withArgs(roomB._id, user).resolves(roomB);
-      userService.getUsersByIds.callsFake(ids => Promise.resolve(ids.map(id => [userJacky, userClare, userDrake].find(x => x._id === id))));
+      storageService.deleteRoomAndResources.resolves();
+      mailService.sendRoomDeletionNotificationEmails.resolves();
 
-      sut.handleDeleteAllRoomsForUser(req, res);
+      sut.handleDeleteRoomsForUser(req, res);
     });
 
-    it('should call delete room for each room on roomService', () => {
-      sinon.assert.calledWith(roomService.deleteRoom, roomA._id, user);
-      sinon.assert.calledWith(roomService.deleteRoom, roomB._id, user);
+    it('should call storageService.deleteRoomAndResources for each room', () => {
+      sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomA._id, roomOwnerId: user._id });
+      sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomB._id, roomOwnerId: user._id });
     });
 
     it('should not call delete room for rooms with a different access level', () => {
-      sinon.assert.neverCalledWith(roomService.deleteRoom, roomC._id, user);
+      sinon.assert.neverCalledWith(storageService.deleteRoomAndResources, { roomId: roomC._id, roomOwnerId: user._id });
     });
 
-    it('should call getUsersByIds for each room with the right ids', () => {
-      sinon.assert.calledWith(userService.getUsersByIds, roomA.members.map(({ userId }) => userId));
-      sinon.assert.calledWith(userService.getUsersByIds, roomB.members.map(({ userId }) => userId));
+    it('should call mailService.sendRoomDeletionNotificationEmails for each room', () => {
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmails, { roomName: roomA.name, ownerName: user.username, roomMembers: roomA.members });
+      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmails, { roomName: roomB.name, ownerName: user.username, roomMembers: roomB.members });
     });
 
-    it('should call sendRoomDeletionNotificationEmail with the right emails', () => {
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userJacky.email, roomName: roomA.name, ownerName: user.username });
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userClare.email, roomName: roomA.name, ownerName: user.username });
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userClare.email, roomName: roomB.name, ownerName: user.username });
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: userDrake.email, roomName: roomB.name, ownerName: user.username });
-    });
-
-    it('should not call sendRoomDeletionNotificationEmail with the emails for rooms with a different access level', () => {
-      sinon.assert.neverCalledWith(mailService.sendRoomDeletionNotificationEmail, {
-        email: sinon.match.string,
+    it('should not call mailService.sendRoomDeletionNotificationEmails for rooms with a different access level', () => {
+      sinon.assert.neverCalledWith(mailService.sendRoomDeletionNotificationEmails, {
         roomName: roomC.name,
-        ownerName: user.username
+        ownerName: user.username,
+        roomMembers: roomC.members
       });
     });
 
@@ -709,44 +667,80 @@ describe('room-controller', () => {
     });
   });
 
-  describe('handleDeleteRoom', () => {
-    const roomId = uniqueId.create();
-    const members = [{ userId: uniqueId.create() }, { userId: uniqueId.create() }];
-    const roomName = 'my room';
-    const users = [{ email: 'email1' }, { email: 'email2' }];
+  describe('handleDeleteOwnRoom', () => {
+    describe('when the roomId is not valid', () => {
+      beforeEach(() => {
+        const room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: user._id,
+          members: []
+        };
 
-    beforeEach(done => {
-      req = httpMocks.createRequest({
-        protocol: 'https',
-        headers: { host: 'educandu.dev' },
-        params: { roomId }
+        roomService.getRoomById.withArgs(room._id).resolves(null);
+
+        req = { user, params: { roomId: room._id } };
+        res = {};
       });
-      req.user = user;
 
-      res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-      res.on('end', done);
-
-      roomService.deleteRoom.resolves({ members, name: roomName });
-      userService.getUsersByIds.resolves(users);
-
-      sut.handleDeleteRoom(req, res);
+      it('should throw NotFound', () => {
+        expect(() => sut.handleDeleteOwnRoom(req, res)).rejects.toThrow(NotFound);
+      });
     });
 
-    it('should call delete room on roomService', () => {
-      sinon.assert.calledWith(roomService.deleteRoom, roomId, user);
+    describe('when the user is not the room owner', () => {
+      beforeEach(() => {
+        const room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          members: []
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+
+        req = { user, params: { roomId: room._id } };
+        res = {};
+      });
+
+      it('should throw Forbidden', () => {
+        expect(() => sut.handleDeleteOwnRoom(req, res)).rejects.toThrow(Forbidden);
+      });
     });
 
-    it('should call getUsersByIds with the right ids', () => {
-      sinon.assert.calledWith(userService.getUsersByIds, members.map(({ userId }) => userId));
-    });
+    describe('when the request is valid', () => {
+      let room;
 
-    it('should call sendRoomDeletionNotificationEmail with the right emails', () => {
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: 'email1', roomName, ownerName: user.username });
-      sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmail, { email: 'email2', roomName, ownerName: user.username });
-    });
+      beforeEach(done => {
+        room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: user._id,
+          members: [{ userId: uniqueId.create() }, { userId: uniqueId.create() }]
+        };
 
-    it('should return status 200', () => {
-      expect(res.statusCode).toBe(200);
+        storageService.deleteRoomAndResources.resolves();
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        mailService.sendRoomDeletionNotificationEmails.resolves();
+
+        req = { user, params: { roomId: room._id } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleDeleteOwnRoom(req, res);
+      });
+
+      it('should call storageService.deleteRoomAndResources', () => {
+        sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: room._id, roomOwnerId: user._id });
+      });
+
+      it('should call mailService.sendRoomDeletionNotificationEmails with the right emails', () => {
+        sinon.assert.calledWith(mailService.sendRoomDeletionNotificationEmails, { roomMembers: room.members, roomName: room.name, ownerName: user.username });
+      });
+
+      it('should return status 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
     });
   });
 

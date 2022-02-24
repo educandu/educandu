@@ -4,6 +4,7 @@ import StoreBase from './store-base.js';
 import uniqueId from '../utils/unique-id.js';
 
 const LOCK_TYPE = {
+  user: 'user',
   room: 'room',
   task: 'task',
   batch: 'batch',
@@ -16,6 +17,10 @@ class LockStore extends StoreBase {
 
   constructor(db) {
     super(db.locks);
+  }
+
+  takeUserLock(key) {
+    return this._takeLock({ type: LOCK_TYPE.user, key, expirationTimeInMinutes: 1 });
   }
 
   takeRoomLock(key) {

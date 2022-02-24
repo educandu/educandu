@@ -39,11 +39,6 @@ export function isSubPath({ pathSegments, subPathSegments }) {
     && pathSegments.every((part, index) => part === subPathSegments[index]);
 }
 
-export function getObjectNameWithoutPrefixFromStoragePath(path) {
-  const segments = getPathSegments(path);
-  return segments[segments.length - 1];
-}
-
 export function getPrefixFromStoragePath(path) {
   const segments = getPathSegments(path);
   return getPrefix(segments.slice(0, -1));

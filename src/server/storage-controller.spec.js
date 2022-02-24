@@ -97,7 +97,7 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.uploadFiles', () => {
-        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, user });
+        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, userId: user._id });
       });
 
       it('should return 201', () => {
