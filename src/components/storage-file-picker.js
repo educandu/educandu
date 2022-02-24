@@ -44,7 +44,7 @@ function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged })
 
   const { isModalVisible, currentSelectedFile } = state;
 
-  const handleModalOverlayClick = event => event.stopPropagation();
+  const modalRender = modal => <div onClick={event => event.stopPropagation()}>{modal}</div>;
 
   return (
     <div className="StorageFilePicker">
@@ -70,8 +70,8 @@ function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged })
           </Button>
         ]}
         centered
+        modalRender={modalRender}
         >
-        <div className="StorageFilePicker-eventCapturingModalOverlay" onClick={handleModalOverlayClick} />
         <StorageBrowser
           publicStorage={publicStorage}
           privateStorage={privateStorage}
