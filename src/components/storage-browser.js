@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import React from 'react';
 import firstBy from 'thenby';
+import debounce from 'debounce';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -65,7 +66,7 @@ class StorageBrowser extends React.Component {
       filterText: '',
       isRefreshing: false,
       selectedRowKeys: [],
-      currentUploadCount: 0,
+      currentUploadFiles: [],
       currentDropTarget: null,
       currentUploadMessage: null,
       currentPathSegments: currentLocation.initialPathSegments,
@@ -126,6 +127,27 @@ class StorageBrowser extends React.Component {
         }
       });
     }
+
+    this.uploadCurrentFilesDebounced = debounce(async ({ onProgress } = {}) => {
+      const { storageApiClient, t } = this.props;
+      const { currentPathSegments, currentUploadFiles, selectedRowKeys } = this.state;
+
+      if (!currentUploadFiles.length) {
+        return;
+      }
+
+      try {
+        const prefix = getPrefix(currentPathSegments);
+        const { usedBytes } = await storageApiClient.uploadFiles(currentUploadFiles, prefix, { onProgress });
+        this.updateUsedBytes(usedBytes);
+      } catch (error) {
+        handleApiError({ error, logger, t });
+      } finally {
+        this.clearCurrentUploadFiles();
+      }
+
+      await this.refreshFiles(currentPathSegments, selectedRowKeys);
+    }, 100);
   }
 
   componentDidMount() {
@@ -164,42 +186,27 @@ class StorageBrowser extends React.Component {
     return { rootPathSegments, uploadPathSegments, initialPathSegments };
   }
 
-  increaseCurrentUploadCount() {
+  addToCurrentUploadFiles(files) {
     const { t } = this.props;
-    const { currentUploadCount, currentUploadMessage } = this.state;
-    const newUploadCount = currentUploadCount + 1;
-    let newUploadMessage;
-
-    if (currentUploadMessage) {
-      newUploadMessage = currentUploadMessage;
-    } else {
-      const hide = message.loading(t('fileUpload'), 0);
-      newUploadMessage = { hide };
-    }
+    const { currentUploadFiles, currentUploadMessage } = this.state;
+    const newUploadMessage = currentUploadMessage || { hide: message.loading(t('fileUpload'), 0) };
 
     this.setState({
-      currentUploadCount: newUploadCount,
+      currentUploadFiles: [...currentUploadFiles, ...files],
       currentUploadMessage: newUploadMessage
     });
   }
 
-  decreaseCurrentUploadCount() {
-    const { currentUploadCount, currentUploadMessage } = this.state;
-    const newUploadCount = currentUploadCount - 1;
-    let newUploadMessage;
+  clearCurrentUploadFiles() {
+    const { currentUploadMessage } = this.state;
 
-    if (newUploadCount === 0) {
-      newUploadMessage = null;
-      if (currentUploadMessage) {
-        currentUploadMessage.hide();
-      }
-    } else {
-      newUploadMessage = currentUploadMessage;
+    if (currentUploadMessage) {
+      currentUploadMessage.hide();
     }
 
     this.setState({
-      currentUploadCount: newUploadCount,
-      currentUploadMessage: newUploadMessage
+      currentUploadFiles: [],
+      currentUploadMessage: null
     });
   }
 
@@ -257,7 +264,7 @@ class StorageBrowser extends React.Component {
     this.setState({ currentDropTarget: null });
   }
 
-  async handleFrameDrop(event) {
+  handleFrameDrop(event) {
     if (!this.eventHasFiles(event)) {
       return;
     }
@@ -270,7 +277,7 @@ class StorageBrowser extends React.Component {
       return;
     }
 
-    await this.uploadFiles(files);
+    this.collectFilesToUpload(files);
   }
 
   async refreshFiles(pathSegments, keysToSelect) {
@@ -305,10 +312,8 @@ class StorageBrowser extends React.Component {
     this.props.setUser({ ...this.props.user, ...{ storage: { ...this.props.user.storage, usedBytes } } });
   }
 
-  async uploadFiles(files, { onProgress } = {}) {
-    const { storageApiClient, t } = this.props;
-    const { currentPathSegments, selectedRowKeys } = this.state;
-
+  collectFilesToUpload(files, { onProgress } = {}) {
+    const { t } = this.props;
     const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
     const availableBytes = this.props.storagePlan.maxBytes - this.props.user.storage.usedBytes;
 
@@ -317,19 +322,9 @@ class StorageBrowser extends React.Component {
       return;
     }
 
-    this.increaseCurrentUploadCount();
+    this.addToCurrentUploadFiles(files);
 
-    try {
-      const prefix = getPrefix(currentPathSegments);
-      const { usedBytes } = await storageApiClient.uploadFiles(files, prefix, { onProgress });
-      this.updateUsedBytes(usedBytes);
-    } catch (error) {
-      handleApiError({ error, logger, t });
-    }
-
-    this.decreaseCurrentUploadCount();
-
-    await this.refreshFiles(currentPathSegments, selectedRowKeys);
+    this.uploadCurrentFilesDebounced({ onProgress });
   }
 
   async handleDeleteFile(fileName) {
@@ -462,8 +457,8 @@ class StorageBrowser extends React.Component {
     this.setState({ filterText: '' });
   }
 
-  async onCustomUpload({ file, onProgress, onSuccess }) {
-    const result = await this.uploadFiles([file], { onProgress });
+  onCustomUpload({ file, onProgress, onSuccess }) {
+    const result = this.collectFilesToUpload([file], { onProgress });
     onSuccess(result);
   }
 
@@ -497,7 +492,7 @@ class StorageBrowser extends React.Component {
   }
 
   renderRecordsTable(records) {
-    const { isRefreshing, currentUploadCount } = this.state;
+    const { isRefreshing, currentUploadFiles } = this.state;
 
     return (
       <Table
@@ -507,7 +502,7 @@ class StorageBrowser extends React.Component {
         columns={this.columns}
         dataSource={records}
         rowClassName={this.getRowClassName}
-        loading={isRefreshing || currentUploadCount !== 0}
+        loading={isRefreshing || currentUploadFiles.length !== 0}
         onRow={this.handleRow}
         />
     );

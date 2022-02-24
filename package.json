@@ -42,6 +42,7 @@
     "clipboard-copy": "^4.0.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.5",
+    "debounce": "^1.2.1",
     "decompress": "^4.2.1",
     "del": "^6.0.0",
     "dropperx": "^1.0.1",
