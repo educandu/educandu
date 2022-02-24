@@ -8,11 +8,11 @@ import prettyBytes from 'pretty-bytes';
 import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
-import { useUser } from './user-context.js';
 import UsedStorage from './used-storage.js';
 import { useTranslation } from 'react-i18next';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
+import { useSetUser, useUser } from './user-context.js';
 import { useStoragePlan } from './storage-plan-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
@@ -301,6 +301,10 @@ class StorageBrowser extends React.Component {
     });
   }
 
+  updateUsedBytes(usedBytes) {
+    this.props.setUser({ ...this.props.user, ...{ storage: { ...this.props.user.storage, usedBytes } } });
+  }
+
   async uploadFiles(files, { onProgress } = {}) {
     this.increaseCurrentUploadCount();
 
@@ -309,7 +313,8 @@ class StorageBrowser extends React.Component {
     const prefix = getPrefix(currentPathSegments);
 
     try {
-      await storageApiClient.uploadFiles(files, prefix, { onProgress });
+      const { usedBytes } = await storageApiClient.uploadFiles(files, prefix, { onProgress });
+      this.updateUsedBytes(usedBytes);
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -326,7 +331,9 @@ class StorageBrowser extends React.Component {
     const objectName = `${prefix}${fileName}`;
 
     try {
-      await storageApiClient.deleteCdnObject(prefix, fileName);
+      const { usedBytes } = await storageApiClient.deleteCdnObject(prefix, fileName);
+      this.updateUsedBytes(usedBytes);
+
       if (selectedRowKeys.includes(objectName)) {
         onSelectionChanged([], true);
       }
@@ -682,7 +689,9 @@ export default function StorageBrowserWrapper({ ...props }) {
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
+
   const user = useUser();
+  const setUser = useSetUser();
   const storagePlan = useStoragePlan();
 
   return (
@@ -691,6 +700,7 @@ export default function StorageBrowserWrapper({ ...props }) {
       uiLanguage={uiLanguage}
       formatDate={formatDate}
       user={user}
+      setUser={setUser}
       storagePlan={storagePlan}
       t={t}
       {...props}
