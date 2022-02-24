@@ -74,7 +74,7 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
 
   return (
     <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError>
-      <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} {...formItemLayout} />
+      <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} initialValue={user.username} {...formItemLayout} />
       <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} {...formItemLayout} />
       <FormItem {...tailFormItemLayout}>
         <Button type="link" size="small" onClick={handleResetPasswordClick}>{t('resetPassword')}</Button>
