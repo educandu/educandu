@@ -325,8 +325,8 @@ describe('lesson-controller', () => {
         res = {};
       });
 
-      it('should throw NotFound', () => {
-        expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(NotFound);
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(NotFound);
       });
     });
 
@@ -356,8 +356,8 @@ describe('lesson-controller', () => {
         res = {};
       });
 
-      it('should throw Forbidden', () => {
-        expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(Forbidden);
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(Forbidden);
       });
     });
   });

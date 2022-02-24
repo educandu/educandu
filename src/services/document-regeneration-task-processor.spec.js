@@ -38,10 +38,10 @@ describe('DocumentRegenerationTaskProcessor', () => {
       sinon.assert.calledWith(documentService.regenerateDocument, documentKey);
     });
 
-    it('should throw an error if a cancellation was requested', () => {
+    it('should throw an error if a cancellation was requested', async () => {
       const documentKey = uniqueId.create();
 
-      expect(() => sut.process({ taskParams: { key: documentKey } }, { cancellationRequested: true })).rejects.toThrow(Error);
+      await expect(() => sut.process({ taskParams: { key: documentKey } }, { cancellationRequested: true })).rejects.toThrow(Error);
     });
 
     it('should not call regenerate document if a cancellation was requested', () => {

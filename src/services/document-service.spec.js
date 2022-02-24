@@ -1215,8 +1215,8 @@ describe('document-service', () => {
         await sut.createDocumentRegenerationBatch(user);
       });
 
-      it('should return null', () => {
-        expect(() => sut.createDocumentRegenerationBatch(user)).rejects.toThrow(BadRequest);
+      it('should return null', async () => {
+        await expect(() => sut.createDocumentRegenerationBatch(user)).rejects.toThrow(BadRequest);
       });
     });
 
