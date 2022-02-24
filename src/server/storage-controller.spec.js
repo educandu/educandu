@@ -87,11 +87,15 @@ describe('storage-controller', () => {
     });
 
     describe('when storage path type is private and the user is the room owner', () => {
+      const expectedUsedBytes = 2 * 1000 * 1000;
+
       beforeEach(done => {
         room.owner = user._id;
         req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media/` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
+
+        storageService.uploadFiles.resolves({ usedBytes: expectedUsedBytes });
 
         sut.handlePostCdnObject(req, res);
       });
@@ -102,6 +106,10 @@ describe('storage-controller', () => {
 
       it('should return 201', () => {
         expect(res.statusCode).toBe(201);
+      });
+
+      it('should return the used bytes', () => {
+        expect(res._getData()).toEqual({ usedBytes: expectedUsedBytes });
       });
     });
   });

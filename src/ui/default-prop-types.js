@@ -89,11 +89,6 @@ export const baseStoragePlanShape = PropTypes.shape({
   ...baseStoragePlanProps
 });
 
-export const storagePlanShape = PropTypes.shape({
-  ...baseStoragePlanProps,
-  maxBytes: PropTypes.number.isRequired
-});
-
 export const userProfileShape = PropTypes.shape({
   city: PropTypes.string,
   country: PropTypes.string,

@@ -41,6 +41,7 @@ export default class StorageService {
 
   async uploadFiles({ prefix, files, userId }) {
     let lock;
+    let usedBytes = 0;
 
     try {
       lock = await this.lockStore.takeUserLock(userId);
@@ -54,7 +55,7 @@ export default class StorageService {
 
       if (storagePathType === STORAGE_PATH_TYPE.public) {
         await this._uploadFiles(files, prefix);
-        return;
+        return { usedBytes };
       }
 
       if (!user.storage.plan) {
@@ -70,10 +71,12 @@ export default class StorageService {
       }
 
       await this._uploadFiles(files, prefix);
-      await this._updateUserUsedBytes(user._id);
+      usedBytes = await this._updateUserUsedBytes(user._id);
     } finally {
       this.lockStore.releaseLock(lock);
     }
+
+    return { usedBytes };
   }
 
   async listObjects({ prefix, recursive }) {
@@ -83,21 +86,26 @@ export default class StorageService {
 
   async deleteObject({ prefix, objectName, userId }) {
     let lock;
+    let usedBytes = 0;
 
     try {
       lock = await this.lockStore.takeUserLock(userId);
       await this._deleteObjects([urls.concatParts(prefix, objectName)]);
 
       if (getStoragePathType(prefix) === STORAGE_PATH_TYPE.private) {
-        await this._updateUserUsedBytes(userId);
+        usedBytes = await this._updateUserUsedBytes(userId);
       }
+
+      return { usedBytes };
     } finally {
       this.lockStore.releaseLock(lock);
     }
+
   }
 
   async deleteRoomAndResources({ roomId, roomOwnerId }) {
     let lock;
+    let usedBytes = 0;
 
     try {
       lock = await this.lockStore.takeUserLock(roomOwnerId);
@@ -111,8 +119,10 @@ export default class StorageService {
       const roomPrivateStorageObjects = await this.listObjects({ prefix: getPrivateStoragePathForRoomId(roomId), recursive: true });
       if (roomPrivateStorageObjects.length) {
         await this._deleteObjects(roomPrivateStorageObjects.map(({ name }) => name));
-        await this._updateUserUsedBytes(roomOwnerId);
+        usedBytes = await this._updateUserUsedBytes(roomOwnerId);
       }
+
+      return { usedBytes };
     } finally {
       this.lockStore.releaseLock(lock);
     }
@@ -150,7 +160,7 @@ export default class StorageService {
     user.storage = { ...user.storage, usedBytes };
 
     await this.userStore.saveUser(user);
-    return user;
+    return usedBytes;
   }
 
   async _deleteObjects(paths) {

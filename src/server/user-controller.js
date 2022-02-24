@@ -14,7 +14,6 @@ import MailService from '../services/mail-service.js';
 import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { exportUser } from '../domain/built-in-users.js';
-import { SAVE_USER_RESULT } from '../domain/constants.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
@@ -23,6 +22,7 @@ import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
+import { COOKIE_SAME_SITE_POLICY, SAVE_USER_RESULT } from '../domain/constants.js';
 import PasswordResetRequestService from '../services/password-reset-request-service.js';
 import {
   postUserBodySchema,
@@ -251,6 +251,7 @@ class UserController {
       name: this.serverConfig.sessionCookieName,
       cookie: {
         httpOnly: true,
+        sameSite: COOKIE_SAME_SITE_POLICY,
         domain: this.serverConfig.sessionCookieDomain
       },
       secret: this.serverConfig.sessionSecret,
@@ -304,6 +305,20 @@ class UserController {
         return cb(null, user);
       } catch (err) {
         return cb(err);
+      }
+    });
+
+    router.use(async (req, res, next) => {
+      try {
+        let storagePlan;
+        if (req.user?.storage.plan) {
+          storagePlan = await this.storageService.getStoragePlanById(req.user.storage.plan);
+        }
+        // eslint-disable-next-line require-atomic-updates
+        req.storagePlan = storagePlan || null;
+        return next();
+      } catch (err) {
+        return next(err);
       }
     });
   }

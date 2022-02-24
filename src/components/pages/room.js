@@ -1,3 +1,4 @@
+import by from 'thenby';
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
 import urls from '../../utils/urls.js';
@@ -36,11 +37,11 @@ export default function Room({ PageTemplate, initialState }) {
 
   const [room, setRoom] = useState(initialState.room);
   const [lessons, setLessons] = useState(initialState.lessons);
+  const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
 
-  const { invitations } = initialState;
   const isRoomOwner = user?._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
@@ -67,13 +68,15 @@ export default function Room({ PageTemplate, initialState }) {
     confirmRoomDelete(t, room.name, handleRoomDelete);
   };
 
-  const handleInvitationModalClose = wasNewInvitationCreated => {
+  const handleInvitationModalClose = newInvitation => {
     setIsRoomInvitationModalVisible(false);
-
-    if (!wasNewInvitationCreated) {
-      return;
+    if (newInvitation) {
+      setInvitations(currentInvitations => {
+        const invitationsByEmail = new Map(currentInvitations.map(x => [x.email, x]));
+        invitationsByEmail.set(newInvitation.email, newInvitation);
+        return [...invitationsByEmail.values()].sort(by(x => x.sentOn));
+      });
     }
-    window.location.reload();
   };
 
   const handleNewLessonClick = () => {
@@ -241,7 +244,12 @@ export default function Room({ PageTemplate, initialState }) {
               <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
                 {renderRoomMembers()}
                 {renderRoomInvitations()}
-                <RoomInvitationCreationModal isVisible={isRoomInvitationModalVisible} onClose={handleInvitationModalClose} roomId={room._id} />
+                <RoomInvitationCreationModal
+                  isVisible={isRoomInvitationModalVisible}
+                  onOk={handleInvitationModalClose}
+                  onCancel={handleInvitationModalClose}
+                  roomId={room._id}
+                  />
               </TabPane>
             )}
 

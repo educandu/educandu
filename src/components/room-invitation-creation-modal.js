@@ -1,19 +1,25 @@
-import { Form, Modal } from 'antd';
 import PropTypes from 'prop-types';
+import { Form, Modal } from 'antd';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
-import React, { useState, useRef } from 'react';
 import EmailFormItem from './email-form-item.js';
+import React, { useEffect, useState } from 'react';
 import RoomApiClient from '../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 
 const logger = new Logger(import.meta.url);
 
-function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
-  const formRef = useRef(null);
-  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+function RoomInvitationCreationModal({ isVisible, onOk, onCancel, roomId }) {
+  const [form] = Form.useForm();
   const { t } = useTranslation('roomInvitationCreationModal');
+  const roomApiClient = useSessionAwareApiClient(RoomApiClient);
+
+  useEffect(() => {
+    if (!isVisible) {
+      form.resetFields();
+    }
+  }, [form, isVisible]);
 
   const initialFormValues = { email: null };
   const [isLoading, setIsLoading] = useState(false);
@@ -21,8 +27,8 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
   const handleFormFinish = async values => {
     try {
       setIsLoading(true);
-      await roomApiClient.addRoomInvitation({ email: values.email, roomId });
-      onClose(true);
+      const invitation = await roomApiClient.addRoomInvitation({ email: values.email, roomId });
+      onOk(invitation);
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     } finally {
@@ -30,29 +36,25 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
     }
   };
 
-  const handleCancel = () => {
-    if (formRef.current) {
-      formRef.current.resetFields();
-    }
-    onClose(false);
+  const handleModalCancel = () => {
+    onCancel();
   };
 
-  const handleSubmitForm = () => {
-    if (formRef.current) {
-      formRef.current.submit();
-    }
+  const handleModalOk = () => {
+    form.submit();
   };
 
   return (
     <Modal
       title={t('newRoomInvitation')}
-      onCancel={handleCancel}
-      onOk={handleSubmitForm}
+      onCancel={handleModalCancel}
+      onOk={handleModalOk}
       maskClosable={false}
       visible={isVisible}
       okButtonProps={{ loading: isLoading }}
+      forceRender
       >
-      <Form name="new-room-invitation-form" initialValues={initialFormValues} onFinish={handleFormFinish} ref={formRef} layout="vertical">
+      <Form form={form} name="new-room-invitation-form" initialValues={initialFormValues} onFinish={handleFormFinish} layout="vertical">
         <EmailFormItem name="email" />
       </Form>
     </Modal>
@@ -61,7 +63,8 @@ function RoomInvitationCreationModal({ isVisible, onClose, roomId }) {
 
 RoomInvitationCreationModal.propTypes = {
   isVisible: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onOk: PropTypes.func.isRequired,
   roomId: PropTypes.string.isRequired
 };
 

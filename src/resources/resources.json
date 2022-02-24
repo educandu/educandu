@@ -545,8 +545,7 @@
       "accountTabTitle": "Account",
       "roomsTabTitle": "Rooms",
       "storagePlanLabel": "storage plan",
-      "noStoragePlanLabel": "No storage plan",
-      "usedStorageLabel": "Used"
+      "noStoragePlanLabel": "No storage plan"
     }
   },
   {
@@ -557,8 +556,7 @@
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",
       "storagePlanLabel": "Speicherplan",
-      "noStoragePlanLabel": "Kein Speicherplan",
-      "usedStorageLabel": "Benutzt"
+      "noStoragePlanLabel": "Kein Speicherplan"
     }
   },
   {
@@ -1015,7 +1013,8 @@
       "moreActions": "More Actions",
       "uploadFiles": "Upload files",
       "publicStorage": "Public storage",
-      "privateStorage": "Private storage"
+      "privateStorage": "Private storage",
+      "insufficientPrivateStorge": "Not enough storage space available"
     }
   },
   {
@@ -1032,7 +1031,8 @@
       "moreActions": "Weitere Aktionen",
       "uploadFiles": "Dateien hochladen",
       "publicStorage": "Öffentlicher Speicher",
-      "privateStorage": "Privater Speicher"
+      "privateStorage": "Privater Speicher",
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar"
     }
   },
   {
@@ -1063,6 +1063,20 @@
     "resources": {
       "title": "Sprache auswählen",
       "explanation": "Bitte wählen Sie Ihre bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
+    }
+  },
+  {
+    "namespace": "usedStorage",
+    "language": "en",
+    "resources": {
+      "label": "Used"
+    }
+  },
+  {
+    "namespace": "usedStorage",
+    "language": "de",
+    "resources": {
+      "label": "Benutzt"
     }
   },
   {

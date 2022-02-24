@@ -111,7 +111,7 @@ describe('storage-service', () => {
         ];
         cdn.uploadObject.resolves();
 
-        await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        result = await sut.uploadFiles({ prefix, files, userId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -126,6 +126,10 @@ describe('storage-service', () => {
 
       it('should release the lock', () => {
         sinon.assert.calledWith(lockStore.releaseLock, lock);
+      });
+
+      it('should return zero used bytes', () => {
+        expect(result).toEqual({ usedBytes: 0 });
       });
     });
 
@@ -221,7 +225,7 @@ describe('storage-service', () => {
 
         cdn.uploadObject.resolves();
 
-        await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        result = await sut.uploadFiles({ prefix, files, userId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -247,6 +251,10 @@ describe('storage-service', () => {
 
       it('should release the lock', () => {
         sinon.assert.called(lockStore.releaseLock);
+      });
+
+      it('should return the recalculated used bytes', () => {
+        expect(result).toEqual({ usedBytes: oldFiles[0].size + oldFiles[1].size + files[0].size + files[1].size });
       });
     });
   });
