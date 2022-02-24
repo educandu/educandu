@@ -306,13 +306,21 @@ class StorageBrowser extends React.Component {
   }
 
   async uploadFiles(files, { onProgress } = {}) {
-    this.increaseCurrentUploadCount();
-
     const { storageApiClient, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
-    const prefix = getPrefix(currentPathSegments);
+
+    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+    const availableBytes = this.props.storagePlan.maxBytes - this.props.user.storage.usedBytes;
+
+    if (requiredBytes > availableBytes) {
+      message.error(t('insufficientPrivateStorge'));
+      return;
+    }
+
+    this.increaseCurrentUploadCount();
 
     try {
+      const prefix = getPrefix(currentPathSegments);
       const { usedBytes } = await storageApiClient.uploadFiles(files, prefix, { onProgress });
       this.updateUsedBytes(usedBytes);
     } catch (error) {

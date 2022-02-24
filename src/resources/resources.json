@@ -1001,7 +1001,8 @@
       "moreActions": "More Actions",
       "uploadFiles": "Upload files",
       "publicStorage": "Public storage",
-      "privateStorage": "Private storage"
+      "privateStorage": "Private storage",
+      "insufficientPrivateStorge": "Not enough storage space available"
     }
   },
   {
@@ -1018,7 +1019,8 @@
       "moreActions": "Weitere Aktionen",
       "uploadFiles": "Dateien hochladen",
       "publicStorage": "Öffentlicher Speicher",
-      "privateStorage": "Privater Speicher"
+      "privateStorage": "Privater Speicher",
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar"
     }
   },
   {
