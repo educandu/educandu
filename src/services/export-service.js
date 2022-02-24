@@ -1,7 +1,6 @@
 import by from 'thenby';
 import httpErrors from 'http-errors';
 import UserStore from '../stores/user-store.js';
-import DocumentService from './document-service.js';
 import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
@@ -21,13 +20,12 @@ const exportableDocumentsProjection = {
 const lastUpdatedFirst = [['updatedOn', -1]];
 
 class ExportService {
-  static get inject() { return [ServerConfig, DocumentStore, UserStore, DocumentService]; }
+  static get inject() { return [ServerConfig, DocumentStore, UserStore]; }
 
-  constructor(serverConfig, documentStore, userStore, documentService) {
+  constructor(serverConfig, documentStore, userStore) {
     this.userStore = userStore;
     this.serverConfig = serverConfig;
     this.documentStore = documentStore;
-    this.documentService = documentService;
   }
 
   getAllExportableDocumentsMetadata() {
@@ -40,7 +38,7 @@ class ExportService {
   }
 
   async getDocumentExport({ key, toRevision }) {
-    const revisions = (await this.documentService.getAllDocumentRevisionsByKey(key)).sort(by(d => d.order));
+    const revisions = (await this.documentStore.getAllDocumentRevisionsByKey(key)).sort(by(d => d.order));
     const lastRevisionIndex = revisions.findIndex(revision => revision._id === toRevision);
 
     if (lastRevisionIndex === -1) {
