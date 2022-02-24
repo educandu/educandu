@@ -13,6 +13,3 @@ storagePlanLabel:
 noStoragePlanLabel:
   en: No storage plan
   de: Kein Speicherplan
-usedStorageLabel:
-  en: Used
-  de: Benutzt

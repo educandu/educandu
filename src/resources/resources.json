@@ -545,8 +545,7 @@
       "accountTabTitle": "Account",
       "roomsTabTitle": "Rooms",
       "storagePlanLabel": "storage plan",
-      "noStoragePlanLabel": "No storage plan",
-      "usedStorageLabel": "Used"
+      "noStoragePlanLabel": "No storage plan"
     }
   },
   {
@@ -557,8 +556,7 @@
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",
       "storagePlanLabel": "Speicherplan",
-      "noStoragePlanLabel": "Kein Speicherplan",
-      "usedStorageLabel": "Benutzt"
+      "noStoragePlanLabel": "Kein Speicherplan"
     }
   },
   {
@@ -1051,6 +1049,20 @@
     "resources": {
       "title": "Sprache auswählen",
       "explanation": "Bitte wählen Sie Ihre bevorzugte Sprache für Oberflächenelemente wie z.B. Buttons, Menüs etc. aus."
+    }
+  },
+  {
+    "namespace": "usedStorage",
+    "language": "en",
+    "resources": {
+      "label": "Used"
+    }
+  },
+  {
+    "namespace": "usedStorage",
+    "language": "de",
+    "resources": {
+      "label": "Benutzt"
     }
   },
   {

@@ -9,9 +9,11 @@ import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
 import { useUser } from './user-context.js';
+import UsedStorage from './used-storage.js';
 import { useTranslation } from 'react-i18next';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
+import { useStoragePlan } from './storage-plan-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
@@ -637,6 +639,11 @@ class StorageBrowser extends React.Component {
             </Upload>
           </div>
         </div>
+        <div className="StorageBrowser-storageUsage">
+          {currentLocation.isPrivate && (
+            <UsedStorage usedBytes={this.props.user.storage.usedBytes} maxBytes={this.props.storagePlan.maxBytes} showLabel />
+          )}
+        </div>
         <div
           ref={this.browserRef}
           className={browserClassNames}
@@ -676,6 +683,7 @@ export default function StorageBrowserWrapper({ ...props }) {
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
   const user = useUser();
+  const storagePlan = useStoragePlan();
 
   return (
     <StorageBrowser
@@ -683,6 +691,7 @@ export default function StorageBrowserWrapper({ ...props }) {
       uiLanguage={uiLanguage}
       formatDate={formatDate}
       user={user}
+      storagePlan={storagePlan}
       t={t}
       {...props}
       />
