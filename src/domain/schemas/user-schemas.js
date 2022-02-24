@@ -1,9 +1,10 @@
 import joi from 'joi';
 import { ROLE } from '../constants.js';
 import { idOrKeySchema } from './shared-schemas.js';
+import { minPasswordLength, minUsernameLength, passwordValidationPattern } from '../validation-constants.js';
 
-const usernameSchema = joi.string().min(6);
-const passwordSchema = joi.string().min(8).pattern(/^(?=.*[A-Za-z])(?=.*\d).*$/);
+const usernameSchema = joi.string().min(minUsernameLength);
+const passwordSchema = joi.string().min(minPasswordLength).pattern(passwordValidationPattern);
 const emailSchema = joi.string().case('lower');
 
 export const postUserBodySchema = joi.object({

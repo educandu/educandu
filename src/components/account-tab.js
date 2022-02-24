@@ -2,9 +2,9 @@ import Logger from '../common/logger.js';
 import { Form, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
-import UsernameInput from './username-input.js';
 import EmailFormItem from './email-form-item.js';
 import { useDialogs } from './dialog-context.js';
+import UsernameFormItem from './username-form-item.js';
 import { useSetUser, useUser } from './user-context.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -74,7 +74,7 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
 
   return (
     <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError>
-      <UsernameInput formItemLayout={formItemLayout} forbiddenUsernames={state.forbiddenUsernames} />
+      <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} {...formItemLayout} />
       <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} {...formItemLayout} />
       <FormItem {...tailFormItemLayout}>
         <Button type="link" size="small" onClick={handleResetPasswordClick}>{t('resetPassword')}</Button>

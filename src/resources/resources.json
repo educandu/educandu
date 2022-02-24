@@ -786,25 +786,37 @@
     }
   },
   {
-    "namespace": "passwordInput",
+    "namespace": "passwordConfirmationFormItem",
     "language": "en",
     "resources": {
       "passwordConfirmation": "Password confirmation",
-      "enterPassword": "Please enter a password",
-      "passwordIsInvalid": "The password must be at least {length} characters long and contain at least one letter and one number",
       "confirmPassword": "Please confirm your password",
       "passwordsDoNotMatch": "The passwords do not match"
     }
   },
   {
-    "namespace": "passwordInput",
+    "namespace": "passwordConfirmationFormItem",
     "language": "de",
     "resources": {
       "passwordConfirmation": "Kennwortbestätigung",
-      "enterPassword": "Bitte geben Sie ein Kennwort an",
-      "passwordIsInvalid": "Das Kennwort muss mindestens {length} Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten",
       "confirmPassword": "Bitte bestätigen Sie Ihr Kennwort",
       "passwordsDoNotMatch": "Die Kennwörter stimmen nicht überein"
+    }
+  },
+  {
+    "namespace": "passwordFormItem",
+    "language": "en",
+    "resources": {
+      "enterPassword": "Please enter a password",
+      "passwordIsInvalid": "The password must be at least {length} characters long and contain at least one letter and one number"
+    }
+  },
+  {
+    "namespace": "passwordFormItem",
+    "language": "de",
+    "resources": {
+      "enterPassword": "Bitte geben Sie ein Kennwort an",
+      "passwordIsInvalid": "Das Kennwort muss mindestens {length} Zeichen lang sein und mindestens einen Buchstaben und eine Ziffer enthalten"
     }
   },
   {
@@ -1054,20 +1066,18 @@
     }
   },
   {
-    "namespace": "usernameInput",
+    "namespace": "usernameFormItem",
     "language": "en",
     "resources": {
-      "username": "User name",
       "enterUsername": "Please enter a user name",
       "usernameIsTooShort": "The user name must be at least {length} characters long",
       "usernameIsInUse": "The user name is already registered"
     }
   },
   {
-    "namespace": "usernameInput",
+    "namespace": "usernameFormItem",
     "language": "de",
     "resources": {
-      "username": "Benutzername",
       "enterUsername": "Bitte geben Sie einen Benutzernamen an",
       "usernameIsTooShort": "Der Benutzername muss mindestens {length} Zeichen lang sein",
       "usernameIsInUse": "Der Benutzername ist bereits vergeben"

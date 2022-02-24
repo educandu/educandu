@@ -22,7 +22,8 @@ function EmailFormItem({ name, emailsInUse, ...formItemProps }) {
   const validationRules = [
     {
       required: true,
-      message: t('enterEmail')
+      message: t('enterEmail'),
+      whitespace: true
     },
     {
       type: 'email',
