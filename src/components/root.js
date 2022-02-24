@@ -9,11 +9,13 @@ import { SettingsProvider } from './settings-context.js';
 import { PageNameProvider } from './page-name-context.js';
 import { useReloadPersistedWindow } from '../ui/hooks.js';
 import { ContainerProvider } from './container-context.js';
+import { StoragePlanProvider } from './storage-plan-context.js';
 import { userProps, requestProps, settingsProps, pageNameProps } from '../ui/default-prop-types.js';
 
 function Root({
   request,
   user,
+  storagePlan,
   container,
   initialState,
   settings,
@@ -34,14 +36,16 @@ function Root({
           <SettingsProvider value={settings}>
             <RequestProvider value={request}>
               <UserProvider value={user}>
-                <DialogProvider>
-                  <PageComponent
-                    initialState={initialState}
-                    PageTemplate={PageTemplateComponent}
-                    HomePageLogo={HomePageLogoComponent}
-                    SiteLogo={SiteLogoComponent}
-                    />
-                </DialogProvider>
+                <StoragePlanProvider value={storagePlan}>
+                  <DialogProvider>
+                    <PageComponent
+                      initialState={initialState}
+                      PageTemplate={PageTemplateComponent}
+                      HomePageLogo={HomePageLogoComponent}
+                      SiteLogo={SiteLogoComponent}
+                      />
+                  </DialogProvider>
+                </StoragePlanProvider>
               </UserProvider>
             </RequestProvider>
           </SettingsProvider>
