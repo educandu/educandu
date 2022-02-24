@@ -68,7 +68,7 @@ class StorageController {
       }
     }
 
-    await this.storageService.uploadFiles({ prefix, files, user });
+    await this.storageService.uploadFiles({ prefix, files, userId: user._id });
     return res.status(201).send({});
   }
 

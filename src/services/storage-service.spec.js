@@ -69,6 +69,7 @@ describe('storage-service', () => {
 
   describe('uploadFiles', () => {
     let lock;
+    let result;
 
     beforeEach(() => {
       lock = { id: uniqueId.create() };
@@ -77,14 +78,27 @@ describe('storage-service', () => {
     });
 
     describe('when the storage type is unknown', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         prefix = 'other-path/media/';
         files = [{}];
+
+        try {
+          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        } catch (error) {
+          result = error.message;
+        }
       });
 
-      it('should throw an error', async () => {
-        await expect(() => sut.uploadFiles({ prefix, files, user: myUser }))
-          .rejects.toThrowError(`Invalid storage path '${prefix}'`);
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
+      it('should throw an error', () => {
+        expect(result).toBe(`Invalid storage path '${prefix}'`);
+      });
+
+      it('should release the lock', () => {
+        sinon.assert.called(lockStore.releaseLock);
       });
     });
 
@@ -97,11 +111,11 @@ describe('storage-service', () => {
         ];
         cdn.uploadObject.resolves();
 
-        await sut.uploadFiles({ prefix, files, user: myUser });
+        await sut.uploadFiles({ prefix, files, userId: myUser._id });
       });
 
-      it('should not take the lock on the user record', () => {
-        sinon.assert.notCalled(lockStore.takeUserLock);
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
       });
 
       it('should call cdn.uploadObject for each file', () => {
@@ -110,8 +124,8 @@ describe('storage-service', () => {
         sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file2-(.+)\.jpeg/), files[1].path, {});
       });
 
-      it('should not release the lock', () => {
-        sinon.assert.notCalled(lockStore.releaseLock);
+      it('should release the lock', () => {
+        sinon.assert.calledWith(lockStore.releaseLock, lock);
       });
     });
 
@@ -127,11 +141,24 @@ describe('storage-service', () => {
           { _id: myUser._id },
           { $set: { storage: { plan: null, usedBytes: 0, reminders: [] } } }
         );
+
+        try {
+          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        } catch (error) {
+          result = error.message;
+        }
       });
 
-      it('should throw an error', async () => {
-        await expect(() => sut.uploadFiles({ prefix, files, user: myUser }))
-          .rejects.toThrowError('Cannot upload to private storage without a storage plan');
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
+      it('should throw an error', () => {
+        expect(result).toBe('Cannot upload to private storage without a storage plan');
+      });
+
+      it('should release the lock', () => {
+        sinon.assert.called(lockStore.releaseLock);
       });
     });
 
@@ -145,11 +172,24 @@ describe('storage-service', () => {
 
         myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
+
+        try {
+          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        } catch (error) {
+          result = error.message;
+        }
       });
 
-      it('should throw an error', async () => {
-        await expect(() => sut.uploadFiles({ prefix, files, user: myUser }))
-          .rejects.toThrowError('Not enough storage space: available 8 MB, required 10 MB');
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
+      it('should throw an error', () => {
+        expect(result).toBe('Not enough storage space: available 8 MB, required 10 MB');
+      });
+
+      it('should release the lock', () => {
+        sinon.assert.called(lockStore.releaseLock);
       });
     });
 
@@ -181,7 +221,7 @@ describe('storage-service', () => {
 
         cdn.uploadObject.resolves();
 
-        await sut.uploadFiles({ prefix, files, user: myUser });
+        await sut.uploadFiles({ prefix, files, userId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -213,6 +253,7 @@ describe('storage-service', () => {
 
   describe('deleteObject', () => {
     let lock;
+    let result;
     let fileToDelete;
 
     beforeEach(() => {
@@ -222,14 +263,27 @@ describe('storage-service', () => {
     });
 
     describe('when the storage type is unknown', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         prefix = 'other-path/media/';
         fileToDelete = { name: 'file1.jpeg' };
+
+        try {
+          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        } catch (error) {
+          result = error.message;
+        }
       });
 
-      it('should throw an error', async () => {
-        await expect(() => sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id }))
-          .rejects.toThrowError(`Invalid storage path '${prefix}'`);
+      it('should take the lock on the user record', () => {
+        sinon.assert.calledWith(lockStore.takeUserLock, myUser._id);
+      });
+
+      it('should throw an error', () => {
+        expect(result).toBe(`Invalid storage path '${prefix}'`);
+      });
+
+      it('should release the lock', () => {
+        sinon.assert.called(lockStore.releaseLock);
       });
     });
 

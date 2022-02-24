@@ -39,33 +39,36 @@ export default class StorageService {
     return this.storagePlanStore.getStoragePlanById(id);
   }
 
-  async uploadFiles({ prefix, files, user }) {
-    const storagePathType = getStoragePathType(prefix);
-
-    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
-      throw new Error(`Invalid storage path '${prefix}'`);
-    }
-
-    if (storagePathType === STORAGE_PATH_TYPE.public) {
-      await this._uploadFiles(files, prefix);
-      return;
-    }
-
-    if (!user.storage.plan) {
-      throw new Error('Cannot upload to private storage without a storage plan');
-    }
-
-    const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.plan);
-    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
-    const availableBytes = storagePlan.maxBytes - user.storage.usedBytes;
-
-    if (availableBytes < requiredBytes) {
-      throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
-    }
-
+  async uploadFiles({ prefix, files, userId }) {
     let lock;
+
     try {
-      lock = await this.lockStore.takeUserLock(user._id);
+      lock = await this.lockStore.takeUserLock(userId);
+
+      const user = await this.userStore.getUserById(userId);
+      const storagePathType = getStoragePathType(prefix);
+
+      if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+        throw new Error(`Invalid storage path '${prefix}'`);
+      }
+
+      if (storagePathType === STORAGE_PATH_TYPE.public) {
+        await this._uploadFiles(files, prefix);
+        return;
+      }
+
+      if (!user.storage.plan) {
+        throw new Error('Cannot upload to private storage without a storage plan');
+      }
+
+      const storagePlan = await this.storagePlanStore.getStoragePlanById(user.storage.plan);
+      const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+      const availableBytes = storagePlan.maxBytes - user.storage.usedBytes;
+
+      if (availableBytes < requiredBytes) {
+        throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
+      }
+
       await this._uploadFiles(files, prefix);
       await this._updateUserUsedBytes(user._id);
     } finally {
