@@ -31,3 +31,6 @@ publicStorage:
 privateStorage:
   en: Private storage
   de: Privater Speicher
+insufficientPrivateStorge:
+  en: Not enough storage space available
+  de: Nicht genügend Speicherplatz verfügbar

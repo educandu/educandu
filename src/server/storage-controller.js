@@ -37,9 +37,9 @@ class StorageController {
     const { prefix } = req.query;
     const { objectName } = req.params;
 
-    await this.storageService.deleteObject({ prefix, objectName, userId: user._id });
+    const { usedBytes } = await this.storageService.deleteObject({ prefix, objectName, userId: user._id });
 
-    return res.send({});
+    return res.send({ usedBytes });
   }
 
   async handlePostCdnObject(req, res) {
@@ -68,8 +68,9 @@ class StorageController {
       }
     }
 
-    await this.storageService.uploadFiles({ prefix, files, userId: user._id });
-    return res.status(201).send({});
+    const { usedBytes } = await this.storageService.uploadFiles({ prefix, files, userId: user._id });
+
+    return res.status(201).send({ usedBytes });
   }
 
   registerApi(router) {

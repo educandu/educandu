@@ -8,10 +8,12 @@ import prettyBytes from 'pretty-bytes';
 import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
-import { useUser } from './user-context.js';
+import UsedStorage from './used-storage.js';
 import { useTranslation } from 'react-i18next';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
+import { useSetUser, useUser } from './user-context.js';
+import { useStoragePlan } from './storage-plan-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
@@ -299,15 +301,28 @@ class StorageBrowser extends React.Component {
     });
   }
 
-  async uploadFiles(files, { onProgress } = {}) {
-    this.increaseCurrentUploadCount();
+  updateUsedBytes(usedBytes) {
+    this.props.setUser({ ...this.props.user, ...{ storage: { ...this.props.user.storage, usedBytes } } });
+  }
 
+  async uploadFiles(files, { onProgress } = {}) {
     const { storageApiClient, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
-    const prefix = getPrefix(currentPathSegments);
+
+    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+    const availableBytes = this.props.storagePlan.maxBytes - this.props.user.storage.usedBytes;
+
+    if (requiredBytes > availableBytes) {
+      message.error(t('insufficientPrivateStorge'));
+      return;
+    }
+
+    this.increaseCurrentUploadCount();
 
     try {
-      await storageApiClient.uploadFiles(files, prefix, { onProgress });
+      const prefix = getPrefix(currentPathSegments);
+      const { usedBytes } = await storageApiClient.uploadFiles(files, prefix, { onProgress });
+      this.updateUsedBytes(usedBytes);
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -324,7 +339,9 @@ class StorageBrowser extends React.Component {
     const objectName = `${prefix}${fileName}`;
 
     try {
-      await storageApiClient.deleteCdnObject(prefix, fileName);
+      const { usedBytes } = await storageApiClient.deleteCdnObject(prefix, fileName);
+      this.updateUsedBytes(usedBytes);
+
       if (selectedRowKeys.includes(objectName)) {
         onSelectionChanged([], true);
       }
@@ -637,6 +654,11 @@ class StorageBrowser extends React.Component {
             </Upload>
           </div>
         </div>
+        <div className="StorageBrowser-storageUsage">
+          {currentLocation.isPrivate && (
+            <UsedStorage usedBytes={this.props.user.storage.usedBytes} maxBytes={this.props.storagePlan.maxBytes} showLabel />
+          )}
+        </div>
         <div
           ref={this.browserRef}
           className={browserClassNames}
@@ -675,7 +697,10 @@ export default function StorageBrowserWrapper({ ...props }) {
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
+
   const user = useUser();
+  const setUser = useSetUser();
+  const storagePlan = useStoragePlan();
 
   return (
     <StorageBrowser
@@ -683,6 +708,8 @@ export default function StorageBrowserWrapper({ ...props }) {
       uiLanguage={uiLanguage}
       formatDate={formatDate}
       user={user}
+      setUser={setUser}
+      storagePlan={storagePlan}
       t={t}
       {...props}
       />

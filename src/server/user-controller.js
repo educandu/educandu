@@ -307,6 +307,20 @@ class UserController {
         return cb(err);
       }
     });
+
+    router.use(async (req, res, next) => {
+      try {
+        let storagePlan;
+        if (req.user?.storage.plan) {
+          storagePlan = await this.storageService.getStoragePlanById(req.user.storage.plan);
+        }
+        // eslint-disable-next-line require-atomic-updates
+        req.storagePlan = storagePlan || null;
+        return next();
+      } catch (err) {
+        return next(err);
+      }
+    });
   }
 
   registerPages(router) {
