@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import React, { useState } from 'react';
 import Markdown from '../../../src/components/markdown.js';
 import { ALERT_TYPE } from '../../../src/domain/constants.js';
@@ -10,7 +9,7 @@ import DefaultPageHeader from '../../../src/components/default-page-header.js';
 import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import CookieConsentDrawer from '../../../src/components/cookie-consent-drawer.js';
 
-function HomePageTemplate({ children, fullScreen, alerts }) {
+function HomePageTemplate({ children, alerts }) {
   const settings = useSettings();
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
 
@@ -22,21 +21,11 @@ function HomePageTemplate({ children, fullScreen, alerts }) {
     setIsUiLanguageDialogVisible(true);
   };
 
-  const contentAreaClasses = classNames({
-    'DefaultPageTemplate-contentArea': true,
-    'DefaultPageTemplate-contentArea--fullScreen': fullScreen
-  });
-
-  const contentClasses = classNames({
-    'DefaultPageTemplate-content': true,
-    'DefaultPageTemplate-content--fullScreen': fullScreen
-  });
-
   return (
     <div className="DefaultPageTemplate">
-      <DefaultPageHeader fullScreen={fullScreen} alerts={alerts} onUiLanguageClick={handleUiLanguageClick} />
-      <main className={contentAreaClasses}>
-        <div className={contentClasses}>
+      <DefaultPageHeader fullScreen alerts={alerts} onUiLanguageClick={handleUiLanguageClick} />
+      <main className="DefaultPageTemplate-contentArea DefaultPageTemplate-contentArea--fullScreen">
+        <div className="DefaultPageTemplate-content DefaultPageTemplate-content--fullScreen">
           <div className="HomePageTemplate-logo" >
             <DefaultSiteLogo readonly />
           </div>
@@ -60,14 +49,12 @@ HomePageTemplate.propTypes = {
     message: PropTypes.node.isRequired,
     type: PropTypes.oneOf(Object.values(ALERT_TYPE))
   })),
-  children: PropTypes.node,
-  fullScreen: PropTypes.bool
+  children: PropTypes.node
 };
 
 HomePageTemplate.defaultProps = {
   alerts: [],
-  children: null,
-  fullScreen: false
+  children: null
 };
 
 export default HomePageTemplate;

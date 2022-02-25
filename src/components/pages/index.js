@@ -12,7 +12,7 @@ function Index({ HomePageTemplate }) {
   const alerts = useGlobalAlerts();
 
   return (
-    <HomePageTemplate alerts={alerts} fullScreen>
+    <HomePageTemplate alerts={alerts}>
       <div className="IndexPage">
         <SearchBar onSearch={handleSearch} autoFocus />
       </div>
