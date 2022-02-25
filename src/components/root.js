@@ -23,7 +23,7 @@ function Root({
   pageName,
   PageComponent,
   PageTemplateComponent,
-  HomePageLogoComponent,
+  HomePageTemplateComponent,
   SiteLogoComponent
 }) {
 
@@ -41,7 +41,7 @@ function Root({
                     <PageComponent
                       initialState={initialState}
                       PageTemplate={PageTemplateComponent}
-                      HomePageLogo={HomePageLogoComponent}
+                      HomePageTemplate={HomePageTemplateComponent}
                       SiteLogo={SiteLogoComponent}
                       />
                   </DialogProvider>

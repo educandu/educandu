@@ -28,7 +28,7 @@ const configSchema = joi.object({
   emailSenderAddress: joi.string().required(),
   bundleConfig: joi.object({
     getPageTemplateComponent: joi.func().required().allow(null),
-    getHomePageLogoComponent: joi.func().required().allow(null),
+    getHomePageTemplateComponent: joi.func().required().allow(null),
     getSiteLogoComponent: joi.func().required().allow(null)
   }).required(),
   publicFolders: joi.array().items(joi.string()).default([]),

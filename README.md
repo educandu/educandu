@@ -29,7 +29,7 @@ The educandu framework
  | sessionCookieName | The name to be used for the session cookie | `string` | yes |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
- | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
+ | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getHomePageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
  | publicFolders | The project-specific public folders that need to be accesible on the project domain | `array` of string | no |
  | resources | URLs to additional resource bundles, e.g. extra translations  | `array` of string  | no |
  | initialUser | The first user account, with admin role | `{ username, password, email }` or `null` | no |
