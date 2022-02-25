@@ -54,7 +54,7 @@ const mongoContainer = new MongoContainer({
   rootUser: 'root',
   rootPassword: 'rootpw',
   replicaSetName: 'educandurs',
-  image: 'educandu/mongo:5.0.6-multiplatform' // Temporary solution due to ARM64 processor incompatibility
+  image: 'educandu/mongo:5.0.6-multiplatform.2' // Temporary solution due to ARM64 processor incompatibility
 });
 
 const minioContainer = new MinioContainer({

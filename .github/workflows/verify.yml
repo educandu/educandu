@@ -19,7 +19,7 @@ jobs:
           MINIO_BROWSER: "on"
           MINIO_DOMAIN: "localhost"
       mongo:
-        image: educandu/mongo:5.0.6-multiplatform
+        image: educandu/mongo:5.0.6-multiplatform.2
         ports:
           - 27017:27017
         env:
