@@ -1,6 +1,5 @@
 import moment from 'moment';
 import Database from './database.js';
-import StoreBase from './store-base.js';
 import uniqueId from '../utils/unique-id.js';
 
 const LOCK_TYPE = {
@@ -12,11 +11,11 @@ const LOCK_TYPE = {
   maintenance: 'maintenance'
 };
 
-class LockStore extends StoreBase {
+class LockStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.locks);
+    this.collection = db.locks;
   }
 
   takeUserLock(key) {
