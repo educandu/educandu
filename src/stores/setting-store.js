@@ -1,11 +1,17 @@
 import Database from './database.js';
-import StoreBase from './store-base.js';
-
-class SettingStore extends StoreBase {
+class SettingStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.settings);
+    this.collection = db.settings;
+  }
+
+  getAllSettings() {
+    return this.collection.find({}).toArray();
+  }
+
+  saveSetting(setting, { session } = {}) {
+    return this.collection.replaceOne({ _id: setting._id }, setting, { session, upsert: true });
   }
 }
 

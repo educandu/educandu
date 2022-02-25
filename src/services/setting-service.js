@@ -8,7 +8,7 @@ class SettingService {
   }
 
   async getAllSettings() {
-    const settings = await this.settingStore.find();
+    const settings = await this.settingStore.getAllSettings();
     return settings.reduce((all, { _id, value }) => {
       all[_id] = value;
       return all;
@@ -16,7 +16,7 @@ class SettingService {
   }
 
   saveSettings(settings) {
-    return Promise.all(Object.keys(settings).map(key => this.settingStore.save({ _id: key, value: settings[key] })));
+    return Promise.all(Object.keys(settings).map(key => this.settingStore.saveSetting(settings[key])));
   }
 }
 
