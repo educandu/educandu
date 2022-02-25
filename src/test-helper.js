@@ -69,7 +69,7 @@ export async function setupTestEnvironment() {
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
     bundleConfig: {
       getPageTemplateComponent: () => Promise.resolve(null),
-      getHomePageLogoComponent: () => Promise.resolve(null),
+      getHomePageTemplateComponent: () => Promise.resolve(null),
       getSiteLogoComponent: () => Promise.resolve(null)
     }
   });

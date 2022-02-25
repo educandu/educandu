@@ -7,7 +7,7 @@ const allPageNames = Object.values(PAGE_NAME);
 
 function MyTemplateComponent() {}
 function MySiteLogoComponent() {}
-function MyHomePageLogoComponent() {}
+function MyHomePageTemplateComponent() {}
 
 describe('page-resolver', () => {
 
@@ -18,18 +18,18 @@ describe('page-resolver', () => {
         it('resolves the components', async () => {
           const sut = new PageResolver({
             getPageTemplateComponent: () => null,
-            getHomePageLogoComponent: () => null,
+            getHomePageTemplateComponent: () => null,
             getSiteLogoComponent: () => null
           });
 
           const {
             PageComponent,
-            HomePageLogoComponent,
+            HomePageTemplateComponent,
             SiteLogoComponent
           } = await sut.getPageComponentInfo(pageName);
 
           expect(PageComponent).toBeInstanceOf(Function);
-          expect(HomePageLogoComponent).toBeNull();
+          expect(HomePageTemplateComponent).toBeInstanceOf(Function);
           expect(SiteLogoComponent).toBeInstanceOf(Function);
         });
       });
@@ -39,18 +39,18 @@ describe('page-resolver', () => {
       it('resolves the default components', async () => {
         const sut = new PageResolver({
           getPageTemplateComponent: () => null,
-          getHomePageLogoComponent: () => null,
+          getHomePageTemplateComponent: () => null,
           getSiteLogoComponent: () => null
         });
 
         const {
           PageTemplateComponent,
-          HomePageLogoComponent,
+          HomePageTemplateComponent,
           SiteLogoComponent
         } = await sut.getPageComponentInfo(PAGE_NAME.index);
 
         expect(PageTemplateComponent).toBe(DefaultPageTemplate);
-        expect(HomePageLogoComponent).toBe(null);
+        expect(HomePageTemplateComponent).toBe(DefaultPageTemplate);
         expect(SiteLogoComponent).toBe(DefaultSiteLogo);
       });
     });
@@ -59,18 +59,18 @@ describe('page-resolver', () => {
       it('resolves the configured components', async () => {
         const sut = new PageResolver({
           getPageTemplateComponent: () => Promise.resolve(MyTemplateComponent),
-          getHomePageLogoComponent: () => Promise.resolve(MyHomePageLogoComponent),
+          getHomePageTemplateComponent: () => Promise.resolve(MyHomePageTemplateComponent),
           getSiteLogoComponent: () => Promise.resolve(MySiteLogoComponent)
         });
 
         const {
           PageTemplateComponent,
-          HomePageLogoComponent,
+          HomePageTemplateComponent,
           SiteLogoComponent
         } = await sut.getPageComponentInfo(PAGE_NAME.index);
 
         expect(PageTemplateComponent).toBe(MyTemplateComponent);
-        expect(HomePageLogoComponent).toBe(MyHomePageLogoComponent);
+        expect(HomePageTemplateComponent).toBe(MyHomePageTemplateComponent);
         expect(SiteLogoComponent).toBe(MySiteLogoComponent);
       });
     });
@@ -83,7 +83,7 @@ describe('page-resolver', () => {
       it('throws an error', () => {
         const sut = new PageResolver({
           getPageTemplateComponent: () => null,
-          getHomePageLogoComponent: () => null,
+          getHomePageTemplateComponent: () => null,
           getSiteLogoComponent: () => null
         });
         expect(() => sut.getCachedPageComponentInfo(PAGE_NAME.index)).toThrow();
@@ -95,19 +95,19 @@ describe('page-resolver', () => {
         it('resolves the components', async () => {
           const sut = new PageResolver({
             getPageTemplateComponent: () => null,
-            getHomePageLogoComponent: () => null,
+            getHomePageTemplateComponent: () => null,
             getSiteLogoComponent: () => null
           });
           await sut.prefillCache();
 
           const {
             PageComponent,
-            HomePageLogoComponent,
+            HomePageTemplateComponent,
             SiteLogoComponent
           } = sut.getCachedPageComponentInfo(pageName);
 
           expect(PageComponent).toBeInstanceOf(Function);
-          expect(HomePageLogoComponent).toBeNull();
+          expect(HomePageTemplateComponent).toBeInstanceOf(Function);
           expect(SiteLogoComponent).toBeInstanceOf(Function);
         });
       });
@@ -117,19 +117,19 @@ describe('page-resolver', () => {
       it('resolves the default components', async () => {
         const sut = new PageResolver({
           getPageTemplateComponent: () => null,
-          getHomePageLogoComponent: () => null,
+          getHomePageTemplateComponent: () => null,
           getSiteLogoComponent: () => null
         });
         await sut.prefillCache();
 
         const {
           PageTemplateComponent,
-          HomePageLogoComponent,
+          HomePageTemplateComponent,
           SiteLogoComponent
         } = sut.getCachedPageComponentInfo(PAGE_NAME.index);
 
         expect(PageTemplateComponent).toBe(DefaultPageTemplate);
-        expect(HomePageLogoComponent).toBeNull();
+        expect(HomePageTemplateComponent).toBe(DefaultPageTemplate);
         expect(SiteLogoComponent).toBe(DefaultSiteLogo);
       });
     });
@@ -138,19 +138,19 @@ describe('page-resolver', () => {
       it('resolves the configured components', async () => {
         const sut = new PageResolver({
           getPageTemplateComponent: () => Promise.resolve(MyTemplateComponent),
-          getHomePageLogoComponent: () => Promise.resolve(MyHomePageLogoComponent),
+          getHomePageTemplateComponent: () => Promise.resolve(MyHomePageTemplateComponent),
           getSiteLogoComponent: () => Promise.resolve(MySiteLogoComponent)
         });
         await sut.prefillCache();
 
         const {
           PageTemplateComponent,
-          HomePageLogoComponent,
+          HomePageTemplateComponent,
           SiteLogoComponent
         } = sut.getCachedPageComponentInfo(PAGE_NAME.index);
 
         expect(PageTemplateComponent).toBe(MyTemplateComponent);
-        expect(HomePageLogoComponent).toBe(MyHomePageLogoComponent);
+        expect(HomePageTemplateComponent).toBe(MyHomePageTemplateComponent);
         expect(SiteLogoComponent).toBe(MySiteLogoComponent);
       });
     });

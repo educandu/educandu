@@ -1,13 +1,17 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import { ALERT_TYPE } from '../domain/constants.js';
-import UiLanguageDialog from './ui-language-dialog.js';
-import DefaultPageHeader from './default-page-header.js';
-import DefaultPageFooter from './default-page-footer.js';
-import CookieConsentDrawer from './cookie-consent-drawer.js';
+import Markdown from '../../../src/components/markdown.js';
+import { ALERT_TYPE } from '../../../src/domain/constants.js';
+import { useSettings } from '../../../src/components/settings-context.js';
+import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
+import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
+import DefaultPageHeader from '../../../src/components/default-page-header.js';
+import DefaultPageFooter from '../../../src/components/default-page-footer.js';
+import CookieConsentDrawer from '../../../src/components/cookie-consent-drawer.js';
 
-function DefaultPageTemplate({ children, fullScreen, alerts }) {
+function HomePageTemplate({ children, fullScreen, alerts }) {
+  const settings = useSettings();
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
 
   const handleUiLanguageDialogClose = () => {
@@ -29,7 +33,15 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
       <DefaultPageHeader fullScreen={fullScreen} alerts={alerts} />
       <main className={contentAreaClasses}>
         <div className={contentClasses}>
+          <div className="HomePageTemplate-logo" >
+            <DefaultSiteLogo readonly />
+          </div>
           {children}
+          {settings.homepageInfo && (
+            <div className="HomePageTemplate-info">
+              <Markdown renderMedia>{settings.homepageInfo}</Markdown>
+            </div>
+          )}
         </div>
       </main>
       <DefaultPageFooter />
@@ -39,7 +51,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
   );
 }
 
-DefaultPageTemplate.propTypes = {
+HomePageTemplate.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
     message: PropTypes.node.isRequired,
     type: PropTypes.oneOf(Object.values(ALERT_TYPE))
@@ -48,10 +60,10 @@ DefaultPageTemplate.propTypes = {
   fullScreen: PropTypes.bool
 };
 
-DefaultPageTemplate.defaultProps = {
+HomePageTemplate.defaultProps = {
   alerts: [],
   children: null,
   fullScreen: false
 };
 
-export default DefaultPageTemplate;
+export default HomePageTemplate;

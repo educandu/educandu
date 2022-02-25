@@ -40,18 +40,18 @@ export default class PageResolver {
     const [
       PageComponent,
       PageTemplateComponent,
-      HomePageLogoComponent,
+      HomePageTemplateComponent,
       SiteLogoComponent
     ] = await resolveAll([
       pageImporters[pageName],
       () => this.bundleConfig.getPageTemplateComponent(pageName),
-      () => this.bundleConfig.getHomePageLogoComponent(pageName),
+      () => this.bundleConfig.getHomePageTemplateComponent(pageName),
       () => this.bundleConfig.getSiteLogoComponent(pageName)
     ]);
 
     return {
       PageComponent,
-      HomePageLogoComponent,
+      HomePageTemplateComponent: HomePageTemplateComponent || DefaultPageTemplateComponent,
       PageTemplateComponent: PageTemplateComponent || DefaultPageTemplateComponent,
       SiteLogoComponent: SiteLogoComponent || DefaultSiteLogoComponent
     };

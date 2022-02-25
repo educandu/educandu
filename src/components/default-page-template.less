@@ -1,6 +1,3 @@
-@default-page-template-header-content-min-height: 32px;
-@default-page-template-header-min-height: @default-page-template-header-content-min-height + (2* @edu-content-padding);
-
 .DefaultPageTemplate {
   margin: 0;
   padding: 0;
@@ -10,55 +7,6 @@
   flex-direction: column;
   min-width: @edu-min-page-width;
   max-width: 100vw;
-}
-
-.DefaultPageTemplate-headerArea {
-  top: 0;
-  flex: none;
-  width: 100%;
-  position: sticky;
-  z-index: @edu-z-index-cover-layer;
-  margin-bottom: @edu-content-padding;
-}
-
-.DefaultPageTemplate-header {
-  .m-inverted-button;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: @default-page-template-header-min-height;
-  background-color: @edu-primary-color;
-}
-
-.DefaultPageTemplate-headerContent {
-  display: block;
-  padding: @edu-content-padding;
-
-  &.DefaultPageTemplate-headerContent--left {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  &.DefaultPageTemplate-headerContent--right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-}
-
-.DefaultPageTemplate-logo {
-  font-weight: bold;
-}
-
-.DefaultPageTemplate-headerButton {
-  .m-icon-button;
-  .m-grouped-button;
-}
-
-.DefaultPageTemplate-loginButton {
-  cursor: pointer;
-  margin-right: (2.5 * @edu-button-spacing);
 }
 
 .DefaultPageTemplate-contentArea {
@@ -81,23 +29,5 @@
 
   &.DefaultPageTemplate-content--fullScreen {
     max-width: @edu-content-width-narrow;
-  }
-}
-
-.DefaultPageTemplate-footer {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: @edu-content-padding;
-  position: relative;
-  z-index: @edu-z-index-base-layer;
-}
-
-.DefaultPageTemplate-footerLink {
-  display: inline-block;
-
-  &:not(:last-child)::after {
-    content: "\00A0\00A0|\00A0\00A0";
   }
 }

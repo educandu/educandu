@@ -28,7 +28,7 @@ export async function hydrateApp({ bundleConfig }) {
   const {
     PageComponent,
     PageTemplateComponent,
-    HomePageLogoComponent,
+    HomePageTemplateComponent,
     SiteLogoComponent
   } = await pageResolver.getPageComponentInfo(window.__pageName__);
 
@@ -43,7 +43,7 @@ export async function hydrateApp({ bundleConfig }) {
     initialState: window.__initalState__,
     PageComponent,
     PageTemplateComponent,
-    HomePageLogoComponent,
+    HomePageTemplateComponent,
     SiteLogoComponent
   };
 

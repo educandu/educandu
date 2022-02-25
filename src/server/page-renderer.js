@@ -37,7 +37,7 @@ class PageRenderer extends PageRendererBase {
     const {
       PageComponent,
       PageTemplateComponent,
-      HomePageLogoComponent,
+      HomePageTemplateComponent,
       SiteLogoComponent
     } = this.pageResolver.getCachedPageComponentInfo(pageName);
 
@@ -52,7 +52,7 @@ class PageRenderer extends PageRendererBase {
       settings: cloneDeep(settings),
       PageComponent,
       PageTemplateComponent,
-      HomePageLogoComponent,
+      HomePageTemplateComponent,
       SiteLogoComponent
     };
 
