@@ -14,6 +14,10 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
     setIsUiLanguageDialogVisible(false);
   };
 
+  const handleUiLanguageClick = () => {
+    setIsUiLanguageDialogVisible(true);
+  };
+
   const contentAreaClasses = classNames({
     'DefaultPageTemplate-contentArea': true,
     'DefaultPageTemplate-contentArea--fullScreen': fullScreen
@@ -26,7 +30,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
 
   return (
     <div className="DefaultPageTemplate">
-      <DefaultPageHeader fullScreen={fullScreen} alerts={alerts} />
+      <DefaultPageHeader fullScreen={fullScreen} alerts={alerts} onUiLanguageClick={handleUiLanguageClick} />
       <main className={contentAreaClasses}>
         <div className={contentClasses}>
           {children}

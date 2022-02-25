@@ -1,8 +1,8 @@
+import React from 'react';
 import Login from './login.js';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import { Alert, Button } from 'antd';
-import React, { useState } from 'react';
 import LinkPopover from './link-popover.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
@@ -26,14 +26,13 @@ import {
   GlobalOutlined
 } from '@ant-design/icons';
 
-function DefaultPageHeader({ fullScreen, alerts }) {
+function DefaultPageHeader({ fullScreen, alerts, onUiLanguageClick }) {
   const user = useUser();
   const settings = useSettings();
   const { uiLanguage } = useLocale();
   const { t } = useTranslation('page');
   const clientConfig = useService(ClientConfig);
   const helpPage = settings?.helpPage?.[uiLanguage];
-  const [setIsUiLanguageDialogVisible] = useState(false);
 
   const pageMenuItems = [
     {
@@ -94,7 +93,7 @@ function DefaultPageHeader({ fullScreen, alerts }) {
     },
     {
       key: 'ui-language',
-      onClick: () => setIsUiLanguageDialogVisible(true),
+      onClick: () => onUiLanguageClick(),
       text: t('common:language'),
       icon: GlobalOutlined,
       permission: null,
@@ -156,12 +155,14 @@ DefaultPageHeader.propTypes = {
     message: PropTypes.node.isRequired,
     type: PropTypes.oneOf(Object.values(ALERT_TYPE))
   })),
-  fullScreen: PropTypes.bool
+  fullScreen: PropTypes.bool,
+  onUiLanguageClick: PropTypes.func
 };
 
 DefaultPageHeader.defaultProps = {
   alerts: [],
-  fullScreen: false
+  fullScreen: false,
+  onUiLanguageClick: () => {}
 };
 
 export default DefaultPageHeader;
