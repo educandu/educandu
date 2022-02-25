@@ -1,7 +1,10 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
+import AnavisIcon from './anavis-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { MergeCellsOutlined } from '@ant-design/icons';
 import { MEDIA_KIND, MEDIA_TYPE } from './constants.js';
+
+const Icon = iconNs.default || iconNs;
 
 export default class Anavis {
   static get typeName() { return 'anavis'; }
@@ -15,7 +18,7 @@ export default class Anavis {
   }
 
   getIcon() {
-    return <MergeCellsOutlined />;
+    return <Icon component={AnavisIcon} />;
   }
 
   getDefaultContent(t) {

@@ -1,6 +1,9 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
-import { ColumnHeightOutlined } from '@ant-design/icons';
+import IntervalTrainerIcon from './interval-trainer-icon.js';
+
+const Icon = iconNs.default || iconNs;
 
 export default class IntervalTrainer {
   static get typeName() { return 'interval-trainer'; }
@@ -14,7 +17,7 @@ export default class IntervalTrainer {
   }
 
   getIcon() {
-    return <ColumnHeightOutlined />;
+    return <Icon component={IntervalTrainerIcon} />;
   }
 
   getDefaultContent() {

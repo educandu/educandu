@@ -1,6 +1,9 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
+import IframeIcon from './iframe-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { GlobalOutlined } from '@ant-design/icons';
+
+const Icon = iconNs.default || iconNs;
 
 export default class Iframe {
   static get typeName() { return 'iframe'; }
@@ -14,7 +17,7 @@ export default class Iframe {
   }
 
   getIcon() {
-    return <GlobalOutlined />;
+    return <Icon component={IframeIcon} />;
   }
 
   getDefaultContent() {

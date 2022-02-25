@@ -1,7 +1,10 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
+import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { FileMarkdownOutlined } from '@ant-design/icons';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+
+const Icon = iconNs.default || iconNs;
 
 export default class Markdown {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -18,7 +21,7 @@ export default class Markdown {
   }
 
   getIcon() {
-    return <FileMarkdownOutlined />;
+    return <Icon component={MarkdownIcon} />;
   }
 
   getDefaultContent() {
