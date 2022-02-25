@@ -1,4 +1,4 @@
-import { escapeHtml, kebabCaseToCamelCase } from './string-utils.js';
+import { escapeHtml, kebabCaseToCamelCase, shorten } from './string-utils.js';
 
 describe('string-utils', () => {
 
@@ -13,6 +13,25 @@ describe('string-utils', () => {
     it('converts kebab to camel case', () => {
       const result = kebabCaseToCamelCase('just-my-2-cents');
       expect(result).toBe('justMy2Cents');
+    });
+  });
+
+  describe('shorten', () => {
+    it('will return a falsy value as empty string', () => {
+      const result = shorten(null, 5);
+      expect(result).toBe('');
+    });
+    it('will return empty string as is', () => {
+      const result = shorten('', 5);
+      expect(result).toBe('');
+    });
+    it('will return a string that has exactly the `maxLength` unchanged', () => {
+      const result = shorten('12345', 5);
+      expect(result).toBe('12345');
+    });
+    it('will return a string that is longer than `maxLength` trimmed to `maxLength`', () => {
+      const result = shorten('123456', 5);
+      expect(result).toBe('1234…');
     });
   });
 

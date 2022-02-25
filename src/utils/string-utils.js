@@ -20,3 +20,11 @@ export function escapeHtml(str) {
 export function kebabCaseToCamelCase(str) {
   return str.replace(/-[a-z0-9]/g, c => c.toUpperCase()).replace(/-/g, '');
 }
+
+export function shorten(str, maxLength) {
+  if (!str || str.length <= maxLength) {
+    return str || '';
+  }
+
+  return `${str.slice(0, maxLength - 1)}…`;
+}
