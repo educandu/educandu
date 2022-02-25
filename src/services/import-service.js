@@ -125,10 +125,9 @@ class ImportService {
     }
 
     try {
-      const existingActiveBatch = await this.batchStore.findOne({
-        'batchType': BATCH_TYPE.documentImport,
-        'batchParams.hostName': importSource.hostName,
-        'completedOn': null
+      const existingActiveBatch = await this.batchStore.getUncompletedBatchByTypeAndHost({
+        batchType: BATCH_TYPE.documentImport,
+        hostName: importSource.hostName
       });
 
       if (existingActiveBatch) {
@@ -137,7 +136,7 @@ class ImportService {
 
       logger.info(`Creating new import batch for source '${importSource.name}' containing ${tasks.length} tasks`);
       await this.transactionRunner.run(async session => {
-        await this.batchStore.insertOne(batch, { session });
+        await this.batchStore.addBatch(batch, { session });
         await this.taskStore.insertMany(tasks, { session });
       });
 
@@ -182,7 +181,7 @@ class ImportService {
   }
 
   async getImportBatches() {
-    const batches = await this.batchStore.find({ batchType: BATCH_TYPE.documentImport });
+    const batches = await this.batchStore.getBatchesByType(BATCH_TYPE.documentImport);
 
     return Promise.all(batches.map(async batch => {
       const progress = await this._getProgressForBatch(batch);
@@ -194,7 +193,7 @@ class ImportService {
   }
 
   async getImportBatchDetails(id) {
-    const batch = await this.batchStore.findOne({ _id: id });
+    const batch = await this.batchStore.getBatchById(id);
     if (!batch) {
       throw new NotFound('Batch not found');
     }

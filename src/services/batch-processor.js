@@ -19,7 +19,7 @@ export default class BatchProcessor {
     let uncompletedBatch;
 
     try {
-      uncompletedBatch = await this.batchStore.findOne({ completedOn: null });
+      uncompletedBatch = await this.batchStore.getUncompletedBatch();
       if (!uncompletedBatch) {
         logger.debug('No more batches to process, will return');
         return false;
@@ -36,7 +36,7 @@ export default class BatchProcessor {
       if (!nextCandidateTask) {
         logger.debug('No more tasks to process, will complete the batch');
         uncompletedBatch.completedOn = new Date();
-        await this.batchStore.save(uncompletedBatch);
+        await this.batchStore.saveBatch(uncompletedBatch);
         return false;
       }
 
@@ -51,7 +51,7 @@ export default class BatchProcessor {
         logger.error(`Error processing task '${nextCandidateTask._id}': `, taskProcessingError);
 
         uncompletedBatch.errors = [...uncompletedBatch.errors || [], serializeError(taskProcessingError)].slice(-10);
-        await this.batchStore.save(uncompletedBatch);
+        await this.batchStore.saveBatch(uncompletedBatch);
 
         return false;
       }

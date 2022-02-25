@@ -458,10 +458,7 @@ class DocumentService {
   }
 
   async createDocumentRegenerationBatch(user) {
-    const existingActiveBatch = await this.batchStore.findOne({
-      batchType: BATCH_TYPE.documentRegeneration,
-      completedOn: null
-    });
+    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.documentRegeneration);
 
     if (existingActiveBatch) {
       throw new BadRequest('Another document regeneration batch is already in progress');
@@ -490,7 +487,7 @@ class DocumentService {
     }));
 
     await this.transactionRunner.run(async session => {
-      await this.batchStore.insertOne(batch, { session });
+      await this.batchStore.addBatch(batch, { session });
       await this.taskStore.insertMany(tasks, { session });
     });
 
