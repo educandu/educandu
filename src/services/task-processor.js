@@ -33,7 +33,7 @@ export default class TaskProcessor {
     }
 
     try {
-      const nextTask = await this.taskStore.findOne({ _id: taskId, processed: false });
+      const nextTask = await this.taskStore.getUnprocessedTaskById(taskId);
       if (!nextTask) {
         logger.debug('Candidate has been already processed, will skip');
         return;
@@ -74,7 +74,7 @@ export default class TaskProcessor {
       }
 
       logger.debug('Saving task');
-      await this.taskStore.save(nextTask);
+      await this.taskStore.saveTask(nextTask);
     } finally {
       await this.lockStore.releaseLock(lock);
     }

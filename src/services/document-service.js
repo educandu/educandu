@@ -488,7 +488,7 @@ class DocumentService {
 
     await this.transactionRunner.run(async session => {
       await this.batchStore.addBatch(batch, { session });
-      await this.taskStore.insertMany(tasks, { session });
+      await this.taskStore.addTasks(tasks, { session });
     });
 
     return batch;

@@ -10,8 +10,11 @@ class SettingStore {
     return this.collection.find({}).toArray();
   }
 
-  saveSetting(setting, { session } = {}) {
-    return this.collection.replaceOne({ _id: setting._id }, setting, { session, upsert: true });
+  saveSettings(settings, { session } = {}) {
+    return Promise.all(Object.keys(settings).map(key => {
+      const setting = { _id: key, value: settings[key] };
+      return this.collection.replaceOne({ _id: key }, setting, { session, upsert: true });
+    }));
   }
 }
 

@@ -16,7 +16,7 @@ class SettingService {
   }
 
   saveSettings(settings) {
-    return Promise.all(Object.keys(settings).map(key => this.settingStore.saveSetting(settings[key])));
+    return this.settingStore.saveSettings(settings);
   }
 }
 

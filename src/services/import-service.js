@@ -137,7 +137,7 @@ class ImportService {
       logger.info(`Creating new import batch for source '${importSource.name}' containing ${tasks.length} tasks`);
       await this.transactionRunner.run(async session => {
         await this.batchStore.addBatch(batch, { session });
-        await this.taskStore.insertMany(tasks, { session });
+        await this.taskStore.addTasks(tasks, { session });
       });
 
     } finally {
@@ -152,20 +152,7 @@ class ImportService {
       return 1;
     }
 
-    const countGroups = await this.taskStore.toAggregateArray([
-      {
-        $match: {
-          batchId: batch._id
-        }
-      }, {
-        $group: {
-          _id: '$processed',
-          count: {
-            $sum: 1
-          }
-        }
-      }
-    ]);
+    const countGroups = await this.taskStore.countTasksWithBatchIdGroupedByProcessedStatus(batch._id);
 
     const stats = countGroups.reduce((accumulator, current) => {
       accumulator.totalCount += current.count;
@@ -198,7 +185,7 @@ class ImportService {
       throw new NotFound('Batch not found');
     }
 
-    const tasks = await this.taskStore.find({ batchId: id });
+    const tasks = await this.taskStore.getTasksByBatchId(id);
     const processedTasksCount = tasks.filter(task => task.processed).length;
 
     batch.tasks = tasks;
