@@ -5,7 +5,7 @@ export const getTagsQuery = searchString => [
     {
       $and: [
         { tags: { $regex: `.*${searchString}.*`, $options: 'i' } },
-        { slug: { $ne: null } } // Is this still needed?
+        { slug: { $ne: null } }
       ]
     }
   },
