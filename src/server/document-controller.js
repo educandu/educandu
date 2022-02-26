@@ -24,7 +24,6 @@ const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
-const getDocumentsQueryFilter = user => ({ includeArchived: hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS) });
 
 class DocumentController {
   static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
@@ -36,7 +35,8 @@ class DocumentController {
   }
 
   async handleGetDocsPage(req, res) {
-    const allDocs = await this.documentService.getAllDocumentsMetadata(getDocumentsQueryFilter(req.user));
+    const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
+    const allDocs = await this.documentService.getAllDocumentsMetadata({ includeArchived });
     const documents = await this.clientDataMappingService.mapDocsOrRevisions(allDocs, req.user);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents });

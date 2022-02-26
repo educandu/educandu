@@ -1,3 +1,4 @@
+import by from 'thenby';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
@@ -14,17 +15,6 @@ import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '..
 const { BadRequest, NotFound } = httpErrors;
 
 const logger = new Logger(import.meta.url);
-
-const importedDocumentsProjection = {
-  key: 1,
-  revision: 1,
-  updatedOn: 1,
-  title: 1,
-  slug: 1,
-  language: 1
-};
-
-const lastUpdatedFirst = [['updatedOn', -1]];
 
 const CONCURRENT_BATCH_ERROR_MESSAGE = 'Cannot create a new batch while another batch for the same source is still active';
 
@@ -43,9 +33,11 @@ class ImportService {
     this.userStore = userStore;
   }
 
-  getAllImportedDocumentsMetadata(hostName) {
-    const filter = { archived: false, origin: `${DOCUMENT_ORIGIN.external}/${hostName}` };
-    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: importedDocumentsProjection });
+  async getAllImportedDocumentsMetadata(hostName) {
+    const origin = `${DOCUMENT_ORIGIN.external}/${hostName}`;
+
+    return (await this.documentStore.getNonArchivedDocumentsMetadataByOrigin(origin))
+      .sort(by(doc => doc.updatedOn, 'desc'));
   }
 
   async getAllImportableDocumentsMetadata(importSource) {

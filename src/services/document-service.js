@@ -1,3 +1,4 @@
+import by from 'thenby';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
@@ -8,6 +9,7 @@ import BatchStore from '../stores/batch-store.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
+import { getTagsQuery } from '../stores/store-helper.js';
 import { createSectionRevision } from './section-helper.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
@@ -17,59 +19,6 @@ import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 const logger = new Logger(import.meta.url);
 
 const { BadRequest } = httpErrors;
-
-const metadataProjection = {
-  _id: 1,
-  key: 1,
-  order: 1,
-  revision: 1,
-  title: 1,
-  description: 1,
-  slug: 1,
-  language: 1,
-  createdOn: 1,
-  createdBy: 1,
-  updatedOn: 1,
-  updatedBy: 1,
-  tags: 1,
-  archived: 1,
-  origin: 1,
-  originUrl: 1
-};
-
-const getTagsQuery = searchString => [
-  { $unwind: '$tags' },
-  {
-    $match:
-    {
-      $and: [
-        { tags: { $regex: `.*${searchString}.*`, $options: 'i' } },
-        { slug: { $ne: null } }
-      ]
-    }
-  },
-  { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
-  {
-    $project: {
-      _id: 0,
-      uniqueTags: {
-        $reduce: {
-          input: '$uniqueTags',
-          initialValue: [],
-          in: {
-            $let: {
-              vars: { elem: { $concatArrays: [['$$this'], '$$value'] } },
-              in: { $setUnion: '$$elem' }
-            }
-          }
-        }
-      }
-    }
-  }
-];
-
-const lastUpdatedFirst = [['updatedOn', -1]];
-
 class DocumentService {
   static get inject() {
     return [
@@ -95,12 +44,12 @@ class DocumentService {
     this.infoFactory = infoFactory;
   }
 
-  getAllDocumentsMetadata({ includeArchived } = {}) {
-    const filter = {};
-    if (!includeArchived) {
-      filter.archived = false;
-    }
-    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: metadataProjection });
+  async getAllDocumentsMetadata({ includeArchived } = {}) {
+    const documentsMetadata = includeArchived
+      ? await this.documentStore.getAllDocumentsExtendedMetadata()
+      : await this.documentStore.getAllNonArchivedDocumentsExtendedMetadata();
+
+    return documentsMetadata.sort(by(doc => doc.updatedBy, 'desc'));
   }
 
   async getDocumentsMetadataByTags(searchQuery) {
@@ -130,8 +79,7 @@ class DocumentService {
       queryConditions.push({ tags: { $not: { $regex: `^(${[...negativeTokens].join('|')})$`, $options: 'i' } } });
     }
 
-    const documents = await this.documentStore
-      .find({ $and: queryConditions }, { projection: metadataProjection }) || [];
+    const documents = await this.documentStore.getDocumentsExtendedMetadataByConditions(queryConditions);
 
     return documents.map(document => ({
       ...document,
@@ -140,7 +88,7 @@ class DocumentService {
   }
 
   getDocumentByKey(documentKey) {
-    return this.documentStore.findOne({ _id: documentKey });
+    return this.documentStore.getDocumentByKey(documentKey);
   }
 
   getAllDocumentRevisionsByKey(documentKey) {
@@ -164,7 +112,7 @@ class DocumentService {
   }
 
   findDocumentTags(searchString) {
-    return this.documentStore.toAggregateArray(getTagsQuery(searchString));
+    return this.documentStore.getDocumentTagsMatchingText(searchString);
   }
 
   async restoreDocumentRevision({ documentKey, revisionId, user }) {
@@ -257,7 +205,7 @@ class DocumentService {
       const latestDocument = this._buildDocumentFromRevisions(revisionsAfterDelete);
 
       logger.info(`Saving latest document with revision ${latestDocument.revision}`);
-      await this.documentStore.save(latestDocument);
+      await this.documentStore.saveDocument(latestDocument);
 
     } finally {
       if (lock) {
@@ -280,8 +228,8 @@ class DocumentService {
       logger.info(`Hard deleting external document '${documentKey}'`);
 
       await this.transactionRunner.run(async session => {
+        await this.documentStore.deleteDocumentByKey(documentKey, { session });
         await this.documentRevisionStore.deleteMany({ key: documentKey }, { session });
-        await this.documentStore.deleteOne({ key: documentKey }, { session });
       });
 
     } finally {
@@ -370,7 +318,7 @@ class DocumentService {
       const latestDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
 
       logger.info(`Saving latest document with revision ${latestDocument.revision}`);
-      await this.documentStore.save(latestDocument);
+      await this.documentStore.saveDocument(latestDocument);
 
       return newDocumentRevision;
 
@@ -425,7 +373,7 @@ class DocumentService {
         const document = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
 
         logger.info(`Saving document '${documentKey}' with revision ${document.revision}`);
-        await this.documentStore.save(document, { session });
+        await this.documentStore.saveDocument(document, { session });
       });
 
       return newDocumentRevisions;
@@ -448,7 +396,7 @@ class DocumentService {
         const document = this._buildDocumentFromRevisions(existingDocumentRevisions);
 
         logger.info(`Saving document '${documentKey}' with revision ${document.revision}`);
-        await this.documentStore.save(document, { session });
+        await this.documentStore.saveDocument(document, { session });
       });
     } finally {
       if (lock) {
