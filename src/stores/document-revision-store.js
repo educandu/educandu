@@ -1,27 +1,44 @@
 import Database from './database.js';
-import StoreBase from './store-base.js';
+import { getTagsQuery } from './store-helper.js';
 import { validate } from '../domain/validation.js';
 import { documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 
-class DocumentRevisionStore extends StoreBase {
+class DocumentRevisionStore {
   static get inject() { return [Database]; }
 
   constructor(db) {
-    super(db.documentRevisions);
+    this.collection = db.documentRevisions;
   }
 
-  save(item, options = {}) {
-    validate(item, documentRevisionDBSchema);
-    return super.save(item, options);
-  }
-
-  saveMany(items) {
-    items.forEach(item => validate(item, documentRevisionDBSchema));
-    return super.saveMany(items);
+  getDocumentRevisionById(documentRevisionId, { session } = {}) {
+    return this.collection.findOne({ _id: documentRevisionId }, { session });
   }
 
   getAllDocumentRevisionsByKey(documentKey, { session } = {}) {
-    return super.find({ key: documentKey }, { sort: [['order', 1]], session });
+    return this.collection.find({ key: documentKey }, { sort: [['order', 1]], session }).toArray();
+  }
+
+  getLatestDocumentRevisionByKey(documentKey, { session } = {}) {
+    return this.collection.findOne({ key: documentKey }, { sort: [['order', -1]], session });
+  }
+
+  getDocumentRevisionsTagsMatchingText(text) {
+    return this.collection.aggregate(getTagsQuery(text)).toArray();
+  }
+
+  saveDocumentRevision(documentRevision, { session } = {}) {
+    validate(documentRevision, documentRevisionDBSchema);
+    return this.collection.replaceOne({ _id: documentRevision._id }, documentRevision, { session, upsert: true });
+  }
+
+  saveDocumentRevisions(documentRevisions, { session } = {}) {
+    documentRevisions.forEach(documentRevision => validate(documentRevision, documentRevisionDBSchema));
+    return Promise.all(documentRevisions
+      .map(documentRevision => this.collection.replaceOne({ _id: documentRevision._id }, documentRevision, { session, upsert: true })));
+  }
+
+  deleteDocumentRevisionsByKey(documentKey, { session } = {}) {
+    return this.collection.deleteMany({ key: documentKey }, { session });
   }
 }
 

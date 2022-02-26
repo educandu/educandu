@@ -9,7 +9,6 @@ import BatchStore from '../stores/batch-store.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
-import { getTagsQuery } from '../stores/store-helper.js';
 import { createSectionRevision } from './section-helper.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
@@ -92,23 +91,19 @@ class DocumentService {
   }
 
   getAllDocumentRevisionsByKey(documentKey) {
-    return this._getAllDocumentRevisionsByKey(documentKey);
-  }
-
-  _getAllDocumentRevisionsByKey(documentKey, session = null) {
-    return this.documentRevisionStore.find({ key: documentKey }, { sort: [['order', 1]], session });
+    return this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
   }
 
   getCurrentDocumentRevisionByKey(documentKey) {
-    return this.documentRevisionStore.findOne({ key: documentKey }, { sort: [['order', -1]] });
+    return this.documentRevisionStore.getLatestDocumentRevisionByKey(documentKey);
   }
 
   getDocumentRevisionById(id) {
-    return this.documentRevisionStore.findOne({ _id: id });
+    return this.documentRevisionStore.getDocumentRevisionById(id);
   }
 
   findRevisionTags(searchString) {
-    return this.documentRevisionStore.toAggregateArray(getTagsQuery(searchString));
+    return this.documentRevisionStore.getDocumentRevisionsTagsMatchingText(searchString);
   }
 
   findDocumentTags(searchString) {
@@ -145,7 +140,7 @@ class DocumentService {
 
     await this.createNewDocumentRevision({ doc, user, restoredFrom: revisionToRestore._id });
 
-    return this._getAllDocumentRevisionsByKey(documentKey);
+    return this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
   }
 
   async hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user }) {
@@ -163,7 +158,7 @@ class DocumentService {
 
       lock = await this.lockStore.takeDocumentLock(documentKey);
 
-      const revisionsBeforeDelete = await this._getAllDocumentRevisionsByKey(documentKey);
+      const revisionsBeforeDelete = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
 
       const revisionsAfterDelete = [];
       const revisionsToUpdateById = new Map();
@@ -197,7 +192,7 @@ class DocumentService {
 
       if (revisionsToUpdateById.size) {
         logger.info(`Hard deleting ${revisionsToUpdateById.size} sections with section key ${sectionKey} in document revisions with key ${documentKey}`);
-        await this.documentRevisionStore.saveMany([...revisionsToUpdateById.values()]);
+        await this.documentRevisionStore.saveDocumentRevisions([...revisionsToUpdateById.values()]);
       } else {
         throw new Error(`Could not find a section with key ${sectionKey} and revision ${sectionRevision} in document revisions for key ${documentKey}`);
       }
@@ -229,7 +224,7 @@ class DocumentService {
 
       await this.transactionRunner.run(async session => {
         await this.documentStore.deleteDocumentByKey(documentKey, { session });
-        await this.documentRevisionStore.deleteMany({ key: documentKey }, { session });
+        await this.documentRevisionStore.deleteDocumentRevisionsByKey(documentKey, { session });
       });
 
     } finally {
@@ -284,7 +279,7 @@ class DocumentService {
       lock = await this.lockStore.takeDocumentLock(documentKey);
 
       if (isAppendedRevision) {
-        existingDocumentRevisions = await this._getAllDocumentRevisionsByKey(documentKey);
+        existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
         if (!existingDocumentRevisions.length) {
           throw new Error(`Cannot append new revision for key ${documentKey}, because there are no existing revisions`);
         }
@@ -313,7 +308,7 @@ class DocumentService {
       const newDocumentRevision = this._buildDocumentRevision({ data: doc, documentKey, userId, order, restoredFrom, sections: newSections });
       logger.info(`Saving new document revision with id ${newDocumentRevision._id}`);
 
-      await this.documentRevisionStore.save(newDocumentRevision);
+      await this.documentRevisionStore.saveDocumentRevision(newDocumentRevision);
 
       const latestDocument = this._buildDocumentFromRevisions([...existingDocumentRevisions, newDocumentRevision]);
 
@@ -339,7 +334,7 @@ class DocumentService {
 
       await this.transactionRunner.run(async session => {
 
-        const existingDocumentRevisions = await this._getAllDocumentRevisionsByKey(documentKey, session);
+        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session });
         const latestExistingRevision = existingDocumentRevisions[existingDocumentRevisions.length - 1];
 
         if (!ancestorId && latestExistingRevision) {
@@ -368,7 +363,7 @@ class DocumentService {
         }
 
         logger.info(`Saving revisions for document '${documentKey}'`);
-        await this.documentRevisionStore.saveMany(newDocumentRevisions);
+        await this.documentRevisionStore.saveDocumentRevisions(newDocumentRevisions);
 
         const document = this._buildDocumentFromRevisions([...existingDocumentRevisions, ...newDocumentRevisions]);
 
@@ -391,7 +386,7 @@ class DocumentService {
       lock = await this.lockStore.takeDocumentLock(documentKey);
 
       await this.transactionRunner.run(async session => {
-        const existingDocumentRevisions = await this._getAllDocumentRevisionsByKey(documentKey, session);
+        const existingDocumentRevisions = await this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session });
 
         const document = this._buildDocumentFromRevisions(existingDocumentRevisions);
 
@@ -422,7 +417,7 @@ class DocumentService {
       errors: []
     };
 
-    const allDocumentKeys = await this.documentRevisionStore.distinct('key');
+    const allDocumentKeys = await this.documentStore.getAllDocumentKeys();
     const tasks = allDocumentKeys.map(key => ({
       _id: uniqueId.create(),
       batchId: batch._id,

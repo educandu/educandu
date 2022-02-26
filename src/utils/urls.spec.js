@@ -1,6 +1,6 @@
 import sut from './urls.js';
 
-describe('order-store-base', () => {
+describe('urls', () => {
   let result;
 
   describe('removeTrailingSlash', () => {

@@ -46,6 +46,10 @@ class DocumentStore {
     return this.collection.find({ key: documentKey }, { sort: [['order', 1]], session }).toArray();
   }
 
+  getAllDocumentKeys() {
+    return this.collection.distinct('key');
+  }
+
   getAllNonArchivedDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({ archived: false }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }

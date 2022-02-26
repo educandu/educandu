@@ -1,3 +1,4 @@
+import by from 'thenby';
 import httpErrors from 'http-errors';
 import UserStore from '../stores/user-store.js';
 import DocumentStore from '../stores/document-store.js';
