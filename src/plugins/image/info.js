@@ -1,7 +1,10 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
+import ImageIcon from './image-icon.js';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { PictureOutlined } from '@ant-design/icons';
+
+const Icon = iconNs.default || iconNs;
 
 export default class Image {
   static get typeName() { return 'image'; }
@@ -15,7 +18,7 @@ export default class Image {
   }
 
   getIcon() {
-    return <PictureOutlined />;
+    return <Icon component={ImageIcon} />;
   }
 
   getDefaultContent() {

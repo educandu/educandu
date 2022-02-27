@@ -1,7 +1,10 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
 import { TESTS_ORDER } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { CheckSquareOutlined } from '@ant-design/icons';
+import QuickTesterIcon from './quick-tester-icon.js';
+
+const Icon = iconNs.default || iconNs;
 
 export default class QuickTester {
   static get typeName() { return 'quick-tester'; }
@@ -15,7 +18,7 @@ export default class QuickTester {
   }
 
   getIcon() {
-    return <CheckSquareOutlined />;
+    return <Icon component={QuickTesterIcon} />;
   }
 
   getDefaultContent(t) {
