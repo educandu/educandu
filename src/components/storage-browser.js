@@ -314,12 +314,15 @@ class StorageBrowser extends React.Component {
 
   collectFilesToUpload(files, { onProgress } = {}) {
     const { t } = this.props;
-    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
-    const availableBytes = this.props.storagePlan.maxBytes - this.props.user.storage.usedBytes;
 
-    if (requiredBytes > availableBytes) {
-      message.error(t('insufficientPrivateStorge'));
-      return;
+    if (this.state.currentLocation.isPrivate) {
+      const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+      const availableBytes = Math.max(0, this.props.storagePlan?.maxBytes || 0 - this.props.user.storage.usedBytes);
+
+      if (requiredBytes > availableBytes) {
+        message.error(t('insufficientPrivateStorge'));
+        return;
+      }
     }
 
     this.addToCurrentUploadFiles(files);
@@ -651,7 +654,7 @@ class StorageBrowser extends React.Component {
         </div>
         <div className="StorageBrowser-storageUsage">
           {currentLocation.isPrivate && (
-            <UsedStorage usedBytes={this.props.user.storage.usedBytes} maxBytes={this.props.storagePlan.maxBytes} showLabel />
+            <UsedStorage usedBytes={this.props.user.storage.usedBytes} maxBytes={this.props.storagePlan?.maxBytes || 0} showLabel />
           )}
         </div>
         <div
