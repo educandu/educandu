@@ -19,6 +19,10 @@ class DocumentRevisionStore extends StoreBase {
     items.forEach(item => validate(item, documentRevisionDBSchema));
     return super.saveMany(items);
   }
+
+  getAllDocumentRevisionsByKey(documentKey, { session } = {}) {
+    return super.find({ key: documentKey }, { sort: [['order', 1]], session });
+  }
 }
 
 export default DocumentRevisionStore;

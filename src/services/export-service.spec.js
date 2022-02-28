@@ -1,16 +1,16 @@
 import sinon from 'sinon';
 import UserStore from '../stores/user-store.js';
 import ExportService from './export-service.js';
-import DocumentStore from '../stores/document-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
+import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('export-service', () => {
 
   const sandbox = sinon.createSandbox();
 
-  let documentStore;
+  let documentRevisionStore;
   let serverConfig;
   let container;
   let userStore;
@@ -23,7 +23,7 @@ describe('export-service', () => {
 
     serverConfig = container.get(ServerConfig);
     userStore = container.get(UserStore);
-    documentStore = container.get(DocumentStore);
+    documentRevisionStore = container.get(DocumentRevisionStore);
     sut = container.get(ExportService);
   });
 
@@ -34,7 +34,7 @@ describe('export-service', () => {
   beforeEach(() => {
     sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.root.url');
     sandbox.stub(userStore, 'getUsersByIds');
-    sandbox.stub(documentStore, 'getAllDocumentRevisionsByKey');
+    sandbox.stub(documentRevisionStore, 'getAllDocumentRevisionsByKey');
   });
 
   afterEach(async () => {
@@ -83,12 +83,12 @@ describe('export-service', () => {
     let result;
 
     const rev1 = { _id: '1', order: 1, createdBy: 'user1' };
-    const rev2 = { _id: '2', order: 2 };
-    const rev3 = { _id: '3', order: 3 };
+    const rev2 = { _id: '2', order: 2, createdBy: 'user1' };
+    const rev3 = { _id: '3', order: 3, createdBy: 'user1' };
 
     beforeEach(() => {
       userStore.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
-      documentStore.getAllDocumentRevisionsByKey.resolves([rev2, rev3, rev1]);
+      documentRevisionStore.getAllDocumentRevisionsByKey.resolves([rev1, rev2, rev3]);
     });
 
     describe('with toRevision = null', () => {
