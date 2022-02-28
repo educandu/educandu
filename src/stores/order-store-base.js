@@ -1,8 +1,6 @@
-import StoreBase from './store-base.js';
-
-class OrderStoreBase extends StoreBase {
+class OrderStoreBase {
   constructor(collection, orderKey) {
-    super(collection);
+    this.collection = collection;
     this.orderKey = orderKey;
   }
 

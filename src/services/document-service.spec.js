@@ -1239,7 +1239,7 @@ describe('document-service', () => {
       });
 
       it('should create the according tasks', async () => {
-        const tasks = await taskStore.find({ batchId: batch._id });
+        const tasks = await taskStore.getTasksByBatchId(batch._id);
         expect(tasks).toEqual([
           {
             _id: expect.stringMatching(/\w+/),

@@ -15,29 +15,26 @@ describe('import-service', () => {
 
   const sandbox = sinon.createSandbox();
 
-  let container;
-  let user;
-  let taskStore;
-  let sut;
   let db;
+  let sut;
+  let user;
+  let container;
+  let taskStore;
   let importSource;
+  let documentStore;
+  let exportApiClient;
   let documentsToImport;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
-    user = await setupTestUser(container);
+
+    exportApiClient = container.get(ExportApiClient);
+    documentStore = container.get(DocumentStore);
     taskStore = container.get(TaskStore);
     sut = container.get(ImportService);
     db = container.get(Database);
-  });
 
-  afterAll(async () => {
-    await destroyTestEnvironment(container);
-  });
-
-  afterEach(async () => {
-    await pruneTestEnvironment(container);
-    sandbox.restore();
+    user = await setupTestUser(container);
   });
 
   beforeEach(() => {
@@ -70,6 +67,16 @@ describe('import-service', () => {
       }
     ];
   });
+
+  afterEach(async () => {
+    await pruneTestEnvironment(container);
+    sandbox.restore();
+  });
+
+  afterAll(async () => {
+    await destroyTestEnvironment(container);
+  });
+
   describe('getAllImportedDocumentsMetadata', () => {
     let result;
 
@@ -114,15 +121,12 @@ describe('import-service', () => {
   });
 
   describe('getAllImportableDocumentsMetadata', () => {
-    let documentStore;
-    let exportApiClient;
     let result;
 
     beforeEach(() => {
-      exportApiClient = container.get(ExportApiClient);
-      sandbox.stub(exportApiClient, 'getExports');
-      documentStore = container.get(DocumentStore);
       sandbox.stub(documentStore, 'find');
+      sandbox.stub(exportApiClient, 'getExports');
+
       importSource = {
         name: 'Other System',
         hostName: 'other-system.com',
@@ -312,6 +316,10 @@ describe('import-service', () => {
   });
 
   describe('_getProgressForBatch', () => {
+    beforeEach(() => {
+      sandbox.stub(taskStore, 'countTasksWithBatchIdGroupedByProcessedStatus');
+    });
+
     describe('when the batch is completed', () => {
       it('should return 1', async () => {
         const result = await sut._getProgressForBatch({ completedOn: new Date() });
@@ -321,9 +329,9 @@ describe('import-service', () => {
 
     describe('when the total count is 0', () => {
       it('should return 1', async () => {
-        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+        taskStore.countTasksWithBatchIdGroupedByProcessedStatus.resolves([
           { _id: true, count: 0 },
-          { id: false, count: 0 }
+          { _id: false, count: 0 }
         ]);
 
         const result = await sut._getProgressForBatch({ _id: '123' });
@@ -333,9 +341,9 @@ describe('import-service', () => {
 
     describe('when the processed count matches the total count', () => {
       it('should return 1', async () => {
-        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+        taskStore.countTasksWithBatchIdGroupedByProcessedStatus.resolves([
           { _id: true, count: 15 },
-          { id: false, count: 0 }
+          { _id: false, count: 0 }
         ]);
 
         const result = await sut._getProgressForBatch({ _id: '123' });
@@ -345,9 +353,9 @@ describe('import-service', () => {
 
     describe('when the total count matches is half of the total count', () => {
       it('should return 0.5', async () => {
-        sandbox.stub(taskStore, 'toAggregateArray').resolves([
+        taskStore.countTasksWithBatchIdGroupedByProcessedStatus.resolves([
           { _id: true, count: 15 },
-          { id: false, count: 15 }
+          { _id: false, count: 15 }
         ]);
 
         const result = await sut._getProgressForBatch({ _id: '123' });
@@ -366,7 +374,7 @@ describe('import-service', () => {
         documentsToImport,
         user
       });
-      await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      await db.tasks.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
       result = await sut.getImportBatches();
     });
 
@@ -416,7 +424,7 @@ describe('import-service', () => {
 
     beforeEach(async () => {
       await sut.createImportBatch({ importSource, documentsToImport, user });
-      await taskStore.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
+      await db.tasks.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
       const dbEntries = await db.batches.find({}).toArray();
       createdBatchId = dbEntries[0]._id;
       result = await sut.getImportBatchDetails(createdBatchId);

@@ -125,10 +125,9 @@ class ImportService {
     }
 
     try {
-      const existingActiveBatch = await this.batchStore.findOne({
-        'batchType': BATCH_TYPE.documentImport,
-        'batchParams.hostName': importSource.hostName,
-        'completedOn': null
+      const existingActiveBatch = await this.batchStore.getUncompletedBatchByTypeAndHost({
+        batchType: BATCH_TYPE.documentImport,
+        hostName: importSource.hostName
       });
 
       if (existingActiveBatch) {
@@ -137,8 +136,8 @@ class ImportService {
 
       logger.info(`Creating new import batch for source '${importSource.name}' containing ${tasks.length} tasks`);
       await this.transactionRunner.run(async session => {
-        await this.batchStore.insertOne(batch, { session });
-        await this.taskStore.insertMany(tasks, { session });
+        await this.batchStore.createBatch(batch, { session });
+        await this.taskStore.addTasks(tasks, { session });
       });
 
     } finally {
@@ -153,20 +152,7 @@ class ImportService {
       return 1;
     }
 
-    const countGroups = await this.taskStore.toAggregateArray([
-      {
-        $match: {
-          batchId: batch._id
-        }
-      }, {
-        $group: {
-          _id: '$processed',
-          count: {
-            $sum: 1
-          }
-        }
-      }
-    ]);
+    const countGroups = await this.taskStore.countTasksWithBatchIdGroupedByProcessedStatus(batch._id);
 
     const stats = countGroups.reduce((accumulator, current) => {
       accumulator.totalCount += current.count;
@@ -182,7 +168,7 @@ class ImportService {
   }
 
   async getImportBatches() {
-    const batches = await this.batchStore.find({ batchType: BATCH_TYPE.documentImport });
+    const batches = await this.batchStore.getBatchesByType(BATCH_TYPE.documentImport);
 
     return Promise.all(batches.map(async batch => {
       const progress = await this._getProgressForBatch(batch);
@@ -194,12 +180,12 @@ class ImportService {
   }
 
   async getImportBatchDetails(id) {
-    const batch = await this.batchStore.findOne({ _id: id });
+    const batch = await this.batchStore.getBatchById(id);
     if (!batch) {
       throw new NotFound('Batch not found');
     }
 
-    const tasks = await this.taskStore.find({ batchId: id });
+    const tasks = await this.taskStore.getTasksByBatchId(id);
     const processedTasksCount = tasks.filter(task => task.processed).length;
 
     batch.tasks = tasks;
