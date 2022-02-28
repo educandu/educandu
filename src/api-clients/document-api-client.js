@@ -78,15 +78,6 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  getRevisionTagSuggestions(tagsSuggestionQuery) {
-    return this.httpClient
-      .get(
-        `/api/v1/docs/revisions/tags/${encodeURIComponent(tagsSuggestionQuery)}`,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
   getDocumentTagSuggestions(tagsSuggestionQuery) {
     return this.httpClient
       .get(

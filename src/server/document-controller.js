@@ -24,7 +24,6 @@ const { NotFound } = httpErrors;
 
 const jsonParser = express.json();
 const jsonParserLargePayload = express.json({ limit: '2MB' });
-const getDocumentsQueryFilter = user => ({ includeArchived: hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS) });
 
 class DocumentController {
   static get inject() { return [DocumentService, ClientDataMappingService, PageRenderer]; }
@@ -36,7 +35,8 @@ class DocumentController {
   }
 
   async handleGetDocsPage(req, res) {
-    const allDocs = await this.documentService.getAllDocumentsMetadata(getDocumentsQueryFilter(req.user));
+    const includeArchived = hasUserPermission(req.user, permissions.MANAGE_ARCHIVED_DOCS);
+    const allDocs = await this.documentService.getAllDocumentsMetadata({ includeArchived });
     const documents = await this.clientDataMappingService.mapDocsOrRevisions(allDocs, req.user);
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.docs, { documents });
@@ -163,15 +163,9 @@ class DocumentController {
     return res.send({});
   }
 
-  async handleGetDocRevisionTags(req, res) {
-    const searchString = req.params[0] || '';
-
-    const result = await this.documentService.findRevisionTags(searchString);
-    return res.send(result.length ? result[0].uniqueTags : []);
-  }
-
   async handleGetDocTags(req, res) {
     const searchString = req.params[0] || '';
+
     const result = await this.documentService.findDocumentTags(searchString);
     return res.send(result.length ? result[0].uniqueTags : []);
   }
@@ -249,11 +243,6 @@ class DocumentController {
       '/api/v1/docs',
       [needsPermission(permissions.MANAGE_IMPORT), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
       (req, res) => this.handleDeleteDoc(req, res)
-    );
-
-    router.get(
-      '/api/v1/docs/revisions/tags/*',
-      (req, res) => this.handleGetDocRevisionTags(req, res)
     );
 
     router.get(

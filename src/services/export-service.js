@@ -1,3 +1,4 @@
+import by from 'thenby';
 import httpErrors from 'http-errors';
 import UserStore from '../stores/user-store.js';
 import DocumentStore from '../stores/document-store.js';
@@ -7,17 +8,6 @@ import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
 const { BadRequest } = httpErrors;
-
-const exportableDocumentsProjection = {
-  key: 1,
-  revision: 1,
-  updatedOn: 1,
-  title: 1,
-  slug: 1,
-  language: 1
-};
-
-const lastUpdatedFirst = [['updatedOn', -1]];
 
 class ExportService {
   static get inject() { return [ServerConfig, DocumentStore, DocumentRevisionStore, UserStore]; }
@@ -29,13 +19,9 @@ class ExportService {
     this.documentRevisionStore = documentRevisionStore;
   }
 
-  getAllExportableDocumentsMetadata() {
-    const filter = {
-      archived: false,
-      origin: DOCUMENT_ORIGIN.internal
-    };
-
-    return this.documentStore.find(filter, { sort: lastUpdatedFirst, projection: exportableDocumentsProjection });
+  async getAllExportableDocumentsMetadata() {
+    return (await this.documentStore.getNonArchivedDocumentsMetadataByOrigin(DOCUMENT_ORIGIN.internal))
+      .sort(by(doc => doc.updatedOn, 'desc'));
   }
 
   async getDocumentExport({ key, toRevision }) {

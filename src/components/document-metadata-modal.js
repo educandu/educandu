@@ -84,7 +84,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
       if (typedInTag.length !== 3) {
         return;
       }
-      const tagSuggestions = await documentApiClient.getRevisionTagSuggestions(typedInTag);
+      const tagSuggestions = await documentApiClient.getDocumentTagSuggestions(typedInTag);
       const newTagOptions = composeTagOptions(defaultTags, initialDocumentMetadata?.tags, tagSuggestions);
       setTagOptions(newTagOptions);
     } catch (error) {
