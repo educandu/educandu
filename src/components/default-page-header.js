@@ -1,8 +1,8 @@
 import React from 'react';
+import { Button } from 'antd';
 import Login from './login.js';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
-import { Alert, Button } from 'antd';
 import LinkPopover from './link-popover.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +10,9 @@ import { useLocale } from './locale-context.js';
 import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
-import DefaultSiteLogo from './default-site-logo.js';
 import ClientConfig from '../bootstrap/client-config.js';
-import { ALERT_TYPE, FEATURE_TOGGLES } from '../domain/constants.js';
+import { FEATURE_TOGGLES } from '../domain/constants.js';
+import DefaultHeaderLogo from './default-header-logo.js';
 import {
   QuestionOutlined,
   MenuOutlined,
@@ -26,7 +26,7 @@ import {
   GlobalOutlined
 } from '@ant-design/icons';
 
-function DefaultPageHeader({ fullScreen, alerts, onUiLanguageClick }) {
+function DefaultPageHeader({ onUiLanguageClick }) {
   const user = useUser();
   const settings = useSettings();
   const { uiLanguage } = useLocale();
@@ -109,31 +109,12 @@ function DefaultPageHeader({ fullScreen, alerts, onUiLanguageClick }) {
     }
   ].filter(item => item.showWhen);
 
-  const renderAlert = (alert, index) => {
-    const shouldRenderAlert = !fullScreen || alert.showInFullScreen;
-
-    if (!shouldRenderAlert) {
-      return null;
-    }
-
-    return (
-      <Alert
-        key={index}
-        message={alert.message}
-        type={alert.type || 'info'}
-        banner
-        closable={alert.closable || false}
-        onClose={alert.onClose || (() => { })}
-        />
-    );
-  };
-
   return (
     <header className="DefaultPageHeader">
       <div className="DefaultPageHeader-header">
         <div className="DefaultPageHeader-headerContent DefaultPageHeader-headerContent--left">
           <div className="DefaultPageHeader-logo">
-            <DefaultSiteLogo size="small" />
+            <DefaultHeaderLogo size="small" />
           </div>
         </div>
         <div className="DefaultPageHeader-headerContent DefaultPageHeader-headerContent--right">
@@ -141,27 +122,19 @@ function DefaultPageHeader({ fullScreen, alerts, onUiLanguageClick }) {
             <Login />
           </div>
           <LinkPopover items={pageMenuItems} trigger="click" placement="bottomRight">
-            <Button className="DefaultPageHeader-headerButton" icon={<MenuOutlined />} ghost />
+            <Button className="DefaultPageHeader-headerButton" icon={<MenuOutlined />} />
           </LinkPopover>
         </div>
       </div>
-      {alerts && alerts.map((alert, index) => renderAlert(alert, index))}
     </header>
   );
 }
 
 DefaultPageHeader.propTypes = {
-  alerts: PropTypes.arrayOf(PropTypes.shape({
-    message: PropTypes.node.isRequired,
-    type: PropTypes.oneOf(Object.values(ALERT_TYPE))
-  })),
-  fullScreen: PropTypes.bool,
   onUiLanguageClick: PropTypes.func
 };
 
 DefaultPageHeader.defaultProps = {
-  alerts: [],
-  fullScreen: false,
   onUiLanguageClick: () => {}
 };
 
