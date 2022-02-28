@@ -27,7 +27,7 @@ class BatchStore {
     return this.collection.findOne({ completedOn: null }, { session });
   }
 
-  addBatch(batch, { session } = {}) {
+  createBatch(batch, { session } = {}) {
     return this.collection.insertOne(batch, { session });
   }
 
