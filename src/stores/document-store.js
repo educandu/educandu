@@ -84,33 +84,23 @@ class DocumentStore {
   _getTagsQuery(searchString) {
     return [
       { $unwind: '$tags' },
-      {
-        $match:
-      {
-        $and: [
-          { tags: { $regex: `.*${searchString}.*`, $options: 'i' } },
-          { slug: { $ne: null } }
-        ]
-      }
-      },
+      { $match: { tags: { $regex: `.*${searchString}.*`, $options: 'i' } } },
       { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
-      {
-        $project: {
-          _id: 0,
-          uniqueTags: {
-            $reduce: {
-              input: '$uniqueTags',
-              initialValue: [],
-              in: {
-                $let: {
-                  vars: { elem: { $concatArrays: [['$$this'], '$$value'] } },
-                  in: { $setUnion: '$$elem' }
-                }
+      { $project: {
+        _id: 0,
+        uniqueTags: {
+          $reduce: {
+            input: '$uniqueTags',
+            initialValue: [],
+            in: {
+              $let: {
+                vars: { elem: { $concatArrays: [['$$this'], '$$value'] } },
+                in: { $setUnion: '$$elem' }
               }
             }
           }
         }
-      }
+      } }
     ];
   }
 }
