@@ -53,7 +53,11 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
       <DefaultPageHeader fullScreen={fullScreen} alerts={alerts} onUiLanguageClick={handleUiLanguageClick} />
       <main className={contentAreaClasses}>
         <div className={contentClasses}>
-          {alerts && alerts.map((alert, index) => renderAlert(alert, index))}
+          {!!alerts?.length && (
+            <div className="DefaultPageTemplate-contentAlerts">
+              { alerts.map((alert, index) => renderAlert(alert, index)) }
+            </div>
+          )}
           {children}
         </div>
       </main>

@@ -31,7 +31,7 @@ function HomePageTemplate({ children, alerts }) {
           </div>
           {children}
           {settings.homepageInfo && (
-            <div className="HomePageTemplate-info">
+            <div>
               <Markdown renderMedia>{settings.homepageInfo}</Markdown>
             </div>
           )}
