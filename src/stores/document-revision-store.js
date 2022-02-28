@@ -1,5 +1,4 @@
 import Database from './database.js';
-import { getTagsQuery } from './store-helper.js';
 import { validate } from '../domain/validation.js';
 import { documentRevisionDBSchema } from '../domain/schemas/document-schemas.js';
 
@@ -20,10 +19,6 @@ class DocumentRevisionStore {
 
   getLatestDocumentRevisionByKey(documentKey, { session } = {}) {
     return this.collection.findOne({ key: documentKey }, { sort: [['order', -1]], session });
-  }
-
-  getDocumentRevisionsTagsMatchingText(text) {
-    return this.collection.aggregate(getTagsQuery(text)).toArray();
   }
 
   saveDocumentRevision(documentRevision, { session } = {}) {

@@ -1,5 +1,4 @@
 import Database from './database.js';
-import { getTagsQuery } from './store-helper.js';
 import { validate } from '../domain/validation.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
@@ -63,7 +62,7 @@ class DocumentStore {
   }
 
   getDocumentTagsMatchingText(text) {
-    return this.collection.aggregate(getTagsQuery(text)).toArray();
+    return this.collection.aggregate(this._getTagsQuery(text)).toArray();
   }
 
   getNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
@@ -80,6 +79,39 @@ class DocumentStore {
 
   deleteDocumentByKey(key, { session } = {}) {
     return this.collection.deleteOne({ key }, { session });
+  }
+
+  _getTagsQuery(searchString) {
+    return [
+      { $unwind: '$tags' },
+      {
+        $match:
+      {
+        $and: [
+          { tags: { $regex: `.*${searchString}.*`, $options: 'i' } },
+          { slug: { $ne: null } }
+        ]
+      }
+      },
+      { $group: { _id: null, uniqueTags: { $push: '$tags' } } },
+      {
+        $project: {
+          _id: 0,
+          uniqueTags: {
+            $reduce: {
+              input: '$uniqueTags',
+              initialValue: [],
+              in: {
+                $let: {
+                  vars: { elem: { $concatArrays: [['$$this'], '$$value'] } },
+                  in: { $setUnion: '$$elem' }
+                }
+              }
+            }
+          }
+        }
+      }
+    ];
   }
 }
 

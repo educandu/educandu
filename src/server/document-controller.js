@@ -163,15 +163,9 @@ class DocumentController {
     return res.send({});
   }
 
-  async handleGetDocRevisionTags(req, res) {
-    const searchString = req.params[0] || '';
-
-    const result = await this.documentService.findRevisionTags(searchString);
-    return res.send(result.length ? result[0].uniqueTags : []);
-  }
-
   async handleGetDocTags(req, res) {
     const searchString = req.params[0] || '';
+
     const result = await this.documentService.findDocumentTags(searchString);
     return res.send(result.length ? result[0].uniqueTags : []);
   }
@@ -249,11 +243,6 @@ class DocumentController {
       '/api/v1/docs',
       [needsPermission(permissions.MANAGE_IMPORT), jsonParser, validateBody(hardDeleteDocumentBodySchema)],
       (req, res) => this.handleDeleteDoc(req, res)
-    );
-
-    router.get(
-      '/api/v1/docs/revisions/tags/*',
-      (req, res) => this.handleGetDocRevisionTags(req, res)
     );
 
     router.get(

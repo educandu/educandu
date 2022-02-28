@@ -102,10 +102,6 @@ class DocumentService {
     return this.documentRevisionStore.getDocumentRevisionById(id);
   }
 
-  findRevisionTags(searchString) {
-    return this.documentRevisionStore.getDocumentRevisionsTagsMatchingText(searchString);
-  }
-
   findDocumentTags(searchString) {
     return this.documentStore.getDocumentTagsMatchingText(searchString);
   }
