@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { useLocale } from '../locale-context.js';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
-import LanguageFlagAndName from '../language-flag-and-name.js';
 import LanguageNameProvider from '../../data/language-name-provider.js';
 
 const Option = Select.Option;
@@ -23,10 +22,18 @@ function createLanguageList(languageNameProvider, language, languages) {
 function LanguageSelect({ size, value, languages, onChange }) {
   const { uiLanguage } = useLocale();
   const languageNameProvider = useService(LanguageNameProvider);
+  const languageData = languageNameProvider.getData(uiLanguage);
   const [languageList, setLanguageList] = useState(createLanguageList(languageNameProvider, uiLanguage, languages));
   useEffect(() => {
     setLanguageList(createLanguageList(languageNameProvider, uiLanguage, languages));
   }, [languageNameProvider, uiLanguage, languages]);
+
+  const renderLanguage = language => {
+    const code = language.toUpperCase();
+    const name = languageData[language]?.name;
+    const languageText = name ? `${code} - ${name}` : code;
+    return <span>{languageText}</span>;
+  };
 
   return (
     <Select
@@ -40,7 +47,7 @@ function LanguageSelect({ size, value, languages, onChange }) {
       >
       {languageList.map(ln => (
         <Option key={ln.code} value={ln.code} title={ln.name}>
-          <LanguageFlagAndName language={ln.code} />
+          {renderLanguage(ln.code)}
         </Option>
       ))}
     </Select>
