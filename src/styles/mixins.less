@@ -1,5 +1,9 @@
 .m-page-content {
   padding: @edu-page-content-padding;
+
+  @media @edu-media-phone {
+    padding: calc(@edu-page-content-padding / 2);
+  }
 }
 
 .m-fullscreen {

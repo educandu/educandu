@@ -3,7 +3,6 @@
 @control-panel-content-height: @edu-control-height-sm;
 @control-panel-height: @control-panel-content-height + (2 * @control-panel-padding);
 
-
 .ControlPanel {
   .m-inverted-button;
   display: flex;
@@ -33,12 +32,13 @@
 }
 
 .ControlPanel-content {
+  .m-page-content;
+  padding-top: 0;
+  padding-bottom: 0;
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  padding-left: @edu-page-content-padding;
-  padding-right: @edu-page-content-padding;
 }
 
 .ControlPanel-contentLeft {
