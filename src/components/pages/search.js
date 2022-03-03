@@ -1,8 +1,9 @@
+import Tag from '../tag.js';
 import firstBy from 'thenby';
 import PropTypes from 'prop-types';
+import { Table, Select } from 'antd';
 import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
-import { Table, Tag, Select } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
@@ -62,8 +63,12 @@ function Search({ PageTemplate }) {
 
   const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
   const renderTitle = (title, doc) => (<a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>);
-  const renderTags = tags => tags.map(tag => (<Tag key={tag}>{tag}</Tag>));
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
+  const renderTags = tags => (
+    <div className="SearchPage-cellTags">
+      {tags.map(tag => (<Tag key={tag} value={tag} />))}
+    </div>
+  );
 
   const columns = [
     {
