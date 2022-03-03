@@ -86,7 +86,7 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
   return (
     <Form onFinish={handleProfileFinish} scrollToFirstError>
       <FormItem {...tailFormItemLayout}>
-        <Avatar shape="square" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
+        <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
         <br />
         <a onClick={handleShowAvatarDescriptionClick}>{t('changePicture')}</a>
         <br />

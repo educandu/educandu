@@ -38,7 +38,7 @@ function Login() {
 
     return (
       <Tooltip title={popoverTitle} placement="bottomRight">
-        <Avatar src={gravatarUrl} alt={user.username} shape="square" onClick={handleAvatarClick} />
+        <Avatar className="Avatar" src={gravatarUrl} alt={user.username} shape="circle" size="large" onClick={handleAvatarClick} />
       </Tooltip>
     );
   };
