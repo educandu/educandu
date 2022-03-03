@@ -7,22 +7,16 @@ import DeletedSection from './deleted-section.js';
 import { useService } from './container-context.js';
 import InfoFactory from '../plugins/info-factory.js';
 import EditorFactory from '../plugins/editor-factory.js';
+import EditPluginIcon from './icons/edit-plugin-icon.js';
 import React, { Fragment, useMemo, useState } from 'react';
 import RendererFactory from '../plugins/renderer-factory.js';
+import DeletePluginIcon from './icons/delete-plugin-icon.js';
 import NotSupportedSection from './not-supported-section.js';
+import MoveUpPluginIcon from './icons/move-up-plugin-icon.js';
+import MoveDownPluginIcon from './icons/move-down-plugin-icon.js';
+import DuplicatePluginIcon from './icons/duplicate-plugin-icon.js';
 import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  DragOutlined,
-  EditOutlined,
-  EyeOutlined,
-  SnippetsOutlined,
-  ThunderboltOutlined
-} from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, DragOutlined, EyeOutlined, ThunderboltOutlined } from '@ant-design/icons';
 
 function SectionDisplay({
   section,
@@ -83,7 +77,7 @@ function SectionDisplay({
     {
       type: 'edit',
       tooltip: renderActionTooltip('edit', ['ctrl', 'click']),
-      icon: <EditOutlined key="edit" />,
+      icon: <EditPluginIcon key="edit" />,
       handleAction: () => setIsEditing(true),
       isVisible: !isEditing,
       isEnabled: !isEditing && !!section.content
@@ -99,7 +93,7 @@ function SectionDisplay({
     {
       type: 'duplicate',
       tooltip: renderActionTooltip('duplicate', ['shift', 'ctrl', 'click']),
-      icon: <SnippetsOutlined key="duplicate" />,
+      icon: <DuplicatePluginIcon key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
       isVisible: true,
       isEnabled: !isEditing
@@ -107,7 +101,7 @@ function SectionDisplay({
     {
       type: 'delete',
       tooltip: renderActionTooltip('delete', ['shift', 'ctrl', 'alt', 'click']),
-      icon: <DeleteOutlined key="delete" />,
+      icon: <DeletePluginIcon key="delete" />,
       handleAction: () => onSectionDelete(),
       isVisible: true,
       isEnabled: true
@@ -115,7 +109,7 @@ function SectionDisplay({
     {
       type: 'moveUp',
       tooltip: renderActionTooltip('moveUp'),
-      icon: <ArrowUpOutlined key="moveUp" />,
+      icon: <MoveUpPluginIcon key="moveUp" />,
       handleAction: () => onSectionMoveUp(),
       isVisible: true,
       isEnabled: true
@@ -123,7 +117,7 @@ function SectionDisplay({
     {
       type: 'moveDown',
       tooltip: renderActionTooltip('moveDown'),
-      icon: <ArrowDownOutlined key="moveDown" />,
+      icon: <MoveDownPluginIcon key="moveDown" />,
       handleAction: () => onSectionMoveDown(),
       isVisible: true,
       isEnabled: true

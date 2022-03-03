@@ -6,11 +6,11 @@ import ControlPanel from './control-panel.js';
 import { useTranslation } from 'react-i18next';
 import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
+import ViewHistoryIcon from './icons/view-history-icon.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { documentRevisionShape } from '../ui/default-prop-types.js';
 import LanguageNameProvider from '../data/language-name-provider.js';
-
-import { HistoryOutlined, PaperClipOutlined, ReloadOutlined } from '@ant-design/icons';
+import { PaperClipOutlined, ReloadOutlined } from '@ant-design/icons';
 
 function HistoryControlPanel({
   revisions,
@@ -113,7 +113,7 @@ function HistoryControlPanel({
     <ControlPanel
       className="HistoryControlPanel"
       startOpen={startOpen}
-      openIcon={<HistoryOutlined />}
+      openIcon={<ViewHistoryIcon />}
       openIconPositionFromRight={2}
       canClose
       onOpen={handleOpen}

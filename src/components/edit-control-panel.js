@@ -3,14 +3,10 @@ import { Button, Tooltip } from 'antd';
 import React, { useState } from 'react';
 import ControlPanel from './control-panel.js';
 import { useTranslation } from 'react-i18next';
-import {
-  EditOutlined,
-  SaveOutlined,
-  CloudOutlined,
-  CloudUploadOutlined,
-  WarningOutlined,
-  UndoOutlined
-} from '@ant-design/icons';
+import EditDocIcon from './icons/edit-doc-icon.js';
+import SaveDocIcon from './icons/save-doc-icon.js';
+import CloseAbortIcon from './icons/close-abort-icon.js';
+import { CloudOutlined, CloudUploadOutlined, EditOutlined, WarningOutlined } from '@ant-design/icons';
 
 export const EDIT_CONTROL_PANEL_STATUS = {
   saved: 'saved',
@@ -98,7 +94,7 @@ function EditControlPanel({
         size="small"
         loading={isSaving}
         onClick={handleSave}
-        icon={<SaveOutlined />}
+        icon={<SaveDocIcon />}
         className="EditControlPanel-rightSideButton"
         disabled={status !== EDIT_CONTROL_PANEL_STATUS.dirty}
         >
@@ -110,7 +106,7 @@ function EditControlPanel({
           ghost
           size="small"
           onClick={handleCancel}
-          icon={<UndoOutlined />}
+          icon={<CloseAbortIcon />}
           className="EditControlPanel-rightSideButton"
           disabled={status === EDIT_CONTROL_PANEL_STATUS.saved}
           >
@@ -124,7 +120,7 @@ function EditControlPanel({
     <ControlPanel
       className="EditControlPanel"
       startOpen={startOpen}
-      openIcon={<EditOutlined />}
+      openIcon={<EditDocIcon />}
       openIconPositionFromRight={1}
       canClose={canClose}
       onOpen={handleOpen}

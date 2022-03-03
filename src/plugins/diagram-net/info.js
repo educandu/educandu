@@ -1,9 +1,6 @@
 import React from 'react';
-import iconNs from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import DiagramNetIcon from './diagram-net-icon.js';
-
-const Icon = iconNs.default || iconNs;
 
 export default class DiagramNet {
   static get typeName() { return 'diagram-net'; }
@@ -17,7 +14,7 @@ export default class DiagramNet {
   }
 
   getIcon() {
-    return <Icon component={DiagramNetIcon} />;
+    return <DiagramNetIcon />;
   }
 
   getDefaultContent() {

@@ -1,10 +1,7 @@
 import React from 'react';
-import iconNs from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
 import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
-
-const Icon = iconNs.default || iconNs;
 
 export default class EarTraining {
   static get typeName() { return 'ear-training'; }
@@ -18,7 +15,7 @@ export default class EarTraining {
   }
 
   getIcon() {
-    return <Icon component={EarTrainingIcon} />;
+    return <EarTrainingIcon />;
   }
 
   getDefaultContent(t) {
