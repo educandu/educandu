@@ -96,27 +96,30 @@ function Search({ PageTemplate }) {
   return (
     <PageTemplate alerts={alerts}>
       <div className="SearchPage">
-        <div className="SearchPage-searchHeader">
-          <SearchBar initialValue={searchText} onSearch={setSearchText} />
+        <div className="SearchPage-header">
+          <h1>{`${t('searchResultPrefix')}: ${searchText}`} </h1>
         </div>
-
-        <h1>{`${t('searchResultPrefix')}: ${searchText}`} </h1>
-
-        <Select
-          className="SearchPage-searchFilter"
-          mode="multiple"
-          tokenSeparators={[' ']}
-          value={selectedTags}
-          onChange={setSelectedTags}
-          options={tagOptions}
-          placeholder={(
-            <span className="SearchPage-placeholder">
-              <span>{t('refineSearch')}</span>
-              <SearchOutlined className="SearchPage-placeholderIcon" />
-            </span>
-          )}
-          />
-
+        <div className="SearchPage-controls">
+          <SearchBar initialValue={searchText} onSearch={setSearchText} />
+          <Select
+            className="SearchPage-filter"
+            size="large"
+            mode="multiple"
+            tokenSeparators={[' ']}
+            value={selectedTags}
+            onChange={setSelectedTags}
+            options={tagOptions}
+            placeholder={(
+              <span className="SearchPage-filterPlaceholder">
+                <span>{t('refineSearch')}</span>
+                <SearchOutlined className="SearchPage-filterPlaceholderIcon" />
+              </span>
+            )}
+            />
+        </div>
+        <div className="SearchPage-tags">
+          some tags
+        </div>
         <Table
           bordered={false}
           pagination={false}

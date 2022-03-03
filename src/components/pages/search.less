@@ -1,21 +1,37 @@
 .SearchPage {}
 
-.SearchPage-searchHeader {
+.SearchPage-header {
   margin: 25px 0;
   max-width: 600px;
 }
 
-.SearchPage-searchFilter {
-  display: block;
-  width: 50%;
-  margin: 25px 0 25px auto;
+.SearchPage-controls {
+  display: grid;
+  column-gap: 15px;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  @media @edu-media-phone {
+    row-gap: 15px;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
 }
 
-.SearchPage-placeholder {
+.SearchPage-filter {
+  display: block;
+  width: 100%;
+}
+
+.SearchPage-filterPlaceholder {
   display: flex;
   justify-content: space-between;
 }
 
-.SearchPage-placeholderIcon {
+.SearchPage-filterPlaceholderIcon {
     align-self: center
+}
+
+.SearchPage-tags {
+  padding-top: @edu-content-padding;
+  padding-bottom: 2 * @edu-content-padding;
 }
