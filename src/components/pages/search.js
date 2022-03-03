@@ -7,14 +7,15 @@ import SearchBar from '../search-bar.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
-import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
+import { MenuOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
+import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
 function Search({ PageTemplate }) {
@@ -61,14 +62,24 @@ function Search({ PageTemplate }) {
     setFilteredDocs(newFilteredDocs);
   }, [docs, selectedTags]);
 
+  const handleDeselectTagsClick = () => setSelectedTags([]);
+  const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
+  const handleSearch = tag => {
+    setSelectedTags(ensureIsIncluded(selectedTags, tag));
+  };
+
   const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
   const renderTitle = (title, doc) => (<a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>);
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
-  const renderTags = tags => (
+
+  const renderCellTags = tags => (
     <div className="SearchPage-cellTags">
       {tags.map(tag => (<Tag key={tag} value={tag} />))}
     </div>
   );
+  const renderSelectedTags = () => selectedTags.map(tag => (
+    <Tag key={tag} value={tag} isSelected onDeselect={() => handleDeselectTag(tag)} />
+  ));
 
   const columns = [
     {
@@ -80,7 +91,7 @@ function Search({ PageTemplate }) {
     {
       title: t('common:tags'),
       dataIndex: 'tags',
-      render: renderTags,
+      render: renderCellTags,
       responsive: ['md']
     },
     {
@@ -107,23 +118,24 @@ function Search({ PageTemplate }) {
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
           <Select
-            className="SearchPage-filter"
             size="large"
-            mode="multiple"
-            tokenSeparators={[' ']}
-            value={selectedTags}
-            onChange={setSelectedTags}
+            onChange={handleSearch}
             options={tagOptions}
+            showArrow
+            showSearch
+            value={null}
             placeholder={(
               <span className="SearchPage-filterPlaceholder">
-                <span>{t('filterPlaceholder')}</span>
+                <span>{`${t('filterPlaceholder')} (${selectedTags.length})`}</span>
                 <SearchOutlined className="SearchPage-filterPlaceholderIcon" />
               </span>
             )}
+            suffixIcon={<MenuOutlined />}
             />
         </div>
-        <div className="SearchPage-tags">
-          some tags
+        <div className="SearchPage-selectedTags">
+          {renderSelectedTags()}
+          {selectedTags.length > 1 && <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>x {t('deselectTags')}</a>}
         </div>
         <Table
           bordered={false}

@@ -668,7 +668,8 @@
     "language": "en",
     "resources": {
       "headline": "{count, plural, =1 {# document} other {# documents}} found\n",
-      "filterPlaceholder": "Filter by tags"
+      "filterPlaceholder": "Filter by tags",
+      "deselectTags": "Remove all tags"
     }
   },
   {
@@ -676,7 +677,8 @@
     "language": "de",
     "resources": {
       "headline": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
-      "filterPlaceholder": "Nach Tags filtern"
+      "filterPlaceholder": "Nach Tags filtern",
+      "deselectTags": "Alle Tags löschen"
     }
   },
   {

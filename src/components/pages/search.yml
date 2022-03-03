@@ -6,3 +6,6 @@ headline:
 filterPlaceholder:
   en: Filter by tags
   de: Nach Tags filtern
+deselectTags:
+  en: Remove all tags
+  de: Alle Tags löschen

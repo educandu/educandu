@@ -27,12 +27,19 @@
 }
 
 .SearchPage-filterPlaceholderIcon {
-    align-self: center
+  align-self: center
 }
 
-.SearchPage-tags {
+.SearchPage-selectedTags {
+  display: flex;
+  align-items: baseline;
   padding-top: @edu-content-padding;
   padding-bottom: 2 * @edu-content-padding;
+}
+
+.SearchPage-deselectTagsLink {
+  padding-left: 10px;
+  font-size: 12px;
 }
 
 .SearchPage-cellTags {
