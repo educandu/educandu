@@ -10,9 +10,9 @@ import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
 import { shorten } from '../../utils/string-utils.js';
+import LanguageIcon from '../localization/language-icon.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { Input, Table, Button, Switch, Tooltip } from 'antd';
-import LanguageFlagAndName from '../language-flag-and-name.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
@@ -165,7 +165,7 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const renderLanguage = documentLanguage => {
-    return <LanguageFlagAndName language={documentLanguage} flagOnly />;
+    return <LanguageIcon language={documentLanguage} />;
   };
 
   const renderUpdatedBy = (_user, doc) => {

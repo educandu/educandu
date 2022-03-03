@@ -10,8 +10,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import LanguageIcon from '../localization/language-icon.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import LanguageFlagAndName from '../language-flag-and-name.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 
@@ -63,7 +63,7 @@ function Search({ PageTemplate }) {
   const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
   const renderTitle = (title, doc) => (<a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>);
   const renderTags = tags => tags.map(tag => (<Tag key={tag}>{tag}</Tag>));
-  const renderLanguage = lang => (<LanguageFlagAndName language={lang} />);
+  const renderLanguage = lang => (<LanguageIcon language={lang} />);
 
   const columns = [
     {
