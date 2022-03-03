@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import DocumentSelector from '../document-selector.js';
 import LanguageFlagAndName from '../localization/language-flag-and-name.js';
-import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
+import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
@@ -88,7 +88,6 @@ function SpecialPageSettings({ settings, documents, onChange }) {
 SpecialPageSettings.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.oneOfType([
     documentMetadataShape,
-    documentRevisionShape,
     documentShape
   ])).isRequired,
   onChange: PropTypes.func.isRequired,

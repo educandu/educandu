@@ -58,13 +58,17 @@ describe('document-service', () => {
     sandbox.restore();
   });
 
-  describe('createNewDocumentRevision', () => {
-    let result;
-    let revision;
+  describe('createDocument', () => {
+    let data;
+    let createdDocument;
+    let createdRevision;
 
     beforeEach(() => {
-      result = null;
-      revision = {
+      createdRevision = null;
+    });
+
+    beforeEach(async () => {
+      data = {
         title: 'Title',
         slug: 'my-doc',
         language: 'en',
@@ -92,217 +96,240 @@ describe('document-service', () => {
         ],
         tags: ['tag-1']
       };
+
+      createdDocument = await sut.createDocument({ data, user });
+      createdRevision = await db.documentRevisions.findOne({ _id: createdDocument.revision });
     });
 
-    describe('when it is the first revision', () => {
-      let createdDocument;
-
-      beforeEach(async () => {
-        result = await sut.createNewDocumentRevision({ doc: revision, user });
-        createdDocument = await db.documents.findOne({ key: result.key });
-      });
-
-      it('creates an _id', () => {
-        expect(result._id).toMatch(/\w+/);
-      });
-
-      it('creates a document key', () => {
-        expect(result.key).toMatch(/\w+/);
-      });
-
-      it('saves the revision', () => {
-        expect(result).toMatchObject({
-          ...revision,
-          sections: [
-            {
-              ...revision.sections[0],
-              revision: expect.stringMatching(/\w+/)
-            },
-            {
-              ...revision.sections[1],
-              revision: expect.stringMatching(/\w+/)
-            }
-          ],
-          createdOn: now,
-          createdBy: user._id,
-          order: 1,
-          restoredFrom: '',
-          archived: false,
-          origin: DOCUMENT_ORIGIN.internal
-        });
-      });
-
-      it('generates ids for the sections revisions', () => {
-        result.sections.forEach((section, index) => {
-          expect(section.revision).toMatch(/\w+/);
-          expect(section.revision).not.toEqual(revision.sections[index].revision);
-        });
-      });
-
-      it('saves all referenced cdn resources with the revision', () => {
-        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
-      });
-
-      it('creates a document', () => {
-        expect(createdDocument).toBeDefined();
-      });
-
-      it('saves the revision data onto the document', () => {
-        expect(createdDocument).toMatchObject({
-          ...revision,
-          sections: [
-            {
-              ...revision.sections[0],
-              revision: expect.stringMatching(/\w+/)
-            },
-            {
-              ...revision.sections[1],
-              revision: expect.stringMatching(/\w+/)
-            }
-          ],
-          revision: result._id,
-          createdOn: now,
-          createdBy: user._id,
-          updatedOn: now,
-          updatedBy: user._id,
-          order: 1,
-          archived: false,
-          origin: DOCUMENT_ORIGIN.internal,
-          contributors: [user._id]
-        });
-      });
-
-      it('saves all referenced cdn resources with the document', () => {
-        expect(createdDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
-      });
+    it('creates an _id', () => {
+      expect(createdRevision._id).toMatch(/\w+/);
     });
 
-    describe('when it is the second revision', () => {
-      let secondTick;
-      let secondUser;
-      let secondRevision;
-      let updatedDocument;
-      let persistedFirstRevision;
+    it('creates a document key', () => {
+      expect(createdRevision.key).toMatch(/\w+/);
+    });
 
-      beforeEach(async () => {
-        const firstRevision = { ...revision };
-        persistedFirstRevision = await sut.createNewDocumentRevision({ doc: firstRevision, user });
-
-        secondUser = await setupTestUser(container);
-
-        secondRevision = {
-          ...firstRevision,
-          title: 'Title 2',
-          slug: 'my-doc-2',
-          language: 'de',
-          sections: [
-            ...firstRevision.sections,
-            {
-              ...createDefaultSection(),
-              type: 'video',
-              content: {
-                type: VIDEO_SOURCE_TYPE.internal,
-                url: 'media/video-2.mp4'
-              }
-            }
-          ],
-          appendTo: {
-            key: persistedFirstRevision.key,
-            ancestorId: persistedFirstRevision._id
+    it('saves the revision', () => {
+      expect(createdRevision).toMatchObject({
+        ...data,
+        sections: [
+          {
+            ...data.sections[0],
+            revision: expect.stringMatching(/\w+/)
+          },
+          {
+            ...data.sections[1],
+            revision: expect.stringMatching(/\w+/)
           }
-        };
-
-        secondTick = new Date(sandbox.clock.tick(1000));
-
-        result = await sut.createNewDocumentRevision({ doc: secondRevision, user: secondUser });
-        updatedDocument = await db.documents.findOne({ key: result.key });
+        ],
+        createdOn: now,
+        createdBy: user._id,
+        order: 1,
+        restoredFrom: '',
+        archived: false,
+        origin: DOCUMENT_ORIGIN.internal
       });
+    });
 
-      it('creates an _id', () => {
-        expect(result._id).toMatch(/\w+/);
+    it('generates ids for the sections revisions', () => {
+      createdRevision.sections.forEach((section, index) => {
+        expect(section.revision).toMatch(/\w+/);
+        expect(section.revision).not.toEqual(data.sections[index].revision);
       });
+    });
 
-      it('sets the same document key', () => {
-        expect(result.key).toBe(persistedFirstRevision.key);
-      });
+    it('saves all referenced cdn resources with the revision', () => {
+      expect(createdRevision.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
+    });
 
-      it('saves the second revision', () => {
-        const expectedResult = {
-          ...secondRevision,
-          sections: [
-            {
-              ...secondRevision.sections[0],
-              revision: expect.stringMatching(/\w+/)
-            },
-            {
-              ...secondRevision.sections[1],
-              revision: expect.stringMatching(/\w+/)
-            },
-            {
-              ...secondRevision.sections[2],
-              revision: expect.stringMatching(/\w+/)
-            }
-          ],
-          createdOn: secondTick,
-          createdBy: secondUser._id,
-          order: 2,
-          restoredFrom: '',
-          archived: false,
-          origin: DOCUMENT_ORIGIN.internal
-        };
-        delete expectedResult.appendTo;
-        expect(result).toMatchObject(expectedResult);
-      });
+    it('creates a document', () => {
+      expect(createdDocument).toBeDefined();
+    });
 
-      it('generates ids for the sections revisions', () => {
-        result.sections.forEach((section, index) => {
-          expect(section.revision).toMatch(/\w+/);
-          expect(section.revision).not.toEqual(secondRevision.sections[index].revision);
-        });
+    it('saves the revision data onto the document', () => {
+      expect(createdDocument).toMatchObject({
+        ...data,
+        sections: [
+          {
+            ...data.sections[0],
+            revision: expect.stringMatching(/\w+/)
+          },
+          {
+            ...data.sections[1],
+            revision: expect.stringMatching(/\w+/)
+          }
+        ],
+        revision: createdRevision._id,
+        createdOn: now,
+        createdBy: user._id,
+        updatedOn: now,
+        updatedBy: user._id,
+        order: 1,
+        archived: false,
+        origin: DOCUMENT_ORIGIN.internal,
+        contributors: [user._id]
       });
+    });
 
-      it('saves all referenced cdn resources with the revision', () => {
-        expect(result.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
-      });
-
-      it('saves the second revision data onto the document', () => {
-        const expectedResult = {
-          ...secondRevision,
-          sections: [
-            {
-              ...secondRevision.sections[0],
-              revision: expect.stringMatching(/\w+/)
-            },
-            {
-              ...secondRevision.sections[1],
-              revision: expect.stringMatching(/\w+/)
-            },
-            {
-              ...secondRevision.sections[2],
-              revision: expect.stringMatching(/\w+/)
-            }
-          ],
-          revision: result._id,
-          createdOn: now,
-          createdBy: user._id,
-          updatedOn: secondTick,
-          updatedBy: secondUser._id,
-          order: 2,
-          archived: false,
-          origin: DOCUMENT_ORIGIN.internal,
-          contributors: [user._id, secondUser._id]
-        };
-        delete expectedResult.appendTo;
-        expect(updatedDocument).toMatchObject(expectedResult);
-      });
-
-      it('saves all referenced cdn resources with the document', () => {
-        expect(updatedDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
-      });
+    it('saves all referenced cdn resources with the document', () => {
+      expect(createdDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4']);
     });
   });
 
-  describe('copyDocumentRevisions', () => {
+  describe('updateDocument', () => {
+    let data;
+    let secondTick;
+    let secondUser;
+    let updatedData;
+    let updatedDocument;
+    let persistedFirstRevision;
+    let persistedSecondRevision;
+
+    beforeEach(async () => {
+      secondUser = await setupTestUser(container);
+
+      data = {
+        title: 'Title',
+        slug: 'my-doc',
+        language: 'en',
+        sections: [
+          {
+            ...createDefaultSection(),
+            type: 'image',
+            content: {
+              sourceType: IMAGE_SOURCE_TYPE.internal,
+              sourceUrl: 'media/image-1.png',
+              effect: {
+                sourceType: IMAGE_SOURCE_TYPE.internal,
+                sourceUrl: 'media/image-2.png'
+              }
+            }
+          },
+          {
+            ...createDefaultSection(),
+            type: 'video',
+            content: {
+              type: VIDEO_SOURCE_TYPE.internal,
+              url: 'media/video-1.mp4'
+            }
+          }
+        ],
+        tags: ['tag-1']
+      };
+
+      const initialData = { ...data };
+
+      const initialDocument = await sut.createDocument({ data: initialData, user });
+      persistedFirstRevision = await db.documentRevisions.findOne({ _id: initialDocument.revision });
+
+      updatedData = {
+        ...initialData,
+        title: 'Title 2',
+        slug: 'my-doc-2',
+        language: 'de',
+        sections: [
+          ...initialData.sections,
+          {
+            ...createDefaultSection(),
+            type: 'video',
+            content: {
+              type: VIDEO_SOURCE_TYPE.internal,
+              url: 'media/video-2.mp4'
+            }
+          }
+        ]
+      };
+
+      secondTick = new Date(sandbox.clock.tick(1000));
+
+      updatedDocument = await sut.updateDocument({ documentKey: initialDocument._id, data: updatedData, user: secondUser });
+      persistedSecondRevision = await db.documentRevisions.findOne({ _id: updatedDocument.revision });
+    });
+
+    it('creates an _id', () => {
+      expect(persistedSecondRevision._id).toMatch(/\w+/);
+    });
+
+    it('sets the same document key', () => {
+      expect(persistedSecondRevision.key).toBe(persistedFirstRevision.key);
+    });
+
+    it('saves the second revision', () => {
+      const expectedResult = {
+        ...updatedData,
+        sections: [
+          {
+            ...updatedData.sections[0],
+            revision: expect.stringMatching(/\w+/)
+          },
+          {
+            ...updatedData.sections[1],
+            revision: expect.stringMatching(/\w+/)
+          },
+          {
+            ...updatedData.sections[2],
+            revision: expect.stringMatching(/\w+/)
+          }
+        ],
+        createdOn: secondTick,
+        createdBy: secondUser._id,
+        order: 2,
+        restoredFrom: '',
+        archived: false,
+        origin: DOCUMENT_ORIGIN.internal
+      };
+      delete expectedResult.appendTo;
+      expect(persistedSecondRevision).toMatchObject(expectedResult);
+    });
+
+    it('generates ids for the sections revisions', () => {
+      persistedSecondRevision.sections.forEach((section, index) => {
+        expect(section.revision).toMatch(/\w+/);
+        expect(section.revision).not.toEqual(updatedData.sections[index].revision);
+      });
+    });
+
+    it('saves all referenced cdn resources with the revision', () => {
+      expect(persistedSecondRevision.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+    });
+
+    it('saves the second revision data onto the document', () => {
+      const expectedResult = {
+        ...updatedData,
+        sections: [
+          {
+            ...updatedData.sections[0],
+            revision: expect.stringMatching(/\w+/)
+          },
+          {
+            ...updatedData.sections[1],
+            revision: expect.stringMatching(/\w+/)
+          },
+          {
+            ...updatedData.sections[2],
+            revision: expect.stringMatching(/\w+/)
+          }
+        ],
+        revision: persistedSecondRevision._id,
+        createdOn: now,
+        createdBy: user._id,
+        updatedOn: secondTick,
+        updatedBy: secondUser._id,
+        order: 2,
+        archived: false,
+        origin: DOCUMENT_ORIGIN.internal,
+        contributors: [user._id, secondUser._id]
+      };
+      delete expectedResult.appendTo;
+      expect(updatedDocument).toMatchObject(expectedResult);
+    });
+
+    it('saves all referenced cdn resources with the document', () => {
+      expect(updatedDocument.cdnResources).toEqual(['media/image-1.png', 'media/image-2.png', 'media/video-1.mp4', 'media/video-2.mp4']);
+    });
+  });
+
+  describe('importDocumentRevisions', () => {
     let revisions;
     const documentKey = uniqueId.create();
     const userId1 = uniqueId.create();
@@ -361,7 +388,7 @@ describe('document-service', () => {
       let createdDocument;
 
       beforeEach(async () => {
-        await sut.copyDocumentRevisions({ revisions, ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentKey, revisions, ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
         createdDocument = await db.documents.findOne({ key: documentKey });
       });
 
@@ -430,8 +457,8 @@ describe('document-service', () => {
       let updatedDocument;
 
       beforeEach(async () => {
-        await sut.copyDocumentRevisions({ revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
-        await sut.copyDocumentRevisions({ revisions: [revisions[1]], ancestorId: revisions[0]._id, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentKey, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentKey, revisions: [revisions[1]], ancestorId: revisions[0]._id, origin: 'external/origin.url', originUrl: 'https://origin.url' });
         updatedDocument = await db.documents.findOne({ key: documentKey });
       });
 
@@ -506,10 +533,10 @@ describe('document-service', () => {
       const expectedAncestorId = uniqueId.create();
 
       beforeEach(async () => {
-        await sut.copyDocumentRevisions({ revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+        await sut.importDocumentRevisions({ documentKey, revisions: [revisions[0]], ancestorId: null, origin: 'external/origin.url', originUrl: 'https://origin.url' });
 
         try {
-          await sut.copyDocumentRevisions({ revisions: [revisions[1]], ancestorId: expectedAncestorId, origin: 'external/origin.url', originUrl: 'https://origin.url' });
+          await sut.importDocumentRevisions({ documentKey, revisions: [revisions[1]], ancestorId: expectedAncestorId, origin: 'external/origin.url', originUrl: 'https://origin.url' });
         } catch (error) {
           result = error;
         }
@@ -763,63 +790,61 @@ describe('document-service', () => {
     });
   });
 
-  describe('setArchivedState', () => {
-    let result;
-    let revision;
+  describe('updateArchivedState', () => {
+    let initialDocument;
+    let updatedDocument;
 
     describe('to true', () => {
       beforeEach(async () => {
-        const revisionToCreate = {
+        initialDocument = await createTestDocument(container, user, {
           title: 'Title',
           slug: 'my-doc',
           language: 'en',
           sections: [],
           archived: false
-        };
-        revision = await sut.createNewDocumentRevision({ doc: revisionToCreate, user });
+        });
 
-        result = await sut.setArchivedState({ documentKey: revision.key, user, archived: true });
+        updatedDocument = await sut.updateArchivedState({ documentKey: initialDocument.key, user, archived: true });
       });
 
       it('should create a new revision', () => {
-        expect(result._id).not.toBe(revision._id);
+        expect(updatedDocument.revision).not.toBe(initialDocument.revision);
       });
 
       it('should set archived to true', () => {
-        expect(result.archived).toBe(true);
+        expect(updatedDocument.archived).toBe(true);
       });
 
       it('should not change other static revision data', () => {
-        const expectedResult = { ...revision, _id: result._id, archived: result.archived, order: result.order };
-        expect(result).toEqual(expectedResult);
+        const expectedResult = { ...initialDocument, revision: updatedDocument.revision, archived: updatedDocument.archived, order: updatedDocument.order };
+        expect(updatedDocument).toEqual(expectedResult);
       });
     });
 
     describe('to false', () => {
       beforeEach(async () => {
-        const revisionToCreate = {
+        initialDocument = await createTestDocument(container, user, {
           title: 'Title',
           slug: 'my-doc',
           language: 'en',
           sections: [],
           archived: true
-        };
-        revision = await sut.createNewDocumentRevision({ doc: revisionToCreate, user });
+        });
 
-        result = await sut.setArchivedState({ documentKey: revision.key, user, archived: false });
+        updatedDocument = await sut.updateArchivedState({ documentKey: initialDocument.key, user, archived: false });
       });
 
       it('should create a new revision', () => {
-        expect(result._id).not.toBe(revision._id);
+        expect(updatedDocument.revision).not.toBe(initialDocument.revision);
       });
 
       it('should set archived to false', () => {
-        expect(result.archived).toBe(false);
+        expect(updatedDocument.archived).toBe(false);
       });
 
       it('should not change other static revision data', () => {
-        const expectedResult = { ...revision, _id: result._id, archived: result.archived, order: result.order };
-        expect(result).toEqual(expectedResult);
+        const expectedResult = { ...initialDocument, revision: updatedDocument.revision, archived: updatedDocument.archived, order: updatedDocument.order };
+        expect(updatedDocument).toEqual(expectedResult);
       });
     });
   });
@@ -1194,20 +1219,16 @@ describe('document-service', () => {
   });
 
   describe('createDocumentRegenerationBatch', () => {
-    let createdDocument;
-    let result;
-    let revision;
+    let testDocument;
     beforeEach(async () => {
-      revision = {
+      testDocument = await createTestDocument(container, user, {
         title: 'Title',
         description: 'Description',
         slug: 'my-doc',
         language: 'en',
         sections: [],
         tags: ['tag-1']
-      };
-      result = await sut.createNewDocumentRevision({ doc: revision, user });
-      createdDocument = await db.documents.findOne({ key: result.key });
+      });
     });
 
     describe('when a running batch already exists', () => {
@@ -1248,7 +1269,7 @@ describe('document-service', () => {
             processed: false,
             attempts: [],
             taskParams: {
-              key: createdDocument.key
+              key: testDocument.key
             }
           }
         ]);
@@ -1259,36 +1280,20 @@ describe('document-service', () => {
   describe('regenerateDocument', () => {
     const lock = { _id: 'mylock' };
 
+    let initialDocument;
     let regeneratedDocument;
-    let document;
-    let revision;
 
     beforeEach(async () => {
       sandbox.stub(lockStore, 'takeDocumentLock').resolves(lock);
       sandbox.stub(lockStore, 'releaseLock');
-      revision = {
-        title: 'Title',
-        description: 'Description',
-        slug: 'my-doc',
-        language: 'en',
-        sections: [],
-        tags: ['tag-1']
-      };
 
-      document = await sut.createNewDocumentRevision({ doc: revision, user });
+      initialDocument = await createTestDocument(container, user, { slug: 'old-slug' });
 
-      await db.documentRevisions.replaceOne(
-        { _id: document._id },
-        {
-          ...document,
-          slug: 'new-slug'
-        },
-        { upsert: true }
-      );
+      await db.documentRevisions.updateOne({ key: initialDocument._id }, { $set: { slug: 'new-slug' } });
 
-      await sut.regenerateDocument(document.key);
+      await sut.regenerateDocument(initialDocument.key);
 
-      regeneratedDocument = await db.documents.findOne({ _id: document.key });
+      regeneratedDocument = await db.documents.findOne({ _id: initialDocument.key });
     });
 
     it('should take a lock on the document', () => {

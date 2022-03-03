@@ -16,7 +16,7 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
-  saveDocument(data) {
+  createDocument(data) {
     return this.httpClient
       .post(
         '/api/v1/docs',
@@ -26,11 +26,31 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  updateDocumentMetadata({ documentKey, metadata }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/docs/${encodeURIComponent(documentKey)}/metadata`,
+        metadata,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  updateDocumentSections({ documentKey, sections }) {
+    return this.httpClient
+      .patch(
+        `/api/v1/docs/${encodeURIComponent(documentKey)}/sections`,
+        { sections },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   restoreDocumentRevision({ documentKey, revisionId }) {
     return this.httpClient
-      .post(
-        '/api/v1/docs/restore-revision',
-        { documentKey, revisionId },
+      .patch(
+        `/api/v1/docs/${encodeURIComponent(documentKey)}/restore`,
+        { revisionId },
         { responseType: 'json' }
       )
       .then(res => res.data);

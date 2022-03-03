@@ -23,12 +23,10 @@ describe('document-controller', () => {
   beforeEach(() => {
     documentService = {
       getDocumentByKey: sandbox.stub(),
-      getDocumentRevisionById: sandbox.stub(),
       createDocumentRegenerationBatch: sandbox.stub()
     };
 
     clientDataMappingService = {
-      mapDocOrRevision: sandbox.stub(),
       mapDocsOrRevisions: sandbox.stub(),
       createProposedSections: sandbox.stub()
     };
@@ -163,10 +161,6 @@ describe('document-controller', () => {
         sut.handleGetDocPage(req, res);
       });
 
-      it('should not call documentService.getDocumentRevisionById', () => {
-        sinon.assert.notCalled(documentService.getDocumentRevisionById);
-      });
-
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
         sinon.assert.calledWith(clientDataMappingService.mapDocsOrRevisions, [doc, templateDocument], user);
       });
@@ -176,9 +170,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', {
-          doc: mappedDocument, latestRevision: null, templateSections
-        });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, templateSections });
       });
     });
 
@@ -186,7 +178,6 @@ describe('document-controller', () => {
       let mappedDocument;
       let documentRevision;
       let templateSections;
-      let mappedDocumentRevision;
       let mappedTemplateDocument;
 
       beforeEach(() => {
@@ -205,29 +196,17 @@ describe('document-controller', () => {
 
         templateSections = [{}];
         mappedDocument = { ...doc };
-        mappedDocumentRevision = { ...documentRevision };
         mappedTemplateDocument = { ...templateDocument };
 
         documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
         documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
 
-        documentService.getDocumentRevisionById.resolves(documentRevision);
-
-        clientDataMappingService.mapDocOrRevision.resolves(mappedDocumentRevision);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, mappedTemplateDocument]);
 
         clientDataMappingService.createProposedSections.returns(templateSections);
         pageRenderer.sendPage.resolves();
 
         sut.handleGetDocPage(req, res);
-      });
-
-      it('should call documentService.getDocumentRevisionById', () => {
-        sinon.assert.calledWith(documentService.getDocumentRevisionById, doc.revision);
-      });
-
-      it('should call clientDataMappingService.mapDocOrRevision', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocOrRevision, documentRevision, user);
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
@@ -239,16 +218,13 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', {
-          doc: mappedDocument, latestRevision: mappedDocumentRevision, templateSections
-        });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, templateSections });
       });
     });
 
     describe('when the view query param is \'edit\' but no templateDocumentKey is provided', () => {
       let mappedDocument;
       let documentRevision;
-      let mappedDocumentRevision;
 
       beforeEach(() => {
         templateDocument = { key: uniqueId.create() };
@@ -265,27 +241,15 @@ describe('document-controller', () => {
         doc.revision = documentRevision._id;
 
         mappedDocument = { ...doc };
-        mappedDocumentRevision = { ...documentRevision };
 
         documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
         documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
 
-        documentService.getDocumentRevisionById.resolves(documentRevision);
-
-        clientDataMappingService.mapDocOrRevision.resolves(mappedDocumentRevision);
         clientDataMappingService.mapDocsOrRevisions.resolves([mappedDocument, null]);
 
         pageRenderer.sendPage.resolves();
 
         sut.handleGetDocPage(req, res);
-      });
-
-      it('should call documentService.getDocumentRevisionById', () => {
-        sinon.assert.calledWith(documentService.getDocumentRevisionById, doc.revision);
-      });
-
-      it('should call clientDataMappingService.mapDocOrRevision', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapDocOrRevision, documentRevision, user);
       });
 
       it('should call clientDataMappingService.mapDocsOrRevisions', () => {
@@ -297,9 +261,7 @@ describe('document-controller', () => {
       });
 
       it('should call pageRenderer.sendPage', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', {
-          doc: mappedDocument, latestRevision: mappedDocumentRevision, templateSections: []
-        });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, templateSections: [] });
       });
     });
   });

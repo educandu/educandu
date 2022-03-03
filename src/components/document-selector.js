@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import memoizeOne from 'memoize-one';
 import React, { useEffect, useState } from 'react';
-import { documentMetadataShape, documentRevisionShape, documentShape } from '../ui/default-prop-types.js';
+import { documentMetadataShape, documentShape } from '../ui/default-prop-types.js';
 
 const { Option } = Select;
 
@@ -48,7 +48,6 @@ DocumentSelector.propTypes = {
   by: PropTypes.oneOf(['key', 'url']),
   documents: PropTypes.arrayOf(PropTypes.oneOfType([
     documentMetadataShape,
-    documentRevisionShape,
     documentShape
   ])).isRequired,
   onChange: PropTypes.func.isRequired,

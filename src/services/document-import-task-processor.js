@@ -69,7 +69,13 @@ class DocumentImportTaskProcessor {
     const originUrl = `${baseUrl}${docUrl}`;
     const origin = `${DOCUMENT_ORIGIN.external}/${batchParams.hostName}`;
 
-    await this.documentService.copyDocumentRevisions({ revisions: sortedRevisions, ancestorId: importedRevision, origin, originUrl });
+    await this.documentService.importDocumentRevisions({
+      documentKey: key,
+      revisions: sortedRevisions,
+      ancestorId: importedRevision,
+      origin,
+      originUrl
+    });
   }
 }
 

@@ -99,12 +99,12 @@ function Docs({ initialState, PageTemplate }) {
   };
 
   const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags, templateDocumentKey }) => {
-    const { documentRevision } = await documentApiClient.saveDocument({ title, description, slug, language, tags, sections: [] });
+    const newDocument = await documentApiClient.createDocument({ title, description, slug, language, tags });
     setModalState(getDefaultModalState({ t, uiLanguage, settings }));
 
     window.location = urls.getDocUrl({
-      key: documentRevision.key,
-      slug: documentRevision.slug,
+      key: newDocument.key,
+      slug: newDocument.slug,
       view: DOC_VIEW_QUERY_PARAM.edit,
       templateDocumentKey: templateDocumentKey || clonedDocument?.key
     });

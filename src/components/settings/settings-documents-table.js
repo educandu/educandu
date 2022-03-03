@@ -5,7 +5,7 @@ import { Form, Table, Button, Input } from 'antd';
 import DocumentSelector from '../document-selector.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
-import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
+import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
@@ -121,7 +121,6 @@ function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
 SettingsDocumentsTable.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.oneOfType([
     documentMetadataShape,
-    documentRevisionShape,
     documentShape
   ])).isRequired,
   onChange: PropTypes.func.isRequired,
