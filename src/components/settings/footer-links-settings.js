@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { useLocale } from '../locale-context.js';
 import LanguageFlagAndName from '../language-flag-and-name.js';
 import SettingsDocumentsTable from './settings-documents-table.js';
-import { documentMetadataShape, documentRevisionShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
+import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const hasValue = value => value && String(value).trim();
 
@@ -47,7 +47,6 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
 FooterLinksSettings.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.oneOfType([
     documentMetadataShape,
-    documentRevisionShape,
     documentShape
   ])).isRequired,
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),

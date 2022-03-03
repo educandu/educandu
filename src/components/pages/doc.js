@@ -24,7 +24,7 @@ import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { ALERT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import { documentRevisionShape, documentShape, sectionShape } from '../../ui/default-prop-types.js';
+import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import {
@@ -66,7 +66,6 @@ function Doc({ initialState, PageTemplate }) {
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [view, setView] = useState(user ? initialView : VIEW.display);
   const [selectedHistoryRevision, setSelectedHistoryRevision] = useState(null);
-  const [latestRevision, setLatestRevision] = useState(initialState.latestRevision);
   const [isDocumentMetadataModalVisible, setIsDocumentMetadataModalVisible] = useState(false);
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
@@ -144,28 +143,10 @@ function Doc({ initialState, PageTemplate }) {
     setIsDocumentMetadataModalVisible(true);
   };
 
-  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags }) => {
-    const mappedDocumentRevision = {
-      title,
-      description,
-      slug,
-      language,
-      tags,
-      sections: latestRevision.sections.map(section => ({
-        key: section.key,
-        type: section.type,
-        content: section.content
-      })),
-      appendTo: {
-        key: latestRevision.key,
-        ancestorId: latestRevision._id
-      }
-    };
-    const { documentRevision } = await documentApiClient.saveDocument(mappedDocumentRevision);
-    const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
+  const handleDocumentMetadataModalSave = async ({ templateDocumentKey, ...newMetadata }) => {
+    const updatedDoc = await documentApiClient.updateDocumentMetadata({ documentKey: doc.key, metadata: newMetadata });
 
-    setDoc(latestDoc);
-    setLatestRevision(documentRevision);
+    setDoc(updatedDoc);
     setIsDocumentMetadataModalVisible(false);
   };
 
@@ -173,45 +154,29 @@ function Doc({ initialState, PageTemplate }) {
     setIsDocumentMetadataModalVisible(false);
   };
 
-  const handleEditOpen = async () => {
-    const { documentRevisions: revisions } = await documentApiClient.getDocumentRevisions(doc.key);
-
-    const newLatestRevision = revisions[revisions.length - 1];
-
+  const handleEditOpen = () => {
     setView(VIEW.edit);
-    setLatestRevision(newLatestRevision);
-    setCurrentSections(cloneDeep(newLatestRevision.sections));
+    setCurrentSections(cloneDeep(doc.sections));
   };
 
   const handleEditSave = async () => {
-    const mappedDocumentRevision = {
-      title: latestRevision.title,
-      description: latestRevision.description,
-      slug: latestRevision.slug,
-      language: latestRevision.language,
-      tags: latestRevision.tags,
-      sections: currentSections.filter(s => !pendingTemplateSectionKeys.includes(s.key)).map(s => ({
-        key: s.key,
-        type: s.type,
-        content: s.content
-      })),
-      appendTo: {
-        key: latestRevision.key,
-        ancestorId: latestRevision._id
-      }
-    };
+    const newSections = currentSections.filter(s => !pendingTemplateSectionKeys.includes(s.key)).map(s => ({
+      key: s.key,
+      type: s.type,
+      content: s.content
+    }));
 
     try {
-      const { documentRevision: newRevision } = await documentApiClient.saveDocument(mappedDocumentRevision);
+      const updatedDoc = await documentApiClient.updateDocumentSections({ documentKey: doc.key, sections: newSections });
 
       const currentSectionKeys = currentSections.map(s => s.key);
-      if (newRevision.sections.some(s => !currentSectionKeys.includes(s.key))) {
-        throw new Error('Updated sections do not match exiting sections');
+      if (updatedDoc.sections.some(s => !currentSectionKeys.includes(s.key))) {
+        throw new Error('Updated sections do not match existing sections');
       }
 
       const newPendingTemplateSectionKeys = [];
       const mergedSections = currentSections.map(currentSection => {
-        const updatedSection = newRevision.sections.find(s => s.key === currentSection.key);
+        const updatedSection = updatedDoc.sections.find(s => s.key === currentSection.key);
         if (updatedSection) {
           return updatedSection;
         }
@@ -220,11 +185,8 @@ function Doc({ initialState, PageTemplate }) {
         return currentSection;
       });
 
-      const { doc: latestDoc } = await documentApiClient.getDocument(doc.key);
-
       setIsDirty(false);
-      setDoc(latestDoc);
-      setLatestRevision(newRevision);
+      setDoc(updatedDoc);
       setCurrentSections(cloneDeep(mergedSections));
       setPendingTemplateSectionKeys(newPendingTemplateSectionKeys);
     } catch (error) {
@@ -236,7 +198,7 @@ function Doc({ initialState, PageTemplate }) {
     return new Promise(resolve => {
       const exitEditMode = () => {
         setPendingTemplateSectionKeys([]);
-        setCurrentSections(latestRevision.sections);
+        setCurrentSections(doc.sections);
 
         setIsDirty(false);
         setView(VIEW.display);
@@ -490,7 +452,6 @@ Doc.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     doc: documentShape.isRequired,
-    latestRevision: documentRevisionShape,
     templateSections: PropTypes.arrayOf(sectionShape)
   }).isRequired
 };

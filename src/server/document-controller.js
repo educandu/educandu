@@ -12,12 +12,15 @@ import { validateBody, validateParams, validateQuery } from '../domain/validatio
 import {
   getDocByKeyParamsSchema,
   getRevisionsByKeyQuerySchema,
-  createRevisionBodySchema,
+  documentMetadataBodySchema,
   hardDeleteSectionBodySchema,
   hardDeleteDocumentBodySchema,
   restoreRevisionBodySchema,
   getDocumentParamsSchema,
-  getDocumentQuerySchema
+  getDocumentQuerySchema,
+  documentKeyParamsSchema,
+  patchDocSectionsBodySchema,
+  createDocumentDataBodySchema
 } from '../domain/schemas/document-schemas.js';
 
 const { NotFound } = httpErrors;
@@ -57,43 +60,59 @@ class DocumentController {
       return res.redirect(301, urls.getDocUrl({ key: doc.key, slug: doc.slug, view, templateDocumentKey }));
     }
 
-    const templateDocument = templateDocumentKey
-      ? await this.documentService.getDocumentByKey(templateDocumentKey)
-      : null;
+    let templateDocument;
+    if (templateDocumentKey) {
+      if (doc.sections.length) {
+        return res.redirect(302, urls.getDocUrl({ key: doc.key, slug: doc.slug }));
+      }
 
-    if (templateDocumentKey && !templateDocument) {
-      throw new NotFound();
-    }
-
-    if (templateDocument && doc.sections.length) {
-      return res.redirect(302, urls.getDocUrl({ key: doc.key, slug: doc.slug }));
-    }
-
-    let mappedLatestRevision = null;
-    if (view === DOC_VIEW_QUERY_PARAM.edit) {
-      const latestRevision = await this.documentService.getDocumentRevisionById(doc.revision);
-      mappedLatestRevision = await this.clientDataMappingService.mapDocOrRevision(latestRevision, user);
+      templateDocument = await this.documentService.getDocumentByKey(templateDocumentKey);
+      if (!templateDocument) {
+        throw new NotFound();
+      }
+    } else {
+      templateDocument = null;
     }
 
     const [mappedDocument, mappedTemplateDocument] = await this.clientDataMappingService.mapDocsOrRevisions([doc, templateDocument], user);
     const templateSections = mappedTemplateDocument ? this.clientDataMappingService.createProposedSections(mappedTemplateDocument) : [];
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, latestRevision: mappedLatestRevision, templateSections });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.doc, { doc: mappedDocument, templateSections });
   }
 
-  async handlePostDoc(req, res) {
-    const revision = await this.documentService.createNewDocumentRevision({ doc: req.body, user: req.user });
-    if (!revision) {
-      throw new NotFound();
-    }
-
-    const documentRevision = await this.clientDataMappingService.mapDocOrRevision(revision, req.user);
-    return res.status(201).send({ documentRevision });
-  }
-
-  async handlePostDocRestoreRevision(req, res) {
+  async handlePostDocument(req, res) {
     const { user } = req;
-    const { documentKey, revisionId } = req.body;
+    const data = req.body;
+
+    const newDocument = await this.documentService.createDocument({ data, user });
+    const mappedNewDocument = await this.clientDataMappingService.mapDocOrRevision(newDocument, user);
+    return res.status(201).send(mappedNewDocument);
+  }
+
+  async handlePatchDocumentMetadata(req, res) {
+    const { user } = req;
+    const metadata = req.body;
+    const { key: documentKey } = req.params;
+
+    const updatedDocument = await this.documentService.updateDocumentMetadata({ documentKey, metadata, user });
+    const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
+    return res.status(201).send(mappedUpdatedDocument);
+  }
+
+  async handlePatchDocumentSections(req, res) {
+    const { user } = req;
+    const { sections } = req.body;
+    const { key: documentKey } = req.params;
+
+    const updatedDocument = await this.documentService.updateDocumentSections({ documentKey, sections, user });
+    const mappedUpdatedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
+    return res.status(201).send(mappedUpdatedDocument);
+  }
+
+  async handlePatchDocumentRestoreRevision(req, res) {
+    const { user } = req;
+    const { revisionId } = req.body;
+    const { key: documentKey } = req.params;
 
     const revisions = await this.documentService.restoreDocumentRevision({ documentKey, revisionId, user });
     if (!revisions.length) {
@@ -105,7 +124,7 @@ class DocumentController {
   }
 
   async handlePatchDocArchive(req, res) {
-    const revision = await this.documentService.setArchivedState({ documentKey: req.params.key, user: req.user, archived: true });
+    const revision = await this.documentService.updateArchivedState({ documentKey: req.params.key, user: req.user, archived: true });
     if (!revision) {
       throw new NotFound();
     }
@@ -115,7 +134,7 @@ class DocumentController {
   }
 
   async handlePatchDocUnarchive(req, res) {
-    const revision = await this.documentService.setArchivedState({ documentKey: req.params.key, user: req.user, archived: false });
+    const revision = await this.documentService.updateArchivedState({ documentKey: req.params.key, user: req.user, archived: false });
     if (!revision) {
       throw new NotFound();
     }
@@ -166,7 +185,7 @@ class DocumentController {
   async handleGetDocTags(req, res) {
     const searchString = req.params[0] || '';
 
-    const result = await this.documentService.findDocumentTags(searchString);
+    const result = await this.documentService.getDocumentTagsMatchingText(searchString);
     return res.send(result.length ? result[0].uniqueTags : []);
   }
 
@@ -199,25 +218,48 @@ class DocumentController {
   registerApi(router) {
     router.post(
       '/api/v1/docs',
-      [needsPermission(permissions.EDIT_DOC), jsonParserLargePayload, validateBody(createRevisionBodySchema)],
-      (req, res) => this.handlePostDoc(req, res)
+      jsonParserLargePayload,
+      needsPermission(permissions.EDIT_DOC),
+      validateBody(createDocumentDataBodySchema),
+      (req, res) => this.handlePostDocument(req, res)
     );
 
-    router.post(
-      '/api/v1/docs/restore-revision',
-      [needsPermission(permissions.EDIT_DOC), jsonParser, validateBody(restoreRevisionBodySchema)],
-      (req, res) => this.handlePostDocRestoreRevision(req, res)
+    router.patch(
+      '/api/v1/docs/:key/metadata',
+      jsonParser,
+      needsPermission(permissions.EDIT_DOC),
+      validateParams(documentKeyParamsSchema),
+      validateBody(documentMetadataBodySchema),
+      (req, res) => this.handlePatchDocumentMetadata(req, res)
+    );
+
+    router.patch(
+      '/api/v1/docs/:key/sections',
+      jsonParserLargePayload,
+      needsPermission(permissions.EDIT_DOC),
+      validateParams(documentKeyParamsSchema),
+      validateBody(patchDocSectionsBodySchema),
+      (req, res) => this.handlePatchDocumentSections(req, res)
+    );
+
+    router.patch(
+      '/api/v1/docs/:key/restore',
+      jsonParser,
+      needsPermission(permissions.EDIT_DOC),
+      validateParams(documentKeyParamsSchema),
+      validateBody(restoreRevisionBodySchema),
+      (req, res) => this.handlePatchDocumentRestoreRevision(req, res)
     );
 
     router.patch(
       '/api/v1/docs/:key/archive',
-      needsPermission(permissions.MANAGE_ARCHIVED_DOCS),
+      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsSchema)],
       (req, res) => this.handlePatchDocArchive(req, res)
     );
 
     router.patch(
       '/api/v1/docs/:key/unarchive',
-      needsPermission(permissions.MANAGE_ARCHIVED_DOCS),
+      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsSchema)],
       (req, res) => this.handlePatchDocUnarchive(req, res)
     );
 

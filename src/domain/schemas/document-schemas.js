@@ -3,11 +3,6 @@ import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 
-const documentRevisionAppendToSchema = joi.object({
-  key: idOrKeySchema.required(),
-  ancestorId: idOrKeySchema.required()
-});
-
 export const getRevisionsByKeyQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });
@@ -16,19 +11,32 @@ export const getDocByKeyParamsSchema = joi.object({
   key: idOrKeySchema.required()
 });
 
-export const createRevisionBodySchema = joi.object({
+export const documentKeyParamsSchema = joi.object({
+  key: idOrKeySchema.required()
+});
+
+export const patchDocSectionsBodySchema = joi.object({
+  sections: joi.array().items(sectionSchema)
+});
+
+export const createDocumentDataBodySchema = joi.object({
   title: joi.string().required(),
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  sections: joi.array().items(sectionSchema).required(),
-  appendTo: documentRevisionAppendToSchema.optional(),
   tags: joi.array().items(joi.string()).required(),
-  archived: joi.boolean()
+  sections: joi.array().items(sectionSchema)
+});
+
+export const documentMetadataBodySchema = joi.object({
+  title: joi.string().required(),
+  description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
+  slug: slugSchema,
+  language: joi.string().case('lower').required(),
+  tags: joi.array().items(joi.string()).required()
 });
 
 export const restoreRevisionBodySchema = joi.object({
-  documentKey: idOrKeySchema.required(),
   revisionId: idOrKeySchema.required()
 });
 

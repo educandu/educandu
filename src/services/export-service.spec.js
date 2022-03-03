@@ -34,7 +34,6 @@ describe('export-service', () => {
   beforeEach(() => {
     sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.root.url');
     sandbox.stub(userStore, 'getUsersByIds');
-    sandbox.stub(documentRevisionStore, 'getAllDocumentRevisionsByKey');
   });
 
   afterEach(async () => {
@@ -87,6 +86,8 @@ describe('export-service', () => {
     const rev3 = { _id: '3', order: 3, createdBy: 'user1' };
 
     beforeEach(() => {
+      sandbox.stub(documentRevisionStore, 'getAllDocumentRevisionsByKey');
+
       userStore.getUsersByIds.resolves([{ _id: 'user1', username: 'JohnDoe' }]);
       documentRevisionStore.getAllDocumentRevisionsByKey.resolves([rev1, rev2, rev3]);
     });

@@ -8,8 +8,8 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
+import { ROLE, ROOM_ACCESS_LEVEL, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
-import { ROLE, DOCUMENT_ORIGIN, ROOM_ACCESS_LEVEL, SAVE_USER_RESULT } from './domain/constants.js';
 
 export async function createTestDir() {
   const tempDir = url.fileURLToPath(new URL('../.test/', import.meta.url).href);
@@ -156,20 +156,15 @@ export async function createTestRoom(container, roomValues) {
   return room;
 }
 
-export function createTestDocument(container, user, document) {
+export function createTestDocument(container, user, data) {
   const documentService = container.get(DocumentService);
-
-  return documentService.createNewDocumentRevision({
-    doc: {
-      title: document.title ?? 'Title',
-      description: document.description ?? 'Description',
-      slug: document.slug ?? 'my-doc',
-      language: document.language ?? 'en',
-      sections: document.sections ?? [],
-      tags: document.tags || [],
-      appendTo: document.appendTo || null,
-      archived: document.archived || false,
-      origin: document.origin || DOCUMENT_ORIGIN.internal
+  return documentService.createDocument({
+    data: {
+      ...data,
+      title: data.title ?? 'Title',
+      description: data.description ?? 'Description',
+      slug: data.slug ?? 'my-doc',
+      language: data.language ?? 'en'
     },
     user
   });
@@ -177,30 +172,29 @@ export function createTestDocument(container, user, document) {
 
 export async function createTestRevisions(container, user, revisions) {
   const documentService = container.get(DocumentService);
-  const createdRevisions = [];
+  let lastCreatedDocument = null;
 
   for (const revision of revisions) {
-    const lastCreatedRevision = createdRevisions[createdRevisions.length - 1] || null;
+    const data = {
+      title: revision.title ?? lastCreatedDocument?.title ?? 'Title',
+      description: revision.description ?? lastCreatedDocument?.description ?? 'Description',
+      slug: revision.slug ?? lastCreatedDocument?.slug ?? 'my-doc',
+      language: revision.language ?? lastCreatedDocument?.language ?? 'en',
+      sections: (revision.sections ?? lastCreatedDocument?.sections ?? []).map(s => ({
+        key: s.key ?? uniqueId.create(),
+        type: s.type ?? 'markdown',
+        content: s.content ?? {}
+      }))
+    };
 
-    // eslint-disable-next-line no-await-in-loop
-    createdRevisions.push(await documentService.createNewDocumentRevision({
-      doc: {
-        title: revision.title ?? lastCreatedRevision?.title ?? 'Title',
-        description: revision.description ?? lastCreatedRevision?.description ?? 'Description',
-        slug: revision.slug ?? lastCreatedRevision?.slug ?? 'my-doc',
-        language: revision.language ?? lastCreatedRevision?.language ?? 'en',
-        sections: (revision.sections ?? lastCreatedRevision?.sections ?? []).map(s => ({
-          key: s.key ?? uniqueId.create(),
-          type: s.type ?? 'markdown',
-          content: s.content ?? {}
-        })),
-        appendTo: lastCreatedRevision
-          ? { key: lastCreatedRevision.key, ancestorId: lastCreatedRevision._id }
-          : null
-      },
-      user
-    }));
+    lastCreatedDocument = lastCreatedDocument
+      // eslint-disable-next-line no-await-in-loop
+      ? await documentService.updateDocument({ documentKey: lastCreatedDocument.key, data, user })
+      // eslint-disable-next-line no-await-in-loop
+      : await documentService.createDocument({ data, user });
   }
 
-  return createdRevisions;
+  return lastCreatedDocument
+    ? documentService.getAllDocumentRevisionsByKey(lastCreatedDocument.key)
+    : [];
 }

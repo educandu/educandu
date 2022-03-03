@@ -17,10 +17,6 @@ class DocumentRevisionStore {
     return this.collection.find({ key: documentKey }, { sort: [['order', 1]], session }).toArray();
   }
 
-  getLatestDocumentRevisionByKey(documentKey, { session } = {}) {
-    return this.collection.findOne({ key: documentKey }, { sort: [['order', -1]], session });
-  }
-
   saveDocumentRevision(documentRevision, { session } = {}) {
     validate(documentRevision, documentRevisionDBSchema);
     return this.collection.replaceOne({ _id: documentRevision._id }, documentRevision, { session, upsert: true });
