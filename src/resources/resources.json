@@ -667,18 +667,16 @@
     "namespace": "search",
     "language": "en",
     "resources": {
-      "tags": "Tags",
-      "refineSearch": "Filter by tags",
-      "searchResultPrefix": "Results for"
+      "headline": "{count, plural, =1 {# document} other {# documents}} found\n",
+      "filterPlaceholder": "Filter by tags"
     }
   },
   {
     "namespace": "search",
     "language": "de",
     "resources": {
-      "tags": "Tags",
-      "refineSearch": "Nach Tags filtern",
-      "searchResultPrefix": "Ergebnisse für"
+      "headline": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
+      "filterPlaceholder": "Nach Tags filtern"
     }
   },
   {

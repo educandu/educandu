@@ -73,7 +73,7 @@ function Search({ PageTemplate }) {
       render: renderTitle
     },
     {
-      title: t('tags'),
+      title: t('common:tags'),
       dataIndex: 'tags',
       render: renderTags,
       responsive: ['md']
@@ -96,8 +96,8 @@ function Search({ PageTemplate }) {
   return (
     <PageTemplate alerts={alerts}>
       <div className="SearchPage">
-        <div className="SearchPage-header">
-          <h1>{`${t('searchResultPrefix')}: ${searchText}`} </h1>
+        <div className="SearchPage-headline">
+          <h1>{t('headline', { count: filteredDocs.length })}</h1>
         </div>
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
@@ -111,7 +111,7 @@ function Search({ PageTemplate }) {
             options={tagOptions}
             placeholder={(
               <span className="SearchPage-filterPlaceholder">
-                <span>{t('refineSearch')}</span>
+                <span>{t('filterPlaceholder')}</span>
                 <SearchOutlined className="SearchPage-filterPlaceholderIcon" />
               </span>
             )}

@@ -1,9 +1,8 @@
-tags:
-  en: Tags
-  de: Tags
-refineSearch:
+headline:
+  en: |
+    {count, plural, =1 {# document} other {# documents}} found
+  de: |
+    {count, plural, =1 {# Dokument} other {# Dokumente}} gefunden
+filterPlaceholder:
   en: Filter by tags
   de: Nach Tags filtern
-searchResultPrefix:
-  en: Results for
-  de: Ergebnisse für
