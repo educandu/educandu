@@ -31,6 +31,7 @@ import {
   removeItemAt,
   replaceItemAt
 } from '../../utils/array-utils.js';
+import Title from '../title.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -227,6 +228,7 @@ function Lesson({ PageTemplate, initialState }) {
               <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
             </Breadcrumb>
           </div>
+          <Title text={lesson.title} />
           <SectionsDisplay
             sections={currentSections}
             publicStorage={publicStorage}

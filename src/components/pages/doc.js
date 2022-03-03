@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import Title from '../title.js';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -388,6 +389,7 @@ function Doc({ initialState, PageTemplate }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="DocPage">
+          <Title text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title} />
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
@@ -403,8 +405,8 @@ function Doc({ initialState, PageTemplate }) {
             onSectionDelete={handleSectionDelete}
             onSectionHardDelete={handleSectionHardDelete}
             />
+          <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
         </div>
-        <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
       </PageTemplate>
       <Restricted to={permissions.EDIT_DOC}>
         <HistoryControlPanel
