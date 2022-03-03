@@ -22,9 +22,7 @@ function Revision({ initialState, PageTemplate }) {
           canEdit={false}
           />
       </div>
-      <aside className="Content">
-        <CreditsFooter revision={revision} />
-      </aside>
+      <CreditsFooter revision={revision} />
     </PageTemplate>
   );
 }

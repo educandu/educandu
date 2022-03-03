@@ -1,3 +1,4 @@
+import { Alert } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
@@ -28,11 +29,35 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
     'DefaultPageTemplate-content--fullScreen': fullScreen
   });
 
+  const renderAlert = (alert, index) => {
+    const shouldRenderAlert = !fullScreen || alert.showInFullScreen;
+
+    if (!shouldRenderAlert) {
+      return null;
+    }
+
+    return (
+      <Alert
+        key={index}
+        message={alert.message}
+        type={alert.type || 'info'}
+        banner
+        closable={alert.closable || false}
+        onClose={alert.onClose || (() => { })}
+        />
+    );
+  };
+
   return (
     <div className="DefaultPageTemplate">
       <DefaultPageHeader fullScreen={fullScreen} alerts={alerts} onUiLanguageClick={handleUiLanguageClick} />
       <main className={contentAreaClasses}>
         <div className={contentClasses}>
+          {!!alerts?.length && (
+            <div className="DefaultPageTemplate-contentAlerts">
+              { alerts.map((alert, index) => renderAlert(alert, index)) }
+            </div>
+          )}
           {children}
         </div>
       </main>

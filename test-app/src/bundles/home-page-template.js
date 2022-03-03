@@ -27,11 +27,11 @@ function HomePageTemplate({ children, alerts }) {
       <main className="DefaultPageTemplate-contentArea DefaultPageTemplate-contentArea--fullScreen">
         <div className="DefaultPageTemplate-content DefaultPageTemplate-content--fullScreen">
           <div className="HomePageTemplate-logo" >
-            <DefaultSiteLogo readonly />
+            <DefaultSiteLogo />
           </div>
           {children}
           {settings.homepageInfo && (
-            <div className="HomePageTemplate-info">
+            <div>
               <Markdown renderMedia>{settings.homepageInfo}</Markdown>
             </div>
           )}

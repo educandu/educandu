@@ -22,12 +22,18 @@
 }
 
 .DefaultPageTemplate-content {
+  .m-page-content;
   margin: 0 auto;
   width: 100%;
   min-width: @edu-min-page-width;
   max-width: @edu-content-width-wide;
 
   &.DefaultPageTemplate-content--fullScreen {
+    .m-page-content-fullscreen;
     max-width: @edu-content-width-narrow;
   }
+}
+
+.DefaultPageTemplate-contentAlerts {
+  padding-bottom: 20px;
 }

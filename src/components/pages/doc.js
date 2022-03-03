@@ -442,9 +442,7 @@ function Doc({ initialState, PageTemplate }) {
             onSectionHardDelete={handleSectionHardDelete}
             />
         </div>
-        <aside className="Content">
-          <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
-        </aside>
+        <CreditsFooter doc={selectedHistoryRevision ? null : doc} revision={selectedHistoryRevision} />
       </PageTemplate>
       <Restricted to={permissions.EDIT_DOC}>
         <HistoryControlPanel
