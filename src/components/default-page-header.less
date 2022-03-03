@@ -1,27 +1,17 @@
-@default-page-header-content-min-height: 32px;
-@default-page-header-min-height: @default-page-header-content-min-height + (2* @edu-content-padding);
-
 .DefaultPageHeader {
-  top: 0;
+  .m-page-content;
   flex: none;
   width: 100%;
-  position: sticky;
-  z-index: @edu-z-index-cover-layer;
-  margin-bottom: @edu-content-padding;
 }
 
 .DefaultPageHeader-header {
-  .m-inverted-button;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: @default-page-header-min-height;
-  background-color: @edu-primary-color;
 }
 
 .DefaultPageHeader-headerContent {
   display: block;
-  padding: @edu-content-padding;
 
   &.DefaultPageHeader-headerContent--left {
     display: flex;
@@ -47,5 +37,5 @@
 
 .DefaultPageHeader-loginButton {
   cursor: pointer;
-  margin-right: (2.5 * @edu-button-spacing);
+  margin-right: (3 * @edu-button-spacing);
 }

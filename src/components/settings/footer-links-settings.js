@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { useLocale } from '../locale-context.js';
-import LanguageFlagAndName from '../language-flag-and-name.js';
 import SettingsDocumentsTable from './settings-documents-table.js';
+import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const hasValue = value => value && String(value).trim();
@@ -29,9 +29,7 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
         <React.Fragment key={lang}>
           {idx !== 0 && <br />}
           <h3>
-            <LanguageFlagAndName
-              language={lang}
-              />
+            <LanguageFlagAndName language={lang} />
           </h3>
           <SettingsDocumentsTable
             documents={documents}

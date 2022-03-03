@@ -3,7 +3,7 @@ import { Modal, Radio } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
-import LanguageFlagAndName from './language-flag-and-name.js';
+import LanguageFlagAndName from './localization/language-flag-and-name.js';
 
 function UiLanguageDialog({ visible, onClose }) {
   const { t, i18n } = useTranslation('uiLanguageDialog');

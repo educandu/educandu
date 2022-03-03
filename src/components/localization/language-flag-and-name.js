@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useLocale } from './locale-context.js';
-import { useService } from './container-context.js';
-import LanguageNameProvider from '../data/language-name-provider.js';
-import CountryFlagAndName from './localization/country-flag-and-name.js';
+import { useLocale } from '../locale-context.js';
+import { useService } from '../container-context.js';
+import LanguageNameProvider from '../../data/language-name-provider.js';
+import CountryFlagAndName from '../localization/country-flag-and-name.js';
 
 export default function LanguageFlagAndName({ language, flagOnly, stacked }) {
   const { uiLanguage } = useLocale();

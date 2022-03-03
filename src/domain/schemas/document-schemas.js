@@ -3,15 +3,7 @@ import { DOC_VIEW_QUERY_PARAM } from '../constants.js';
 import { maxDocumentDescriptionLength } from '../validation-constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 
-export const getRevisionsByKeyQuerySchema = joi.object({
-  key: idOrKeySchema.required()
-});
-
-export const getDocByKeyParamsSchema = joi.object({
-  key: idOrKeySchema.required()
-});
-
-export const documentKeyParamsSchema = joi.object({
+export const documentKeyParamsOrQuerySchema = joi.object({
   key: idOrKeySchema.required()
 });
 

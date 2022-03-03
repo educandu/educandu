@@ -5,7 +5,7 @@ import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import ImportTypeIcon from './import-type-icon.js';
 import { useService } from './container-context.js';
-import LanguageFlagAndName from './language-flag-and-name.js';
+import LanguageIcon from './localization/language-icon.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import React, { useMemo, memo, useState, useEffect } from 'react';
 import LanguageNameProvider from '../data/language-name-provider.js';
@@ -28,7 +28,7 @@ function createRecords(importableDocuments, formatDate, languageNameProvider, la
       titleComponent: getTitleComponent(doc.title, url),
       language: doc.language,
       languageLocalized: documentLanguageData.name,
-      languageComponent: <LanguageFlagAndName language={doc.language} flagOnly />,
+      languageComponent: <LanguageIcon language={doc.language} flagOnly />,
       updatedOn: doc.updatedOn,
       updatedOnLocalized: formatDate(doc.updatedOn),
       importType: doc.importType,

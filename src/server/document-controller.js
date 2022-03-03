@@ -10,15 +10,13 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
-  getDocByKeyParamsSchema,
-  getRevisionsByKeyQuerySchema,
+  documentKeyParamsOrQuerySchema,
   documentMetadataBodySchema,
   hardDeleteSectionBodySchema,
   hardDeleteDocumentBodySchema,
   restoreRevisionBodySchema,
   getDocumentParamsSchema,
   getDocumentQuerySchema,
-  documentKeyParamsSchema,
   patchDocSectionsBodySchema,
   createDocumentDataBodySchema
 } from '../domain/schemas/document-schemas.js';
@@ -228,7 +226,7 @@ class DocumentController {
       '/api/v1/docs/:key/metadata',
       jsonParser,
       needsPermission(permissions.EDIT_DOC),
-      validateParams(documentKeyParamsSchema),
+      validateParams(documentKeyParamsOrQuerySchema),
       validateBody(documentMetadataBodySchema),
       (req, res) => this.handlePatchDocumentMetadata(req, res)
     );
@@ -237,7 +235,7 @@ class DocumentController {
       '/api/v1/docs/:key/sections',
       jsonParserLargePayload,
       needsPermission(permissions.EDIT_DOC),
-      validateParams(documentKeyParamsSchema),
+      validateParams(documentKeyParamsOrQuerySchema),
       validateBody(patchDocSectionsBodySchema),
       (req, res) => this.handlePatchDocumentSections(req, res)
     );
@@ -246,32 +244,32 @@ class DocumentController {
       '/api/v1/docs/:key/restore',
       jsonParser,
       needsPermission(permissions.EDIT_DOC),
-      validateParams(documentKeyParamsSchema),
+      validateParams(documentKeyParamsOrQuerySchema),
       validateBody(restoreRevisionBodySchema),
       (req, res) => this.handlePatchDocumentRestoreRevision(req, res)
     );
 
     router.patch(
       '/api/v1/docs/:key/archive',
-      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsSchema)],
+      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsOrQuerySchema)],
       (req, res) => this.handlePatchDocArchive(req, res)
     );
 
     router.patch(
       '/api/v1/docs/:key/unarchive',
-      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsSchema)],
+      [needsPermission(permissions.MANAGE_ARCHIVED_DOCS), validateParams(documentKeyParamsOrQuerySchema)],
       (req, res) => this.handlePatchDocUnarchive(req, res)
     );
 
     router.get(
       '/api/v1/docs',
-      [needsPermission(permissions.VIEW_DOCS), validateQuery(getRevisionsByKeyQuerySchema)],
+      [needsPermission(permissions.VIEW_DOCS), validateQuery(documentKeyParamsOrQuerySchema)],
       (req, res) => this.handleGetDocs(req, res)
     );
 
     router.get(
       '/api/v1/docs/:key',
-      [needsPermission(permissions.VIEW_DOCS), validateParams(getDocByKeyParamsSchema)],
+      [needsPermission(permissions.VIEW_DOCS), validateParams(documentKeyParamsOrQuerySchema)],
       (req, res) => this.handleGetDoc(req, res)
     );
 
