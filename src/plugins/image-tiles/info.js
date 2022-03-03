@@ -1,10 +1,7 @@
 import React from 'react';
-import iconNs from '@ant-design/icons';
 import { IMAGE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import ImageTilesIcon from './image-tiles-icon.js';
-
-const Icon = iconNs.default || iconNs;
 
 export default class ImageTiles {
   static get typeName() { return 'image-tiles'; }
@@ -18,7 +15,7 @@ export default class ImageTiles {
   }
 
   getIcon() {
-    return <Icon component={ImageTilesIcon} />;
+    return <ImageTilesIcon />;
   }
 
   getDefaultContent() {

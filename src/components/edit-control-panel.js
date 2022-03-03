@@ -3,14 +3,11 @@ import { Button, Tooltip } from 'antd';
 import React, { useState } from 'react';
 import ControlPanel from './control-panel.js';
 import { useTranslation } from 'react-i18next';
-import {
-  EditOutlined,
-  SaveOutlined,
-  CloudOutlined,
-  CloudUploadOutlined,
-  WarningOutlined,
-  UndoOutlined
-} from '@ant-design/icons';
+import SaveIcon from './icons/general/save-icon.js';
+import EditIcon from './icons/general/edit-icon.js';
+import CloseIcon from './icons/general/close-icon.js';
+import EditDocIcon from './icons/multi-color/edit-doc-icon.js';
+import { CloudOutlined, CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
 
 export const EDIT_CONTROL_PANEL_STATUS = {
   saved: 'saved',
@@ -82,7 +79,7 @@ function EditControlPanel({
     <span className="EditControlPanel-leftSide">
       <span className="EditControlPanel-leftSideButton">
         <Tooltip title={t('editMetadata')} placement="topLeft">
-          <Button size="small" icon={<EditOutlined />} onClick={onMetadataOpen} ghost />
+          <Button size="small" icon={<EditIcon />} onClick={onMetadataOpen} ghost />
         </Tooltip>
       </span>
       {metadata}
@@ -98,7 +95,7 @@ function EditControlPanel({
         size="small"
         loading={isSaving}
         onClick={handleSave}
-        icon={<SaveOutlined />}
+        icon={<SaveIcon />}
         className="EditControlPanel-rightSideButton"
         disabled={status !== EDIT_CONTROL_PANEL_STATUS.dirty}
         >
@@ -110,7 +107,7 @@ function EditControlPanel({
           ghost
           size="small"
           onClick={handleCancel}
-          icon={<UndoOutlined />}
+          icon={<CloseIcon />}
           className="EditControlPanel-rightSideButton"
           disabled={status === EDIT_CONTROL_PANEL_STATUS.saved}
           >
@@ -124,7 +121,7 @@ function EditControlPanel({
     <ControlPanel
       className="EditControlPanel"
       startOpen={startOpen}
-      openIcon={<EditOutlined />}
+      openIcon={<EditDocIcon />}
       openIconPositionFromRight={1}
       canClose={canClose}
       onOpen={handleOpen}

@@ -1,6 +1,9 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
 
-function AbcNotationIcon() {
+const Icon = iconNs.default || iconNs;
+
+export function AbcNotationIconComponent() {
   return (
     <svg height="1em" style={{ enableBackground: 'new 0 0 1000 1000' }} width="1em" viewBox="0 0 1000 1000">
       <path style={{ fill: '#f2f2f2' }} d="M511.24 591.03c-8.46 0-16.42-4.16-21.29-11.12a26.002 26.002 0 0 1-3.12-23.8l43.91-119.4c.9-2.45 2.47-4.61 4.54-6.21l319.21-248.69a48.977 48.977 0 0 1 30.31-10.56c14.95 0 28.86 6.69 38.17 18.35l51.92 65.06c8.12 10.18 11.79 22.91 10.33 35.84-1.46 12.94-7.89 24.53-18.08 32.64L647.76 571.96a13.888 13.888 0 0 1-6.84 2.84l-126.36 16.02c-1.14.15-2.24.21-3.32.21z" />
@@ -9,6 +12,12 @@ function AbcNotationIcon() {
       <path style={{ fill: 'none', stroke: '#666', strokeWidth: '40', strokeLinecap: 'round', strokeLinejoin: 'round', strokeMiterlimit: '10' }} d="M94.93 390.12h285.66M20.48 515.57h285.61M77.41 652.43h151.43M86.17 789.29h291.78" />
       <ellipse style={{ fill: '#666' }} cx="374.01" cy="646.04" rx="113.59" ry="75.64" transform="rotate(-22.616 374.104 646.102)" />
     </svg>
+  );
+}
+
+function AbcNotationIcon() {
+  return (
+    <Icon component={AbcNotationIconComponent} />
   );
 }
 

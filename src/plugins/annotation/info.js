@@ -1,10 +1,7 @@
 import React from 'react';
-import iconNs from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
-
-const Icon = iconNs.default || iconNs;
 
 export default class Annotation {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -21,7 +18,7 @@ export default class Annotation {
   }
 
   getIcon() {
-    return <Icon component={AnnotationIcon} />;
+    return <AnnotationIcon />;
   }
 
   getDefaultContent(t) {
