@@ -6,6 +6,7 @@ import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
+import MetadataTitle from '../metadata-title.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
@@ -227,6 +228,7 @@ function Lesson({ PageTemplate, initialState }) {
               <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
             </Breadcrumb>
           </div>
+          <MetadataTitle text={lesson.title} />
           <SectionsDisplay
             sections={currentSections}
             publicStorage={publicStorage}
