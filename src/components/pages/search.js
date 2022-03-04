@@ -1,5 +1,5 @@
+import by from 'thenby';
 import Tag from '../tag.js';
-import firstBy from 'thenby';
 import PropTypes from 'prop-types';
 import { Table, Select } from 'antd';
 import urls from '../../utils/urls.js';
@@ -23,12 +23,27 @@ function Search({ PageTemplate }) {
   const { t } = useTranslation('search');
   const { formatDate } = useDateFormat();
 
+  const sortingOptions = [
+    { label: `${t('sorting')}: ${t('relevance')}`, value: 'relevance' },
+    { label: `${t('sorting')}: ${t('common:title')}`, value: 'title' },
+    { label: `${t('sorting')}: ${t('common:language')}`, value: 'language' },
+    { label: `${t('sorting')}: ${t('common:createdOn')}`, value: 'createdOn' },
+    { label: `${t('sorting')}: ${t('common:updatedOn')}`, value: 'updatedOn' }
+  ];
+
+  const sortByRelevance = docsToSort => docsToSort.sort(by(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByTitle = docsToSort => docsToSort.sort(by(doc => doc.title, 'asc').thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByLanguage = docsToSort => docsToSort.sort(by(doc => doc.language, 'asc').thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByCreatedOn = docsToSort => docsToSort.sort(by(doc => doc.createdOn, 'desc'));
+  const sortByUpdatedOn = docsToSort => docsToSort.sort(by(doc => doc.updatedOn, 'desc'));
+
   const [docs, setDocs] = useState([]);
-  const [filteredDocs, setFilteredDocs] = useState([]);
+  const [displayedDocs, setDisplayedDocs] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
   const [searchText, setSearchText] = useState(request.query.query);
+  const [sorting, setSorting] = useState(sortingOptions[0].value);
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
   useEffect(() => {
@@ -55,23 +70,39 @@ function Search({ PageTemplate }) {
   }, [docs]);
 
   useEffect(() => {
-    const newFilteredDocs = docs
-      .filter(doc => selectedTags.every(selectedTag => doc.tags.some(docTag => docTag.toLowerCase() === selectedTag)))
-      .sort(firstBy(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
-
-    setFilteredDocs(newFilteredDocs);
+    const filteredDocs = docs.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
+    setDisplayedDocs(sortByRelevance(filteredDocs));
   }, [docs, selectedTags]);
 
-  const handleDeselectTagsClick = () => setSelectedTags([]);
+  const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
-  const handleSearch = tag => {
-    setSelectedTags(ensureIsIncluded(selectedTags, tag));
+  const handleDeselectTagsClick = () => setSelectedTags([]);
+  const handleSelectSorting = sortingValue => {
+    setSorting(sortingValue);
+    switch (sortingValue) {
+      case 'relevance':
+        setDisplayedDocs(sortByRelevance(displayedDocs));
+        break;
+      case 'title':
+        setDisplayedDocs(sortByTitle(displayedDocs));
+        break;
+      case 'language':
+        setDisplayedDocs(sortByLanguage(displayedDocs));
+        break;
+      case 'createdOn':
+        setDisplayedDocs(sortByCreatedOn(displayedDocs));
+        break;
+      case 'updatedOn':
+        setDisplayedDocs(sortByUpdatedOn(displayedDocs));
+        break;
+      default:
+        break;
+    }
   };
 
   const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
   const renderTitle = (title, doc) => (<a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>);
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
-
   const renderCellTags = tags => (
     <div className="SearchPage-cellTags">
       {tags.map(tag => (<Tag key={tag} value={tag} />))}
@@ -113,17 +144,17 @@ function Search({ PageTemplate }) {
     <PageTemplate alerts={alerts}>
       <div className="SearchPage">
         <div className="SearchPage-headline">
-          <h1>{t('headline', { count: filteredDocs.length })}</h1>
+          <h1>{t('headline', { count: displayedDocs.length })}</h1>
         </div>
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
           <Select
-            size="large"
-            onChange={handleSearch}
-            options={tagOptions}
             showArrow
             showSearch
+            size="large"
             value={null}
+            options={tagOptions}
+            onChange={handleSelectTag}
             placeholder={(
               <span className="SearchPage-filterPlaceholder">
                 <span>{`${t('filterPlaceholder')} (${selectedTags.length})`}</span>
@@ -131,6 +162,13 @@ function Search({ PageTemplate }) {
               </span>
             )}
             suffixIcon={<MenuOutlined />}
+            />
+          <Select
+            size="large"
+            value={sorting}
+            options={sortingOptions}
+            onChange={handleSelectSorting}
+            showArrow
             />
         </div>
         <div className="SearchPage-selectedTags">
@@ -142,7 +180,7 @@ function Search({ PageTemplate }) {
           pagination={false}
           size="middle"
           columns={columns}
-          dataSource={filteredDocs}
+          dataSource={[...displayedDocs]}
           loading={isSearching}
           />
       </div>

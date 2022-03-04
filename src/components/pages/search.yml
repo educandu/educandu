@@ -9,3 +9,9 @@ filterPlaceholder:
 deselectTags:
   en: Remove all tags
   de: Alle Tags löschen
+sorting:
+  en: Sorting
+  de: Sortierung
+relevance:
+  en: Relevance
+  de: Relevanz

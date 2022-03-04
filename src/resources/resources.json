@@ -669,7 +669,9 @@
     "resources": {
       "headline": "{count, plural, =1 {# document} other {# documents}} found\n",
       "filterPlaceholder": "Filter by tags",
-      "deselectTags": "Remove all tags"
+      "deselectTags": "Remove all tags",
+      "sorting": "Sorting",
+      "relevance": "Relevance"
     }
   },
   {
@@ -678,7 +680,9 @@
     "resources": {
       "headline": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
       "filterPlaceholder": "Nach Tags filtern",
-      "deselectTags": "Alle Tags löschen"
+      "deselectTags": "Alle Tags löschen",
+      "sorting": "Sortierung",
+      "relevance": "Relevanz"
     }
   },
   {
