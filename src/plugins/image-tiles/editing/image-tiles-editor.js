@@ -2,21 +2,18 @@ import React from 'react';
 import TileEditor from './tile-editor.js';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
+import DeleteButton from '../../../components/delete-button.js';
+import { SettingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Form, Menu, Radio, Slider, Button, Dropdown } from 'antd';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
+import MoveUpIcon from '../../../components/icons/general/move-up-icon.js';
+import MoveDownIcon from '../../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
 import { confirmDeleteImageTile } from '../../../components/confirmation-dialogs.js';
-import { SettingOutlined, PlusOutlined, ArrowUpOutlined, ArrowDownOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-
-const TILE_MENU_KEY = {
-  moveUp: 'move-up',
-  moveDown: 'move-down',
-  delete: 'delete'
-};
 
 const possibleValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const minValue = possibleValues[0];
@@ -84,22 +81,9 @@ function ImageTilesEditor({ content, onContentChanged, publicStorage, privateSto
     changeContent({ tiles: removeItemAt(tiles, index) });
   };
 
-  const handleTileMenuClick = ({ item, key }) => {
-    const index = item.props['data-index'];
-    switch (key) {
-      case TILE_MENU_KEY.moveUp:
-        moveUpTile(index);
-        break;
-      case TILE_MENU_KEY.moveDown:
-        moveDownTile(index);
-        break;
-      case TILE_MENU_KEY.delete:
-        confirmDeleteImageTile(t, () => deleteTile(index));
-        break;
-      default:
-        break;
-    }
-  };
+  const handleMoveUpClick = index => moveUpTile(index);
+  const handleMoveDownClick = index => moveDownTile(index);
+  const handleDeleteClick = index => confirmDeleteImageTile(t, () => deleteTile(index));
 
   const handleAddButtonClick = () => {
     const newTiles = content.tiles.slice();
@@ -108,15 +92,15 @@ function ImageTilesEditor({ content, onContentChanged, publicStorage, privateSto
   };
 
   const renderTileMenu = index => (
-    <Menu onClick={handleTileMenuClick}>
-      <Menu.Item data-index={index} key={TILE_MENU_KEY.moveUp}>
-        <ArrowUpOutlined />&nbsp;&nbsp;<span>{t('common:moveUp')}</span>
+    <Menu>
+      <Menu.Item key="moveUp" onClick={() => handleMoveUpClick(index)}>
+        <Button type="link" size="small" icon={<MoveUpIcon />}>{t('common:moveUp')}</Button>
       </Menu.Item>
-      <Menu.Item data-index={index} key={TILE_MENU_KEY.moveDown}>
-        <ArrowDownOutlined />&nbsp;&nbsp;<span>{t('common:moveDown')}</span>
+      <Menu.Item key="moveDown" onClick={() => handleMoveDownClick(index)}>
+        <Button type="link" size="small" icon={<MoveDownIcon />}>{t('common:moveDown')}</Button>
       </Menu.Item>
-      <Menu.Item data-index={index} key={TILE_MENU_KEY.delete}>
-        <DeleteOutlined style={{ color: 'red' }} />&nbsp;&nbsp;<span>{t('common:delete')}</span>
+      <Menu.Item key="delete" >
+        <DeleteButton onClick={() => handleDeleteClick(index)}>{t('common:delete')}</DeleteButton>
       </Menu.Item>
     </Menu>
   );

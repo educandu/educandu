@@ -2,11 +2,12 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Input, Table, Button, Radio } from 'antd';
 import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
+import DeleteButton from '../../../components/delete-button.js';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
-import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -140,12 +141,7 @@ function EarTrainingEditor({ content, onContentChanged, publicStorage, privateSt
       width: 48,
       key: 'button',
       render: (value, item, index) => (
-        <Button
-          type="danger"
-          icon={<DeleteOutlined />}
-          disabled={tests.length < 2}
-          onClick={() => handleDeleteButtonClick(index)}
-          />
+        <DeleteButton onClick={() => handleDeleteButtonClick(index)} disabled={tests.length < 2} />
       )
     }
   ];

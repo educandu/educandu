@@ -10,6 +10,7 @@ import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
 import Highlighter from 'react-highlighter';
 import UsedStorage from './used-storage.js';
+import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
@@ -27,7 +28,6 @@ import {
   FolderOutlined,
   FileOutlined,
   UploadOutlined,
-  DeleteOutlined,
   LockOutlined,
   GlobalOutlined
 } from '@ant-design/icons';
@@ -79,7 +79,7 @@ class StorageBrowser extends React.Component {
         dataIndex: 'displayName',
         key: 'displayName',
         align: 'left',
-        render: this.renderNameColumn,
+        render: this.renderNameCell,
         sorter: firstBy('isDirectory', { direction: -1 })
           .thenBy('displayName', { ignoreCase: true })
           .thenBy('displayName', { ignoreCase: false }),
@@ -115,7 +115,7 @@ class StorageBrowser extends React.Component {
       this.columns.push({
         dataIndex: 'isDirectory',
         key: 'displayName',
-        render: this.renderDeleteColumn,
+        render: this.renderDeleteCell,
         onCell: ({ displayName }) => {
           return {
             onClick: event => {
@@ -468,11 +468,11 @@ class StorageBrowser extends React.Component {
     });
   }
 
-  renderDeleteColumn(isDirectory) {
-    return isDirectory ? null : (<DeleteOutlined className="StorageBrowser-tableDeleteCell" />);
+  renderDeleteCell(isDirectory) {
+    return isDirectory ? null : <DeleteButton />;
   }
 
-  renderNameColumn(text, record) {
+  renderNameCell(text, record) {
     const { filterText } = this.state;
     const normalizedFilterText = filterText.toLowerCase().trim();
     const icon = record.isDirectory

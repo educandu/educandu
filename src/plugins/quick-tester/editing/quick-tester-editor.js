@@ -2,9 +2,10 @@ import React from 'react';
 import { TESTS_ORDER } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import { Form, Input, Table, Button, Radio } from 'antd';
+import DeleteButton from '../../../components/delete-button.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
-import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -119,12 +120,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
       width: 48,
       key: 'button',
       render: (value, item, index) => (
-        <Button
-          disabled={tests.length < 2}
-          type="danger"
-          icon={<DeleteOutlined />}
-          onClick={() => handleDeleteButtonClick(index)}
-          />
+        <DeleteButton onClick={() => handleDeleteButtonClick(index)} disabled={tests.length < 2} />
       )
     }
   ];
