@@ -8,10 +8,10 @@ import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../domain/constants.js';
 import errorHelper from '../../ui/error-helper.js';
 import React, { useEffect, useState } from 'react';
+import { Table, Popover, Tabs, Select } from 'antd';
 import { replaceItem } from '../../utils/array-utils.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { Table, Popover, Tabs, Select, Button } from 'antd';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -337,32 +337,17 @@ function Users({ initialState, PageTemplate }) {
   const renderActions = (_, user) => {
     return (
       <div className="UsersPage-actions">
-        <Button
-          type="link"
-          size="small"
-          className="UsersPage-actionButton"
-          onClick={() => handleAddReminderClick(user)}
-          >
+        <a className="UsersPage-actionButton" onClick={() => handleAddReminderClick(user)}>
           {t('addReminder')}
-        </Button>
+        </a>
         {!!user.storage.reminders.length && (
-        <Button
-          type="link"
-          size="small"
-          className="UsersPage-actionButton"
-          onClick={() => handleRemoveRemindersClick(user)}
-          >
+        <a className="UsersPage-actionButton" onClick={() => handleRemoveRemindersClick(user)}>
           {t('removeAllReminders')}
-        </Button>
+        </a>
         )}
-        <Button
-          type="link"
-          size="small"
-          className="UsersPage-actionButton"
-          onClick={() => handleDeleteAllPrivateRoomsClick(user)}
-          >
+        <a className="UsersPage-actionButton" onClick={() => handleDeleteAllPrivateRoomsClick(user)}>
           {t('deleteAllPrivateRooms')}
-        </Button>
+        </a>
       </div>
     );
   };

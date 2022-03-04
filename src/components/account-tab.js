@@ -77,7 +77,7 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
       <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} initialValue={user.username} {...formItemLayout} />
       <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} {...formItemLayout} />
       <FormItem {...tailFormItemLayout}>
-        <Button type="link" size="small" onClick={handleResetPasswordClick}>{t('resetPassword')}</Button>
+        <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>
       </FormItem>
       <FormItem {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">{t('common:save')}</Button>
