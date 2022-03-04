@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
+import CloseIcon from '../icons/general/close-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
@@ -108,7 +109,15 @@ function Search({ PageTemplate }) {
     </div>
   );
   const renderSelectedTags = () => selectedTags.map(tag => (
-    <Tag className="Tag Tag--selected" key={tag} closable onClose={() => handleDeselectTag(tag)}>{tag}</Tag>
+    <Tag
+      key={tag}
+      closable
+      closeIcon={<CloseIcon />}
+      className="Tag Tag--selected"
+      onClose={() => handleDeselectTag(tag)}
+      >
+      {tag}
+    </Tag>
   ));
 
   const columns = [
@@ -172,7 +181,12 @@ function Search({ PageTemplate }) {
         </div>
         <div className="SearchPage-selectedTags">
           {renderSelectedTags()}
-          {selectedTags.length > 1 && <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>x {t('deselectTags')}</a>}
+          {selectedTags.length > 1 && (
+            <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
+              <CloseIcon />
+              {t('deselectTags')}
+            </a>
+          )}
         </div>
         <Table
           bordered={false}
