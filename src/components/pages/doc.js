@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import Title from '../title.js';
 import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
@@ -8,6 +7,7 @@ import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import uniqueId from '../../utils/unique-id.js';
+import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
@@ -389,7 +389,7 @@ function Doc({ initialState, PageTemplate }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="DocPage">
-          <Title text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title} />
+          <MetadataTitle text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title} />
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
