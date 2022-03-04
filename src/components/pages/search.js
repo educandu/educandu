@@ -1,9 +1,8 @@
 import by from 'thenby';
-import Tag from '../tag.js';
 import PropTypes from 'prop-types';
-import { Table, Select } from 'antd';
 import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
+import { Table, Select, Tag } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
@@ -105,11 +104,11 @@ function Search({ PageTemplate }) {
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
   const renderCellTags = tags => (
     <div className="SearchPage-cellTags">
-      {tags.map(tag => (<Tag key={tag} value={tag} />))}
+      {tags.map(tag => (<Tag className="Tag" key={tag}>{tag}</Tag>))}
     </div>
   );
   const renderSelectedTags = () => selectedTags.map(tag => (
-    <Tag key={tag} value={tag} isSelected onDeselect={() => handleDeselectTag(tag)} />
+    <Tag className="Tag Tag--selected" key={tag} closable onClose={() => handleDeselectTag(tag)}>{tag}</Tag>
   ));
 
   const columns = [
