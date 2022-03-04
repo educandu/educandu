@@ -2,8 +2,9 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import DownloadIcon from './icons/general/download-icon.js';
 import { DOCUMENT_IMPORT_TYPE } from '../domain/constants.js';
-import { DownloadOutlined, HistoryOutlined, RedoOutlined } from '@ant-design/icons';
+import { HistoryOutlined, RedoOutlined } from '@ant-design/icons';
 
 function ImportTypeIcon({ importType }) {
   const { t } = useTranslation('importTypeIcon');
@@ -11,7 +12,7 @@ function ImportTypeIcon({ importType }) {
 
   switch (importType) {
     case DOCUMENT_IMPORT_TYPE.add:
-      icon = <DownloadOutlined />;
+      icon = <DownloadIcon />;
       break;
     case DOCUMENT_IMPORT_TYPE.update:
       icon = <HistoryOutlined />;
@@ -24,7 +25,7 @@ function ImportTypeIcon({ importType }) {
   }
 
   return (
-    <Tooltip className="ImportTypeIcon" title={t(importType)}>{icon}</Tooltip>
+    <Tooltip className="ImportTypeIcon" title={t(importType)}><span>{icon}</span></Tooltip>
   );
 }
 

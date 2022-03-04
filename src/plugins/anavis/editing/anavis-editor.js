@@ -2,6 +2,7 @@ import React from 'react';
 import Dropperx from 'dropperx';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../../components/color-picker.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import DeleteButton from '../../../components/delete-button.js';
@@ -9,8 +10,9 @@ import { useService } from '../../../components/container-context.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
 import StorageFilePicker from '../../../components/storage-file-picker.js';
+import MoveUpIcon from '../../../components/icons/general/move-up-icon.js';
+import MoveDownIcon from '../../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
-import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, MEDIA_TYPE, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from '../constants.js';
 
@@ -207,11 +209,11 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
     return (
       <div>
         {part.annotations.map((annotation, annotationIndex) => (
-          <div key={annotationIndex.toString()} style={{ display: 'flex', marginTop: annotationIndex === 0 ? '0' : '4px' }}>
-            <div style={{ flex: '1 0 0%', marginRight: '8px' }}>
+          <div key={annotationIndex.toString()} className="AnavisEditor-annotation">
+            <div className="AnavisEditor-annotationInput">
               <Input value={annotation} onChange={event => handleAnnotationChange(event, partIndex, annotationIndex)} />
             </div>
-            <div style={{ flex: 'none', marginLeft: '8px' }}>
+            <div className="AnavisEditor-annotationDelete">
               <DeleteButton onClick={() => handleDeleteAnnotationButtonClick(annotationIndex)} />
             </div>
           </div>
@@ -231,12 +233,12 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
         <ButtonGroup>
           <Button
             disabled={index === 0}
-            icon={<ArrowUpOutlined />}
+            icon={<MoveUpIcon />}
             onClick={() => handleUpCircleButtonClick(index)}
             />
           <Button
             disabled={index === parts.length - 1}
-            icon={<ArrowDownOutlined />}
+            icon={<MoveDownIcon />}
             onClick={() => handleDownCircleButtonClick(index)}
             />
         </ButtonGroup>

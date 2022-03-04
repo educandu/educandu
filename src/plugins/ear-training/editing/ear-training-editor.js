@@ -1,13 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import { Form, Input, Table, Button, Radio } from 'antd';
 import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
 import DeleteButton from '../../../components/delete-button.js';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
+import MoveUpIcon from '../../../components/icons/general/move-up-icon.js';
+import MoveDownIcon from '../../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
-import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -100,12 +102,12 @@ function EarTrainingEditor({ content, onContentChanged, publicStorage, privateSt
         <ButtonGroup>
           <Button
             disabled={index === 0}
-            icon={<ArrowUpOutlined />}
+            icon={<MoveUpIcon />}
             onClick={() => handleUpCircleButtonClick(index)}
             />
           <Button
             disabled={index === tests.length - 1}
-            icon={<ArrowDownOutlined />}
+            icon={<MoveDownIcon />}
             onClick={() => handleDownCircleButtonClick(index)}
             />
         </ButtonGroup>

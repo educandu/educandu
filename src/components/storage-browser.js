@@ -14,6 +14,7 @@ import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
+import UploadIcon from './icons/general/upload-icon.js';
 import { useSetUser, useUser } from './user-context.js';
 import { useStoragePlan } from './storage-plan-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
@@ -27,7 +28,6 @@ import { Input, Table, Upload, Button, message, Breadcrumb, Select } from 'antd'
 import {
   FolderOutlined,
   FileOutlined,
-  UploadOutlined,
   LockOutlined,
   GlobalOutlined
 } from '@ant-design/icons';
@@ -640,7 +640,7 @@ class StorageBrowser extends React.Component {
               customRequest={this.onCustomUpload}
               >
               <Button disabled={!canUpload}>
-                <UploadOutlined />&nbsp;<span>{t('uploadFiles')}</span>
+                <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
               </Button>
             </Upload>
           </div>
