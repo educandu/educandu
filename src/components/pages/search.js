@@ -1,8 +1,9 @@
 import by from 'thenby';
+import Table from '../table.js';
 import PropTypes from 'prop-types';
+import { Select, Tag } from 'antd';
 import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
-import { Table, Select, Tag } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
@@ -193,12 +194,10 @@ function Search({ PageTemplate }) {
           )}
         </div>
         <Table
-          bordered={false}
-          pagination={false}
-          size="middle"
-          columns={columns}
           dataSource={[...displayedDocs]}
+          columns={columns}
           loading={isSearching}
+          pagination
           />
       </div>
     </PageTemplate>
