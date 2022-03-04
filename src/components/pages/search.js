@@ -6,13 +6,14 @@ import { Table, Select, Tag } from 'antd';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';
+import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
+import FilterIcon from '../icons/general/filter-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { MenuOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
@@ -169,7 +170,7 @@ function Search({ PageTemplate }) {
                 <SearchOutlined className="SearchPage-filterPlaceholderIcon" />
               </span>
             )}
-            suffixIcon={<MenuOutlined />}
+            suffixIcon={<FilterIcon />}
             />
           <Select
             size="large"
