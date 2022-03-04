@@ -2,8 +2,8 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { CloseOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
+import CloseIcon from './icons/general/close-icon.js';
 
 function ControlPanel({
   startOpen,
@@ -59,7 +59,7 @@ function ControlPanel({
         <div className="ControlPanel-contentRight">
           { rightSideContent }
           { canClose && (
-            <Button className="ControlPanel-closeButton" size="small" icon={<CloseOutlined />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
+            <Button className="ControlPanel-closeButton" size="small" icon={<CloseIcon />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
           )}
         </div>
       </div>

@@ -1,10 +1,7 @@
 import React from 'react';
-import iconNs from '@ant-design/icons';
 import AudioIcon from './audio-icon.js';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
-
-const Icon = iconNs.default || iconNs;
 
 export default class Audio {
   static get typeName() { return 'audio'; }
@@ -18,7 +15,7 @@ export default class Audio {
   }
 
   getIcon() {
-    return <Icon component={AudioIcon} />;
+    return <AudioIcon />;
   }
 
   getDefaultContent() {

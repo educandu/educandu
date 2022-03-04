@@ -1,6 +1,9 @@
 import React from 'react';
+import iconNs from '@ant-design/icons';
 
-function EarTrainingIcon() {
+const Icon = iconNs.default || iconNs;
+
+export function EarTrainingIconComponent() {
   return (
     <svg height="1em" style={{ enableBackground: 'new 0 0 1000 1000' }} width="1em" viewBox="0 0 1000 1000">
       <path style={{ fill: '#f2f2f2' }} d="M496.69 33.45c-176.96 0-320.92 143.94-320.92 320.85 0 54.62-1.38 144.3-2.71 231.05-1.17 77.09-2.3 149.92-2.3 189.45 0 105.72 86.04 191.74 191.78 191.74 68.53 0 113.55-40.08 160.55-142.97 27.18-59.46 73.18-97.41 121.88-137.59 84.88-70.05 172.65-142.47 172.65-331.69 0-176.9-143.97-320.84-320.93-320.84z" />
@@ -11,6 +14,12 @@ function EarTrainingIcon() {
       <path style={{ fill: 'none', stroke: '#666', strokeWidth: '98.74', strokeLinecap: 'round', strokeLinejoin: 'round', strokeMiterlimit: '10' }} d="M605.31 565.51c0-49.84 40.76-90.16 90.76-89.46 47.52.66 87.54 40.67 88.21 88.19.41 29.58-11.33 50.42-35.32 72.5-30.47 28.05-54.16 62.52-54.16 103.93v0" />
       <ellipse style={{ fill: '#666' }} cx="695.99" cy="840.18" rx="42.48" ry="42.47" />
     </svg>
+  );
+}
+
+function EarTrainingIcon() {
+  return (
+    <Icon component={EarTrainingIconComponent} />
   );
 }
 
