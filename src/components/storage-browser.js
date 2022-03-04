@@ -26,7 +26,6 @@ import { Input, Table, Upload, Button, message, Breadcrumb, Select } from 'antd'
 import {
   FolderOutlined,
   FileOutlined,
-  CloseOutlined,
   UploadOutlined,
   DeleteOutlined,
   LockOutlined,
@@ -455,11 +454,6 @@ class StorageBrowser extends React.Component {
     this.setState({ filterText: event.target.value });
   }
 
-  handleFilterTextClear() {
-    this.filterTextInputRef.current.focus();
-    this.setState({ filterText: '' });
-  }
-
   onCustomUpload({ file, onProgress, onSuccess }) {
     const result = this.collectFilesToUpload([file], { onProgress });
     onSuccess(result);
@@ -619,7 +613,6 @@ class StorageBrowser extends React.Component {
       'StorageBrowser-browser--dropTarget': canUpload && currentDropTarget === currentPrefix
     });
 
-    const suffix = normalizedFilterText ? <CloseOutlined className="StorageBrowser-filterClearButton" onClick={this.handleFilterTextClear} /> : null;
     const filterTextInputClassNames = classNames({
       'StorageBrowser-filterInput': true,
       'is-active': !!normalizedFilterText
@@ -633,7 +626,7 @@ class StorageBrowser extends React.Component {
           </div>
           <div className="StorageBrowser-headerButtons">
             <Input
-              suffix={suffix}
+              allowClear
               value={filterText}
               placeholder={t('searchFilter')}
               ref={this.filterTextInputRef}
