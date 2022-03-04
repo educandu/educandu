@@ -25,11 +25,11 @@ function Search({ PageTemplate }) {
   const { formatDate } = useDateFormat();
 
   const sortingOptions = [
-    { label: `${t('sorting')}: ${t('relevance')}`, value: 'relevance' },
-    { label: `${t('sorting')}: ${t('common:title')}`, value: 'title' },
-    { label: `${t('sorting')}: ${t('common:language')}`, value: 'language' },
-    { label: `${t('sorting')}: ${t('common:createdOn')}`, value: 'createdOn' },
-    { label: `${t('sorting')}: ${t('common:updatedOn')}`, value: 'updatedOn' }
+    { label: t('relevance'), value: 'relevance' },
+    { label: t('common:title'), value: 'title' },
+    { label: t('common:language'), value: 'language' },
+    { label: t('common:createdOn'), value: 'createdOn' },
+    { label: t('common:updatedOn'), value: 'updatedOn' }
   ];
 
   const sortByRelevance = docsToSort => docsToSort.sort(by(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
@@ -38,13 +38,15 @@ function Search({ PageTemplate }) {
   const sortByCreatedOn = docsToSort => docsToSort.sort(by(doc => doc.createdOn, 'desc'));
   const sortByUpdatedOn = docsToSort => docsToSort.sort(by(doc => doc.updatedOn, 'desc'));
 
+  const formatSorting = value => `${t('sorting')}: ${sortingOptions.find(o => o.value === value).label}`;
+
   const [docs, setDocs] = useState([]);
   const [displayedDocs, setDisplayedDocs] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
   const [searchText, setSearchText] = useState(request.query.query);
-  const [sorting, setSorting] = useState(sortingOptions[0].value);
+  const [sorting, setSorting] = useState(formatSorting(sortingOptions[0].value));
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
   useEffect(() => {
@@ -79,7 +81,8 @@ function Search({ PageTemplate }) {
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSelectSorting = sortingValue => {
-    setSorting(sortingValue);
+    setSorting(formatSorting(sortingValue));
+
     switch (sortingValue) {
       case 'relevance':
         setDisplayedDocs(sortByRelevance(displayedDocs));
