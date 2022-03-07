@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Table as AntdTable } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-export default function Table({ className, pagination, ...tableProps }) {
+function Table({ className, pagination, ...tableProps }) {
   const { t } = useTranslation('table');
 
   const itemRender = (current, type, originalElement) => {
@@ -38,3 +38,5 @@ Table.defaultProps = {
   className: null,
   pagination: false
 };
+
+export default Table;

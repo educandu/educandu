@@ -1,4 +1,4 @@
-import { Alert } from 'antd';
+import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';

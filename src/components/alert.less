@@ -1,0 +1,10 @@
+.Alert {
+  background-color: @edu-secondary-color-light;
+  border: none;
+}
+
+.Alert-icon {
+  // has to be important, otherwise Antd overrides it
+  // through `.ant-alert-xyz .ant-alert-icon`
+  color: @edu-secondary-color-dark !important;
+}

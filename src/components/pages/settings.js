@@ -1,8 +1,9 @@
+import Alert from '../alert.js';
 import PropTypes from 'prop-types';
+import { Input, Button } from 'antd';
 import Markdown from '../markdown.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
-import { Alert, Input, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
