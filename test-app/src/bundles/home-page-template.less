@@ -1,3 +1,49 @@
+.HomePageTemplate {
+  display: flex;
+  flex-direction: column;
+  min-width: @edu-min-page-width;
+  height: 100vh;
+  width: 100vw;
+}
+
+.HomePageTemplate-contentArea {
+  .m-page-content;
+  padding-bottom: 0;
+  flex: 1 0 0%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: @oma-blue-1;
+
+  @media @edu-media-phone {
+    padding-bottom: 0;
+  }
+}
+
+.HomePageTemplate-content {
+  height: 100%;
+  width: 100%;
+  max-width: @edu-content-width-narrow;
+  display: grid;
+  grid-template-rows: 1.5fr 2fr auto;
+  grid-template-columns: 100%;
+}
+
 .HomePageTemplate-logo {
-  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: auto;
+  margin-bottom: 40px;
+}
+
+.HomePageTemplate-info {
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.HomePageTemplate-illustration {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
