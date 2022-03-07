@@ -230,6 +230,22 @@
     }
   },
   {
+    "namespace": "itemsExpander",
+    "language": "en",
+    "resources": {
+      "expand": "+ {count} more",
+      "collapse": "show less"
+    }
+  },
+  {
+    "namespace": "itemsExpander",
+    "language": "de",
+    "resources": {
+      "expand": "+ {count} weitere",
+      "collapse": "weniger anzeigen"
+    }
+  },
+  {
     "namespace": "lessonMetadataModal",
     "language": "en",
     "resources": {
@@ -671,7 +687,9 @@
       "filterPlaceholder": "Filter by tags",
       "deselectTags": "Remove all tags",
       "sorting": "Sorting",
-      "relevance": "Relevance"
+      "relevance": "Relevance",
+      "createdOn": "Created",
+      "updatedOn": "Last update"
     }
   },
   {
@@ -682,7 +700,9 @@
       "filterPlaceholder": "Nach Tags filtern",
       "deselectTags": "Alle Tags löschen",
       "sorting": "Sortierung",
-      "relevance": "Relevanz"
+      "relevance": "Relevanz",
+      "createdOn": "Erstellt",
+      "updatedOn": "Letztes Update"
     }
   },
   {

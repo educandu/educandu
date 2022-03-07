@@ -1,0 +1,6 @@
+expand:
+  en: + {count} more
+  de: + {count} weitere
+collapse:
+  en: show less
+  de: weniger anzeigen
