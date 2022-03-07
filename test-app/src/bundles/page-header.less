@@ -1,0 +1,41 @@
+.PageHeader {
+  .m-page-content;
+  width: 100%;
+}
+
+.PageHeader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: @edu-white;
+}
+
+.PageHeader-headerContent {
+  display: block;
+
+  &.PageHeader-headerContent--left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  &.PageHeader-headerContent--right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+}
+
+.PageHeader-languageSwitch {
+  white-space: nowrap;
+}
+
+.PageHeader-headerButton {
+  .m-icon-button;
+  .m-grouped-button;
+}
+
+.PageHeader-loginButton {
+  cursor: pointer;
+  margin-right: (3 * @edu-button-spacing);
+}
