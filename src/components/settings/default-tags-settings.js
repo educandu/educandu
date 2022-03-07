@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { memo } from 'react';
+import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { Form, Table, Button, Input } from 'antd';
 import inputValidators from '../../utils/input-validators.js';
 import { swapItemsAt, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
-import { DeleteOutlined, DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
 
 const FormItem = Form.Item;
 
@@ -57,7 +58,7 @@ function DefaultTagsSettings({ defaultTags, onChange }) {
   );
 
   const renderActions = (text, record, index) => (
-    <Button size="small" icon={<DeleteOutlined style={{ color: 'red' }} />} onClick={() => handleDeleteClick(index)} danger />
+    <DeleteButton onClick={() => handleDeleteClick(index)} />
   );
 
   const renderActionsTitle = () => (

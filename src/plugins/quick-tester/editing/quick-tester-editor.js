@@ -1,10 +1,13 @@
 import React from 'react';
 import { TESTS_ORDER } from '../constants.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import { Form, Input, Table, Button, Radio } from 'antd';
+import DeleteButton from '../../../components/delete-button.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
-import { ArrowUpOutlined, ArrowDownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import MoveUpIcon from '../../../components/icons/general/move-up-icon.js';
+import MoveDownIcon from '../../../components/icons/general/move-down-icon.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -78,12 +81,12 @@ function QuickTesterEditor({ content, onContentChanged }) {
         <ButtonGroup>
           <Button
             disabled={index === 0}
-            icon={<ArrowUpOutlined />}
+            icon={<MoveUpIcon />}
             onClick={() => handleUpCircleButtonClick(index)}
             />
           <Button
             disabled={index === tests.length - 1}
-            icon={<ArrowDownOutlined />}
+            icon={<MoveDownIcon />}
             onClick={() => handleDownCircleButtonClick(index)}
             />
         </ButtonGroup>
@@ -119,12 +122,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
       width: 48,
       key: 'button',
       render: (value, item, index) => (
-        <Button
-          disabled={tests.length < 2}
-          type="danger"
-          icon={<DeleteOutlined />}
-          onClick={() => handleDeleteButtonClick(index)}
-          />
+        <DeleteButton onClick={() => handleDeleteButtonClick(index)} disabled={tests.length < 2} />
       )
     }
   ];

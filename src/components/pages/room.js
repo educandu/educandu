@@ -4,10 +4,12 @@ import Markdown from '../markdown.js';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from '../locale-context.js';
 import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
@@ -17,9 +19,9 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
+import { LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
-import { DeleteOutlined, LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
@@ -134,13 +136,7 @@ export default function Room({ PageTemplate, initialState }) {
       <div className="Room-lesson" key={lesson._id}>
         <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
           <Tooltip title={t('common:delete')}>
-            <Button
-              type="link"
-              size="small"
-              icon={<DeleteOutlined />}
-              className="Room-lessonDeleteButton"
-              onClick={() => handleDeleteLessonClick(lesson)}
-              />
+            <DeleteButton className="Room-lessonDeleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
           </Tooltip>
           <span className="Room-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
           <a className="Room-lessonTitle" href={url}>{lesson.title}</a>
@@ -277,7 +273,7 @@ export default function Room({ PageTemplate, initialState }) {
                     <span className="Room-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
                     <span className="Room-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
                   </div>
-                  <Button className="Room-cardDangerActionButton" type="primary" icon={<DeleteOutlined />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
+                  <Button className="Room-cardDangerActionButton" type="primary" icon={<DeleteIcon />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
                 </div>
               </Card>
             </TabPane>
