@@ -1040,6 +1040,22 @@
     }
   },
   {
+    "namespace": "table",
+    "language": "en",
+    "resources": {
+      "prev": "‹ back",
+      "next": "› forward"
+    }
+  },
+  {
+    "namespace": "table",
+    "language": "de",
+    "resources": {
+      "prev": "‹ zurück",
+      "next": "› weiter"
+    }
+  },
+  {
     "namespace": "uiLanguageDialog",
     "language": "en",
     "resources": {

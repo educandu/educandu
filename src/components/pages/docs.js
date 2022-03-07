@@ -1,4 +1,5 @@
 import by from 'thenby';
+import Table from '../table.js';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
@@ -10,9 +11,9 @@ import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
 import { shorten } from '../../utils/string-utils.js';
+import { Input, Button, Switch, Tooltip } from 'antd';
 import LanguageIcon from '../localization/language-icon.js';
 import { useGlobalAlerts } from '../../ui/global-alerts.js';
-import { Input, Table, Button, Switch, Tooltip } from 'antd';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
@@ -284,7 +285,7 @@ function Docs({ initialState, PageTemplate }) {
             placeholder={t('enterSearchTerm')}
             />
         </div>
-        <Table dataSource={state.filteredDocs} columns={columns} size="middle" />
+        <Table dataSource={state.filteredDocs} columns={columns} pagination />
         <aside>
           <Restricted to={permissions.EDIT_DOC}>
             <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />
