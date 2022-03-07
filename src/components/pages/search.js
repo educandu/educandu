@@ -6,6 +6,7 @@ import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
 import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
+
 function Search({ PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('search');
@@ -105,14 +107,27 @@ function Search({ PageTemplate }) {
     }
   };
 
-  const renderUpdatedOn = updatedOn => (<span>{formatDate(updatedOn)}</span>);
-  const renderTitle = (title, doc) => (<a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>);
+  const renderTitle = (title, doc) => (
+    <a className="SearchPage-titleCell" href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>
+      <div className="SearchPage-titleCellTitle">{title}</div>
+      {doc.description && <div className="SearchPage-titleCellDescription">{doc.description}</div>}
+      <div className="SearchPage-titleCellDates">{t('createdOn')}: {formatDate(doc.createdOn)} | {t('updatedOn')}: {formatDate(doc.updatedOn)}</div>
+    </a>
+  );
+
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
+
   const renderCellTags = tags => (
-    <div className="SearchPage-cellTags">
-      {tags.map(tag => (<Tag className="Tag" key={tag}>{tag}</Tag>))}
+    <div>
+      <ItemsExpander
+        className="SearchPage-cellTags"
+        expandLinkClassName="SearchPage-cellTagsExpandLink"
+        items={tags}
+        renderItem={tag => <Tag className="Tag" key={tag}>{tag}</Tag>}
+        />
     </div>
   );
+
   const renderSelectedTags = () => selectedTags.map(tag => (
     <Tag
       key={tag}
@@ -136,13 +151,8 @@ function Search({ PageTemplate }) {
       title: t('common:tags'),
       dataIndex: 'tags',
       render: renderCellTags,
-      responsive: ['md']
-    },
-    {
-      title: t('common:updatedOn'),
-      dataIndex: 'updatedOn',
-      render: renderUpdatedOn,
-      responsive: ['lg']
+      responsive: ['md'],
+      width: '45%'
     },
     {
       title: t('common:language'),
