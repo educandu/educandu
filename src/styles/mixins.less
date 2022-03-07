@@ -19,14 +19,14 @@
   color: @edu-text-color-inverse;
 
   a {
-    color: hardlight(@edu-primary-color, @grey-4);
+    color: hardlight(@edu-primary-color-light, @grey-4);
 
     &:hover, &:focus, &:active {
       color: @edu-text-color-inverse;
     }
 
     &:visited {
-      color: hardlight(@edu-primary-color, @grey-4);
+      color: hardlight(@edu-primary-color-light, @grey-4);
     }
   }
 
@@ -46,14 +46,14 @@
     }
 
     &:disabled {
-      @{prop}: hardlight(@edu-primary-color, @grey-6);
+      @{prop}: hardlight(@edu-primary-color-light, @grey-6);
     }
   }
 
   .m-create-active-background {
     &:not(:disabled) {
       &:hover, &:focus, &:active {
-        background-color: softlight(@edu-primary-color, @grey-6);
+        background-color: softlight(@edu-primary-color-light, @grey-6);
       }
     }
   }
@@ -97,8 +97,8 @@
 }
 
 .m-selected-item {
-  color: @edu-primary-color;
-  border-color: @edu-primary-color;
+  color: @edu-primary-color-light;
+  border-color: @edu-primary-color-light;
   background-color: @edu-selection-background-color;
 }
 
@@ -120,17 +120,17 @@
 
 .m-antd-inverted-slider {
   & > .ant-slider-rail {
-    background-color: tint(@edu-primary-color, 20%);
+    background-color: tint(@edu-primary-color-light, 20%);
   }
   &:hover > .ant-slider-rail {
-    background-color: tint(@edu-primary-color, 30%);
+    background-color: tint(@edu-primary-color-light, 30%);
   }
 
   & > .ant-slider-step > .ant-slider-dot {
-    border-color: tint(@edu-primary-color, 40%);
+    border-color: tint(@edu-primary-color-light, 40%);
   }
   &  > .ant-slider-step > .ant-slider-dot-active {
-    border-color: tint(@edu-primary-color, 50%);
+    border-color: tint(@edu-primary-color-light, 50%);
   }
 
   & > .ant-slider-track,
