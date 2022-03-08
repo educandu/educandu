@@ -9,12 +9,12 @@ import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
-import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
@@ -25,6 +25,16 @@ function Search({ PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('search');
   const { formatDate } = useDateFormat();
+  const searchApiClient = useSessionAwareApiClient(SearchApiClient);
+
+  const [docs, setDocs] = useState([]);
+  const [allTags, setAllTags] = useState([]);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [isSearching, setIsSearching] = useState(true);
+  const [displayedDocs, setDisplayedDocs] = useState([]);
+  const [searchText, setSearchText] = useState(request.query.query);
+  const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
 
   const sortingOptions = [
     { label: t('relevance'), value: 'relevance' },
@@ -40,14 +50,22 @@ function Search({ PageTemplate }) {
   const sortByCreatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.createdOn, direction));
   const sortByUpdatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.updatedOn, direction));
 
-  const [docs, setDocs] = useState([]);
-  const [allTags, setAllTags] = useState([]);
-  const [displayedDocs, setDisplayedDocs] = useState([]);
-  const [tagOptions, setTagOptions] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [isSearching, setIsSearching] = useState(true);
-  const [searchText, setSearchText] = useState(request.query.query);
-  const searchApiClient = useSessionAwareApiClient(SearchApiClient);
+  const sortDocuments = useCallback((documentsToSort, sortingValue, sortingDirection) => {
+    switch (sortingValue) {
+      case 'relevance':
+        return sortByRelevance(documentsToSort, sortingDirection);
+      case 'title':
+        return sortByTitle(documentsToSort, sortingDirection);
+      case 'language':
+        return sortByLanguage(documentsToSort, sortingDirection);
+      case 'createdOn':
+        return sortByCreatedOn(documentsToSort, sortingDirection);
+      case 'updatedOn':
+        return sortByUpdatedOn(documentsToSort, sortingDirection);
+      default:
+        return documentsToSort;
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -77,33 +95,14 @@ function Search({ PageTemplate }) {
 
   useEffect(() => {
     const filteredDocs = docs.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
-    setDisplayedDocs(sortByRelevance(filteredDocs));
-  }, [docs, selectedTags]);
+    const sortedDocuments = sortDocuments(filteredDocs, sorting.value, sorting.direction);
+    setDisplayedDocs(sortedDocuments);
+  }, [docs, selectedTags, sorting, sortDocuments]);
 
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
-  const handleSortingChange = ({ value, direction }) => {
-    switch (value) {
-      case 'relevance':
-        setDisplayedDocs(sortByRelevance(displayedDocs, direction));
-        break;
-      case 'title':
-        setDisplayedDocs(sortByTitle(displayedDocs, direction));
-        break;
-      case 'language':
-        setDisplayedDocs(sortByLanguage(displayedDocs, direction));
-        break;
-      case 'createdOn':
-        setDisplayedDocs(sortByCreatedOn(displayedDocs, direction));
-        break;
-      case 'updatedOn':
-        setDisplayedDocs(sortByUpdatedOn(displayedDocs, direction));
-        break;
-      default:
-        break;
-    }
-  };
+  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
   const renderTitle = (title, doc) => (
     <a className="SearchPage-titleCell" href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>
@@ -169,9 +168,9 @@ function Search({ PageTemplate }) {
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
           <SortingSelector
             size="large"
-            initialDirection="desc"
-            initialValue="relevance"
             options={sortingOptions}
+            initialValue={sorting.value}
+            initialDirection={sorting.direction}
             onChange={handleSortingChange}
             />
         </div>
