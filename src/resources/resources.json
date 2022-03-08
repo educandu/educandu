@@ -1022,6 +1022,20 @@
     }
   },
   {
+    "namespace": "sortingSelector",
+    "language": "en",
+    "resources": {
+      "selectedValue": "Sort by \"{value}\""
+    }
+  },
+  {
+    "namespace": "sortingSelector",
+    "language": "de",
+    "resources": {
+      "selectedValue": "Nach \"{value}\" sortieren"
+    }
+  },
+  {
     "namespace": "storageBrowser",
     "language": "en",
     "resources": {

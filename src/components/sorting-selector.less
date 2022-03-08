@@ -1,0 +1,26 @@
+.SortingSelector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: @edu-control-height-base;
+
+  &.SortingSelector--small {
+    height: @edu-control-height-sm;
+  }
+
+  &.SortingSelector--large {
+    height: @edu-control-height-lg;
+  }
+}
+
+.SortingSelector-direction {
+  padding: 0 10px;
+}
+
+.SortingSelector-text {
+  display: flex;
+  align-items: center;
+  color: @edu-text-color;
+  font-weight: bold;
+  user-select: none;
+}

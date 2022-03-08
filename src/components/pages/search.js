@@ -1,7 +1,7 @@
 import by from 'thenby';
+import { Tag } from 'antd';
 import Table from '../table.js';
 import PropTypes from 'prop-types';
-import { Select, Tag } from 'antd';
 import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
 import Logger from '../../common/logger.js';
@@ -11,6 +11,7 @@ import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
 import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
+import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
@@ -33,13 +34,11 @@ function Search({ PageTemplate }) {
     { label: t('common:updatedOn'), value: 'updatedOn' }
   ];
 
-  const sortByRelevance = docsToSort => docsToSort.sort(by(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByTitle = docsToSort => docsToSort.sort(by(doc => doc.title, 'asc').thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByLanguage = docsToSort => docsToSort.sort(by(doc => doc.language, 'asc').thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByCreatedOn = docsToSort => docsToSort.sort(by(doc => doc.createdOn, 'desc'));
-  const sortByUpdatedOn = docsToSort => docsToSort.sort(by(doc => doc.updatedOn, 'desc'));
-
-  const formatSorting = value => `${t('sorting')}: ${sortingOptions.find(o => o.value === value).label}`;
+  const sortByRelevance = (docsToSort, direction) => docsToSort.sort(by(doc => doc.tagMatchCount, direction).thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByTitle = (docsToSort, direction) => docsToSort.sort(by(doc => doc.title, direction).thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByLanguage = (docsToSort, direction) => docsToSort.sort(by(doc => doc.language, direction).thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByCreatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.createdOn, direction));
+  const sortByUpdatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.updatedOn, direction));
 
   const [docs, setDocs] = useState([]);
   const [allTags, setAllTags] = useState([]);
@@ -48,10 +47,7 @@ function Search({ PageTemplate }) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
   const [searchText, setSearchText] = useState(request.query.query);
-  const [sorting, setSorting] = useState(formatSorting(sortingOptions[0].value));
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
-
-  const updateTagOptions = tags => setTagOptions(tags.sort().map(tag => ({ value: tag, key: tag })));
 
   useEffect(() => {
     (async () => {
@@ -76,7 +72,7 @@ function Search({ PageTemplate }) {
 
   useEffect(() => {
     const remainingTags = allTags.filter(tag => !selectedTags.includes(tag));
-    setTagOptions(remainingTags.map(tag => ({ value: tag, key: tag })));
+    setTagOptions(remainingTags.map(tag => ({ label: tag, value: tag })));
   }, [allTags, selectedTags]);
 
   useEffect(() => {
@@ -87,24 +83,22 @@ function Search({ PageTemplate }) {
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
-  const handleSelectSorting = sortingValue => {
-    setSorting(formatSorting(sortingValue));
-
-    switch (sortingValue) {
+  const handleSortingChange = ({ value, direction }) => {
+    switch (value) {
       case 'relevance':
-        setDisplayedDocs(sortByRelevance(displayedDocs));
+        setDisplayedDocs(sortByRelevance(displayedDocs, direction));
         break;
       case 'title':
-        setDisplayedDocs(sortByTitle(displayedDocs));
+        setDisplayedDocs(sortByTitle(displayedDocs, direction));
         break;
       case 'language':
-        setDisplayedDocs(sortByLanguage(displayedDocs));
+        setDisplayedDocs(sortByLanguage(displayedDocs, direction));
         break;
       case 'createdOn':
-        setDisplayedDocs(sortByCreatedOn(displayedDocs));
+        setDisplayedDocs(sortByCreatedOn(displayedDocs, direction));
         break;
       case 'updatedOn':
-        setDisplayedDocs(sortByUpdatedOn(displayedDocs));
+        setDisplayedDocs(sortByUpdatedOn(displayedDocs, direction));
         break;
       default:
         break;
@@ -173,12 +167,12 @@ function Search({ PageTemplate }) {
         </div>
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
-          <Select
+          <SortingSelector
             size="large"
-            value={sorting}
+            initialDirection="desc"
+            initialValue="relevance"
             options={sortingOptions}
-            onChange={handleSelectSorting}
-            showArrow
+            onChange={handleSortingChange}
             />
         </div>
         <div className="SearchPage-selectedTags">
