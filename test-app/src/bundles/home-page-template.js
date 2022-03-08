@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import Markdown from '../../../src/components/markdown.js';
-import { ALERT_TYPE } from '../../../src/domain/constants.js';
 import { useSettings } from '../../../src/components/settings-context.js';
 import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
@@ -47,7 +46,9 @@ function HomePageTemplate({ children, alerts }) {
 HomePageTemplate.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
     message: PropTypes.node.isRequired,
-    type: PropTypes.oneOf(Object.values(ALERT_TYPE))
+    showInFullScreen: PropTypes.bool,
+    closable: PropTypes.bool,
+    onClose: PropTypes.func
   })),
   children: PropTypes.node
 };

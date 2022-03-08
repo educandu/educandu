@@ -95,8 +95,6 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
         <Alert
           message={t('howToChangePicture')}
           description={avatarDescription}
-          type="info"
-          showIcon
           closable
           afterClose={handleAvatarDescriptionAfterClose}
           />

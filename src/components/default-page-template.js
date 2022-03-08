@@ -2,7 +2,6 @@ import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import { ALERT_TYPE } from '../domain/constants.js';
 import UiLanguageDialog from './ui-language-dialog.js';
 import DefaultPageHeader from './default-page-header.js';
 import DefaultPageFooter from './default-page-footer.js';
@@ -40,8 +39,6 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
       <Alert
         key={index}
         message={alert.message}
-        type={alert.type || 'info'}
-        banner
         closable={alert.closable || false}
         onClose={alert.onClose || (() => { })}
         />
@@ -50,7 +47,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
 
   return (
     <div className="DefaultPageTemplate">
-      <DefaultPageHeader fullScreen={fullScreen} alerts={alerts} onUiLanguageClick={handleUiLanguageClick} />
+      <DefaultPageHeader onUiLanguageClick={handleUiLanguageClick} />
       <main className={contentAreaClasses}>
         <div className={contentClasses}>
           {!!alerts?.length && (
@@ -71,7 +68,9 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
 DefaultPageTemplate.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
     message: PropTypes.node.isRequired,
-    type: PropTypes.oneOf(Object.values(ALERT_TYPE))
+    showInFullScreen: PropTypes.bool,
+    closable: PropTypes.bool,
+    onClose: PropTypes.func
   })),
   children: PropTypes.node,
   fullScreen: PropTypes.bool

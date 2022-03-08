@@ -22,10 +22,10 @@ import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
-import { ALERT_TYPE, DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
 import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import {
@@ -76,9 +76,7 @@ function Doc({ initialState, PageTemplate }) {
 
     if (doc.archived) {
       newAlerts.push({
-        message: t('common:archivedAlert'),
-        type: ALERT_TYPE.warning,
-        showInFullScreen: false
+        message: t('common:archivedAlert')
       });
     }
 
@@ -89,17 +87,13 @@ function Doc({ initialState, PageTemplate }) {
             t={t}
             i18nKey="common:externalDocumentWarning"
             components={[<a key="external-document-warning" href={doc.originUrl} />]}
-            />),
-        type: 'warning',
-        showInFullScreen: false
+            />)
       });
     }
 
     if (view === VIEW.edit && pendingTemplateSectionKeys?.length) {
       newAlerts.push({
-        message: t('proposedSectionsAlert'),
-        type: ALERT_TYPE.info,
-        showInFullScreen: false
+        message: t('proposedSectionsAlert')
       });
     }
 

@@ -1,6 +1,12 @@
 .Alert {
   background-color: @edu-secondary-color-light;
+  padding: 20px 16px;
+  border-radius: 0;
   border: none;
+
+  & + & {
+    margin-top: 12px;
+  }
 }
 
 .Alert-icon {
