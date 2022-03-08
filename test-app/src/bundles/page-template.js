@@ -1,9 +1,9 @@
-import { Alert } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import PageHeader from './page-header.js';
 import PageFooter from './page-footer.js';
+import Alert from '../../../src/components/alert.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
 import CookieConsentDrawer from '../../../src/components/cookie-consent-drawer.js';
 
@@ -37,8 +37,6 @@ function PageTemplate({ children, fullScreen, alerts }) {
       <Alert
         key={index}
         message={alert.message}
-        type={alert.type || 'info'}
-        banner
         closable={alert.closable || false}
         onClose={alert.onClose || (() => { })}
         />

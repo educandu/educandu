@@ -83,7 +83,7 @@ function QuickTesterDisplay({ content }) {
             <Markdown inline>{content.title}</Markdown>
           </div>
           <div className="QuickTester-closeButton">
-            <Button size="small" icon={<CloseOutlined />} onClick={close} ghost />
+            <Button size="small" icon={<CloseOutlined />} onClick={close} />
           </div>
         </div>
         <div className="QuickTester-progress" style={{ width: `${percentDone}%` }} />

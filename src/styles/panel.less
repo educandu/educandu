@@ -1,12 +1,10 @@
-@panel-background-color: @grey-2;
 @panel-proposed-background-color: @blue-1;
-@panel-border-color: @grey-5;
-@panel-proposed-border-color: @blue-5;
-@panel-content-background-color: @grey-1;
-@panel-content-overlay-background-color: fade(white, 50%);
+@panel-border-color: @edu-border-color-base;
+@panel-proposed-border-color: @edu-primary-color-light;
+@panel-content-overlay-background-color: fade(@edu-white, 50%);
 
 .Panel {
-  background-color: @panel-background-color;
+  background-color: @edu-background-color-light;
   border: 1px solid @panel-border-color;
   border-radius: 4px;
   width: 100%;
@@ -14,7 +12,7 @@
   transition: border-color 0.5s ease-in-out;
 
   &.is-highlighted {
-    border-color: @edu-primary-color;
+    border-color: @edu-primary-color-light;
   }
 
   &.is-invalid {
@@ -29,7 +27,7 @@
 }
 
 .Panel-content {
-  background-color: @panel-content-background-color;
+  background-color: @edu-white;
   position: relative;
   padding: 24px;
 

@@ -12,15 +12,15 @@
   &.is-editable {
     padding: @edu-content-padding;
     padding-top: @section-display-editable-padding-top;
-    border-color: @grey-5;
+    border-color: @edu-border-color-base;
     min-height: @section-display-min-height + @section-display-editable-padding-top;
 
     &:hover {
-      border: 1px solid @grey-6;
+      border: 1px solid @edu-border-color-base;
     }
 
     &.is-dragged {
-      border: 1px solid @grey-6;
+      border: 1px solid @edu-border-color-base;
     }
 
     &.is-other-section-dragged {
@@ -30,7 +30,7 @@
 
   &.is-hard-deletable {
     &:hover {
-      border: 1px solid @grey-6;
+      border: 1px solid @edu-border-color-base;
     }
 
     &:hover .SectionDisplay-actionButton--hardDelete {
@@ -105,7 +105,7 @@
   grid-auto-flow: column;
   padding: 0 5px;
   height: @edu-control-height-sm;
-  border: 1px solid @grey-5;
+  border: 1px solid @edu-border-color-base;
   border-radius: @edu-border-radius-base;
   background-color: @edu-white;
 

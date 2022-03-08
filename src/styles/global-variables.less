@@ -33,44 +33,56 @@
 @edu-control-height-sm: 24px;
 
 // Colors
-@edu-primary-color: @blue-6;
+@edu-primary-color-light: #6D8BB1;
+@edu-primary-color-dark: #4F608E;
 @edu-secondary-color-light: #F5E3D6;
 @edu-secondary-color-dark: #EAA58D;
-@edu-link-color: inherit;
-@edu-link-decoration: underline;
-@edu-link-hover-color: inherit;
-@edu-link-active-color: inherit;
-@edu-info-color: @edu-primary-color;
+@edu-text-color: #626262;
+@edu-text-color-secondary: #9A9A9A;
+@edu-disabled-color: #E6E6E6;
+@edu-background-color-base: #F0F0F0;
+@edu-background-color-light: #FAFAFA;
+@edu-content-title-color: #000000;
+@edu-border-color-base: #BCBCBC;
+@edu-border-color-light: #E8E8E8;
+
 @edu-apply-color: @green-4;
 @edu-success-color: @green-6;
-@edu-processing-color: @edu-primary-color;
 @edu-discard-color: @red-4;
 @edu-error-color: @red-5;
 @edu-danger-color: @red-8;
 @edu-highlight-color: @red-5;
 @edu-warning-color: @gold-6;
-@edu-normal-color: @grey-5;
-@edu-white: @grey-1;
-@edu-black: @grey-10;
-@edu-text-color: fade(@edu-black, 85%);
-@edu-text-color-secondary: fade(@edu-black, 45%);
+
+// Colors - antd mappings
+@edu-white: #FFFFFF;
+@edu-black: #000000;
+@edu-link-color: inherit;
+@edu-link-decoration: underline;
+@edu-link-hover-color: inherit;
+@edu-link-active-color: inherit;
+@edu-normal-color: @edu-text-color;
 @edu-text-color-inverse: @edu-white;
-@edu-disabled-color: fade(@edu-black, 25%);
-@edu-selection-background-color: fade(@edu-primary-color, 10%);
-@edu-progress-default-color: fade(@edu-primary-color, 60%);
-@edu-background-color-base: @grey-4;
-@edu-background-color-light: @grey-3;
-
-// Slider
-@edu-slider-rail-background-color: @grey-4;
-@edu-slider-rail-background-color-hover: @grey-5;
-@edu-slider-track-background-color: tint(@edu-primary-color, 40%);
-@edu-slider-track-background-color-hover: tint(@edu-primary-color, 20%);
-@edu-slider-dot-border-color: @grey-5;
-@edu-slider-dot-border-color-active: tint(@edu-primary-color, 20%);
-
-// Table
-@edu-table-selected-row-background-color: tint(@edu-primary-color, 95%);
+@edu-heading-color: @edu-primary-color-dark;
+@edu-modal-heading-color: @edu-content-title-color;
+@edu-label-color: @edu-content-title-color;
+@edu-table-header-color: @edu-content-title-color;
+@edu-table-selected-row-bg: @edu-text-color;
+@edu-table-footer-color: @edu-text-color;
+@edu-card-head-color: @edu-content-title-color;
+@edu-alert-message-color: @edu-text-color;
+@edu-info-color: @edu-primary-color-light;
+@edu-processing-color: @edu-primary-color-light;
+@edu-selection-background-color: @edu-background-color-base;
+@edu-table-selected-row-background-color: @edu-selection-background-color;
+@edu-progress-default-color: fade(@edu-primary-color-light, 60%);
+// Colors - slider
+@edu-slider-rail-background-color: @edu-background-color-light;
+@edu-slider-rail-background-color-hover: @edu-background-color-base;
+@edu-slider-track-background-color: tint(@edu-primary-color-light, 40%);
+@edu-slider-track-background-color-hover: tint(@edu-primary-color-light, 20%);
+@edu-slider-dot-border-color: @edu-background-color-base;
+@edu-slider-dot-border-color-active: tint(@edu-primary-color-light, 20%);
 
 // Border radii
 @edu-border-radius-base: 8px;
