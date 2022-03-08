@@ -11,7 +11,6 @@ import { useService } from '../container-context.js';
 import { roomShape } from '../../ui/default-prop-types.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useStoragePlan } from '../storage-plan-context.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 
 const { TabPane } = Tabs;
 
@@ -19,7 +18,6 @@ function MySpace({ initialState, PageTemplate }) {
   const user = useUser();
   const storagePlan = useStoragePlan();
 
-  const alerts = useGlobalAlerts();
   const { t } = useTranslation('mySpace');
   const clientConfig = useService(ClientConfig);
 
@@ -52,7 +50,7 @@ function MySpace({ initialState, PageTemplate }) {
   const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
 
   return (
-    <PageTemplate alerts={alerts} disableProfileWarning>
+    <PageTemplate disableProfileWarning>
       <div className="MySpacePage">
 
         <h1>{t('pageNames:mySpace')}</h1>

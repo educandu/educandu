@@ -6,7 +6,6 @@ import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import DocumentImportTable from '../document-import-table.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import ImportApiClient from '../../api-clients/import-api-client.js';
@@ -73,10 +72,8 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
 
   }, [importApiClient, importSource.hostName, t]);
 
-  const alerts = useGlobalAlerts();
-
   return (
-    <PageTemplate alerts={alerts}>
+    <PageTemplate>
       <div className="ImportBatchCreationPage">
         <div><a href="/import-batches">{t('backToImports')}</a></div>
         <h1>{t('pageNames:importBatchCreation')}</h1>

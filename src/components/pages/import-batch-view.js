@@ -7,7 +7,6 @@ import ImportTypeIcon from '../import-type-icon.js';
 import { useDateFormat } from '../locale-context.js';
 import { Table, Row, Space, Collapse, List } from 'antd';
 import { handleApiError } from '../../ui/error-helper.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import ImportApiClient from '../../api-clients/import-api-client.js';
 import { importBatchDetailsShape } from '../../ui/default-prop-types.js';
@@ -128,10 +127,8 @@ function ImportBatchView({ initialState, PageTemplate }) {
     { title: t('taskStatus'), dataIndex: 'processed', width: '150px', render: renderTaskStatus, sorter: taskStatusSorter }
   ];
 
-  const alerts = useGlobalAlerts();
-
   return (
-    <PageTemplate alerts={alerts}>
+    <PageTemplate>
       <div className="ImportBatchViewPage">
         <div><a href="/import-batches">{t('backToImports')}</a></div>
         <h1>{t('pageNames:importBatchView')}</h1>

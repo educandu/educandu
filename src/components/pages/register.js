@@ -12,7 +12,6 @@ import { useSettings } from '../settings-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import UsernameFormItem from '../username-form-item.js';
 import PasswordFormItem from '../password-form-item.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { SAVE_USER_RESULT } from '../../domain/constants.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
@@ -146,10 +145,8 @@ function Register({ PageTemplate, SiteLogo }) {
     </div>
   );
 
-  const alerts = useGlobalAlerts();
-
   return (
-    <PageTemplate alerts={alerts} fullScreen>
+    <PageTemplate fullScreen>
       <div className="RegisterPage">
         <div className="RegisterPage-title">
           <SiteLogo readonly />

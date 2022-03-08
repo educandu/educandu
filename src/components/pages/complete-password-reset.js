@@ -8,7 +8,6 @@ import errorHelper from '../../ui/error-helper.js';
 import { useService } from '../container-context.js';
 import { Trans, useTranslation } from 'react-i18next';
 import PasswordFormItem from '../password-form-item.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import PasswordConfirmationFormItem from '../password-confirmation-form-item.js';
 
@@ -103,10 +102,8 @@ function CompletePasswordReset({ initialState, PageTemplate, SiteLogo }) {
 
   const isValidRequest = !!initialState.passwordResetRequestId;
 
-  const alerts = useGlobalAlerts();
-
   return (
-    <PageTemplate alerts={alerts} fullScreen>
+    <PageTemplate fullScreen>
       <div className="CompletePasswordResetPage">
         <div className="CompletePasswordResetPage-title">
           <SiteLogo readonly />

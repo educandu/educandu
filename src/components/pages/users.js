@@ -11,7 +11,6 @@ import React, { useEffect, useState } from 'react';
 import { Table, Popover, Tabs, Select } from 'antd';
 import { replaceItem } from '../../utils/array-utils.js';
 import UserRoleTagEditor from '../user-role-tag-editor.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import UserApiClient from '../../api-clients/user-api-client.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -66,7 +65,6 @@ function Users({ initialState, PageTemplate }) {
   const executingUser = useUser();
   const { locale } = useLocale();
   const { formatDate } = useDateFormat();
-  const alerts = useGlobalAlerts();
   const { t } = useTranslation('users');
   const userApiClient = useSessionAwareApiClient(UserApiClient);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
@@ -452,7 +450,7 @@ function Users({ initialState, PageTemplate }) {
   ];
 
   return (
-    <PageTemplate alerts={alerts}>
+    <PageTemplate>
       <div className="UsersPage">
         <h1>{t('pageNames:users')}</h1>
         <Tabs className="Tabs" defaultActiveKey={TABS.internalUsers} type="line" size="large" disabled={isSaving}>

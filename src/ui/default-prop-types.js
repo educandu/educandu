@@ -68,7 +68,6 @@ const settingsLicenseProps = {
 export const settingsLicenseShape = PropTypes.shape(settingsLicenseProps);
 
 export const settingsShape = PropTypes.shape({
-  announcement: PropTypes.string,
   helpPage: PropTypes.objectOf(settingsDocumentShape),
   termsPage: PropTypes.objectOf(settingsDocumentShape),
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),

@@ -13,7 +13,6 @@ import { useSettings } from '../settings-context.js';
 import { shorten } from '../../utils/string-utils.js';
 import { Input, Button, Switch, Tooltip } from 'antd';
 import LanguageIcon from '../localization/language-icon.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useDateFormat, useLocale } from '../locale-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
@@ -53,7 +52,6 @@ function getDefaultModalState({ t, uiLanguage, settings }) {
 function Docs({ initialState, PageTemplate }) {
   const user = useUser();
   const settings = useSettings();
-  const alerts = useGlobalAlerts();
   const { t } = useTranslation('docs');
   const { uiLanguage } = useLocale();
   const { formatDate } = useDateFormat();
@@ -274,7 +272,7 @@ function Docs({ initialState, PageTemplate }) {
   ].filter(column => !column.needsPermission || hasUserPermission(user, column.needsPermission));
 
   return (
-    <PageTemplate alerts={alerts}>
+    <PageTemplate>
       <div className="DocsPage">
         <h1>{t('pageNames:docs')}</h1>
         <div className="DocsPage-search">

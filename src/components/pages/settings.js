@@ -1,7 +1,5 @@
-import Alert from '../alert.js';
+import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import { Input, Button } from 'antd';
-import Markdown from '../markdown.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +7,6 @@ import { useBeforeunload } from 'react-beforeunload';
 import permissions from '../../domain/permissions.js';
 import MarkdownTextarea from '../markdown-textarea.js';
 import DocumentSelector from '../document-selector.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import LicenseSettings from '../settings/license-settings.js';
 import React, { useState, useCallback, Fragment } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -40,10 +37,6 @@ function Settings({ initialState, PageTemplate }) {
     setDirtyKeys(prev => ensureIsIncluded(prev, key));
     setInvalidKeys(prev => isValid ? ensureIsExcluded(prev, key) : ensureIsIncluded(prev, key));
   }, [setSettings, setDirtyKeys, setInvalidKeys]);
-
-  const handleAnnouncementChange = useCallback(event => {
-    handleChange('announcement', event.target.value, true);
-  }, [handleChange]);
 
   const handleHomepageInfoChange = useCallback(event => {
     handleChange('homepageInfo', event.target.value, true);
@@ -112,8 +105,6 @@ function Settings({ initialState, PageTemplate }) {
     }
   };
 
-  const alerts = useGlobalAlerts();
-
   useBeforeunload(event => {
     if (dirtyKeys.length) {
       event.preventDefault();
@@ -135,16 +126,9 @@ function Settings({ initialState, PageTemplate }) {
 
   return (
     <Fragment>
-      <PageTemplate alerts={alerts}>
+      <PageTemplate>
         <div className="SettingsPage">
           <h1>{t('pageNames:settings')}</h1>
-
-          <h2 className="SettingsPage-sectionHeader">{t('announcementHeader')}</h2>
-          <section className="SettingsPage-section SettingsPage-section--announcement">
-            <Input value={settings.announcement} onChange={handleAnnouncementChange} />
-            <span className="SettingsPage-announcementPreview">{t('announcementPreview')}</span>
-            <Alert type="warning" message={<Markdown inline>{settings.announcement}</Markdown>} banner />
-          </section>
 
           <h2 className="SettingsPage-sectionHeader">{t('homepageInfoHeader')}</h2>
           <MarkdownTextarea value={settings.homepageInfo || ''} onChange={handleHomepageInfoChange} />

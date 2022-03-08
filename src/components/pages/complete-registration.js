@@ -4,13 +4,11 @@ import Countdown from '../countdown.js';
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { userShape } from '../../ui/default-prop-types.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 
 function CompleteRegistration({ initialState, PageTemplate, SiteLogo }) {
   const { t } = useTranslation('completeRegistration');
   const [isCountdownRunning, setIsCountdownRunning] = useState(false);
   useEffect(() => setIsCountdownRunning(true), []);
-  const alerts = useGlobalAlerts();
 
   const registrationSuccessContent = () => (
     <React.Fragment>
@@ -42,7 +40,7 @@ function CompleteRegistration({ initialState, PageTemplate, SiteLogo }) {
   );
 
   return (
-    <PageTemplate alerts={alerts} fullScreen>
+    <PageTemplate fullScreen>
       <div className="CompleteRegistrationPage">
         <div className="CompleteRegistrationPage-title">
           <SiteLogo readonly />
