@@ -1,4 +1,5 @@
 import by from 'thenby';
+import Alert from './alert.js';
 import gravatar from 'gravatar';
 import memoizee from 'memoizee';
 import React, { useState } from 'react';
@@ -13,7 +14,7 @@ import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import CountryNameProvider from '../data/country-name-provider.js';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
-import { Form, Input, Alert, Avatar, Button, Select, message } from 'antd';
+import { Form, Input, Avatar, Button, Select, message } from 'antd';
 import { formItemLayoutShape, tailFormItemLayoutShape } from '../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -94,8 +95,6 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
         <Alert
           message={t('howToChangePicture')}
           description={avatarDescription}
-          type="info"
-          showIcon
           closable
           afterClose={handleAvatarDescriptionAfterClose}
           />

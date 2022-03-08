@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
 import cloneDeep from '../utils/clone-deep.js';
@@ -11,7 +12,7 @@ import { useDateFormat, useLocale } from './locale-context.js';
 import LessonApiClient from '../api-clients/lesson-api-client.js';
 import { lessonMetadataShape } from '../ui/default-prop-types.js';
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Form, Modal, Input, DatePicker, Collapse, Select, InputNumber, Checkbox, Alert } from 'antd';
+import { Form, Modal, Input, DatePicker, Collapse, Select, InputNumber, Checkbox } from 'antd';
 
 const FormItem = Form.Item;
 const CollapsePanel = Collapse.Panel;
@@ -204,7 +205,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
         {mode === LESSON_MODAL_MODE.create && (
           <Collapse className="LessonMetadataModal-sequenceCollapse" activeKey={isSequenceExpanded ? ['sequence'] : []} onChange={handleSequenceCollapseChange} ghost>
             <CollapsePanel header={t('createSequence')} key="sequence" forceRender>
-              <Alert className="LessonMetadataModal-sequenceInfo" message={t('sequenceInfoBoxHeader')} description={t('sequenceInfoBoxDescription')} type="info" showIcon />
+              <Alert className="LessonMetadataModal-sequenceInfo" message={t('sequenceInfoBoxHeader')} description={t('sequenceInfoBoxDescription')} />
               <FormItem label={t('sequenceInterval')} name="sequenceInterval">
                 <Select options={lessonSequenceIntervalOptions} disabled={!hasStartDate} />
               </FormItem>
