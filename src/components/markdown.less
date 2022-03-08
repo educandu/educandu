@@ -1,6 +1,4 @@
 @markdown-blockquote-color: fade(@edu-primary-color-light, 50%);
-@markdown-blockquote-background-color: @grey-1;
-@markdown-blockquote-shadow-color: @grey-6;
 @markdown-blockquote-quotations-color: fade(@edu-primary-color-light, 20%);
 @markdown-table-border-color: fade(@edu-primary-color-light, 50%);
 @markdown-table-cell-text-color: @edu-text-color;
@@ -9,7 +7,7 @@
 .Markdown {
   blockquote {
     display:block;
-    background: @markdown-blockquote-background-color;
+    background: @edu-white;
     padding: 15px 20px 15px 45px;
     margin: 40px 80px;
     position: relative;
@@ -23,7 +21,7 @@
     border-right: 2px solid @markdown-blockquote-color;
 
     /*Box Shadow - (Optional)*/
-    box-shadow: 2px 2px 15px @markdown-blockquote-shadow-color;
+    box-shadow: 2px 2px 15px @edu-border-color-base;
   }
 
   blockquote::before{

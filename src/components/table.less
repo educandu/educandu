@@ -17,7 +17,8 @@
 
 .m-pagination-item-active() {
   font-weight: normal;
-  background-color: @edu-background-color;
+  background-color: @edu-background-color-base;
+  border-radius: @edu-border-radius-base;
 }
 
 .Table {
@@ -28,7 +29,7 @@
       border-radius: 0;
 
       thead tr th {
-        background-color: @edu-background-color;
+        background-color: @edu-background-color-base;
 
         &:first-child,
         &:last-child {
@@ -37,7 +38,7 @@
       }
 
       tbody tr td {
-        border-color: @edu-background-color;
+        border-color: @edu-border-color-base;
       }
     }
   }
@@ -55,16 +56,18 @@
 
     color: @edu-text-color;
     background-color: transparent;
-    border: 1px solid @edu-text-color;
+    border: 1px solid @edu-border-color-base;
+    border-radius: @edu-border-radius-base;
 
     &:hover:not(.ant-pagination-disabled) {
-      color: fade(@edu-text-color, 66%);
-      border-color: fade(@edu-text-color, 66%);
+      cursor: pointer;
+      color: @edu-text-color;
+      border-color: @edu-text-color;
     }
 
     &.ant-pagination-disabled {
+      cursor: not-allowed;
       color: @edu-disabled-color;
-      border-color: @edu-disabled-color;
     }
   }
 
