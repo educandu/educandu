@@ -6,7 +6,6 @@ import Logger from '../../common/logger.js';
 import React, { Fragment, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { handleApiError } from '../../ui/error-helper.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 
@@ -17,7 +16,6 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   const [hasConfirmed, setHasConfirmed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const roomApiClient = useSessionAwareApiClient(RoomApiClient);
-  const alerts = useGlobalAlerts();
 
   const { token, roomId, roomName, roomSlug, isValid } = initialState;
 
@@ -91,7 +89,7 @@ function RoomMembershipConfirmation({ initialState, PageTemplate, SiteLogo }) {
   }
 
   return (
-    <PageTemplate alerts={alerts} fullScreen>
+    <PageTemplate fullScreen>
       <div className="RoomMembershipConfirmationPage">
         <div className="RoomMembershipConfirmationPage-title">
           <SiteLogo readonly />

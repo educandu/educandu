@@ -48,7 +48,7 @@ function PageTemplate({ children, fullScreen, alerts }) {
       <PageHeader onUiLanguageClick={handleUiLanguageClick} />
       <main className={contentAreaClasses}>
         <div className={contentClasses}>
-          {!!alerts?.length && <div className="PageTemplate-contentAlerts">{alerts.map(renderAlert)}</div>}
+          {!!alerts.length && <div className="PageTemplate-contentAlerts">{alerts.map(renderAlert)}</div>}
           {children}
         </div>
       </main>
@@ -62,7 +62,8 @@ function PageTemplate({ children, fullScreen, alerts }) {
 PageTemplate.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
     message: PropTypes.node.isRequired,
-    type: PropTypes.oneOf(['success', 'info', 'warning', 'error'])
+    closable: PropTypes.bool,
+    onClose: PropTypes.func
   })),
   children: PropTypes.node,
   fullScreen: PropTypes.bool

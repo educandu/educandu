@@ -5,7 +5,6 @@ import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import { Table, Collapse, Button } from 'antd';
 import { useDateFormat } from '../locale-context.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { importBatchShape, importSourceShape } from '../../ui/default-prop-types.js';
 
 const Panel = Collapse.Panel;
@@ -80,10 +79,8 @@ function ImportBatches({ initialState, PageTemplate }) {
     );
   };
 
-  const alerts = useGlobalAlerts();
-
   return (
-    <PageTemplate alerts={alerts}>
+    <PageTemplate>
       <div className="ImportBatchesPage">
         <h1>{t('pageNames:importBatches')}</h1>
         {!sources.length && <h2>{t('noImportSourcesConfigured')}</h2>}

@@ -709,8 +709,6 @@
     "namespace": "settings",
     "language": "en",
     "resources": {
-      "announcementHeader": "Announcement",
-      "announcementPreview": "Preview",
       "homepageInfoHeader": "Homepage info",
       "helpPageHeader": "Help page",
       "termsPageHeader": "Terms of usage page",
@@ -726,8 +724,6 @@
     "namespace": "settings",
     "language": "de",
     "resources": {
-      "announcementHeader": "Mitteilung",
-      "announcementPreview": "Vorschau",
       "homepageInfoHeader": "Homepage-Info",
       "helpPageHeader": "Hilfe-Seite",
       "termsPageHeader": "Nutzungsbedingungen-Seite",

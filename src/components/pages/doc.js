@@ -17,7 +17,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import InfoFactory from '../../plugins/info-factory.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -45,12 +44,36 @@ const VIEW = {
   history: DOC_VIEW_QUERY_PARAM.history
 };
 
+function createPageAlerts(doc, currentView, hasPendingTemplateSectionKeys, t) {
+  const alerts = [];
+
+  if (doc.archived) {
+    alerts.push({ message: t('common:archivedAlert') });
+  }
+
+  if (doc.origin.startsWith(DOCUMENT_ORIGIN.external)) {
+    alerts.push({
+      message: (
+        <Trans
+          t={t}
+          i18nKey="common:externalDocumentWarning"
+          components={[<a key="external-document-warning" href={doc.originUrl} />]}
+          />
+      )
+    });
+  }
+
+  if (currentView === VIEW.edit && hasPendingTemplateSectionKeys) {
+    alerts.push({ message: t('proposedSectionsAlert') });
+  }
+
+  return alerts;
+}
+
 function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('doc');
-  const globalAlerts = useGlobalAlerts();
-  const [alerts, setAlerts] = useState([]);
   const infoFactory = useService(InfoFactory);
   const editorFactory = useService(EditorFactory);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
@@ -71,34 +94,10 @@ function Doc({ initialState, PageTemplate }) {
   const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
   const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : doc.sections));
 
+  const [alerts, setAlerts] = useState(createPageAlerts(doc, view, !!pendingTemplateSectionKeys.length, t));
   useEffect(() => {
-    const newAlerts = [...globalAlerts];
-
-    if (doc.archived) {
-      newAlerts.push({
-        message: t('common:archivedAlert')
-      });
-    }
-
-    if (isExternalDocument) {
-      newAlerts.push({
-        message:
-          (<Trans
-            t={t}
-            i18nKey="common:externalDocumentWarning"
-            components={[<a key="external-document-warning" href={doc.originUrl} />]}
-            />)
-      });
-    }
-
-    if (view === VIEW.edit && pendingTemplateSectionKeys?.length) {
-      newAlerts.push({
-        message: t('proposedSectionsAlert')
-      });
-    }
-
-    setAlerts(newAlerts);
-  }, [globalAlerts, doc, view, isExternalDocument, pendingTemplateSectionKeys, t]);
+    setAlerts(createPageAlerts(doc, view, !!pendingTemplateSectionKeys.length, t));
+  }, [doc, view, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
     if (initialView === VIEW.edit || view === VIEW.edit) {

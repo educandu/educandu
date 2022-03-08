@@ -15,7 +15,6 @@ import CloseIcon from '../icons/general/close-icon.js';
 import FilterIcon from '../icons/general/filter-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
-import { useGlobalAlerts } from '../../ui/global-alerts.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
@@ -161,10 +160,8 @@ function Search({ PageTemplate }) {
     }
   ];
 
-  const alerts = useGlobalAlerts();
-
   return (
-    <PageTemplate alerts={alerts}>
+    <PageTemplate>
       <div className="SearchPage">
         <div className="SearchPage-headline">
           <h1>{t('headline', { count: displayedDocs.length })}</h1>
