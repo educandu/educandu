@@ -37,9 +37,7 @@ function SortingSelector({ initialValue, initialDirection, options, size, onChan
   return (
     <div className={sortingSelectorClasses}>
       <Dropdown overlay={menu} trigger="click">
-        <span className="SortingSelector-text">
-          {t('selectedValue', { value: selectedOption.label })}
-        </span>
+        <a>{t('selectedValue', { value: selectedOption.label })}</a>
       </Dropdown>
 
       {direction === 'asc' && <CaretUpOutlined className="SortingSelector-direction" onClick={handleDirectionToggleClick} />}
