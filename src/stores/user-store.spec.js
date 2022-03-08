@@ -1,5 +1,6 @@
 import UserStore from './user-store.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
+import { FAVORITE_TYPE } from '../domain/constants.js';
 
 describe('user-store', () => {
   let sut;
@@ -173,6 +174,53 @@ describe('user-store', () => {
       it('should return the other user', () => {
         expect(result).toEqual(user);
       });
+    });
+  });
+
+  describe('pushToUserFavorites', () => {
+    let updatedUser;
+    const favoriteSetOnDate = new Date();
+
+    beforeEach(async () => {
+      await sut.pushToUserFavorites({
+        userId: user._id,
+        favoriteType: FAVORITE_TYPE.room,
+        favoriteId: '4827ztc1487xmnm',
+        favoriteSetOn: favoriteSetOnDate
+      });
+
+      updatedUser = await sut.getUserById(user._id);
+    });
+
+    it('should add a new entry into the favorites array', () => {
+      expect(updatedUser.favorites).toStrictEqual([{ type: FAVORITE_TYPE.room, id: '4827ztc1487xmnm', setOn: favoriteSetOnDate }]);
+    });
+  });
+
+  describe('pullFromUserFavorites', () => {
+    let updatedUser;
+    const favoriteSetOnDate = new Date();
+
+    beforeEach(async () => {
+      await sut.saveUser({
+        ...user,
+        favorites: [
+          { type: FAVORITE_TYPE.room, id: '4827ztc1487xmnm', setOn: favoriteSetOnDate },
+          { type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', setOn: favoriteSetOnDate }
+        ]
+      });
+
+      await sut.pullFromUserFavorites({
+        userId: user._id,
+        favoriteType: FAVORITE_TYPE.room,
+        favoriteId: '4827ztc1487xmnm'
+      });
+
+      updatedUser = await sut.getUserById(user._id);
+    });
+
+    it('should remove only the entry with matching criteria from the favorites array', () => {
+      expect(updatedUser.favorites).toStrictEqual([{ type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', setOn: favoriteSetOnDate }]);
     });
   });
 

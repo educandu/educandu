@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { ROLE } from '../constants.js';
+import { FAVORITE_TYPE, ROLE } from '../constants.js';
 import { idOrKeySchema } from './shared-schemas.js';
 import { minPasswordLength, minUsernameLength, passwordValidationPattern } from '../validation-constants.js';
 
@@ -53,4 +53,9 @@ export const postUserStoragePlanBodySchema = joi.object({
 
 export const userIdParamsSchema = joi.object({
   userId: idOrKeySchema.required()
+});
+
+export const favoriteBodySchema = joi.object({
+  type: joi.string().valid(...Object.values(FAVORITE_TYPE)).required(),
+  id: idOrKeySchema.required()
 });

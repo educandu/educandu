@@ -24,7 +24,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
@@ -34,6 +34,7 @@ import {
   confirmSectionDelete,
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
+import FavoriteStar from '../favorite-star.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -383,7 +384,10 @@ function Doc({ initialState, PageTemplate }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="DocPage">
-          <MetadataTitle text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title} />
+          <MetadataTitle
+            text={selectedHistoryRevision ? selectedHistoryRevision.title : doc.title}
+            extra={<FavoriteStar type={FAVORITE_TYPE.document} id={doc.key} />}
+            />
           <SectionsDisplay
             sections={view === VIEW.history ? selectedHistoryRevision?.sections || [] : currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}

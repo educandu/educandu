@@ -124,6 +124,26 @@ class UserApiClient {
       )
       .then(res => res.data);
   }
+
+  addFavorite({ type, id }) {
+    return this.httpClient
+      .post(
+        '/api/v1/users/favorites',
+        { type, id },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
+  removeFavorite({ type, id }) {
+    return this.httpClient
+      .delete(
+        '/api/v1/users/favorites',
+        { data: { type, id } },
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default UserApiClient;

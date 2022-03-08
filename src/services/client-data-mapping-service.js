@@ -26,7 +26,11 @@ class ClientDataMappingService {
       storage: {
         plan: user.storage.plan,
         usedBytes: user.storage.usedBytes
-      }
+      },
+      favorites: user.favorites.map(favorite => ({
+        ...favorite,
+        setOn: favorite.setOn.toISOString()
+      }))
     };
   }
 
@@ -40,7 +44,11 @@ class ClientDataMappingService {
           ...reminder,
           timestamp: reminder.timestamp.toISOString()
         }))
-      }
+      },
+      favorites: user.favorites.map(favorite => ({
+        ...favorite,
+        setOn: favorite.setOn.toISOString()
+      }))
     }));
   }
 

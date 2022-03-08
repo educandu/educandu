@@ -166,6 +166,18 @@ class UserService {
     return newStorage;
   }
 
+  async addFavorite({ type, id, user }) {
+    await this.userStore.pushToUserFavorites({ userId: user._id, favoriteType: type, favoriteId: id, favoriteSetOn: new Date() });
+    const updatedUser = await this.userStore.getUserById(user._id);
+    return updatedUser;
+  }
+
+  async deleteFavorite({ type, id, user }) {
+    await this.userStore.pullFromUserFavorites({ userId: user._id, favoriteType: type, favoriteId: id });
+    const updatedUser = await this.userStore.getUserById(user._id);
+    return updatedUser;
+  }
+
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
@@ -289,7 +301,8 @@ class UserService {
         plan: null,
         usedBytes: 0,
         reminders: []
-      }
+      },
+      favorites: []
     };
   }
 }

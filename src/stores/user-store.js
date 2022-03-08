@@ -55,6 +55,16 @@ class UserStore {
   saveUser(user, { session } = {}) {
     return this.collection.replaceOne({ _id: user._id }, user, { session, upsert: true });
   }
+
+  pushToUserFavorites({ userId, favoriteType, favoriteId, favoriteSetOn }, { session } = {}) {
+    const favorite = { type: favoriteType, id: favoriteId, setOn: favoriteSetOn };
+    return this.collection.updateOne({ _id: userId }, { $push: { favorites: favorite } }, { session });
+  }
+
+  pullFromUserFavorites({ userId, favoriteType, favoriteId }, { session } = {}) {
+    const filter = { type: favoriteType, id: favoriteId };
+    return this.collection.updateOne({ _id: userId }, { $pull: { favorites: filter } }, { session });
+  }
 }
 
 export default UserStore;

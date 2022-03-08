@@ -194,6 +194,22 @@
     }
   },
   {
+    "namespace": "favoriteStar",
+    "language": "en",
+    "resources": {
+      "removeFavorite": "Remove from favorites",
+      "addFavorite": "Add to favorites"
+    }
+  },
+  {
+    "namespace": "favoriteStar",
+    "language": "de",
+    "resources": {
+      "removeFavorite": "Aus den Favoriten entfernen",
+      "addFavorite": "Als Favorit hinzufügen"
+    }
+  },
+  {
     "namespace": "historyControlPanel",
     "language": "en",
     "resources": {

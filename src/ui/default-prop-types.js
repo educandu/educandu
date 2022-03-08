@@ -108,6 +108,12 @@ export const userStorageShape = PropTypes.shape({
   }))
 });
 
+export const userFavoriteShape = PropTypes.shape({
+  type: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  setOn: PropTypes.string.isRequired
+});
+
 export const userShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   provider: PropTypes.string.isRequired,
@@ -117,7 +123,8 @@ export const userShape = PropTypes.shape({
   expires: PropTypes.string,
   lockedOut: PropTypes.bool,
   profile: userProfileShape,
-  storage: userStorageShape
+  storage: userStorageShape,
+  favorites: PropTypes.arrayOf(userFavoriteShape).isRequired
 });
 
 export const userProps = {

@@ -13,7 +13,7 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
-import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { FAVORITE_TYPE, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
@@ -23,6 +23,8 @@ import { LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
+import MetadataTitle from '../metadata-title.js';
+import FavoriteStar from '../favorite-star.js';
 
 const { TabPane } = Tabs;
 
@@ -220,7 +222,10 @@ export default function Room({ PageTemplate, initialState }) {
   return (
     <PageTemplate>
       <div className="Room">
-        <h1 className="Room-title">{room.name}</h1>
+        <MetadataTitle
+          text={room.name}
+          extra={<FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />}
+          />
         <div className="Room-subtitle">
           <div className="Room-subtitleIcon">
             {room.access === ROOM_ACCESS_LEVEL.private ? <LockOutlined /> : <UnlockOutlined />}
