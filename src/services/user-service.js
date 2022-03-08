@@ -87,23 +87,19 @@ class UserService {
   }
 
   async updateUserStoragePlan(userId, storagePlanId) {
-    logger.info(`Updating storage plan for user with id ${userId}: ${storagePlanId}`);
+    logger.info(`Updating storage plan for user with id ${userId}: ${storagePlanId || '<null>'}`);
 
     const user = await this.userStore.getUserById(userId);
     if (!user) {
       throw new NotFound(`User with ID '${userId}' could not be found`);
     }
 
-    const plan = await this.storagePlanStore.getStoragePlanById(storagePlanId);
-    if (!plan) {
+    const plan = storagePlanId ? await this.storagePlanStore.getStoragePlanById(storagePlanId) : null;
+    if (storagePlanId && !plan) {
       throw new NotFound(`Storage plan with ID '${storagePlanId}' could not be found`);
     }
 
-    if (user.storage.plan) {
-      throw new BadRequest('Switching from existing storage plans is not yet supported');
-    }
-
-    const newStorage = { ...user.storage, plan: plan._id };
+    const newStorage = { ...user.storage, plan: plan?._id || null };
     user.storage = newStorage;
     await this.userStore.saveUser(user);
     return newStorage;

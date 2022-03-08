@@ -131,7 +131,7 @@ function Users({ initialState, PageTemplate }) {
 
     let finalStorage;
     try {
-      finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId });
+      finalStorage = await userApiClient.saveUserStoragePlan({ userId: user._id, storagePlanId: newStoragePlanId || null });
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
       finalStorage = oldStorage;
@@ -298,7 +298,7 @@ function Users({ initialState, PageTemplate }) {
         placeholder={t('selectPlan')}
         value={user.storage.plan}
         onChange={value => handleStoragePlanChange(user, value)}
-        disabled={!!user.storage.plan}
+        allowClear
         >
         {initialState.storagePlans.map(plan => (
           <Option key={plan._id} value={plan._id} label={plan.name}>
@@ -314,7 +314,7 @@ function Users({ initialState, PageTemplate }) {
 
   const renderStorageSpace = (_, user) => {
     return (
-      <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={user.storagePlan.maxBytes} />
+      <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={user.storagePlan?.maxBytes || 0} />
     );
   };
 
@@ -433,7 +433,17 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'storageSpace',
       key: 'storageSpace',
       render: renderStorageSpace,
-      sorter: by(x => x.storage.usedBytes),
+      sorter: by(x => {
+        if (!x.storage.usedBytes) {
+          return 0;
+        }
+
+        if (!x.storagePlan?.maxBytes) {
+          return 1 + x.storage.usedBytes;
+        }
+
+        return x.storage.usedBytes / x.storagePlan.maxBytes;
+      }),
       responsive: ['md']
     }, {
       title: () => t('reminders'),

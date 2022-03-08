@@ -9,8 +9,8 @@ function UsedStorage({ usedBytes, maxBytes, showLabel }) {
   const { t } = useTranslation('usedStorage');
   const { uiLocale } = useLocale();
 
-  const percent = maxBytes ? usedBytes * 100 / maxBytes : 100;
-  const displayedPercent = `${Math.round(percent)} %`;
+  const percent = maxBytes ? usedBytes * 100 / maxBytes : 101;
+  const displayedPercent = percent > 100 ? '> 100 %' : `${Math.round(percent)} %`;
   const status = percent >= 95 ? 'exception' : 'normal';
 
   const maxSpace = prettyBytes(maxBytes, { locale: uiLocale });
@@ -20,7 +20,7 @@ function UsedStorage({ usedBytes, maxBytes, showLabel }) {
     <div className="UsedStorage">
       <div className="UsedStorage-progress">
         {showLabel && <span className="UsedStorage-progressLabel">{t('label')}:</span>}
-        <Progress strokeLinecap="square" percent={percent} status={status} showInfo={false} />
+        <Progress strokeLinecap="square" percent={Math.min(100, percent)} status={status} showInfo={false} />
         <span className="UserStorage-progressPercentage">{displayedPercent}</span>
       </div>
       <span className="UsedStorage-occupiedSpace">{`${usedSpace} / ${maxSpace}`}</span>

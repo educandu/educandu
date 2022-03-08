@@ -4,7 +4,7 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
-const { BadRequest, NotFound } = httpErrors;
+const { NotFound } = httpErrors;
 
 describe('user-service', () => {
   let db;
@@ -48,14 +48,16 @@ describe('user-service', () => {
       });
     });
     describe('when called with the ID of a user that has already an assigned plan', () => {
+      let result;
       beforeEach(async () => {
         await db.users.updateOne(
           { _id: user._id },
           { $set: { storage: { plan: 'some-other-plan-id', usedBytes: 0, reminders: [] } } }
         );
+        result = await sut.updateUserStoragePlan(user._id, storagePlan._id);
       });
-      it('should throw a bad request error', () => {
-        expect(() => sut.updateUserStoragePlan(user._id, storagePlan._id)).rejects.toThrowError(BadRequest);
+      it('should assign the new plan', () => {
+        expect(result.plan).toBe(storagePlan._id);
       });
     });
     describe('when called with the ID of a user that has no plan assigned yet', () => {
@@ -65,6 +67,25 @@ describe('user-service', () => {
       });
       it('should assign the new plan', () => {
         expect(result.plan).toBe(storagePlan._id);
+      });
+    });
+    describe('when called with a storage plan ID of `null`', () => {
+      let result;
+      beforeEach(async () => {
+        await db.users.updateOne(
+          { _id: user._id },
+          { $set: { storage: { plan: 'some-other-plan-id', usedBytes: 250, reminders: [{ timestamp: new Date(), createdBy: executingUser._id }] } } }
+        );
+        result = await sut.updateUserStoragePlan(user._id, null);
+      });
+      it('should set the plan on the user to `null`', () => {
+        expect(result.plan).toBeNull();
+      });
+      it('should not change the existing used bytes', () => {
+        expect(result.usedBytes).toBe(250);
+      });
+      it('should not change the existing reminders', () => {
+        expect(result.reminders).toHaveLength(1);
       });
     });
   });
