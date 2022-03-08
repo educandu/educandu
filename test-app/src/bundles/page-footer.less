@@ -1,0 +1,17 @@
+.PageFooter {
+  .m-page-content;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: @edu-z-index-base-layer;
+}
+
+.PageFooter-link {
+  display: inline-block;
+
+  &:not(:last-child)::after {
+    content: "\00A0\00A0|\00A0\00A0";
+  }
+}

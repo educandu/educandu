@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
+import SiteLogo from './site-logo.js';
 import React, { useState } from 'react';
+import PageHeader from './page-header.js';
+import PageFooter from './page-footer.js';
+import HomePageIllustration from './home-page-illustration.js';
 import Markdown from '../../../src/components/markdown.js';
 import { useSettings } from '../../../src/components/settings-context.js';
-import DefaultSiteLogo from '../../../src/components/default-site-logo.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
-import DefaultPageHeader from '../../../src/components/default-page-header.js';
-import DefaultPageFooter from '../../../src/components/default-page-footer.js';
 import CookieConsentDrawer from '../../../src/components/cookie-consent-drawer.js';
 
-function HomePageTemplate({ children, alerts }) {
+function HomePageTemplate({ children }) {
   const settings = useSettings();
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
 
@@ -21,22 +22,23 @@ function HomePageTemplate({ children, alerts }) {
   };
 
   return (
-    <div className="DefaultPageTemplate">
-      <DefaultPageHeader fullScreen alerts={alerts} onUiLanguageClick={handleUiLanguageClick} />
-      <main className="DefaultPageTemplate-contentArea DefaultPageTemplate-contentArea--fullScreen">
-        <div className="DefaultPageTemplate-content DefaultPageTemplate-content--fullScreen">
+    <div className="HomePageTemplate">
+      <PageHeader onUiLanguageClick={handleUiLanguageClick} />
+      <main className="HomePageTemplate-contentArea">
+        <div className="HomePageTemplate-content">
           <div className="HomePageTemplate-logo" >
-            <DefaultSiteLogo />
+            <SiteLogo readonly />
+            {settings.homepageInfo && (
+              <div className="HomePageTemplate-info"><Markdown renderMedia>{settings.homepageInfo}</Markdown></div>
+            )}
           </div>
           {children}
-          {settings.homepageInfo && (
-            <div>
-              <Markdown renderMedia>{settings.homepageInfo}</Markdown>
-            </div>
-          )}
+          <div className="HomePageTemplate-illustration">
+            <HomePageIllustration />
+          </div>
         </div>
       </main>
-      <DefaultPageFooter />
+      <PageFooter />
       <UiLanguageDialog visible={isUiLanguageDialogVisible} onClose={handleUiLanguageDialogClose} />
       <CookieConsentDrawer />
     </div>
@@ -44,17 +46,10 @@ function HomePageTemplate({ children, alerts }) {
 }
 
 HomePageTemplate.propTypes = {
-  alerts: PropTypes.arrayOf(PropTypes.shape({
-    message: PropTypes.node.isRequired,
-    showInFullScreen: PropTypes.bool,
-    closable: PropTypes.bool,
-    onClose: PropTypes.func
-  })),
   children: PropTypes.node
 };
 
 HomePageTemplate.defaultProps = {
-  alerts: [],
   children: null
 };
 
