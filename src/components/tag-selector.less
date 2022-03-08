@@ -1,0 +1,29 @@
+.TagSelector {
+  position: relative;
+}
+
+.TagSelector-link {
+  display: flex;
+  align-items: center;
+  color: @edu-link-color;
+  padding: @tag-padding;
+  font-size: @tag-font-size;
+  text-decoration: underline;
+
+  &.is-active {
+    color: @edu-white;
+    text-decoration: none;
+    border-radius: @tag-border-radius;
+    background-color: @edu-primary-color-light;
+  }
+}
+
+.TagSelector-selectWrapper {
+  position: absolute;
+  top: @edu-control-height-base;
+  z-index: @edu-z-index-overlay-layer;
+}
+
+.TagSelector-select {
+  width: 200px;
+}

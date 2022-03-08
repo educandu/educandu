@@ -5,14 +5,13 @@ import { Select, Tag } from 'antd';
 import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
 import Logger from '../../common/logger.js';
+import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
-import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
 import CloseIcon from '../icons/general/close-icon.js';
-import FilterIcon from '../icons/general/filter-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -43,6 +42,7 @@ function Search({ PageTemplate }) {
   const formatSorting = value => `${t('sorting')}: ${sortingOptions.find(o => o.value === value).label}`;
 
   const [docs, setDocs] = useState([]);
+  const [allTags, setAllTags] = useState([]);
   const [displayedDocs, setDisplayedDocs] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -50,6 +50,8 @@ function Search({ PageTemplate }) {
   const [searchText, setSearchText] = useState(request.query.query);
   const [sorting, setSorting] = useState(formatSorting(sortingOptions[0].value));
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
+
+  const updateTagOptions = tags => setTagOptions(tags.sort().map(tag => ({ value: tag, key: tag })));
 
   useEffect(() => {
     (async () => {
@@ -67,12 +69,15 @@ function Search({ PageTemplate }) {
   }, [searchText, searchApiClient, t]);
 
   useEffect(() => {
-    const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
-    const allUniqueTags = [...new Set(allTags)];
-    const newTagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
-
-    setTagOptions(newTagOptions);
+    const docTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
+    const uniqueDocTags = [...new Set(docTags)];
+    setAllTags(uniqueDocTags);
   }, [docs]);
+
+  useEffect(() => {
+    const remainingTags = allTags.filter(tag => !selectedTags.includes(tag));
+    setTagOptions(remainingTags.map(tag => ({ value: tag, key: tag })));
+  }, [allTags, selectedTags]);
 
   useEffect(() => {
     const filteredDocs = docs.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
@@ -169,21 +174,6 @@ function Search({ PageTemplate }) {
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
           <Select
-            showArrow
-            showSearch
-            size="large"
-            value={null}
-            options={tagOptions}
-            onChange={handleSelectTag}
-            placeholder={(
-              <span className="SearchPage-filterPlaceholder">
-                <span>{`${t('filterPlaceholder')} (${selectedTags.length})`}</span>
-                <SearchOutlined className="SearchPage-filterPlaceholderIcon" />
-              </span>
-            )}
-            suffixIcon={<FilterIcon />}
-            />
-          <Select
             size="large"
             value={sorting}
             options={sortingOptions}
@@ -193,6 +183,12 @@ function Search({ PageTemplate }) {
         </div>
         <div className="SearchPage-selectedTags">
           {renderSelectedTags()}
+          <TagSelector
+            size="large"
+            options={tagOptions}
+            onSelect={handleSelectTag}
+            selectedCount={selectedTags.length}
+            />
           {selectedTags.length > 1 && (
             <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
               <CloseIcon />
