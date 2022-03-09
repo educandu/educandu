@@ -1095,14 +1095,16 @@
     "namespace": "usedStorage",
     "language": "en",
     "resources": {
-      "label": "Used"
+      "label": "Used",
+      "storageSpaceExceeded": "Exceedance"
     }
   },
   {
     "namespace": "usedStorage",
     "language": "de",
     "resources": {
-      "label": "Benutzt"
+      "label": "Benutzt",
+      "storageSpaceExceeded": "Überschreitung"
     }
   },
   {

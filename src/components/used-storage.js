@@ -10,7 +10,7 @@ function UsedStorage({ usedBytes, maxBytes, showLabel }) {
   const { uiLocale } = useLocale();
 
   const percent = maxBytes ? usedBytes * 100 / maxBytes : 101;
-  const displayedPercent = percent > 100 ? '> 100 %' : `${Math.round(percent)} %`;
+  const displayedPercent = percent > 100 ? t('storageSpaceExceeded') : `${Math.round(percent)} %`;
   const status = percent >= 95 ? 'exception' : 'normal';
 
   const maxSpace = prettyBytes(maxBytes, { locale: uiLocale });
