@@ -402,6 +402,28 @@
     }
   },
   {
+    "namespace": "dashboard",
+    "language": "en",
+    "resources": {
+      "profileTabTitle": "Profile",
+      "accountTabTitle": "Account",
+      "roomsTabTitle": "Rooms",
+      "storagePlanLabel": "storage plan",
+      "noStoragePlanLabel": "No storage plan"
+    }
+  },
+  {
+    "namespace": "dashboard",
+    "language": "de",
+    "resources": {
+      "profileTabTitle": "Profil",
+      "accountTabTitle": "Konto",
+      "roomsTabTitle": "Räume",
+      "storagePlanLabel": "Speicherplan",
+      "noStoragePlanLabel": "Kein Speicherplan"
+    }
+  },
+  {
     "namespace": "doc",
     "language": "en",
     "resources": {
@@ -551,28 +573,6 @@
       "createImport": "Import erstellen",
       "importsHeaderPrefix": "Quelle",
       "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
-    }
-  },
-  {
-    "namespace": "mySpace",
-    "language": "en",
-    "resources": {
-      "profileTabTitle": "Profile",
-      "accountTabTitle": "Account",
-      "roomsTabTitle": "Rooms",
-      "storagePlanLabel": "storage plan",
-      "noStoragePlanLabel": "No storage plan"
-    }
-  },
-  {
-    "namespace": "mySpace",
-    "language": "de",
-    "resources": {
-      "profileTabTitle": "Profil",
-      "accountTabTitle": "Konto",
-      "roomsTabTitle": "Räume",
-      "storagePlanLabel": "Speicherplan",
-      "noStoragePlanLabel": "Kein Speicherplan"
     }
   },
   {
@@ -1723,7 +1723,7 @@
     "resources": {
       "home": "Home",
       "users": "Users",
-      "mySpace": "My space",
+      "dashboard": "Dashboard",
       "settings": "Settings",
       "importBatchCreation": "Create import",
       "importBatches": "Imports",
@@ -1738,7 +1738,7 @@
     "resources": {
       "home": "Home",
       "users": "Benutzer",
-      "mySpace": "Mein Bereich",
+      "dashboard": "Dashboard",
       "settings": "Einstellungen",
       "importBatchCreation": "Import erstellen",
       "importBatches": "Importe",

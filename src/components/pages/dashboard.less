@@ -1,0 +1,38 @@
+.DashboardPage {}
+
+.DashboardPage-usedStorage {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  margin: 20px 0 10px 0;
+}
+
+.DashboardPage-headerSection {
+  display: grid;
+  grid-gap: 35px;
+  align-items: center;
+  justify-content: center;
+  grid-auto-flow: column;
+
+  @media @edu-media-phone {
+    grid-gap: 15px;
+    grid-auto-flow: row;
+  }
+}
+
+.DashboardPage-headerAvatar {
+  margin: 0 auto;
+}
+
+.DashboardPage-headerTitle {
+  display: block;
+  color: @edu-text-color;
+  font-weight: bold;
+  font-size: @edu-heading-1-size;
+}
+
+.DashboardPage-headerSubtitle {
+  display: block;
+  font-size: 12px;
+  color: @edu-text-color-secondary;
+}

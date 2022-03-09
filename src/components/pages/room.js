@@ -62,7 +62,7 @@ export default function Room({ PageTemplate, initialState }) {
   const handleRoomDelete = async () => {
     try {
       await roomApiClient.deleteRoom(room._id);
-      window.location = urls.getMySpaceUrl();
+      window.location = urls.getDashboardUrl();
     } catch (error) {
       handleApiError({ error, t, logger });
     }

@@ -1,6 +1,6 @@
 export const PAGE_NAME = {
   login: 'login',
-  mySpace: 'my-space',
+  dashboard: 'dashboard',
   register: 'register',
   resetPassword: 'reset-password',
   completeRegistration: 'complete-registration',

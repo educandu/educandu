@@ -13,8 +13,8 @@ import { useSetUser, useUser } from './user-context.js';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import CountryNameProvider from '../data/country-name-provider.js';
-import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { Form, Input, Avatar, Button, Select, message } from 'antd';
+import CountryFlagAndName from './localization/country-flag-and-name.js';
 import { formItemLayoutShape, tailFormItemLayoutShape } from '../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
