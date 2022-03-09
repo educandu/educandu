@@ -12,7 +12,7 @@ documentMarkedFavoriteActivity:
   de: Dokument als Favorit hinzugefügt
 roomCreatedActivity:
   en: New room created
-  de: Neuen Raum ertellt
+  de: Neuen Raum erstellt
 roomUpdatedActivity:
   en: Room updated
   de: Raum bearbeitet

@@ -1,28 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { USER_ACTIVITY_TYPE } from '../domain/constants.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
+import { userActivitiesShape } from '../ui/default-prop-types.js';
 import { StarFilled, UsergroupAddOutlined } from '@ant-design/icons';
 
-function NewsTab() {
+function NewsTab({ activities }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('newsTab');
-
-  const activities = [
-    { type: USER_ACTIVITY_TYPE.documentCreated, timestamp: new Date(), data: { title: 'My document', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.documentUpdated, timestamp: new Date(), data: { title: 'My document', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.documentMarkedFavorite, timestamp: new Date(), data: { title: 'Some document', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.roomCreated, timestamp: new Date(), data: { title: 'My room', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.roomUpdated, timestamp: new Date(), data: { title: 'My room', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.roomMarkedFavorite, timestamp: new Date(), data: { title: 'Some room', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.roomJoined, timestamp: new Date(), data: { title: 'Other room', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.lessonCreated, timestamp: new Date(), data: { title: 'My lesson', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.lessonUpdated, timestamp: new Date(), data: { title: 'My lesson', _id: '' } },
-    { type: USER_ACTIVITY_TYPE.lessonMarkedFavorite, timestamp: new Date(), data: { title: 'Some lesson', _id: '' } }
-  ];
 
   const renderActivity = ({ icon, timestamp, description, linkText, linkHref }) => (
     <div className="NewsTab-activity">
@@ -72,7 +61,7 @@ function NewsTab() {
       icon: <DuplicateIcon />,
       timestamp: activity.timestamp,
       description: t('roomCreatedActivity'),
-      linkText: activity.data.title,
+      linkText: activity.data.name,
       linkHref: urls.getRoomUrl(activity.data._id)
     });
   };
@@ -82,7 +71,7 @@ function NewsTab() {
       icon: <EditIcon />,
       timestamp: activity.timestamp,
       description: t('roomUpdatedActivity'),
-      linkText: activity.data.title,
+      linkText: activity.data.name,
       linkHref: urls.getRoomUrl(activity.data._id)
     });
   };
@@ -92,7 +81,7 @@ function NewsTab() {
       icon: <StarFilled className="NewsTab-activityMetadataIcon--lighter" />,
       timestamp: activity.timestamp,
       description: t('roomMarkedFavoriteActivity'),
-      linkText: activity.data.title,
+      linkText: activity.data.name,
       linkHref: urls.getRoomUrl(activity.data._id)
     });
   };
@@ -102,7 +91,7 @@ function NewsTab() {
       icon: <UsergroupAddOutlined />,
       timestamp: activity.timestamp,
       description: t('roomJoinedActivity'),
-      linkText: activity.data.title,
+      linkText: activity.data.name,
       linkHref: urls.getRoomUrl(activity.data._id)
     });
   };
@@ -113,7 +102,7 @@ function NewsTab() {
       timestamp: activity.timestamp,
       description: t('lessonCreatedActivity'),
       linkText: activity.data.title,
-      linkHref: urls.getLessonUrl(activity.data._id)
+      linkHref: urls.getLessonUrl({ id: activity.data._id })
     });
   };
 
@@ -123,7 +112,7 @@ function NewsTab() {
       timestamp: activity.timestamp,
       description: t('lessonUpdatedActivity'),
       linkText: activity.data.title,
-      linkHref: urls.getLessonUrl(activity.data._id)
+      linkHref: urls.getLessonUrl({ id: activity.data._id })
     });
   };
 
@@ -133,7 +122,7 @@ function NewsTab() {
       timestamp: activity.timestamp,
       description: t('lessonMarkedFavoriteActivity'),
       linkText: activity.data.title,
-      linkHref: urls.getLessonUrl(activity.data._id)
+      linkHref: urls.getLessonUrl({ id: activity.data._id })
     });
   };
 
@@ -166,18 +155,26 @@ function NewsTab() {
 
   const renderActivities = () => {
     return activities
-      .map(activity => <div key={activity.timestamp}>{renderActivityByType(activity)}</div>)
+      .map(activity => <div key={JSON.stringify(activity)}>{renderActivityByType(activity)}</div>)
       .filter(activity => activity);
   };
 
   return (
-    <section>
-      <h5 className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</h5>
-      <div className="NewsTab-activities">
-        {renderActivities()}
-      </div>
-    </section>
+    <div>
+      {!!activities.length && (
+        <section>
+          <h5 className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</h5>
+          <div className="NewsTab-activities">
+            {renderActivities()}
+          </div>
+        </section>
+      )}
+    </div>
   );
 }
+
+NewsTab.propTypes = {
+  activities: PropTypes.arrayOf(userActivitiesShape).isRequired
+};
 
 export default NewsTab;

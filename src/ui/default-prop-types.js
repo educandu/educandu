@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, DOCUMENT_IMPORT_TYPE, ROOM_ACCESS_LEVEL, TASK_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';
 
 export const filePickerStorageShape = PropTypes.shape({
   rootPath: PropTypes.string.isRequired,
@@ -305,4 +305,14 @@ export const lessonMetadataShape = PropTypes.shape({
 
 export const lessonShape = PropTypes.shape({
   ...lessonMetadataProps
+});
+
+export const userActivitiesShape = PropTypes.shape({
+  type: PropTypes.oneOf(Object.values(USER_ACTIVITY_TYPE)).isRequired,
+  timestamp: PropTypes.string.isRequired,
+  data: PropTypes.shape({
+    _id: PropTypes.string,
+    title: PropTypes.string,
+    name: PropTypes.string
+  }).isRequired
 });

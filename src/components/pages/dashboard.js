@@ -10,9 +10,9 @@ import { useUser } from '../user-context.js';
 import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
-import { roomShape } from '../../ui/default-prop-types.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useStoragePlan } from '../storage-plan-context.js';
+import { roomShape, userActivitiesShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
@@ -24,7 +24,7 @@ function Dashboard({ initialState, PageTemplate }) {
   const { t } = useTranslation('dashboard');
   const clientConfig = useService(ClientConfig);
 
-  const { rooms } = initialState;
+  const { rooms, activities } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
   const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
 
@@ -72,7 +72,7 @@ function Dashboard({ initialState, PageTemplate }) {
 
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
           <TabPane className="Tabs-tabPane" tab={t('newsTabTitle')} key="1">
-            <NewsTab />
+            <NewsTab activities={activities} />
           </TabPane>
           {clientConfig.areRoomsEnabled && (
             <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="2">
@@ -102,7 +102,8 @@ function Dashboard({ initialState, PageTemplate }) {
 Dashboard.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    rooms: PropTypes.arrayOf(roomShape).isRequired
+    rooms: PropTypes.arrayOf(roomShape).isRequired,
+    activities: PropTypes.arrayOf(userActivitiesShape).isRequired
   }).isRequired
 };
 
