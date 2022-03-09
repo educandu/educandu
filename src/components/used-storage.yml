@@ -1,3 +1,6 @@
 label:
   en: Used
   de: Benutzt
+storageSpaceExceeded:
+  en: Exceedance
+  de: Überschreitung
