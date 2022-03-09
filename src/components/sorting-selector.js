@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Dropdown, Menu } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Tooltip } from 'antd';
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 
 function SortingSelector({ initialValue, initialDirection, options, size, onChange }) {
   const { t } = useTranslation('sortingSelector');
@@ -37,11 +37,15 @@ function SortingSelector({ initialValue, initialDirection, options, size, onChan
   return (
     <div className={sortingSelectorClasses}>
       <Dropdown overlay={menu} trigger="click">
-        <a>{t('selectedValue', { value: selectedOption.label })}</a>
+        <Tooltip placement="top" title={t('changeSortingValue')}>
+          <a>{t('selectedValue', { value: selectedOption.label })}</a>
+        </Tooltip>
       </Dropdown>
 
-      {direction === 'asc' && <CaretUpOutlined className="SortingSelector-direction" onClick={handleDirectionToggleClick} />}
-      {direction === 'desc' && <CaretDownOutlined className="SortingSelector-direction" onClick={handleDirectionToggleClick} />}
+      <Tooltip placement="top" title={t('changeSortingDirection')}>
+        {direction === 'asc' && <ArrowUpOutlined className="SortingSelector-direction" onClick={handleDirectionToggleClick} /> }
+        {direction === 'desc' && <ArrowDownOutlined className="SortingSelector-direction" onClick={handleDirectionToggleClick} /> }
+      </Tooltip>
     </div>
   );
 }

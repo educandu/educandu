@@ -1025,14 +1025,18 @@
     "namespace": "sortingSelector",
     "language": "en",
     "resources": {
-      "selectedValue": "Sort by \"{value}\""
+      "selectedValue": "Sort by \"{value}\"",
+      "changeSortingValue": "Change sorting",
+      "changeSortingDirection": "Change sorting direction"
     }
   },
   {
     "namespace": "sortingSelector",
     "language": "de",
     "resources": {
-      "selectedValue": "Nach \"{value}\" sortieren"
+      "selectedValue": "Nach \"{value}\" sortieren",
+      "changeSortingValue": "Sortierung ändern",
+      "changeSortingDirection": "Sortierungsrichtung ändern"
     }
   },
   {
