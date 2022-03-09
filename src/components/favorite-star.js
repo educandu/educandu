@@ -43,6 +43,7 @@ function FavoriteStar({ type, id, disabled }) {
   return (
     <div className="FavoriteStar">
       <Rate
+        className="FavoriteStar-rate"
         count={1}
         value={isSet ? 1 : 0}
         onChange={handleChange}
