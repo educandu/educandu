@@ -3,6 +3,7 @@ import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
+import { FAVORITE_TYPE } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -11,7 +12,6 @@ describe('user-service', () => {
   let sut;
   let user;
   let container;
-  let storagePlan;
   let executingUser;
 
   beforeAll(async () => {
@@ -26,8 +26,6 @@ describe('user-service', () => {
   });
 
   beforeEach(async () => {
-    storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 500 * 1000 * 1000 };
-    await db.storagePlans.insertOne(storagePlan);
     user = await setupTestUser(container, { username: 'John Doe', email: 'john-doe@test.com' });
     executingUser = await setupTestUser(container, { username: 'Emilia Watson', email: 'emilia-watson@test.com' });
   });
@@ -37,6 +35,13 @@ describe('user-service', () => {
   });
 
   describe('updateUserStoragePlan', () => {
+    let storagePlan;
+
+    beforeEach(async () => {
+      storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 500 * 1000 * 1000 };
+      await db.storagePlans.insertOne(storagePlan);
+    });
+
     describe('when called with the ID of a non-existent user', () => {
       it('should throw a not found error', () => {
         expect(() => sut.updateUserStoragePlan('non-existent-user-id', storagePlan._id)).rejects.toThrowError(NotFound);
@@ -100,6 +105,13 @@ describe('user-service', () => {
   });
 
   describe('deleteAllUserStorageReminders', () => {
+    let storagePlan;
+
+    beforeEach(async () => {
+      storagePlan = { _id: uniqueId.create(), name: 'test-plan', maxBytes: 500 * 1000 * 1000 };
+      await db.storagePlans.insertOne(storagePlan);
+    });
+
     describe('when called with the ID of a non-existent user', () => {
       it('should throw a not found error', () => {
         expect(() => sut.deleteAllUserStorageReminders('non-existent-user-id', storagePlan._id)).rejects.toThrowError(NotFound);
@@ -131,6 +143,39 @@ describe('user-service', () => {
       it('should replace them with an empty array', () => {
         expect(result.reminders).toHaveLength(0);
       });
+    });
+  });
+
+  describe('addFavorite', () => {
+    let result;
+
+    beforeEach(async () => {
+      result = await sut.addFavorite({ type: FAVORITE_TYPE.lesson, id: '9c348ntxgnr9xy', user: executingUser });
+    });
+
+    it('should add a new entry to the user\'s favorite collection', () => {
+      expect(result.favorites).toStrictEqual([{ type: FAVORITE_TYPE.lesson, id: '9c348ntxgnr9xy', setOn: expect.any(Date) }]);
+    });
+  });
+
+  describe('deleteFavorite', () => {
+    let result;
+
+    beforeEach(async () => {
+      await db.users.updateOne({ _id: executingUser._id }, {
+        $set: {
+          favorites: [
+            { type: FAVORITE_TYPE.room, id: '4827ztc1487xmnm', setOn: new Date() },
+            { type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', setOn: new Date() }
+          ]
+        }
+      });
+
+      result = await sut.deleteFavorite({ type: FAVORITE_TYPE.lesson, id: 'm9vc9qmhc9qcwas', user: executingUser });
+    });
+
+    it('should remove the matching entries from the user\'s favorite collection', () => {
+      expect(result.favorites).toStrictEqual([{ type: FAVORITE_TYPE.room, id: '4827ztc1487xmnm', setOn: expect.any(Date) }]);
     });
   });
 

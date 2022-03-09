@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import UserStore from '../stores/user-store.js';
-import { ROLE, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { FAVORITE_TYPE, ROLE, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
@@ -36,6 +36,7 @@ describe('client-data-mapping-service', () => {
 
   describe('mapWebsiteUser', () => {
     let dbUser;
+    const favoriteSetOnDate = new Date();
 
     beforeEach(() => {
       dbUser = {
@@ -58,7 +59,14 @@ describe('client-data-mapping-service', () => {
               createdBy: 'kjghdskjhgfdsf'
             }
           ]
-        }
+        },
+        favorites: [
+          {
+            type: FAVORITE_TYPE.document,
+            id: '4589ct29nr76n4x9214',
+            setOn: favoriteSetOnDate
+          }
+        ]
       };
       result = sut.mapWebsiteUser(dbUser);
     });
@@ -74,7 +82,14 @@ describe('client-data-mapping-service', () => {
         storage: {
           plan: 'lkdkgfj',
           usedBytes: 0
-        }
+        },
+        favorites: [
+          {
+            type: FAVORITE_TYPE.document,
+            id: '4589ct29nr76n4x9214',
+            setOn: favoriteSetOnDate.toISOString()
+          }
+        ]
       });
     });
   });

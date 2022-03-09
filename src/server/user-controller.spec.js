@@ -3,7 +3,7 @@ import events from 'events';
 import httpErrors from 'http-errors';
 import httpMocks from 'node-mocks-http';
 import UserController from './user-controller.js';
-import { SAVE_USER_RESULT } from '../domain/constants.js';
+import { FAVORITE_TYPE, SAVE_USER_RESULT } from '../domain/constants.js';
 
 const { NotFound } = httpErrors;
 
@@ -25,7 +25,9 @@ describe('user-controller', () => {
       getUserByEmailAddress: sandbox.stub(),
       addUserStorageReminder: sandbox.stub(),
       createPasswordResetRequest: sandbox.stub(),
-      deleteAllUserStorageReminders: sandbox.stub()
+      deleteAllUserStorageReminders: sandbox.stub(),
+      addFavorite: sandbox.stub(),
+      deleteFavorite: sandbox.stub()
     };
     storageService = {
       getAllStoragePlans: sandbox.stub()
@@ -418,6 +420,104 @@ describe('user-controller', () => {
     it('should return the result object', () => {
       const response = res._getData();
       expect(response).toBe(serviceResponse);
+    });
+  });
+
+  describe('handlePostFavorite', () => {
+    let req;
+    let res;
+    const requestUser = {
+      _id: 1234,
+      favorites: []
+    };
+    const mappedUser = {
+      ...requestUser,
+      favorites: [
+        {
+          type: FAVORITE_TYPE.document,
+          id: '4589ct29nr76n4x9214',
+          setOn: new Date().toISOString()
+        }
+      ]
+    };
+
+    beforeEach(done => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' },
+        user: requestUser,
+        body: { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214' }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+      res.on('end', done);
+
+      userService.addFavorite.resolves();
+      clientDataMappingService.mapWebsiteUser.returns(mappedUser);
+
+      sut.handlePostFavorite(req, res);
+    });
+
+    it('should call userService.addFavorite', () => {
+      sinon.assert.calledWith(userService.addFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });
+    });
+
+    it('should set the status code on the response to 201', () => {
+      expect(res.statusCode).toBe(201);
+    });
+
+    it('should return the result object', () => {
+      const response = res._getData();
+      expect(response).toBe(mappedUser);
+    });
+  });
+
+  describe('handleDeleteFavorite', () => {
+    let req;
+    let res;
+    const requestUser = {
+      _id: 1234,
+      favorites: [
+        {
+          type: FAVORITE_TYPE.document,
+          id: '4589ct29nr76n4x9214',
+          setOn: new Date()
+        }
+      ]
+    };
+    const mappedUser = {
+      ...requestUser,
+      favorites: []
+    };
+
+    beforeEach(done => {
+      req = httpMocks.createRequest({
+        protocol: 'https',
+        headers: { host: 'localhost' },
+        user: requestUser,
+        body: { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214' }
+      });
+      res = httpMocks.createResponse({ eventEmitter: events.EventEmitter });
+
+      res.on('end', done);
+
+      userService.deleteFavorite.resolves();
+      clientDataMappingService.mapWebsiteUser.returns(mappedUser);
+
+      sut.handleDeleteFavorite(req, res);
+    });
+
+    it('should call userService.deleteFavorite', () => {
+      sinon.assert.calledWith(userService.deleteFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });
+    });
+
+    it('should set the status code on the response to 200', () => {
+      expect(res.statusCode).toBe(200);
+    });
+
+    it('should return the result object', () => {
+      const response = res._getData();
+      expect(response).toBe(mappedUser);
     });
   });
 

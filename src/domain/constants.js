@@ -53,6 +53,12 @@ export const LESSON_VIEW_QUERY_PARAM = {
   edit: 'edit'
 };
 
+export const FAVORITE_TYPE = {
+  document: 'document',
+  lesson: 'lesson',
+  room: 'room'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

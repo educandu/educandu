@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import FavoriteStar from '../favorite-star.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
@@ -21,7 +22,7 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
-import { LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
 import {
@@ -228,7 +229,10 @@ function Lesson({ PageTemplate, initialState }) {
               <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
             </Breadcrumb>
           </div>
-          <MetadataTitle text={lesson.title} />
+          <MetadataTitle
+            text={lesson.title}
+            extra={<FavoriteStar type={FAVORITE_TYPE.lesson} id={lesson._id} />}
+            />
           <SectionsDisplay
             sections={currentSections}
             publicStorage={publicStorage}

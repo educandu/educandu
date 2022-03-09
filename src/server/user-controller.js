@@ -33,7 +33,8 @@ import {
   postUserRolesBodySchema,
   postUserLockedOutBodySchema,
   postUserStoragePlanBodySchema,
-  userIdParamsSchema
+  userIdParamsSchema,
+  favoriteBodySchema
 } from '../domain/schemas/user-schemas.js';
 
 const { NotFound } = httpErrors;
@@ -246,6 +247,20 @@ class UserController {
     return res.send(newStorage);
   }
 
+  async handlePostFavorite(req, res) {
+    const { user } = req;
+    const { type, id } = req.body;
+    const updatedUser = await this.userService.addFavorite({ type, id, user });
+    return res.status(201).send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
+  }
+
+  async handleDeleteFavorite(req, res) {
+    const { user } = req;
+    const { type, id } = req.body;
+    const updatedUser = await this.userService.deleteFavorite({ type, id, user });
+    return res.send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
+  }
+
   registerMiddleware(router) {
     router.use(session({
       name: this.serverConfig.sessionCookieName,
@@ -410,6 +425,22 @@ class UserController {
       '/api/v1/users/:userId/storageReminders',
       [needsPermission(permissions.EDIT_USERS), validateParams(userIdParamsSchema)],
       (req, res) => this.handleDeleteAllUserStorageReminders(req, res)
+    );
+
+    router.post(
+      '/api/v1/users/favorites',
+      needsPermission(permissions.VIEW_DOCS),
+      jsonParser,
+      validateBody(favoriteBodySchema),
+      (req, res) => this.handlePostFavorite(req, res)
+    );
+
+    router.delete(
+      '/api/v1/users/favorites',
+      needsPermission(permissions.VIEW_DOCS),
+      jsonParser,
+      validateBody(favoriteBodySchema),
+      (req, res) => this.handleDeleteFavorite(req, res)
     );
   }
 }

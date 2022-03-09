@@ -4,8 +4,10 @@ import Markdown from '../markdown.js';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
+import MetadataTitle from '../metadata-title.js';
 import { useDateFormat } from '../locale-context.js';
 import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
@@ -13,11 +15,11 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
-import { ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip } from 'antd';
+import { FAVORITE_TYPE, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
@@ -220,7 +222,10 @@ export default function Room({ PageTemplate, initialState }) {
   return (
     <PageTemplate>
       <div className="Room">
-        <h1 className="Room-title">{room.name}</h1>
+        <MetadataTitle
+          text={room.name}
+          extra={<FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />}
+          />
         <div className="Room-subtitle">
           <div className="Room-subtitleIcon">
             {room.access === ROOM_ACCESS_LEVEL.private ? <LockOutlined /> : <UnlockOutlined />}
