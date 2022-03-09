@@ -330,6 +330,40 @@
     }
   },
   {
+    "namespace": "newsTab",
+    "language": "en",
+    "resources": {
+      "latestActivitiesHeader": "Latest activities",
+      "documentCreatedActivity": "New document created",
+      "documentUpdatedActivity": "Document updated",
+      "documentMarkedFavoriteActivity": "Document marked as favorite",
+      "roomCreatedActivity": "New room created",
+      "roomUpdatedActivity": "Room updated",
+      "roomMarkedFavoriteActivity": "Room marked as favorite",
+      "roomJoinedActivity": "Private room joined",
+      "lessonCreatedActivity": "New lesson created",
+      "lessonUpdatedActivity": "Lesson updated",
+      "lessonMarkedFavoriteActivity": "Lesson marked as favorite"
+    }
+  },
+  {
+    "namespace": "newsTab",
+    "language": "de",
+    "resources": {
+      "latestActivitiesHeader": "Letzte Aktivitäten",
+      "documentCreatedActivity": "Neues Dokument erstellt",
+      "documentUpdatedActivity": "Dokument bearbeitet",
+      "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
+      "roomCreatedActivity": "Neuen Raum ertellt",
+      "roomUpdatedActivity": "Raum bearbeitet",
+      "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
+      "roomJoinedActivity": "Privater Raum eingetreten",
+      "lessonCreatedActivity": "Neue Unterrichtseinheit erstellt",
+      "lessonUpdatedActivity": "Unterrichtseinheit bearbeitet",
+      "lessonMarkedFavoriteActivity": "Unterrichtseinheit als Favorit hinzugefügt"
+    }
+  },
+  {
     "namespace": "notSupportedSection",
     "language": "en",
     "resources": {
@@ -405,6 +439,7 @@
     "namespace": "dashboard",
     "language": "en",
     "resources": {
+      "newsTabTitle": "News",
       "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
       "roomsTabTitle": "Rooms",
@@ -416,6 +451,7 @@
     "namespace": "dashboard",
     "language": "de",
     "resources": {
+      "newsTabTitle": "Neuigkeiten",
       "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",

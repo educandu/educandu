@@ -59,6 +59,19 @@ export const FAVORITE_TYPE = {
   room: 'room'
 };
 
+export const USER_ACTIVITY_TYPE = {
+  documentCreated: 'document-created',
+  documentUpdated: 'document-updated',
+  documentMarkedFavorite: 'document-marked-favorite',
+  roomCreated: 'room-created',
+  roomUpdated: 'room-updated',
+  roomMarkedFavorite: 'room-marked-favorite',
+  roomJoined: 'room-joined',
+  lessonCreated: 'lesson-created',
+  lessonUpdated: 'lesson-updated',
+  lessonMarkedFavorite: 'lesson-marked-favorite'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

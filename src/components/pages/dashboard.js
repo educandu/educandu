@@ -2,6 +2,7 @@ import React from 'react';
 import gravatar from 'gravatar';
 import PropTypes from 'prop-types';
 import { Avatar, Tabs } from 'antd';
+import NewsTab from '../news-tab.js';
 import RoomsTab from '../rooms-tab.js';
 import AccountTab from '../account-tab.js';
 import ProfileTab from '../profile-tab.js';
@@ -69,19 +70,22 @@ function Dashboard({ initialState, PageTemplate }) {
           </div>
         </section>
 
-        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
+        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
+          <TabPane className="Tabs-tabPane" tab={t('newsTabTitle')} key="1">
+            <NewsTab />
+          </TabPane>
           {clientConfig.areRoomsEnabled && (
-            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="1">
+            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="2">
               <RoomsTab rooms={rooms} />
             </TabPane>)}
-          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="2">
+          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="3">
             <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
-          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="3">
+          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="4">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
           {!!(user.storage.plan || user.storage.usedBytes) && (
-            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="4">
+            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="5">
               <h5>{storagePlanName}</h5>
               <div className="DashboardPage-usedStorage">
                 <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
