@@ -37,11 +37,11 @@ function Search({ PageTemplate }) {
   const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
 
   const sortingOptions = [
-    { label: t('relevance'), value: 'relevance' },
-    { label: t('common:title'), value: 'title' },
-    { label: t('common:language'), value: 'language' },
-    { label: t('common:createdOn'), value: 'createdOn' },
-    { label: t('common:updatedOn'), value: 'updatedOn' }
+    { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: 'relevance' },
+    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
+    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
+    { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+    { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' }
   ];
 
   const sortByRelevance = (docsToSort, direction) => docsToSort.sort(by(doc => doc.tagMatchCount, direction).thenBy(doc => doc.updatedOn, 'desc'));
@@ -168,9 +168,8 @@ function Search({ PageTemplate }) {
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
           <SortingSelector
             size="large"
+            sorting={sorting}
             options={sortingOptions}
-            initialValue={sorting.value}
-            initialDirection={sorting.direction}
             onChange={handleSortingChange}
             />
         </div>

@@ -1,25 +1,23 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dropdown, Menu, Tooltip } from 'antd';
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 
-function SortingSelector({ initialValue, initialDirection, options, size, onChange }) {
+function SortingSelector({ sorting, options, size, onChange }) {
   const { t } = useTranslation('sortingSelector');
-  const [direction, setDirection] = useState(initialDirection);
-  const [selectedOption, setSelectedOption] = useState(options.find(o => o.value === initialValue));
 
-  const handleDirectionToggleClick = () => {
-    const newDirection = direction === 'asc' ? 'desc' : 'asc';
-    setDirection(newDirection);
-    onChange({ value: selectedOption.value, direction: newDirection });
+  const handleUpArrowClick = () => {
+    onChange({ value: sorting.value, direction: 'desc' });
+  };
+
+  const handleDownArrowClick = () => {
+    onChange({ value: sorting.value, direction: 'asc' });
   };
 
   const handleChange = ({ key }) => {
-    const newSelectedOption = options.find(option => option.value === key);
-    setSelectedOption(newSelectedOption);
-    onChange({ value: newSelectedOption.value, direction });
+    onChange({ value: key, direction: sorting.direction });
   };
 
   const sortingSelectorClasses = classNames({
@@ -34,31 +32,36 @@ function SortingSelector({ initialValue, initialDirection, options, size, onChan
     </Menu>
   );
 
+  const selectedOption = options.find(o => o.value === sorting.value);
+
   return (
     <div className={sortingSelectorClasses}>
       <Dropdown overlay={menu} trigger="click">
         <Tooltip placement="top" title={t('changeSortingValue')}>
-          <a>{t('selectedValue', { value: selectedOption.label })}</a>
+          <a>{selectedOption.appliedLabel || selectedOption.label}</a>
         </Tooltip>
       </Dropdown>
 
       <Tooltip placement="top" title={t('changeSortingDirection')}>
-        {direction === 'asc' && <ArrowUpOutlined className="SortingSelector-direction" onClick={handleDirectionToggleClick} /> }
-        {direction === 'desc' && <ArrowDownOutlined className="SortingSelector-direction" onClick={handleDirectionToggleClick} /> }
+        {sorting.direction === 'asc' && <ArrowUpOutlined className="SortingSelector-direction" onClick={handleUpArrowClick} /> }
+        {sorting.direction === 'desc' && <ArrowDownOutlined className="SortingSelector-direction" onClick={handleDownArrowClick} /> }
       </Tooltip>
     </div>
   );
 }
 
 SortingSelector.propTypes = {
-  initialDirection: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  initialValue: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(PropTypes.shape({
+    appliedLabel: PropTypes.string,
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired
   })).isRequired,
-  size: PropTypes.oneOf(['small', 'middle', 'large'])
+  size: PropTypes.oneOf(['small', 'middle', 'large']),
+  sorting: PropTypes.shape({
+    value: PropTypes.string.isRequired,
+    direction: PropTypes.oneOf(['asc', 'desc']).isRequired
+  }).isRequired
 };
 
 SortingSelector.defaultProps = {

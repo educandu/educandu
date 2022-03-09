@@ -703,7 +703,6 @@
       "filterPlaceholder": "Filter by tags",
       "deselectTags": "Remove all tags",
       "sorting": "Sorting",
-      "relevance": "Relevance",
       "createdOn": "Created",
       "updatedOn": "Last update"
     }
@@ -716,7 +715,6 @@
       "filterPlaceholder": "Nach Tags filtern",
       "deselectTags": "Alle Tags löschen",
       "sorting": "Sortierung",
-      "relevance": "Relevanz",
       "createdOn": "Erstellt",
       "updatedOn": "Letztes Update"
     }
@@ -1025,7 +1023,6 @@
     "namespace": "sortingSelector",
     "language": "en",
     "resources": {
-      "selectedValue": "Sort by \"{value}\"",
       "changeSortingValue": "Change sorting",
       "changeSortingDirection": "Change sorting direction"
     }
@@ -1034,7 +1031,6 @@
     "namespace": "sortingSelector",
     "language": "de",
     "resources": {
-      "selectedValue": "Nach \"{value}\" sortieren",
       "changeSortingValue": "Sortierung ändern",
       "changeSortingDirection": "Sortierungsrichtung ändern"
     }
@@ -1119,7 +1115,7 @@
     "language": "de",
     "resources": {
       "linkTextSelectMore": "+ Mehr",
-      "linkTextSelectFirst": "+ Tag Filter hinzufügen",
+      "linkTextSelectFirst": "+ Tag-Filter hinzufügen",
       "searchPlaceholder": "Suchen"
     }
   },
@@ -1611,6 +1607,7 @@
       "completedOn": "Completed on",
       "createdBy": "Created by",
       "updatedOn": "Update date",
+      "relevance": "Relevance",
       "owner": "Owner",
       "email": "Email",
       "name": "Name",
@@ -1640,7 +1637,12 @@
       "opt": "Opt",
       "unknown": "Unknown",
       "storage": "Storage",
-      "actions": "Actions"
+      "actions": "Actions",
+      "sortedByRelevance": "Sorted by relevance",
+      "sortedByTitle": "Sorted by title",
+      "sortedByLanguage": "Sorted by language",
+      "sortedByCreatedOn": "Sorted by creation date",
+      "sortedByUpdatedOn": "Sorted by update date"
     }
   },
   {
@@ -1681,6 +1683,7 @@
       "completedOn": "Abgeschlossen am",
       "createdBy": "Erstellt von",
       "updatedOn": "Update-Datum",
+      "relevance": "Relevanz",
       "owner": "Eigentümer",
       "email": "E-Mail",
       "name": "Name",
@@ -1710,7 +1713,12 @@
       "opt": "Opt",
       "unknown": "Unbekannt",
       "storage": "Speicher",
-      "actions": "Aktionen"
+      "actions": "Aktionen",
+      "sortedByRelevance": "Nach Relevanz sortiert",
+      "sortedByTitle": "Nach Titel sortiert",
+      "sortedByLanguage": "Nach Sprache sortiert",
+      "sortedByCreatedOn": "Nach Erstellungsdatum sortiert",
+      "sortedByUpdatedOn": "Nach Änderungsdatum sortiert"
     }
   },
   {
