@@ -429,6 +429,7 @@ class UserController {
 
     router.post(
       '/api/v1/users/favorites',
+      needsPermission(permissions.VIEW_DOCS),
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handlePostFavorite(req, res)
@@ -436,6 +437,7 @@ class UserController {
 
     router.delete(
       '/api/v1/users/favorites',
+      needsPermission(permissions.VIEW_DOCS),
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handleDeleteFavorite(req, res)
