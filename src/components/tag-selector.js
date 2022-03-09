@@ -39,6 +39,11 @@ function TagSelector({ options, selectedCount, onSelect, size }) {
     setIsActive(false);
   };
 
+  const mainClasses = classNames({
+    'TagSelector': true,
+    'is-adding-subsequent-tag': !!selectedCount
+  });
+
   const linkClasses = classNames({
     'TagSelector-link': true,
     'is-active': isActive
@@ -47,7 +52,7 @@ function TagSelector({ options, selectedCount, onSelect, size }) {
   const linkText = selectedCount ? t('linkTextSelectMore') : t('linkTextSelectFirst');
 
   return (
-    <div className="TagSelector" ref={relativeElemRef}>
+    <div className={mainClasses} ref={relativeElemRef}>
       <a className={linkClasses} onClick={handleClick}>{linkText}</a>
       {isActive && (
         <div ref={absoluteElemRef} className="TagSelector-selectWrapper" style={{ left: selectLeftOffset }}>
