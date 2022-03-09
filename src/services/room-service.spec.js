@@ -74,6 +74,7 @@ describe('room-service', () => {
         description: '',
         createdOn: now,
         createdBy: myUser._id,
+        updatedOn: now,
         members: []
       });
     });

@@ -57,6 +57,7 @@ export default class RoomService {
       owner: user._id,
       createdBy: user._id,
       createdOn: new Date(),
+      updatedOn: new Date(),
       members: []
     };
 
@@ -68,7 +69,8 @@ export default class RoomService {
     const updatedRoom = {
       ...room,
       slug: room.slug || '',
-      description: room.description || ''
+      description: room.description || '',
+      updatedOn: new Date()
     };
     await this.roomStore.saveRoom(updatedRoom);
     return updatedRoom;

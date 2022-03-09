@@ -5,6 +5,7 @@ import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 const documentMetadataProjection = {
   key: 1,
   revision: 1,
+  createdOn: 1,
   updatedOn: 1,
   title: 1,
   slug: 1,
@@ -41,6 +42,10 @@ class DocumentStore {
     return this.collection.findOne({ key }, { session });
   }
 
+  getDocumentMetadataByKey(key, { session } = {}) {
+    return this.collection.findOne({ key }, { projection: documentMetadataProjection, session });
+  }
+
   getAllDocumentRevisionsByKey(documentKey, { session } = {}) {
     return this.collection.find({ key: documentKey }, { sort: [['order', 1]], session }).toArray();
   }
@@ -68,6 +73,20 @@ class DocumentStore {
   getNonArchivedDocumentsMetadataByOrigin(origin, { session } = {}) {
     return this.collection.find(
       { archived: false, origin },
+      { projection: documentMetadataProjection, session }
+    ).toArray();
+  }
+
+  getDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
+    return this.collection.find(
+      { createdBy },
+      { projection: documentMetadataProjection, session }
+    ).toArray();
+  }
+
+  getDocumentsMetadataByUpdatedBy(updatedBy, { session } = {}) {
+    return this.collection.find(
+      { updatedBy },
       { projection: documentMetadataProjection, session }
     ).toArray();
   }
