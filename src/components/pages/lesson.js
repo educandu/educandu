@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import FavoriteStar from '../favorite-star.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
@@ -32,7 +33,6 @@ import {
   removeItemAt,
   replaceItemAt
 } from '../../utils/array-utils.js';
-import FavoriteStar from '../favorite-star.js';
 
 const logger = new Logger(import.meta.url);
 

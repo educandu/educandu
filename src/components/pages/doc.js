@@ -6,6 +6,7 @@ import Restricted from '../restricted.js';
 import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import FavoriteStar from '../favorite-star.js';
 import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
@@ -34,7 +35,6 @@ import {
   confirmSectionDelete,
   confirmSectionHardDelete
 } from '../confirmation-dialogs.js';
-import FavoriteStar from '../favorite-star.js';
 
 const logger = new Logger(import.meta.url);
 
