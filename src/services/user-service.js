@@ -167,13 +167,13 @@ class UserService {
   }
 
   async addFavorite({ type, id, user }) {
-    await this.userStore.pushToUserFavorites({ userId: user._id, favoriteType: type, favoriteId: id, favoriteSetOn: new Date() });
+    await this.userStore.addToUserFavorites({ userId: user._id, favoriteType: type, favoriteId: id, favoriteSetOn: new Date() });
     const updatedUser = await this.userStore.getUserById(user._id);
     return updatedUser;
   }
 
   async deleteFavorite({ type, id, user }) {
-    await this.userStore.pullFromUserFavorites({ userId: user._id, favoriteType: type, favoriteId: id });
+    await this.userStore.removeFromUserFavorites({ userId: user._id, favoriteType: type, favoriteId: id });
     const updatedUser = await this.userStore.getUserById(user._id);
     return updatedUser;
   }

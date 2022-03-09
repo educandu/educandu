@@ -177,12 +177,12 @@ describe('user-store', () => {
     });
   });
 
-  describe('pushToUserFavorites', () => {
+  describe('addToUserFavorites', () => {
     let updatedUser;
     const favoriteSetOnDate = new Date();
 
     beforeEach(async () => {
-      await sut.pushToUserFavorites({
+      await sut.addToUserFavorites({
         userId: user._id,
         favoriteType: FAVORITE_TYPE.room,
         favoriteId: '4827ztc1487xmnm',
@@ -197,7 +197,7 @@ describe('user-store', () => {
     });
   });
 
-  describe('pullFromUserFavorites', () => {
+  describe('removeFromUserFavorites', () => {
     let updatedUser;
     const favoriteSetOnDate = new Date();
 
@@ -210,7 +210,7 @@ describe('user-store', () => {
         ]
       });
 
-      await sut.pullFromUserFavorites({
+      await sut.removeFromUserFavorites({
         userId: user._id,
         favoriteType: FAVORITE_TYPE.room,
         favoriteId: '4827ztc1487xmnm'
