@@ -160,7 +160,7 @@ function ImportBatchView({ initialState, PageTemplate }) {
         </Row>
         <Row>
           <Space>
-            <span>{t('common:createdBy')}:</span>
+            <span>{t('common:user')}:</span>
             <span>{batch.createdBy.username}</span>
           </Space>
         </Row>

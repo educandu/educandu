@@ -239,7 +239,7 @@ function Docs({ initialState, PageTemplate }) {
       responsive: ['lg']
     },
     {
-      title: t('user'),
+      title: t('common:user'),
       dataIndex: 'user',
       key: 'user',
       render: renderUpdatedBy,

@@ -89,17 +89,14 @@ logoff:
   en: Log off
   de: Abmelden
 createdOn:
-  en: Created on
-  de: Erstellt am
+  en: Creation date
+  de: Erstellungsdatum
 completedOn:
-  en: Completed on
+  en: Completion date
   de: Abgeschlossen am
-createdBy:
-  en: Created by
-  de: Erstellt von
 updatedOn:
   en: Update date
-  de: Update-Datum
+  de: Änderungsdatum
 relevance:
   en: Relevance
   de: Relevanz
