@@ -1,20 +1,20 @@
 import by from 'thenby';
+import { Tag } from 'antd';
 import Table from '../table.js';
 import PropTypes from 'prop-types';
-import { Select, Tag } from 'antd';
 import urls from '../../utils/urls.js';
 import SearchBar from '../search-bar.js';
 import Logger from '../../common/logger.js';
+import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
-import { SearchOutlined } from '@ant-design/icons';
-import React, { useEffect, useState } from 'react';
 import { useDateFormat } from '../locale-context.js';
+import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
-import FilterIcon from '../icons/general/filter-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
@@ -25,31 +25,47 @@ function Search({ PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('search');
   const { formatDate } = useDateFormat();
-
-  const sortingOptions = [
-    { label: t('relevance'), value: 'relevance' },
-    { label: t('common:title'), value: 'title' },
-    { label: t('common:language'), value: 'language' },
-    { label: t('common:createdOn'), value: 'createdOn' },
-    { label: t('common:updatedOn'), value: 'updatedOn' }
-  ];
-
-  const sortByRelevance = docsToSort => docsToSort.sort(by(doc => doc.tagMatchCount, 'desc').thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByTitle = docsToSort => docsToSort.sort(by(doc => doc.title, 'asc').thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByLanguage = docsToSort => docsToSort.sort(by(doc => doc.language, 'asc').thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByCreatedOn = docsToSort => docsToSort.sort(by(doc => doc.createdOn, 'desc'));
-  const sortByUpdatedOn = docsToSort => docsToSort.sort(by(doc => doc.updatedOn, 'desc'));
-
-  const formatSorting = value => `${t('sorting')}: ${sortingOptions.find(o => o.value === value).label}`;
+  const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
   const [docs, setDocs] = useState([]);
-  const [displayedDocs, setDisplayedDocs] = useState([]);
+  const [allTags, setAllTags] = useState([]);
   const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
+  const [displayedDocs, setDisplayedDocs] = useState([]);
   const [searchText, setSearchText] = useState(request.query.query);
-  const [sorting, setSorting] = useState(formatSorting(sortingOptions[0].value));
-  const searchApiClient = useSessionAwareApiClient(SearchApiClient);
+  const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
+
+  const sortingOptions = [
+    { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: 'relevance' },
+    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
+    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
+    { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+    { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' }
+  ];
+
+  const sortByRelevance = (docsToSort, direction) => docsToSort.sort(by(doc => doc.tagMatchCount, direction).thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByTitle = (docsToSort, direction) => docsToSort.sort(by(doc => doc.title, direction).thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByLanguage = (docsToSort, direction) => docsToSort.sort(by(doc => doc.language, direction).thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByCreatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.createdOn, direction));
+  const sortByUpdatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.updatedOn, direction));
+
+  const sortDocuments = useCallback((documentsToSort, sortingValue, sortingDirection) => {
+    switch (sortingValue) {
+      case 'relevance':
+        return sortByRelevance(documentsToSort, sortingDirection);
+      case 'title':
+        return sortByTitle(documentsToSort, sortingDirection);
+      case 'language':
+        return sortByLanguage(documentsToSort, sortingDirection);
+      case 'createdOn':
+        return sortByCreatedOn(documentsToSort, sortingDirection);
+      case 'updatedOn':
+        return sortByUpdatedOn(documentsToSort, sortingDirection);
+      default:
+        return documentsToSort;
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -67,44 +83,26 @@ function Search({ PageTemplate }) {
   }, [searchText, searchApiClient, t]);
 
   useEffect(() => {
-    const allTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
-    const allUniqueTags = [...new Set(allTags)];
-    const newTagOptions = allUniqueTags.map(tag => ({ value: tag, key: tag }));
-
-    setTagOptions(newTagOptions);
+    const docTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
+    const uniqueDocTags = [...new Set(docTags)];
+    setAllTags(uniqueDocTags);
   }, [docs]);
 
   useEffect(() => {
+    const remainingTags = allTags.filter(tag => !selectedTags.includes(tag));
+    setTagOptions(remainingTags.map(tag => ({ label: tag, value: tag })));
+  }, [allTags, selectedTags]);
+
+  useEffect(() => {
     const filteredDocs = docs.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
-    setDisplayedDocs(sortByRelevance(filteredDocs));
-  }, [docs, selectedTags]);
+    const sortedDocuments = sortDocuments(filteredDocs, sorting.value, sorting.direction);
+    setDisplayedDocs(sortedDocuments);
+  }, [docs, selectedTags, sorting, sortDocuments]);
 
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
-  const handleSelectSorting = sortingValue => {
-    setSorting(formatSorting(sortingValue));
-
-    switch (sortingValue) {
-      case 'relevance':
-        setDisplayedDocs(sortByRelevance(displayedDocs));
-        break;
-      case 'title':
-        setDisplayedDocs(sortByTitle(displayedDocs));
-        break;
-      case 'language':
-        setDisplayedDocs(sortByLanguage(displayedDocs));
-        break;
-      case 'createdOn':
-        setDisplayedDocs(sortByCreatedOn(displayedDocs));
-        break;
-      case 'updatedOn':
-        setDisplayedDocs(sortByUpdatedOn(displayedDocs));
-        break;
-      default:
-        break;
-    }
-  };
+  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
   const renderTitle = (title, doc) => (
     <a className="SearchPage-titleCell" href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>
@@ -168,31 +166,21 @@ function Search({ PageTemplate }) {
         </div>
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
-          <Select
-            showArrow
-            showSearch
+          <SortingSelector
             size="large"
-            value={null}
-            options={tagOptions}
-            onChange={handleSelectTag}
-            placeholder={(
-              <span className="SearchPage-filterPlaceholder">
-                <span>{`${t('filterPlaceholder')} (${selectedTags.length})`}</span>
-                <SearchOutlined className="SearchPage-filterPlaceholderIcon" />
-              </span>
-            )}
-            suffixIcon={<FilterIcon />}
-            />
-          <Select
-            size="large"
-            value={sorting}
+            sorting={sorting}
             options={sortingOptions}
-            onChange={handleSelectSorting}
-            showArrow
+            onChange={handleSortingChange}
             />
         </div>
         <div className="SearchPage-selectedTags">
           {renderSelectedTags()}
+          <TagSelector
+            size="large"
+            options={tagOptions}
+            onSelect={handleSelectTag}
+            selectedCount={selectedTags.length}
+            />
           {selectedTags.length > 1 && (
             <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
               <CloseIcon />

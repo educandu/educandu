@@ -12,12 +12,9 @@ deselectTags:
 sorting:
   en: Sorting
   de: Sortierung
-relevance:
-  en: Relevance
-  de: Relevanz
 createdOn:
   en: Created
   de: Erstellt
 updatedOn:
   en: Last update
-  de: Letztes Update
+  de: Letzte Änderung

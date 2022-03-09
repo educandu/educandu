@@ -7,9 +7,6 @@ copyTitleSuffix:
 copySlugSuffix:
   en: copy
   de: kopie
-user:
-  en: User info
-  de: User-Info
 clone:
   en: Clone
   de: Klonen

@@ -59,7 +59,7 @@ function ImportBatches({ initialState, PageTemplate }) {
     { title: t('batchStatus'), width: '150px', render: renderStatus },
     { title: t('common:createdOn'), width: '150px', dataIndex: 'createdOn', render: renderDate, responsive: ['md'] },
     { title: t('common:completedOn'), width: '150px', dataIndex: 'completedOn', render: renderDate, responsive: ['md'] },
-    { title: t('common:createdBy'), width: '150px', dataIndex: 'createdBy', render: renderUser, responsive: ['lg'] }
+    { title: t('common:user'), width: '150px', dataIndex: 'createdBy', render: renderUser, responsive: ['lg'] }
   ];
 
   const getExtra = source => {

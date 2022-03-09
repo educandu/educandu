@@ -426,7 +426,6 @@
       "defaultDocumentTitle": "New document",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
-      "user": "User info",
       "clone": "Clone",
       "archived": "Archived",
       "enterSearchTerm": "Enter search term",
@@ -443,7 +442,6 @@
       "defaultDocumentTitle": "Neues Dokument",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
-      "user": "User-Info",
       "clone": "Klonen",
       "archived": "Archiviert",
       "enterSearchTerm": "Suchbegriff eingeben",
@@ -703,7 +701,6 @@
       "filterPlaceholder": "Filter by tags",
       "deselectTags": "Remove all tags",
       "sorting": "Sorting",
-      "relevance": "Relevance",
       "createdOn": "Created",
       "updatedOn": "Last update"
     }
@@ -716,9 +713,8 @@
       "filterPlaceholder": "Nach Tags filtern",
       "deselectTags": "Alle Tags löschen",
       "sorting": "Sortierung",
-      "relevance": "Relevanz",
       "createdOn": "Erstellt",
-      "updatedOn": "Letztes Update"
+      "updatedOn": "Letzte Änderung"
     }
   },
   {
@@ -1022,6 +1018,22 @@
     }
   },
   {
+    "namespace": "sortingSelector",
+    "language": "en",
+    "resources": {
+      "changeSortingValue": "Change sorting",
+      "changeSortingDirection": "Change sorting direction"
+    }
+  },
+  {
+    "namespace": "sortingSelector",
+    "language": "de",
+    "resources": {
+      "changeSortingValue": "Sortierung ändern",
+      "changeSortingDirection": "Sortierungsrichtung ändern"
+    }
+  },
+  {
     "namespace": "storageBrowser",
     "language": "en",
     "resources": {
@@ -1085,6 +1097,24 @@
     "resources": {
       "prev": "‹ zurück",
       "next": "› weiter"
+    }
+  },
+  {
+    "namespace": "tagSelector",
+    "language": "en",
+    "resources": {
+      "linkTextSelectMore": "+ More",
+      "linkTextSelectFirst": "+ Add tag filter",
+      "searchPlaceholder": "Search"
+    }
+  },
+  {
+    "namespace": "tagSelector",
+    "language": "de",
+    "resources": {
+      "linkTextSelectMore": "+ Mehr",
+      "linkTextSelectFirst": "+ Tag-Filter hinzufügen",
+      "searchPlaceholder": "Suchen"
     }
   },
   {
@@ -1571,10 +1601,10 @@
       "accept": "Accept",
       "logon": "Log on",
       "logoff": "Log off",
-      "createdOn": "Created on",
-      "completedOn": "Completed on",
-      "createdBy": "Created by",
+      "createdOn": "Creation date",
+      "completedOn": "Completion date",
       "updatedOn": "Update date",
+      "relevance": "Relevance",
       "owner": "Owner",
       "email": "Email",
       "name": "Name",
@@ -1604,7 +1634,12 @@
       "opt": "Opt",
       "unknown": "Unknown",
       "storage": "Storage",
-      "actions": "Actions"
+      "actions": "Actions",
+      "sortedByRelevance": "Sorted by relevance",
+      "sortedByTitle": "Sorted by title",
+      "sortedByLanguage": "Sorted by language",
+      "sortedByCreatedOn": "Sorted by creation date",
+      "sortedByUpdatedOn": "Sorted by update date"
     }
   },
   {
@@ -1641,10 +1676,10 @@
       "accept": "Akzeptieren",
       "logon": "Anmelden",
       "logoff": "Abmelden",
-      "createdOn": "Erstellt am",
+      "createdOn": "Erstellungsdatum",
       "completedOn": "Abgeschlossen am",
-      "createdBy": "Erstellt von",
-      "updatedOn": "Update-Datum",
+      "updatedOn": "Änderungsdatum",
+      "relevance": "Relevanz",
       "owner": "Eigentümer",
       "email": "E-Mail",
       "name": "Name",
@@ -1674,7 +1709,12 @@
       "opt": "Opt",
       "unknown": "Unbekannt",
       "storage": "Speicher",
-      "actions": "Aktionen"
+      "actions": "Aktionen",
+      "sortedByRelevance": "Nach Relevanz sortiert",
+      "sortedByTitle": "Nach Titel sortiert",
+      "sortedByLanguage": "Nach Sprache sortiert",
+      "sortedByCreatedOn": "Nach Erstellungsdatum sortiert",
+      "sortedByUpdatedOn": "Nach Änderungsdatum sortiert"
     }
   },
   {

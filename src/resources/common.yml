@@ -89,17 +89,17 @@ logoff:
   en: Log off
   de: Abmelden
 createdOn:
-  en: Created on
-  de: Erstellt am
+  en: Creation date
+  de: Erstellungsdatum
 completedOn:
-  en: Completed on
+  en: Completion date
   de: Abgeschlossen am
-createdBy:
-  en: Created by
-  de: Erstellt von
 updatedOn:
   en: Update date
-  de: Update-Datum
+  de: Änderungsdatum
+relevance:
+  en: Relevance
+  de: Relevanz
 owner:
   en: Owner
   de: Eigentümer
@@ -190,3 +190,18 @@ storage:
 actions:
   en: Actions
   de: Aktionen
+sortedByRelevance:
+  en: Sorted by relevance
+  de: Nach Relevanz sortiert
+sortedByTitle:
+  en: Sorted by title
+  de: Nach Titel sortiert
+sortedByLanguage:
+  en: Sorted by language
+  de: Nach Sprache sortiert
+sortedByCreatedOn:
+  en: Sorted by creation date
+  de: Nach Erstellungsdatum sortiert
+sortedByUpdatedOn:
+  en: Sorted by update date
+  de: Nach Änderungsdatum sortiert
