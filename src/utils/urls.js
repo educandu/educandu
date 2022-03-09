@@ -4,9 +4,9 @@ const usersPath = '/users';
 const loginPath = '/login';
 const logoutPath = '/logout';
 const searchPath = '/search';
-const mySpacePath = '/my-space';
 const registerPath = '/register';
 const settingsPath = '/settings';
+const dashboardPath = '/dashboard';
 const importBatchesPath = '/import-batches';
 const resetPasswordPath = '/reset-password';
 const createImportPath = '/import-batches/create';
@@ -101,7 +101,7 @@ function getRoomMembershipConfirmationUrl(token) {
 }
 
 function getDefaultLoginRedirectUrl() {
-  return mySpacePath;
+  return dashboardPath;
 }
 
 function getDefaultLogoutRedirectUrl() {
@@ -120,8 +120,8 @@ function getLogoutUrl() {
   return logoutPath;
 }
 
-function getMySpaceUrl() {
-  return mySpacePath;
+function getDashboardUrl() {
+  return dashboardPath;
 }
 
 function getRegisterUrl() {
@@ -187,7 +187,7 @@ export default {
   getHomeUrl,
   getLoginUrl,
   getLogoutUrl,
-  getMySpaceUrl,
+  getDashboardUrl,
   getRegisterUrl,
   getResetPasswordUrl,
   createFullyQualifiedUrl,

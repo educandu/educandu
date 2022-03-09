@@ -10,10 +10,10 @@ import ImportController from './import-controller.js';
 import ExportController from './export-controller.js';
 import LessonController from './lesson-controller.js';
 import StorageController from './storage-controller.js';
-import MySpaceController from './my-space-controller.js';
 import SettingsController from './settings-controller.js';
 import DocumentController from './document-controller.js';
 import RevisionController from './revision-controller.js';
+import DashboardController from './dashboard-controller.js';
 import UserAgentController from './user-agent-controller.js';
 
 const controllerTypes = [
@@ -30,7 +30,7 @@ const controllerTypes = [
   ImportController,
   ErrorController,
   RoomController,
-  MySpaceController,
+  DashboardController,
   LessonController,
   RevisionController
 ];

@@ -4,9 +4,9 @@ home:
 users:
   en: Users
   de: Benutzer
-mySpace:
-  en: My space
-  de: Mein Bereich
+dashboard:
+  en: Dashboard
+  de: Dashboard
 settings:
   en: Settings
   de: Einstellungen

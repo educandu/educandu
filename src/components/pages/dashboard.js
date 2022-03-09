@@ -14,11 +14,11 @@ import { useStoragePlan } from '../storage-plan-context.js';
 
 const { TabPane } = Tabs;
 
-function MySpace({ initialState, PageTemplate }) {
+function Dashboard({ initialState, PageTemplate }) {
   const user = useUser();
   const storagePlan = useStoragePlan();
 
-  const { t } = useTranslation('mySpace');
+  const { t } = useTranslation('dashboard');
   const clientConfig = useService(ClientConfig);
 
   const { rooms } = initialState;
@@ -51,9 +51,9 @@ function MySpace({ initialState, PageTemplate }) {
 
   return (
     <PageTemplate disableProfileWarning>
-      <div className="MySpacePage">
+      <div className="DashboardPage">
 
-        <h1>{t('pageNames:mySpace')}</h1>
+        <h1>{t('pageNames:dashboard')}</h1>
         <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
           {clientConfig.areRoomsEnabled && (
             <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="1">
@@ -68,7 +68,7 @@ function MySpace({ initialState, PageTemplate }) {
           {!!(user.storage.plan || user.storage.usedBytes) && (
             <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="4">
               <h5>{storagePlanName}</h5>
-              <div className="MySpacePage-usedStorage">
+              <div className="DashboardPage-usedStorage">
                 <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
               </div>
             </TabPane>
@@ -80,11 +80,11 @@ function MySpace({ initialState, PageTemplate }) {
   );
 }
 
-MySpace.propTypes = {
+Dashboard.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     rooms: PropTypes.arrayOf(roomShape).isRequired
   }).isRequired
 };
 
-export default MySpace;
+export default Dashboard;

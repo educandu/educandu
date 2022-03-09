@@ -11,7 +11,7 @@ function Login() {
   const { t } = useTranslation('login');
 
   const handleAvatarClick = () => {
-    window.location = urls.getMySpaceUrl();
+    window.location = urls.getDashboardUrl();
   };
 
   const handleLoginClick = () => {

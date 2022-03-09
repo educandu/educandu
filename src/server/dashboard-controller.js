@@ -15,7 +15,7 @@ class UserController {
     this.clientDataMappingService = clientDataMappingService;
   }
 
-  async handleGetMySpacePage(req, res) {
+  async handleGetDashboardPage(req, res) {
     const { user } = req;
 
     let rooms = [];
@@ -26,14 +26,14 @@ class UserController {
 
     const initialState = { rooms: mappedRooms };
 
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.mySpace, initialState);
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.dashboard, initialState);
   }
 
   registerPages(router) {
     router.get(
-      '/my-space',
+      '/dashboard',
       needsAuthentication(),
-      (req, res) => this.handleGetMySpacePage(req, res)
+      (req, res) => this.handleGetDashboardPage(req, res)
     );
   }
 }

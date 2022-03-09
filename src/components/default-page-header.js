@@ -44,9 +44,9 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       showWhen: true
     },
     {
-      key: 'my-space',
-      href: urls.getMySpaceUrl(),
-      text: t('pageNames:mySpace'),
+      key: 'dashboard',
+      href: urls.getDashboardUrl(),
+      text: t('pageNames:dashboard'),
       icon: IdcardOutlined,
       permission: null,
       showWhen: !!user
