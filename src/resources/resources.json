@@ -210,6 +210,30 @@
     }
   },
   {
+    "namespace": "favoritesTab",
+    "language": "en",
+    "resources": {
+      "documentsHeading": "Documents",
+      "roomsHeading": "Rooms",
+      "lessonsHeading": "Lessons",
+      "noFavoriteDocuments": "There are no documents marked as favorite",
+      "noFavoriteRooms": "There are no rooms marked as favorite",
+      "noFavoriteLessons": "There are no lessons marked as favorite"
+    }
+  },
+  {
+    "namespace": "favoritesTab",
+    "language": "de",
+    "resources": {
+      "documentsHeading": "Dokumente",
+      "roomsHeading": "Räume",
+      "lessonsHeading": "Unterrichtseinheiten",
+      "noFavoriteDocuments": "Keine Dokumente as Favorit hinzugefügt",
+      "noFavoriteRooms": "Keine Räume as Favorit hinzugefügt",
+      "noFavoriteLessons": "Keine Unterrichtseinheiten as Favorit hinzugefügt"
+    }
+  },
+  {
     "namespace": "historyControlPanel",
     "language": "en",
     "resources": {
@@ -440,6 +464,7 @@
     "language": "en",
     "resources": {
       "newsTabTitle": "News",
+      "favoritesTabTitle": "Favorites",
       "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
       "roomsTabTitle": "Rooms",
@@ -452,6 +477,7 @@
     "language": "de",
     "resources": {
       "newsTabTitle": "Neuigkeiten",
+      "favoritesTabTitle": "Favoriten",
       "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",
