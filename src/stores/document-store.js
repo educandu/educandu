@@ -77,14 +77,14 @@ class DocumentStore {
     ).toArray();
   }
 
-  getDocumentsMetadataByCreatedBy(createdBy, { session } = {}) {
+  getDocumentsMetadataCreatedByUser(createdBy, { session } = {}) {
     return this.collection.find(
       { createdBy },
       { projection: documentMetadataProjection, session }
     ).toArray();
   }
 
-  getDocumentsMetadataByUpdatedBy(updatedBy, { session } = {}) {
+  getDocumentsMetadataUpdatedByUser(updatedBy, { session } = {}) {
     return this.collection.find(
       { $and: [{ updatedBy }, { $expr: { $ne: ['$createdOn', '$updatedOn'] } }] },
       { projection: documentMetadataProjection, session }

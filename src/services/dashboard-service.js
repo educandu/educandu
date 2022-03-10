@@ -21,9 +21,9 @@ class DashboardService {
     const createdRooms = await this.roomStore.getRoomsCreatedByUser(userId);
     const joinedRooms = await this.roomStore.getRoomsJoinedByUser(userId);
     const updatedRooms = await this.roomStore.getRoomsUpdatedByUser(userId);
-    const createdDocuments = await this.documentStore.getDocumentsMetadataByCreatedBy(userId);
-    const updatedDocuments = await this.documentStore.getDocumentsMetadataByUpdatedBy(userId);
-    const lessons = await this.lessonStore.getLessonsMetadataByCreatedBy(userId);
+    const createdDocuments = await this.documentStore.getDocumentsMetadataCreatedByUser(userId);
+    const updatedDocuments = await this.documentStore.getDocumentsMetadataUpdatedByUser(userId);
+    const lessons = await this.lessonStore.getLessonsMetadataCreatedByUser(userId);
 
     const createdDocumentActivities = createdDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentCreated,

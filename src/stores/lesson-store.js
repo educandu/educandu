@@ -36,7 +36,7 @@ class LessonStore {
     return this.collection.find({ roomId }, { projection: lessonMetadataProjection, session }).toArray();
   }
 
-  getLessonsMetadataByCreatedBy(createdBy, { session } = {}) {
+  getLessonsMetadataCreatedByUser(createdBy, { session } = {}) {
     return this.collection.find({ createdBy }, { projection: lessonMetadataProjection, session }).toArray();
   }
 
