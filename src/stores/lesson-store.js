@@ -36,8 +36,9 @@ class LessonStore {
     return this.collection.find({ roomId }, { projection: lessonMetadataProjection, session }).toArray();
   }
 
-  getLessonsMetadataCreatedByUser(createdBy, { session } = {}) {
-    return this.collection.find({ createdBy }, { projection: lessonMetadataProjection, session }).toArray();
+  getLatestLessonsMetadataCreatedByUser(createdBy, { session, limit } = {}) {
+    return this.collection.find({ createdBy }, { projection: lessonMetadataProjection, session })
+      .sort({ updatedOn: -1 }).limit(limit || 0).toArray();
   }
 
   async saveLesson(lesson, { session } = {}) {

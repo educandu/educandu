@@ -15,15 +15,15 @@ class DashboardService {
     this.documentStore = documentStore;
   }
 
-  async getUserActivities({ userId, limit = 0 }) {
+  async getUserActivities({ userId, limit = 30 }) {
     const user = await this.userStore.getUserById(userId);
 
-    const createdRooms = await this.roomStore.getRoomsCreatedByUser(userId);
-    const joinedRooms = await this.roomStore.getRoomsJoinedByUser(userId);
-    const updatedRooms = await this.roomStore.getRoomsUpdatedByUser(userId);
-    const createdDocuments = await this.documentStore.getDocumentsMetadataCreatedByUser(userId);
-    const updatedDocuments = await this.documentStore.getDocumentsMetadataUpdatedByUser(userId);
-    const lessons = await this.lessonStore.getLessonsMetadataCreatedByUser(userId);
+    const createdRooms = await this.roomStore.getLatestRoomsCreatedByUser(userId, { limit });
+    const joinedRooms = await this.roomStore.getLatestRoomsJoinedByUser(userId, { limit });
+    const updatedRooms = await this.roomStore.getLatestRoomsUpdatedByUser(userId, { limit });
+    const createdDocuments = await this.documentStore.getLatestDocumentsMetadataCreatedByUser(userId, { limit });
+    const updatedDocuments = await this.documentStore.getLatestDocumentsMetadataUpdatedByUser(userId, { limit });
+    const lessons = await this.lessonStore.getLatestLessonsMetadataCreatedByUser(userId, { limit });
 
     const createdDocumentActivities = createdDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentCreated,
@@ -72,7 +72,8 @@ class DashboardService {
       }
     });
 
-    const favoriteActivitiesMetadata = user.favorites.map(favorite => {
+    const latestFavorites = user.favorites.sort(by(f => f.setOn, 'desc')).slice(0, limit);
+    const favoriteActivitiesMetadata = latestFavorites.map(favorite => {
       switch (favorite.type) {
         case FAVORITE_TYPE.document:
           return {

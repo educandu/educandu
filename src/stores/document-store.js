@@ -77,18 +77,18 @@ class DocumentStore {
     ).toArray();
   }
 
-  getDocumentsMetadataCreatedByUser(createdBy, { session } = {}) {
+  getLatestDocumentsMetadataCreatedByUser(createdBy, { session, limit } = {}) {
     return this.collection.find(
       { createdBy },
       { projection: documentMetadataProjection, session }
-    ).toArray();
+    ).sort({ createdOn: -1 }).limit(limit || 0).toArray();
   }
 
-  getDocumentsMetadataUpdatedByUser(updatedBy, { session } = {}) {
+  getLatestDocumentsMetadataUpdatedByUser(updatedBy, { session, limit } = {}) {
     return this.collection.find(
       { $and: [{ updatedBy }, { $expr: { $ne: ['$createdOn', '$updatedOn'] } }] },
       { projection: documentMetadataProjection, session }
-    ).toArray();
+    ).sort({ updatedOn: -1 }).limit(limit || 0).toArray();
   }
 
   saveDocument(document, { session } = {}) {

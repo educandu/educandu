@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import Database from '../stores/database.js';
 import DashboardService from './dashboard-service.js';
 import { FAVORITE_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';
@@ -255,5 +256,320 @@ describe('dashboard-service', () => {
         });
       });
     });
+
+    describe('when there are more \'document-created\' activities than the set limit', () => {
+      let latestCreatedDocument;
+
+      beforeEach(async () => {
+        const firstCreatedDocument = await createTestDocument(container, user, { createdBy: user._id, title: 'Created document 1' });
+        await db.documents.updateOne({ _id: firstCreatedDocument._id }, {
+          $set: {
+            createdOn: new Date('2022-03-09T10:00:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:00:00.000Z')
+          }
+        });
+        latestCreatedDocument = await createTestDocument(container, user, { createdBy: user._id, title: 'Created document 2' });
+        await db.documents.updateOne({ _id: latestCreatedDocument._id }, {
+          $set: {
+            createdOn: new Date('2022-03-09T10:01:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:01:00.000Z')
+          }
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest created documents', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.documentCreated,
+            timestamp: new Date('2022-03-09T10:01:00.000Z'),
+            data: {
+              _id: latestCreatedDocument._id,
+              title: 'Created document 2'
+            }
+          }
+        ]);
+      });
+    });
+
+    describe('when there are more \'document-updated\' activities than the set limit', () => {
+      let updatedDocument;
+
+      beforeEach(async () => {
+        updatedDocument = await createTestDocument(container, user, { createdBy: user._id, title: 'Created document' });
+        await db.documents.updateOne({ _id: updatedDocument._id }, {
+          $set: {
+            title: 'Document update 1',
+            createdOn: new Date('2022-03-09T10:00:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:01:00.000Z')
+          }
+        });
+        await db.documents.updateOne({ _id: updatedDocument._id }, {
+          $set: {
+            title: 'Document update 2',
+            createdOn: new Date('2022-03-09T10:00:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:02:00.000Z')
+          }
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest updated documents', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.documentUpdated,
+            timestamp: new Date('2022-03-09T10:02:00.000Z'),
+            data: {
+              _id: updatedDocument._id,
+              title: 'Document update 2'
+            }
+          }
+        ]);
+      });
+    });
+
+    describe('when there are more \'room-created\' activities than the set limit', () => {
+      let latestCreatedRoom;
+
+      beforeEach(async () => {
+        await createTestRoom(container, {
+          owner: user._id,
+          createdBy: user._id,
+          name: 'Created room 1',
+          createdOn: new Date('2022-03-09T10:00:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:00:00.000Z')
+        });
+        latestCreatedRoom = await createTestRoom(container, {
+          owner: user._id,
+          createdBy: user._id,
+          name: 'Created room 2',
+          createdOn: new Date('2022-03-09T10:01:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:01:00.000Z')
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest created rooms', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.roomCreated,
+            timestamp: new Date('2022-03-09T10:01:00.000Z'),
+            data: {
+              _id: latestCreatedRoom._id,
+              name: 'Created room 2'
+            }
+          }
+        ]);
+      });
+    });
+
+    describe('when there are more \'room-updated\' activities than the set limit', () => {
+      let updatedRoom;
+
+      beforeEach(async () => {
+        updatedRoom = await createTestRoom(container, {
+          owner: user._id,
+          createdBy: user._id,
+          name: 'Created room 1',
+          createdOn: new Date('2022-03-09T10:00:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:00:00.000Z')
+        });
+        await db.rooms.updateOne({ _id: updatedRoom._id }, {
+          $set: {
+            updatedBy: user._id,
+            name: 'Room update 1',
+            createdOn: new Date('2022-03-09T10:00:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:01:00.000Z')
+          }
+        });
+        await db.rooms.updateOne({ _id: updatedRoom._id }, {
+          $set: {
+            updatedBy: user._id,
+            name: 'Room update 2',
+            createdOn: new Date('2022-03-09T10:00:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:02:00.000Z')
+          }
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest updated rooms', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.roomUpdated,
+            timestamp: new Date('2022-03-09T10:02:00.000Z'),
+            data: {
+              _id: updatedRoom._id,
+              name: 'Room update 2'
+            }
+          }
+        ]);
+      });
+    });
+
+    describe('when there are more \'room-joined\' activities than the set limit', () => {
+      let latestJoinedRoom;
+
+      beforeEach(async () => {
+        await createTestRoom(container, {
+          owner: otherUser._id,
+          createdBy: otherUser._id,
+          name: 'Joined room 1',
+          createdOn: new Date('2022-03-09T10:02:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:02:00.000Z'),
+          members: [{ userId: user._id, joinedOn: new Date('2022-03-09T10:03:00.000Z') }]
+        });
+        latestJoinedRoom = await createTestRoom(container, {
+          owner: otherUser._id,
+          createdBy: otherUser._id,
+          name: 'Joined room 2',
+          createdOn: new Date('2022-03-09T10:01:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:01:00.000Z'),
+          members: [{ userId: user._id, joinedOn: new Date('2022-03-09T10:04:00.000Z') }]
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest joined rooms', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.roomJoined,
+            timestamp: new Date('2022-03-09T10:04:00.000Z'),
+            data: {
+              _id: latestJoinedRoom._id,
+              name: 'Joined room 2'
+            }
+          }
+        ]);
+      });
+    });
+
+    describe('when there are more \'lesson-created\' activities than the set limit', () => {
+      let latestCreatedLesson;
+
+      beforeEach(async () => {
+        await createTestLesson(container, {
+          createdBy: user._id,
+          title: 'Created lesson 1',
+          createdOn: new Date('2022-03-09T10:00:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:00:00.000Z')
+        });
+        latestCreatedLesson = await createTestLesson(container, {
+          createdBy: user._id,
+          title: 'Created lesson 2',
+          createdOn: new Date('2022-03-09T10:01:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:01:00.000Z')
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest created lessons', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.lessonCreated,
+            timestamp: new Date('2022-03-09T10:01:00.000Z'),
+            data: {
+              _id: latestCreatedLesson._id,
+              title: 'Created lesson 2'
+            }
+          }
+        ]);
+      });
+    });
+
+    describe('when there are more \'lesson-updated\' activities than the set limit', () => {
+      let updatedLesson;
+
+      beforeEach(async () => {
+        updatedLesson = await createTestLesson(container, {
+          createdBy: user._id,
+          title: 'Created lesson',
+          createdOn: new Date('2022-03-09T10:00:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:00:00.000Z')
+        });
+        await db.lessons.updateOne({ _id: updatedLesson._id }, {
+          $set: {
+            title: 'Lesson update 1',
+            createdOn: new Date('2022-03-09T10:00:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:01:00.000Z')
+          }
+        });
+        await db.lessons.updateOne({ _id: updatedLesson._id }, {
+          $set: {
+            title: 'Lesson update 2',
+            createdOn: new Date('2022-03-09T10:00:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:02:00.000Z')
+          }
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest created lessons', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.lessonUpdated,
+            timestamp: new Date('2022-03-09T10:02:00.000Z'),
+            data: {
+              _id: updatedLesson._id,
+              title: 'Lesson update 2'
+            }
+          }
+        ]);
+      });
+    });
+
+    describe('when there are more \'marked-as-favorite\' activities than the set limit', () => {
+      let latestFavorite;
+
+      beforeEach(async () => {
+        const favorite1 = await createTestRoom(container, { name: 'Favorite 1', owner: otherUser._id, createdBy: otherUser._id });
+        const favorite2 = await createTestLesson(container, { title: 'Favorite 2', createdBy: otherUser._id });
+        latestFavorite = await createTestDocument(container, otherUser, { title: 'Favorite 3' });
+        await db.users.updateOne({ _id: user._id }, {
+          $set: {
+            favorites: [
+              {
+                type: FAVORITE_TYPE.room,
+                setOn: new Date('2022-03-09T10:01:00.000Z'),
+                id: favorite1._id
+              },
+              {
+                type: FAVORITE_TYPE.lesson,
+                setOn: new Date('2022-03-09T10:02:00.000Z'),
+                id: favorite2._id
+              },
+              {
+                type: FAVORITE_TYPE.document,
+                setOn: new Date('2022-03-09T10:03:00.000Z'),
+                id: latestFavorite._id
+              }
+            ]
+          }
+        });
+
+        result = await sut.getUserActivities({ userId: user._id, limit: 1 });
+      });
+
+      it('should return only the latest items marked as favorite', () => {
+        expect(result).toEqual([
+          {
+            type: USER_ACTIVITY_TYPE.documentMarkedFavorite,
+            timestamp: new Date('2022-03-09T10:03:00.000Z'),
+            data: {
+              _id: latestFavorite._id,
+              title: 'Favorite 3'
+            }
+          }
+        ]);
+      });
+    });
+
   });
 });
