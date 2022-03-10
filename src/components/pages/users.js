@@ -463,7 +463,7 @@ function Users({ initialState, PageTemplate }) {
     <PageTemplate>
       <div className="UsersPage">
         <h1>{t('pageNames:users')}</h1>
-        <Tabs className="Tabs" defaultActiveKey={TABS.internalUsers} type="line" size="large" disabled={isSaving}>
+        <Tabs className="Tabs" defaultActiveKey={TABS.internalUsers} type="line" size="middle" disabled={isSaving}>
           <TabPane className="Tabs-tabPane" tab={t('internalUsers')} key={TABS.internalUsers}>
             <Table
               dataSource={internalUsers}

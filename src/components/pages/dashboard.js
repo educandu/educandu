@@ -2,6 +2,7 @@ import React from 'react';
 import gravatar from 'gravatar';
 import PropTypes from 'prop-types';
 import { Avatar, Tabs } from 'antd';
+import NewsTab from '../news-tab.js';
 import RoomsTab from '../rooms-tab.js';
 import AccountTab from '../account-tab.js';
 import ProfileTab from '../profile-tab.js';
@@ -9,9 +10,9 @@ import { useUser } from '../user-context.js';
 import UsedStorage from '../used-storage.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
-import { roomShape } from '../../ui/default-prop-types.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useStoragePlan } from '../storage-plan-context.js';
+import { roomShape, userActivitiesShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
@@ -23,7 +24,7 @@ function Dashboard({ initialState, PageTemplate }) {
   const { t } = useTranslation('dashboard');
   const clientConfig = useService(ClientConfig);
 
-  const { rooms } = initialState;
+  const { rooms, activities } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
   const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
 
@@ -69,19 +70,22 @@ function Dashboard({ initialState, PageTemplate }) {
           </div>
         </section>
 
-        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
+        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
+          <TabPane className="Tabs-tabPane" tab={t('newsTabTitle')} key="1">
+            <NewsTab activities={activities} />
+          </TabPane>
           {clientConfig.areRoomsEnabled && (
-            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="1">
+            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="2">
               <RoomsTab rooms={rooms} />
             </TabPane>)}
-          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="2">
+          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="3">
             <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
-          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="3">
+          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="4">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
           {!!(user.storage.plan || user.storage.usedBytes) && (
-            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="4">
+            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="5">
               <h5>{storagePlanName}</h5>
               <div className="DashboardPage-usedStorage">
                 <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
@@ -98,7 +102,8 @@ function Dashboard({ initialState, PageTemplate }) {
 Dashboard.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    rooms: PropTypes.arrayOf(roomShape).isRequired
+    rooms: PropTypes.arrayOf(roomShape).isRequired,
+    activities: PropTypes.arrayOf(userActivitiesShape).isRequired
   }).isRequired
 };
 

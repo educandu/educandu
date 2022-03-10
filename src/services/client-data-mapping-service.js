@@ -133,6 +133,10 @@ class ClientDataMappingService {
     return lessons.map(lesson => this._mapLessonMetadata(lesson));
   }
 
+  mapUserActivities(activities) {
+    return activities.map(activity => ({ ...activity, timestamp: activity.timestamp.toISOString() }));
+  }
+
   _mapUser(user, allowedUserFields) {
     if (!user) {
       return null;

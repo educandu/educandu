@@ -220,15 +220,13 @@ function Lesson({ PageTemplate, initialState }) {
     <Fragment>
       <PageTemplate>
         <div className="LessonPage">
-          <div className="LessonPage-breadcrumbs">
-            <Breadcrumb>
-              <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
-                {isPrivateRoom ? <LockOutlined /> : <GlobalOutlined />}
-                <span>{room.name}</span>
-              </Breadcrumb.Item>
-              <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
-            </Breadcrumb>
-          </div>
+          <Breadcrumb className="LessonPage-breadcrumbs">
+            <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
+              {isPrivateRoom ? <LockOutlined /> : <GlobalOutlined />}
+              <span>{room.name}</span>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
+          </Breadcrumb>
           <MetadataTitle
             text={lesson.title}
             extra={<FavoriteStar type={FAVORITE_TYPE.lesson} id={lesson._id} />}

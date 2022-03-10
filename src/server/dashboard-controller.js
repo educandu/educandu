@@ -2,16 +2,18 @@ import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import DashboardService from '../services/dashboard-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class UserController {
-  static get inject() { return [ServerConfig, PageRenderer, RoomService, ClientDataMappingService]; }
+  static get inject() { return [ServerConfig, PageRenderer, DashboardService, RoomService, ClientDataMappingService]; }
 
-  constructor(serverConfig, pageRenderer, roomService, clientDataMappingService) {
-    this.serverConfig = serverConfig;
+  constructor(serverConfig, pageRenderer, dashboardService, roomService, clientDataMappingService) {
     this.roomService = roomService;
+    this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
+    this.dashboardService = dashboardService;
     this.clientDataMappingService = clientDataMappingService;
   }
 
@@ -23,8 +25,10 @@ class UserController {
       rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
     }
     const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
+    const activities = await this.dashboardService.getUserActivities({ userId: user._id, limit: 10 });
+    const mappedActivities = this.clientDataMappingService.mapUserActivities(activities);
 
-    const initialState = { rooms: mappedRooms };
+    const initialState = { rooms: mappedRooms, activities: mappedActivities };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.dashboard, initialState);
   }

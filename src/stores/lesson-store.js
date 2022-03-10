@@ -8,7 +8,9 @@ const lessonMetadataProjection = {
   title: 1,
   slug: 1,
   language: 1,
-  schedule: 1
+  schedule: 1,
+  createdOn: 1,
+  updatedOn: 1
 };
 
 class LessonStore {
@@ -22,12 +24,21 @@ class LessonStore {
     return this.collection.findOne({ _id: lessonId }, { session });
   }
 
+  getLessonMetadataById(lessonId, { session } = {}) {
+    return this.collection.findOne({ _id: lessonId }, { projection: lessonMetadataProjection, session });
+  }
+
   getLessonsById(lessonIds, { session } = {}) {
     return this.collection.find({ _id: { $in: lessonIds } }, { session }).toArray();
   }
 
   getLessonsMetadataByRoomId(roomId, { session } = {}) {
     return this.collection.find({ roomId }, { projection: lessonMetadataProjection, session }).toArray();
+  }
+
+  getLatestLessonsMetadataCreatedByUser(createdBy, { session, limit } = {}) {
+    return this.collection.find({ createdBy }, { projection: lessonMetadataProjection, session })
+      .sort({ updatedOn: -1 }).limit(limit || 0).toArray();
   }
 
   async saveLesson(lesson, { session } = {}) {

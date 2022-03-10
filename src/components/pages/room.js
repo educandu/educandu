@@ -236,7 +236,7 @@ export default function Room({ PageTemplate, initialState }) {
         {!isRoomOwner && renderRoomLessonsCard()}
 
         {isRoomOwner && (
-          <Tabs className="Tabs" defaultActiveKey="1" type="line" size="large">
+          <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
             <TabPane className="Tabs-tabPane" tab={t('lessonsTabTitle')} key="1">
               {renderRoomLessonsCard()}
             </TabPane>

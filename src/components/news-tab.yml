@@ -1,0 +1,33 @@
+latestActivitiesHeader:
+  en: Latest activities
+  de: Letzte Aktivitäten
+documentCreatedActivity:
+  en: New document created
+  de: Neues Dokument erstellt
+documentUpdatedActivity:
+  en: Document updated
+  de: Dokument bearbeitet
+documentMarkedFavoriteActivity:
+  en: Document marked as favorite
+  de: Dokument als Favorit hinzugefügt
+roomCreatedActivity:
+  en: New room created
+  de: Neuen Raum erstellt
+roomUpdatedActivity:
+  en: Room updated
+  de: Raum bearbeitet
+roomMarkedFavoriteActivity:
+  en: Room marked as favorite
+  de: Raum als Favorit hinzugefügt
+roomJoinedActivity:
+  en: Private room joined
+  de: Privatem Raum beigetreten
+lessonCreatedActivity:
+  en: New lesson created
+  de: Neue Unterrichtseinheit erstellt
+lessonUpdatedActivity:
+  en: Lesson updated
+  de: Unterrichtseinheit bearbeitet
+lessonMarkedFavoriteActivity:
+  en: Lesson marked as favorite
+  de: Unterrichtseinheit als Favorit hinzugefügt

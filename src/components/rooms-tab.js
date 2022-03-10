@@ -1,9 +1,9 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
-import { Button, Table } from 'antd';
 import React, { useState } from 'react';
 import Restricted from './restricted.js';
+import { Button, Card, Table } from 'antd';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
@@ -143,8 +143,7 @@ function RoomsTab({ rooms }) {
 
   return (
     <div className="RoomsTab">
-      <section className="RoomsTab-section">
-        <h2>{t('ownedRoomsHeader')}</h2>
+      <Card className="RoomsTab-card" title={t('ownedRoomsHeader')}>
         <Table dataSource={ownedRoomsRows} columns={ownedRoomsColumns} size="middle" />
         <Restricted to={permissions.OWN_ROOMS}>
           <Button
@@ -156,11 +155,10 @@ function RoomsTab({ rooms }) {
             className="RoomsTab-createRoomButton"
             />
         </Restricted>
-      </section>
-      <section className="RoomsTab-section">
-        <h2>{t('joinedRoomsHeader')}</h2>
+      </Card>
+      <Card className="RoomsTab-card" title={t('joinedRoomsHeader')}>
         <Table dataSource={membershipRoomsRows} columns={membershipRoomsColumns} size="middle" />
-      </section>
+      </Card>
       <RoomCreationModal isVisible={isRoomCreationModalVisible} onClose={handleRoomCreationModalClose} />
     </div>
   );

@@ -40,6 +40,18 @@ class RoomStore {
     return this.collection.find({ $or: [{ owner: userId }, { 'members.userId': userId }] }, { session }).toArray();
   }
 
+  getLatestRoomsCreatedByUser(userId, { session, limit } = {}) {
+    return this.collection.find({ createdBy: userId }, { session }).sort({ createdOn: -1 }).limit(limit || 0).toArray();
+  }
+
+  getLatestRoomsUpdatedByUser(userId, { session, limit } = {}) {
+    return this.collection.find({ updatedBy: userId }, { session }).sort({ updatedOn: -1 }).limit(limit || 0).toArray();
+  }
+
+  getLatestRoomsJoinedByUser(userId, { session, limit } = {}) {
+    return this.collection.find({ 'members.userId': userId }, { session }).sort({ 'members.joinedOn': -1 }).limit(limit || 0).toArray();
+  }
+
   appendRoomMember({ roomId, member }, { session } = {}) {
     return this.collection.updateOne({ _id: roomId }, { $push: { members: member } }, { session });
   }
