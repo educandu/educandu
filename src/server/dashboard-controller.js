@@ -1,8 +1,8 @@
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
-import DashboardService from './dashboard-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import DashboardService from '../services/dashboard-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 

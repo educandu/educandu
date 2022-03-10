@@ -15,7 +15,7 @@ class DashboardService {
     this.documentStore = documentStore;
   }
 
-  async getUserActivities({ userId, limit }) {
+  async getUserActivities({ userId, limit = 0 }) {
     const user = await this.userStore.getUserById(userId);
 
     const createdRooms = await this.roomStore.getRoomsCreatedByUser(userId);
@@ -23,7 +23,7 @@ class DashboardService {
     const updatedRooms = await this.roomStore.getRoomsUpdatedByUser(userId);
     const createdDocuments = await this.documentStore.getDocumentsMetadataByCreatedBy(userId);
     const updatedDocuments = await this.documentStore.getDocumentsMetadataByUpdatedBy(userId);
-    const lessons = await this.lessonStore.getLessonsMetadataByCreatedBy(createdRooms.map(room => room._id));
+    const lessons = await this.lessonStore.getLessonsMetadataByCreatedBy(userId);
 
     const createdDocumentActivities = createdDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentCreated,
@@ -55,18 +55,21 @@ class DashboardService {
       data: { _id: room._id, name: room.name }
     }));
 
-    const lessonActivities = lessons.map(lesson => {
-      return lesson.createdOn === lesson.updatedOn
-        ? {
-          type: USER_ACTIVITY_TYPE.lessonCreated,
-          timestamp: lesson.createdOn,
-          data: { _id: lesson._id, title: lesson.title }
-        }
-        : {
+    const lessonActivities = [];
+    lessons.forEach(lesson => {
+      lessonActivities.push({
+        type: USER_ACTIVITY_TYPE.lessonCreated,
+        timestamp: lesson.createdOn,
+        data: { _id: lesson._id, title: lesson.title }
+      });
+
+      if (lesson.createdOn.toISOString() !== lesson.updatedOn.toISOString()) {
+        lessonActivities.push({
           type: USER_ACTIVITY_TYPE.lessonUpdated,
           timestamp: lesson.updatedOn,
           data: { _id: lesson._id, title: lesson.title }
-        };
+        });
+      }
     });
 
     const favoriteActivitiesMetadata = user.favorites.map(favorite => {
@@ -103,7 +106,7 @@ class DashboardService {
       }
     });
 
-    const incompleteActivities = [
+    let incompleteActivities = [
       ...createdDocumentActivities,
       ...updatedDocumentActivities,
       ...createdRoomActivities,
@@ -112,8 +115,11 @@ class DashboardService {
       ...lessonActivities,
       ...favoriteActivitiesMetadata
     ]
-      .sort(by(item => item.timestamp, 'desc'))
-      .slice(0, limit);
+      .sort(by(item => item.timestamp, 'desc'));
+
+    if (limit && limit !== 0) {
+      incompleteActivities = incompleteActivities.slice(0, limit);
+    }
 
     const activities = [];
     for (const activity of incompleteActivities) {
