@@ -9,7 +9,7 @@
   text-align: center;
   vertical-align: middle;
   border: none;
-  border-radius: 0;
+  border-radius: @edu-border-radius-base;
   outline: 0;
   cursor: pointer;
   user-select: none;
@@ -68,6 +68,7 @@
     &.ant-pagination-disabled {
       cursor: not-allowed;
       color: @edu-disabled-color;
+      border-color: @edu-border-color-light;
     }
   }
 

@@ -2,7 +2,39 @@
   border-radius: @edu-border-radius-boxy;
 }
 
-.ant-btn[disabled] {
+.disabled-input-style() {
   background-color: inherit;
   color: @edu-disabled-color;
+  border-color: @edu-border-color-light;
+}
+
+.disabled-input-checked-style() {
+  background-color: @edu-background-color-light;
+  color: @edu-disabled-color-checked;
+  border-color: @edu-border-color-light;
+}
+
+.ant-btn[disabled],
+.ant-btn[disabled]:hover,
+.ant-btn[disabled]:active,
+.ant-input[disabled],
+.ant-input-number-disabled {
+  .disabled-input-style();
+}
+
+.ant-radio-button-wrapper-disabled,
+.ant-radio-button-wrapper-disabled:hover,
+.ant-radio-button-wrapper-disabled:active,
+.ant-radio-button-wrapper-disabled:first-child,
+.ant-radio-button-wrapper-disabled:first-child:hover,
+.ant-radio-button-wrapper-disabled:first-child:active {
+  .disabled-input-style();
+
+  &.ant-radio-button-wrapper-checked {
+    .disabled-input-checked-style();
+  }
+}
+
+.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  .disabled-input-checked-style();
 }
