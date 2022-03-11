@@ -19,16 +19,18 @@ class UserController {
 
   async handleGetDashboardPage(req, res) {
     const { user } = req;
-
     let rooms = [];
     if (this.serverConfig.areRoomsEnabled) {
       rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
     }
-    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
     const activities = await this.dashboardService.getUserActivities({ userId: user._id, limit: 10 });
-    const mappedActivities = this.clientDataMappingService.mapUserActivities(activities);
+    const favorites = await this.dashboardService.getUserFavorites(user);
 
-    const initialState = { rooms: mappedRooms, activities: mappedActivities };
+    const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
+    const mappedActivities = this.clientDataMappingService.mapUserActivities(activities);
+    const mappedFavorites = this.clientDataMappingService.mapUserFavorites(favorites);
+
+    const initialState = { rooms: mappedRooms, activities: mappedActivities, favorites: mappedFavorites };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.dashboard, initialState);
   }

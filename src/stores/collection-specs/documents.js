@@ -2,6 +2,10 @@ export default {
   name: 'documents',
   indexes: [
     {
+      name: '_idx_key_',
+      key: { key: 1 }
+    },
+    {
       name: '_idx_createdBy_',
       key: { createdBy: -1 }
     },

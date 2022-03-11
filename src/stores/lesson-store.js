@@ -28,6 +28,10 @@ class LessonStore {
     return this.collection.findOne({ _id: lessonId }, { projection: lessonMetadataProjection, session });
   }
 
+  getLessonsMetadataByIds(lessonIds, { session } = {}) {
+    return this.collection.find({ _id: { $in: lessonIds } }, { session }).toArray();
+  }
+
   getLessonsById(lessonIds, { session } = {}) {
     return this.collection.find({ _id: { $in: lessonIds } }, { session }).toArray();
   }

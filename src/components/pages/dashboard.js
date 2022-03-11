@@ -8,11 +8,12 @@ import AccountTab from '../account-tab.js';
 import ProfileTab from '../profile-tab.js';
 import { useUser } from '../user-context.js';
 import UsedStorage from '../used-storage.js';
+import FavoritesTab from '../favorites-tab.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useStoragePlan } from '../storage-plan-context.js';
-import { roomShape, userActivitiesShape } from '../../ui/default-prop-types.js';
+import { roomShape, userActivitiesShape, userFavoritesShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
@@ -24,7 +25,7 @@ function Dashboard({ initialState, PageTemplate }) {
   const { t } = useTranslation('dashboard');
   const clientConfig = useService(ClientConfig);
 
-  const { rooms, activities } = initialState;
+  const { rooms, activities, favorites } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
   const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
 
@@ -74,18 +75,21 @@ function Dashboard({ initialState, PageTemplate }) {
           <TabPane className="Tabs-tabPane" tab={t('newsTabTitle')} key="1">
             <NewsTab activities={activities} />
           </TabPane>
+          <TabPane className="Tabs-tabPane" tab={t('favoritesTabTitle')} key="2">
+            <FavoritesTab favorites={favorites} />
+          </TabPane>
           {clientConfig.areRoomsEnabled && (
-            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="2">
+            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="3">
               <RoomsTab rooms={rooms} />
             </TabPane>)}
-          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="3">
+          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="4">
             <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
-          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="4">
+          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="5">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
           {!!(user.storage.plan || user.storage.usedBytes) && (
-            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="5">
+            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="6">
               <h5>{storagePlanName}</h5>
               <div className="DashboardPage-usedStorage">
                 <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
@@ -103,7 +107,8 @@ Dashboard.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     rooms: PropTypes.arrayOf(roomShape).isRequired,
-    activities: PropTypes.arrayOf(userActivitiesShape).isRequired
+    activities: PropTypes.arrayOf(userActivitiesShape).isRequired,
+    favorites: PropTypes.arrayOf(userFavoritesShape).isRequired
   }).isRequired
 };
 
