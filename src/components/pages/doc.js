@@ -343,7 +343,10 @@ function Doc({ initialState, PageTemplate }) {
     const sectionRevision = section.revision;
 
     try {
-      await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
+      const { document: updatedDoc } = await documentApiClient.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions });
+
+      setDoc(updatedDoc);
+      setCurrentSections(updatedDoc.sections);
     } catch (error) {
       handleApiError({ error, logger, t });
     }

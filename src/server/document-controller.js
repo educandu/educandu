@@ -170,8 +170,9 @@ class DocumentController {
   async handleDeleteDocSection(req, res) {
     const { user } = req;
     const { documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
-    await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
-    return res.send({});
+    const document = await this.documentService.hardDeleteSection({ documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions, user });
+    const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(document, req.user);
+    return res.send({ document: mappedDocument });
   }
 
   async handleDeleteDoc(req, res) {
