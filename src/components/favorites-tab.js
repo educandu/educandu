@@ -20,7 +20,7 @@ function FavoritesTab({ favorites }) {
   ];
 
   const sortBySetOn = (items, direction) => items.sort(by(item => item.setOn, direction));
-  const sortByTitle = (items, direction) => items.sort(by(item => item.title, direction).thenBy(item => item.setOn, 'desc'));
+  const sortByTitle = (items, direction) => items.sort(by(item => item.title, { direction, ignoreCase: true }).thenBy(item => item.setOn, 'desc'));
   const sortByType = (items, direction) => items.sort(by(item => item.type, direction).thenBy(item => item.setOn, 'desc'));
 
   const [tableRows, setTableRows] = useState([]);
