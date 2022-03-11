@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
+import by from 'thenby';
 import React from 'react';
-import firstBy from 'thenby';
 import debounce from 'debounce';
 import autoBind from 'auto-bind';
 import PropTypes from 'prop-types';
@@ -80,9 +80,7 @@ class StorageBrowser extends React.Component {
         key: 'displayName',
         align: 'left',
         render: this.renderNameCell,
-        sorter: firstBy('isDirectory', { direction: -1 })
-          .thenBy('displayName', { ignoreCase: true })
-          .thenBy('displayName', { ignoreCase: false }),
+        sorter: by('isDirectory', { direction: -1 }).thenBy('displayName', { ignoreCase: true }),
         defaultSortOrder: 'ascend'
       },
       {
@@ -91,7 +89,7 @@ class StorageBrowser extends React.Component {
         key: 'categoryText',
         align: 'left',
         width: 150,
-        sorter: firstBy('categoryText', { ignoreCase: false })
+        sorter: by('categoryText', { ignoreCase: true })
       },
       {
         title: () => this.props.t('sizeText'),
@@ -99,7 +97,7 @@ class StorageBrowser extends React.Component {
         key: 'sizeText',
         align: 'right',
         width: 100,
-        sorter: firstBy('size')
+        sorter: by('size')
       },
       {
         title: () => this.props.t('lastModifiedText'),
@@ -107,7 +105,7 @@ class StorageBrowser extends React.Component {
         key: 'lastModifiedText',
         align: 'right',
         width: 200,
-        sorter: firstBy('lastModified')
+        sorter: by('lastModified')
       }
     ];
 

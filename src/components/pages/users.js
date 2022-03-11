@@ -355,14 +355,14 @@ function Users({ initialState, PageTemplate }) {
       title: () => t('common:username'),
       dataIndex: 'username',
       key: 'username',
-      sorter: by(x => x.username),
+      sorter: by(x => x.username, { ignoreCase: true }),
       render: renderUsername
     }, {
       title: () => t('common:email'),
       dataIndex: 'email',
       key: 'email',
       render: renderEmail,
-      sorter: by(x => x.email)
+      sorter: by(x => x.email, { ignoreCase: true })
     }, {
       title: () => t('expires'),
       dataIndex: 'expires',
@@ -386,7 +386,7 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'storage',
       key: 'storage',
       render: renderStorage,
-      sorter: by(x => x.storagePlan?.name),
+      sorter: by(x => x.storagePlan?.name, { ignoreCase: true }),
       responsive: ['md']
     }
   ];
@@ -396,13 +396,13 @@ function Users({ initialState, PageTemplate }) {
       title: () => t('common:username'),
       dataIndex: 'username',
       key: 'username',
-      sorter: by(x => x.username),
+      sorter: by(x => x.username, { ignoreCase: true }),
       render: renderUsername
     }, {
       title: () => t('importSource'),
       dataIndex: 'importSource',
       key: 'importSource',
-      sorter: by(x => x.importSource)
+      sorter: by(x => x.importSource, { ignoreCase: true })
     }
   ];
 
@@ -411,20 +411,20 @@ function Users({ initialState, PageTemplate }) {
       title: () => t('common:username'),
       dataIndex: 'username',
       key: 'username',
-      sorter: by(x => x.username),
+      sorter: by(x => x.username, { ignoreCase: true }),
       render: renderUsername
     }, {
       title: () => t('common:email'),
       dataIndex: 'email',
       key: 'email',
       render: renderEmail,
-      sorter: by(x => x.email)
+      sorter: by(x => x.email, { ignoreCase: true })
     }, {
       title: () => t('common:storage'),
       dataIndex: 'storage',
       key: 'storage',
       render: renderStorage,
-      sorter: by(x => x.storagePlan?.name),
+      sorter: by(x => x.storagePlan?.name, { ignoreCase: true }),
       responsive: ['md']
     }, {
       title: () => t('storageSpace'),

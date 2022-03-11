@@ -45,7 +45,7 @@ function Search({ PageTemplate }) {
   ];
 
   const sortByRelevance = (docsToSort, direction) => docsToSort.sort(by(doc => doc.tagMatchCount, direction).thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByTitle = (docsToSort, direction) => docsToSort.sort(by(doc => doc.title, direction).thenBy(doc => doc.updatedOn, 'desc'));
+  const sortByTitle = (docsToSort, direction) => docsToSort.sort(by(doc => doc.title, { direction, ignoreCase: true }).thenBy(doc => doc.updatedOn, 'desc'));
   const sortByLanguage = (docsToSort, direction) => docsToSort.sort(by(doc => doc.language, direction).thenBy(doc => doc.updatedOn, 'desc'));
   const sortByCreatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.createdOn, direction));
   const sortByUpdatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.updatedOn, direction));

@@ -16,7 +16,7 @@ function createLanguageList(languageNameProvider, language, languages) {
       code: key,
       name: value.name
     }))
-    .sort(by(x => x.name));
+    .sort(by(x => x.name, { ignoreCase: true }));
 }
 
 function LanguageSelect({ size, value, languages, onChange }) {

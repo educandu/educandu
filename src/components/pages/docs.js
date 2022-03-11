@@ -219,7 +219,7 @@ function Docs({ initialState, PageTemplate }) {
       dataIndex: 'title',
       key: 'title',
       render: renderTitle,
-      sorter: by(x => x.title)
+      sorter: by(x => x.title, { ignoreCase: true })
     },
     {
       title: t('common:language'),
@@ -243,7 +243,7 @@ function Docs({ initialState, PageTemplate }) {
       dataIndex: 'user',
       key: 'user',
       render: renderUpdatedBy,
-      sorter: by(x => x.updatedBy.username),
+      sorter: by(x => x.updatedBy.username, { ignoreCase: true }),
       responsive: ['md']
     },
     {

@@ -1,4 +1,4 @@
-import thenby from 'thenby';
+import by from 'thenby';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import memoizeOne from 'memoize-one';
@@ -10,22 +10,22 @@ const { Option } = Select;
 const createKeyOptions = memoizeOne(documents => {
   return documents
     .map(doc => ({ key: doc.key, value: doc.key, title: `${doc.key} - ${doc.title}` }))
-    .sort(thenby(x => x.title));
+    .sort(by(x => x.title, { ignoreCase: true }));
 });
 
 const createUrlOptions = memoizeOne(documents => {
   return documents
     .filter(doc => doc.slug)
     .map(doc => ({ key: doc.key, value: `${doc.key}/${doc.slug}`, title: `${doc.key}/${doc.slug}` }))
-    .sort(thenby(x => x.title));
+    .sort(by(x => x.title, { ignoreCase: true }));
 });
 
-function DocumentSelector({ size, documents, value, by, onChange }) {
-  const [filteredOptions, setFilteredOptions] = useState(by === 'key' ? createKeyOptions(documents) : createUrlOptions(documents));
+function DocumentSelector({ size, documents, value, selectBy, onChange }) {
+  const [filteredOptions, setFilteredOptions] = useState(selectBy === 'key' ? createKeyOptions(documents) : createUrlOptions(documents));
 
   useEffect(() => {
-    setFilteredOptions(by === 'key' ? createKeyOptions(documents) : createUrlOptions(documents));
-  }, [documents, by]);
+    setFilteredOptions(selectBy === 'key' ? createKeyOptions(documents) : createUrlOptions(documents));
+  }, [documents, selectBy]);
 
   return (
     <Select
@@ -45,18 +45,18 @@ function DocumentSelector({ size, documents, value, by, onChange }) {
 }
 
 DocumentSelector.propTypes = {
-  by: PropTypes.oneOf(['key', 'url']),
   documents: PropTypes.arrayOf(PropTypes.oneOfType([
     documentMetadataShape,
     documentShape
   ])).isRequired,
   onChange: PropTypes.func.isRequired,
+  selectBy: PropTypes.oneOf(['key', 'url']),
   size: PropTypes.oneOf(['small', 'middle', 'large']),
   value: PropTypes.string.isRequired
 };
 
 DocumentSelector.defaultProps = {
-  by: 'key',
+  selectBy: 'url',
   size: 'middle'
 };
 
