@@ -11,7 +11,7 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 const logger = new Logger(import.meta.url);
 
 function getIsSet(user, type, id) {
-  return !!user.favorites.find(x => x.type === type && x.id === id);
+  return !!user?.favorites.find(x => x.type === type && x.id === id);
 }
 
 function FavoriteStar({ type, id, disabled }) {
@@ -24,6 +24,10 @@ function FavoriteStar({ type, id, disabled }) {
   useEffect(() => {
     setIsSet(getIsSet(user, type, id));
   }, [user, type, id]);
+
+  if (!user) {
+    return null;
+  }
 
   const handleChange = async value => {
     const newIsSet = value === 1;
