@@ -280,7 +280,7 @@ class DocumentService {
 
       logger.info(`Saving latest document with revision ${latestDocument.revision}`);
       await this.documentStore.saveDocument(latestDocument);
-
+      return latestDocument;
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
