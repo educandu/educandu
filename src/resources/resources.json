@@ -1657,6 +1657,9 @@
       "invalidSlug": "The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
       "archivedAlert": "This document is archived and cannot be edited",
       "revision": "Revision",
+      "document": "Document",
+      "room": "Room",
+      "lesson": "Lesson",
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
@@ -1666,11 +1669,13 @@
       "createdOn": "Creation date",
       "completedOn": "Completion date",
       "updatedOn": "Update date",
+      "setOn": "Added on",
       "relevance": "Relevance",
       "owner": "Owner",
       "email": "Email",
       "name": "Name",
       "access": "Access",
+      "type": "Type",
       "accessType_public": "public",
       "accessType_private": "private",
       "title": "Title",
@@ -1701,7 +1706,9 @@
       "sortedByTitle": "Sorted by title",
       "sortedByLanguage": "Sorted by language",
       "sortedByCreatedOn": "Sorted by creation date",
-      "sortedByUpdatedOn": "Sorted by update date"
+      "sortedByUpdatedOn": "Sorted by update date",
+      "sortedBySetOn": "Sorted by date of adding",
+      "sortedByType": "Sorted by type"
     }
   },
   {
@@ -1732,6 +1739,9 @@
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
       "revision": "Revision",
+      "document": "Dokument",
+      "room": "Raum",
+      "lesson": "Unterrichtseinheit",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
@@ -1741,11 +1751,13 @@
       "createdOn": "Erstellungsdatum",
       "completedOn": "Abgeschlossen am",
       "updatedOn": "Änderungsdatum",
+      "setOn": "Hinzugefügt am",
       "relevance": "Relevanz",
       "owner": "Eigentümer",
       "email": "E-Mail",
       "name": "Name",
       "access": "Zugang",
+      "type": "Typ",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
       "title": "Titel",
@@ -1776,7 +1788,9 @@
       "sortedByTitle": "Nach Titel sortiert",
       "sortedByLanguage": "Nach Sprache sortiert",
       "sortedByCreatedOn": "Nach Erstellungsdatum sortiert",
-      "sortedByUpdatedOn": "Nach Änderungsdatum sortiert"
+      "sortedByUpdatedOn": "Nach Änderungsdatum sortiert",
+      "sortedBySetOn": "Nach Hinfügungsdatum sortiert",
+      "sortedByType": "Nach Typ sortiert"
     }
   },
   {

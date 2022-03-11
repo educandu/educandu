@@ -70,6 +70,15 @@ archivedAlert:
 revision:
   en: Revision
   de: Revision
+document:
+  en: Document
+  de: Dokument
+room:
+  en: Room
+  de: Raum
+lesson:
+  en: Lesson
+  de: Unterrichtseinheit
 viewRevisions:
   en: View revisions
   de: Revisionen ansehen
@@ -97,6 +106,9 @@ completedOn:
 updatedOn:
   en: Update date
   de: Änderungsdatum
+setOn:
+  en: Added on
+  de: Hinzugefügt am
 relevance:
   en: Relevance
   de: Relevanz
@@ -112,6 +124,9 @@ name:
 access:
   en: Access
   de: Zugang
+type:
+  en: Type
+  de: Typ
 accessType_public:
   en: public
   de: öffentlich
@@ -205,3 +220,9 @@ sortedByCreatedOn:
 sortedByUpdatedOn:
   en: Sorted by update date
   de: Nach Änderungsdatum sortiert
+sortedBySetOn:
+  en: Sorted by date of adding
+  de: Nach Hinfügungsdatum sortiert
+sortedByType:
+  en: Sorted by type
+  de: Nach Typ sortiert

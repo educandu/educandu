@@ -137,6 +137,15 @@ class ClientDataMappingService {
     return activities.map(activity => ({ ...activity, timestamp: activity.timestamp.toISOString() }));
   }
 
+  mapUserFavorites(favorites) {
+    return favorites.map(favorite => ({
+      id: favorite.id,
+      type: favorite.type,
+      setOn: favorite.setOn.toISOString(),
+      title: favorite.title || ''
+    }));
+  }
+
   _mapUser(user, allowedUserFields) {
     if (!user) {
       return null;

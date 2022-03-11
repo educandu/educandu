@@ -11,6 +11,10 @@ class RoomStore {
     return this.collection.findOne({ _id: roomId }, { session });
   }
 
+  getRoomsByIds(roomIds, { session } = {}) {
+    return this.collection.find({ _id: { $in: roomIds } }, { session }).toArray();
+  }
+
   deleteRoomById(roomId, { session } = {}) {
     return this.collection.deleteOne({ _id: roomId }, { session });
   }

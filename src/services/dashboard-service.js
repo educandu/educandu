@@ -136,6 +136,34 @@ class DashboardService {
 
     return activities;
   }
+
+  async getUserFavorites(userId) {
+    const user = await this.userStore.getUserById(userId);
+
+    const documentIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.document).map(d => d.id);
+    const roomIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.room).map(r => r.id);
+    const lessonIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.lesson).map(l => l.id);
+
+    const documents = documentIds.length ? await this.documentStore.getDocumentsMetadataByKeys(documentIds) : [];
+    const rooms = roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [];
+    const lessons = lessonIds.length ? await this.lessonStore.getLessonsMetadataByIds(lessonIds) : [];
+
+    return user.favorites.map(f => {
+      if (f.type === FAVORITE_TYPE.document) {
+        const document = documents.find(d => d._id === f.id);
+        return { ...f, title: document.title };
+      }
+      if (f.type === FAVORITE_TYPE.room) {
+        const room = rooms.find(r => r._id === f.id);
+        return { ...f, title: room.name };
+      }
+      if (f.type === FAVORITE_TYPE.lesson) {
+        const lesson = lessons.find(l => l._id === f.id);
+        return { ...f, title: lesson.title };
+      }
+      return { ...f };
+    });
+  }
 }
 
 export default DashboardService;

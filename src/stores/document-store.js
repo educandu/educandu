@@ -54,6 +54,10 @@ class DocumentStore {
     return this.collection.distinct('key');
   }
 
+  getDocumentsMetadataByKeys(keys, { session } = {}) {
+    return this.collection.find({ key: { $in: keys } }, { session }).toArray();
+  }
+
   getAllNonArchivedDocumentsExtendedMetadata({ session } = {}) {
     return this.collection.find({ archived: false }, { projection: documentExtendedMetadataProjection, session }).toArray();
   }

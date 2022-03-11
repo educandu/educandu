@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useStoragePlan } from '../storage-plan-context.js';
-import { roomShape, userActivitiesShape } from '../../ui/default-prop-types.js';
+import { roomShape, userActivitiesShape, userFavoritesShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
@@ -25,7 +25,7 @@ function Dashboard({ initialState, PageTemplate }) {
   const { t } = useTranslation('dashboard');
   const clientConfig = useService(ClientConfig);
 
-  const { rooms, activities } = initialState;
+  const { rooms, activities, favorites } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
   const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
 
@@ -76,7 +76,7 @@ function Dashboard({ initialState, PageTemplate }) {
             <NewsTab activities={activities} />
           </TabPane>
           <TabPane className="Tabs-tabPane" tab={t('favoritesTabTitle')} key="2">
-            <FavoritesTab favorites={[]} />
+            <FavoritesTab favorites={favorites} />
           </TabPane>
           {clientConfig.areRoomsEnabled && (
             <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="3">
@@ -107,7 +107,8 @@ Dashboard.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     rooms: PropTypes.arrayOf(roomShape).isRequired,
-    activities: PropTypes.arrayOf(userActivitiesShape).isRequired
+    activities: PropTypes.arrayOf(userActivitiesShape).isRequired,
+    favorites: PropTypes.arrayOf(userFavoritesShape).isRequired
   }).isRequired
 };
 
