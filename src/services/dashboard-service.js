@@ -137,16 +137,16 @@ class DashboardService {
     return activities;
   }
 
-  async getUserFavorites(userId) {
-    const user = await this.userStore.getUserById(userId);
-
+  async getUserFavorites(user) {
     const documentIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.document).map(d => d.id);
     const roomIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.room).map(r => r.id);
     const lessonIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.lesson).map(l => l.id);
 
-    const documents = documentIds.length ? await this.documentStore.getDocumentsMetadataByKeys(documentIds) : [];
-    const rooms = roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [];
-    const lessons = lessonIds.length ? await this.lessonStore.getLessonsMetadataByIds(lessonIds) : [];
+    const [documents, rooms, lessons] = await Promise.all([
+      documentIds.length ? await this.documentStore.getDocumentsMetadataByKeys(documentIds) : [],
+      roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [],
+      lessonIds.length ? await this.lessonStore.getLessonsMetadataByIds(lessonIds) : []
+    ]);
 
     return user.favorites.map(f => {
       if (f.type === FAVORITE_TYPE.document) {

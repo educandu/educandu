@@ -575,7 +575,7 @@ describe('dashboard-service', () => {
   describe('getUserFavorites', () => {
     describe('when there are no favorites', () => {
       beforeEach(async () => {
-        result = await sut.getUserFavorites(user._id);
+        result = await sut.getUserFavorites(user);
       });
 
       it('should return an empty array', () => {
@@ -592,28 +592,26 @@ describe('dashboard-service', () => {
         room = await createTestRoom(container, { name: 'Favorite room' });
         lesson = await createTestLesson(container, { title: 'Favorite lesson' });
         document = await createTestDocument(container, user, { title: 'Favorite document' });
-        await db.users.updateOne({ _id: user._id }, {
-          $set: {
-            favorites: [
-              {
-                type: FAVORITE_TYPE.room,
-                setOn: new Date('2022-03-09T10:01:00.000Z'),
-                id: room._id
-              },
-              {
-                type: FAVORITE_TYPE.lesson,
-                setOn: new Date('2022-03-09T10:02:00.000Z'),
-                id: lesson._id
-              },
-              {
-                type: FAVORITE_TYPE.document,
-                setOn: new Date('2022-03-09T10:03:00.000Z'),
-                id: document._id
-              }
-            ]
+
+        const favorites = [
+          {
+            type: FAVORITE_TYPE.room,
+            setOn: new Date('2022-03-09T10:01:00.000Z'),
+            id: room._id
+          },
+          {
+            type: FAVORITE_TYPE.lesson,
+            setOn: new Date('2022-03-09T10:02:00.000Z'),
+            id: lesson._id
+          },
+          {
+            type: FAVORITE_TYPE.document,
+            setOn: new Date('2022-03-09T10:03:00.000Z'),
+            id: document._id
           }
-        });
-        result = await sut.getUserFavorites(user._id);
+        ];
+
+        result = await sut.getUserFavorites({ ...user, favorites });
       });
 
       it('should return an array containing the user favorites', () => {
