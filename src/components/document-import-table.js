@@ -60,7 +60,7 @@ function DocumentImportTable({ importableDocuments, importSourceBaseUrl, loading
     {
       title: t('common:title'),
       key: 'title',
-      sorter: by(x => x.title),
+      sorter: by(x => x.title, { ignoreCase: true }),
       render: (_text, record) => record.titleComponent,
       shouldCellUpdate: (record, prevRecord) => record.title !== prevRecord.title || record.url !== prevRecord.url
     },

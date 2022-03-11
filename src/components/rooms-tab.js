@@ -58,7 +58,7 @@ function RoomsTab({ rooms }) {
       dataIndex: 'name',
       key: 'name',
       render: renderName,
-      sorter: by(x => x.name)
+      sorter: by(x => x.name, { ignoreCase: true })
     },
     {
       title: t('common:createdOn'),
@@ -86,14 +86,14 @@ function RoomsTab({ rooms }) {
       dataIndex: 'name',
       key: 'name',
       render: renderName,
-      sorter: by(x => x.name)
+      sorter: by(x => x.name, { ignoreCase: true })
     },
     {
       title: t('common:owner'),
       dataIndex: 'owner',
       key: 'owner',
       render: renderOwner,
-      sorter: by(x => x.owner),
+      sorter: by(x => x.owner, { ignoreCase: true }),
       width: '200px',
       responsive: ['md']
     },

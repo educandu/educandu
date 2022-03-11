@@ -135,7 +135,6 @@ function Settings({ initialState, PageTemplate }) {
 
           <h2 className="SettingsPage-sectionHeader">{t('templateDocumentHeader')}</h2>
           <DocumentSelector
-            by="url"
             documents={initialState.documents}
             value={templateDocumentURL}
             onChange={handleTemplateDocumentChange}

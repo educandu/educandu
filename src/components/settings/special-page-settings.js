@@ -56,7 +56,6 @@ function SpecialPageSettings({ settings, documents, onChange }) {
   const renderUrlPath = (text, record, index) => (
     <FormItem style={{ marginBottom: 0 }}>
       <DocumentSelector
-        by="url"
         documents={documents}
         value={record.urlPath}
         onChange={value => handleChange(index, 'urlPath', value)}
