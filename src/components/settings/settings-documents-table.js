@@ -2,10 +2,12 @@ import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import { Form, Table, Button, Input } from 'antd';
 import DocumentSelector from '../document-selector.js';
+import MoveUpIcon from '../icons/general/move-up-icon.js';
+import MoveDownIcon from '../icons/general/move-down-icon.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
-import { DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons';
 import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
@@ -67,8 +69,8 @@ function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
 
   const renderRank = (text, record, index) => (
     <span style={{ whiteSpace: 'nowrap' }}>
-      <Button size="small" icon={<UpOutlined />} disabled={index === 0} onClick={() => handleMoveClick(index, -1)} />
-      <Button size="small" icon={<DownOutlined />} disabled={index === settingsDocuments.length - 1} onClick={() => handleMoveClick(index, +1)} />
+      <Button size="small" icon={<MoveUpIcon />} disabled={index === 0} onClick={() => handleMoveClick(index, -1)} />
+      <Button size="small" icon={<MoveDownIcon />} disabled={index === settingsDocuments.length - 1} onClick={() => handleMoveClick(index, +1)} />
     </span>
   );
 
