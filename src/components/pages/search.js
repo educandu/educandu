@@ -29,8 +29,8 @@ function Search({ PageTemplate }) {
 
   const [docs, setDocs] = useState([]);
   const [allTags, setAllTags] = useState([]);
-  const [tagOptions, setTagOptions] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [unselectedTags, setUnselectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
   const [displayedDocs, setDisplayedDocs] = useState([]);
   const [searchText, setSearchText] = useState(request.query.query);
@@ -89,8 +89,7 @@ function Search({ PageTemplate }) {
   }, [docs]);
 
   useEffect(() => {
-    const remainingTags = allTags.filter(tag => !selectedTags.includes(tag));
-    setTagOptions(remainingTags.map(tag => ({ label: tag, value: tag })));
+    setUnselectedTags(allTags.filter(tag => !selectedTags.includes(tag)));
   }, [allTags, selectedTags]);
 
   useEffect(() => {
@@ -177,7 +176,7 @@ function Search({ PageTemplate }) {
           {renderSelectedTags()}
           <TagSelector
             size="large"
-            options={tagOptions}
+            tags={unselectedTags}
             onSelect={handleSelectTag}
             selectedCount={selectedTags.length}
             />
