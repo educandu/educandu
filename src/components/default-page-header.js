@@ -10,21 +10,19 @@ import { useLocale } from './locale-context.js';
 import permissions from '../domain/permissions.js';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
+import { QuestionOutlined } from '@ant-design/icons';
+import MenuIcon from './icons/main-menu/menu-icon.js';
+import HomeIcon from './icons/main-menu/home-icon.js';
+import UsersIcon from './icons/main-menu/users-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import { FEATURE_TOGGLES } from '../domain/constants.js';
 import DefaultHeaderLogo from './default-header-logo.js';
-import {
-  QuestionOutlined,
-  MenuOutlined,
-  LogoutOutlined,
-  HomeOutlined,
-  IdcardOutlined,
-  FileOutlined,
-  UserOutlined,
-  SettingOutlined,
-  ImportOutlined,
-  GlobalOutlined
-} from '@ant-design/icons';
+import LogoffIcon from './icons/main-menu/logoff-icon.js';
+import ImportsIcon from './icons/main-menu/imports-icon.js';
+import LanguageIcon from './icons/main-menu/language-icon.js';
+import SettingsIcon from './icons/main-menu/settings-icon.js';
+import DocumentsIcon from './icons/main-menu/documents-icon.js';
+import DashboardIcon from './icons/main-menu/dashboard-icon.js';
 
 function DefaultPageHeader({ onUiLanguageClick }) {
   const user = useUser();
@@ -39,7 +37,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'home',
       href: urls.getHomeUrl(),
       text: t('pageNames:home'),
-      icon: HomeOutlined,
+      icon: HomeIcon,
       permission: null,
       showWhen: true
     },
@@ -47,7 +45,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'dashboard',
       href: urls.getDashboardUrl(),
       text: t('pageNames:dashboard'),
-      icon: IdcardOutlined,
+      icon: DashboardIcon,
       permission: null,
       showWhen: !!user
     },
@@ -55,7 +53,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'docs',
       href: urls.getDocsUrl(),
       text: t('pageNames:docs'),
-      icon: FileOutlined,
+      icon: DocumentsIcon,
       permission: permissions.VIEW_DOCS,
       showWhen: true
     },
@@ -63,7 +61,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'users',
       href: urls.getUsersUrl(),
       text: t('pageNames:users'),
-      icon: UserOutlined,
+      icon: UsersIcon,
       permission: permissions.EDIT_USERS,
       showWhen: true
     },
@@ -71,7 +69,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'settings',
       href: urls.getSettingsUrl(),
       text: t('pageNames:settings'),
-      icon: SettingOutlined,
+      icon: SettingsIcon,
       permission: permissions.EDIT_SETTINGS,
       showWhen: true
     },
@@ -79,7 +77,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'import',
       href: urls.getImportsUrl(),
       text: t('pageNames:importBatches'),
-      icon: ImportOutlined,
+      icon: ImportsIcon,
       permission: permissions.MANAGE_IMPORT,
       showWhen: !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)
     },
@@ -95,7 +93,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'ui-language',
       onClick: () => onUiLanguageClick(),
       text: t('common:language'),
-      icon: GlobalOutlined,
+      icon: LanguageIcon,
       permission: null,
       showWhen: true
     },
@@ -103,7 +101,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'logout',
       href: urls.getLogoutUrl(),
       text: t('common:logoff'),
-      icon: LogoutOutlined,
+      icon: LogoffIcon,
       permission: null,
       showWhen: !!user
     }
@@ -122,7 +120,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
             <Login />
           </div>
           <LinkPopover items={pageMenuItems} trigger="click" placement="bottomRight">
-            <Button className="DefaultPageHeader-headerButton" icon={<MenuOutlined />} />
+            <Button className="DefaultPageHeader-headerButton" icon={<MenuIcon />} />
           </LinkPopover>
         </div>
       </div>

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import urls from '../../../src/utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import Login from '../../../src/components/login.js';
+import { QuestionOutlined } from '@ant-design/icons';
 import permissions from '../../../src/domain/permissions.js';
 import { useUser } from '../../../src/components/user-context.js';
 import LinkPopover from '../../../src/components/link-popover.js';
@@ -12,19 +13,16 @@ import { FEATURE_TOGGLES } from '../../../src/domain/constants.js';
 import { useLocale } from '../../../src/components/locale-context.js';
 import { useService } from '../../../src/components/container-context.js';
 import { useSettings } from '../../../src/components/settings-context.js';
+import HomeIcon from '../../../src/components/icons/main-menu/home-icon.js';
+import MenuIcon from '../../../src/components/icons/main-menu/menu-icon.js';
+import UsersIcon from '../../../src/components/icons/main-menu/users-icon.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
-import {
-  QuestionOutlined,
-  MenuOutlined,
-  LogoutOutlined,
-  HomeOutlined,
-  IdcardOutlined,
-  FileOutlined,
-  UserOutlined,
-  SettingOutlined,
-  ImportOutlined,
-  GlobalOutlined
-} from '@ant-design/icons';
+import LogoffIcon from '../../../src/components/icons/main-menu/logoff-icon.js';
+import ImportsIcon from '../../../src/components/icons/main-menu/imports-icon.js';
+import LanguageIcon from '../../../src/components/icons/main-menu/language-icon.js';
+import SettingsIcon from '../../../src/components/icons/main-menu/settings-icon.js';
+import DocumentsIcon from '../../../src/components/icons/main-menu/documents-icon.js';
+import DashboardIcon from '../../../src/components/icons/main-menu/dashboard-icon.js';
 
 function PageHeader({ onUiLanguageClick }) {
   const user = useUser();
@@ -39,7 +37,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'home',
       href: urls.getHomeUrl(),
       text: t('pageNames:home'),
-      icon: HomeOutlined,
+      icon: HomeIcon,
       permission: null,
       showWhen: true
     },
@@ -47,7 +45,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'dashboard',
       href: urls.getDashboardUrl(),
       text: t('pageNames:dashboard'),
-      icon: IdcardOutlined,
+      icon: DashboardIcon,
       permission: null,
       showWhen: !!user
     },
@@ -55,7 +53,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'docs',
       href: urls.getDocsUrl(),
       text: t('pageNames:docs'),
-      icon: FileOutlined,
+      icon: DocumentsIcon,
       permission: permissions.VIEW_DOCS,
       showWhen: true
     },
@@ -63,7 +61,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'users',
       href: urls.getUsersUrl(),
       text: t('pageNames:users'),
-      icon: UserOutlined,
+      icon: UsersIcon,
       permission: permissions.EDIT_USERS,
       showWhen: true
     },
@@ -71,7 +69,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'settings',
       href: urls.getSettingsUrl(),
       text: t('pageNames:settings'),
-      icon: SettingOutlined,
+      icon: SettingsIcon,
       permission: permissions.EDIT_SETTINGS,
       showWhen: true
     },
@@ -79,7 +77,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'import',
       href: urls.getImportsUrl(),
       text: t('pageNames:importBatches'),
-      icon: ImportOutlined,
+      icon: ImportsIcon,
       permission: permissions.MANAGE_IMPORT,
       showWhen: !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)
     },
@@ -95,7 +93,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'ui-language',
       onClick: () => onUiLanguageClick(),
       text: t('common:language'),
-      icon: GlobalOutlined,
+      icon: LanguageIcon,
       permission: null,
       showWhen: true
     },
@@ -103,7 +101,7 @@ function PageHeader({ onUiLanguageClick }) {
       key: 'logout',
       href: urls.getLogoutUrl(),
       text: t('common:logoff'),
-      icon: LogoutOutlined,
+      icon: LogoffIcon,
       permission: null,
       showWhen: !!user
     }
@@ -120,7 +118,7 @@ function PageHeader({ onUiLanguageClick }) {
             <Login />
           </div>
           <LinkPopover items={pageMenuItems} trigger="click" placement="bottomRight">
-            <Button className="PageHeader-headerButton" icon={<MenuOutlined />} />
+            <Button className="PageHeader-headerButton" icon={<MenuIcon />} />
           </LinkPopover>
         </div>
       </div>

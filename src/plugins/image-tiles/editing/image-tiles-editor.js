@@ -1,14 +1,15 @@
 import React from 'react';
 import TileEditor from './tile-editor.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import DeleteButton from '../../../components/delete-button.js';
-import { SettingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Form, Menu, Radio, Slider, Button, Dropdown } from 'antd';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
 import MoveUpIcon from '../../../components/icons/general/move-up-icon.js';
 import MoveDownIcon from '../../../components/icons/general/move-down-icon.js';
+import SettingsIcon from '../../../components/icons/main-menu/settings-icon.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
 import { confirmDeleteImageTile } from '../../../components/confirmation-dialogs.js';
 
@@ -137,7 +138,7 @@ function ImageTilesEditor({ content, onContentChanged, publicStorage, privateSto
                 </div>
                 <div style={{ flex: 'none' }}>
                   <Dropdown overlay={renderTileMenu(index)} placement="bottomRight">
-                    <Button type="ghost" icon={<SettingOutlined />} size="small" />
+                    <Button type="ghost" icon={<SettingsIcon />} size="small" />
                   </Dropdown>
                 </div>
               </div>
