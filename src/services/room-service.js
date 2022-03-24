@@ -6,9 +6,9 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import LessonStore from '../stores/lesson-store.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -119,23 +119,35 @@ export default class RoomService {
   }
 
   async verifyInvitationToken({ token, user }) {
-    let roomId = null;
-    let roomName = null;
-    let roomSlug = null;
-    let isValid = false;
+    const response = {
+      roomId: null,
+      roomName: null,
+      roomSlug: null,
+      invalidInvitationReason: null
+    };
 
     const invitation = await this.roomInvitationStore.getRoomInvitationByToken(token);
-    if (invitation?.email === user.email) {
-      const room = await this.roomStore.getRoomById(invitation.roomId);
-      if (room) {
-        roomId = room._id;
-        roomName = room.name;
-        roomSlug = room.slug;
-        isValid = true;
-      }
+    if (!invitation) {
+      response.invalidInvitationReason = INVALID_ROOM_INVITATION_REASON.token;
+      return response;
     }
 
-    return { roomId, roomName, roomSlug, isValid };
+    if (invitation.email !== user.email) {
+      response.invalidInvitationReason = INVALID_ROOM_INVITATION_REASON.user;
+      logger.debug(`Invitation ${invitation._id} was sent to email '${invitation?.email}' but accessed by user with email '${user.email}'`);
+      return response;
+    }
+
+    const room = await this.roomStore.getRoomById(invitation.roomId);
+    if (!room) {
+      response.invalidInvitationReason = INVALID_ROOM_INVITATION_REASON.room;
+      return response;
+    }
+
+    response.roomId = room._id;
+    response.roomName = room.name;
+    response.roomSlug = room.slug;
+    return response;
   }
 
   async confirmInvitation({ token, user }) {
