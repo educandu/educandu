@@ -2,12 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
-import EditIcon from './icons/general/edit-icon.js';
 import { useDateFormat } from './locale-context.js';
 import { USER_ACTIVITY_TYPE } from '../domain/constants.js';
-import DuplicateIcon from './icons/general/duplicate-icon.js';
 import { userActivitiesShape } from '../ui/default-prop-types.js';
-import { StarFilled, UsergroupAddOutlined } from '@ant-design/icons';
+import ItemEditedIcon from './icons/user-activities/item-edited-icon.js';
+import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
+import RoomCreatedIcon from './icons/user-activities/room-created-icon.js';
+import LessonCreatedIcon from './icons/user-activities/lesson-created-icon.js';
+import DocumentCreatedIcon from './icons/user-activities/document-created-icon.js';
+import RoomMarkedFavoriteIcon from './icons/user-activities/room-marked-favorite-icon.js';
+import LessonMarkedFavoriteIcon from './icons/user-activities/lesson-marked-favorite-icon.js';
+import DocumentMarkedFavoriteIcon from './icons/user-activities/document-marked-favorite-icon.js';
 
 function NewsTab({ activities }) {
   const { formatDate } = useDateFormat();
@@ -28,7 +33,7 @@ function NewsTab({ activities }) {
 
   const renderDocumentCreatedActivity = activity => {
     return renderActivity({
-      icon: <DuplicateIcon />,
+      icon: <DocumentCreatedIcon />,
       timestamp: activity.timestamp,
       description: t('documentCreatedActivity'),
       linkText: activity.data.title,
@@ -38,7 +43,7 @@ function NewsTab({ activities }) {
 
   const renderDocumentUpdatedActivity = activity => {
     return renderActivity({
-      icon: <EditIcon />,
+      icon: <ItemEditedIcon />,
       timestamp: activity.timestamp,
       description: t('documentUpdatedActivity'),
       linkText: activity.data.title,
@@ -48,7 +53,7 @@ function NewsTab({ activities }) {
 
   const renderDocumentMarkedFavoriteActivity = activity => {
     return renderActivity({
-      icon: <StarFilled className="NewsTab-activityMetadataIcon--lighter" />,
+      icon: <DocumentMarkedFavoriteIcon />,
       timestamp: activity.timestamp,
       description: t('documentMarkedFavoriteActivity'),
       linkText: activity.data.title,
@@ -58,7 +63,7 @@ function NewsTab({ activities }) {
 
   const renderRoomCreatedActivity = activity => {
     return renderActivity({
-      icon: <DuplicateIcon />,
+      icon: <RoomCreatedIcon />,
       timestamp: activity.timestamp,
       description: t('roomCreatedActivity'),
       linkText: activity.data.name,
@@ -68,7 +73,7 @@ function NewsTab({ activities }) {
 
   const renderRoomUpdatedActivity = activity => {
     return renderActivity({
-      icon: <EditIcon />,
+      icon: <ItemEditedIcon />,
       timestamp: activity.timestamp,
       description: t('roomUpdatedActivity'),
       linkText: activity.data.name,
@@ -78,7 +83,7 @@ function NewsTab({ activities }) {
 
   const renderRoomMarkedFavoriteActivity = activity => {
     return renderActivity({
-      icon: <StarFilled className="NewsTab-activityMetadataIcon--lighter" />,
+      icon: <RoomMarkedFavoriteIcon />,
       timestamp: activity.timestamp,
       description: t('roomMarkedFavoriteActivity'),
       linkText: activity.data.name,
@@ -88,7 +93,7 @@ function NewsTab({ activities }) {
 
   const renderRoomJoinedActivity = activity => {
     return renderActivity({
-      icon: <UsergroupAddOutlined />,
+      icon: <RoomJoinedIcon />,
       timestamp: activity.timestamp,
       description: t('roomJoinedActivity'),
       linkText: activity.data.name,
@@ -98,7 +103,7 @@ function NewsTab({ activities }) {
 
   const renderLessonCreatedActivity = activity => {
     return renderActivity({
-      icon: <DuplicateIcon />,
+      icon: <LessonCreatedIcon />,
       timestamp: activity.timestamp,
       description: t('lessonCreatedActivity'),
       linkText: activity.data.title,
@@ -108,7 +113,7 @@ function NewsTab({ activities }) {
 
   const renderLessonUpdatedActivity = activity => {
     return renderActivity({
-      icon: <EditIcon />,
+      icon: <ItemEditedIcon />,
       timestamp: activity.timestamp,
       description: t('lessonUpdatedActivity'),
       linkText: activity.data.title,
@@ -118,7 +123,7 @@ function NewsTab({ activities }) {
 
   const renderLessonMarkedFavoriteActivity = activity => {
     return renderActivity({
-      icon: <StarFilled className="NewsTab-activityMetadataIcon--lighter" />,
+      icon: <LessonMarkedFavoriteIcon />,
       timestamp: activity.timestamp,
       description: t('lessonMarkedFavoriteActivity'),
       linkText: activity.data.title,

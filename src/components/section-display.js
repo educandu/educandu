@@ -10,13 +10,15 @@ import EditIcon from './icons/general/edit-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import MoveUpIcon from './icons/general/move-up-icon.js';
 import EditorFactory from '../plugins/editor-factory.js';
+import PreviewIcon from './icons/general/preview-icon.js';
 import React, { Fragment, useMemo, useState } from 'react';
 import MoveDownIcon from './icons/general/move-down-icon.js';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
+import HardDeleteIcon from './icons/general/hard-delete-icon.js';
+import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
 import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
-import { CheckOutlined, CloseOutlined, DragOutlined, EyeOutlined, ThunderboltOutlined } from '@ant-design/icons';
 
 function SectionDisplay({
   section,
@@ -85,7 +87,7 @@ function SectionDisplay({
     {
       type: 'preview',
       tooltip: renderActionTooltip('preview', ['ctrl', 'click']),
-      icon: <EyeOutlined key="preview" />,
+      icon: <PreviewIcon key="preview" />,
       handleAction: () => setIsEditing(false),
       isVisible: isEditing,
       isEnabled: isEditing
@@ -174,7 +176,7 @@ function SectionDisplay({
       <Button
         className="SectionDisplay-actionButton SectionDisplay-actionButton--hardDelete"
         size="small"
-        icon={<ThunderboltOutlined />}
+        icon={<HardDeleteIcon />}
         onClick={onSectionHardDelete}
         />
     </Tooltip>

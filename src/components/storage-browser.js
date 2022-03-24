@@ -12,25 +12,22 @@ import Highlighter from 'react-highlighter';
 import UsedStorage from './used-storage.js';
 import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
+import FileIcon from './icons/general/file-icon.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
+import FolderIcon from './icons/general/folder-icon.js';
 import UploadIcon from './icons/general/upload-icon.js';
 import { useSetUser, useUser } from './user-context.js';
 import { useStoragePlan } from './storage-plan-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
+import { LockOutlined, GlobalOutlined } from '@ant-design/icons';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select } from 'antd';
-import {
-  FolderOutlined,
-  FileOutlined,
-  LockOutlined,
-  GlobalOutlined
-} from '@ant-design/icons';
 
 const logger = new Logger(import.meta.url);
 
@@ -474,8 +471,8 @@ class StorageBrowser extends React.Component {
     const { filterText } = this.state;
     const normalizedFilterText = filterText.toLowerCase().trim();
     const icon = record.isDirectory
-      ? <span className="StorageBrowser-browserRecordIcon StorageBrowser-browserRecordIcon--folder"><FolderOutlined /></span>
-      : <span className="StorageBrowser-browserRecordIcon StorageBrowser-browserRecordIcon--file"><FileOutlined /></span>;
+      ? <span className="StorageBrowser-browserRecordIcon StorageBrowser-browserRecordIcon--folder"><FolderIcon /></span>
+      : <span className="StorageBrowser-browserRecordIcon StorageBrowser-browserRecordIcon--file"><FileIcon /></span>;
 
     return (
       <span className="StorageBrowser-browserRecordText">

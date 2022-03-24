@@ -1,8 +1,9 @@
 import React from 'react';
 import { Switch } from 'antd';
 import PropTypes from 'prop-types';
+import { CheckOutlined } from '@ant-design/icons';
+import CloseIcon from './icons/general/close-icon.js';
 import { userShape } from './../ui/default-prop-types.js';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 function UserLockedOutStateEditor({ user, onLockedOutStateChange }) {
   const handleLockedOutStateChange = newLockedOutState => {
@@ -12,7 +13,7 @@ function UserLockedOutStateEditor({ user, onLockedOutStateChange }) {
   return (
     <Switch
       checkedChildren={<CheckOutlined />}
-      unCheckedChildren={<CloseOutlined />}
+      unCheckedChildren={<CloseIcon />}
       checked={user.lockedOut}
       onChange={handleLockedOutStateChange}
       />

@@ -2,9 +2,9 @@ import { Button } from 'antd';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
-import { WarningOutlined } from '@ant-design/icons';
 import ClientConfig from '../bootstrap/client-config.js';
 import React, { useEffect, useState, useRef } from 'react';
+import CookieAlertIcon from './icons/general/cookie-alert-icon.js';
 import { getCookie, setLongLastingCookie } from '../common/cookie.js';
 
 export default function CookieConsentDrawer() {
@@ -52,7 +52,7 @@ export default function CookieConsentDrawer() {
       <div className="CookieConsentDrawer-overlay" />
       <div className="CookieConsentDrawer-drawer">
         <div className="CookieConsentDrawer-icon">
-          <WarningOutlined size="large" />
+          <CookieAlertIcon />
         </div>
         <div className="CookieConsentDrawer-consentText">
           {t('consentText')}
