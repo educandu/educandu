@@ -9,9 +9,9 @@ import TagSelector from '../tag-selector.js';
 import { useTranslation } from 'react-i18next';
 import ItemsExpander from '../items-expander.js';
 import { useRequest } from '../request-context.js';
-import { useDateFormat } from '../locale-context.js';
 import SortingSelector from '../sorting-selector.js';
 import CloseIcon from '../icons/general/close-icon.js';
+import DocumentInfoCell from '../document-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -24,7 +24,6 @@ const logger = new Logger(import.meta.url);
 function Search({ PageTemplate }) {
   const request = useRequest();
   const { t } = useTranslation('search');
-  const { formatDate } = useDateFormat();
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
   const [docs, setDocs] = useState([]);
@@ -103,13 +102,7 @@ function Search({ PageTemplate }) {
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
-  const renderTitle = (title, doc) => (
-    <a className="SearchPage-titleCell" href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>
-      <div className="SearchPage-titleCellTitle">{title}</div>
-      {doc.description && <div className="SearchPage-titleCellDescription">{doc.description}</div>}
-      <div className="SearchPage-titleCellDates">{t('createdOn')}: {formatDate(doc.createdOn)} | {t('updatedOn')}: {formatDate(doc.updatedOn)}</div>
-    </a>
-  );
+  const renderTitle = (title, doc) => <DocumentInfoCell doc={doc} />;
 
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
 

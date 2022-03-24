@@ -5,15 +5,15 @@ import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import { Input, Button, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from '../locale-context.js';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
-import { shorten } from '../../utils/string-utils.js';
-import { Input, Button, Switch, Tooltip } from 'antd';
+import DocumentInfoCell from '../document-info-cell.js';
 import LanguageIcon from '../localization/language-icon.js';
-import { useDateFormat, useLocale } from '../locale-context.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
@@ -54,7 +54,6 @@ function Docs({ initialState, PageTemplate }) {
   const settings = useSettings();
   const { t } = useTranslation('docs');
   const { uiLanguage } = useLocale();
-  const { formatDate } = useDateFormat();
   const [clonedDocument, setClonedDocument] = useState(null);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
@@ -151,17 +150,7 @@ function Docs({ initialState, PageTemplate }) {
     }
   };
 
-  const renderTitle = (title, doc) => {
-    return (
-      <Tooltip title={shorten(doc.description, 120)}>
-        <a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>
-      </Tooltip>
-    );
-  };
-
-  const renderUpdatedOn = updatedOn => {
-    return <span>{formatDate(updatedOn)}</span>;
-  };
+  const renderTitle = (title, doc) => <DocumentInfoCell doc={doc} />;
 
   const renderLanguage = documentLanguage => {
     return <LanguageIcon language={documentLanguage} />;
@@ -228,15 +217,6 @@ function Docs({ initialState, PageTemplate }) {
       render: renderLanguage,
       sorter: by(x => x.language),
       responsive: ['sm']
-    },
-    {
-      title: t('common:updatedOn'),
-      dataIndex: 'updatedOn',
-      key: 'updatedOn',
-      render: renderUpdatedOn,
-      defaultSortOrder: 'descend',
-      sorter: by(x => x.updatedOn),
-      responsive: ['lg']
     },
     {
       title: t('common:user'),

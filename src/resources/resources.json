@@ -132,6 +132,22 @@
     }
   },
   {
+    "namespace": "documentInfoCell",
+    "language": "en",
+    "resources": {
+      "createdOn": "Created",
+      "updatedOn": "Last update"
+    }
+  },
+  {
+    "namespace": "documentInfoCell",
+    "language": "de",
+    "resources": {
+      "createdOn": "Erstellt",
+      "updatedOn": "Letzte Änderung"
+    }
+  },
+  {
     "namespace": "documentMetadataModal",
     "language": "en",
     "resources": {
@@ -766,9 +782,7 @@
       "headline": "{count, plural, =1 {# document} other {# documents}} found\n",
       "filterPlaceholder": "Filter by tags",
       "deselectTags": "Remove all tags",
-      "sorting": "Sorting",
-      "createdOn": "Created",
-      "updatedOn": "Last update"
+      "sorting": "Sorting"
     }
   },
   {
@@ -778,9 +792,7 @@
       "headline": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
       "filterPlaceholder": "Nach Tags filtern",
       "deselectTags": "Alle Tags löschen",
-      "sorting": "Sortierung",
-      "createdOn": "Erstellt",
-      "updatedOn": "Letzte Änderung"
+      "sorting": "Sortierung"
     }
   },
   {
