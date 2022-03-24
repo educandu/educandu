@@ -16,8 +16,9 @@ import MoveDownIcon from './icons/general/move-down-icon.js';
 import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
+import HardDeleteIcon from './icons/general/hard-delete-icon.js';
+import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
 import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
-import { CheckOutlined, CloseOutlined, DragOutlined, ThunderboltOutlined } from '@ant-design/icons';
 
 function SectionDisplay({
   section,
@@ -175,7 +176,7 @@ function SectionDisplay({
       <Button
         className="SectionDisplay-actionButton SectionDisplay-actionButton--hardDelete"
         size="small"
-        icon={<ThunderboltOutlined />}
+        icon={<HardDeleteIcon />}
         onClick={onSectionHardDelete}
         />
     </Tooltip>
