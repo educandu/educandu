@@ -1,3 +1,4 @@
+import by from 'thenby';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -5,10 +6,11 @@ import { delay } from '../utils/time-utils.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 
-function TagSelector({ options, selectedCount, onSelect, size }) {
+function TagSelector({ tags, selectedCount, onSelect, size }) {
   const relativeElemRef = useRef(null);
   const absoluteElemRef = useRef(null);
   const { t } = useTranslation('tagSelector');
+  const [options, setOptions] = useState([]);
   const [isActive, setIsActive] = useState(false);
   const [selectLeftOffset, setSelectLeftOffset] = useState(0);
 
@@ -24,6 +26,10 @@ function TagSelector({ options, selectedCount, onSelect, size }) {
       }
     }
   }, [isActive]);
+
+  useEffect(() => {
+    setOptions(tags.map(tag => ({ label: tag, value: tag })).sort(by(tag => tag.label, { ignoreCase: true })));
+  }, [tags]);
 
   const handleClick = () => {
     setIsActive(!isActive);
@@ -75,12 +81,9 @@ function TagSelector({ options, selectedCount, onSelect, size }) {
 
 TagSelector.propTypes = {
   onSelect: PropTypes.func.isRequired,
-  options: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired
-  })).isRequired,
   selectedCount: PropTypes.number.isRequired,
-  size: PropTypes.oneOf(['small', 'middle', 'large'])
+  size: PropTypes.oneOf(['small', 'middle', 'large']),
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 TagSelector.defaultProps = {
