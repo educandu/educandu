@@ -226,3 +226,6 @@ sortedBySetOn:
 sortedByType:
   en: Sorted by type
   de: Nach Typ sortiert
+searchPlaceholder:
+  en: Search terms
+  de: Suchbegriffe

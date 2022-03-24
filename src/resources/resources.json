@@ -528,7 +528,6 @@
       "copySlugSuffix": "copy",
       "clone": "Clone",
       "archived": "Archived",
-      "enterSearchTerm": "Enter search term",
       "newDocument": "New document",
       "origin": "Origin",
       "originInternal": "internal",
@@ -544,7 +543,6 @@
       "copySlugSuffix": "kopie",
       "clone": "Klonen",
       "archived": "Archiviert",
-      "enterSearchTerm": "Suchbegriff eingeben",
       "newDocument": "Neues Dokument",
       "origin": "Quelle",
       "originInternal": "intern",
@@ -1027,8 +1025,6 @@
     "namespace": "searchBar",
     "language": "en",
     "resources": {
-      "searchPlaceholder": "Search terms",
-      "searchButtonText": "Search",
       "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long"
     }
   },
@@ -1036,8 +1032,6 @@
     "namespace": "searchBar",
     "language": "de",
     "resources": {
-      "searchPlaceholder": "Suchbegriffe",
-      "searchButtonText": "Suchen",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein"
     }
   },
@@ -1726,7 +1720,8 @@
       "sortedByCreatedOn": "Sorted by creation date",
       "sortedByUpdatedOn": "Sorted by update date",
       "sortedBySetOn": "Sorted by date of adding",
-      "sortedByType": "Sorted by type"
+      "sortedByType": "Sorted by type",
+      "searchPlaceholder": "Search terms"
     }
   },
   {
@@ -1808,7 +1803,8 @@
       "sortedByCreatedOn": "Nach Erstellungsdatum sortiert",
       "sortedByUpdatedOn": "Nach Änderungsdatum sortiert",
       "sortedBySetOn": "Nach Hinfügungsdatum sortiert",
-      "sortedByType": "Nach Typ sortiert"
+      "sortedByType": "Nach Typ sortiert",
+      "searchPlaceholder": "Suchbegriffe"
     }
   },
   {

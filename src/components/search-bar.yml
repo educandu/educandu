@@ -1,9 +1,3 @@
-searchPlaceholder:
-  en: Search terms
-  de: Suchbegriffe
-searchButtonText:
-  en: Search
-  de: Suchen
 searchTextTooShort:
   en: The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long
   de: Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein

@@ -8,12 +8,12 @@ import { useUser } from '../user-context.js';
 import { Input, Button, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
-import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
 import DocumentInfoCell from '../document-info-cell.js';
 import LanguageIcon from '../localization/language-icon.js';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
@@ -257,10 +257,12 @@ function Docs({ initialState, PageTemplate }) {
         <h1>{t('pageNames:docs')}</h1>
         <div className="DocsPage-search">
           <Search
+            size="large"
             className="DocsPage-searchField"
             value={state.filterInput}
+            enterButton={<SearchOutlined />}
             onChange={handleFilterInputChange}
-            placeholder={t('enterSearchTerm')}
+            placeholder={t('common:searchPlaceholder')}
             />
         </div>
         <Table dataSource={state.filteredDocs} columns={columns} pagination />
