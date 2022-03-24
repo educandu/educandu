@@ -1,13 +1,14 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Radio, InputNumber } from 'antd';
 import ClientConfig from '../../../bootstrap/client-config.js';
+import { getImageDimensions, getImageSource } from '../utils.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
-import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION } from '../constants.js';
 import StorageFilePicker from '../../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../../components/object-max-width-slider.js';
+import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION, SMALL_IMAGE_WIDTH_THRESHOLD } from '../constants.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -17,6 +18,8 @@ const { TextArea } = Input;
 function ImageEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('image');
   const clientConfig = useService(ClientConfig);
+  const [currentImageSource, setCurrentImageSource] = useState(null);
+  const [shouldWarnOfSmallImageSize, setShouldWarnOfSmallImageSize] = useState(false);
 
   const { sourceType, sourceUrl, maxWidth, text, effect } = content;
   const effectType = effect?.type || EFFECT_TYPE.none;
@@ -25,6 +28,25 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     labelCol: { span: 4 },
     wrapperCol: { span: 14 }
   };
+
+  useEffect(() => {
+    setCurrentImageSource(getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl));
+  }, [clientConfig, sourceType, sourceUrl]);
+
+  useEffect(() => {
+    const src = currentImageSource;
+    if (!src) {
+      setShouldWarnOfSmallImageSize(false);
+      return;
+    }
+
+    (async () => {
+      const dimensions = await getImageDimensions(src);
+      if (src === currentImageSource) {
+        setShouldWarnOfSmallImageSize(dimensions && dimensions.width < SMALL_IMAGE_WIDTH_THRESHOLD);
+      }
+    })();
+  }, [currentImageSource]);
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -230,7 +252,12 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
             </div>
           </div>
         )}
-        <Form.Item label={t('maximumWidth')} {...formItemLayout}>
+        <Form.Item
+          label={t('maximumWidth')}
+          {...formItemLayout}
+          validateStatus={shouldWarnOfSmallImageSize ? 'warning' : null}
+          help={shouldWarnOfSmallImageSize ? t('smallImageSizeWarning') : null}
+          >
           <ObjectMaxWidthSlider value={maxWidth} onChange={handleMaxWidthValueChanged} />
         </Form.Item>
       </Form>

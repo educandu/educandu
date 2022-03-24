@@ -1486,7 +1486,8 @@
       "startPosition": "Start Position",
       "orientationLabel": "Orientation",
       "orientationOptionVertical": "Vertical",
-      "orientationOptionHorizontal": "Horizontal"
+      "orientationOptionHorizontal": "Horizontal",
+      "smallImageSizeWarning": "The selected image has a smaller width than the page content and might therefore be displayed smaller than expected."
     }
   },
   {
@@ -1508,7 +1509,8 @@
       "startPosition": "Startposition",
       "orientationLabel": "Richtung",
       "orientationOptionVertical": "Vertikal",
-      "orientationOptionHorizontal": "Horizontal"
+      "orientationOptionHorizontal": "Horizontal",
+      "smallImageSizeWarning": "Das von Ihnen gewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt."
     }
   },
   {
