@@ -72,6 +72,12 @@ export const USER_ACTIVITY_TYPE = {
   lessonMarkedFavorite: 'lesson-marked-favorite'
 };
 
+export const INVALID_ROOM_INVITATION_REASON = {
+  token: 'token',
+  room: 'room',
+  user: 'user'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

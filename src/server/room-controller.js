@@ -53,8 +53,8 @@ export default class RoomController {
       throw new Unauthorized();
     }
 
-    const { roomId, roomName, roomSlug, isValid } = await this.roomService.verifyInvitationToken({ token, user });
-    const initialState = { token, roomId, roomName, roomSlug, isValid };
+    const { roomId, roomName, roomSlug, invalidInvitationReason } = await this.roomService.verifyInvitationToken({ token, user });
+    const initialState = { token, roomId, roomName, roomSlug, invalidInvitationReason };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.roomMembershipConfirmation, initialState);
   }

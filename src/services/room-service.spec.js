@@ -5,7 +5,7 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -144,24 +144,24 @@ describe('room-service', () => {
     });
 
     it('should be valid if user and token are valid', async () => {
-      const { roomId, roomName, roomSlug, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: otherUser });
-      expect(isValid).toBe(true);
+      const { roomId, roomName, roomSlug, invalidInvitationReason } = await sut.verifyInvitationToken({ token: invitation.token, user: otherUser });
+      expect(invalidInvitationReason).toBe(null);
       expect(roomId).toBe(testRoom._id);
       expect(roomName).toBe(testRoom.name);
       expect(roomSlug).toBe(testRoom.slug);
     });
 
     it('should be invalid if user is valid but token is invalid', async () => {
-      const { roomId, roomName, roomSlug, isValid } = await sut.verifyInvitationToken({ token: '34z5c7z47z92234z592qz', user: otherUser });
-      expect(isValid).toBe(false);
+      const { roomId, roomName, roomSlug, invalidInvitationReason } = await sut.verifyInvitationToken({ token: '34z5c7z47z92234z592qz', user: otherUser });
+      expect(invalidInvitationReason).toBe(INVALID_ROOM_INVITATION_REASON.token);
       expect(roomId).toBeNull();
       expect(roomName).toBeNull();
       expect(roomSlug).toBeNull();
     });
 
     it('should be invalid if token is valid but user is invalid', async () => {
-      const { roomId, roomName, roomSlug, isValid } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
-      expect(isValid).toBe(false);
+      const { roomId, roomName, roomSlug, invalidInvitationReason } = await sut.verifyInvitationToken({ token: invitation.token, user: myUser });
+      expect(invalidInvitationReason).toBe(INVALID_ROOM_INVITATION_REASON.user);
       expect(roomId).toBeNull();
       expect(roomName).toBeNull();
       expect(roomSlug).toBeNull();
