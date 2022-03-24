@@ -100,7 +100,7 @@ to the global-variables.less in educandu and consult the list there.
 $ yarn
 $ gulp                 # run the test application
 $ gulp --instances 3   # run 3 instances behind a load balancer
-$ gulp --tunnel        # run using the tunnel proxy; prerequisite: TUNNEL_TOKEN secret is needed in the env variables
+$ gulp --tunnel        # run using the tunnel proxy; TUNNEL_TOKEN secret is needed in the env variables beforehand
 ~~~
 
 This will build and start up the TestApp (in watch mode), which is set up to use educandu.
