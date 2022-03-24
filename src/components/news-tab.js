@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
-import ItemsEditIcon from './icons/general/edit-icon.js';
 import { USER_ACTIVITY_TYPE } from '../domain/constants.js';
 import { userActivitiesShape } from '../ui/default-prop-types.js';
+import ItemEditedIcon from './icons/user-activities/item-edited-icon.js';
 import RoomJoinedIcon from './icons/user-activities/room-joined-icon.js';
 import RoomCreatedIcon from './icons/user-activities/room-created-icon.js';
 import LessonCreatedIcon from './icons/user-activities/lesson-created-icon.js';
@@ -43,7 +43,7 @@ function NewsTab({ activities }) {
 
   const renderDocumentUpdatedActivity = activity => {
     return renderActivity({
-      icon: <ItemsEditIcon />,
+      icon: <ItemEditedIcon />,
       timestamp: activity.timestamp,
       description: t('documentUpdatedActivity'),
       linkText: activity.data.title,
@@ -73,7 +73,7 @@ function NewsTab({ activities }) {
 
   const renderRoomUpdatedActivity = activity => {
     return renderActivity({
-      icon: <ItemsEditIcon />,
+      icon: <ItemEditedIcon />,
       timestamp: activity.timestamp,
       description: t('roomUpdatedActivity'),
       linkText: activity.data.name,
@@ -113,7 +113,7 @@ function NewsTab({ activities }) {
 
   const renderLessonUpdatedActivity = activity => {
     return renderActivity({
-      icon: <ItemsEditIcon />,
+      icon: <ItemEditedIcon />,
       timestamp: activity.timestamp,
       description: t('lessonUpdatedActivity'),
       linkText: activity.data.title,
