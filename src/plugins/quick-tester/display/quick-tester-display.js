@@ -4,8 +4,9 @@ import { TESTS_ORDER } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../../components/markdown.js';
 import { shuffleItems } from '../../../utils/array-utils.js';
+import CloseIcon from '../../../components/icons/general/close-icon.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import { CloseOutlined, LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 function QuickTesterDisplay({ content }) {
   const [tests, setTests] = useState([]);
@@ -83,7 +84,7 @@ function QuickTesterDisplay({ content }) {
             <Markdown inline>{content.title}</Markdown>
           </div>
           <div className="QuickTester-closeButton">
-            <Button size="small" icon={<CloseOutlined />} onClick={close} />
+            <Button size="small" icon={<CloseIcon />} onClick={close} />
           </div>
         </div>
         <div className="QuickTester-progress" style={{ width: `${percentDone}%` }} />

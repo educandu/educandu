@@ -120,7 +120,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
             <Login />
           </div>
           <LinkPopover items={pageMenuItems} trigger="click" placement="bottomRight">
-            <Button className="DefaultPageHeader-headerButton" icon={<MenuIcon />} />
+            <Button className="DefaultPageHeader-headerButton" icon={<MenuIcon />} type="link" />
           </LinkPopover>
         </div>
       </div>
