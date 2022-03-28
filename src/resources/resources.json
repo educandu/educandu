@@ -1809,7 +1809,7 @@
       "sortedByType": "Nach Typ sortiert",
       "sortedByUser": "Nach Benutzer sortiert",
       "sortedByOrigin": "Nach Quelle sortiert",
-      "sortedByArchived": "Nach Archiviert Status sortiert",
+      "sortedByArchived": "Nach Archivierungsstatus sortiert",
       "searchPlaceholder": "Suchbegriffe"
     }
   },
