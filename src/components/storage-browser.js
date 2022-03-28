@@ -24,7 +24,7 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { LockOutlined, GlobalOutlined } from '@ant-design/icons';
 import StorageApiClient from '../api-clients/storage-api-client.js';
-import { processFilesBeforeUpload } from './storage-upload-helper.js';
+import { processFilesBeforeUpload } from '../utils/storage-helper.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
