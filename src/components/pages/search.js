@@ -14,7 +14,7 @@ import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
@@ -26,12 +26,12 @@ function Search({ PageTemplate }) {
   const { t } = useTranslation('search');
   const searchApiClient = useSessionAwareApiClient(SearchApiClient);
 
-  const [docs, setDocs] = useState([]);
   const [allTags, setAllTags] = useState([]);
+  const [documents, setDocuments] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [unselectedTags, setUnselectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
-  const [displayedDocs, setDisplayedDocs] = useState([]);
+  const [displayedDocuments, setDisplayedDocuments] = useState([]);
   const [searchText, setSearchText] = useState(request.query.query);
   const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
 
@@ -43,28 +43,13 @@ function Search({ PageTemplate }) {
     { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' }
   ];
 
-  const sortByRelevance = (docsToSort, direction) => docsToSort.sort(by(doc => doc.tagMatchCount, direction).thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByTitle = (docsToSort, direction) => docsToSort.sort(by(doc => doc.title, { direction, ignoreCase: true }).thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByLanguage = (docsToSort, direction) => docsToSort.sort(by(doc => doc.language, direction).thenBy(doc => doc.updatedOn, 'desc'));
-  const sortByCreatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.createdOn, direction));
-  const sortByUpdatedOn = (docsToSort, direction) => docsToSort.sort(by(doc => doc.updatedOn, direction));
-
-  const sortDocuments = useCallback((documentsToSort, sortingValue, sortingDirection) => {
-    switch (sortingValue) {
-      case 'relevance':
-        return sortByRelevance(documentsToSort, sortingDirection);
-      case 'title':
-        return sortByTitle(documentsToSort, sortingDirection);
-      case 'language':
-        return sortByLanguage(documentsToSort, sortingDirection);
-      case 'createdOn':
-        return sortByCreatedOn(documentsToSort, sortingDirection);
-      case 'updatedOn':
-        return sortByUpdatedOn(documentsToSort, sortingDirection);
-      default:
-        return documentsToSort;
-    }
-  }, []);
+  const sorters = useMemo(() => ({
+    relevance: documentsToSort => documentsToSort.sort(by(doc => doc.tagMatchCount, sorting.direction).thenBy(doc => doc.updatedOn, 'desc')),
+    title: documentsToSort => documentsToSort.sort(by(doc => doc.title, { direction: sorting.direction, ignoreCase: true })),
+    createdOn: documentsToSort => documentsToSort.sort(by(doc => doc.createdOn, sorting.direction)),
+    updatedOn: documentsToSort => documentsToSort.sort(by(doc => doc.updatedOn, sorting.direction)),
+    language: documentsToSort => documentsToSort.sort(by(doc => doc.language, sorting.direction))
+  }), [sorting.direction]);
 
   useEffect(() => {
     (async () => {
@@ -72,7 +57,7 @@ function Search({ PageTemplate }) {
       try {
         history.replaceState(null, '', urls.getSearchUrl(searchText));
         const { result } = await searchApiClient.search(searchText);
-        setDocs(result);
+        setDocuments(result);
       } catch (error) {
         handleApiError({ error, logger, t });
       } finally {
@@ -82,21 +67,23 @@ function Search({ PageTemplate }) {
   }, [searchText, searchApiClient, t]);
 
   useEffect(() => {
-    const docTags = docs.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
-    const uniqueDocTags = [...new Set(docTags)];
-    setAllTags(uniqueDocTags);
-  }, [docs]);
+    const documentTags = documents.map(doc => doc.tags).flat().map(tag => tag.toLowerCase());
+    setAllTags([...new Set(documentTags)]);
+  }, [documents]);
 
   useEffect(() => {
     setUnselectedTags(allTags.filter(tag => !selectedTags.includes(tag)));
   }, [allTags, selectedTags]);
 
   useEffect(() => {
-    const newDocs = docs.slice();
-    const filteredDocs = newDocs.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
-    const sortedDocuments = sortDocuments(filteredDocs, sorting.value, sorting.direction);
-    setDisplayedDocs(sortedDocuments);
-  }, [docs, selectedTags, sorting, sortDocuments]);
+    const newDocuments = documents.slice();
+    const sorter = sorters[sorting.value];
+
+    const filteredDocuments = newDocuments.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
+    const sortedDocuments = sorter ? sorter(filteredDocuments) : filteredDocuments;
+
+    setDisplayedDocuments(sortedDocuments);
+  }, [documents, selectedTags, sorting, sorters]);
 
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
@@ -155,7 +142,7 @@ function Search({ PageTemplate }) {
     <PageTemplate>
       <div className="SearchPage">
         <div className="SearchPage-headline">
-          <h1>{t('headline', { count: displayedDocs.length })}</h1>
+          <h1>{t('headline', { count: displayedDocuments.length })}</h1>
         </div>
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
@@ -182,7 +169,7 @@ function Search({ PageTemplate }) {
           )}
         </div>
         <Table
-          dataSource={[...displayedDocs]}
+          dataSource={[...displayedDocuments]}
           columns={columns}
           loading={isSearching}
           pagination
