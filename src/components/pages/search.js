@@ -92,7 +92,8 @@ function Search({ PageTemplate }) {
   }, [allTags, selectedTags]);
 
   useEffect(() => {
-    const filteredDocs = docs.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
+    const newDocs = docs.slice();
+    const filteredDocs = newDocs.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
     const sortedDocuments = sortDocuments(filteredDocs, sorting.value, sorting.direction);
     setDisplayedDocs(sortedDocuments);
   }, [docs, selectedTags, sorting, sortDocuments]);
