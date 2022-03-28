@@ -10,15 +10,9 @@ copySlugSuffix:
 clone:
   en: Clone
   de: Klonen
-archived:
-  en: Archived
-  de: Archiviert
 newDocument:
   en: New document
   de: Neues Dokument
-origin:
-  en: Origin
-  de: Quelle
 originInternal:
   en: internal
   de: intern

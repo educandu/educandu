@@ -527,9 +527,7 @@
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "clone": "Clone",
-      "archived": "Archived",
       "newDocument": "New document",
-      "origin": "Origin",
       "originInternal": "internal",
       "originExternal": "external"
     }
@@ -542,9 +540,7 @@
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
       "clone": "Klonen",
-      "archived": "Archiviert",
       "newDocument": "Neues Dokument",
-      "origin": "Quelle",
       "originInternal": "intern",
       "originExternal": "extern"
     }
@@ -1693,6 +1689,8 @@
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
+      "origin": "Origin",
+      "archived": "Archived",
       "id": "ID",
       "user": "User",
       "username": "User name",
@@ -1721,6 +1719,9 @@
       "sortedByUpdatedOn": "Sorted by update date",
       "sortedBySetOn": "Sorted by date of adding",
       "sortedByType": "Sorted by type",
+      "sortedByUser": "Sorted by user",
+      "sortedByOrigin": "Sorted by origin",
+      "sortedByArchived": "Sorted by archived status",
       "searchPlaceholder": "Search terms"
     }
   },
@@ -1776,6 +1777,8 @@
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",
+      "origin": "Quelle",
+      "archived": "Archiviert",
       "id": "ID",
       "user": "Benutzer",
       "username": "Benutzername",
@@ -1804,6 +1807,9 @@
       "sortedByUpdatedOn": "Nach Änderungsdatum sortiert",
       "sortedBySetOn": "Nach Hinfügungsdatum sortiert",
       "sortedByType": "Nach Typ sortiert",
+      "sortedByUser": "Nach Benutzer sortiert",
+      "sortedByOrigin": "Nach Quelle sortiert",
+      "sortedByArchived": "Nach Archiviert Status sortiert",
       "searchPlaceholder": "Suchbegriffe"
     }
   },

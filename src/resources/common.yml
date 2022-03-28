@@ -142,6 +142,12 @@ slug:
 tags:
   en: Tags
   de: Tags
+origin:
+  en: Origin
+  de: Quelle
+archived:
+  en: Archived
+  de: Archiviert
 id:
   en: ID
   de: ID
@@ -226,6 +232,15 @@ sortedBySetOn:
 sortedByType:
   en: Sorted by type
   de: Nach Typ sortiert
+sortedByUser:
+  en: Sorted by user
+  de: Nach Benutzer sortiert
+sortedByOrigin:
+  en: Sorted by origin
+  de: Nach Quelle sortiert
+sortedByArchived:
+  en: Sorted by archived status
+  de: Nach Archiviert Status sortiert
 searchPlaceholder:
   en: Search terms
   de: Suchbegriffe
