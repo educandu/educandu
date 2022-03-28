@@ -20,8 +20,8 @@ export default class Video {
 
   getDefaultContent() {
     return {
-      type: SOURCE_TYPE.internal,
-      url: '',
+      sourceType: SOURCE_TYPE.internal,
+      sourceUrl: '',
       text: '',
       width: 100,
       aspectRatio: {
@@ -41,6 +41,6 @@ export default class Video {
   }
 
   getCdnResources(content) {
-    return content.type === SOURCE_TYPE.internal && content.url ? [content.url] : [];
+    return content.sourceType === SOURCE_TYPE.internal && content.sourceUrl ? [content.sourceUrl] : [];
   }
 }
