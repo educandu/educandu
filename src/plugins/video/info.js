@@ -28,7 +28,11 @@ export default class Video {
         h: 16,
         v: 9
       },
-      showVideo: true
+      showVideo: true,
+      posterImage: {
+        sourceType: SOURCE_TYPE.internal,
+        sourceUrl: ''
+      }
     };
   }
 

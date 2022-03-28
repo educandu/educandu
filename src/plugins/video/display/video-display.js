@@ -82,6 +82,10 @@ function VideoDisplay({ content }) {
     setVolume(newVolume);
   };
 
+  const handleClickPreview = () => {
+    setPlayState(PLAY_STATES.playing);
+  };
+
   const html = githubFlavoredMarkdown.render(content.text || '');
   const aspectRatio = content.aspectRatio || { h: 16, v: 9 };
   const paddingTop = `${(aspectRatio.v / aspectRatio.h * 100).toFixed(2)}%`;
@@ -121,6 +125,8 @@ function VideoDisplay({ content }) {
       'Video-mainPlayerContainer--noDisplay': !content.showVideo
     });
 
+    const posterImageUrl = content.posterImage?.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.posterImage.sourceUrl}` : null;
+
     return (
       <div className={classes}>
         <div className="Video-mainPlayerOuter" style={{ paddingTop }}>
@@ -133,6 +139,7 @@ function VideoDisplay({ content }) {
             controls
             volume={volume}
             progressInterval={100}
+            light={posterImageUrl || false}
             playing={playState === PLAY_STATES.playing || playState === PLAY_STATES.buffering}
             onReady={handleReady}
             onBuffer={handleBuffer}
@@ -142,6 +149,7 @@ function VideoDisplay({ content }) {
             onEnded={handleStop}
             onDuration={handleDuration}
             onProgress={handleProgress}
+            onClickPreview={handleClickPreview}
             />
         </div>
       </div>

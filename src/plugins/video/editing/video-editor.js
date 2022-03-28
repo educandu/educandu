@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { SOURCE_TYPE } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import { Form, Input, Radio, Switch } from 'antd';
@@ -23,7 +23,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
     wrapperCol: { span: 14 }
   };
 
-  const { type, url, text, width, aspectRatio, showVideo } = content;
+  const { type, url, text, width, aspectRatio, showVideo, posterImage } = content;
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -50,7 +50,15 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const handleTypeChanged = event => {
     const { value } = event.target;
-    changeContent({ type: value, url: '', showVideo: true });
+    changeContent({
+      type: value,
+      url: '',
+      showVideo: true,
+      posterImage: {
+        sourceType: SOURCE_TYPE.internal,
+        sourceUrl: ''
+      }
+    });
   };
 
   const handleAspectRatioChanged = event => {
@@ -71,6 +79,33 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
     changeContent({ width: newValue });
   };
 
+  const handlePosterImageSourceUrlValueChanged = event => {
+    const { value } = event.target;
+    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+  };
+
+  const handlePosterImageSourceUrlFileNameChanged = value => {
+    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+  };
+
+  const renderPosterImageFormItem = () => (
+    <FormItem label={t('posterImageUrl')} {...formItemLayout}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Input
+          addonBefore={`${clientConfig.cdnRootUrl}/`}
+          value={posterImage.sourceUrl}
+          onChange={handlePosterImageSourceUrlValueChanged}
+          />
+        <StorageFilePicker
+          publicStorage={publicStorage}
+          privateStorage={privateStorage}
+          fileName={posterImage.sourceUrl}
+          onFileNameChanged={handlePosterImageSourceUrlFileNameChanged}
+          />
+      </div>
+    </FormItem>
+  );
+
   return (
     <div>
       <Form layout="horizontal">
@@ -82,26 +117,32 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
           </RadioGroup>
         </FormItem>
         {type === SOURCE_TYPE.external && (
-          <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
-            <Input value={url} onChange={handleExternalUrlChanged} />
-          </FormItem>
+          <Fragment>
+            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
+              <Input value={url} onChange={handleExternalUrlChanged} />
+            </FormItem>
+            {renderPosterImageFormItem()}
+          </Fragment>
         )}
         {type === SOURCE_TYPE.internal && (
-          <FormItem label={t('internalUrl')} {...formItemLayout}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Input
-                addonBefore={`${clientConfig.cdnRootUrl}/`}
-                value={url}
-                onChange={handleInternalUrlChanged}
-                />
-              <StorageFilePicker
-                publicStorage={publicStorage}
-                privateStorage={privateStorage}
-                fileName={url}
-                onFileNameChanged={handleInternalUrlFileNameChanged}
-                />
-            </div>
-          </FormItem>
+          <Fragment>
+            <FormItem label={t('internalUrl')} {...formItemLayout}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Input
+                  addonBefore={`${clientConfig.cdnRootUrl}/`}
+                  value={url}
+                  onChange={handleInternalUrlChanged}
+                  />
+                <StorageFilePicker
+                  publicStorage={publicStorage}
+                  privateStorage={privateStorage}
+                  fileName={url}
+                  onFileNameChanged={handleInternalUrlFileNameChanged}
+                  />
+              </div>
+            </FormItem>
+            {renderPosterImageFormItem()}
+          </Fragment>
         )}
         {type === SOURCE_TYPE.youtube && (
           <FormItem label={t('youtubeUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>

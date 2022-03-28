@@ -1617,7 +1617,8 @@
       "aspectRatio": "Aspect ratio",
       "videoDisplay": "Video display",
       "width": "Width",
-      "copyrightInfos": "Copyright infos"
+      "copyrightInfos": "Copyright infos",
+      "posterImageUrl": "Preview image URL"
     }
   },
   {
@@ -1636,7 +1637,8 @@
       "aspectRatio": "Seitenverhältnis",
       "videoDisplay": "Videoanzeige",
       "width": "Breite",
-      "copyrightInfos": "Copyright Infos"
+      "copyrightInfos": "Copyright Infos",
+      "posterImageUrl": "Vorschau Bild URL"
     }
   },
   {
