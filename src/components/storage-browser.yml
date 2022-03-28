@@ -34,3 +34,6 @@ privateStorage:
 insufficientPrivateStorge:
   en: Not enough storage space available
   de: Nicht genügend Speicherplatz verfügbar
+scaleDownImages:
+  en: Optimize images for web display
+  de: Bilder für Web optimieren

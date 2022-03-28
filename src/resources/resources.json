@@ -1114,7 +1114,8 @@
       "uploadFiles": "Upload files",
       "publicStorage": "Public storage",
       "privateStorage": "Private storage",
-      "insufficientPrivateStorge": "Not enough storage space available"
+      "insufficientPrivateStorge": "Not enough storage space available",
+      "scaleDownImages": "Optimize images for web display"
     }
   },
   {
@@ -1132,7 +1133,8 @@
       "uploadFiles": "Dateien hochladen",
       "publicStorage": "Öffentlicher Speicher",
       "privateStorage": "Privater Speicher",
-      "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar"
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar",
+      "scaleDownImages": "Bilder für Web optimieren"
     }
   },
   {

@@ -28,7 +28,7 @@ import { processFilesBeforeUpload } from './storage-upload-helper.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
-import { Input, Table, Upload, Button, message, Breadcrumb, Select } from 'antd';
+import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox } from 'antd';
 
 const logger = new Logger(import.meta.url);
 
@@ -68,7 +68,8 @@ class StorageBrowser extends React.Component {
       currentUploadMessage: null,
       currentPathSegments: currentLocation.initialPathSegments,
       locations,
-      currentLocation
+      currentLocation,
+      scaleDownImages: true
     };
 
     this.columns = [
@@ -310,7 +311,7 @@ class StorageBrowser extends React.Component {
   async collectFilesToUpload(files, { onProgress } = {}) {
     const { t } = this.props;
 
-    const processedFiles = await processFilesBeforeUpload({ files, scaleDownImages: true });
+    const processedFiles = await processFilesBeforeUpload({ files, scaleDownImages: this.state.scaleDownImages });
 
     if (this.state.currentLocation.isPrivate) {
       const requiredBytes = processedFiles.reduce((totalSize, file) => totalSize + file.size, 0);
@@ -595,6 +596,10 @@ class StorageBrowser extends React.Component {
     this.refreshFiles(newLocation.initialPathSegments, selectedRowKeys);
   }
 
+  handleScaleDownImagesChange(event) {
+    this.setState({ scaleDownImages: event.target.checked });
+  }
+
   render() {
     const { t } = this.props;
     const { records, currentPathSegments, currentLocation, currentDropTarget, filterText } = this.state;
@@ -612,42 +617,46 @@ class StorageBrowser extends React.Component {
     });
 
     const filterTextInputClassNames = classNames({
-      'StorageBrowser-filterInput': true,
+      'StorageBrowser-control StorageBrowser-control--filter': true,
       'is-active': !!normalizedFilterText
     });
 
     return (
       <div className="StorageBrowser">
-        <div className="StorageBrowser-header">
-          <div className="StorageBrowser-headerBreadCrumbs">
-            {this.renderBreadCrumbs(currentPathSegments, currentLocation)}
-          </div>
-          <div className="StorageBrowser-headerButtons">
-            <Input
-              allowClear
-              value={filterText}
-              placeholder={t('searchFilter')}
-              ref={this.filterTextInputRef}
-              onChange={this.handleFilterTextChange}
-              className={filterTextInputClassNames}
-              />
-            <Upload
-              multiple
-              disabled={!canUpload}
-              showUploadList={false}
-              customRequest={this.onCustomUpload}
-              >
-              <Button disabled={!canUpload}>
-                <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
-              </Button>
-            </Upload>
-          </div>
+        <div>
+          {this.renderBreadCrumbs(currentPathSegments, currentLocation)}
         </div>
         <div className="StorageBrowser-storageUsage">
           {currentLocation.isPrivate && (
             <UsedStorage usedBytes={this.props.user.storage.usedBytes} maxBytes={this.props.storagePlan?.maxBytes || 0} showLabel />
           )}
         </div>
+
+        <div className="StorageBrowser-controls">
+          <Input
+            allowClear
+            value={filterText}
+            placeholder={t('searchFilter')}
+            ref={this.filterTextInputRef}
+            onChange={this.handleFilterTextChange}
+            className={filterTextInputClassNames}
+            />
+          <Upload
+            multiple
+            disabled={!canUpload}
+            showUploadList={false}
+            customRequest={this.onCustomUpload}
+            className="StorageBrowser-control"
+            >
+            <Button disabled={!canUpload}>
+              <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
+            </Button>
+          </Upload>
+          <Checkbox className="StorageBrowser-control" checked={this.state.scaleDownImages} onChange={this.handleScaleDownImagesChange}>
+            {t('scaleDownImages')}
+          </Checkbox>
+        </div>
+
         <div
           ref={this.browserRef}
           className={browserClassNames}

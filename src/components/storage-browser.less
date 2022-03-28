@@ -12,23 +12,32 @@
   }
 }
 
-.StorageBrowser-header {
-  display: flex;
-  align-items: center;
-}
-
-.StorageBrowser-headerBreadCrumbs {
-  flex: 1 0 0%;
-}
-
-.StorageBrowser-headerButtons {
-  flex: none;
-}
-
 .StorageBrowser-storageUsage {
-  width: 50%;
-  min-height: 40px;
+  min-height: 50px;
   padding-left: 7px;
+}
+
+.StorageBrowser-controls {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.StorageBrowser-control {
+  margin-left: 10px;
+  margin-bottom: 10px;
+
+  &.StorageBrowser-control--filter {
+    width: 250px;
+
+    &.is-active > input:not(:focus):not(:active):not(:hover) {
+      border-color: @storage-browser-filter-input-active-border-color;
+      box-shadow: 0 0 0 2px lighten(@storage-browser-filter-input-active-border-color, 33%);
+    }
+  }
 }
 
 .StorageBrowser-browserRecordIcon {
@@ -64,18 +73,4 @@
     background-color: @orange-2;
     box-shadow: 0px 0px 5px @orange-8;
   }
-}
-
-.StorageBrowser-filterInput {
-  width: 250px;
-  margin-right: 10px;
-
-  &.is-active > input:not(:focus):not(:active):not(:hover) {
-    border-color: @storage-browser-filter-input-active-border-color;
-    box-shadow: 0 0 0 2px lighten(@storage-browser-filter-input-active-border-color, 33%);
-  }
-}
-
-.StorageBrowser-filterClearButton {
-  cursor: pointer;
 }
