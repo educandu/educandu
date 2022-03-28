@@ -81,3 +81,4 @@ export const INVALID_ROOM_INVITATION_REASON = {
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';
+export const IMAGE_DOWN_SCALING_WIDTH = 1200;
