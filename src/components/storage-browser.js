@@ -24,6 +24,7 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { LockOutlined, GlobalOutlined } from '@ant-design/icons';
 import StorageApiClient from '../api-clients/storage-api-client.js';
+import { processFilesBeforeUpload } from './storage-upload-helper.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
@@ -306,11 +307,13 @@ class StorageBrowser extends React.Component {
     this.props.setUser({ ...this.props.user, ...{ storage: { ...this.props.user.storage, usedBytes } } });
   }
 
-  collectFilesToUpload(files, { onProgress } = {}) {
+  async collectFilesToUpload(files, { onProgress } = {}) {
     const { t } = this.props;
 
+    const processedFiles = await processFilesBeforeUpload({ files, scaleDownImages: true });
+
     if (this.state.currentLocation.isPrivate) {
-      const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+      const requiredBytes = processedFiles.reduce((totalSize, file) => totalSize + file.size, 0);
       const availableBytes = Math.max(0, this.props.storagePlan?.maxBytes || 0 - this.props.user.storage.usedBytes);
 
       if (requiredBytes > availableBytes) {
@@ -319,7 +322,7 @@ class StorageBrowser extends React.Component {
       }
     }
 
-    this.addToCurrentUploadFiles(files);
+    this.addToCurrentUploadFiles(processedFiles);
 
     this.uploadCurrentFilesDebounced({ onProgress });
   }
