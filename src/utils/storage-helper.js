@@ -5,10 +5,10 @@ const getScaledDimensions = (img, width) => {
   return { width, height: Math.round(((img.naturalHeight / ratio) + Number.EPSILON) * 100) / 100 };
 };
 
-const isImage = file => file && file.type.startsWith('image');
+const scalableFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 const scaleDownImage = ({ file, width }) => {
-  if (!isImage(file)) {
+  if (!scalableFileTypes.includes(file.type)) {
     return file;
   }
 
