@@ -5,17 +5,18 @@ import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
+import { Input, Button, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
-import React, { Fragment, useState } from 'react';
+import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
-import { shorten } from '../../utils/string-utils.js';
-import { Input, Button, Switch, Tooltip } from 'antd';
+import SortingSelector from '../sorting-selector.js';
+import DocumentInfoCell from '../document-info-cell.js';
 import LanguageIcon from '../localization/language-icon.js';
-import { useDateFormat, useLocale } from '../locale-context.js';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -24,8 +25,6 @@ import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document
 
 const { Search } = Input;
 const logger = new Logger(import.meta.url);
-
-const DEFAULT_FILTER_INPUT = '';
 
 function getDefaultLanguageFromUiLanguage(uiLanguage) {
   switch (uiLanguage) {
@@ -54,24 +53,53 @@ function Docs({ initialState, PageTemplate }) {
   const settings = useSettings();
   const { t } = useTranslation('docs');
   const { uiLanguage } = useLocale();
-  const { formatDate } = useDateFormat();
   const [clonedDocument, setClonedDocument] = useState(null);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
+  const [searchText, setSearchText] = useState('');
+  const [displayedDocuments, setDisplayedDocuments] = useState([]);
+  const [documents, setDocuments] = useState(initialState.documents);
+  const [sorting, setSorting] = useState({ value: 'title', direction: 'desc' });
   const [modalState, setModalState] = useState(getDefaultModalState({ t, uiLanguage, settings }));
 
-  const [state, setState] = useState({
-    filteredDocs: initialState.documents.slice(),
-    filterInput: DEFAULT_FILTER_INPUT,
-    isLoading: false
-  });
+  const sortingOptions = [
+    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
+    { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
+    { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
+    { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
+    { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' },
+    { label: t('common:origin'), appliedLabel: t('common:sortedByOrigin'), value: 'origin' },
+    { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' }
+  ];
 
-  const handleFilterInputChange = event => {
-    const filterInput = event.target.value;
-    const docs = initialState.documents;
-    const filteredDocs = docs.filter(doc => doc.title.toLowerCase().includes(filterInput.toLowerCase())
-      || doc.updatedBy.username.toLowerCase().includes(filterInput.toLowerCase()));
-    setState(prevState => ({ ...prevState, filteredDocs, filterInput }));
+  const sorters = useMemo(() => ({
+    title: documentsToSort => documentsToSort.sort(by(doc => doc.title, { direction: sorting.direction, ignoreCase: true })),
+    createdOn: documentsToSort => documentsToSort.sort(by(doc => doc.createdOn, sorting.direction)),
+    updatedOn: documentsToSort => documentsToSort.sort(by(doc => doc.updatedOn, sorting.direction)),
+    language: documentsToSort => documentsToSort.sort(by(doc => doc.language, sorting.direction)),
+    user: documentsToSort => documentsToSort.sort(by(doc => doc.createdBy.username, { direction: sorting.direction, ignoreCase: true })),
+    origin: documentsToSort => documentsToSort.sort(by(doc => doc.origin, { direction: sorting.direction, ignoreCase: true })),
+    archived: documentsToSort => documentsToSort.sort(by(doc => doc.archived, sorting.direction))
+  }), [sorting.direction]);
+
+  useEffect(() => {
+    const newDocuments = documents.slice();
+    const sorter = sorters[sorting.value];
+
+    const filteredDocuments = searchText
+      ? newDocuments.filter(doc => doc.title.toLowerCase().includes(searchText.toLowerCase())
+        || doc.updatedBy.username.toLowerCase().includes(searchText.toLowerCase()))
+      : newDocuments;
+    const sortedDocuments = sorter ? sorter(filteredDocuments) : filteredDocuments;
+
+    setDisplayedDocuments(sortedDocuments);
+  }, [documents, sorting, searchText, sorters]);
+
+  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
+
+  const handleSearchChange = event => {
+    const newSearchText = event.target.value;
+    setSearchText(newSearchText);
   };
 
   const handleNewDocumentClick = () => {
@@ -116,11 +144,7 @@ function Docs({ initialState, PageTemplate }) {
   const handleDocumentDelete = async documentKey => {
     try {
       await documentApiClient.hardDeleteDocument(documentKey);
-
-      setState(prevState => ({
-        ...prevState,
-        filteredDocs: prevState.filteredDocs.filter(doc => doc.key !== documentKey)
-      }));
+      setDocuments(documents.filter(doc => doc.key !== documentKey));
     } catch (error) {
       errorHelper.handleApiError({ error, logger, t });
     }
@@ -132,36 +156,22 @@ function Docs({ initialState, PageTemplate }) {
 
   const handleArchivedSwitchChange = async (archived, doc) => {
     try {
-      setState(prevState => ({ ...prevState, isLoading: true }));
-
       const { documentRevision } = archived
         ? await documentApiClient.unarchiveDocument(doc.key)
         : await documentApiClient.archiveDocument(doc.key);
 
-      state.filteredDocs
+      const newDocuments = documents.slice();
+      newDocuments
         .filter(document => document.key === documentRevision.key)
-        .forEach(document => {
-          document.archived = documentRevision.archived;
-        });
+        .forEach(document => { document.archived = documentRevision.archived; });
 
-      setState(prevState => ({ ...prevState, filteredDocs: state.filteredDocs, isLoading: false }));
+      setDocuments(newDocuments);
     } catch (error) {
-      setState(prevState => ({ ...prevState, isLoading: false }));
       errorHelper.handleApiError({ error, logger, t });
     }
   };
 
-  const renderTitle = (title, doc) => {
-    return (
-      <Tooltip title={shorten(doc.description, 120)}>
-        <a href={urls.getDocUrl({ key: doc.key, slug: doc.slug })}>{title}</a>
-      </Tooltip>
-    );
-  };
-
-  const renderUpdatedOn = updatedOn => {
-    return <span>{formatDate(updatedOn)}</span>;
-  };
+  const renderTitle = (title, doc) => <DocumentInfoCell doc={doc} />;
 
   const renderLanguage = documentLanguage => {
     return <LanguageIcon language={documentLanguage} />;
@@ -218,48 +228,34 @@ function Docs({ initialState, PageTemplate }) {
       title: t('common:title'),
       dataIndex: 'title',
       key: 'title',
-      render: renderTitle,
-      sorter: by(x => x.title, { ignoreCase: true })
+      render: renderTitle
     },
     {
       title: t('common:language'),
       dataIndex: 'language',
       key: 'language',
       render: renderLanguage,
-      sorter: by(x => x.language),
       responsive: ['sm']
-    },
-    {
-      title: t('common:updatedOn'),
-      dataIndex: 'updatedOn',
-      key: 'updatedOn',
-      render: renderUpdatedOn,
-      defaultSortOrder: 'descend',
-      sorter: by(x => x.updatedOn),
-      responsive: ['lg']
     },
     {
       title: t('common:user'),
       dataIndex: 'user',
       key: 'user',
       render: renderUpdatedBy,
-      sorter: by(x => x.updatedBy.username, { ignoreCase: true }),
       responsive: ['md']
     },
     {
-      title: t('origin'),
+      title: t('common:origin'),
       dataIndex: 'origin',
       key: 'origin',
       render: renderOrigin,
-      sorter: by(x => x.origin),
       responsive: ['lg']
     },
     {
-      title: t('archived'),
+      title: t('common:archived'),
       dataIndex: 'archived',
       key: 'archived',
       render: renderArchived,
-      sorter: by(x => x.archived),
       responsive: ['lg'],
       needsPermission: permissions.MANAGE_ARCHIVED_DOCS
     },
@@ -275,15 +271,23 @@ function Docs({ initialState, PageTemplate }) {
     <PageTemplate>
       <div className="DocsPage">
         <h1>{t('pageNames:docs')}</h1>
-        <div className="DocsPage-search">
+        <div className="DocsPage-controls">
           <Search
-            className="DocsPage-searchField"
-            value={state.filterInput}
-            onChange={handleFilterInputChange}
-            placeholder={t('enterSearchTerm')}
+            size="large"
+            className="DocsPage-search"
+            value={searchText}
+            enterButton={<SearchOutlined />}
+            onChange={handleSearchChange}
+            placeholder={t('common:searchPlaceholder')}
+            />
+          <SortingSelector
+            size="large"
+            sorting={sorting}
+            options={sortingOptions}
+            onChange={handleSortingChange}
             />
         </div>
-        <Table dataSource={state.filteredDocs} columns={columns} pagination />
+        <Table dataSource={[...displayedDocuments]} columns={columns} pagination />
         <aside>
           <Restricted to={permissions.EDIT_DOC}>
             <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />

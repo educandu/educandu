@@ -132,6 +132,22 @@
     }
   },
   {
+    "namespace": "documentInfoCell",
+    "language": "en",
+    "resources": {
+      "createdOn": "Created",
+      "updatedOn": "Last update"
+    }
+  },
+  {
+    "namespace": "documentInfoCell",
+    "language": "de",
+    "resources": {
+      "createdOn": "Erstellt",
+      "updatedOn": "Letzte Änderung"
+    }
+  },
+  {
     "namespace": "documentMetadataModal",
     "language": "en",
     "resources": {
@@ -511,10 +527,7 @@
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "clone": "Clone",
-      "archived": "Archived",
-      "enterSearchTerm": "Enter search term",
       "newDocument": "New document",
-      "origin": "Origin",
       "originInternal": "internal",
       "originExternal": "external"
     }
@@ -527,10 +540,7 @@
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
       "clone": "Klonen",
-      "archived": "Archiviert",
-      "enterSearchTerm": "Suchbegriff eingeben",
       "newDocument": "Neues Dokument",
-      "origin": "Quelle",
       "originInternal": "intern",
       "originExternal": "extern"
     }
@@ -766,9 +776,7 @@
       "headline": "{count, plural, =1 {# document} other {# documents}} found\n",
       "filterPlaceholder": "Filter by tags",
       "deselectTags": "Remove all tags",
-      "sorting": "Sorting",
-      "createdOn": "Created",
-      "updatedOn": "Last update"
+      "sorting": "Sorting"
     }
   },
   {
@@ -778,9 +786,7 @@
       "headline": "{count, plural, =1 {# Dokument} other {# Dokumente}} gefunden\n",
       "filterPlaceholder": "Nach Tags filtern",
       "deselectTags": "Alle Tags löschen",
-      "sorting": "Sortierung",
-      "createdOn": "Erstellt",
-      "updatedOn": "Letzte Änderung"
+      "sorting": "Sortierung"
     }
   },
   {
@@ -1015,8 +1021,6 @@
     "namespace": "searchBar",
     "language": "en",
     "resources": {
-      "searchPlaceholder": "Search terms",
-      "searchButtonText": "Search",
       "searchTextTooShort": "The search text has to be at least {minCharCount, plural, =1 {# character} other {# characters}} long"
     }
   },
@@ -1024,8 +1028,6 @@
     "namespace": "searchBar",
     "language": "de",
     "resources": {
-      "searchPlaceholder": "Suchbegriffe",
-      "searchButtonText": "Suchen",
       "searchTextTooShort": "Der Suchbegriff muss mindestens {minCharCount} Zeichen lang sein"
     }
   },
@@ -1687,6 +1689,8 @@
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
+      "origin": "Origin",
+      "archived": "Archived",
       "id": "ID",
       "user": "User",
       "username": "User name",
@@ -1714,7 +1718,11 @@
       "sortedByCreatedOn": "Sorted by creation date",
       "sortedByUpdatedOn": "Sorted by update date",
       "sortedBySetOn": "Sorted by date of adding",
-      "sortedByType": "Sorted by type"
+      "sortedByType": "Sorted by type",
+      "sortedByUser": "Sorted by user",
+      "sortedByOrigin": "Sorted by origin",
+      "sortedByArchived": "Sorted by archived status",
+      "searchPlaceholder": "Search terms"
     }
   },
   {
@@ -1769,6 +1777,8 @@
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",
+      "origin": "Quelle",
+      "archived": "Archiviert",
       "id": "ID",
       "user": "Benutzer",
       "username": "Benutzername",
@@ -1796,7 +1806,11 @@
       "sortedByCreatedOn": "Nach Erstellungsdatum sortiert",
       "sortedByUpdatedOn": "Nach Änderungsdatum sortiert",
       "sortedBySetOn": "Nach Hinfügungsdatum sortiert",
-      "sortedByType": "Nach Typ sortiert"
+      "sortedByType": "Nach Typ sortiert",
+      "sortedByUser": "Nach Benutzer sortiert",
+      "sortedByOrigin": "Nach Quelle sortiert",
+      "sortedByArchived": "Nach Archivierungsstatus sortiert",
+      "searchPlaceholder": "Suchbegriffe"
     }
   },
   {
