@@ -1,13 +1,20 @@
 .DocsPage {}
 
-.DocsPage-search {
-  display: flex;
-  justify-content: flex-end;
+.DocsPage-controls {
   margin-bottom: 20px;
+  display: grid;
+  column-gap: 15px;
+  grid-template-columns: 2fr 1fr;
+
+  @media @edu-media-phone {
+    row-gap: 15px;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr 1fr;
+  }
 }
 
-.DocsPage-searchField {
-  max-width: 360px;
+.DocsPage-search {
+  width: 100%;
 }
 
 .DocsPage-newDocumentButton {

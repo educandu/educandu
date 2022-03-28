@@ -271,10 +271,10 @@ function Docs({ initialState, PageTemplate }) {
     <PageTemplate>
       <div className="DocsPage">
         <h1>{t('pageNames:docs')}</h1>
-        <div className="DocsPage-search">
+        <div className="DocsPage-controls">
           <Search
             size="large"
-            className="DocsPage-searchField"
+            className="DocsPage-search"
             value={searchText}
             enterButton={<SearchOutlined />}
             onChange={handleSearchChange}
