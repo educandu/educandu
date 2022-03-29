@@ -315,6 +315,14 @@ class StorageBrowser extends React.Component {
     const processedFiles = await processFilesBeforeUpload({ files, scaleDownImages: this.state.scaleDownImages });
     const requiredBytes = processedFiles.reduce((totalSize, file) => totalSize + file.size, 0);
 
+    if (requiredBytes > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
+      message.error(t('uploadLimitExceeded', {
+        uploadSize: prettyBytes(requiredBytes, { locale: this.props.uiLocale }),
+        uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: this.props.uiLocale })
+      }));
+      return;
+    }
+
     if (this.state.currentLocation.isPrivate) {
       const availableBytes = Math.max(0, this.props.storagePlan?.maxBytes || 0 - this.props.user.storage.usedBytes);
 
@@ -322,14 +330,6 @@ class StorageBrowser extends React.Component {
         message.error(t('insufficientPrivateStorge'));
         return;
       }
-    }
-
-    if (requiredBytes > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
-      message.error(t('uploadLimitExceeded', {
-        uploadSize: prettyBytes(requiredBytes, { locale: this.props.uiLocale }),
-        uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: this.props.uiLocale })
-      }));
-      return;
     }
 
     this.addToCurrentUploadFiles(processedFiles);

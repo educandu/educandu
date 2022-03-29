@@ -4,6 +4,7 @@ import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import StorageController from './storage-controller.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 
 const { BadRequest, Unauthorized } = httpErrors;
 
@@ -44,6 +45,25 @@ describe('storage-controller', () => {
     describe('when no files are provided', () => {
       beforeEach(() => {
         req = { user, files: [], body: { prefix: 'media/' } };
+        res = {};
+      });
+
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.handlePostCdnObject(req, res)).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when the files exceed the size limit per upload', () => {
+      beforeEach(() => {
+        req = {
+          user,
+          files: [
+            { size: LIMIT_PER_STORAGE_UPLOAD_IN_BYTES / 2 },
+            { size: LIMIT_PER_STORAGE_UPLOAD_IN_BYTES / 2 },
+            { size: 1 }
+          ],
+          body: { prefix: 'media/' }
+        };
         res = {};
       });
 

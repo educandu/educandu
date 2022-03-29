@@ -3,10 +3,12 @@ import multer from 'multer';
 import express from 'express';
 import parseBool from 'parseboolean';
 import httpErrors from 'http-errors';
+import prettyBytes from 'pretty-bytes';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
 import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/storage-schemas.js';
@@ -53,6 +55,12 @@ class StorageController {
 
     if (storagePathType === STORAGE_PATH_TYPE.unknown) {
       throw new BadRequest(`Invalid storage path '${prefix}'`);
+    }
+
+    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
+
+    if (requiredBytes > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
+      throw new BadRequest(`Upload limit exceeded: limit ${prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES)}, required ${prettyBytes(requiredBytes)}.`);
     }
 
     if (storagePathType === STORAGE_PATH_TYPE.private) {
