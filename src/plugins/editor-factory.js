@@ -6,6 +6,7 @@ const pluginImporters = [
   async () => (await import('./audio/editor.js')).default,
   async () => (await import('./video/editor.js')).default,
   async () => (await import('./image/editor.js')).default,
+  async () => (await import('./pdf-viewer/editor.js')).default,
   async () => (await import('./iframe/editor.js')).default,
   async () => (await import('./anavis/editor.js')).default,
   async () => (await import('./markdown/editor.js')).default,
