@@ -18,6 +18,13 @@ const multipartParser = multer({ dest: os.tmpdir() });
 
 const { BadRequest, Unauthorized } = httpErrors;
 
+const uploadLimitExceededMiddleware = (req, res, next) => {
+  const requestSize = !!req.headers['content-length'] && Number(req.headers['content-length']);
+  return requestSize && requestSize > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES
+    ? next(new Error(`Upload limit exceeded: limit ${prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES)}, requested ${prettyBytes(requestSize)}.`))
+    : next();
+};
+
 class StorageController {
   static get inject() { return [StorageService, RoomService]; }
 
@@ -57,12 +64,6 @@ class StorageController {
       throw new BadRequest(`Invalid storage path '${prefix}'`);
     }
 
-    const requiredBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
-
-    if (requiredBytes > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
-      throw new BadRequest(`Upload limit exceeded: limit ${prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES)}, required ${prettyBytes(requiredBytes)}.`);
-    }
-
     if (storagePathType === STORAGE_PATH_TYPE.private) {
       const roomId = getRoomIdFromPrivateStoragePath(prefix);
       const room = await this.roomService.getRoomById(roomId);
@@ -84,19 +85,31 @@ class StorageController {
   registerApi(router) {
     router.get(
       '/api/v1/storage/objects',
-      [needsPermission(permissions.VIEW_FILES), jsonParser, validateQuery(getObjectsQuerySchema)],
+      [
+        needsPermission(permissions.VIEW_FILES),
+        jsonParser,
+        validateQuery(getObjectsQuerySchema)
+      ],
       (req, res) => this.handleGetCdnObject(req, res)
     );
 
     router.delete(
       '/api/v1/storage/objects/:objectName',
-      [needsPermission(permissions.DELETE_STORAGE_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
+      [
+        needsPermission(permissions.DELETE_STORAGE_FILE),
+        validateQuery(deleteObjectQuerySchema),
+        validateParams(deleteObjectParamSchema)
+      ],
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
 
     router.post(
       '/api/v1/storage/objects',
-      [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)],
+      [
+        needsPermission(permissions.CREATE_FILE),
+        uploadLimitExceededMiddleware,
+        multipartParser.array('files'), validateBody(postObjectsBodySchema)
+      ],
       (req, res) => this.handlePostCdnObject(req, res)
     );
   }
