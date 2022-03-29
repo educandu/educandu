@@ -41,6 +41,8 @@ export default class Video {
   }
 
   getCdnResources(content) {
-    return content.sourceType === SOURCE_TYPE.internal && content.sourceUrl ? [content.sourceUrl] : [];
+    const sourceUrl = content.sourceType === SOURCE_TYPE.internal && content.sourceUrl;
+    const posterImageSourceUrl = content.posterImage.sourceType === SOURCE_TYPE.internal && content.posterImage.sourceUrl;
+    return [sourceUrl, posterImageSourceUrl].filter(url => url);
   }
 }

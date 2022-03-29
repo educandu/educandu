@@ -90,7 +90,8 @@ describe('document-service', () => {
             type: 'video',
             content: {
               sourceType: VIDEO_SOURCE_TYPE.internal,
-              sourceUrl: 'media/video-1.mp4'
+              sourceUrl: 'media/video-1.mp4',
+              posterImage: {}
             }
           }
         ],
@@ -210,7 +211,8 @@ describe('document-service', () => {
             type: 'video',
             content: {
               sourceType: VIDEO_SOURCE_TYPE.internal,
-              sourceUrl: 'media/video-1.mp4'
+              sourceUrl: 'media/video-1.mp4',
+              posterImage: {}
             }
           }
         ],
@@ -234,7 +236,8 @@ describe('document-service', () => {
             type: 'video',
             content: {
               sourceType: VIDEO_SOURCE_TYPE.internal,
-              sourceUrl: 'media/video-2.mp4'
+              sourceUrl: 'media/video-2.mp4',
+              posterImage: {}
             }
           }
         ]
@@ -352,7 +355,8 @@ describe('document-service', () => {
               type: 'video',
               content: {
                 sourceType: VIDEO_SOURCE_TYPE.internal,
-                sourceUrl: 'media/video-1.mp4'
+                sourceUrl: 'media/video-1.mp4',
+                posterImage: {}
               },
               deletedOn: new Date().toISOString()
             }
@@ -375,7 +379,8 @@ describe('document-service', () => {
               type: 'video',
               content: {
                 sourceType: VIDEO_SOURCE_TYPE.internal,
-                sourceUrl: 'media/video-1.mp4'
+                sourceUrl: 'media/video-1.mp4',
+                posterImage: {}
               }
             }
           ],

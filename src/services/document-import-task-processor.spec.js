@@ -90,7 +90,8 @@ describe('document-import-task-processor', () => {
               type: 'video',
               content: {
                 sourceType: VIDEO_SOURCE_TYPE.internal,
-                sourceUrl: 'media/video-1.mp4'
+                sourceUrl: 'media/video-1.mp4',
+                posterImage: {}
               },
               deletedOn: null,
               deletedBy: null,
@@ -117,7 +118,8 @@ describe('document-import-task-processor', () => {
               type: 'video',
               content: {
                 sourceType: VIDEO_SOURCE_TYPE.internal,
-                sourceUrl: 'media/video-2.mp4'
+                sourceUrl: 'media/video-2.mp4',
+                posterImage: {}
               },
               deletedOn: null,
               deletedBy: null,
@@ -269,7 +271,8 @@ describe('document-import-task-processor', () => {
                 type: 'video',
                 content: {
                   sourceType: VIDEO_SOURCE_TYPE.internal,
-                  sourceUrl: 'media/video-3.mp4'
+                  sourceUrl: 'media/video-3.mp4',
+                  posterImage: {}
                 },
                 deletedOn: null,
                 deletedBy: null,
