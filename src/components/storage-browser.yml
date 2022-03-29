@@ -34,6 +34,9 @@ privateStorage:
 insufficientPrivateStorge:
   en: Not enough storage space available
   de: Nicht genügend Speicherplatz verfügbar
+uploadLimitExceeded:
+  en: Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.
+  de: Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.
 scaleDownImages:
   en: Optimize images for web display
   de: Bilder für Web optimieren

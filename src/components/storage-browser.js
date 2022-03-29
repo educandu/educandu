@@ -26,6 +26,7 @@ import { LockOutlined, GlobalOutlined } from '@ant-design/icons';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-helper.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox } from 'antd';
@@ -312,9 +313,17 @@ class StorageBrowser extends React.Component {
     const { t } = this.props;
 
     const processedFiles = await processFilesBeforeUpload({ files, scaleDownImages: this.state.scaleDownImages });
+    const requiredBytes = processedFiles.reduce((totalSize, file) => totalSize + file.size, 0);
+
+    if (requiredBytes > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
+      message.error(t('uploadLimitExceeded', {
+        uploadSize: prettyBytes(requiredBytes, { locale: this.props.uiLocale }),
+        uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: this.props.uiLocale })
+      }));
+      return;
+    }
 
     if (this.state.currentLocation.isPrivate) {
-      const requiredBytes = processedFiles.reduce((totalSize, file) => totalSize + file.size, 0);
       const availableBytes = Math.max(0, this.props.storagePlan?.maxBytes || 0 - this.props.user.storage.usedBytes);
 
       if (requiredBytes > availableBytes) {
@@ -681,7 +690,8 @@ StorageBrowser.propTypes = {
   selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE]),
   storageApiClient: PropTypes.instanceOf(StorageApiClient).isRequired,
   t: PropTypes.func.isRequired,
-  uiLanguage: PropTypes.string.isRequired
+  uiLanguage: PropTypes.string.isRequired,
+  uiLocale: PropTypes.string.isRequired
 };
 
 StorageBrowser.defaultProps = {
@@ -693,16 +703,17 @@ StorageBrowser.defaultProps = {
 export default function StorageBrowserWrapper({ ...props }) {
   const { t } = useTranslation('storageBrowser');
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const { uiLanguage } = useLocale();
-  const { formatDate } = useDateFormat();
 
   const user = useUser();
   const setUser = useSetUser();
   const storagePlan = useStoragePlan();
+  const { formatDate } = useDateFormat();
+  const { uiLanguage, uiLocale } = useLocale();
 
   return (
     <StorageBrowser
       storageApiClient={storageApiClient}
+      uiLocale={uiLocale}
       uiLanguage={uiLanguage}
       formatDate={formatDate}
       user={user}

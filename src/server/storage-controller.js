@@ -3,10 +3,12 @@ import multer from 'multer';
 import express from 'express';
 import parseBool from 'parseboolean';
 import httpErrors from 'http-errors';
+import prettyBytes from 'pretty-bytes';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
 import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/storage-schemas.js';
@@ -15,6 +17,13 @@ const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
 
 const { BadRequest, Unauthorized } = httpErrors;
+
+const uploadLimitExceededMiddleware = (req, res, next) => {
+  const requestSize = !!req.headers['content-length'] && Number(req.headers['content-length']);
+  return requestSize && requestSize > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES
+    ? next(new Error(`Upload limit exceeded: limit ${prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES)}, requested ${prettyBytes(requestSize)}.`))
+    : next();
+};
 
 class StorageController {
   static get inject() { return [StorageService, RoomService]; }
@@ -76,19 +85,31 @@ class StorageController {
   registerApi(router) {
     router.get(
       '/api/v1/storage/objects',
-      [needsPermission(permissions.VIEW_FILES), jsonParser, validateQuery(getObjectsQuerySchema)],
+      [
+        needsPermission(permissions.VIEW_FILES),
+        jsonParser,
+        validateQuery(getObjectsQuerySchema)
+      ],
       (req, res) => this.handleGetCdnObject(req, res)
     );
 
     router.delete(
       '/api/v1/storage/objects/:objectName',
-      [needsPermission(permissions.DELETE_STORAGE_FILE), validateQuery(deleteObjectQuerySchema), validateParams(deleteObjectParamSchema)],
+      [
+        needsPermission(permissions.DELETE_STORAGE_FILE),
+        validateQuery(deleteObjectQuerySchema),
+        validateParams(deleteObjectParamSchema)
+      ],
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
 
     router.post(
       '/api/v1/storage/objects',
-      [needsPermission(permissions.CREATE_FILE), multipartParser.array('files'), validateBody(postObjectsBodySchema)],
+      [
+        needsPermission(permissions.CREATE_FILE),
+        uploadLimitExceededMiddleware,
+        multipartParser.array('files'), validateBody(postObjectsBodySchema)
+      ],
       (req, res) => this.handlePostCdnObject(req, res)
     );
   }
