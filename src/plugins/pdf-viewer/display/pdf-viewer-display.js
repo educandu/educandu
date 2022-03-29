@@ -1,3 +1,5 @@
+import { Empty, Result, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import { pdfjs, Document, Page } from 'react-pdf';
 import Markdown from '../../../components/markdown.js';
@@ -13,6 +15,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `${pluginControllerApiPath}/pdfjs-dist/bui
 function PdfViewerDisplay({ content }) {
   const viewerRef = useRef();
   const [pdf, setPdf] = useState(null);
+  const { t } = useTranslation('pdfViewer');
   const clientConfig = useService(ClientConfig);
   const [pageNumber, setPageNumber] = useState(1);
   const [viewerStyle, setViewerStyle] = useState({});
@@ -63,6 +66,22 @@ function PdfViewerDisplay({ content }) {
       throw new Error(`Invalid source type '${sourceType}'`);
   }
 
+  const renderLoadingComponent = () => (
+    <Empty description={t('loadingDocument')} image={<Spin size="large" />} />
+  );
+
+  const renderNoDataComponent = () => (
+    <Empty description={t('noDocument')} />
+  );
+
+  const renderErrorComponent = () => (
+    <Result
+      status="warning"
+      title={t('common:error')}
+      subTitle={t('errorRenderingDocument')}
+      />
+  );
+
   return (
     <div className="PdfViewer">
       <div className={`PdfViewer-viewer u-width-${width || 100}`} style={viewerStyle} ref={viewerRef}>
@@ -75,6 +94,9 @@ function PdfViewerDisplay({ content }) {
               }}
               file={url}
               renderMode={renderMode}
+              loading={renderLoadingComponent}
+              noData={renderNoDataComponent}
+              error={renderErrorComponent}
               onLoadSuccess={onDocumentLoadSuccess}
               >
               <Page

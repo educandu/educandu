@@ -1587,7 +1587,10 @@
       "renderMode": "Render mode",
       "renderModeInfo": "Determines the way the document is rendered in the web browser.\nIn most cases the text appearance is of higher quality when choosing SVG,\nhowever, in certain documents, some characters cannot be shown correctly.\nIn such cases you should select Canvas.\n",
       "showTextOverlay": "Show text overlay",
-      "showTextOverlayInfo": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n"
+      "showTextOverlayInfo": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n",
+      "errorRenderingDocument": "The document cannot be displayed",
+      "noDocument": "No document specified",
+      "loadingDocument": "Loading document"
     }
   },
   {
@@ -1606,7 +1609,10 @@
       "renderMode": "Darstellungsmodus",
       "renderModeInfo": "Bestimmt die Darstellung der PDF-Datei im Web-Browser.\nSVG liefert in der Regel ein qualitativ hochwertigeres Schriftbild,\nstellt jedoch in seltenen Fällen bestimmte Sonderzeichen falsch dar.\nIn diesen Fällen sollten Sie Canvas wählen.\n",
       "showTextOverlay": "Text-Overlay anzeigen",
-      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachten Sie, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
+      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachten Sie, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n",
+      "errorRenderingDocument": "Das Dokument kann nicht angezeigt werden",
+      "noDocument": "Kein Dokument angegeben",
+      "loadingDocument": "Dokument wird geladen"
     }
   },
   {

@@ -51,3 +51,12 @@ showTextOverlayInfo:
       Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.
       Bitte beachten Sie, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht
       vollständig mit der des Dokuments übereinstimmen kann.
+errorRenderingDocument:
+  en: The document cannot be displayed
+  de: Das Dokument kann nicht angezeigt werden
+noDocument:
+  en: No document specified
+  de: Kein Dokument angegeben
+loadingDocument:
+  en: Loading document
+  de: Dokument wird geladen
