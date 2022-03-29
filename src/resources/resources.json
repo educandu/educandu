@@ -1117,6 +1117,7 @@
       "publicStorage": "Public storage",
       "privateStorage": "Private storage",
       "insufficientPrivateStorge": "Not enough storage space available",
+      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
       "scaleDownImages": "Optimize images for web display"
     }
   },
@@ -1136,6 +1137,7 @@
       "publicStorage": "Öffentlicher Speicher",
       "privateStorage": "Privater Speicher",
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar",
+      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
       "scaleDownImages": "Bilder für Web optimieren"
     }
   },
@@ -1638,7 +1640,7 @@
       "videoDisplay": "Videoanzeige",
       "width": "Breite",
       "copyrightInfos": "Copyright Infos",
-      "posterImageUrl": "Vorschau Bild URL"
+      "posterImageUrl": "Vorschau-Bild-URL"
     }
   },
   {
