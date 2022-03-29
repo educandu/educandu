@@ -205,7 +205,7 @@ function SectionDisplay({
         } else {
           onSectionDuplicate();
         }
-      } else {
+      } else if (section.content) {
         setIsEditing(!isEditing);
       }
     }
