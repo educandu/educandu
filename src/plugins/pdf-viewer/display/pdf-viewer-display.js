@@ -1,14 +1,14 @@
-import { SOURCE_TYPE } from '../constants.js';
 import React, { useRef, useState } from 'react';
 import { pdfjs, Document, Page } from 'react-pdf';
 import Markdown from '../../../components/markdown.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
+import { pluginControllerApiPath, SOURCE_TYPE } from '../constants.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 import DimensionsProvider from '../../interval-trainer/display/dimensions-provider.js';
 import { BackwardOutlined, CaretLeftOutlined, CaretRightOutlined, ForwardOutlined } from '@ant-design/icons';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `${pluginControllerApiPath}/pdfjs-dist/build/pdf.worker.min.js`;
 
 function PdfViewerDisplay({ content }) {
   const viewerRef = useRef();
@@ -70,7 +70,7 @@ function PdfViewerDisplay({ content }) {
           {({ containerWidth }) => (
             <Document
               options={{
-                cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps`,
+                cMapUrl: `${pluginControllerApiPath}/pdfjs-dist/cmaps`,
                 cMapPacked: true
               }}
               file={url}
