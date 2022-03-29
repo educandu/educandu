@@ -82,18 +82,22 @@ function VideoDisplay({ content }) {
     setVolume(newVolume);
   };
 
+  const handleClickPreview = () => {
+    setPlayState(PLAY_STATES.playing);
+  };
+
   const html = githubFlavoredMarkdown.render(content.text || '');
   const aspectRatio = content.aspectRatio || { h: 16, v: 9 };
   const paddingTop = `${(aspectRatio.v / aspectRatio.h * 100).toFixed(2)}%`;
   const width = content.width || 100;
 
-  let url;
-  switch (content.type) {
+  let sourceUrl;
+  switch (content.sourceType) {
     case SOURCE_TYPE.internal:
-      url = content.url ? `${clientConfig.cdnRootUrl}/${content.url}` : null;
+      sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
       break;
     default:
-      url = content.url || null;
+      sourceUrl = content.sourceUrl || null;
       break;
   }
 
@@ -121,18 +125,21 @@ function VideoDisplay({ content }) {
       'Video-mainPlayerContainer--noDisplay': !content.showVideo
     });
 
+    const posterImageUrl = content.posterImage.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.posterImage.sourceUrl}` : null;
+
     return (
       <div className={classes}>
         <div className="Video-mainPlayerOuter" style={{ paddingTop }}>
           <ReactPlayer
             ref={playerRef}
             className="Video-mainPlayerInner"
-            url={url}
+            url={sourceUrl}
             width="100%"
             height="100%"
             controls
             volume={volume}
             progressInterval={100}
+            light={posterImageUrl || false}
             playing={playState === PLAY_STATES.playing || playState === PLAY_STATES.buffering}
             onReady={handleReady}
             onBuffer={handleBuffer}
@@ -142,6 +149,7 @@ function VideoDisplay({ content }) {
             onEnded={handleStop}
             onDuration={handleDuration}
             onProgress={handleProgress}
+            onClickPreview={handleClickPreview}
             />
         </div>
       </div>
@@ -151,13 +159,13 @@ function VideoDisplay({ content }) {
   const renderPlayers = () => (
     <div className="Video-players">
       {renderMainPlayer()}
-      {url && !content.showVideo && renderMediaControl()}
+      {sourceUrl && !content.showVideo && renderMediaControl()}
     </div>
   );
 
   return (
     <div className="Video">
-      {url && renderPlayers()}
+      {sourceUrl && renderPlayers()}
       {html && <div className="Video-text" dangerouslySetInnerHTML={{ __html: html }} />}
     </div>
   );

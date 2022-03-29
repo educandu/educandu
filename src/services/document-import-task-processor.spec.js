@@ -89,8 +89,9 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                type: VIDEO_SOURCE_TYPE.internal,
-                url: 'media/video-1.mp4'
+                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceUrl: 'media/video-1.mp4',
+                posterImage: {}
               },
               deletedOn: null,
               deletedBy: null,
@@ -116,8 +117,9 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                type: VIDEO_SOURCE_TYPE.internal,
-                url: 'media/video-2.mp4'
+                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceUrl: 'media/video-2.mp4',
+                posterImage: {}
               },
               deletedOn: null,
               deletedBy: null,
@@ -268,8 +270,9 @@ describe('document-import-task-processor', () => {
                 key: uniqueId.create(),
                 type: 'video',
                 content: {
-                  type: VIDEO_SOURCE_TYPE.internal,
-                  url: 'media/video-3.mp4'
+                  sourceType: VIDEO_SOURCE_TYPE.internal,
+                  sourceUrl: 'media/video-3.mp4',
+                  posterImage: {}
                 },
                 deletedOn: null,
                 deletedBy: null,

@@ -222,7 +222,7 @@ function getCategory(pathOrExtension) {
       return CATEGORY_AUDIO;
     case 'image':
       return CATEGORY_IMAGE;
-    case 'vido':
+    case 'video':
       return CATEGORY_VIDEO;
     case 'application':
       return CATEGORY_PROGRAM;

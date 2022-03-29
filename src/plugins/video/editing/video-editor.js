@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { SOURCE_TYPE } from '../constants.js';
 import { useTranslation } from 'react-i18next';
 import { Form, Input, Radio, Switch } from 'antd';
@@ -23,7 +23,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
     wrapperCol: { span: 14 }
   };
 
-  const { type, url, text, width, aspectRatio, showVideo } = content;
+  const { sourceType, sourceUrl, text, width, aspectRatio, showVideo, posterImage } = content;
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -31,26 +31,34 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const handleExternalUrlChanged = event => {
     const { value } = event.target;
-    changeContent({ url: value });
+    changeContent({ sourceUrl: value });
   };
 
   const handleYoutubeUrlChanged = event => {
     const { value } = event.target;
-    changeContent({ url: value });
+    changeContent({ sourceUrl: value });
   };
 
   const handleInternalUrlChanged = event => {
     const { value } = event.target;
-    changeContent({ url: value });
+    changeContent({ sourceUrl: value });
   };
 
   const handleInternalUrlFileNameChanged = value => {
-    changeContent({ url: value });
+    changeContent({ sourceUrl: value });
   };
 
   const handleTypeChanged = event => {
     const { value } = event.target;
-    changeContent({ type: value, url: '', showVideo: true });
+    changeContent({
+      sourceType: value,
+      sourceUrl: '',
+      showVideo: true,
+      posterImage: {
+        sourceType: SOURCE_TYPE.internal,
+        sourceUrl: ''
+      }
+    });
   };
 
   const handleAspectRatioChanged = event => {
@@ -71,41 +79,74 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
     changeContent({ width: newValue });
   };
 
+  const handlePosterImageSourceUrlValueChanged = event => {
+    const { value } = event.target;
+    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+  };
+
+  const handlePosterImageSourceUrlFileNameChanged = value => {
+    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+  };
+
+  const renderPosterImageFormItem = () => (
+    <FormItem label={t('posterImageUrl')} {...formItemLayout}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Input
+          addonBefore={`${clientConfig.cdnRootUrl}/`}
+          value={posterImage.sourceUrl}
+          onChange={handlePosterImageSourceUrlValueChanged}
+          />
+        <StorageFilePicker
+          publicStorage={publicStorage}
+          privateStorage={privateStorage}
+          fileName={posterImage.sourceUrl}
+          onFileNameChanged={handlePosterImageSourceUrlFileNameChanged}
+          />
+      </div>
+    </FormItem>
+  );
+
   return (
     <div>
       <Form layout="horizontal">
         <FormItem label={t('source')} {...formItemLayout}>
-          <RadioGroup value={type} onChange={handleTypeChanged}>
+          <RadioGroup value={sourceType} onChange={handleTypeChanged}>
             <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
             <RadioButton value={SOURCE_TYPE.internal}>{t('internalLink')}</RadioButton>
             <RadioButton value={SOURCE_TYPE.youtube}>{t('youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {type === SOURCE_TYPE.external && (
-          <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
-            <Input value={url} onChange={handleExternalUrlChanged} />
-          </FormItem>
+        {sourceType === SOURCE_TYPE.external && (
+          <Fragment>
+            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+              <Input value={sourceUrl} onChange={handleExternalUrlChanged} />
+            </FormItem>
+            {renderPosterImageFormItem()}
+          </Fragment>
         )}
-        {type === SOURCE_TYPE.internal && (
-          <FormItem label={t('internalUrl')} {...formItemLayout}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Input
-                addonBefore={`${clientConfig.cdnRootUrl}/`}
-                value={url}
-                onChange={handleInternalUrlChanged}
-                />
-              <StorageFilePicker
-                publicStorage={publicStorage}
-                privateStorage={privateStorage}
-                fileName={url}
-                onFileNameChanged={handleInternalUrlFileNameChanged}
-                />
-            </div>
-          </FormItem>
+        {sourceType === SOURCE_TYPE.internal && (
+          <Fragment>
+            <FormItem label={t('internalUrl')} {...formItemLayout}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Input
+                  addonBefore={`${clientConfig.cdnRootUrl}/`}
+                  value={sourceUrl}
+                  onChange={handleInternalUrlChanged}
+                  />
+                <StorageFilePicker
+                  publicStorage={publicStorage}
+                  privateStorage={privateStorage}
+                  fileName={sourceUrl}
+                  onFileNameChanged={handleInternalUrlFileNameChanged}
+                  />
+              </div>
+            </FormItem>
+            {renderPosterImageFormItem()}
+          </Fragment>
         )}
-        {type === SOURCE_TYPE.youtube && (
-          <FormItem label={t('youtubeUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
-            <Input value={url} onChange={handleYoutubeUrlChanged} />
+        {sourceType === SOURCE_TYPE.youtube && (
+          <FormItem label={t('youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+            <Input value={sourceUrl} onChange={handleYoutubeUrlChanged} />
           </FormItem>
         )}
         <Form.Item label={t('aspectRatio')} {...formItemLayout}>

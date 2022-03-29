@@ -89,8 +89,9 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              type: VIDEO_SOURCE_TYPE.internal,
-              url: 'media/video-1.mp4'
+              sourceType: VIDEO_SOURCE_TYPE.internal,
+              sourceUrl: 'media/video-1.mp4',
+              posterImage: {}
             }
           }
         ],
@@ -209,8 +210,9 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              type: VIDEO_SOURCE_TYPE.internal,
-              url: 'media/video-1.mp4'
+              sourceType: VIDEO_SOURCE_TYPE.internal,
+              sourceUrl: 'media/video-1.mp4',
+              posterImage: {}
             }
           }
         ],
@@ -233,8 +235,9 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              type: VIDEO_SOURCE_TYPE.internal,
-              url: 'media/video-2.mp4'
+              sourceType: VIDEO_SOURCE_TYPE.internal,
+              sourceUrl: 'media/video-2.mp4',
+              posterImage: {}
             }
           }
         ]
@@ -351,8 +354,9 @@ describe('document-service', () => {
               revision: uniqueId.create(),
               type: 'video',
               content: {
-                type: VIDEO_SOURCE_TYPE.internal,
-                url: 'media/video-1.mp4'
+                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceUrl: 'media/video-1.mp4',
+                posterImage: {}
               },
               deletedOn: new Date().toISOString()
             }
@@ -374,8 +378,9 @@ describe('document-service', () => {
               revision: uniqueId.create(),
               type: 'video',
               content: {
-                type: VIDEO_SOURCE_TYPE.internal,
-                url: 'media/video-1.mp4'
+                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceUrl: 'media/video-1.mp4',
+                posterImage: {}
               }
             }
           ],

@@ -20,15 +20,19 @@ export default class Video {
 
   getDefaultContent() {
     return {
-      type: SOURCE_TYPE.internal,
-      url: '',
+      sourceType: SOURCE_TYPE.internal,
+      sourceUrl: '',
       text: '',
       width: 100,
       aspectRatio: {
         h: 16,
         v: 9
       },
-      showVideo: true
+      showVideo: true,
+      posterImage: {
+        sourceType: SOURCE_TYPE.internal,
+        sourceUrl: ''
+      }
     };
   }
 
@@ -37,6 +41,8 @@ export default class Video {
   }
 
   getCdnResources(content) {
-    return content.type === SOURCE_TYPE.internal && content.url ? [content.url] : [];
+    const sourceUrl = content.sourceType === SOURCE_TYPE.internal && content.sourceUrl;
+    const posterImageSourceUrl = content.posterImage.sourceType === SOURCE_TYPE.internal && content.posterImage.sourceUrl;
+    return [sourceUrl, posterImageSourceUrl].filter(url => url);
   }
 }
