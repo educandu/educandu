@@ -1,0 +1,9 @@
+newStoragePlan:
+  en: New storage plan
+  de: Neuer Speicherplan
+editStoragePlan:
+  en: Edit storage plan
+  de: Speicherplan bearbeiten
+storagePlanNameIsInUse:
+  en: This name is already in use
+  de: Dieser Name ist bereits in Benutzung

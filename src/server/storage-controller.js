@@ -11,7 +11,17 @@ import needsPermission from '../domain/needs-permission-middleware.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
-import { getObjectsQuerySchema, postObjectsBodySchema, deleteObjectQuerySchema, deleteObjectParamSchema } from '../domain/schemas/storage-schemas.js';
+import {
+  getObjectsQuerySchema,
+  postObjectsBodySchema,
+  deleteObjectQuerySchema,
+  deleteObjectParamSchema,
+  getStoragePlansQuerySchema,
+  postStoragePlanBodySchema,
+  patchStoragePlanParamsSchema,
+  deleteStoragePlanParamsSchema,
+  patchStoragePlanBodySchema
+} from '../domain/schemas/storage-schemas.js';
 
 const jsonParser = express.json();
 const multipartParser = multer({ dest: os.tmpdir() });
@@ -82,6 +92,33 @@ class StorageController {
     return res.status(201).send({ usedBytes });
   }
 
+  async handleGetStoragePlans(req, res) {
+    const { includeAssignedUserCount } = req.query;
+    const storagePlans = includeAssignedUserCount === true.toString()
+      ? await this.storageService.getAllStoragePlansWithAssignedUserCount()
+      : await this.storageService.getAllStoragePlans();
+    return res.send(storagePlans);
+  }
+
+  async handlePostStoragePlan(req, res) {
+    const { name, maxBytes } = req.body;
+    const newStoragePlan = await this.storageService.createStoragePlan({ name, maxBytes });
+    return res.status(201).send(newStoragePlan);
+  }
+
+  async handlePatchStoragePlan(req, res) {
+    const { storagePlanId } = req.params;
+    const { name, maxBytes } = req.body;
+    const updatedStoragePlan = await this.storageService.updateStoragePlan(storagePlanId, { name, maxBytes });
+    return res.send(updatedStoragePlan);
+  }
+
+  async handleDeleteStoragePlan(req, res) {
+    const { storagePlanId } = req.params;
+    await this.storageService.deleteStoragePlanById(storagePlanId);
+    return res.send({});
+  }
+
   registerApi(router) {
     router.get(
       '/api/v1/storage/objects',
@@ -111,6 +148,37 @@ class StorageController {
         multipartParser.array('files'), validateBody(postObjectsBodySchema)
       ],
       (req, res) => this.handlePostCdnObject(req, res)
+    );
+
+    router.get(
+      '/api/v1/storage/plans',
+      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      validateQuery(getStoragePlansQuerySchema),
+      (req, res) => this.handleGetStoragePlans(req, res)
+    );
+
+    router.post(
+      '/api/v1/storage/plans',
+      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      jsonParser,
+      validateBody(postStoragePlanBodySchema),
+      (req, res) => this.handlePostStoragePlan(req, res)
+    );
+
+    router.patch(
+      '/api/v1/storage/plans/:storagePlanId',
+      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      jsonParser,
+      validateParams(patchStoragePlanParamsSchema),
+      validateBody(patchStoragePlanBodySchema),
+      (req, res) => this.handlePatchStoragePlan(req, res)
+    );
+
+    router.delete(
+      '/api/v1/storage/plans/:storagePlanId',
+      needsPermission(permissions.MANAGE_STORAGE_PLANS),
+      validateParams(deleteStoragePlanParamsSchema),
+      (req, res) => this.handleDeleteStoragePlan(req, res)
     );
   }
 }

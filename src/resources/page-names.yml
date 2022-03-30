@@ -7,9 +7,9 @@ users:
 dashboard:
   en: Dashboard
   de: Dashboard
-settings:
-  en: Settings
-  de: Einstellungen
+admin:
+  en: Administration
+  de: Verwaltung
 importBatchCreation:
   en: Create import
   de: Import erstellen

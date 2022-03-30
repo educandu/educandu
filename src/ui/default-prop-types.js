@@ -88,11 +88,21 @@ export const settingsProps = {
 
 export const baseStoragePlanProps = {
   _id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  maxBytes: PropTypes.number.isRequired
+};
+
+export const storagePlanWithAssignedUserCountProps = {
+  ...baseStoragePlanProps,
+  assignedUserCount: PropTypes.number.isRequired
 };
 
 export const baseStoragePlanShape = PropTypes.shape({
   ...baseStoragePlanProps
+});
+
+export const storagePlanWithAssignedUserCountShape = PropTypes.shape({
+  ...storagePlanWithAssignedUserCountProps
 });
 
 export const userProfileShape = PropTypes.shape({

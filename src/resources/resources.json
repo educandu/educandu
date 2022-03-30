@@ -18,6 +18,104 @@
     }
   },
   {
+    "namespace": "defaultTagsSettings",
+    "language": "en",
+    "resources": {
+      "rank": "Rank",
+      "tag": "Tag"
+    }
+  },
+  {
+    "namespace": "defaultTagsSettings",
+    "language": "de",
+    "resources": {
+      "rank": "Rang",
+      "tag": "Tag"
+    }
+  },
+  {
+    "namespace": "settingsDocumentsTable",
+    "language": "en",
+    "resources": {
+      "rank": "Rank",
+      "linkTitle": "Link title",
+      "urlPath": "URL path"
+    }
+  },
+  {
+    "namespace": "settingsDocumentsTable",
+    "language": "de",
+    "resources": {
+      "rank": "Rang",
+      "linkTitle": "Link-Titel",
+      "urlPath": "URL-Pfad"
+    }
+  },
+  {
+    "namespace": "settingsTab",
+    "language": "en",
+    "resources": {
+      "homepageInfoHeader": "Homepage info",
+      "helpPageHeader": "Help page",
+      "termsPageHeader": "Terms of usage page",
+      "footerLinksHeader": "Footer links",
+      "defaultTagsHeader": "Default tags",
+      "createDocumentRegenerationBatchHeader": "Document recreation",
+      "createDocumentRegenerationBatchButton": "Regenerate documents",
+      "templateDocumentHeader": "Template for new documents",
+      "licenseHeader": "License"
+    }
+  },
+  {
+    "namespace": "settingsTab",
+    "language": "de",
+    "resources": {
+      "homepageInfoHeader": "Homepage-Info",
+      "helpPageHeader": "Hilfe-Seite",
+      "termsPageHeader": "Nutzungsbedingungen-Seite",
+      "footerLinksHeader": "Footer-Links",
+      "defaultTagsHeader": "Vordefinierte Tags",
+      "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung",
+      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
+      "templateDocumentHeader": "Vorlage für neue Dokumente",
+      "licenseHeader": "Lizenz"
+    }
+  },
+  {
+    "namespace": "specialPageSettings",
+    "language": "en",
+    "resources": {
+      "rank": "Rank",
+      "linkTitle": "Link title",
+      "urlPath": "URL path",
+      "unknown": "Unknown"
+    }
+  },
+  {
+    "namespace": "specialPageSettings",
+    "language": "de",
+    "resources": {
+      "rank": "Rang",
+      "linkTitle": "Link-Titel",
+      "urlPath": "URL-Pfad",
+      "unknown": "Unbekannt"
+    }
+  },
+  {
+    "namespace": "storagePlansTab",
+    "language": "en",
+    "resources": {
+      "assignedUserCount": "User accounts"
+    }
+  },
+  {
+    "namespace": "storagePlansTab",
+    "language": "de",
+    "resources": {
+      "assignedUserCount": "Benutzerkonten"
+    }
+  },
+  {
     "namespace": "confirmationDialogs",
     "language": "en",
     "resources": {
@@ -38,7 +136,8 @@
       "confirmWithPasswordDescription": "Please enter your password in order to continue this process.",
       "sessionExpiredTitle": "Your session has expired",
       "sessionExpiredDescription": "Your session has expired because you have been inactive for some time. Please login in order to continue this process.",
-      "confirmDeleteImageTile": "Do you really want to delete this tile?"
+      "confirmDeleteImageTile": "Do you really want to delete this tile?",
+      "deleteStoragePlanConfirmation": "Do you really want to delete storage plan \"{storagePlanName}\"?"
     }
   },
   {
@@ -62,7 +161,8 @@
       "confirmWithPasswordDescription": "Bitte geben Sie Ihr Kennwort an, um diesen Vorgang fortzusetzen.",
       "sessionExpiredTitle": "Ihre Sitzung ist abgelaufen",
       "sessionExpiredDescription": "Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen.",
-      "confirmDeleteImageTile": "Möchten Sie diese Kachel löschen?"
+      "confirmDeleteImageTile": "Möchten Sie diese Kachel löschen?",
+      "deleteStoragePlanConfirmation": "Möchten Sie den Speicherplan \"{storagePlanName}\" wirklich löschen?"
     }
   },
   {
@@ -415,6 +515,22 @@
     "language": "de",
     "resources": {
       "messageTitle": "Dieser Inhalt wird nicht unterstützt"
+    }
+  },
+  {
+    "namespace": "admin",
+    "language": "en",
+    "resources": {
+      "settingsTabTitle": "Settings",
+      "storagePlansTabTitle": "Storage plans"
+    }
+  },
+  {
+    "namespace": "admin",
+    "language": "de",
+    "resources": {
+      "settingsTabTitle": "Einstellungen",
+      "storagePlansTabTitle": "Speicherpläne"
     }
   },
   {
@@ -790,36 +906,6 @@
     }
   },
   {
-    "namespace": "settings",
-    "language": "en",
-    "resources": {
-      "homepageInfoHeader": "Homepage info",
-      "helpPageHeader": "Help page",
-      "termsPageHeader": "Terms of usage page",
-      "footerLinksHeader": "Footer links",
-      "defaultTagsHeader": "Default tags",
-      "createDocumentRegenerationBatchHeader": "Document recreation",
-      "createDocumentRegenerationBatchButton": "Regenerate documents",
-      "templateDocumentHeader": "Template for new documents",
-      "licenseHeader": "License"
-    }
-  },
-  {
-    "namespace": "settings",
-    "language": "de",
-    "resources": {
-      "homepageInfoHeader": "Homepage-Info",
-      "helpPageHeader": "Hilfe-Seite",
-      "termsPageHeader": "Nutzungsbedingungen-Seite",
-      "footerLinksHeader": "Footer-Links",
-      "defaultTagsHeader": "Vordefinierte Tags",
-      "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung",
-      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
-      "templateDocumentHeader": "Vorlage für neue Dokumente",
-      "licenseHeader": "Lizenz"
-    }
-  },
-  {
     "namespace": "users",
     "language": "en",
     "resources": {
@@ -1032,60 +1118,6 @@
     }
   },
   {
-    "namespace": "defaultTagsSettings",
-    "language": "en",
-    "resources": {
-      "rank": "Rank",
-      "tag": "Tag"
-    }
-  },
-  {
-    "namespace": "defaultTagsSettings",
-    "language": "de",
-    "resources": {
-      "rank": "Rang",
-      "tag": "Tag"
-    }
-  },
-  {
-    "namespace": "settingsDocumentsTable",
-    "language": "en",
-    "resources": {
-      "rank": "Rank",
-      "linkTitle": "Link title",
-      "urlPath": "URL path"
-    }
-  },
-  {
-    "namespace": "settingsDocumentsTable",
-    "language": "de",
-    "resources": {
-      "rank": "Rang",
-      "linkTitle": "Link-Titel",
-      "urlPath": "URL-Pfad"
-    }
-  },
-  {
-    "namespace": "specialPageSettings",
-    "language": "en",
-    "resources": {
-      "rank": "Rank",
-      "linkTitle": "Link title",
-      "urlPath": "URL path",
-      "unknown": "Unknown"
-    }
-  },
-  {
-    "namespace": "specialPageSettings",
-    "language": "de",
-    "resources": {
-      "rank": "Rang",
-      "linkTitle": "Link-Titel",
-      "urlPath": "URL-Pfad",
-      "unknown": "Unbekannt"
-    }
-  },
-  {
     "namespace": "sortingSelector",
     "language": "en",
     "resources": {
@@ -1153,6 +1185,24 @@
     "language": "de",
     "resources": {
       "modalTitle": "Dateibrowser"
+    }
+  },
+  {
+    "namespace": "storagePlanModal",
+    "language": "en",
+    "resources": {
+      "newStoragePlan": "New storage plan",
+      "editStoragePlan": "Edit storage plan",
+      "storagePlanNameIsInUse": "This name is already in use"
+    }
+  },
+  {
+    "namespace": "storagePlanModal",
+    "language": "de",
+    "resources": {
+      "newStoragePlan": "Neuer Speicherplan",
+      "editStoragePlan": "Speicherplan bearbeiten",
+      "storagePlanNameIsInUse": "Dieser Name ist bereits in Benutzung"
     }
   },
   {
@@ -1772,7 +1822,8 @@
       "sortedByUser": "Sorted by user",
       "sortedByOrigin": "Sorted by origin",
       "sortedByArchived": "Sorted by archived status",
-      "searchPlaceholder": "Search terms"
+      "searchPlaceholder": "Search terms",
+      "capacity": "Capacity"
     }
   },
   {
@@ -1860,7 +1911,8 @@
       "sortedByUser": "Nach Benutzer sortiert",
       "sortedByOrigin": "Nach Quelle sortiert",
       "sortedByArchived": "Nach Archivierungsstatus sortiert",
-      "searchPlaceholder": "Suchbegriffe"
+      "searchPlaceholder": "Suchbegriffe",
+      "capacity": "Kapazität"
     }
   },
   {
@@ -1870,7 +1922,7 @@
       "home": "Home",
       "users": "Users",
       "dashboard": "Dashboard",
-      "settings": "Settings",
+      "admin": "Administration",
       "importBatchCreation": "Create import",
       "importBatches": "Imports",
       "importBatchView": "Import details",
@@ -1885,7 +1937,7 @@
       "home": "Home",
       "users": "Benutzer",
       "dashboard": "Dashboard",
-      "settings": "Einstellungen",
+      "admin": "Verwaltung",
       "importBatchCreation": "Import erstellen",
       "importBatches": "Importe",
       "importBatchView": "Import-Details",

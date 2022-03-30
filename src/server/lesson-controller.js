@@ -23,7 +23,7 @@ import {
 const jsonParser = express.json();
 const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
 
-export default class LessonController {
+class LessonController {
   static get inject() { return [ServerConfig, LessonService, RoomService, ClientDataMappingService, PageRenderer]; }
 
   constructor(serverConfig, lessonService, roomService, clientDataMappingService, pageRenderer) {
@@ -193,3 +193,5 @@ export default class LessonController {
   }
 
 }
+
+export default LessonController;

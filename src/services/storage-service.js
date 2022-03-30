@@ -1,6 +1,8 @@
 import urls from '../utils/urls.js';
+import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
+import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
@@ -10,12 +12,9 @@ import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
-import {
-  getPrivateStoragePathForRoomId,
-  getPrefixFromStoragePath,
-  getStoragePathType,
-  STORAGE_PATH_TYPE
-} from '../ui/path-helper.js';
+import { getPrivateStoragePathForRoomId, getPrefixFromStoragePath, getStoragePathType, STORAGE_PATH_TYPE } from '../ui/path-helper.js';
+
+const { BadRequest } = httpErrors;
 
 export default class StorageService {
   static get inject() { return [Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, LockStore, TransactionRunner]; }
@@ -35,8 +34,61 @@ export default class StorageService {
     return this.storagePlanStore.getAllStoragePlans();
   }
 
+  getAllStoragePlansWithAssignedUserCount() {
+    return this.storagePlanStore.getAllStoragePlansWithAssignedUserCount();
+  }
+
   getStoragePlanById(id) {
     return this.storagePlanStore.getStoragePlanById(id);
+  }
+
+  async createStoragePlan({ name, maxBytes }) {
+    const storagePlan = {
+      _id: uniqueId.create(),
+      name,
+      maxBytes
+    };
+
+    await this.storagePlanStore.saveStoragePlan(storagePlan);
+    return storagePlan;
+  }
+
+  async updateStoragePlan(storagePlanId, { name, maxBytes }) {
+    const updatedStoragePlan = {
+      _id: storagePlanId,
+      name,
+      maxBytes
+    };
+
+    let lock;
+    try {
+      lock = await this.lockStore.takeStoragePlanLock(storagePlanId);
+      await this.storagePlanStore.saveStoragePlan(updatedStoragePlan);
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
+      }
+    }
+
+    return updatedStoragePlan;
+  }
+
+  async deleteStoragePlanById(storagePlanId) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeStoragePlanLock(storagePlanId);
+      const usersExist = await this.userStore.checkUsersWithStoragePlanExistByStoragePlanId(storagePlanId);
+      if (usersExist) {
+        throw new BadRequest('Storage plan cannot be deleted because it is still in use');
+      }
+
+      await this.storagePlanStore.deleteStoragePlanById(storagePlanId);
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
+      }
+    }
   }
 
   async uploadFiles({ prefix, files, userId }) {

@@ -52,3 +52,6 @@ sessionExpiredDescription:
 confirmDeleteImageTile:
   en: Do you really want to delete this tile?
   de: Möchten Sie diese Kachel löschen?
+deleteStoragePlanConfirmation:
+  en: Do you really want to delete storage plan "{storagePlanName}"?
+  de: Möchten Sie den Speicherplan "{storagePlanName}" wirklich löschen?

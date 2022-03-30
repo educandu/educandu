@@ -1,11 +1,11 @@
 const homePath = '/';
 const docsPath = '/docs';
+const adminPath = '/admin';
 const usersPath = '/users';
 const loginPath = '/login';
 const logoutPath = '/logout';
 const searchPath = '/search';
 const registerPath = '/register';
-const settingsPath = '/settings';
 const dashboardPath = '/dashboard';
 const importBatchesPath = '/import-batches';
 const resetPasswordPath = '/reset-password';
@@ -72,8 +72,8 @@ function getDocumentRevisionUrl(revisionId) {
   return concatParts(revisionPrefix, revisionId);
 }
 
-function getSettingsUrl() {
-  return settingsPath;
+function getAdminUrl() {
+  return adminPath;
 }
 
 function getImportsUrl() {
@@ -176,7 +176,7 @@ export default {
   getDocUrl,
   getDocumentRevisionUrl,
   getRoomUrl,
-  getSettingsUrl,
+  getAdminUrl,
   getImportsUrl,
   getCreateImportUrl,
   getCompleteRegistrationUrl,

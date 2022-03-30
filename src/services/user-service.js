@@ -4,6 +4,7 @@ import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
+import LockStore from '../stores/lock-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { ROLE, SAVE_USER_RESULT } from '../domain/constants.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
@@ -19,12 +20,13 @@ const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 const logger = new Logger(import.meta.url);
 
 class UserService {
-  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore]; }
+  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, LockStore]; }
 
-  constructor(userStore, storagePlanStore, passwordResetRequestStore) {
+  constructor(userStore, storagePlanStore, passwordResetRequestStore, lockStore) {
     this.userStore = userStore;
     this.storagePlanStore = storagePlanStore;
     this.passwordResetRequestStore = passwordResetRequestStore;
+    this.lockStore = lockStore;
   }
 
   getAllUsers() {
@@ -100,8 +102,23 @@ class UserService {
     }
 
     const newStorage = { ...user.storage, plan: plan?._id || null };
-    user.storage = newStorage;
-    await this.userStore.saveUser(user);
+
+    let oldPlanLock;
+    let newPlanLock;
+    try {
+      oldPlanLock = user.storage.plan ? await this.lockStore.takeStoragePlanLock(user.storage.plan) : null;
+      newPlanLock = newStorage.plan ? await this.lockStore.takeStoragePlanLock(newStorage.plan) : null;
+      user.storage = newStorage;
+      await this.userStore.saveUser(user);
+    } finally {
+      if (oldPlanLock) {
+        await this.lockStore.releaseLock(oldPlanLock);
+      }
+      if (newPlanLock) {
+        await this.lockStore.releaseLock(newPlanLock);
+      }
+    }
+
     return newStorage;
   }
 
