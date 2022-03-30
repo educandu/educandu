@@ -14,7 +14,7 @@ const config = {
   bundleConfig,
   port: Number(processEnv.TEST_APP_PORT) || 3000,
   publicFolders: ['../dist', '../static'].map(x => path.resolve(thisDir, x)),
-  resources: ['./test-app/src/resource-overrides.json'].map(x => path.resolve(x)),
+  resources: ['./test-app/src/local-resources.json', './test-app/src/resource-overrides.json'].map(x => path.resolve(x)),
   sessionDurationInMinutes: Number(processEnv.TEST_APP_SESSION_DURATION_IN_MINUTES) || 60,
   skipMaintenance: parseBool(processEnv.TEST_APP_SKIP_MAINTENANCE || false.toString()),
   mongoConnectionString: processEnv.TEST_APP_WEB_CONNECTION_STRING,

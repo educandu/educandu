@@ -3,14 +3,16 @@ import SiteLogo from './site-logo.js';
 import React, { useState } from 'react';
 import PageHeader from './page-header.js';
 import PageFooter from './page-footer.js';
-import HomePageIllustration from './home-page-illustration.js';
+import { useTranslation } from 'react-i18next';
 import Markdown from '../../../src/components/markdown.js';
+import HomePageIllustration from './home-page-illustration.js';
 import { useSettings } from '../../../src/components/settings-context.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
 import CookieConsentDrawer from '../../../src/components/cookie-consent-drawer.js';
 
 function HomePageTemplate({ children }) {
   const settings = useSettings();
+  const { t } = useTranslation('testApp');
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
 
   const handleUiLanguageDialogClose = () => {
@@ -28,11 +30,14 @@ function HomePageTemplate({ children }) {
         <div className="HomePageTemplate-content">
           <div className="HomePageTemplate-logo" >
             <SiteLogo readonly />
+            <div className="HomePageTemplate-subtitle">{t('homePage.subtitle')}</div>
+          </div>
+          <div>
+            {children}
             {settings.homepageInfo && (
               <div className="HomePageTemplate-info"><Markdown renderMedia>{settings.homepageInfo}</Markdown></div>
             )}
           </div>
-          {children}
           <div className="HomePageTemplate-illustration">
             <HomePageIllustration />
           </div>
