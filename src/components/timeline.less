@@ -1,20 +1,66 @@
-.Timeline {}
+@timeline-part-track-bar-height: 25px;
+@timeline-part-hover-bar-height: @edu-control-height-base;
+@timeline-bar-height: @timeline-part-track-bar-height + @edu-control-height-base;
 
-.Timeline-bar {
+.Timeline {
+  position: relative;
   width: 100%;
-  height: 25px;
-  color: @edu-white;
-  background-color: @edu-primary-color-light;
+  height: @timeline-bar-height;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+
+  &:hover .Timeline-partDeleteBar,
+  &:hover .Timeline-partFlagsBar,
+  &.is-dragging .Timeline-partDeleteBar,
+  &.is-dragging .Timeline-partFlagsBar {
+    display: block;
+  }
 }
 
-.Timeline-barPart {
-  border-right: 1px solid @edu-white;
+.Timeline-part {
   text-align: center;
 
-  &:last-of-type {
+  &:last-of-type > .Timeline-partTrackBar,
+  &:last-of-type > .Timeline-partDeleteBar {
     border-right: none;
+  }
+}
+
+.Timeline-partFlagsBar {
+  position: relative;
+  left: -1px;
+  display: none;
+  height: @timeline-part-hover-bar-height;
+}
+
+.Timeline-partStartFlag {
+  position: absolute;
+  cursor: col-resize;
+  user-select: none;
+  color: @edu-primary-color-light;
+}
+
+.Timeline-partTrackBar {
+  color: @edu-white;
+  height: @timeline-part-track-bar-height;
+  background-color: @edu-primary-color-light;
+  border-right: 1px dotted @edu-white;
+}
+
+.Timeline-partDeleteBar {
+  display: none;
+  color: @edu-error-color;
+  height: @timeline-part-hover-bar-height;
+  background-color: @edu-background-color-light;
+  border-right: 1px dotted @edu-border-color-base;
+}
+
+.Timeline-partDeleteBarButton {
+  &:hover {
+    color: @edu-error-color;
+  }
+  &:disabled {
+    border: none;
   }
 }
