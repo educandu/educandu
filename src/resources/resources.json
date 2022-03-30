@@ -1629,7 +1629,9 @@
       "teaserLabel": "Link text",
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
-      "testsOrderRandom": "random"
+      "testsOrderRandom": "random",
+      "renderMedia": "Render media",
+      "renderMediaInfo": "Will be applied to the question and answer text, not the link text and title"
     }
   },
   {
@@ -1644,7 +1646,9 @@
       "teaserLabel": "Link-Text",
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
-      "testsOrderRandom": "zufällig"
+      "testsOrderRandom": "zufällig",
+      "renderMedia": "Medien wiedergeben",
+      "renderMediaInfo": "Bezieht sich nur auf den Fragen- und Antworttext, nicht auf den Link-Text und Titel"
     }
   },
   {

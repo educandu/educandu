@@ -1,8 +1,8 @@
 import React from 'react';
 import { TESTS_ORDER } from '../constants.js';
 import { useTranslation } from 'react-i18next';
-import { PlusOutlined } from '@ant-design/icons';
-import { Form, Input, Table, Button, Radio } from 'antd';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Form, Input, Table, Button, Radio, Checkbox, Tooltip } from 'antd';
 import DeleteButton from '../../../components/delete-button.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../../utils/array-utils.js';
@@ -13,6 +13,7 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ButtonGroup = Button.Group;
+const TextArea = Input.TextArea;
 
 function QuickTesterEditor({ content, onContentChanged }) {
   const { t } = useTranslation('quickTester');
@@ -73,6 +74,10 @@ function QuickTesterEditor({ content, onContentChanged }) {
     changeContent({ testsOrder: event.target.value });
   };
 
+  const handleRenderMediaChanged = event => {
+    changeContent({ renderMedia: event.target.checked });
+  };
+
   const columns = [
     {
       width: 80,
@@ -96,7 +101,8 @@ function QuickTesterEditor({ content, onContentChanged }) {
       dataIndex: 'question',
       key: 'question',
       render: (question, item, index) => (
-        <Input
+        <TextArea
+          rows={3}
           value={question}
           onChange={event => handleInputQuestionChanged(index, event.target.value)}
           />
@@ -106,7 +112,8 @@ function QuickTesterEditor({ content, onContentChanged }) {
       dataIndex: 'answer',
       key: 'answer',
       render: (answer, item, index) => (
-        <Input
+        <TextArea
+          rows={3}
           value={answer}
           onChange={event => handleInputAnswerChanged(index, event.target.value)}
           />
@@ -128,7 +135,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
   ];
 
   return (
-    <div>
+    <div className="QuickTesterEditor">
       <Form layout="horizontal">
         <FormItem label={`${t('teaserLabel')}:`} {...formItemLayout}>
           <Input value={teaser} onChange={handleTeaserValueChanged} />
@@ -142,6 +149,12 @@ function QuickTesterEditor({ content, onContentChanged }) {
             <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
           </RadioGroup>
         </FormItem>
+        <Form.Item label={t('renderMedia')} {...formItemLayout}>
+          <Checkbox checked={content.renderMedia} onChange={handleRenderMediaChanged} />
+          <Tooltip title={t('renderMediaInfo')}>
+            <InfoCircleOutlined className="QuickTesterEditor-infoIcon" />
+          </Tooltip>
+        </Form.Item>
       </Form>
       <Table dataSource={dataSource} columns={columns} pagination={false} size="small" />
     </div>
