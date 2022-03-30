@@ -5,6 +5,7 @@ import ImagePlugin from './image/renderer.js';
 import IframePlugin from './iframe/renderer.js';
 import AnavisPlugin from './anavis/renderer.js';
 import MarkdownPlugin from './markdown/renderer.js';
+import PdfViewerPlugin from './pdf-viewer/renderer.js';
 import AnnotationPlugin from './annotation/renderer.js';
 import ImageTilePlugin from './image-tiles/renderer.js';
 import DiagramNetPlugin from './diagram-net/renderer.js';
@@ -20,6 +21,7 @@ const renderers = [
   AudioPlugin,
   VideoPlugin,
   ImagePlugin,
+  PdfViewerPlugin,
   IframePlugin,
   AnavisPlugin,
   ImageTilePlugin,

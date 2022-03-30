@@ -1,0 +1,35 @@
+@import (less) 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+
+.PdfViewer {}
+
+.PdfViewer-viewer {
+  margin: 0 auto;
+}
+
+.PdfViewer-caption {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.PdfViewer-pager {
+  text-align: center;
+}
+
+.PdfViewer-pagerItem {
+  display: inline-block;
+  padding: @edu-button-spacing;
+}
+
+.PdfViewerEditor {}
+
+.PdfViewerEditor-internalSourceSelector {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  gap: @edu-button-spacing;
+}
+
+.PdfViewerEditor-infoIcon {
+  color: @edu-secondary-color-dark;
+  margin-left: @edu-button-spacing;
+}

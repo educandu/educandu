@@ -5,6 +5,7 @@ import IframePlugin from './iframe/info.js';
 import AnavisPlugin from './anavis/info.js';
 import { Container } from '../common/di.js';
 import MarkdownPlugin from './markdown/info.js';
+import PdfViewerPlugin from './pdf-viewer/info.js';
 import ImageTilePlugin from './image-tiles/info.js';
 import AnnotationPlugin from './annotation/info.js';
 import DiagramNetPlugin from './diagram-net/info.js';
@@ -20,6 +21,7 @@ const infos = [
   AudioPlugin,
   VideoPlugin,
   ImagePlugin,
+  PdfViewerPlugin,
   IframePlugin,
   AnavisPlugin,
   ImageTilePlugin,

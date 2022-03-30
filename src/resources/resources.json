@@ -1574,6 +1574,50 @@
     }
   },
   {
+    "namespace": "pdfViewer",
+    "language": "en",
+    "resources": {
+      "name": "PDF viewer",
+      "source": "Source",
+      "externalLink": "External link",
+      "internalLink": "Internal link",
+      "internalCdn": "Internal CDN",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "width": "Width",
+      "caption": "Caption",
+      "renderMode": "Render mode",
+      "renderModeInfo": "Determines the way the document is rendered in the web browser.\nIn most cases the text appearance is of higher quality when choosing SVG,\nhowever, in certain documents, some characters cannot be shown correctly.\nIn such cases you should select Canvas.\n",
+      "showTextOverlay": "Show text overlay",
+      "showTextOverlayInfo": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n",
+      "errorRenderingDocument": "The document cannot be displayed",
+      "noDocument": "No document specified",
+      "loadingDocument": "Loading document"
+    }
+  },
+  {
+    "namespace": "pdfViewer",
+    "language": "de",
+    "resources": {
+      "name": "PDF-Anzeige",
+      "source": "Quelle",
+      "externalLink": "Externer Link",
+      "internalLink": "Interner Link",
+      "internalCdn": "Internes CDN",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "width": "Breite",
+      "caption": "Legende",
+      "renderMode": "Darstellungsmodus",
+      "renderModeInfo": "Bestimmt die Darstellung der PDF-Datei im Web-Browser.\nSVG liefert in der Regel ein qualitativ hochwertigeres Schriftbild,\nstellt jedoch in seltenen Fällen bestimmte Sonderzeichen falsch dar.\nIn diesen Fällen sollten Sie Canvas wählen.\n",
+      "showTextOverlay": "Text-Overlay anzeigen",
+      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachten Sie, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n",
+      "errorRenderingDocument": "Das Dokument kann nicht angezeigt werden",
+      "noDocument": "Kein Dokument angegeben",
+      "loadingDocument": "Dokument wird geladen"
+    }
+  },
+  {
     "namespace": "quickTester",
     "language": "en",
     "resources": {

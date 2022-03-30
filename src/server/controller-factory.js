@@ -15,6 +15,7 @@ import DocumentController from './document-controller.js';
 import RevisionController from './revision-controller.js';
 import DashboardController from './dashboard-controller.js';
 import UserAgentController from './user-agent-controller.js';
+import PluginControllers from '../plugins/plugin-controllers.js';
 
 const controllerTypes = [
   StaticController,
@@ -40,6 +41,11 @@ class ControllerFactory {
 
   constructor(container) {
     this.container = container;
+  }
+
+  registerPluginControllers() {
+    const pluginControllers = this.container.get(PluginControllers);
+    controllerTypes.push(...pluginControllers.getPluginControllerTypes());
   }
 
   registerAdditionalControllers(additionalControllers) {
