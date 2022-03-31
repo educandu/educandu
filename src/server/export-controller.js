@@ -48,7 +48,7 @@ class ExportController {
   registerApi(router) {
     router.get(
       '/api/v1/exports',
-      [needsPermission(permissions.MANAGE_EXPORT), validateQuery(getExportsQuerySchema)],
+      [needsPermission(permissions.MANAGE_EXPORT_WITH_BUILT_IN_USER), validateQuery(getExportsQuerySchema)],
       (req, res) => this.handleGetExports(req, res)
     );
 

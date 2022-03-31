@@ -4,6 +4,7 @@ import I18nController from './i18n-controller.js';
 import UserController from './user-controller.js';
 import IndexController from './index-controller.js';
 import ErrorController from './error-controller.js';
+import AdminController from './admin-controller.js';
 import SearchController from './search-controller.js';
 import StaticController from './static-controller.js';
 import ImportController from './import-controller.js';
@@ -33,7 +34,8 @@ const controllerTypes = [
   RoomController,
   DashboardController,
   LessonController,
-  RevisionController
+  RevisionController,
+  AdminController
 ];
 
 class ControllerFactory {

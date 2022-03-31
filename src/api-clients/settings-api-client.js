@@ -1,6 +1,6 @@
 import HttpClient from './http-client.js';
 
-class SettingApiClient {
+class SettingsApiClient {
   static inject() { return [HttpClient]; }
 
   constructor(httpClient) {
@@ -18,4 +18,4 @@ class SettingApiClient {
   }
 }
 
-export default SettingApiClient;
+export default SettingsApiClient;

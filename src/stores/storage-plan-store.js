@@ -7,12 +7,57 @@ class StoragePlanStore {
     this.collection = db.storagePlans;
   }
 
-  getAllStoragePlans() {
-    return this.collection.find().toArray();
+  getAllStoragePlans({ session } = {}) {
+    return this.collection.find({}, { session }).toArray();
+  }
+
+  getAllStoragePlansWithAssignedUserCount({ session } = {}) {
+    return this._getStoragePlansWithAssignedUserCount({}, { session });
   }
 
   getStoragePlanById(id, { session } = {}) {
     return this.collection.findOne({ _id: id }, { session });
+  }
+
+  async getStoragePlanWithAssignedUserCountById(id, { session } = {}) {
+    const allPlans = await this._getStoragePlansWithAssignedUserCount({ _id: id }, { session });
+    return allPlans[0];
+  }
+
+  async saveStoragePlan(storagePlan, { session } = {}) {
+    await this.collection.replaceOne({ _id: storagePlan._id }, storagePlan, { session, upsert: true });
+  }
+
+  async deleteStoragePlanById(storagePlanId, { session } = {}) {
+    await this.collection.deleteOne({ _id: storagePlanId }, { session });
+  }
+
+  _getStoragePlansWithAssignedUserCount(matchFilter, { session } = {}) {
+    const pipeline = [
+      {
+        $match: matchFilter
+      }, {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: 'storage.plan',
+          as: '_tmpAssignedUserCountObject_',
+          pipeline: [
+            {
+              $count: 'count'
+            }
+          ]
+        }
+      }, {
+        $set: {
+          assignedUserCount: { $sum: '$_tmpAssignedUserCountObject_.count' }
+        }
+      }, {
+        $unset: '_tmpAssignedUserCountObject_'
+      }
+    ];
+
+    return this.collection.aggregate(pipeline, { session }).toArray();
   }
 }
 

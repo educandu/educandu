@@ -196,6 +196,53 @@ export function confirmDocumentRevisionRestoration(
   dialog = confirm(createDialogProps());
 }
 
+export function confirmStoragePlanDeletion(
+  t,
+  storagePlan,
+  onOk,
+  onCancel = () => {}
+) {
+  let dialog = null;
+  let isDeleting = false;
+  let createDialogProps = null;
+
+  const handleOkClick = () => {
+    isDeleting = true;
+    dialog.update(createDialogProps());
+
+    onOk()
+      .then(() => {
+        isDeleting = false;
+        dialog.update(createDialogProps());
+        dialog.destroy();
+        dialog = null;
+      })
+      .catch(() => {
+        isDeleting = false;
+        dialog.update(createDialogProps());
+      });
+
+    return true;
+  };
+
+  createDialogProps = () => ({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteStoragePlanConfirmation', {
+      storagePlanName: storagePlan.name
+    }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk: handleOkClick,
+    onCancel,
+    okButtonProps: {
+      loading: isDeleting
+    }
+  });
+
+  dialog = confirm(createDialogProps());
+}
+
 export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
   const formRef = createRef();
 

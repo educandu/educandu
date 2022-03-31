@@ -65,6 +65,11 @@ class UserStore {
     const filter = { type: favoriteType, id: favoriteId };
     return this.collection.updateOne({ _id: userId }, { $pull: { favorites: filter } }, { session });
   }
+
+  async checkUsersWithStoragePlanExistByStoragePlanId(storagePlanId, { session } = {}) {
+    const matchingUser = await this.collection.findOne({ 'storage.plan': storagePlanId }, { session });
+    return !!matchingUser;
+  }
 }
 
 export default UserStore;
