@@ -1,0 +1,16 @@
+[
+  {
+    "namespace": "testApp",
+    "language": "en",
+    "resources": {
+      "homePage.subtitle": "Open educational music resources for everyone!"
+    }
+  },
+  {
+    "namespace": "testApp",
+    "language": "de",
+    "resources": {
+      "homePage.subtitle": "Open Educational Resources zur Musik für alle!"
+    }
+  }
+]
