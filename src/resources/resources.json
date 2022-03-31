@@ -105,14 +105,16 @@
     "namespace": "storagePlansTab",
     "language": "en",
     "resources": {
-      "assignedUserCount": "User accounts"
+      "assignedUserCount": "User accounts",
+      "sortedByAssignedUserCount": "Sorted by user accounts"
     }
   },
   {
     "namespace": "storagePlansTab",
     "language": "de",
     "resources": {
-      "assignedUserCount": "Benutzerkonten"
+      "assignedUserCount": "Benutzerkonten",
+      "sortedByAssignedUserCount": "Nach Benutzerkonten sortiert"
     }
   },
   {
@@ -1193,7 +1195,9 @@
     "resources": {
       "newStoragePlan": "New storage plan",
       "editStoragePlan": "Edit storage plan",
-      "storagePlanNameIsInUse": "This name is already in use"
+      "storagePlanNameIsInUse": "This name is already in use",
+      "nameRequired": "Please specify a name",
+      "numberTooSmallOrTooBig": "The value is beyond the permissible range"
     }
   },
   {
@@ -1202,7 +1206,9 @@
     "resources": {
       "newStoragePlan": "Neuer Speicherplan",
       "editStoragePlan": "Speicherplan bearbeiten",
-      "storagePlanNameIsInUse": "Dieser Name ist bereits in Benutzung"
+      "storagePlanNameIsInUse": "Dieser Name ist bereits in Benutzung",
+      "nameRequired": "Bitte geben Sie einen Namen an",
+      "numberTooSmallOrTooBig": "Der Wert liegt außerhalb des zulässigen Bereichs"
     }
   },
   {
@@ -1813,6 +1819,8 @@
       "storage": "Storage",
       "actions": "Actions",
       "sortedByRelevance": "Sorted by relevance",
+      "sortedByName": "Sorted by name",
+      "sortedByCapacity": "Sorted by capacity",
       "sortedByTitle": "Sorted by title",
       "sortedByLanguage": "Sorted by language",
       "sortedByCreatedOn": "Sorted by creation date",
@@ -1902,6 +1910,8 @@
       "storage": "Speicher",
       "actions": "Aktionen",
       "sortedByRelevance": "Nach Relevanz sortiert",
+      "sortedByName": "Nach Name sortiert",
+      "sortedByCapacity": "Nach Kapazität sortiert",
       "sortedByTitle": "Nach Titel sortiert",
       "sortedByLanguage": "Nach Sprache sortiert",
       "sortedByCreatedOn": "Nach Erstellungsdatum sortiert",

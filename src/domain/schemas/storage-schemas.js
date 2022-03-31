@@ -24,7 +24,7 @@ export const getStoragePlansQuerySchema = joi.object({
 
 export const postStoragePlanBodySchema = joi.object({
   name: joi.string().required(),
-  maxBytes: joi.number().min(0).required()
+  maxBytes: joi.number().min(0).max(Number.MAX_SAFE_INTEGER).required()
 });
 
 export const patchStoragePlanParamsSchema = joi.object({
@@ -33,7 +33,7 @@ export const patchStoragePlanParamsSchema = joi.object({
 
 export const patchStoragePlanBodySchema = joi.object({
   name: joi.string().required(),
-  maxBytes: joi.number().min(0).required()
+  maxBytes: joi.number().min(0).max(Number.MAX_SAFE_INTEGER).required()
 });
 
 export const deleteStoragePlanParamsSchema = joi.object({

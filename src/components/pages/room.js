@@ -150,7 +150,7 @@ export default function Room({ PageTemplate, initialState }) {
   const renderRoomMembers = () => {
     const title = isRoomOwner && t('roomMembersHeader', { count: room.members.length });
     return (
-      <Card className="Card" title={title}>
+      <Card className="Room-card" title={title}>
         <List
           dataSource={room.members}
           renderItem={member => (
@@ -167,7 +167,7 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderRoomInvitations = () => (
     <Card
-      className="Card"
+      className="Room-card"
       title={t('invitationsHeader', { count: invitations.length })}
       actions={[
         <Button
@@ -201,7 +201,7 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderRoomLessonsCard = () => (
     <Card
-      className="Card"
+      className="Room-card"
       actions={isRoomOwner && [
         <Button
           className="Room-cardButton"
@@ -255,7 +255,7 @@ export default function Room({ PageTemplate, initialState }) {
             )}
 
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
-              <Card className="Card" title={t('updateRoomCardTitle')}>
+              <Card className="Room-card" title={t('updateRoomCardTitle')}>
                 <RoomMetadataForm
                   formRef={formRef}
                   room={room}
@@ -272,7 +272,7 @@ export default function Room({ PageTemplate, initialState }) {
                   {t('common:update')}
                 </Button>
               </Card>
-              <Card className="Card Card--danger" title={t('roomDangerZoneCardTitle')}>
+              <Card className="Room-card Room-card--danger" title={t('roomDangerZoneCardTitle')}>
                 <div className="Room-cardDangerAction">
                   <div>
                     <span className="Room-cardDangerActionTitle">{t('deleteRoomTitle')}</span>

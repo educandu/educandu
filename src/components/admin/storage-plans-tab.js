@@ -1,22 +1,21 @@
-import { Button, Card } from 'antd';
+import by from 'thenby';
+import { Button } from 'antd';
+import Table from '../table.js';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
-import React, { useState } from 'react';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
-import EditIcon from '../icons/general/edit-icon.js';
+import SortingSelector from '../sorting-selector.js';
 import StoragePlanModal from '../storage-plan-modal.js';
-import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 import { confirmStoragePlanDeletion } from '../confirmation-dialogs.js';
 import { storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
-
-const { Meta } = Card;
 
 const logger = new Logger(import.meta.url);
 
@@ -28,6 +27,8 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
   const [editedStoragePlan, setEditedStoragePlan] = useState(null);
   const [storagePlanNamesInUse, setStoragePlanNamesInUse] = useState([]);
   const [isStoragePlanModalVisible, setIsStoragePlanModalVisible] = useState(false);
+  const [sorting, setSorting] = useState({ value: 'name', direction: 'asc' });
+  const [displayedStoragePlans, setDisplayedStoragePlans] = useState([]);
 
   const handleEditClick = storagePlan => {
     const { _id, name, maxBytes } = storagePlan;
@@ -88,45 +89,85 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
     setIsStoragePlanModalVisible(false);
   };
 
-  const renderStoragePlanActions = storagePlan => {
-    const actions = [<a key="edit" onClick={() => handleEditClick(storagePlan)}><EditIcon /></a>];
-    if (!storagePlan.assignedUserCount) {
-      actions.push(<a key="delete" onClick={() => handleDeleteClick(storagePlan)}><DeleteIcon /></a>);
-    }
+  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
-    return actions;
+  const renderMaxBytes = maxBytes => prettyBytes(maxBytes, { locale: uiLocale });
+
+  const renderActions = (_actions, storagePlan) => {
+    return (
+      <Fragment>
+        <span><a onClick={() => handleEditClick(storagePlan)}>{t('common:edit')}</a></span>
+        {!storagePlan.assignedUserCount && (
+          <Fragment>
+            &nbsp;&nbsp;&nbsp;
+            <span><a onClick={() => handleDeleteClick(storagePlan)}>{t('common:delete')}</a></span>
+          </Fragment>
+        )}
+      </Fragment>
+    );
   };
+
+  const sortingOptions = [
+    { label: t('common:name'), appliedLabel: t('common:sortedByName'), value: 'name' },
+    { label: t('common:capacity'), appliedLabel: t('common:sortedByCapacity'), value: 'capacity' },
+    { label: t('assignedUserCount'), appliedLabel: t('sortedByAssignedUserCount'), value: 'assignedUserCount' }
+  ];
+
+  const sorters = useMemo(() => ({
+    name: documentsToSort => documentsToSort.sort(by(doc => doc.name, { direction: sorting.direction, ignoreCase: true })),
+    capacity: documentsToSort => documentsToSort.sort(by(doc => doc.maxBytes, sorting.direction)),
+    assignedUserCount: documentsToSort => documentsToSort.sort(by(doc => doc.assignedUserCount, sorting.direction))
+  }), [sorting.direction]);
+
+  useEffect(() => {
+    const newPlans = [...storagePlans];
+    const sorter = sorters[sorting.value];
+    const sortedPlans = sorter ? sorter(newPlans) : newPlans;
+    setDisplayedStoragePlans(sortedPlans);
+  }, [storagePlans, sorting, sorters]);
+
+  const columns = [
+    {
+      title: t('common:name'),
+      dataIndex: 'name',
+      key: 'name'
+    },
+    {
+      title: t('common:capacity'),
+      dataIndex: 'maxBytes',
+      key: 'maxBytes',
+      render: renderMaxBytes
+    },
+    {
+      title: t('assignedUserCount'),
+      dataIndex: 'assignedUserCount',
+      key: 'assignedUserCount'
+    },
+    {
+      title: t('common:actions'),
+      dataIndex: 'actions',
+      key: 'actions',
+      render: renderActions
+    }
+  ];
 
   return (
     <div className="StoragePlansTab">
-      <div className="StoragePlansTab-cards">
-        {storagePlans.map(storagePlan => (
-          <Card
-            key={storagePlan._id}
-            className="StoragePlansTab-card"
-            actions={renderStoragePlanActions(storagePlan)}
-            >
-            <Meta
-              title={storagePlan.name}
-              description={(
-                <div>
-                  <div>{t('common:capacity')}: {prettyBytes(storagePlan.maxBytes, { locale: uiLocale })}</div>
-                  <div>{t('assignedUserCount')}: {storagePlan.assignedUserCount}</div>
-                </div>
-              )}
-              />
-          </Card>
-        ))}
-      </div>
-      <div className="StoragePlansTab-newStoragePlan">
-        <Button
-          type="primary"
-          shape="circle"
-          size="large"
-          icon={<PlusOutlined />}
-          onClick={handleNewStoragePlanClick}
-          />
-      </div>
+      <SortingSelector
+        size="large"
+        sorting={sorting}
+        options={sortingOptions}
+        onChange={handleSortingChange}
+        />
+      <Table dataSource={[...displayedStoragePlans]} rowKey="_id" columns={columns} pagination />
+      <Button
+        className="StoragePlansTab-newStoragePlanButton"
+        type="primary"
+        shape="circle"
+        size="large"
+        icon={<PlusOutlined />}
+        onClick={handleNewStoragePlanClick}
+        />
       <StoragePlanModal
         isVisible={isStoragePlanModalVisible}
         storagePlan={editedStoragePlan}

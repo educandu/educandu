@@ -30,8 +30,9 @@ function StoragePlanModal({ isVisible, storagePlan, storagePlanNamesInUse, onOk,
   const maxBytesValidationRules = [
     {
       min: 0,
+      max: Number.MAX_SAFE_INTEGER,
       type: 'number',
-      message: t('maxBytesZeroOrPositive')
+      message: t('numberTooSmallOrTooBig')
     }
   ];
 

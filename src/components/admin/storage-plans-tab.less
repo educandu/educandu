@@ -1,20 +1,5 @@
-@storage-plans-card-width: 278px;
-
 .StoragePlansTab {}
 
-.StoragePlansTab-cards {
-  display: grid;
-  gap: @edu-content-padding;
-  grid-template-columns: repeat(auto-fill, @storage-plans-card-width);
-}
-
-.StoragePlansTab-card {
-  // Antd sets background color to white here, so the actions destroy the border of the card
-  .ant-card-actions {
-    border-radius: 0 0 @edu-border-radius-base @edu-border-radius-base;
-  }
-}
-
-.StoragePlansTab-newStoragePlan {
+.StoragePlansTab-newStoragePlanButton {
   margin-top: 30px;
 }
