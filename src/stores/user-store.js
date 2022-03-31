@@ -11,8 +11,25 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
-  findUserByUsername({ provider, username }, { session } = {}) {
-    return this.collection.findOne({ username, provider }, { session });
+  async findUserByLogin({ provider, emailOrUsername }, { session } = {}) {
+    const matches = await this.collection.find({
+      $and: [
+        { provider },
+        { $or: [{ username: emailOrUsername }, { email: emailOrUsername }] }
+      ]
+    }, {
+      session
+    }).toArray();
+
+    switch (matches.length) {
+      case 0:
+        return null;
+      case 1:
+        return matches[0];
+      default:
+        // Always prefer matching emails over usernames:
+        return matches.find(match => match.email === emailOrUsername);
+    }
   }
 
   findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {

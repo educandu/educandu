@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import { Form, Input } from 'antd';
 import React, { useState } from 'react';
 import Logger from '../common/logger.js';
-import { Form, Input, Button } from 'antd';
 import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
@@ -11,32 +10,13 @@ import UserApiClient from '../api-clients/user-api-client.js';
 
 const logger = new Logger(import.meta.url);
 
-const formItemLayouts = {
-  horizontal: {
-    default: {
-      labelCol: { xs: { span: 24 }, sm: { span: 8 } },
-      wrapperCol: { xs: { span: 24 }, sm: { span: 16 } }
-    },
-    tail: {
-      wrapperCol: { xs: { span: 24, offset: 0 }, sm: { span: 16, offset: 8 } }
-    }
-  },
-  vertical: {
-    default: null,
-    tail: null
-  }
-};
-
 export default function LoginForm({
   name,
-  fixedUsername,
+  fixedEmailOrUsername,
   onLoginStarted,
   onLoginSucceeded,
   onLoginFailed,
-  hidePasswordRecoveryLink,
-  hideLoginButton,
-  formRef,
-  layout
+  formRef
 }) {
   const [form] = Form.useForm();
   const setUser = useSetUser();
@@ -56,10 +36,10 @@ export default function LoginForm({
     setLoginError(null);
   };
 
-  const login = async ({ username, password }) => {
+  const login = async ({ emailOrUsername, password }) => {
     try {
       onLoginStarted();
-      const { user } = await userApiClient.login({ username, password });
+      const { user } = await userApiClient.login({ emailOrUsername, password });
       if (user) {
         setUser(user);
         onLoginSucceeded();
@@ -75,18 +55,18 @@ export default function LoginForm({
 
   const handleFinish = values => {
     clearLoginError();
-    const { username, password } = values;
-    login({ username, password });
+    const { emailOrUsername, password } = values;
+    login({ emailOrUsername, password });
   };
 
   const handlePressEnter = () => {
     form.submit();
   };
 
-  const usernameValidationRules = [
+  const emailOrUsernameValidationRules = [
     {
       required: true,
-      message: t('enterUsername'),
+      message: t('enterEmailOrUsername'),
       whitespace: true
     }
   ];
@@ -100,62 +80,39 @@ export default function LoginForm({
 
   return (
     <Form
-      layout={layout}
       form={form}
       name={name}
+      layout="vertical"
       className="LoginForm"
       onFinish={handleFinish}
       scrollToFirstError
       >
       <Form.Item
-        {...formItemLayouts[layout].default}
-        label={t('common:username')}
-        name="username"
-        rules={fixedUsername ? [] : usernameValidationRules}
-        initialValue={fixedUsername || ''}
-        hidden={!!fixedUsername}
+        label={t('emailOrUsername')}
+        name="emailOrUsername"
+        rules={fixedEmailOrUsername ? [] : emailOrUsernameValidationRules}
+        initialValue={fixedEmailOrUsername || ''}
+        hidden={!!fixedEmailOrUsername}
         >
         <Input onPressEnter={handlePressEnter} />
       </Form.Item>
       <Form.Item
-        {...formItemLayouts[layout].default}
         label={t('common:password')}
         name="password"
         rules={passwordValidationRules}
         >
         <Input type="password" onPressEnter={handlePressEnter} />
       </Form.Item>
-      <Form.Item
-        {...formItemLayouts[layout].tail}
-        >
-        {loginError ? <div className="LoginForm-errorMessage">{loginError}</div> : null}
-      </Form.Item>
-      {!hidePasswordRecoveryLink && (
-        <Form.Item
-          {...formItemLayouts[layout].tail}
-          >
-          <a href={urls.getResetPasswordUrl()}>{t('forgotPassword')}</a>
-        </Form.Item>
-      )}
-      {!hideLoginButton && (
-        <Form.Item
-          {...formItemLayouts[layout].tail}
-          >
-          <Button type="primary" htmlType="submit">{t('common:logon')}</Button>
-        </Form.Item>
-      )}
+      {!!loginError && <div className="LoginForm-errorMessage">{loginError}</div>}
     </Form>
   );
 }
 
 LoginForm.propTypes = {
-  fixedUsername: PropTypes.string,
+  fixedEmailOrUsername: PropTypes.string,
   formRef: PropTypes.shape({
     current: PropTypes.object
   }),
-  hideLoginButton: PropTypes.bool,
-  hidePasswordRecoveryLink: PropTypes.bool,
-  layout: PropTypes.oneOf(['horizontal', 'vertical']),
   name: PropTypes.string,
   onLoginFailed: PropTypes.func,
   onLoginStarted: PropTypes.func,
@@ -163,11 +120,8 @@ LoginForm.propTypes = {
 };
 
 LoginForm.defaultProps = {
-  fixedUsername: null,
+  fixedEmailOrUsername: null,
   formRef: null,
-  hideLoginButton: false,
-  hidePasswordRecoveryLink: false,
-  layout: 'horizontal',
   name: 'login-form',
   onLoginFailed: () => {},
   onLoginStarted: () => {},

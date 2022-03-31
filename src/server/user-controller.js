@@ -34,7 +34,8 @@ import {
   postUserLockedOutBodySchema,
   postUserStoragePlanBodySchema,
   userIdParamsSchema,
-  favoriteBodySchema
+  favoriteBodySchema,
+  loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
 const { NotFound } = httpErrors;
@@ -304,8 +305,11 @@ class UserController {
         : cb(null, false);
     }));
 
-    passport.use('local', new LocalStrategy((username, password, cb) => {
-      this.userService.authenticateUser(username, password)
+    passport.use('local', new LocalStrategy({
+      usernameField: 'emailOrUsername',
+      passwordField: 'password'
+    }, (emailOrUsername, password, cb) => {
+      this.userService.authenticateUser(emailOrUsername, password)
         .then(user => cb(null, user || false))
         .catch(err => cb(err));
     }));
@@ -394,6 +398,7 @@ class UserController {
     router.post(
       '/api/v1/users/login',
       jsonParser,
+      validateBody(loginBodySchema),
       (req, res, next) => this.handlePostUserLogin(req, res, next)
     );
 

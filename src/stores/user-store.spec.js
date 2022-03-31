@@ -25,28 +25,37 @@ describe('user-store', () => {
     await destroyTestEnvironment(container);
   });
 
-  describe('findUserByUsername', () => {
+  describe('findUserByLogin', () => {
     describe('when provider doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.findUserByUsername({ provider: 'unknown', username: user.username });
+        result = await sut.findUserByLogin({ provider: 'unknown', emailOrUsername: user.username });
       });
       it('should return null', () => {
         expect(result).toEqual(null);
       });
     });
 
-    describe('when username doesn\'t match', () => {
+    describe('when emailOrUsername doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.findUserByUsername({ provider: user.provider, username: 'unknown' });
+        result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: 'unknown' });
       });
       it('should return null', () => {
         expect(result).toEqual(null);
       });
     });
 
-    describe('when provider and username match', () => {
+    describe('when provider matches and emailOrUsername matches the email', () => {
       beforeEach(async () => {
-        result = await sut.findUserByUsername({ provider: user.provider, username: user.username });
+        result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: user.email });
+      });
+      it('should return the user', () => {
+        expect(result).toEqual(user);
+      });
+    });
+
+    describe('when provider matches and emailOrUsername matches the username', () => {
+      beforeEach(async () => {
+        result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: user.username });
       });
       it('should return the user', () => {
         expect(result).toEqual(user);

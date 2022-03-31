@@ -46,11 +46,11 @@ class UserApiClient {
       .then(res => res.data);
   }
 
-  login({ username, password }) {
+  login({ emailOrUsername, password }) {
     return this.httpClient
       .post(
         '/api/v1/users/login',
-        { username, password },
+        { emailOrUsername, password },
         { responseType: 'json' }
       )
       .then(res => res.data);

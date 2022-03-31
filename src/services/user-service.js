@@ -228,8 +228,8 @@ class UserService {
     return user;
   }
 
-  async authenticateUser(username, password, provider = DEFAULT_PROVIDER_NAME) {
-    const user = await this.userStore.findUserByUsername({ username, provider });
+  async authenticateUser(emailOrUsername, password, provider = DEFAULT_PROVIDER_NAME) {
+    const user = await this.userStore.findUserByLogin({ emailOrUsername, provider });
     if (!user || user.expires || user.lockedOut) {
       return false;
     }

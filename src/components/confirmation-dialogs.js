@@ -233,13 +233,10 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
         <p>{t('confirmationDialogs:sessionExpiredDescription')}</p>
         <LoginForm
           formRef={formRef}
-          layout="vertical"
           name="session-expired-login-form"
           onLoginFailed={handleLoginFailed}
           onLoginStarted={handleLoginStarted}
           onLoginSucceeded={handleLoginSucceeded}
-          hidePasswordRecoveryLink
-          hideLoginButton
           />
       </div>
     );
@@ -296,14 +293,11 @@ export function confirmWithPassword(modal, t, username, onOk, onCancel = () => {
       <p>{t('confirmationDialogs:confirmWithPasswordDescription')}</p>
       <LoginForm
         formRef={formRef}
-        layout="vertical"
-        fixedUsername={username}
+        fixedEmailOrUsername={username}
         name="session-expired-login-form"
         onLoginFailed={handleLoginFailed}
         onLoginStarted={handleLoginStarted}
         onLoginSucceeded={handleLoginSucceeded}
-        hidePasswordRecoveryLink
-        hideLoginButton
         />
     </div>
   );
