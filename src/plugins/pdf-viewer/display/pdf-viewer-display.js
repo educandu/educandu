@@ -1,8 +1,8 @@
 import { Empty, Result, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
-import React, { useRef, useState } from 'react';
 import { pdfjs, Document, Page } from 'react-pdf';
 import Markdown from '../../../components/markdown.js';
+import React, { useMemo, useRef, useState } from 'react';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
 import { pluginControllerApiPath, SOURCE_TYPE } from '../constants.js';
@@ -21,6 +21,21 @@ function PdfViewerDisplay({ content }) {
   const [viewerStyle, setViewerStyle] = useState({});
 
   const { sourceType, sourceUrl, renderMode, showTextOverlay, width, caption } = content;
+
+  const fileObject = useMemo(() => {
+    if (!sourceUrl) {
+      return null;
+    }
+
+    switch (sourceType) {
+      case SOURCE_TYPE.internal:
+        return { url: `${clientConfig.cdnRootUrl}/${sourceUrl}`, withCredentials: true };
+      case SOURCE_TYPE.external:
+        return { url: sourceUrl };
+      default:
+        throw new Error(`Invalid source type '${sourceType}'`);
+    }
+  }, [sourceType, sourceUrl, clientConfig.cdnRootUrl]);
 
   const onDocumentLoadSuccess = loadedPdfDocument => {
     setPdf(loadedPdfDocument);
@@ -54,18 +69,6 @@ function PdfViewerDisplay({ content }) {
     setTimeout(() => setViewerStyle({}), 0);
   };
 
-  let url;
-  switch (sourceType) {
-    case SOURCE_TYPE.internal:
-      url = sourceUrl ? `${clientConfig.cdnRootUrl}/${sourceUrl}` : null;
-      break;
-    case SOURCE_TYPE.external:
-      url = sourceUrl || null;
-      break;
-    default:
-      throw new Error(`Invalid source type '${sourceType}'`);
-  }
-
   const renderLoadingComponent = () => (
     <Empty description={t('loadingDocument')} image={<Spin size="large" />} />
   );
@@ -92,7 +95,7 @@ function PdfViewerDisplay({ content }) {
                 cMapUrl: `${pluginControllerApiPath}/pdfjs-dist/cmaps`,
                 cMapPacked: true
               }}
-              file={url}
+              file={fileObject}
               renderMode={renderMode}
               loading={renderLoadingComponent}
               noData={renderNoDataComponent}
