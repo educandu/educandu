@@ -1,32 +1,34 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import DeleteIcon from './icons/general/delete-icon.js';
-import React, { useCallback, useEffect, useState } from 'react';
 import { FlagOutlined } from '@ant-design/icons';
+import DeleteIcon from './icons/general/delete-icon.js';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-const MIN_PART_LENGTH_IN_MS = 1000;
+const MIN_PART_WIDTH_IN_PX = 35;
+const MIN_PART_DURATION_IN_MS = 1000;
 
 function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChange }) {
+  const timelineRef = useRef(null);
+  const [markers, setMarkers] = useState([]);
+  const [segments, setSegments] = useState([]);
   const [dragState, setDragState] = useState(null);
+  const [msToPxRatio, setMsToPxRatio] = useState(0);
+  const [timelineBounds, setTimelineBounds] = useState({});
+
   const handlePartDelete = key => () => onPartDelete(key);
 
-  const handleMouseDown = (part, index) => () => {
-    setDragState(part);
-    const previousPart = parts[index - 1];
-    const nextPart = parts[index + 1];
+  const handleMouseDown = (marker, index) => () => {
+    const prevMarker = markers[index - 1];
+    const nextMarker = markers[index + 1];
 
-    const elementBounds = document.getElementById(part.key).getBoundingClientRect();
-    const previousElementBounds = document.getElementById(previousPart.key).getBoundingClientRect();
-    const maxBoundsInMs = { left: previousPart.startTimecode, right: nextPart?.startTimecode || length };
-    const maxBoundsInPx = { left: previousElementBounds.left, right: elementBounds.right };
+    const minPartLength = MIN_PART_DURATION_IN_MS * msToPxRatio;
+    const bounds = {
+      left: (prevMarker?.left || 0) + minPartLength,
+      right: (nextMarker?.left || timelineBounds.width) - minPartLength
+    };
 
-    const msToPxRatio = maxBoundsInPx.right / maxBoundsInMs.right;
-    const minPartLengthInPx = MIN_PART_LENGTH_IN_MS * msToPxRatio;
-
-    const boundsInPx = { left: maxBoundsInPx.left + minPartLengthInPx, right: maxBoundsInPx.right - minPartLengthInPx };
-
-    setDragState({ part, boundsInPx, msToPxRatio });
+    setDragState({ marker, bounds });
   };
 
   const handleMouseUp = useCallback(() => {
@@ -34,15 +36,31 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   }, []);
 
   const handleMouseMove = useCallback(event => {
-    if (dragState.boundsInPx.left <= event.clientX && event.clientX <= dragState.boundsInPx.right) {
-      const newStartTimecode = event.clientX / dragState.msToPxRatio;
-      onStartTimecodeChange(dragState.part.key, newStartTimecode);
+    // Disable text selection
+    event.preventDefault();
+
+    const currentLeft = event.clientX - timelineBounds.left;
+    const marker = markers.find(m => m.key === dragState.marker.key);
+
+    if (dragState.bounds.left > currentLeft && dragState.bounds.left !== marker.left) {
+      marker.left = dragState.bounds.left;
     }
-  }, [dragState, onStartTimecodeChange]);
+    if (dragState.bounds.left <= currentLeft && currentLeft <= dragState.bounds.right) {
+      marker.left = currentLeft;
+    }
+    if (currentLeft > dragState.bounds.right && dragState.bounds.left !== marker.left) {
+      marker.left = dragState.bounds.right;
+    }
+
+    setDragState(prev => ({ ...prev, marker }));
+
+    const newStartTimecode = dragState.marker.left / msToPxRatio;
+    onStartTimecodeChange(dragState.marker.key, newStartTimecode);
+  }, [dragState, markers, timelineBounds, msToPxRatio, onStartTimecodeChange]);
 
   useEffect(() => {
     if (!dragState) {
-      return () => {};
+      return () => { };
     }
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
@@ -51,33 +69,79 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     };
   }, [dragState, handleMouseMove, handleMouseUp]);
 
-  const renderPart = (part, index) => {
-    const nextPart = parts[index + 1];
-    const stopTimecode = nextPart ? nextPart.startTimecode : length;
-    const width = ((stopTimecode - part.startTimecode) * 100) / length;
+  useEffect(() => {
+    if (!timelineRef.current) {
+      return;
+    }
 
+    const newRatio = timelineRef.current.clientWidth / length;
+    const newTimelineBounds = timelineRef.current.getBoundingClientRect();
+    const newMarkers = parts.slice(1).map(part => ({ key: part.key, left: part.startTimecode * newRatio }));
+
+    const newSegments = parts.map((part, index) => {
+      const segment = { key: part.key, title: part.title };
+
+      if (parts.length === 1) {
+        segment.width = newTimelineBounds.width;
+        return segment;
+      }
+      if (index === 0) {
+        segment.width = newMarkers[index].left;
+        return segment;
+      }
+      if (index === parts.length - 1) {
+        segment.width = newTimelineBounds.width - newMarkers[index - 1].left;
+        return segment;
+      }
+      segment.width = newMarkers[index].left - newMarkers[index - 1].left;
+      return segment;
+    });
+
+    setMarkers(newMarkers);
+    setMsToPxRatio(newRatio);
+    setSegments(newSegments);
+    setTimelineBounds(newTimelineBounds);
+  }, [timelineRef, parts, length]);
+
+  const renderMarker = (marker, index) => {
     return (
-      <div key={part.key} id={part.key} className="Timeline-part" style={{ width: `${width}%` }}>
-        <div className="Timeline-partFlagsBar">
-          {index > 0 && <div className="Timeline-partStartFlag" onMouseDown={handleMouseDown(part, index)}><FlagOutlined /></div>}
-        </div>
-        <div className="Timeline-partTrackBar">{part.title}</div>
-        <div className="Timeline-partDeleteBar">
-          <Button
-            className="Timeline-partDeleteBarButton"
-            type="link"
-            icon={<DeleteIcon />}
-            onClick={handlePartDelete(part.key)}
-            disabled={parts.length === 1}
-            />
+      <div key={marker.key} id={marker.key} className="Timeline-marker" style={{ left: `${marker.left}px` }}>
+        <div className="Timeline-partFlagsBar" onMouseDown={handleMouseDown(marker, index)}>
+          <FlagOutlined />
         </div>
       </div>
     );
   };
 
+  const renderSegment = segment => (
+    <div key={segment.key} className="Timeline-segment" style={{ width: `${segment.width}px` }}>{segment.title}</div>
+  );
+
+  const renderDeleteSegment = segment => {
+    return segment.width >= MIN_PART_WIDTH_IN_PX && (
+      <div key={segment.key} className="Timeline-deleteSegment" style={{ width: `${segment.width}px` }}>
+        <Button
+          className="Timeline-deleteButton"
+          type="link"
+          icon={<DeleteIcon />}
+          onClick={handlePartDelete(segment.key)}
+          disabled={segments.length === 1}
+          />
+      </div>
+    );
+  };
+
   return (
-    <div className={classNames('Timeline', { 'is-dragging': !!dragState })}>
-      {parts.map(renderPart)}
+    <div className={classNames('Timeline', { 'is-dragging': !!dragState })} ref={timelineRef}>
+      <div className={classNames('Timeline-markersBar')}>
+        {markers.map(renderMarker)}
+      </div>
+      <div className={classNames('Timeline-segmentsBar')}>
+        {segments.map(renderSegment)}
+      </div>
+      <div className={classNames('Timeline-deletionBar')}>
+        {segments.map(renderDeleteSegment)}
+      </div>
     </div>
   );
 }
@@ -95,9 +159,9 @@ Timeline.propTypes = {
 };
 
 Timeline.defaultProps = {
-  onPartAdd: () => {},
-  onPartDelete: () => {},
-  onStartTimecodeChange: () => {}
+  onPartAdd: () => { },
+  onPartDelete: () => { },
+  onStartTimecodeChange: () => { }
 };
 
 export default Timeline;
