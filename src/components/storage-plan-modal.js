@@ -58,7 +58,7 @@ function StoragePlanModal({ isVisible, storagePlan, storagePlanNamesInUse, onOk,
   const initialValues = {
     _id: storagePlan?._id || '',
     name: storagePlan?.name || t('newStoragePlan'),
-    maxBytes: storagePlan?.maxBytes || 100 * 1000 * 1000
+    maxBytes: storagePlan?.maxBytes ?? 100 * 1000 * 1000
   };
 
   return (

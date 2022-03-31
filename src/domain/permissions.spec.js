@@ -2,7 +2,7 @@ import { ROLE } from './constants.js';
 import { exportUser } from './built-in-users.js';
 import permissions, { hasUserPermission } from './permissions.js';
 
-const isTechnicalPermission = permission => permission === permissions.MANAGE_EXPORT;
+const isTechnicalPermission = permission => permission === permissions.MANAGE_EXPORT_WITH_BUILT_IN_USER;
 
 describe('permissions', () => {
 

@@ -7,3 +7,6 @@ editStoragePlan:
 storagePlanNameIsInUse:
   en: This name is already in use
   de: Dieser Name ist bereits in Benutzung
+nameRequired:
+  en: Please specify a name
+  de: Bitte geben Sie einen Namen an

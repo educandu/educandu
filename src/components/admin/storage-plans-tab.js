@@ -89,25 +89,9 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
   };
 
   const renderStoragePlanActions = storagePlan => {
-    const actions = [
-      <a
-        key="edit"
-        onClick={() => handleEditClick(storagePlan)}
-        >
-        <EditIcon />
-      </a>
-    ];
-
+    const actions = [<a key="edit" onClick={() => handleEditClick(storagePlan)}><EditIcon /></a>];
     if (!storagePlan.assignedUserCount) {
-      actions.push((
-        <a
-          key="delete"
-          onClick={() => handleDeleteClick(storagePlan)}
-          disabled={!!storagePlan.assignedUserCount}
-          >
-          <DeleteIcon />
-        </a>
-      ));
+      actions.push(<a key="delete" onClick={() => handleDeleteClick(storagePlan)}><DeleteIcon /></a>);
     }
 
     return actions;

@@ -14,7 +14,7 @@ const MIGRATE_DATA = 'migrate-data';
 const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
 const MANAGE_ARCHIVED_DOCS = 'manage-archived-docs';
 const MANAGE_IMPORT = 'manage-import';
-const MANAGE_EXPORT = 'manage-export';
+const MANAGE_EXPORT_WITH_BUILT_IN_USER = 'manage-export-with-built-in-user';
 const MANAGE_SETTINGS = 'manage-settings';
 const MANAGE_STORAGE_PLANS = 'manage-storage-plans';
 const OWN_ROOMS = 'own-rooms';
@@ -39,7 +39,7 @@ const rolesForPermission = {
   [RESTORE_DOC_REVISIONS]: [ROLE.admin],
   [MANAGE_ARCHIVED_DOCS]: [ROLE.admin],
   [MANAGE_IMPORT]: [ROLE.admin],
-  [MANAGE_EXPORT]: [], // This permission is restricted to a built-in user exclusively
+  [MANAGE_EXPORT_WITH_BUILT_IN_USER]: [],
   [MANAGE_SETTINGS]: [ROLE.admin],
   [MANAGE_STORAGE_PLANS]: [ROLE.admin],
   [OWN_ROOMS]: [ROLE.admin, ROLE.user],
@@ -72,7 +72,7 @@ export default {
   MANAGE_ARCHIVED_DOCS,
   RESTORE_DOC_REVISIONS,
   MANAGE_IMPORT,
-  MANAGE_EXPORT,
+  MANAGE_EXPORT_WITH_BUILT_IN_USER,
   DELETE_STORAGE_FILE,
   OWN_ROOMS,
   DELETE_FOREIGN_ROOMS,
