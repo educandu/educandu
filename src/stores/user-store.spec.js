@@ -25,31 +25,60 @@ describe('user-store', () => {
     await destroyTestEnvironment(container);
   });
 
-  describe('findUserByUsername', () => {
+  describe('findUserByLogin', () => {
     describe('when provider doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.findUserByUsername({ provider: 'unknown', username: user.username });
+        result = await sut.findUserByLogin({ provider: 'unknown', emailOrUsername: user.username });
       });
       it('should return null', () => {
         expect(result).toEqual(null);
       });
     });
 
-    describe('when username doesn\'t match', () => {
+    describe('when emailOrUsername doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.findUserByUsername({ provider: user.provider, username: 'unknown' });
+        result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: 'unknown' });
       });
       it('should return null', () => {
         expect(result).toEqual(null);
       });
     });
 
-    describe('when provider and username match', () => {
+    describe('when provider matches and emailOrUsername matches the email', () => {
       beforeEach(async () => {
-        result = await sut.findUserByUsername({ provider: user.provider, username: user.username });
+        result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: user.email });
       });
       it('should return the user', () => {
         expect(result).toEqual(user);
+      });
+    });
+
+    describe('when provider matches and emailOrUsername matches the username', () => {
+      beforeEach(async () => {
+        result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: user.username });
+      });
+      it('should return the user', () => {
+        expect(result).toEqual(user);
+      });
+    });
+
+    describe('when provider matches and emailOrUsername matches the username and the email', () => {
+      let user1;
+      let user2;
+      let result1;
+      let result2;
+
+      beforeEach(async () => {
+        user1 = await setupTestUser(container, { username: 'peter', email: 'peter@peterson.com', provider: 'educandu' });
+        user2 = await setupTestUser(container, { username: 'peter@peterson.com', email: 'different-peter@peterson.com', provider: 'educandu' });
+        result1 = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: 'peter@peterson.com' });
+        result2 = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: 'different-peter@peterson.com' });
+      });
+      it('should return the user where the email matches', () => {
+        expect(result1).toEqual(user1);
+      });
+      it('should still find the other user by email', () => {
+        expect(result2).toEqual(user2);
       });
     });
   });

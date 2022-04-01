@@ -1,12 +1,12 @@
-forgotPassword:
-  en: Forgot your password?
-  de: Kennwort vergessen?
-enterUsername:
-  en: Please enter your user name
-  de: Bitte geben Sie Ihren Benutzernamen an
+enterEmailOrUsername:
+  en: Please enter your email address or user name
+  de: Bitte geben Sie Ihre E-Mail-Adresse oder Ihren Benutzernamen an
 enterPassword:
   en: Please enter your password
   de: Bitte geben Sie Ihr Kennwort an
 logonFailed:
   en: Logon failed. Please check your input.
   de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.
+emailOrUsername:
+  en: Email address or user name
+  de: E-Mail-Adresse oder Benutzername

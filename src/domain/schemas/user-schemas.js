@@ -59,3 +59,8 @@ export const favoriteBodySchema = joi.object({
   type: joi.string().valid(...Object.values(FAVORITE_TYPE)).required(),
   id: idOrKeySchema.required()
 });
+
+export const loginBodySchema = joi.object({
+  emailOrUsername: joi.string().required(),
+  password: joi.string().required()
+});

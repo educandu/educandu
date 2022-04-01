@@ -437,20 +437,20 @@
     "namespace": "loginForm",
     "language": "en",
     "resources": {
-      "forgotPassword": "Forgot your password?",
-      "enterUsername": "Please enter your user name",
+      "enterEmailOrUsername": "Please enter your email address or user name",
       "enterPassword": "Please enter your password",
-      "logonFailed": "Logon failed. Please check your input."
+      "logonFailed": "Logon failed. Please check your input.",
+      "emailOrUsername": "Email address or user name"
     }
   },
   {
     "namespace": "loginForm",
     "language": "de",
     "resources": {
-      "forgotPassword": "Kennwort vergessen?",
-      "enterUsername": "Bitte geben Sie Ihren Benutzernamen an",
+      "enterEmailOrUsername": "Bitte geben Sie Ihre E-Mail-Adresse oder Ihren Benutzernamen an",
       "enterPassword": "Bitte geben Sie Ihr Kennwort an",
-      "logonFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe."
+      "logonFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.",
+      "emailOrUsername": "E-Mail-Adresse oder Benutzername"
     }
   },
   {
@@ -763,6 +763,20 @@
       "createImport": "Import erstellen",
       "importsHeaderPrefix": "Quelle",
       "noImportSourcesConfigured": "Keine Importquellen konfiguriert"
+    }
+  },
+  {
+    "namespace": "login",
+    "language": "en",
+    "resources": {
+      "forgotPassword": "Forgot your password?"
+    }
+  },
+  {
+    "namespace": "login",
+    "language": "de",
+    "resources": {
+      "forgotPassword": "Kennwort vergessen?"
     }
   },
   {
