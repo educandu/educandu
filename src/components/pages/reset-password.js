@@ -76,7 +76,7 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
         seconds={15}
         isRunning={!!isRequestSent}
         onComplete={() => {
-          window.location = urls.getHomeUrl();
+          window.location = urls.getLoginUrl();
         }}
         >
         {seconds => (
@@ -84,7 +84,7 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
             t={t}
             i18nKey="redirectMessage"
             values={{ seconds }}
-            components={[<a key="home-link" href={urls.getHomeUrl()} />]}
+            components={[<a key="login-link" href={urls.getLoginUrl()} />]}
             />
         )}
       </Countdown>
