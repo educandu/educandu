@@ -45,7 +45,7 @@ function getDefaultLanguageFromUiLanguage(uiLanguage) {
   }
 }
 
-function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
+function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVisible, onSave, onCancel }) {
   const formRef = useRef(null);
   const { dateTimeFormat } = useDateFormat();
   const { uiLanguage } = useLocale();
@@ -76,10 +76,10 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
   ];
 
   const initialValues = {
-    title: lesson.title || t('newLesson'),
-    slug: lesson.slug || '',
-    language: lesson.language || getDefaultLanguageFromUiLanguage(uiLanguage),
-    startsOn: lesson.schedule?.startsOn ? moment(lesson.schedule?.startsOn) : null,
+    title: initialLessonMetadata.title || t('newLesson'),
+    slug: initialLessonMetadata.slug || '',
+    language: initialLessonMetadata.language || getDefaultLanguageFromUiLanguage(uiLanguage),
+    startsOn: initialLessonMetadata.schedule?.startsOn ? moment(initialLessonMetadata.schedule.startsOn) : null,
     enableSequence: false,
     sequenceInterval: LESSON_SEQUENCE_INTERVAL.weekly,
     sequenceCount: 3
@@ -116,8 +116,8 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
       setLoading(true);
 
       const mappedLesson = {
-        lessonId: lesson._id,
-        roomId: lesson.roomId,
+        lessonId: initialLessonMetadata._id,
+        roomId: initialLessonMetadata.roomId,
         title,
         slug: slug || '',
         language,
@@ -141,7 +141,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
           savedLessons.push(await lessonApiClient.addLesson(lessonToSave));
         }
 
-        onSave(savedLessons);
+        onSave(allowMultiple ? savedLessons : savedLessons[0]);
       } else {
         const savedLesson = await lessonApiClient.updateLessonMetadata(mappedLesson);
         onSave(savedLesson);
@@ -202,7 +202,7 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
         <FormItem name="enableSequence" valuePropName="checked" hidden>
           <Checkbox />
         </FormItem>
-        {mode === LESSON_MODAL_MODE.create && (
+        {mode === LESSON_MODAL_MODE.create && allowMultiple && (
           <Collapse className="LessonMetadataModal-sequenceCollapse" activeKey={isSequenceExpanded ? ['sequence'] : []} onChange={handleSequenceCollapseChange} ghost>
             <CollapsePanel header={t('createSequence')} key="sequence" forceRender>
               <Alert className="LessonMetadataModal-sequenceInfo" message={t('sequenceInfoBoxHeader')} description={t('sequenceInfoBoxDescription')} />
@@ -221,17 +221,19 @@ function LessonMetadataModal({ lesson, mode, isVisible, onSave, onCancel }) {
 }
 
 LessonMetadataModal.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
-  lesson: PropTypes.oneOfType([
+  allowMultiple: PropTypes.bool,
+  initialLessonMetadata: PropTypes.oneOfType([
     PropTypes.shape({ roomId: PropTypes.string.isRequired }),
     lessonMetadataShape
   ]).isRequired,
+  isVisible: PropTypes.bool.isRequired,
   mode: PropTypes.oneOf(Object.values(LESSON_MODAL_MODE)).isRequired,
   onCancel: PropTypes.func,
   onSave: PropTypes.func
 };
 
 LessonMetadataModal.defaultProps = {
+  allowMultiple: false,
   onCancel: () => {},
   onSave: () => {}
 };

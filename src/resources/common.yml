@@ -43,6 +43,9 @@ delete:
 hardDelete:
   en: Delete irreversibly
   de: Unwiderruflich löschen
+clone:
+  en: Clone
+  de: Klonen
 moveUp:
   en: Move up
   de: Nach oben verschieben
@@ -67,6 +70,13 @@ invalidSlug:
 archivedAlert:
   en: This document is archived and cannot be edited
   de: Dieses Dokument ist archiviert und kann nicht editiert werden
+proposedSectionsAlert:
+  en: |
+    Apply or discard the proposed sections. Unapplied sections are
+    only visible until you leave the current view.
+  de: |
+    Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene
+    Abschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.
 revision:
   en: Revision
   de: Revision
@@ -253,3 +263,9 @@ searchPlaceholder:
 capacity:
   en: Capacity
   de: Kapazität
+copyTitleSuffix:
+  en: (copy)
+  de: (Kopie)
+copySlugSuffix:
+  en: copy
+  de: kopie

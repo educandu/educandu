@@ -623,7 +623,6 @@
     "namespace": "doc",
     "language": "en",
     "resources": {
-      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
       "permalinkCopied": "The permalink was copied to the clipboard",
       "permalinkCouldNotBeCopied": "The permalink could not be copied to the clipboard"
     }
@@ -632,7 +631,6 @@
     "namespace": "doc",
     "language": "de",
     "resources": {
-      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n",
       "permalinkCopied": "Der Permalink wurde in die Zwischenablage kopiert",
       "permalinkCouldNotBeCopied": "Der Permalink konnte nicht in die Zwischenablage kopiert werden"
     }
@@ -642,9 +640,6 @@
     "language": "en",
     "resources": {
       "defaultDocumentTitle": "New document",
-      "copyTitleSuffix": "(copy)",
-      "copySlugSuffix": "copy",
-      "clone": "Clone",
       "newDocument": "New document",
       "originInternal": "internal",
       "originExternal": "external"
@@ -655,9 +650,6 @@
     "language": "de",
     "resources": {
       "defaultDocumentTitle": "Neues Dokument",
-      "copyTitleSuffix": "(Kopie)",
-      "copySlugSuffix": "kopie",
-      "clone": "Klonen",
       "newDocument": "Neues Dokument",
       "originInternal": "intern",
       "originExternal": "extern"
@@ -1780,6 +1772,7 @@
       "duplicate": "Duplicate",
       "delete": "Delete",
       "hardDelete": "Delete irreversibly",
+      "clone": "Clone",
       "moveUp": "Move up",
       "moveDown": "Move down",
       "confirm": "Confirm",
@@ -1788,6 +1781,7 @@
       "language": "Language",
       "invalidSlug": "The URL path can contain only lower case letters (a-z), digits and hyphens. Individual parts can be separated by slashes.",
       "archivedAlert": "This document is archived and cannot be edited",
+      "proposedSectionsAlert": "Apply or discard the proposed sections. Unapplied sections are\nonly visible until you leave the current view.\n",
       "revision": "Revision",
       "document": "Document",
       "room": "Room",
@@ -1849,7 +1843,9 @@
       "sortedByOrigin": "Sorted by origin",
       "sortedByArchived": "Sorted by archived status",
       "searchPlaceholder": "Search terms",
-      "capacity": "Capacity"
+      "capacity": "Capacity",
+      "copyTitleSuffix": "(copy)",
+      "copySlugSuffix": "copy"
     }
   },
   {
@@ -1871,6 +1867,7 @@
       "duplicate": "Duplizieren",
       "delete": "Löschen",
       "hardDelete": "Unwiderruflich löschen",
+      "clone": "Klonen",
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
       "confirm": "Bestätigen",
@@ -1879,6 +1876,7 @@
       "language": "Sprache",
       "invalidSlug": "Der URL-Pfad darf nur Kleinbuchstaben (a-z), Ziffern und Bindestriche enthalten. Einzelne Teile können durch Schrägstriche getrennt werden.",
       "archivedAlert": "Dieses Dokument ist archiviert und kann nicht editiert werden",
+      "proposedSectionsAlert": "Übernehmen oder verwerfen Sie die vorgeschlagenen Abschnitte. Nicht übernommene\nAbschnitte sind nur solange sichtbar, bis Sie die Ansicht verlassen.\n",
       "revision": "Revision",
       "document": "Dokument",
       "room": "Raum",
@@ -1940,7 +1938,9 @@
       "sortedByOrigin": "Nach Quelle sortiert",
       "sortedByArchived": "Nach Archivierungsstatus sortiert",
       "searchPlaceholder": "Suchbegriffe",
-      "capacity": "Kapazität"
+      "capacity": "Kapazität",
+      "copyTitleSuffix": "(Kopie)",
+      "copySlugSuffix": "kopie"
     }
   },
   {

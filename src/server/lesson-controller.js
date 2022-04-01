@@ -10,14 +10,15 @@ import LessonService from '../services/lesson-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
-import { validateBody, validateParams } from '../domain/validation-middleware.js';
+import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
   getLessonParamsSchema,
   postLessonBodySchema,
   patchLessonParamsSchema,
   deleteLessonParamsSchema,
   patchLessonMetadataBodySchema,
-  patchLessonSectionsBodySchema
+  patchLessonSectionsBodySchema,
+  getLessonQuerySchema
 } from '../domain/schemas/lesson-schemas.js';
 
 const jsonParser = express.json();
@@ -37,16 +38,22 @@ class LessonController {
   async handleGetLessonPage(req, res) {
     const { user } = req;
     const { lessonId } = req.params;
+    const { view, templateLessonId } = req.query;
     const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
 
     const lesson = await this.lessonService.getLessonById(lessonId);
+    const templateLesson = templateLessonId ? await this.lessonService.getLessonById(templateLessonId) : null;
 
-    if (!lesson) {
+    if (!lesson || (templateLessonId && !templateLesson)) {
       throw new NotFound();
     }
 
+    if (templateLessonId && lesson.roomId !== templateLesson.roomId) {
+      throw new BadRequest();
+    }
+
     if (lesson.slug !== routeWildcardValue) {
-      return res.redirect(301, urls.getLessonUrl({ id: lesson._id, slug: lesson.slug }));
+      return res.redirect(301, urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view, templateLessonId }));
     }
 
     const room = await this.roomService.getRoomById(lesson.roomId);
@@ -62,8 +69,10 @@ class LessonController {
     }
 
     const mappedLesson = this.clientDataMappingService.mapLesson(lesson);
+    const mappedTemplateLesson = templateLesson ? this.clientDataMappingService.mapLesson(templateLesson) : null;
+    const templateSections = mappedTemplateLesson ? this.clientDataMappingService.createProposedLessonSections(mappedTemplateLesson) : [];
     const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
-    return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson: mappedLesson, room: mappedRoom });
+    return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson: mappedLesson, room: mappedRoom, templateSections });
   }
 
   async handlePostLesson(req, res) {
@@ -187,7 +196,8 @@ class LessonController {
 
     router.get(
       '/lessons/:lessonId*',
-      [validateParams(getLessonParamsSchema)],
+      validateParams(getLessonParamsSchema),
+      validateQuery(getLessonQuerySchema),
       (req, res) => this.handleGetLessonPage(req, res)
     );
   }

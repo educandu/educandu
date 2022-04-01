@@ -3,24 +3,18 @@ import { Button } from 'antd';
 import PropTypes from 'prop-types';
 import DeleteIcon from './icons/general/delete-icon.js';
 
-function DeleteButton({ children, onClick, disabled }) {
+function DeleteButton({ className, ...props }) {
   return (
-    <Button className="DeleteButton" size="small" type="link" icon={<DeleteIcon />} disabled={disabled} onClick={onClick}>
-      {children}
-    </Button>
+    <Button className={`DeleteButton ${className}`} size="small" type="link" icon={<DeleteIcon />} {...props} />
   );
 }
 
 DeleteButton.propTypes = {
-  children: PropTypes.node,
-  disabled: PropTypes.bool,
-  onClick: PropTypes.func
+  className: PropTypes.string
 };
 
 DeleteButton.defaultProps = {
-  children: null,
-  disabled: false,
-  onClick: () => {}
+  className: ''
 };
 
 export default DeleteButton;

@@ -15,16 +15,17 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
+import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip } from 'antd';
-import { FAVORITE_TYPE, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
@@ -44,7 +45,12 @@ export default function Room({ PageTemplate, initialState }) {
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
-  const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
+  const [lessonMetadataModalState, setLessonMetadataModalState] = useState({
+    isVisible: false,
+    isCloning: false,
+    templateLessonId: null,
+    initialLessonMetadata: { roomId: room._id }
+  });
 
   const isRoomOwner = user?._id === room.owner.key;
   const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
@@ -83,17 +89,37 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleNewLessonClick = () => {
-    setIsLessonMetadataModalVisible(true);
+  const handleNewLessonClick = (lessonToClone = null) => {
+    setLessonMetadataModalState({
+      isVisible: true,
+      isCloning: !!lessonToClone,
+      templateLessonId: lessonToClone?._id || null,
+      initialLessonMetadata: lessonToClone
+        ? {
+          ...lessonToClone,
+          title: `${lessonToClone.title} ${t('common:copyTitleSuffix')}`,
+          slug: lessonToClone.slug ? `${lessonToClone.slug}-${t('common:copySlugSuffix')}` : ''
+        }
+        : {
+          roomId: room._id
+        }
+    });
   };
 
-  const handleLessonMetadataModalSave = createdLessons => {
-    window.location = urls.getLessonUrl({ id: createdLessons[0]._id, slug: createdLessons[0].slug });
-    setIsLessonMetadataModalVisible(false);
+  const handleLessonMetadataModalSave = createdLessonOrLessons => {
+    const lessonToShow = lessonMetadataModalState.isCloning ? createdLessonOrLessons : createdLessonOrLessons[0];
+    window.location = urls.getLessonUrl({
+      id: lessonToShow._id,
+      slug: lessonToShow.slug,
+      view: LESSON_VIEW_QUERY_PARAM.edit,
+      templateLessonId: lessonMetadataModalState.isCloning ? lessonMetadataModalState.templateLessonId : null
+    });
+
+    setLessonMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
   const handleLessonMetadataModalCancel = () => {
-    setIsLessonMetadataModalVisible(false);
+    setLessonMetadataModalState(prev => ({ ...prev, isVisible: false }));
   };
 
   const handleUpdateRoomClick = () => {
@@ -137,6 +163,9 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="Room-lesson" key={lesson._id}>
         <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
+          <Tooltip title={t('common:clone')}>
+            <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
+          </Tooltip>
           <Tooltip title={t('common:delete')}>
             <DeleteButton className="Room-lessonDeleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
           </Tooltip>
@@ -210,7 +239,7 @@ export default function Room({ PageTemplate, initialState }) {
           shape="circle"
           icon={<PlusOutlined />}
           size="large"
-          onClick={handleNewLessonClick}
+          onClick={() => handleNewLessonClick()}
           />
       ]}
       >
@@ -286,9 +315,10 @@ export default function Room({ PageTemplate, initialState }) {
         )}
 
         <LessonMetadataModal
-          lesson={{ roomId: room._id }}
           mode={LESSON_MODAL_MODE.create}
-          isVisible={isLessonMetadataModalVisible}
+          isVisible={lessonMetadataModalState.isVisible}
+          allowMultiple={!lessonMetadataModalState.isCloning}
+          initialLessonMetadata={lessonMetadataModalState.initialLessonMetadata}
           onSave={handleLessonMetadataModalSave}
           onCancel={handleLessonMetadataModalCancel}
           />

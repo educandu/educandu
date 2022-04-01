@@ -40,7 +40,8 @@ describe('lesson-controller', () => {
     };
     clientDataMappingService = {
       mapLesson: sandbox.stub(),
-      mapRoom: sandbox.stub()
+      mapRoom: sandbox.stub(),
+      createProposedLessonSections: sandbox.stub()
     };
     pageRenderer = {
       sendPage: sandbox.stub()
@@ -66,7 +67,7 @@ describe('lesson-controller', () => {
 
     describe('when user is not provided (session expired)', () => {
       beforeEach(() => {
-        req = { params: { 0: '', lessonId } };
+        req = { params: { 0: '', lessonId }, query: {} };
         room = { _id: roomId, access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [] };
         lesson = { _id: lessonId, slug: '', roomId };
 
@@ -81,7 +82,7 @@ describe('lesson-controller', () => {
 
     describe('when the lesson does not exist', () => {
       beforeEach(() => {
-        req = { user, params: { 0: '', lessonId: uniqueId.create() } };
+        req = { user, params: { 0: '', lessonId: uniqueId.create() }, query: {} };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(null);
       });
@@ -93,7 +94,7 @@ describe('lesson-controller', () => {
 
     describe('when the lesson slug is different than the URL slug', () => {
       beforeEach(done => {
-        req = { user, params: { 0: '/url-slug', lessonId } };
+        req = { user, params: { 0: '/url-slug', lessonId }, query: {} };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -112,7 +113,7 @@ describe('lesson-controller', () => {
 
     describe('when the user is neither owner nor member of the private room containing the lesson', () => {
       beforeEach(() => {
-        req = { user, params: { 0: '/slug', lessonId } };
+        req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [] };
 
@@ -127,7 +128,7 @@ describe('lesson-controller', () => {
 
     describe('when the user is owner of the private room containing the lesson', () => {
       beforeEach(() => {
-        req = { user, params: { 0: '/slug', lessonId } };
+        req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: user._id, members: [] };
         mappedLesson = { ...lesson };
@@ -142,13 +143,13 @@ describe('lesson-controller', () => {
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom, templateSections: [] });
       });
     });
 
     describe('when the user is member of the private room containing the lesson', () => {
       beforeEach(() => {
-        req = { user, params: { 0: '/slug', lessonId } };
+        req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.private, owner: uniqueId.create(), members: [{ userId: user._id }] };
         mappedLesson = { ...lesson };
@@ -163,13 +164,13 @@ describe('lesson-controller', () => {
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom, templateSections: [] });
       });
     });
 
     describe('when the room containing the lesson is public', () => {
       beforeEach(() => {
-        req = { user, params: { 0: '/slug', lessonId } };
+        req = { user, params: { 0: '/slug', lessonId }, query: {} };
         lesson = { _id: lessonId, roomId, slug: 'slug' };
         room = { access: ROOM_ACCESS_LEVEL.public, owner: uniqueId.create(), members: [] };
         mappedLesson = { ...lesson };
@@ -184,7 +185,56 @@ describe('lesson-controller', () => {
       });
 
       it('should send the rendered page', () => {
-        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom });
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', { lesson: mappedLesson, room: mappedRoom, templateSections: [] });
+      });
+    });
+
+    describe('when the request contains template lesson ID', () => {
+      let templateLessonId;
+      let templateLesson;
+      let mappedTemplateLesson;
+      let templateSections;
+
+      beforeEach(() => {
+        templateLessonId = uniqueId.create();
+        req = { user, params: { 0: '/slug', lessonId }, query: { templateLessonId } };
+        lesson = { _id: lessonId, roomId, slug: 'slug' };
+        room = { access: ROOM_ACCESS_LEVEL.public, owner: uniqueId.create(), members: [] };
+        mappedLesson = { ...lesson };
+        mappedRoom = { ...room, owner: { _id: room.owner } };
+        templateLesson = {
+          _id: templateLessonId,
+          roomId: lesson.roomId,
+          sections: [
+            { key: uniqueId.create(), type: 'markdown', content: {} },
+            { key: uniqueId.create(), type: 'markdown', content: {} },
+            { key: uniqueId.create(), type: 'markdown', content: {} }
+          ]
+        };
+        mappedTemplateLesson = { ...templateLesson };
+        templateSections = [
+          { key: uniqueId.create(), type: 'markdown', content: {} },
+          { key: uniqueId.create(), type: 'markdown', content: {} },
+          { key: uniqueId.create(), type: 'markdown', content: {} }
+        ];
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        lessonService.getLessonById.withArgs(templateLessonId).resolves(templateLesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+        clientDataMappingService.mapLesson.withArgs(lesson).returns(mappedLesson);
+        clientDataMappingService.mapLesson.withArgs(templateLesson).returns(mappedTemplateLesson);
+        clientDataMappingService.mapRoom.withArgs(room, user).resolves(mappedRoom);
+        clientDataMappingService.createProposedLessonSections.withArgs(mappedTemplateLesson).returns(templateSections);
+
+        return sut.handleGetLessonPage(req, res);
+      });
+
+      it('should send the rendered page including the template sections', () => {
+        sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'lesson', {
+          lesson: mappedLesson,
+          room: mappedRoom,
+          templateSections
+        });
       });
     });
   });
