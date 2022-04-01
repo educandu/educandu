@@ -165,6 +165,7 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     window.addEventListener('mouseup', handleWindowMouseUp);
     return () => {
       window.removeEventListener('mousemove', handleWindowMouseMove);
+      window.removeEventListener('mouseup', handleWindowMouseUp);
     };
   }, [dragState, handleWindowMouseMove, handleWindowMouseUp]);
 
@@ -181,24 +182,20 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     <div key={segment.key} className="Timeline-segment" style={{ width: `${segment.width}px` }}>{segment.title}</div>
   );
 
-  const renderButton = segment => {
-    return segment.width >= MIN_PART_WIDTH_IN_PX && (
-      <Button
-        className="Timeline-deleteButton"
-        type="link"
-        icon={<DeleteIcon />}
-        onClick={handleSegmentDelete(segment.key)}
-        disabled={timelineState.segments.length === 1}
-        />
-    );
-  };
-
   const renderDeleteSegment = segment => {
     const classes = classNames('Timeline-deleteSegment', { 'is-displayed': isTouchDevice() });
 
     return (
       <div key={segment.key} className={classes} style={{ width: `${segment.width}px` }}>
-        {renderButton(segment)}
+        {segment.width >= MIN_PART_WIDTH_IN_PX && (
+          <Button
+            className="Timeline-deleteButton"
+            type="link"
+            icon={<DeleteIcon />}
+            onClick={handleSegmentDelete(segment.key)}
+            disabled={timelineState.segments.length === 1}
+            />
+        )}
       </div>
     );
   };
