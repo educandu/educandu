@@ -21,15 +21,19 @@ class UserStore {
       session
     }).toArray();
 
+    let bestMatch;
     switch (matches.length) {
       case 0:
-        return null;
+        bestMatch = null;
+        break;
       case 1:
-        return matches[0];
+        bestMatch = matches[0];
+        break;
       default:
-        // Always prefer matching emails over usernames:
-        return matches.find(match => match.email === emailOrUsername);
+        bestMatch = matches.find(match => match.email === emailOrUsername);
     }
+
+    return bestMatch;
   }
 
   findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {
