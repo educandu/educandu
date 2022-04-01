@@ -154,8 +154,7 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     return () => {
       window.removeEventListener('resize', updateStates);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [updateStates]);
 
   useEffect(() => {
     if (!dragState || isTouchDevice()) {
