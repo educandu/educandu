@@ -37,6 +37,9 @@ publicStorageWarning:
 insufficientPrivateStorge:
   en: Not enough storage space available
   de: Nicht genügend Speicherplatz verfügbar
+uploadLimit:
+  en: There is a limit of {uploadLimit} per upload
+  de: Es gibt eine Begrenzung von {uploadLimit} per Upload
 uploadLimitExceeded:
   en: Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.
   de: Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.
