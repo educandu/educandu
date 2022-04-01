@@ -1,11 +1,16 @@
+import by from 'thenby';
 import { Card } from 'antd';
 import Timeline from '../timeline.js';
 import React, { useState } from 'react';
-import { insertItemAt, removeItemAt } from '../../utils/array-utils.js';
+import { removeItemAt } from '../../utils/array-utils.js';
+
+const ensurePartsOrder = parts => {
+  return parts.sort(by(part => part.startTimecode));
+};
 
 function TestsTab() {
   const lastTimecode = 7;
-  const [parts, setParts] = useState([
+  const initialParts = [
     {
       title: 'the brown fox',
       startTimecode: 0
@@ -18,7 +23,9 @@ function TestsTab() {
       title: 'the end',
       startTimecode: lastTimecode * 1000
     }
-  ].map((part, index) => ({ ...part, key: index.toString() })));
+  ].map((part, index) => ({ ...part, key: index.toString() }));
+
+  const [parts, setParts] = useState(ensurePartsOrder(initialParts));
   const length = (lastTimecode * 1000) + 1000;
 
   const handlePartAdd = startTimecode => {
@@ -27,10 +34,7 @@ function TestsTab() {
       title: parts.length.toString(),
       startTimecode
     };
-    const nextPartIndex = parts.findIndex(part => part.startTimecode > startTimecode);
-    const newPartIndex = nextPartIndex === -1 ? parts.length : nextPartIndex;
-    const newParts = insertItemAt(parts, newPart, newPartIndex);
-    setParts(newParts);
+    setParts(ensurePartsOrder([...parts, newPart]));
   };
 
   const handlePartDelete = key => {
