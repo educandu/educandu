@@ -29,7 +29,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
-import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert } from 'antd';
+import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert, Tooltip } from 'antd';
 
 const logger = new Logger(import.meta.url);
 
@@ -660,9 +660,11 @@ class StorageBrowser extends React.Component {
             customRequest={this.onCustomUpload}
             className="StorageBrowser-control"
             >
-            <Button disabled={!canUpload}>
-              <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
-            </Button>
+            <Tooltip title={t('uploadLimit', { uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) })}>
+              <Button disabled={!canUpload}>
+                <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
+              </Button>
+            </Tooltip>
           </Upload>
           <Checkbox className="StorageBrowser-control" checked={this.state.scaleDownImages} onChange={this.handleScaleDownImagesChange}>
             {t('scaleDownImages')}
