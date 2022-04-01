@@ -139,12 +139,6 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
       return { leftMin, leftMax };
     }).filter(bound => bound);
 
-    console.log(`markers ${JSON.stringify(markers)}`);
-    console.log(`segments ${JSON.stringify(segments)}`);
-    console.log(`msToPxRatio ${JSON.stringify(msToPxRatio)}`);
-    console.log(`bounds ${JSON.stringify(bounds)}`);
-    console.log(`markerBounds ${JSON.stringify(markerBounds)}`);
-
     setNewMarkerBounds(markerBounds);
     setTimelineState({ markers, segments, msToPxRatio, bounds, minSegmentLength });
   }, [parts, length]);
