@@ -23,11 +23,11 @@ export const moveItem = (items, fromIndex, toIndex) => {
 export function insertItemAt(items, item, index) {
   const lastIndex = items.length - 1;
 
-  if (index === lastIndex + 1) {
+  if (index >= lastIndex + 1) {
     return [...items, item];
   }
 
-  if (index === 0) {
+  if (index <= 0) {
     return [item, ...items];
   }
 

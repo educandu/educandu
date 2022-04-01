@@ -1,6 +1,7 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import Restricted from '../restricted.js';
+import TestsTab from '../admin/tests-tab.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import SettingsTab from '../admin/settings-tab.js';
@@ -64,6 +65,9 @@ function Admin({ initialState, PageTemplate }) {
                 initialStoragePlans={storagePlans}
                 onStoragePlansSaved={setStoragePlans}
                 />
+            </TabPane>
+            <TabPane className="Tabs-tabPane" tab={t('testsTabTitle')} key="100">
+              <TestsTab />
             </TabPane>
           </Tabs>
         </Restricted>

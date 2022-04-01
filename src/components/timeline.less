@@ -1,0 +1,103 @@
+@timeline-bar-height: 25px;
+@timeline-segments-bar-color: @edu-white;
+
+.Timeline {
+  display: flex;
+  user-select: none;
+  flex-direction: column;
+
+  &:hover .Timeline-marker,
+  &:hover .Timeline-deleteSegment,
+  &.is-dragging .Timeline-marker,
+  &.is-dragging .Timeline-deleteSegment {
+    display: flex;
+  }
+}
+
+.Timeline-markersBar {
+  display: flex;
+  position: relative;
+  height: @timeline-bar-height;
+}
+
+.Timeline-marker {
+  display: none;
+  position: absolute;
+  cursor: col-resize;
+  color: @edu-primary-color-light;
+
+  &.is-displayed {
+    display: flex;
+  }
+}
+
+.Timeline-segmentsBar {
+  display: flex;
+  position: relative;
+  height: @timeline-bar-height;
+  color: @timeline-segments-bar-color;
+  background-color: @edu-primary-color-light;
+}
+
+.Timeline-segment {
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px dotted @timeline-segments-bar-color;
+
+  &:last-of-type {
+    border-right: none;
+  }
+}
+
+.Timeline-newMarker {
+  position: absolute;
+  bottom: @timeline-bar-height;
+  height: @timeline-bar-height;
+  color: @edu-border-color-base;
+}
+
+.Timeline-newMarkerCloseIcon {
+  margin-left: -5px;
+}
+
+.Timeline-newSegmentStart {
+  position: absolute;
+  height: @timeline-bar-height;
+  border-right: 1px dotted @timeline-segments-bar-color;
+}
+
+.Timeline-deletionBar {
+  display: flex;
+  height: @timeline-bar-height;
+}
+
+.Timeline-deleteSegment {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: @edu-background-color-light;
+  border-right: 1px dotted @edu-border-color-base;
+
+  &.is-displayed {
+    display: flex;
+  }
+
+  &:last-of-type {
+    border-right: none;
+  }
+}
+
+.Timeline-deleteButton {
+  color: @edu-error-color;
+
+  &:hover {
+    color: @edu-error-color;
+  }
+
+  &:disabled {
+    border: none;
+    height: @timeline-bar-height;
+  }
+}
