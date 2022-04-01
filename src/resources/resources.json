@@ -1150,6 +1150,7 @@
       "uploadFiles": "Upload files",
       "publicStorage": "Public storage",
       "privateStorage": "Private storage",
+      "publicStorageWarning": "This directory is publicly accessible",
       "insufficientPrivateStorge": "Not enough storage space available",
       "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
       "scaleDownImages": "Optimize images for web display"
@@ -1170,6 +1171,7 @@
       "uploadFiles": "Dateien hochladen",
       "publicStorage": "Öffentlicher Speicher",
       "privateStorage": "Privater Speicher",
+      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar",
       "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
       "scaleDownImages": "Bilder für Web optimieren"

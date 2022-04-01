@@ -31,6 +31,9 @@ publicStorage:
 privateStorage:
   en: Private storage
   de: Privater Speicher
+publicStorageWarning:
+  en: This directory is publicly accessible
+  de: Dieses Verzeichnis ist öffentlich zugänglich
 insufficientPrivateStorge:
   en: Not enough storage space available
   de: Nicht genügend Speicherplatz verfügbar
