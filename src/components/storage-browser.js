@@ -29,7 +29,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
-import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox } from 'antd';
+import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert } from 'antd';
 
 const logger = new Logger(import.meta.url);
 
@@ -41,13 +41,7 @@ class StorageBrowser extends React.Component {
     this.browserRef = React.createRef();
     this.filterTextInputRef = React.createRef();
 
-    const locations = [
-      {
-        ...this.createPathSegments(props.publicStorage),
-        isPrivate: false,
-        key: 'public'
-      }
-    ];
+    const locations = [];
 
     if (props.privateStorage) {
       locations.push({
@@ -56,6 +50,12 @@ class StorageBrowser extends React.Component {
         key: 'private'
       });
     }
+
+    locations.push({
+      ...this.createPathSegments(props.publicStorage),
+      isPrivate: false,
+      key: 'public'
+    });
 
     const currentLocation = locations[0];
 
@@ -611,7 +611,7 @@ class StorageBrowser extends React.Component {
 
   render() {
     const { t } = this.props;
-    const { records, currentPathSegments, currentLocation, currentDropTarget, filterText } = this.state;
+    const { records, currentPathSegments, locations, currentLocation, currentDropTarget, filterText } = this.state;
     const { uploadPathSegments } = currentLocation;
 
     const normalizedFilterText = filterText.toLowerCase().trim();
@@ -635,9 +635,12 @@ class StorageBrowser extends React.Component {
         <div>
           {this.renderBreadCrumbs(currentPathSegments, currentLocation)}
         </div>
-        <div className="StorageBrowser-storageUsage">
+        <div className="StorageBrowser-storageDetails">
           {currentLocation.isPrivate && (
             <UsedStorage usedBytes={this.props.user.storage.usedBytes} maxBytes={this.props.storagePlan?.maxBytes || 0} showLabel />
+          )}
+          {locations.some(loc => loc.isPrivate) && !currentLocation.isPrivate && (
+            <Alert message={t('publicStorageWarning')} type="warning" showIcon />
           )}
         </div>
 
