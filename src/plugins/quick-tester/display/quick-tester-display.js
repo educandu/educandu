@@ -73,7 +73,7 @@ function QuickTesterDisplay({ content }) {
   }
 
   const answerDisplay = isAnswerVisible
-    ? <Markdown inline>{tests[currentTestIndex].answer}</Markdown>
+    ? <Markdown renderMedia={content.renderMedia}>{tests[currentTestIndex].answer}</Markdown>
     : <Button type="primary" size="large" onClick={showAnswer}>{t('showAnswer')}</Button>;
 
   return (
@@ -94,7 +94,7 @@ function QuickTesterDisplay({ content }) {
               {t('questionHeader', { currentTest: currentTestIndex + 1, testsLength: tests.length })}
             </div>
             <div className="QuickTester-questionBody">
-              <Markdown inline>{tests[currentTestIndex].question}</Markdown>
+              <Markdown renderMedia={content.renderMedia}>{tests[currentTestIndex].question}</Markdown>
             </div>
           </div>
           <div className="QuickTester-answer">

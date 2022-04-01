@@ -28,7 +28,8 @@ export default class QuickTester {
           answer: `[${t('quickTester:answer')}]`
         }
       ],
-      testsOrder: TESTS_ORDER.given
+      testsOrder: TESTS_ORDER.given,
+      renderMedia: false
     };
   }
 
