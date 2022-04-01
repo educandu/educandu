@@ -66,8 +66,8 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
 
     if (newMarkerState?.isInBounds) {
       const startTimecode = Math.round(newMarkerState.left / timelineState.msToPxRatio);
-      onPartAdd(startTimecode);
       setNewMarkerState(null);
+      onPartAdd(startTimecode);
     }
   };
 
@@ -139,6 +139,12 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
       return { leftMin, leftMax };
     }).filter(bound => bound);
 
+    console.log(`markers ${JSON.stringify(markers)}`);
+    console.log(`segments ${JSON.stringify(segments)}`);
+    console.log(`msToPxRatio ${JSON.stringify(msToPxRatio)}`);
+    console.log(`bounds ${JSON.stringify(bounds)}`);
+    console.log(`markerBounds ${JSON.stringify(markerBounds)}`);
+
     setNewMarkerBounds(markerBounds);
     setTimelineState({ markers, segments, msToPxRatio, bounds, minSegmentLength });
   }, [parts, length]);
@@ -181,17 +187,24 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     <div key={segment.key} className="Timeline-segment" style={{ width: `${segment.width}px` }}>{segment.title}</div>
   );
 
+  const renderButton = segment => {
+    return segment.width >= MIN_PART_WIDTH_IN_PX && (
+      <Button
+        className="Timeline-deleteButton"
+        type="link"
+        icon={<DeleteIcon />}
+        onClick={handleSegmentDelete(segment.key)}
+        disabled={timelineState.segments.length === 1}
+        />
+    );
+  };
+
   const renderDeleteSegment = segment => {
     const classes = classNames('Timeline-deleteSegment', { 'is-displayed': isTouchDevice() });
-    return segment.width >= MIN_PART_WIDTH_IN_PX && (
+
+    return (
       <div key={segment.key} className={classes} style={{ width: `${segment.width}px` }}>
-        <Button
-          className="Timeline-deleteButton"
-          type="link"
-          icon={<DeleteIcon />}
-          onClick={handleSegmentDelete(segment.key)}
-          disabled={timelineState.segments.length === 1}
-          />
+        {renderButton(segment)}
       </div>
     );
   };
