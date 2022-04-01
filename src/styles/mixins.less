@@ -21,7 +21,9 @@
   a {
     color: hardlight(@edu-primary-color-light, @grey-4);
 
-    &:hover, &:focus, &:active {
+    &:hover,
+    &:focus,
+    &:active {
       color: @edu-text-color-inverse;
     }
 
@@ -33,7 +35,8 @@
   .m-create-button-rules(@prop) {
     @{prop}: @edu-text-color-inverse;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       @{prop}: @edu-text-color-inverse;
     }
 
@@ -52,7 +55,10 @@
 
   .m-create-active-background {
     &:not(:disabled) {
-      &:hover, &:focus, &:active {
+
+      &:hover,
+      &:focus,
+      &:active {
         background-color: softlight(@edu-primary-color-light, @grey-6);
       }
     }
@@ -122,6 +128,7 @@
   & > .ant-slider-rail {
     background-color: tint(@edu-primary-color-light, 20%);
   }
+
   &:hover > .ant-slider-rail {
     background-color: tint(@edu-primary-color-light, 30%);
   }
@@ -129,7 +136,8 @@
   & > .ant-slider-step > .ant-slider-dot {
     border-color: tint(@edu-primary-color-light, 40%);
   }
-  &  > .ant-slider-step > .ant-slider-dot-active {
+
+  & > .ant-slider-step > .ant-slider-dot-active {
     border-color: tint(@edu-primary-color-light, 50%);
   }
 
@@ -137,8 +145,14 @@
   & > .ant-slider-handle {
     background-color: @grey-4;
   }
+
   &:hover > .ant-slider-track,
   &:hover > .ant-slider-handle {
     background-color: @grey-1;
   }
+}
+
+.m-login-form {
+  margin: 0 auto;
+  max-width: 360px;
 }

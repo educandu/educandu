@@ -59,30 +59,6 @@ function Register({ PageTemplate, SiteLogo }) {
     register({ username, password, email });
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  };
-
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0
-      },
-      sm: {
-        span: 16,
-        offset: 8
-      }
-    }
-  };
-
   const agreementValidationRules = [
     {
       message: t('confirmTerms'),
@@ -96,12 +72,12 @@ function Register({ PageTemplate, SiteLogo }) {
 
   const registrationForm = (
     <div className="RegisterPage-form">
-      <Form ref={formRef} onFinish={handleFinish} scrollToFirstError>
-        <UsernameFormItem name="username" usernamesInUse={forbiddenUsernames} {...formItemLayout} />
-        <EmailFormItem name="email" emailsInUse={forbiddenEmails} {...formItemLayout} />
-        <PasswordFormItem name="password" {...formItemLayout} />
-        <PasswordConfirmationFormItem name="confirm" passwordFormItemName="password" {...formItemLayout} />
-        <FormItem {...tailFormItemLayout} name="agreement" valuePropName="checked" rules={agreementValidationRules}>
+      <Form ref={formRef} onFinish={handleFinish} scrollToFirstError layout="vertical">
+        <UsernameFormItem name="username" usernamesInUse={forbiddenUsernames} />
+        <EmailFormItem name="email" emailsInUse={forbiddenEmails} />
+        <PasswordFormItem name="password" />
+        <PasswordConfirmationFormItem name="confirm" passwordFormItemName="password" />
+        <FormItem name="agreement" valuePropName="checked" rules={agreementValidationRules}>
           <Checkbox>
             <Trans
               t={t}
@@ -116,8 +92,10 @@ function Register({ PageTemplate, SiteLogo }) {
               />
           </Checkbox>
         </FormItem>
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">{t('register')}</Button>
+        <FormItem >
+          <Button className="RegisterPage-formButton" type="primary" size="large" htmlType="submit" block>
+            {t('register')}
+          </Button>
         </FormItem>
       </Form>
     </div>
