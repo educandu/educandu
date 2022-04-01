@@ -60,6 +60,13 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     onStartTimecodeChange(dragState.marker.key, newStartTimecode);
   }, [dragState, markers, timelineBounds, msToPxRatio, onStartTimecodeChange]);
 
+  const handleSegmentsBarClick = () => {
+    if (newMarker.isVisible && newMarker.isInBounds) {
+      const startTimecode = newMarker.left / msToPxRatio;
+      onPartAdd(startTimecode);
+    }
+  };
+
   const handleSegmentsBarMouseMove = event => {
     if (dragState) {
       return;
@@ -168,8 +175,13 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
       <div className="Timeline-markersBar">
         {markers.map(renderMarker)}
       </div>
-      <div className="Timeline-segmentsBar" onMouseMove={handleSegmentsBarMouseMove} onMouseLeave={handleSegmentsBarMouseLeave}>
-        { newMarker.isVisible && (
+      <div
+        className="Timeline-segmentsBar"
+        onClick={handleSegmentsBarClick}
+        onMouseMove={handleSegmentsBarMouseMove}
+        onMouseLeave={handleSegmentsBarMouseLeave}
+        >
+        {newMarker.isVisible && (
           <Fragment>
             <div className="Timeline-newMarker" style={{ left: `${newMarker.left}px` }}>
               {newMarker.isInBounds && <FlagOutlined />}
