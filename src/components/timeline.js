@@ -9,22 +9,14 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 const MIN_PART_WIDTH_IN_PX = 35;
 const MIN_PART_DURATION_IN_MS = 1000;
 
+const getDefaultNewMarkerState = () => ({ left: 0, bounds: [], isInBounds: false, isVisible: false });
+
 function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChange }) {
   const timelineRef = useRef(null);
 
-  const [timelineState, setTimelineState] = useState({
-    markers: [],
-    segments: [],
-    msToPxRatio: 0,
-    bounds: { left: 0, width: 0 }
-  });
-  const [newMarkerState, setNewMarkerState] = useState({
-    left: 0,
-    bounds: [],
-    isInBounds: false,
-    isVisible: false
-  });
   const [dragState, setDragState] = useState(null);
+  const [newMarkerState, setNewMarkerState] = useState(getDefaultNewMarkerState());
+  const [timelineState, setTimelineState] = useState({ markers: [], segments: [], msToPxRatio: 0, bounds: {} });
 
   const handleSegmentDelete = key => () => onPartDelete(key);
 
@@ -63,19 +55,20 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
 
     setDragState(prev => ({ ...prev, marker }));
 
-    const newStartTimecode = dragState.marker.left / timelineState.msToPxRatio;
+    const newStartTimecode = Math.round(dragState.marker.left / timelineState.msToPxRatio);
     onStartTimecodeChange(dragState.marker.key, newStartTimecode);
   }, [dragState, timelineState, onStartTimecodeChange]);
 
   const handleSegmentsBarClick = () => {
     if (newMarkerState.isVisible && newMarkerState.isInBounds) {
-      const startTimecode = newMarkerState.left / timelineState.msToPxRatio;
+      const startTimecode = Math.round(newMarkerState.left / timelineState.msToPxRatio);
       onPartAdd(startTimecode);
+      setNewMarkerState(getDefaultNewMarkerState());
     }
   };
 
   const handleSegmentsBarMouseLeave = () => {
-    setNewMarkerState(prevState => ({ ...prevState, isVisible: false }));
+    setNewMarkerState(getDefaultNewMarkerState());
   };
 
   const handleSegmentsBarMouseMove = event => {
@@ -87,7 +80,8 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     const segmentsBarMinTop = timelineState.bounds.top + timelineBarHeight;
     const segmentsBarMaxTop = timelineState.bounds.top + (timelineBarHeight * 2);
 
-    if (event.clientY > segmentsBarMaxTop || event.clientY < segmentsBarMinTop) {
+    const isExceedingVerticalBounds = event.clientY > segmentsBarMaxTop || event.clientY < segmentsBarMinTop;
+    if (isExceedingVerticalBounds) {
       handleSegmentsBarMouseLeave();
       return;
     }
@@ -137,20 +131,27 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
       return segment;
     });
 
-    const currentNewMarkerBounds = parts.map((part, index) => {
+    const newMarkerBounds = parts.map((part, index) => {
       const nextPartStartTimecode = parts[index + 1]?.startTimecode || length;
       const currentPartDuration = nextPartStartTimecode - part.startTimecode;
+
       if (currentPartDuration <= MIN_PART_DURATION_IN_MS) {
         return null;
       }
-      return {
-        leftMin: (part.startTimecode * msToPxRatio) + minSegmentLength,
-        leftMax: (nextPartStartTimecode * msToPxRatio) - minSegmentLength
-      };
+
+      let leftMin = (part.startTimecode * msToPxRatio) + minSegmentLength;
+      let leftMax = (nextPartStartTimecode * msToPxRatio) - minSegmentLength;
+      const thereIsAlmostAPixelLeft = (leftMax - leftMin) <= 0;
+
+      if (thereIsAlmostAPixelLeft) {
+        leftMin -= 0.5;
+        leftMax += 0.5;
+      }
+      return { leftMin, leftMax };
     }).filter(bound => bound);
 
+    setNewMarkerState(prevState => ({ ...prevState, bounds: newMarkerBounds }));
     setTimelineState({ markers, segments, msToPxRatio, bounds, minSegmentLength });
-    setNewMarkerState(prevState => ({ ...prevState, bounds: currentNewMarkerBounds }));
   }, [timelineRef, parts, length]);
 
   const renderMarker = (marker, index) => {

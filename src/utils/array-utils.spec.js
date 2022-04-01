@@ -42,9 +42,14 @@ describe('array-utils', () => {
       expect(result).not.toBe(items);
       expect(items).toEqual([0, 1, 2, 3]);
     });
-    it('adds the item at the beginning', () => {
+    it('adds the item at the beginning when index is 0', () => {
       const items = [0, 1, 2, 3];
       const result = insertItemAt(items, -1, 0);
+      expect(result).toEqual([-1, 0, 1, 2, 3]);
+    });
+    it('adds the item at the beginning when index is < 0', () => {
+      const items = [0, 1, 2, 3];
+      const result = insertItemAt(items, -1, -1);
       expect(result).toEqual([-1, 0, 1, 2, 3]);
     });
     it('adds the item in the middle', () => {
@@ -52,9 +57,14 @@ describe('array-utils', () => {
       const result = insertItemAt(items, 1.5, 2);
       expect(result).toEqual([0, 1, 1.5, 2, 3]);
     });
-    it('adds the item at the end', () => {
+    it('adds the item at the end when index is array length', () => {
       const items = [0, 1, 2, 3];
       const result = insertItemAt(items, 4, 4);
+      expect(result).toEqual([0, 1, 2, 3, 4]);
+    });
+    it('adds the item at the end when index is > array length', () => {
+      const items = [0, 1, 2, 3];
+      const result = insertItemAt(items, 4, 5);
       expect(result).toEqual([0, 1, 2, 3, 4]);
     });
   });
