@@ -55,6 +55,7 @@ const configSchema = joi.object({
   additionalControllers: joi.array().items(joi.function().class()).default([]),
   consentCookieName: joi.string().default('COOKIECONSENT'),
   areRoomsEnabled: joi.bool().default(false),
+  isAdminTestsTabEnabled: joi.bool().default(false),
   additionalHeadHtml: joi.string().default('')
 });
 
