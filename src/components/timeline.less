@@ -14,6 +14,7 @@
 }
 
 .Timeline-markersBar {
+  display: flex;
   position: relative;
   height: @timeline-bar-height;
 }
@@ -23,6 +24,10 @@
   position: absolute;
   cursor: col-resize;
   color: @edu-primary-color-light;
+
+  &.is-displayed {
+    display: flex;
+  }
 }
 
 .Timeline-segmentsBar {
@@ -70,6 +75,10 @@
   justify-content: center;
   background-color: @edu-background-color-light;
   border-right: 1px dotted @edu-border-color-base;
+
+  &.is-displayed {
+    display: flex;
+  }
 
   &:last-of-type {
     border-right: none;

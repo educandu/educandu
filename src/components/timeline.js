@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { FlagOutlined } from '@ant-design/icons';
 import CloseIcon from './icons/general/close-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
+import { isTouchDevice } from '../ui/browser-helper.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 const MIN_PART_WIDTH_IN_PX = 35;
@@ -60,6 +61,10 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   }, [dragState, timelineState, onStartTimecodeChange]);
 
   const handleSegmentsBarClick = () => {
+    if (isTouchDevice()) {
+      return;
+    }
+
     if (newMarkerState.isVisible && newMarkerState.isInBounds) {
       const startTimecode = Math.round(newMarkerState.left / timelineState.msToPxRatio);
       onPartAdd(startTimecode);
@@ -72,7 +77,7 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   };
 
   const handleSegmentsBarMouseMove = event => {
-    if (dragState) {
+    if (dragState || isTouchDevice()) {
       return;
     }
 
@@ -91,22 +96,7 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     setNewMarkerState(prevState => ({ ...prevState, left: currentLeft, isInBounds, isVisible: true }));
   };
 
-  useEffect(() => {
-    if (!dragState) {
-      return () => { };
-    }
-    window.addEventListener('mousemove', handleWindowMouseMove);
-    window.addEventListener('mouseup', handleWindowMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', handleWindowMouseMove);
-    };
-  }, [dragState, handleWindowMouseMove, handleWindowMouseUp]);
-
-  useEffect(() => {
-    if (!timelineRef.current) {
-      return;
-    }
-
+  const updateStates = useCallback(() => {
     const bounds = timelineRef.current.getBoundingClientRect();
     const msToPxRatio = timelineRef.current.clientWidth / length;
     const minSegmentLength = MIN_PART_DURATION_IN_MS * msToPxRatio;
@@ -152,14 +142,38 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
 
     setNewMarkerState(prevState => ({ ...prevState, bounds: newMarkerBounds }));
     setTimelineState({ markers, segments, msToPxRatio, bounds, minSegmentLength });
-  }, [timelineRef, parts, length]);
+  }, [parts, length]);
+
+  useEffect(() => {
+    if (timelineRef.current) {
+      updateStates();
+    }
+  }, [timelineRef, updateStates]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateStates);
+    return () => {
+      window.removeEventListener('resize', updateStates);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!dragState) {
+      return () => { };
+    }
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    window.addEventListener('mouseup', handleWindowMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+    };
+  }, [dragState, handleWindowMouseMove, handleWindowMouseUp]);
 
   const renderMarker = (marker, index) => {
+    const classes = classNames('Timeline-marker', { 'is-displayed': isTouchDevice() });
     return (
-      <div key={marker.key} id={marker.key} className="Timeline-marker" style={{ left: `${marker.left}px` }}>
-        <div className="Timeline-partFlagsBar" onMouseDown={handleMarkerMouseDown(marker, index)}>
-          <FlagOutlined />
-        </div>
+      <div key={marker.key} className={classes} style={{ left: `${marker.left}px` }}>
+        <FlagOutlined onMouseDown={handleMarkerMouseDown(marker, index)} />
       </div>
     );
   };
@@ -169,8 +183,9 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   );
 
   const renderDeleteSegment = segment => {
+    const classes = classNames('Timeline-deleteSegment', { 'is-displayed': isTouchDevice() });
     return segment.width >= MIN_PART_WIDTH_IN_PX && (
-      <div key={segment.key} className="Timeline-deleteSegment" style={{ width: `${segment.width}px` }}>
+      <div key={segment.key} className={classes} style={{ width: `${segment.width}px` }}>
         <Button
           className="Timeline-deleteButton"
           type="link"
