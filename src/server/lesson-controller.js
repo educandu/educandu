@@ -48,7 +48,7 @@ class LessonController {
       throw new NotFound();
     }
 
-    if (templateLessonId && lesson.roomId !== templateLesson.roomId) {
+    if (templateLesson && lesson.roomId !== templateLesson.roomId) {
       throw new BadRequest();
     }
 
