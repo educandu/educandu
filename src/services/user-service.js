@@ -6,16 +6,19 @@ import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import LockStore from '../stores/lock-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
-import { ROLE, SAVE_USER_RESULT } from '../domain/constants.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
+import {
+  ROLE,
+  SAVE_USER_RESULT,
+  PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS,
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+} from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
 const DEFAULT_ROLE_NAME = ROLE.user;
 const DEFAULT_PROVIDER_NAME = 'educandu';
 const PASSWORD_SALT_ROUNDS = 1024;
-const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
-const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 
 const logger = new Logger(import.meta.url);
 
