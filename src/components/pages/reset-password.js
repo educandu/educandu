@@ -33,36 +33,14 @@ function ResetPassword({ PageTemplate, SiteLogo }) {
     requestPasswordReset({ email });
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  };
-
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0
-      },
-      sm: {
-        span: 16,
-        offset: 8
-      }
-    }
-  };
-
   const resetRequestForm = (
     <div className="ResetPasswordPage-form">
-      <Form onFinish={handleFinish} scrollToFirstError>
-        <EmailFormItem name="email" {...formItemLayout} />
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">{t('requestReset')}</Button>
+      <Form onFinish={handleFinish} scrollToFirstError layout="vertical">
+        <EmailFormItem name="email" />
+        <FormItem>
+          <Button className="ResetPasswordPage-formButton" type="primary" size="large" htmlType="submit" block>
+            {t('requestReset')}
+          </Button>
         </FormItem>
       </Form>
     </div>
