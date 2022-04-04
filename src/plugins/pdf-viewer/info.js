@@ -1,6 +1,6 @@
 import React from 'react';
+import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { RENDER_MODE, SOURCE_TYPE } from './constants.js';
 import FileIcon from '../../components/icons/general/file-icon.js';
 
 export default class PdfViewer {
@@ -22,7 +22,6 @@ export default class PdfViewer {
     return {
       sourceType: SOURCE_TYPE.internal,
       sourceUrl: '',
-      renderMode: RENDER_MODE.svg,
       showTextOverlay: true,
       width: 100,
       caption: ''
@@ -34,6 +33,6 @@ export default class PdfViewer {
   }
 
   getCdnResources(content) {
-    return content.type === SOURCE_TYPE.internal && content.url ? [content.url] : [];
+    return content.sourceType === SOURCE_TYPE.internal && content.sourceUrl ? [content.sourceUrl] : [];
   }
 }

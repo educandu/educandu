@@ -20,21 +20,16 @@ function PdfViewerDisplay({ content }) {
   const [pageNumber, setPageNumber] = useState(1);
   const [viewerStyle, setViewerStyle] = useState({});
 
-  const { sourceType, sourceUrl, renderMode, showTextOverlay, width, caption } = content;
+  const { sourceType, sourceUrl, showTextOverlay, width, caption } = content;
 
   const fileObject = useMemo(() => {
-    if (!sourceUrl) {
-      return null;
+    if (sourceType !== SOURCE_TYPE.internal) {
+      throw new Error(`Invalid source type '${sourceType}'`);
     }
 
-    switch (sourceType) {
-      case SOURCE_TYPE.internal:
-        return { url: `${clientConfig.cdnRootUrl}/${sourceUrl}`, withCredentials: true };
-      case SOURCE_TYPE.external:
-        return { url: sourceUrl };
-      default:
-        throw new Error(`Invalid source type '${sourceType}'`);
-    }
+    return sourceUrl
+      ? { url: `${clientConfig.cdnRootUrl}/${sourceUrl}`, withCredentials: true }
+      : null;
   }, [sourceType, sourceUrl, clientConfig.cdnRootUrl]);
 
   const onDocumentLoadSuccess = loadedPdfDocument => {
@@ -96,7 +91,7 @@ function PdfViewerDisplay({ content }) {
                 cMapPacked: true
               }}
               file={fileObject}
-              renderMode={renderMode}
+              renderMode="canvas"
               loading={renderLoadingComponent}
               noData={renderNoDataComponent}
               error={renderErrorComponent}

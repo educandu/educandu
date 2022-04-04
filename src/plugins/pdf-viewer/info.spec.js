@@ -8,16 +8,12 @@ describe('pdf-viewer-info', () => {
   });
 
   describe('getCdnResources', () => {
-    it('returns empty list for an external resource', () => {
-      const result = sut.getCdnResources({ type: SOURCE_TYPE.external, url: 'https://someplace.com/doc.pdf' });
-      expect(result).toHaveLength(0);
-    });
     it('returns empty list for an internal resource without url', () => {
-      const result = sut.getCdnResources({ type: SOURCE_TYPE.internal, url: null });
+      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.internal, sourceUrl: null });
       expect(result).toHaveLength(0);
     });
     it('returns a list with the url for an internal resource', () => {
-      const result = sut.getCdnResources({ type: SOURCE_TYPE.internal, url: 'media/some-doc.pdf' });
+      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.internal, sourceUrl: 'media/some-doc.pdf' });
       expect(result).toEqual(['media/some-doc.pdf']);
     });
   });
