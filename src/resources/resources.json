@@ -2002,8 +2002,8 @@
     "language": "de",
     "resources": {
       "registrationVerificationEmail.subject": "Willkommen auf educandu!",
-      "registrationVerificationEmail.text": "Willkommen!\n\nSie haben sich als {username} auf educandu registriert.\nZum Abschluss der Registrierung bestätigen Sie bitte Ihre Emailadresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
-      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Sie haben sich als {username} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätigen Sie bitte Ihre Emailadresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
+      "registrationVerificationEmail.text": "Willkommen!\n\nSie haben sich als {username} auf educandu registriert.\nZum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: {verificationLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
+      "registrationVerificationEmail.html": "<p>Willkommen!<br/><br/>Sie haben sich als {username} auf educandu registriert.<br/>Zum Abschluss der Registrierung bestätigen Sie bitte Ihre E-Mail-Adresse über diesen Link: <a href=\"{verificationLink}\">Registrierung bestätigen</a><br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
       "passwordResetEmail.subject": "Ihr Kennwort auf educandu",
       "passwordResetEmail.text": "Hallo {username}!\n\nSie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.\nZur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: {completionLink}\nDer Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.\n",
       "passwordResetEmail.html": "<p>Hallo {username}!<br/><br/>Sie haben das Zurücksetzen Ihres Kennworts auf educandu angefordert.<br/>Zur Vergabe eines neuen Kennworts folgen Sie bitte diesem Link: <a href=\"{completionLink}\">Kennwort ändern</a>.<br/>Der Link bleibt {hours, plural, =1 {eine Stunde} other {# Stunden}} gültig.</p>\n",
