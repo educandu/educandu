@@ -7,8 +7,10 @@ import cloneDeep from '../../utils/clone-deep.js';
 import SettingsTab from '../admin/settings-tab.js';
 import React, { useEffect, useState } from 'react';
 import { useBeforeunload } from 'react-beforeunload';
+import { useService } from '../container-context.js';
 import permissions from '../../domain/permissions.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
 import { documentMetadataShape, settingsShape, storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
 
@@ -16,6 +18,7 @@ const { TabPane } = Tabs;
 
 function Admin({ initialState, PageTemplate }) {
   const { t } = useTranslation('admin');
+  const clientConfig = useService(ClientConfig);
   const [currentTab, setCurrentTab] = useState('1');
   const [isCurrentTabDirty, setIsCurrentTabDirty] = useState(false);
   const [settings, setSettings] = useState(cloneDeep(initialState.settings));
@@ -66,9 +69,11 @@ function Admin({ initialState, PageTemplate }) {
                 onStoragePlansSaved={setStoragePlans}
                 />
             </TabPane>
-            <TabPane className="Tabs-tabPane" tab={t('testsTabTitle')} key="100">
-              <TestsTab />
-            </TabPane>
+            {clientConfig.isAdminTestsTabEnabled && (
+              <TabPane className="Tabs-tabPane" tab={t('testsTabTitle')} key="100">
+                <TestsTab />
+              </TabPane>
+            )}
           </Tabs>
         </Restricted>
       </div>

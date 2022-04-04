@@ -79,7 +79,8 @@ class ServerConfig {
       disabledFeatures: this.disabledFeatures,
       importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),
       consentCookieName: this.consentCookieName,
-      areRoomsEnabled: this.areRoomsEnabled
+      areRoomsEnabled: this.areRoomsEnabled,
+      isAdminTestsTabEnabled: this.isAdminTestsTabEnabled
     };
   }
 }
