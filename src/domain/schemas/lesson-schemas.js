@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { LESSON_VIEW_QUERY_PARAM } from '../constants.js';
 import { idOrKeySchema, slugSchema, sectionSchema } from './shared-schemas.js';
 
 export const lessonSectionDBSchema = joi.object({
@@ -29,6 +30,11 @@ export const lessonDBSchema = joi.object({
 export const getLessonParamsSchema = joi.object({
   lessonId: idOrKeySchema.required()
 }).unknown(true);
+
+export const getLessonQuerySchema = joi.object({
+  view: joi.string().valid(...Object.values(LESSON_VIEW_QUERY_PARAM)),
+  templateLessonId: idOrKeySchema
+});
 
 export const postLessonBodySchema = joi.object({
   roomId: idOrKeySchema.required(),

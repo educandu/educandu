@@ -316,12 +316,19 @@ export const lessonMetadataProps = {
   })
 };
 
+export const lessonSectionShape = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  content: PropTypes.object
+});
+
 export const lessonMetadataShape = PropTypes.shape({
   ...lessonMetadataProps
 });
 
 export const lessonShape = PropTypes.shape({
-  ...lessonMetadataProps
+  ...lessonMetadataProps,
+  sections: PropTypes.arrayOf(lessonSectionShape).isRequired
 });
 
 export const userActivitiesShape = PropTypes.shape({

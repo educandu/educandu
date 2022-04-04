@@ -116,9 +116,9 @@ function Docs({ initialState, PageTemplate }) {
       isVisible: true,
       templateDocumentKey: null,
       initialDocumentMetadata: {
-        title: `${doc.title} ${t('copyTitleSuffix')}`,
+        title: `${doc.title} ${t('common:copyTitleSuffix')}`,
         description: doc.description,
-        slug: doc.slug ? `${doc.slug}-${t('copySlugSuffix')}` : '',
+        slug: doc.slug ? `${doc.slug}-${t('common:copySlugSuffix')}` : '',
         tags: [...doc.tags],
         language: doc.language
       }
@@ -200,7 +200,7 @@ function Docs({ initialState, PageTemplate }) {
   const renderActions = (_actions, doc) => {
     return (
       <Fragment>
-        <span><a onClick={() => handleCloneClick(doc)}>{t('clone')}</a></span>
+        <span><a onClick={() => handleCloneClick(doc)}>{t('common:clone')}</a></span>
         {doc.origin.startsWith(DOCUMENT_ORIGIN.external) && (
           <Restricted to={permissions.MANAGE_IMPORT}>
             <br />

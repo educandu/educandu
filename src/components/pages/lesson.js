@@ -20,23 +20,20 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
-import { lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
+import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
-import {
-  ensureIsExcluded,
-  ensureIsIncluded,
-  insertItemAt,
-  moveItem,
-  removeItemAt,
-  replaceItemAt
-} from '../../utils/array-utils.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
 
 const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
+
+const createPageAlerts = (isInEditMode, hasPendingTemplateSectionKeys, t) => {
+  return isInEditMode && hasPendingTemplateSectionKeys ? [{ message: t('common:proposedSectionsAlert') }] : [];
+};
 
 function Lesson({ PageTemplate, initialState }) {
   const user = useUser();
@@ -56,8 +53,14 @@ function Lesson({ PageTemplate, initialState }) {
   const [lesson, setLesson] = useState(initialState.lesson);
   const [invalidSectionKeys, setInvalidSectionKeys] = useState([]);
   const [isInEditMode, setIsInEditMode] = useState(user ? startsInEditMode : false);
-  const [currentSections, setCurrentSections] = useState(cloneDeep(lesson.sections));
+  const [pendingTemplateSectionKeys, setPendingTemplateSectionKeys] = useState((initialState.templateSections || []).map(s => s.key));
+  const [currentSections, setCurrentSections] = useState(cloneDeep(initialState.templateSections?.length ? initialState.templateSections : lesson.sections));
   const [isLessonMetadataModalVisible, setIsLessonMetadataModalVisible] = useState(false);
+
+  const [alerts, setAlerts] = useState(createPageAlerts(isInEditMode, !!pendingTemplateSectionKeys.length, t));
+  useEffect(() => {
+    setAlerts(createPageAlerts(isInEditMode, !!pendingTemplateSectionKeys.length, t));
+  }, [isInEditMode, pendingTemplateSectionKeys, t]);
 
   useEffect(() => {
     if (startsInEditMode) {
@@ -102,12 +105,28 @@ function Lesson({ PageTemplate, initialState }) {
     try {
       const updatedLesson = await lessonApiClient.updateLessonSections({
         lessonId: lesson._id,
-        sections: currentSections
+        sections: currentSections.filter(s => !pendingTemplateSectionKeys.includes(s.key))
+      });
+
+      const currentSectionKeys = currentSections.map(s => s.key);
+      if (updatedLesson.sections.some(s => !currentSectionKeys.includes(s.key))) {
+        throw new Error('Updated sections do not match existing sections');
+      }
+
+      const newPendingTemplateSectionKeys = [];
+      const mergedSections = currentSections.map(currentSection => {
+        const updatedSection = updatedLesson.sections.find(s => s.key === currentSection.key);
+        if (updatedSection) {
+          return updatedSection;
+        }
+
+        newPendingTemplateSectionKeys.push(currentSection.key);
+        return currentSection;
       });
 
       setIsDirty(false);
       setLesson(updatedLesson);
-      setCurrentSections(cloneDeep(updatedLesson.sections));
+      setCurrentSections(cloneDeep(mergedSections));
     } catch (error) {
       handleApiError({ error, logger, t });
     }
@@ -129,6 +148,18 @@ function Lesson({ PageTemplate, initialState }) {
         exitEditMode();
       }
     });
+  };
+
+  const handlePendingSectionApply = index => {
+    const appliedSectionKey = currentSections[index].key;
+    setPendingTemplateSectionKeys(prevKeys => ensureIsExcluded(prevKeys, appliedSectionKey));
+    setIsDirty(true);
+  };
+
+  const handlePendingSectionDiscard = index => {
+    const discardedSection = currentSections[index];
+    setCurrentSections(prevSections => ensureIsExcluded(prevSections, discardedSection));
+    setIsDirty(true);
   };
 
   const handleSectionContentChange = (index, newContent, isInvalid) => {
@@ -218,7 +249,7 @@ function Lesson({ PageTemplate, initialState }) {
 
   return (
     <Fragment>
-      <PageTemplate>
+      <PageTemplate alerts={alerts}>
         <div className="LessonPage">
           <Breadcrumb className="LessonPage-breadcrumbs">
             <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
@@ -233,9 +264,12 @@ function Lesson({ PageTemplate, initialState }) {
             />
           <SectionsDisplay
             sections={currentSections}
+            pendingSectionKeys={pendingTemplateSectionKeys}
             publicStorage={publicStorage}
             privateStorage={privateStorage}
             canEdit={isInEditMode}
+            onPendingSectionApply={handlePendingSectionApply}
+            onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
             onSectionMove={handleSectionMove}
             onSectionInsert={handleSectionInsert}
@@ -264,7 +298,7 @@ function Lesson({ PageTemplate, initialState }) {
             />
 
           <LessonMetadataModal
-            lesson={lesson}
+            initialLessonMetadata={lesson}
             mode={LESSON_MODAL_MODE.update}
             isVisible={isLessonMetadataModalVisible}
             onSave={handleLessonMetadataModalSave}
@@ -280,6 +314,7 @@ Lesson.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     lesson: lessonShape.isRequired,
+    templateSections: PropTypes.arrayOf(lessonSectionShape),
     room: roomShape.isRequired
   }).isRequired
 };

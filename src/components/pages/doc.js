@@ -65,7 +65,7 @@ function createPageAlerts(doc, currentView, hasPendingTemplateSectionKeys, t) {
   }
 
   if (currentView === VIEW.edit && hasPendingTemplateSectionKeys) {
-    alerts.push({ message: t('proposedSectionsAlert') });
+    alerts.push({ message: t('common:proposedSectionsAlert') });
   }
 
   return alerts;

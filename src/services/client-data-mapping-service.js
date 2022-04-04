@@ -60,6 +60,13 @@ class ClientDataMappingService {
     }));
   }
 
+  createProposedLessonSections(lesson) {
+    return lesson.sections.map(section => ({
+      ...section,
+      key: uniqueId.create()
+    }));
+  }
+
   async mapDocOrRevision(docOrRevision, user) {
     const userMap = await this._getUserMapForDocsOrRevisions([docOrRevision]);
     const allowedUserFields = privateData.getAllowedUserFields(user);

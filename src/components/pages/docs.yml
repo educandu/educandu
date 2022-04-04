@@ -1,15 +1,6 @@
 defaultDocumentTitle:
   en: New document
   de: Neues Dokument
-copyTitleSuffix:
-  en: (copy)
-  de: (Kopie)
-copySlugSuffix:
-  en: copy
-  de: kopie
-clone:
-  en: Clone
-  de: Klonen
 newDocument:
   en: New document
   de: Neues Dokument

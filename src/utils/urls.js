@@ -159,9 +159,9 @@ function getRoomUrl(id, slug) {
   return concatParts(roomsPrefix, encodeURIComponent(id), encodeURIParts(slug));
 }
 
-function getLessonUrl({ id, slug, view }) {
+function getLessonUrl({ id, slug, view, templateLessonId }) {
   const url = concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIParts(slug));
-  const queryString = composeQueryString([['view', view]]);
+  const queryString = composeQueryString([['view', view], ['templateLessonId', templateLessonId]]);
   return queryString ? `${url}?${queryString}` : url;
 }
 
