@@ -33,6 +33,6 @@ export default class PdfViewer {
   }
 
   getCdnResources(content) {
-    return content.type === SOURCE_TYPE.internal && content.sourceUrl ? [content.sourceUrl] : [];
+    return content.sourceType === SOURCE_TYPE.internal && content.sourceUrl ? [content.sourceUrl] : [];
   }
 }
