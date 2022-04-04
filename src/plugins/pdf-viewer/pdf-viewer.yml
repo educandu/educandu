@@ -1,21 +1,12 @@
 name:
   en: PDF viewer
   de: PDF-Anzeige
-source:
-  en: Source
-  de: Quelle
-externalLink:
-  en: External link
-  de: Externer Link
 internalLink:
   en: Internal link
   de: Interner Link
 internalCdn:
   en: Internal CDN
   de: Internes CDN
-externalUrl:
-  en: External URL
-  de: Externe URL
 internalUrl:
   en: Internal URL
   de: Interne URL
@@ -25,20 +16,6 @@ width:
 caption:
   en: Caption
   de: Legende
-renderMode:
-  en: Render mode
-  de: Darstellungsmodus
-renderModeInfo:
-  en: |
-      Determines the way the document is rendered in the web browser.
-      In most cases the text appearance is of higher quality when choosing SVG,
-      however, in certain documents, some characters cannot be shown correctly.
-      In such cases you should select Canvas.
-  de: |
-      Bestimmt die Darstellung der PDF-Datei im Web-Browser.
-      SVG liefert in der Regel ein qualitativ hochwertigeres Schriftbild,
-      stellt jedoch in seltenen Fällen bestimmte Sonderzeichen falsch dar.
-      In diesen Fällen sollten Sie Canvas wählen.
 showTextOverlay:
   en: Show text overlay
   de: Text-Overlay anzeigen
