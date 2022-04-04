@@ -8,13 +8,15 @@ import UserStore from '../stores/user-store.js';
 import LessonStore from '../stores/lesson-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
-import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import {
+  ROOM_ACCESS_LEVEL,
+  INVALID_ROOM_INVITATION_REASON,
+  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
+} from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
 const logger = new Logger(import.meta.url);
-
-const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
 
 export default class RoomService {
   static get inject() {

@@ -5,6 +5,11 @@ import UserStore from '../stores/user-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ResourceManager from '../resources/resource-manager.js';
 import { SUPPORTED_UI_LANGUAGES } from '../resources/ui-language.js';
+import {
+  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
+  PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS,
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+} from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -24,16 +29,22 @@ class MailService {
     logger.info(`Creating email with registration verification link ${verificationLink}`);
 
     const subject = this.translators
-      .map(t => t('mailService:registrationVerificationEmail.subject', { username, verificationLink }))
+      .map(t => t('mailService:registrationVerificationEmail.subject'))
       .join(' / ');
 
     const text = this.translators
-      .map(t => t('mailService:registrationVerificationEmail.text', { username, verificationLink }))
+      .map(t => t('mailService:registrationVerificationEmail.text', {
+        username,
+        verificationLink,
+        hours: PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS
+      }))
       .join('\n\n');
 
     const html = this.translators
       .map(t => t('mailService:registrationVerificationEmail.html', {
-        username: htmlescape(username), verificationLink
+        username: htmlescape(username),
+        verificationLink,
+        hours: PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS
       }))
       .join('\n');
 
@@ -45,16 +56,22 @@ class MailService {
     logger.info(`Creating email with password reset request completion link ${completionLink}`);
 
     const subject = this.translators
-      .map(t => t('mailService:passwordResetEmail.subject', { username, completionLink }))
+      .map(t => t('mailService:passwordResetEmail.subject'))
       .join(' / ');
 
     const text = this.translators
-      .map(t => t('mailService:passwordResetEmail.text', { username, completionLink }))
+      .map(t => t('mailService:passwordResetEmail.text', {
+        username,
+        completionLink,
+        hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+      }))
       .join('\n\n');
 
     const html = this.translators
       .map(t => t('mailService:passwordResetEmail.html', {
-        username: htmlescape(username), completionLink
+        username: htmlescape(username),
+        completionLink,
+        hours: PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
       }))
       .join('\n');
 
@@ -66,16 +83,24 @@ class MailService {
     logger.info(`Creating email with room invitation link ${invitationLink}`);
 
     const subject = this.translators
-      .map(t => t('mailService:roomInvitationEmail.subject', { ownerName, roomName, invitationLink }))
+      .map(t => t('mailService:roomInvitationEmail.subject'))
       .join(' / ');
 
     const text = this.translators
-      .map(t => t('mailService:roomInvitationEmail.text', { ownerName, roomName, invitationLink }))
+      .map(t => t('mailService:roomInvitationEmail.text', {
+        ownerName,
+        roomName,
+        invitationLink,
+        days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
+      }))
       .join('\n\n');
 
     const html = this.translators
       .map(t => t('mailService:roomInvitationEmail.html', {
-        ownerName: htmlescape(ownerName), roomName: htmlescape(roomName), invitationLink
+        ownerName: htmlescape(ownerName),
+        roomName: htmlescape(roomName),
+        invitationLink,
+        days: PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
       }))
       .join('\n');
 
