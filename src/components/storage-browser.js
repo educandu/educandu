@@ -70,7 +70,7 @@ class StorageBrowser extends React.Component {
       currentPathSegments: currentLocation.initialPathSegments,
       locations,
       currentLocation,
-      scaleDownImages: true
+      optimizeImages: true
     };
 
     this.columns = [
@@ -312,7 +312,7 @@ class StorageBrowser extends React.Component {
   async collectFilesToUpload(files, { onProgress } = {}) {
     const { t } = this.props;
 
-    const processedFiles = await processFilesBeforeUpload({ files, scaleDownImages: this.state.scaleDownImages });
+    const processedFiles = await processFilesBeforeUpload({ files, optimizeImages: this.state.optimizeImages });
     const requiredBytes = processedFiles.reduce((totalSize, file) => totalSize + file.size, 0);
 
     if (requiredBytes > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
@@ -605,8 +605,8 @@ class StorageBrowser extends React.Component {
     this.refreshFiles(newLocation.initialPathSegments, selectedRowKeys);
   }
 
-  handleScaleDownImagesChange(event) {
-    this.setState({ scaleDownImages: event.target.checked });
+  handleOptimizeImagesChange(event) {
+    this.setState({ optimizeImages: event.target.checked });
   }
 
   render() {
@@ -666,8 +666,8 @@ class StorageBrowser extends React.Component {
               </Button>
             </Tooltip>
           </Upload>
-          <Checkbox className="StorageBrowser-control" checked={this.state.scaleDownImages} onChange={this.handleScaleDownImagesChange}>
-            {t('scaleDownImages')}
+          <Checkbox className="StorageBrowser-control" checked={this.state.optimizeImages} onChange={this.handleOptimizeImagesChange}>
+            {t('optimizeImages')}
           </Checkbox>
         </div>
 
