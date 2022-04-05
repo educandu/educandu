@@ -16,6 +16,9 @@ hoverOption:
 revealOption:
   en: Reveal
   de: Auflösung
+clipOption:
+  en: Clip
+  de: Abschneiden
 internalCdn:
   en: Internal CDN
   de: Internes CDN

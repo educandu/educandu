@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
-import React, { useEffect, useState } from 'react';
 import { Form, Input, Radio, InputNumber } from 'antd';
+import React, { Fragment, useEffect, useState } from 'react';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getImageDimensions, getImageSource } from '../utils.js';
 import { useService } from '../../../components/container-context.js';
@@ -137,6 +137,13 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
           }
         });
         break;
+      case EFFECT_TYPE.clip:
+        changeContent({
+          effect: {
+            type: EFFECT_TYPE.clip
+          }
+        });
+        break;
       case EFFECT_TYPE.none:
       default:
         changeContent({ effect: null });
@@ -154,83 +161,86 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     changeContent({ effect: newEffect });
   };
 
+  const renderSourceTypeInput = (value, onChangeHandler) => (
+    <FormItem label={t('source')} {...formItemLayout}>
+      <RadioGroup value={value} onChange={onChangeHandler}>
+        <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
+        <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
+      </RadioGroup>
+    </FormItem>
+  );
+
+  const renderInternalSourceTypeInput = (value, onInputChangeHandler, inFileChangeHandler) => (
+    <FormItem label={t('internalUrl')} {...formItemLayout}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Input
+          addonBefore={`${clientConfig.cdnRootUrl}/`}
+          value={value}
+          onChange={onInputChangeHandler}
+          />
+        <StorageFilePicker
+          publicStorage={publicStorage}
+          privateStorage={privateStorage}
+          fileName={value}
+          onFileNameChanged={inFileChangeHandler}
+          />
+      </div>
+    </FormItem>
+  );
+
+  const renderExternalSourceTypeInput = (value, onChangeHandler) => (
+    <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(value, t)} hasFeedback>
+      <Input value={value} onChange={onChangeHandler} />
+    </FormItem>
+  );
+
+  const renderCopyrightInput = (value, onChangeHandler) => (
+    <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+      <TextArea value={value} onChange={onChangeHandler} autoSize={{ minRows: 3 }} />
+    </Form.Item>
+  );
+
   return (
     <div>
       <Form layout="horizontal">
-        <FormItem label={t('source')} {...formItemLayout}>
-          <RadioGroup value={sourceType} onChange={handleSourceTypeValueChanged}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
-          </RadioGroup>
-        </FormItem>
-        {sourceType === SOURCE_TYPE.external && (
-          <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <Input value={sourceUrl} onChange={handleExternalSourceUrlValueChanged} />
-          </FormItem>
-        )}
-        {sourceType === SOURCE_TYPE.internal && (
-          <FormItem label={t('internalUrl')} {...formItemLayout}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Input
-                addonBefore={`${clientConfig.cdnRootUrl}/`}
-                value={sourceUrl}
-                onChange={handleInternalSourceUrlValueChanged}
-                />
-              <StorageFilePicker
-                publicStorage={publicStorage}
-                privateStorage={privateStorage}
-                fileName={sourceUrl}
-                onFileNameChanged={handleInternalSourceUrlFileNameChanged}
-                />
-            </div>
-          </FormItem>
-        )}
-        <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
-          <TextArea value={text} onChange={handleCopyrightInfoValueChanged} autoSize={{ minRows: 3 }} />
-        </Form.Item>
+        {renderSourceTypeInput(sourceType, handleSourceTypeValueChanged)}
+
+        {sourceType === SOURCE_TYPE.external
+          && renderExternalSourceTypeInput(sourceUrl, handleExternalSourceUrlValueChanged)}
+
+        {sourceType === SOURCE_TYPE.internal
+          && renderInternalSourceTypeInput(sourceUrl, handleInternalSourceUrlValueChanged, handleInternalSourceUrlFileNameChanged)}
+
+        {renderCopyrightInput(text, handleCopyrightInfoValueChanged)}
+
         <Form.Item label={t('effectTypeLabel')} {...formItemLayout}>
           <RadioGroup value={effectType} onChange={handleEffectOptionChange}>
             <RadioButton value={EFFECT_TYPE.none}>{t('noneOption')}</RadioButton>
             <RadioButton value={EFFECT_TYPE.hover}>{t('hoverOption')}</RadioButton>
             <RadioButton value={EFFECT_TYPE.reveal}>{t('revealOption')}</RadioButton>
+            <RadioButton value={EFFECT_TYPE.clip}>{t('clipOption')}</RadioButton>
           </RadioGroup>
         </Form.Item>
+
         {effect && (
           <div className="Panel">
             <div className="Panel-content Panel-content--darker">
-              <FormItem label={t('source')} {...formItemLayout}>
-                <RadioGroup value={effect.sourceType} onChange={handleEffectSourceTypeValueChanged}>
-                  <RadioButton value="external">{t('externalLink')}</RadioButton>
-                  <RadioButton value="internal">{t('internalCdn')}</RadioButton>
-                </RadioGroup>
-              </FormItem>
-              {effect.sourceType === SOURCE_TYPE.external && (
-                <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(effect.sourceUrl, t)} hasFeedback>
-                  <Input value={effect.sourceUrl} onChange={handleEffectExternalSourceUrlValueChanged} />
-                </FormItem>
+              {[EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(effect.type) && (
+                <Fragment>
+                  {renderSourceTypeInput(effect.sourceType, handleEffectSourceTypeValueChanged)}
+
+                  {effect.sourceType === SOURCE_TYPE.external
+                  && renderExternalSourceTypeInput(effect.sourceUrl, handleEffectExternalSourceUrlValueChanged)}
+
+                  {effect.sourceType === SOURCE_TYPE.internal
+                  && renderInternalSourceTypeInput(effect.sourceUrl, handleEffectInternalSourceUrlValueChanged, handleEffectInternalSourceUrlFileNameChanged)}
+
+                  {renderCopyrightInput(effect.text, handleEffectCopyrightInfoValueChanged)}
+                </Fragment>
               )}
-              {effect.sourceType === SOURCE_TYPE.internal && (
-                <FormItem label={t('internalUrl')} {...formItemLayout}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Input
-                      addonBefore={`${clientConfig.cdnRootUrl}/`}
-                      value={effect.sourceUrl}
-                      onChange={handleEffectInternalSourceUrlValueChanged}
-                      />
-                    <StorageFilePicker
-                      publicStorage={publicStorage}
-                      privateStorage={privateStorage}
-                      fileName={effect.sourceUrl}
-                      onFileNameChanged={handleEffectInternalSourceUrlFileNameChanged}
-                      />
-                  </div>
-                </FormItem>
-              )}
-              <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
-                <TextArea value={effect.text} onChange={handleEffectCopyrightInfoValueChanged} autoSize={{ minRows: 3 }} />
-              </Form.Item>
+
               {effect.type === EFFECT_TYPE.reveal && (
-                <div>
+                <Fragment>
                   <FormItem label={t('startPosition')} {...formItemLayout}>
                     <InputNumber
                       defaultValue={effect.startPosition}
@@ -247,6 +257,12 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
                       <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
                     </RadioGroup>
                   </FormItem>
+                </Fragment>
+              )}
+
+              {effect.type === EFFECT_TYPE.clip && (
+                <div>
+                  will clip here
                 </div>
               )}
             </div>
