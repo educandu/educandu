@@ -1162,7 +1162,7 @@
       "insufficientPrivateStorge": "Not enough storage space available",
       "uploadLimit": "There is a limit of {uploadLimit} per upload",
       "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
-      "scaleDownImages": "Optimize images for web display"
+      "optimizeImages": "Optimize images for web display"
     }
   },
   {
@@ -1184,7 +1184,7 @@
       "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar",
       "uploadLimit": "Es gibt eine Begrenzung von {uploadLimit} per Upload",
       "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
-      "scaleDownImages": "Bilder für Web optimieren"
+      "optimizeImages": "Bilder für Web optimieren"
     }
   },
   {
