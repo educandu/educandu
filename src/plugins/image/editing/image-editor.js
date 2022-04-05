@@ -1,3 +1,4 @@
+import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
@@ -200,6 +201,19 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     </Form.Item>
   );
 
+  const regionChanged = newRegions => {
+    const region = newRegions[0];
+    const newEffect = { ...effect,
+      region: {
+        x: region.x,
+        y: region.y,
+        width: region.width,
+        height: region.height,
+        data: {}
+      } };
+    changeContent({ effect: newEffect });
+  };
+
   return (
     <div>
       <Form layout="horizontal">
@@ -262,7 +276,9 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
 
               {effect.type === EFFECT_TYPE.clip && (
                 <div>
-                  will clip here
+                  <RegionSelect maxRegions={1} regions={effect.region ? [effect.region] : []} onChange={regionChanged}>
+                    <img src={sourceUrl} className="Image-clipEffectSettingImage" />
+                  </RegionSelect>
                 </div>
               )}
             </div>

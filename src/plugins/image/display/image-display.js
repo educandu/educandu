@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import React, { Fragment } from 'react';
 import { getImageSource } from '../utils.js';
+import React, { Fragment, useEffect, useRef } from 'react';
 import { EFFECT_TYPE, ORIENTATION } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
@@ -44,8 +44,41 @@ function ImageDisplay({ content }) {
     </div>
   );
 
+  const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
+
+  const canvasRef = useRef();
+
+  useEffect(() => {
+    const img = document.getElementById('source');
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    const width = img.naturalWidth * (effect.region.width / 100);
+    const height = img.naturalHeight * (effect.region.height / 100);
+    const x = img.naturalWidth * (effect.region.x / 100);
+    const y = img.naturalHeight * (effect.region.y / 100);
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(img, x, y, width, height, 0, 0, width, height);
+  }, [canvasRef, effect]);
+
+  const renderClipEffect = () => (
+    <Fragment>
+      <canvas ref={canvasRef} style={{ width: '100%' }} />
+      <div style={{ display: 'none' }}>
+        <img
+          id="source"
+          src={src}
+          />
+      </div>
+    </Fragment>
+  );
+
   if (effect?.type === EFFECT_TYPE.reveal) {
     return renderRevealEffect();
+  }
+
+  if (effect?.type === EFFECT_TYPE.clip) {
+    return renderClipEffect();
   }
 
   return (
