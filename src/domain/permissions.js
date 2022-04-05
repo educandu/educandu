@@ -7,6 +7,7 @@ const EDIT_FILE = 'edit-file';
 const VIEW_FILES = 'view-files';
 const CREATE_FILE = 'create-file';
 const EDIT_USERS = 'edit-users';
+const VIEW_BATCHES = 'view-batches';
 const HARD_DELETE_SECTION = 'hard-delete-section';
 const DELETE_STORAGE_FILE = 'delete-storage-file';
 const SEE_USER_EMAIL = 'see-user-email';
@@ -32,6 +33,7 @@ const rolesForPermission = {
   [VIEW_FILES]: [ROLE.admin, ROLE.user],
   [CREATE_FILE]: [ROLE.admin, ROLE.user],
   [EDIT_USERS]: [ROLE.admin],
+  [VIEW_BATCHES]: [ROLE.admin],
   [HARD_DELETE_SECTION]: [ROLE.admin],
   [DELETE_STORAGE_FILE]: [ROLE.admin],
   [SEE_USER_EMAIL]: [ROLE.admin],
@@ -64,6 +66,7 @@ export default {
   VIEW_FILES,
   CREATE_FILE,
   EDIT_USERS,
+  VIEW_BATCHES,
   MANAGE_SETTINGS,
   MANAGE_STORAGE_PLANS,
   HARD_DELETE_SECTION,

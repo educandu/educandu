@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import UserStore from '../stores/user-store.js';
-import { FAVORITE_TYPE, ROLE, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
+import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
@@ -94,7 +94,7 @@ describe('client-data-mapping-service', () => {
     });
   });
 
-  describe('mapImportBatches', () => {
+  describe('mapBatches', () => {
     let batches;
 
     beforeEach(async () => {
@@ -103,8 +103,11 @@ describe('client-data-mapping-service', () => {
           createdOn: new Date(),
           completedOn: new Date(),
           createdBy: user1._id,
+          batchType: BATCH_TYPE.documentImport,
+          batchParams: {},
           tasks: [
             {
+              taskType: TASK_TYPE.documentImport,
               taskParams: {
                 updatedOn: new Date()
               },
@@ -121,14 +124,18 @@ describe('client-data-mapping-service', () => {
           createdOn: new Date(),
           completedOn: new Date(),
           createdBy: user2._id,
+          batchType: BATCH_TYPE.documentRegeneration,
+          batchParams: {},
           tasks: [
             {
+              taskType: TASK_TYPE.documentRegeneration,
+              taskParams: {},
               attempts: []
             }
           ]
         }
       ];
-      result = await sut.mapImportBatches(batches, user1);
+      result = await sut.mapBatches(batches, user1);
     });
 
     it('should map the batches', () => {
@@ -141,8 +148,11 @@ describe('client-data-mapping-service', () => {
             key: user1._id,
             username: user1.username
           },
+          batchType: BATCH_TYPE.documentImport,
+          batchParams: {},
           tasks: [
             {
+              taskType: TASK_TYPE.documentImport,
               taskParams: {
                 updatedOn: batches[0].tasks[0].taskParams.updatedOn.toISOString()
               },
@@ -163,8 +173,12 @@ describe('client-data-mapping-service', () => {
             key: user2._id,
             username: user2.username
           },
+          batchType: BATCH_TYPE.documentRegeneration,
+          batchParams: {},
           tasks: [
             {
+              taskType: TASK_TYPE.documentRegeneration,
+              taskParams: {},
               attempts: []
             }
           ]
@@ -173,56 +187,117 @@ describe('client-data-mapping-service', () => {
     });
   });
 
-  describe('mapImportBatch', () => {
+  describe('mapBatch', () => {
     let batch;
 
-    beforeEach(async () => {
-      batch = {
-        createdOn: new Date(),
-        completedOn: new Date(),
-        createdBy: user1._id,
-        tasks: [
-          {
-            taskParams: {
-              updatedOn: new Date()
-            },
-            attempts: [
-              {
-                startedOn: new Date(),
-                completedOn: new Date()
-              }
-            ]
-          }
-        ]
-      };
+    describe('for batches/tasks of type `document-import`', () => {
+      beforeEach(async () => {
+        batch = {
+          createdOn: new Date(),
+          completedOn: new Date(),
+          createdBy: user1._id,
+          batchType: BATCH_TYPE.documentImport,
+          batchParams: {},
+          tasks: [
+            {
+              taskType: TASK_TYPE.documentImport,
+              taskParams: {
+                updatedOn: new Date()
+              },
+              attempts: [
+                {
+                  startedOn: new Date(),
+                  completedOn: new Date()
+                }
+              ]
+            }
+          ]
+        };
 
-      result = await sut.mapImportBatch(batch, user1);
-    });
+        result = await sut.mapBatch(batch, user1);
+      });
 
-    it('should map the batch', () => {
-      expect(result).toEqual({
-        createdOn: batch.createdOn.toISOString(),
-        completedOn: batch.completedOn.toISOString(),
-        createdBy: {
-          _id: user1._id,
-          key: user1._id,
-          username: user1.username
-        },
-        tasks: [
-          {
-            taskParams: {
-              updatedOn: batch.tasks[0].taskParams.updatedOn.toISOString()
-            },
-            attempts: [
-              {
-                startedOn: batch.tasks[0].attempts[0].startedOn.toISOString(),
-                completedOn: batch.tasks[0].attempts[0].completedOn.toISOString()
-              }
-            ]
-          }
-        ]
+      it('should map the batch', () => {
+        expect(result).toEqual({
+          createdOn: batch.createdOn.toISOString(),
+          completedOn: batch.completedOn.toISOString(),
+          createdBy: {
+            _id: user1._id,
+            key: user1._id,
+            username: user1.username
+          },
+          batchType: BATCH_TYPE.documentImport,
+          batchParams: {},
+          tasks: [
+            {
+              taskType: TASK_TYPE.documentImport,
+              taskParams: {
+                updatedOn: batch.tasks[0].taskParams.updatedOn.toISOString()
+              },
+              attempts: [
+                {
+                  startedOn: batch.tasks[0].attempts[0].startedOn.toISOString(),
+                  completedOn: batch.tasks[0].attempts[0].completedOn.toISOString()
+                }
+              ]
+            }
+          ]
+        });
       });
     });
+
+    describe('for batches/tasks of type `document-regeneration`', () => {
+      beforeEach(async () => {
+        batch = {
+          createdOn: new Date(),
+          completedOn: new Date(),
+          createdBy: user1._id,
+          batchType: BATCH_TYPE.documentRegeneration,
+          batchParams: {},
+          tasks: [
+            {
+              taskType: TASK_TYPE.documentRegeneration,
+              taskParams: {},
+              attempts: [
+                {
+                  startedOn: new Date(),
+                  completedOn: new Date()
+                }
+              ]
+            }
+          ]
+        };
+
+        result = await sut.mapBatch(batch, user1);
+      });
+
+      it('should map the batch', () => {
+        expect(result).toEqual({
+          createdOn: batch.createdOn.toISOString(),
+          completedOn: batch.completedOn.toISOString(),
+          createdBy: {
+            _id: user1._id,
+            key: user1._id,
+            username: user1.username
+          },
+          batchType: BATCH_TYPE.documentRegeneration,
+          batchParams: {},
+          tasks: [
+            {
+              taskType: TASK_TYPE.documentRegeneration,
+              taskParams: {},
+              attempts: [
+                {
+                  startedOn: batch.tasks[0].attempts[0].startedOn.toISOString(),
+                  completedOn: batch.tasks[0].attempts[0].completedOn.toISOString()
+                }
+              ]
+            }
+          ]
+        });
+      });
+    });
+
   });
 
   describe('mapRoom', () => {

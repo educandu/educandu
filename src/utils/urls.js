@@ -5,11 +5,12 @@ const usersPath = '/users';
 const loginPath = '/login';
 const logoutPath = '/logout';
 const searchPath = '/search';
+const batchesPath = '/batches';
+const importsPath = '/imports';
 const registerPath = '/register';
 const dashboardPath = '/dashboard';
-const importBatchesPath = '/import-batches';
+const createImportPath = '/create-import';
 const resetPasswordPath = '/reset-password';
-const createImportPath = '/import-batches/create';
 
 const docsPrefix = '/docs/';
 const roomsPrefix = '/rooms/';
@@ -77,7 +78,7 @@ function getAdminUrl() {
 }
 
 function getImportsUrl() {
-  return importBatchesPath;
+  return importsPath;
 }
 
 function getCreateImportUrl(sourceName) {
@@ -85,7 +86,7 @@ function getCreateImportUrl(sourceName) {
 }
 
 function getBatchUrl(id) {
-  return concatParts(importBatchesPath, id);
+  return concatParts(batchesPath, id);
 }
 
 function getCompleteRegistrationUrl(verificationCode) {
@@ -151,10 +152,6 @@ function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
   return concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ key, slug }));
 }
 
-function getImportDetailsUrl(batchId) {
-  return concatParts(importBatchesPath, batchId);
-}
-
 function getRoomUrl(id, slug) {
   return concatParts(roomsPrefix, encodeURIComponent(id), encodeURIParts(slug));
 }
@@ -194,7 +191,6 @@ export default {
   getSearchUrl,
   getBatchUrl,
   getImportedDocUrl,
-  getImportDetailsUrl,
   getImportSourceBaseUrl,
   getLessonUrl
 };

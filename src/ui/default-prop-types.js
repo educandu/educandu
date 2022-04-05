@@ -232,16 +232,22 @@ export const tailFormItemLayoutShape = PropTypes.shape({
   wrapperCol: formItemDimensionsShape.isRequired
 });
 
-export const importTaskShape = PropTypes.shape({
+export const commonTaskProps = {
   _id: PropTypes.string.isRequired,
   batchId: PropTypes.string.isRequired,
-  taskType: PropTypes.oneOf(Object.values(TASK_TYPE)),
+  taskType: PropTypes.oneOf(Object.values(TASK_TYPE)).isRequired,
+  taskParams: PropTypes.any.isRequired,
   processed: PropTypes.bool.isRequired,
   attempts: PropTypes.arrayOf(PropTypes.shape({
     startedOn: PropTypes.string,
     completedOn: PropTypes.string,
     errors: PropTypes.arrayOf(PropTypes.any).isRequired
-  })),
+  })).isRequired
+};
+
+export const documentImportTaskShape = PropTypes.shape({
+  ...commonTaskProps,
+  taskType: PropTypes.oneOf([TASK_TYPE.documentImport]),
   taskParams: PropTypes.shape({
     key: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
@@ -251,24 +257,41 @@ export const importTaskShape = PropTypes.shape({
     importedRevision: PropTypes.string,
     importableRevision: PropTypes.string.isRequired,
     importType: PropTypes.oneOf(Object.values(DOCUMENT_IMPORT_TYPE))
-  })
+  }).isRequired
 });
 
-export const batchProps = {
+export const documentRegenerationTaskShape = PropTypes.shape({
+  ...commonTaskProps,
+  taskType: PropTypes.oneOf([TASK_TYPE.documentRegeneration]),
+  taskParams: PropTypes.shape({
+    key: PropTypes.string.isRequired
+  }).isRequired
+});
+
+export const commonBatchProps = {
   _id: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
   createdOn: PropTypes.string.isRequired,
   completedOn: PropTypes.string,
-  batchType: PropTypes.oneOf(Object.values(BATCH_TYPE)),
+  batchType: PropTypes.oneOf(Object.values(BATCH_TYPE)).isRequired,
+  batchParams: PropTypes.any,
   errors: PropTypes.arrayOf(PropTypes.any).isRequired
 };
 
-export const importBatchShape = PropTypes.shape(batchProps);
+export const batchShape = PropTypes.shape(commonBatchProps);
 
-export const importBatchDetailsShape = PropTypes.shape({
-  ...batchProps,
-  batchParams: importSourceShape,
-  tasks: PropTypes.arrayOf(importTaskShape)
+export const documentImportBatchDetailsShape = PropTypes.shape({
+  ...commonBatchProps,
+  batchType: PropTypes.oneOf([BATCH_TYPE.documentImport]).isRequired,
+  batchParams: importSourceShape.isRequired,
+  tasks: PropTypes.arrayOf(documentImportTaskShape).isRequired
+});
+
+export const documentRegenerationDetailsShape = PropTypes.shape({
+  ...commonBatchProps,
+  batchType: PropTypes.oneOf([BATCH_TYPE.documentRegeneration]).isRequired,
+  batchParams: PropTypes.shape({}),
+  tasks: PropTypes.arrayOf(documentRegenerationTaskShape).isRequired
 });
 
 export const roomOwnerShape = PropTypes.shape({

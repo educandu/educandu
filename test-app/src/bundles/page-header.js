@@ -76,7 +76,7 @@ function PageHeader({ onUiLanguageClick }) {
     {
       key: 'import',
       href: urls.getImportsUrl(),
-      text: t('pageNames:importBatches'),
+      text: t('pageNames:imports'),
       icon: ImportsIcon,
       permission: permissions.MANAGE_IMPORT,
       showWhen: !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)

@@ -19,20 +19,11 @@ class ImportApiClient {
       .then(res => res.data);
   }
 
-  getImportBatch(batchId) {
-    return this.httpClient
-      .get(
-        `/api/v1/imports/batches/${encodeURIComponent(batchId)}`,
-        { responseType: 'json' }
-      )
-      .then(res => res.data);
-  }
-
-  postImportBatch(batch) {
+  postImport({ hostName, documentsToImport }) {
     return this.httpClient
       .post(
-        '/api/v1/imports/batches',
-        batch,
+        '/api/v1/imports',
+        { hostName, documentsToImport },
         { responseType: 'json' }
       )
       .then(res => res.data);

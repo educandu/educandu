@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Button, Card } from 'antd';
+import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -82,7 +83,8 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
 
   const handleCreateDocumentRegenerationBatchClick = async () => {
     try {
-      await documentApiClient.postDocumentRegenerationBatch();
+      const batch = await documentApiClient.postDocumentRegenerationBatch();
+      window.location = urls.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
     }
@@ -94,53 +96,53 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
 
   return (
     <div className="SettingsTab">
-      <Card className="Card" title={t('homepageInfoHeader')}>
+      <Card className="SettingsTab-card" title={t('homepageInfoHeader')}>
         <MarkdownTextarea
           value={settings.homepageInfo || ''}
           onChange={handleHomepageInfoChange}
           />
       </Card>
-      <Card className="Card" title={t('templateDocumentHeader')}>
+      <Card className="SettingsTab-card" title={t('templateDocumentHeader')}>
         <DocumentSelector
           documents={documents}
           value={templateDocumentURL}
           onChange={handleTemplateDocumentChange}
           />
       </Card>
-      <Card className="Card" title={t('helpPageHeader')}>
+      <Card className="SettingsTab-card" title={t('helpPageHeader')}>
         <SpecialPageSettings
           settings={settings.helpPage}
           documents={documents}
           onChange={handleHelpPageChange}
           />
       </Card>
-      <Card className="Card" title={t('termsPageHeader')}>
+      <Card className="SettingsTab-card" title={t('termsPageHeader')}>
         <SpecialPageSettings
           settings={settings.termsPage}
           documents={documents}
           onChange={handleTermsPageChange}
           />
       </Card>
-      <Card className="Card" title={t('footerLinksHeader')}>
+      <Card className="SettingsTab-card" title={t('footerLinksHeader')}>
         <FooterLinksSettings
           footerLinks={settings.footerLinks}
           documents={documents}
           onChange={handleFooterLinksChange}
           />
       </Card>
-      <Card className="Card" title={t('defaultTagsHeader')}>
+      <Card className="SettingsTab-card" title={t('defaultTagsHeader')}>
         <DefaultTagsSettings
           defaultTags={settings.defaultTags || []}
           onChange={handleDefaultTagsChange}
           />
       </Card>
-      <Card className="Card" title={t('licenseHeader')}>
+      <Card className="SettingsTab-card" title={t('licenseHeader')}>
         <LicenseSettings
           license={settings.license}
           onChange={handleLicenseChange}
           />
       </Card>
-      <Card className="Card Card--danger" title={t('createDocumentRegenerationBatchHeader')}>
+      <Card className="SettingsTab-card SettingsTab-card--danger" title={t('createDocumentRegenerationBatchHeader')}>
         <Button
           onClick={handleCreateDocumentRegenerationBatchClick}
           danger

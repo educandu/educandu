@@ -1,6 +1,3 @@
-documentTitle:
-  en: Document
-  de: Dokument
 taskType:
   en: Task type
   de: Tasktyp
@@ -19,12 +16,15 @@ taskStatusFailed:
 taskStatusDoneWithWarnings:
   en: Done (with warnings)
   de: Abgeschlossen (mit Warnungen)
-batchSource:
-  en: Batch source
-  de: Chargenquelle
-batchStatus:
-  en: Batch status
-  de: Chargenstatus
+batchType:
+  en: Batch type
+  de: Chargentyp
+batchTypeDocumentImport:
+  en: Document import
+  de: Dokumentimport
+batchTypeDocumentRegeneration:
+  en: Document regeneration
+  de: Dokumentwiederherstellung
 batchStatusPending:
   en: Pending
   de: Ausstehend
@@ -34,12 +34,12 @@ batchStatusDone:
 batchStatusProcessing:
   en: '{progress, number, percent} completed'
   de: '{progress, number, percent} abgeschlossen'
-importType:
+documentImportType:
   en: Import type
   de: Import-Typ
-startedOn:
-  en: Started on
-  de: Begann am
+documentImportSource:
+  en: Import source
+  de: Importquelle
 errors:
   en: Errors
   de: Fehler
@@ -52,6 +52,6 @@ attemptsHeader:
 batchErrors:
   en: Batch errors
   de: Chargenfehler
-backToImports:
-  en: Back to the overview
-  de: Zurück zur Übersicht
+tasks:
+  en: Tasks
+  de: Tasks

@@ -10,8 +10,8 @@ import DocumentImportTable from '../document-import-table.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import ImportApiClient from '../../api-clients/import-api-client.js';
 
-export default function ImportBatchCreation({ initialState, PageTemplate }) {
-  const { t } = useTranslation('importBatchCreation');
+export default function CreateImport({ initialState, PageTemplate }) {
+  const { t } = useTranslation('createImport');
   const clientConfig = useService(ClientConfig);
   const importApiClient = useSessionAwareApiClient(ImportApiClient);
   const [selectedDocumentKeys, setSelectedDocumentKeys] = useState([]);
@@ -24,18 +24,12 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
 
   const handleImportClick = async () => {
     setIsCreatingNewImportBatch(true);
-    const selectedDocs = selectedDocumentKeys
-      .map(key => importableDocuments.find(doc => doc.key === key));
-
-    const batch = {
-      hostName: importSource.hostName,
-      documentsToImport: selectedDocs
-    };
+    const documentsToImport = selectedDocumentKeys.map(key => importableDocuments.find(doc => doc.key === key));
 
     try {
-      const result = await importApiClient.postImportBatch(batch);
+      const result = await importApiClient.postImport({ hostName: importSource.hostName, documentsToImport });
       setIsCreatingNewImportBatch(false);
-      window.location = urls.getImportDetailsUrl(result.batch._id);
+      window.location = urls.getBatchUrl(result.batch._id);
     } catch (error) {
       handleApiError({ error, t });
     } finally {
@@ -46,7 +40,7 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
   const renderImportButton = () => (
     <Button
       type="primary"
-      className="ImportBatchCreationPage-importButton"
+      className="CreateImportPage-importButton"
       disabled={!selectedDocumentKeys.length}
       loading={isCreatingNewImportBatch}
       onClick={handleImportClick}
@@ -74,9 +68,9 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
 
   return (
     <PageTemplate>
-      <div className="ImportBatchCreationPage">
-        <div><a href="/import-batches">{t('backToImports')}</a></div>
-        <h1>{t('pageNames:importBatchCreation')}</h1>
+      <div className="CreateImportPage">
+        <div><a href={urls.getImportsUrl()}>{t('backToImports')}</a></div>
+        <h1>{t('pageNames:createImport')}</h1>
         <h2> {t('source')}: {importSource?.name} </h2>
         {renderImportButton()}
         <DocumentImportTable
@@ -91,7 +85,7 @@ export default function ImportBatchCreation({ initialState, PageTemplate }) {
   );
 }
 
-ImportBatchCreation.propTypes = {
+CreateImport.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
     importSourceHostName: PropTypes.string.isRequired

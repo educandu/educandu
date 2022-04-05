@@ -5,6 +5,7 @@ import UserController from './user-controller.js';
 import IndexController from './index-controller.js';
 import ErrorController from './error-controller.js';
 import AdminController from './admin-controller.js';
+import BatchController from './batch-controller.js';
 import SearchController from './search-controller.js';
 import StaticController from './static-controller.js';
 import ImportController from './import-controller.js';
@@ -30,6 +31,7 @@ const controllerTypes = [
   StorageController,
   ExportController,
   ImportController,
+  BatchController,
   ErrorController,
   RoomController,
   DashboardController,

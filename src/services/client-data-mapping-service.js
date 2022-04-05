@@ -2,6 +2,7 @@ import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
 import privateData from '../domain/private-data.js';
+import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
 import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
@@ -83,7 +84,7 @@ class ClientDataMappingService {
     });
   }
 
-  async mapImportBatches(batches, user) {
+  async mapBatches(batches, user) {
     const userIdSet = new Set(batches.map(batch => batch.createdBy));
     const users = await this.userStore.getUsersByIds(Array.from(userIdSet));
     const allowedUserFields = privateData.getAllowedUserFields(user);
@@ -93,18 +94,12 @@ class ClientDataMappingService {
     }
 
     const userMap = new Map(users.map(u => [u._id, u]));
-    return batches.map(batch => this._mapImportBatch(batch, userMap.get(batch.createdBy), allowedUserFields));
+    return batches.map(batch => this._mapBatch(batch, userMap.get(batch.createdBy), allowedUserFields));
   }
 
-  async mapImportBatch(batch, user) {
-    const users = await this.userStore.getUsersByIds([batch.createdBy]);
-    const allowedUserFields = privateData.getAllowedUserFields(user);
-
-    if (users.length !== 1) {
-      throw new Error(`Was searching for 1 user, but found ${users.length}`);
-    }
-
-    return this._mapImportBatch(batch, users[0], allowedUserFields);
+  async mapBatch(batch, user) {
+    const mappedBatches = await this.mapBatches([batch], user);
+    return mappedBatches[0];
   }
 
   async mapRoom(room, user) {
@@ -171,13 +166,20 @@ class ClientDataMappingService {
     return mappedUser;
   }
 
-  _mapTaskParams(rawTaskParams) {
-    const updatedOn = rawTaskParams.updatedOn && rawTaskParams.updatedOn.toISOString();
-
-    return {
-      ...rawTaskParams,
-      updatedOn
-    };
+  _mapTaskParams(rawTaskParams, taskType) {
+    switch (taskType) {
+      case TASK_TYPE.documentImport:
+        return {
+          ...rawTaskParams,
+          updatedOn: rawTaskParams.updatedOn && rawTaskParams.updatedOn.toISOString()
+        };
+      case TASK_TYPE.documentRegeneration:
+        return {
+          ...rawTaskParams
+        };
+      default:
+        throw new Error(`Task param mapping for task type ${taskType} is not implemented`);
+    }
   }
 
   _mapTaskAttempt(rawTaskAttempt) {
@@ -192,7 +194,7 @@ class ClientDataMappingService {
   }
 
   _mapTask(rawTask) {
-    const taskParams = rawTask.taskParams && this._mapTaskParams(rawTask.taskParams);
+    const taskParams = rawTask.taskParams && this._mapTaskParams(rawTask.taskParams, rawTask.taskType);
     const attempts = rawTask.attempts && rawTask.attempts.map(attempt => this._mapTaskAttempt(attempt));
 
     return {
@@ -202,10 +204,23 @@ class ClientDataMappingService {
     };
   }
 
-  _mapImportBatch(rawBatch, rawUser, allowedUserFields) {
+  _mapBatchParams(rawBatchParams, batchType) {
+    switch (batchType) {
+      case BATCH_TYPE.documentImport:
+      case BATCH_TYPE.documentRegeneration:
+        return {
+          ...rawBatchParams
+        };
+      default:
+        throw new Error(`Batch param mapping for batch type ${batchType} is not implemented`);
+    }
+  }
+
+  _mapBatch(rawBatch, rawUser, allowedUserFields) {
     const createdOn = rawBatch.createdOn && rawBatch.createdOn.toISOString();
     const completedOn = rawBatch.completedOn && rawBatch.completedOn.toISOString();
     const createdBy = this._mapUser(rawUser, allowedUserFields);
+    const batchParams = this._mapBatchParams(rawBatch.batchParams, rawBatch.batchType);
     const tasks = rawBatch.tasks && rawBatch.tasks.map(task => this._mapTask(task));
 
     return {
@@ -213,6 +228,7 @@ class ClientDataMappingService {
       createdOn,
       completedOn,
       createdBy,
+      batchParams,
       tasks
     };
   }
