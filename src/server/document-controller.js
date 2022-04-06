@@ -188,13 +188,6 @@ class DocumentController {
     return res.send(result.length ? result[0].uniqueTags : []);
   }
 
-  async handlePostDocumentRegenerationBatch(req, res) {
-    const { user } = req;
-    const batch = await this.documentService.createDocumentRegenerationBatch(user);
-
-    return res.status(201).send(batch);
-  }
-
   registerPages(router) {
     router.get(
       '/docs',
@@ -289,12 +282,6 @@ class DocumentController {
     router.get(
       '/api/v1/docs/tags/*',
       (req, res) => this.handleGetDocTags(req, res)
-    );
-
-    router.post(
-      '/api/v1/docs/document-regeneration-batch',
-      [needsPermission(permissions.REGENERATE_DOCS)],
-      (req, res) => this.handlePostDocumentRegenerationBatch(req, res)
     );
   }
 }

@@ -9,11 +9,11 @@ import BatchStore from '../stores/batch-store.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import { createSectionRevision } from './section-helper.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -399,43 +399,6 @@ class DocumentService {
         await this.lockStore.releaseLock(lock);
       }
     }
-  }
-
-  async createDocumentRegenerationBatch(user) {
-    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.documentRegeneration);
-
-    if (existingActiveBatch) {
-      throw new BadRequest('Another document regeneration batch is already in progress');
-    }
-
-    const batch = {
-      _id: uniqueId.create(),
-      createdBy: user._id,
-      createdOn: new Date(),
-      completedOn: null,
-      batchType: BATCH_TYPE.documentRegeneration,
-      batchParams: {},
-      errors: []
-    };
-
-    const allDocumentKeys = await this.documentStore.getAllDocumentKeys();
-    const tasks = allDocumentKeys.map(key => ({
-      _id: uniqueId.create(),
-      batchId: batch._id,
-      taskType: TASK_TYPE.documentRegeneration,
-      processed: false,
-      attempts: [],
-      taskParams: {
-        key
-      }
-    }));
-
-    await this.transactionRunner.run(async session => {
-      await this.batchStore.createBatch(batch, { session });
-      await this.taskStore.addTasks(tasks, { session });
-    });
-
-    return batch;
   }
 
   _buildDocumentRevision(data) {

@@ -22,8 +22,7 @@ describe('document-controller', () => {
 
   beforeEach(() => {
     documentService = {
-      getDocumentByKey: sandbox.stub(),
-      createDocumentRegenerationBatch: sandbox.stub()
+      getDocumentByKey: sandbox.stub()
     };
 
     clientDataMappingService = {
@@ -263,32 +262,6 @@ describe('document-controller', () => {
       it('should call pageRenderer.sendPage', () => {
         sinon.assert.calledWith(pageRenderer.sendPage, req, res, 'doc', { doc: mappedDocument, templateSections: [] });
       });
-    });
-  });
-
-  describe('handlePostDocumentRegenerationBatch', () => {
-    const batch = { _id: uniqueId.create() };
-    beforeEach(done => {
-      documentService.createDocumentRegenerationBatch.resolves(batch);
-
-      req = httpMocks.createRequest({
-        protocol: 'https',
-        headers: { host: 'educandu.dev' }
-      });
-      req.user = user;
-
-      res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-      res.on('end', done);
-
-      sut.handlePostDocumentRegenerationBatch(req, res);
-    });
-
-    it('should call createDocumentRegenerationBatch with the user', () => {
-      sinon.assert.calledWith(documentService.createDocumentRegenerationBatch, user);
-    });
-
-    it('should return the batch', () => {
-      expect(res._getData()).toEqual(batch);
     });
   });
 

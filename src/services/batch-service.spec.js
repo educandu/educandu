@@ -5,20 +5,19 @@ import BatchService from './batch-service.js';
 import LockStore from '../stores/lock-store.js';
 import TaskStore from '../stores/task-store.js';
 import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
-import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { createTestDocument, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest } = httpErrors;
 
 describe('batch-service', () => {
   const sandbox = sinon.createSandbox();
+  const now = new Date();
 
   let db;
   let sut;
   let user;
   let container;
   let taskStore;
-  let importSource;
-  let documentsToImport;
 
   beforeAll(async () => {
     container = await setupTestEnvironment();
@@ -30,35 +29,12 @@ describe('batch-service', () => {
     user = await setupTestUser(container);
   });
 
+  afterAll(async () => {
+    await destroyTestEnvironment(container);
+  });
+
   beforeEach(() => {
-    importSource = {
-      name: 'source-1',
-      hostName: 'source1.com',
-      allowUnsecure: false,
-      apiKey: 'DFGRDB553dscfVDSv'
-    };
-    documentsToImport = [
-      {
-        key: 'v5NSMktadhzquVUAEdzAKg',
-        title: 'doc-1',
-        slug: 'doc-1',
-        language: 'en',
-        updatedOn: '2021-11-24T16:00:32.200Z',
-        importedRevision: null,
-        importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
-        importType: 'add'
-      },
-      {
-        key: 'sueoX7WCUtSUHT9cWE6UMq',
-        title: 'doc-2',
-        slug: 'doc-2',
-        language: 'en',
-        updatedOn: '2021-11-24T16:05:27.800Z',
-        importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
-        importableRevision: '6AXHKzH3z26r7JKJyPN6er',
-        importType: 'update'
-      }
-    ];
+    sandbox.useFakeTimers(now);
   });
 
   afterEach(async () => {
@@ -66,11 +42,41 @@ describe('batch-service', () => {
     sandbox.restore();
   });
 
-  afterAll(async () => {
-    await destroyTestEnvironment(container);
-  });
-
   describe('createImportBatch', () => {
+    let importSource;
+    let documentsToImport;
+
+    beforeEach(() => {
+      importSource = {
+        name: 'source-1',
+        hostName: 'source1.com',
+        allowUnsecure: false,
+        apiKey: 'DFGRDB553dscfVDSv'
+      };
+      documentsToImport = [
+        {
+          key: 'v5NSMktadhzquVUAEdzAKg',
+          title: 'doc-1',
+          slug: 'doc-1',
+          language: 'en',
+          updatedOn: '2021-11-24T16:00:32.200Z',
+          importedRevision: null,
+          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
+          importType: 'add'
+        },
+        {
+          key: 'sueoX7WCUtSUHT9cWE6UMq',
+          title: 'doc-2',
+          slug: 'doc-2',
+          language: 'en',
+          updatedOn: '2021-11-24T16:05:27.800Z',
+          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
+          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
+          importType: 'update'
+        }
+      ];
+    });
+
     describe('when creating a new batch', () => {
       let result;
       beforeEach(async () => {
@@ -165,6 +171,66 @@ describe('batch-service', () => {
 
   });
 
+  describe('createDocumentRegenerationBatch', () => {
+    let testDocument;
+
+    beforeEach(async () => {
+      testDocument = await createTestDocument(container, user, {
+        title: 'Title',
+        description: 'Description',
+        slug: 'my-doc',
+        language: 'en',
+        sections: [],
+        tags: ['tag-1']
+      });
+    });
+
+    describe('when a running batch already exists', () => {
+      beforeEach(async () => {
+        await sut.createDocumentRegenerationBatch(user);
+      });
+
+      it('should return null', async () => {
+        await expect(() => sut.createDocumentRegenerationBatch(user)).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when a new batch is created', () => {
+      let batch = null;
+      beforeEach(async () => {
+        batch = await sut.createDocumentRegenerationBatch(user);
+      });
+
+      it('should create the new batch', () => {
+        expect(batch).toEqual({
+          _id: expect.stringMatching(/\w+/),
+          createdBy: user._id,
+          createdOn: now,
+          completedOn: null,
+          batchType: BATCH_TYPE.documentRegeneration,
+          batchParams: {},
+          errors: []
+        });
+      });
+
+      it('should create the according tasks', async () => {
+        const tasks = await taskStore.getTasksByBatchId(batch._id);
+        expect(tasks).toEqual([
+          {
+            _id: expect.stringMatching(/\w+/),
+            batchId: batch._id,
+            taskType: TASK_TYPE.documentRegeneration,
+            processed: false,
+            attempts: [],
+            taskParams: {
+              key: testDocument.key
+            }
+          }
+        ]);
+      });
+    });
+  });
+
   describe('_getProgressForBatch', () => {
     beforeEach(() => {
       sandbox.stub(taskStore, 'countTasksWithBatchIdGroupedByProcessedStatus');
@@ -216,6 +282,39 @@ describe('batch-service', () => {
 
   describe('getBatchesWithProgress', () => {
     let result;
+    let importSource;
+    let documentsToImport;
+
+    beforeEach(() => {
+      importSource = {
+        name: 'source-1',
+        hostName: 'source1.com',
+        allowUnsecure: false,
+        apiKey: 'DFGRDB553dscfVDSv'
+      };
+      documentsToImport = [
+        {
+          key: 'v5NSMktadhzquVUAEdzAKg',
+          title: 'doc-1',
+          slug: 'doc-1',
+          language: 'en',
+          updatedOn: '2021-11-24T16:00:32.200Z',
+          importedRevision: null,
+          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
+          importType: 'add'
+        },
+        {
+          key: 'sueoX7WCUtSUHT9cWE6UMq',
+          title: 'doc-2',
+          slug: 'doc-2',
+          language: 'en',
+          updatedOn: '2021-11-24T16:05:27.800Z',
+          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
+          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
+          importType: 'update'
+        }
+      ];
+    });
 
     beforeEach(async () => {
       result = await sut.createImportBatch({ importSource, documentsToImport, user });
@@ -271,8 +370,39 @@ describe('batch-service', () => {
   describe('getBatchDetails', () => {
     let result;
     let createdBatchId;
+    let importSource;
+    let documentsToImport;
 
     beforeEach(async () => {
+      importSource = {
+        name: 'source-1',
+        hostName: 'source1.com',
+        allowUnsecure: false,
+        apiKey: 'DFGRDB553dscfVDSv'
+      };
+      documentsToImport = [
+        {
+          key: 'v5NSMktadhzquVUAEdzAKg',
+          title: 'doc-1',
+          slug: 'doc-1',
+          language: 'en',
+          updatedOn: '2021-11-24T16:00:32.200Z',
+          importedRevision: null,
+          importableRevision: 'gvxaYSFamGGfeWTYPrA6q9',
+          importType: 'add'
+        },
+        {
+          key: 'sueoX7WCUtSUHT9cWE6UMq',
+          title: 'doc-2',
+          slug: 'doc-2',
+          language: 'en',
+          updatedOn: '2021-11-24T16:05:27.800Z',
+          importedRevision: 'wtwS9CJndhKkdFrCHFEifM',
+          importableRevision: '6AXHKzH3z26r7JKJyPN6er',
+          importType: 'update'
+        }
+      ];
+
       await sut.createImportBatch({ importSource, documentsToImport, user });
       await db.tasks.updateOne({ 'taskParams.key': 'v5NSMktadhzquVUAEdzAKg' }, { $set: { processed: true } });
       const dbEntries = await db.batches.find({}).toArray();

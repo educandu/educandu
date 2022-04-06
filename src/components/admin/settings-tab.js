@@ -13,8 +13,8 @@ import DefaultTagsSettings from './default-tags-settings.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import AdminApiClient from '../../api-clients/admin-api-client.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
-import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
@@ -23,7 +23,7 @@ const logger = new Logger(import.meta.url);
 function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSettingsSaved }) {
   const { t } = useTranslation('settingsTab');
   const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
-  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const adminApiClient = useSessionAwareApiClient(AdminApiClient);
   const [settings, setSettings] = useState(cloneDeep(initialSettings));
   const [dirtyKeys, setDirtyKeys] = useState([]);
   const [invalidKeys, setInvalidKeys] = useState([]);
@@ -83,7 +83,7 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
 
   const handleCreateDocumentRegenerationBatchClick = async () => {
     try {
-      const batch = await documentApiClient.postDocumentRegenerationBatch();
+      const batch = await adminApiClient.postDocumentRegenerationRequest();
       window.location = urls.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
