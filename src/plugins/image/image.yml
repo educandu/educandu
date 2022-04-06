@@ -58,3 +58,6 @@ orientationOptionHorizontal:
 smallImageSizeWarning:
   en: The selected image has a smaller width than the page content and might therefore be displayed smaller than expected.
   de: Das von Ihnen gewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
+smallClippingSizeWarning:
+  en: The selected clipping has a smaller width than the page content and might therefore be displayed smaller than expected.
+  de: Das von Ihnen gewählte Abschneidung hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.

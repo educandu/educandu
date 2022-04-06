@@ -1,26 +1,26 @@
 .Image {
   &--hoverable {
-    .Image-primary {
+    .Image-displayedImageContainer {
       display: block;
     }
 
-    .Image-secondary {
+    .Image-hoverEffectImageContainer {
       display: none;
     }
   }
 
   &--hoverable:hover {
-    .Image-primary {
+    .Image-displayedImageContainer {
       display: none;
     }
 
-    .Image-secondary {
+    .Image-hoverEffectImageContainer {
       display: block;
     }
   }
 }
 
-.Image-img {
+.Image-displayedImage {
   display: block;
   margin: 0 auto;
   max-width: 100%;
@@ -34,6 +34,10 @@
 
 .Image-maxWidthInput {
   margin-top: 20px;
+}
+
+.Image-clipEffectImage {
+  display: none;
 }
 
 .Image-clipEffectSettingImage {

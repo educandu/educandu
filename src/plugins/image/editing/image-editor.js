@@ -2,9 +2,9 @@ import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
 import validation from '../../../ui/validation.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
-import React, { Fragment, useEffect, useState } from 'react';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { getImageDimensions, getImageSource } from '../utils.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useService } from '../../../components/container-context.js';
 import { sectionEditorProps } from '../../../ui/default-prop-types.js';
 import StorageFilePicker from '../../../components/storage-file-picker.js';
@@ -20,9 +20,10 @@ const defaultClipRegion = { x: 0, y: 0, width: 0, height: 0, data: {} };
 
 function ImageEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('image');
+  const clipEffectImageRef = useRef(null);
   const clientConfig = useService(ClientConfig);
   const [currentImageSource, setCurrentImageSource] = useState(null);
-  const [shouldWarnOfSmallImageSize, setShouldWarnOfSmallImageSize] = useState(false);
+  const [smallImageSizeWarning, setSmallImageSizeWarning] = useState(null);
 
   const { sourceType, sourceUrl, maxWidth, text, effect } = content;
   const effectType = effect?.type || EFFECT_TYPE.none;
@@ -39,17 +40,35 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
   useEffect(() => {
     const src = currentImageSource;
     if (!src) {
-      setShouldWarnOfSmallImageSize(false);
+      setSmallImageSizeWarning(null);
+      return;
+    }
+    if (effectType === EFFECT_TYPE.clip) {
       return;
     }
 
     (async () => {
-      const dimensions = await getImageDimensions(src);
-      if (src === currentImageSource) {
-        setShouldWarnOfSmallImageSize(dimensions && dimensions.width < SMALL_IMAGE_WIDTH_THRESHOLD);
+      if (src !== currentImageSource) {
+        return;
       }
+      const dimensions = await getImageDimensions(src);
+      setSmallImageSizeWarning(dimensions && dimensions.width < SMALL_IMAGE_WIDTH_THRESHOLD ? t('smallImageSizeWarning') : null);
     })();
-  }, [currentImageSource]);
+  }, [currentImageSource, effectType, t]);
+
+  useEffect(() => {
+    if (!currentImageSource) {
+      setSmallImageSizeWarning(null);
+      return;
+    }
+    if (effectType !== EFFECT_TYPE.clip) {
+      return;
+    }
+
+    const img = clipEffectImageRef.current;
+    const clipWidth = img.naturalWidth * (effect.region.width / 100);
+    setSmallImageSizeWarning(clipWidth < SMALL_IMAGE_WIDTH_THRESHOLD ? t('smallClippingSizeWarning') : null);
+  }, [currentImageSource, effectType, effect?.region, t]);
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -298,7 +317,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
                     onChange={handleClipRegionsChanged}
                     regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
                     >
-                    <img src={currentImageSource} className="Image-clipEffectSettingImage" />
+                    <img src={currentImageSource} className="Image-clipEffectSettingImage" ref={clipEffectImageRef} />
                   </RegionSelect>
                 )}
                 <div className="Image-clipEffectRegion">
@@ -329,8 +348,8 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
           className="Image-maxWidthInput"
           label={t('maximumWidth')}
           {...formItemLayout}
-          validateStatus={shouldWarnOfSmallImageSize ? 'warning' : null}
-          help={shouldWarnOfSmallImageSize ? t('smallImageSizeWarning') : null}
+          validateStatus={smallImageSizeWarning ? 'warning' : null}
+          help={smallImageSizeWarning}
           >
           <ObjectMaxWidthSlider value={maxWidth} onChange={handleMaxWidthValueChanged} />
         </Form.Item>

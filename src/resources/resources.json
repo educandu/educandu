@@ -1568,7 +1568,8 @@
       "orientationLabel": "Orientation",
       "orientationOptionVertical": "Vertical",
       "orientationOptionHorizontal": "Horizontal",
-      "smallImageSizeWarning": "The selected image has a smaller width than the page content and might therefore be displayed smaller than expected."
+      "smallImageSizeWarning": "The selected image has a smaller width than the page content and might therefore be displayed smaller than expected.",
+      "smallClippingSizeWarning": "The selected clipping has a smaller width than the page content and might therefore be displayed smaller than expected."
     }
   },
   {
@@ -1594,7 +1595,8 @@
       "orientationLabel": "Richtung",
       "orientationOptionVertical": "Vertikal",
       "orientationOptionHorizontal": "Horizontal",
-      "smallImageSizeWarning": "Das von Ihnen gewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt."
+      "smallImageSizeWarning": "Das von Ihnen gewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.",
+      "smallClippingSizeWarning": "Das von Ihnen gewählte Abschneidung hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt."
     }
   },
   {
