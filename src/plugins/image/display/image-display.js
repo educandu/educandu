@@ -49,6 +49,9 @@ function ImageDisplay({ content }) {
   const canvasRef = useRef();
 
   useEffect(() => {
+    if (effect?.type !== EFFECT_TYPE.clip) {
+      return;
+    }
     const img = document.getElementById('source');
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');

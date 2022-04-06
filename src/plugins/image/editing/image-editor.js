@@ -16,6 +16,8 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
+const defaultClipRegion = { x: 0, y: 0, width: 0, height: 0, data: {} };
+
 function ImageEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('image');
   const clientConfig = useService(ClientConfig);
@@ -53,61 +55,37 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     onContentChanged({ ...content, ...newContentValues });
   };
 
-  const handleExternalSourceUrlValueChanged = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value });
-  };
-
-  const handleEffectExternalSourceUrlValueChanged = event => {
-    const { value } = event.target;
-    const newEffect = { ...effect, sourceUrl: value };
-    changeContent({ effect: newEffect });
-  };
-
-  const handleInternalSourceUrlValueChanged = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value });
-  };
-
-  const handleEffectInternalSourceUrlValueChanged = event => {
-    const { value } = event.target;
-    const newEffect = { ...effect, sourceUrl: value };
-    changeContent({ effect: newEffect });
-  };
-
-  const handleInternalSourceUrlFileNameChanged = value => {
-    changeContent({ sourceUrl: value });
-  };
-
-  const handleEffectInternalSourceUrlFileNameChanged = value => {
-    const newEffect = { ...effect, sourceUrl: value };
-    changeContent({ effect: newEffect });
+  const getResetEffect = () => {
+    switch (effectType) {
+      case EFFECT_TYPE.clip:
+        return { ...effect, region: { ...defaultClipRegion } };
+      default:
+        return { ...effect };
+    }
   };
 
   const handleSourceTypeValueChanged = event => {
     const { value } = event.target;
-    changeContent({ sourceType: value, sourceUrl: '' });
+    changeContent({ sourceType: value, sourceUrl: '', effect: getResetEffect() });
   };
 
-  const handleEffectSourceTypeValueChanged = event => {
+  const handleExternalSourceUrlValueChanged = event => {
     const { value } = event.target;
-    const newEffect = { ...effect, sourceType: value, sourceUrl: '' };
-    changeContent({ effect: newEffect });
+    changeContent({ sourceUrl: value, effect: getResetEffect() });
   };
 
-  const handleMaxWidthValueChanged = value => {
-    changeContent({ maxWidth: value });
+  const handleInternalSourceUrlValueChanged = event => {
+    const { value } = event.target;
+    changeContent({ sourceUrl: value, effect: getResetEffect });
+  };
+
+  const handleInternalSourceUrlFileNameChanged = value => {
+    changeContent({ sourceUrl: value, effect: getResetEffect() });
   };
 
   const handleCopyrightInfoValueChanged = event => {
     const { value } = event.target;
     changeContent({ text: value });
-  };
-
-  const handleOrientationValueChanged = event => {
-    const { value } = event.target;
-    const newEffect = { effect, orientation: value };
-    changeContent({ effect: newEffect });
   };
 
   const handleEffectOptionChange = event => {
@@ -141,7 +119,8 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
       case EFFECT_TYPE.clip:
         changeContent({
           effect: {
-            type: EFFECT_TYPE.clip
+            type: EFFECT_TYPE.clip,
+            region: { ...defaultClipRegion }
           }
         });
         break;
@@ -149,6 +128,39 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
       default:
         changeContent({ effect: null });
     }
+  };
+
+  const handleEffectExternalSourceUrlValueChanged = event => {
+    const { value } = event.target;
+    const newEffect = { ...effect, sourceUrl: value };
+    changeContent({ effect: newEffect });
+  };
+
+  const handleEffectInternalSourceUrlValueChanged = event => {
+    const { value } = event.target;
+    const newEffect = { ...effect, sourceUrl: value };
+    changeContent({ effect: newEffect });
+  };
+
+  const handleEffectInternalSourceUrlFileNameChanged = value => {
+    const newEffect = { ...effect, sourceUrl: value };
+    changeContent({ effect: newEffect });
+  };
+
+  const handleEffectSourceTypeValueChanged = event => {
+    const { value } = event.target;
+    const newEffect = { ...effect, sourceType: value, sourceUrl: '' };
+    changeContent({ effect: newEffect });
+  };
+
+  const handleMaxWidthValueChanged = value => {
+    changeContent({ maxWidth: value });
+  };
+
+  const handleOrientationValueChanged = event => {
+    const { value } = event.target;
+    const newEffect = { effect, orientation: value };
+    changeContent({ effect: newEffect });
   };
 
   const handleEffectCopyrightInfoValueChanged = event => {
@@ -159,6 +171,21 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const handleStartPositionValueChanged = newPosition => {
     const newEffect = { ...effect, startPosition: Math.max(0, Math.min(100, newPosition)) };
+    changeContent({ effect: newEffect });
+  };
+
+  const handleClipRegionsChanged = newRegions => {
+    const region = newRegions[0];
+    const newEffect = {
+      ...effect,
+      region: {
+        x: Math.round(region.x),
+        y: Math.round(region.y),
+        width: Math.round(region.width),
+        height: Math.round(region.height),
+        data: {}
+      }
+    };
     changeContent({ effect: newEffect });
   };
 
@@ -201,19 +228,6 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     </Form.Item>
   );
 
-  const regionChanged = newRegions => {
-    const region = newRegions[0];
-    const newEffect = { ...effect,
-      region: {
-        x: region.x,
-        y: region.y,
-        width: region.width,
-        height: region.height,
-        data: {}
-      } };
-    changeContent({ effect: newEffect });
-  };
-
   return (
     <div>
       <Form layout="horizontal">
@@ -240,51 +254,79 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
           <div className="Panel">
             <div className="Panel-content Panel-content--darker">
               {[EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(effect.type) && (
-                <Fragment>
-                  {renderSourceTypeInput(effect.sourceType, handleEffectSourceTypeValueChanged)}
+              <Fragment>
+                {renderSourceTypeInput(effect.sourceType, handleEffectSourceTypeValueChanged)}
 
-                  {effect.sourceType === SOURCE_TYPE.external
-                  && renderExternalSourceTypeInput(effect.sourceUrl, handleEffectExternalSourceUrlValueChanged)}
+                {effect.sourceType === SOURCE_TYPE.external
+                    && renderExternalSourceTypeInput(effect.sourceUrl, handleEffectExternalSourceUrlValueChanged)}
 
-                  {effect.sourceType === SOURCE_TYPE.internal
-                  && renderInternalSourceTypeInput(effect.sourceUrl, handleEffectInternalSourceUrlValueChanged, handleEffectInternalSourceUrlFileNameChanged)}
+                {effect.sourceType === SOURCE_TYPE.internal
+                    && renderInternalSourceTypeInput(effect.sourceUrl, handleEffectInternalSourceUrlValueChanged, handleEffectInternalSourceUrlFileNameChanged)}
 
-                  {renderCopyrightInput(effect.text, handleEffectCopyrightInfoValueChanged)}
-                </Fragment>
+                {renderCopyrightInput(effect.text, handleEffectCopyrightInfoValueChanged)}
+              </Fragment>
               )}
 
               {effect.type === EFFECT_TYPE.reveal && (
-                <Fragment>
-                  <FormItem label={t('startPosition')} {...formItemLayout}>
-                    <InputNumber
-                      defaultValue={effect.startPosition}
-                      min={0}
-                      max={100}
-                      formatter={value => `${value}%`}
-                      parser={value => value.replace('%', '')}
-                      onChange={handleStartPositionValueChanged}
-                      />
-                  </FormItem>
-                  <FormItem label={t('orientationLabel')} {...formItemLayout}>
-                    <RadioGroup value={effect.orientation} onChange={handleOrientationValueChanged}>
-                      <RadioButton value={ORIENTATION.horizontal}>{t('orientationOptionHorizontal')}</RadioButton>
-                      <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
-                    </RadioGroup>
-                  </FormItem>
-                </Fragment>
+              <Fragment>
+                <FormItem label={t('startPosition')} {...formItemLayout}>
+                  <InputNumber
+                    defaultValue={effect.startPosition}
+                    min={0}
+                    max={100}
+                    formatter={value => `${value}%`}
+                    parser={value => value.replace('%', '')}
+                    onChange={handleStartPositionValueChanged}
+                    />
+                </FormItem>
+                <FormItem label={t('orientationLabel')} {...formItemLayout}>
+                  <RadioGroup value={effect.orientation} onChange={handleOrientationValueChanged}>
+                    <RadioButton value={ORIENTATION.horizontal}>{t('orientationOptionHorizontal')}</RadioButton>
+                    <RadioButton value={ORIENTATION.vertical}>{t('orientationOptionVertical')}</RadioButton>
+                  </RadioGroup>
+                </FormItem>
+              </Fragment>
               )}
 
               {effect.type === EFFECT_TYPE.clip && (
-                <div>
-                  <RegionSelect maxRegions={1} regions={effect.region ? [effect.region] : []} onChange={regionChanged}>
-                    <img src={sourceUrl} className="Image-clipEffectSettingImage" />
+              <Fragment>
+                {!!currentImageSource && (
+                  <RegionSelect
+                    constraint
+                    maxRegions={1}
+                    regions={[effect.region]}
+                    onChange={handleClipRegionsChanged}
+                    regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
+                    >
+                    <img src={currentImageSource} className="Image-clipEffectSettingImage" />
                   </RegionSelect>
+                )}
+                <div className="Image-clipEffectRegion">
+                  <div className="Image-clipEffectRegionValue">
+                    <label>X: </label>
+                    <InputNumber value={effect.region.x} formatter={value => `${value} %`} disabled />
+                  </div>
+                  <div className="Image-clipEffectRegionValue">
+                    <label>Y: </label>
+                    <InputNumber value={effect.region.y} formatter={value => `${value} %`} disabled />
+                  </div>
+                  <div className="Image-clipEffectRegionValue">
+                    <label>{t('width')}: </label>
+                    <InputNumber value={effect.region.width} formatter={value => `${value} %`} disabled />
+                  </div>
+                  <div className="Image-clipEffectRegionValue">
+                    <label>{t('height')}: </label>
+                    <InputNumber value={effect.region.height} formatter={value => `${value} %`} disabled />
+                  </div>
                 </div>
+              </Fragment>
               )}
             </div>
           </div>
         )}
+
         <Form.Item
+          className="Image-maxWidthInput"
           label={t('maximumWidth')}
           {...formItemLayout}
           validateStatus={shouldWarnOfSmallImageSize ? 'warning' : null}
