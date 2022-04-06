@@ -24,6 +24,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
   const clientConfig = useService(ClientConfig);
   const [currentImageSource, setCurrentImageSource] = useState(null);
   const [smallImageSizeWarning, setSmallImageSizeWarning] = useState(null);
+  const [clippingSizeInPx, setClippingSizeInPx] = useState({ width: 0, height: 0 });
 
   const { sourceType, sourceUrl, maxWidth, text, effect } = content;
   const effectType = effect?.type || EFFECT_TYPE.none;
@@ -66,7 +67,10 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     }
 
     const img = clipEffectImageRef.current;
-    const clipWidth = img.naturalWidth * (effect.region.width / 100);
+    const clipWidth = Math.round(img.naturalWidth * (effect.region.width / 100));
+    const clipHeight = Math.round(img.naturalHeight * (effect.region.height / 100));
+
+    setClippingSizeInPx({ width: clipWidth, height: clipHeight });
     setSmallImageSizeWarning(clipWidth < SMALL_IMAGE_WIDTH_THRESHOLD ? t('smallClippingSizeWarning') : null);
   }, [currentImageSource, effectType, effect?.region, t]);
 
@@ -308,37 +312,29 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
               )}
 
               {effect.type === EFFECT_TYPE.clip && (
-              <Fragment>
-                {!!currentImageSource && (
-                  <RegionSelect
-                    constraint
-                    maxRegions={1}
-                    regions={[effect.region]}
-                    onChange={handleClipRegionsChanged}
-                    regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
-                    >
-                    <img src={currentImageSource} className="Image-clipEffectSettingImage" ref={clipEffectImageRef} />
-                  </RegionSelect>
-                )}
-                <div className="Image-clipEffectRegion">
-                  <div className="Image-clipEffectRegionValue">
-                    <label>X: </label>
-                    <InputNumber value={effect.region.x} formatter={value => `${value} %`} disabled />
-                  </div>
-                  <div className="Image-clipEffectRegionValue">
-                    <label>Y: </label>
-                    <InputNumber value={effect.region.y} formatter={value => `${value} %`} disabled />
-                  </div>
-                  <div className="Image-clipEffectRegionValue">
-                    <label>{t('width')}: </label>
-                    <InputNumber value={effect.region.width} formatter={value => `${value} %`} disabled />
-                  </div>
-                  <div className="Image-clipEffectRegionValue">
-                    <label>{t('height')}: </label>
-                    <InputNumber value={effect.region.height} formatter={value => `${value} %`} disabled />
+                <div className="Image-clipEffect">
+                  {!!currentImageSource && (
+                    <RegionSelect
+                      constraint
+                      maxRegions={1}
+                      regions={[effect.region]}
+                      onChange={handleClipRegionsChanged}
+                      regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
+                      >
+                      <img src={currentImageSource} className="Image-clipEffectSettingImage" ref={clipEffectImageRef} />
+                    </RegionSelect>
+                  )}
+                  <div className="Image-clipEffectRegion">
+                    <div className="Image-clipEffectRegionValue">
+                      <label>{t('width')}: </label>
+                      <InputNumber value={clippingSizeInPx.width} formatter={value => `${value} px`} disabled />
+                    </div>
+                    <div className="Image-clipEffectRegionValue">
+                      <label>{t('height')}: </label>
+                      <InputNumber value={clippingSizeInPx.height} formatter={value => `${value} px`} disabled />
+                    </div>
                   </div>
                 </div>
-              </Fragment>
               )}
             </div>
           </div>
