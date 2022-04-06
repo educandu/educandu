@@ -325,14 +325,8 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
                     </RegionSelect>
                   )}
                   <div className="Image-clipEffectRegion">
-                    <div className="Image-clipEffectRegionValue">
-                      <label>{t('width')}: </label>
-                      <InputNumber value={clippingSizeInPx.width} formatter={value => `${value} px`} disabled />
-                    </div>
-                    <div className="Image-clipEffectRegionValue">
-                      <label>{t('height')}: </label>
-                      <InputNumber value={clippingSizeInPx.height} formatter={value => `${value} px`} disabled />
-                    </div>
+                    <div>{t('clippedWidth')}: {`${clippingSizeInPx.width} px`}</div>
+                    <div>{t('clippedHeight')}: {`${clippingSizeInPx.height} px`}</div>
                   </div>
                 </div>
               )}

@@ -34,12 +34,12 @@ copyrightInfos:
 maximumWidth:
   en: Maximum width
   de: Maximale Breite
-width:
-  en: Width
-  de: Breite
-height:
-  en: Height
-  de: Höhe
+clippedWidth:
+  en: Clipping actual width
+  de: Echte abgeschnittene Breite
+clippedHeight:
+  en: Clipping actual height
+  de: Echte abgeschnittene Höhe
 effectTypeLabel:
   en: Effect
   de: Effekt
