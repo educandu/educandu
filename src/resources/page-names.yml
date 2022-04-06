@@ -10,15 +10,15 @@ dashboard:
 admin:
   en: Administration
   de: Verwaltung
-importBatchCreation:
+createImport:
   en: Create import
   de: Import erstellen
-importBatches:
+imports:
   en: Imports
   de: Importe
-importBatchView:
-  en: Import details
-  de: Import-Details
+batches:
+  en: Batch details
+  de: Chargen-Details
 docs:
   en: Documents
   de: Dokumente

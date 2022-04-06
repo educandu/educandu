@@ -5,12 +5,12 @@ import urls from '../../utils/urls.js';
 import { useTranslation } from 'react-i18next';
 import { Table, Collapse, Button } from 'antd';
 import { useDateFormat } from '../locale-context.js';
-import { importBatchShape, importSourceShape } from '../../ui/default-prop-types.js';
+import { batchShape, importSourceShape } from '../../ui/default-prop-types.js';
 
 const Panel = Collapse.Panel;
 
-function ImportBatches({ initialState, PageTemplate }) {
-  const { t } = useTranslation('importBatches');
+function Imports({ initialState, PageTemplate }) {
+  const { t } = useTranslation('imports');
   const { formatDate } = useDateFormat();
 
   const { batches, importSources } = initialState;
@@ -75,24 +75,24 @@ function ImportBatches({ initialState, PageTemplate }) {
 
   const header = source => {
     return (
-      <span className="ImportBatchesPage-header" >{t('importsHeaderPrefix')}: {source.importSourceName}</span>
+      <span className="ImportsPage-header" >{t('importsHeaderPrefix')}: {source.importSourceName}</span>
     );
   };
 
   return (
     <PageTemplate>
-      <div className="ImportBatchesPage">
-        <h1>{t('pageNames:importBatches')}</h1>
+      <div className="ImportsPage">
+        <h1>{t('pageNames:imports')}</h1>
         {!sources.length && <h2>{t('noImportSourcesConfigured')}</h2>}
         {sources.map(source => (
           <Collapse
             key={`collapse-${source.importSourceName}`}
-            className="ImportBatchesPage-sourceCollapse"
+            className="ImportsPage-sourceCollapse"
             defaultActiveKey={source.batches.length ? `panel-${source.importSourceName}` : null}
             >
             <Panel
               header={header(source)}
-              className="ImportBatchesPage-batchTablePanel"
+              className="ImportsPage-batchTablePanel"
               extra={getExtra(source)}
               key={`panel-${source.importSourceName}`}
               >
@@ -110,12 +110,12 @@ function ImportBatches({ initialState, PageTemplate }) {
     </PageTemplate>);
 }
 
-ImportBatches.propTypes = {
+Imports.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    batches: PropTypes.arrayOf(importBatchShape).isRequired,
+    batches: PropTypes.arrayOf(batchShape).isRequired,
     importSources: PropTypes.arrayOf(importSourceShape).isRequired
   }).isRequired
 };
 
-export default ImportBatches;
+export default Imports;

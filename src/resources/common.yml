@@ -61,6 +61,9 @@ error:
 date:
   en: Date
   de: Datum
+status:
+  en: Status
+  de: Status
 language:
   en: Language
   de: Sprache
@@ -116,6 +119,9 @@ completedOn:
 updatedOn:
   en: Update date
   de: Änderungsdatum
+startedOn:
+  en: Started on
+  de: Gestartet am
 setOn:
   en: Added on
   de: Hinzugefügt am
