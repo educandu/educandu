@@ -23,7 +23,6 @@ const DELETE_FOREIGN_ROOMS = 'delete-foreign-rooms';
 const OWN_LESSONS = 'own-lessons';
 const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
 const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
-const REGENERATE_DOCS = 'regenerate-docs';
 
 const rolesForPermission = {
   [ADMIN]: [ROLE.admin],
@@ -48,8 +47,7 @@ const rolesForPermission = {
   [DELETE_FOREIGN_ROOMS]: [ROLE.admin],
   [OWN_LESSONS]: [ROLE.admin, ROLE.user],
   [AUTORIZE_ROOMS_RESOURCES]: [ROLE.admin, ROLE.user],
-  [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user],
-  [REGENERATE_DOCS]: [ROLE.admin]
+  [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user]
 };
 
 export function hasUserPermission(user, permission) {
@@ -81,6 +79,5 @@ export default {
   DELETE_FOREIGN_ROOMS,
   OWN_LESSONS,
   AUTORIZE_ROOMS_RESOURCES,
-  JOIN_PRIVATE_ROOMS,
-  REGENERATE_DOCS
+  JOIN_PRIVATE_ROOMS
 };

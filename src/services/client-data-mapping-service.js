@@ -174,6 +174,7 @@ class ClientDataMappingService {
           updatedOn: rawTaskParams.updatedOn && rawTaskParams.updatedOn.toISOString()
         };
       case TASK_TYPE.documentRegeneration:
+      case TASK_TYPE.cdnResourcesConsolidation:
         return {
           ...rawTaskParams
         };
@@ -208,6 +209,7 @@ class ClientDataMappingService {
     switch (batchType) {
       case BATCH_TYPE.documentImport:
       case BATCH_TYPE.documentRegeneration:
+      case BATCH_TYPE.cdnResourcesConsolidation:
         return {
           ...rawBatchParams
         };

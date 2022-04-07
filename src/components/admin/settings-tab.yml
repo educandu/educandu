@@ -13,12 +13,18 @@ footerLinksHeader:
 defaultTagsHeader:
   en: Default tags
   de: Vordefinierte Tags
-createDocumentRegenerationBatchHeader:
+createDocumentRegenerationRequestHeader:
   en: Document recreation
   de: Dokumentwiederherstellung
-createDocumentRegenerationBatchButton:
+createDocumentRegenerationRequestButton:
   en: Regenerate documents
   de: Dokumente neu erstellen
+cdnResourcesConsolidationRequestHeader:
+  en: CDN resources consolidation
+  de: Konsolidierung der CDN-Ressourcen
+cdnResourcesConsolidationRequestButton:
+  en: Consolidate CDN resources
+  de: CDN-Ressourcen konsolidieren
 templateDocumentHeader:
   en: Template for new documents
   de: Vorlage für neue Dokumente

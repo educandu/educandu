@@ -60,8 +60,10 @@
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
       "defaultTagsHeader": "Default tags",
-      "createDocumentRegenerationBatchHeader": "Document recreation",
-      "createDocumentRegenerationBatchButton": "Regenerate documents",
+      "createDocumentRegenerationRequestHeader": "Document recreation",
+      "createDocumentRegenerationRequestButton": "Regenerate documents",
+      "cdnResourcesConsolidationRequestHeader": "CDN resources consolidation",
+      "cdnResourcesConsolidationRequestButton": "Consolidate CDN resources",
       "templateDocumentHeader": "Template for new documents",
       "licenseHeader": "License"
     }
@@ -75,8 +77,10 @@
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
       "defaultTagsHeader": "Vordefinierte Tags",
-      "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung",
-      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
+      "createDocumentRegenerationRequestHeader": "Dokumentwiederherstellung",
+      "createDocumentRegenerationRequestButton": "Dokumente neu erstellen",
+      "cdnResourcesConsolidationRequestHeader": "Konsolidierung der CDN-Ressourcen",
+      "cdnResourcesConsolidationRequestButton": "CDN-Ressourcen konsolidieren",
       "templateDocumentHeader": "Vorlage für neue Dokumente",
       "licenseHeader": "Lizenz"
     }
@@ -550,6 +554,7 @@
       "batchType": "Batch type",
       "batchTypeDocumentImport": "Document import",
       "batchTypeDocumentRegeneration": "Document regeneration",
+      "batchTypeCdnResourcesConsolidation": "CDN resources consolidation",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
       "batchStatusProcessing": "{progress, number, percent} completed",
@@ -575,6 +580,7 @@
       "batchType": "Chargentyp",
       "batchTypeDocumentImport": "Dokumentimport",
       "batchTypeDocumentRegeneration": "Dokumentwiederherstellung",
+      "batchTypeCdnResourcesConsolidation": "Konsolidierung der CDN-Ressourcen",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Abgeschlossen",
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",

@@ -25,6 +25,9 @@ batchTypeDocumentImport:
 batchTypeDocumentRegeneration:
   en: Document regeneration
   de: Dokumentwiederherstellung
+batchTypeCdnResourcesConsolidation:
+  en: CDN resources consolidation
+  de: Konsolidierung der CDN-Ressourcen
 batchStatusPending:
   en: Pending
   de: Ausstehend

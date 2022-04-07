@@ -17,8 +17,12 @@ Graceful.timeout = 10000;
 export default async function educandu(options) {
   let container = null;
 
-  Graceful.on('exit', async signal => {
+  Graceful.on('exit', async (signal, detail) => {
     logger.info(`Received ${signal} - Starting graceful exit process`);
+
+    if (detail) {
+      logger.warn(detail);
+    }
 
     let hasError = false;
     if (container) {

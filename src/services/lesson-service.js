@@ -1,14 +1,18 @@
 import by from 'thenby';
+import deepEqual from 'fast-deep-equal';
 import uniqueId from '../utils/unique-id.js';
 import LessonStore from '../stores/lesson-store.js';
+import InfoFactory from '../plugins/info-factory.js';
+import { extractCdnResources } from './section-helper.js';
 
 class LessonService {
   static get inject() {
-    return [LessonStore];
+    return [LessonStore, InfoFactory];
   }
 
-  constructor(lessonStore) {
+  constructor(lessonStore, infoFactory) {
     this.lessonStore = lessonStore;
+    this.infoFactory = infoFactory;
   }
 
   async getLessonById(lessonId) {
@@ -73,6 +77,7 @@ class LessonService {
     const updatedLesson = {
       ...lesson,
       sections,
+      cdnResources: extractCdnResources(sections, this.infoFactory),
       updatedOn: new Date()
     };
 
@@ -82,6 +87,22 @@ class LessonService {
 
   async deleteLessonById(lessonId) {
     await this.lessonStore.deleteLessonById(lessonId);
+  }
+
+  async consolidateCdnResources(lessonId) {
+    const lesson = await this.getLessonById(lessonId);
+    if (!lesson) {
+      throw new Error('HÄ?', lessonId);
+    }
+
+    const updatedLesson = {
+      ...lesson,
+      cdnResources: extractCdnResources(lesson.sections, this.infoFactory)
+    };
+
+    if (!deepEqual(lesson, updatedLesson)) {
+      await this.lessonStore.saveLesson(updatedLesson);
+    }
   }
 }
 

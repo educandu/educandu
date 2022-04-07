@@ -81,9 +81,18 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
     }
   };
 
-  const handleCreateDocumentRegenerationBatchClick = async () => {
+  const handleCreateDocumentRegenerationRequestClick = async () => {
     try {
       const batch = await adminApiClient.postDocumentRegenerationRequest();
+      window.location = urls.getBatchUrl(batch._id);
+    } catch (error) {
+      handleApiError({ t, logger, error });
+    }
+  };
+
+  const handleCreateCdnResourcesConsolidationRequestClick = async () => {
+    try {
+      const batch = await adminApiClient.postCdnResourcesConsolidationRequest();
       window.location = urls.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
@@ -142,12 +151,20 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
           onChange={handleLicenseChange}
           />
       </Card>
-      <Card className="SettingsTab-card SettingsTab-card--danger" title={t('createDocumentRegenerationBatchHeader')}>
+      <Card className="SettingsTab-card SettingsTab-card--danger" title={t('createDocumentRegenerationRequestHeader')}>
         <Button
-          onClick={handleCreateDocumentRegenerationBatchClick}
+          onClick={handleCreateDocumentRegenerationRequestClick}
           danger
           >
-          {t('createDocumentRegenerationBatchButton')}
+          {t('createDocumentRegenerationRequestButton')}
+        </Button>
+      </Card>
+      <Card className="SettingsTab-card SettingsTab-card--danger" title={t('cdnResourcesConsolidationRequestHeader')}>
+        <Button
+          onClick={handleCreateCdnResourcesConsolidationRequestClick}
+          danger
+          >
+          {t('cdnResourcesConsolidationRequestButton')}
         </Button>
       </Card>
       <Button

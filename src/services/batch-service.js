@@ -5,8 +5,9 @@ import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
 import BatchStore from '../stores/batch-store.js';
 import DocumentStore from '../stores/document-store.js';
-import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
+import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TASK_TYPE, TASK_TYPE } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import LessonStore from '../stores/lesson-store.js';
 
 const { BadRequest, NotFound } = httpErrors;
 
@@ -16,15 +17,16 @@ const CONCURRENT_IMPORT_BATCH_ERROR_MESSAGE = 'Cannot create a new import batch 
 
 class BatchService {
   static get inject() {
-    return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore];
+    return [TransactionRunner, BatchStore, TaskStore, LockStore, DocumentStore, LessonStore];
   }
 
-  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore) {
+  constructor(transactionRunner, batchStore, taskStore, lockStore, documentStore, lessonStore) {
     this.transactionRunner = transactionRunner;
     this.batchStore = batchStore;
     this.taskStore = taskStore;
     this.lockStore = lockStore;
     this.documentStore = documentStore;
+    this.lessonStore = lessonStore;
   }
 
   async createImportBatch({ importSource, documentsToImport, user }) {
@@ -116,6 +118,50 @@ class BatchService {
       taskParams: {
         key
       }
+    }));
+
+    await this.transactionRunner.run(async session => {
+      await this.batchStore.createBatch(batch, { session });
+      await this.taskStore.addTasks(tasks, { session });
+    });
+
+    return batch;
+  }
+
+  async createCdnResourcesConsolidationBatch(user) {
+    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.cdnResourcesConsolidation);
+
+    if (existingActiveBatch) {
+      throw new BadRequest('Another CDN resources consolidation batch is already in progress');
+    }
+
+    const batch = {
+      _id: uniqueId.create(),
+      createdBy: user._id,
+      createdOn: new Date(),
+      completedOn: null,
+      batchType: BATCH_TYPE.cdnResourcesConsolidation,
+      batchParams: {},
+      errors: []
+    };
+
+    const [allDocumentKeys, allLessonIds] = await Promise.all([
+      this.documentStore.getAllDocumentKeys(),
+      this.lessonStore.getAllLessonIds()
+    ]);
+
+    const tasksParams = [
+      ...allDocumentKeys.map(key => ({ type: CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document, documentKey: key })),
+      ...allLessonIds.map(id => ({ type: CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson, lessonId: id }))
+    ];
+
+    const tasks = tasksParams.map(param => ({
+      _id: uniqueId.create(),
+      batchId: batch._id,
+      taskType: TASK_TYPE.cdnResourcesConsolidation,
+      processed: false,
+      attempts: [],
+      taskParams: param
     }));
 
     await this.transactionRunner.run(async session => {

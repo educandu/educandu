@@ -38,6 +38,13 @@ class AdminController {
     return res.status(201).send(batch);
   }
 
+  async handlePostCdnResourcesConsolidationRequest(req, res) {
+    const { user } = req;
+    const batch = await this.batchService.createCdnResourcesConsolidationBatch(user);
+
+    return res.status(201).send(batch);
+  }
+
   registerPages(router) {
     router.get(
       '/admin',
@@ -49,8 +56,14 @@ class AdminController {
   registerApi(router) {
     router.post(
       '/api/v1/admin/document-regeneration',
-      needsPermission(permissions.REGENERATE_DOCS),
+      needsPermission(permissions.ADMIN),
       (req, res) => this.handlePostDocumentRegenerationRequest(req, res)
+    );
+
+    router.post(
+      '/api/v1/admin/cdn-resources-consolidation',
+      needsPermission(permissions.ADMIN),
+      (req, res) => this.handlePostCdnResourcesConsolidationRequest(req, res)
     );
   }
 }

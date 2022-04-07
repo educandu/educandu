@@ -5,6 +5,7 @@ import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
+import MarkdownInfo from '../plugins/markdown/info.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
@@ -1248,4 +1249,68 @@ describe('document-service', () => {
       expect(regeneratedDocument.slug).toEqual('new-slug');
     });
   });
+
+  describe('consolidateCdnResources', () => {
+    let markdownInfo;
+    let documentBeforeConsolidation;
+    let documentRevisionsBeforeConsolidation;
+    let documentAfterConsolidation;
+    let documentRevisionsAfterConsolidation;
+
+    beforeEach(async () => {
+      markdownInfo = container.get(MarkdownInfo);
+
+      const sectionRevision1 = {
+        ...createDefaultSection(),
+        key: uniqueId.create(),
+        type: 'markdown',
+        content: {
+          ...markdownInfo.getDefaultContent(),
+          renderMedia: true
+        }
+      };
+
+      const sectionRevision2 = {
+        ...sectionRevision1,
+        content: {
+          ...sectionRevision1.content,
+          text: '![](cdn://media/some-resource.jpg)'
+        }
+      };
+
+      const [{ key }] = await createTestRevisions(container, user, [{ sections: [sectionRevision1] }, { sections: [sectionRevision2] }]);
+
+      await Promise.all([
+        db.documentRevisions.updateMany({ key }, { $set: { cdnResources: [] } }),
+        db.documents.updateOne({ _id: key }, { $set: { cdnResources: [] } })
+      ]);
+
+      [documentRevisionsBeforeConsolidation, documentBeforeConsolidation] = await Promise.all([
+        db.documentRevisions.find({ key }, { sort: [['order', 1]] }).toArray(),
+        db.documents.findOne({ _id: key })
+      ]);
+
+      await sut.consolidateCdnResources(key);
+
+      [documentRevisionsAfterConsolidation, documentAfterConsolidation] = await Promise.all([
+        db.documentRevisions.find({ key }, { sort: [['order', 1]] }).toArray(),
+        db.documents.findOne({ _id: key })
+      ]);
+    });
+
+    it('should not have changed document revisions that were correct', () => {
+      expect(documentRevisionsAfterConsolidation[0]).toStrictEqual(documentRevisionsBeforeConsolidation[0]);
+    });
+
+    it('should have changed document revisions that were not correct', () => {
+      expect(documentRevisionsAfterConsolidation[1]).not.toStrictEqual(documentRevisionsBeforeConsolidation[1]);
+      expect(documentRevisionsAfterConsolidation[1].cdnResources).toStrictEqual(['media/some-resource.jpg']);
+    });
+
+    it('should have regenerated the document', () => {
+      expect(documentAfterConsolidation).not.toStrictEqual(documentBeforeConsolidation);
+      expect(documentAfterConsolidation.cdnResources).toStrictEqual(['media/some-resource.jpg']);
+    });
+  });
+
 });

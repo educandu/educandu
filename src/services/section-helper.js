@@ -99,3 +99,20 @@ export function createSectionRevision({ section, ancestorSection = null, isResto
   logger.info(`Creating new revision for section key ${section.key}`);
   return createNewSectionRevisionFrom(section);
 }
+
+export function extractCdnResources(sections, pluginInfoFactory) {
+  return [
+    ...sections.reduce((cdnResources, section) => {
+      const info = pluginInfoFactory.tryCreateInfo(section.type);
+      if (info && section.content) {
+        info.getCdnResources(section.content)
+          .forEach(resource => {
+            if (resource) {
+              cdnResources.add(resource);
+            }
+          });
+      }
+      return cdnResources;
+    }, new Set())
+  ].sort();
+}

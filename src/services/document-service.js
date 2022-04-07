@@ -1,5 +1,6 @@
 import by from 'thenby';
 import httpErrors from 'http-errors';
+import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
@@ -10,10 +11,10 @@ import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
-import { createSectionRevision } from './section-helper.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
+import { createSectionRevision, extractCdnResources } from './section-helper.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -401,6 +402,35 @@ class DocumentService {
     }
   }
 
+  async consolidateCdnResources(documentKey) {
+    let lock;
+
+    try {
+      lock = await this.lockStore.takeDocumentLock(documentKey);
+
+      await this.transactionRunner.run(async session => {
+        const [existingDocumentRevisions, existingDocument] = await Promise.all([
+          this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session }),
+          this.documentStore.getDocumentByKey(documentKey, { session })
+        ]);
+
+        const updatedDocumentRevisions = existingDocumentRevisions.map(rev => ({ ...rev, cdnResources: extractCdnResources(rev.sections, this.infoFactory) }));
+        const updatedDocument = this._buildDocumentFromRevisions(updatedDocumentRevisions);
+
+        if (!deepEqual(existingDocumentRevisions, updatedDocumentRevisions) || !deepEqual(existingDocument, updatedDocument)) {
+          await Promise.all([
+            this.documentRevisionStore.saveDocumentRevisions(updatedDocumentRevisions, { session }),
+            this.documentStore.saveDocument(updatedDocument, { session })
+          ]);
+        }
+      });
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
+      }
+    }
+  }
+
   _buildDocumentRevision(data) {
     const mappedSections = data.sections?.map(section => this._buildSection(section)) || [];
 
@@ -420,7 +450,7 @@ class DocumentService {
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
       originUrl: data.originUrl || '',
-      cdnResources: this._getCdnResources(mappedSections)
+      cdnResources: extractCdnResources(mappedSections, this.infoFactory)
     };
   }
 
@@ -462,23 +492,6 @@ class DocumentService {
       originUrl: lastRevision.originUrl,
       cdnResources: lastRevision.cdnResources
     };
-  }
-
-  _getCdnResources(sections) {
-    return [
-      ...sections.reduce((cdnResources, section) => {
-        const info = this.infoFactory.tryCreateInfo(section.type);
-        if (info && section.content) {
-          info.getCdnResources(section.content)
-            .forEach(resource => {
-              if (resource) {
-                cdnResources.add(resource);
-              }
-            });
-        }
-        return cdnResources;
-      }, new Set())
-    ];
   }
 }
 
