@@ -1555,17 +1555,22 @@
       "noneOption": "None",
       "hoverOption": "Hover",
       "revealOption": "Reveal",
+      "clipOption": "Clip",
       "internalCdn": "Internal CDN",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
       "copyrightInfos": "Copyright infos",
       "maximumWidth": "Maximum width",
+      "clippedWidth": "Resulting width",
+      "clippedHeight": "Resulting height",
       "effectTypeLabel": "Effect",
       "startPosition": "Start Position",
       "orientationLabel": "Orientation",
       "orientationOptionVertical": "Vertical",
       "orientationOptionHorizontal": "Horizontal",
-      "smallImageSizeWarning": "The selected image has a smaller width than the page content and might therefore be displayed smaller than expected."
+      "smallImageSizeWarning": "The selected image has a smaller width than the page content and might therefore be displayed smaller than expected.",
+      "smallClippingSizeWarning": "The selected area has a smaller width than the page content and might therefore be displayed smaller than expected.",
+      "clipEffectHint": "Please use the selection rectangle to specify the displayed area"
     }
   },
   {
@@ -1578,17 +1583,22 @@
       "noneOption": "Kein Effekt",
       "hoverOption": "Hover",
       "revealOption": "Auflösung",
+      "clipOption": "Zuschneiden",
       "internalCdn": "Internes CDN",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
       "copyrightInfos": "Copyright Infos",
       "maximumWidth": "Maximale Breite",
+      "clippedWidth": "Resultierende Breite",
+      "clippedHeight": "Resultierende Höhe",
       "effectTypeLabel": "Effekt",
       "startPosition": "Startposition",
       "orientationLabel": "Richtung",
       "orientationOptionVertical": "Vertikal",
       "orientationOptionHorizontal": "Horizontal",
-      "smallImageSizeWarning": "Das von Ihnen gewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt."
+      "smallImageSizeWarning": "Das ausgewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.",
+      "smallClippingSizeWarning": "Der ausgewählte Bereich hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.",
+      "clipEffectHint": "Bitte benutzen Sie das Markierungsrechteck, um einen Bildbereich auszuwählen"
     }
   },
   {

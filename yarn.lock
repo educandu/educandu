@@ -7072,7 +7072,7 @@ nwsapi@^2.2.0:
   resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.2.0.tgz#204879a9e3d068ff2a55139c2c772780681a38b7"
   integrity sha512-h2AatdwYH+JHiZpv7pt/gSX1XoRGb7L/qSIeuqA6GwYoF9w1vP1cw42TO0aI2pNyshRK5893hNSl+1//vHK7hQ==
 
-object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
+object-assign@*, object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
@@ -8370,6 +8370,14 @@ react-redux@^7.2.0:
     loose-envify "^1.4.0"
     prop-types "^15.7.2"
     react-is "^16.13.1"
+
+react-region-select@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-region-select/-/react-region-select-2.3.0.tgz#ae929be115ac780e9694fadeebdee978e75dd87a"
+  integrity sha512-WcGgt5mgd96glKUyRK2lZ7K885eED1xgQXBieblzOJufNtAu0b/kVw+aINF/HGuhcvln8QND27Lntn3adgI1ow==
+  dependencies:
+    object-assign "*"
+    prop-types "^15.6.0"
 
 react-soundplayer@^1.0.5:
   version "1.0.5"

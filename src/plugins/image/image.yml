@@ -16,6 +16,9 @@ hoverOption:
 revealOption:
   en: Reveal
   de: Auflösung
+clipOption:
+  en: Clip
+  de: Zuschneiden
 internalCdn:
   en: Internal CDN
   de: Internes CDN
@@ -31,6 +34,12 @@ copyrightInfos:
 maximumWidth:
   en: Maximum width
   de: Maximale Breite
+clippedWidth:
+  en: Resulting width
+  de: Resultierende Breite
+clippedHeight:
+  en: Resulting height
+  de: Resultierende Höhe
 effectTypeLabel:
   en: Effect
   de: Effekt
@@ -48,4 +57,10 @@ orientationOptionHorizontal:
   de: Horizontal
 smallImageSizeWarning:
   en: The selected image has a smaller width than the page content and might therefore be displayed smaller than expected.
-  de: Das von Ihnen gewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
+  de: Das ausgewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
+smallClippingSizeWarning:
+  en: The selected area has a smaller width than the page content and might therefore be displayed smaller than expected.
+  de: Der ausgewählte Bereich hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
+clipEffectHint:
+  en: Please use the selection rectangle to specify the displayed area
+  de: Bitte benutzen Sie das Markierungsrechteck, um einen Bildbereich auszuwählen

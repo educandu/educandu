@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import React, { Fragment } from 'react';
 import { getImageSource } from '../utils.js';
+import React, { Fragment, useEffect, useRef } from 'react';
 import { EFFECT_TYPE, ORIENTATION } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
@@ -9,22 +9,41 @@ import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js'
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 function ImageDisplay({ content }) {
+  const clipEffectImageRef = useRef();
+  const clipEffectCanvasRef = useRef();
   const maxWidth = content.maxWidth || 100;
   const { text, sourceType, sourceUrl, effect } = content;
 
   const clientConfig = useService(ClientConfig);
   const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
+  const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
+
+  useEffect(() => {
+    if (effect?.type !== EFFECT_TYPE.clip) {
+      return;
+    }
+    const img = clipEffectImageRef.current;
+    const canvas = clipEffectCanvasRef.current;
+    const context = canvas.getContext('2d');
+    const width = img.naturalWidth * (effect.region.width / 100);
+    const height = img.naturalHeight * (effect.region.height / 100);
+    const x = img.naturalWidth * (effect.region.x / 100);
+    const y = img.naturalHeight * (effect.region.y / 100);
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(img, x, y, width, height, 0, 0, width, height);
+  }, [clipEffectCanvasRef, clipEffectImageRef, effect]);
 
   const renderRevealEffect = () => (
     <Fragment>
       <ReactCompareSlider
         position={effect.startPosition}
         portrait={effect.orientation === ORIENTATION.vertical}
-        className={`Image-img u-max-width-${maxWidth}`}
+        className={`ImageDisplay-image u-max-width-${maxWidth}`}
         itemOne={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)} />}
         itemTwo={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)} />}
         />
-      <div className="Image-copyrightInfo">
+      <div className="ImageDisplay-copyrightInfo">
         <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }} />
         <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }} />
       </div>
@@ -32,31 +51,42 @@ function ImageDisplay({ content }) {
   );
 
   const renderHoverEffect = () => (
-    <div className="Image-secondary">
+    <div className="ImageDisplay-hoverEffectContainer">
       <img
-        className={`Image-img u-max-width-${maxWidth}`}
+        className={`ImageDisplay-image u-max-width-${maxWidth}`}
         src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)}
         />
       <div
-        className="Image-copyrightInfo"
+        className="ImageDisplay-copyrightInfo"
         dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }}
         />
     </div>
+  );
+
+  const renderClipEffect = () => (
+    <Fragment>
+      <canvas className={`ImageDisplay-image u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
+      <img className="ImageDisplay-clipEffectImage" src={src} ref={clipEffectImageRef} />
+    </Fragment>
   );
 
   if (effect?.type === EFFECT_TYPE.reveal) {
     return renderRevealEffect();
   }
 
+  if (effect?.type === EFFECT_TYPE.clip) {
+    return renderClipEffect();
+  }
+
   return (
-    <div className={classNames('Image', { 'Image--hoverable': effect })}>
-      <div className="Image-primary">
+    <div className={classNames('ImageDisplay', { 'ImageDisplay--hoverable': effect })}>
+      <div className="ImageDisplay-container">
         <img
-          className={`Image-img u-max-width-${maxWidth}`}
+          className={`ImageDisplay-image u-max-width-${maxWidth}`}
           src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)}
           />
         <div
-          className="Image-copyrightInfo"
+          className="ImageDisplay-copyrightInfo"
           dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }}
           />
       </div>
