@@ -18,7 +18,7 @@ revealOption:
   de: Auflösung
 clipOption:
   en: Clip
-  de: Abschneiden
+  de: Zuschneiden
 internalCdn:
   en: Internal CDN
   de: Internes CDN
@@ -35,11 +35,11 @@ maximumWidth:
   en: Maximum width
   de: Maximale Breite
 clippedWidth:
-  en: Clipping actual width
-  de: Echte abgeschnittene Breite
+  en: Resulting width
+  de: Resultierende Breite
 clippedHeight:
-  en: Clipping actual height
-  de: Echte abgeschnittene Höhe
+  en: Resulting height
+  de: Resultierende Höhe
 effectTypeLabel:
   en: Effect
   de: Effekt
@@ -57,7 +57,7 @@ orientationOptionHorizontal:
   de: Horizontal
 smallImageSizeWarning:
   en: The selected image has a smaller width than the page content and might therefore be displayed smaller than expected.
-  de: Das von Ihnen gewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
+  de: Das ausgewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
 smallClippingSizeWarning:
-  en: The selected clipping has a smaller width than the page content and might therefore be displayed smaller than expected.
-  de: Das von Ihnen gewählte Abschneidung hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
+  en: The selected area has a smaller width than the page content and might therefore be displayed smaller than expected.
+  de: Der ausgewählte Bereich hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.
