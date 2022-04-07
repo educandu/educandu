@@ -16,7 +16,7 @@ const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-const defaultClipRegion = { x: 10, y: 10, width: 80, height: 80, data: {} };
+const defaultClipRegion = { x: 10, y: 10, width: 80, height: 80 };
 
 function ImageEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('image');
@@ -217,8 +217,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
         x: Math.round(region.x),
         y: Math.round(region.y),
         width: Math.round(region.width),
-        height: Math.round(region.height),
-        data: {}
+        height: Math.round(region.height)
       }
     };
     changeContent({ effect: newEffect });
@@ -329,7 +328,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
                     <RegionSelect
                       constraint
                       maxRegions={1}
-                      regions={[effect.region]}
+                      regions={[{ ...effect.region, data: {} }]}
                       onChange={handleClipRegionsChanged}
                       regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
                       >
