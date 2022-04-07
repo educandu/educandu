@@ -325,15 +325,18 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
               {effect.type === EFFECT_TYPE.clip && (
                 <div className="ImageEditor-clipEffect">
                   {!!currentImageSource && (
-                    <RegionSelect
-                      constraint
-                      maxRegions={1}
-                      regions={[{ ...effect.region, data: {} }]}
-                      onChange={handleClipRegionsChanged}
-                      regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
-                      >
-                      <img src={currentImageSource} className="ImageEditor-clipEffectImage" id="clipEffectImage" onLoad={handleClipEffectImageLoad} />
-                    </RegionSelect>
+                    <Fragment>
+                      <div className="ImageEditor-clipEffectHint">{t('clipEffectHint')}</div>
+                      <RegionSelect
+                        constraint
+                        maxRegions={1}
+                        regions={[{ ...effect.region, data: {} }]}
+                        onChange={handleClipRegionsChanged}
+                        regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
+                        >
+                        <img src={currentImageSource} className="ImageEditor-clipEffectImage" id="clipEffectImage" onLoad={handleClipEffectImageLoad} />
+                      </RegionSelect>
+                    </Fragment>
                   )}
                   <div className="ImageEditor-clipEffectRegion">
                     <div>{t('clippedWidth')}: {`${clipSizeInPx.width} px`}</div>

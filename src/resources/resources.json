@@ -1569,7 +1569,8 @@
       "orientationOptionVertical": "Vertical",
       "orientationOptionHorizontal": "Horizontal",
       "smallImageSizeWarning": "The selected image has a smaller width than the page content and might therefore be displayed smaller than expected.",
-      "smallClippingSizeWarning": "The selected area has a smaller width than the page content and might therefore be displayed smaller than expected."
+      "smallClippingSizeWarning": "The selected area has a smaller width than the page content and might therefore be displayed smaller than expected.",
+      "clipEffectHint": "Please use the selection rectangle to specify the displayed area"
     }
   },
   {
@@ -1596,7 +1597,8 @@
       "orientationOptionVertical": "Vertikal",
       "orientationOptionHorizontal": "Horizontal",
       "smallImageSizeWarning": "Das ausgewählte Bild hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.",
-      "smallClippingSizeWarning": "Der ausgewählte Bereich hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt."
+      "smallClippingSizeWarning": "Der ausgewählte Bereich hat eine geringere Breite als der Seiteninhalt und wird deshalb unter Umständen kleiner als erwartet angezeigt.",
+      "clipEffectHint": "Bitte benutzen Sie das Markierungsrechteck, um einen Bildbereich auszuwählen"
     }
   },
   {
