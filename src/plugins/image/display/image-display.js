@@ -32,7 +32,7 @@ function ImageDisplay({ content }) {
     canvas.width = width;
     canvas.height = height;
     context.drawImage(img, x, y, width, height, 0, 0, width, height);
-  }, [clipEffectCanvasRef, effect]);
+  }, [clipEffectCanvasRef, clipEffectImageRef, effect]);
 
   const renderRevealEffect = () => (
     <Fragment>
