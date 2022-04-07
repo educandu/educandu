@@ -110,6 +110,9 @@ logon:
 logoff:
   en: Log off
   de: Abmelden
+created:
+  en: Created
+  de: Erstellt
 createdOn:
   en: Creation date
   de: Erstellungsdatum

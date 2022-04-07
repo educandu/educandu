@@ -1,9 +1,9 @@
-ownedRoomsHeader:
-  en: My rooms
-  de: Meine Räume
-joinedRoomsHeader:
-  en: Rooms I am a member of
-  de: Räume, in denen ich Mitglied bin
-joinedOn:
-  en: Joined on
-  de: Eingetreten am
+joined:
+  en: Joined
+  de: Eingetreten
+role:
+  en: Role
+  de: Rolle
+member:
+  en: Member
+  de: Mitglied

@@ -1099,18 +1099,18 @@
     "namespace": "roomsTab",
     "language": "en",
     "resources": {
-      "ownedRoomsHeader": "My rooms",
-      "joinedRoomsHeader": "Rooms I am a member of",
-      "joinedOn": "Joined on"
+      "joined": "Joined",
+      "role": "Role",
+      "member": "Member"
     }
   },
   {
     "namespace": "roomsTab",
     "language": "de",
     "resources": {
-      "ownedRoomsHeader": "Meine Räume",
-      "joinedRoomsHeader": "Räume, in denen ich Mitglied bin",
-      "joinedOn": "Eingetreten am"
+      "joined": "Eingetreten",
+      "role": "Rolle",
+      "member": "Mitglied"
     }
   },
   {
@@ -1799,6 +1799,7 @@
       "accept": "Accept",
       "logon": "Log on",
       "logoff": "Log off",
+      "created": "Created",
       "createdOn": "Creation date",
       "completedOn": "Completion date",
       "updatedOn": "Update date",
@@ -1896,6 +1897,7 @@
       "accept": "Akzeptieren",
       "logon": "Anmelden",
       "logoff": "Abmelden",
+      "created": "Erstellt",
       "createdOn": "Erstellungsdatum",
       "completedOn": "Abgeschlossen am",
       "updatedOn": "Änderungsdatum",
