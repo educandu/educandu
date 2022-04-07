@@ -1,56 +1,56 @@
-.Image {
-  &--hoverable {
-    .Image-displayedImageContainer {
-      display: block;
-    }
-
-    .Image-hoverEffectImageContainer {
-      display: none;
-    }
-  }
-
-  &--hoverable:hover {
-    .Image-displayedImageContainer {
+.ImageDisplay {
+  &.ImageDisplay--hoverable:hover {
+    .ImageDisplay-container {
       display: none;
     }
 
-    .Image-hoverEffectImageContainer {
+    .ImageDisplay-hoverEffectContainer {
       display: block;
     }
   }
 }
 
-.Image-displayedImage {
+.ImageDisplay-container {
+  display: block;
+}
+
+.ImageDisplay-hoverEffectContainer {
+  display: none;
+}
+
+.ImageDisplay-image {
   display: block;
   margin: 0 auto;
   max-width: 100%;
 }
 
-.Image-copyrightInfo {
+.ImageDisplay-copyrightInfo {
   padding-top: 20px;
   font-size: 12px;
   text-align: center;
 }
 
-.Image-maxWidthInput {
+.ImageDisplay-clipEffectImage {
+  display: none;
+}
+
+.ImageEditor {}
+
+.ImageEditor-maxWidthInput {
   margin-top: 20px;
 }
 
-.Image-clipEffect {
+.ImageEditor-clipEffect {
   display: flex;
   align-items: center;
   flex-direction: column;
 }
 
-.Image-clipEffectImage {
-  display: none;
-}
-
-.Image-clipEffectSettingImage {
+.ImageEditor-clipEffectImage {
   width: 100%;
 }
 
-.Image-clipEffectRegion {
+.ImageEditor-clipEffectRegion {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;

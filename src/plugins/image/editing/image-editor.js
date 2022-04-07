@@ -264,7 +264,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
   );
 
   return (
-    <div>
+    <div className="ImageEditor">
       <Form layout="horizontal">
         {renderSourceTypeInput(sourceType, handleSourceTypeValueChanged)}
 
@@ -324,7 +324,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
               )}
 
               {effect.type === EFFECT_TYPE.clip && (
-                <div className="Image-clipEffect">
+                <div className="ImageEditor-clipEffect">
                   {!!currentImageSource && (
                     <RegionSelect
                       constraint
@@ -333,10 +333,10 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
                       onChange={handleClipRegionsChanged}
                       regionStyle={{ outlineWidth: '2px', borderWidth: '2px' }}
                       >
-                      <img src={currentImageSource} className="Image-clipEffectSettingImage" id="clipEffectImage" onLoad={handleClipEffectImageLoad} />
+                      <img src={currentImageSource} className="ImageEditor-clipEffectImage" id="clipEffectImage" onLoad={handleClipEffectImageLoad} />
                     </RegionSelect>
                   )}
-                  <div className="Image-clipEffectRegion">
+                  <div className="ImageEditor-clipEffectRegion">
                     <div>{t('clippedWidth')}: {`${clipSizeInPx.width} px`}</div>
                     <div>{t('clippedHeight')}: {`${clipSizeInPx.height} px`}</div>
                   </div>
@@ -347,7 +347,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
         )}
 
         <Form.Item
-          className="Image-maxWidthInput"
+          className="ImageEditor-maxWidthInput"
           label={t('maximumWidth')}
           {...formItemLayout}
           validateStatus={smallImageSizeWarning ? 'warning' : null}

@@ -39,11 +39,11 @@ function ImageDisplay({ content }) {
       <ReactCompareSlider
         position={effect.startPosition}
         portrait={effect.orientation === ORIENTATION.vertical}
-        className={`Image-displayedImage u-max-width-${maxWidth}`}
+        className={`ImageDisplay-image u-max-width-${maxWidth}`}
         itemOne={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)} />}
         itemTwo={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)} />}
         />
-      <div className="Image-copyrightInfo">
+      <div className="ImageDisplay-copyrightInfo">
         <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }} />
         <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }} />
       </div>
@@ -51,13 +51,13 @@ function ImageDisplay({ content }) {
   );
 
   const renderHoverEffect = () => (
-    <div className="Image-hoverEffectImageContainer">
+    <div className="ImageDisplay-hoverEffectContainer">
       <img
-        className={`Image-displayedImage u-max-width-${maxWidth}`}
+        className={`ImageDisplay-image u-max-width-${maxWidth}`}
         src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)}
         />
       <div
-        className="Image-copyrightInfo"
+        className="ImageDisplay-copyrightInfo"
         dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }}
         />
     </div>
@@ -65,8 +65,8 @@ function ImageDisplay({ content }) {
 
   const renderClipEffect = () => (
     <Fragment>
-      <canvas className={`Image-displayedImage u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
-      <img className="Image-clipEffectImage" src={src} ref={clipEffectImageRef} />
+      <canvas className={`ImageDisplay-image u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
+      <img className="ImageDisplay-clipEffectImage" src={src} ref={clipEffectImageRef} />
     </Fragment>
   );
 
@@ -79,14 +79,14 @@ function ImageDisplay({ content }) {
   }
 
   return (
-    <div className={classNames('Image', { 'Image--hoverable': effect })}>
-      <div className="Image-displayedImageContainer">
+    <div className={classNames('ImageDisplay', { 'ImageDisplay--hoverable': effect })}>
+      <div className="ImageDisplay-container">
         <img
-          className={`Image-displayedImage u-max-width-${maxWidth}`}
+          className={`ImageDisplay-image u-max-width-${maxWidth}`}
           src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)}
           />
         <div
-          className="Image-copyrightInfo"
+          className="ImageDisplay-copyrightInfo"
           dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }}
           />
       </div>
