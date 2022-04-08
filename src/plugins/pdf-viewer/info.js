@@ -1,7 +1,7 @@
 import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
+import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import FileIcon from '../../components/icons/general/file-icon.js';
 
 export default class PdfViewer {
   static get typeName() { return 'pdf-viewer'; }
@@ -15,7 +15,7 @@ export default class PdfViewer {
   }
 
   getIcon() {
-    return <FileIcon />;
+    return <PdfViewerIcon />;
   }
 
   getDefaultContent() {
