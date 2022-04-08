@@ -13,7 +13,7 @@ import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
@@ -163,12 +163,16 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="Room-lesson" key={lesson._id}>
         <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
-          <Tooltip title={t('common:clone')}>
-            <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
-          </Tooltip>
-          <Tooltip title={t('common:delete')}>
-            <DeleteButton className="Room-lessonDeleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
-          </Tooltip>
+          {isRoomOwner && (
+            <Fragment>
+              <Tooltip title={t('common:clone')}>
+                <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
+              </Tooltip>
+              <Tooltip title={t('common:delete')}>
+                <DeleteButton className="Room-lessonDeleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
+              </Tooltip>
+            </Fragment>
+          )}
           <span className="Room-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
           <a className="Room-lessonTitle" href={url}>{lesson.title}</a>
           <span className="Room-lessonTimeUntil">{timeUntil}</span>
