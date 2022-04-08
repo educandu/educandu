@@ -174,17 +174,17 @@
     }
   },
   {
-    "namespace": "cookieConsentDrawer",
+    "namespace": "consentDrawer",
     "language": "en",
     "resources": {
-      "consentText": "This website uses cookies that are technically needed for strictly functional aspects of the website. These cookies neither track your activities, nor provide 3-rd parties with information of any kind about your visit. By clicking accept you acknowledge this and give your express consent to the usage of the cookies."
+      "consentTextMarkdown": "This website uses cookies that are technically needed for strictly functional aspects of the website.\nThese cookies neither track your activities, nor provide 3-rd parties with information of any kind about your visit.\nBy clicking accept you acknowledge this and give your express consent to the usage of the cookies.\n\nUsers of our platform are able to embed external content via plugins such as a YouTube video player.\nBy clicking on \"accept\" you will confirm that you have no objections to embedded external content.\n\nWhen saving text in a document or uploading files to our server, these will be published under the standard licence of\nthis platform: CC BY-SA 4.0 or any later version (unless there is a different CC licence given in those files).\nBy clicking on \"accept\" you will agree to these terms.\n"
     }
   },
   {
-    "namespace": "cookieConsentDrawer",
+    "namespace": "consentDrawer",
     "language": "de",
     "resources": {
-      "consentText": "Diese Website verwendet technisch notwendige Cookies, um die Funktionalität der Website zu gewährleisten. Diese Cookies verfolgen weder Ihre Aktivitäten, noch liefern sie Dritten irgendwelche Informationen über Ihren Besuch. Indem Sie auf Akzeptieren klicken, bestätigen Sie dies und stimmen der Verwendung der Cookies ausdrücklich zu."
+      "consentTextMarkdown": "Diese Website verwendet technisch notwendige Cookies, um die Funktionalität der Website zu gewährleisten.\nDiese Cookies verfolgen weder Ihre Aktivitäten, noch liefern sie Dritten irgendwelche Informationen über Ihren Besuch.\nIndem Sie auf Akzeptieren klicken, bestätigen Sie dies und stimmen der Verwendung der Cookies ausdrücklich zu.\n\nNutzer:innen dieser Seite können über Plugins externe Quellen wie z.B. einen YouTube-Videoplayer in Dokumente einbinden.\nIndem Sie auf Akzeptieren klicken, bestätigen Sie, gegen die Einbindung externer Quellen keine Einwände zu haben.\n\nWenn Sie in Dokumenten Text speichern und Dateien auf den Server hochladen, werden diese – sofern in Dateien keine\nanderen CC-Lizenz angegeben wird – unter der Standardlizenz dieser Plattform veröffentlicht: CC BY-SA 4.0 (any later version).\nIndem Sie auf Akzeptieren klicken, stimmen Sie dem zu.\n"
     }
   },
   {

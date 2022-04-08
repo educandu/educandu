@@ -6,9 +6,9 @@ import PageFooter from './page-footer.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../../src/components/markdown.js';
 import HomePageIllustration from './home-page-illustration.js';
+import ConsentDrawer from '../../../src/components/consent-drawer.js';
 import { useSettings } from '../../../src/components/settings-context.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
-import CookieConsentDrawer from '../../../src/components/cookie-consent-drawer.js';
 
 function HomePageTemplate({ children }) {
   const settings = useSettings();
@@ -45,7 +45,7 @@ function HomePageTemplate({ children }) {
       </main>
       <PageFooter />
       <UiLanguageDialog visible={isUiLanguageDialogVisible} onClose={handleUiLanguageDialogClose} />
-      <CookieConsentDrawer />
+      <ConsentDrawer />
     </div>
   );
 }

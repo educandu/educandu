@@ -1,6 +1,6 @@
-@cookie-consent-drawer-padding: 15px 25px;
+@consent-drawer-padding: 15px 25px;
 
-.CookieConsentDrawer {
+.ConsentDrawer {
   display: none;
 
   &.is-enabled {
@@ -8,7 +8,7 @@
   }
 }
 
-.CookieConsentDrawer-overlay {
+.ConsentDrawer-overlay {
   position: fixed;
   left: 0;
   top: 0;
@@ -18,7 +18,7 @@
   background-color: rgba(0, 0, 0, 0.45);
 }
 
-.CookieConsentDrawer-drawer {
+.ConsentDrawer-drawer {
   background: fade(@edu-warning-color, 85%);
   display: flex;
   flex-direction: row;
@@ -37,12 +37,12 @@
   }
 }
 
-.CookieConsentDrawer-icon {
+.ConsentDrawer-icon {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: @cookie-consent-drawer-padding;
+  padding: @consent-drawer-padding;
   font-size: 42px;
 
   @media @edu-media-phone {
@@ -50,12 +50,12 @@
   }
 }
 
-.CookieConsentDrawer-consentText {
+.ConsentDrawer-consentText {
   flex: 1 0 0%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: @cookie-consent-drawer-padding;
+  padding: @consent-drawer-padding;
   font-weight: bold;
 
   @media @edu-media-phone {
@@ -64,10 +64,10 @@
   }
 }
 
-.CookieConsentDrawer-acceptButton {
+.ConsentDrawer-acceptButton {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: @cookie-consent-drawer-padding;
+  padding: @consent-drawer-padding;
 }

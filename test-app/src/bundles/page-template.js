@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import PageHeader from './page-header.js';
 import PageFooter from './page-footer.js';
 import Alert from '../../../src/components/alert.js';
+import ConsentDrawer from '../../../src/components/consent-drawer.js';
 import UiLanguageDialog from '../../../src/components/ui-language-dialog.js';
-import CookieConsentDrawer from '../../../src/components/cookie-consent-drawer.js';
 
 function PageTemplate({ children, fullScreen, alerts }) {
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
@@ -54,7 +54,7 @@ function PageTemplate({ children, fullScreen, alerts }) {
       </main>
       <PageFooter />
       <UiLanguageDialog visible={isUiLanguageDialogVisible} onClose={handleUiLanguageDialogClose} />
-      <CookieConsentDrawer />
+      <ConsentDrawer />
     </div>
   );
 }
