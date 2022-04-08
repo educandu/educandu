@@ -166,26 +166,26 @@ function SettingsTab({
       </Card>
       <Card
         className="SettingsTab-card SettingsTab-card--danger"
-        title={t('createDocumentRegenerationRequestHeader')}
+        title={t('documentRegenerationHeader')}
         extra={renderLastBatchExecution(lastDocumentRegenerationBatch)}
         >
         <Button
           onClick={handleStartDocumentRegenerationClick}
           danger
           >
-          {t('createDocumentRegenerationRequestButton')}
+          {t('documentRegenerationButton')}
         </Button>
       </Card>
       <Card
         className="SettingsTab-card SettingsTab-card--danger"
-        title={t('cdnResourcesConsolidationRequestHeader')}
+        title={t('cdnResourcesConsolidationHeader')}
         extra={renderLastBatchExecution(lastCdnResourcesConsolidationBatch)}
         >
         <Button
           onClick={handleStartCdnResourcesConsolidationClick}
           danger
           >
-          {t('cdnResourcesConsolidationRequestButton')}
+          {t('cdnResourcesConsolidationButton')}
         </Button>
       </Card>
       <Button
