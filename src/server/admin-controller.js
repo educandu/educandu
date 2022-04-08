@@ -42,8 +42,12 @@ class AdminController {
       settings,
       documents: await this.clientDataMappingService.mapDocsOrRevisions(documents, user),
       storagePlans,
-      lastDocumentRegenerationBatch: await this.clientDataMappingService.mapBatch(lastDocumentRegenerationBatch, user),
-      lastCdnResourcesConsolidationBatch: await this.clientDataMappingService.mapBatch(lastCdnResourcesConsolidationBatch, user)
+      lastDocumentRegenerationBatch: lastDocumentRegenerationBatch
+        ? await this.clientDataMappingService.mapBatch(lastDocumentRegenerationBatch, user)
+        : null,
+      lastCdnResourcesConsolidationBatch: lastCdnResourcesConsolidationBatch
+        ? await this.clientDataMappingService.mapBatch(lastCdnResourcesConsolidationBatch, user)
+        : null
     };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.admin, initialState);
