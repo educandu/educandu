@@ -1,5 +1,6 @@
 import { Button } from 'antd';
 import classNames from 'classnames';
+import Markdown from './markdown.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
 import ClientConfig from '../bootstrap/client-config.js';
@@ -7,11 +8,15 @@ import React, { useEffect, useState, useRef } from 'react';
 import CookieAlertIcon from './icons/general/cookie-alert-icon.js';
 import { getCookie, setLongLastingCookie } from '../common/cookie.js';
 
-export default function CookieConsentDrawer() {
+const CONSENT_COOKIE_VERSION = 'm157c4noq4et';
+
+export default function ConsentDrawer() {
   const lastActiveElementRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
-  const { t } = useTranslation('cookieConsentDrawer');
-  const { consentCookieName } = useService(ClientConfig);
+  const { t } = useTranslation('consentDrawer');
+  const { consentCookieNamePrefix } = useService(ClientConfig);
+
+  const actualCookieName = `${consentCookieNamePrefix}_${CONSENT_COOKIE_VERSION}`;
 
   useEffect(() => {
     if (!isVisible) {
@@ -33,31 +38,31 @@ export default function CookieConsentDrawer() {
   }, [isVisible]);
 
   useEffect(() => {
-    const consentCookie = getCookie(consentCookieName);
+    const consentCookie = getCookie(actualCookieName);
     if (!consentCookie) {
       lastActiveElementRef.current = document.activeElement;
       setIsVisible(true);
     }
-  }, [consentCookieName]);
+  }, [actualCookieName]);
 
   const handleAcceptButtonClick = () => {
-    setLongLastingCookie(consentCookieName, 'true');
+    setLongLastingCookie(actualCookieName, 'true');
     setIsVisible(false);
     lastActiveElementRef.current?.focus?.();
     lastActiveElementRef.current = null;
   };
 
   return (
-    <div className={classNames('CookieConsentDrawer', { 'is-enabled': isVisible })}>
-      <div className="CookieConsentDrawer-overlay" />
-      <div className="CookieConsentDrawer-drawer">
-        <div className="CookieConsentDrawer-icon">
+    <div className={classNames('ConsentDrawer', { 'is-enabled': isVisible })}>
+      <div className="ConsentDrawer-overlay" />
+      <div className="ConsentDrawer-drawer">
+        <div className="ConsentDrawer-icon">
           <CookieAlertIcon />
         </div>
-        <div className="CookieConsentDrawer-consentText">
-          {t('consentText')}
+        <div className="ConsentDrawer-consentText">
+          <Markdown>{t('consentTextMarkdown')}</Markdown>
         </div>
-        <div className="CookieConsentDrawer-acceptButton">
+        <div className="ConsentDrawer-acceptButton">
           <Button onClick={handleAcceptButtonClick} type="primary">
             {t('common:accept')}
           </Button>
@@ -67,4 +72,4 @@ export default function CookieConsentDrawer() {
   );
 }
 
-CookieConsentDrawer.propTypes = {};
+ConsentDrawer.propTypes = {};

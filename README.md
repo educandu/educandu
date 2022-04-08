@@ -39,7 +39,7 @@ The educandu framework
  | disabledFeatures | A list of names of disabled features | `string[]` | no |
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
  | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
- | consentCookieName | Consent cookie name | an unique name for the cookie | no |
+ | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
  | areRoomsEnabled | Enables rooms | `boolean` | no, defaults to `false` |
 
 ## How to use
@@ -82,7 +82,7 @@ educandu({
     apiKey: 'FSERFSF56Ggsdfg6FGED'
   }],
   additionalControllers: [],
-  consentCookieName: 'APP_CONSENT_COOKIE_NAME'
+  consentCookieNamePrefixPrefix: 'APP_CONSENT_COOKIE_NAME'
 });
 ~~~
 

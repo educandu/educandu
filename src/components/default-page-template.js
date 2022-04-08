@@ -2,10 +2,10 @@ import Alert from './alert.js';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
+import ConsentDrawer from './consent-drawer.js';
 import UiLanguageDialog from './ui-language-dialog.js';
 import DefaultPageHeader from './default-page-header.js';
 import DefaultPageFooter from './default-page-footer.js';
-import CookieConsentDrawer from './cookie-consent-drawer.js';
 
 function DefaultPageTemplate({ children, fullScreen, alerts }) {
   const [isUiLanguageDialogVisible, setIsUiLanguageDialogVisible] = useState(false);
@@ -60,7 +60,7 @@ function DefaultPageTemplate({ children, fullScreen, alerts }) {
       </main>
       <DefaultPageFooter />
       <UiLanguageDialog visible={isUiLanguageDialogVisible} onClose={handleUiLanguageDialogClose} />
-      <CookieConsentDrawer />
+      <ConsentDrawer />
     </div>
   );
 }

@@ -40,7 +40,7 @@ export const clientConfigProps = {
     cdnRootUrl: PropTypes.string.isRequired,
     disabledFeatures: PropTypes.arrayOf(PropTypes.string).isRequired,
     importSources: PropTypes.arrayOf(importSourceShape).isRequired,
-    consentCookieName: PropTypes.string.isRequired,
+    consentCookieNamePrefix: PropTypes.string.isRequired,
     areRoomsEnabled: PropTypes.bool.isRequired
   }).isRequired
 };

@@ -65,6 +65,7 @@ export async function setupTestEnvironment() {
     cdnRootUrl: `http://localhost:9000/${bucketName}`,
     sessionSecret: 'd4340515fa834498b3ab1aba1e4d9013',
     sessionCookieName: 'SESSION_ID',
+    consentCookieNamePrefix: 'CONSENT',
     emailSenderAddress: 'educandu-test-app@test.com',
     smtpOptions: 'smtp://localhost:8025/?ignoreTLS=true',
     bundleConfig: {

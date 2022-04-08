@@ -53,7 +53,7 @@ const configSchema = joi.object({
     maxAttempts: joi.number().min(1).default(defaultTaskProcessing.maxAttempts)
   }).default(defaultTaskProcessing),
   additionalControllers: joi.array().items(joi.function().class()).default([]),
-  consentCookieName: joi.string().default('COOKIECONSENT'),
+  consentCookieNamePrefix: joi.string().required(),
   areRoomsEnabled: joi.bool().default(false),
   isAdminTestsTabEnabled: joi.bool().default(false),
   additionalHeadHtml: joi.string().default('')
@@ -78,7 +78,7 @@ class ServerConfig {
       cdnRootUrl: this.cdnRootUrl,
       disabledFeatures: this.disabledFeatures,
       importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),
-      consentCookieName: this.consentCookieName,
+      consentCookieNamePrefix: this.consentCookieNamePrefix,
       areRoomsEnabled: this.areRoomsEnabled,
       isAdminTestsTabEnabled: this.isAdminTestsTabEnabled
     };
