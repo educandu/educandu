@@ -14,7 +14,7 @@ defaultTagsHeader:
   en: Default tags
   de: Vordefinierte Tags
 createDocumentRegenerationRequestHeader:
-  en: Document recreation
+  en: Document regeneration
   de: Dokumentwiederherstellung
 createDocumentRegenerationRequestButton:
   en: Regenerate documents
