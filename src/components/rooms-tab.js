@@ -12,13 +12,8 @@ import { useDateFormat } from './locale-context.js';
 import { roomShape } from '../ui/default-prop-types.js';
 import RoomCreationModal from './room-creation-modal.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PlusOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons';
-
-const ROOM_ROLE = {
-  owner: 'owner',
-  member: 'member'
-};
 
 function RoomsTab({ rooms }) {
   const user = useUser();
@@ -34,10 +29,11 @@ function RoomsTab({ rooms }) {
       slug: room.slug,
       owner: room.owner,
       access: room.access,
+      accessTranslated: t(`common:accessType_${room.access}`),
       createdOn: room.createdOn,
       updatedOn: room.updatedOn,
       joinedOn: userAsMember?.joinedOn || '',
-      role: userAsMember ? ROOM_ROLE.member : ROOM_ROLE.owner
+      roleTranslated: userAsMember ? t('member') : t('common:owner')
     };
   });
 
@@ -58,7 +54,7 @@ function RoomsTab({ rooms }) {
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
     owner: rowsToSort => rowsToSort.sort(by(row => row.owner.username, sorting.direction)),
     access: rowsToSort => rowsToSort.sort(by(row => row.access, sorting.direction)),
-    role: rowsToSort => rowsToSort.sort(by(row => row.role, sorting.direction).thenBy(row => row.joinedOn, 'desc').thenBy(row => row.createdOn, 'desc'))
+    role: rowsToSort => rowsToSort.sort(by(row => row.roleTranslated, sorting.direction).thenBy(row => row.joinedOn, 'desc').thenBy(row => row.createdOn, 'desc'))
   }), [sorting.direction]);
 
   useEffect(() => {
@@ -86,22 +82,13 @@ function RoomsTab({ rooms }) {
       : <span>{owner.username}</span>;
   };
 
-  const renderAccess = access => {
+  const renderAccess = (accessTranslated, row) => {
     return (
       <div className="RoomsTab-accessCell">
-        {access === ROOM_ACCESS_LEVEL.private && <LockOutlined />}
-        {access === ROOM_ACCESS_LEVEL.public && <UnlockOutlined />}
-        <span>{t(`common:accessType_${access}`)}</span>
+        {row.access === ROOM_ACCESS_LEVEL.private && <LockOutlined />}
+        {row.access === ROOM_ACCESS_LEVEL.public && <UnlockOutlined />}
+        <span>{accessTranslated}</span>
       </div>
-    );
-  };
-
-  const renderRole = role => {
-    return (
-      <Fragment>
-        {role === ROOM_ROLE.owner && <span>{t('common:owner')}</span>}
-        {role === ROOM_ROLE.member && <span>{t('member')}</span>}
-      </Fragment>
     );
   };
 
@@ -131,17 +118,17 @@ function RoomsTab({ rooms }) {
     },
     {
       title: t('common:access'),
-      dataIndex: 'access',
-      key: 'access',
+      dataIndex: 'accessTranslated',
+      key: 'accessTranslated',
       render: renderAccess,
       width: '150px',
       responsive: ['sm']
     },
     {
       title: t('role'),
-      dataIndex: 'role',
-      key: 'role',
-      render: renderRole,
+      dataIndex: 'roleTranslated',
+      key: 'roleTranslated',
+      render: roleTranslated => roleTranslated,
       width: '100px'
     }
   ];
