@@ -90,7 +90,7 @@ function SettingsTab({
     }
   };
 
-  const handleCreateDocumentRegenerationRequestClick = async () => {
+  const handleStartDocumentRegenerationClick = async () => {
     try {
       const batch = await adminApiClient.postDocumentRegenerationRequest();
       window.location = urls.getBatchUrl(batch._id);
@@ -99,7 +99,7 @@ function SettingsTab({
     }
   };
 
-  const handleCreateCdnResourcesConsolidationRequestClick = async () => {
+  const handleStartCdnResourcesConsolidationClick = async () => {
     try {
       const batch = await adminApiClient.postCdnResourcesConsolidationRequest();
       window.location = urls.getBatchUrl(batch._id);
@@ -170,7 +170,7 @@ function SettingsTab({
         extra={renderLastBatchExecution(lastDocumentRegenerationBatch)}
         >
         <Button
-          onClick={handleCreateDocumentRegenerationRequestClick}
+          onClick={handleStartDocumentRegenerationClick}
           danger
           >
           {t('createDocumentRegenerationRequestButton')}
@@ -182,7 +182,7 @@ function SettingsTab({
         extra={renderLastBatchExecution(lastCdnResourcesConsolidationBatch)}
         >
         <Button
-          onClick={handleCreateCdnResourcesConsolidationRequestClick}
+          onClick={handleStartCdnResourcesConsolidationClick}
           danger
           >
           {t('cdnResourcesConsolidationRequestButton')}
