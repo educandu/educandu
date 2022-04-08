@@ -1,6 +1,6 @@
-import { Empty, Result, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { pdfjs, Document, Page } from 'react-pdf';
+import { Button, Empty, Result, Spin } from 'antd';
 import Markdown from '../../../components/markdown.js';
 import React, { useMemo, useRef, useState } from 'react';
 import ClientConfig from '../../../bootstrap/client-config.js';
@@ -124,11 +124,11 @@ function PdfViewerDisplay({ content }) {
       )}
       {pdf?.numPages > 1 && (
         <div className="PdfViewer-pager">
-          <a className="PdfViewer-pagerItem" disabled={pageNumber <= 1} onClick={handleFirstPageButtonClick}><BackwardOutlined /></a>
-          <a className="PdfViewer-pagerItem" disabled={pageNumber <= 1} onClick={handlePreviousPageButtonClick}><CaretLeftOutlined /></a>
+          <Button type="link" className="PdfViewer-pagerItem" disabled={pageNumber <= 1} onClick={handleFirstPageButtonClick}><BackwardOutlined /></Button>
+          <Button type="link" className="PdfViewer-pagerItem" disabled={pageNumber <= 1} onClick={handlePreviousPageButtonClick}><CaretLeftOutlined /></Button>
           <span className="PdfViewer-pagerItem">{pageNumber}&nbsp;/&nbsp;{pdf.numPages}</span>
-          <a className="PdfViewer-pagerItem" disabled={pageNumber >= pdf.numPages} onClick={handleNextPageButtonClick}><CaretRightOutlined /></a>
-          <a className="PdfViewer-pagerItem" disabled={pageNumber >= pdf.numPages} onClick={handleLastPageButtonClick}><ForwardOutlined /></a>
+          <Button type="link" className="PdfViewer-pagerItem" disabled={pageNumber >= pdf.numPages} onClick={handleNextPageButtonClick}><CaretRightOutlined /></Button>
+          <Button type="link" className="PdfViewer-pagerItem" disabled={pageNumber >= pdf.numPages} onClick={handleLastPageButtonClick}><ForwardOutlined /></Button>
         </div>
       )}
     </div>
