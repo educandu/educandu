@@ -1,5 +1,6 @@
 import by from 'thenby';
 import httpErrors from 'http-errors';
+import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
@@ -9,11 +10,11 @@ import BatchStore from '../stores/batch-store.js';
 import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
-import { createSectionRevision } from './section-helper.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
-import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
+import { createSectionRevision, extractCdnResources } from './section-helper.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -401,41 +402,33 @@ class DocumentService {
     }
   }
 
-  async createDocumentRegenerationBatch(user) {
-    const existingActiveBatch = await this.batchStore.getUncompleteBatchByType(BATCH_TYPE.documentRegeneration);
+  async consolidateCdnResources(documentKey) {
+    let lock;
 
-    if (existingActiveBatch) {
-      throw new BadRequest('Another document regeneration batch is already in progress');
-    }
+    try {
+      lock = await this.lockStore.takeDocumentLock(documentKey);
 
-    const batch = {
-      _id: uniqueId.create(),
-      createdBy: user._id,
-      createdOn: new Date(),
-      completedOn: null,
-      batchType: BATCH_TYPE.documentRegeneration,
-      batchParams: {},
-      errors: []
-    };
+      await this.transactionRunner.run(async session => {
+        const [existingDocumentRevisions, existingDocument] = await Promise.all([
+          this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey, { session }),
+          this.documentStore.getDocumentByKey(documentKey, { session })
+        ]);
 
-    const allDocumentKeys = await this.documentStore.getAllDocumentKeys();
-    const tasks = allDocumentKeys.map(key => ({
-      _id: uniqueId.create(),
-      batchId: batch._id,
-      taskType: TASK_TYPE.documentRegeneration,
-      processed: false,
-      attempts: [],
-      taskParams: {
-        key
+        const updatedDocumentRevisions = existingDocumentRevisions.map(rev => ({ ...rev, cdnResources: extractCdnResources(rev.sections, this.infoFactory) }));
+        const updatedDocument = this._buildDocumentFromRevisions(updatedDocumentRevisions);
+
+        if (!deepEqual(existingDocumentRevisions, updatedDocumentRevisions) || !deepEqual(existingDocument, updatedDocument)) {
+          await Promise.all([
+            this.documentRevisionStore.saveDocumentRevisions(updatedDocumentRevisions, { session }),
+            this.documentStore.saveDocument(updatedDocument, { session })
+          ]);
+        }
+      });
+    } finally {
+      if (lock) {
+        await this.lockStore.releaseLock(lock);
       }
-    }));
-
-    await this.transactionRunner.run(async session => {
-      await this.batchStore.createBatch(batch, { session });
-      await this.taskStore.addTasks(tasks, { session });
-    });
-
-    return batch;
+    }
   }
 
   _buildDocumentRevision(data) {
@@ -457,7 +450,7 @@ class DocumentService {
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
       originUrl: data.originUrl || '',
-      cdnResources: this._getCdnResources(mappedSections)
+      cdnResources: extractCdnResources(mappedSections, this.infoFactory)
     };
   }
 
@@ -499,23 +492,6 @@ class DocumentService {
       originUrl: lastRevision.originUrl,
       cdnResources: lastRevision.cdnResources
     };
-  }
-
-  _getCdnResources(sections) {
-    return [
-      ...sections.reduce((cdnResources, section) => {
-        const info = this.infoFactory.tryCreateInfo(section.type);
-        if (info && section.content) {
-          info.getCdnResources(section.content)
-            .forEach(resource => {
-              if (resource) {
-                cdnResources.add(resource);
-              }
-            });
-        }
-        return cdnResources;
-      }, new Set())
-    ];
   }
 }
 

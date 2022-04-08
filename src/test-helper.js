@@ -165,10 +165,13 @@ export async function createTestLesson(container, lessonValues) {
     roomId: lessonValues.roomId || uniqueId.create(),
     title: lessonValues.title || 'my-lesson',
     slug: lessonValues.slug || 'my-lesson-slug',
-    schedule: lessonValues.slug || null,
+    schedule: lessonValues.schedule || null,
     createdBy: lessonValues.createdBy || uniqueId.create(),
     createdOn: lessonValues.createdOn || now,
-    updatedOn: lessonValues.updatedOn || now
+    updatedOn: lessonValues.updatedOn || now,
+    language: lessonValues.language || 'en',
+    sections: lessonValues.sections || [],
+    cdnResources: lessonValues.cdnResources || []
   };
   await db.lessons.insertOne(lesson);
   return lesson;

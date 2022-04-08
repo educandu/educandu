@@ -5,6 +5,7 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
+import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
 import MarkdownTextarea from '../markdown-textarea.js';
 import DocumentSelector from '../document-selector.js';
@@ -13,17 +14,25 @@ import DefaultTagsSettings from './default-tags-settings.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import AdminApiClient from '../../api-clients/admin-api-client.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
-import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
-import { documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
+import { batchShape, documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
-function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSettingsSaved }) {
+function SettingsTab({
+  initialSettings,
+  documents,
+  lastDocumentRegenerationBatch,
+  lastCdnResourcesConsolidationBatch,
+  onDirtyStateChange,
+  onSettingsSaved
+}) {
   const { t } = useTranslation('settingsTab');
+  const { formatDate } = useDateFormat();
   const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
-  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
+  const adminApiClient = useSessionAwareApiClient(AdminApiClient);
   const [settings, setSettings] = useState(cloneDeep(initialSettings));
   const [dirtyKeys, setDirtyKeys] = useState([]);
   const [invalidKeys, setInvalidKeys] = useState([]);
@@ -81,14 +90,27 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
     }
   };
 
-  const handleCreateDocumentRegenerationBatchClick = async () => {
+  const handleStartDocumentRegenerationClick = async () => {
     try {
-      const batch = await documentApiClient.postDocumentRegenerationBatch();
+      const batch = await adminApiClient.postDocumentRegenerationRequest();
       window.location = urls.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
     }
   };
+
+  const handleStartCdnResourcesConsolidationClick = async () => {
+    try {
+      const batch = await adminApiClient.postCdnResourcesConsolidationRequest();
+      window.location = urls.getBatchUrl(batch._id);
+    } catch (error) {
+      handleApiError({ t, logger, error });
+    }
+  };
+
+  const renderLastBatchExecution = batch => batch && (
+    <span>{t('lastExecution')}: <a href={urls.getBatchUrl(batch._id)}>{formatDate(batch.createdOn)}</a></span>
+  );
 
   const templateDocumentURL = settings.templateDocument
     ? `${settings.templateDocument.documentKey}/${settings.templateDocument.documentSlug}`
@@ -142,12 +164,28 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
           onChange={handleLicenseChange}
           />
       </Card>
-      <Card className="SettingsTab-card SettingsTab-card--danger" title={t('createDocumentRegenerationBatchHeader')}>
+      <Card
+        className="SettingsTab-card SettingsTab-card--danger"
+        title={t('documentRegenerationHeader')}
+        extra={renderLastBatchExecution(lastDocumentRegenerationBatch)}
+        >
         <Button
-          onClick={handleCreateDocumentRegenerationBatchClick}
+          onClick={handleStartDocumentRegenerationClick}
           danger
           >
-          {t('createDocumentRegenerationBatchButton')}
+          {t('documentRegenerationButton')}
+        </Button>
+      </Card>
+      <Card
+        className="SettingsTab-card SettingsTab-card--danger"
+        title={t('cdnResourcesConsolidationHeader')}
+        extra={renderLastBatchExecution(lastCdnResourcesConsolidationBatch)}
+        >
+        <Button
+          onClick={handleStartCdnResourcesConsolidationClick}
+          danger
+          >
+          {t('cdnResourcesConsolidationButton')}
         </Button>
       </Card>
       <Button
@@ -165,8 +203,15 @@ function SettingsTab({ initialSettings, documents, onDirtyStateChange, onSetting
 SettingsTab.propTypes = {
   documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
   initialSettings: settingsShape.isRequired,
+  lastCdnResourcesConsolidationBatch: batchShape,
+  lastDocumentRegenerationBatch: batchShape,
   onDirtyStateChange: PropTypes.func.isRequired,
   onSettingsSaved: PropTypes.func.isRequired
+};
+
+SettingsTab.defaultProps = {
+  lastCdnResourcesConsolidationBatch: null,
+  lastDocumentRegenerationBatch: null
 };
 
 export default SettingsTab;

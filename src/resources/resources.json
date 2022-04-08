@@ -60,10 +60,13 @@
       "termsPageHeader": "Terms of usage page",
       "footerLinksHeader": "Footer links",
       "defaultTagsHeader": "Default tags",
-      "createDocumentRegenerationBatchHeader": "Document recreation",
-      "createDocumentRegenerationBatchButton": "Regenerate documents",
+      "documentRegenerationHeader": "Document regeneration",
+      "documentRegenerationButton": "Regenerate documents",
+      "cdnResourcesConsolidationHeader": "CDN resources consolidation",
+      "cdnResourcesConsolidationButton": "Consolidate CDN resources",
       "templateDocumentHeader": "Template for new documents",
-      "licenseHeader": "License"
+      "licenseHeader": "License",
+      "lastExecution": "Last execution"
     }
   },
   {
@@ -75,10 +78,13 @@
       "termsPageHeader": "Nutzungsbedingungen-Seite",
       "footerLinksHeader": "Footer-Links",
       "defaultTagsHeader": "Vordefinierte Tags",
-      "createDocumentRegenerationBatchHeader": "Dokumentwiederherstellung",
-      "createDocumentRegenerationBatchButton": "Dokumente neu erstellen",
+      "documentRegenerationHeader": "Dokumentwiederherstellung",
+      "documentRegenerationButton": "Dokumente neu erstellen",
+      "cdnResourcesConsolidationHeader": "Konsolidierung der CDN-Ressourcen",
+      "cdnResourcesConsolidationButton": "CDN-Ressourcen konsolidieren",
       "templateDocumentHeader": "Vorlage für neue Dokumente",
-      "licenseHeader": "Lizenz"
+      "licenseHeader": "Lizenz",
+      "lastExecution": "Letzte Ausführung"
     }
   },
   {
@@ -550,6 +556,7 @@
       "batchType": "Batch type",
       "batchTypeDocumentImport": "Document import",
       "batchTypeDocumentRegeneration": "Document regeneration",
+      "batchTypeCdnResourcesConsolidation": "CDN resources consolidation",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
       "batchStatusProcessing": "{progress, number, percent} completed",
@@ -575,6 +582,7 @@
       "batchType": "Chargentyp",
       "batchTypeDocumentImport": "Dokumentimport",
       "batchTypeDocumentRegeneration": "Dokumentwiederherstellung",
+      "batchTypeCdnResourcesConsolidation": "Konsolidierung der CDN-Ressourcen",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Abgeschlossen",
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",

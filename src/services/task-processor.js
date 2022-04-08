@@ -6,20 +6,38 @@ import { TASK_TYPE } from '../domain/constants.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
+import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
 
 const logger = new Logger(import.meta.url);
 
 export default class TaskProcessor {
-  static get inject() { return [TaskStore, LockStore, DocumentImportTaskProcessor, DocumentRegenerationTaskProcessor, ServerConfig]; }
+  static get inject() {
+    return [
+      TaskStore,
+      LockStore,
+      DocumentImportTaskProcessor,
+      DocumentRegenerationTaskProcessor,
+      CdnResourcesConsolidationTaskProcessor,
+      ServerConfig
+    ];
+  }
 
-  constructor(taskStore, lockStore, documentImportTaskProcessor, documentRegenerationTaskProcessor, serverConfig) {
+  constructor(
+    taskStore,
+    lockStore,
+    documentImportTaskProcessor,
+    documentRegenerationTaskProcessor,
+    cdnResourcesConsolidationTaskProcessor,
+    serverConfig
+  ) {
     this.taskStore = taskStore;
     this.lockStore = lockStore;
     this.serverConfig = serverConfig;
 
     this.taskProcessors = {
       [TASK_TYPE.documentImport]: documentImportTaskProcessor,
-      [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor
+      [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor,
+      [TASK_TYPE.cdnResourcesConsolidation]: cdnResourcesConsolidationTaskProcessor
     };
   }
 

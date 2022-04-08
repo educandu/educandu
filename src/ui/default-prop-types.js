@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { PAGE_NAME } from '../domain/page-name.js';
 import {
   BATCH_TYPE,
+  CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
   DOCUMENT_IMPORT_TYPE,
   FAVORITE_TYPE,
   ROOM_ACCESS_LEVEL,
@@ -268,6 +269,21 @@ export const documentRegenerationTaskShape = PropTypes.shape({
   }).isRequired
 });
 
+export const cdnResourcesConsolidationTaskShape = PropTypes.shape({
+  ...commonTaskProps,
+  taskType: PropTypes.oneOf([TASK_TYPE.cdnResourcesConsolidation]),
+  taskParams: PropTypes.oneOfType([
+    PropTypes.shape({
+      type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document]),
+      documentKey: PropTypes.string.isRequired
+    }),
+    PropTypes.shape({
+      type: PropTypes.oneOf([CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson]),
+      lessonId: PropTypes.string.isRequired
+    })
+  ]).isRequired
+});
+
 export const commonBatchProps = {
   _id: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
@@ -287,11 +303,18 @@ export const documentImportBatchDetailsShape = PropTypes.shape({
   tasks: PropTypes.arrayOf(documentImportTaskShape).isRequired
 });
 
-export const documentRegenerationDetailsShape = PropTypes.shape({
+export const documentRegenerationBatchDetailsShape = PropTypes.shape({
   ...commonBatchProps,
   batchType: PropTypes.oneOf([BATCH_TYPE.documentRegeneration]).isRequired,
   batchParams: PropTypes.shape({}),
   tasks: PropTypes.arrayOf(documentRegenerationTaskShape).isRequired
+});
+
+export const cdnResourcesConsolidationBatchDetailsShape = PropTypes.shape({
+  ...commonBatchProps,
+  batchType: PropTypes.oneOf([BATCH_TYPE.cdnResourcesConsolidation]).isRequired,
+  batchParams: PropTypes.shape({}),
+  tasks: PropTypes.arrayOf(cdnResourcesConsolidationTaskShape).isRequired
 });
 
 export const roomOwnerShape = PropTypes.shape({

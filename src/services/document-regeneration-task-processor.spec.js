@@ -44,13 +44,15 @@ describe('DocumentRegenerationTaskProcessor', () => {
       await expect(() => sut.process({ taskParams: { key: documentKey } }, { cancellationRequested: true })).rejects.toThrow(Error);
     });
 
-    it('should not call regenerate document if a cancellation was requested', () => {
+    it('should not call regenerate document if a cancellation was requested', async () => {
       const documentKey = uniqueId.create();
 
-      sut.process({ taskParams: { key: documentKey } }, { cancellationRequested: true })
-        .catch(() => {
-          sinon.assert.notCalled(documentService.regenerateDocument);
-        });
+      try {
+        await sut.process({ taskParams: { key: documentKey } }, { cancellationRequested: true });
+        sinon.assert.fail('This code should not have been reached');
+      } catch {
+        sinon.assert.notCalled(documentService.regenerateDocument);
+      }
     });
   });
 });

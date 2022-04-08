@@ -16,12 +16,19 @@ export const DOCUMENT_IMPORT_TYPE = {
 
 export const BATCH_TYPE = {
   documentImport: 'document-import',
-  documentRegeneration: 'document-regeneration'
+  documentRegeneration: 'document-regeneration',
+  cdnResourcesConsolidation: 'cdn-resources-consolidation'
 };
 
 export const TASK_TYPE = {
   documentImport: 'document-import',
-  documentRegeneration: 'document-regeneration'
+  documentRegeneration: 'document-regeneration',
+  cdnResourcesConsolidation: 'cdn-resources-consolidation'
+};
+
+export const CDN_RESOURCES_CONSOLIDATION_TASK_TYPE = {
+  document: 'document',
+  lesson: 'lesson'
 };
 
 export const FEATURE_TOGGLES = {

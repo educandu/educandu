@@ -1,18 +1,15 @@
 /* eslint-disable max-lines */
 import sinon from 'sinon';
-import httpErrors from 'http-errors';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
-import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
-import { BATCH_TYPE, DOCUMENT_ORIGIN, TASK_TYPE } from '../domain/constants.js';
+import MarkdownInfo from '../plugins/markdown/info.js';
+import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
 import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
-
-const { BadRequest } = httpErrors;
 
 const createDefaultSection = () => ({
   key: uniqueId.create(),
@@ -28,7 +25,6 @@ describe('document-service', () => {
   let container;
   let user;
 
-  let taskStore;
   let lockStore;
 
   let sut;
@@ -38,7 +34,6 @@ describe('document-service', () => {
     container = await setupTestEnvironment();
     user = await setupTestUser(container);
 
-    taskStore = container.get(TaskStore);
     lockStore = container.get(LockStore);
 
     sut = container.get(DocumentService);
@@ -1223,65 +1218,6 @@ describe('document-service', () => {
     });
   });
 
-  describe('createDocumentRegenerationBatch', () => {
-    let testDocument;
-    beforeEach(async () => {
-      testDocument = await createTestDocument(container, user, {
-        title: 'Title',
-        description: 'Description',
-        slug: 'my-doc',
-        language: 'en',
-        sections: [],
-        tags: ['tag-1']
-      });
-    });
-
-    describe('when a running batch already exists', () => {
-      beforeEach(async () => {
-        await sut.createDocumentRegenerationBatch(user);
-      });
-
-      it('should return null', async () => {
-        await expect(() => sut.createDocumentRegenerationBatch(user)).rejects.toThrow(BadRequest);
-      });
-    });
-
-    describe('when a new batch is created', () => {
-      let batch = null;
-      beforeEach(async () => {
-        batch = await sut.createDocumentRegenerationBatch(user);
-      });
-
-      it('should create the new batch', () => {
-        expect(batch).toEqual({
-          _id: expect.stringMatching(/\w+/),
-          createdBy: user._id,
-          createdOn: now,
-          completedOn: null,
-          batchType: BATCH_TYPE.documentRegeneration,
-          batchParams: {},
-          errors: []
-        });
-      });
-
-      it('should create the according tasks', async () => {
-        const tasks = await taskStore.getTasksByBatchId(batch._id);
-        expect(tasks).toEqual([
-          {
-            _id: expect.stringMatching(/\w+/),
-            batchId: batch._id,
-            taskType: TASK_TYPE.documentRegeneration,
-            processed: false,
-            attempts: [],
-            taskParams: {
-              key: testDocument.key
-            }
-          }
-        ]);
-      });
-    });
-  });
-
   describe('regenerateDocument', () => {
     const lock = { _id: 'mylock' };
 
@@ -1313,4 +1249,68 @@ describe('document-service', () => {
       expect(regeneratedDocument.slug).toEqual('new-slug');
     });
   });
+
+  describe('consolidateCdnResources', () => {
+    let markdownInfo;
+    let documentBeforeConsolidation;
+    let documentRevisionsBeforeConsolidation;
+    let documentAfterConsolidation;
+    let documentRevisionsAfterConsolidation;
+
+    beforeEach(async () => {
+      markdownInfo = container.get(MarkdownInfo);
+
+      const sectionRevision1 = {
+        ...createDefaultSection(),
+        key: uniqueId.create(),
+        type: 'markdown',
+        content: {
+          ...markdownInfo.getDefaultContent(),
+          renderMedia: true
+        }
+      };
+
+      const sectionRevision2 = {
+        ...sectionRevision1,
+        content: {
+          ...sectionRevision1.content,
+          text: '![](cdn://media/some-resource.jpg)'
+        }
+      };
+
+      const [{ key }] = await createTestRevisions(container, user, [{ sections: [sectionRevision1] }, { sections: [sectionRevision2] }]);
+
+      await Promise.all([
+        db.documentRevisions.updateMany({ key }, { $set: { cdnResources: [] } }),
+        db.documents.updateOne({ _id: key }, { $set: { cdnResources: [] } })
+      ]);
+
+      [documentRevisionsBeforeConsolidation, documentBeforeConsolidation] = await Promise.all([
+        db.documentRevisions.find({ key }, { sort: [['order', 1]] }).toArray(),
+        db.documents.findOne({ _id: key })
+      ]);
+
+      await sut.consolidateCdnResources(key);
+
+      [documentRevisionsAfterConsolidation, documentAfterConsolidation] = await Promise.all([
+        db.documentRevisions.find({ key }, { sort: [['order', 1]] }).toArray(),
+        db.documents.findOne({ _id: key })
+      ]);
+    });
+
+    it('should not have changed document revisions that were correct', () => {
+      expect(documentRevisionsAfterConsolidation[0]).toStrictEqual(documentRevisionsBeforeConsolidation[0]);
+    });
+
+    it('should have changed document revisions that were not correct', () => {
+      expect(documentRevisionsAfterConsolidation[1]).not.toStrictEqual(documentRevisionsBeforeConsolidation[1]);
+      expect(documentRevisionsAfterConsolidation[1].cdnResources).toStrictEqual(['media/some-resource.jpg']);
+    });
+
+    it('should have regenerated the document', () => {
+      expect(documentAfterConsolidation).not.toStrictEqual(documentBeforeConsolidation);
+      expect(documentAfterConsolidation.cdnResources).toStrictEqual(['media/some-resource.jpg']);
+    });
+  });
+
 });
