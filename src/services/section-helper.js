@@ -104,15 +104,9 @@ export function extractCdnResources(sections, pluginInfoFactory) {
   return [
     ...sections.reduce((cdnResources, section) => {
       const info = pluginInfoFactory.tryCreateInfo(section.type);
-      if (info && section.content) {
-        info.getCdnResources(section.content)
-          .forEach(resource => {
-            if (resource) {
-              cdnResources.add(resource);
-            }
-          });
-      }
-      return cdnResources;
+      return info && section.content
+        ? [...cdnResources, ...info.getCdnResources(section.content).filter(resource => resource)]
+        : cdnResources;
     }, new Set())
   ].sort();
 }
