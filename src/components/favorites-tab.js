@@ -3,63 +3,17 @@ import Table from './table.js';
 import PropTypes from 'prop-types';
 import urls from '../utils/urls.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
 import SortingSelector from './sorting-selector.js';
 import { useDateFormat } from './locale-context.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
+import React, { useEffect, useMemo, useState } from 'react';
 import { userFavoritesShape } from '../ui/default-prop-types.js';
 
 function FavoritesTab({ favorites }) {
-  const { t } = useTranslation('');
+  const { t } = useTranslation('favoritesTab');
   const { formatDate } = useDateFormat();
 
-  const sortingOptions = [
-    { label: t('common:setOn'), appliedLabel: t('common:sortedBySetOn'), value: 'setOn' },
-    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
-    { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'type' }
-  ];
-
-  const sortBySetOn = (items, direction) => items.sort(by(item => item.setOn, direction));
-  const sortByTitle = (items, direction) => items.sort(by(item => item.title, { direction, ignoreCase: true }).thenBy(item => item.setOn, 'desc'));
-  const sortByType = (items, direction) => items.sort(by(item => item.type, direction).thenBy(item => item.setOn, 'desc'));
-
-  const [tableRows, setTableRows] = useState([]);
-  const [sorting, setSorting] = useState({ value: 'setOn', direction: 'desc' });
-
-  useEffect(() => {
-    switch (sorting.value) {
-      case 'setOn':
-        setTableRows(sortBySetOn(favorites, sorting.direction));
-        return;
-      case 'title':
-        setTableRows(sortByTitle(favorites, sorting.direction));
-        break;
-      case 'type':
-        setTableRows(sortByType(favorites, sorting.direction));
-        break;
-      default:
-        break;
-    }
-  }, [favorites, sorting]);
-
-  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
-
-  const renderSetOn = setOn => (<span>{formatDate(setOn)}</span>);
-
-  const renderTitle = (title, favorite) => {
-    switch (favorite.type) {
-      case FAVORITE_TYPE.document:
-        return <a href={urls.getDocUrl({ key: favorite.id })}>{title}</a>;
-      case FAVORITE_TYPE.room:
-        return <a href={urls.getRoomUrl(favorite.id)}>{title}</a>;
-      case FAVORITE_TYPE.lesson:
-        return <a href={urls.getLessonUrl({ id: favorite.id })}>{title}</a>;
-      default:
-        return null;
-    }
-  };
-
-  const renderType = (type, favorite) => {
+  const getTranslatedType = favorite => {
     switch (favorite.type) {
       case FAVORITE_TYPE.document:
         return t('common:document');
@@ -72,15 +26,61 @@ function FavoritesTab({ favorites }) {
     }
   };
 
+  const initialRows = favorites.map(favorite => {
+    return {
+      id: favorite.id,
+      title: favorite.title,
+      setOn: favorite.setOn,
+      type: favorite.type,
+      typeTranslated: getTranslatedType(favorite)
+    };
+  });
+
+  const [displayedRows, setDisplayedRows] = useState(initialRows);
+  const [sorting, setSorting] = useState({ value: 'setOn', direction: 'desc' });
+
+  const sortingOptions = [
+    { label: t('setOn'), appliedLabel: t('sortedBySetOn'), value: 'setOn' },
+    { label: t('common:title'), appliedLabel: t('common:sortedByTitle'), value: 'title' },
+    { label: t('common:type'), appliedLabel: t('common:sortedByType'), value: 'type' }
+  ];
+
+  const sorters = useMemo(() => ({
+    title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: sorting.direction, ignoreCase: true }).thenBy(row => row.setOn, 'desc')),
+    setOn: rowsToSort => rowsToSort.sort(by(row => row.setOn, sorting.direction)),
+    type: rowsToSort => rowsToSort.sort(by(row => row.typeTranslated, sorting.direction).thenBy(row => row.setOn, 'desc'))
+  }), [sorting.direction]);
+
+  useEffect(() => {
+    const sorter = sorters[sorting.value];
+    setDisplayedRows(oldDisplayedRows => sorter ? sorter(oldDisplayedRows.slice()) : oldDisplayedRows.slice());
+  }, [sorting, sorters]);
+
+  const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
+
+  const getFavoriteUrl = favorite => {
+    switch (favorite.type) {
+      case FAVORITE_TYPE.document:
+        return urls.getDocUrl({ key: favorite.id });
+      case FAVORITE_TYPE.room:
+        return urls.getRoomUrl(favorite.id);
+      case FAVORITE_TYPE.lesson:
+        return urls.getLessonUrl({ id: favorite.id });
+      default:
+        return null;
+    }
+  };
+
+  const renderTitle = (title, favorite) => {
+    return (
+      <a className="InfoCell" href={getFavoriteUrl(favorite)}>
+        <div className="InfoCell-mainText">{title}</div>
+        <div className="InfoCell-subtext">{`${t('set')}: ${formatDate(favorite.setOn)}`}</div>
+      </a>
+    );
+  };
+
   const columns = [
-    {
-      key: 'setOn',
-      title: t('common:setOn'),
-      dataIndex: 'setOn',
-      render: renderSetOn,
-      responsive: ['lg'],
-      width: 200
-    },
     {
       key: 'title',
       title: t('common:title'),
@@ -88,12 +88,12 @@ function FavoritesTab({ favorites }) {
       render: renderTitle
     },
     {
-      key: 'type',
+      key: 'typeTranslated',
       title: t('common:type'),
-      dataIndex: 'type',
-      render: renderType,
-      responsive: ['md'],
-      width: 150
+      dataIndex: 'typeTranslated',
+      render: typeTranslated => typeTranslated,
+      responsive: ['sm'],
+      width: 200
     }
   ];
 
@@ -102,7 +102,7 @@ function FavoritesTab({ favorites }) {
       <div className="FavoritesTab-sortingSelector">
         <SortingSelector sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
       </div>
-      <Table dataSource={[...tableRows]} columns={columns} rowKey="id" pagination />
+      <Table dataSource={[...displayedRows]} columns={columns} rowKey="id" pagination />
     </div>
   );
 }

@@ -331,24 +331,18 @@
     "namespace": "favoritesTab",
     "language": "en",
     "resources": {
-      "documentsHeading": "Documents",
-      "roomsHeading": "Rooms",
-      "lessonsHeading": "Lessons",
-      "noFavoriteDocuments": "There are no documents marked as favorite",
-      "noFavoriteRooms": "There are no rooms marked as favorite",
-      "noFavoriteLessons": "There are no lessons marked as favorite"
+      "set": "Added",
+      "setOn": "Added on",
+      "sortedBySetOn": "Sorted by date of adding"
     }
   },
   {
     "namespace": "favoritesTab",
     "language": "de",
     "resources": {
-      "documentsHeading": "Dokumente",
-      "roomsHeading": "Räume",
-      "lessonsHeading": "Unterrichtseinheiten",
-      "noFavoriteDocuments": "Keine Dokumente as Favorit hinzugefügt",
-      "noFavoriteRooms": "Keine Räume as Favorit hinzugefügt",
-      "noFavoriteLessons": "Keine Unterrichtseinheiten as Favorit hinzugefügt"
+      "set": "Hinzugefügt",
+      "setOn": "Hinzugefügt am",
+      "sortedBySetOn": "Nach Hinfügungsdatum sortiert"
     }
   },
   {
@@ -1810,7 +1804,6 @@
       "completedOn": "Completion date",
       "updatedOn": "Update date",
       "startedOn": "Started on",
-      "setOn": "Added on",
       "relevance": "Relevance",
       "owner": "Owner",
       "email": "Email",
@@ -1852,7 +1845,6 @@
       "sortedByLanguage": "Sorted by language",
       "sortedByCreatedOn": "Sorted by creation date",
       "sortedByUpdatedOn": "Sorted by update date",
-      "sortedBySetOn": "Sorted by date of adding",
       "sortedByType": "Sorted by type",
       "sortedByUser": "Sorted by user",
       "sortedByOrigin": "Sorted by origin",
@@ -1908,7 +1900,6 @@
       "completedOn": "Abgeschlossen am",
       "updatedOn": "Änderungsdatum",
       "startedOn": "Gestartet am",
-      "setOn": "Hinzugefügt am",
       "relevance": "Relevanz",
       "owner": "Eigentümer",
       "email": "E-Mail",
@@ -1950,7 +1941,6 @@
       "sortedByLanguage": "Nach Sprache sortiert",
       "sortedByCreatedOn": "Nach Erstellungsdatum sortiert",
       "sortedByUpdatedOn": "Nach Änderungsdatum sortiert",
-      "sortedBySetOn": "Nach Hinfügungsdatum sortiert",
       "sortedByType": "Nach Typ sortiert",
       "sortedByUser": "Nach Benutzer sortiert",
       "sortedByOrigin": "Nach Quelle sortiert",
