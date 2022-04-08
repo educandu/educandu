@@ -100,7 +100,7 @@ function FavoritesTab({ favorites }) {
   return (
     <div className="FavoritesTab">
       <div className="FavoritesTab-sortingSelector">
-        <SortingSelector sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
+        <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
       </div>
       <Table dataSource={[...displayedRows]} columns={columns} rowKey="id" pagination />
     </div>
