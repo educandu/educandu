@@ -16,6 +16,9 @@ width:
 caption:
   en: Caption
   de: Legende
+initialPageNumber:
+  en: Initially displayed page
+  de: Zuerst angezeigte Seite
 showTextOverlay:
   en: Show text overlay
   de: Text-Overlay anzeigen
@@ -31,6 +34,9 @@ showTextOverlayInfo:
 errorRenderingDocument:
   en: The document cannot be displayed
   de: Das Dokument kann nicht angezeigt werden
+errorRenderingPage:
+  en: The page cannot be displayed
+  de: Die Seite kann nicht angezeigt werden
 noDocument:
   en: No document specified
   de: Kein Dokument angegeben

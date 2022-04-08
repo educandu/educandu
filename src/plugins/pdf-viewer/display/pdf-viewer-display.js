@@ -13,14 +13,14 @@ import { BackwardOutlined, CaretLeftOutlined, CaretRightOutlined, ForwardOutline
 pdfjs.GlobalWorkerOptions.workerSrc = `${pluginControllerApiPath}/pdfjs-dist/build/pdf.worker.min.js`;
 
 function PdfViewerDisplay({ content }) {
+  const { sourceType, sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
+
   const viewerRef = useRef();
   const [pdf, setPdf] = useState(null);
   const { t } = useTranslation('pdfViewer');
   const clientConfig = useService(ClientConfig);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [pageNumber, setPageNumber] = useState(initialPageNumber);
   const [viewerStyle, setViewerStyle] = useState({});
-
-  const { sourceType, sourceUrl, showTextOverlay, width, caption } = content;
 
   const fileObject = useMemo(() => {
     if (sourceType !== SOURCE_TYPE.internal) {
@@ -34,7 +34,7 @@ function PdfViewerDisplay({ content }) {
 
   const onDocumentLoadSuccess = loadedPdfDocument => {
     setPdf(loadedPdfDocument);
-    setPageNumber(1);
+    setPageNumber(initialPageNumber);
   };
 
   const navigate = newPageNumber => {
@@ -72,11 +72,19 @@ function PdfViewerDisplay({ content }) {
     <Empty description={t('noDocument')} />
   );
 
-  const renderErrorComponent = () => (
+  const renderDocumentErrorComponent = () => (
     <Result
       status="warning"
       title={t('common:error')}
       subTitle={t('errorRenderingDocument')}
+      />
+  );
+
+  const renderPageErrorComponent = () => (
+    <Result
+      status="warning"
+      title={t('common:error')}
+      subTitle={t('errorRenderingPage')}
       />
   );
 
@@ -94,13 +102,14 @@ function PdfViewerDisplay({ content }) {
               renderMode="canvas"
               loading={renderLoadingComponent}
               noData={renderNoDataComponent}
-              error={renderErrorComponent}
+              error={renderDocumentErrorComponent}
               onLoadSuccess={onDocumentLoadSuccess}
               >
               <Page
                 key={pageNumber}
                 pageNumber={pageNumber}
                 width={containerWidth}
+                error={renderPageErrorComponent}
                 renderTextLayer={showTextOverlay}
                 onRenderSuccess={handlePageRenderSuccess}
                 />

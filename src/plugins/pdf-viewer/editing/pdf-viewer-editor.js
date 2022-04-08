@@ -1,7 +1,7 @@
 import React from 'react';
 import { SOURCE_TYPE } from '../constants.js';
 import { useTranslation } from 'react-i18next';
-import { Form, Input, Switch, Tooltip } from 'antd';
+import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
@@ -20,23 +20,28 @@ function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStor
   const { t } = useTranslation('pdfViewer');
   const clientConfig = useService(ClientConfig);
 
-  const { sourceUrl, showTextOverlay, width, caption } = content;
+  const { sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
 
   const triggerContentChanged = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
   };
 
   const handleSourceUrlChange = event => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: event.target.value });
+    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: event.target.value, initialPageNumber: 1 });
   };
 
   const handleCdnFileNameChange = newValue => {
-    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: newValue });
+    triggerContentChanged({ sourceType: SOURCE_TYPE.internal, sourceUrl: newValue, initialPageNumber: 1 });
+  };
+
+  const handleInitialPageNumberChange = newInitialPageNumber => {
+    triggerContentChanged({ initialPageNumber: newInitialPageNumber });
   };
 
   const handleShowTextOverlayChange = newShowTextOverlay => {
     triggerContentChanged({ showTextOverlay: newShowTextOverlay });
   };
+
   const handleWidthChange = newValue => {
     triggerContentChanged({ width: newValue });
   };
@@ -63,6 +68,9 @@ function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStor
               />
           </div>
         </FormItem>
+        <Form.Item label={t('initialPageNumber')} {...formItemLayout}>
+          <InputNumber min={1} step={1} value={initialPageNumber} onChange={handleInitialPageNumberChange} />
+        </Form.Item>
         <Form.Item label={t('showTextOverlay')} {...formItemLayout}>
           <Switch size="small" checked={showTextOverlay} onChange={handleShowTextOverlayChange} />
           <Tooltip title={t('showTextOverlayInfo')}>
