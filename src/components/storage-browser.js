@@ -18,11 +18,12 @@ import { handleApiError } from '../ui/error-helper.js';
 import FolderIcon from './icons/general/folder-icon.js';
 import UploadIcon from './icons/general/upload-icon.js';
 import { useSetUser, useUser } from './user-context.js';
+import PublicIcon from './icons/general/public-icon.js';
+import PrivateIcon from './icons/general/private-icon.js';
 import { useStoragePlan } from './storage-plan-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
-import { LockOutlined, GlobalOutlined } from '@ant-design/icons';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-helper.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
@@ -542,7 +543,7 @@ class StorageBrowser extends React.Component {
 
     const rootOptions = this.state.locations.map(location => ({
       label: t(location.isPrivate ? 'privateStorage' : 'publicStorage'),
-      icon: location.isPrivate ? <LockOutlined /> : <GlobalOutlined />,
+      icon: location.isPrivate ? <PrivateIcon /> : <PublicIcon />,
       value: location.key
     }));
 

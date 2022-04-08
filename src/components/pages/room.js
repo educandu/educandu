@@ -7,21 +7,23 @@ import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
 import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import MetadataTitle from '../metadata-title.js';
 import { useDateFormat } from '../locale-context.js';
 import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
 import DeleteIcon from '../icons/general/delete-icon.js';
+import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import PrivateIcon from '../icons/general/private-icon.js';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
-import { LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
@@ -260,9 +262,7 @@ export default function Room({ PageTemplate, initialState }) {
           extra={<FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />}
           />
         <div className="Room-subtitle">
-          <div className="Room-subtitleIcon">
-            {room.access === ROOM_ACCESS_LEVEL.private ? <LockOutlined /> : <UnlockOutlined />}
-          </div>
+          {room.access === ROOM_ACCESS_LEVEL.private ? <PrivateIcon /> : <PublicIcon />}
           <span>{t(`${room.access}RoomSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
         </div>
 

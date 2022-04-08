@@ -14,10 +14,11 @@ import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
+import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
+import PrivateIcon from '../icons/general/private-icon.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
-import { GlobalOutlined, LockOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
@@ -253,7 +254,7 @@ function Lesson({ PageTemplate, initialState }) {
         <div className="LessonPage">
           <Breadcrumb className="LessonPage-breadcrumbs">
             <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
-              {isPrivateRoom ? <LockOutlined /> : <GlobalOutlined />}
+              {isPrivateRoom ? <PrivateIcon /> : <PublicIcon />}
               <span>{room.name}</span>
             </Breadcrumb.Item>
             <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
