@@ -110,6 +110,9 @@ logon:
 logoff:
   en: Log off
   de: Abmelden
+created:
+  en: Created
+  de: Erstellt
 createdOn:
   en: Creation date
   de: Erstellungsdatum
@@ -122,9 +125,6 @@ updatedOn:
 startedOn:
   en: Started on
   de: Gestartet am
-setOn:
-  en: Added on
-  de: Hinzugefügt am
 relevance:
   en: Relevance
   de: Relevanz
@@ -248,9 +248,6 @@ sortedByCreatedOn:
 sortedByUpdatedOn:
   en: Sorted by update date
   de: Nach Änderungsdatum sortiert
-sortedBySetOn:
-  en: Sorted by date of adding
-  de: Nach Hinfügungsdatum sortiert
 sortedByType:
   en: Sorted by type
   de: Nach Typ sortiert

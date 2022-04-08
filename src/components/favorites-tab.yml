@@ -1,18 +1,9 @@
-documentsHeading:
-  en: Documents
-  de: Dokumente
-roomsHeading:
-  en: Rooms
-  de: Räume
-lessonsHeading:
-  en: Lessons
-  de: Unterrichtseinheiten
-noFavoriteDocuments:
-  en: There are no documents marked as favorite
-  de: Keine Dokumente as Favorit hinzugefügt
-noFavoriteRooms:
-  en: There are no rooms marked as favorite
-  de: Keine Räume as Favorit hinzugefügt
-noFavoriteLessons:
-  en: There are no lessons marked as favorite
-  de: Keine Unterrichtseinheiten as Favorit hinzugefügt
+set:
+  en: Added
+  de: Hinzugefügt
+setOn:
+  en: Added on
+  de: Hinzugefügt am
+sortedBySetOn:
+  en: Sorted by date of adding
+  de: Nach Hinzufügungsdatum sortiert
