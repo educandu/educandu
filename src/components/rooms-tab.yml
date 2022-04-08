@@ -7,3 +7,12 @@ role:
 member:
   en: Member
   de: Mitglied
+sortedByOwner:
+  en: Sorted by owner
+  de: Nach Eigentümer sortiert
+sortedByAccess:
+  en: Sorted by access
+  de: Nach Zugang sortiert
+sortedByRole:
+  en: Sorted by role
+  de: Nach Rolle sortiert

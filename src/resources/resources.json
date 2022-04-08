@@ -1101,7 +1101,10 @@
     "resources": {
       "joined": "Joined",
       "role": "Role",
-      "member": "Member"
+      "member": "Member",
+      "sortedByOwner": "Sorted by owner",
+      "sortedByAccess": "Sorted by access",
+      "sortedByRole": "Sorted by role"
     }
   },
   {
@@ -1110,7 +1113,10 @@
     "resources": {
       "joined": "Eingetreten",
       "role": "Rolle",
-      "member": "Mitglied"
+      "member": "Mitglied",
+      "sortedByOwner": "Nach Eigentümer sortiert",
+      "sortedByAccess": "Nach Zugang sortiert",
+      "sortedByRole": "Nach Rolle sortiert"
     }
   },
   {
