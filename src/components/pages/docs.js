@@ -16,11 +16,11 @@ import LanguageIcon from '../localization/language-icon.js';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 
 const { Search } = Input;
@@ -48,6 +48,19 @@ function getDefaultModalState({ t, uiLanguage, settings }) {
   };
 }
 
+const getOriginTranslated = ({ t, origin }) => {
+  if (origin === DOCUMENT_ORIGIN.internal) {
+    return t('originInternal');
+  }
+
+  if (origin.startsWith(DOCUMENT_ORIGIN.external)) {
+    const nameOfOrigin = origin.split(DOCUMENT_ORIGIN.external)[1];
+    return `${t('originExternal')}${nameOfOrigin}`;
+  }
+
+  return origin || '';
+};
+
 function Docs({ initialState, PageTemplate }) {
   const user = useUser();
   const settings = useSettings();
@@ -56,10 +69,25 @@ function Docs({ initialState, PageTemplate }) {
   const [clonedDocument, setClonedDocument] = useState(null);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
+  const mapToRows = useCallback(docs => docs.map(doc => (
+    {
+      key: doc.key,
+      title: doc.title,
+      createdOn: doc.createdOn,
+      updatedOn: doc.updatedOn,
+      updatedBy: doc.updatedBy,
+      createdBy: doc.createdBy,
+      language: doc.language,
+      user: doc.user,
+      origin: doc.origin,
+      originTranslated: getOriginTranslated({ t, origin: doc.origin }),
+      archived: doc.archived
+    })), [t]);
+
   const [searchText, setSearchText] = useState('');
-  const [displayedDocuments, setDisplayedDocuments] = useState([]);
   const [documents, setDocuments] = useState(initialState.documents);
   const [sorting, setSorting] = useState({ value: 'title', direction: 'desc' });
+  const [displayedRows, setDisplayedRows] = useState(mapToRows(initialState.documents));
   const [modalState, setModalState] = useState(getDefaultModalState({ t, uiLanguage, settings }));
 
   const sortingOptions = [
@@ -73,27 +101,27 @@ function Docs({ initialState, PageTemplate }) {
   ];
 
   const sorters = useMemo(() => ({
-    title: documentsToSort => documentsToSort.sort(by(doc => doc.title, { direction: sorting.direction, ignoreCase: true })),
-    createdOn: documentsToSort => documentsToSort.sort(by(doc => doc.createdOn, sorting.direction)),
-    updatedOn: documentsToSort => documentsToSort.sort(by(doc => doc.updatedOn, sorting.direction)),
-    language: documentsToSort => documentsToSort.sort(by(doc => doc.language, sorting.direction)),
-    user: documentsToSort => documentsToSort.sort(by(doc => doc.createdBy.username, { direction: sorting.direction, ignoreCase: true })),
-    origin: documentsToSort => documentsToSort.sort(by(doc => doc.origin, { direction: sorting.direction, ignoreCase: true })),
-    archived: documentsToSort => documentsToSort.sort(by(doc => doc.archived, sorting.direction))
+    title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: sorting.direction, ignoreCase: true })),
+    createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
+    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction)),
+    language: rowsToSort => rowsToSort.sort(by(row => row.language, sorting.direction)),
+    user: rowsToSort => rowsToSort.sort(by(row => row.createdBy.username, { direction: sorting.direction, ignoreCase: true })),
+    origin: rowsToSort => rowsToSort.sort(by(row => row.origin, { direction: sorting.direction, ignoreCase: true })),
+    archived: rowsToSort => rowsToSort.sort(by(row => row.archived, sorting.direction))
   }), [sorting.direction]);
 
   useEffect(() => {
-    const newDocuments = documents.slice();
+    const newRows = mapToRows(documents.slice());
     const sorter = sorters[sorting.value];
 
-    const filteredDocuments = searchText
-      ? newDocuments.filter(doc => doc.title.toLowerCase().includes(searchText.toLowerCase())
-        || doc.updatedBy.username.toLowerCase().includes(searchText.toLowerCase()))
-      : newDocuments;
-    const sortedDocuments = sorter ? sorter(filteredDocuments) : filteredDocuments;
+    const filteredRows = searchText
+      ? newRows.filter(row => row.title.toLowerCase().includes(searchText.toLowerCase())
+        || row.updatedBy.username.toLowerCase().includes(searchText.toLowerCase()))
+      : newRows;
+    const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
-    setDisplayedDocuments(sortedDocuments);
-  }, [documents, sorting, searchText, sorters]);
+    setDisplayedRows(sortedRows);
+  }, [documents, sorting, searchText, sorters, mapToRows]);
 
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
@@ -110,7 +138,8 @@ function Docs({ initialState, PageTemplate }) {
     });
   };
 
-  const handleCloneClick = doc => {
+  const handleCloneClick = row => {
+    const doc = documents.find(d => d.key === row.key);
     setClonedDocument(doc);
     setModalState({
       isVisible: true,
@@ -150,15 +179,15 @@ function Docs({ initialState, PageTemplate }) {
     }
   };
 
-  const handleDeleteClick = doc => {
-    confirmDocumentDelete(t, doc.title, () => handleDocumentDelete(doc.key));
+  const handleDeleteClick = row => {
+    confirmDocumentDelete(t, row.title, () => handleDocumentDelete(row.key));
   };
 
-  const handleArchivedSwitchChange = async (archived, doc) => {
+  const handleArchivedSwitchChange = async (archived, row) => {
     try {
       const { documentRevision } = archived
-        ? await documentApiClient.unarchiveDocument(doc.key)
-        : await documentApiClient.archiveDocument(doc.key);
+        ? await documentApiClient.unarchiveDocument(row.key)
+        : await documentApiClient.archiveDocument(row.key);
 
       const newDocuments = documents.slice();
       newDocuments
@@ -171,54 +200,41 @@ function Docs({ initialState, PageTemplate }) {
     }
   };
 
-  const renderTitle = (title, doc) => <DocumentInfoCell doc={doc} />;
-
-  const renderLanguage = documentLanguage => {
-    return <LanguageIcon language={documentLanguage} />;
+  const renderOrigin = originTranslated => <span>{originTranslated}</span>;
+  const renderLanguage = documentLanguage => <LanguageIcon language={documentLanguage} />;
+  const renderTitle = (title, row) => {
+    const doc = documents.find(d => d.key === row.key);
+    return !!doc && <DocumentInfoCell doc={doc} />;
   };
 
-  const renderUpdatedBy = (_user, doc) => {
-    return doc.updatedBy.email
-      ? <span>{doc.updatedBy.username} | <a href={`mailto:${doc.updatedBy.email}`}>{t('common:email')}</a></span>
-      : <span>{doc.updatedBy.username}</span>;
+  const renderUpdatedBy = (_user, row) => {
+    return row.updatedBy.email
+      ? <span>{row.updatedBy.username} | <a href={`mailto:${row.updatedBy.email}`}>{t('common:email')}</a></span>
+      : <span>{row.updatedBy.username}</span>;
   };
 
-  const renderOrigin = origin => {
-    let translatedOrigin = origin || '';
-
-    if (origin === DOCUMENT_ORIGIN.internal) {
-      translatedOrigin = t('originInternal');
-    }
-    if (origin.startsWith(DOCUMENT_ORIGIN.external)) {
-      const nameOfOrigin = origin.split(DOCUMENT_ORIGIN.external)[1];
-      translatedOrigin = `${t('originExternal')}${nameOfOrigin}`;
-    }
-
-    return <span>{translatedOrigin}</span>;
-  };
-
-  const renderActions = (_actions, doc) => {
+  const renderActions = (_actions, row) => {
     return (
       <Fragment>
-        <span><a onClick={() => handleCloneClick(doc)}>{t('common:clone')}</a></span>
-        {doc.origin.startsWith(DOCUMENT_ORIGIN.external) && (
+        <span><a onClick={() => handleCloneClick(row)}>{t('common:clone')}</a></span>
+        {row.origin.startsWith(DOCUMENT_ORIGIN.external) && (
           <Restricted to={permissions.MANAGE_IMPORT}>
             <br />
-            <span><a onClick={() => handleDeleteClick(doc)}>{t('common:delete')}</a></span>
+            <span><a onClick={() => handleDeleteClick(row)}>{t('common:delete')}</a></span>
           </Restricted>
         )}
       </Fragment>
     );
   };
 
-  const renderArchived = (archived, doc) => {
-    const disableArchiving = doc.origin !== DOCUMENT_ORIGIN.internal;
+  const renderArchived = (archived, row) => {
+    const disableArchiving = row.origin !== DOCUMENT_ORIGIN.internal;
     return (
       <Switch
         size="small"
-        checked={doc.archived}
+        checked={row.archived}
         disabled={disableArchiving}
-        onChange={() => handleArchivedSwitchChange(archived, doc)}
+        onChange={() => handleArchivedSwitchChange(archived, row)}
         />
     );
   };
@@ -235,21 +251,24 @@ function Docs({ initialState, PageTemplate }) {
       dataIndex: 'language',
       key: 'language',
       render: renderLanguage,
-      responsive: ['sm']
+      responsive: ['sm'],
+      width: '100px'
     },
     {
       title: t('common:user'),
       dataIndex: 'user',
       key: 'user',
       render: renderUpdatedBy,
-      responsive: ['md']
+      responsive: ['md'],
+      width: '200px'
     },
     {
       title: t('common:origin'),
-      dataIndex: 'origin',
-      key: 'origin',
+      dataIndex: 'originTranslated',
+      key: 'originTranslated',
       render: renderOrigin,
-      responsive: ['lg']
+      responsive: ['lg'],
+      width: '200px'
     },
     {
       title: t('common:archived'),
@@ -257,13 +276,15 @@ function Docs({ initialState, PageTemplate }) {
       key: 'archived',
       render: renderArchived,
       responsive: ['lg'],
-      needsPermission: permissions.MANAGE_ARCHIVED_DOCS
+      needsPermission: permissions.MANAGE_ARCHIVED_DOCS,
+      width: '100px'
     },
     {
       title: t('common:actions'),
       dataIndex: 'actions',
       key: 'actions',
-      render: renderActions
+      render: renderActions,
+      width: '100px'
     }
   ].filter(column => !column.needsPermission || hasUserPermission(user, column.needsPermission));
 
@@ -280,14 +301,9 @@ function Docs({ initialState, PageTemplate }) {
             onChange={handleSearchChange}
             placeholder={t('common:searchPlaceholder')}
             />
-          <SortingSelector
-            size="large"
-            sorting={sorting}
-            options={sortingOptions}
-            onChange={handleSortingChange}
-            />
+          <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
-        <Table dataSource={[...displayedDocuments]} columns={columns} pagination />
+        <Table dataSource={[...displayedRows]} columns={columns} pagination />
         <aside>
           <Restricted to={permissions.EDIT_DOC}>
             <Button className="DocsPage-newDocumentButton" type="primary" shape="circle" icon={<PlusOutlined />} size="large" onClick={handleNewDocumentClick} />

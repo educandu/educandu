@@ -14,9 +14,9 @@ import CloseIcon from '../icons/general/close-icon.js';
 import DocumentInfoCell from '../document-info-cell.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import LanguageIcon from '../localization/language-icon.js';
-import React, { useEffect, useMemo, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import SearchApiClient from '../../api-clients/search-api-client.js';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -31,9 +31,20 @@ function Search({ PageTemplate }) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [unselectedTags, setUnselectedTags] = useState([]);
   const [isSearching, setIsSearching] = useState(true);
-  const [displayedDocuments, setDisplayedDocuments] = useState([]);
+  const [displayedRows, setDisplayedRows] = useState([]);
   const [searchText, setSearchText] = useState(request.query.query);
   const [sorting, setSorting] = useState({ value: 'relevance', direction: 'desc' });
+
+  const mapToRows = useCallback(docs => docs.map(doc => (
+    {
+      key: doc.key,
+      relevance: doc.tagMatchCount,
+      tags: doc.tags,
+      title: doc.title,
+      createdOn: doc.createdOn,
+      updatedOn: doc.updatedOn,
+      language: doc.language
+    })), []);
 
   const sortingOptions = [
     { label: t('common:relevance'), appliedLabel: t('common:sortedByRelevance'), value: 'relevance' },
@@ -44,11 +55,11 @@ function Search({ PageTemplate }) {
   ];
 
   const sorters = useMemo(() => ({
-    relevance: documentsToSort => documentsToSort.sort(by(doc => doc.tagMatchCount, sorting.direction).thenBy(doc => doc.updatedOn, 'desc')),
-    title: documentsToSort => documentsToSort.sort(by(doc => doc.title, { direction: sorting.direction, ignoreCase: true })),
-    createdOn: documentsToSort => documentsToSort.sort(by(doc => doc.createdOn, sorting.direction)),
-    updatedOn: documentsToSort => documentsToSort.sort(by(doc => doc.updatedOn, sorting.direction)),
-    language: documentsToSort => documentsToSort.sort(by(doc => doc.language, sorting.direction))
+    relevance: rowsToSort => rowsToSort.sort(by(row => row.relevance, sorting.direction).thenBy(row => row.updatedOn, 'desc')),
+    title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: sorting.direction, ignoreCase: true })),
+    createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
+    updatedOn: rowsToSort => rowsToSort.sort(by(row => row.updatedOn, sorting.direction)),
+    language: rowsToSort => rowsToSort.sort(by(row => row.language, sorting.direction))
   }), [sorting.direction]);
 
   useEffect(() => {
@@ -76,23 +87,25 @@ function Search({ PageTemplate }) {
   }, [allTags, selectedTags]);
 
   useEffect(() => {
-    const newDocuments = documents.slice();
+    const newRows = mapToRows(documents.slice());
     const sorter = sorters[sorting.value];
 
-    const filteredDocuments = newDocuments.filter(doc => selectedTags.every(selectedTag => doc.tags.some(tag => tag.toLowerCase() === selectedTag)));
+    const filteredDocuments = newRows.filter(row => selectedTags.every(selectedTag => row.tags.some(tag => tag.toLowerCase() === selectedTag)));
     const sortedDocuments = sorter ? sorter(filteredDocuments) : filteredDocuments;
 
-    setDisplayedDocuments(sortedDocuments);
-  }, [documents, selectedTags, sorting, sorters]);
+    setDisplayedRows(sortedDocuments);
+  }, [documents, selectedTags, sorting, sorters, mapToRows]);
 
   const handleSelectTag = tag => setSelectedTags(ensureIsIncluded(selectedTags, tag));
   const handleDeselectTag = tag => setSelectedTags(ensureIsExcluded(selectedTags, tag));
   const handleDeselectTagsClick = () => setSelectedTags([]);
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
-  const renderTitle = (title, doc) => <DocumentInfoCell doc={doc} />;
-
   const renderLanguage = lang => (<LanguageIcon language={lang} />);
+  const renderTitle = (title, row) => {
+    const doc = documents.find(d => d.key === row.key);
+    return !!doc && <DocumentInfoCell doc={doc} />;
+  };
 
   const renderCellTags = tags => (
     <div>
@@ -142,25 +155,15 @@ function Search({ PageTemplate }) {
     <PageTemplate>
       <div className="SearchPage">
         <div className="SearchPage-headline">
-          <h1>{t('headline', { count: displayedDocuments.length })}</h1>
+          <h1>{t('headline', { count: displayedRows.length })}</h1>
         </div>
         <div className="SearchPage-controls">
           <SearchBar initialValue={searchText} onSearch={setSearchText} />
-          <SortingSelector
-            size="large"
-            sorting={sorting}
-            options={sortingOptions}
-            onChange={handleSortingChange}
-            />
+          <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
         <div className="SearchPage-selectedTags">
           {renderSelectedTags()}
-          <TagSelector
-            size="large"
-            tags={unselectedTags}
-            onSelect={handleSelectTag}
-            selectedCount={selectedTags.length}
-            />
+          <TagSelector size="large" tags={unselectedTags} onSelect={handleSelectTag} selectedCount={selectedTags.length} />
           {selectedTags.length > 1 && (
             <a className="SearchPage-deselectTagsLink" onClick={handleDeselectTagsClick}>
               <CloseIcon />
@@ -168,12 +171,7 @@ function Search({ PageTemplate }) {
             </a>
           )}
         </div>
-        <Table
-          dataSource={[...displayedDocuments]}
-          columns={columns}
-          loading={isSearching}
-          pagination
-          />
+        <Table dataSource={[...displayedRows]} columns={columns} loading={isSearching} pagination />
       </div>
     </PageTemplate>
   );
