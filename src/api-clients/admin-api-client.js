@@ -1,6 +1,6 @@
 import HttpClient from './http-client.js';
 
-class DocumentApiClient {
+class AdminApiClient {
   static inject() { return [HttpClient]; }
 
   constructor(httpClient) {
@@ -28,4 +28,4 @@ class DocumentApiClient {
   }
 }
 
-export default DocumentApiClient;
+export default AdminApiClient;
