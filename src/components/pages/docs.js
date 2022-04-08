@@ -85,9 +85,9 @@ function Docs({ initialState, PageTemplate }) {
     })), [t]);
 
   const [searchText, setSearchText] = useState('');
+  const [displayedRows, setDisplayedRows] = useState([]);
   const [documents, setDocuments] = useState(initialState.documents);
   const [sorting, setSorting] = useState({ value: 'title', direction: 'desc' });
-  const [displayedRows, setDisplayedRows] = useState(mapToRows(initialState.documents));
   const [modalState, setModalState] = useState(getDefaultModalState({ t, uiLanguage, settings }));
 
   const sortingOptions = [
