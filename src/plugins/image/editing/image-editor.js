@@ -90,6 +90,8 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const getResetEffect = () => {
     switch (effectType) {
+      case EFFECT_TYPE.none:
+        return null;
       case EFFECT_TYPE.clip:
         return { ...effect, region: { ...defaultClipRegion } };
       default:

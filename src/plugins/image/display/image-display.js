@@ -79,7 +79,7 @@ function ImageDisplay({ content }) {
   }
 
   return (
-    <div className={classNames('ImageDisplay', { 'ImageDisplay--hoverable': effect })}>
+    <div className={classNames('ImageDisplay', { 'ImageDisplay--hoverable': effect?.type === EFFECT_TYPE.hover })}>
       <div className="ImageDisplay-container">
         <img
           className={`ImageDisplay-image u-max-width-${maxWidth}`}
