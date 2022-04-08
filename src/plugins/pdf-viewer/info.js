@@ -22,6 +22,7 @@ export default class PdfViewer {
     return {
       sourceType: SOURCE_TYPE.internal,
       sourceUrl: '',
+      initialPageNumber: 1,
       showTextOverlay: true,
       width: 100,
       caption: ''
