@@ -12,7 +12,7 @@ import permissions from '../../domain/permissions.js';
 import StoragePlansTab from '../admin/storage-plans-tab.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { confirmDiscardUnsavedChanges } from '../confirmation-dialogs.js';
-import { documentMetadataShape, settingsShape, storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
+import { batchShape, documentMetadataShape, settingsShape, storagePlanWithAssignedUserCountShape } from '../../ui/default-prop-types.js';
 
 const { TabPane } = Tabs;
 
@@ -59,6 +59,8 @@ function Admin({ initialState, PageTemplate }) {
               <SettingsTab
                 initialSettings={settings}
                 documents={initialState.documents}
+                lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
+                lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
                 onSettingsSaved={setSettings}
                 onDirtyStateChange={setIsCurrentTabDirty}
                 />
@@ -86,7 +88,9 @@ Admin.propTypes = {
   initialState: PropTypes.shape({
     settings: settingsShape.isRequired,
     storagePlans: PropTypes.arrayOf(storagePlanWithAssignedUserCountShape).isRequired,
-    documents: PropTypes.arrayOf(documentMetadataShape).isRequired
+    documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
+    lastCdnResourcesConsolidationBatch: batchShape,
+    lastDocumentRegenerationBatch: batchShape
   }).isRequired
 };
 

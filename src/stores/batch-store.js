@@ -34,6 +34,11 @@ class BatchStore {
   saveBatch(batch, { session } = {}) {
     return this.collection.replaceOne({ _id: batch._id }, batch, { session, upsert: true });
   }
+
+  async getLastBatchByBatchType(batchType, { session } = {}) {
+    const lastBatches = await this.collection.find({ batchType }, { session }).sort({ createdOn: -1 }).limit(1).toArray();
+    return lastBatches[0] || null;
+  }
 }
 
 export default BatchStore;

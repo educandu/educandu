@@ -217,6 +217,10 @@ class BatchService {
     batch.progress = batch.tasks.length === 0 ? 1 : processedTasksCount / tasks.length;
     return batch;
   }
+
+  getLastBatch(batchType) {
+    return this.batchStore.getLastBatchByBatchType(batchType);
+  }
 }
 
 export default BatchService;

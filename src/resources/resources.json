@@ -65,7 +65,8 @@
       "cdnResourcesConsolidationRequestHeader": "CDN resources consolidation",
       "cdnResourcesConsolidationRequestButton": "Consolidate CDN resources",
       "templateDocumentHeader": "Template for new documents",
-      "licenseHeader": "License"
+      "licenseHeader": "License",
+      "lastExecution": "Last execution"
     }
   },
   {
@@ -82,7 +83,8 @@
       "cdnResourcesConsolidationRequestHeader": "Konsolidierung der CDN-Ressourcen",
       "cdnResourcesConsolidationRequestButton": "CDN-Ressourcen konsolidieren",
       "templateDocumentHeader": "Vorlage für neue Dokumente",
-      "licenseHeader": "Lizenz"
+      "licenseHeader": "Lizenz",
+      "lastExecution": "Letzte Ausführung"
     }
   },
   {

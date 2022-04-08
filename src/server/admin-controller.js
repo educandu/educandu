@@ -1,6 +1,7 @@
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
+import { BATCH_TYPE } from '../domain/constants.js';
 import BatchService from '../services/batch-service.js';
 import SettingService from '../services/setting-service.js';
 import StorageService from '../services/storage-service.js';
@@ -21,13 +22,30 @@ class AdminController {
   }
 
   async handleGetAdminPage(req, res) {
-    const [settings, docs, storagePlans] = await Promise.all([
+    const { user } = req;
+
+    const [
+      settings,
+      documents,
+      storagePlans,
+      lastDocumentRegenerationBatch,
+      lastCdnResourcesConsolidationBatch
+    ] = await Promise.all([
       this.settingService.getAllSettings(),
       this.documentService.getAllDocumentsMetadata(),
-      this.storageService.getAllStoragePlansWithAssignedUserCount()
+      this.storageService.getAllStoragePlansWithAssignedUserCount(),
+      this.batchService.getLastBatch(BATCH_TYPE.documentRegeneration),
+      this.batchService.getLastBatch(BATCH_TYPE.cdnResourcesConsolidation)
     ]);
-    const documents = await this.clientDataMappingService.mapDocsOrRevisions(docs, req.user);
-    const initialState = { settings, documents, storagePlans };
+
+    const initialState = {
+      settings,
+      documents: await this.clientDataMappingService.mapDocsOrRevisions(documents, user),
+      storagePlans,
+      lastDocumentRegenerationBatch: await this.clientDataMappingService.mapBatch(lastDocumentRegenerationBatch, user),
+      lastCdnResourcesConsolidationBatch: await this.clientDataMappingService.mapBatch(lastCdnResourcesConsolidationBatch, user)
+    };
+
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.admin, initialState);
   }
 
