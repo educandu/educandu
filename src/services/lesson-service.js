@@ -22,7 +22,7 @@ class LessonService {
 
   async getLessonsMetadata(roomId) {
     const lessons = await this.lessonStore.getLessonsMetadataByRoomId(roomId);
-    return lessons.sort(by(l => l.schedule?.startsOn || ''));
+    return lessons.sort(by(l => l.schedule?.startsOn || 0));
   }
 
   async createLesson({ user, roomId, title, slug, language, schedule }) {
