@@ -386,7 +386,7 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'storage',
       key: 'storage',
       render: renderStorage,
-      sorter: by(x => x.storagePlan?.name, { ignoreCase: true }),
+      sorter: by(x => x.storagePlan?.name || '', { ignoreCase: true }),
       responsive: ['md']
     }
   ];
@@ -424,7 +424,7 @@ function Users({ initialState, PageTemplate }) {
       dataIndex: 'storage',
       key: 'storage',
       render: renderStorage,
-      sorter: by(x => x.storagePlan?.name, { ignoreCase: true }),
+      sorter: by(x => x.storagePlan?.name || '', { ignoreCase: true }),
       responsive: ['md']
     }, {
       title: () => t('storageSpace'),
