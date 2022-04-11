@@ -449,11 +449,6 @@ describe('room-controller', () => {
         access: ROOM_ACCESS_LEVEL.public
       };
 
-      const request = {
-        params: { 0: `/${room.slug}`, roomId: room._id },
-        user: { _id: 'someGuy' }
-      };
-
       const mappedRoom = { ...room };
 
       const lessons = [];
@@ -465,51 +460,97 @@ describe('room-controller', () => {
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
-        clientDataMappingService.mapRoomInvitations.returns([]);
       });
 
-      beforeEach(async () => {
-        lessonService.getLessonsMetadata.resolves(lessons);
-        await sut.handleGetRoomPage(request, {});
+      describe('and the request is made by a user who is not the owner', () => {
+        const request = {
+          params: { 0: `/${room.slug}`, roomId: room._id },
+          user: { _id: 'someGuy' }
+        };
+
+        beforeEach(async () => {
+          roomService.getRoomInvitations.resolves([]);
+          clientDataMappingService.mapRoomInvitations.returns([]);
+
+          lessonService.getLessonsMetadata.resolves(lessons);
+          await sut.handleGetRoomPage(request, {});
+        });
+
+        it('should call getRoomById with roomId', () => {
+          sinon.assert.calledWith(roomService.getRoomById, room._id);
+        });
+
+        it('should not check if the room caller is the owner or a member', () => {
+          sinon.assert.notCalled(roomService.isRoomOwnerOrMember);
+        });
+
+        it('should call mapRoom with the room returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
+        });
+
+        it('should not call getRoomInvitations', () => {
+          sinon.assert.notCalled(roomService.getRoomInvitations);
+        });
+
+        it('should call mapRoomInvitations with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
+        });
+
+        it('should call getLessonsMetadata', () => {
+          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
+        });
+
+        it('should call mapLessonsMetadata with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
+        });
+
+        it('should call pageRenderer with the right parameters', () => {
+          sinon.assert.calledWith(
+            pageRenderer.sendPage,
+            request,
+            {},
+            PAGE_NAME.room,
+            { room: mappedRoom, lessons: mappedLessons, invitations: [] }
+          );
+        });
       });
 
-      it('should call getRoomById with roomId', () => {
-        sinon.assert.calledWith(roomService.getRoomById, room._id);
+      describe('and the request is made by the room owner', () => {
+        const request = {
+          params: { 0: `/${room.slug}`, roomId: room._id },
+          user: { _id: 'owner' }
+        };
+
+        const invitations = [{ email: 'test@test.com', sentOn: new Date() }];
+        const mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
+
+        beforeEach(async () => {
+          roomService.getRoomInvitations.resolves(invitations);
+          clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
+
+          lessonService.getLessonsMetadata.resolves(lessons);
+          await sut.handleGetRoomPage(request, {});
+        });
+
+        it('should call getRoomInvitations', () => {
+          sinon.assert.calledWith(roomService.getRoomInvitations, room._id);
+        });
+
+        it('should call mapRoomInvitations with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
+        });
+
+        it('should call pageRenderer with the right parameters', () => {
+          sinon.assert.calledWith(
+            pageRenderer.sendPage,
+            request,
+            {},
+            PAGE_NAME.room,
+            { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations }
+          );
+        });
       });
 
-      it('should not check if the room caller is the owner or a member', () => {
-        sinon.assert.notCalled(roomService.isRoomOwnerOrMember);
-      });
-
-      it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
-      });
-
-      it('should not call getRoomInvitations', () => {
-        sinon.assert.notCalled(roomService.getRoomInvitations);
-      });
-
-      it('should call mapRoomInvitations with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
-      });
-
-      it('should call getLessonsMetadata', () => {
-        sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
-      });
-
-      it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
-      });
-
-      it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(
-          pageRenderer.sendPage,
-          request,
-          {},
-          PAGE_NAME.room,
-          { room: mappedRoom, lessons: mappedLessons, invitations: [] }
-        );
-      });
     });
 
     describe('when the room does not exist', () => {

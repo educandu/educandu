@@ -172,10 +172,10 @@ export default class RoomController {
       if (!isRoomOwnerOrMember) {
         throw new Forbidden();
       }
+    }
 
-      if (room.owner === userId) {
-        invitations = await this.roomService.getRoomInvitations(roomId);
-      }
+    if (room.owner === userId) {
+      invitations = await this.roomService.getRoomInvitations(roomId);
     }
 
     const lessonsMetadata = await this.lessonService.getLessonsMetadata(roomId);
