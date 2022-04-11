@@ -1,10 +1,11 @@
+/* eslint-disable max-lines */
 import sinon from 'sinon';
 import httpErrors from 'http-errors';
 import { EventEmitter } from 'events';
 import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import LessonController from './lesson-controller.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -256,10 +257,15 @@ describe('lesson-controller', () => {
       });
     });
 
-    describe('when the room to contain the lesson is not owned by the user', () => {
+    describe('when the user neither owns nor is not a collaborator of the room to contain the lesson', () => {
       beforeEach(() => {
         req = { user, body: { roomId } };
-        room = { _id: roomId, owner: uniqueId.create() };
+        room = {
+          _id: roomId,
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          members: [{ userId: uniqueId.create() }]
+        };
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
       });
@@ -269,11 +275,67 @@ describe('lesson-controller', () => {
       });
     });
 
-    describe('when the room to contain the lesson is owned by the user', () => {
+    describe('when the user is a member of the (exclusive) room to contain the lesson', () => {
+      beforeEach(() => {
+        req = { user, body: { roomId } };
+        room = {
+          _id: roomId,
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          members: [{ userId: user._id }]
+        };
+
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(sut.handlePostLesson(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the user owns the room to contain the lesson', () => {
       let newLesson;
 
       beforeEach(done => {
-        room = { _id: roomId, owner: user._id };
+        room = {
+          _id: roomId,
+          owner: user._id,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          members: [{ userId: uniqueId.create() }]
+        };
+        lesson = { roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+        newLesson = { _id: lessonId, ...lesson };
+
+        req = { user, body: lesson };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+        lessonService.createLesson.resolves(newLesson);
+
+        sut.handlePostLesson(req, res);
+      });
+
+      it('should create the lesson', () => {
+        sinon.assert.calledWith(lessonService.createLesson, { user, ...lesson });
+      });
+
+      it('should return the lesson', () => {
+        expect(res.statusCode).toBe(201);
+        expect(res._getData()).toBe(newLesson);
+      });
+    });
+
+    describe('when the user is a collaborator of the room to contain the lesson', () => {
+      let newLesson;
+
+      beforeEach(done => {
+        room = {
+          _id: roomId,
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          members: [{ userId: user._id }]
+        };
         lesson = { roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
         newLesson = { _id: lessonId, ...lesson };
 
@@ -299,15 +361,105 @@ describe('lesson-controller', () => {
   });
 
   describe('handlePatchLessonMetadata', () => {
+    describe('when the request contains an unknown lesson id', () => {
+      beforeEach(() => {
+        lessonService.getLessonById.withArgs(lessonId).resolves(null);
 
-    describe('when the request data is valid', () => {
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { lessonId },
+          body: { title: 'new title', slug: 'new-slug', language: 'new language' }
+        });
+        req.user = user;
+
+        res = {};
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the user is the lesson\'s (exclusive) room member', () => {
+      beforeEach(() => {
+        const room = {
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          members: [{ userId: user._id }]
+        };
+        const lesson = {
+          _id: uniqueId.create(),
+          roomId: room._id
+        };
+
+        lessonService.getLessonById.withArgs(lesson._id).resolves(lesson);
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { lessonId: lesson._id },
+          body: { title: 'new title', slug: 'new-slug', language: 'new language' }
+
+        });
+        req.user = user;
+
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the user is not the lesson\'s room owner or collaborator', () => {
+      beforeEach(() => {
+        const room = {
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          members: [{ userId: uniqueId.create() }]
+        };
+        const lesson = {
+          _id: uniqueId.create(),
+          roomId: room._id
+        };
+
+        lessonService.getLessonById.withArgs(lesson._id).resolves(lesson);
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+
+        req = httpMocks.createRequest({
+          protocol: 'https',
+          headers: { host: 'educandu.dev' },
+          params: { lessonId: lesson._id },
+          body: { title: 'new title', slug: 'new-slug', language: 'new language' }
+
+        });
+        req.user = user;
+
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the user is the lessons\'s room owner', () => {
       let room;
       let lesson;
       let requestBody;
       let updatedLesson;
 
       beforeEach(done => {
-        room = { _id: uniqueId.create(), owner: user._id };
+        room = {
+          _id: uniqueId.create(),
+          owner: user._id,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          members: [{ userId: uniqueId.create() }]
+        };
         lesson = {
           _id: uniqueId.create(),
           roomId: room._id,
@@ -360,54 +512,68 @@ describe('lesson-controller', () => {
       });
     });
 
-    describe('when the request contains an unknown lesson id', () => {
-      beforeEach(() => {
-        lessonService.getLessonById.withArgs(lessonId).resolves(null);
+    describe('when the user is the lessons\'s room collaborator', () => {
+      let room;
+      let lesson;
+      let requestBody;
+      let updatedLesson;
 
-        req = httpMocks.createRequest({
-          protocol: 'https',
-          headers: { host: 'educandu.dev' },
-          params: { lessonId },
-          body: { title: 'new title', slug: 'new-slug', language: 'new language' }
-        });
-        req.user = user;
-
-        res = {};
-      });
-
-      it('should throw NotFound', async () => {
-        await expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(NotFound);
-      });
-    });
-
-    describe('when the request is made by a user which is not the lesson\'s room owner', () => {
-      beforeEach(() => {
-        const room = {
+      beforeEach(done => {
+        room = {
           _id: uniqueId.create(),
-          owner: uniqueId.create()
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          members: [{ userId: user._id }]
         };
-        const lesson = {
+        lesson = {
           _id: uniqueId.create(),
-          roomId: room._id
+          roomId: room._id,
+          title: 'title',
+          slug: 'slug',
+          language: 'language',
+          schedule: {
+            startsOn: new Date().toISOString()
+          }
+        };
+        requestBody = {
+          title: 'new title',
+          slug: 'new-slug',
+          language: 'new language',
+          schedule: { startsOn: new Date().toISOString() }
+        };
+        updatedLesson = {
+          ...lesson,
+          ...requestBody
         };
 
         lessonService.getLessonById.withArgs(lesson._id).resolves(lesson);
         roomService.getRoomById.withArgs(room._id).resolves(room);
+        lessonService.updateLessonMetadata.resolves(updatedLesson);
 
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
           params: { lessonId: lesson._id },
-          body: { title: 'new title', slug: 'new-slug', language: 'new language' }
-
+          body: { ...requestBody }
         });
         req.user = user;
 
-        res = {};
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handlePatchLessonMetadata(req, res);
       });
 
-      it('should throw Forbidden', async () => {
-        await expect(() => sut.handlePatchLessonMetadata(req, res)).rejects.toThrow(Forbidden);
+      it('should respond with status code 201', () => {
+        expect(res.statusCode).toBe(201);
+      });
+
+      it('should call lessonService.updateLessonMetadata', () => {
+        sinon.assert.calledWith(lessonService.updateLessonMetadata, lesson._id, { ...requestBody });
+      });
+
+      it('should respond with the updated lesson', () => {
+        expect(res._getData()).toEqual(updatedLesson);
       });
     });
   });
@@ -444,11 +610,16 @@ describe('lesson-controller', () => {
       });
     });
 
-    describe('when the user is not the owner of the room containing the lesson', () => {
+    describe('when the user neither owns nor is not a collaborator of the room containing the lesson', () => {
       beforeEach(() => {
         req = { user, params: { lessonId } };
         lesson = { _id: lessonId, roomId };
-        room = { _id: roomId, owner: uniqueId.create() };
+        room = {
+          _id: roomId,
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          members: [{ userId: uniqueId.create() }]
+        };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
@@ -459,10 +630,60 @@ describe('lesson-controller', () => {
       });
     });
 
-    describe('when the user is the owner of the room containing the lesson', () => {
+    describe('when the user is a member of the (exclusive) room containing the lesson', () => {
+      beforeEach(() => {
+        req = { user, params: { lessonId } };
+        lesson = { _id: lessonId, roomId };
+        room = {
+          _id: roomId,
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          members: [{ userId: user._id }]
+        };
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(sut.handleDeleteLesson(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the user owns the room containing the lesson', () => {
       beforeEach(done => {
-        room = { _id: roomId, owner: user._id };
         lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+        room = {
+          _id: roomId,
+          owner: user._id,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          members: [{ userId: uniqueId.create() }]
+        };
+
+        req = { user, params: { lessonId } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
+        roomService.getRoomById.withArgs(roomId).resolves(room);
+
+        sut.handleDeleteLesson(req, res);
+      });
+
+      it('should call lessonService.deleteLessonById', () => {
+        sinon.assert.calledWith(lessonService.deleteLessonById, lessonId);
+      });
+    });
+
+    describe('when the user is a collaborator of the room containing the lesson', () => {
+      beforeEach(done => {
+        lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
+        room = {
+          _id: roomId,
+          owner: uniqueId.create(),
+          lessonsMode: ROOM_LESSONS_MODE.collaborative,
+          members: [{ userId: user._id }]
+        };
 
         req = { user, params: { lessonId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });

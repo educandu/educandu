@@ -10,6 +10,7 @@ import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
+import roomHelper from '../../utils/room-helper.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
@@ -47,8 +48,8 @@ function Lesson({ PageTemplate, initialState }) {
   const startsInEditMode = request.query.view === LESSON_VIEW_QUERY_PARAM.edit;
 
   const { room } = initialState;
-  const isRoomOwner = user?._id === room.owner._id;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
+  const isRoomOwnerOrCollaborator = roomHelper.isRoomOwnerOrCollaborator({ room, userId: user?._id });
 
   const [isDirty, setIsDirty] = useState(false);
   const [lesson, setLesson] = useState(initialState.lesson);
@@ -279,7 +280,7 @@ function Lesson({ PageTemplate, initialState }) {
             />
         </div>
       </PageTemplate>
-      {isRoomOwner && (
+      {isRoomOwnerOrCollaborator && (
         <Fragment>
           <EditControlPanel
             canClose

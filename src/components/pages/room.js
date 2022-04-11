@@ -9,6 +9,7 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import MetadataTitle from '../metadata-title.js';
+import roomHelper from '../../utils/room-helper.js';
 import { useDateFormat } from '../locale-context.js';
 import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
@@ -55,6 +56,8 @@ export default function Room({ PageTemplate, initialState }) {
   });
 
   const isRoomOwner = user?._id === room.owner.key;
+  const isRoomOwnerOrCollaborator = roomHelper.isRoomOwnerOrCollaborator({ room, userId: user?._id });
+
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 
   useEffect(() => {
@@ -164,7 +167,7 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="Room-lesson" key={lesson._id}>
         <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
-          {isRoomOwner && (
+          {isRoomOwnerOrCollaborator && (
             <Fragment>
               <Tooltip title={t('common:clone')}>
                 <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
@@ -236,7 +239,7 @@ export default function Room({ PageTemplate, initialState }) {
   const renderRoomLessonsCard = () => (
     <Card
       className="Room-card"
-      actions={isRoomOwner && [
+      actions={isRoomOwnerOrCollaborator && [
         <Button
           className="Room-cardButton"
           key="createLesson"

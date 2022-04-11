@@ -2,6 +2,7 @@ import express from 'express';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
+import roomHelper from '../utils/room-helper.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
@@ -85,7 +86,7 @@ class LessonController {
       throw new BadRequest(`Unknown room id '${roomId}'`);
     }
 
-    if (user._id !== room.owner) {
+    if (!roomHelper.isRoomOwnerOrCollaborator({ room, userId: user._id })) {
       throw new Forbidden();
     }
 
@@ -133,11 +134,11 @@ class LessonController {
       throw new NotFound(`Unknown room id '${lesson.roomId}'`);
     }
 
-    if (user._id !== room.owner) {
+    if (!roomHelper.isRoomOwnerOrCollaborator({ room, userId: user._id })) {
       throw new Forbidden();
     }
 
-    await this.lessonService.deleteLessonById(lessonId, user);
+    await this.lessonService.deleteLessonById(lessonId);
 
     return res.send({});
   }
@@ -154,7 +155,7 @@ class LessonController {
 
     const room = await this.roomService.getRoomById(lesson.roomId);
 
-    if (room.owner !== user._id) {
+    if (!roomHelper.isRoomOwnerOrCollaborator({ room, userId: user._id })) {
       throw new Forbidden();
     }
   }
