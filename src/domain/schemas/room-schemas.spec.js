@@ -1,5 +1,5 @@
 import { validate } from '../validation.js';
-import { ROOM_ACCESS_LEVEL } from '../constants.js';
+import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../constants.js';
 import { postRoomBodySchema, patchRoomBodySchema, postRoomInvitationBodySchema } from './room-schemas.js';
 
 describe('postRoomBodySchema', () => {
@@ -8,7 +8,8 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        access: ROOM_ACCESS_LEVEL.public
+        access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
       expect(() => validate(body, postRoomBodySchema)).not.toThrow();
     });
@@ -19,7 +20,8 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: '',
-        access: ROOM_ACCESS_LEVEL.private
+        access: ROOM_ACCESS_LEVEL.private,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, postRoomBodySchema)).not.toThrow();
@@ -30,7 +32,8 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         slug: '',
-        access: ROOM_ACCESS_LEVEL.public
+        access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -41,7 +44,8 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        access: ROOM_ACCESS_LEVEL.public
+        access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -53,7 +57,8 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: null,
-        access: ROOM_ACCESS_LEVEL.public
+        access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -64,7 +69,8 @@ describe('postRoomBodySchema', () => {
     it('should throw', () => {
       const body = {
         name: 'my room',
-        slug: ''
+        slug: '',
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -76,7 +82,8 @@ describe('postRoomBodySchema', () => {
       const body = {
         name: 'def',
         slug: '',
-        access: 'unknown access'
+        access: 'unknown access',
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, postRoomBodySchema)).toThrow();
@@ -89,7 +96,8 @@ describe('patchRoomBodySchema', () => {
     it('should pass validation', () => {
       const body = {
         name: 'my room',
-        slug: ''
+        slug: '',
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
       expect(() => validate(body, patchRoomBodySchema)).not.toThrow();
     });
@@ -98,7 +106,8 @@ describe('patchRoomBodySchema', () => {
   describe('when the body does not contain the room name', () => {
     it('should throw', () => {
       const body = {
-        slug: ''
+        slug: '',
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, patchRoomBodySchema)).toThrow();
@@ -108,7 +117,8 @@ describe('patchRoomBodySchema', () => {
   describe('when the body does not contain the slug', () => {
     it('should throw', () => {
       const body = {
-        name: 'my room'
+        name: 'my room',
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       expect(() => validate(body, patchRoomBodySchema)).toThrow();
@@ -120,6 +130,17 @@ describe('patchRoomBodySchema', () => {
       const body = {
         name: 'my room',
         slug: null
+      };
+
+      expect(() => validate(body, patchRoomBodySchema)).toThrow();
+    });
+  });
+
+  describe('when the body does not contain the lessonsMode', () => {
+    it('should throw', () => {
+      const body = {
+        name: 'my room',
+        slug: ''
       };
 
       expect(() => validate(body, patchRoomBodySchema)).toThrow();

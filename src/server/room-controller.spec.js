@@ -6,7 +6,7 @@ import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -82,7 +82,10 @@ describe('room-controller', () => {
       beforeEach(done => {
         roomService.createRoom.resolves(createdRoom);
 
-        req = { user, body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public } };
+        req = {
+          user,
+          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public, lessonsMode: ROOM_LESSONS_MODE.exclusive }
+        };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -113,12 +116,14 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           access: ROOM_ACCESS_LEVEL.public,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
           description: 'description'
         };
         requestBody = {
           name: 'new name',
           slug: 'new-slug',
-          description: 'new description'
+          description: 'new description',
+          lessonsMode: ROOM_LESSONS_MODE.collaborative
         };
         updatedRoom = {
           ...room,
@@ -170,7 +175,8 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          access: ROOM_ACCESS_LEVEL.public
+          access: ROOM_ACCESS_LEVEL.public,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -287,7 +293,12 @@ describe('room-controller', () => {
 
     describe('when user is not provided (session expired)', () => {
       beforeEach(() => {
-        const room = { _id: uniqueId.create(), slug: '', access: ROOM_ACCESS_LEVEL.private };
+        const room = {
+          _id: uniqueId.create(),
+          slug: '',
+          access: ROOM_ACCESS_LEVEL.private,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive
+        };
         roomService.getRoomById.resolves(room);
 
         req = { params: { 0: '', roomId: room._id } };
@@ -305,7 +316,8 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        access: ROOM_ACCESS_LEVEL.private
+        access: ROOM_ACCESS_LEVEL.private,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
       const mappedRoom = { ...room };
 
@@ -446,7 +458,8 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        access: ROOM_ACCESS_LEVEL.public
+        access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       const mappedRoom = { ...room };

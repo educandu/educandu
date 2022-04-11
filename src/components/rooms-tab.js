@@ -6,14 +6,16 @@ import urls from '../utils/urls.js';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../domain/permissions.js';
 import SortingSelector from './sorting-selector.js';
 import { useDateFormat } from './locale-context.js';
+import PublicIcon from './icons/general/public-icon.js';
 import { roomShape } from '../ui/default-prop-types.js';
 import RoomCreationModal from './room-creation-modal.js';
+import PrivateIcon from './icons/general/private-icon.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import { PlusOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons';
 
 function RoomsTab({ rooms }) {
   const user = useUser();
@@ -85,8 +87,8 @@ function RoomsTab({ rooms }) {
   const renderAccess = (accessTranslated, row) => {
     return (
       <div className="RoomsTab-accessCell">
-        {row.access === ROOM_ACCESS_LEVEL.private && <LockOutlined />}
-        {row.access === ROOM_ACCESS_LEVEL.public && <UnlockOutlined />}
+        {row.access === ROOM_ACCESS_LEVEL.private && <PrivateIcon />}
+        {row.access === ROOM_ACCESS_LEVEL.public && <PublicIcon />}
         <span>{accessTranslated}</span>
       </div>
     );
