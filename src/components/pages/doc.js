@@ -21,14 +21,14 @@ import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import { createClipboardText } from '../../services/section-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
   confirmDiscardUnsavedChanges,
   confirmDocumentRevisionRestoration,
@@ -255,11 +255,26 @@ function Doc({ initialState, PageTemplate }) {
 
   const handleSectionCopyToClipboard = async index => {
     const originalSection = currentSections[index];
-    const clipboardText = createClipboardText(originalSection, request.hostInfo.origin);
+    const clipboardText = createClipboardTextForSection(originalSection, request.hostInfo.origin);
     try {
       await window.navigator.clipboard.writeText(clipboardText);
     } catch (error) {
       handleApiError({ error, logger, t });
+    }
+  };
+
+  const handleSectionPasteFromClipboard = async index => {
+    try {
+      const clipboardText = await window.navigator.clipboard.readText();
+      const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
+      const redactedSection = redactSectionContent({ section: newSection, infoFactory });
+      const newSections = insertItemAt(currentSections, redactedSection, index);
+      setCurrentSections(newSections);
+      setIsDirty(true);
+      return true;
+    } catch (error) {
+      handleApiError({ error, logger, t });
+      return false;
     }
   };
 
@@ -411,6 +426,7 @@ function Doc({ initialState, PageTemplate }) {
             onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
             onSectionCopyToClipboard={handleSectionCopyToClipboard}
+            onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
             onSectionMove={handleSectionMove}
             onSectionInsert={handleSectionInsert}
             onSectionDuplicate={handleSectionDuplicate}

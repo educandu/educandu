@@ -22,6 +22,7 @@ function SectionsDisplay({
   onSectionDelete,
   onSectionContentChange,
   onSectionCopyToClipboard,
+  onSectionPasteFromClipboard,
   onSectionHardDelete
 }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -57,6 +58,13 @@ function SectionsDisplay({
 
   const handlePluginSelectorDialogCancel = () => {
     setCurrentNewSectionIndex(-1);
+  };
+
+  const handlePasteFromClipboard = async () => {
+    const success = await onSectionPasteFromClipboard(currentNewSectionIndex);
+    if (success) {
+      setCurrentNewSectionIndex(-1);
+    }
   };
 
   const renderSection = ({ section, index, dragHandleProps, isDragged }) => {
@@ -142,6 +150,7 @@ function SectionsDisplay({
         visible={currentNewSectionIndex > -1}
         onSelect={handlePluginSelectorDialogSelect}
         onCancel={handlePluginSelectorDialogCancel}
+        onPasteFromClipboard={handlePasteFromClipboard}
         />
     </Fragment>
   );
@@ -159,6 +168,7 @@ SectionsDisplay.propTypes = {
   onSectionHardDelete: PropTypes.func,
   onSectionInsert: PropTypes.func,
   onSectionMove: PropTypes.func,
+  onSectionPasteFromClipboard: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
   privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
@@ -177,6 +187,7 @@ SectionsDisplay.defaultProps = {
   onSectionHardDelete: () => {},
   onSectionInsert: () => {},
   onSectionMove: () => {},
+  onSectionPasteFromClipboard: () => {},
   pendingSectionKeys: [],
   privateStorage: null
 };

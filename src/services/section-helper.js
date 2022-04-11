@@ -3,6 +3,7 @@ import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import cryptoJsUtf8Encoder from 'crypto-js/enc-utf8.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -112,17 +113,17 @@ export function extractCdnResources(sections, pluginInfoFactory) {
   ].sort();
 }
 
-function _clipboardEncode(clipboardObject, secretKey) {
-  const jsonText = JSON.stringify(clipboardObject || {});
-  return AES.encrypt(jsonText, secretKey);
+function _clipboardEncode(clipboardObject, encryptionKey) {
+  const jsonText = JSON.stringify(clipboardObject || null);
+  return AES.encrypt(jsonText, encryptionKey);
 }
 
-function _clipboardDecode(clipboardText, secretKey) {
+function _clipboardDecode(clipboardText, encryptionKey) {
   try {
-    const decryptedText = AES.decrypt(clipboardText, secretKey);
+    const decryptedText = AES.decrypt(clipboardText, encryptionKey).toString(cryptoJsUtf8Encoder);
     return JSON.parse(decryptedText);
   } catch {
-    return {};
+    return null;
   }
 }
 
@@ -133,7 +134,27 @@ function _isValidClipboardObject(clipboardObject) {
     && typeof clipboardObject.content === 'object';
 }
 
-export function createClipboardText(section, origin) {
+export function createClipboardTextForSection(section, origin) {
   const clipboardObject = { type: section.type, content: section.content };
   return _clipboardEncode(clipboardObject, origin);
+}
+
+export function createNewSectionFromClipboardText(clipboardText, origin) {
+  const clipboardObject = _clipboardDecode(clipboardText, origin);
+  if (_isValidClipboardObject(clipboardObject)) {
+    return {
+      key: uniqueId.create(),
+      type: clipboardObject.type,
+      content: clipboardObject.content
+    };
+  }
+
+  return null;
+}
+
+export function redactSectionContent({ section, infoFactory, targetRoomId }) {
+  const pluginInfo = infoFactory.createInfo(section.type);
+  return pluginInfo?.redactContent
+    ? { ...section, content: pluginInfo.redactContent(section.content, targetRoomId) }
+    : section;
 }

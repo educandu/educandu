@@ -40,6 +40,9 @@ duplicate:
 copyToClipboard:
   en: Copy to clipboard
   de: In die Zwischenablage kopieren
+pasteFromClipboard:
+  en: Paste from clipboard
+  de: Aus der Zwischenablage einfügen
 delete:
   en: Delete
   de: Löschen
