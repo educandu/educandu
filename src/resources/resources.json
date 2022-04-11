@@ -1087,14 +1087,18 @@
     "namespace": "roomMetadataForm",
     "language": "en",
     "resources": {
-      "roomNameRequired": "Please specify a room name"
+      "roomNameRequired": "Please specify a room name",
+      "accessLevelInfo": "Public rooms can be viewed by all users, while private rooms can only be viewed by invited members.",
+      "lessonsModeInfo": "In exclusive room lessons can be managed only by the owner, while in collaborative rooms lessons can be managed by all members."
     }
   },
   {
     "namespace": "roomMetadataForm",
     "language": "de",
     "resources": {
-      "roomNameRequired": "Bitte geben Sie einen Raumnamen an"
+      "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
+      "accessLevelInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, während private Räume sind nur für Mitglieder sichtbar.",
+      "lessonsModeInfo": "In exklusive Räume, Unterrischtseinheiten können nur von den Besitzer verwaltet sein, während in kollaborative Räume, Unterrichsteinheiten können von alle Mitglieder verwendet sein."
     }
   },
   {
@@ -1824,6 +1828,9 @@
       "type": "Type",
       "accessType_public": "public",
       "accessType_private": "private",
+      "lessonsMode": "Lessons mode",
+      "lessonsMode_exclusive": "exclusive",
+      "lessonsMode_collaborative": "collaborative",
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
@@ -1920,6 +1927,9 @@
       "type": "Typ",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
+      "lessonsMode": "Unterichtseinheiten-Modus",
+      "lessonsMode_exclusive": "exklusiv",
+      "lessonsMode_collaborative": "kollaborativ",
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",

@@ -129,10 +129,10 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, lessonsMode, description }) => {
     try {
-      const updatedRoom = { ...room, name, slug, description };
-      await roomApiClient.updateRoom({ roomId: room._id, name, slug, description });
+      const updatedRoom = { ...room, name, slug, lessonsMode, description };
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug, lessonsMode, description });
 
       setRoom(updatedRoom);
       setIsRoomUpdateButtonDisabled(true);

@@ -149,6 +149,15 @@ accessType_public:
 accessType_private:
   en: private
   de: privat
+lessonsMode:
+  en: Lessons mode
+  de: Unterichtseinheiten-Modus
+lessonsMode_exclusive:
+  en: exclusive
+  de: exklusiv
+lessonsMode_collaborative:
+  en: collaborative
+  de: kollaborativ
 title:
   en: Title
   de: Titel

@@ -1,3 +1,9 @@
 roomNameRequired:
   en: Please specify a room name
   de: Bitte geben Sie einen Raumnamen an
+accessLevelInfo:
+  en: Public rooms can be viewed by all users, while private rooms can only be viewed by invited members.
+  de: Öffentliche Räume sind für alle Benutzer sichtbar, während private Räume sind nur für Mitglieder sichtbar.
+lessonsModeInfo:
+  en: In exclusive room lessons can be managed only by the owner, while in collaborative rooms lessons can be managed by all members.
+  de: In exklusive Räume, Unterrischtseinheiten können nur von den Besitzer verwaltet sein, während in kollaborative Räume, Unterrichsteinheiten können von alle Mitglieder verwendet sein.
