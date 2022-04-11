@@ -55,7 +55,6 @@ export default function Room({ PageTemplate, initialState }) {
   });
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 
   useEffect(() => {
@@ -274,18 +273,16 @@ export default function Room({ PageTemplate, initialState }) {
               {renderRoomLessonsCard()}
             </TabPane>
 
-            {isPrivateRoom && (
-              <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
-                {renderRoomMembers()}
-                {renderRoomInvitations()}
-                <RoomInvitationCreationModal
-                  isVisible={isRoomInvitationModalVisible}
-                  onOk={handleInvitationModalClose}
-                  onCancel={handleInvitationModalClose}
-                  roomId={room._id}
-                  />
-              </TabPane>
-            )}
+            <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
+              {renderRoomMembers()}
+              {renderRoomInvitations()}
+              <RoomInvitationCreationModal
+                isVisible={isRoomInvitationModalVisible}
+                onOk={handleInvitationModalClose}
+                onCancel={handleInvitationModalClose}
+                roomId={room._id}
+                />
+            </TabPane>
 
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
               <Card className="Room-card" title={t('updateRoomCardTitle')}>

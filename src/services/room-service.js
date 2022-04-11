@@ -91,10 +91,6 @@ export default class RoomService {
       throw new NotFound(`A room with ID '${roomId}' owned by '${user._id}' could not be found`);
     }
 
-    if (room.access === ROOM_ACCESS_LEVEL.public) {
-      throw new BadRequest(`Room with ID '${roomId}' is public, therefore invitations cannot be sent`);
-    }
-
     const owner = await this.userStore.getUserById(room.owner);
 
     if (owner.email.toLowerCase() === lowerCasedEmail) {

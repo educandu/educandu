@@ -96,8 +96,13 @@ describe('room-service', () => {
       ]);
     });
 
-    it('should create a new invitation if it does not exist', async () => {
+    it('should create a new invitation for a private room if it does not exist', async () => {
       const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      expect(invitation.token).toBeDefined();
+    });
+
+    it('should create a new invitation for a public room if it does not exist', async () => {
+      const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
       expect(invitation.token).toBeDefined();
     });
 
@@ -113,12 +118,6 @@ describe('room-service', () => {
       expect(updatedInvitation.token).not.toBe(originalInvitation.token);
       expect(updatedInvitation.sentOn).not.toBe(originalInvitation.sentOn);
       expect(updatedInvitation.expires.getTime()).toBeGreaterThan(originalInvitation.expires.getTime());
-    });
-
-    it('should throw a BadRequest error when the room is public', async () => {
-      await expect(async () => {
-        await sut.createOrUpdateInvitation({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
-      }).rejects.toThrow(BadRequest);
     });
 
     it('should throw a NotFound error when the room does not exist', async () => {
