@@ -857,6 +857,8 @@
     "resources": {
       "privateRoomSubtitle": "Private room",
       "publicRoomSubtitle": "Public room",
+      "exclusiveLessonsSubtitle": "Exclusive lessons",
+      "collaborativeLessonsSubtitle": "Collaborative lessons",
       "expires": "Invitation expires on",
       "roomMembersHeader": "Room members ({count})",
       "invitationsHeader": "Outstanding invitations ({count})",
@@ -880,6 +882,8 @@
     "resources": {
       "privateRoomSubtitle": "privater Raum",
       "publicRoomSubtitle": "öffentlicher Raum",
+      "exclusiveLessonsSubtitle": "exklusive Unterrichtseinheiten",
+      "collaborativeLessonsSubtitle": "kollaborative Unterrichtseinheiten",
       "expires": "Einladung läuft ab am",
       "roomMembersHeader": "Raummitglieder ({count})",
       "invitationsHeader": "Ausstehende Einladungen ({count})",
@@ -1110,6 +1114,7 @@
       "member": "Member",
       "sortedByOwner": "Sorted by owner",
       "sortedByAccess": "Sorted by access",
+      "sortedByLessonsMode": "Sorted by lessons mode",
       "sortedByRole": "Sorted by role"
     }
   },
@@ -1122,6 +1127,7 @@
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
+      "sortedByLessonsMode": "Nach Modus sortiert",
       "sortedByRole": "Nach Rolle sortiert"
     }
   },
@@ -1828,7 +1834,7 @@
       "type": "Type",
       "accessType_public": "public",
       "accessType_private": "private",
-      "lessonsMode": "Lessons mode",
+      "lessonsMode": "Mode",
       "lessonsMode_exclusive": "exclusive",
       "lessonsMode_collaborative": "collaborative",
       "title": "Title",
@@ -1927,7 +1933,7 @@
       "type": "Typ",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
-      "lessonsMode": "Unterichtseinheiten-Modus",
+      "lessonsMode": "Modus",
       "lessonsMode_exclusive": "exklusiv",
       "lessonsMode_collaborative": "kollaborativ",
       "title": "Titel",

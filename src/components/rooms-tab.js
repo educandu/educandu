@@ -32,6 +32,7 @@ function RoomsTab({ rooms }) {
       owner: room.owner,
       access: room.access,
       accessTranslated: t(`common:accessType_${room.access}`),
+      lessonsModeTranslated: t(`common:lessonsMode_${room.lessonsMode}`),
       createdOn: room.createdOn,
       updatedOn: room.updatedOn,
       joinedOn: userAsMember?.joinedOn || '',
@@ -48,6 +49,7 @@ function RoomsTab({ rooms }) {
     { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
     { label: t('common:owner'), appliedLabel: t('sortedByOwner'), value: 'owner' },
     { label: t('common:access'), appliedLabel: t('sortedByAccess'), value: 'access' },
+    { label: t('common:lessonsMode'), appliedLabel: t('sortedByLessonsMode'), value: 'lessonsMode' },
     { label: t('role'), appliedLabel: t('sortedByRole'), value: 'role' }
   ];
 
@@ -55,7 +57,8 @@ function RoomsTab({ rooms }) {
     name: rowsToSort => rowsToSort.sort(by(row => row.name, { direction: sorting.direction, ignoreCase: true })),
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
     owner: rowsToSort => rowsToSort.sort(by(row => row.owner.username, sorting.direction)),
-    access: rowsToSort => rowsToSort.sort(by(row => row.access, sorting.direction)),
+    access: rowsToSort => rowsToSort.sort(by(row => row.accessTranslated, sorting.direction)),
+    lessonsMode: rowsToSort => rowsToSort.sort(by(row => row.lessonsModeTranslated, sorting.direction)),
     role: rowsToSort => rowsToSort.sort(by(row => row.roleTranslated, sorting.direction).thenBy(row => row.joinedOn, 'desc').thenBy(row => row.createdOn, 'desc'))
   }), [sorting.direction]);
 
@@ -115,7 +118,7 @@ function RoomsTab({ rooms }) {
       dataIndex: 'owner',
       key: 'owner',
       render: renderOwner,
-      width: '200px',
+      width: '150px',
       responsive: ['md']
     },
     {
@@ -123,6 +126,14 @@ function RoomsTab({ rooms }) {
       dataIndex: 'accessTranslated',
       key: 'accessTranslated',
       render: renderAccess,
+      width: '150px',
+      responsive: ['sm']
+    },
+    {
+      title: t('common:lessonsMode'),
+      dataIndex: 'lessonsModeTranslated',
+      key: 'lessonsModeTranslated',
+      render: lessonsModeTranslated => lessonsModeTranslated,
       width: '150px',
       responsive: ['sm']
     },

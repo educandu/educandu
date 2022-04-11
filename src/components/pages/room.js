@@ -262,7 +262,7 @@ export default function Room({ PageTemplate, initialState }) {
           />
         <div className="Room-subtitle">
           {room.access === ROOM_ACCESS_LEVEL.private ? <PrivateIcon /> : <PublicIcon />}
-          <span>{t(`${room.access}RoomSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+          <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
         </div>
 
         {!isRoomOwner && renderRoomLessonsCard()}
