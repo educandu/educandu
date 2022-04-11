@@ -53,6 +53,15 @@ describe('user-store', () => {
       });
     });
 
+    describe('when provider matches and emailOrUsername matches the email in a different casing', () => {
+      beforeEach(async () => {
+        result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: user.email.toUpperCase() });
+      });
+      it('should return the user', () => {
+        expect(result).toEqual(user);
+      });
+    });
+
     describe('when provider matches and emailOrUsername matches the username', () => {
       beforeEach(async () => {
         result = await sut.findUserByLogin({ provider: user.provider, emailOrUsername: user.username });
