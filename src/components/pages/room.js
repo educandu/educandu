@@ -9,7 +9,6 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import MetadataTitle from '../metadata-title.js';
-import roomHelper from '../../utils/room-helper.js';
 import { useDateFormat } from '../locale-context.js';
 import lessonsUtils from '../../utils/lessons-utils.js';
 import RoomMetadataForm from '../room-metadata-form.js';
@@ -28,7 +27,7 @@ import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
@@ -56,7 +55,7 @@ export default function Room({ PageTemplate, initialState }) {
   });
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isRoomOwnerOrCollaborator = roomHelper.isRoomOwnerOrCollaborator({ room, userId: user?._id });
+  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === user?._id);
 
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 
@@ -167,7 +166,7 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="Room-lesson" key={lesson._id}>
         <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
-          {isRoomOwnerOrCollaborator && (
+          {(isRoomOwner || isRoomCollaborator) && (
             <Fragment>
               <Tooltip title={t('common:clone')}>
                 <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
@@ -239,7 +238,7 @@ export default function Room({ PageTemplate, initialState }) {
   const renderRoomLessonsCard = () => (
     <Card
       className="Room-card"
-      actions={isRoomOwnerOrCollaborator && [
+      actions={(isRoomOwner || isRoomCollaborator) && [
         <Button
           className="Room-cardButton"
           key="createLesson"

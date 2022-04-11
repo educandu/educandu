@@ -55,11 +55,6 @@ class LessonStore {
     return result;
   }
 
-  async saveLessons(lessons, { session } = {}) {
-    lessons.forEach(lesson => validate(lesson, lessonDBSchema));
-    await Promise.all(lessons.map(lesson => this._saveLesson(lesson, { session })));
-  }
-
   async deleteLessonsByRoomId(roomId, { session } = {}) {
     await this.collection.deleteMany({ roomId }, { session });
   }

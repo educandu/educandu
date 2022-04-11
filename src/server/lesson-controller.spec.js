@@ -317,7 +317,7 @@ describe('lesson-controller', () => {
       });
 
       it('should create the lesson', () => {
-        sinon.assert.calledWith(lessonService.createLesson, { user, ...lesson });
+        sinon.assert.calledWith(lessonService.createLesson, { userId: user._id, ...lesson });
       });
 
       it('should return the lesson', () => {
@@ -350,7 +350,7 @@ describe('lesson-controller', () => {
       });
 
       it('should create the lesson', () => {
-        sinon.assert.calledWith(lessonService.createLesson, { user, ...lesson });
+        sinon.assert.calledWith(lessonService.createLesson, { userId: user._id, ...lesson });
       });
 
       it('should return the lesson', () => {
@@ -504,7 +504,7 @@ describe('lesson-controller', () => {
       });
 
       it('should call lessonService.updateLessonMetadata', () => {
-        sinon.assert.calledWith(lessonService.updateLessonMetadata, lesson._id, { ...requestBody });
+        sinon.assert.calledWith(lessonService.updateLessonMetadata, lesson._id, { ...requestBody, userId: user._id });
       });
 
       it('should respond with the updated lesson', () => {
@@ -569,7 +569,7 @@ describe('lesson-controller', () => {
       });
 
       it('should call lessonService.updateLessonMetadata', () => {
-        sinon.assert.calledWith(lessonService.updateLessonMetadata, lesson._id, { ...requestBody });
+        sinon.assert.calledWith(lessonService.updateLessonMetadata, lesson._id, { ...requestBody, userId: user._id });
       });
 
       it('should respond with the updated lesson', () => {

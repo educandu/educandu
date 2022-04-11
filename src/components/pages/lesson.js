@@ -10,7 +10,6 @@ import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { useRequest } from '../request-context.js';
-import roomHelper from '../../utils/room-helper.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
@@ -26,7 +25,7 @@ import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 
 const logger = new Logger(import.meta.url);
@@ -49,7 +48,8 @@ function Lesson({ PageTemplate, initialState }) {
 
   const { room } = initialState;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
-  const isRoomOwnerOrCollaborator = roomHelper.isRoomOwnerOrCollaborator({ room, userId: user?._id });
+  const isRoomOwner = user?._id === room.owner.key;
+  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === user?._id);
 
   const [isDirty, setIsDirty] = useState(false);
   const [lesson, setLesson] = useState(initialState.lesson);
@@ -280,7 +280,7 @@ function Lesson({ PageTemplate, initialState }) {
             />
         </div>
       </PageTemplate>
-      {isRoomOwnerOrCollaborator && (
+      {(isRoomOwner || isRoomCollaborator) && (
         <Fragment>
           <EditControlPanel
             canClose

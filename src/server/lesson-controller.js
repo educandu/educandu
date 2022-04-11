@@ -2,14 +2,13 @@ import express from 'express';
 import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
-import roomHelper from '../utils/room-helper.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import RoomService from '../services/room-service.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams, validateQuery } from '../domain/validation-middleware.js';
 import {
@@ -24,6 +23,12 @@ import {
 
 const jsonParser = express.json();
 const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
+
+const isRoomOwnerOrCollaborator = ({ room, userId }) => {
+  const isOwner = room.owner === userId;
+  const isCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === userId);
+  return isOwner || isCollaborator;
+};
 
 class LessonController {
   static get inject() { return [ServerConfig, LessonService, RoomService, ClientDataMappingService, PageRenderer]; }
@@ -86,16 +91,17 @@ class LessonController {
       throw new BadRequest(`Unknown room id '${roomId}'`);
     }
 
-    if (!roomHelper.isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+    if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
       throw new Forbidden();
     }
 
-    const newLesson = await this.lessonService.createLesson({ user, roomId, title, slug, language, schedule });
+    const newLesson = await this.lessonService.createLesson({ userId: user._id, roomId, title, slug, language, schedule });
 
     return res.status(201).send(newLesson);
   }
 
   async handlePatchLessonMetadata(req, res) {
+    const { user } = req;
     const { lessonId } = req.params;
     const { title, slug, language, schedule } = req.body;
 
@@ -103,18 +109,19 @@ class LessonController {
 
     const updatedLesson = await this.lessonService.updateLessonMetadata(
       lessonId,
-      { title, slug, language, schedule }
+      { userId: user._id, title, slug, language, schedule }
     );
     return res.status(201).send(updatedLesson);
   }
 
   async handlePatchLessonSections(req, res) {
+    const { user } = req;
     const { lessonId } = req.params;
     const { sections } = req.body;
 
     await this._authorizeLessonWriteAccess(req);
 
-    const updatedLesson = await this.lessonService.updateLessonSections(lessonId, { sections });
+    const updatedLesson = await this.lessonService.updateLessonSections(lessonId, { userId: user._id, sections });
     return res.status(201).send(updatedLesson);
   }
 
@@ -134,7 +141,7 @@ class LessonController {
       throw new NotFound(`Unknown room id '${lesson.roomId}'`);
     }
 
-    if (!roomHelper.isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+    if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
       throw new Forbidden();
     }
 
@@ -155,7 +162,7 @@ class LessonController {
 
     const room = await this.roomService.getRoomById(lesson.roomId);
 
-    if (!roomHelper.isRoomOwnerOrCollaborator({ room, userId: user._id })) {
+    if (!isRoomOwnerOrCollaborator({ room, userId: user._id })) {
       throw new Forbidden();
     }
   }
