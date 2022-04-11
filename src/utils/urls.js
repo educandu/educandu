@@ -141,7 +141,7 @@ function createFullyQualifiedUrl(pathname) {
 }
 
 function getSearchUrl(query) {
-  return `${searchPath}?query=${encodeURIComponent(query)}`;
+  return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
 }
 
 function getImportSourceBaseUrl({ allowUnsecure, hostName }) {

@@ -5,7 +5,7 @@ import SearchBar from '../search-bar.js';
 
 function Index({ HomePageTemplate }) {
   const handleSearch = searchText => {
-    window.location = urls.getSearchUrl(searchText);
+    window.location = urls.getSearchUrl(searchText.trim());
   };
 
   return (

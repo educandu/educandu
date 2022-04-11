@@ -66,8 +66,9 @@ function Search({ PageTemplate }) {
     (async () => {
       setIsSearching(true);
       try {
-        history.replaceState(null, '', urls.getSearchUrl(searchText));
-        const { result } = await searchApiClient.search(searchText);
+        const trimmedSearchText = searchText.trim();
+        history.replaceState(null, '', urls.getSearchUrl(trimmedSearchText));
+        const { result } = await searchApiClient.search(trimmedSearchText);
         setDocuments(result);
       } catch (error) {
         handleApiError({ error, logger, t });
