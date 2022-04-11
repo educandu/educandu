@@ -21,6 +21,7 @@ import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import { createClipboardText } from '../../services/section-helper.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
@@ -206,6 +207,16 @@ function Lesson({ PageTemplate, initialState }) {
     }
   };
 
+  const handleSectionCopyToClipboard = async index => {
+    const originalSection = currentSections[index];
+    const clipboardText = createClipboardText(originalSection, request.hostInfo.origin);
+    try {
+      await window.navigator.clipboard.writeText(clipboardText);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
   const handleSectionDelete = index => {
     confirmSectionDelete(
       t,
@@ -272,6 +283,7 @@ function Lesson({ PageTemplate, initialState }) {
             onPendingSectionApply={handlePendingSectionApply}
             onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
+            onSectionCopyToClipboard={handleSectionCopyToClipboard}
             onSectionMove={handleSectionMove}
             onSectionInsert={handleSectionInsert}
             onSectionDuplicate={handleSectionDuplicate}

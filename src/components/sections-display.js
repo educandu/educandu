@@ -21,6 +21,7 @@ function SectionsDisplay({
   onSectionDuplicate,
   onSectionDelete,
   onSectionContentChange,
+  onSectionCopyToClipboard,
   onSectionHardDelete
 }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -72,6 +73,7 @@ function SectionsDisplay({
       isPending={pendingSectionKeys.includes(section.key)}
       onPendingSectionApply={() => onPendingSectionApply(index)}
       onPendingSectionDiscard={() => onPendingSectionDiscard(index)}
+      onSectionCopyToClipboard={() => onSectionCopyToClipboard(index)}
       onSectionDelete={() => onSectionDelete(index)}
       onSectionDuplicate={() => onSectionDuplicate(index)}
       onSectionMoveUp={() => handleSectionMove(index, index - 1)}
@@ -151,6 +153,7 @@ SectionsDisplay.propTypes = {
   onPendingSectionApply: PropTypes.func,
   onPendingSectionDiscard: PropTypes.func,
   onSectionContentChange: PropTypes.func,
+  onSectionCopyToClipboard: PropTypes.func,
   onSectionDelete: PropTypes.func,
   onSectionDuplicate: PropTypes.func,
   onSectionHardDelete: PropTypes.func,
@@ -168,6 +171,7 @@ SectionsDisplay.defaultProps = {
   onPendingSectionApply: () => {},
   onPendingSectionDiscard: () => {},
   onSectionContentChange: () => {},
+  onSectionCopyToClipboard: () => {},
   onSectionDelete: () => {},
   onSectionDuplicate: () => {},
   onSectionHardDelete: () => {},

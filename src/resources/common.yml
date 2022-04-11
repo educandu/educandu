@@ -37,6 +37,9 @@ discard:
 duplicate:
   en: Duplicate
   de: Duplizieren
+copyToClipboard:
+  en: Copy to clipboard
+  de: In die Zwischenablage kopieren
 delete:
   en: Delete
   de: Löschen

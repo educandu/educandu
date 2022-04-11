@@ -17,8 +17,8 @@ import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
-import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
 import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
+import { CheckOutlined, CloseOutlined, DragOutlined, PaperClipOutlined } from '@ant-design/icons';
 
 function SectionDisplay({
   section,
@@ -37,6 +37,7 @@ function SectionDisplay({
   onSectionMoveUp,
   onSectionMoveDown,
   onSectionContentChange,
+  onSectionCopyToClipboard,
   onSectionHardDelete
 }) {
   const { t } = useTranslation();
@@ -64,12 +65,12 @@ function SectionDisplay({
     const macOSShortcutParts = shortcutParts.map(part => macOSKeyMappings[part] || part);
     return (
       <div className="SectionDisplay-actionTooltip">
-        <div className="SectionDisplay-actionTooltipTitle">{t(`common:${action}`)}</div>
+        <div>{t(`common:${action}`)}</div>
         {!!shortcutParts.length && (
-          <Fragment>
-            <div className="SectionDisplay-actionTooltipSubtext">Windows: {composeShortcutText(shortcutParts)}</div>
-            <div className="SectionDisplay-actionTooltipSubtext">Mac: {composeShortcutText(macOSShortcutParts)}</div>
-          </Fragment>
+          <div className="SectionDisplay-actionTooltipSubtext">
+            <div>Windows: {composeShortcutText(shortcutParts)}</div>
+            <div>Mac: {composeShortcutText(macOSShortcutParts)}</div>
+          </div>
         )}
       </div>
     );
@@ -99,6 +100,14 @@ function SectionDisplay({
       handleAction: () => onSectionDuplicate(),
       isVisible: true,
       isEnabled: !isEditing
+    },
+    {
+      type: 'copyToClipboard',
+      tooltip: renderActionTooltip('copyToClipboard'),
+      icon: <PaperClipOutlined key="copyToClipboard" />,
+      handleAction: () => onSectionCopyToClipboard(),
+      isVisible: true,
+      isEnabled: !!section.content
     },
     {
       type: 'delete',
@@ -280,6 +289,7 @@ SectionDisplay.propTypes = {
   onPendingSectionApply: PropTypes.func,
   onPendingSectionDiscard: PropTypes.func,
   onSectionContentChange: PropTypes.func,
+  onSectionCopyToClipboard: PropTypes.func,
   onSectionDelete: PropTypes.func,
   onSectionDuplicate: PropTypes.func,
   onSectionHardDelete: PropTypes.func,
@@ -300,6 +310,7 @@ SectionDisplay.defaultProps = {
   onPendingSectionApply: () => {},
   onPendingSectionDiscard: () => {},
   onSectionContentChange: () => {},
+  onSectionCopyToClipboard: () => {},
   onSectionDelete: () => {},
   onSectionDuplicate: () => {},
   onSectionHardDelete: () => {},

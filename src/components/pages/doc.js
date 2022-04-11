@@ -21,6 +21,7 @@ import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { createClipboardText } from '../../services/section-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -252,6 +253,16 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
+  const handleSectionCopyToClipboard = async index => {
+    const originalSection = currentSections[index];
+    const clipboardText = createClipboardText(originalSection, request.hostInfo.origin);
+    try {
+      await window.navigator.clipboard.writeText(clipboardText);
+    } catch (error) {
+      handleApiError({ error, logger, t });
+    }
+  };
+
   const handleSectionDelete = index => {
     confirmSectionDelete(
       t,
@@ -399,6 +410,7 @@ function Doc({ initialState, PageTemplate }) {
             onPendingSectionApply={handlePendingSectionApply}
             onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
+            onSectionCopyToClipboard={handleSectionCopyToClipboard}
             onSectionMove={handleSectionMove}
             onSectionInsert={handleSectionInsert}
             onSectionDuplicate={handleSectionDuplicate}

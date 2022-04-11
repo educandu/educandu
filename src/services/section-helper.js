@@ -1,3 +1,4 @@
+import AES from 'crypto-js/aes.js';
 import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
@@ -109,4 +110,30 @@ export function extractCdnResources(sections, pluginInfoFactory) {
         : cdnResources;
     }, new Set())
   ].sort();
+}
+
+function _clipboardEncode(clipboardObject, secretKey) {
+  const jsonText = JSON.stringify(clipboardObject || {});
+  return AES.encrypt(jsonText, secretKey);
+}
+
+function _clipboardDecode(clipboardText, secretKey) {
+  try {
+    const decryptedText = AES.decrypt(clipboardText, secretKey);
+    return JSON.parse(decryptedText);
+  } catch {
+    return {};
+  }
+}
+
+function _isValidClipboardObject(clipboardObject) {
+  return clipboardObject
+    && typeof clipboardObject === 'object'
+    && typeof clipboardObject.type === 'string'
+    && typeof clipboardObject.content === 'object';
+}
+
+export function createClipboardText(section, origin) {
+  const clipboardObject = { type: section.type, content: section.content };
+  return _clipboardEncode(clipboardObject, origin);
 }
