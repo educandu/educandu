@@ -96,9 +96,12 @@ function Docs({ initialState, PageTemplate }) {
     { label: t('common:updatedOn'), appliedLabel: t('common:sortedByUpdatedOn'), value: 'updatedOn' },
     { label: t('common:language'), appliedLabel: t('common:sortedByLanguage'), value: 'language' },
     { label: t('common:user'), appliedLabel: t('common:sortedByUser'), value: 'user' },
-    { label: t('common:origin'), appliedLabel: t('common:sortedByOrigin'), value: 'origin' },
-    { label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' }
+    { label: t('common:origin'), appliedLabel: t('common:sortedByOrigin'), value: 'origin' }
   ];
+
+  if (hasUserPermission(user, permissions.MANAGE_ARCHIVED_DOCS)) {
+    sortingOptions.push({ label: t('common:archived'), appliedLabel: t('common:sortedByArchived'), value: 'archived' });
+  }
 
   const sorters = useMemo(() => ({
     title: rowsToSort => rowsToSort.sort(by(row => row.title, { direction: sorting.direction, ignoreCase: true })),
