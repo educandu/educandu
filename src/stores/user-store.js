@@ -12,10 +12,11 @@ class UserStore {
   }
 
   async findUserByLogin({ provider, emailOrUsername }, { session } = {}) {
+    const lowerCasedEmailOrUsername = emailOrUsername?.toLowerCase() || '';
     const matches = await this.collection.find({
       $and: [
         { provider },
-        { $or: [{ username: emailOrUsername }, { email: emailOrUsername }] }
+        { $or: [{ username: emailOrUsername }, { email: lowerCasedEmailOrUsername }] }
       ]
     }, {
       session
@@ -30,7 +31,7 @@ class UserStore {
         bestMatch = matches[0];
         break;
       default:
-        bestMatch = matches.find(match => match.email === emailOrUsername);
+        bestMatch = matches.find(match => match.email === lowerCasedEmailOrUsername);
     }
 
     return bestMatch;
