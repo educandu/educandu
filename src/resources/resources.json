@@ -1114,7 +1114,7 @@
       "member": "Member",
       "sortedByOwner": "Sorted by owner",
       "sortedByAccess": "Sorted by access",
-      "sortedByLessonsMode": "Sorted by lessons mode",
+      "sortedByLessonsMode": "Sorted by lessons handling mode",
       "sortedByRole": "Sorted by role"
     }
   },
@@ -1127,7 +1127,7 @@
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
-      "sortedByLessonsMode": "Nach Modus sortiert",
+      "sortedByLessonsMode": "Nach Unterrichtseinheiten-Bearbeitungsmodus sortiert",
       "sortedByRole": "Nach Rolle sortiert"
     }
   },
@@ -1834,7 +1834,7 @@
       "type": "Type",
       "accessType_public": "public",
       "accessType_private": "private",
-      "lessonsMode": "Mode",
+      "lessonsMode": "Lessons handling mode",
       "lessonsMode_exclusive": "exclusive",
       "lessonsMode_collaborative": "collaborative",
       "title": "Title",
@@ -1933,7 +1933,7 @@
       "type": "Typ",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
-      "lessonsMode": "Modus",
+      "lessonsMode": "Unterrichtseinheiten-Bearbeitungsmodus",
       "lessonsMode_exclusive": "exklusiv",
       "lessonsMode_collaborative": "kollaborativ",
       "title": "Titel",

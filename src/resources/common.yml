@@ -150,8 +150,8 @@ accessType_private:
   en: private
   de: privat
 lessonsMode:
-  en: Mode
-  de: Modus
+  en: Lessons handling mode
+  de: Unterrichtseinheiten-Bearbeitungsmodus
 lessonsMode_exclusive:
   en: exclusive
   de: exklusiv
