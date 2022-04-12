@@ -855,7 +855,6 @@
     "namespace": "room",
     "language": "en",
     "resources": {
-      "roomsBreadcrumbPart": "rooms",
       "privateRoomSubtitle": "Private room",
       "publicRoomSubtitle": "Public room",
       "exclusiveLessonsSubtitle": "Exclusive lessons",
@@ -881,7 +880,6 @@
     "namespace": "room",
     "language": "de",
     "resources": {
-      "roomsBreadcrumbPart": "Räume",
       "privateRoomSubtitle": "privater Raum",
       "publicRoomSubtitle": "öffentlicher Raum",
       "exclusiveLessonsSubtitle": "exklusive Unterrichtseinheiten",
@@ -1879,7 +1877,8 @@
       "searchPlaceholder": "Search terms",
       "capacity": "Capacity",
       "copyTitleSuffix": "(copy)",
-      "copySlugSuffix": "copy"
+      "copySlugSuffix": "copy",
+      "roomsBreadcrumbPart": "rooms"
     }
   },
   {
@@ -1978,7 +1977,8 @@
       "searchPlaceholder": "Suchbegriffe",
       "capacity": "Kapazität",
       "copyTitleSuffix": "(Kopie)",
-      "copySlugSuffix": "kopie"
+      "copySlugSuffix": "kopie",
+      "roomsBreadcrumbPart": "Räume"
     }
   },
   {

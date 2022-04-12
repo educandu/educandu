@@ -259,7 +259,7 @@ export default function Room({ PageTemplate, initialState }) {
     <PageTemplate>
       <div className="RoomPage">
         <Breadcrumb className="Breadcrumbs">
-          <Breadcrumb.Item href={urls.getDashboardUrl({ tab: 'rooms' })}>{t('roomsBreadcrumbPart')}</Breadcrumb.Item>
+          <Breadcrumb.Item href={urls.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
           <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
         </Breadcrumb>
         <MetadataTitle

@@ -281,3 +281,6 @@ copyTitleSuffix:
 copySlugSuffix:
   en: copy
   de: kopie
+roomsBreadcrumbPart:
+  en: rooms
+  de: Räume
