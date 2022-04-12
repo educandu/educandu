@@ -253,7 +253,7 @@ function Lesson({ PageTemplate, initialState }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="LessonPage">
-          <Breadcrumb className="LessonPage-breadcrumbs">
+          <Breadcrumb className="Breadcrumbs">
             <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
               {isPrivateRoom ? <PrivateIcon /> : <PublicIcon />}
               <span>{room.name}</span>
