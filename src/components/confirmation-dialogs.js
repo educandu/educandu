@@ -66,6 +66,30 @@ export function confirmRoomDelete(t, roomName, onOk, onCancel = () => {}) {
   });
 }
 
+export function confirmRoomMemberDelete(t, memberUsername, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteRoomMemberConfirmation', { memberUsername }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
+export function confirmRoomInvitationDelete(t, invitationEmail, onOk, onCancel = () => {}) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:deleteRoomInvitationConfirmation', { invitationEmail }),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}
+
 export function confirmLessonDelete(t, lessonName, onOk, onCancel = () => { }) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),

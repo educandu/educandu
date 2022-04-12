@@ -46,6 +46,15 @@ export const deleteRoomParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 });
 
+export const deleteRoomMemberParamsSchema = joi.object({
+  roomId: idOrKeySchema.required(),
+  memberUserId: idOrKeySchema.required()
+});
+
+export const deleteRoomInvitationParamsSchema = joi.object({
+  invitationId: idOrKeySchema.required()
+});
+
 export const getAuthorizeResourcesAccessParamsSchema = joi.object({
   roomId: idOrKeySchema.required()
 });

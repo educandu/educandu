@@ -16,6 +16,12 @@ deleteAllPrivateRoomsConfirmation:
 deleteRoomConfirmation:
   en: Do you really want to delete room "{roomName}"?
   de: Möchten Sie den Raum "{roomName}" wirklich löschen?
+deleteRoomMemberConfirmation:
+  en: Do you really want remove member "{memberUsername}" from the room?
+  de: Möchten Sie den Mitglied "{memberUsername}" wirklich vom Raum entfernen?
+deleteRoomInvitationConfirmation:
+  en: Do you really want revoke room invitation send to "{invitationEmail}"?
+  de: Möchten Sie die Raumeinladung für "{invitationEmail}" wirklich zurücknehmen?
 deleteLessonConfirmation:
   en: Do you really want to delete lesson "{lessonName}"?
   de: Möchten Sie die Unterrichtseinheit "{lessonName}" wirklich löschen?

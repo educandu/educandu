@@ -23,11 +23,11 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
-import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
 import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
+import { confirmLessonDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
 
@@ -155,6 +155,20 @@ export default function Room({ PageTemplate, initialState }) {
     });
   };
 
+  const handleDeleteRoomMemberClick = member => {
+    confirmRoomMemberDelete(t, member.username, async () => {
+      const response = await roomApiClient.deleteRoomMember({ roomId: room._id, memberUserId: member.userId });
+      setRoom(response.room);
+    });
+  };
+
+  const handleRemoveRoomInvitationClick = invitation => {
+    confirmRoomInvitationDelete(t, invitation.email, async () => {
+      const response = await roomApiClient.deleteRoomInvitation({ invitationId: invitation._id });
+      setInvitations(response.invitations.sort(by(x => x.sentOn)));
+    });
+  };
+
   const renderLesson = lesson => {
     const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
 
@@ -172,7 +186,7 @@ export default function Room({ PageTemplate, initialState }) {
                 <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
               </Tooltip>
               <Tooltip title={t('common:delete')}>
-                <DeleteButton className="RoomPage-lessonDeleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
+                <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
               </Tooltip>
             </Fragment>
           )}
@@ -192,6 +206,10 @@ export default function Room({ PageTemplate, initialState }) {
           renderItem={member => (
             <List.Item className="RoomPage-membersRow">
               <Space>
+                  <Tooltip title={t('removeMember')}>
+                    <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
+                  </Tooltip>
+                )}
                 <span className="RoomPage-membersRowDate">{formatDate(member.joinedOn)}</span>
                 <span>{member.username}</span>
               </Space>
@@ -222,6 +240,11 @@ export default function Room({ PageTemplate, initialState }) {
         renderItem={invitation => (
           <List.Item className="RoomPage-membersRow">
             <Space>
+              {isRoomOwner && (
+                <Tooltip title={t('revokeInvitation')}>
+                  <DeleteButton className="RoomPage-deleteButton" onClick={() => handleRemoveRoomInvitationClick(invitation)} />
+                </Tooltip>
+              )}
               <span className="RoomPage-membersRowDate">{formatDate(invitation.sentOn)}</span>
               <span>{invitation.email}</span>
             </Space>

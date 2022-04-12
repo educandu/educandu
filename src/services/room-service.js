@@ -6,6 +6,7 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import LessonStore from '../stores/lesson-store.js';
+import { ensureIsExcluded } from '../utils/array-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import {
@@ -33,6 +34,10 @@ export default class RoomService {
 
   getRoomById(roomId) {
     return this.roomStore.getRoomById(roomId);
+  }
+
+  getRoomInvitationById(roomInvitationId) {
+    return this.roomInvitationStore.getRoomInvitationById(roomInvitationId);
   }
 
   getRoomsOwnedByUser(userId) {
@@ -179,5 +184,19 @@ export default class RoomService {
         this.lockStore.releaseLock(lock);
       }
     });
+  }
+
+  async removeRoomMember({ room, member }) {
+    const remainingMembers = ensureIsExcluded(room.members, member);
+    const updatedRoom = await this.updateRoom({ ...room, members: remainingMembers });
+
+    return updatedRoom;
+  }
+
+  async deleteRoomInvitation({ room, invitation }) {
+    await this.roomInvitationStore.deleteRoomInvitationById(invitation._id);
+    const remainingRoomInvitations = await this.getRoomInvitations(room._id);
+
+    return remainingRoomInvitations;
   }
 }

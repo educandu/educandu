@@ -55,3 +55,9 @@ deleteRoomTitle:
 deleteRoomDescription:
   en: All room data and resources will be deleted.
   de: Alle Raum-Daten und -Ressourcen werden gelöscht.
+removeMember:
+  en: Remove member
+  de: Mitglied entfernen
+revokeInvitation:
+  en: Revoke invitation
+  de: Einladung zurückziehen

@@ -133,6 +133,8 @@
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
       "deleteAllPrivateRoomsConfirmation": "Do you really want to delete all private rooms owned by user \"{ownerName}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
+      "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberUsername}\" from the room?",
+      "deleteRoomInvitationConfirmation": "Do you really want revoke room invitation send to \"{invitationEmail}\"?",
       "deleteLessonConfirmation": "Do you really want to delete lesson \"{lessonName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
       "thisActionIsIrreversible": "This action is irreversible!",
@@ -158,6 +160,8 @@
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
       "deleteAllPrivateRoomsConfirmation": "Möchten Sie wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
+      "deleteRoomMemberConfirmation": "Möchten Sie den Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
+      "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich zurücknehmen?",
       "deleteLessonConfirmation": "Möchten Sie die Unterrichtseinheit \"{lessonName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
@@ -873,7 +877,9 @@
       "updateRoomSuccessMessage": "The room metadata was updated successfully.",
       "roomDangerZoneCardTitle": "Danger zone",
       "deleteRoomTitle": "Delete this room",
-      "deleteRoomDescription": "All room data and resources will be deleted."
+      "deleteRoomDescription": "All room data and resources will be deleted.",
+      "removeMember": "Remove member",
+      "revokeInvitation": "Revoke invitation"
     }
   },
   {
@@ -898,7 +904,9 @@
       "updateRoomSuccessMessage": "Die Raum-Metadaten wurden erfolgreich aktualisiert.",
       "roomDangerZoneCardTitle": "Gefahrenzone",
       "deleteRoomTitle": "Diesen Raum löschen",
-      "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht."
+      "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
+      "removeMember": "Mitglied entfernen",
+      "revokeInvitation": "Einladung zurückziehen"
     }
   },
   {

@@ -22,7 +22,9 @@ import {
   patchRoomParamsSchema,
   deleteRoomParamsSchema,
   deleteRoomsQuerySchema,
+  deleteRoomMemberParamsSchema,
   postRoomInvitationBodySchema,
+  deleteRoomInvitationParamsSchema,
   postRoomInvitationConfirmBodySchema,
   getAuthorizeResourcesAccessParamsSchema,
   getRoomMembershipConfirmationParamsSchema
@@ -123,6 +125,47 @@ export default class RoomController {
     await this._deleteRoom({ room, roomOwner: user });
 
     return res.send({});
+  }
+
+  async handleDeleteRoomMember(req, res) {
+    const { user } = req;
+    const { roomId, memberUserId } = req.params;
+
+    const room = await this.roomService.getRoomById(roomId);
+    const member = room?.members.find(m => m.userId === memberUserId);
+
+    if (!room || !member) {
+      throw new NotFound();
+    }
+
+    if (room.owner !== user._id) {
+      throw new Forbidden();
+    }
+
+    const updatedRoom = await this.roomService.removeRoomMember({ room, member });
+    const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
+
+    return res.send({ room: mappedRoom });
+  }
+
+  async handleDeleteRoomInvitation(req, res) {
+    const { user } = req;
+    const { invitationId } = req.params;
+
+    const invitation = await this.roomService.getRoomInvitationById(invitationId);
+    if (!invitation) {
+      throw new NotFound();
+    }
+
+    const room = await this.roomService.getRoomById(invitation.roomId);
+    if (room.owner !== user._id) {
+      throw new Forbidden();
+    }
+
+    const remainingRoomInvitations = await this.roomService.deleteRoomInvitation({ room, invitation });
+    const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(remainingRoomInvitations);
+
+    return res.send({ invitations: mappedInvitations });
   }
 
   async handlePostRoomInvitation(req, res) {
@@ -241,10 +284,22 @@ export default class RoomController {
       (req, res) => this.handleDeleteOwnRoom(req, res)
     );
 
+    router.delete(
+      '/api/v1/rooms/:roomId/members/:memberUserId',
+      [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomMemberParamsSchema)],
+      (req, res) => this.handleDeleteRoomMember(req, res)
+    );
+
     router.post(
       '/api/v1/room-invitations',
       [needsPermission(permissions.OWN_ROOMS), jsonParser, validateBody(postRoomInvitationBodySchema)],
       (req, res) => this.handlePostRoomInvitation(req, res)
+    );
+
+    router.delete(
+      '/api/v1/room-invitations/:invitationId',
+      [needsPermission(permissions.OWN_ROOMS), validateParams(deleteRoomInvitationParamsSchema)],
+      (req, res) => this.handleDeleteRoomInvitation(req, res)
     );
 
     router.post(
