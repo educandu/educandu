@@ -857,6 +857,8 @@
     "resources": {
       "privateRoomSubtitle": "Private room",
       "publicRoomSubtitle": "Public room",
+      "exclusiveLessonsSubtitle": "Exclusive lessons",
+      "collaborativeLessonsSubtitle": "Collaborative lessons",
       "expires": "Invitation expires on",
       "roomMembersHeader": "Room members ({count})",
       "invitationsHeader": "Outstanding invitations ({count})",
@@ -880,6 +882,8 @@
     "resources": {
       "privateRoomSubtitle": "privater Raum",
       "publicRoomSubtitle": "öffentlicher Raum",
+      "exclusiveLessonsSubtitle": "exklusive Unterrichtseinheiten",
+      "collaborativeLessonsSubtitle": "kollaborative Unterrichtseinheiten",
       "expires": "Einladung läuft ab am",
       "roomMembersHeader": "Raummitglieder ({count})",
       "invitationsHeader": "Ausstehende Einladungen ({count})",
@@ -1087,14 +1091,18 @@
     "namespace": "roomMetadataForm",
     "language": "en",
     "resources": {
-      "roomNameRequired": "Please specify a room name"
+      "roomNameRequired": "Please specify a room name",
+      "accessLevelInfo": "Public rooms are visible to all users, private rooms only to room members.",
+      "lessonsModeInfo": "In exclusive room lessons can be managed only by the owner, in collaborative rooms by all room members."
     }
   },
   {
     "namespace": "roomMetadataForm",
     "language": "de",
     "resources": {
-      "roomNameRequired": "Bitte geben Sie einen Raumnamen an"
+      "roomNameRequired": "Bitte geben Sie einen Raumnamen an",
+      "accessLevelInfo": "Öffentliche Räume sind für alle Benutzer sichtbar, private Räume nur für Raummitglieder.",
+      "lessonsModeInfo": "In exklusiven Räumen können Unterrischtseinheiten nur von den Besitzern verwaltet werden, in kollaborativen Räumen von allen Raummitgliedern."
     }
   },
   {
@@ -1106,6 +1114,7 @@
       "member": "Member",
       "sortedByOwner": "Sorted by owner",
       "sortedByAccess": "Sorted by access",
+      "sortedByLessonsMode": "Sorted by lessons handling mode",
       "sortedByRole": "Sorted by role"
     }
   },
@@ -1118,6 +1127,7 @@
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
+      "sortedByLessonsMode": "Nach Unterrichtseinheiten-Bearbeitungsmodus sortiert",
       "sortedByRole": "Nach Rolle sortiert"
     }
   },
@@ -1824,6 +1834,9 @@
       "type": "Type",
       "accessType_public": "public",
       "accessType_private": "private",
+      "lessonsMode": "Lessons handling mode",
+      "lessonsMode_exclusive": "exclusive",
+      "lessonsMode_collaborative": "collaborative",
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
@@ -1920,6 +1933,9 @@
       "type": "Typ",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
+      "lessonsMode": "Unterrichtseinheiten-Bearbeitungsmodus",
+      "lessonsMode_exclusive": "exklusiv",
+      "lessonsMode_collaborative": "kollaborativ",
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",

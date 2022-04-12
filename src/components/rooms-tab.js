@@ -6,14 +6,16 @@ import urls from '../utils/urls.js';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
+import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../domain/permissions.js';
 import SortingSelector from './sorting-selector.js';
 import { useDateFormat } from './locale-context.js';
+import PublicIcon from './icons/general/public-icon.js';
 import { roomShape } from '../ui/default-prop-types.js';
 import RoomCreationModal from './room-creation-modal.js';
+import PrivateIcon from './icons/general/private-icon.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import { PlusOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons';
 
 function RoomsTab({ rooms }) {
   const user = useUser();
@@ -30,6 +32,7 @@ function RoomsTab({ rooms }) {
       owner: room.owner,
       access: room.access,
       accessTranslated: t(`common:accessType_${room.access}`),
+      lessonsModeTranslated: t(`common:lessonsMode_${room.lessonsMode}`),
       createdOn: room.createdOn,
       updatedOn: room.updatedOn,
       joinedOn: userAsMember?.joinedOn || '',
@@ -46,6 +49,7 @@ function RoomsTab({ rooms }) {
     { label: t('common:createdOn'), appliedLabel: t('common:sortedByCreatedOn'), value: 'createdOn' },
     { label: t('common:owner'), appliedLabel: t('sortedByOwner'), value: 'owner' },
     { label: t('common:access'), appliedLabel: t('sortedByAccess'), value: 'access' },
+    { label: t('common:lessonsMode'), appliedLabel: t('sortedByLessonsMode'), value: 'lessonsMode' },
     { label: t('role'), appliedLabel: t('sortedByRole'), value: 'role' }
   ];
 
@@ -53,7 +57,8 @@ function RoomsTab({ rooms }) {
     name: rowsToSort => rowsToSort.sort(by(row => row.name, { direction: sorting.direction, ignoreCase: true })),
     createdOn: rowsToSort => rowsToSort.sort(by(row => row.createdOn, sorting.direction)),
     owner: rowsToSort => rowsToSort.sort(by(row => row.owner.username, sorting.direction)),
-    access: rowsToSort => rowsToSort.sort(by(row => row.access, sorting.direction)),
+    access: rowsToSort => rowsToSort.sort(by(row => row.accessTranslated, sorting.direction)),
+    lessonsMode: rowsToSort => rowsToSort.sort(by(row => row.lessonsModeTranslated, sorting.direction)),
     role: rowsToSort => rowsToSort.sort(by(row => row.roleTranslated, sorting.direction).thenBy(row => row.joinedOn, 'desc').thenBy(row => row.createdOn, 'desc'))
   }), [sorting.direction]);
 
@@ -85,8 +90,8 @@ function RoomsTab({ rooms }) {
   const renderAccess = (accessTranslated, row) => {
     return (
       <div className="RoomsTab-accessCell">
-        {row.access === ROOM_ACCESS_LEVEL.private && <LockOutlined />}
-        {row.access === ROOM_ACCESS_LEVEL.public && <UnlockOutlined />}
+        {row.access === ROOM_ACCESS_LEVEL.private && <PrivateIcon />}
+        {row.access === ROOM_ACCESS_LEVEL.public && <PublicIcon />}
         <span>{accessTranslated}</span>
       </div>
     );
@@ -113,7 +118,7 @@ function RoomsTab({ rooms }) {
       dataIndex: 'owner',
       key: 'owner',
       render: renderOwner,
-      width: '200px',
+      width: '150px',
       responsive: ['md']
     },
     {
@@ -121,6 +126,14 @@ function RoomsTab({ rooms }) {
       dataIndex: 'accessTranslated',
       key: 'accessTranslated',
       render: renderAccess,
+      width: '150px',
+      responsive: ['sm']
+    },
+    {
+      title: t('common:lessonsMode'),
+      dataIndex: 'lessonsModeTranslated',
+      key: 'lessonsModeTranslated',
+      render: lessonsModeTranslated => lessonsModeTranslated,
       width: '150px',
       responsive: ['sm']
     },

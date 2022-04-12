@@ -4,6 +4,12 @@ privateRoomSubtitle:
 publicRoomSubtitle:
   en: Public room
   de: öffentlicher Raum
+exclusiveLessonsSubtitle:
+  en: Exclusive lessons
+  de: exklusive Unterrichtseinheiten
+collaborativeLessonsSubtitle:
+  en: Collaborative lessons
+  de: kollaborative Unterrichtseinheiten
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am

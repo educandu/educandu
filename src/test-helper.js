@@ -8,7 +8,7 @@ import uniqueId from './utils/unique-id.js';
 import UserStore from './stores/user-store.js';
 import UserService from './services/user-service.js';
 import DocumentService from './services/document-service.js';
-import { ROLE, ROOM_ACCESS_LEVEL, SAVE_USER_RESULT } from './domain/constants.js';
+import { ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, SAVE_USER_RESULT } from './domain/constants.js';
 import { createContainer, disposeContainer } from './bootstrap/server-bootstrapper.js';
 
 export async function createTestDir() {
@@ -148,6 +148,7 @@ export async function createTestRoom(container, roomValues) {
     _id: roomValues._id || uniqueId.create(),
     name: roomValues.name || 'my-room',
     access: roomValues.access || ROOM_ACCESS_LEVEL.public,
+    lessonsMode: roomValues.lessonsMode || ROOM_LESSONS_MODE.exclusive,
     owner: roomValues.owner || uniqueId.create(),
     createdBy: roomValues.createdBy || uniqueId.create(),
     createdOn: roomValues.createdOn || new Date(),
@@ -160,6 +161,7 @@ export async function createTestRoom(container, roomValues) {
 export async function createTestLesson(container, lessonValues) {
   const db = container.get(Database);
   const now = new Date();
+  const createdBy = lessonValues.createdBy || uniqueId.create();
 
   const lesson = {
     _id: lessonValues._id || uniqueId.create(),
@@ -167,9 +169,10 @@ export async function createTestLesson(container, lessonValues) {
     title: lessonValues.title || 'my-lesson',
     slug: lessonValues.slug || 'my-lesson-slug',
     schedule: lessonValues.schedule || null,
-    createdBy: lessonValues.createdBy || uniqueId.create(),
     createdOn: lessonValues.createdOn || now,
+    createdBy,
     updatedOn: lessonValues.updatedOn || now,
+    updatedBy: lessonValues.updatedBy || createdBy,
     language: lessonValues.language || 'en',
     sections: lessonValues.sections || [],
     cdnResources: lessonValues.cdnResources || []

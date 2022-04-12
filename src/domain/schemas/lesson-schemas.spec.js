@@ -9,6 +9,7 @@ describe('lessonDBSchema', () => {
     createdOn: new Date(),
     createdBy: uniqueId.create(),
     updatedOn: new Date(),
+    updatedBy: uniqueId.create(),
     title: 'the title',
     slug: '0123-123',
     language: 'en',
@@ -71,24 +72,31 @@ describe('lessonDBSchema', () => {
       }
     },
     {
-      description: 'a lesson with missing created by',
+      description: 'a lesson with missing createdBy',
       data: {
         ...lesson,
         createdBy: null
       }
     },
     {
-      description: 'a lesson with missing created on',
+      description: 'a lesson with missing createdOn',
       data: {
         ...lesson,
         createdOn: null
       }
     },
     {
-      description: 'a lesson with missing updated on',
+      description: 'a lesson with missing updatedOn',
       data: {
         ...lesson,
         updatedOn: null
+      }
+    },
+    {
+      description: 'a lesson with missing updatedBy',
+      data: {
+        ...lesson,
+        updatedBy: null
       }
     }
   ];

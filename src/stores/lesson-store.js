@@ -46,18 +46,20 @@ class LessonStore {
 
   getLatestLessonsMetadataCreatedByUser(createdBy, { session, limit } = {}) {
     return this.collection.find({ createdBy }, { projection: lessonMetadataProjection, session })
-      .sort({ updatedOn: -1 }).limit(limit || 0).toArray();
+      .sort({ createdOn: -1 }).limit(limit || 0).toArray();
+  }
+
+  getLatestLessonsMetadataUpdatedByUser(updatedBy, { session, limit } = {}) {
+    return this.collection.find(
+      { $and: [{ updatedBy }, { $expr: { $ne: ['$createdOn', '$updatedOn'] } }] },
+      { projection: lessonMetadataProjection, session }
+    ).sort({ updatedOn: -1 }).limit(limit || 0).toArray();
   }
 
   async saveLesson(lesson, { session } = {}) {
     validate(lesson, lessonDBSchema);
     const result = await this._saveLesson(lesson, { session });
     return result;
-  }
-
-  async saveLessons(lessons, { session } = {}) {
-    lessons.forEach(lesson => validate(lesson, lessonDBSchema));
-    await Promise.all(lessons.map(lesson => this._saveLesson(lesson, { session })));
   }
 
   async deleteLessonsByRoomId(roomId, { session } = {}) {

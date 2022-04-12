@@ -27,7 +27,7 @@ import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
@@ -55,7 +55,8 @@ export default function Room({ PageTemplate, initialState }) {
   });
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === user?._id);
+
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 
   useEffect(() => {
@@ -130,10 +131,10 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, lessonsMode, description }) => {
     try {
-      const updatedRoom = { ...room, name, slug, description };
-      await roomApiClient.updateRoom({ roomId: room._id, name, slug, description });
+      const updatedRoom = { ...room, name, slug, lessonsMode, description };
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug, lessonsMode, description });
 
       setRoom(updatedRoom);
       setIsRoomUpdateButtonDisabled(true);
@@ -165,7 +166,7 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="Room-lesson" key={lesson._id}>
         <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
-          {isRoomOwner && (
+          {(isRoomOwner || isRoomCollaborator) && (
             <Fragment>
               <Tooltip title={t('common:clone')}>
                 <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
@@ -237,7 +238,7 @@ export default function Room({ PageTemplate, initialState }) {
   const renderRoomLessonsCard = () => (
     <Card
       className="Room-card"
-      actions={isRoomOwner && [
+      actions={(isRoomOwner || isRoomCollaborator) && [
         <Button
           className="Room-cardButton"
           key="createLesson"
@@ -263,7 +264,7 @@ export default function Room({ PageTemplate, initialState }) {
           />
         <div className="Room-subtitle">
           {room.access === ROOM_ACCESS_LEVEL.private ? <PrivateIcon /> : <PublicIcon />}
-          <span>{t(`${room.access}RoomSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+          <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
         </div>
 
         {!isRoomOwner && renderRoomLessonsCard()}
@@ -274,18 +275,16 @@ export default function Room({ PageTemplate, initialState }) {
               {renderRoomLessonsCard()}
             </TabPane>
 
-            {isPrivateRoom && (
-              <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
-                {renderRoomMembers()}
-                {renderRoomInvitations()}
-                <RoomInvitationCreationModal
-                  isVisible={isRoomInvitationModalVisible}
-                  onOk={handleInvitationModalClose}
-                  onCancel={handleInvitationModalClose}
-                  roomId={room._id}
-                  />
-              </TabPane>
-            )}
+            <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
+              {renderRoomMembers()}
+              {renderRoomInvitations()}
+              <RoomInvitationCreationModal
+                isVisible={isRoomInvitationModalVisible}
+                onOk={handleInvitationModalClose}
+                onCancel={handleInvitationModalClose}
+                roomId={room._id}
+                />
+            </TabPane>
 
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
               <Card className="Room-card" title={t('updateRoomCardTitle')}>

@@ -18,6 +18,7 @@ describe('lesson-store', () => {
       createdOn: new Date(),
       createdBy: uniqueId.create(),
       updatedOn: new Date(),
+      updatedBy: uniqueId.create(),
       title: 'title 1',
       slug: '0123-123',
       language: 'en',
@@ -53,34 +54,4 @@ describe('lesson-store', () => {
       await expect(() => sut.saveLesson(invalidLesson)).rejects.toThrow();
     });
   });
-
-  describe('saveLessons', () => {
-    it('should save an array of valid lessons', async () => {
-      const anotherKey = uniqueId.create();
-      const validLesson2 = {
-        ...validLesson,
-        _id: anotherKey,
-        title: 'title 2'
-      };
-
-      await sut.saveLessons([validLesson, validLesson2]);
-
-      const savedItems = await sut.getLessonsById([testLessonKey, anotherKey]);
-      savedItems.sort((a, b) => a.title > b.title ? 1 : -1);
-
-      expect([validLesson, validLesson2]).toEqual(savedItems);
-
-    });
-
-    it('should throw on an array with an invalid lesson', async () => {
-      const invalidLesson = {
-        ...validLesson
-      };
-
-      delete invalidLesson.createdBy;
-
-      await expect(() => sut.saveLessons([invalidLesson, validLesson])).rejects.toThrow();
-    });
-  });
-
 });

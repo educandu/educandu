@@ -6,7 +6,7 @@ import httpMocks from 'node-mocks-http';
 import uniqueId from '../utils/unique-id.js';
 import RoomController from './room-controller.js';
 import { PAGE_NAME } from '../domain/page-name.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
 
 const { NotFound, Forbidden, BadRequest, Unauthorized } = httpErrors;
 
@@ -82,7 +82,10 @@ describe('room-controller', () => {
       beforeEach(done => {
         roomService.createRoom.resolves(createdRoom);
 
-        req = { user, body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public } };
+        req = {
+          user,
+          body: { name: 'name', slug: 'slug', access: ROOM_ACCESS_LEVEL.public, lessonsMode: ROOM_LESSONS_MODE.exclusive }
+        };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -113,12 +116,14 @@ describe('room-controller', () => {
           name: 'name',
           slug: 'slug',
           access: ROOM_ACCESS_LEVEL.public,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
           description: 'description'
         };
         requestBody = {
           name: 'new name',
           slug: 'new-slug',
-          description: 'new description'
+          description: 'new description',
+          lessonsMode: ROOM_LESSONS_MODE.collaborative
         };
         updatedRoom = {
           ...room,
@@ -170,7 +175,8 @@ describe('room-controller', () => {
           owner: uniqueId.create(),
           name: 'name',
           slug: 'slug',
-          access: ROOM_ACCESS_LEVEL.public
+          access: ROOM_ACCESS_LEVEL.public,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -287,7 +293,12 @@ describe('room-controller', () => {
 
     describe('when user is not provided (session expired)', () => {
       beforeEach(() => {
-        const room = { _id: uniqueId.create(), slug: '', access: ROOM_ACCESS_LEVEL.private };
+        const room = {
+          _id: uniqueId.create(),
+          slug: '',
+          access: ROOM_ACCESS_LEVEL.private,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive
+        };
         roomService.getRoomById.resolves(room);
 
         req = { params: { 0: '', roomId: room._id } };
@@ -305,7 +316,8 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        access: ROOM_ACCESS_LEVEL.private
+        access: ROOM_ACCESS_LEVEL.private,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
       const mappedRoom = { ...room };
 
@@ -446,12 +458,8 @@ describe('room-controller', () => {
         name: 'Mein schöner Raum',
         slug: 'room-slug',
         owner: 'owner',
-        access: ROOM_ACCESS_LEVEL.public
-      };
-
-      const request = {
-        params: { 0: `/${room.slug}`, roomId: room._id },
-        user: { _id: 'someGuy' }
+        access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive
       };
 
       const mappedRoom = { ...room };
@@ -465,51 +473,97 @@ describe('room-controller', () => {
 
         clientDataMappingService.mapRoom.resolves(mappedRoom);
         clientDataMappingService.mapLessonsMetadata.returns(mappedLessons);
-        clientDataMappingService.mapRoomInvitations.returns([]);
       });
 
-      beforeEach(async () => {
-        lessonService.getLessonsMetadata.resolves(lessons);
-        await sut.handleGetRoomPage(request, {});
+      describe('and the request is made by a user who is not the owner', () => {
+        const request = {
+          params: { 0: `/${room.slug}`, roomId: room._id },
+          user: { _id: 'someGuy' }
+        };
+
+        beforeEach(async () => {
+          roomService.getRoomInvitations.resolves([]);
+          clientDataMappingService.mapRoomInvitations.returns([]);
+
+          lessonService.getLessonsMetadata.resolves(lessons);
+          await sut.handleGetRoomPage(request, {});
+        });
+
+        it('should call getRoomById with roomId', () => {
+          sinon.assert.calledWith(roomService.getRoomById, room._id);
+        });
+
+        it('should not check if the room caller is the owner or a member', () => {
+          sinon.assert.notCalled(roomService.isRoomOwnerOrMember);
+        });
+
+        it('should call mapRoom with the room returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
+        });
+
+        it('should not call getRoomInvitations', () => {
+          sinon.assert.notCalled(roomService.getRoomInvitations);
+        });
+
+        it('should call mapRoomInvitations with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
+        });
+
+        it('should call getLessonsMetadata', () => {
+          sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
+        });
+
+        it('should call mapLessonsMetadata with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
+        });
+
+        it('should call pageRenderer with the right parameters', () => {
+          sinon.assert.calledWith(
+            pageRenderer.sendPage,
+            request,
+            {},
+            PAGE_NAME.room,
+            { room: mappedRoom, lessons: mappedLessons, invitations: [] }
+          );
+        });
       });
 
-      it('should call getRoomById with roomId', () => {
-        sinon.assert.calledWith(roomService.getRoomById, room._id);
+      describe('and the request is made by the room owner', () => {
+        const request = {
+          params: { 0: `/${room.slug}`, roomId: room._id },
+          user: { _id: 'owner' }
+        };
+
+        const invitations = [{ email: 'test@test.com', sentOn: new Date() }];
+        const mappedInvitations = [{ email: 'test@test.com', sentOn: new Date().toISOString() }];
+
+        beforeEach(async () => {
+          roomService.getRoomInvitations.resolves(invitations);
+          clientDataMappingService.mapRoomInvitations.returns(mappedInvitations);
+
+          lessonService.getLessonsMetadata.resolves(lessons);
+          await sut.handleGetRoomPage(request, {});
+        });
+
+        it('should call getRoomInvitations', () => {
+          sinon.assert.calledWith(roomService.getRoomInvitations, room._id);
+        });
+
+        it('should call mapRoomInvitations with the invitations returned by the service', () => {
+          sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, invitations);
+        });
+
+        it('should call pageRenderer with the right parameters', () => {
+          sinon.assert.calledWith(
+            pageRenderer.sendPage,
+            request,
+            {},
+            PAGE_NAME.room,
+            { room: mappedRoom, lessons: mappedLessons, invitations: mappedInvitations }
+          );
+        });
       });
 
-      it('should not check if the room caller is the owner or a member', () => {
-        sinon.assert.notCalled(roomService.isRoomOwnerOrMember);
-      });
-
-      it('should call mapRoom with the room returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoom, room);
-      });
-
-      it('should not call getRoomInvitations', () => {
-        sinon.assert.notCalled(roomService.getRoomInvitations);
-      });
-
-      it('should call mapRoomInvitations with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapRoomInvitations, []);
-      });
-
-      it('should call getLessonsMetadata', () => {
-        sinon.assert.calledWith(lessonService.getLessonsMetadata, room._id);
-      });
-
-      it('should call mapLessonsMetadata with the invitations returned by the service', () => {
-        sinon.assert.calledWith(clientDataMappingService.mapLessonsMetadata, lessons);
-      });
-
-      it('should call pageRenderer with the right parameters', () => {
-        sinon.assert.calledWith(
-          pageRenderer.sendPage,
-          request,
-          {},
-          PAGE_NAME.room,
-          { room: mappedRoom, lessons: mappedLessons, invitations: [] }
-        );
-      });
     });
 
     describe('when the room does not exist', () => {

@@ -40,6 +40,11 @@ export const ROOM_ACCESS_LEVEL = {
   private: 'private'
 };
 
+export const ROOM_LESSONS_MODE = {
+  exclusive: 'exclusive',
+  collaborative: 'collaborative'
+};
+
 export const SAVE_USER_RESULT = {
   success: 'success',
   duplicateEmail: 'duplicate-email',
