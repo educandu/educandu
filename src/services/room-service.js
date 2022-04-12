@@ -186,7 +186,8 @@ export default class RoomService {
     });
   }
 
-  async removeRoomMember({ room, member }) {
+  async removeRoomMember({ room, memberUserId }) {
+    const member = room.members.find(m => m.userId === memberUserId);
     const remainingMembers = ensureIsExcluded(room.members, member);
     const updatedRoom = await this.updateRoom({ ...room, members: remainingMembers });
 

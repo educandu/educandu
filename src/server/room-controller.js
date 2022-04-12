@@ -132,9 +132,9 @@ export default class RoomController {
     const { roomId, memberUserId } = req.params;
 
     const room = await this.roomService.getRoomById(roomId);
-    const member = room?.members.find(m => m.userId === memberUserId);
+    const memberUser = await this.userService.getUserById(memberUserId);
 
-    if (!room || !member) {
+    if (!room || !memberUser) {
       throw new NotFound();
     }
 
@@ -142,8 +142,9 @@ export default class RoomController {
       throw new Forbidden();
     }
 
-    const updatedRoom = await this.roomService.removeRoomMember({ room, member });
+    const updatedRoom = await this.roomService.removeRoomMember({ room, memberUserId });
     const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
+    await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.username, memberUser });
 
     return res.send({ room: mappedRoom });
   }
@@ -164,6 +165,7 @@ export default class RoomController {
 
     const remainingRoomInvitations = await this.roomService.deleteRoomInvitation({ room, invitation });
     const mappedInvitations = this.clientDataMappingService.mapRoomInvitations(remainingRoomInvitations);
+    await this.mailService.sendRoomInvitationDeletionNotificationEmail({ roomName: room.name, ownerName: user.username, email: invitation.email });
 
     return res.send({ invitations: mappedInvitations });
   }

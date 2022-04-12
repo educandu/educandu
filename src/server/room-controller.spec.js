@@ -51,7 +51,9 @@ describe('room-controller', () => {
     };
     mailService = {
       sendRoomInvitationEmail: sandbox.stub(),
-      sendRoomDeletionNotificationEmails: sandbox.stub()
+      sendRoomDeletionNotificationEmails: sandbox.stub(),
+      sendRoomMemberRemovalNotificationEmail: sandbox.stub(),
+      sendRoomInvitationDeletionNotificationEmail: sandbox.stub()
     };
     user = {
       _id: uniqueId.create(),
@@ -803,7 +805,7 @@ describe('room-controller', () => {
 
   describe('handleDeleteRoomMember', () => {
     let room;
-    const memberUserId = uniqueId.create();
+    const memberUser = { _id: uniqueId.create() };
 
     describe('when the roomId is not valid', () => {
       beforeEach(() => {
@@ -811,12 +813,13 @@ describe('room-controller', () => {
           name: 'my room',
           _id: uniqueId.create(),
           owner: user._id,
-          members: [{ userId: memberUserId }]
+          members: [{ userId: memberUser._id }]
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(null);
+        userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
 
-        req = { user, params: { roomId: room._id, memberUserId } };
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
         res = {};
       });
 
@@ -825,7 +828,7 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the room does not contain the member', () => {
+    describe('when the member user does not exist', () => {
       beforeEach(() => {
         room = {
           name: 'my room',
@@ -835,8 +838,9 @@ describe('room-controller', () => {
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
+        userService.getUserById.withArgs(memberUser._id).resolves(null);
 
-        req = { user, params: { roomId: room._id, memberUserId } };
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
         res = {};
       });
 
@@ -851,12 +855,13 @@ describe('room-controller', () => {
           name: 'my room',
           _id: uniqueId.create(),
           owner: uniqueId.create(),
-          members: [{ userId: memberUserId }]
+          members: [{ userId: memberUser._id }]
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
+        userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
 
-        req = { user, params: { roomId: room._id, memberUserId } };
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
         res = {};
       });
 
@@ -873,16 +878,18 @@ describe('room-controller', () => {
           name: 'my room',
           _id: uniqueId.create(),
           owner: user._id,
-          members: [{ userId: memberUserId }, { userId: uniqueId.create() }]
+          members: [{ userId: memberUser._id }, { userId: uniqueId.create() }]
         };
         const updatedRoom = { ...room, members: [room.members[1]] };
         mappedRoom = { ...updatedRoom };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
-        roomService.removeRoomMember.withArgs({ room, member: room.members[0] }).resolves(updatedRoom);
+        userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
+        roomService.removeRoomMember.withArgs({ room, memberUserId: memberUser._id }).resolves(updatedRoom);
         clientDataMappingService.mapRoom.withArgs(updatedRoom).resolves(mappedRoom);
+        mailService.sendRoomMemberRemovalNotificationEmail.resolves();
 
-        req = { user, params: { roomId: room._id, memberUserId } };
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -895,6 +902,14 @@ describe('room-controller', () => {
 
       it('should return the updated room', () => {
         expect(res._getData()).toEqual({ room: mappedRoom });
+      });
+
+      it('should have called mailService.sendRoomMemberRemovalNotificationEmail', () => {
+        sinon.assert.calledWith(mailService.sendRoomMemberRemovalNotificationEmail, {
+          roomName: 'my room',
+          ownerName: 'dagobert-the-third',
+          memberUser
+        });
       });
     });
   });
@@ -924,7 +939,8 @@ describe('room-controller', () => {
         };
         const invitation = {
           _id: invitationId,
-          roomId: room._id
+          roomId: room._id,
+          email: 'max.mustermann@gtest.com'
         };
 
         roomService.getRoomById.withArgs(room._id).resolves(room);
@@ -950,7 +966,8 @@ describe('room-controller', () => {
         };
         const invitation = {
           _id: invitationId,
-          roomId: room._id
+          roomId: room._id,
+          email: 'max.mustermann@gtest.com'
         };
 
         const remainingInvitations = [{ _id: uniqueId.create(), roomId: room._id }];
@@ -960,6 +977,7 @@ describe('room-controller', () => {
         roomService.getRoomInvitationById.withArgs(invitationId).resolves(invitation);
         roomService.deleteRoomInvitation.withArgs({ room, invitation }).resolves(remainingInvitations);
         clientDataMappingService.mapRoomInvitations.withArgs(remainingInvitations).returns(mappedInvitations);
+        mailService.sendRoomInvitationDeletionNotificationEmail.resolves();
 
         req = { user, params: { invitationId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
@@ -974,6 +992,14 @@ describe('room-controller', () => {
 
       it('should return the remaining room invitations', () => {
         expect(res._getData()).toEqual({ invitations: mappedInvitations });
+      });
+
+      it('should have called mailService.sendRoomInvitationDeletionNotificationEmail', () => {
+        sinon.assert.calledWith(mailService.sendRoomInvitationDeletionNotificationEmail, {
+          roomName: 'my room',
+          ownerName: 'dagobert-the-third',
+          email: 'max.mustermann@gtest.com'
+        });
       });
     });
   });
