@@ -206,10 +206,9 @@ export default function Room({ PageTemplate, initialState }) {
           renderItem={member => (
             <List.Item className="RoomPage-membersRow">
               <Space>
-                  <Tooltip title={t('removeMember')}>
-                    <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
-                  </Tooltip>
-                )}
+                <Tooltip title={t('removeMember')}>
+                  <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteRoomMemberClick(member)} />
+                </Tooltip>
                 <span className="RoomPage-membersRowDate">{formatDate(member.joinedOn)}</span>
                 <span>{member.username}</span>
               </Space>

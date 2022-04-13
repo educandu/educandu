@@ -160,8 +160,8 @@
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
       "deleteAllPrivateRoomsConfirmation": "Möchten Sie wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
-      "deleteRoomMemberConfirmation": "Möchten Sie den Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
-      "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich zurücknehmen?",
+      "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
+      "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
       "deleteLessonConfirmation": "Möchten Sie die Unterrichtseinheit \"{lessonName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
@@ -906,7 +906,7 @@
       "deleteRoomTitle": "Diesen Raum löschen",
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
-      "revokeInvitation": "Einladung zurückziehen"
+      "revokeInvitation": "Einladung widerrufen"
     }
   },
   {
@@ -2036,8 +2036,8 @@
       "roomDeletionNotificationEmail.text": "Hello!\n\nUser {ownerName} has deleted the room {roomName}.\n",
       "roomDeletionNotificationEmail.html": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>.",
       "roomMemberRemovalNotificationEmail.subject": "Your membership to a room has ended",
-      "roomMemberRemovalNotificationEmail.text": "Hello {username}!\n\nUser {ownerName} has ended your membership to room {roomName}.\n",
-      "roomMemberRemovalNotificationEmail.html": "<p>Hello {username}!<br/><br/>User <b>{ownerName}</b> has ended your membership to room <b>{roomName}</b>.",
+      "roomMemberRemovalNotificationEmail.text": "Hello {username}!\n\nUser {ownerName} has ended your membership in room {roomName}.\n",
+      "roomMemberRemovalNotificationEmail.html": "<p>Hello {username}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.",
       "roomInvitationDeletionNotificationEmail.subject": "Your membership invitation to a room has been revoked",
       "roomInvitationDeletionNotificationEmail.text": "Hello!\n\nUser {ownerName} has revoked your membership invitation to room {roomName}.\n",
       "roomInvitationDeletionNotificationEmail.html": "<p>Hello<br/><br/>User <b>{ownerName}</b> has revoked your membership invitation to room <b>{roomName}</b>."
@@ -2060,8 +2060,8 @@
       "roomDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat den Raum {roomName} gelöscht.\n",
       "roomDeletionNotificationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.",
       "roomMemberRemovalNotificationEmail.subject": "Ihre Mitgliedschaft in einem Raum wurde beendet",
-      "roomMemberRemovalNotificationEmail.text": "Hallo {username}!\n\nDer Benutzer {ownerName} hat Ihre Mitgliedschaft in dem Raum {roomName} beendet.\n",
-      "roomMemberRemovalNotificationEmail.html": "<p>Hallo {username}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft in dem Raum <b>{roomName}</b> beendet.",
+      "roomMemberRemovalNotificationEmail.text": "Hallo {username}!\n\nDer Benutzer {ownerName} hat Ihre Mitgliedschaft im Raum {roomName} beendet.\n",
+      "roomMemberRemovalNotificationEmail.html": "<p>Hallo {username}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.",
       "roomInvitationDeletionNotificationEmail.subject": "Ihre Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen",
       "roomInvitationDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat Ihre Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.\n",
       "roomInvitationDeletionNotificationEmail.html": "<p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen."
