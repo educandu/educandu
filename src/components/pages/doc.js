@@ -3,7 +3,6 @@ import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
-import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -324,7 +323,7 @@ function Doc({ initialState, PageTemplate }) {
   const handlePermalinkRequest = async () => {
     const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(selectedHistoryRevision._id));
     try {
-      await clipboardCopy(permalinkUrl);
+      await window.navigator.clipboard.writeText(permalinkUrl);
       message.success(t('permalinkCopied'));
     } catch (error) {
       const msg = (
