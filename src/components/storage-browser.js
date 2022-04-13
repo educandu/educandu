@@ -26,7 +26,6 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-helper.js';
-import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
@@ -47,6 +46,9 @@ class StorageBrowser extends React.Component {
     if (props.privateStorage) {
       locations.push({
         ...this.createPathSegments(props.privateStorage),
+        isDeletionEnabled: props.privateStorage.isDeletionEnabled,
+        usedBytes: props.privateStorage.usedBytes,
+        maxBytes: props.privateStorage.maxBytes,
         isPrivate: true,
         key: 'private'
       });
@@ -54,6 +56,7 @@ class StorageBrowser extends React.Component {
 
     locations.push({
       ...this.createPathSegments(props.publicStorage),
+      isDeletionEnabled: props.publicStorage.isDeletionEnabled,
       isPrivate: false,
       key: 'public'
     });
@@ -110,7 +113,7 @@ class StorageBrowser extends React.Component {
       }
     ];
 
-    if (hasUserPermission(this.props.user, permissions.DELETE_STORAGE_FILE)) {
+    if (this.state.currentLocation.isDeletionEnabled) {
       this.columns.push({
         dataIndex: 'isDirectory',
         key: 'displayName',
@@ -136,8 +139,8 @@ class StorageBrowser extends React.Component {
 
       try {
         const prefix = getPrefix(currentPathSegments);
+        // eslint-disable-next-line no-unused-vars
         const { usedBytes } = await storageApiClient.uploadFiles(currentUploadFiles, prefix, { onProgress });
-        this.updateUsedBytes(usedBytes);
       } catch (error) {
         handleApiError({ error, logger, t });
       } finally {
@@ -306,10 +309,6 @@ class StorageBrowser extends React.Component {
     });
   }
 
-  updateUsedBytes(usedBytes) {
-    this.props.setUser({ ...this.props.user, ...{ storage: { ...this.props.user.storage, usedBytes } } });
-  }
-
   async collectFilesToUpload(files, { onProgress } = {}) {
     const { t } = this.props;
 
@@ -325,7 +324,7 @@ class StorageBrowser extends React.Component {
     }
 
     if (this.state.currentLocation.isPrivate) {
-      const availableBytes = Math.max(0, this.props.storagePlan?.maxBytes || 0 - this.props.user.storage.usedBytes);
+      const availableBytes = Math.max(0, this.state.currentLocation.maxBytes || 0 - this.state.currentLocation.usedBytes);
 
       if (requiredBytes > availableBytes) {
         message.error(t('insufficientPrivateStorge'));
@@ -345,8 +344,8 @@ class StorageBrowser extends React.Component {
     const objectName = `${prefix}${fileName}`;
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const { usedBytes } = await storageApiClient.deleteCdnObject(prefix, fileName);
-      this.updateUsedBytes(usedBytes);
 
       if (selectedRowKeys.includes(objectName)) {
         onSelectionChanged([], true);
@@ -638,7 +637,7 @@ class StorageBrowser extends React.Component {
         </div>
         <div className="StorageBrowser-storageDetails">
           {currentLocation.isPrivate && (
-            <UsedStorage usedBytes={this.props.user.storage.usedBytes} maxBytes={this.props.storagePlan?.maxBytes || 0} showLabel />
+            <UsedStorage usedBytes={this.state.currentLocation.usedBytes} maxBytes={this.state.currentLocation.maxBytes} showLabel />
           )}
           {locations.some(loc => loc.isPrivate) && !currentLocation.isPrivate && (
             <Alert message={t('publicStorageWarning')} type="warning" showIcon />

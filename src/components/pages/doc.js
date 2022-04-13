@@ -405,7 +405,8 @@ function Doc({ initialState, PageTemplate }) {
   const publicStorage = {
     rootPath: 'media',
     initialPath: `media/${doc.key}`,
-    uploadPath: `media/${doc.key}`
+    uploadPath: `media/${doc.key}`,
+    isDeletionEnabled: hasUserPermission(user, permissions.DELETE_STORAGE_FILE)
   };
 
   return (

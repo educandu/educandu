@@ -10,7 +10,8 @@ function Revision({ initialState, PageTemplate }) {
   const publicStorage = {
     rootPath: 'media',
     initialPath: `media/${revision.key}`,
-    uploadPath: `media/${revision.key}`
+    uploadPath: `media/${revision.key}`,
+    isDeletionEnabled: false
   };
 
   return (

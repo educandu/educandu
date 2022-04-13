@@ -19,6 +19,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
+import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
@@ -48,7 +49,7 @@ function Lesson({ PageTemplate, initialState }) {
   const { room } = initialState;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
   const isRoomOwner = user?._id === room.owner.key;
-  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === user?._id);
+  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
 
   const [isDirty, setIsDirty] = useState(false);
   const [lesson, setLesson] = useState(initialState.lesson);
@@ -263,14 +264,18 @@ function Lesson({ PageTemplate, initialState }) {
   const publicStorage = {
     rootPath: 'media',
     initialPath: `media/${lesson._id}`,
-    uploadPath: `media/${lesson._id}`
+    uploadPath: `media/${lesson._id}`,
+    isDeletionEnabled: hasUserPermission(user, permissions.DELETE_STORAGE_FILE)
   };
 
-  const privateStorage = isPrivateRoom && !!user.storage.plan
+  const privateStorage = isPrivateRoom && !!room.owner.storage?.plan
     ? {
+      usedBytes: room.owner.storage.usedBytes,
+      maxBytes: room.owner.storagePlan.maxBytes,
       rootPath: `rooms/${room._id}/media`,
       initialPath: `rooms/${room._id}/media`,
-      uploadPath: `rooms/${room._id}/media`
+      uploadPath: `rooms/${room._id}/media`,
+      isDeletionEnabled: isRoomOwner || isRoomCollaborator
     }
     : null;
 

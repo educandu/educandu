@@ -13,7 +13,8 @@ import {
 export const filePickerStorageShape = PropTypes.shape({
   rootPath: PropTypes.string.isRequired,
   initialPath: PropTypes.string,
-  uploadPath: PropTypes.string
+  uploadPath: PropTypes.string,
+  isDeletionEnabled: PropTypes.bool
 });
 
 export const sectionDisplayProps = {
