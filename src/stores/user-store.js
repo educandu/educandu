@@ -27,7 +27,7 @@ class UserStore {
     }
 
     return this.collection
-      .find({ $and: [{ provider }, queryFilters.length === 1 ? queryFilters[0] : { $or: queryFilters }] }, { session })
+      .find({ $and: [{ provider }, { $or: queryFilters }] }, { session })
       .toArray();
   }
 
