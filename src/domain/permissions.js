@@ -50,10 +50,26 @@ const rolesForPermission = {
   [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user]
 };
 
+function getPermissionsForRole(userRole) {
+  const userRolePermissions = Object.entries(rolesForPermission).reduce((accu, [permission, roles]) => {
+    if (roles.includes(userRole)) {
+      accu.push(permission);
+    }
+    return accu;
+  }, []);
+  return [...new Set(userRolePermissions)];
+}
+
 export function hasUserPermission(user, permission) {
   return user?.permissions
     ? user.permissions.includes(permission)
     : (rolesForPermission[permission] || []).some(role => user?.roles?.includes(role));
+}
+
+export function getAllUserPermissions(user) {
+  const directPermissions = user?.permissions || [];
+  const permissionsBasedOnRoles = (user?.roles || []).reduce((accu, userRole) => [...accu, ...getPermissionsForRole(userRole)], []);
+  return Array.from(new Set([...directPermissions, ...permissionsBasedOnRoles]));
 }
 
 export default {

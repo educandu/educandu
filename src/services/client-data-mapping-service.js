@@ -1,15 +1,17 @@
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
-import privateData from '../domain/private-data.js';
+import StoragePlanStore from '../stores/storage-plan-store.js';
 import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
+import permissions, { getAllUserPermissions } from '../domain/permissions.js';
 import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
-  static get inject() { return [UserStore]; }
+  static get inject() { return [UserStore, StoragePlanStore]; }
 
-  constructor(userStore) {
+  constructor(userStore, storagePlanStore) {
     this.userStore = userStore;
+    this.storagePlanStore = storagePlanStore;
   }
 
   mapWebsiteUser(user) {
@@ -69,32 +71,34 @@ class ClientDataMappingService {
   }
 
   async mapDocOrRevision(docOrRevision, user) {
+    const grantedPermissions = getAllUserPermissions(user);
     const userMap = await this._getUserMapForDocsOrRevisions([docOrRevision]);
-    const allowedUserFields = privateData.getAllowedUserFields(user);
-    return this._mapDocOrRevision(docOrRevision, userMap, allowedUserFields);
+
+    return this._mapDocOrRevision(docOrRevision, userMap, grantedPermissions);
   }
 
   async mapDocsOrRevisions(docsOrRevisions, user) {
+    const grantedPermissions = getAllUserPermissions(user);
     const userMap = await this._getUserMapForDocsOrRevisions(docsOrRevisions.filter(x => !!x));
-    const allowedUserFields = privateData.getAllowedUserFields(user);
+
     return docsOrRevisions.map(docOrRevision => {
       return docOrRevision
-        ? this._mapDocOrRevision(docOrRevision, userMap, allowedUserFields)
+        ? this._mapDocOrRevision(docOrRevision, userMap, grantedPermissions)
         : docOrRevision;
     });
   }
 
   async mapBatches(batches, user) {
+    const grantedPermissions = getAllUserPermissions(user);
     const userIdSet = new Set(batches.map(batch => batch.createdBy));
     const users = await this.userStore.getUsersByIds(Array.from(userIdSet));
-    const allowedUserFields = privateData.getAllowedUserFields(user);
 
     if (users.length !== userIdSet.size) {
       throw new Error(`Was searching for ${userIdSet.size} users, but found ${users.length}`);
     }
 
     const userMap = new Map(users.map(u => [u._id, u]));
-    return batches.map(batch => this._mapBatch(batch, userMap.get(batch.createdBy), allowedUserFields));
+    return batches.map(batch => this._mapBatch(batch, userMap.get(batch.createdBy), grantedPermissions));
   }
 
   async mapBatch(batch, user) {
@@ -103,11 +107,12 @@ class ClientDataMappingService {
   }
 
   async mapRoom(room, user) {
-    const allowedUserFields = privateData.getAllowedUserFields(user);
     const mappedRoom = cloneDeep(room);
+    const grantedPermissions = getAllUserPermissions(user);
 
     const owner = await this.userStore.getUserById(room.owner);
-    mappedRoom.owner = this._mapUser(owner, allowedUserFields);
+    const storagePlan = owner.storage.plan ? await this.storagePlanStore.getStoragePlanById(owner.storage.plan) : null;
+    mappedRoom.owner = this._mapUser({ user: owner, storagePlan, grantedPermissions });
 
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 
@@ -148,19 +153,24 @@ class ClientDataMappingService {
     }));
   }
 
-  _mapUser(user, allowedUserFields) {
+  _mapUser({ user, storagePlan, grantedPermissions }) {
     if (!user) {
       return null;
     }
 
-    const mappedUser = {};
-    for (const field of allowedUserFields) {
-      if (field in user) {
-        mappedUser[field] = user[field];
-        if (field === '_id') {
-          mappedUser.key = user._id;
-        }
-      }
+    const mappedUser = {
+      _id: user._id,
+      key: user._id,
+      username: user.username
+    };
+
+    if (grantedPermissions.includes(permissions.SEE_USER_EMAIL)) {
+      mappedUser.email = user.email;
+    }
+
+    if (storagePlan) {
+      mappedUser.storage = { plan: user.storage.plan, usedBytes: user.storage.usedBytes };
+      mappedUser.storagePlan = { maxBytes: storagePlan.maxBytes };
     }
 
     return mappedUser;
@@ -218,10 +228,10 @@ class ClientDataMappingService {
     }
   }
 
-  _mapBatch(rawBatch, rawUser, allowedUserFields) {
+  _mapBatch(rawBatch, rawUser, grantedPermissions) {
     const createdOn = rawBatch.createdOn && rawBatch.createdOn.toISOString();
     const completedOn = rawBatch.completedOn && rawBatch.completedOn.toISOString();
-    const createdBy = this._mapUser(rawUser, allowedUserFields);
+    const createdBy = this._mapUser({ user: rawUser, grantedPermissions });
     const batchParams = this._mapBatchParams(rawBatch.batchParams, rawBatch.batchType);
     const tasks = rawBatch.tasks && rawBatch.tasks.map(task => this._mapTask(task));
 
@@ -286,15 +296,15 @@ class ClientDataMappingService {
     };
   }
 
-  _mapDocumentSection(section, userMap, allowedUserFields) {
+  _mapDocumentSection(section, userMap, grantedPermissions) {
     return {
       ...section,
       deletedOn: section.deletedOn ? section.deletedOn.toISOString() : section.deletedOn,
-      deletedBy: section.deletedBy ? this._mapUser(userMap.get(section.deletedBy), allowedUserFields) : section.deletedBy
+      deletedBy: section.deletedBy ? this._mapUser({ user: userMap.get(section.deletedBy), grantedPermissions }) : section.deletedBy
     };
   }
 
-  _mapDocOrRevision(docOrRevision, userMap, allowedUserFields) {
+  _mapDocOrRevision(docOrRevision, userMap, grantedPermissions) {
     if (!docOrRevision) {
       return docOrRevision;
     }
@@ -309,13 +319,13 @@ class ClientDataMappingService {
           break;
         case 'createdBy':
         case 'updatedBy':
-          result[key] = value ? this._mapUser(userMap.get(value), allowedUserFields) : value;
+          result[key] = value ? this._mapUser({ user: userMap.get(value), grantedPermissions }) : value;
           break;
         case 'contributors':
-          result[key] = value.map(c => this._mapUser(userMap.get(c), allowedUserFields));
+          result[key] = value.map(c => this._mapUser({ user: userMap.get(c), grantedPermissions }));
           break;
         case 'sections':
-          result[key] = value.map(s => this._mapDocumentSection(s, userMap, allowedUserFields));
+          result[key] = value.map(s => this._mapDocumentSection(s, userMap, grantedPermissions));
           break;
         case 'cdnResources':
           break;
