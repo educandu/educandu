@@ -127,7 +127,7 @@ function _clipboardDecode(clipboardText, encryptionKey) {
   }
 }
 
-function _isValidClipboardObject(clipboardObject) {
+function _isValidClipboardSection(clipboardObject) {
   return clipboardObject
     && typeof clipboardObject === 'object'
     && typeof clipboardObject.type === 'string'
@@ -141,7 +141,7 @@ export function createClipboardTextForSection(section, origin) {
 
 export function createNewSectionFromClipboardText(clipboardText, origin) {
   const clipboardObject = _clipboardDecode(clipboardText, origin);
-  if (_isValidClipboardObject(clipboardObject)) {
+  if (_isValidClipboardSection(clipboardObject)) {
     return {
       key: uniqueId.create(),
       type: clipboardObject.type,
