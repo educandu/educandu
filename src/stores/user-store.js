@@ -11,30 +11,24 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
-  async findUserByLogin({ provider, emailOrUsername }, { session } = {}) {
-    const lowerCasedEmailOrUsername = emailOrUsername?.toLowerCase() || '';
-    const matches = await this.collection.find({
-      $and: [
-        { provider },
-        { $or: [{ username: emailOrUsername }, { email: lowerCasedEmailOrUsername }] }
-      ]
-    }, {
-      session
-    }).toArray();
+  findUsersByEmailOrUsername({ provider, email, username }, { session } = {}) {
+    const queryFilters = [];
 
-    let bestMatch;
-    switch (matches.length) {
-      case 0:
-        bestMatch = null;
-        break;
-      case 1:
-        bestMatch = matches[0];
-        break;
-      default:
-        bestMatch = matches.find(match => match.email === lowerCasedEmailOrUsername);
+    if (email) {
+      queryFilters.push({ email });
     }
 
-    return bestMatch;
+    if (username) {
+      queryFilters.push({ username });
+    }
+
+    if (!queryFilters.length) {
+      return [];
+    }
+
+    return this.collection
+      .find({ $and: [{ provider }, queryFilters.length === 1 ? queryFilters[0] : { $or: queryFilters }] }, { session })
+      .toArray();
   }
 
   findUserByVerificationCode({ provider, verificationCode }, { session } = {}) {
@@ -71,7 +65,7 @@ class UserStore {
   }
 
   getUserByEmailAddress(email, { session } = {}) {
-    return this.collection.findOne({ email: email.toLowerCase() }, { session });
+    return this.collection.findOne({ email }, { session });
   }
 
   saveUser(user, { session } = {}) {
