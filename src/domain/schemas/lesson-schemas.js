@@ -17,6 +17,7 @@ export const lessonDBSchema = joi.object({
   createdOn: joi.date().required(),
   createdBy: idOrKeySchema.required(),
   updatedOn: joi.date().required(),
+  updatedBy: idOrKeySchema.required(),
   title: joi.string().required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),

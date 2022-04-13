@@ -23,7 +23,8 @@ class DashboardService {
     const updatedRooms = await this.roomStore.getLatestRoomsUpdatedByUser(userId, { limit });
     const createdDocuments = await this.documentStore.getLatestDocumentsMetadataCreatedByUser(userId, { limit });
     const updatedDocuments = await this.documentStore.getLatestDocumentsMetadataUpdatedByUser(userId, { limit });
-    const lessons = await this.lessonStore.getLatestLessonsMetadataCreatedByUser(userId, { limit });
+    const createdLessons = await this.lessonStore.getLatestLessonsMetadataCreatedByUser(userId, { limit });
+    const updatedLessons = await this.lessonStore.getLatestLessonsMetadataUpdatedByUser(userId, { limit });
 
     const createdDocumentActivities = createdDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentCreated,
@@ -55,22 +56,17 @@ class DashboardService {
       data: { _id: room._id, name: room.name }
     }));
 
-    const lessonActivities = [];
-    lessons.forEach(lesson => {
-      lessonActivities.push({
-        type: USER_ACTIVITY_TYPE.lessonCreated,
-        timestamp: lesson.createdOn,
-        data: { _id: lesson._id, title: lesson.title }
-      });
+    const createdLessonActivities = createdLessons.map(lesson => ({
+      type: USER_ACTIVITY_TYPE.lessonCreated,
+      timestamp: lesson.createdOn,
+      data: { _id: lesson._id, title: lesson.title }
+    }));
 
-      if (lesson.createdOn.toISOString() !== lesson.updatedOn.toISOString()) {
-        lessonActivities.push({
-          type: USER_ACTIVITY_TYPE.lessonUpdated,
-          timestamp: lesson.updatedOn,
-          data: { _id: lesson._id, title: lesson.title }
-        });
-      }
-    });
+    const updatedLessonActivities = updatedLessons.map(lesson => ({
+      type: USER_ACTIVITY_TYPE.lessonUpdated,
+      timestamp: lesson.updatedOn,
+      data: { _id: lesson._id, title: lesson.title }
+    }));
 
     const latestFavorites = user.favorites.sort(by(f => f.setOn, 'desc')).slice(0, limit);
     const favoriteActivitiesMetadata = latestFavorites.map(favorite => {
@@ -113,7 +109,8 @@ class DashboardService {
       ...createdRoomActivities,
       ...updatedRoomActivities,
       ...joinedRoomActivities,
-      ...lessonActivities,
+      ...createdLessonActivities,
+      ...updatedLessonActivities,
       ...favoriteActivitiesMetadata
     ]
       .sort(by(item => item.timestamp, 'desc'));

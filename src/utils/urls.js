@@ -121,8 +121,9 @@ function getLogoutUrl() {
   return logoutPath;
 }
 
-function getDashboardUrl() {
-  return dashboardPath;
+function getDashboardUrl({ tab } = {}) {
+  const queryString = composeQueryString([['tab', tab]]);
+  return queryString ? `${dashboardPath}?${queryString}` : dashboardPath;
 }
 
 function getRegisterUrl() {

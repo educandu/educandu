@@ -9,7 +9,6 @@ import LessonStore from '../stores/lesson-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import {
-  ROOM_ACCESS_LEVEL,
   INVALID_ROOM_INVITATION_REASON,
   PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
 } from '../domain/constants.js';
@@ -49,12 +48,13 @@ export default class RoomService {
     return !!room;
   }
 
-  async createRoom({ name, slug, access, user }) {
+  async createRoom({ name, slug, access, lessonsMode, user }) {
     const newRoom = {
       _id: uniqueId.create(),
       name,
       slug: slug?.trim() || '',
       access,
+      lessonsMode,
       description: '',
       owner: user._id,
       createdBy: user._id,
@@ -89,10 +89,6 @@ export default class RoomService {
     const room = await this.roomStore.getRoomByIdAndOwnerId({ roomId, ownerId: user._id });
     if (!room) {
       throw new NotFound(`A room with ID '${roomId}' owned by '${user._id}' could not be found`);
-    }
-
-    if (room.access === ROOM_ACCESS_LEVEL.public) {
-      throw new BadRequest(`Room with ID '${roomId}' is public, therefore invitations cannot be sent`);
     }
 
     const owner = await this.userStore.getUserById(room.owner);

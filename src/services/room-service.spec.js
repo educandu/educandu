@@ -5,7 +5,7 @@ import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
-import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { INVALID_ROOM_INVITATION_REASON, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -60,6 +60,7 @@ describe('room-service', () => {
         name: 'my room',
         slug: '  my-room  ',
         access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive,
         user: myUser
       });
     });
@@ -71,6 +72,7 @@ describe('room-service', () => {
         slug: 'my-room',
         owner: myUser._id,
         access: ROOM_ACCESS_LEVEL.public,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive,
         description: '',
         createdOn: now,
         createdBy: myUser._id,
@@ -91,13 +93,28 @@ describe('room-service', () => {
 
     beforeEach(async () => {
       [myPublicRoom, myPrivateRoom] = await Promise.all([
-        await sut.createRoom({ name: 'my public room', access: ROOM_ACCESS_LEVEL.public, user: myUser }),
-        await sut.createRoom({ name: 'my private room', access: ROOM_ACCESS_LEVEL.private, user: myUser })
+        await sut.createRoom({
+          name: 'my public room',
+          access: ROOM_ACCESS_LEVEL.public,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          user: myUser
+        }),
+        await sut.createRoom({
+          name: 'my private room',
+          access: ROOM_ACCESS_LEVEL.private,
+          lessonsMode: ROOM_LESSONS_MODE.exclusive,
+          user: myUser
+        })
       ]);
     });
 
-    it('should create a new invitation if it does not exist', async () => {
+    it('should create a new invitation for a private room if it does not exist', async () => {
       const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPrivateRoom._id, email: 'invited-user@test.com', user: myUser });
+      expect(invitation.token).toBeDefined();
+    });
+
+    it('should create a new invitation for a public room if it does not exist', async () => {
+      const { invitation } = await sut.createOrUpdateInvitation({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
       expect(invitation.token).toBeDefined();
     });
 
@@ -113,12 +130,6 @@ describe('room-service', () => {
       expect(updatedInvitation.token).not.toBe(originalInvitation.token);
       expect(updatedInvitation.sentOn).not.toBe(originalInvitation.sentOn);
       expect(updatedInvitation.expires.getTime()).toBeGreaterThan(originalInvitation.expires.getTime());
-    });
-
-    it('should throw a BadRequest error when the room is public', async () => {
-      await expect(async () => {
-        await sut.createOrUpdateInvitation({ roomId: myPublicRoom._id, email: 'invited-user@test.com', user: myUser });
-      }).rejects.toThrow(BadRequest);
     });
 
     it('should throw a NotFound error when the room does not exist', async () => {
@@ -139,7 +150,13 @@ describe('room-service', () => {
     let invitation = null;
 
     beforeEach(async () => {
-      testRoom = await sut.createRoom({ name: 'room-name', slug: 'room-slug', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      testRoom = await sut.createRoom({
+        name: 'room-name',
+        slug: 'room-slug',
+        access: ROOM_ACCESS_LEVEL.private,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        user: myUser
+      });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
@@ -173,7 +190,12 @@ describe('room-service', () => {
     let invitation = null;
 
     beforeEach(async () => {
-      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      testRoom = await sut.createRoom({
+        name: 'test-room',
+        access: ROOM_ACCESS_LEVEL.private,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        user: myUser
+      });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
@@ -258,7 +280,12 @@ describe('room-service', () => {
     let invitation = null;
 
     beforeEach(async () => {
-      testRoom = await sut.createRoom({ name: 'test-room', access: ROOM_ACCESS_LEVEL.private, user: myUser });
+      testRoom = await sut.createRoom({
+        name: 'test-room',
+        access: ROOM_ACCESS_LEVEL.private,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive,
+        user: myUser
+      });
       ({ invitation } = await sut.createOrUpdateInvitation({ roomId: testRoom._id, email: otherUser.email, user: myUser }));
     });
 
@@ -279,6 +306,7 @@ describe('room-service', () => {
         _id: roomId,
         name: 'my room',
         access: ROOM_ACCESS_LEVEL.private,
+        lessonsMode: ROOM_LESSONS_MODE.exclusive,
         owner: myUser._id,
         members: [
           {

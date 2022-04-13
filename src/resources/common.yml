@@ -168,6 +168,15 @@ accessType_public:
 accessType_private:
   en: private
   de: privat
+lessonsMode:
+  en: Lessons handling mode
+  de: Unterrichtseinheiten-Bearbeitungsmodus
+lessonsMode_exclusive:
+  en: exclusive
+  de: exklusiv
+lessonsMode_collaborative:
+  en: collaborative
+  de: kollaborativ
 title:
   en: Title
   de: Titel
@@ -291,3 +300,6 @@ copyTitleSuffix:
 copySlugSuffix:
   en: copy
   de: kopie
+roomsBreadcrumbPart:
+  en: rooms
+  de: Räume

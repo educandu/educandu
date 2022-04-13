@@ -25,7 +25,7 @@ class LessonService {
     return lessons.sort(by(l => l.schedule?.startsOn || 0));
   }
 
-  async createLesson({ user, roomId, title, slug, language, schedule }) {
+  async createLesson({ userId, roomId, title, slug, language, schedule }) {
     const mappedSchedule = schedule
       ? {
         startsOn: new Date(schedule.startsOn)
@@ -36,8 +36,9 @@ class LessonService {
       _id: uniqueId.create(),
       roomId,
       createdOn: new Date(),
-      createdBy: user._id,
+      createdBy: userId,
       updatedOn: new Date(),
+      updatedBy: userId,
       title,
       slug,
       language,
@@ -51,7 +52,7 @@ class LessonService {
     return lesson;
   }
 
-  async updateLessonMetadata(lessonId, { title, slug, language, schedule }) {
+  async updateLessonMetadata(lessonId, { userId, title, slug, language, schedule }) {
     const lesson = await this.getLessonById(lessonId);
 
     const mappedSchedule = schedule
@@ -64,21 +65,23 @@ class LessonService {
       slug: slug || '',
       language,
       schedule: mappedSchedule,
-      updatedOn: new Date()
+      updatedOn: new Date(),
+      updatedBy: userId
     };
 
     await this.lessonStore.saveLesson(updatedLesson);
     return updatedLesson;
   }
 
-  async updateLessonSections(lessonId, { sections }) {
+  async updateLessonSections(lessonId, { userId, sections }) {
     const lesson = await this.getLessonById(lessonId);
 
     const updatedLesson = {
       ...lesson,
       sections,
       cdnResources: extractCdnResources(sections, this.infoFactory),
-      updatedOn: new Date()
+      updatedOn: new Date(),
+      updatedBy: userId
     };
 
     await this.lessonStore.saveLesson(updatedLesson);

@@ -22,12 +22,12 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
-import { Space, List, Button, Tabs, Card, message, Tooltip } from 'antd';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import { confirmLessonDelete, confirmRoomDelete } from '../confirmation-dialogs.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
+import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 
 const { TabPane } = Tabs;
 
@@ -55,7 +55,8 @@ export default function Room({ PageTemplate, initialState }) {
   });
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
+  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === user?._id);
+
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 
   useEffect(() => {
@@ -130,10 +131,10 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
-  const handleRoomMetadataFormSubmitted = async ({ name, slug, description }) => {
+  const handleRoomMetadataFormSubmitted = async ({ name, slug, lessonsMode, description }) => {
     try {
-      const updatedRoom = { ...room, name, slug, description };
-      await roomApiClient.updateRoom({ roomId: room._id, name, slug, description });
+      const updatedRoom = { ...room, name, slug, lessonsMode, description };
+      await roomApiClient.updateRoom({ roomId: room._id, name, slug, lessonsMode, description });
 
       setRoom(updatedRoom);
       setIsRoomUpdateButtonDisabled(true);
@@ -163,21 +164,21 @@ export default function Room({ PageTemplate, initialState }) {
     const timeUntil = isUpcomingLesson ? formatTimeTo(startsOn) : null;
 
     return (
-      <div className="Room-lesson" key={lesson._id}>
-        <div className={`Room-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
-          {isRoomOwner && (
+      <div className="RoomPage-lesson" key={lesson._id}>
+        <div className={`RoomPage-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
+          {(isRoomOwner || isRoomCollaborator) && (
             <Fragment>
               <Tooltip title={t('common:clone')}>
                 <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
               </Tooltip>
               <Tooltip title={t('common:delete')}>
-                <DeleteButton className="Room-lessonDeleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
+                <DeleteButton className="RoomPage-lessonDeleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
               </Tooltip>
             </Fragment>
           )}
-          <span className="Room-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
-          <a className="Room-lessonTitle" href={url}>{lesson.title}</a>
-          <span className="Room-lessonTimeUntil">{timeUntil}</span>
+          <span className="RoomPage-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
+          <a className="RoomPage-lessonTitle" href={url}>{lesson.title}</a>
+          <span className="RoomPage-lessonTimeUntil">{timeUntil}</span>
         </div>
       </div>);
   };
@@ -185,13 +186,13 @@ export default function Room({ PageTemplate, initialState }) {
   const renderRoomMembers = () => {
     const title = isRoomOwner && t('roomMembersHeader', { count: room.members.length });
     return (
-      <Card className="Room-card" title={title}>
+      <Card className="RoomPage-card" title={title}>
         <List
           dataSource={room.members}
           renderItem={member => (
-            <List.Item className="Room-membersRow">
+            <List.Item className="RoomPage-membersRow">
               <Space>
-                <span className="Room-membersRowDate">{formatDate(member.joinedOn)}</span>
+                <span className="RoomPage-membersRowDate">{formatDate(member.joinedOn)}</span>
                 <span>{member.username}</span>
               </Space>
             </List.Item>)}
@@ -202,11 +203,11 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderRoomInvitations = () => (
     <Card
-      className="Room-card"
+      className="RoomPage-card"
       title={t('invitationsHeader', { count: invitations.length })}
       actions={[
         <Button
-          className="Room-cardButton"
+          className="RoomPage-cardButton"
           key="createRoomInvitation"
           type="primary"
           shape="circle"
@@ -219,14 +220,14 @@ export default function Room({ PageTemplate, initialState }) {
       <List
         dataSource={invitations}
         renderItem={invitation => (
-          <List.Item className="Room-membersRow">
+          <List.Item className="RoomPage-membersRow">
             <Space>
-              <span className="Room-membersRowDate">{formatDate(invitation.sentOn)}</span>
+              <span className="RoomPage-membersRowDate">{formatDate(invitation.sentOn)}</span>
               <span>{invitation.email}</span>
             </Space>
             <Space>
               <span>{t('expires')}:</span>
-              <span className="Room-membersRowDate">{formatDate(invitation.expires)}</span>
+              <span className="RoomPage-membersRowDate">{formatDate(invitation.expires)}</span>
             </Space>
           </List.Item>
         )}
@@ -236,10 +237,10 @@ export default function Room({ PageTemplate, initialState }) {
 
   const renderRoomLessonsCard = () => (
     <Card
-      className="Room-card"
-      actions={isRoomOwner && [
+      className="RoomPage-card"
+      actions={(isRoomOwner || isRoomCollaborator) && [
         <Button
-          className="Room-cardButton"
+          className="RoomPage-cardButton"
           key="createLesson"
           type="primary"
           shape="circle"
@@ -249,21 +250,25 @@ export default function Room({ PageTemplate, initialState }) {
           />
       ]}
       >
-      {room.description && <Markdown className="Room-description" renderMedia>{room.description}</Markdown>}
+      {room.description && <Markdown className="RoomPage-description" renderMedia>{room.description}</Markdown>}
       {lessons.length ? lessons.map(renderLesson) : t('lessonsPlaceholder')}
     </Card>
   );
 
   return (
     <PageTemplate>
-      <div className="Room">
+      <div className="RoomPage">
+        <Breadcrumb className="Breadcrumbs">
+          <Breadcrumb.Item href={urls.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+          <Breadcrumb.Item>{room.name}</Breadcrumb.Item>
+        </Breadcrumb>
         <MetadataTitle
           text={room.name}
           extra={<FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />}
           />
-        <div className="Room-subtitle">
+        <div className="RoomPage-subtitle">
           {room.access === ROOM_ACCESS_LEVEL.private ? <PrivateIcon /> : <PublicIcon />}
-          <span>{t(`${room.access}RoomSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+          <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
         </div>
 
         {!isRoomOwner && renderRoomLessonsCard()}
@@ -274,21 +279,19 @@ export default function Room({ PageTemplate, initialState }) {
               {renderRoomLessonsCard()}
             </TabPane>
 
-            {isPrivateRoom && (
-              <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
-                {renderRoomMembers()}
-                {renderRoomInvitations()}
-                <RoomInvitationCreationModal
-                  isVisible={isRoomInvitationModalVisible}
-                  onOk={handleInvitationModalClose}
-                  onCancel={handleInvitationModalClose}
-                  roomId={room._id}
-                  />
-              </TabPane>
-            )}
+            <TabPane className="Tabs-tabPane" tab={t('membersTabTitle')} key="2">
+              {renderRoomMembers()}
+              {renderRoomInvitations()}
+              <RoomInvitationCreationModal
+                isVisible={isRoomInvitationModalVisible}
+                onOk={handleInvitationModalClose}
+                onCancel={handleInvitationModalClose}
+                roomId={room._id}
+                />
+            </TabPane>
 
             <TabPane className="Tabs-tabPane" tab={t('settingsTabTitle')} key="3">
-              <Card className="Room-card" title={t('updateRoomCardTitle')}>
+              <Card className="RoomPage-card" title={t('updateRoomCardTitle')}>
                 <RoomMetadataForm
                   formRef={formRef}
                   room={room}
@@ -297,7 +300,7 @@ export default function Room({ PageTemplate, initialState }) {
                   editMode
                   />
                 <Button
-                  className="Room-cardEditButton"
+                  className="RoomPage-cardEditButton"
                   type="primary"
                   onClick={handleUpdateRoomClick}
                   disabled={isRoomUpdateButtonDisabled}
@@ -305,13 +308,13 @@ export default function Room({ PageTemplate, initialState }) {
                   {t('common:update')}
                 </Button>
               </Card>
-              <Card className="Room-card Room-card--danger" title={t('roomDangerZoneCardTitle')}>
-                <div className="Room-cardDangerAction">
+              <Card className="RoomPage-card RoomPage-card--danger" title={t('roomDangerZoneCardTitle')}>
+                <div className="RoomPage-cardDangerAction">
                   <div>
-                    <span className="Room-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
-                    <span className="Room-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
+                    <span className="RoomPage-cardDangerActionTitle">{t('deleteRoomTitle')}</span>
+                    <span className="RoomPage-cardDangerActionDescription">{t('deleteRoomDescription')}</span>
                   </div>
-                  <Button className="Room-cardDangerActionButton" type="primary" icon={<DeleteIcon />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
+                  <Button className="RoomPage-cardDangerActionButton" type="primary" icon={<DeleteIcon />} onClick={handleDeleteRoomClick}>{t('deleteRoomButton')}</Button>
                 </div>
               </Card>
             </TabPane>

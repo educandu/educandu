@@ -56,6 +56,7 @@ describe('dashboard-service', () => {
       let createdRoom;
       let favoriteRoom;
       let createdLesson;
+      let updatedLesson;
       let favoriteLesson;
       let createdDocument;
       let updatedDocument;
@@ -113,18 +114,20 @@ describe('dashboard-service', () => {
           createdOn: new Date('2022-03-09T10:08:00.000Z'),
           updatedOn: new Date('2022-03-09T10:08:00.000Z')
         });
-        await db.lessons.updateOne({ _id: createdLesson._id }, {
-          $set: {
-            title: 'Updated lesson',
-            createdOn: new Date('2022-03-09T10:08:00.000Z'),
-            updatedOn: new Date('2022-03-09T10:09:00.000Z')
-          }
-        });
-        await createTestLesson(container, {
+
+        updatedLesson = await createTestLesson(container, {
           createdBy: otherUser._id,
           title: 'Created lesson [other]',
-          createdOn: new Date('2022-03-09T10:10:00.000Z'),
-          updatedOn: new Date('2022-03-09T10:10:00.000Z')
+          createdOn: new Date('2022-03-09T10:09:00.000Z'),
+          updatedOn: new Date('2022-03-09T10:09:00.000Z')
+        });
+        await db.lessons.updateOne({ _id: updatedLesson._id }, {
+          $set: {
+            updatedBy: user._id,
+            title: 'Updated lesson',
+            createdOn: new Date('2022-03-09T10:09:00.000Z'),
+            updatedOn: new Date('2022-03-09T10:10:00.000Z')
+          }
         });
 
         favoriteRoom = await createTestRoom(container, { name: 'Created popular room [other]', owner: otherUser._id, createdBy: otherUser._id });
@@ -179,9 +182,9 @@ describe('dashboard-service', () => {
           },
           {
             type: USER_ACTIVITY_TYPE.lessonUpdated,
-            timestamp: new Date('2022-03-09T10:09:00.000Z'),
+            timestamp: new Date('2022-03-09T10:10:00.000Z'),
             data: {
-              _id: createdLesson._id,
+              _id: updatedLesson._id,
               title: 'Updated lesson'
             }
           },
@@ -190,7 +193,7 @@ describe('dashboard-service', () => {
             timestamp: new Date('2022-03-09T10:08:00.000Z'),
             data: {
               _id: createdLesson._id,
-              title: 'Updated lesson'
+              title: 'Created lesson'
             }
           },
           {

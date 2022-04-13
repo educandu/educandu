@@ -8,21 +8,21 @@ class RoomApiClient {
     this.httpClient = httpClient;
   }
 
-  addRoom({ name, slug, access }) {
+  addRoom({ name, slug, access, lessonsMode }) {
     return this.httpClient
       .post(
         '/api/v1/rooms',
-        { name, slug, access },
+        { name, slug, access, lessonsMode },
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  updateRoom({ roomId, name, slug, description }) {
+  updateRoom({ roomId, name, slug, lessonsMode, description }) {
     return this.httpClient
       .patch(
         `/api/v1/rooms/${encodeURIComponent(roomId)}`,
-        { name, slug, description },
+        { name, slug, lessonsMode, description },
         { responseType: 'json' }
       )
       .then(res => res.data);

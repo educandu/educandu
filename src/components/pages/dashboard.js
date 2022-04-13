@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import { Avatar, Tabs } from 'antd';
 import NewsTab from '../news-tab.js';
 import RoomsTab from '../rooms-tab.js';
+import urls from '../../utils/urls.js';
 import AccountTab from '../account-tab.js';
 import ProfileTab from '../profile-tab.js';
 import { useUser } from '../user-context.js';
 import UsedStorage from '../used-storage.js';
 import FavoritesTab from '../favorites-tab.js';
 import { useTranslation } from 'react-i18next';
+import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useStoragePlan } from '../storage-plan-context.js';
@@ -21,10 +23,12 @@ const AVATAR_SIZE = 110;
 
 function Dashboard({ initialState, PageTemplate }) {
   const user = useUser();
+  const request = useRequest();
   const storagePlan = useStoragePlan();
   const { t } = useTranslation('dashboard');
   const clientConfig = useService(ClientConfig);
 
+  const initialTab = request.query.tab || '';
   const { rooms, activities, favorites } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
   const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
@@ -57,6 +61,10 @@ function Dashboard({ initialState, PageTemplate }) {
   const headerTitle = personName || user.username;
   const headerSubtitle = personName ? `${user.username} | ${user.email}` : user.email;
 
+  const handleTabChange = tab => {
+    history.replaceState(null, '', urls.getDashboardUrl({ tab }));
+  };
+
   return (
     <PageTemplate disableProfileWarning>
       <div className="DashboardPage">
@@ -71,25 +79,25 @@ function Dashboard({ initialState, PageTemplate }) {
           </div>
         </section>
 
-        <Tabs className="Tabs" defaultActiveKey="1" type="line" size="middle">
-          <TabPane className="Tabs-tabPane" tab={t('newsTabTitle')} key="1">
+        <Tabs className="Tabs" type="line" size="middle" defaultActiveKey={initialTab} onChange={handleTabChange}>
+          <TabPane className="Tabs-tabPane" tab={t('newsTabTitle')} key="news">
             <NewsTab activities={activities} />
           </TabPane>
-          <TabPane className="Tabs-tabPane" tab={t('favoritesTabTitle')} key="2">
+          <TabPane className="Tabs-tabPane" tab={t('favoritesTabTitle')} key="favorites">
             <FavoritesTab favorites={favorites} />
           </TabPane>
           {clientConfig.areRoomsEnabled && (
-            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="3">
+            <TabPane className="Tabs-tabPane" tab={t('roomsTabTitle')} key="rooms">
               <RoomsTab rooms={rooms} />
             </TabPane>)}
-          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="4">
+          <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="profile">
             <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
-          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="5">
+          <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="account">
             <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
           </TabPane>
           {!!(user.storage.plan || user.storage.usedBytes) && (
-            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="6">
+            <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="storage">
               <h5>{storagePlanName}</h5>
               <div className="DashboardPage-usedStorage">
                 <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />

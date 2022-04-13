@@ -14,8 +14,6 @@ import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
-import PublicIcon from '../icons/general/public-icon.js';
-import PrivateIcon from '../icons/general/private-icon.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -25,7 +23,7 @@ import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 
@@ -48,8 +46,9 @@ function Lesson({ PageTemplate, initialState }) {
   const startsInEditMode = request.query.view === LESSON_VIEW_QUERY_PARAM.edit;
 
   const { room } = initialState;
-  const isRoomOwner = user?._id === room.owner._id;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
+  const isRoomOwner = user?._id === room.owner.key;
+  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === user?._id);
 
   const [isDirty, setIsDirty] = useState(false);
   const [lesson, setLesson] = useState(initialState.lesson);
@@ -279,11 +278,9 @@ function Lesson({ PageTemplate, initialState }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="LessonPage">
-          <Breadcrumb className="LessonPage-breadcrumbs">
-            <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
-              {isPrivateRoom ? <PrivateIcon /> : <PublicIcon />}
-              <span>{room.name}</span>
-            </Breadcrumb.Item>
+          <Breadcrumb className="Breadcrumbs">
+            <Breadcrumb.Item href={urls.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+            <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
             <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
           </Breadcrumb>
           <MetadataTitle
@@ -308,7 +305,7 @@ function Lesson({ PageTemplate, initialState }) {
             />
         </div>
       </PageTemplate>
-      {isRoomOwner && (
+      {(isRoomOwner || isRoomCollaborator) && (
         <Fragment>
           <EditControlPanel
             canClose
