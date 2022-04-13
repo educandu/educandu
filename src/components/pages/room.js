@@ -55,7 +55,7 @@ export default function Room({ PageTemplate, initialState }) {
   });
 
   const isRoomOwner = user?._id === room.owner.key;
-  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === user?._id);
+  const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
 
   const upcommingLesson = lessonsUtils.determineUpcomingLesson(now, lessons);
 

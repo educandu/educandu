@@ -26,7 +26,7 @@ const { NotFound, BadRequest, Forbidden, Unauthorized } = httpErrors;
 
 const isRoomOwnerOrCollaborator = ({ room, userId }) => {
   const isOwner = room.owner === userId;
-  const isCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.find(m => m.userId === userId);
+  const isCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === userId);
   return isOwner || isCollaborator;
 };
 
@@ -78,6 +78,7 @@ class LessonController {
     const mappedTemplateLesson = templateLesson ? this.clientDataMappingService.mapLesson(templateLesson) : null;
     const templateSections = mappedTemplateLesson ? this.clientDataMappingService.createProposedLessonSections(mappedTemplateLesson) : [];
     const mappedRoom = await this.clientDataMappingService.mapRoom(room, user);
+
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.lesson, { lesson: mappedLesson, room: mappedRoom, templateSections });
   }
 
