@@ -81,6 +81,21 @@ export function shuffleItems(items) {
   return result;
 }
 
+export function splitItems(items, maxLength) {
+  const result = [];
+
+  let currentChunk = [];
+  for (let i = 0; i < items.length; i += 1) {
+    currentChunk.push(items[i]);
+    if (currentChunk.length === maxLength || i === items.length - 1) {
+      result.push(currentChunk);
+      currentChunk = [];
+    }
+  }
+
+  return result;
+}
+
 export function ensureIsArray(items) {
   return Array.isArray(items) ? items : [items];
 }

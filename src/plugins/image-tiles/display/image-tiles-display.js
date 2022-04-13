@@ -1,12 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
-import splitArray from 'split-array';
 import urls from '../../../utils/urls.js';
+import Markdown from '../../../components/markdown.js';
 import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
@@ -21,17 +20,6 @@ function getSource(type, url, cdnRootUrl) {
 
 function ImageTilesDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
-  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
-
-  const rows = splitArray(content.tiles, content.maxTilesPerRow);
-
-  if (rows.length) {
-    const tilesOfLastRow = rows[rows.length - 1];
-    const rest = content.maxTilesPerRow - tilesOfLastRow.length;
-    for (let i = 0; i < rest; i += 1) {
-      tilesOfLastRow.push(null);
-    }
-  }
 
   const getTileUrl = tile => {
     const link = tile.link || {};
@@ -47,7 +35,7 @@ function ImageTilesDisplay({ content }) {
 
   const renderTile = (tile, index) => {
     const classes = classNames({
-      'ImageTiles-tilesContainer': true,
+      'ImageTiles-tile': true,
       'u-img-color-flip': content.hoverEffect === 'colorize-zoom'
     });
 
@@ -61,23 +49,21 @@ function ImageTilesDisplay({ content }) {
           className="ImageTiles-img"
           src={getSource(tile.image.type, tile.image.url, clientConfig.cdnRootUrl)}
           />
-        <div
-          className="ImageTiles-description"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(tile.description || '') }}
-          />
+        <div className="ImageTiles-description">
+          <Markdown>{tile.description}</Markdown>
+        </div>
       </a>
     );
   };
 
-  const renderRow = (row, index) => (
-    <div key={index} className={`ImageTiles-row u-max-width-${content.maxWidth || 100}`}>
-      {row.map(renderTile)}
-    </div>
-  );
-
   return (
     <div className={classNames('ImageTiles')}>
-      {rows.map(renderRow)}
+      <div
+        className={`ImageTiles-grid u-max-width-${content.maxWidth || 100}`}
+        style={{ gridTemplateColumns: `repeat(${content.maxTilesPerRow}, 1fr)` }}
+        >
+        {content.tiles.map(renderTile)}
+      </div>
     </div>
   );
 }
