@@ -1,8 +1,8 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
-import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 export default class AbcNotation {
   static get inject() { return [GithubFlavoredMarkdown]; }
