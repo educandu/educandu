@@ -32,10 +32,13 @@ describe('room-controller', () => {
       confirmInvitation: sandbox.stub(),
       getRoomsOwnedByUser: sandbox.stub(),
       getRoomById: sandbox.stub(),
+      getRoomInvitationById: sandbox.stub(),
       isRoomOwnerOrMember: sandbox.stub(),
       getRoomInvitations: sandbox.stub(),
       createRoom: sandbox.stub(),
-      updateRoom: sandbox.stub()
+      updateRoom: sandbox.stub(),
+      removeRoomMember: sandbox.stub(),
+      deleteRoomInvitation: sandbox.stub()
     };
     lessonService = {
       getLessonsMetadata: sandbox.stub()
@@ -48,7 +51,9 @@ describe('room-controller', () => {
     };
     mailService = {
       sendRoomInvitationEmail: sandbox.stub(),
-      sendRoomDeletionNotificationEmails: sandbox.stub()
+      sendRoomDeletionNotificationEmails: sandbox.stub(),
+      sendRoomMemberRemovalNotificationEmail: sandbox.stub(),
+      sendRoomInvitationDeletionNotificationEmail: sandbox.stub()
     };
     user = {
       _id: uniqueId.create(),
@@ -798,4 +803,204 @@ describe('room-controller', () => {
     });
   });
 
+  describe('handleDeleteRoomMember', () => {
+    let room;
+    const memberUser = { _id: uniqueId.create() };
+
+    describe('when the roomId is not valid', () => {
+      beforeEach(() => {
+        room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: user._id,
+          members: [{ userId: memberUser._id }]
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(null);
+        userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
+
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
+        res = {};
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleDeleteRoomMember(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the member user does not exist', () => {
+      beforeEach(() => {
+        room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: user._id,
+          members: [{ userId: uniqueId.create() }]
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        userService.getUserById.withArgs(memberUser._id).resolves(null);
+
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
+        res = {};
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleDeleteRoomMember(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the user is not the room owner', () => {
+      beforeEach(() => {
+        room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          members: [{ userId: memberUser._id }]
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
+
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleDeleteRoomMember(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the request is valid', () => {
+      let mappedRoom;
+
+      beforeEach(done => {
+        room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: user._id,
+          members: [{ userId: memberUser._id }, { userId: uniqueId.create() }]
+        };
+        const updatedRoom = { ...room, members: [room.members[1]] };
+        mappedRoom = { ...updatedRoom };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
+        roomService.removeRoomMember.withArgs({ room, memberUserId: memberUser._id }).resolves(updatedRoom);
+        clientDataMappingService.mapRoom.withArgs(updatedRoom).resolves(mappedRoom);
+        mailService.sendRoomMemberRemovalNotificationEmail.resolves();
+
+        req = { user, params: { roomId: room._id, memberUserId: memberUser._id } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleDeleteRoomMember(req, res);
+      });
+
+      it('should return status 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the updated room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
+      });
+
+      it('should have called mailService.sendRoomMemberRemovalNotificationEmail', () => {
+        sinon.assert.calledWith(mailService.sendRoomMemberRemovalNotificationEmail, {
+          roomName: 'my room',
+          ownerName: 'dagobert-the-third',
+          memberUser
+        });
+      });
+    });
+  });
+
+  describe('handleDeleteRoomInvitation', () => {
+    const invitationId = uniqueId.create();
+
+    describe('when the invitationId is not valid', () => {
+      beforeEach(() => {
+        roomService.getRoomInvitationById.withArgs(invitationId).resolves(null);
+
+        req = { user, params: { invitationId } };
+        res = {};
+      });
+
+      it('should throw NotFound', async () => {
+        await expect(() => sut.handleDeleteRoomInvitation(req, res)).rejects.toThrow(NotFound);
+      });
+    });
+
+    describe('when the user is not the room owner', () => {
+      beforeEach(() => {
+        const room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: uniqueId.create()
+        };
+        const invitation = {
+          _id: invitationId,
+          roomId: room._id,
+          email: 'max.mustermann@gtest.com'
+        };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        roomService.getRoomInvitationById.withArgs(invitationId).resolves(invitation);
+
+        req = { user, params: { invitationId } };
+        res = {};
+      });
+
+      it('should throw Forbidden', async () => {
+        await expect(() => sut.handleDeleteRoomInvitation(req, res)).rejects.toThrow(Forbidden);
+      });
+    });
+
+    describe('when the request is valid', () => {
+      let mappedInvitations;
+
+      beforeEach(done => {
+        const room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: user._id
+        };
+        const invitation = {
+          _id: invitationId,
+          roomId: room._id,
+          email: 'max.mustermann@gtest.com'
+        };
+
+        const remainingInvitations = [{ _id: uniqueId.create(), roomId: room._id }];
+        mappedInvitations = [...remainingInvitations];
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        roomService.getRoomInvitationById.withArgs(invitationId).resolves(invitation);
+        roomService.deleteRoomInvitation.withArgs({ room, invitation }).resolves(remainingInvitations);
+        clientDataMappingService.mapRoomInvitations.withArgs(remainingInvitations).returns(mappedInvitations);
+        mailService.sendRoomInvitationDeletionNotificationEmail.resolves();
+
+        req = { user, params: { invitationId } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleDeleteRoomInvitation(req, res);
+      });
+
+      it('should return status 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the remaining room invitations', () => {
+        expect(res._getData()).toEqual({ invitations: mappedInvitations });
+      });
+
+      it('should have called mailService.sendRoomInvitationDeletionNotificationEmail', () => {
+        sinon.assert.calledWith(mailService.sendRoomInvitationDeletionNotificationEmail, {
+          roomName: 'my room',
+          ownerName: 'dagobert-the-third',
+          email: 'max.mustermann@gtest.com'
+        });
+      });
+    });
+  });
 });
