@@ -81,7 +81,7 @@ export function shuffleItems(items) {
   return result;
 }
 
-export function splitItems(items, maxLength) {
+export function splitIntoChunks(items, maxLength) {
   const result = [];
 
   let currentChunk = [];
