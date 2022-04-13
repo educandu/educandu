@@ -32,6 +32,10 @@ export default class IntervalTrainer {
     return cloneDeep(content);
   }
 
+  redactContent(content) {
+    return cloneDeep(content);
+  }
+
   getCdnResources() {
     return [];
   }

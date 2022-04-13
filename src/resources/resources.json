@@ -133,6 +133,8 @@
       "deleteDocumentConfirmation": "Do you really want to delete document \"{title}\"?",
       "deleteAllPrivateRoomsConfirmation": "Do you really want to delete all private rooms owned by user \"{ownerName}\"?",
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
+      "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberUsername}\" from the room?",
+      "deleteRoomInvitationConfirmation": "Do you really want revoke room invitation send to \"{invitationEmail}\"?",
       "deleteLessonConfirmation": "Do you really want to delete lesson \"{lessonName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
       "thisActionIsIrreversible": "This action is irreversible!",
@@ -158,6 +160,8 @@
       "deleteDocumentConfirmation": "Möchten Sie das Dokument \"{title}\" wirklich löschen?",
       "deleteAllPrivateRoomsConfirmation": "Möchten Sie wirklich alle privaten Räume von Benutzer \"{ownerName}\" löschen?",
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
+      "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
+      "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
       "deleteLessonConfirmation": "Möchten Sie die Unterrichtseinheit \"{lessonName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
@@ -873,7 +877,9 @@
       "updateRoomSuccessMessage": "The room metadata was updated successfully.",
       "roomDangerZoneCardTitle": "Danger zone",
       "deleteRoomTitle": "Delete this room",
-      "deleteRoomDescription": "All room data and resources will be deleted."
+      "deleteRoomDescription": "All room data and resources will be deleted.",
+      "removeMember": "Remove member",
+      "revokeInvitation": "Revoke invitation"
     }
   },
   {
@@ -898,7 +904,9 @@
       "updateRoomSuccessMessage": "Die Raum-Metadaten wurden erfolgreich aktualisiert.",
       "roomDangerZoneCardTitle": "Gefahrenzone",
       "deleteRoomTitle": "Diesen Raum löschen",
-      "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht."
+      "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
+      "removeMember": "Mitglied entfernen",
+      "revokeInvitation": "Einladung widerrufen"
     }
   },
   {
@@ -1798,6 +1806,8 @@
       "apply": "Apply",
       "discard": "Discard",
       "duplicate": "Duplicate",
+      "copyToClipboard": "Copy to clipboard",
+      "pasteFromClipboard": "Paste from clipboard",
       "delete": "Delete",
       "hardDelete": "Delete irreversibly",
       "clone": "Clone",
@@ -1818,6 +1828,9 @@
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
+      "copySectionToClipboardError": "Error copying the section into the clipboard due to missing access permissions.",
+      "pasteSectionFromClipboardError": "Error pasting the section from the clipboard. Either the clipboard contains content that cannot\nbe pasted as a new section or the browser denies access to the clipboard.\n",
+      "sectionCopiedToClipboard": "The section was copied to the clipboard",
       "accept": "Accept",
       "logon": "Log on",
       "logoff": "Log off",
@@ -1898,6 +1911,8 @@
       "apply": "Übernehmen",
       "discard": "Verwerfen",
       "duplicate": "Duplizieren",
+      "copyToClipboard": "In die Zwischenablage kopieren",
+      "pasteFromClipboard": "Aus der Zwischenablage einfügen",
       "delete": "Löschen",
       "hardDelete": "Unwiderruflich löschen",
       "clone": "Klonen",
@@ -1918,6 +1933,9 @@
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
+      "copySectionToClipboardError": "Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.",
+      "pasteSectionFromClipboardError": "Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht\nals neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.\n",
+      "sectionCopiedToClipboard": "Der Abschnitt wurde in die Zwischenablage kopiert",
       "accept": "Akzeptieren",
       "logon": "Anmelden",
       "logoff": "Abmelden",
@@ -2026,7 +2044,13 @@
       "roomInvitationEmail.html": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has invited you to the room <b>{roomName}</b>.<br/>To accept the invitation, please follow this link: <a href=\"{invitationLink}\">Join room</a>.<br/>The link remains valid for {days, plural, =1 {one day} other {# days}}.</p>\n",
       "roomDeletionNotificationEmail.subject": "A room you were a member of has been deleted",
       "roomDeletionNotificationEmail.text": "Hello!\n\nUser {ownerName} has deleted the room {roomName}.\n",
-      "roomDeletionNotificationEmail.html": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>."
+      "roomDeletionNotificationEmail.html": "<p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>.",
+      "roomMemberRemovalNotificationEmail.subject": "Your membership to a room has ended",
+      "roomMemberRemovalNotificationEmail.text": "Hello {username}!\n\nUser {ownerName} has ended your membership in room {roomName}.\n",
+      "roomMemberRemovalNotificationEmail.html": "<p>Hello {username}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.",
+      "roomInvitationDeletionNotificationEmail.subject": "Your membership invitation to a room has been revoked",
+      "roomInvitationDeletionNotificationEmail.text": "Hello!\n\nUser {ownerName} has revoked your membership invitation to room {roomName}.\n",
+      "roomInvitationDeletionNotificationEmail.html": "<p>Hello<br/><br/>User <b>{ownerName}</b> has revoked your membership invitation to room <b>{roomName}</b>."
     }
   },
   {
@@ -2044,7 +2068,13 @@
       "roomInvitationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Sie in den Raum <b>{roomName}</b> eingeladen.<br/>Um die Einladung zu bestätigenUm die Einladung anzunehmen, folgen Sie bitte diesem Link: <a href=\"{invitationLink}\">Raum beitreten</a>.<br/>Der Link bleibt {days, plural, =1 {einen Tag} other {# Tage}} gültig.</p>\n",
       "roomDeletionNotificationEmail.subject": "Ein Raum, in dem Sie Mitglied waren, wurde gelöscht",
       "roomDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat den Raum {roomName} gelöscht.\n",
-      "roomDeletionNotificationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht."
+      "roomDeletionNotificationEmail.html": "<p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.",
+      "roomMemberRemovalNotificationEmail.subject": "Ihre Mitgliedschaft in einem Raum wurde beendet",
+      "roomMemberRemovalNotificationEmail.text": "Hallo {username}!\n\nDer Benutzer {ownerName} hat Ihre Mitgliedschaft im Raum {roomName} beendet.\n",
+      "roomMemberRemovalNotificationEmail.html": "<p>Hallo {username}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.",
+      "roomInvitationDeletionNotificationEmail.subject": "Ihre Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen",
+      "roomInvitationDeletionNotificationEmail.text": "Hallo!\n\nDer Benutzer {ownerName} hat Ihre Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.\n",
+      "roomInvitationDeletionNotificationEmail.html": "<p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen."
     }
   },
   {

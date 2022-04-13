@@ -29,6 +29,10 @@ export default class DiagramNet {
     return cloneDeep(content);
   }
 
+  redactContent(content) {
+    return cloneDeep(content);
+  }
+
   getCdnResources() {
     return [];
   }

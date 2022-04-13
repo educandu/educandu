@@ -3,7 +3,6 @@ import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
-import clipboardCopy from 'clipboard-copy';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -16,18 +15,19 @@ import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
 import InfoFactory from '../../plugins/info-factory.js';
-import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
-import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
+import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM, FAVORITE_TYPE } from '../../domain/constants.js';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 import {
   confirmDiscardUnsavedChanges,
   confirmDocumentRevisionRestoration,
@@ -252,6 +252,32 @@ function Doc({ initialState, PageTemplate }) {
     }
   };
 
+  const handleSectionCopyToClipboard = async index => {
+    const originalSection = currentSections[index];
+    const clipboardText = createClipboardTextForSection(originalSection, request.hostInfo.origin);
+    try {
+      await window.navigator.clipboard.writeText(clipboardText);
+      message.success(t('common:sectionCopiedToClipboard'));
+    } catch (error) {
+      handleError({ message: t('common:copySectionToClipboardError'), error, logger, t, duration: 30 });
+    }
+  };
+
+  const handleSectionPasteFromClipboard = async index => {
+    try {
+      const clipboardText = await window.navigator.clipboard.readText();
+      const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
+      const redactedSection = redactSectionContent({ section: newSection, infoFactory });
+      const newSections = insertItemAt(currentSections, redactedSection, index);
+      setCurrentSections(newSections);
+      setIsDirty(true);
+      return true;
+    } catch (error) {
+      handleError({ message: t('common:pasteSectionFromClipboardError'), error, logger, t, duration: 30 });
+      return false;
+    }
+  };
+
   const handleSectionDelete = index => {
     confirmSectionDelete(
       t,
@@ -298,7 +324,7 @@ function Doc({ initialState, PageTemplate }) {
   const handlePermalinkRequest = async () => {
     const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(selectedHistoryRevision._id));
     try {
-      await clipboardCopy(permalinkUrl);
+      await window.navigator.clipboard.writeText(permalinkUrl);
       message.success(t('permalinkCopied'));
     } catch (error) {
       const msg = (
@@ -399,6 +425,8 @@ function Doc({ initialState, PageTemplate }) {
             onPendingSectionApply={handlePendingSectionApply}
             onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
+            onSectionCopyToClipboard={handleSectionCopyToClipboard}
+            onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
             onSectionMove={handleSectionMove}
             onSectionInsert={handleSectionInsert}
             onSectionDuplicate={handleSectionDuplicate}

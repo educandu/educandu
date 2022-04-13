@@ -117,6 +117,48 @@ class MailService {
     }));
   }
 
+  sendRoomMemberRemovalNotificationEmail({ roomName, ownerName, memberUser }) {
+    logger.info(`Sending room member removal notification to ${memberUser.email}`);
+
+    const subject = this.translators
+      .map(t => t('mailService:roomMemberRemovalNotificationEmail.subject', { ownerName, roomName }))
+      .join(' / ');
+
+    const text = this.translators
+      .map(t => t('mailService:roomMemberRemovalNotificationEmail.text', { username: memberUser.username, ownerName, roomName }))
+      .join('\n\n');
+
+    const html = this.translators
+      .map(t => t('mailService:roomMemberRemovalNotificationEmail.html', {
+        username: htmlescape(memberUser.username), ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+      }))
+      .join('\n');
+
+    const message = { from: this.emailSenderAddress, to: memberUser.email, subject, text, html };
+    return this._sendMail(message);
+  }
+
+  sendRoomInvitationDeletionNotificationEmail({ roomName, ownerName, email }) {
+    logger.info(`Sending room invitation deletion notification to ${email}`);
+
+    const subject = this.translators
+      .map(t => t('mailService:roomInvitationDeletionNotificationEmail.subject', { ownerName, roomName }))
+      .join(' / ');
+
+    const text = this.translators
+      .map(t => t('mailService:roomInvitationDeletionNotificationEmail.text', { ownerName, roomName }))
+      .join('\n\n');
+
+    const html = this.translators
+      .map(t => t('mailService:roomInvitationDeletionNotificationEmail.html', {
+        ownerName: htmlescape(ownerName), roomName: htmlescape(roomName)
+      }))
+      .join('\n');
+
+    const message = { from: this.emailSenderAddress, to: email, subject, text, html };
+    return this._sendMail(message);
+  }
+
   _sendRoomDeletionNotificationEmail({ email, ownerName, roomName }) {
     logger.info(`Sending delete notification to ${email}`);
 

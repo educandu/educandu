@@ -14,6 +14,10 @@ class RoomInvitationStore {
     this.collection = db.roomInvitations;
   }
 
+  getRoomInvitationById(roomInvitationId, { session } = {}) {
+    return this.collection.findOne({ _id: roomInvitationId }, { session });
+  }
+
   getRoomInvitationByToken(token, { session } = {}) {
     return this.collection.findOne({ token }, { session });
   }

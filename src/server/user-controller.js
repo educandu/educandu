@@ -309,7 +309,7 @@ class UserController {
       usernameField: 'emailOrUsername',
       passwordField: 'password'
     }, (emailOrUsername, password, cb) => {
-      this.userService.authenticateUser(emailOrUsername, password)
+      this.userService.authenticateUser({ emailOrUsername, password })
         .then(user => cb(null, user || false))
         .catch(err => cb(err));
     }));

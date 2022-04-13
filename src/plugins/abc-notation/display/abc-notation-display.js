@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { useService } from '../../../components/container-context.js';
+import Markdown from '../../../components/markdown.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 const abcOptions = {
   paddingtop: 0,
@@ -17,8 +16,6 @@ const midiOptions = {
 };
 
 function AbcNotationDisplay({ content }) {
-  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
-
   const abcContainerRef = useRef(null);
   const midiContainerRef = useRef(null);
 
@@ -36,10 +33,9 @@ function AbcNotationDisplay({ content }) {
       <div className={`AbcNotation-wrapper u-max-width-${content.maxWidth || 100}`}>
         <div ref={abcContainerRef} />
         {content.displayMidi && <div ref={midiContainerRef} />}
-        <div
-          className="AbcNotation-copyrightInfo"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(content.text || '') }}
-          />
+        <div className="AbcNotation-copyrightInfo">
+          <Markdown>{content.text}</Markdown>
+        </div>
       </div>
     </div>
   );

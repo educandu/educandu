@@ -76,3 +76,33 @@ roomDeletionNotificationEmail.text:
 roomDeletionNotificationEmail.html:
   en: <p>Hello!<br/><br/>User <b>{ownerName}</b> has deleted the room <b>{roomName}</b>.
   de: <p>Hallo!<br/><br/>Der Benutzer <b>{ownerName}</b> hat den Raum <b>{roomName}</b> gelöscht.
+roomMemberRemovalNotificationEmail.subject:
+  en: Your membership to a room has ended
+  de: Ihre Mitgliedschaft in einem Raum wurde beendet
+roomMemberRemovalNotificationEmail.text:
+  en: |
+    Hello {username}!
+
+    User {ownerName} has ended your membership in room {roomName}.
+  de: |
+    Hallo {username}!
+
+    Der Benutzer {ownerName} hat Ihre Mitgliedschaft im Raum {roomName} beendet.
+roomMemberRemovalNotificationEmail.html:
+  en: <p>Hello {username}!<br/><br/>User <b>{ownerName}</b> has ended your membership in room <b>{roomName}</b>.
+  de: <p>Hallo {username}!<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Mitgliedschaft im Raum <b>{roomName}</b> beendet.
+roomInvitationDeletionNotificationEmail.subject:
+  en: Your membership invitation to a room has been revoked
+  de: Ihre Einladung zur Mitgliedschaft in einem Raum wurde zurückgezogen
+roomInvitationDeletionNotificationEmail.text:
+  en: |
+    Hello!
+
+    User {ownerName} has revoked your membership invitation to room {roomName}.
+  de: |
+    Hallo!
+
+    Der Benutzer {ownerName} hat Ihre Einladung zur Mitgliedschaft in dem Raum {roomName} zurückgezogen.
+roomInvitationDeletionNotificationEmail.html:
+  en: <p>Hello<br/><br/>User <b>{ownerName}</b> has revoked your membership invitation to room <b>{roomName}</b>.
+  de: <p>Hallo<br/><br/>Der Benutzer <b>{ownerName}</b> hat Ihre Einladung zur Mitgliedschaft in dem Raum <b>{roomName}</b> zurückgezogen.

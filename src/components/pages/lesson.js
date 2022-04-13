@@ -1,7 +1,7 @@
 import memoizee from 'memoizee';
-import { Breadcrumb } from 'antd';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
+import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -14,17 +14,18 @@ import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
-import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import { handleApiError, handleError } from '../../ui/error-helper.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
 import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
+import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -205,6 +206,32 @@ function Lesson({ PageTemplate, initialState }) {
     }
   };
 
+  const handleSectionCopyToClipboard = async index => {
+    const originalSection = currentSections[index];
+    const clipboardText = createClipboardTextForSection(originalSection, request.hostInfo.origin);
+    try {
+      await window.navigator.clipboard.writeText(clipboardText);
+      message.success(t('common:sectionCopiedToClipboard'));
+    } catch (error) {
+      handleError({ message: t('common:copySectionToClipboardError'), error, logger, t, duration: 30 });
+    }
+  };
+
+  const handleSectionPasteFromClipboard = async index => {
+    try {
+      const clipboardText = await window.navigator.clipboard.readText();
+      const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
+      const redactedSection = redactSectionContent({ section: newSection, infoFactory, targetRoomId: room._id });
+      const newSections = insertItemAt(currentSections, redactedSection, index);
+      setCurrentSections(newSections);
+      setIsDirty(true);
+      return true;
+    } catch (error) {
+      handleError({ message: t('common:pasteSectionFromClipboardError'), error, logger, t, duration: 30 });
+      return false;
+    }
+  };
+
   const handleSectionDelete = index => {
     confirmSectionDelete(
       t,
@@ -269,6 +296,8 @@ function Lesson({ PageTemplate, initialState }) {
             onPendingSectionApply={handlePendingSectionApply}
             onPendingSectionDiscard={handlePendingSectionDiscard}
             onSectionContentChange={handleSectionContentChange}
+            onSectionCopyToClipboard={handleSectionCopyToClipboard}
+            onSectionPasteFromClipboard={handleSectionPasteFromClipboard}
             onSectionMove={handleSectionMove}
             onSectionInsert={handleSectionInsert}
             onSectionDuplicate={handleSectionDuplicate}

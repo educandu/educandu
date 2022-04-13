@@ -26,6 +26,12 @@ export function getRoomIdFromPrivateStoragePath(path) {
   return match ? match[1] : null;
 }
 
+export function isAccessibleStoragePath(storagePath, fromRoomId) {
+  return storagePath && getStoragePathType(storagePath) === STORAGE_PATH_TYPE.private
+    ? getRoomIdFromPrivateStoragePath(storagePath) === fromRoomId
+    : true;
+}
+
 export function getPathSegments(path) {
   return path.split('/').filter(seg => !!seg);
 }
