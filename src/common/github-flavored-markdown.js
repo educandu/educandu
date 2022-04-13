@@ -1,6 +1,8 @@
 import MarkdownIt from 'markdown-it';
 import { escapeHtml } from '../utils/string-utils.js';
 
+const CDN_URL_PREFIX = 'cdn://';
+
 const audioUrlPattern = new RegExp(`\\.(${['aac', 'm4a', 'mp3', 'oga', 'ogg', 'wav'].join('|')})$`, 'i');
 const videoUrlPattern = new RegExp(`\\.(${['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg'].join('|')})$`, 'i');
 
@@ -29,9 +31,10 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
     const token = tokens[idx];
 
     let targetUrl = token.attrGet(targetAttributeName) || '';
-    if (targetUrl.startsWith('cdn://')) {
-      env.collectCdnUrl?.(targetUrl.slice(6));
-      targetUrl = (env.cdnRootUrl || 'cdn:/') + targetUrl.slice(5);
+    if (targetUrl.startsWith(CDN_URL_PREFIX)) {
+      const targetUrlPath = targetUrl.slice(CDN_URL_PREFIX.length);
+      env.collectCdnUrl?.(targetUrlPath);
+      targetUrl = (env.cdnRootUrl ? `${env.cdnRootUrl}/` : CDN_URL_PREFIX) + targetUrlPath;
       token.attrSet(targetAttributeName, targetUrl);
     }
 
@@ -83,11 +86,11 @@ class GithubFlavoredMarkdown {
     }
 
     const redact = url => {
-      if (url.startsWith('cdn://')) {
-        const pathOnly = url.slice(6);
+      if (url.startsWith(CDN_URL_PREFIX)) {
+        const pathOnly = url.slice(CDN_URL_PREFIX.length);
         if (pathOnly) {
           const redactedPath = cb(pathOnly);
-          return redactedPath ? `cdn://${redactedPath}` : '';
+          return redactedPath ? `${CDN_URL_PREFIX}${redactedPath}` : '';
         }
       }
 
