@@ -41,7 +41,7 @@ class UserService {
   }
 
   getUserByEmailAddress(email) {
-    return this.userStore.getUserByEmailAddress(email);
+    return email ? this.userStore.getUserByEmailAddress(email.toLowerCase()) : null;
   }
 
   async updateUserAccount({ userId, provider, username, email }) {
@@ -248,14 +248,37 @@ class UserService {
     return user;
   }
 
-  async authenticateUser(emailOrUsername, password, provider = DEFAULT_PROVIDER_NAME) {
-    const user = await this.userStore.findUserByLogin({ emailOrUsername, provider });
+  async authenticateUser({ emailOrUsername, password, provider = DEFAULT_PROVIDER_NAME }) {
+    if (!emailOrUsername || !password) {
+      return false;
+    }
+
+    const lowerCasedEmailOrUsername = emailOrUsername.toLowerCase() || '';
+
+    const possibleMatches = await this.userStore.findUsersByEmailOrUsername({
+      email: lowerCasedEmailOrUsername,
+      username: emailOrUsername,
+      provider
+    });
+
+    let user;
+    switch (possibleMatches.length) {
+      case 0:
+        user = null;
+        break;
+      case 1:
+        user = possibleMatches[0];
+        break;
+      default:
+        user = possibleMatches.find(match => match.email === lowerCasedEmailOrUsername);
+    }
+
     if (!user || user.expires || user.lockedOut) {
       return false;
     }
 
-    const match = await bcrypt.compare(password, user.passwordHash);
-    return match ? user : false;
+    const doesPasswordMatch = await bcrypt.compare(password, user.passwordHash);
+    return doesPasswordMatch ? user : false;
   }
 
   async createPasswordResetRequest(user) {
