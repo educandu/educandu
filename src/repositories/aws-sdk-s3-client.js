@@ -151,9 +151,9 @@ class AwsSdkS3Client {
 
   async deleteObjects(bucketName, objectNames) {
     const maxItems = 1000;
-    const listsOfNames = splitIntoChunks(objectNames, maxItems);
+    const objectNamesChunks = splitIntoChunks(objectNames, maxItems);
 
-    const requests = listsOfNames.map(chunk => {
+    const requests = objectNamesChunks.map(chunk => {
       const params = {
         Bucket: bucketName,
         Delete: {
