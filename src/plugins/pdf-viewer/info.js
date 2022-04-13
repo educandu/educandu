@@ -2,6 +2,7 @@ import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
 export default class PdfViewer {
   static get typeName() { return 'pdf-viewer'; }
@@ -31,6 +32,16 @@ export default class PdfViewer {
 
   cloneContent(content) {
     return cloneDeep(content);
+  }
+
+  redactContent(content, targetRoomId) {
+    const redactedContent = cloneDeep(content);
+
+    if (redactedContent.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+      redactedContent.sourceUrl = '';
+    }
+
+    return redactedContent;
   }
 
   getCdnResources(content) {

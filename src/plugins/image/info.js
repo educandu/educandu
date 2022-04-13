@@ -2,6 +2,7 @@ import React from 'react';
 import ImageIcon from './image-icon.js';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
 export default class Image {
   static get typeName() { return 'image'; }
@@ -32,6 +33,20 @@ export default class Image {
     return cloneDeep(content);
   }
 
+  redactContent(content, targetRoomId) {
+    const redactedContent = cloneDeep(content);
+
+    if (redactedContent.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+      redactedContent.sourceUrl = '';
+    }
+
+    if (redactedContent.effect?.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.effect.sourceUrl, targetRoomId)) {
+      redactedContent.effect.sourceUrl = '';
+    }
+
+    return redactedContent;
+  }
+
   getCdnResources(content) {
     const resources = [];
     if (content.sourceType === SOURCE_TYPE.internal && content.sourceUrl) {
@@ -40,6 +55,6 @@ export default class Image {
     if (content.effect?.sourceType === SOURCE_TYPE.internal && content.effect.sourceUrl) {
       resources.push(content.effect.sourceUrl);
     }
-    return resources;
+    return [...new Set(resources)];
   }
 }

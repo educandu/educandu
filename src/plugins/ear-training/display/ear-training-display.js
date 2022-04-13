@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import Markdown from '../../../components/markdown.js';
 import { SOUND_TYPE, TESTS_ORDER } from '../constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { shuffleItems } from '../../../utils/array-utils.js';
@@ -6,7 +7,6 @@ import AudioPlayer from '../../../components/audio-player.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 const abcOptions = {
   paddingtop: 0,
@@ -24,7 +24,6 @@ const midiOptions = {
 function EarTrainingDisplay({ content }) {
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
-  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
 
   const abcContainerRef = useRef();
   const midiContainerRef = useRef();
@@ -67,25 +66,22 @@ function EarTrainingDisplay({ content }) {
 
   const renderSoundPlayer = () => {
     let soundUrl = null;
-    let legendHtml = '';
     let soundType = SOUND_TYPE.midi;
     const currentTest = tests[currentIndex];
 
     if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.internal) {
       soundType = SOUND_TYPE.internal;
       soundUrl = currentTest.sound.url ? `${clientConfig.cdnRootUrl}/${currentTest.sound.url}` : null;
-      legendHtml = currentTest.sound.text || '';
     }
 
     if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.external) {
       soundType = SOUND_TYPE.external;
       soundUrl = currentTest.sound.url || null;
-      legendHtml = currentTest.sound.text || '';
     }
 
     return soundType === SOUND_TYPE.midi
       ? <div ref={midiContainerRef} />
-      : <AudioPlayer soundUrl={soundUrl} legendHtml={legendHtml} />;
+      : <AudioPlayer soundUrl={soundUrl} legendMarkdown={currentTest.sound.text} />;
   };
 
   const renderButtons = () => {
@@ -104,10 +100,9 @@ function EarTrainingDisplay({ content }) {
   return (
     <div className="EarTraining fa5">
       <div className={`EarTraining-testWrapper u-max-width-${maxWidth || 100}`}>
-        <h3
-          className="EarTraining-header"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(title) }}
-          />
+        <h3 className="EarTraining-header">
+          <Markdown inline>{title}</Markdown>
+        </h3>
         <div ref={abcContainerRef} />
         {renderSoundPlayer()}
         <div className="EarTraining-buttons">

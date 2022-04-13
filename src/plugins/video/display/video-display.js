@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
 import { SOURCE_TYPE } from '../constants.js';
 import React, { useRef, useState } from 'react';
+import Markdown from '../../../components/markdown.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaControl from '../../../components/media-control.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -21,7 +21,6 @@ const PLAY_STATES = {
 function VideoDisplay({ content }) {
   const playerRef = useRef();
   const clientConfig = useService(ClientConfig);
-  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
 
   const [volume, setVolume] = useState(1);
   const [playedSeconds, setPlayedSeconds] = useState(0);
@@ -86,7 +85,6 @@ function VideoDisplay({ content }) {
     setPlayState(PLAY_STATES.playing);
   };
 
-  const html = githubFlavoredMarkdown.render(content.text || '');
   const aspectRatio = content.aspectRatio || { h: 16, v: 9 };
   const paddingTop = `${(aspectRatio.v / aspectRatio.h * 100).toFixed(2)}%`;
   const width = content.width || 100;
@@ -166,7 +164,11 @@ function VideoDisplay({ content }) {
   return (
     <div className="Video">
       {sourceUrl && renderPlayers()}
-      {html && <div className="Video-text" dangerouslySetInnerHTML={{ __html: html }} />}
+      {content.text && (
+        <div className="Video-text">
+          <Markdown>{content.text}</Markdown>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,11 +1,16 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
 export default class AbcNotation {
+  static get inject() { return [GithubFlavoredMarkdown]; }
+
   static get typeName() { return 'abc-notation'; }
 
-  constructor() {
+  constructor(gfm) {
+    this.gfm = gfm;
     this.type = 'abc-notation';
   }
 
@@ -30,7 +35,18 @@ export default class AbcNotation {
     return cloneDeep(content);
   }
 
-  getCdnResources() {
-    return [];
+  redactContent(content, targetRoomId) {
+    const redactedContent = cloneDeep(content);
+
+    redactedContent.text = this.gfm.redactCdnResources(
+      redactedContent.text,
+      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+    );
+
+    return redactedContent;
+  }
+
+  getCdnResources(content) {
+    return this.gfm.extractCdnResources(content.text);
   }
 }

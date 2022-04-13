@@ -154,7 +154,7 @@ export function createNewSectionFromClipboardText(clipboardText, origin) {
 
 export function redactSectionContent({ section, infoFactory, targetRoomId }) {
   const pluginInfo = infoFactory.createInfo(section.type);
-  return pluginInfo?.redactContent
+  return pluginInfo
     ? { ...section, content: pluginInfo.redactContent(section.content, targetRoomId) }
     : section;
 }

@@ -6,11 +6,9 @@ import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
 
 function AudioDisplay({ content }) {
-  let soundUrl;
-  const legendHtml = content.text || '';
-
   const clientConfig = useService(ClientConfig);
 
+  let soundUrl;
   switch (content.type) {
     case SOURCE_TYPE.external:
       soundUrl = content.url || null;
@@ -25,7 +23,7 @@ function AudioDisplay({ content }) {
 
   return (
     <div className="Audio">
-      <AudioPlayer soundUrl={soundUrl} legendHtml={legendHtml} />
+      <AudioPlayer soundUrl={soundUrl} legendMarkdown={content.text} />
     </div>
   );
 }
