@@ -1877,7 +1877,8 @@
       "searchPlaceholder": "Search terms",
       "capacity": "Capacity",
       "copyTitleSuffix": "(copy)",
-      "copySlugSuffix": "copy"
+      "copySlugSuffix": "copy",
+      "roomsBreadcrumbPart": "rooms"
     }
   },
   {
@@ -1976,7 +1977,8 @@
       "searchPlaceholder": "Suchbegriffe",
       "capacity": "Kapazität",
       "copyTitleSuffix": "(Kopie)",
-      "copySlugSuffix": "kopie"
+      "copySlugSuffix": "kopie",
+      "roomsBreadcrumbPart": "Räume"
     }
   },
   {

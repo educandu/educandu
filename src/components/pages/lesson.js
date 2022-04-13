@@ -14,9 +14,7 @@ import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
-import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
-import PrivateIcon from '../icons/general/private-icon.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
@@ -253,11 +251,9 @@ function Lesson({ PageTemplate, initialState }) {
     <Fragment>
       <PageTemplate alerts={alerts}>
         <div className="LessonPage">
-          <Breadcrumb className="LessonPage-breadcrumbs">
-            <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>
-              {isPrivateRoom ? <PrivateIcon /> : <PublicIcon />}
-              <span>{room.name}</span>
-            </Breadcrumb.Item>
+          <Breadcrumb className="Breadcrumbs">
+            <Breadcrumb.Item href={urls.getDashboardUrl({ tab: 'rooms' })}>{t('common:roomsBreadcrumbPart')}</Breadcrumb.Item>
+            <Breadcrumb.Item href={urls.getRoomUrl(room._id, room.slug)}>{room.name}</Breadcrumb.Item>
             <Breadcrumb.Item>{lesson.title}</Breadcrumb.Item>
           </Breadcrumb>
           <MetadataTitle

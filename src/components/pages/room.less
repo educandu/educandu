@@ -1,20 +1,21 @@
 @room-date-label-width: 150px;
 
-.Room {}
+.RoomPage {}
 
-.Room-subtitle {
+.RoomPage-subtitle {
   display: flex;
   gap: 8px;
   font-size: 12px;
   align-items: center;
   color: @edu-text-color-secondary;
+  padding-left: @edu-content-padding;
 }
 
-.Room-description {
+.RoomPage-description {
   margin-bottom: 50px;
 }
 
-.Room-lessonInfo {
+.RoomPage-lessonInfo {
   display: flex;
   flex-wrap: wrap;
   padding: 10px;
@@ -27,20 +28,20 @@
   }
 }
 
-.Room-lessonDeleteButton {
+.RoomPage-lessonDeleteButton {
   margin-right: @edu-content-padding;
 }
 
-.Room-lessonStartsOn {
+.RoomPage-lessonStartsOn {
   flex: 0 1 @room-date-label-width;
 }
 
-.Room-lessonTitle {
+.RoomPage-lessonTitle {
   flex: 1 1 auto;
   padding-left: 15px;
 }
 
-.Room-lessonTimeUntil {
+.RoomPage-lessonTimeUntil {
   flex: 0 1 auto;
   font-size: 13px;
   margin-left: auto;
@@ -48,53 +49,53 @@
   padding-left: 15px;
 }
 
-.Room-newLessonButton {
+.RoomPage-newLessonButton {
   margin-top: 15px;
 }
 
-.Room-membersRow {
+.RoomPage-membersRow {
   display: flex;
   justify-content: space-between;
 }
 
-.Room-membersRowDate {
+.RoomPage-membersRowDate {
   display: block;
   width: @room-date-label-width;
 }
 
-.Room-card {
+.RoomPage-card {
   margin-top: 40px;
 
   &:first-of-type {
     margin-top: 0;
   }
 
-  &.Room-card--danger {
+  &.RoomPage-card--danger {
     border-color: @edu-danger-color;
   }
 }
 
-.Room-cardButton {
+.RoomPage-cardButton {
   display: block;
   margin-left: 20px;
   margin-right: auto;
 }
 
-.Room-cardDangerAction {
+.RoomPage-cardDangerAction {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.Room-cardDangerActionTitle {
+.RoomPage-cardDangerActionTitle {
   display: block;
   font-weight: bold;
 }
 
-.Room-cardDangerActionDescription {
+.RoomPage-cardDangerActionDescription {
   display: block;
 }
 
-.Room-cardDangerActionButton {
+.RoomPage-cardDangerActionButton {
   margin-left: @edu-content-padding;
 }
