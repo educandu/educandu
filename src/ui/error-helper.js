@@ -15,9 +15,28 @@ export function handleApiError({ error, logger, t }) {
 
   if (err.code !== ERROR_CODES.operationCancelled) {
     notification.error({
-      message: `${err.name || 'Error'}`,
+      message: err.name || t('common:error'),
       description: tryToTranslateMessage(err, t) || err.message,
       duration: 10
+    });
+  }
+
+  try {
+    logger.error(err);
+  } catch {
+    // eslint-disable-next-line no-console
+    console.error(err);
+  }
+}
+
+export function handleError({ message, error, logger, t, duration = 10 }) {
+  const err = error.response?.body || error;
+
+  if (err.code !== ERROR_CODES.operationCancelled) {
+    notification.error({
+      message: t('common:error'),
+      description: message || err.message,
+      duration
     });
   }
 

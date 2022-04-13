@@ -107,6 +107,19 @@ viewDocument:
 externalDocumentWarning:
   en: This document is a copy. The original can be edited <0>here</0>.
   de: Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.
+copySectionToClipboardError:
+  en: Error copying the section into the clipboard due to missing access permissions.
+  de: Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
+pasteSectionFromClipboardError:
+  en: |
+      Error pasting the section from the clipboard. Either the clipboard contains content that cannot
+      be pasted as a new section or the browser denies access to the clipboard.
+  de: |
+      Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht
+      als neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.
+sectionCopiedToClipboard:
+  en: The section was copied to the clipboard
+  de: Der Abschnitt wurde in die Zwischenablage kopiert
 accept:
   en: Accept
   de: Akzeptieren

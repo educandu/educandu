@@ -15,11 +15,11 @@ import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
 import InfoFactory from '../../plugins/info-factory.js';
-import { handleApiError } from '../../ui/error-helper.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { handleApiError, handleError } from '../../ui/error-helper.js';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import { documentShape, sectionShape } from '../../ui/default-prop-types.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -257,8 +257,9 @@ function Doc({ initialState, PageTemplate }) {
     const clipboardText = createClipboardTextForSection(originalSection, request.hostInfo.origin);
     try {
       await window.navigator.clipboard.writeText(clipboardText);
+      message.success(t('common:sectionCopiedToClipboard'));
     } catch (error) {
-      handleApiError({ error, logger, t });
+      handleError({ message: t('common:copySectionToClipboardError'), error, logger, t, duration: 30 });
     }
   };
 
@@ -272,7 +273,7 @@ function Doc({ initialState, PageTemplate }) {
       setIsDirty(true);
       return true;
     } catch (error) {
-      handleApiError({ error, logger, t });
+      handleError({ message: t('common:pasteSectionFromClipboardError'), error, logger, t, duration: 30 });
       return false;
     }
   };

@@ -1,7 +1,7 @@
 import memoizee from 'memoizee';
-import { Breadcrumb } from 'antd';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
+import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
@@ -15,12 +15,12 @@ import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
 import InfoFactory from '../../plugins/info-factory.js';
 import PublicIcon from '../icons/general/public-icon.js';
-import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
 import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import { handleApiError, handleError } from '../../ui/error-helper.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
@@ -212,8 +212,9 @@ function Lesson({ PageTemplate, initialState }) {
     const clipboardText = createClipboardTextForSection(originalSection, request.hostInfo.origin);
     try {
       await window.navigator.clipboard.writeText(clipboardText);
+      message.success(t('common:sectionCopiedToClipboard'));
     } catch (error) {
-      handleApiError({ error, logger, t });
+      handleError({ message: t('common:copySectionToClipboardError'), error, logger, t, duration: 30 });
     }
   };
 
@@ -227,7 +228,7 @@ function Lesson({ PageTemplate, initialState }) {
       setIsDirty(true);
       return true;
     } catch (error) {
-      handleApiError({ error, logger, t });
+      handleError({ message: t('common:pasteSectionFromClipboardError'), error, logger, t, duration: 30 });
       return false;
     }
   };
