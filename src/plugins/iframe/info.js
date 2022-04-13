@@ -30,6 +30,10 @@ export default class Iframe {
     return cloneDeep(content);
   }
 
+  redactContent(content) {
+    return cloneDeep(content);
+  }
+
   getCdnResources() {
     return [];
   }

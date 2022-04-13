@@ -5,7 +5,8 @@ import {
   STORAGE_PATH_TYPE,
   getStoragePathType,
   getPrivateStoragePathForRoomId,
-  getRoomIdFromPrivateStoragePath
+  getRoomIdFromPrivateStoragePath,
+  isAccessibleStoragePath
 } from './path-helper.js';
 
 describe('path-helper', () => {
@@ -29,6 +30,31 @@ describe('path-helper', () => {
         });
 
         it(`should return '${expectedResult}'`, () => {
+          expect(result).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('isAccessibleStoragePath', () => {
+    const testCases = [
+      { path: null, roomId: '12345', expectedResult: true },
+      { path: 'media/12345/my-file.png', roomId: null, expectedResult: true },
+      { path: 'media/12345/my-file.png', roomId: '12345', expectedResult: true },
+      { path: 'media/67890/my-file.png', roomId: '12345', expectedResult: true },
+      { path: null, roomId: '12345', expectedResult: true },
+      { path: 'rooms/12345/media/my-file.png', roomId: null, expectedResult: false },
+      { path: 'rooms/12345/media/my-file.png', roomId: '12345', expectedResult: true },
+      { path: 'rooms/67890/media/my-file.png', roomId: '12345', expectedResult: false }
+    ];
+
+    testCases.forEach(({ path, roomId, expectedResult }) => {
+      describe(`when called with path ${JSON.stringify(path)} and room ID ${JSON.stringify(roomId)}`, () => {
+        beforeEach(() => {
+          result = isAccessibleStoragePath(path, roomId);
+        });
+
+        it(`should return ${expectedResult}`, () => {
           expect(result).toBe(expectedResult);
         });
       });

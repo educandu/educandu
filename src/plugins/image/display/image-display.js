@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { getImageSource } from '../utils.js';
+import Markdown from '../../../components/markdown.js';
 import React, { Fragment, useEffect, useRef } from 'react';
 import { EFFECT_TYPE, ORIENTATION } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 function ImageDisplay({ content }) {
@@ -15,7 +15,6 @@ function ImageDisplay({ content }) {
   const { text, sourceType, sourceUrl, effect } = content;
 
   const clientConfig = useService(ClientConfig);
-  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
   const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
 
   useEffect(() => {
@@ -44,8 +43,8 @@ function ImageDisplay({ content }) {
         itemTwo={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)} />}
         />
       <div className="ImageDisplay-copyrightInfo">
-        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }} />
-        <div dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }} />
+        <Markdown>{text}</Markdown>
+        <Markdown>{effect.text}</Markdown>
       </div>
     </Fragment>
   );
@@ -56,10 +55,9 @@ function ImageDisplay({ content }) {
         className={`ImageDisplay-image u-max-width-${maxWidth}`}
         src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)}
         />
-      <div
-        className="ImageDisplay-copyrightInfo"
-        dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(effect.text || '') }}
-        />
+      <div className="ImageDisplay-copyrightInfo">
+        <Markdown>{effect.text}</Markdown>
+      </div>
     </div>
   );
 
@@ -85,10 +83,9 @@ function ImageDisplay({ content }) {
           className={`ImageDisplay-image u-max-width-${maxWidth}`}
           src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)}
           />
-        <div
-          className="ImageDisplay-copyrightInfo"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(text || '') }}
-          />
+        <div className="ImageDisplay-copyrightInfo">
+          <Markdown>{text}</Markdown>
+        </div>
       </div>
       {effect && renderHoverEffect()}
     </div>

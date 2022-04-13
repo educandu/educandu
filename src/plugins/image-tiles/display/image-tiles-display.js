@@ -2,11 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 import splitArray from 'split-array';
 import urls from '../../../utils/urls.js';
+import Markdown from '../../../components/markdown.js';
 import { IMAGE_TYPE, LINK_TYPE } from '../constants.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
@@ -21,7 +21,6 @@ function getSource(type, url, cdnRootUrl) {
 
 function ImageTilesDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
-  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
 
   const rows = splitArray(content.tiles, content.maxTilesPerRow);
 
@@ -61,10 +60,9 @@ function ImageTilesDisplay({ content }) {
           className="ImageTiles-img"
           src={getSource(tile.image.type, tile.image.url, clientConfig.cdnRootUrl)}
           />
-        <div
-          className="ImageTiles-description"
-          dangerouslySetInnerHTML={{ __html: githubFlavoredMarkdown.render(tile.description || '') }}
-          />
+        <div className="ImageTiles-description">
+          <Markdown>{tile.description}</Markdown>
+        </div>
       </a>
     );
   };

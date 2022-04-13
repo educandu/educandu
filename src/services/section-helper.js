@@ -1,7 +1,9 @@
+import AES from 'crypto-js/aes.js';
 import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
+import cryptoJsUtf8Encoder from 'crypto-js/enc-utf8.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -109,4 +111,50 @@ export function extractCdnResources(sections, pluginInfoFactory) {
         : cdnResources;
     }, new Set())
   ].sort();
+}
+
+function _clipboardEncode(clipboardObject, encryptionKey) {
+  const jsonText = JSON.stringify(clipboardObject || null);
+  return AES.encrypt(jsonText, encryptionKey);
+}
+
+function _clipboardDecode(clipboardText, encryptionKey) {
+  try {
+    const decryptedText = AES.decrypt(clipboardText, encryptionKey).toString(cryptoJsUtf8Encoder);
+    return JSON.parse(decryptedText);
+  } catch {
+    return null;
+  }
+}
+
+function _isValidClipboardSection(clipboardObject) {
+  return clipboardObject
+    && typeof clipboardObject === 'object'
+    && typeof clipboardObject.type === 'string'
+    && typeof clipboardObject.content === 'object';
+}
+
+export function createClipboardTextForSection(section, origin) {
+  const clipboardObject = { type: section.type, content: section.content };
+  return _clipboardEncode(clipboardObject, origin);
+}
+
+export function createNewSectionFromClipboardText(clipboardText, origin) {
+  const clipboardObject = _clipboardDecode(clipboardText, origin);
+  if (_isValidClipboardSection(clipboardObject)) {
+    return {
+      key: uniqueId.create(),
+      type: clipboardObject.type,
+      content: clipboardObject.content
+    };
+  }
+
+  return null;
+}
+
+export function redactSectionContent({ section, infoFactory, targetRoomId }) {
+  const pluginInfo = infoFactory.createInfo(section.type);
+  return pluginInfo
+    ? { ...section, content: pluginInfo.redactContent(section.content, targetRoomId) }
+    : section;
 }

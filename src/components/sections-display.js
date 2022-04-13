@@ -21,6 +21,8 @@ function SectionsDisplay({
   onSectionDuplicate,
   onSectionDelete,
   onSectionContentChange,
+  onSectionCopyToClipboard,
+  onSectionPasteFromClipboard,
   onSectionHardDelete
 }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -58,6 +60,13 @@ function SectionsDisplay({
     setCurrentNewSectionIndex(-1);
   };
 
+  const handlePasteFromClipboard = async () => {
+    const success = await onSectionPasteFromClipboard(currentNewSectionIndex);
+    if (success) {
+      setCurrentNewSectionIndex(-1);
+    }
+  };
+
   const renderSection = ({ section, index, dragHandleProps, isDragged }) => {
     return (<SectionDisplay
       key={section.key}
@@ -72,6 +81,7 @@ function SectionsDisplay({
       isPending={pendingSectionKeys.includes(section.key)}
       onPendingSectionApply={() => onPendingSectionApply(index)}
       onPendingSectionDiscard={() => onPendingSectionDiscard(index)}
+      onSectionCopyToClipboard={() => onSectionCopyToClipboard(index)}
       onSectionDelete={() => onSectionDelete(index)}
       onSectionDuplicate={() => onSectionDuplicate(index)}
       onSectionMoveUp={() => handleSectionMove(index, index - 1)}
@@ -140,6 +150,7 @@ function SectionsDisplay({
         visible={currentNewSectionIndex > -1}
         onSelect={handlePluginSelectorDialogSelect}
         onCancel={handlePluginSelectorDialogCancel}
+        onPasteFromClipboard={handlePasteFromClipboard}
         />
     </Fragment>
   );
@@ -151,11 +162,13 @@ SectionsDisplay.propTypes = {
   onPendingSectionApply: PropTypes.func,
   onPendingSectionDiscard: PropTypes.func,
   onSectionContentChange: PropTypes.func,
+  onSectionCopyToClipboard: PropTypes.func,
   onSectionDelete: PropTypes.func,
   onSectionDuplicate: PropTypes.func,
   onSectionHardDelete: PropTypes.func,
   onSectionInsert: PropTypes.func,
   onSectionMove: PropTypes.func,
+  onSectionPasteFromClipboard: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
   privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
@@ -168,11 +181,13 @@ SectionsDisplay.defaultProps = {
   onPendingSectionApply: () => {},
   onPendingSectionDiscard: () => {},
   onSectionContentChange: () => {},
+  onSectionCopyToClipboard: () => {},
   onSectionDelete: () => {},
   onSectionDuplicate: () => {},
   onSectionHardDelete: () => {},
   onSectionInsert: () => {},
   onSectionMove: () => {},
+  onSectionPasteFromClipboard: () => {},
   pendingSectionKeys: [],
   privateStorage: null
 };

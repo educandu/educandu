@@ -2,11 +2,16 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
 import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
+import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 export default class EarTraining {
+  static get inject() { return [GithubFlavoredMarkdown]; }
+
   static get typeName() { return 'ear-training'; }
 
-  constructor() {
+  constructor(gfm) {
+    this.gfm = gfm;
     this.type = 'ear-training';
   }
 
@@ -41,7 +46,43 @@ export default class EarTraining {
     return cloneDeep(content);
   }
 
+  redactContent(content, targetRoomId) {
+    const redactedContent = cloneDeep(content);
+
+    redactedContent.title = this.gfm.redactCdnResources(
+      redactedContent.title,
+      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+    );
+
+    for (const test of redactedContent.tests) {
+      if (test.sound) {
+        test.sound.text = this.gfm.redactCdnResources(
+          test.sound.text,
+          url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        );
+      }
+
+      if (test.sound?.type === SOUND_TYPE.internal && !isAccessibleStoragePath(test.sound.url, targetRoomId)) {
+        test.sound.url = '';
+      }
+    }
+
+    return redactedContent;
+  }
+
   getCdnResources(content) {
-    return content.tests.filter(test => test.sound?.type === SOUND_TYPE.internal && test.sound.url).map(test => test.sound.url);
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.title || ''));
+
+    for (const test of content.tests) {
+      cdnResources.push(...this.gfm.extractCdnResources(test.text || ''));
+
+      if (test.sound?.type === SOUND_TYPE.internal && test.sound.url) {
+        cdnResources.push(test.sound.url);
+      }
+    }
+
+    return cdnResources;
   }
 }

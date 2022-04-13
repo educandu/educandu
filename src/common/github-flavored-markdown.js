@@ -1,8 +1,16 @@
 import MarkdownIt from 'markdown-it';
 import { escapeHtml } from '../utils/string-utils.js';
 
+const CDN_URL_PREFIX = 'cdn://';
+
 const audioUrlPattern = new RegExp(`\\.(${['aac', 'm4a', 'mp3', 'oga', 'ogg', 'wav'].join('|')})$`, 'i');
 const videoUrlPattern = new RegExp(`\\.(${['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg'].join('|')})$`, 'i');
+
+// Matches both URLs in e.g.: [![alt](cdn://image.png "image title")](cdn://some-target)
+const imageInsideOfHyperlinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
+
+// Matches the URL in e.g.: ![alt](cdn://image.png "image title")
+const simpleHyperlinkOrImagePattern = /(!?\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
 
 const getMediaType = url => {
   if (audioUrlPattern.test(url)) {
@@ -23,9 +31,10 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
     const token = tokens[idx];
 
     let targetUrl = token.attrGet(targetAttributeName) || '';
-    if (targetUrl.startsWith('cdn://')) {
-      env.collectCdnUrl?.(targetUrl.slice(6));
-      targetUrl = (env.cdnRootUrl || 'cdn:/') + targetUrl.slice(5);
+    if (targetUrl.startsWith(CDN_URL_PREFIX)) {
+      const targetUrlPath = targetUrl.slice(CDN_URL_PREFIX.length);
+      env.collectCdnUrl?.(targetUrlPath);
+      targetUrl = (env.cdnRootUrl ? `${env.cdnRootUrl}/` : CDN_URL_PREFIX) + targetUrlPath;
       token.attrSet(targetAttributeName, targetUrl);
     }
 
@@ -58,6 +67,10 @@ class GithubFlavoredMarkdown {
   }
 
   extractCdnResources(markdown) {
+    if (!markdown) {
+      return [];
+    }
+
     const linkSet = new Set();
     gfm.render(markdown, { collectCdnUrl: link => {
       if (link) {
@@ -65,6 +78,28 @@ class GithubFlavoredMarkdown {
       }
     } });
     return [...linkSet];
+  }
+
+  redactCdnResources(markdown, cb) {
+    if (!markdown) {
+      return markdown;
+    }
+
+    const redact = url => {
+      if (url.startsWith(CDN_URL_PREFIX)) {
+        const pathOnly = url.slice(CDN_URL_PREFIX.length);
+        if (pathOnly) {
+          const redactedPath = cb(pathOnly);
+          return redactedPath ? `${CDN_URL_PREFIX}${redactedPath}` : '';
+        }
+      }
+
+      return url;
+    };
+
+    return markdown
+      .replace(imageInsideOfHyperlinkPattern, (_match, g1, g2, g3, g4, g5) => `${g1}${redact(g2)}${g3}${redact(g4)}${g5}`)
+      .replace(simpleHyperlinkOrImagePattern, (_match, g1, g2, g3) => `${g1}${redact(g2)}${g3}`);
   }
 }
 

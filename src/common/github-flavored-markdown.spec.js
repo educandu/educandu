@@ -48,6 +48,31 @@ describe('GithubFlavoredMarkdown', () => {
 
   });
 
+  describe('redactCdnResources', () => {
+    it('redacts all links and images starting with the cdn protocol only', () => {
+      const result = sut.redactCdnResources([
+        'This is a [hyperlink](cdn://) and',
+        'this is a [hyperlink](cdn://media/example.png) and',
+        'this is an image: ![](cdn://media/example.png  ) and',
+        'this is an image: ![alt](cdn://media/example.png  "") and',
+        'this is an image: ![alt](cdn://media/example.png "image title") and',
+        'this is an image inside a hyperlink: [![alt](cdn://example.png "image title")](cdn://example-target);',
+        'this, too: [![alt](https://example.com/image.png "image title")](cdn://example-target);',
+        'this, too: [![alt](cdn://example.png "image title")](https://example.com/example-target);'
+      ].join('\n\n'), url => url.replace(/example/, 'redacted'));
+      expect(result).toEqual([
+        'This is a [hyperlink](cdn://) and',
+        'this is a [hyperlink](cdn://media/redacted.png) and',
+        'this is an image: ![](cdn://media/redacted.png  ) and',
+        'this is an image: ![alt](cdn://media/redacted.png  "") and',
+        'this is an image: ![alt](cdn://media/redacted.png "image title") and',
+        'this is an image inside a hyperlink: [![alt](cdn://redacted.png "image title")](cdn://redacted-target);',
+        'this, too: [![alt](https://example.com/image.png "image title")](cdn://redacted-target);',
+        'this, too: [![alt](cdn://redacted.png "image title")](https://example.com/example-target);'
+      ].join('\n\n'));
+    });
+  });
+
   describe('extractCdnResources', () => {
     it('extracts all links and images starting with the cdn protocol only', () => {
       const result = sut.extractCdnResources([

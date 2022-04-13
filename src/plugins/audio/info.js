@@ -2,11 +2,16 @@ import React from 'react';
 import AudioIcon from './audio-icon.js';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 export default class Audio {
+  static get inject() { return [GithubFlavoredMarkdown]; }
+
   static get typeName() { return 'audio'; }
 
-  constructor() {
+  constructor(gfm) {
+    this.gfm = gfm;
     this.type = 'audio';
   }
 
@@ -30,7 +35,30 @@ export default class Audio {
     return cloneDeep(content);
   }
 
+  redactContent(content, targetRoomId) {
+    const redactedContent = cloneDeep(content);
+
+    redactedContent.text = this.gfm.redactCdnResources(
+      redactedContent.text,
+      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+    );
+
+    if (redactedContent.type === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.url, targetRoomId)) {
+      redactedContent.url = '';
+    }
+
+    return redactedContent;
+  }
+
   getCdnResources(content) {
-    return content.type === SOURCE_TYPE.internal && content.url ? [content.url] : [];
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.text));
+
+    if (content.type === SOURCE_TYPE.internal && content.url) {
+      cdnResources.push(content.url);
+    }
+
+    return cdnResources;
   }
 }

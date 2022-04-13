@@ -2,19 +2,18 @@ import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
 import React, { useRef, useState } from 'react';
 import colorHelper from '../../../ui/color-helper.js';
+import Markdown from '../../../components/markdown.js';
 import ClientConfig from '../../../bootstrap/client-config.js';
 import MediaControl from '../../../components/media-control.js';
 import { MEDIA_KIND, MEDIA_TYPE, PLAY_STATE } from '../constants.js';
 import { useService } from '../../../components/container-context.js';
 import { sectionDisplayProps } from '../../../ui/default-prop-types.js';
-import GithubFlavoredMarkdown from '../../../common/github-flavored-markdown.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 function AnavisDisplay({ content }) {
   const playerRef = useRef(null);
   const clientConfig = useService(ClientConfig);
-  const githubFlavoredMarkdown = useService(GithubFlavoredMarkdown);
 
   const [volume, setVolume] = useState(1);
   const [playedSeconds, setPlayedSeconds] = useState(0);
@@ -24,7 +23,6 @@ function AnavisDisplay({ content }) {
   const { parts, media } = content;
   const width = content.width || 100;
   const aspectRatio = media.aspectRatio || { h: 16, v: 9 };
-  const html = githubFlavoredMarkdown.render(media.text || '');
   const paddingTop = `${(aspectRatio.v / aspectRatio.h * 100).toFixed(2)}%`;
 
   let url;
@@ -193,7 +191,11 @@ function AnavisDisplay({ content }) {
           {url && media.kind !== MEDIA_KIND.video && renderMediaControl()}
         </div>)}
 
-      {html && <div className="Anavis-text" dangerouslySetInnerHTML={{ __html: html }} />}
+      {media.text && (
+        <div className="Anavis-text">
+          <Markdown>{media.text}</Markdown>
+        </div>
+      )}
     </div>
   );
 }
