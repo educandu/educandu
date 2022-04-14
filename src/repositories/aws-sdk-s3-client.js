@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 import awsSdk from 'aws-sdk';
-import splitArray from 'split-array';
 import PriorityQueue from '../common/priority-queue.js';
+import { splitIntoChunks } from '../utils/array-utils.js';
 
 const { S3, Credentials } = awsSdk;
 
@@ -151,9 +151,9 @@ class AwsSdkS3Client {
 
   async deleteObjects(bucketName, objectNames) {
     const maxItems = 1000;
-    const listsOfNames = splitArray(objectNames, maxItems);
+    const objectNamesChunks = splitIntoChunks(objectNames, maxItems);
 
-    const requests = listsOfNames.map(chunk => {
+    const requests = objectNamesChunks.map(chunk => {
       const params = {
         Bucket: bucketName,
         Delete: {

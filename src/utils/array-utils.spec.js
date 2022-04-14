@@ -6,7 +6,8 @@ import {
   ensureIsExcluded,
   shuffleItems,
   replaceItemAt,
-  replaceItem
+  replaceItem,
+  splitIntoChunks
 } from './array-utils.js';
 
 describe('array-utils', () => {
@@ -172,6 +173,23 @@ describe('array-utils', () => {
       const result = shuffleItems(input);
       expect(result).not.toBe(input);
       expect(input).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    });
+  });
+
+  describe('splitIntoChunks', () => {
+    it('splits arrays correctly into chunks of 2', () => {
+      const input = ['a', 'b', 'c', 'd', 'e', 'f'];
+      expect(splitIntoChunks(input, 2)).toStrictEqual([['a', 'b'], ['c', 'd'], ['e', 'f']]);
+    });
+
+    it('splits arrays correctly into chunks of 3', () => {
+      const input = ['a', 'b', 'c', 'd', 'e', 'f'];
+      expect(splitIntoChunks(input, 3)).toStrictEqual([['a', 'b', 'c'], ['d', 'e', 'f']]);
+    });
+
+    it('handles the last chunk correctly', () => {
+      const input = ['a', 'b', 'c', 'd', 'e', 'f', 'foo'];
+      expect(splitIntoChunks(input, 6)).toStrictEqual([['a', 'b', 'c', 'd', 'e', 'f'], ['foo']]);
     });
   });
 
