@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
-import React, { useState } from 'react';
 import Logger from '../common/logger.js';
 import { useSetUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';
+import React, { useEffect, useState } from 'react';
 import { useService } from './container-context.js';
 import UserApiClient from '../api-clients/user-api-client.js';
+import { ensureFormValuesAfterHydration } from '../ui/browser-helper.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -27,6 +28,10 @@ export default function LoginForm({
   if (formRef) {
     formRef.current = form;
   }
+
+  useEffect(() => {
+    ensureFormValuesAfterHydration(form, ['emailOrUsername', 'password']);
+  }, [form]);
 
   const showLoginError = () => {
     setLoginError(t('logonFailed'));
