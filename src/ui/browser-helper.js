@@ -14,3 +14,9 @@ export function getCurrentUrl() {
   const { pathname, search, hash } = window.location;
   return `${pathname}${search}${hash}`;
 }
+
+export function ensureFormValuesAfterHydration(antForm, fieldNames) {
+  for (const fieldName of fieldNames) {
+    antForm.setFieldsValue({ [fieldName]: antForm.getFieldInstance(fieldName).input.value });
+  }
+}
