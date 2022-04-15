@@ -5,11 +5,12 @@ const EDIT_DOC = 'edit-doc';
 const VIEW_DOCS = 'view-docs';
 const EDIT_FILE = 'edit-file';
 const VIEW_FILES = 'view-files';
+const DELETE_OWN_FILES = 'delete-own-files';
 const CREATE_FILE = 'create-file';
 const EDIT_USERS = 'edit-users';
 const VIEW_BATCHES = 'view-batches';
 const HARD_DELETE_SECTION = 'hard-delete-section';
-const DELETE_STORAGE_FILE = 'delete-storage-file';
+const DELETE_ANY_STORAGE_FILE = 'delete-storage-file';
 const SEE_USER_EMAIL = 'see-user-email';
 const MIGRATE_DATA = 'migrate-data';
 const RESTORE_DOC_REVISIONS = 'restore-doc-revisions';
@@ -30,11 +31,12 @@ const rolesForPermission = {
   [VIEW_DOCS]: [ROLE.admin, ROLE.user],
   [EDIT_FILE]: [ROLE.admin, ROLE.user],
   [VIEW_FILES]: [ROLE.admin, ROLE.user],
+  [DELETE_OWN_FILES]: [ROLE.admin, ROLE.user],
   [CREATE_FILE]: [ROLE.admin, ROLE.user],
   [EDIT_USERS]: [ROLE.admin],
   [VIEW_BATCHES]: [ROLE.admin],
   [HARD_DELETE_SECTION]: [ROLE.admin],
-  [DELETE_STORAGE_FILE]: [ROLE.admin],
+  [DELETE_ANY_STORAGE_FILE]: [ROLE.admin],
   [SEE_USER_EMAIL]: [ROLE.admin],
   [MIGRATE_DATA]: [ROLE.admin],
   [RESTORE_DOC_REVISIONS]: [ROLE.admin],
@@ -50,10 +52,26 @@ const rolesForPermission = {
   [JOIN_PRIVATE_ROOMS]: [ROLE.admin, ROLE.user]
 };
 
+function getPermissionsForRole(userRole) {
+  const userRolePermissions = Object.entries(rolesForPermission).reduce((accu, [permission, roles]) => {
+    if (roles.includes(userRole)) {
+      accu.push(permission);
+    }
+    return accu;
+  }, []);
+  return [...new Set(userRolePermissions)];
+}
+
 export function hasUserPermission(user, permission) {
   return user?.permissions
     ? user.permissions.includes(permission)
     : (rolesForPermission[permission] || []).some(role => user?.roles?.includes(role));
+}
+
+export function getAllUserPermissions(user) {
+  const directPermissions = user?.permissions || [];
+  const permissionsBasedOnRoles = (user?.roles || []).reduce((accu, userRole) => [...accu, ...getPermissionsForRole(userRole)], []);
+  return Array.from(new Set([...directPermissions, ...permissionsBasedOnRoles]));
 }
 
 export default {
@@ -62,6 +80,7 @@ export default {
   VIEW_DOCS,
   EDIT_FILE,
   VIEW_FILES,
+  DELETE_OWN_FILES,
   CREATE_FILE,
   EDIT_USERS,
   VIEW_BATCHES,
@@ -74,7 +93,7 @@ export default {
   RESTORE_DOC_REVISIONS,
   MANAGE_IMPORT,
   MANAGE_EXPORT_WITH_BUILT_IN_USER,
-  DELETE_STORAGE_FILE,
+  DELETE_ANY_STORAGE_FILE,
   OWN_ROOMS,
   DELETE_FOREIGN_ROOMS,
   OWN_LESSONS,

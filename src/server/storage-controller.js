@@ -8,7 +8,7 @@ import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE } from '../domain/constants.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
 import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
 import {
@@ -35,6 +35,12 @@ const uploadLimitExceededMiddleware = (req, res, next) => {
     : next();
 };
 
+const isRoomOwnerOrCollaborator = ({ room, userId }) => {
+  const isOwner = room.owner === userId;
+  const isCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === userId);
+  return isOwner || isCollaborator;
+};
+
 class StorageController {
   static get inject() { return [StorageService, RoomService]; }
 
@@ -56,7 +62,26 @@ class StorageController {
     const { prefix } = req.query;
     const { objectName } = req.params;
 
-    const { usedBytes } = await this.storageService.deleteObject({ prefix, objectName, userId: user._id });
+    const storagePathType = getStoragePathType(prefix);
+    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+      throw new BadRequest(`Invalid storage path '${prefix}'`);
+    }
+
+    let privateRoom;
+    if (storagePathType === STORAGE_PATH_TYPE.private) {
+      const roomId = getRoomIdFromPrivateStoragePath(prefix);
+      privateRoom = await this.roomService.getRoomById(roomId);
+
+      if (!privateRoom) {
+        throw new BadRequest(`Unknown room id '${roomId}'`);
+      }
+
+      if (!isRoomOwnerOrCollaborator({ room: privateRoom, userId: user._id })) {
+        throw new Unauthorized(`User is not authorized to delete from room '${roomId}'`);
+      }
+    }
+    const storageClaimingUserId = privateRoom?.owner || user._id;
+    const { usedBytes } = await this.storageService.deleteObject({ prefix, objectName, storageClaimingUserId });
 
     return res.send({ usedBytes });
   }
@@ -74,20 +99,22 @@ class StorageController {
       throw new BadRequest(`Invalid storage path '${prefix}'`);
     }
 
+    let privateRoom;
     if (storagePathType === STORAGE_PATH_TYPE.private) {
       const roomId = getRoomIdFromPrivateStoragePath(prefix);
-      const room = await this.roomService.getRoomById(roomId);
+      privateRoom = await this.roomService.getRoomById(roomId);
 
-      if (!room) {
+      if (!privateRoom) {
         throw new BadRequest(`Unknown room id '${roomId}'`);
       }
 
-      if (user._id !== room.owner) {
+      if (!isRoomOwnerOrCollaborator({ room: privateRoom, userId: user._id })) {
         throw new Unauthorized(`User is not authorized to upload to room '${roomId}'`);
       }
     }
 
-    const { usedBytes } = await this.storageService.uploadFiles({ prefix, files, userId: user._id });
+    const storageClaimingUserId = privateRoom?.owner || user._id;
+    const { usedBytes } = await this.storageService.uploadFiles({ prefix, files, storageClaimingUserId });
 
     return res.status(201).send({ usedBytes });
   }
@@ -133,7 +160,7 @@ class StorageController {
     router.delete(
       '/api/v1/storage/objects/:objectName',
       [
-        needsPermission(permissions.DELETE_STORAGE_FILE),
+        needsPermission(permissions.DELETE_OWN_FILES),
         validateQuery(deleteObjectQuerySchema),
         validateParams(deleteObjectParamSchema)
       ],

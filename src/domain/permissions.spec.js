@@ -1,21 +1,19 @@
 import { ROLE } from './constants.js';
 import { exportUser } from './built-in-users.js';
-import permissions, { hasUserPermission } from './permissions.js';
+import permissions, { hasUserPermission, getAllUserPermissions } from './permissions.js';
 
 const isTechnicalPermission = permission => permission === permissions.MANAGE_EXPORT_WITH_BUILT_IN_USER;
 
 describe('permissions', () => {
 
   describe('hasUserPermission', () => {
+    let result;
+    let expected;
 
     describe('when user has role "admin"', () => {
-      const adminUser = {
-        roles: [ROLE.admin]
-      };
+      const adminUser = { roles: [ROLE.admin] };
 
       Object.values(permissions).forEach(permission => {
-        let result;
-        let expected;
         beforeEach(() => {
           result = hasUserPermission(adminUser, permission);
           expected = !isTechnicalPermission(permission);
@@ -24,15 +22,12 @@ describe('permissions', () => {
           expect(result).toBe(expected);
         });
       });
-
     });
 
     describe('when user is builtin user "export"', () => {
       const adminUser = exportUser;
 
       Object.values(permissions).forEach(permission => {
-        let result;
-        let expected;
         beforeEach(() => {
           result = hasUserPermission(adminUser, permission);
           expected = isTechnicalPermission(permission);
@@ -41,9 +36,79 @@ describe('permissions', () => {
           expect(result).toBe(expected);
         });
       });
+    });
+  });
 
+  describe('getAllUserPermissions', () => {
+    let result;
+
+    describe('when user has no direct permissions or roles', () => {
+      beforeEach(() => {
+        const user = { permissions: [], roles: [] };
+        result = getAllUserPermissions(user);
+      });
+      it('should return an empty array', () => {
+        expect(result).toEqual([]);
+      });
     });
 
+    describe('when user has role \'user\'', () => {
+      beforeEach(() => {
+        const user = { permissions: ['custom'], roles: [ROLE.user] };
+        result = getAllUserPermissions(user);
+      });
+      it('should return all user permissions', () => {
+        expect(result).toEqual([
+          'custom',
+          permissions.EDIT_DOC,
+          permissions.VIEW_DOCS,
+          permissions.EDIT_FILE,
+          permissions.VIEW_FILES,
+          permissions.DELETE_OWN_FILES,
+          permissions.CREATE_FILE,
+          permissions.OWN_ROOMS,
+          permissions.OWN_LESSONS,
+          permissions.AUTORIZE_ROOMS_RESOURCES,
+          permissions.JOIN_PRIVATE_ROOMS
+        ]);
+      });
+    });
+
+    describe('when user has role \'admin\'', () => {
+      beforeEach(() => {
+        const user = { permissions: ['custom'], roles: [ROLE.admin] };
+        result = getAllUserPermissions(user);
+      });
+
+      it('should return all user permissions', () => {
+        expect(result).toEqual([
+          'custom',
+          permissions.ADMIN,
+          permissions.EDIT_DOC,
+          permissions.VIEW_DOCS,
+          permissions.EDIT_FILE,
+          permissions.VIEW_FILES,
+          permissions.DELETE_OWN_FILES,
+          permissions.CREATE_FILE,
+          permissions.EDIT_USERS,
+          permissions.VIEW_BATCHES,
+          permissions.HARD_DELETE_SECTION,
+          permissions.DELETE_ANY_STORAGE_FILE,
+          permissions.SEE_USER_EMAIL,
+          permissions.MIGRATE_DATA,
+          permissions.RESTORE_DOC_REVISIONS,
+          permissions.MANAGE_ARCHIVED_DOCS,
+          permissions.MANAGE_IMPORT,
+          permissions.MANAGE_SETTINGS,
+          permissions.MANAGE_STORAGE_PLANS,
+          permissions.OWN_ROOMS,
+          permissions.DELETE_FOREIGN_ROOMS,
+          permissions.OWN_LESSONS,
+          permissions.AUTORIZE_ROOMS_RESOURCES,
+          permissions.JOIN_PRIVATE_ROOMS
+        ]);
+      });
+    });
   });
 
 });
