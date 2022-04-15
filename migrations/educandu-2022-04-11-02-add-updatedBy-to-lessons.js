@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-await-in-loop, no-console */
-export default class Educandu_2023_04_11_02_add_updatedBy_to_lessons {
+export default class Educandu_2022_04_11_02_add_updatedBy_to_lessons {
   constructor(db) {
     this.db = db;
   }

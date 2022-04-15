@@ -5,6 +5,7 @@ import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
+import ConsentSettings from './consent-settings.js';
 import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
 import MarkdownTextarea from '../markdown-textarea.js';
@@ -47,6 +48,10 @@ function SettingsTab({
 
   const handleHomepageInfoChange = useCallback(event => {
     handleChange('homepageInfo', event.target.value, true);
+  }, [handleChange]);
+
+  const handleConsentTextChange = useCallback((value, { isValid }) => {
+    handleChange('consentText', value, isValid);
   }, [handleChange]);
 
   const handleTemplateDocumentChange = useCallback(value => {
@@ -122,6 +127,12 @@ function SettingsTab({
         <MarkdownTextarea
           value={settings.homepageInfo || ''}
           onChange={handleHomepageInfoChange}
+          />
+      </Card>
+      <Card className="SettingsTab-card" title={t('consentHeader')}>
+        <ConsentSettings
+          consentText={settings.consentText}
+          onChange={handleConsentTextChange}
           />
       </Card>
       <Card className="SettingsTab-card" title={t('templateDocumentHeader')}>
