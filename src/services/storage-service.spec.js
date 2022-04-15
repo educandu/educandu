@@ -83,7 +83,7 @@ describe('storage-service', () => {
         files = [{}];
 
         try {
-          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -111,7 +111,7 @@ describe('storage-service', () => {
         ];
         cdn.uploadObject.resolves();
 
-        result = await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        result = await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -147,7 +147,7 @@ describe('storage-service', () => {
         );
 
         try {
-          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -178,7 +178,7 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         try {
-          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -225,7 +225,7 @@ describe('storage-service', () => {
 
         cdn.uploadObject.resolves();
 
-        result = await sut.uploadFiles({ prefix, files, userId: myUser._id });
+        result = await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -276,7 +276,7 @@ describe('storage-service', () => {
         fileToDelete = { name: 'file1.jpeg' };
 
         try {
-          await sut.uploadFiles({ prefix, files, userId: myUser._id });
+          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -306,7 +306,7 @@ describe('storage-service', () => {
         cdn.deleteObjects.resolves();
         roomStore.getRoomIdsByOwnerIdAndAccess.resolves([]);
 
-        await sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id });
+        await sut.deleteObject({ prefix, objectName: fileToDelete.name, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -359,7 +359,7 @@ describe('storage-service', () => {
 
         cdn.deleteObjects.resolves();
 
-        await sut.deleteObject({ prefix, objectName: fileToDelete.name, userId: myUser._id });
+        await sut.deleteObject({ prefix, objectName: fileToDelete.name, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {

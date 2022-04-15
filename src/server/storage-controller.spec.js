@@ -107,7 +107,7 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.uploadFiles', () => {
-        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, userId: user._id });
+        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, storageClaimingUserId: user._id });
       });
 
       it('should return 201', () => {
@@ -136,7 +136,7 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.uploadFiles (on behalf of the room owner)', () => {
-        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, userId: room.owner });
+        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, storageClaimingUserId: room.owner });
       });
 
       it('should return 201', () => {
@@ -204,7 +204,7 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, { prefix: req.query.prefix, objectName: req.params.objectName, userId: user._id });
+        sinon.assert.calledWith(storageService.deleteObject, { prefix: req.query.prefix, objectName: req.params.objectName, storageClaimingUserId: user._id });
       });
 
       it('should return 200', () => {
@@ -234,7 +234,10 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, { prefix: req.query.prefix, objectName: req.params.objectName, userId: room.owner });
+        sinon.assert.calledWith(
+          storageService.deleteObject,
+          { prefix: req.query.prefix, objectName: req.params.objectName, storageClaimingUserId: room.owner }
+        );
       });
 
       it('should return 200', () => {
@@ -261,7 +264,7 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, { prefix: req.query.prefix, objectName: req.params.objectName, userId: user._id });
+        sinon.assert.calledWith(storageService.deleteObject, { prefix: req.query.prefix, objectName: req.params.objectName, storageClaimingUserId: user._id });
       });
 
       it('should return 200', () => {

@@ -91,14 +91,14 @@ export default class StorageService {
     }
   }
 
-  async uploadFiles({ prefix, files, userId }) {
+  async uploadFiles({ prefix, files, storageClaimingUserId }) {
     let lock;
     let usedBytes = 0;
 
     try {
-      lock = await this.lockStore.takeUserLock(userId);
+      lock = await this.lockStore.takeUserLock(storageClaimingUserId);
 
-      const user = await this.userStore.getUserById(userId);
+      const user = await this.userStore.getUserById(storageClaimingUserId);
       const storagePathType = getStoragePathType(prefix);
 
       if (storagePathType === STORAGE_PATH_TYPE.unknown) {
@@ -136,16 +136,16 @@ export default class StorageService {
     return objects;
   }
 
-  async deleteObject({ prefix, objectName, userId }) {
+  async deleteObject({ prefix, objectName, storageClaimingUserId }) {
     let lock;
     let usedBytes = 0;
 
     try {
-      lock = await this.lockStore.takeUserLock(userId);
+      lock = await this.lockStore.takeUserLock(storageClaimingUserId);
       await this._deleteObjects([urls.concatParts(prefix, objectName)]);
 
       if (getStoragePathType(prefix) === STORAGE_PATH_TYPE.private) {
-        usedBytes = await this._updateUserUsedBytes(userId);
+        usedBytes = await this._updateUserUsedBytes(storageClaimingUserId);
       }
 
       return { usedBytes };

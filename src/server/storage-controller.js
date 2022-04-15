@@ -81,7 +81,7 @@ class StorageController {
       }
     }
     const storageClaimingUserId = privateRoom?.owner || user._id;
-    const { usedBytes } = await this.storageService.deleteObject({ prefix, objectName, userId: storageClaimingUserId });
+    const { usedBytes } = await this.storageService.deleteObject({ prefix, objectName, storageClaimingUserId });
 
     return res.send({ usedBytes });
   }
@@ -114,7 +114,7 @@ class StorageController {
     }
 
     const storageClaimingUserId = privateRoom?.owner || user._id;
-    const { usedBytes } = await this.storageService.uploadFiles({ prefix, files, userId: storageClaimingUserId });
+    const { usedBytes } = await this.storageService.uploadFiles({ prefix, files, storageClaimingUserId });
 
     return res.status(201).send({ usedBytes });
   }
