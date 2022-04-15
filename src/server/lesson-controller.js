@@ -64,7 +64,7 @@ class LessonController {
 
     const room = await this.roomService.getRoomById(lesson.roomId);
     const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
-    const isRoomOwnerOrMember = user && (room.owner === user._id || room.members.find(member => member.userId === user._id));
+    const isRoomOwnerOrMember = user && (room.owner === user._id || room.members.some(member => member.userId === user._id));
 
     if (isPrivateRoom && !user) {
       throw new Unauthorized();
