@@ -46,9 +46,9 @@ function Lesson({ PageTemplate, initialState }) {
 
   const startsInEditMode = request.query.view === LESSON_VIEW_QUERY_PARAM.edit;
 
-  const { room } = initialState;
-  const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
+  const [room, setRoom] = useState(initialState.room);
   const isRoomOwner = user?._id === room.owner.key;
+  const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
   const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
 
   const [isDirty, setIsDirty] = useState(false);
@@ -246,6 +246,14 @@ function Lesson({ PageTemplate, initialState }) {
     );
   };
 
+  const handleUsedBytesUpdated = usedBytes => {
+    if (room.owner.storage) {
+      const updatedRoom = cloneDeep(room);
+      updatedRoom.owner.storage.usedBytes = usedBytes;
+      setRoom(updatedRoom);
+    }
+  };
+
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -265,7 +273,7 @@ function Lesson({ PageTemplate, initialState }) {
     rootPath: 'media',
     initialPath: `media/${lesson._id}`,
     uploadPath: `media/${lesson._id}`,
-    isDeletionEnabled: hasUserPermission(user, permissions.DELETE_STORAGE_FILE)
+    isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
   };
 
   const privateStorage = isPrivateRoom && !!room.owner.storage?.plan
@@ -275,7 +283,8 @@ function Lesson({ PageTemplate, initialState }) {
       rootPath: `rooms/${room._id}/media`,
       initialPath: `rooms/${room._id}/media`,
       uploadPath: `rooms/${room._id}/media`,
-      isDeletionEnabled: isRoomOwner || isRoomCollaborator
+      isDeletionEnabled: isRoomOwner || isRoomCollaborator,
+      onUsedBytesUpdated: handleUsedBytesUpdated
     }
     : null;
 
@@ -307,6 +316,7 @@ function Lesson({ PageTemplate, initialState }) {
             onSectionInsert={handleSectionInsert}
             onSectionDuplicate={handleSectionDuplicate}
             onSectionDelete={handleSectionDelete}
+            onUsedBytesUpdated={handleUsedBytesUpdated}
             />
         </div>
       </PageTemplate>

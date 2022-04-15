@@ -160,7 +160,7 @@ class StorageController {
     router.delete(
       '/api/v1/storage/objects/:objectName',
       [
-        needsPermission(permissions.DELETE_STORAGE_FILE),
+        needsPermission(permissions.DELETE_OWN_FILES),
         validateQuery(deleteObjectQuerySchema),
         validateParams(deleteObjectParamSchema)
       ],

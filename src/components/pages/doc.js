@@ -406,7 +406,7 @@ function Doc({ initialState, PageTemplate }) {
     rootPath: 'media',
     initialPath: `media/${doc.key}`,
     uploadPath: `media/${doc.key}`,
-    isDeletionEnabled: hasUserPermission(user, permissions.DELETE_STORAGE_FILE)
+    isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
   };
 
   return (
