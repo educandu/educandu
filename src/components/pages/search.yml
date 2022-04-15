@@ -1,4 +1,7 @@
-headline:
+headlineSearching:
+  en: Searching ...
+  de: Suchen ...
+headlineDocumentsFound:
   en: |
     {count, plural, =1 {# document} other {# documents}} found
   de: |
