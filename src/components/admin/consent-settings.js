@@ -11,7 +11,7 @@ function ConsentSettings({ consentText, onChange }) {
   const handleConsentTextChanged = (lang, value) => {
     const updatedConsentText = cloneDeep(consentText);
     updatedConsentText[lang] = value;
-    onChange(updatedConsentText, { isValid: true });
+    onChange(updatedConsentText, { isValid: !!value.trim().length });
   };
 
   return (
