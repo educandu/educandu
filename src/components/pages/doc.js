@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import Restricted from '../restricted.js';
@@ -14,9 +13,8 @@ import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { Trans, useTranslation } from 'react-i18next';
-import InfoFactory from '../../plugins/info-factory.js';
-import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
+import PluginRegistry from '../../plugins/plugin-registry.js';
 import HistoryControlPanel from '../history-control-panel.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
@@ -36,8 +34,6 @@ import {
 } from '../confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
-
-const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
 
 const VIEW = {
   display: 'display',
@@ -75,8 +71,7 @@ function Doc({ initialState, PageTemplate }) {
   const user = useUser();
   const request = useRequest();
   const { t } = useTranslation('doc');
-  const infoFactory = useService(InfoFactory);
-  const editorFactory = useService(EditorFactory);
+  const pluginRegistry = useService(PluginRegistry);
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const isExternalDocument = initialState.doc.origin.startsWith(DOCUMENT_ORIGIN.external);
@@ -102,7 +97,7 @@ function Doc({ initialState, PageTemplate }) {
 
   useEffect(() => {
     if (initialView === VIEW.edit || view === VIEW.edit) {
-      ensureEditorsAreLoaded(editorFactory);
+      pluginRegistry.ensureAllEditorsAreLoaded();
     }
 
     if (initialView === VIEW.history) {
@@ -116,20 +111,19 @@ function Doc({ initialState, PageTemplate }) {
         }
       })();
     }
-  }, [initialView, doc.key, view, t, editorFactory, documentApiClient]);
+  }, [initialView, doc.key, view, t, pluginRegistry, documentApiClient]);
 
   useEffect(() => {
     switch (view) {
-      case VIEW.display:
-        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
-        break;
       case VIEW.edit:
         history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.edit }));
         break;
       case VIEW.history:
         history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.history }));
         break;
+      case VIEW.display:
       default:
+        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
         break;
     }
   }, [user, doc.key, doc.slug, view]);
@@ -228,7 +222,7 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handleSectionInsert = (pluginType, index) => {
-    const pluginInfo = infoFactory.createInfo(pluginType);
+    const pluginInfo = pluginRegistry.getInfo(pluginType);
     const newSection = {
       key: uniqueId.create(),
       type: pluginType,
@@ -267,7 +261,7 @@ function Doc({ initialState, PageTemplate }) {
     try {
       const clipboardText = await window.navigator.clipboard.readText();
       const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
-      const redactedSection = redactSectionContent({ section: newSection, infoFactory });
+      const redactedSection = redactSectionContent({ section: newSection, pluginRegistry });
       const newSections = insertItemAt(currentSections, redactedSection, index);
       setCurrentSections(newSections);
       setIsDirty(true);

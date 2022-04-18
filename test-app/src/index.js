@@ -9,6 +9,23 @@ const processEnv = process.env;
 
 const thisDir = path.dirname(url.fileURLToPath(import.meta.url));
 
+const plugins = [
+  'markdown',
+  'quick-tester',
+  'audio',
+  'video',
+  'image',
+  'pdf-viewer',
+  'iframe',
+  'anavis',
+  'image-tiles',
+  'diagram-net',
+  'annotation',
+  'abc-notation',
+  'ear-training',
+  'interval-trainer'
+];
+
 const config = {
   appName: 'educandu',
   bundleConfig,
@@ -41,7 +58,8 @@ const config = {
   additionalControllers: [],
   consentCookieNamePrefix: 'TEST_APP_CONSENT',
   areRoomsEnabled: parseBool(processEnv.TEST_APP_ARE_ROOMS_ENABLED || false.toString()),
-  isAdminTestsTabEnabled: parseBool(processEnv.TEST_APP_IS_ADMIN_TESTS_TAB_ENABLED || false.toString())
+  isAdminTestsTabEnabled: parseBool(processEnv.TEST_APP_IS_ADMIN_TESTS_TAB_ENABLED || false.toString()),
+  plugins
 };
 
 educandu(config);

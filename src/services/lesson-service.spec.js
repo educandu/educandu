@@ -1,7 +1,7 @@
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
 import LessonService from './lesson-service.js';
-import MarkdownInfo from '../plugins/markdown/info.js';
+import MarkdownInfo from '../plugins/markdown/markdown-info.js';
 import { createTestLesson, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
 describe('lesson-service', () => {

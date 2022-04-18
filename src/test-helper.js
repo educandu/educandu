@@ -72,7 +72,23 @@ export async function setupTestEnvironment() {
       getPageTemplateComponent: () => Promise.resolve(null),
       getHomePageTemplateComponent: () => Promise.resolve(null),
       getSiteLogoComponent: () => Promise.resolve(null)
-    }
+    },
+    plugins: [
+      'markdown',
+      'quick-tester',
+      'audio',
+      'video',
+      'image',
+      'pdf-viewer',
+      'iframe',
+      'anavis',
+      'image-tiles',
+      'diagram-net',
+      'annotation',
+      'abc-notation',
+      'ear-training',
+      'interval-trainer'
+    ]
   });
 
   // Run the DB check in order to create all collections and indexes:

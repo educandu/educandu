@@ -6,7 +6,7 @@ import ServerConfig from './server-config.js';
 import ClientConfig from './client-config.js';
 import resources from '../resources/resources.json';
 import PageResolver from '../domain/page-resolver.js';
-import EditorFactory from '../plugins/editor-factory.js';
+import PluginRegistry from '../plugins/plugin-registry.js';
 import ResourceManager from '../resources/resource-manager.js';
 
 const logger = new Logger(import.meta.url);
@@ -59,8 +59,8 @@ export async function createContainer(configValues = {}) {
   container.registerInstance(PageResolver, pageResolver);
 
   logger.info('Loading plugin editors');
-  const editorFactory = container.get(EditorFactory);
-  await editorFactory.ensureEditorsAreLoaded();
+  const pluginRegistry = container.get(PluginRegistry);
+  await pluginRegistry.ensureAllEditorsAreLoaded();
 
   return container;
 }

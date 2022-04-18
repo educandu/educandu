@@ -102,10 +102,10 @@ export function createSectionRevision({ section, ancestorSection = null, isResto
   return createNewSectionRevisionFrom(section);
 }
 
-export function extractCdnResources(sections, pluginInfoFactory) {
+export function extractCdnResources(sections, pluginRegistry) {
   return [
     ...sections.reduce((cdnResources, section) => {
-      const info = pluginInfoFactory.tryCreateInfo(section.type);
+      const info = pluginRegistry.tryGetInfo(section.type);
       return info && section.content
         ? [...cdnResources, ...info.getCdnResources(section.content).filter(resource => resource)]
         : cdnResources;
@@ -152,8 +152,8 @@ export function createNewSectionFromClipboardText(clipboardText, origin) {
   return null;
 }
 
-export function redactSectionContent({ section, infoFactory, targetRoomId }) {
-  const pluginInfo = infoFactory.createInfo(section.type);
+export function redactSectionContent({ section, pluginRegistry, targetRoomId }) {
+  const pluginInfo = pluginRegistry.getInfo(section.type);
   return pluginInfo
     ? { ...section, content: pluginInfo.redactContent(section.content, targetRoomId) }
     : section;

@@ -7,10 +7,10 @@ import cloneDeep from '../utils/clone-deep.js';
 import TaskStore from '../stores/task-store.js';
 import LockStore from '../stores/lock-store.js';
 import BatchStore from '../stores/batch-store.js';
-import InfoFactory from '../plugins/info-factory.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
 import { DOCUMENT_ORIGIN } from '../domain/constants.js';
+import PluginRegistry from '../plugins/plugin-registry.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
@@ -30,11 +30,11 @@ class DocumentService {
       TaskStore,
       LockStore,
       TransactionRunner,
-      InfoFactory
+      PluginRegistry
     ];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentStore, batchStore, taskStore, lockStore, transactionRunner, infoFactory) {
+  constructor(documentRevisionStore, documentOrderStore, documentStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry) {
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentStore = documentStore;
@@ -42,7 +42,7 @@ class DocumentService {
     this.taskStore = taskStore;
     this.lockStore = lockStore;
     this.transactionRunner = transactionRunner;
-    this.infoFactory = infoFactory;
+    this.pluginRegistry = pluginRegistry;
   }
 
   async getAllDocumentsMetadata({ includeArchived } = {}) {
@@ -414,7 +414,11 @@ class DocumentService {
           this.documentStore.getDocumentByKey(documentKey, { session })
         ]);
 
-        const updatedDocumentRevisions = existingDocumentRevisions.map(rev => ({ ...rev, cdnResources: extractCdnResources(rev.sections, this.infoFactory) }));
+        const updatedDocumentRevisions = existingDocumentRevisions.map(revision => ({
+          ...revision,
+          cdnResources: extractCdnResources(revision.sections, this.pluginRegistry)
+        }));
+
         const updatedDocument = this._buildDocumentFromRevisions(updatedDocumentRevisions);
 
         if (!deepEqual(existingDocumentRevisions, updatedDocumentRevisions) || !deepEqual(existingDocument, updatedDocument)) {
@@ -450,7 +454,7 @@ class DocumentService {
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
       originUrl: data.originUrl || '',
-      cdnResources: extractCdnResources(mappedSections, this.infoFactory)
+      cdnResources: extractCdnResources(mappedSections, this.pluginRegistry)
     };
   }
 

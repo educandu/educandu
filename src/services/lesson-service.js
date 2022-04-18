@@ -2,17 +2,17 @@ import by from 'thenby';
 import deepEqual from 'fast-deep-equal';
 import uniqueId from '../utils/unique-id.js';
 import LessonStore from '../stores/lesson-store.js';
-import InfoFactory from '../plugins/info-factory.js';
 import { extractCdnResources } from './section-helper.js';
+import PluginRegistry from '../plugins/plugin-registry.js';
 
 class LessonService {
   static get inject() {
-    return [LessonStore, InfoFactory];
+    return [LessonStore, PluginRegistry];
   }
 
-  constructor(lessonStore, infoFactory) {
+  constructor(lessonStore, pluginRegistry) {
     this.lessonStore = lessonStore;
-    this.infoFactory = infoFactory;
+    this.pluginRegistry = pluginRegistry;
   }
 
   async getLessonById(lessonId) {
@@ -79,7 +79,7 @@ class LessonService {
     const updatedLesson = {
       ...lesson,
       sections,
-      cdnResources: extractCdnResources(sections, this.infoFactory),
+      cdnResources: extractCdnResources(sections, this.pluginRegistry),
       updatedOn: new Date(),
       updatedBy: userId
     };
@@ -100,7 +100,7 @@ class LessonService {
 
     const updatedLesson = {
       ...lesson,
-      cdnResources: extractCdnResources(lesson.sections, this.infoFactory)
+      cdnResources: extractCdnResources(lesson.sections, this.pluginRegistry)
     };
 
     if (!deepEqual(lesson, updatedLesson)) {

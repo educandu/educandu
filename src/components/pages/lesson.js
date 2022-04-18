@@ -1,4 +1,3 @@
-import memoizee from 'memoizee';
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
 import { Breadcrumb, message } from 'antd';
@@ -13,9 +12,8 @@ import { useRequest } from '../request-context.js';
 import { useService } from '../container-context.js';
 import SectionsDisplay from '../sections-display.js';
 import { useDateFormat } from '../locale-context.js';
-import InfoFactory from '../../plugins/info-factory.js';
-import EditorFactory from '../../plugins/editor-factory.js';
 import React, { Fragment, useEffect, useState } from 'react';
+import PluginRegistry from '../../plugins/plugin-registry.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
@@ -30,8 +28,6 @@ import { createClipboardTextForSection, createNewSectionFromClipboardText, redac
 
 const logger = new Logger(import.meta.url);
 
-const ensureEditorsAreLoaded = memoizee(editorFactory => editorFactory.ensureEditorsAreLoaded());
-
 const createPageAlerts = (isInEditMode, hasPendingTemplateSectionKeys, t) => {
   return isInEditMode && hasPendingTemplateSectionKeys ? [{ message: t('common:proposedSectionsAlert') }] : [];
 };
@@ -41,8 +37,7 @@ function Lesson({ PageTemplate, initialState }) {
   const request = useRequest();
   const { t } = useTranslation();
   const { formatDate } = useDateFormat();
-  const infoFactory = useService(InfoFactory);
-  const editorFactory = useService(EditorFactory);
+  const pluginRegistry = useService(PluginRegistry);
 
   const startsInEditMode = request.query.view === LESSON_VIEW_QUERY_PARAM.edit;
 
@@ -66,9 +61,9 @@ function Lesson({ PageTemplate, initialState }) {
 
   useEffect(() => {
     if (startsInEditMode) {
-      ensureEditorsAreLoaded(editorFactory);
+      pluginRegistry.ensureAllEditorsAreLoaded();
     }
-  }, [startsInEditMode, editorFactory]);
+  }, [startsInEditMode, pluginRegistry]);
 
   useEffect(() => {
     if (isInEditMode) {
@@ -98,7 +93,7 @@ function Lesson({ PageTemplate, initialState }) {
   };
 
   const handleEditOpen = async () => {
-    await ensureEditorsAreLoaded(editorFactory);
+    await pluginRegistry.ensureAllEditorsAreLoaded();
     setIsInEditMode(true);
     setCurrentSections(cloneDeep(lesson.sections));
   };
@@ -183,7 +178,7 @@ function Lesson({ PageTemplate, initialState }) {
   };
 
   const handleSectionInsert = (pluginType, index) => {
-    const pluginInfo = infoFactory.createInfo(pluginType);
+    const pluginInfo = pluginRegistry.getInfo(pluginType);
     const newSection = {
       key: uniqueId.create(),
       type: pluginType,
@@ -222,7 +217,7 @@ function Lesson({ PageTemplate, initialState }) {
     try {
       const clipboardText = await window.navigator.clipboard.readText();
       const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
-      const redactedSection = redactSectionContent({ section: newSection, infoFactory, targetRoomId: room._id });
+      const redactedSection = redactSectionContent({ section: newSection, pluginRegistry, targetRoomId: room._id });
       const newSections = insertItemAt(currentSections, redactedSection, index);
       setCurrentSections(newSections);
       setIsDirty(true);
