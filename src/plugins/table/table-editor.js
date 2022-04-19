@@ -44,7 +44,7 @@ function TableEditor({ content, onContentChanged }) {
         <Form.Item label="JSON" {...formItemLayout}>
           <TextArea value={json} onChange={handleJSONValueChanged} autoSize={{ minRows: 10 }} />
         </Form.Item>
-        <Form.Item label={t('renderMedia')} {...formItemLayout}>
+        <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={renderMedia} onChange={handleRenderMediaChanged} />
         </Form.Item>
       </Form>

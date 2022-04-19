@@ -33,7 +33,7 @@ export default function MarkdownEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
           <TextArea value={text} onChange={handleTextChanged} autoSize={{ minRows: 3 }} />
         </Form.Item>
-        <Form.Item label={t('renderMedia')} {...formItemLayout}>
+        <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={renderMedia} onChange={handleRenderMediaChanged} />
         </Form.Item>
       </Form>
