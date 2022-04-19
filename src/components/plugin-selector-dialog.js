@@ -66,7 +66,7 @@ function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboar
       visible={visible}
       title={t('title')}
       footer={renderFooter()}
-      destroyOnClose
+      onCancel={onCancel}
       >
       <GridSelector
         items={pluginItems}
