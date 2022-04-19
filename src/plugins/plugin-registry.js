@@ -16,6 +16,7 @@ import QuickTesterInfo from './quick-tester/quick-tester-info.js';
 import AbcNotationInfo from './abc-notation/abc-notation-info.js';
 import EarTrainingInfo from './ear-training/ear-training-info.js';
 import IntervalTrainerInfo from './interval-trainer/interval-trainer-info.js';
+import InteractiveMediaInfo from './interactive-media/interactive-media-info.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -33,7 +34,8 @@ const allPossibleInfoTypes = [
   QuickTesterInfo,
   AbcNotationInfo,
   EarTrainingInfo,
-  IntervalTrainerInfo
+  IntervalTrainerInfo,
+  InteractiveMediaInfo
 ];
 
 class RegisteredPlugin {

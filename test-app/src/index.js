@@ -23,7 +23,8 @@ const plugins = [
   'annotation',
   'abc-notation',
   'ear-training',
-  'interval-trainer'
+  'interval-trainer',
+  'interactive-media'
 ];
 
 const config = {
