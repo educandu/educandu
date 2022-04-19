@@ -120,6 +120,9 @@ pasteSectionFromClipboardError:
 sectionCopiedToClipboard:
   en: The section was copied to the clipboard
   de: Der Abschnitt wurde in die Zwischenablage kopiert
+clipboardPasteNotSupported:
+  en: Pasting from the clipboard is not supported by this browser.
+  de: Das Einfügen aus der Zwischenablage wird von diesem Browser nicht unterstützt.
 accept:
   en: Accept
   de: Akzeptieren

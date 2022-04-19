@@ -15,6 +15,7 @@ import { useDateFormat } from '../locale-context.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import PluginRegistry from '../../plugins/plugin-registry.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
@@ -214,6 +215,11 @@ function Lesson({ PageTemplate, initialState }) {
   };
 
   const handleSectionPasteFromClipboard = async index => {
+    if (!supportsClipboardPaste()) {
+      message.error(t('common:clipboardPasteNotSupported'), 10);
+      return false;
+    }
+
     try {
       const clipboardText = await window.navigator.clipboard.readText();
       const newSection = createNewSectionFromClipboardText(clipboardText, request.hostInfo.origin);
