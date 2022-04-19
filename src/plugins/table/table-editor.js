@@ -1,21 +1,32 @@
 import React from 'react';
-import { Checkbox, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
-import validation from '../../ui/validation.js';
+import { Checkbox, Form, Input, message } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 
 const { TextArea } = Input;
 
-export default function MarkdownEditor({ content, onContentChanged }) {
-  const { t } = useTranslation('markdown');
-  const { text, renderMedia } = content;
+function TableEditor({ content, onContentChanged }) {
+  const { t } = useTranslation('table');
+  const json = JSON.stringify(content, null, 2) || '';
+
+  const { renderMedia } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
   };
 
-  const handleTextChanged = event => {
-    updateContent({ text: event.target.value });
+  const handleJSONValueChanged = event => {
+    const { value } = event.target;
+
+    let newContent;
+    try {
+      newContent = JSON.parse(value);
+    } catch (err) {
+      message.error(err.message);
+      return;
+    }
+
+    updateContent({ ...newContent });
   };
 
   const handleRenderMediaChanged = event => {
@@ -28,10 +39,10 @@ export default function MarkdownEditor({ content, onContentChanged }) {
   };
 
   return (
-    <div>
+    <div className="TableEditor">
       <Form>
-        <Form.Item label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
-          <TextArea value={text} onChange={handleTextChanged} autoSize={{ minRows: 3 }} />
+        <Form.Item label="JSON" {...formItemLayout}>
+          <TextArea value={json} onChange={handleJSONValueChanged} autoSize={{ minRows: 10 }} />
         </Form.Item>
         <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={renderMedia} onChange={handleRenderMediaChanged} />
@@ -41,6 +52,8 @@ export default function MarkdownEditor({ content, onContentChanged }) {
   );
 }
 
-MarkdownEditor.propTypes = {
+TableEditor.propTypes = {
   ...sectionEditorProps
 };
+
+export default TableEditor;

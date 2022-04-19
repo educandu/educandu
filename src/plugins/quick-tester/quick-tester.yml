@@ -25,9 +25,6 @@ testsOrderGiven:
 testsOrderRandom:
   en: random
   de: zufällig
-renderMedia:
-  en: Render media
-  de: Medien wiedergeben
 renderMediaInfo:
   en: Will be applied to the question and answer text, not the link text and title
   de: Bezieht sich nur auf den Fragen- und Antworttext, nicht auf den Link-Text und Titel

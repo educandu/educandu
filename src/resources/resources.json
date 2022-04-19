@@ -1395,16 +1395,14 @@
     "namespace": "annotation",
     "language": "en",
     "resources": {
-      "name": "Annotation",
-      "renderMedia": "Render media"
+      "name": "Annotation"
     }
   },
   {
     "namespace": "annotation",
     "language": "de",
     "resources": {
-      "name": "Anmerkung",
-      "renderMedia": "Medien wiedergeben"
+      "name": "Anmerkung"
     }
   },
   {
@@ -1669,16 +1667,14 @@
     "namespace": "markdown",
     "language": "en",
     "resources": {
-      "name": "Markdown",
-      "renderMedia": "Render media"
+      "name": "Markdown"
     }
   },
   {
     "namespace": "markdown",
     "language": "de",
     "resources": {
-      "name": "Markdown",
-      "renderMedia": "Medien wiedergeben"
+      "name": "Markdown"
     }
   },
   {
@@ -1732,7 +1728,6 @@
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
       "testsOrderRandom": "random",
-      "renderMedia": "Render media",
       "renderMediaInfo": "Will be applied to the question and answer text, not the link text and title"
     }
   },
@@ -1749,8 +1744,21 @@
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
       "testsOrderRandom": "zufällig",
-      "renderMedia": "Medien wiedergeben",
       "renderMediaInfo": "Bezieht sich nur auf den Fragen- und Antworttext, nicht auf den Link-Text und Titel"
+    }
+  },
+  {
+    "namespace": "table",
+    "language": "en",
+    "resources": {
+      "name": "Table"
+    }
+  },
+  {
+    "namespace": "table",
+    "language": "de",
+    "resources": {
+      "name": "Tabelle"
     }
   },
   {
@@ -1896,7 +1904,8 @@
       "capacity": "Capacity",
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
-      "roomsBreadcrumbPart": "rooms"
+      "roomsBreadcrumbPart": "rooms",
+      "renderMedia": "Render media"
     }
   },
   {
@@ -2002,7 +2011,8 @@
       "capacity": "Kapazität",
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
-      "roomsBreadcrumbPart": "Räume"
+      "roomsBreadcrumbPart": "Räume",
+      "renderMedia": "Medien wiedergeben"
     }
   },
   {

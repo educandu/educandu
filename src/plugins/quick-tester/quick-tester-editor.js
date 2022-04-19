@@ -149,7 +149,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
             <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        <Form.Item label={t('renderMedia')} {...formItemLayout}>
+        <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={content.renderMedia} onChange={handleRenderMediaChanged} />
           <Tooltip title={t('renderMediaInfo')}>
             <InfoCircleOutlined className="QuickTesterEditor-infoIcon" />

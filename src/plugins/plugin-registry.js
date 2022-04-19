@@ -3,6 +3,7 @@ import { Container } from '../common/di.js';
 import AudioInfo from './audio/audio-info.js';
 import VideoInfo from './video/video-info.js';
 import ImageInfo from './image/image-info.js';
+import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import AnavisInfo from './anavis/anavis-info.js';
 import MarkdownInfo from './markdown/markdown-info.js';
@@ -24,6 +25,7 @@ const allPossibleInfoTypes = [
   AudioInfo,
   VideoInfo,
   ImageInfo,
+  TableInfo,
   IframeInfo,
   AnavisInfo,
   MarkdownInfo,
