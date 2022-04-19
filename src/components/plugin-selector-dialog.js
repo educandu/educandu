@@ -40,7 +40,9 @@ function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboar
           icon={<PaperClipOutlined />}
           onClick={onPasteFromClipboard}
           >
-          {t('common:pasteFromClipboard')}
+          <div className="PluginSelectorDialog-pasteButton">
+            {t('common:pasteFromClipboard')}
+          </div>
         </Button>
       </div>
       <div>
