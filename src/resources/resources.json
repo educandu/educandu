@@ -1754,6 +1754,22 @@
     }
   },
   {
+    "namespace": "table",
+    "language": "en",
+    "resources": {
+      "name": "Table",
+      "renderMedia": "Render media"
+    }
+  },
+  {
+    "namespace": "table",
+    "language": "de",
+    "resources": {
+      "name": "Tabelle",
+      "renderMedia": "Medien wiedergeben"
+    }
+  },
+  {
     "namespace": "video",
     "language": "en",
     "resources": {
