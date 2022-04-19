@@ -47,7 +47,7 @@ class RegisteredPlugin {
     this.editorComponent = null;
   }
 
-  async ensureEditorComponentTypeIsResolved() {
+  async ensureEditorComponentIsResolved() {
     this.editorComponent = await this.info.resolveEditorComponent();
   }
 }
@@ -69,7 +69,7 @@ class PluginRegistry {
   }
 
   ensureAllEditorsAreLoaded() {
-    return resolveAll([...this.pluginMap.values()].map(plugin => () => plugin.ensureEditorComponentTypeIsResolved()));
+    return resolveAll([...this.pluginMap.values()].map(plugin => () => plugin.ensureEditorComponentIsResolved()));
   }
 
   getAllInfos() {
