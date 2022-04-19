@@ -23,11 +23,11 @@ class MarkdownInfo {
     return <MarkdownIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return MarkdownDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./markdown-editor.js')).default;
   }
 

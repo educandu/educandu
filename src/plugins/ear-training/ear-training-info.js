@@ -24,11 +24,11 @@ class EarTrainingInfo {
     return <EarTrainingIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return EarTrainingDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./ear-training-editor.js')).default;
   }
 

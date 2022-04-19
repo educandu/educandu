@@ -18,11 +18,11 @@ export default class IntervalTrainerInfo {
     return <IntervalTrainerIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return IntervalTrainerDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./interval-trainer-editor.js')).default;
   }
 

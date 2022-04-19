@@ -24,11 +24,11 @@ class AudioInfo {
     return <AudioIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return AudioDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./audio-editor.js')).default;
   }
 

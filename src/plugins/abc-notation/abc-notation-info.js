@@ -23,11 +23,11 @@ class AbcNotationInfo {
     return <AbcNotationIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return AbcNotationDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./abc-notation-editor.js')).default;
   }
 

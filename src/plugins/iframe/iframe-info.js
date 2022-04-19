@@ -18,11 +18,11 @@ class IframeInfo {
     return <IframeIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return IframeDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./iframe-editor.js')).default;
   }
 

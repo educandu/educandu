@@ -18,11 +18,11 @@ class DiagramNetInfo {
     return <DiagramNetIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return DiagramNetDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./diagram-net-editor.js')).default;
   }
 

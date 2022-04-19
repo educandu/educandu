@@ -24,11 +24,11 @@ class VideoInfo {
     return <VideoIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return VideoDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./video-editor.js')).default;
   }
 

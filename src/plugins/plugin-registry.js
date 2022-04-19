@@ -39,12 +39,12 @@ const allPossibleInfoTypes = [
 class RegisteredPlugin {
   constructor(info) {
     this.info = info;
-    this.displayComponentType = this.info.getDisplayComponentType();
-    this.editorComponentType = null;
+    this.displayComponent = this.info.getDisplayComponent();
+    this.editorComponent = null;
   }
 
   async ensureEditorComponentTypeIsResolved() {
-    this.editorComponentType = await this.info.resolveEditorComponentType();
+    this.editorComponent = await this.info.resolveEditorComponent();
   }
 }
 
@@ -85,12 +85,12 @@ class PluginRegistry {
     return info;
   }
 
-  tryGetDisplayComponentType(pluginType) {
-    return this.pluginMap.get(pluginType)?.displayComponentType;
+  tryGetDisplayComponent(pluginType) {
+    return this.pluginMap.get(pluginType)?.displayComponent;
   }
 
-  tryGetEditorComponentType(pluginType) {
-    return this.pluginMap.get(pluginType)?.editorComponentType;
+  tryGetEditorComponent(pluginType) {
+    return this.pluginMap.get(pluginType)?.editorComponent;
   }
 }
 
