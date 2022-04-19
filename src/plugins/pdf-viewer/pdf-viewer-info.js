@@ -20,11 +20,11 @@ class PdfViewerInfo {
     return <PdfViewerIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return PdfViewerDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./pdf-viewer-editor.js')).default;
   }
 

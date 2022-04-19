@@ -10,10 +10,9 @@
 }
 
 .GridSelector-item {
-  display: grid;
-  grid-auto-flow: row;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
   gap: 2px;
   height: auto;
   width: 100%;
@@ -28,14 +27,19 @@
     .m-selected-item();
     .m-hide-browser-keyboard-focus();
 
-    &:focus, &:focus-within {
+    &:focus,
+    &:focus-within {
       .m-selected-item-focused();
     }
   }
 }
 
 .GridSelector-itemIcon {
+  padding-top: 5px;
   font-size: @grid-selector-icon-size;
 }
 
-.GridSelector-itemLabel {}
+.GridSelector-itemLabel {
+  text-align: center;
+  height: 40px;
+}

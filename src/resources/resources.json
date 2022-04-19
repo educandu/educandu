@@ -1618,6 +1618,20 @@
     }
   },
   {
+    "namespace": "interactiveMedia",
+    "language": "en",
+    "resources": {
+      "name": "Interactive media"
+    }
+  },
+  {
+    "namespace": "interactiveMedia",
+    "language": "de",
+    "resources": {
+      "name": "Interaktive Medien"
+    }
+  },
+  {
     "namespace": "intervalTrainer",
     "language": "en",
     "resources": {

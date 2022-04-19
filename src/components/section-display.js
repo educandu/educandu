@@ -133,7 +133,7 @@ function SectionDisplay({
 
   const renderDisplayComponent = () => {
     if (section.content) {
-      const DisplayComponent = pluginRegistry.tryGetDisplayComponentType(section.type) || NotSupportedSection;
+      const DisplayComponent = pluginRegistry.tryGetDisplayComponent(section.type) || NotSupportedSection;
       return <DisplayComponent content={section.content} />;
     }
 
@@ -145,7 +145,7 @@ function SectionDisplay({
       throw new Error('Cannot edit a deleted section');
     }
 
-    const EditorComponent = pluginRegistry.tryGetEditorComponentType(section.type) || NotSupportedSection;
+    const EditorComponent = pluginRegistry.tryGetEditorComponent(section.type) || NotSupportedSection;
     return (
       <EditorComponent
         publicStorage={publicStorage}

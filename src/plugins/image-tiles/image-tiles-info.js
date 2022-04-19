@@ -20,11 +20,11 @@ export default class ImageTiles {
     return <ImageTilesIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return ImageTilesDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./image-tiles-editor.js')).default;
   }
 

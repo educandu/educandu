@@ -24,11 +24,11 @@ class QuickTesterInfo {
     return <QuickTesterIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return QuickTesterDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./quick-tester-editor.js')).default;
   }
 

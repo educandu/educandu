@@ -23,11 +23,11 @@ class AnnotationInfo {
     return <AnnotationIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return AnnotationEditor;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./annotation-display.js')).default;
   }
 

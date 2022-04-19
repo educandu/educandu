@@ -39,6 +39,7 @@ function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboar
         <Button
           icon={<PaperClipOutlined />}
           onClick={onPasteFromClipboard}
+          className="PluginSelectorDialog-pasteButton"
           >
           {t('common:pasteFromClipboard')}
         </Button>
@@ -66,7 +67,7 @@ function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboar
       visible={visible}
       title={t('title')}
       footer={renderFooter()}
-      destroyOnClose
+      onCancel={onCancel}
       >
       <GridSelector
         items={pluginItems}

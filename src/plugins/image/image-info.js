@@ -20,11 +20,11 @@ class ImageInfo {
     return <ImageIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return ImageDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./image-editor.js')).default;
   }
 

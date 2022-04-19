@@ -24,11 +24,11 @@ class AnavisInfo {
     return <AnavisIcon />;
   }
 
-  getDisplayComponentType() {
+  getDisplayComponent() {
     return AnavisDisplay;
   }
 
-  async resolveEditorComponentType() {
+  async resolveEditorComponent() {
     return (await import('./anavis-editor.js')).default;
   }
 
