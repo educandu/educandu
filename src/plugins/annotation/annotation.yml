@@ -1,3 +1,15 @@
 name:
   en: Annotation
   de: Anmerkung
+state:
+  en: Initial state
+  de: Anfangszustand
+static:
+  en: static
+  de: statisch
+collapsed:
+  en: collapsed
+  de: eingeklappt
+expanded:
+  en: expanded
+  de: ausgeklappt

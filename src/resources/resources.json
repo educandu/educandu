@@ -1395,14 +1395,22 @@
     "namespace": "annotation",
     "language": "en",
     "resources": {
-      "name": "Annotation"
+      "name": "Annotation",
+      "state": "Initial state",
+      "static": "static",
+      "collapsed": "collapsed",
+      "expanded": "expanded"
     }
   },
   {
     "namespace": "annotation",
     "language": "de",
     "resources": {
-      "name": "Anmerkung"
+      "name": "Anmerkung",
+      "state": "Anfangszustand",
+      "static": "statisch",
+      "collapsed": "eingeklappt",
+      "expanded": "ausgeklappt"
     }
   },
   {

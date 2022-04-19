@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, no-await-in-loop, no-console */
-export default class Educandu_2022_04_19_01_add_intent_and_collapsible_state_to_annotation_plugin {
+export default class Educandu_2022_04_19_01_add_intent_and_state_to_annotation_plugin {
   constructor(db) {
     this.db = db;
   }
@@ -10,7 +10,7 @@ export default class Educandu_2022_04_19_01_add_intent_and_collapsible_state_to_
       {
         $set: {
           'sections.$[sectionElement].content.intent': 'neutral',
-          'sections.$[sectionElement].content.collapsibleState': 'collapsed'
+          'sections.$[sectionElement].content.state': 'collapsed'
         }
       },
       {
@@ -33,7 +33,7 @@ export default class Educandu_2022_04_19_01_add_intent_and_collapsible_state_to_
       {
         $unset: {
           'sections.$[sectionElement].content.intent': null,
-          'sections.$[sectionElement].content.collapsibleState': null
+          'sections.$[sectionElement].content.state': null
         }
       },
       {
