@@ -2,8 +2,8 @@ import React from 'react';
 import { TESTS_ORDER } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import QuickTesterIcon from './quick-tester-icon.js';
+import QuickTesterDisplay from './quick-tester-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
-import QuickTesterDisplay from './display/quick-tester-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class QuickTesterInfo {
@@ -29,7 +29,7 @@ class QuickTesterInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/quick-tester-editor.js')).default;
+    return (await import('./quick-tester-editor.js')).default;
   }
 
   getDefaultContent(t) {

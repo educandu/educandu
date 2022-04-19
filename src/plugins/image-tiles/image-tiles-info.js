@@ -2,7 +2,7 @@ import React from 'react';
 import { IMAGE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import ImageTilesIcon from './image-tiles-icon.js';
-import ImageTilesDisplay from './display/image-tiles-display.js';
+import ImageTilesDisplay from './image-tiles-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
 export default class ImageTiles {
@@ -25,7 +25,7 @@ export default class ImageTiles {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/image-tiles-editor.js')).default;
+    return (await import('./image-tiles-editor.js')).default;
   }
 
   getDefaultContent() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
-import AnnotationEditor from './editing/annotation-editor.js';
+import AnnotationEditor from './annotation-editor.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -28,7 +28,7 @@ class AnnotationInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./display/annotation-display.js')).default;
+    return (await import('./annotation-display.js')).default;
   }
 
   getDefaultContent(t) {

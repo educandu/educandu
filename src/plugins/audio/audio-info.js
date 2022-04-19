@@ -1,8 +1,8 @@
 import React from 'react';
 import AudioIcon from './audio-icon.js';
 import { SOURCE_TYPE } from './constants.js';
+import AudioDisplay from './audio-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import AudioDisplay from './display/audio-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -29,7 +29,7 @@ class AudioInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/audio-editor.js')).default;
+    return (await import('./audio-editor.js')).default;
   }
 
   getDefaultContent() {

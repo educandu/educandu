@@ -1,7 +1,7 @@
 import React from 'react';
 import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import MarkdownDisplay from './display/markdown-display.js';
+import MarkdownDisplay from './markdown-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -28,7 +28,7 @@ class MarkdownInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/markdown-editor.js')).default;
+    return (await import('./markdown-editor.js')).default;
   }
 
   getDefaultContent() {

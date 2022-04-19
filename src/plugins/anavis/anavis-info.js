@@ -1,7 +1,7 @@
 import React from 'react';
 import AnavisIcon from './anavis-icon.js';
+import AnavisDisplay from './anavis-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import AnavisDisplay from './display/anavis-display.js';
 import { MEDIA_KIND, MEDIA_TYPE } from './constants.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -29,7 +29,7 @@ class AnavisInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/anavis-editor.js')).default;
+    return (await import('./anavis-editor.js')).default;
   }
 
   getDefaultContent(t) {

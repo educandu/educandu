@@ -2,7 +2,7 @@ import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import PdfViewerIcon from './pdf-viewer-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import PdfViewerDisplay from './display/pdf-viewer-display.js';
+import PdfViewerDisplay from './pdf-viewer-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
 class PdfViewerInfo {
@@ -25,7 +25,7 @@ class PdfViewerInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/pdf-viewer-editor.js')).default;
+    return (await import('./pdf-viewer-editor.js')).default;
   }
 
   getDefaultContent() {

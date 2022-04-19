@@ -1,7 +1,7 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import IntervalTrainerIcon from './interval-trainer-icon.js';
-import IntervalTrainerDisplay from './display/interval-trainer-display.js';
+import IntervalTrainerDisplay from './interval-trainer-display.js';
 
 export default class IntervalTrainerInfo {
   static get typeName() { return 'interval-trainer'; }
@@ -23,7 +23,7 @@ export default class IntervalTrainerInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/interval-trainer-editor.js')).default;
+    return (await import('./interval-trainer-editor.js')).default;
   }
 
   getDefaultContent() {

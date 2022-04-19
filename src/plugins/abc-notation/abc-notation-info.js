@@ -1,8 +1,8 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
+import AbcNotationDisplay from './abc-notation-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
-import AbcNotationDisplay from './display/abc-notation-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AbcNotationInfo {
@@ -28,7 +28,7 @@ class AbcNotationInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/abc-notation-editor.js')).default;
+    return (await import('./abc-notation-editor.js')).default;
   }
 
   getDefaultContent() {

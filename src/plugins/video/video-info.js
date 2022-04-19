@@ -1,8 +1,8 @@
 import React from 'react';
 import VideoIcon from './video-icon.js';
 import { SOURCE_TYPE } from './constants.js';
+import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import VideoDisplay from './display/video-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -29,7 +29,7 @@ class VideoInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/video-editor.js')).default;
+    return (await import('./video-editor.js')).default;
   }
 
   getDefaultContent() {

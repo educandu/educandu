@@ -1,7 +1,7 @@
 import React from 'react';
 import IframeIcon from './iframe-icon.js';
+import IframeDisplay from './iframe-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import IframeDisplay from './display/iframe-display.js';
 
 class IframeInfo {
   static get typeName() { return 'iframe'; }
@@ -23,7 +23,7 @@ class IframeInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/iframe-editor.js')).default;
+    return (await import('./iframe-editor.js')).default;
   }
 
   getDefaultContent() {

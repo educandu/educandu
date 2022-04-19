@@ -1,8 +1,8 @@
 import React from 'react';
 import ImageIcon from './image-icon.js';
 import { SOURCE_TYPE } from './constants.js';
+import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import ImageDisplay from './display/image-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
 class ImageInfo {
@@ -25,7 +25,7 @@ class ImageInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/image-editor.js')).default;
+    return (await import('./image-editor.js')).default;
   }
 
   getDefaultContent() {

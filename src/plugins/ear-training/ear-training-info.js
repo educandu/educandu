@@ -2,8 +2,8 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
 import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
+import EarTrainingDisplay from './ear-training-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
-import EarTrainingDisplay from './display/ear-training-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class EarTrainingInfo {
@@ -29,7 +29,7 @@ class EarTrainingInfo {
   }
 
   async resolveEditorComponentType() {
-    return (await import('./editing/ear-training-editor.js')).default;
+    return (await import('./ear-training-editor.js')).default;
   }
 
   getDefaultContent(t) {
