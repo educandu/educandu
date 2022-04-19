@@ -4,12 +4,30 @@ name:
 state:
   en: Initial state
   de: Anfangszustand
-static:
+state_static:
   en: static
   de: statisch
-collapsed:
+state_collapsed:
   en: collapsed
   de: eingeklappt
-expanded:
+state_expanded:
   en: expanded
   de: ausgeklappt
+intent:
+  en: Intent
+  de: Zweck
+intent_neutral:
+  en: neutral
+  de: neutral
+intent_confirm:
+  en: confirm
+  de: bestätigen
+intent_inform:
+  en: inform
+  de: informieren
+intent_warn:
+  en: warn
+  de: warnen
+intent_alert:
+  en: alert
+  de: alertieren

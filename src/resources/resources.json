@@ -1397,9 +1397,15 @@
     "resources": {
       "name": "Annotation",
       "state": "Initial state",
-      "static": "static",
-      "collapsed": "collapsed",
-      "expanded": "expanded"
+      "state_static": "static",
+      "state_collapsed": "collapsed",
+      "state_expanded": "expanded",
+      "intent": "Intent",
+      "intent_neutral": "neutral",
+      "intent_confirm": "confirm",
+      "intent_inform": "inform",
+      "intent_warn": "warn",
+      "intent_alert": "alert"
     }
   },
   {
@@ -1408,9 +1414,15 @@
     "resources": {
       "name": "Anmerkung",
       "state": "Anfangszustand",
-      "static": "statisch",
-      "collapsed": "eingeklappt",
-      "expanded": "ausgeklappt"
+      "state_static": "statisch",
+      "state_collapsed": "eingeklappt",
+      "state_expanded": "ausgeklappt",
+      "intent": "Zweck",
+      "intent_neutral": "neutral",
+      "intent_confirm": "bestätigen",
+      "intent_inform": "informieren",
+      "intent_warn": "warnen",
+      "intent_alert": "alertieren"
     }
   },
   {

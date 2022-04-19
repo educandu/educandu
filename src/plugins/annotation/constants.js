@@ -6,8 +6,8 @@ export const STATE = {
 
 export const INTENT = {
   neutral: 'neutral',
-  confirmation: 'confirmation',
-  note: 'note',
-  warning: 'warning',
-  danger: 'danger'
+  confirm: 'confirm',
+  inform: 'inform',
+  warn: 'warn',
+  alert: 'alert'
 };
