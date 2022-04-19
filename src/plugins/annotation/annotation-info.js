@@ -28,7 +28,7 @@ class AnnotationInfo {
   }
 
   async resolveEditorComponent() {
-    return (await import('./annotation-display.js')).default;
+    return (await import('./annotation-editor.js')).default;
   }
 
   getDefaultContent(t) {
