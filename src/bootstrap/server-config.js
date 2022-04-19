@@ -56,7 +56,8 @@ const configSchema = joi.object({
   consentCookieNamePrefix: joi.string().required(),
   areRoomsEnabled: joi.bool().default(false),
   isAdminTestsTabEnabled: joi.bool().default(false),
-  additionalHeadHtml: joi.string().default('')
+  additionalHeadHtml: joi.string().default(''),
+  plugins: joi.array().items(joi.string().required()).default(['markdown', 'image'])
 });
 
 class ServerConfig {
@@ -80,7 +81,8 @@ class ServerConfig {
       importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),
       consentCookieNamePrefix: this.consentCookieNamePrefix,
       areRoomsEnabled: this.areRoomsEnabled,
-      isAdminTestsTabEnabled: this.isAdminTestsTabEnabled
+      isAdminTestsTabEnabled: this.isAdminTestsTabEnabled,
+      plugins: this.plugins
     };
   }
 }

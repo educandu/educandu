@@ -4,16 +4,14 @@ import { Button, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { isMacOs } from '../ui/browser-helper.js';
 import DeletedSection from './deleted-section.js';
+import React, { Fragment, useState } from 'react';
 import { useService } from './container-context.js';
-import InfoFactory from '../plugins/info-factory.js';
 import EditIcon from './icons/general/edit-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import MoveUpIcon from './icons/general/move-up-icon.js';
-import EditorFactory from '../plugins/editor-factory.js';
 import PreviewIcon from './icons/general/preview-icon.js';
-import React, { Fragment, useMemo, useState } from 'react';
+import PluginRegistry from '../plugins/plugin-registry.js';
 import MoveDownIcon from './icons/general/move-down-icon.js';
-import RendererFactory from '../plugins/renderer-factory.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
@@ -41,9 +39,7 @@ function SectionDisplay({
   onSectionHardDelete
 }) {
   const { t } = useTranslation();
-  const infoFactory = useService(InfoFactory);
-  const editorFactory = useService(EditorFactory);
-  const rendererFactory = useService(RendererFactory);
+  const pluginRegistry = useService(PluginRegistry);
 
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
 
@@ -135,17 +131,9 @@ function SectionDisplay({
     }
   ].filter(action => action.isVisible);
 
-  const getDisplayComponent = useMemo(() => () => {
-    return rendererFactory.tryCreateRenderer(section.type)?.getDisplayComponent() || NotSupportedSection;
-  }, [rendererFactory, section.type]);
-
-  const getEditorComponent = useMemo(() => () => {
-    return editorFactory.tryCreateEditor(section.type)?.getEditorComponent() || NotSupportedSection;
-  }, [editorFactory, section.type]);
-
   const renderDisplayComponent = () => {
     if (section.content) {
-      const DisplayComponent = getDisplayComponent();
+      const DisplayComponent = pluginRegistry.tryGetDisplayComponentType(section.type) || NotSupportedSection;
       return <DisplayComponent content={section.content} />;
     }
 
@@ -157,7 +145,7 @@ function SectionDisplay({
       throw new Error('Cannot edit a deleted section');
     }
 
-    const EditorComponent = getEditorComponent();
+    const EditorComponent = pluginRegistry.tryGetEditorComponentType(section.type) || NotSupportedSection;
     return (
       <EditorComponent
         publicStorage={publicStorage}
@@ -193,7 +181,7 @@ function SectionDisplay({
 
   const renderSectionInfo = () => {
     const sectionInfo = [
-      infoFactory.tryCreateInfo(section.type)?.getName(t) || `${t('common:unknown')} (${section.type})`,
+      pluginRegistry.tryGetInfo(section.type)?.getName(t) || `${t('common:unknown')} (${section.type})`,
       section.revision ? `${t('common:revision')}: ${section.revision}` : null
     ].filter(s => s).join(' | ');
 
