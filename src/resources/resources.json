@@ -1395,14 +1395,36 @@
     "namespace": "annotation",
     "language": "en",
     "resources": {
-      "name": "Annotation"
+      "name": "Annotation",
+      "behavior": "Behavior",
+      "behavior_static": "static",
+      "behavior_collapsible": "collapsible",
+      "behavior_expandable": "expandable",
+      "intent": "Intent",
+      "intent_neutral": "neutral",
+      "intent_confirm": "confirm",
+      "intent_inform": "inform",
+      "intent_warn": "warn",
+      "intent_discourage": "discourage",
+      "width": "Width"
     }
   },
   {
     "namespace": "annotation",
     "language": "de",
     "resources": {
-      "name": "Anmerkung"
+      "name": "Anmerkung",
+      "behavior": "Verhalten",
+      "behavior_static": "statisch",
+      "behavior_collapsible": "einklappbar",
+      "behavior_expandable": "ausklappbar",
+      "intent": "Intention",
+      "intent_neutral": "neutral",
+      "intent_confirm": "bestätigen",
+      "intent_inform": "informieren",
+      "intent_warn": "warnen",
+      "intent_discourage": "abraten",
+      "width": "Breite"
     }
   },
   {

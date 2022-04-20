@@ -1,4 +1,5 @@
 import React from 'react';
+import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
 import AnnotationDisplay from './annotation-display.js';
@@ -35,7 +36,10 @@ class AnnotationInfo {
     return {
       title: `[${t('common:title')}]`,
       text: `[${t('common:text')}]`,
-      renderMedia: false
+      renderMedia: false,
+      behavior: BEHAVIOR.expandable,
+      intent: INTENT.neutral,
+      width: 100
     };
   }
 
