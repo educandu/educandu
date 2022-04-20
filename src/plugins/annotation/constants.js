@@ -9,5 +9,5 @@ export const INTENT = {
   confirm: 'confirm',
   inform: 'inform',
   warn: 'warn',
-  alert: 'alert'
+  discourage: 'discourage'
 };

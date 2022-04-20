@@ -5,8 +5,8 @@
 @annotation-header-inform-border-color: darken(@annotation-header-inform-background-color, 8%);
 @annotation-header-warn-background-color: #ffeed2;
 @annotation-header-warn-border-color: darken(@annotation-header-warn-background-color, 8%);
-@annotation-header-alert-background-color: #ffe0d0;
-@annotation-header-alert-border-color: darken(@annotation-header-alert-background-color, 8%);
+@annotation-header-discourage-background-color: #ffe0d0;
+@annotation-header-discourage-border-color: darken(@annotation-header-discourage-background-color, 8%);
 
 .AnnotationDisplay {
   margin: 0 auto;
@@ -42,9 +42,9 @@
     border-color: @annotation-header-warn-border-color;
   }
 
-  &.AnnotationDisplay-header--alert {
-    background-color: @annotation-header-alert-background-color;
-    border-color: @annotation-header-alert-border-color;
+  &.AnnotationDisplay-header--discourage {
+    background-color: @annotation-header-discourage-background-color;
+    border-color: @annotation-header-discourage-border-color;
   }
 }
 
@@ -95,8 +95,8 @@
       background-color: @annotation-header-warn-background-color;
     }
 
-    &.AnnotationDisplay-content--alert {
-      background-color: @annotation-header-alert-background-color;
+    &.AnnotationDisplay-content--discourage {
+      background-color: @annotation-header-discourage-background-color;
     }
   }
 
@@ -112,7 +112,7 @@
     border-color: @annotation-header-warn-border-color;
   }
 
-  &.AnnotationDisplay-content--alert {
-    border-color: @annotation-header-alert-border-color;
+  &.AnnotationDisplay-content--discourage {
+    border-color: @annotation-header-discourage-border-color;
   }
 }

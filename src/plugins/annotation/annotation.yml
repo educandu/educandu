@@ -15,7 +15,7 @@ state_expanded:
   de: ausgeklappt
 intent:
   en: Intent
-  de: Zweck
+  de: Intention
 intent_neutral:
   en: neutral
   de: neutral
@@ -28,9 +28,9 @@ intent_inform:
 intent_warn:
   en: warn
   de: warnen
-intent_alert:
-  en: alert
-  de: alertieren
+intent_discourage:
+  en: discourage
+  de: abraten
 width:
   en: Width
   de: Breite

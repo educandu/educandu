@@ -29,7 +29,7 @@ export default function AnnotationDisplay({ content }) {
         {intent === INTENT.confirm && <CheckCircleOutlined />}
         {intent === INTENT.inform && <InfoCircleOutlined />}
         {intent === INTENT.warn && <ExclamationCircleOutlined />}
-        {intent === INTENT.alert && <AlertOutlined />}
+        {intent === INTENT.discourage && <AlertOutlined />}
       </div>
     );
   };
@@ -41,7 +41,7 @@ export default function AnnotationDisplay({ content }) {
       'AnnotationDisplay-content--confirm': intent === INTENT.confirm,
       'AnnotationDisplay-content--inform': intent === INTENT.inform,
       'AnnotationDisplay-content--warn': intent === INTENT.warn,
-      'AnnotationDisplay-content--alert': intent === INTENT.alert
+      'AnnotationDisplay-content--discourage': intent === INTENT.discourage
     });
 
     return (
@@ -57,7 +57,7 @@ export default function AnnotationDisplay({ content }) {
     'AnnotationDisplay-header--confirm': intent === INTENT.confirm,
     'AnnotationDisplay-header--inform': intent === INTENT.inform,
     'AnnotationDisplay-header--warn': intent === INTENT.warn,
-    'AnnotationDisplay-header--alert': intent === INTENT.alert,
+    'AnnotationDisplay-header--discourage': intent === INTENT.discourage,
     'is-above-content': isExpanded || (state === STATE.static && content.title)
   });
 

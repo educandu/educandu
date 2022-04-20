@@ -73,7 +73,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
             <RadioButton value={INTENT.confirm}>{t('intent_confirm')}</RadioButton>
             <RadioButton value={INTENT.inform}>{t('intent_inform')}</RadioButton>
             <RadioButton value={INTENT.warn}>{t('intent_warn')}</RadioButton>
-            <RadioButton value={INTENT.alert}>{t('intent_alert')}</RadioButton>
+            <RadioButton value={INTENT.discourage}>{t('intent_discourage')}</RadioButton>
           </RadioGroup>
         </FormItem>
         <FormItem label={t('width')} {...formItemLayout}>
