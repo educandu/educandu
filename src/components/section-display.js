@@ -179,18 +179,16 @@ function SectionDisplay({
     </Tooltip>
   );
 
-  const renderSectionInfo = () => {
-    const sectionInfo = [
-      pluginRegistry.tryGetInfo(section.type)?.getName(t) || `${t('common:unknown')} (${section.type})`,
-      section.revision ? `${t('common:revision')}: ${section.revision}` : null
-    ].filter(s => s).join(' | ');
-
-    return (<span>{sectionInfo}</span>);
+  const renderSectionType = () => {
+    return pluginRegistry.tryGetInfo(section.type)?.getName(t) || `${t('common:unknown')} (${section.type})`;
   };
 
-  const renderSectionRevision = () => (
-    <span>{section.revision ? `${t('common:revision')}: ${section.revision}` : null}</span>
-  );
+  const renderSectionRevision = () => {
+    if (!section.revision) {
+      return null;
+    }
+    return (<span className="SectionDisplay-sectionRevision">{`${t('common:revision')}: ${section.revision}`}</span>);
+  };
 
   const handleSectionClick = event => {
     const ctrlKeyIsPressed = event.ctrlKey;
@@ -217,7 +215,9 @@ function SectionDisplay({
           <div className="SectionDisplay-actions SectionDisplay-actions--left">
             <div className="SectionDisplay-sectionInfo" {...dragHandleProps}>
               <DragOutlined />
-              {renderSectionInfo()}
+              {renderSectionType()}
+              {!!section.revision && <span className="SectionDisplay-sectionRevisionSeparator">|</span>}
+              {renderSectionRevision()}
             </div>
           </div>
           <div className="SectionDisplay-actions SectionDisplay-actions--right">

@@ -64,7 +64,10 @@
   &.SectionDisplay-actionButton--edit,
   &.SectionDisplay-actionButton--preview {
     color: @green-8;
-    &:hover, &:active, &:focus {
+
+    &:hover,
+    &:active,
+    &:focus {
       color: @green-8;
       border-color: @green-8;
     }
@@ -72,7 +75,10 @@
 
   &.SectionDisplay-actionButton--delete {
     color: @edu-danger-color;
-    &:hover, &:active, &:focus {
+
+    &:hover,
+    &:active,
+    &:focus {
       color: @edu-danger-color;
       border-color: @edu-danger-color;
     }
@@ -107,6 +113,20 @@
   background-color: @edu-white;
 
   &.SectionDisplay-sectionInfo--hardDelete {
+    display: none;
+  }
+}
+
+.SectionDisplay-sectionRevisionSeparator {
+  padding: 0 5px;
+
+  @media @edu-media-phone {
+    display: none;
+  }
+}
+
+.SectionDisplay-sectionRevision {
+  @media @edu-media-phone {
     display: none;
   }
 }
