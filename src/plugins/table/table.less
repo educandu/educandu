@@ -1,14 +1,112 @@
-.TableDisplay {}
+@table-plugin-cell-content-padding: 5px;
+
+.TableDisplay {
+  overflow-x: hidden;
+}
 
 .TableDisplay-table {
   width: 100%;
+  overflow-x: hidden;
   border-collapse: collapse;
 }
 
 .TableDisplay-cell {
   border: 1px solid @edu-border-color-base;
   text-align: left;
-  padding: 5px;
+  padding: @table-plugin-cell-content-padding;
 }
 
 .TableEditor {}
+
+.TableDesigner {}
+
+.TableDesigner-table {
+  .TableDisplay-table;
+  margin: -20px 0 0 -20px;
+  width: ~"calc(100% + 20px)";
+}
+
+.TableDesigner-tableCell {
+
+  &.TableDesigner-tableCell--content {
+    .TableDisplay-cell;
+    position: relative;
+    background-color: @edu-white;
+  }
+
+  &.TableDesigner-tableCell--rowHeader {
+    .TableDisplay-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: none;
+    width: 20px;
+  }
+
+  &.TableDesigner-tableCell--columnHeader {
+    .TableDisplay-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: none;
+    height: 20px;
+  }
+}
+
+.TableDesigner-contentInput {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+
+  &:hover,
+  &:focus {
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.TableDesigner-headerCellMenuContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.TableDesigner-contentCellMenuContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.TableDesignerMenu {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+
+  .TableDesignerMenu-dot {
+    display: block;
+    border-radius: 50%;
+    transition: all .2s ease-in-out;
+    background-color: lighten(@edu-secondary-color-dark, 10%);
+
+    &.TableDesignerMenu-dot--normal {
+      width: 10px;
+      height: 10px;
+    }
+
+    &.TableDesignerMenu-dot--zooming {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
+  &:hover {
+    .TableDesignerMenu-dot {
+      background-color: @edu-secondary-color-dark;
+
+      &.TableDesignerMenu-dot--zooming {
+        transform: scale(1.5);
+      }
+    }
+  }
+}

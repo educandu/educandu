@@ -1,4 +1,21 @@
 name:
   en: Table
   de: Tabelle
-
+cellAction_insertRowBefore:
+  en: Insert row before
+  de: Zeile davor einfügen
+cellAction_insertRowAfter:
+  en: Insert row after
+  de: Zeile danach einfügen
+cellAction_deleteRow:
+  en: Delete row
+  de: Zeile löschen
+cellAction_insertColumnBefore:
+  en: Insert column before
+  de: Spalte davor einfügen
+cellAction_insertColumnAfter:
+  en: Insert column after
+  de: Spalte danach einfügen
+cellAction_deleteColumn:
+  en: Delete column
+  de: Spalte löschen
