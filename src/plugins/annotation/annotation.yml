@@ -31,3 +31,6 @@ intent_warn:
 intent_alert:
   en: alert
   de: alertieren
+width:
+  en: Width
+  de: Breite

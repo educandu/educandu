@@ -6,7 +6,7 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { AlertOutlined, InfoCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, RightOutlined } from '@ant-design/icons';
 
 export default function AnnotationDisplay({ content }) {
-  const { state, intent } = content;
+  const { state, intent, width } = content;
 
   const [isExpanded, setIsExpanded] = useState(state === STATE.expanded);
 
@@ -15,8 +15,12 @@ export default function AnnotationDisplay({ content }) {
   };
 
   const renderIntentIcon = ({ standalone }) => {
+    if (intent === INTENT.neutral) {
+      return null;
+    }
+
     const iconClasses = classNames({
-      'AnnotationDisplay- intentIcon': true,
+      'AnnotationDisplay-intentIcon': true,
       'AnnotationDisplay-intentIcon--standalone': standalone
     });
 
@@ -58,7 +62,7 @@ export default function AnnotationDisplay({ content }) {
   });
 
   return (
-    <div className="AnnotationDisplay">
+    <div className={`AnnotationDisplay u-max-width-${width}`}>
       {state === STATE.static && !content.title && renderContent({ standalone: true })}
 
       {state === STATE.static && content.title && (

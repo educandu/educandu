@@ -8,11 +8,14 @@
 @annotation-header-alert-background-color: #ffe0d0;
 @annotation-header-alert-border-color: darken(@annotation-header-alert-background-color, 8%);
 
-.AnnotationDisplay {}
+.AnnotationDisplay {
+  margin: 0 auto;
+}
 
 .AnnotationDisplay-header {
   display: flex;
   align-items: center;
+  overflow-x: hidden;
   text-decoration: none;
   gap: @edu-content-padding;
   padding: 12px @annotation-padding;
@@ -67,6 +70,7 @@
 }
 
 .AnnotationDisplay-content {
+  overflow-x: hidden;
   padding: @annotation-padding;
   border: 1px solid @edu-border-color-light;
   border-radius: 0 0 @edu-border-radius-base @edu-border-radius-base;

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Checkbox, Form, Input, Radio } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -12,7 +13,7 @@ const RadioButton = Radio.Button;
 
 export default function AnnotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('annotation');
-  const { title, text, renderMedia, state, intent } = content;
+  const { title, text, renderMedia, state, intent, width } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -36,6 +37,10 @@ export default function AnnotationEditor({ content, onContentChanged }) {
 
   const handleIntentChange = event => {
     updateContent({ intent: event.target.value });
+  };
+
+  const handleWidthChange = value => {
+    updateContent({ width: value });
   };
 
   const formItemLayout = {
@@ -70,6 +75,9 @@ export default function AnnotationEditor({ content, onContentChanged }) {
             <RadioButton value={INTENT.warn}>{t('intent_warn')}</RadioButton>
             <RadioButton value={INTENT.alert}>{t('intent_alert')}</RadioButton>
           </RadioGroup>
+        </FormItem>
+        <FormItem label={t('width')} {...formItemLayout}>
+          <ObjectMaxWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
       </Form>
     </div>

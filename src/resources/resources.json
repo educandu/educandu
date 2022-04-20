@@ -1405,7 +1405,8 @@
       "intent_confirm": "confirm",
       "intent_inform": "inform",
       "intent_warn": "warn",
-      "intent_alert": "alert"
+      "intent_alert": "alert",
+      "width": "Width"
     }
   },
   {
@@ -1422,7 +1423,8 @@
       "intent_confirm": "bestätigen",
       "intent_inform": "informieren",
       "intent_warn": "warnen",
-      "intent_alert": "alertieren"
+      "intent_alert": "alertieren",
+      "width": "Breite"
     }
   },
   {

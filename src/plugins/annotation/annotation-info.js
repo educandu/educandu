@@ -38,7 +38,8 @@ class AnnotationInfo {
       text: `[${t('common:text')}]`,
       renderMedia: false,
       state: STATE.collapsed,
-      intent: INTENT.neutral
+      intent: INTENT.neutral,
+      width: 100
     };
   }
 
