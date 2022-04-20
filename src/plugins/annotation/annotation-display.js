@@ -1,14 +1,14 @@
 import classNames from 'classnames';
-import { INTENT, STATE } from './constants.js';
+import { BEHAVIOR, INTENT } from './constants.js';
 import React, { Fragment, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { AlertOutlined, InfoCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, RightOutlined } from '@ant-design/icons';
 
 export default function AnnotationDisplay({ content }) {
-  const { state, intent, width } = content;
+  const { behavior, intent, width } = content;
 
-  const [isExpanded, setIsExpanded] = useState(state === STATE.expanded);
+  const [isExpanded, setIsExpanded] = useState(behavior === BEHAVIOR.collapsible);
 
   const handleHeaderClick = () => {
     setIsExpanded(!isExpanded);
@@ -58,14 +58,14 @@ export default function AnnotationDisplay({ content }) {
     'AnnotationDisplay-header--inform': intent === INTENT.inform,
     'AnnotationDisplay-header--warn': intent === INTENT.warn,
     'AnnotationDisplay-header--discourage': intent === INTENT.discourage,
-    'is-above-content': isExpanded || (state === STATE.static && content.title)
+    'is-above-content': isExpanded || (behavior === BEHAVIOR.static && content.title)
   });
 
   return (
     <div className={`AnnotationDisplay u-max-width-${width}`}>
-      {state === STATE.static && !content.title && renderContent({ standalone: true })}
+      {behavior === BEHAVIOR.static && !content.title && renderContent({ standalone: true })}
 
-      {state === STATE.static && content.title && (
+      {behavior === BEHAVIOR.static && content.title && (
         <Fragment>
           <div className={headerClasses}>
             {renderIntentIcon({ standalone: false })}
@@ -75,7 +75,7 @@ export default function AnnotationDisplay({ content }) {
         </Fragment>
       )}
 
-      {state !== STATE.static && (
+      {behavior !== BEHAVIOR.static && (
         <Fragment>
           <a className={headerClasses} onClick={handleHeaderClick}>
             {renderIntentIcon({ standalone: false })}

@@ -1,7 +1,7 @@
-export const STATE = {
+export const BEHAVIOR = {
   static: 'static',
-  expanded: 'expanded',
-  collapsed: 'collapsed'
+  expandable: 'expandable',
+  collapsible: 'collapsible'
 };
 
 export const INTENT = {

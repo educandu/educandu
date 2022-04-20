@@ -1,7 +1,7 @@
 import React from 'react';
-import { INTENT, STATE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import { BEHAVIOR, INTENT } from './constants.js';
 import { Checkbox, Form, Input, Radio } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
@@ -13,7 +13,7 @@ const RadioButton = Radio.Button;
 
 export default function AnnotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('annotation');
-  const { title, text, renderMedia, state, intent, width } = content;
+  const { title, text, renderMedia, behavior, intent, width } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues });
@@ -31,8 +31,8 @@ export default function AnnotationEditor({ content, onContentChanged }) {
     updateContent({ renderMedia: event.target.checked });
   };
 
-  const handleStateChange = event => {
-    updateContent({ state: event.target.value });
+  const handleBehaviorChange = event => {
+    updateContent({ behavior: event.target.value });
   };
 
   const handleIntentChange = event => {
@@ -60,11 +60,11 @@ export default function AnnotationEditor({ content, onContentChanged }) {
         <FormItem label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={renderMedia} onChange={handleRenderMediaChange} />
         </FormItem>
-        <FormItem label={t('state')} {...formItemLayout}>
-          <RadioGroup value={state} onChange={handleStateChange}>
-            <RadioButton value={STATE.collapsed}>{t('state_collapsed')}</RadioButton>
-            <RadioButton value={STATE.expanded}>{t('state_expanded')}</RadioButton>
-            <RadioButton value={STATE.static}>{t('state_static')}</RadioButton>
+        <FormItem label={t('behavior')} {...formItemLayout}>
+          <RadioGroup value={behavior} onChange={handleBehaviorChange}>
+            <RadioButton value={BEHAVIOR.expandable}>{t('behavior_expandable')}</RadioButton>
+            <RadioButton value={BEHAVIOR.collapsible}>{t('behavior_collapsible')}</RadioButton>
+            <RadioButton value={BEHAVIOR.static}>{t('behavior_static')}</RadioButton>
           </RadioGroup>
         </FormItem>
         <FormItem label={t('intent')} {...formItemLayout}>

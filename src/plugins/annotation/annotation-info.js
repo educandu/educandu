@@ -1,5 +1,5 @@
 import React from 'react';
-import { STATE, INTENT } from './constants.js';
+import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
 import AnnotationDisplay from './annotation-display.js';
@@ -37,7 +37,7 @@ class AnnotationInfo {
       title: `[${t('common:title')}]`,
       text: `[${t('common:text')}]`,
       renderMedia: false,
-      state: STATE.collapsed,
+      behavior: BEHAVIOR.expandable,
       intent: INTENT.neutral,
       width: 100
     };

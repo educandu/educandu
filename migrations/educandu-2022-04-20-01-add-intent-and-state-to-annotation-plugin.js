@@ -10,7 +10,7 @@ export default class Educandu_2022_04_20_01_add_intent_and_state_to_annotation_p
       {
         $set: {
           'sections.$[sectionElement].content.intent': 'neutral',
-          'sections.$[sectionElement].content.state': 'collapsed',
+          'sections.$[sectionElement].content.behavior': 'expandable',
           'sections.$[sectionElement].content.width': 100
         }
       },
@@ -34,7 +34,7 @@ export default class Educandu_2022_04_20_01_add_intent_and_state_to_annotation_p
       {
         $unset: {
           'sections.$[sectionElement].content.intent': null,
-          'sections.$[sectionElement].content.state': null,
+          'sections.$[sectionElement].content.behavior': null,
           'sections.$[sectionElement].content.width': null
         }
       },

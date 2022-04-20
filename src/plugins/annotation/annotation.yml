@@ -1,18 +1,18 @@
 name:
   en: Annotation
   de: Anmerkung
-state:
-  en: Initial state
-  de: Anfangszustand
-state_static:
+behavior:
+  en: Behavior
+  de: Verhalten
+behavior_static:
   en: static
   de: statisch
-state_collapsed:
-  en: collapsed
-  de: eingeklappt
-state_expanded:
-  en: expanded
-  de: ausgeklappt
+behavior_collapsible:
+  en: collapsible
+  de: einklappbar
+behavior_expandable:
+  en: expandable
+  de: ausklappbar
 intent:
   en: Intent
   de: Intention
