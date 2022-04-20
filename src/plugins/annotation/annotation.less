@@ -1,10 +1,19 @@
 @annotation-padding: 16px;
+@annotation-header-confirm-background-color: #d3ffde;
+@annotation-header-confirm-border-color: darken(@annotation-header-confirm-background-color, 10%);
+@annotation-header-inform-background-color: #e8f2ff;
+@annotation-header-inform-border-color: darken(@annotation-header-inform-background-color, 8%);
+@annotation-header-warn-background-color: #ffeed2;
+@annotation-header-warn-border-color: darken(@annotation-header-warn-background-color, 8%);
+@annotation-header-alert-background-color: #ffe0d0;
+@annotation-header-alert-border-color: darken(@annotation-header-alert-background-color, 8%);
 
-.Annotation {}
+.AnnotationDisplay {}
 
-.Annotation-header {
+.AnnotationDisplay-header {
   display: flex;
   align-items: center;
+  text-decoration: none;
   gap: @edu-content-padding;
   padding: 12px @annotation-padding;
   border-radius: @edu-border-radius-base;
@@ -14,9 +23,29 @@
   &.is-above-content {
     border-radius: @edu-border-radius-base @edu-border-radius-base 0 0;
   }
+
+  &.AnnotationDisplay-header--confirm {
+    background-color: @annotation-header-confirm-background-color;
+    border-color: @annotation-header-confirm-border-color;
+  }
+
+  &.AnnotationDisplay-header--inform {
+    background-color: @annotation-header-inform-background-color;
+    border-color: @annotation-header-inform-border-color;
+  }
+
+  &.AnnotationDisplay-header--warn {
+    background-color: @annotation-header-warn-background-color;
+    border-color: @annotation-header-warn-border-color;
+  }
+
+  &.AnnotationDisplay-header--alert {
+    background-color: @annotation-header-alert-background-color;
+    border-color: @annotation-header-alert-border-color;
+  }
 }
 
-.Annotation-headerArrow {
+.AnnotationDisplay-headerArrow {
   display: inline-block;
   font-size: 12px;
   margin-right: 0;
@@ -28,25 +57,58 @@
   }
 }
 
-.Annotation-intentIcon {
+.AnnotationDisplay-intentIcon {
   font-size: 16px;
+
+  &.AnnotationDisplay-intentIcon--standalone {
+    font-size: 30px;
+    align-self: center;
+  }
 }
 
-.Annotation-content {
+.AnnotationDisplay-content {
   padding: @annotation-padding;
   border: 1px solid @edu-border-color-light;
   border-radius: 0 0 @edu-border-radius-base @edu-border-radius-base;
   border-top: none;
 
-  &.Annotation-content--standalone {
+  &.AnnotationDisplay-content--standalone {
     display: flex;
     align-items: center;
-    gap: @edu-content-padding;
+    gap: 20px;
     border-radius: @edu-border-radius-base;
     border: 1px solid @edu-border-color-light;
-  }
-}
 
-.Annotation-contentIntentIcon {
-  align-self: center;
+    &.AnnotationDisplay-content--confirm {
+      background-color: @annotation-header-confirm-background-color;
+    }
+
+    &.AnnotationDisplay-content--inform {
+      background-color: @annotation-header-inform-background-color;
+    }
+
+    &.AnnotationDisplay-content--warn {
+      background-color: @annotation-header-warn-background-color;
+    }
+
+    &.AnnotationDisplay-content--alert {
+      background-color: @annotation-header-alert-background-color;
+    }
+  }
+
+  &.AnnotationDisplay-content--confirm {
+    border-color: @annotation-header-confirm-border-color;
+  }
+
+  &.AnnotationDisplay-content--inform {
+    border-color: @annotation-header-inform-border-color;
+  }
+
+  &.AnnotationDisplay-content--warn {
+    border-color: @annotation-header-warn-border-color;
+  }
+
+  &.AnnotationDisplay-content--alert {
+    border-color: @annotation-header-alert-border-color;
+  }
 }

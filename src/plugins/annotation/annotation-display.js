@@ -14,9 +14,14 @@ export default function AnnotationDisplay({ content }) {
     setIsExpanded(!isExpanded);
   };
 
-  const renderIntentIcon = () => {
+  const renderIntentIcon = ({ standalone }) => {
+    const iconClasses = classNames({
+      'AnnotationDisplay- intentIcon': true,
+      'AnnotationDisplay-intentIcon--standalone': standalone
+    });
+
     return (
-      <div className="Annotation-intentIcon">
+      <div className={iconClasses}>
         {intent === INTENT.confirm && <CheckCircleOutlined />}
         {intent === INTENT.inform && <InfoCircleOutlined />}
         {intent === INTENT.warn && <ExclamationCircleOutlined />}
@@ -26,22 +31,40 @@ export default function AnnotationDisplay({ content }) {
   };
 
   const renderContent = ({ standalone }) => {
+    const contentClasses = classNames({
+      'AnnotationDisplay-content': true,
+      'AnnotationDisplay-content--standalone': standalone,
+      'AnnotationDisplay-content--confirm': intent === INTENT.confirm,
+      'AnnotationDisplay-content--inform': intent === INTENT.inform,
+      'AnnotationDisplay-content--warn': intent === INTENT.warn,
+      'AnnotationDisplay-content--alert': intent === INTENT.alert
+    });
+
     return (
-      <div className={classNames('Annotation-content', { 'Annotation-content--standalone': standalone })}>
-        {standalone && <div className="Annotation-contentIntentIcon">{renderIntentIcon()}</div>}
+      <div className={contentClasses}>
+        {standalone && renderIntentIcon({ standalone: true })}
         <Markdown renderMedia={content.renderMedia}>{content.text}</Markdown>
       </div>
     );
   };
 
+  const headerClasses = classNames({
+    'AnnotationDisplay-header': true,
+    'AnnotationDisplay-header--confirm': intent === INTENT.confirm,
+    'AnnotationDisplay-header--inform': intent === INTENT.inform,
+    'AnnotationDisplay-header--warn': intent === INTENT.warn,
+    'AnnotationDisplay-header--alert': intent === INTENT.alert,
+    'is-above-content': isExpanded || (state === STATE.static && content.title)
+  });
+
   return (
-    <div className="Annotation">
+    <div className="AnnotationDisplay">
       {state === STATE.static && !content.title && renderContent({ standalone: true })}
 
       {state === STATE.static && content.title && (
         <Fragment>
-          <div className="Annotation-header is-above-content">
-            {renderIntentIcon()}
+          <div className={headerClasses}>
+            {renderIntentIcon({ standalone: false })}
             {content.title}
           </div>
           {renderContent({ standalone: false })}
@@ -50,10 +73,10 @@ export default function AnnotationDisplay({ content }) {
 
       {state !== STATE.static && (
         <Fragment>
-          <a className={classNames('Annotation-header ', { 'is-above-content': isExpanded })} onClick={handleHeaderClick}>
-            {renderIntentIcon()}
+          <a className={headerClasses} onClick={handleHeaderClick}>
+            {renderIntentIcon({ standalone: false })}
             {content.title}
-            <RightOutlined className={classNames('Annotation-headerArrow', { 'is-rotated-downwards': isExpanded })} />
+            <RightOutlined className={classNames('AnnotationDisplay-headerArrow', { 'is-rotated-downwards': isExpanded })} />
           </a>
           {isExpanded && renderContent({ standalone: false })}
         </Fragment>
