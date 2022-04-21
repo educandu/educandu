@@ -514,8 +514,7 @@
     "language": "en",
     "resources": {
       "settingsTabTitle": "Settings",
-      "storagePlansTabTitle": "Storage plans",
-      "testsTabTitle": "Tests"
+      "storagePlansTabTitle": "Storage plans"
     }
   },
   {
@@ -523,8 +522,7 @@
     "language": "de",
     "resources": {
       "settingsTabTitle": "Einstellungen",
-      "storagePlansTabTitle": "Speicherpläne",
-      "testsTabTitle": "Tests"
+      "storagePlansTabTitle": "Speicherpläne"
     }
   },
   {
