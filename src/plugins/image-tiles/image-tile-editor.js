@@ -4,8 +4,8 @@ import urls from '../../utils/urls.js';
 import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
-import { IMAGE_TYPE, LINK_TYPE } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { IMAGE_SOURCE_TYPE, LINK_TYPE } from './constants.js';
 import { useService } from '../../components/container-context.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { filePickerStorageShape } from '../../ui/default-prop-types.js';
@@ -25,20 +25,20 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
 
   const handleExternalImageUrlValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { image: { url: value, type: image.type } });
+    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlValueChanged = e => {
-    onChange(index, { image: { url: e.target.value, type: image.type } });
+    onChange(index, { image: { sourceUrl: e.target.value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlFileNameChanged = value => {
-    onChange(index, { image: { url: value, type: image.type } });
+    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
-  const handleImageTypeValueChanged = event => {
+  const handleImageSourceTypeValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { image: { url: '', type: value } });
+    onChange(index, { image: { sourceUrl: '', sourceType: value } });
   };
 
   const handleDescriptionValueChanged = event => {
@@ -48,39 +48,39 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
 
   const handleLinkTypeValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { url: '', type: value } });
+    onChange(index, { link: { sourceUrl: '', sourceType: value } });
   };
 
   const handleLinkUrlValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { url: value, type: link.type } });
+    onChange(index, { link: { sourceUrl: value, sourceType: link.type } });
   };
 
   return (
     <React.Fragment>
       <FormItem label={t('imageSource')} {...formItemLayout}>
-        <RadioGroup value={image.type} onChange={handleImageTypeValueChanged}>
+        <RadioGroup value={image.sourceType} onChange={handleImageSourceTypeValueChanged}>
           <RadioButton value="external">{t('common:externalLink')}</RadioButton>
           <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
         </RadioGroup>
       </FormItem>
-      {image.type === IMAGE_TYPE.external && (
-        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(image.url, t)} hasFeedback>
-          <Input value={image.url} onChange={handleExternalImageUrlValueChanged} />
+      {image.sourceType === IMAGE_SOURCE_TYPE.external && (
+        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(image.sourceUrl, t)} hasFeedback>
+          <Input value={image.sourceUrl} onChange={handleExternalImageUrlValueChanged} />
         </FormItem>
       )}
-      {image.type === IMAGE_TYPE.internal && (
+      {image.sourceType === IMAGE_SOURCE_TYPE.internal && (
         <FormItem label={t('common:internalUrl')} {...formItemLayout}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Input
               addonBefore={`${clientConfig.cdnRootUrl}/`}
-              value={image.url}
+              value={image.sourceUrl}
               onChange={handleInternalImageUrlValueChanged}
               />
             <StorageFilePicker
               publicStorage={publicStorage}
               privateStorage={privateStorage}
-              fileName={image.url}
+              fileName={image.sourceUrl}
               onFileNameChanged={handleInternalImageUrlFileNameChanged}
               />
           </div>
@@ -112,8 +112,8 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
 ImageTileEditor.propTypes = {
   description: PropTypes.string,
   image: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    url: PropTypes.string
+    sourceType: PropTypes.string.isRequired,
+    sourceUrl: PropTypes.string
   }).isRequired,
   index: PropTypes.number.isRequired,
   link: PropTypes.shape({

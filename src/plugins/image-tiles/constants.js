@@ -1,4 +1,4 @@
-export const IMAGE_TYPE = {
+export const IMAGE_SOURCE_TYPE = {
   internal: 'internal',
   external: 'external'
 };

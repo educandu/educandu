@@ -2,16 +2,16 @@ import React from 'react';
 import classNames from 'classnames';
 import urls from '../../utils/urls.js';
 import Markdown from '../../components/markdown.js';
-import { IMAGE_TYPE, LINK_TYPE } from './constants.js';
+import { IMAGE_SOURCE_TYPE, LINK_TYPE } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
-    case IMAGE_TYPE.external:
+    case IMAGE_SOURCE_TYPE.external:
       return url || null;
-    case IMAGE_TYPE.internal:
+    case IMAGE_SOURCE_TYPE.internal:
       return url ? `${cdnRootUrl}/${url}` : null;
     default:
       return null;
@@ -47,7 +47,7 @@ function ImageTilesDisplay({ content }) {
       <a key={index.toString()} className={classes} href={getTileUrl(tile)}>
         <img
           className="ImageTiles-img"
-          src={getSource(tile.image.type, tile.image.url, clientConfig.cdnRootUrl)}
+          src={getSource(tile.image.sourceType, tile.image.sourceUrl, clientConfig.cdnRootUrl)}
           />
         <div className="ImageTiles-description">
           <Markdown>{tile.description}</Markdown>

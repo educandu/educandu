@@ -1,7 +1,7 @@
 import React from 'react';
-import { IMAGE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import ImageTilesIcon from './image-tiles-icon.js';
+import { IMAGE_SOURCE_TYPE } from './constants.js';
 import ImageTilesDisplay from './image-tiles-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
@@ -45,8 +45,8 @@ export default class ImageTiles {
     const redactedContent = cloneDeep(content);
 
     for (const tile of redactedContent.tiles) {
-      if (tile.image?.type === IMAGE_TYPE.internal && !isAccessibleStoragePath(tile.image.url, targetRoomId)) {
-        tile.image.url = '';
+      if (tile.image?.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(tile.image.sourceUrl, targetRoomId)) {
+        tile.image.sourceUrl = '';
       }
     }
 
@@ -54,6 +54,6 @@ export default class ImageTiles {
   }
 
   getCdnResources(content) {
-    return content.tiles.filter(tile => tile.image?.type === IMAGE_TYPE.internal && tile.image.url).map(tile => tile.image.url);
+    return content.tiles.filter(tile => tile.image?.sourceType === IMAGE_SOURCE_TYPE.internal && tile.image.sourceUrl).map(tile => tile.image.sourceUrl);
   }
 }
