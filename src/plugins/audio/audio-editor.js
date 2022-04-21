@@ -17,7 +17,7 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
   const { t } = useTranslation('audio');
   const clientConfig = useService(ClientConfig);
 
-  const { type, url, text } = content;
+  const { sourceType, sourceUrl, text } = content;
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -30,20 +30,20 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const handleExternalUrlValueChanged = event => {
     const { value } = event.target;
-    changeContent({ url: value });
+    changeContent({ sourceUrl: value });
   };
 
   const handleInternalUrlValueChanged = e => {
-    changeContent({ url: e.target.value });
+    changeContent({ sourceUrl: e.target.value });
   };
 
   const handleInternalUrlFileNameChanged = value => {
-    changeContent({ url: value });
+    changeContent({ sourceUrl: value });
   };
 
-  const handleTypeValueChanged = event => {
+  const handleSourceTypeValueChanged = event => {
     const { value } = event.target;
-    changeContent({ type: value, url: '' });
+    changeContent({ sourceType: value, sourceUrl: '' });
   };
   const handleCurrentEditorValueChanged = event => {
     const newValue = event.target.value;
@@ -54,28 +54,28 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
     <div>
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
-          <RadioGroup value={type} onChange={handleTypeValueChanged}>
+          <RadioGroup value={sourceType} onChange={handleSourceTypeValueChanged}>
             <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
             <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {type === 'external' && (
-          <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
-            <Input value={url} onChange={handleExternalUrlValueChanged} />
+        {sourceType === 'external' && (
+          <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+            <Input value={sourceUrl} onChange={handleExternalUrlValueChanged} />
           </FormItem>
         )}
-        {type === 'internal' && (
+        {sourceType === 'internal' && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
                 addonBefore={`${clientConfig.cdnRootUrl}/`}
-                value={url}
+                value={sourceUrl}
                 onChange={handleInternalUrlValueChanged}
                 />
               <StorageFilePicker
                 publicStorage={publicStorage}
                 privateStorage={privateStorage}
-                fileName={url}
+                fileName={sourceUrl}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
                 />
             </div>

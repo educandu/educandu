@@ -34,8 +34,8 @@ class AudioInfo {
 
   getDefaultContent() {
     return {
-      type: SOURCE_TYPE.internal,
-      url: '',
+      sourceType: SOURCE_TYPE.internal,
+      sourceUrl: '',
       text: ''
     };
   }
@@ -52,8 +52,8 @@ class AudioInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (redactedContent.type === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.url, targetRoomId)) {
-      redactedContent.url = '';
+    if (redactedContent.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+      redactedContent.sourceUrl = '';
     }
 
     return redactedContent;
@@ -64,8 +64,8 @@ class AudioInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.text));
 
-    if (content.type === SOURCE_TYPE.internal && content.url) {
-      cdnResources.push(content.url);
+    if (content.sourceType === SOURCE_TYPE.internal && content.sourceUrl) {
+      cdnResources.push(content.sourceUrl);
     }
 
     return cdnResources;
