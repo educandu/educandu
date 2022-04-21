@@ -1497,7 +1497,8 @@
       "addTile": "Add tile",
       "imageSource": "Image source",
       "linkSource": "Link source",
-      "internalLink": "Internal link",
+      "documentLink": "Document link",
+      "documentKey": "Document key",
       "imageDescription": "Image description"
     }
   },
@@ -1515,7 +1516,8 @@
       "addTile": "Kachel hinzufügen",
       "imageSource": "Bild-Quelle",
       "linkSource": "Link-Quelle",
-      "internalLink": "Internal-Link",
+      "documentLink": "Dokument-Link",
+      "documentKey": "Dokument-ID",
       "imageDescription": "Bildunterschrift"
     }
   },

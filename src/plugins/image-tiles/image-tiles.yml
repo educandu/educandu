@@ -28,9 +28,12 @@ imageSource:
 linkSource:
   en: Link source
   de: Link-Quelle
-internalLink:
-  en: Internal link
-  de: Internal-Link
+documentLink:
+  en: Document link
+  de: Dokument-Link
+documentKey:
+  en: Document key
+  de: Dokument-ID
 imageDescription:
   en: Image description
   de: Bildunterschrift

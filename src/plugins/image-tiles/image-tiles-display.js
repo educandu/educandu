@@ -2,10 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import urls from '../../utils/urls.js';
 import Markdown from '../../components/markdown.js';
-import { IMAGE_SOURCE_TYPE, LINK_TYPE } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
@@ -23,11 +23,11 @@ function ImageTilesDisplay({ content }) {
 
   const getTileUrl = tile => {
     const link = tile.link || {};
-    switch (link.type) {
-      case LINK_TYPE.external:
-        return link.url;
-      case LINK_TYPE.internal:
-        return urls.getDocUrl({ keyAndSlug: link.url });
+    switch (link.sourceType) {
+      case LINK_SOURCE_TYPE.external:
+        return link.sourceUrl;
+      case LINK_SOURCE_TYPE.document:
+        return urls.getDocUrl({ keyAndSlug: link.documentId });
       default:
         return '';
     }

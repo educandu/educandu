@@ -3,7 +3,7 @@ export const IMAGE_SOURCE_TYPE = {
   external: 'external'
 };
 
-export const LINK_TYPE = {
+export const LINK_SOURCE_TYPE = {
   external: 'external',
-  internal: 'internal'
+  document: 'document'
 };

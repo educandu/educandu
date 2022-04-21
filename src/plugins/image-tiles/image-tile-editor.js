@@ -5,8 +5,8 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { IMAGE_SOURCE_TYPE, LINK_TYPE } from './constants.js';
 import { useService } from '../../components/container-context.js';
+import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { filePickerStorageShape } from '../../ui/default-prop-types.js';
 
@@ -46,14 +46,19 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
     onChange(index, { description: value });
   };
 
-  const handleLinkTypeValueChanged = event => {
+  const handleLinkSourceTypeValueChanged = event => {
     const { value } = event.target;
     onChange(index, { link: { sourceUrl: '', sourceType: value } });
   };
 
-  const handleLinkUrlValueChanged = event => {
+  const handleLinkSourceUrlValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { sourceUrl: value, sourceType: link.type } });
+    onChange(index, { link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
+  };
+
+  const handleLinkDocumentIdValueChanged = event => {
+    const { value } = event.target;
+    onChange(index, { link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
   };
 
   return (
@@ -90,19 +95,19 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
         <Input value={description} onChange={handleDescriptionValueChanged} />
       </FormItem>
       <FormItem label={t('linkSource')} {...formItemLayout}>
-        <RadioGroup value={link.type} onChange={handleLinkTypeValueChanged}>
-          <RadioButton value={LINK_TYPE.external}>{t('common:externalLink')}</RadioButton>
-          <RadioButton value={LINK_TYPE.internal}>{t('internalLink')}</RadioButton>
+        <RadioGroup value={link.sourceType} onChange={handleLinkSourceTypeValueChanged}>
+          <RadioButton value={LINK_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+          <RadioButton value={LINK_SOURCE_TYPE.document}>{t('documentLink')}</RadioButton>
         </RadioGroup>
       </FormItem>
-      {link.type === LINK_TYPE.external && (
-        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(link.url, t, { allowInsecure: true })} hasFeedback>
-          <Input value={link.url} onChange={handleLinkUrlValueChanged} />
+      {link.sourceType === LINK_SOURCE_TYPE.external && (
+        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(link.sourceUrl, t, { allowInsecure: true })} hasFeedback>
+          <Input value={link.sourceUrl} onChange={handleLinkSourceUrlValueChanged} />
         </FormItem>
       )}
-      {link.type === LINK_TYPE.internal && (
-        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-          <Input addonBefore={urls.docsPrefix} value={link.url} onChange={handleLinkUrlValueChanged} />
+      {link.sourceType === LINK_SOURCE_TYPE.document && (
+        <FormItem label={t('documentKey')} {...formItemLayout}>
+          <Input addonBefore={urls.docsPrefix} value={link.documentId} onChange={handleLinkDocumentIdValueChanged} />
         </FormItem>
       )}
     </React.Fragment>
@@ -117,8 +122,9 @@ ImageTileEditor.propTypes = {
   }).isRequired,
   index: PropTypes.number.isRequired,
   link: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    url: PropTypes.string
+    sourceType: PropTypes.string.isRequired,
+    sourceUrl: PropTypes.string,
+    documentId: PropTypes.string
   }).isRequired,
   onChange: PropTypes.func.isRequired,
   privateStorage: filePickerStorageShape,

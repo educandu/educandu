@@ -21,6 +21,15 @@ export default class Educandu_2022_04_21_04_rename_type_and_url_in_image_tiles_p
               delete tile.image.url;
               docWasUpdated = true;
             }
+            // eslint-disable-next-line max-depth
+            if (tile.link) {
+              tile.link.sourceType = tile.link.type === 'external' ? 'external' : 'document';
+              tile.link.sourceUrl = tile.link.type === 'external' ? tile.link.url : '';
+              tile.link.documentId = tile.link.type === 'external' ? '' : tile.link.url;
+              delete tile.link.type;
+              delete tile.link.url;
+              docWasUpdated = true;
+            }
           }
           console.log(`Updating ${collectionName} ${doc._id} - section ${section.key}`);
         }
@@ -49,6 +58,15 @@ export default class Educandu_2022_04_21_04_rename_type_and_url_in_image_tiles_p
               tile.image.url = tile.image.sourceUrl;
               delete tile.image.sourceType;
               delete tile.image.sourceUrl;
+              docWasUpdated = true;
+            }
+            // eslint-disable-next-line max-depth
+            if (tile.link) {
+              tile.link.type = tile.link.sourceType === 'external' ? 'external' : 'internal';
+              tile.link.url = tile.link.sourceType === 'external' ? tile.link.sourceUrl : tile.link.documentId;
+              delete tile.link.sourceType;
+              delete tile.link.sourceUrl;
+              delete tile.link.documentId;
               docWasUpdated = true;
             }
           }
