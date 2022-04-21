@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
-import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
+import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import { Form, Input, Table, Button, Radio } from 'antd';
 import DeleteButton from '../../components/delete-button.js';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
@@ -17,7 +17,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ButtonGroup = Button.Group;
 
-const defaultSound = { type: SOUND_TYPE.midi, url: null, text: null };
+const defaultSound = { sourceType: SOURCE_TYPE.midi, sourceUrl: null, text: null };
 
 function EarTrainingEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const { t } = useTranslation('earTraining');

@@ -1,7 +1,7 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
-import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
+import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import EarTrainingDisplay from './ear-training-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -41,8 +41,8 @@ class EarTrainingInfo {
           startAbcCode: 'X:1',
           fullAbcCode: 'X:1',
           sound: {
-            type: SOUND_TYPE.midi,
-            url: null,
+            sourceType: SOURCE_TYPE.midi,
+            sourceUrl: null,
             text: null
           }
         }
@@ -71,8 +71,8 @@ class EarTrainingInfo {
         );
       }
 
-      if (test.sound?.type === SOUND_TYPE.internal && !isAccessibleStoragePath(test.sound.url, targetRoomId)) {
-        test.sound.url = '';
+      if (test.sound?.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(test.sound.sourceUrl, targetRoomId)) {
+        test.sound.sourceUrl = '';
       }
     }
 
@@ -87,8 +87,8 @@ class EarTrainingInfo {
     for (const test of content.tests) {
       cdnResources.push(...this.gfm.extractCdnResources(test.text || ''));
 
-      if (test.sound?.type === SOUND_TYPE.internal && test.sound.url) {
-        cdnResources.push(test.sound.url);
+      if (test.sound?.sourceType === SOURCE_TYPE.internal && test.sound.sourceUrl) {
+        cdnResources.push(test.sound.sourceUrl);
       }
     }
 

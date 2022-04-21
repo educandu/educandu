@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
-import { SOUND_TYPE, TESTS_ORDER } from './constants.js';
+import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 import AudioPlayer from '../../components/audio-player.js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -66,20 +66,20 @@ function EarTrainingDisplay({ content }) {
 
   const renderSoundPlayer = () => {
     let soundUrl = null;
-    let soundType = SOUND_TYPE.midi;
+    let sourceType = SOURCE_TYPE.midi;
     const currentTest = tests[currentIndex];
 
-    if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.internal) {
-      soundType = SOUND_TYPE.internal;
-      soundUrl = currentTest.sound.url ? `${clientConfig.cdnRootUrl}/${currentTest.sound.url}` : null;
+    if (currentTest.sound && currentTest.sound.sourceType === SOURCE_TYPE.internal) {
+      sourceType = SOURCE_TYPE.internal;
+      soundUrl = currentTest.sound.sourceUrl ? `${clientConfig.cdnRootUrl}/${currentTest.sound.sourceUrl}` : null;
     }
 
-    if (currentTest.sound && currentTest.sound.type === SOUND_TYPE.external) {
-      soundType = SOUND_TYPE.external;
-      soundUrl = currentTest.sound.url || null;
+    if (currentTest.sound && currentTest.sound.sourceType === SOURCE_TYPE.external) {
+      sourceType = SOURCE_TYPE.external;
+      soundUrl = currentTest.sound.sourceUrl || null;
     }
 
-    return soundType === SOUND_TYPE.midi
+    return sourceType === SOURCE_TYPE.midi
       ? <div ref={midiContainerRef} />
       : <AudioPlayer soundUrl={soundUrl} legendMarkdown={currentTest.sound.text} />;
   };
