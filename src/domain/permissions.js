@@ -22,7 +22,7 @@ const MANAGE_STORAGE_PLANS = 'manage-storage-plans';
 const OWN_ROOMS = 'own-rooms';
 const DELETE_FOREIGN_ROOMS = 'delete-foreign-rooms';
 const OWN_LESSONS = 'own-lessons';
-const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resouces';
+const AUTORIZE_ROOMS_RESOURCES = 'authorize-room-resources';
 const JOIN_PRIVATE_ROOMS = 'join-private-rooms';
 
 const rolesForPermission = {
