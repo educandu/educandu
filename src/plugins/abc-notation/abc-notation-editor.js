@@ -49,7 +49,7 @@ function AbcNotationEditor({ content, onContentChanged }) {
         <Form.Item label={t('maximumWidth')} {...formItemLayout}>
           <ObjectMaxWidthSlider defaultValue={100} value={maxWidth} onChange={handleMaxWidthChanged} />
         </Form.Item>
-        <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <TextArea value={text} onChange={handleCurrentTextChanged} autoSize={{ minRows: 3 }} />
         </Form.Item>
       </Form>

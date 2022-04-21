@@ -53,19 +53,19 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
   return (
     <div>
       <Form layout="horizontal">
-        <FormItem label={t('source')} {...formItemLayout}>
+        <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={type} onChange={handleTypeValueChanged}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {type === 'external' && (
-          <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
+          <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(url, t)} hasFeedback>
             <Input value={url} onChange={handleExternalUrlValueChanged} />
           </FormItem>
         )}
         {type === 'internal' && (
-          <FormItem label={t('internalUrl')} {...formItemLayout}>
+          <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
                 addonBefore={`${clientConfig.cdnRootUrl}/`}
@@ -81,7 +81,7 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
             </div>
           </FormItem>
         )}
-        <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <TextArea value={text} onChange={handleCurrentEditorValueChanged} autoSize={{ minRows: 3 }} />
         </Form.Item>
       </Form>

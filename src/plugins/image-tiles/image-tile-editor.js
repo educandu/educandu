@@ -60,17 +60,17 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
     <React.Fragment>
       <FormItem label={t('imageSource')} {...formItemLayout}>
         <RadioGroup value={image.type} onChange={handleImageTypeValueChanged}>
-          <RadioButton value="external">{t('externalLink')}</RadioButton>
-          <RadioButton value="internal">{t('internalCdn')}</RadioButton>
+          <RadioButton value="external">{t('common:externalLink')}</RadioButton>
+          <RadioButton value="internal">{t('common:internalCdn')}</RadioButton>
         </RadioGroup>
       </FormItem>
       {image.type === IMAGE_TYPE.external && (
-        <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(image.url, t)} hasFeedback>
+        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(image.url, t)} hasFeedback>
           <Input value={image.url} onChange={handleExternalImageUrlValueChanged} />
         </FormItem>
       )}
       {image.type === IMAGE_TYPE.internal && (
-        <FormItem label={t('internalUrl')} {...formItemLayout}>
+        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Input
               addonBefore={`${clientConfig.cdnRootUrl}/`}
@@ -91,17 +91,17 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
       </FormItem>
       <FormItem label={t('linkSource')} {...formItemLayout}>
         <RadioGroup value={link.type} onChange={handleLinkTypeValueChanged}>
-          <RadioButton value={LINK_TYPE.external}>{t('externalLink')}</RadioButton>
+          <RadioButton value={LINK_TYPE.external}>{t('common:externalLink')}</RadioButton>
           <RadioButton value={LINK_TYPE.internal}>{t('internalLink')}</RadioButton>
         </RadioGroup>
       </FormItem>
       {link.type === LINK_TYPE.external && (
-        <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(link.url, t, { allowInsecure: true })} hasFeedback>
+        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(link.url, t, { allowInsecure: true })} hasFeedback>
           <Input value={link.url} onChange={handleLinkUrlValueChanged} />
         </FormItem>
       )}
       {link.type === LINK_TYPE.internal && (
-        <FormItem label={t('internalUrl')} {...formItemLayout}>
+        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
           <Input addonBefore={urls.docsPrefix} value={link.url} onChange={handleLinkUrlValueChanged} />
         </FormItem>
       )}

@@ -28,21 +28,9 @@ imageSource:
 linkSource:
   en: Link source
   de: Link-Quelle
-externalLink:
-  en: External link
-  de: Externer Link
 internalLink:
   en: Internal link
   de: Internal-Link
-internalCdn:
-  en: Internal CDN
-  de: Internes CDN
-externalUrl:
-  en: External URL
-  de: Externe URL
-internalUrl:
-  en: Internal URL
-  de: Interne URL
 imageDescription:
   en: Image description
   de: Bildunterschrift

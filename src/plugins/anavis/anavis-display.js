@@ -6,7 +6,7 @@ import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MediaControl from '../../components/media-control.js';
 import { useService } from '../../components/container-context.js';
-import { MEDIA_KIND, MEDIA_TYPE, PLAY_STATE } from './constants.js';
+import { MEDIA_KIND, SOURCE_TYPE, PLAY_STATE } from './constants.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
@@ -25,13 +25,13 @@ function AnavisDisplay({ content }) {
   const aspectRatio = media.aspectRatio || { h: 16, v: 9 };
   const paddingTop = `${(aspectRatio.v / aspectRatio.h * 100).toFixed(2)}%`;
 
-  let url;
-  switch (media.type) {
-    case MEDIA_TYPE.internal:
-      url = media.url ? `${clientConfig.cdnRootUrl}/${media.url}` : null;
+  let sourceUrl;
+  switch (media.sourceType) {
+    case SOURCE_TYPE.internal:
+      sourceUrl = media.sourceUrl ? `${clientConfig.cdnRootUrl}/${media.sourceUrl}` : null;
       break;
     default:
-      url = media.url || null;
+      sourceUrl = media.sourceUrl || null;
       break;
   }
 
@@ -120,7 +120,7 @@ function AnavisDisplay({ content }) {
           <ReactPlayer
             ref={playerRef}
             className="Anavis-mainPlayerInner"
-            url={url}
+            url={sourceUrl}
             width="100%"
             height="100%"
             controls
@@ -185,10 +185,10 @@ function AnavisDisplay({ content }) {
           {renderAnnotations()}
         </div>
       </div>
-      {url && (
+      {sourceUrl && (
         <div className="Anavis-players">
           {renderMediaPlayer()}
-          {url && media.kind !== MEDIA_KIND.video && renderMediaControl()}
+          {sourceUrl && media.kind !== MEDIA_KIND.video && renderMediaControl()}
         </div>)}
 
       {media.text && (

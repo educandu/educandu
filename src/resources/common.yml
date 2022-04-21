@@ -309,3 +309,36 @@ roomsBreadcrumbPart:
 renderMedia:
   en: Render media
   de: Medien wiedergeben
+internalCdn:
+  en: Internal CDN
+  de: Internes CDN
+externalLink:
+  en: External link
+  de: Externer Link
+youtube:
+  en: Youtube
+  de: Youtube
+externalUrl:
+  en: External URL
+  de: Externe URL
+internalUrl:
+  en: Internal URL
+  de: Interne URL
+youtubeUrl:
+  en: Youtube URL
+  de: Youtube URL
+aspectRatio:
+  en: Aspect ratio
+  de: Seitenverhältnis
+width:
+  en: Width
+  de: Breite
+copyrightInfos:
+  en: Copyright infos
+  de: Copyright Infos
+videoDisplay:
+  en: Video display
+  de: Videoanzeige
+source:
+  en: Source
+  de: Quelle

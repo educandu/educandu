@@ -57,8 +57,8 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
           onChange={handleSoundTypeChanged}
           >
           <RadioButton value={SOUND_TYPE.midi}>{t('midi')}</RadioButton>
-          <RadioButton value={SOUND_TYPE.external}>{t('externalLink')}</RadioButton>
-          <RadioButton value={SOUND_TYPE.internal}>{t('internalCdn')}</RadioButton>
+          <RadioButton value={SOUND_TYPE.external}>{t('common:externalLink')}</RadioButton>
+          <RadioButton value={SOUND_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
         </RadioGroup>
       </td>
       <td style={{ padding: 8 }}>&nbsp;</td>
@@ -69,8 +69,8 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
     <tr>
       <td style={{ padding: 8 }}>&nbsp;</td>
       <td style={{ padding: 8 }}>
-        {sound.type === SOUND_TYPE.external && `${t('externalUrl')}:`}
-        {sound.type === SOUND_TYPE.internal && `${t('internalUrl')}:`}
+        {sound.type === SOUND_TYPE.external && `${t('common:externalUrl')}:`}
+        {sound.type === SOUND_TYPE.internal && `${t('common:internalUrl')}:`}
       </td>
       <td style={{ padding: 8 }}>
         {sound.type === SOUND_TYPE.external && (
@@ -102,7 +102,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
   const renderTextRow = () => (
     <tr>
       <td style={{ padding: 8 }}>&nbsp;</td>
-      <td style={{ padding: 8 }}>{t('copyrightInfos')}:</td>
+      <td style={{ padding: 8 }}>{t('common:copyrightInfos')}:</td>
       <td style={{ padding: 8 }}>
         <TextArea
           value={sound.text}

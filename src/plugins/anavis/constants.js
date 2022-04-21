@@ -3,7 +3,7 @@ export const MEDIA_KIND = {
   video: 'video'
 };
 
-export const MEDIA_TYPE = {
+export const SOURCE_TYPE = {
   internal: 'internal',
   external: 'external',
   youtube: 'youtube'

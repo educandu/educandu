@@ -71,7 +71,7 @@ export default function CreateImport({ initialState, PageTemplate }) {
       <div className="CreateImportPage">
         <div><a href={urls.getImportsUrl()}>{t('backToImports')}</a></div>
         <h1>{t('pageNames:createImport')}</h1>
-        <h2> {t('source')}: {importSource?.name} </h2>
+        <h2> {t('common:source')}: {importSource?.name} </h2>
         {renderImportButton()}
         <DocumentImportTable
           importableDocuments={importableDocuments}

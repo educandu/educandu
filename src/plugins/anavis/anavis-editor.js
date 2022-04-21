@@ -14,7 +14,7 @@ import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
-import { MEDIA_KIND, MEDIA_TYPE, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
+import { MEDIA_KIND, SOURCE_TYPE, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -27,7 +27,7 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
   const clientConfig = useService(ClientConfig);
 
   const { width, parts, media } = content;
-  const { kind, type, url, text, aspectRatio } = media;
+  const { kind, sourceType, sourceUrl, text, aspectRatio } = media;
   const dataSource = parts.map((part, i) => ({ key: i, ...part }));
 
   const formItemLayout = {
@@ -43,39 +43,39 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
     }
   };
 
-  const handleMediaUrlChanged = newValue => {
+  const handleSourceUrlValueChanged = newValue => {
     changeContent(oldContent => ({
       ...oldContent,
       media: {
         ...oldContent.media,
-        url: newValue
+        sourceUrl: newValue
       }
     }));
   };
 
   const handleExternalUrlValueChanged = event => {
-    handleMediaUrlChanged(event.target.value);
+    handleSourceUrlValueChanged(event.target.value);
   };
 
   const handleYoutubeUrlValueChanged = event => {
-    handleMediaUrlChanged(event.target.value);
+    handleSourceUrlValueChanged(event.target.value);
   };
 
   const handleInternalUrlValueChanged = e => {
-    handleMediaUrlChanged(e.target.value);
+    handleSourceUrlValueChanged(e.target.value);
   };
 
   const handleInternalUrlFileNameChanged = value => {
-    handleMediaUrlChanged(value);
+    handleSourceUrlValueChanged(value);
   };
 
-  const handleTypeValueChanged = event => {
+  const handleSourceTypeValueChanged = event => {
     changeContent(oldContent => ({
       ...oldContent,
       media: {
         ...oldContent.media,
-        type: event.target.value,
-        url: '',
+        sourceType: event.target.value,
+        sourceUrl: '',
         aspectRatio: {
           h: 16,
           v: 9
@@ -90,8 +90,8 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
       ...oldContent,
       media: {
         ...oldContent.media,
-        type: event.target.value,
-        url: '',
+        sourceType: event.target.value,
+        sourceUrl: '',
         aspectRatio: { h, v }
       }
     }));
@@ -301,53 +301,53 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
   return (
     <div className="AnavisEditor">
       <Form layout="horizontal">
-        <FormItem label={t('source')} {...formItemLayout}>
-          <RadioGroup value={type} onChange={handleTypeValueChanged}>
-            <RadioButton value={MEDIA_TYPE.external}>{t('externalLink')}</RadioButton>
-            <RadioButton value={MEDIA_TYPE.internal}>{t('internalCdn')}</RadioButton>
-            <RadioButton value={MEDIA_TYPE.youtube}>{t('youtube')}</RadioButton>
+        <FormItem label={t('common:source')} {...formItemLayout}>
+          <RadioGroup value={sourceType} onChange={handleSourceTypeValueChanged}>
+            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {type === MEDIA_TYPE.external && (
-          <FormItem label={t('externalUrl')} {...formItemLayout}>
-            <Input value={url} onChange={handleExternalUrlValueChanged} />
+        {sourceType === SOURCE_TYPE.external && (
+          <FormItem label={t('common:externalUrl')} {...formItemLayout}>
+            <Input value={sourceUrl} onChange={handleExternalUrlValueChanged} />
           </FormItem>
         )}
-        {type === MEDIA_TYPE.internal && (
-          <FormItem label={t('internalUrl')} {...formItemLayout}>
+        {sourceType === SOURCE_TYPE.internal && (
+          <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
                 addonBefore={`${clientConfig.cdnRootUrl}/`}
-                value={url}
+                value={sourceUrl}
                 onChange={handleInternalUrlValueChanged}
                 />
               <StorageFilePicker
                 publicStorage={publicStorage}
                 privateStorage={privateStorage}
-                fileName={url}
+                fileName={sourceUrl}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
                 />
             </div>
           </FormItem>
         )}
-        {type === MEDIA_TYPE.youtube && (
-          <FormItem label={t('youtubeUrl')} {...formItemLayout}>
-            <Input value={url} onChange={handleYoutubeUrlValueChanged} />
+        {sourceType === SOURCE_TYPE.youtube && (
+          <FormItem label={t('common:youtubeUrl')} {...formItemLayout}>
+            <Input value={sourceUrl} onChange={handleYoutubeUrlValueChanged} />
           </FormItem>
         )}
-        <Form.Item label={t('aspectRatio')} {...formItemLayout}>
+        <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
           <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={handleAspectRatioChanged}>
             <RadioButton value="16:9">16:9</RadioButton>
             <RadioButton value="4:3">4:3</RadioButton>
           </RadioGroup>
         </Form.Item>
-        <Form.Item label={t('videoDisplay')} {...formItemLayout}>
+        <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
           <Switch size="small" defaultChecked checked={kind === MEDIA_KIND.video} onChange={handleShowVideoChanged} />
         </Form.Item>
-        <Form.Item label={t('width')} {...formItemLayout}>
+        <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
         </Form.Item>
-        <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <TextArea value={text} onChange={handleTextChanged} autoSize={{ minRows: 3 }} />
         </Form.Item>
       </Form>

@@ -185,7 +185,6 @@
     "resources": {
       "citation": "Article “{title}”",
       "license": "License",
-      "source": "Source",
       "originalSource": "Original source",
       "contributionsBy": "Contributions by",
       "revisionBy": "Revision created by"
@@ -197,7 +196,6 @@
     "resources": {
       "citation": "Artikel »{title}«",
       "license": "Lizenz",
-      "source": "Quelle",
       "originalSource": "Originalquelle",
       "contributionsBy": "Bearbeitungen durch",
       "revisionBy": "Revision erstellt von"
@@ -644,7 +642,6 @@
     "language": "en",
     "resources": {
       "importButton": "Start import",
-      "source": "Source",
       "backToImports": "Back to the overview"
     }
   },
@@ -653,7 +650,6 @@
     "language": "de",
     "resources": {
       "importButton": "Import starten",
-      "source": "Quelle",
       "backToImports": "Zurück zur Übersicht"
     }
   },
@@ -1330,8 +1326,7 @@
       "name": "ABC notation",
       "abcCode": "ABC code",
       "midiSound": "MIDI sound",
-      "maximumWidth": "Maximum width",
-      "copyrightInfos": "Copyright infos"
+      "maximumWidth": "Maximum width"
     }
   },
   {
@@ -1341,8 +1336,7 @@
       "name": "ABC-Notation",
       "abcCode": "ABC-Code",
       "midiSound": "MIDI-Sound",
-      "maximumWidth": "Maximale Breite",
-      "copyrightInfos": "Copyright Infos"
+      "maximumWidth": "Maximale Breite"
     }
   },
   {
@@ -1354,18 +1348,7 @@
       "nameLabel": "Name",
       "color": "Color",
       "length": "Length",
-      "unsupportedFileFormat": "Unsupported file format",
-      "source": "Source",
-      "externalLink": "External link",
-      "internalCdn": "Internal CDN",
-      "youtube": "Youtube",
-      "externalUrl": "External URL",
-      "internalUrl": "Internal URL",
-      "youtubeUrl": "Youtube URL",
-      "aspectRatio": "Aspect ratio",
-      "videoDisplay": "Video display",
-      "width": "Width",
-      "copyrightInfos": "Copyright infos"
+      "unsupportedFileFormat": "Unsupported file format"
     }
   },
   {
@@ -1377,18 +1360,7 @@
       "nameLabel": "Name",
       "color": "Farbe",
       "length": "Länge",
-      "unsupportedFileFormat": "Nicht unterstütztes Dateiformat",
-      "source": "Quelle",
-      "externalLink": "Externer Link",
-      "internalCdn": "Internes CDN",
-      "youtube": "Youtube",
-      "externalUrl": "Externe URL",
-      "internalUrl": "Interne URL",
-      "youtubeUrl": "Youtube URL",
-      "aspectRatio": "Seitenverhältnis",
-      "videoDisplay": "Videoanzeige",
-      "width": "Breite",
-      "copyrightInfos": "Copyright Infos"
+      "unsupportedFileFormat": "Nicht unterstütztes Dateiformat"
     }
   },
   {
@@ -1405,8 +1377,7 @@
       "intent_confirm": "confirm",
       "intent_inform": "inform",
       "intent_warn": "warn",
-      "intent_discourage": "discourage",
-      "width": "Width"
+      "intent_discourage": "discourage"
     }
   },
   {
@@ -1423,34 +1394,21 @@
       "intent_confirm": "bestätigen",
       "intent_inform": "informieren",
       "intent_warn": "warnen",
-      "intent_discourage": "abraten",
-      "width": "Breite"
+      "intent_discourage": "abraten"
     }
   },
   {
     "namespace": "audio",
     "language": "en",
     "resources": {
-      "name": "Audio",
-      "source": "Source",
-      "externalLink": "External link",
-      "internalCdn": "Internal CDN",
-      "externalUrl": "External URL",
-      "internalUrl": "Internal URL",
-      "copyrightInfos": "Copyright infos"
+      "name": "Audio"
     }
   },
   {
     "namespace": "audio",
     "language": "de",
     "resources": {
-      "name": "Audio",
-      "source": "Quelle",
-      "externalLink": "Externer Link",
-      "internalCdn": "Internes CDN",
-      "externalUrl": "Externe URL",
-      "internalUrl": "Interne URL",
-      "copyrightInfos": "Copyright Infos"
+      "name": "Audio"
     }
   },
   {
@@ -1484,11 +1442,6 @@
       "maximumWidth": "Maximum width",
       "audioSource": "Audio source",
       "midi": "MIDI (auto)",
-      "externalLink": "External link",
-      "internalCdn": "Internal CDN",
-      "externalUrl": "External URL",
-      "internalUrl": "Internal URL",
-      "copyrightInfos": "Copyright infos",
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
       "testsOrderRandom": "random"
@@ -1507,11 +1460,6 @@
       "maximumWidth": "Maximale Breite",
       "audioSource": "Audio-Quelle",
       "midi": "MIDI (auto)",
-      "externalLink": "Externer Link",
-      "internalCdn": "Internes CDN",
-      "externalUrl": "Externe URL",
-      "internalUrl": "Interne URL",
-      "copyrightInfos": "Copyright Infos",
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
       "testsOrderRandom": "zufällig"
@@ -1522,7 +1470,6 @@
     "language": "en",
     "resources": {
       "name": "Iframe",
-      "width": "Width",
       "height": "Height",
       "frame": "Frame"
     }
@@ -1532,7 +1479,6 @@
     "language": "de",
     "resources": {
       "name": "Iframe",
-      "width": "Breite",
       "height": "Höhe",
       "frame": "Rahmen"
     }
@@ -1551,11 +1497,7 @@
       "addTile": "Add tile",
       "imageSource": "Image source",
       "linkSource": "Link source",
-      "externalLink": "External link",
       "internalLink": "Internal link",
-      "internalCdn": "Internal CDN",
-      "externalUrl": "External URL",
-      "internalUrl": "Internal URL",
       "imageDescription": "Image description"
     }
   },
@@ -1573,11 +1515,7 @@
       "addTile": "Kachel hinzufügen",
       "imageSource": "Bild-Quelle",
       "linkSource": "Link-Quelle",
-      "externalLink": "Externer Link",
       "internalLink": "Internal-Link",
-      "internalCdn": "Internes CDN",
-      "externalUrl": "Externe URL",
-      "internalUrl": "Interne URL",
       "imageDescription": "Bildunterschrift"
     }
   },
@@ -1586,16 +1524,10 @@
     "language": "en",
     "resources": {
       "name": "Image",
-      "source": "Source",
-      "externalLink": "External link",
       "noneOption": "None",
       "hoverOption": "Hover",
       "revealOption": "Reveal",
       "clipOption": "Clip",
-      "internalCdn": "Internal CDN",
-      "externalUrl": "External URL",
-      "internalUrl": "Internal URL",
-      "copyrightInfos": "Copyright infos",
       "maximumWidth": "Maximum width",
       "clippedWidth": "Resulting width",
       "clippedHeight": "Resulting height",
@@ -1614,16 +1546,10 @@
     "language": "de",
     "resources": {
       "name": "Bild",
-      "source": "Quelle",
-      "externalLink": "Externer Link",
       "noneOption": "Kein Effekt",
       "hoverOption": "Hover",
       "revealOption": "Auflösung",
       "clipOption": "Zuschneiden",
-      "internalCdn": "Internes CDN",
-      "externalUrl": "Externe URL",
-      "internalUrl": "Interne URL",
-      "copyrightInfos": "Copyright Infos",
       "maximumWidth": "Maximale Breite",
       "clippedWidth": "Resultierende Breite",
       "clippedHeight": "Resultierende Höhe",
@@ -1705,9 +1631,6 @@
     "resources": {
       "name": "PDF viewer",
       "internalLink": "Internal link",
-      "internalCdn": "Internal CDN",
-      "internalUrl": "Internal URL",
-      "width": "Width",
       "caption": "Caption",
       "initialPageNumber": "Initially displayed page",
       "showTextOverlay": "Show text overlay",
@@ -1724,9 +1647,6 @@
     "resources": {
       "name": "PDF-Anzeige",
       "internalLink": "Interner Link",
-      "internalCdn": "Internes CDN",
-      "internalUrl": "Interne URL",
-      "width": "Breite",
       "caption": "Legende",
       "initialPageNumber": "Zuerst angezeigte Seite",
       "showTextOverlay": "Text-Overlay anzeigen",
@@ -1788,18 +1708,7 @@
     "language": "en",
     "resources": {
       "name": "Video",
-      "source": "Source",
-      "externalLink": "External link",
       "internalLink": "Internal link",
-      "internalCdn": "Internal CDN",
-      "youtube": "Youtube",
-      "externalUrl": "External URL",
-      "internalUrl": "Internal URL",
-      "youtubeUrl": "Youtube URL",
-      "aspectRatio": "Aspect ratio",
-      "videoDisplay": "Video display",
-      "width": "Width",
-      "copyrightInfos": "Copyright infos",
       "posterImageUrl": "Preview image URL"
     }
   },
@@ -1808,18 +1717,7 @@
     "language": "de",
     "resources": {
       "name": "Video",
-      "source": "Quelle",
-      "externalLink": "Externer Link",
       "internalLink": "Interner Link",
-      "internalCdn": "Internes CDN",
-      "youtube": "Youtube",
-      "externalUrl": "Externe URL",
-      "internalUrl": "Interne URL",
-      "youtubeUrl": "Youtube URL",
-      "aspectRatio": "Seitenverhältnis",
-      "videoDisplay": "Videoanzeige",
-      "width": "Breite",
-      "copyrightInfos": "Copyright Infos",
       "posterImageUrl": "Vorschau-Bild-URL"
     }
   },
@@ -1927,7 +1825,18 @@
       "copyTitleSuffix": "(copy)",
       "copySlugSuffix": "copy",
       "roomsBreadcrumbPart": "rooms",
-      "renderMedia": "Render media"
+      "renderMedia": "Render media",
+      "internalCdn": "Internal CDN",
+      "externalLink": "External link",
+      "youtube": "Youtube",
+      "externalUrl": "External URL",
+      "internalUrl": "Internal URL",
+      "youtubeUrl": "Youtube URL",
+      "aspectRatio": "Aspect ratio",
+      "width": "Width",
+      "copyrightInfos": "Copyright infos",
+      "videoDisplay": "Video display",
+      "source": "Source"
     }
   },
   {
@@ -2034,7 +1943,18 @@
       "copyTitleSuffix": "(Kopie)",
       "copySlugSuffix": "kopie",
       "roomsBreadcrumbPart": "Räume",
-      "renderMedia": "Medien wiedergeben"
+      "renderMedia": "Medien wiedergeben",
+      "internalCdn": "Internes CDN",
+      "externalLink": "Externer Link",
+      "youtube": "Youtube",
+      "externalUrl": "Externe URL",
+      "internalUrl": "Interne URL",
+      "youtubeUrl": "Youtube URL",
+      "aspectRatio": "Seitenverhältnis",
+      "width": "Breite",
+      "copyrightInfos": "Copyright Infos",
+      "videoDisplay": "Videoanzeige",
+      "source": "Quelle"
     }
   },
   {

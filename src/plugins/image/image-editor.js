@@ -226,16 +226,16 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
   };
 
   const renderSourceTypeInput = (value, onChangeHandler) => (
-    <FormItem label={t('source')} {...formItemLayout}>
+    <FormItem label={t('common:source')} {...formItemLayout}>
       <RadioGroup value={value} onChange={onChangeHandler}>
-        <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
-        <RadioButton value={SOURCE_TYPE.internal}>{t('internalCdn')}</RadioButton>
+        <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+        <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
       </RadioGroup>
     </FormItem>
   );
 
   const renderInternalSourceTypeInput = (value, onInputChangeHandler, inFileChangeHandler) => (
-    <FormItem label={t('internalUrl')} {...formItemLayout}>
+    <FormItem label={t('common:internalUrl')} {...formItemLayout}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Input
           addonBefore={`${clientConfig.cdnRootUrl}/`}
@@ -253,13 +253,13 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
   );
 
   const renderExternalSourceTypeInput = (value, onChangeHandler) => (
-    <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(value, t)} hasFeedback>
+    <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(value, t)} hasFeedback>
       <Input value={value} onChange={onChangeHandler} />
     </FormItem>
   );
 
   const renderCopyrightInput = (value, onChangeHandler) => (
-    <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+    <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
       <TextArea value={value} onChange={onChangeHandler} autoSize={{ minRows: 3 }} />
     </Form.Item>
   );
