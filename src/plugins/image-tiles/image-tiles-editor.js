@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import ImageTileEditor from './image-tile-editor.js';
-import { IMAGE_TYPE, LINK_TYPE } from './constants.js';
 import DeleteButton from '../../components/delete-button.js';
+import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 import { Form, Menu, Radio, Slider, Button, Dropdown } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -37,13 +37,14 @@ function ImageTilesEditor({ content, onContentChanged, publicStorage, privateSto
 
   const createDefaultTile = () => ({
     image: {
-      type: IMAGE_TYPE.external,
-      url: ''
+      sourceType: IMAGE_SOURCE_TYPE.external,
+      sourceUrl: ''
     },
     description: '',
     link: {
-      type: LINK_TYPE.external,
-      url: ''
+      sourceType: LINK_SOURCE_TYPE.external,
+      sourceUrl: '',
+      documentId: ''
     }
   });
 

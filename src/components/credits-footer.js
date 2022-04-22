@@ -80,7 +80,7 @@ function CreditsFooter({ doc, revision }) {
             <br />
           </Fragment>
         )}
-        <b>{t('source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
+        <b>{t('common:source')}:</b> <i>{currentHost}</i>, {citation}, {renderUrl()}, {date}
         <br />
         {originalUrl && (
           <Fragment>

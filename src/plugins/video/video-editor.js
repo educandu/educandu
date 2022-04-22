@@ -109,16 +109,16 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
   return (
     <div>
       <Form layout="horizontal">
-        <FormItem label={t('source')} {...formItemLayout}>
+        <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleTypeChanged}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('externalLink')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
             <RadioButton value={SOURCE_TYPE.internal}>{t('internalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.youtube}>{t('youtube')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {sourceType === SOURCE_TYPE.external && (
           <Fragment>
-            <FormItem label={t('externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+            <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
               <Input value={sourceUrl} onChange={handleExternalUrlChanged} />
             </FormItem>
             {renderPosterImageFormItem()}
@@ -126,7 +126,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
         )}
         {sourceType === SOURCE_TYPE.internal && (
           <Fragment>
-            <FormItem label={t('internalUrl')} {...formItemLayout}>
+            <FormItem label={t('common:internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
@@ -145,23 +145,23 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
           </Fragment>
         )}
         {sourceType === SOURCE_TYPE.youtube && (
-          <FormItem label={t('youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
+          <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
             <Input value={sourceUrl} onChange={handleYoutubeUrlChanged} />
           </FormItem>
         )}
-        <Form.Item label={t('aspectRatio')} {...formItemLayout}>
+        <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
           <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={handleAspectRatioChanged}>
             <RadioButton value="16:9">16:9</RadioButton>
             <RadioButton value="4:3">4:3</RadioButton>
           </RadioGroup>
         </Form.Item>
-        <Form.Item label={t('videoDisplay')} {...formItemLayout}>
+        <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
           <Switch size="small" defaultChecked checked={showVideo} onChange={handleShowVideoChanged} />
         </Form.Item>
-        <Form.Item label={t('width')} {...formItemLayout}>
+        <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
         </Form.Item>
-        <Form.Item label={t('copyrightInfos')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <TextArea value={text} onChange={handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
         </Form.Item>
       </Form>

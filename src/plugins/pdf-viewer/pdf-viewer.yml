@@ -4,15 +4,6 @@ name:
 internalLink:
   en: Internal link
   de: Interner Link
-internalCdn:
-  en: Internal CDN
-  de: Internes CDN
-internalUrl:
-  en: Internal URL
-  de: Interne URL
-width:
-  en: Width
-  de: Breite
 caption:
   en: Caption
   de: Legende

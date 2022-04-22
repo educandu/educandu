@@ -16,36 +16,3 @@ length:
 unsupportedFileFormat:
   en: Unsupported file format
   de: Nicht unterstütztes Dateiformat
-source:
-  en: Source
-  de: Quelle
-externalLink:
-  en: External link
-  de: Externer Link
-internalCdn:
-  en: Internal CDN
-  de: Internes CDN
-youtube:
-  en: Youtube
-  de: Youtube
-externalUrl:
-  en: External URL
-  de: Externe URL
-internalUrl:
-  en: Internal URL
-  de: Interne URL
-youtubeUrl:
-  en: Youtube URL
-  de: Youtube URL
-aspectRatio:
-  en: Aspect ratio
-  de: Seitenverhältnis
-videoDisplay:
-  en: Video display
-  de: Videoanzeige
-width:
-  en: Width
-  de: Breite
-copyrightInfos:
-  en: Copyright infos
-  de: Copyright Infos

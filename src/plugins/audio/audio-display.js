@@ -9,12 +9,12 @@ function AudioDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
   let soundUrl;
-  switch (content.type) {
+  switch (content.sourceType) {
     case SOURCE_TYPE.external:
-      soundUrl = content.url || null;
+      soundUrl = content.sourceUrl || null;
       break;
     case SOURCE_TYPE.internal:
-      soundUrl = content.url ? `${clientConfig.cdnRootUrl}/${content.url}` : null;
+      soundUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
       break;
     default:
       soundUrl = null;

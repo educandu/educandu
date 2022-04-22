@@ -53,7 +53,7 @@ function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStor
   return (
     <div className="PdfViewerEditor">
       <Form layout="horizontal">
-        <FormItem label={t('internalUrl')} {...formItemLayout}>
+        <FormItem label={t('common:internalUrl')} {...formItemLayout}>
           <div className="PdfViewerEditor-internalSourceSelector">
             <Input
               addonBefore={`${clientConfig.cdnRootUrl}/`}
@@ -77,7 +77,7 @@ function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStor
             <InfoCircleOutlined className="PdfViewerEditor-infoIcon" />
           </Tooltip>
         </Form.Item>
-        <Form.Item label={t('width')} {...formItemLayout}>
+        <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('caption')} {...formItemLayout}>

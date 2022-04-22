@@ -76,7 +76,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
             <RadioButton value={INTENT.discourage}>{t('intent_discourage')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        <FormItem label={t('width')} {...formItemLayout}>
+        <FormItem label={t('common:width')} {...formItemLayout}>
           <ObjectMaxWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
       </Form>

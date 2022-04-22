@@ -1,21 +1,3 @@
 name:
   en: Audio
   de: Audio
-source:
-  en: Source
-  de: Quelle
-externalLink:
-  en: External link
-  de: Externer Link
-internalCdn:
-  en: Internal CDN
-  de: Internes CDN
-externalUrl:
-  en: External URL
-  de: Externe URL
-internalUrl:
-  en: Internal URL
-  de: Interne URL
-copyrightInfos:
-  en: Copyright infos
-  de: Copyright Infos

@@ -57,7 +57,7 @@ function IframeEditor({ content, onContentChanged }) {
           >
           <Input value={url} onChange={handleExternalUrlValueChanged} />
         </FormItem>
-        <Form.Item label={t('width')} {...formItemLayout}>
+        <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectMaxWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
         <Form.Item label={t('height')} {...formItemLayout}>

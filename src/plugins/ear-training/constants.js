@@ -1,4 +1,4 @@
-export const SOUND_TYPE = {
+export const SOURCE_TYPE = {
   internal: 'internal',
   external: 'external',
   midi: 'midi'

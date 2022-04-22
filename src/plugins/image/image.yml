@@ -1,12 +1,6 @@
 name:
   en: Image
   de: Bild
-source:
-  en: Source
-  de: Quelle
-externalLink:
-  en: External link
-  de: Externer Link
 noneOption:
   en: None
   de: Kein Effekt
@@ -19,18 +13,6 @@ revealOption:
 clipOption:
   en: Clip
   de: Zuschneiden
-internalCdn:
-  en: Internal CDN
-  de: Internes CDN
-externalUrl:
-  en: External URL
-  de: Externe URL
-internalUrl:
-  en: Internal URL
-  de: Interne URL
-copyrightInfos:
-  en: Copyright infos
-  de: Copyright Infos
 maximumWidth:
   en: Maximum width
   de: Maximale Breite

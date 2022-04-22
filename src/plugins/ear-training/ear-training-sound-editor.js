@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
-import { SOUND_TYPE } from './constants.js';
+import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
@@ -20,26 +20,26 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
     onSoundChanged({ ...sound, ...newValues });
   };
 
-  const handleSoundTypeChanged = event => {
+  const handleSourceTypeChanged = event => {
     const { value } = event.target;
     changeSound({
-      type: value,
-      url: value === SOUND_TYPE.midi ? null : '',
-      text: value === SOUND_TYPE.midi ? null : sound.text || ''
+      sourceType: value,
+      sourceUrl: value === SOURCE_TYPE.midi ? null : '',
+      text: value === SOURCE_TYPE.midi ? null : sound.text || ''
     });
   };
 
   const handleExternalUrlChanged = event => {
     const { value } = event.target;
-    changeSound({ url: value });
+    changeSound({ sourceUrl: value });
   };
 
   const handleInternalUrlChanged = e => {
-    changeSound({ url: e.target.value });
+    changeSound({ sourceUrl: e.target.value });
   };
 
   const handleInternalUrlFileNameChanged = value => {
-    changeSound({ url: value });
+    changeSound({ sourceUrl: value });
   };
 
   const handleTextChanged = event => {
@@ -53,12 +53,12 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
       <td style={{ padding: 8 }}>{t('audioSource')}:</td>
       <td style={{ padding: 8 }}>
         <RadioGroup
-          value={sound.type}
-          onChange={handleSoundTypeChanged}
+          value={sound.sourceType}
+          onChange={handleSourceTypeChanged}
           >
-          <RadioButton value={SOUND_TYPE.midi}>{t('midi')}</RadioButton>
-          <RadioButton value={SOUND_TYPE.external}>{t('externalLink')}</RadioButton>
-          <RadioButton value={SOUND_TYPE.internal}>{t('internalCdn')}</RadioButton>
+          <RadioButton value={SOURCE_TYPE.midi}>{t('midi')}</RadioButton>
+          <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+          <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
         </RadioGroup>
       </td>
       <td style={{ padding: 8 }}>&nbsp;</td>
@@ -69,27 +69,27 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
     <tr>
       <td style={{ padding: 8 }}>&nbsp;</td>
       <td style={{ padding: 8 }}>
-        {sound.type === SOUND_TYPE.external && `${t('externalUrl')}:`}
-        {sound.type === SOUND_TYPE.internal && `${t('internalUrl')}:`}
+        {sound.sourceType === SOURCE_TYPE.external && `${t('common:externalUrl')}:`}
+        {sound.sourceType === SOURCE_TYPE.internal && `${t('common:internalUrl')}:`}
       </td>
       <td style={{ padding: 8 }}>
-        {sound.type === SOUND_TYPE.external && (
+        {sound.sourceType === SOURCE_TYPE.external && (
         <Input
-          value={sound.url}
+          value={sound.sourceUrl}
           onChange={handleExternalUrlChanged}
           />
         )}
-        {sound.type === SOUND_TYPE.internal && (
+        {sound.sourceType === SOURCE_TYPE.internal && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Input
             addonBefore={`${clientConfig.cdnRootUrl}/`}
-            value={sound.url}
+            value={sound.sourceUrl}
             onChange={handleInternalUrlChanged}
             />
           <StorageFilePicker
             publicStorage={publicStorage}
             privateStorage={privateStorage}
-            fileName={sound.url}
+            fileName={sound.sourceUrl}
             onFileNameChanged={handleInternalUrlFileNameChanged}
             />
         </div>
@@ -102,7 +102,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
   const renderTextRow = () => (
     <tr>
       <td style={{ padding: 8 }}>&nbsp;</td>
-      <td style={{ padding: 8 }}>{t('copyrightInfos')}:</td>
+      <td style={{ padding: 8 }}>{t('common:copyrightInfos')}:</td>
       <td style={{ padding: 8 }}>
         <TextArea
           value={sound.text}
@@ -124,8 +124,8 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
       </colgroup>
       <tbody>
         {renderSourceRow()}
-        {sound.type !== 'midi' && renderUrlRow()}
-        {sound.type !== SOUND_TYPE.midi && renderTextRow()}
+        {sound.sourceType !== 'midi' && renderUrlRow()}
+        {sound.sourceType !== SOURCE_TYPE.midi && renderTextRow()}
       </tbody>
     </table>
   );
@@ -136,8 +136,8 @@ EarTrainingSoundEditor.propTypes = {
   privateStorage: filePickerStorageShape,
   publicStorage: filePickerStorageShape.isRequired,
   sound: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    url: PropTypes.string,
+    sourceType: PropTypes.string.isRequired,
+    sourceUrl: PropTypes.string,
     text: PropTypes.string
   }).isRequired
 };

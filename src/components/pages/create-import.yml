@@ -1,9 +1,6 @@
 importButton:
   en: Start import
   de: Import starten
-source:
-  en: Source
-  de: Quelle
 backToImports:
   en: Back to the overview
   de: Zurück zur Übersicht
