@@ -2,10 +2,13 @@ import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
-import InteractiveMediaDisplay from './interactive-media-display.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import InteractiveMediaDisplay from './interactive-media-display.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class InteractiveMediaInfo {
+  static get inject() { return [GithubFlavoredMarkdown]; }
+
   static get typeName() { return 'interactive-media'; }
 
   constructor(gfm) {
