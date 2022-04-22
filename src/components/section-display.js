@@ -95,7 +95,7 @@ function SectionDisplay({
       icon: <DuplicateIcon key="duplicate" />,
       handleAction: () => onSectionDuplicate(),
       isVisible: true,
-      isEnabled: !isEditing
+      isEnabled: true
     },
     {
       type: 'copyToClipboard',
