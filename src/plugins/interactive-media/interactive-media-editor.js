@@ -1,18 +1,20 @@
 import by from 'thenby';
 import React, { useState } from 'react';
-import { Form, Input, Radio } from 'antd';
 import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import { Form, Input, Radio, Switch } from 'antd';
 import Timeline from '../../components/timeline.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
+import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
+const TextArea = Input.TextArea;
 const RadioButton = Radio.Button;
 
 const ensurePartsOrder = parts => {
@@ -23,7 +25,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('interactiveMedia');
 
-  const { sourceType, sourceUrl } = content;
+  const { sourceType, sourceUrl, text, width, aspectRatio, showVideo } = content;
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -109,6 +111,24 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     changeContent({ sourceUrl: value });
   };
 
+  const handleAspectRatioChanged = event => {
+    const [h, v] = event.target.value.split(':').map(Number);
+    changeContent({ aspectRatio: { h, v } });
+  };
+
+  const handleShowVideoChanged = newDhowVideo => {
+    changeContent({ showVideo: newDhowVideo });
+  };
+
+  const handleCopyrightInfoChanged = event => {
+    const { value } = event.target;
+    changeContent({ text: value });
+  };
+
+  const handleWidthChanged = newValue => {
+    changeContent({ width: newValue });
+  };
+
   return (
     <div className="InteractiveMediaEditor">
       <Form layout="horizontal">
@@ -146,6 +166,21 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             <Input value={sourceUrl} onChange={handleYoutubeUrlChanged} />
           </FormItem>
         )}
+        <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
+          <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={handleAspectRatioChanged}>
+            <RadioButton value="16:9">16:9</RadioButton>
+            <RadioButton value="4:3">4:3</RadioButton>
+          </RadioGroup>
+        </Form.Item>
+        <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
+          <Switch size="small" defaultChecked checked={showVideo} onChange={handleShowVideoChanged} />
+        </Form.Item>
+        <Form.Item label={t('common:width')} {...formItemLayout}>
+          <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
+        </Form.Item>
+        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+          <TextArea value={text} onChange={handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
+        </Form.Item>
       </Form>
 
       <Timeline length={length} parts={parts} onPartAdd={handlePartAdd} onPartDelete={handlePartDelete} onStartTimecodeChange={handleStartTimecodeChange} />

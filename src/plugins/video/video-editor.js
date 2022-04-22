@@ -114,7 +114,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleTypeChanged}>
             <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('internalLink')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalLink')}</RadioButton>
             <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>

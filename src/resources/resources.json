@@ -1708,7 +1708,6 @@
     "language": "en",
     "resources": {
       "name": "Video",
-      "internalLink": "Internal link",
       "posterImageUrl": "Preview image URL"
     }
   },
@@ -1717,7 +1716,6 @@
     "language": "de",
     "resources": {
       "name": "Video",
-      "internalLink": "Interner Link",
       "posterImageUrl": "Vorschau-Bild-URL"
     }
   },
@@ -1828,6 +1826,7 @@
       "renderMedia": "Render media",
       "internalCdn": "Internal CDN",
       "externalLink": "External link",
+      "internalLink": "Internal link",
       "youtube": "Youtube",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
@@ -1946,6 +1945,7 @@
       "renderMedia": "Medien wiedergeben",
       "internalCdn": "Internes CDN",
       "externalLink": "Externer Link",
+      "internalLink": "Interner Link",
       "youtube": "Youtube",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",
