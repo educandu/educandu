@@ -10,8 +10,8 @@ export default function MarkdownEditor({ content, onContentChanged }) {
   const { t } = useTranslation('markdown');
   const { text, renderMedia } = content;
 
-  const updateContent = (newContentValues, isInvalid) => {
-    onContentChanged({ ...content, ...newContentValues }, isInvalid);
+  const updateContent = newContentValues => {
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleTextChanged = event => {

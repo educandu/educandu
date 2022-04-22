@@ -11,8 +11,8 @@ function TableEditor({ content, onContentChanged }) {
 
   const { renderMedia } = content;
 
-  const updateContent = (newContentValues, isInvalid) => {
-    onContentChanged({ ...content, ...newContentValues }, isInvalid);
+  const updateContent = newContentValues => {
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleJSONValueChanged = event => {

@@ -84,8 +84,17 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     updateClipState();
   }, [updateClipState, effect?.region]);
 
-  const changeContent = (newContentValues, isInvalid) => {
-    onContentChanged({ ...content, ...newContentValues }, isInvalid);
+  const changeContent = newContentValues => {
+    const newContent = { ...content, ...newContentValues };
+    const isInvalidSourceUrl
+      = newContent.sourceType === SOURCE_TYPE.external
+      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+
+    const isInvalidEffectSourceUrl
+      = [EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(newContent.effect?.type)
+      && newContent.effect.sourceType === SOURCE_TYPE.external
+      && validation.validateUrl(newContent.effect.sourceUrl, t).validateStatus === 'error';
+    onContentChanged(newContent, isInvalidSourceUrl || isInvalidEffectSourceUrl);
   };
 
   const getResetEffect = () => {
@@ -106,8 +115,7 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const handleExternalSourceUrlValueChanged = event => {
     const { value } = event.target;
-    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
-    changeContent({ sourceUrl: value, effect: getResetEffect() }, isInvalid);
+    changeContent({ sourceUrl: value, effect: getResetEffect() });
   };
 
   const handleInternalSourceUrlValueChanged = event => {

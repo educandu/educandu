@@ -24,14 +24,15 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
     wrapperCol: { span: 14 }
   };
 
-  const changeContent = (newContentValues, isInvalid) => {
-    onContentChanged({ ...content, ...newContentValues }, isInvalid);
+  const changeContent = newContentValues => {
+    const newContent = { ...content, ...newContentValues };
+    const isInvalidSourceUrl = newContent.sourceType !== SOURCE_TYPE.internal && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    onContentChanged(newContent, isInvalidSourceUrl);
   };
 
   const handleExternalUrlValueChanged = event => {
     const { value } = event.target;
-    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
-    changeContent({ sourceUrl: value }, isInvalid);
+    changeContent({ sourceUrl: value });
   };
 
   const handleInternalUrlValueChanged = e => {

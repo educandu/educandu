@@ -99,8 +99,14 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     setParts(parts.slice());
   };
 
-  const changeContent = (newContentValues, isInvalid) => {
-    onContentChanged({ ...content, ...newContentValues }, isInvalid);
+  const changeContent = newContentValues => {
+    const newContent = { ...content, ...newContentValues };
+
+    const isInvalidSourceUrl
+      = newContent.sourceType !== SOURCE_TYPE.internal
+      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+
+    onContentChanged(newContent, isInvalidSourceUrl);
   };
 
   const handleSourceTypeChange = event => {
@@ -110,9 +116,8 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const handleExternalUrlChange = event => {
     const { value } = event.target;
-    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio }, isInvalid);
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
   };
 
   const handleInternalUrlChanged = event => {
@@ -123,9 +128,8 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const handleYoutubeUrlChanged = event => {
     const { value } = event.target;
-    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio }, isInvalid);
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
   };
 
   const handleInternalUrlFileNameChanged = value => {

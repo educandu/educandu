@@ -22,15 +22,15 @@ function IframeEditor({ content, onContentChanged }) {
     wrapperCol: { span: 14 }
   };
 
-  const changeContent = (newContentValues, isInvalid) => {
+  const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    onContentChanged(newContent, isInvalid);
+    const isInvalidUrl = validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    onContentChanged(newContent, isInvalidUrl);
   };
 
   const handleExternalUrlValueChanged = event => {
     const { value } = event.target;
-    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
-    changeContent({ url: value }, isInvalid);
+    changeContent({ url: value });
   };
 
   const handleWidthValueChanged = value => {

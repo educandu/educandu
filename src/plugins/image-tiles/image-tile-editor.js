@@ -23,44 +23,57 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
     wrapperCol: { span: 14 }
   };
 
+  const content = { image, description, link };
+
+  const changeContent = newContentValues => {
+    const newContent = { ...content, ...newContentValues };
+
+    const isInvalidImageSourceUrl
+      = newContent.image.sourceType === IMAGE_SOURCE_TYPE.external
+      && validation.validateUrl(newContent.image.sourceUrl, t).validateStatus === 'error';
+    const isInvalidLinkSourceUrl
+      = newContent.link.sourceType === LINK_SOURCE_TYPE.external
+      && validation.validateUrl(newContent.link.sourceUrl, t).validateStatus === 'error';
+
+    onChange(index, newContent, isInvalidImageSourceUrl || isInvalidLinkSourceUrl);
+  };
+
   const handleExternalImageUrlValueChanged = event => {
     const { value } = event.target;
-    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
-    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } }, isInvalid);
+    changeContent({ image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlValueChanged = e => {
-    onChange(index, { image: { sourceUrl: e.target.value, sourceType: image.sourceType } });
+    changeContent({ image: { sourceUrl: e.target.value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlFileNameChanged = value => {
-    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } });
+    changeContent({ image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
   const handleImageSourceTypeValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { image: { sourceUrl: '', sourceType: value } });
+    changeContent({ image: { sourceUrl: '', sourceType: value } });
   };
 
   const handleDescriptionValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { description: value });
+    changeContent({ description: value });
   };
 
   const handleLinkSourceTypeValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { sourceUrl: '', sourceType: value } });
+    changeContent({ link: { sourceUrl: '', sourceType: value } });
   };
 
   const handleExternalLinkUrlValueChanged = event => {
     const { value } = event.target;
-    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
-    onChange(index, { link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } }, isInvalid);
+    changeContent({ link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
   };
 
   const handleLinkDocumentIdValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
+    changeContent({ link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
   };
 
   return (

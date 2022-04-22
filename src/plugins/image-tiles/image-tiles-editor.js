@@ -65,10 +65,10 @@ function ImageTilesEditor({ content, onContentChanged, publicStorage, privateSto
     changeContent({ hoverEffect: value });
   };
 
-  const handleTileChange = (index, newValues) => {
+  const handleTileChange = (index, newValues, isInvalid) => {
     const newTiles = content.tiles.slice();
     newTiles[index] = { ...newTiles[index], ...newValues };
-    changeContent({ tiles: newTiles });
+    changeContent({ tiles: newTiles }, isInvalid);
   };
 
   const moveUpTile = index => {
