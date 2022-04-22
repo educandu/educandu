@@ -25,18 +25,20 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const { sourceType, sourceUrl, text, width, aspectRatio, showVideo, posterImage } = content;
 
-  const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+  const changeContent = (newContentValues, isInvalid) => {
+    onContentChanged({ ...content, ...newContentValues }, isInvalid);
   };
 
   const handleExternalUrlChanged = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value });
+    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
+    changeContent({ sourceUrl: value }, isInvalid);
   };
 
   const handleYoutubeUrlChanged = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value });
+    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
+    changeContent({ sourceUrl: value }, isInvalid);
   };
 
   const handleInternalUrlChanged = event => {

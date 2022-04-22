@@ -15,8 +15,8 @@ function AbcNotationEditor({ content, onContentChanged }) {
     wrapperCol: { span: 14 }
   };
 
-  const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+  const changeContent = (newContentValues, isInvalid) => {
+    onContentChanged({ ...content, ...newContentValues }, isInvalid);
   };
 
   const handleCurrentAbcCodeChanged = event => {

@@ -25,7 +25,8 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
 
   const handleExternalImageUrlValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } });
+    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
+    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } }, isInvalid);
   };
 
   const handleInternalImageUrlValueChanged = e => {
@@ -51,9 +52,10 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
     onChange(index, { link: { sourceUrl: '', sourceType: value } });
   };
 
-  const handleLinkSourceUrlValueChanged = event => {
+  const handleExternalLinkUrlValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
+    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
+    onChange(index, { link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } }, isInvalid);
   };
 
   const handleLinkDocumentIdValueChanged = event => {
@@ -102,7 +104,7 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
       </FormItem>
       {link.sourceType === LINK_SOURCE_TYPE.external && (
         <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(link.sourceUrl, t, { allowInsecure: true })} hasFeedback>
-          <Input value={link.sourceUrl} onChange={handleLinkSourceUrlValueChanged} />
+          <Input value={link.sourceUrl} onChange={handleExternalLinkUrlValueChanged} />
         </FormItem>
       )}
       {link.sourceType === LINK_SOURCE_TYPE.document && (

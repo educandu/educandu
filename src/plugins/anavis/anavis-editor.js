@@ -35,11 +35,11 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
     wrapperCol: { span: 14 }
   };
 
-  const changeContent = newContentValuesOrFunc => {
+  const changeContent = (newContentValuesOrFunc, isInvalid) => {
     if (typeof newContentValuesOrFunc === 'function') {
-      onContentChanged(newContentValuesOrFunc(content));
+      onContentChanged(newContentValuesOrFunc(content), isInvalid);
     } else {
-      onContentChanged({ ...content, ...newContentValuesOrFunc });
+      onContentChanged({ ...content, ...newContentValuesOrFunc }, isInvalid);
     }
   };
 

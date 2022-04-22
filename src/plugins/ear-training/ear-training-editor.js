@@ -32,8 +32,8 @@ function EarTrainingEditor({ content, onContentChanged, publicStorage, privateSt
   const dataSource = tests.map((test, i) => ({ key: i, ...test }));
   const expandedRowKeys = dataSource.map(record => record.key);
 
-  const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+  const changeContent = (newContentValues, isInvalid) => {
+    onContentChanged({ ...content, ...newContentValues }, isInvalid);
   };
 
   const handleTitleChanged = event => {

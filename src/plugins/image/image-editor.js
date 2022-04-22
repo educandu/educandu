@@ -84,8 +84,8 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
     updateClipState();
   }, [updateClipState, effect?.region]);
 
-  const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+  const changeContent = (newContentValues, isInvalid) => {
+    onContentChanged({ ...content, ...newContentValues }, isInvalid);
   };
 
   const getResetEffect = () => {
@@ -106,7 +106,8 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const handleExternalSourceUrlValueChanged = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value, effect: getResetEffect() });
+    const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
+    changeContent({ sourceUrl: value, effect: getResetEffect() }, isInvalid);
   };
 
   const handleInternalSourceUrlValueChanged = event => {

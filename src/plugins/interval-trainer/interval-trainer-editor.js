@@ -9,8 +9,8 @@ function IntervalTrainerEditor({ content, onContentChanged }) {
   const { t } = useTranslation('intervalTrainer');
   const json = JSON.stringify(content, null, 2) || '';
 
-  const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+  const changeContent = (newContentValues, isInvalid) => {
+    onContentChanged({ ...content, ...newContentValues }, isInvalid);
   };
 
   const handleJSONValueChanged = event => {

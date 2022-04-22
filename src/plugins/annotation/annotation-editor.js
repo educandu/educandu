@@ -15,8 +15,8 @@ export default function AnnotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('annotation');
   const { title, text, renderMedia, behavior, intent, width } = content;
 
-  const updateContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+  const updateContent = (newContentValues, isInvalid) => {
+    onContentChanged({ ...content, ...newContentValues }, isInvalid);
   };
 
   const handleTitleChange = event => {

@@ -57,8 +57,8 @@ function DiagramNetEditor({ content, onContentChanged }) {
   const [iframeUrl, setIframeUrl] = useState(null);
   const [isEditorReady, setIsEditorReady] = useState(false);
 
-  const changeContent = useCallback(newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+  const changeContent = useCallback((newContentValues, isInvalid) => {
+    onContentChanged({ ...content, ...newContentValues }, isInvalid);
   }, [content, onContentChanged]);
 
   const handleDiagramChanged = useCallback((xml, data) => {
