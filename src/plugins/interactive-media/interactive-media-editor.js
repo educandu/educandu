@@ -1,10 +1,10 @@
 import by from 'thenby';
 import React, { useState } from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Form, Input, Radio, Switch } from 'antd';
 import Timeline from '../../components/timeline.js';
+import { MEDIA_TYPE, SOURCE_TYPE } from './constants.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
@@ -17,8 +17,27 @@ const RadioGroup = Radio.Group;
 const TextArea = Input.TextArea;
 const RadioButton = Radio.Button;
 
-const ensurePartsOrder = parts => {
-  return parts.sort(by(part => part.startTimecode));
+const videoTypes = ['mp4', 'mov', 'avi', 'mkv'];
+const audioTypes = ['mp3', 'flac', 'aac', 'wav'];
+
+const ensurePartsOrder = parts => parts.sort(by(part => part.startTimecode));
+const getAspectRatioText = aspectRatio => `${aspectRatio.h}:${aspectRatio.v}`;
+
+const getMediaType = path => {
+  const sanitizedPath = (path || '').trim();
+  const extensionMatches = sanitizedPath.match(/\.([0-9a-z]+)$/i);
+  const extension = extensionMatches && extensionMatches[1];
+
+  if (!extension) {
+    return MEDIA_TYPE.none;
+  }
+  if (audioTypes.includes(extension)) {
+    return MEDIA_TYPE.audio;
+  }
+  if (videoTypes.includes(extension)) {
+    return MEDIA_TYPE.video;
+  }
+  return MEDIA_TYPE.unknown;
 };
 
 function InteractiveMediaEditor({ content, onContentChanged, publicStorage, privateStorage }) {
@@ -26,6 +45,9 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const { t } = useTranslation('interactiveMedia');
 
   const { sourceType, sourceUrl, text, width, aspectRatio, showVideo } = content;
+
+  const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
+  const defaultAspectRatio = supportedAspectRatios[0];
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -83,32 +105,32 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const handleSourceTypeChange = event => {
     const { value } = event.target;
-    changeContent({
-      sourceType: value,
-      sourceUrl: '',
-      showVideo: true
-    });
+    changeContent({ sourceType: value, sourceUrl: '', showVideo: false, aspectRatio: defaultAspectRatio });
   };
 
   const handleExternalUrlChange = event => {
     const { value } = event.target;
     const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
-    changeContent({ sourceUrl: value }, isInvalid);
+    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio }, isInvalid);
+  };
+
+  const handleInternalUrlChanged = event => {
+    const { value } = event.target;
+    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
   };
 
   const handleYoutubeUrlChanged = event => {
     const { value } = event.target;
     const isInvalid = validation.validateUrl(value, t).validateStatus === 'error';
-    changeContent({ sourceUrl: value }, isInvalid);
-  };
-
-  const handleInternalUrlChanged = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value });
+    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio }, isInvalid);
   };
 
   const handleInternalUrlFileNameChanged = value => {
-    changeContent({ sourceUrl: value });
+    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
   };
 
   const handleAspectRatioChanged = event => {
@@ -116,8 +138,8 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     changeContent({ aspectRatio: { h, v } });
   };
 
-  const handleShowVideoChanged = newDhowVideo => {
-    changeContent({ showVideo: newDhowVideo });
+  const handleShowVideoChanged = newShowVideo => {
+    changeContent({ showVideo: newShowVideo });
   };
 
   const handleCopyrightInfoChanged = event => {
@@ -167,13 +189,25 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
-          <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={handleAspectRatioChanged}>
-            <RadioButton value="16:9">16:9</RadioButton>
-            <RadioButton value="4:3">4:3</RadioButton>
+          <RadioGroup
+            size="small"
+            defaultValue={getAspectRatioText(defaultAspectRatio)}
+            value={`${aspectRatio.h}:${aspectRatio.v}`}
+            onChange={handleAspectRatioChanged}
+            disabled={[MEDIA_TYPE.audio, MEDIA_TYPE.unknown].includes(getMediaType(sourceUrl))}
+            >
+            {supportedAspectRatios.map(ratio => (
+              <RadioButton key={getAspectRatioText(ratio)} value={getAspectRatioText(ratio)}>{getAspectRatioText(ratio)}</RadioButton>
+            ))}
           </RadioGroup>
         </Form.Item>
         <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
-          <Switch size="small" defaultChecked checked={showVideo} onChange={handleShowVideoChanged} />
+          <Switch
+            size="small"
+            checked={showVideo}
+            onChange={handleShowVideoChanged}
+            disabled={[MEDIA_TYPE.audio, MEDIA_TYPE.unknown].includes(getMediaType(sourceUrl))}
+            />
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />

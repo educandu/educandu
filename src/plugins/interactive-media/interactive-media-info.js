@@ -42,7 +42,7 @@ class InteractiveMediaInfo {
         h: 16,
         v: 9
       },
-      showVideo: true
+      showVideo: false
     };
   }
 
