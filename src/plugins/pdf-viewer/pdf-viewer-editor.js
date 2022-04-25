@@ -23,7 +23,7 @@ function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStor
   const { sourceUrl, initialPageNumber, showTextOverlay, width, caption } = content;
 
   const triggerContentChanged = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleSourceUrlChange = event => {

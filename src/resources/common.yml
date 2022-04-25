@@ -315,6 +315,9 @@ internalCdn:
 externalLink:
   en: External link
   de: Externer Link
+internalLink:
+  en: Internal link
+  de: Interner Link
 youtube:
   en: Youtube
   de: Youtube

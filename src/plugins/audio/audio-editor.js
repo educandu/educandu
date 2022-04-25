@@ -25,7 +25,9 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
   };
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    const newContent = { ...content, ...newContentValues };
+    const isInvalidSourceUrl = newContent.sourceType !== SOURCE_TYPE.internal && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    onContentChanged(newContent, isInvalidSourceUrl);
   };
 
   const handleExternalUrlValueChanged = event => {

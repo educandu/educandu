@@ -39,7 +39,7 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
     if (typeof newContentValuesOrFunc === 'function') {
       onContentChanged(newContentValuesOrFunc(content));
     } else {
-      onContentChanged({ ...content, ...newContentValuesOrFunc });
+      onContentChanged({ ...content, ...newContentValuesOrFunc }, false);
     }
   };
 

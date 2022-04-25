@@ -60,7 +60,6 @@ const config = {
   additionalControllers: [],
   consentCookieNamePrefix: 'CONSENT_TEST_APP',
   areRoomsEnabled: parseBool(processEnv.TEST_APP_ARE_ROOMS_ENABLED || false.toString()),
-  isAdminTestsTabEnabled: parseBool(processEnv.TEST_APP_IS_ADMIN_TESTS_TAB_ENABLED || false.toString()),
   plugins
 };
 

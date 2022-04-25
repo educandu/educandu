@@ -16,7 +16,7 @@ function AbcNotationEditor({ content, onContentChanged }) {
   };
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleCurrentAbcCodeChanged = event => {

@@ -24,8 +24,8 @@ function IframeEditor({ content, onContentChanged }) {
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isValid = validation.validateUrl(newContent.url, t).validateStatus !== 'error';
-    onContentChanged(newContent, !isValid);
+    const isInvalidUrl = validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    onContentChanged(newContent, isInvalidUrl);
   };
 
   const handleExternalUrlValueChanged = event => {

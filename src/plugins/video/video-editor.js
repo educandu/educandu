@@ -26,7 +26,13 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
   const { sourceType, sourceUrl, text, width, aspectRatio, showVideo, posterImage } = content;
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    const newContent = { ...content, ...newContentValues };
+
+    const isInvalidSourceUrl
+      = newContent.sourceType !== SOURCE_TYPE.internal
+      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+
+    onContentChanged(newContent, isInvalidSourceUrl);
   };
 
   const handleExternalUrlChanged = event => {
@@ -112,7 +118,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleTypeChanged}>
             <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('internalLink')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalLink')}</RadioButton>
             <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>

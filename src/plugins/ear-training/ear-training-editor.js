@@ -33,7 +33,7 @@ function EarTrainingEditor({ content, onContentChanged, publicStorage, privateSt
   const expandedRowKeys = dataSource.map(record => record.key);
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleTitleChanged = event => {

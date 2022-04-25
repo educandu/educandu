@@ -23,42 +23,48 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
     wrapperCol: { span: 14 }
   };
 
+  const tileContent = { image, description, link };
+
+  const triggerChange = newTileContentValues => {
+    onChange(index, { ...tileContent, ...newTileContentValues });
+  };
+
   const handleExternalImageUrlValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } });
+    triggerChange({ image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlValueChanged = e => {
-    onChange(index, { image: { sourceUrl: e.target.value, sourceType: image.sourceType } });
+    triggerChange({ image: { sourceUrl: e.target.value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlFileNameChanged = value => {
-    onChange(index, { image: { sourceUrl: value, sourceType: image.sourceType } });
+    triggerChange({ image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
   const handleImageSourceTypeValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { image: { sourceUrl: '', sourceType: value } });
+    triggerChange({ image: { sourceUrl: '', sourceType: value } });
   };
 
   const handleDescriptionValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { description: value });
+    triggerChange({ description: value });
   };
 
   const handleLinkSourceTypeValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { sourceUrl: '', sourceType: value } });
+    triggerChange({ link: { sourceUrl: '', sourceType: value } });
   };
 
-  const handleLinkSourceUrlValueChanged = event => {
+  const handleExternalLinkUrlValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
+    triggerChange({ link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
   };
 
   const handleLinkDocumentIdValueChanged = event => {
     const { value } = event.target;
-    onChange(index, { link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
+    triggerChange({ link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
   };
 
   return (
@@ -102,7 +108,7 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
       </FormItem>
       {link.sourceType === LINK_SOURCE_TYPE.external && (
         <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(link.sourceUrl, t, { allowInsecure: true })} hasFeedback>
-          <Input value={link.sourceUrl} onChange={handleLinkSourceUrlValueChanged} />
+          <Input value={link.sourceUrl} onChange={handleExternalLinkUrlValueChanged} />
         </FormItem>
       )}
       {link.sourceType === LINK_SOURCE_TYPE.document && (

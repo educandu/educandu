@@ -12,7 +12,7 @@ function TableEditor({ content, onContentChanged }) {
   const { renderMedia } = content;
 
   const updateContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleJSONValueChanged = event => {

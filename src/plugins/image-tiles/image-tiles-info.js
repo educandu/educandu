@@ -3,6 +3,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import ImageTilesIcon from './image-tiles-icon.js';
 import { IMAGE_SOURCE_TYPE } from './constants.js';
 import ImageTilesDisplay from './image-tiles-display.js';
+import { createDefaultContent } from './image-tiles-utils.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 
 export default class ImageTiles {
@@ -28,13 +29,8 @@ export default class ImageTiles {
     return (await import('./image-tiles-editor.js')).default;
   }
 
-  getDefaultContent() {
-    return {
-      tiles: [],
-      maxTilesPerRow: 3,
-      maxWidth: 100,
-      hoverEffect: 'none'
-    };
+  getDefaultContent(t) {
+    return createDefaultContent(t);
   }
 
   cloneContent(content) {

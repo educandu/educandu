@@ -16,7 +16,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
   const { title, text, renderMedia, behavior, intent, width } = content;
 
   const updateContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleTitleChange = event => {

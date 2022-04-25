@@ -10,7 +10,7 @@ function IntervalTrainerEditor({ content, onContentChanged }) {
   const json = JSON.stringify(content, null, 2) || '';
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleJSONValueChanged = event => {

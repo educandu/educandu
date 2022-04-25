@@ -85,7 +85,16 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
   }, [updateClipState, effect?.region]);
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    const newContent = { ...content, ...newContentValues };
+    const isInvalidSourceUrl
+      = newContent.sourceType === SOURCE_TYPE.external
+      && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+
+    const isInvalidEffectSourceUrl
+      = [EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(newContent.effect?.type)
+      && newContent.effect.sourceType === SOURCE_TYPE.external
+      && validation.validateUrl(newContent.effect.sourceUrl, t).validateStatus === 'error';
+    onContentChanged(newContent, isInvalidSourceUrl || isInvalidEffectSourceUrl);
   };
 
   const getResetEffect = () => {

@@ -26,7 +26,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
   const dataSource = tests.map((test, i) => ({ key: i, ...test }));
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleTeaserValueChanged = event => {

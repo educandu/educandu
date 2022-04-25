@@ -11,7 +11,7 @@ export default function MarkdownEditor({ content, onContentChanged }) {
   const { text, renderMedia } = content;
 
   const updateContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues });
+    onContentChanged({ ...content, ...newContentValues }, false);
   };
 
   const handleTextChanged = event => {
