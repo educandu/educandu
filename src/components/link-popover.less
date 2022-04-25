@@ -3,13 +3,13 @@
   padding: 0;
   display: list;
   list-style: none;
+  user-select: none;
 }
 
 .LinkPopover-item {
   display: block;
   margin: 0;
-  padding: 6px 0;
-  border-bottom: 1px solid @edu-border-color-light;
+  padding: 2px 0;
 
   &:first-child {
     padding-top: 0;
@@ -17,7 +17,6 @@
 
   &:last-child {
     padding-bottom: 0;
-    border-bottom: none;
   }
 }
 
@@ -26,4 +25,19 @@
   align-items: baseline;
   white-space: nowrap;
   text-decoration: none;
+
+  &.is-disabled {
+    color: @edu-disabled-color;
+    cursor: not-allowed;
+  }
+}
+
+.LinkPopover-itemSeparator {
+  padding: 4px 0;
+}
+
+.LinkPopover-itemSeparatorLine {
+  display: block;
+  height: 1px;
+  border-bottom: 1px solid @edu-border-color-light;
 }

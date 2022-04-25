@@ -1,14 +1,16 @@
-import React from 'react';
 import { Popover } from 'antd';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import React, { Fragment, useState } from 'react';
 import { default as iconsNs } from '@ant-design/icons';
 import { useUser } from '../components/user-context.js';
 import { hasUserPermission } from '../domain/permissions.js';
 
 const Icon = iconsNs.default || iconsNs;
 
-function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger }) {
+function LinkPopover({ children, items, placement, renderIfEmpty, renderSeparator, title, trigger }) {
   const user = useUser();
+  const [isVisible, setIsVisible] = useState(false);
 
   const filteredItems = items.filter(item => {
     return !item.permission || hasUserPermission(user, item.permission);
@@ -18,10 +20,22 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
     return null;
   }
 
+  const handleVisibleChange = newIsVisible => {
+    setIsVisible(newIsVisible);
+  };
+
+  const handleItemClick = item => {
+    setIsVisible(false);
+    item.onClick?.();
+  };
+
   const renderLinkItem = item => {
-    const handleClick = item.onClick;
     return (
-      <a href={item.href} onClick={handleClick} className="LinkPopover-itemLink">
+      <a
+        href={item.disabled ? null : item.href}
+        onClick={item.disabled ? null : () => handleItemClick(item)}
+        className={classnames('LinkPopover-itemLink', { 'is-disabled': item.disabled })}
+        >
         {item.icon && <span><Icon component={item.icon} />&nbsp;&nbsp;</span>}
         {item.text}
       </a>
@@ -31,9 +45,16 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
   const content = (
     <ul className="LinkPopover">
       {filteredItems.map(item => (
-        <li key={item.key} className="LinkPopover-item">
-          {!!(item.href || item.onClick) && renderLinkItem(item)}
-        </li>
+        <Fragment key={item.key}>
+          <li key={item.key} className="LinkPopover-item">
+            {!!(item.href || item.onClick) && renderLinkItem(item)}
+          </li>
+          {(!!item.separator || renderSeparator === 'always') && (
+            <li key={`${item.key}-separator`} className="LinkPopover-itemSeparator">
+              <span className="LinkPopover-itemSeparatorLine" />
+            </li>
+          )}
+        </Fragment>
       ))}
     </ul>
   );
@@ -44,6 +65,8 @@ function LinkPopover({ children, items, placement, renderIfEmpty, title, trigger
       content={content}
       placement={placement}
       trigger={trigger}
+      visible={isVisible}
+      onVisibleChange={handleVisibleChange}
       >
       {children}
     </Popover>
@@ -57,9 +80,11 @@ LinkPopover.propTypes = {
       key: PropTypes.string.isRequired,
       href: PropTypes.string,
       onClick: PropTypes.func,
+      separator: PropTypes.bool,
       text: PropTypes.string.isRequired,
       icon: PropTypes.elementType,
-      permission: PropTypes.string
+      permission: PropTypes.string,
+      disabled: PropTypes.bool
     }),
     PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -81,6 +106,7 @@ LinkPopover.propTypes = {
     'rightBottom'
   ]),
   renderIfEmpty: PropTypes.bool,
+  renderSeparator: PropTypes.oneOf(['always', 'onlyWhenSpecified']),
   title: PropTypes.node,
   trigger: PropTypes.oneOf(['hover', 'focus', 'click', 'contextMenu'])
 };
@@ -90,6 +116,7 @@ LinkPopover.defaultProps = {
   items: [],
   placement: 'top',
   renderIfEmpty: false,
+  renderSeparator: 'always',
   title: null,
   trigger: 'hover'
 };

@@ -1693,14 +1693,26 @@
     "namespace": "table",
     "language": "en",
     "resources": {
-      "name": "Table"
+      "name": "Table",
+      "cellAction_insertRowBefore": "Insert row before",
+      "cellAction_insertRowAfter": "Insert row after",
+      "cellAction_deleteRow": "Delete row",
+      "cellAction_insertColumnBefore": "Insert column before",
+      "cellAction_insertColumnAfter": "Insert column after",
+      "cellAction_deleteColumn": "Delete column"
     }
   },
   {
     "namespace": "table",
     "language": "de",
     "resources": {
-      "name": "Tabelle"
+      "name": "Tabelle",
+      "cellAction_insertRowBefore": "Zeile davor einfügen",
+      "cellAction_insertRowAfter": "Zeile danach einfügen",
+      "cellAction_deleteRow": "Zeile löschen",
+      "cellAction_insertColumnBefore": "Spalte davor einfügen",
+      "cellAction_insertColumnAfter": "Spalte danach einfügen",
+      "cellAction_deleteColumn": "Spalte löschen"
     }
   },
   {

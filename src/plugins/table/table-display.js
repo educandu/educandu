@@ -1,37 +1,36 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Markdown from '../../components/markdown.js';
+import { mapTwoDimensionalArray } from './table-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-
-const createCellMapKey = (rowIndex, columnIndex) => `${rowIndex}-${columnIndex}`;
 
 function TableDisplay({ content }) {
   const { rowCount, columnCount, cells, renderMedia } = content;
 
-  const cellMap = cells.reduce((map, cell) => {
-    map.set(`${cell.startRow}-${cell.startColumn}`, cell);
-    return map;
-  }, new Map());
+  const rows = useMemo(() => {
+    const fullCellMap = mapTwoDimensionalArray(rowCount, columnCount, () => null);
+    cells.forEach(cell => {
+      fullCellMap[cell.rowIndex][cell.columnIndex] = cell;
+    });
 
-  const renderCell = (rowIndex, columnIndex) => {
-    const cell = cellMap.get(createCellMapKey(rowIndex, columnIndex));
-    if (!cell) {
-      return null;
+    for (let rowIndex = 0; rowIndex < fullCellMap.length; rowIndex += 1) {
+      const row = fullCellMap[rowIndex];
+      fullCellMap[rowIndex] = row.filter(cell => cell);
     }
 
-    return (
-      <td key={columnIndex} className="TableDisplay-cell">
-        {cell.text ? <Markdown renderMedia={renderMedia}>{cell.text}</Markdown> : <span>&nbsp;</span>}
-      </td>
-    );
-  };
+    return fullCellMap.filter(row => row.length);
+  }, [rowCount, columnCount, cells]);
 
   return (
     <div className="TableDisplay">
       <table className="TableDisplay-table">
         <tbody>
-          {[...new Array(rowCount).keys()].map(rowIndex => (
-            <tr key={rowIndex}>
-              {[...new Array(columnCount).keys()].map(columnIndex => renderCell(rowIndex, columnIndex))}
+          {rows.map(row => (
+            <tr key={row.map(cell => cell.key).join()}>
+              {row.map(cell => (
+                <td key={cell.key} className="TableDisplay-cell">
+                  {cell.text ? <Markdown renderMedia={renderMedia}>{cell.text}</Markdown> : <span>&nbsp;</span>}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

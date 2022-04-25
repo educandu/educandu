@@ -1,35 +1,18 @@
 import React from 'react';
+import { Checkbox, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { Checkbox, Form, Input, message } from 'antd';
+import TableDesigner from './table-designer.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-
-const { TextArea } = Input;
 
 function TableEditor({ content, onContentChanged }) {
   const { t } = useTranslation('table');
-  const json = JSON.stringify(content, null, 2) || '';
-
-  const { renderMedia } = content;
+  const { rowCount, columnCount, cells, renderMedia } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
   };
 
-  const handleJSONValueChanged = event => {
-    const { value } = event.target;
-
-    let newContent;
-    try {
-      newContent = JSON.parse(value);
-    } catch (err) {
-      message.error(err.message);
-      return;
-    }
-
-    updateContent({ ...newContent });
-  };
-
-  const handleRenderMediaChanged = event => {
+  const handleRenderMediaChange = event => {
     updateContent({ renderMedia: event.target.checked });
   };
 
@@ -41,13 +24,15 @@ function TableEditor({ content, onContentChanged }) {
   return (
     <div className="TableEditor">
       <Form>
-        <Form.Item label="JSON" {...formItemLayout}>
-          <TextArea value={json} onChange={handleJSONValueChanged} autoSize={{ minRows: 10 }} />
-        </Form.Item>
         <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
-          <Checkbox checked={renderMedia} onChange={handleRenderMediaChanged} />
+          <Checkbox checked={renderMedia} onChange={handleRenderMediaChange} />
         </Form.Item>
       </Form>
+      <div className="Panel">
+        <div className="Panel-content Panel-content--darker">
+          <TableDesigner rowCount={rowCount} columnCount={columnCount} cells={cells} onChange={updateContent} />
+        </div>
+      </div>
     </div>
   );
 }
