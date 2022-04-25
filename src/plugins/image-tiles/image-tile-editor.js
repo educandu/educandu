@@ -23,57 +23,48 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
     wrapperCol: { span: 14 }
   };
 
-  const content = { image, description, link };
+  const tileContent = { image, description, link };
 
-  const changeContent = newContentValues => {
-    const newContent = { ...content, ...newContentValues };
-
-    const isInvalidImageSourceUrl
-      = newContent.image.sourceType === IMAGE_SOURCE_TYPE.external
-      && validation.validateUrl(newContent.image.sourceUrl, t).validateStatus === 'error';
-    const isInvalidLinkSourceUrl
-      = newContent.link.sourceType === LINK_SOURCE_TYPE.external
-      && validation.validateUrl(newContent.link.sourceUrl, t).validateStatus === 'error';
-
-    onChange(index, newContent, isInvalidImageSourceUrl || isInvalidLinkSourceUrl);
+  const triggerChange = newTileContentValues => {
+    onChange(index, { ...tileContent, ...newTileContentValues });
   };
 
   const handleExternalImageUrlValueChanged = event => {
     const { value } = event.target;
-    changeContent({ image: { sourceUrl: value, sourceType: image.sourceType } });
+    triggerChange({ image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlValueChanged = e => {
-    changeContent({ image: { sourceUrl: e.target.value, sourceType: image.sourceType } });
+    triggerChange({ image: { sourceUrl: e.target.value, sourceType: image.sourceType } });
   };
 
   const handleInternalImageUrlFileNameChanged = value => {
-    changeContent({ image: { sourceUrl: value, sourceType: image.sourceType } });
+    triggerChange({ image: { sourceUrl: value, sourceType: image.sourceType } });
   };
 
   const handleImageSourceTypeValueChanged = event => {
     const { value } = event.target;
-    changeContent({ image: { sourceUrl: '', sourceType: value } });
+    triggerChange({ image: { sourceUrl: '', sourceType: value } });
   };
 
   const handleDescriptionValueChanged = event => {
     const { value } = event.target;
-    changeContent({ description: value });
+    triggerChange({ description: value });
   };
 
   const handleLinkSourceTypeValueChanged = event => {
     const { value } = event.target;
-    changeContent({ link: { sourceUrl: '', sourceType: value } });
+    triggerChange({ link: { sourceUrl: '', sourceType: value } });
   };
 
   const handleExternalLinkUrlValueChanged = event => {
     const { value } = event.target;
-    changeContent({ link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
+    triggerChange({ link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
   };
 
   const handleLinkDocumentIdValueChanged = event => {
     const { value } = event.target;
-    changeContent({ link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
+    triggerChange({ link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
   };
 
   return (

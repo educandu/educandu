@@ -10,10 +10,10 @@ tilesPerRow:
 hoverEffect:
   en: Hover effect
   de: Hover-Effekt
-noEffect:
+hoverEffect_none:
   en: No effect
   de: Kein Effekt
-colorAndZoom:
+hoverEffect_colorizeZoom:
   en: Color and zoom
   de: Färben und Zoomen
 tileNumber:

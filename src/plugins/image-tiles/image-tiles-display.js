@@ -5,7 +5,7 @@ import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
+import { HOVER_EFFECT, IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 
 function getSource(type, url, cdnRootUrl) {
   switch (type) {
@@ -36,7 +36,7 @@ function ImageTilesDisplay({ content }) {
   const renderTile = (tile, index) => {
     const classes = classNames({
       'ImageTiles-tile': true,
-      'u-img-color-flip': content.hoverEffect === 'colorize-zoom'
+      'u-img-color-flip': content.hoverEffect === HOVER_EFFECT.colorizeZoom
     });
 
     if (!tile) {
