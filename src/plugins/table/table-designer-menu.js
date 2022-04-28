@@ -9,7 +9,9 @@ import {
   DeleteRowOutlined,
   InsertRowLeftOutlined,
   InsertRowRightOutlined,
-  DeleteColumnOutlined
+  DeleteColumnOutlined,
+  MergeCellsOutlined,
+  SplitCellsOutlined
 } from '@ant-design/icons';
 
 export const menuItemInfos = {
@@ -18,7 +20,13 @@ export const menuItemInfos = {
   [DESIGNER_CELL_ACTION.deleteRow]: { translationKey: 'cellAction_deleteRow', icon: DeleteRowOutlined },
   [DESIGNER_CELL_ACTION.insertColumnBefore]: { translationKey: 'cellAction_insertColumnBefore', icon: InsertRowLeftOutlined },
   [DESIGNER_CELL_ACTION.insertColumnAfter]: { translationKey: 'cellAction_insertColumnAfter', icon: InsertRowRightOutlined },
-  [DESIGNER_CELL_ACTION.deleteColumn]: { translationKey: 'cellAction_deleteColumn', icon: DeleteColumnOutlined }
+  [DESIGNER_CELL_ACTION.deleteColumn]: { translationKey: 'cellAction_deleteColumn', icon: DeleteColumnOutlined },
+  [DESIGNER_CELL_ACTION.connectToRowBefore]: { translationKey: 'cellAction_connectToRowBefore', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.connectToRowAfter]: { translationKey: 'cellAction_connectToRowAfter', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.connectToColumnBefore]: { translationKey: 'cellAction_connectToColumnBefore', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.connectToColumnAfter]: { translationKey: 'cellAction_connectToColumnAfter', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined }
+
 };
 
 function createMenuItem(t, action, cell, actionHandler, disabled = false, separator = false) {
@@ -58,7 +66,12 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
     createMenuItem(t, DESIGNER_CELL_ACTION.deleteRow, cell, onCellAction, !canDeleteRow, true),
     createMenuItem(t, DESIGNER_CELL_ACTION.insertColumnBefore, cell, onCellAction, false),
     createMenuItem(t, DESIGNER_CELL_ACTION.insertColumnAfter, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.deleteColumn, cell, !canDeleteColumn, false)
+    createMenuItem(t, DESIGNER_CELL_ACTION.deleteColumn, cell, onCellAction, !canDeleteColumn, true),
+    createMenuItem(t, DESIGNER_CELL_ACTION.connectToRowBefore, cell, onCellAction, cell.isFirstInColumn),
+    createMenuItem(t, DESIGNER_CELL_ACTION.connectToRowAfter, cell, onCellAction, cell.isLastInColumn),
+    createMenuItem(t, DESIGNER_CELL_ACTION.connectToColumnBefore, cell, onCellAction, cell.isFirstInRow),
+    createMenuItem(t, DESIGNER_CELL_ACTION.connectToColumnAfter, cell, onCellAction, cell.isLastInRow),
+    createMenuItem(t, DESIGNER_CELL_ACTION.disconnectCell, cell, onCellAction, !cell.isConnected)
   ];
 
   let items;
@@ -90,7 +103,12 @@ TableDesignerMenu.propTypes = {
   canDeleteColumn: PropTypes.bool.isRequired,
   canDeleteRow: PropTypes.bool.isRequired,
   cell: PropTypes.shape({
-    cellType: PropTypes.oneOf(Object.values(DESIGNER_CELL_TYPE)).isRequired
+    cellType: PropTypes.oneOf(Object.values(DESIGNER_CELL_TYPE)).isRequired,
+    isFirstInRow: PropTypes.bool,
+    isLastInRow: PropTypes.bool,
+    isFirstInColumn: PropTypes.bool,
+    isLastInColumn: PropTypes.bool,
+    isConnected: PropTypes.bool
   }).isRequired,
   dotType: PropTypes.oneOf([
     'normal',

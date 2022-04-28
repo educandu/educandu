@@ -6,7 +6,8 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 
 function TableEditor({ content, onContentChanged }) {
   const { t } = useTranslation('table');
-  const { rowCount, columnCount, cells, renderMedia } = content;
+
+  const { renderMedia } = content;
 
   const updateContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
@@ -30,7 +31,7 @@ function TableEditor({ content, onContentChanged }) {
       </Form>
       <div className="Panel">
         <div className="Panel-content Panel-content--darker">
-          <TableDesigner rowCount={rowCount} columnCount={columnCount} cells={cells} onChange={updateContent} />
+          <TableDesigner content={content} onContentChange={updateContent} />
         </div>
       </div>
     </div>

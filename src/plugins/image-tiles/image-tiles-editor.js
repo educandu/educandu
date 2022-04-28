@@ -17,7 +17,7 @@ import { confirmDeleteImageTile } from '../../components/confirmation-dialogs.js
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-const maxTilesPerRowPossibleValues = [...new Array(MAX_ALLOWED_TILES_PER_ROW).keys()].map(index => index + 1);
+const maxTilesPerRowPossibleValues = Array.from({ length: MAX_ALLOWED_TILES_PER_ROW }, (_, index) => index + 1);
 const maxTilesPerRowMinValue = maxTilesPerRowPossibleValues[0];
 const maxTilesPerRowMaxValue = maxTilesPerRowPossibleValues[maxTilesPerRowPossibleValues.length - 1];
 const maxTilesPerRowSliderMarks = maxTilesPerRowPossibleValues.reduce((all, val) => {

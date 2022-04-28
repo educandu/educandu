@@ -18,7 +18,7 @@ export function createDefaultTile(number, t) {
 
 export function createDefaultContent(t) {
   return {
-    tiles: [...new Array(DEFAULT_MAX_TILES_PER_ROW).keys()].map(index => createDefaultTile(index + 1, t)),
+    tiles: Array.from({ length: DEFAULT_MAX_TILES_PER_ROW }, (_, index) => createDefaultTile(index + 1, t)),
     maxTilesPerRow: DEFAULT_MAX_TILES_PER_ROW,
     maxWidth: 100,
     hoverEffect: HOVER_EFFECT.none

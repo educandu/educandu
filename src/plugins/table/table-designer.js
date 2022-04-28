@@ -3,8 +3,8 @@ import React, { useMemo } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
 import DebouncedTextArea from '../../components/debounced-text-area.js';
 import {
-  changeText,
-  createDesignerRows,
+  changeCellText,
+  createDesignerRowModel,
   deleteColumn,
   deleteRow,
   DESIGNER_CELL_ACTION,
@@ -12,40 +12,59 @@ import {
   insertColumnAfter,
   insertColumnBefore,
   insertRowAfter,
-  insertRowBefore
+  insertRowBefore,
+  connectToColumnAfter,
+  connectToColumnBefore,
+  connectToRowAfter,
+  connectToRowBefore
 } from './table-utils.js';
 
 const CONTENT_INPUT_DATA_ROLE = 'content-input';
 
-function TableEditor({ rowCount, columnCount, cells, onChange }) {
+function TableDesigner({ content, onContentChange }) {
+  const { rowCount, columnCount } = content;
+
   const designerRows = useMemo(() => {
-    return createDesignerRows({ rowCount, columnCount, cells });
-  }, [rowCount, columnCount, cells]);
+    return createDesignerRowModel(content);
+  }, [content]);
 
   const handleDesignerCellTextChange = (cell, newText) => {
-    onChange(changeText({ rowCount, columnCount, cells }, cell.rowIndex, cell.columnIndex, newText));
+    onContentChange(changeCellText(content, cell.rowIndex, cell.columnIndex, newText));
   };
 
   const handleDesignerCellAction = (action, designerCell) => {
     switch (action) {
       case DESIGNER_CELL_ACTION.insertRowBefore:
-        onChange(insertRowBefore({ rowCount, columnCount, cells }, designerCell.rowIndex));
+        onContentChange(insertRowBefore(content, designerCell.rowIndex));
         break;
       case DESIGNER_CELL_ACTION.insertRowAfter:
-        onChange(insertRowAfter({ rowCount, columnCount, cells }, designerCell.rowIndex));
+        onContentChange(insertRowAfter(content, designerCell.rowIndex));
         break;
       case DESIGNER_CELL_ACTION.deleteRow:
-        onChange(deleteRow({ rowCount, columnCount, cells }, designerCell.rowIndex));
+        onContentChange(deleteRow(content, designerCell.rowIndex));
         break;
       case DESIGNER_CELL_ACTION.insertColumnBefore:
-        onChange(insertColumnBefore({ rowCount, columnCount, cells }, designerCell.columnIndex));
+        onContentChange(insertColumnBefore(content, designerCell.columnIndex));
         break;
       case DESIGNER_CELL_ACTION.insertColumnAfter:
-        onChange(insertColumnAfter({ rowCount, columnCount, cells }, designerCell.columnIndex));
+        onContentChange(insertColumnAfter(content, designerCell.columnIndex));
         break;
       case DESIGNER_CELL_ACTION.deleteColumn:
-        onChange(deleteColumn({ rowCount, columnCount, cells }, designerCell.columnIndex));
+        onContentChange(deleteColumn(content, designerCell.columnIndex));
         break;
+      case DESIGNER_CELL_ACTION.connectToRowBefore:
+        onContentChange(connectToRowBefore(content, designerCell.rowIndex, designerCell.columnIndex));
+        break;
+      case DESIGNER_CELL_ACTION.connectToRowAfter:
+        onContentChange(connectToRowAfter(content, designerCell.rowIndex, designerCell.columnIndex));
+        break;
+      case DESIGNER_CELL_ACTION.connectToColumnBefore:
+        onContentChange(connectToColumnBefore(content, designerCell.rowIndex, designerCell.columnIndex));
+        break;
+      case DESIGNER_CELL_ACTION.connectToColumnAfter:
+        onContentChange(connectToColumnAfter(content, designerCell.rowIndex, designerCell.columnIndex));
+        break;
+      case DESIGNER_CELL_ACTION.disconnectCell:
       default:
         throw new Error(`Invalid action: '${action}'`);
     }
@@ -104,6 +123,8 @@ function TableEditor({ rowCount, columnCount, cells, onChange }) {
       <td
         className="TableDesigner-tableCell TableDesigner-tableCell--content"
         key={designerCell.key}
+        rowSpan={designerCell.rowSpan}
+        colSpan={designerCell.columnSpan}
         onClick={handleContentCellClick}
         >
         <DebouncedTextArea
@@ -115,8 +136,8 @@ function TableEditor({ rowCount, columnCount, cells, onChange }) {
           />
         <div className="TableDesigner-contentCellMenuContainer">
           <TableDesignerMenu
-            canDeleteRow={rowCount > 1}
-            canDeleteColumn={columnCount > 1}
+            canDeleteRow={!designerCell.isConnected && !(designerCell.isFirstInColumn && designerCell.isLastInColumn)}
+            canDeleteColumn={!designerCell.isConnected && !(designerCell.isFirstInRow && designerCell.isLastInRow)}
             cell={designerCell}
             placement="bottom"
             dotType="zooming"
@@ -168,17 +189,19 @@ function TableEditor({ rowCount, columnCount, cells, onChange }) {
   );
 }
 
-TableEditor.propTypes = {
-  cells: PropTypes.arrayOf(PropTypes.shape({
-    rowIndex: PropTypes.number.isRequired,
-    columnIndex: PropTypes.number.isRequired,
-    rowSpan: PropTypes.number.isRequired,
-    columnSpan: PropTypes.number.isRequired,
-    text: PropTypes.string.isRequired
-  })).isRequired,
-  columnCount: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired,
-  rowCount: PropTypes.number.isRequired
+TableDesigner.propTypes = {
+  content: PropTypes.shape({
+    cells: PropTypes.arrayOf(PropTypes.shape({
+      rowIndex: PropTypes.number.isRequired,
+      columnIndex: PropTypes.number.isRequired,
+      rowSpan: PropTypes.number.isRequired,
+      columnSpan: PropTypes.number.isRequired,
+      text: PropTypes.string.isRequired
+    })).isRequired,
+    columnCount: PropTypes.number.isRequired,
+    rowCount: PropTypes.number.isRequired
+  }).isRequired,
+  onContentChange: PropTypes.func.isRequired
 };
 
-export default TableEditor;
+export default TableDesigner;
