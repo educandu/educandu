@@ -75,11 +75,7 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
       media: {
         ...oldContent.media,
         sourceType: event.target.value,
-        sourceUrl: '',
-        aspectRatio: {
-          h: 16,
-          v: 9
-        }
+        sourceUrl: ''
       }
     }));
   };
@@ -90,8 +86,6 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
       ...oldContent,
       media: {
         ...oldContent.media,
-        sourceType: event.target.value,
-        sourceUrl: '',
         aspectRatio: { h, v }
       }
     }));
