@@ -9,6 +9,8 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 function ImageDisplay({ content }) {
+  const mainImageRef = useRef();
+  const hoverEffectCanvasRef = useRef();
   const clipEffectImageRef = useRef();
   const clipEffectCanvasRef = useRef();
   const maxWidth = content.maxWidth || 100;
@@ -16,6 +18,24 @@ function ImageDisplay({ content }) {
 
   const clientConfig = useService(ClientConfig);
   const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
+
+  useEffect(() => {
+    if (effect?.type !== EFFECT_TYPE.hover) {
+      return;
+    }
+    const mainImage = mainImageRef.current;
+    const canvas = hoverEffectCanvasRef.current;
+    const context = canvas.getContext('2d');
+    canvas.width = mainImage.naturalWidth;
+    canvas.height = mainImage.naturalHeight;
+
+    const hoverImage = new Image();
+    hoverImage.src = getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl);
+
+    hoverImage.onload = () => {
+      context.drawImage(hoverImage, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+    };
+  }, [mainImageRef, effect, clientConfig]);
 
   useEffect(() => {
     if (effect?.type !== EFFECT_TYPE.clip) {
@@ -51,10 +71,8 @@ function ImageDisplay({ content }) {
 
   const renderHoverEffect = () => (
     <div className="ImageDisplay-hoverEffectContainer">
-      <img
-        className={`ImageDisplay-image u-max-width-${maxWidth}`}
-        src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)}
-        />
+      <canvas className={`ImageDisplay-image u-max-width-${maxWidth}`} ref={hoverEffectCanvasRef} />
+
       <div className="ImageDisplay-copyrightInfo">
         <Markdown>{effect.text}</Markdown>
       </div>
@@ -80,6 +98,7 @@ function ImageDisplay({ content }) {
     <div className={classNames('ImageDisplay', { 'ImageDisplay--hoverable': effect?.type === EFFECT_TYPE.hover })}>
       <div className="ImageDisplay-container">
         <img
+          ref={mainImageRef}
           className={`ImageDisplay-image u-max-width-${maxWidth}`}
           src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)}
           />
