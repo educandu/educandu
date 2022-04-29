@@ -1,9 +1,13 @@
 import classNames from 'classnames';
+import { RightOutlined } from '@ant-design/icons';
 import { BEHAVIOR, INTENT } from './constants.js';
 import React, { Fragment, useState } from 'react';
 import Markdown from '../../components/markdown.js';
+import AlertIcon from '../../components/icons/general/alert-icon.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { AlertOutlined, InfoCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined, RightOutlined } from '@ant-design/icons';
+import WarningIcon from '../../components/icons/general/warning-icon.js';
+import InformationIcon from '../../components/icons/general/information-icon.js';
+import ConfirmationIcon from '../../components/icons/general/confirmation-icon.js';
 
 export default function AnnotationDisplay({ content }) {
   const { behavior, intent, width } = content;
@@ -26,10 +30,10 @@ export default function AnnotationDisplay({ content }) {
 
     return (
       <div className={iconClasses}>
-        {intent === INTENT.confirm && <CheckCircleOutlined />}
-        {intent === INTENT.inform && <InfoCircleOutlined />}
-        {intent === INTENT.warn && <ExclamationCircleOutlined />}
-        {intent === INTENT.discourage && <AlertOutlined />}
+        {intent === INTENT.confirm && <ConfirmationIcon />}
+        {intent === INTENT.inform && <InformationIcon />}
+        {intent === INTENT.warn && <WarningIcon />}
+        {intent === INTENT.discourage && <AlertIcon />}
       </div>
     );
   };
