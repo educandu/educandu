@@ -52,7 +52,7 @@ class TableInfo {
     const redactedContent = cloneDeep(content);
 
     for (const cell of redactedContent.cells) {
-      cell.text = this.gfm.extractCdnResources(
+      cell.text = this.gfm.redactCdnResources(
         cell.text,
         url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
       );
