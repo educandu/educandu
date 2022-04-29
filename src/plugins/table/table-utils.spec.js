@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import { asciiTableToTableValues } from './table-utils.spec.helper.js';
-import { connectCells, createDesignerRowModel, deleteColumn, deleteRow, DESIGNER_CELL_TYPE, insertColumn, insertRow } from './table-utils.js';
+import { connectCells, createDesignerRowModel, deleteColumn, deleteRow, DESIGNER_CELL_TYPE, disconnectCell, insertColumn, insertRow } from './table-utils.js';
 
 describe('table-utils', () => {
 
@@ -789,7 +789,7 @@ describe('table-utils', () => {
           ┌─────┬───────┬─────┐
           │  a  │  b    │  c  │
           ├─────┼───────┼─────┤
-          │  d  │    e  │  f  │
+          │  d  │  e    │  f  │
           ├─────┼───────┼─────┤
           │  g  │  h    │  i  │
           └─────┴───────┴─────┘
@@ -868,6 +868,95 @@ describe('table-utils', () => {
         let result;
         beforeEach(() => {
           result = connectCells(asciiTableToTableValues(input), area);
+        });
+        it(expectation, () => {
+          expect(result).toStrictEqual(asciiTableToTableValues(expectedOutput, () => expect.any(String)));
+        });
+      });
+    });
+  });
+
+  describe('disconnectCell', () => {
+    const testCases = [
+      {
+        description: 'when applied to a single disconnected cell',
+        expectation: 'it should not modify the table structure',
+        rowIndex: 1,
+        columnIndex: 1,
+        input: `
+          ┌─────┬─────┬─────┐
+          │  a  │  b  │  c  │
+          ├─────┼─────┼─────┤
+          │  d  │  e  │  f  │
+          ├─────┼─────┼─────┤
+          │  g  │  h  │  i  │
+          └─────┴─────┴─────┘
+        `,
+        expectedOutput: `
+          ┌─────┬─────┬─────┐
+          │  a  │  b  │  c  │
+          ├─────┼─────┼─────┤
+          │  d  │  e  │  f  │
+          ├─────┼─────┼─────┤
+          │  g  │  h  │  i  │
+          └─────┴─────┴─────┘
+        `
+      },
+      {
+        description: 'when applied using the row and column index of the first cell in the connected area',
+        expectation: 'it should disconnect that area',
+        rowIndex: 1,
+        columnIndex: 1,
+        input: `
+          ┌─────┬──────┬──────┐
+          │  a  │  b   │  c   │
+          ├─────┼──────┼──────┤
+          │  d  │  e   │  <<  │
+          ├─────┼──────┼──────┤
+          │  g  │  ^^  │  ^^  │
+          └─────┴──────┴──────┘
+        `,
+        expectedOutput: `
+          ┌─────┬──────┬──────┐
+          │  a  │  b   │  c   │
+          ├─────┼──────┼──────┤
+          │  d  │  e   │      │
+          ├─────┼──────┼──────┤
+          │  g  │      │      │
+          └─────┴──────┴──────┘
+        `
+      },
+      {
+        description: 'when applied using any other row and column index within the connected area',
+        expectation: 'it should disconnect that area',
+        rowIndex: 2,
+        columnIndex: 2,
+        input: `
+          ┌─────┬──────┬──────┐
+          │  a  │  b   │  c   │
+          ├─────┼──────┼──────┤
+          │  d  │  e   │  <<  │
+          ├─────┼──────┼──────┤
+          │  g  │  ^^  │  ^^  │
+          └─────┴──────┴──────┘
+        `,
+        expectedOutput: `
+          ┌─────┬──────┬──────┐
+          │  a  │  b   │  c   │
+          ├─────┼──────┼──────┤
+          │  d  │  e   │      │
+          ├─────┼──────┼──────┤
+          │  g  │      │      │
+          └─────┴──────┴──────┘
+        `
+      }
+    ];
+
+    testCases.forEach(({ description, expectation, rowIndex, columnIndex, input, expectedOutput }) => {
+      describe(description, () => {
+        let result;
+        beforeEach(() => {
+          result = disconnectCell(asciiTableToTableValues(input), rowIndex, columnIndex);
         });
         it(expectation, () => {
           expect(result).toStrictEqual(asciiTableToTableValues(expectedOutput, () => expect.any(String)));

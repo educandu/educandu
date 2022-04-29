@@ -16,7 +16,8 @@ import {
   connectToColumnAfter,
   connectToColumnBefore,
   connectToRowAfter,
-  connectToRowBefore
+  connectToRowBefore,
+  disconnectCell
 } from './table-utils.js';
 
 const CONTENT_INPUT_DATA_ROLE = 'content-input';
@@ -65,6 +66,8 @@ function TableDesigner({ content, onContentChange }) {
         onContentChange(connectToColumnAfter(content, designerCell.rowIndex, designerCell.columnIndex));
         break;
       case DESIGNER_CELL_ACTION.disconnectCell:
+        onContentChange(disconnectCell(content, designerCell.rowIndex, designerCell.columnIndex));
+        break;
       default:
         throw new Error(`Invalid action: '${action}'`);
     }

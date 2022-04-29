@@ -103,42 +103,6 @@ export function changeCellText(tableModel, rowIndex, columnIndex, newText) {
   };
 }
 
-function consolidateTable(tableModel) {
-  const { rowCount, columnCount } = tableModel;
-
-  // 1. Create the matrix and fill each cell with `null`
-  const cellMap = mapCellsNested(rowCount, columnCount, () => null);
-
-  // 2. Occupy slots with existing cells while checking each cell for data consistency
-  tableModel.cells.forEach(cell => {
-    for (let rowIndex = cell.rowIndex; rowIndex < cell.rowIndex + cell.rowSpan; rowIndex += 1) {
-      for (let columnIndex = cell.columnIndex; columnIndex < cell.columnIndex + cell.columnSpan; columnIndex += 1) {
-        if (rowIndex < 0 || rowIndex > rowCount - 1 || columnIndex < 0 || columnIndex > columnCount - 1) {
-          throw new Error(`Index out of bounds: rowIndex=${rowIndex}, columnIndex=${columnIndex}`);
-        }
-        if (cellMap[rowIndex][columnIndex] !== null) {
-          throw new Error(`There cannot be two cells in the same slot: rowIndex=${rowIndex}, columnIndex=${columnIndex}`);
-        }
-        cellMap[rowIndex][columnIndex] = cell;
-      }
-    }
-  });
-
-  // 3. Collect the cells ordered first by row then by column while filling up empty slots with new cells
-  const cells = [];
-  visitAllCells(rowCount, columnCount, (rowIndex, columnIndex) => {
-    let currentCell = cellMap[rowIndex][columnIndex];
-    if (!currentCell) {
-      currentCell = createEmptyCell(rowIndex, columnIndex);
-    }
-    if (currentCell.rowIndex === rowIndex && currentCell.columnIndex === columnIndex) {
-      cells.push(currentCell);
-    }
-  });
-
-  return { ...tableModel, cells };
-}
-
 function getMatrixDimensions(matrix) {
   return {
     rowCount: matrix.length,
@@ -190,7 +154,7 @@ function getVerticalNeighborsInMatrix(matrix, rowIndex, columnIndex) {
   return neighbors;
 }
 
-function tableModelToMatrix(tableModel) {
+function tableModelToMatrix(tableModel, ignoreEmptySlots) {
   const { rowCount, columnCount, cells } = tableModel;
 
   // 1. Create the matrix and fill each cell with `null`
@@ -213,7 +177,7 @@ function tableModelToMatrix(tableModel) {
 
   // 3. Check if all slots are taken
   visitAllCells(rowCount, columnCount, (rowIndex, columnIndex) => {
-    if (!matrix[rowIndex][columnIndex]) {
+    if (!matrix[rowIndex][columnIndex] && !ignoreEmptySlots) {
       throw new Error(`Cell is missing in slot: rowIndex=${rowIndex}, columnIndex=${columnIndex}`);
     }
   });
@@ -256,30 +220,26 @@ function matrixToTableModel(matrix) {
   return { rowCount, columnCount, cells };
 }
 
-// Inserts a row into the matrix at index `rowIndex` filling it up with `null`
 function insertRowInMatrix(matrix, rowIndex) {
   const { columnCount } = getMatrixDimensions(matrix);
   const newRow = Array.from({ length: columnCount }, () => null);
   return insertItemAt(matrix, newRow, rowIndex);
 }
 
-// Inserts a column into the matrix at index `columnIndex` filling it up with `null`
 function insertColumnInMatrix(matrix, columnIndex) {
   return matrix.map(row => insertItemAt(row, null, columnIndex));
 }
 
-// Deletes a row into the matrix at index `rowIndex`
 function deleteRowInMatrix(matrix, rowIndex) {
   return removeItemAt(matrix, rowIndex);
 }
 
-// Deletes a column into the matrix at index `columnIndex`
 function deleteColumnInMatrix(matrix, columnIndex) {
   return matrix.map(row => removeItemAt(row, columnIndex));
 }
 
-function modifyTableAsMatrix(tableModel, modifierFunction) {
-  let matrix = tableModelToMatrix(tableModel);
+function modifyTableAsMatrix(tableModel, modifierFunction = matrix => matrix, ignoreEmptySlots = false) {
+  let matrix = tableModelToMatrix(tableModel, ignoreEmptySlots);
   matrix = modifierFunction(matrix);
   const newTableModel = matrixToTableModel(matrix);
 
@@ -359,7 +319,7 @@ function getNeededAreaForCells(cells) {
   }), {});
 }
 
-function createMergedCell(cells, targetArea) {
+function createConnectedCell(cells, targetArea) {
   cells.sort(by(x => x.rowIndex).thenBy(x => x.columnIndex));
   const firstCell = cells[0];
   return {
@@ -374,7 +334,7 @@ function createMergedCell(cells, targetArea) {
 }
 
 export function connectCells(tableModel, area) {
-  const cellsToMerge = new Set();
+  const cellsToConnect = new Set();
   const remainingCells = new Set(tableModel.cells);
 
   let actuallyNeededArea = area;
@@ -383,14 +343,14 @@ export function connectCells(tableModel, area) {
     for (const cell of [...remainingCells]) {
       if (isCellInArea(cell, actuallyNeededArea)) {
         remainingCells.delete(cell);
-        cellsToMerge.add(cell);
+        cellsToConnect.add(cell);
       }
     }
     currentlyProcessedArea = actuallyNeededArea;
-    actuallyNeededArea = getNeededAreaForCells([...cellsToMerge]);
+    actuallyNeededArea = getNeededAreaForCells([...cellsToConnect]);
   }
 
-  const mergedCell = createMergedCell([...cellsToMerge], actuallyNeededArea);
+  const mergedCell = createConnectedCell([...cellsToConnect], actuallyNeededArea);
 
   return {
     ...tableModel,
@@ -400,7 +360,7 @@ export function connectCells(tableModel, area) {
 
 export function connectToRowBefore(tableModel, rowIndex, columnIndex) {
   const startCell = getCellAt(tableModel, rowIndex, columnIndex);
-  return consolidateTable(connectCells(tableModel, {
+  return modifyTableAsMatrix(connectCells(tableModel, {
     fromRowIndex: startCell.rowIndex - 1,
     toRowIndex: startCell.rowIndex + startCell.rowSpan - 1,
     fromColumnIndex: startCell.columnIndex,
@@ -410,7 +370,7 @@ export function connectToRowBefore(tableModel, rowIndex, columnIndex) {
 
 export function connectToRowAfter(tableModel, rowIndex, columnIndex) {
   const startCell = getCellAt(tableModel, rowIndex, columnIndex);
-  return consolidateTable(connectCells(tableModel, {
+  return modifyTableAsMatrix(connectCells(tableModel, {
     fromRowIndex: startCell.rowIndex,
     toRowIndex: startCell.rowIndex + startCell.rowSpan,
     fromColumnIndex: startCell.columnIndex,
@@ -420,7 +380,7 @@ export function connectToRowAfter(tableModel, rowIndex, columnIndex) {
 
 export function connectToColumnBefore(tableModel, rowIndex, columnIndex) {
   const startCell = getCellAt(tableModel, rowIndex, columnIndex);
-  return consolidateTable(connectCells(tableModel, {
+  return modifyTableAsMatrix(connectCells(tableModel, {
     fromRowIndex: startCell.rowIndex,
     toRowIndex: startCell.rowIndex,
     fromColumnIndex: startCell.columnIndex - 1,
@@ -430,10 +390,19 @@ export function connectToColumnBefore(tableModel, rowIndex, columnIndex) {
 
 export function connectToColumnAfter(tableModel, rowIndex, columnIndex) {
   const startCell = getCellAt(tableModel, rowIndex, columnIndex);
-  return consolidateTable(connectCells(tableModel, {
+  return modifyTableAsMatrix(connectCells(tableModel, {
     fromRowIndex: startCell.rowIndex,
     toRowIndex: startCell.rowIndex,
     fromColumnIndex: startCell.columnIndex,
     toColumnIndex: startCell.columnIndex + startCell.columnSpan
   }));
+}
+
+export function disconnectCell(tableModel, rowIndex, columnIndex) {
+  const startCell = getCellAt(tableModel, rowIndex, columnIndex);
+  const newStartCell = { ...startCell, rowSpan: 1, columnSpan: 1 };
+  return modifyTableAsMatrix({
+    ...tableModel,
+    cells: tableModel.cells.map(cell => cell === startCell ? newStartCell : cell)
+  }, matrix => matrix, true);
 }
