@@ -12,7 +12,7 @@ function LicenseSettings({ license, onChange }) {
   const url = license?.url || '';
 
   const validateUrl = newUrl => {
-    return validation.validateUrl(newUrl, t, { allowEmpty: true, allowInsecure: true });
+    return validation.validateUrl(newUrl, t, { allowEmpty: true, allowHttp: true });
   };
 
   const handleChange = newLicense => {
