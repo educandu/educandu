@@ -44,12 +44,12 @@ function LinkPopover({ children, items, placement, renderIfEmpty, renderSeparato
 
   const content = (
     <ul className="LinkPopover">
-      {filteredItems.map(item => (
+      {filteredItems.map((item, index) => (
         <Fragment key={item.key}>
           <li key={item.key} className="LinkPopover-item">
             {!!(item.href || item.onClick) && renderLinkItem(item)}
           </li>
-          {(!!item.separator || renderSeparator === 'always') && (
+          {(!!item.separator || (renderSeparator === 'betweenAllItems' && index < filteredItems.length - 1)) && (
             <li key={`${item.key}-separator`} className="LinkPopover-itemSeparator">
               <span className="LinkPopover-itemSeparatorLine" />
             </li>
@@ -106,7 +106,7 @@ LinkPopover.propTypes = {
     'rightBottom'
   ]),
   renderIfEmpty: PropTypes.bool,
-  renderSeparator: PropTypes.oneOf(['always', 'onlyWhenSpecified']),
+  renderSeparator: PropTypes.oneOf(['betweenAllItems', 'onlyWhenSpecified']),
   title: PropTypes.node,
   trigger: PropTypes.oneOf(['hover', 'focus', 'click', 'contextMenu'])
 };
@@ -116,7 +116,7 @@ LinkPopover.defaultProps = {
   items: [],
   placement: 'top',
   renderIfEmpty: false,
-  renderSeparator: 'always',
+  renderSeparator: 'betweenAllItems',
   title: null,
   trigger: 'hover'
 };
