@@ -30,8 +30,9 @@ function ImageDisplay({ content }) {
     const isLoaded = mainImage.complete && mainImage.naturalHeight !== 0;
     if (isLoaded) {
       setIsMainImageLoaded(true);
+    } else {
+      mainImage.onload = () => setIsMainImageLoaded(true);
     }
-    mainImage.onload = () => setIsMainImageLoaded(true);
   }, [mainImageRef]);
 
   useEffect(() => {
