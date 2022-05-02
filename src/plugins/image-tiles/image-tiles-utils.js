@@ -32,7 +32,7 @@ export function isTileInvalid(tile, t) {
 
   const isInvalidLinkSourceUrl
     = tile.link.sourceType === LINK_SOURCE_TYPE.external
-    && validation.validateUrl(tile.link.sourceUrl, t).validateStatus === 'error';
+    && validation.validateUrl(tile.link.sourceUrl, t, { allowHttp: true, allowMailto: true }).validateStatus === 'error';
 
   return isInvalidImageSourceUrl || isInvalidLinkSourceUrl;
 }

@@ -107,7 +107,7 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
         </RadioGroup>
       </FormItem>
       {link.sourceType === LINK_SOURCE_TYPE.external && (
-        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(link.sourceUrl, t, { allowInsecure: true })} hasFeedback>
+        <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(link.sourceUrl, t, { allowHttp: true, allowMailto: true })} hasFeedback>
           <Input value={link.sourceUrl} onChange={handleExternalLinkUrlValueChanged} />
         </FormItem>
       )}

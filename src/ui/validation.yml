@@ -4,9 +4,18 @@ urlRequired:
 urlInvalid:
   en: Please specify a URL with a valid format
   de: Bitte geben Sie eine Adresse im gültigen Format an
-urlInsecure:
-  en: Please specify a URL with a secure protocol (HTTPS)
-  de: Bitte geben Sie eine Adresse mit sicherem Protokoll (HTTPS) an
+urlInvalidProtocol:
+  en: Please specify an address starting with {allowedProtocols}
+  de: Bitte geben Sie eine Adresse an, die mit {allowedProtocols} beginnt
 markdownBoldOrItalicWithinHeaders:
   en: Bold or italic should not be used within headers
   de: Überschriften sollten keine fette oder kursive Auszeichnung enthalten
+orListFirstItem:
+  en: "“{item}”"
+  de: "»{item}«"
+orListLastItem:
+  en: " or “{item}”"
+  de: " oder »{item}«"
+orListOtherItem:
+  en: ", “{item}”"
+  de: ", »{item}«"

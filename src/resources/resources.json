@@ -2099,8 +2099,11 @@
     "resources": {
       "urlRequired": "Please specify a URL",
       "urlInvalid": "Please specify a URL with a valid format",
-      "urlInsecure": "Please specify a URL with a secure protocol (HTTPS)",
-      "markdownBoldOrItalicWithinHeaders": "Bold or italic should not be used within headers"
+      "urlInvalidProtocol": "Please specify an address starting with {allowedProtocols}",
+      "markdownBoldOrItalicWithinHeaders": "Bold or italic should not be used within headers",
+      "orListFirstItem": "“{item}”",
+      "orListLastItem": " or “{item}”",
+      "orListOtherItem": ", “{item}”"
     }
   },
   {
@@ -2109,8 +2112,11 @@
     "resources": {
       "urlRequired": "Bitte geben Sie eine Adresse an",
       "urlInvalid": "Bitte geben Sie eine Adresse im gültigen Format an",
-      "urlInsecure": "Bitte geben Sie eine Adresse mit sicherem Protokoll (HTTPS) an",
-      "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten"
+      "urlInvalidProtocol": "Bitte geben Sie eine Adresse an, die mit {allowedProtocols} beginnt",
+      "markdownBoldOrItalicWithinHeaders": "Überschriften sollten keine fette oder kursive Auszeichnung enthalten",
+      "orListFirstItem": "»{item}«",
+      "orListLastItem": " oder »{item}«",
+      "orListOtherItem": ", »{item}«"
     }
   }
 ]
