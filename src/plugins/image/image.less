@@ -1,37 +1,33 @@
-.ImageDisplay {
-  &.ImageDisplay--hoverable:hover {
-    .ImageDisplay-container {
-      display: none;
-    }
+.ImageDisplay {}
 
-    .ImageDisplay-hoverEffectContainer {
+.ImageDisplay-mainImage {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+
+  &.ImageDisplay-mainImage--hoverEffect {
+    display: none;
+
+    ~ .ImageDisplay-hoverEffectImage {
       display: block;
     }
   }
 }
 
-.ImageDisplay-container {
-  display: block;
-}
-
-.ImageDisplay-hoverEffectContainer {
+.ImageDisplay-hoverEffectImage {
   display: none;
-}
-
-.ImageDisplay-image {
-  display: block;
   margin: 0 auto;
   max-width: 100%;
+}
+
+.ImageDisplay-clipEffectImage {
+  display: none;
 }
 
 .ImageDisplay-copyrightInfo {
   padding-top: 20px;
   font-size: 12px;
   text-align: center;
-}
-
-.ImageDisplay-clipEffectImage {
-  display: none;
 }
 
 .ImageEditor {}
