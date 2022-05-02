@@ -112,13 +112,16 @@ class DocumentController {
     const { revisionId } = req.body;
     const { key: documentKey } = req.params;
 
-    const revisions = await this.documentService.restoreDocumentRevision({ documentKey, revisionId, user });
-    if (!revisions.length) {
+    const documentRevisions = await this.documentService.restoreDocumentRevision({ documentKey, revisionId, user });
+    if (!documentRevisions.length) {
       throw new NotFound();
     }
 
-    const documentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(revisions, user);
-    return res.status(201).send({ documentRevisions });
+    const updatedDocument = await this.documentService.getDocumentByKey(documentKey);
+    const mappedDocument = await this.clientDataMappingService.mapDocOrRevision(updatedDocument, user);
+    const mappedDocumentRevisions = await this.clientDataMappingService.mapDocsOrRevisions(documentRevisions, user);
+
+    return res.status(201).send({ document: mappedDocument, documentRevisions: mappedDocumentRevisions });
   }
 
   async handlePatchDocArchive(req, res) {
