@@ -348,11 +348,13 @@ function Doc({ initialState, PageTemplate }) {
       selectedHistoryRevision,
       async () => {
         try {
-          const { documentRevisions } = await documentApiClient.restoreDocumentRevision({
+          const { document: updatedDoc, documentRevisions } = await documentApiClient.restoreDocumentRevision({
             documentKey: selectedHistoryRevision.key,
             revisionId: selectedHistoryRevision._id
           });
 
+          setDoc(updatedDoc);
+          setCurrentSections(updatedDoc.sections);
           setHistoryRevisions(documentRevisions);
           setSelectedHistoryRevision(documentRevisions[documentRevisions.length - 1]);
         } catch (error) {
