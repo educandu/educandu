@@ -2,10 +2,10 @@ import classNames from 'classnames';
 import { getImageSource } from './utils.js';
 import Markdown from '../../components/markdown.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 function ImageDisplay({ content }) {
@@ -16,9 +16,24 @@ function ImageDisplay({ content }) {
   const maxWidth = content.maxWidth || 100;
   const { text, sourceType, sourceUrl, effect } = content;
   const [isMainImageLoaded, setIsMainImageLoaded] = useState(false);
+  const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
   const clientConfig = useService(ClientConfig);
   const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
+
+  useEffect(() => {
+    const mainImage = mainImageRef.current;
+    if (!mainImage) {
+      return;
+    }
+
+    const isLoaded = mainImage.complete && mainImage.naturalHeight !== 0;
+    if (isLoaded) {
+      setIsMainImageLoaded(true);
+    } else {
+      mainImage.onload = () => setIsMainImageLoaded(true);
+    }
+  }, [mainImageRef]);
 
   useEffect(() => {
     if (effect?.type !== EFFECT_TYPE.hover || !isMainImageLoaded) {
@@ -54,39 +69,37 @@ function ImageDisplay({ content }) {
     context.drawImage(img, x, y, width, height, 0, 0, width, height);
   }, [clipEffectCanvasRef, clipEffectImageRef, effect]);
 
-  const onMainImageLoad = () => {
-    setIsMainImageLoaded(true);
+  const handleMainImageMouseEnter = () => {
+    if (effect?.type === EFFECT_TYPE.hover) {
+      setShouldApplyHoverEffect(true);
+    }
   };
 
-  const renderRevealEffect = () => (
-    <Fragment>
-      <ReactCompareSlider
-        position={effect.startPosition}
-        portrait={effect.orientation === ORIENTATION.vertical}
-        className={`ImageDisplay-image u-max-width-${maxWidth}`}
-        itemOne={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)} />}
-        itemTwo={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)} />}
-        />
-      <div className="ImageDisplay-copyrightInfo">
-        <Markdown>{text}</Markdown>
-        <Markdown>{effect.text}</Markdown>
-      </div>
-    </Fragment>
-  );
+  const handleHoverEffectImageMouseLeave = () => {
+    setShouldApplyHoverEffect(false);
+  };
 
   const renderHoverEffect = () => (
-    <div className="ImageDisplay-hoverEffectContainer">
-      <canvas className={`ImageDisplay-image u-max-width-${maxWidth}`} ref={hoverEffectCanvasRef} />
+    <canvas
+      ref={hoverEffectCanvasRef}
+      className={`ImageDisplay-hoverEffectImage u-max-width-${maxWidth}`}
+      onMouseLeave={handleHoverEffectImageMouseLeave}
+      />
+  );
 
-      <div className="ImageDisplay-copyrightInfo">
-        <Markdown>{effect.text}</Markdown>
-      </div>
-    </div>
+  const renderRevealEffect = () => (
+    <ReactCompareSlider
+      position={effect.startPosition}
+      portrait={effect.orientation === ORIENTATION.vertical}
+      className={`ImageDisplay-mainImage u-max-width-${maxWidth}`}
+      itemOne={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)} />}
+      itemTwo={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)} />}
+      />
   );
 
   const renderClipEffect = () => (
     <Fragment>
-      <canvas className={`ImageDisplay-image u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
+      <canvas className={`ImageDisplay-mainImage u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
       <img className="ImageDisplay-clipEffectImage" src={src} ref={clipEffectImageRef} />
       <div className="ImageDisplay-copyrightInfo">
         <Markdown>{text}</Markdown>
@@ -94,28 +107,29 @@ function ImageDisplay({ content }) {
     </Fragment>
   );
 
-  if (effect?.type === EFFECT_TYPE.reveal) {
-    return renderRevealEffect();
-  }
-
-  if (effect?.type === EFFECT_TYPE.clip) {
-    return renderClipEffect();
-  }
+  const mainImageClasses = classNames(
+    'ImageDisplay-mainImage',
+    `u-max-width-${maxWidth}`,
+    { 'ImageDisplay-mainImage--hoverEffect': shouldApplyHoverEffect }
+  );
 
   return (
-    <div className={classNames('ImageDisplay', { 'ImageDisplay--hoverable': effect?.type === EFFECT_TYPE.hover })}>
-      <div className="ImageDisplay-container">
+    <div className="ImageDisplay">
+      {effect?.type === EFFECT_TYPE.reveal && renderRevealEffect()}
+      {effect?.type === EFFECT_TYPE.clip && renderClipEffect()}
+      {effect?.type !== EFFECT_TYPE.reveal && effect?.type !== EFFECT_TYPE.clip && (
         <img
           ref={mainImageRef}
-          onLoad={onMainImageLoad}
-          className={`ImageDisplay-image u-max-width-${maxWidth}`}
+          className={mainImageClasses}
+          onMouseEnter={handleMainImageMouseEnter}
           src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)}
           />
-        <div className="ImageDisplay-copyrightInfo">
-          <Markdown>{text}</Markdown>
-        </div>
+      )}
+      {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}
+      <div className="ImageDisplay-copyrightInfo">
+        <Markdown>{text}</Markdown>
+        {effect?.text && <Markdown>{effect.text}</Markdown>}
       </div>
-      {effect && renderHoverEffect()}
     </div>
   );
 }
