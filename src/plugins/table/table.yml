@@ -19,3 +19,18 @@ cellAction_insertColumnAfter:
 cellAction_deleteColumn:
   en: Delete column
   de: Spalte löschen
+cellAction_connectToRowBefore:
+  en: Connect with cell above
+  de: Mit Zelle darüber verbinden
+cellAction_connectToRowAfter:
+  en: Connect with cell below
+  de: Mit Zelle darunter verbinden
+cellAction_connectToColumnBefore:
+  en: Connect with cell on the left
+  de: Mit Zelle links verbinden
+cellAction_connectToColumnAfter:
+  en: Connect with cell on the right
+  de: Mit Zelle rechts verbinden
+cellAction_disconnectCell:
+  en: Disconnect cells
+  de: Zellenverbindung aufheben

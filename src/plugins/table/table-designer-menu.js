@@ -9,7 +9,9 @@ import {
   DeleteRowOutlined,
   InsertRowLeftOutlined,
   InsertRowRightOutlined,
-  DeleteColumnOutlined
+  DeleteColumnOutlined,
+  MergeCellsOutlined,
+  SplitCellsOutlined
 } from '@ant-design/icons';
 
 export const menuItemInfos = {
@@ -18,59 +20,59 @@ export const menuItemInfos = {
   [DESIGNER_CELL_ACTION.deleteRow]: { translationKey: 'cellAction_deleteRow', icon: DeleteRowOutlined },
   [DESIGNER_CELL_ACTION.insertColumnBefore]: { translationKey: 'cellAction_insertColumnBefore', icon: InsertRowLeftOutlined },
   [DESIGNER_CELL_ACTION.insertColumnAfter]: { translationKey: 'cellAction_insertColumnAfter', icon: InsertRowRightOutlined },
-  [DESIGNER_CELL_ACTION.deleteColumn]: { translationKey: 'cellAction_deleteColumn', icon: DeleteColumnOutlined }
+  [DESIGNER_CELL_ACTION.deleteColumn]: { translationKey: 'cellAction_deleteColumn', icon: DeleteColumnOutlined },
+  [DESIGNER_CELL_ACTION.connectToRowBefore]: { translationKey: 'cellAction_connectToRowBefore', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.connectToRowAfter]: { translationKey: 'cellAction_connectToRowAfter', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.connectToColumnBefore]: { translationKey: 'cellAction_connectToColumnBefore', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.connectToColumnAfter]: { translationKey: 'cellAction_connectToColumnAfter', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined }
 };
-
-function createMenuItem(t, action, cell, actionHandler, disabled = false, separator = false) {
-  const menuItemInfo = menuItemInfos[action];
-  if (!menuItemInfo) {
-    throw Error(`Invalid menu action: '${action}'`);
-  }
-
-  return {
-    key: action,
-    text: t(menuItemInfo.translationKey),
-    icon: menuItemInfo.icon,
-    separator,
-    disabled,
-    onClick: () => actionHandler(action, cell)
-  };
-}
 
 function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, placement }) {
   const { t } = useTranslation('table');
 
-  const createContentRowHeaderMenuItems = () => [
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertRowBefore, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertRowAfter, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.deleteRow, cell, onCellAction, !canDeleteRow)
-  ];
-
-  const createContentColumnHeaderMenuItems = () => [
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertColumnBefore, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertColumnAfter, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.deleteColumn, cell, onCellAction, !canDeleteColumn)
-  ];
-
-  const createContentCellMenuItems = () => [
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertRowBefore, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertRowAfter, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.deleteRow, cell, onCellAction, !canDeleteRow, true),
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertColumnBefore, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.insertColumnAfter, cell, onCellAction, false),
-    createMenuItem(t, DESIGNER_CELL_ACTION.deleteColumn, cell, !canDeleteColumn, false)
-  ];
+  const createMenuItem = ({ action, disabled = false, separator = false }) => {
+    const menuItemInfo = menuItemInfos[action];
+    return {
+      key: action,
+      text: t(menuItemInfo.translationKey),
+      icon: menuItemInfo.icon,
+      separator,
+      disabled,
+      onClick: () => onCellAction(action, cell)
+    };
+  };
 
   let items;
   switch (cell.cellType) {
-    case DESIGNER_CELL_TYPE.content:
-      items = createContentCellMenuItems(cell);
-      break;
     case DESIGNER_CELL_TYPE.rowHeader:
-      items = createContentRowHeaderMenuItems(cell);
+      items = [
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow })
+      ];
       break;
     case DESIGNER_CELL_TYPE.columnHeader:
-      items = createContentColumnHeaderMenuItems(cell);
+      items = [
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn })
+      ];
+      break;
+    case DESIGNER_CELL_TYPE.content:
+      items = [
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow, separator: true }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn, separator: true }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToRowBefore, disabled: cell.isFirstInColumn }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToRowAfter, disabled: cell.isLastInColumn }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToColumnBefore, disabled: cell.isFirstInRow }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToColumnAfter, disabled: cell.isLastInRow }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.disconnectCell, disabled: !cell.isConnected })
+      ];
       break;
     default:
       items = [];
@@ -90,7 +92,12 @@ TableDesignerMenu.propTypes = {
   canDeleteColumn: PropTypes.bool.isRequired,
   canDeleteRow: PropTypes.bool.isRequired,
   cell: PropTypes.shape({
-    cellType: PropTypes.oneOf(Object.values(DESIGNER_CELL_TYPE)).isRequired
+    cellType: PropTypes.oneOf(Object.values(DESIGNER_CELL_TYPE)).isRequired,
+    isFirstInRow: PropTypes.bool,
+    isLastInRow: PropTypes.bool,
+    isFirstInColumn: PropTypes.bool,
+    isLastInColumn: PropTypes.bool,
+    isConnected: PropTypes.bool
   }).isRequired,
   dotType: PropTypes.oneOf([
     'normal',

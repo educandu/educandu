@@ -127,12 +127,12 @@ function LessonMetadataModal({ initialLessonMetadata, mode, allowMultiple, isVis
       if (mode === LESSON_MODAL_MODE.create) {
         const savedLessons = [];
         const lessonsToSave = enableSequence && sequenceCount > 1 && startsOn
-          ? [...new Array(sequenceCount).keys()].map(i => ({
+          ? Array.from({ length: sequenceCount }, (_, index) => ({
             ...cloneDeep(mappedLesson),
             lessonId: null,
-            title: `${mappedLesson.title} (${i + 1})`,
-            slug: mappedLesson.slug ? `${mappedLesson.slug}/${i + 1}` : '',
-            schedule: { startsOn: moment(startsOn).add(i, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString() }
+            title: `${mappedLesson.title} (${index + 1})`,
+            slug: mappedLesson.slug ? `${mappedLesson.slug}/${index + 1}` : '',
+            schedule: { startsOn: moment(startsOn).add(index, MOMENT_INTERVAL_UNITS[sequenceInterval]).toISOString() }
           }))
           : [mappedLesson];
 

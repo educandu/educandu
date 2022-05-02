@@ -2,7 +2,7 @@ import React from 'react';
 import TableIcon from './table-icon.js';
 import TableDisplay from './table-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { createEmptyCell, mapFlatArray } from './table-utils.js';
+import { createEmptyCell, createTableCellsFlat } from './table-utils.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -39,7 +39,7 @@ class TableInfo {
     return {
       rowCount: DEFAULT_TABLE_ROW_COUNT,
       columnCount: DEFAULT_TABLE_COLUMN_COUNT,
-      cells: mapFlatArray(DEFAULT_TABLE_ROW_COUNT, DEFAULT_TABLE_COLUMN_COUNT, (rowIndex, columnIndex) => createEmptyCell(rowIndex, columnIndex)),
+      cells: createTableCellsFlat(DEFAULT_TABLE_ROW_COUNT, DEFAULT_TABLE_COLUMN_COUNT, (rowIndex, columnIndex) => createEmptyCell(rowIndex, columnIndex)),
       renderMedia: false
     };
   }
@@ -52,7 +52,7 @@ class TableInfo {
     const redactedContent = cloneDeep(content);
 
     for (const cell of redactedContent.cells) {
-      cell.text = this.gfm.extractCdnResources(
+      cell.text = this.gfm.redactCdnResources(
         cell.text,
         url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
       );

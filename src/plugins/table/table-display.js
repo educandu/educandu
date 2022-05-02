@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import Markdown from '../../components/markdown.js';
-import { mapTwoDimensionalArray } from './table-utils.js';
+import { createTableCellsInRows } from './table-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 function TableDisplay({ content }) {
   const { rowCount, columnCount, cells, renderMedia } = content;
 
   const rows = useMemo(() => {
-    const fullCellMap = mapTwoDimensionalArray(rowCount, columnCount, () => null);
+    const fullCellMap = createTableCellsInRows(rowCount, columnCount, () => null);
     cells.forEach(cell => {
       fullCellMap[cell.rowIndex][cell.columnIndex] = cell;
     });
@@ -27,7 +27,7 @@ function TableDisplay({ content }) {
           {rows.map(row => (
             <tr key={row.map(cell => cell.key).join()}>
               {row.map(cell => (
-                <td key={cell.key} className="TableDisplay-cell">
+                <td key={cell.key} rowSpan={cell.rowSpan} colSpan={cell.columnSpan} className="TableDisplay-cell">
                   {cell.text ? <Markdown renderMedia={renderMedia}>{cell.text}</Markdown> : <span>&nbsp;</span>}
                 </td>
               ))}
