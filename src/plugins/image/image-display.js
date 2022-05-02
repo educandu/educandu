@@ -88,6 +88,9 @@ function ImageDisplay({ content }) {
     <Fragment>
       <canvas className={`ImageDisplay-image u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
       <img className="ImageDisplay-clipEffectImage" src={src} ref={clipEffectImageRef} />
+      <div className="ImageDisplay-copyrightInfo">
+        <Markdown>{text}</Markdown>
+      </div>
     </Fragment>
   );
 
