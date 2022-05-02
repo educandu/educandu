@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { getImageSource } from './utils.js';
 import Markdown from '../../components/markdown.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
-import React, { Fragment, useEffect, useRef } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -15,12 +15,13 @@ function ImageDisplay({ content }) {
   const clipEffectCanvasRef = useRef();
   const maxWidth = content.maxWidth || 100;
   const { text, sourceType, sourceUrl, effect } = content;
+  const [isMainImageLoaded, setIsMainImageLoaded] = useState(false);
 
   const clientConfig = useService(ClientConfig);
   const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
 
   useEffect(() => {
-    if (effect?.type !== EFFECT_TYPE.hover) {
+    if (effect?.type !== EFFECT_TYPE.hover || !isMainImageLoaded) {
       return;
     }
     const mainImage = mainImageRef.current;
@@ -35,7 +36,7 @@ function ImageDisplay({ content }) {
     hoverImage.onload = () => {
       context.drawImage(hoverImage, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
     };
-  }, [mainImageRef, effect, clientConfig]);
+  }, [mainImageRef, effect, clientConfig, isMainImageLoaded]);
 
   useEffect(() => {
     if (effect?.type !== EFFECT_TYPE.clip) {
@@ -52,6 +53,10 @@ function ImageDisplay({ content }) {
     canvas.height = height;
     context.drawImage(img, x, y, width, height, 0, 0, width, height);
   }, [clipEffectCanvasRef, clipEffectImageRef, effect]);
+
+  const onMainImageLoad = () => {
+    setIsMainImageLoaded(true);
+  };
 
   const renderRevealEffect = () => (
     <Fragment>
@@ -99,6 +104,7 @@ function ImageDisplay({ content }) {
       <div className="ImageDisplay-container">
         <img
           ref={mainImageRef}
+          onLoad={onMainImageLoad}
           className={`ImageDisplay-image u-max-width-${maxWidth}`}
           src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)}
           />
