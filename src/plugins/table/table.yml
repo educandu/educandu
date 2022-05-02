@@ -20,17 +20,17 @@ cellAction_deleteColumn:
   en: Delete column
   de: Spalte löschen
 cellAction_connectToRowBefore:
-  en: Connect with row before
-  de: Mit Zeile davor verbinden
+  en: Connect with cell above
+  de: Mit Zelle darüber verbinden
 cellAction_connectToRowAfter:
-  en: Connect with row after
-  de: Mit Zeile danach verbinden
+  en: Connect with cell below
+  de: Mit Zelle darunter verbinden
 cellAction_connectToColumnBefore:
-  en: Connect with column before
-  de: Mit Spalte davor verbinden
+  en: Connect with cell on the left
+  de: Mit Zelle links verbinden
 cellAction_connectToColumnAfter:
-  en: Connect with column after
-  de: Mit Spalte danach verbinden
+  en: Connect with cell on the right
+  de: Mit Zelle rechts verbinden
 cellAction_disconnectCell:
-  en: Revoke cell connection
+  en: Disconnect cells
   de: Zellenverbindung aufheben

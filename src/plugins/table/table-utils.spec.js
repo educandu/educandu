@@ -1,11 +1,11 @@
 /* eslint-disable max-lines */
 
 import { asciiTableToTableValues } from './table-utils.spec.helper.js';
-import { connectCells, createDesignerRowModel, deleteColumn, deleteRow, DESIGNER_CELL_TYPE, disconnectCell, insertColumn, insertRow } from './table-utils.js';
+import { connectCells, createTableDesignerRows, deleteColumn, deleteRow, DESIGNER_CELL_TYPE, disconnectCell, insertColumn, insertRow } from './table-utils.js';
 
 describe('table-utils', () => {
 
-  describe('createDesignerRowModel', () => {
+  describe('createTableDesignerRows', () => {
     const createDefaultContentCell = values => ({
       key: '',
       cellType: DESIGNER_CELL_TYPE.content,
@@ -273,7 +273,7 @@ describe('table-utils', () => {
       describe(description, () => {
         let result;
         beforeEach(() => {
-          result = createDesignerRowModel(asciiTableToTableValues(input));
+          result = createTableDesignerRows(asciiTableToTableValues(input));
         });
         it(expectation, () => {
           expect(result).toStrictEqual(expectedOutput);

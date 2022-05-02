@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
-import { mapCellsNested } from './table-utils.js';
 import Markdown from '../../components/markdown.js';
+import { createTableCellsInRows } from './table-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 function TableDisplay({ content }) {
   const { rowCount, columnCount, cells, renderMedia } = content;
 
   const rows = useMemo(() => {
-    const fullCellMap = mapCellsNested(rowCount, columnCount, () => null);
+    const fullCellMap = createTableCellsInRows(rowCount, columnCount, () => null);
     cells.forEach(cell => {
       fullCellMap[cell.rowIndex][cell.columnIndex] = cell;
     });

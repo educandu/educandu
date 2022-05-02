@@ -36,23 +36,23 @@ export function visitAllCells(rowCount, columnCount, visitorCallback) {
   }
 }
 
-export function mapCellsFlat(rowCount, columnCount, mappingFunction) {
+export function createTableCellsFlat(rowCount, columnCount, createCell) {
   const cells = Array.from({ length: rowCount * columnCount });
   visitAllCells(rowCount, columnCount, (rowIndex, columnIndex) => {
-    cells[(rowIndex * columnCount) + columnIndex] = mappingFunction(rowIndex, columnIndex);
+    cells[(rowIndex * columnCount) + columnIndex] = createCell(rowIndex, columnIndex);
   });
   return cells;
 }
 
-export function mapCellsNested(rowCount, columnCount, mappingFunction) {
+export function createTableCellsInRows(rowCount, columnCount, createCell) {
   const rows = Array.from({ length: rowCount }, () => Array.from({ length: columnCount }));
   visitAllCells(rowCount, columnCount, (rowIndex, columnIndex) => {
-    rows[rowIndex][columnIndex] = mappingFunction(rowIndex, columnIndex);
+    rows[rowIndex][columnIndex] = createCell(rowIndex, columnIndex);
   });
   return rows;
 }
 
-export function createDesignerRowModel(tableModel) {
+export function createTableDesignerRows(tableModel) {
   const { rowCount, columnCount, cells } = tableModel;
   const rows = [];
 
@@ -158,7 +158,7 @@ function tableModelToMatrix(tableModel, ignoreEmptySlots) {
   const { rowCount, columnCount, cells } = tableModel;
 
   // 1. Create the matrix and fill each cell with `null`
-  const matrix = mapCellsNested(rowCount, columnCount, () => null);
+  const matrix = createTableCellsInRows(rowCount, columnCount, () => null);
 
   // 2. Occupy slots with existing cells while checking each cell for data consistency
   cells.forEach(cell => {

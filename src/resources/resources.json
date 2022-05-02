@@ -1700,11 +1700,11 @@
       "cellAction_insertColumnBefore": "Insert column before",
       "cellAction_insertColumnAfter": "Insert column after",
       "cellAction_deleteColumn": "Delete column",
-      "cellAction_connectToRowBefore": "Connect with row before",
-      "cellAction_connectToRowAfter": "Connect with row after",
-      "cellAction_connectToColumnBefore": "Connect with column before",
-      "cellAction_connectToColumnAfter": "Connect with column after",
-      "cellAction_disconnectCell": "Revoke cell connection"
+      "cellAction_connectToRowBefore": "Connect with cell above",
+      "cellAction_connectToRowAfter": "Connect with cell below",
+      "cellAction_connectToColumnBefore": "Connect with cell on the left",
+      "cellAction_connectToColumnAfter": "Connect with cell on the right",
+      "cellAction_disconnectCell": "Disconnect cells"
     }
   },
   {
@@ -1718,10 +1718,10 @@
       "cellAction_insertColumnBefore": "Spalte davor einfügen",
       "cellAction_insertColumnAfter": "Spalte danach einfügen",
       "cellAction_deleteColumn": "Spalte löschen",
-      "cellAction_connectToRowBefore": "Mit Zeile davor verbinden",
-      "cellAction_connectToRowAfter": "Mit Zeile danach verbinden",
-      "cellAction_connectToColumnBefore": "Mit Spalte davor verbinden",
-      "cellAction_connectToColumnAfter": "Mit Spalte danach verbinden",
+      "cellAction_connectToRowBefore": "Mit Zelle darüber verbinden",
+      "cellAction_connectToRowAfter": "Mit Zelle darunter verbinden",
+      "cellAction_connectToColumnBefore": "Mit Zelle links verbinden",
+      "cellAction_connectToColumnAfter": "Mit Zelle rechts verbinden",
       "cellAction_disconnectCell": "Zellenverbindung aufheben"
     }
   },

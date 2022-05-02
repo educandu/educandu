@@ -4,7 +4,7 @@ import TableDesignerMenu from './table-designer-menu.js';
 import DebouncedTextArea from '../../components/debounced-text-area.js';
 import {
   changeCellText,
-  createDesignerRowModel,
+  createTableDesignerRows,
   deleteColumn,
   deleteRow,
   DESIGNER_CELL_ACTION,
@@ -26,7 +26,7 @@ function TableDesigner({ content, onContentChange }) {
   const { rowCount, columnCount } = content;
 
   const designerRows = useMemo(() => {
-    return createDesignerRowModel(content);
+    return createTableDesignerRows(content);
   }, [content]);
 
   const handleDesignerCellTextChange = (cell, newText) => {
