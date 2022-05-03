@@ -57,7 +57,19 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const [chapters, setChapters] = useState(ensureChaptersOrder(content.chapters));
 
-  const determineSourceDuration = () => {
+  const determineSourceDuration = newSourceUrl => {
+    if (!newSourceUrl) {
+      return 0;
+    }
+
+    const isInvalidSourceUrl
+      = sourceType !== SOURCE_TYPE.internal
+      && validation.validateUrl(newSourceUrl, t).validateStatus === 'error';
+
+    if (isInvalidSourceUrl) {
+      return 0;
+    }
+
     setIsDeterminingDuration(true);
 
     return new Promise(resolve => {
@@ -111,28 +123,28 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const handleExternalUrlChange = async event => {
     const { value } = event.target;
-    const newSourceDuration = await determineSourceDuration();
+    const newSourceDuration = await determineSourceDuration(value);
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
     changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
   const handleInternalUrlChanged = async event => {
     const { value } = event.target;
-    const newSourceDuration = await determineSourceDuration();
+    const newSourceDuration = await determineSourceDuration(value);
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
     changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
   const handleYoutubeUrlChanged = async event => {
     const { value } = event.target;
-    const newSourceDuration = await determineSourceDuration();
+    const newSourceDuration = await determineSourceDuration(value);
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
     changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
   const handleInternalUrlFileNameChanged = async value => {
+    const newSourceDuration = await determineSourceDuration(value);
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    const newSourceDuration = await determineSourceDuration();
     changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
