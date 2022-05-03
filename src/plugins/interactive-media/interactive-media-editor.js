@@ -1,9 +1,9 @@
 import by from 'thenby';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
-import { Form, Input, Radio, Switch } from 'antd';
+import React, { Fragment, useState } from 'react';
 import Timeline from '../../components/timeline.js';
+import { Form, Input, Radio, Spin, Switch } from 'antd';
 import { MEDIA_TYPE, SOURCE_TYPE } from './constants.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -44,7 +44,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('interactiveMedia');
 
-  const { sourceType, sourceUrl, sourceDuration, text, width, aspectRatio, showVideo } = content;
+  const { sourceType, sourceUrl, text, width, aspectRatio, showVideo } = content;
 
   const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
   const defaultAspectRatio = supportedAspectRatios[0];
@@ -54,7 +54,19 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     wrapperCol: { span: 14 }
   };
 
+  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const [chapters, setChapters] = useState(ensureChaptersOrder(content.chapters));
+
+  const determineSourceDuration = () => {
+    setIsDeterminingDuration(true);
+
+    return new Promise(resolve => {
+      setTimeout(() => {
+        setIsDeterminingDuration(false);
+        resolve(1000);
+      }, 30000);
+    });
+  };
 
   const handleChapterAdd = startTimecode => {
     const newChapter = {
@@ -97,27 +109,31 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     changeContent({ sourceType: value, sourceUrl: '', showVideo: false, aspectRatio: defaultAspectRatio });
   };
 
-  const handleExternalUrlChange = event => {
+  const handleExternalUrlChange = async event => {
     const { value } = event.target;
+    const newSourceDuration = await determineSourceDuration();
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
-  const handleInternalUrlChanged = event => {
+  const handleInternalUrlChanged = async event => {
     const { value } = event.target;
+    const newSourceDuration = await determineSourceDuration();
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
-  const handleYoutubeUrlChanged = event => {
+  const handleYoutubeUrlChanged = async event => {
     const { value } = event.target;
+    const newSourceDuration = await determineSourceDuration();
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
-  const handleInternalUrlFileNameChanged = value => {
+  const handleInternalUrlFileNameChanged = async value => {
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+    const newSourceDuration = await determineSourceDuration();
+    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
   };
 
   const handleAspectRatioChanged = event => {
@@ -205,12 +221,19 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       </Form>
 
       <Timeline
-        length={sourceDuration}
+        length={content.sourceDuration}
         parts={chapters}
         onPartAdd={handleChapterAdd}
         onPartDelete={handleChapterDelete}
         onStartTimecodeChange={handleStartTimecodeChange}
         />
+
+      {isDeterminingDuration && (
+        <Fragment>
+          <div className="InteractiveMediaEditor-overlay" />
+          <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
+        </Fragment>
+      )}
     </div>
   );
 }

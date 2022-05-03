@@ -1567,14 +1567,16 @@
     "namespace": "interactiveMedia",
     "language": "en",
     "resources": {
-      "name": "Interactive media"
+      "name": "Interactive media",
+      "determiningDuration": "Determining media duration ..."
     }
   },
   {
     "namespace": "interactiveMedia",
     "language": "de",
     "resources": {
-      "name": "Interaktive Medien"
+      "name": "Interaktive Medien",
+      "determiningDuration": "Mediendauer wird entdeckt ..."
     }
   },
   {
