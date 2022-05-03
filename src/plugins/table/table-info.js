@@ -40,7 +40,8 @@ class TableInfo {
       rowCount: DEFAULT_TABLE_ROW_COUNT,
       columnCount: DEFAULT_TABLE_COLUMN_COUNT,
       cells: createTableCellsFlat(DEFAULT_TABLE_ROW_COUNT, DEFAULT_TABLE_COLUMN_COUNT, (rowIndex, columnIndex) => createEmptyCell(rowIndex, columnIndex)),
-      renderMedia: false
+      renderMedia: false,
+      width: 100
     };
   }
 

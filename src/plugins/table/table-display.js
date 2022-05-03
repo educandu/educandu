@@ -4,7 +4,7 @@ import { CELL_TYPE, createTableCellsInRows } from './table-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
 function TableDisplay({ content }) {
-  const { rowCount, columnCount, cells, renderMedia } = content;
+  const { rowCount, columnCount, cells, width, renderMedia } = content;
 
   const rows = useMemo(() => {
     const fullCellMap = createTableCellsInRows(rowCount, columnCount, () => null);
@@ -44,7 +44,7 @@ function TableDisplay({ content }) {
 
   return (
     <div className="TableDisplay">
-      <table className="TableDisplay-table">
+      <table className={`TableDisplay-table u-width-${width || 100}`}>
         <tbody>
           {rows.map(row => (
             <tr key={row.map(cell => cell.key).join()}>
