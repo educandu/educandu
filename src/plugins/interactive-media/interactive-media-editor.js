@@ -20,7 +20,7 @@ const RadioButton = Radio.Button;
 const videoTypes = ['mp4', 'mov', 'avi', 'mkv'];
 const audioTypes = ['mp3', 'flac', 'aac', 'wav'];
 
-const ensurePartsOrder = parts => parts.sort(by(part => part.startTimecode));
+const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
 const getAspectRatioText = aspectRatio => `${aspectRatio.h}:${aspectRatio.v}`;
 
 const getMediaType = path => {
@@ -44,7 +44,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('interactiveMedia');
 
-  const { sourceType, sourceUrl, text, width, aspectRatio, showVideo } = content;
+  const { sourceType, sourceUrl, sourceDuration, text, width, aspectRatio, showVideo } = content;
 
   const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
   const defaultAspectRatio = supportedAspectRatios[0];
@@ -54,49 +54,32 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     wrapperCol: { span: 14 }
   };
 
-  const lastTimecode = 7;
-  const initialParts = [
-    {
-      title: 'the brown fox',
-      startTimecode: 0
-    },
-    {
-      title: 'jumped the veeeeeeeeeery looooong fence',
-      startTimecode: 2 * 1000
-    },
-    {
-      title: 'the end',
-      startTimecode: lastTimecode * 1000
-    }
-  ].map((part, index) => ({ ...part, key: index.toString() }));
+  const [chapters, setChapters] = useState(ensureChaptersOrder(content.chapters));
 
-  const [parts, setParts] = useState(ensurePartsOrder(initialParts));
-  const length = (lastTimecode * 1000) + 1000;
-
-  const handlePartAdd = startTimecode => {
-    const newPart = {
-      key: parts.length.toString(),
-      title: parts.length.toString(),
+  const handleChapterAdd = startTimecode => {
+    const newChapter = {
+      key: chapters.length.toString(),
+      title: chapters.length.toString(),
       startTimecode
     };
-    setParts(ensurePartsOrder([...parts, newPart]));
+    setChapters(ensureChaptersOrder([...chapters, newChapter]));
   };
 
-  const handlePartDelete = key => {
-    const part = parts.find(p => p.key === key);
-    const partIndex = parts.findIndex(p => p.key === key);
-    const nextPart = parts[partIndex + 1];
+  const handleChapterDelete = key => {
+    const part = chapters.find(p => p.key === key);
+    const partIndex = chapters.findIndex(p => p.key === key);
+    const nextPart = chapters[partIndex + 1];
     if (nextPart) {
       nextPart.startTimecode = part.startTimecode;
     }
-    const newParts = removeItemAt(parts, partIndex);
-    setParts(newParts);
+    const newChapters = removeItemAt(chapters, partIndex);
+    setChapters(newChapters);
   };
 
   const handleStartTimecodeChange = (key, newStartTimecode) => {
-    const part = parts.find(p => p.key === key);
+    const part = chapters.find(p => p.key === key);
     part.startTimecode = newStartTimecode;
-    setParts(parts.slice());
+    setChapters(chapters.slice());
   };
 
   const changeContent = newContentValues => {
@@ -221,7 +204,13 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         </Form.Item>
       </Form>
 
-      <Timeline length={length} parts={parts} onPartAdd={handlePartAdd} onPartDelete={handlePartDelete} onStartTimecodeChange={handleStartTimecodeChange} />
+      <Timeline
+        length={sourceDuration}
+        parts={chapters}
+        onPartAdd={handleChapterAdd}
+        onPartDelete={handleChapterDelete}
+        onStartTimecodeChange={handleStartTimecodeChange}
+        />
     </div>
   );
 }
