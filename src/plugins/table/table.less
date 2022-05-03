@@ -11,9 +11,18 @@
 }
 
 .TableDisplay-cell {
-  border: 1px solid @edu-border-color-base;
   text-align: left;
+  font-weight: normal;
+  border: 1px solid @edu-border-color-base;
   padding: @table-plugin-cell-content-padding;
+
+  &.TableDisplay-cell--header {
+    background-color: @edu-background-color-base;
+  }
+
+  &.TableDisplay-cell--body {
+    background-color: @edu-white;
+  }
 }
 
 .TableEditor {}
@@ -49,12 +58,21 @@
     border: none;
     height: 20px;
   }
+
+  &.TableDesigner-tableCell--cellTypeHeader {
+    .TableDisplay-cell.TableDisplay-cell--header;
+  }
+
+  &.TableDesigner-tableCell--cellTypeBody {
+    .TableDisplay-cell.TableDisplay-cell--body;
+  }
 }
 
 .TableDesigner-contentInput {
   padding: 0;
   border: none;
   border-radius: 0;
+  background-color: transparent;
 
   &:hover,
   &:focus {

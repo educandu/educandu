@@ -3,6 +3,11 @@ import deepEqual from 'fast-deep-equal';
 import uniqueId from '../../utils/unique-id.js';
 import { insertItemAt, removeItemAt } from '../../utils/array-utils.js';
 
+export const CELL_TYPE = {
+  header: 'header',
+  body: 'body'
+};
+
 export const DESIGNER_CELL_TYPE = {
   corner: 'corner',
   columnHeader: 'column-header',
@@ -11,6 +16,12 @@ export const DESIGNER_CELL_TYPE = {
 };
 
 export const DESIGNER_CELL_ACTION = {
+  convertToHeaderRow: 'convert-to-header-row',
+  convertToBodyRow: 'convert-to-body-row',
+  convertToHeaderColumn: 'convert-to-header-column',
+  convertToBodyColumn: 'convert-to-body-column',
+  convertToHeaderCell: 'convert-to-header-cell',
+  convertToBodyCell: 'convert-to-body-cell',
   insertRowBefore: 'insert-row-before',
   insertRowAfter: 'insert-row-after',
   deleteRow: 'delete-row',
@@ -25,7 +36,7 @@ export const DESIGNER_CELL_ACTION = {
 };
 
 export function createEmptyCell(rowIndex, columnIndex) {
-  return { key: uniqueId.create(), rowIndex, columnIndex, rowSpan: 1, columnSpan: 1, text: '' };
+  return { key: uniqueId.create(), rowIndex, columnIndex, rowSpan: 1, columnSpan: 1, cellType: CELL_TYPE.body, text: '' };
 }
 
 export function visitAllCells(rowCount, columnCount, visitorCallback) {
@@ -56,15 +67,15 @@ export function createTableDesignerRows(tableModel) {
   const { rowCount, columnCount, cells } = tableModel;
   const rows = [];
 
-  const firstRow = [{ key: `${DESIGNER_CELL_TYPE.corner}`, cellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 }];
+  const firstRow = [{ key: `${DESIGNER_CELL_TYPE.corner}`, designerCellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 }];
   for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-    firstRow.push({ key: `${DESIGNER_CELL_TYPE.columnHeader}-${columnIndex}`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex });
+    firstRow.push({ key: `${DESIGNER_CELL_TYPE.columnHeader}-${columnIndex}`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex });
   }
 
   rows.push(firstRow);
 
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-    const currentRow = [{ key: `${DESIGNER_CELL_TYPE.rowHeader}-${rowIndex}`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex, columnIndex: -1 }];
+    const currentRow = [{ key: `${DESIGNER_CELL_TYPE.rowHeader}-${rowIndex}`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex, columnIndex: -1 }];
     for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
       currentRow.push(null);
     }
@@ -74,7 +85,7 @@ export function createTableDesignerRows(tableModel) {
 
   for (const cell of cells) {
     rows[cell.rowIndex + 1][cell.columnIndex + 1] = {
-      cellType: DESIGNER_CELL_TYPE.content,
+      designerCellType: DESIGNER_CELL_TYPE.content,
       isFirstInRow: cell.columnIndex === 0,
       isLastInRow: cell.columnIndex + cell.columnSpan === columnCount,
       isFirstInColumn: cell.rowIndex === 0,
@@ -95,6 +106,54 @@ export function changeCellText(tableModel, rowIndex, columnIndex, newText) {
         return {
           ...cell,
           text: newText
+        };
+      }
+
+      return cell;
+    })
+  };
+}
+
+export function changeCellType(tableModel, rowIndex, columnIndex, newCellType) {
+  return {
+    ...tableModel,
+    cells: tableModel.cells.map(cell => {
+      if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
+        return {
+          ...cell,
+          cellType: newCellType
+        };
+      }
+
+      return cell;
+    })
+  };
+}
+
+export function changeCellTypesInRow(tableModel, rowIndex, newCellType) {
+  return {
+    ...tableModel,
+    cells: tableModel.cells.map(cell => {
+      if (cell.rowIndex === rowIndex) {
+        return {
+          ...cell,
+          cellType: newCellType
+        };
+      }
+
+      return cell;
+    })
+  };
+}
+
+export function changeCellTypesInColumn(tableModel, columnIndex, newCellType) {
+  return {
+    ...tableModel,
+    cells: tableModel.cells.map(cell => {
+      if (cell.columnIndex === columnIndex) {
+        return {
+          ...cell,
+          cellType: newCellType
         };
       }
 
