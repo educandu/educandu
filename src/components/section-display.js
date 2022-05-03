@@ -15,8 +15,9 @@ import MoveDownIcon from './icons/general/move-down-icon.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
+import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
+import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
 import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
-import { CheckOutlined, CloseOutlined, DragOutlined, PaperClipOutlined } from '@ant-design/icons';
 
 function SectionDisplay({
   section,
@@ -100,7 +101,7 @@ function SectionDisplay({
     {
       type: 'copyToClipboard',
       tooltip: renderActionTooltip('copyToClipboard'),
-      icon: <PaperClipOutlined key="copyToClipboard" />,
+      icon: <CopyToClipboardIcon key="copyToClipboard" />,
       handleAction: () => onSectionCopyToClipboard(),
       isVisible: true,
       isEnabled: !!section.content

@@ -4,8 +4,9 @@ import GridSelector from './grid-selector.js';
 import { useTranslation } from 'react-i18next';
 import React, { useMemo, useState } from 'react';
 import { useService } from './container-context.js';
+import { QuestionOutlined } from '@ant-design/icons';
 import PluginRegistry from '../plugins/plugin-registry.js';
-import { PaperClipOutlined, QuestionOutlined } from '@ant-design/icons';
+import PasteFromClipboardIcon from './icons/general/paste-from-clipboard-icon.js';
 
 function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboard }) {
   const { t } = useTranslation('pluginSelectorDialog');
@@ -37,7 +38,7 @@ function PluginSelectorDialog({ visible, onSelect, onCancel, onPasteFromClipboar
     <div className="PluginSelectorDialog-footer">
       <div>
         <Button
-          icon={<PaperClipOutlined />}
+          icon={<PasteFromClipboardIcon />}
           onClick={onPasteFromClipboard}
           className="PluginSelectorDialog-pasteButton"
           >
