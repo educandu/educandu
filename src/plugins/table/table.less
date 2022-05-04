@@ -41,6 +41,10 @@
     .TableDisplay-cell;
     position: relative;
     background-color: @edu-white;
+
+    // Fixes this bug in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=688556
+    // Background of cell paints over border when borders are collapsed and tbody, row, or cell is relatively positioned
+    background-clip: padding-box;
   }
 
   &.TableDesigner-tableCell--rowHeader {

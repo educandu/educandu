@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import Markdown from '../../components/markdown.js';
-import { CELL_TYPE, createTableCellsInRows } from './table-utils.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { calculateEvenColumnWidthsInPercent, CELL_TYPE, COLUMN_DISTRIBUTION, createTableCellsInRows } from './table-utils.js';
 
 function TableDisplay({ content }) {
-  const { rowCount, columnCount, cells, width, renderMedia } = content;
+  const { rowCount, columnCount, cells, columnDistribution, width, renderMedia } = content;
 
   const rows = useMemo(() => {
     const fullCellMap = createTableCellsInRows(rowCount, columnCount, () => null);
@@ -19,6 +19,15 @@ function TableDisplay({ content }) {
 
     return fullCellMap.filter(row => row.length);
   }, [rowCount, columnCount, cells]);
+
+  const columnWidths = useMemo(() => {
+    switch (columnDistribution) {
+      case COLUMN_DISTRIBUTION.even:
+        return calculateEvenColumnWidthsInPercent(columnCount);
+      default:
+        return null;
+    }
+  }, [columnCount, columnDistribution]);
 
   const renderCell = cell => {
     const props = {
@@ -45,6 +54,9 @@ function TableDisplay({ content }) {
   return (
     <div className="TableDisplay">
       <table className={`TableDisplay-table u-width-${width || 100}`}>
+        {columnWidths && columnWidths.map((value, index) => (
+          <colgroup key={index.toString()} width={`${value}%`} />
+        ))}
         <tbody>
           {rows.map(row => (
             <tr key={row.map(cell => cell.key).join()}>

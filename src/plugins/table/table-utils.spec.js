@@ -1,9 +1,61 @@
 /* eslint-disable max-lines */
 
 import { asciiTableToTableValues } from './table-utils.spec.helper.js';
-import { CELL_TYPE, connectCells, createTableDesignerRows, deleteColumn, deleteRow, DESIGNER_CELL_TYPE, disconnectCell, insertColumn, insertRow } from './table-utils.js';
+import {
+  calculateEvenColumnWidthsInPercent,
+  CELL_TYPE,
+  connectCells,
+  createTableDesignerRows,
+  deleteColumn,
+  deleteRow,
+  DESIGNER_CELL_TYPE,
+  disconnectCell,
+  insertColumn,
+  insertRow
+} from './table-utils.js';
 
 describe('table-utils', () => {
+
+  describe('calculateEvenColumnWidthsInPercent', () => {
+    const testCases = [
+      {
+        description: 'when columnCount is zero',
+        expectation: 'it should return an empty array',
+        columnCount: 0,
+        expectedOutput: []
+      },
+      {
+        description: 'when columnCount is one',
+        expectation: 'it should return an array with the only value of 100',
+        columnCount: 1,
+        expectedOutput: [100]
+      },
+      {
+        description: 'when the columns can be distributed exactly evenly',
+        expectation: 'it should return an array with all identical values',
+        columnCount: 4,
+        expectedOutput: [25, 25, 25, 25]
+      },
+      {
+        description: 'when the columns cannot be distributed exactly evenly',
+        expectation: 'it should return an array with nearly identical values adding up to 100, filling up from the left',
+        columnCount: 3,
+        expectedOutput: [34, 33, 33]
+      }
+    ];
+
+    testCases.forEach(({ description, expectation, columnCount, expectedOutput }) => {
+      describe(description, () => {
+        let result;
+        beforeEach(() => {
+          result = calculateEvenColumnWidthsInPercent(columnCount);
+        });
+        it(expectation, () => {
+          expect(result).toStrictEqual(expectedOutput);
+        });
+      });
+    });
+  });
 
   describe('createTableDesignerRows', () => {
     const createDefaultContentCell = values => ({

@@ -3,6 +3,11 @@ import deepEqual from 'fast-deep-equal';
 import uniqueId from '../../utils/unique-id.js';
 import { insertItemAt, removeItemAt } from '../../utils/array-utils.js';
 
+export const COLUMN_DISTRIBUTION = {
+  automatic: 'automatic',
+  even: 'even'
+};
+
 export const CELL_TYPE = {
   header: 'header',
   body: 'body'
@@ -34,6 +39,25 @@ export const DESIGNER_CELL_ACTION = {
   connectToColumnAfter: 'connect-to-column-after',
   disconnectCell: 'disconnect-cell'
 };
+
+export function calculateEvenColumnWidthsInPercent(columnCount) {
+  if (!columnCount) {
+    return [];
+  }
+
+  const roundedValuePerColumn = Math.floor(100 / columnCount);
+  const widths = Array.from({ length: columnCount }, () => roundedValuePerColumn);
+
+  let index = 0;
+  let rest = 100 - (columnCount * roundedValuePerColumn);
+  while (rest > 0) {
+    widths[index] += 1;
+    rest -= 1;
+    index = (index + 1) % columnCount;
+  }
+
+  return widths;
+}
 
 export function createEmptyCell(rowIndex, columnIndex) {
   return { key: uniqueId.create(), rowIndex, columnIndex, rowSpan: 1, columnSpan: 1, cellType: CELL_TYPE.body, text: '' };

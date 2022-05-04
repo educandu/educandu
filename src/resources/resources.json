@@ -1694,6 +1694,9 @@
     "language": "en",
     "resources": {
       "name": "Table",
+      "columnDistribution": "Column width",
+      "columnDistribution_automatic": "Automatic",
+      "columnDistribution_even": "Even",
       "cellAction_convertToHeaderRow": "Convert to header row",
       "cellAction_convertToBodyRow": "Convert to body row",
       "cellAction_convertToHeaderColumn": "Convert to header column",
@@ -1718,6 +1721,9 @@
     "language": "de",
     "resources": {
       "name": "Tabelle",
+      "columnDistribution": "Spaltenbreite",
+      "columnDistribution_automatic": "Automatisch",
+      "columnDistribution_even": "Gleichmäßig",
       "cellAction_convertToHeaderRow": "In Kopfzeile konvertieren",
       "cellAction_convertToBodyRow": "In Datenzeile konvertieren",
       "cellAction_convertToHeaderColumn": "In Kopfspalte konvertieren",
