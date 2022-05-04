@@ -134,7 +134,7 @@ export function changeCellTypesInRow(tableModel, rowIndex, newCellType) {
   return {
     ...tableModel,
     cells: tableModel.cells.map(cell => {
-      if (cell.rowIndex === rowIndex) {
+      if (cell.rowIndex <= rowIndex && cell.rowIndex + cell.rowSpan - 1 >= rowIndex) {
         return {
           ...cell,
           cellType: newCellType
@@ -150,7 +150,7 @@ export function changeCellTypesInColumn(tableModel, columnIndex, newCellType) {
   return {
     ...tableModel,
     cells: tableModel.cells.map(cell => {
-      if (cell.columnIndex === columnIndex) {
+      if (cell.columnIndex <= columnIndex && cell.columnIndex + cell.columnSpan - 1 >= columnIndex) {
         return {
           ...cell,
           cellType: newCellType

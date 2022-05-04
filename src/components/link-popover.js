@@ -1,16 +1,18 @@
 import { Popover } from 'antd';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { default as iconsNs } from '@ant-design/icons';
 import { useUser } from '../components/user-context.js';
 import { hasUserPermission } from '../domain/permissions.js';
 
 const Icon = iconsNs.default || iconsNs;
 
-function LinkPopover({ children, items, placement, renderIfEmpty, renderSeparator, title, trigger }) {
+function LinkPopover({ children, items, placement, renderIfEmpty, renderSeparator, title, trigger, onVisibleChange }) {
   const user = useUser();
   const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => onVisibleChange(isVisible), [isVisible, onVisibleChange]);
 
   const filteredItems = items.filter(item => {
     return !item.permission || hasUserPermission(user, item.permission);
@@ -91,6 +93,7 @@ LinkPopover.propTypes = {
       permission: PropTypes.string
     })
   ])),
+  onVisibleChange: PropTypes.func,
   placement: PropTypes.oneOf([
     'top',
     'left',
@@ -114,6 +117,7 @@ LinkPopover.propTypes = {
 LinkPopover.defaultProps = {
   children: null,
   items: [],
+  onVisibleChange: () => {},
   placement: 'top',
   renderIfEmpty: false,
   renderSeparator: 'betweenAllItems',

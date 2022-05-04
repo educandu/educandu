@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { Fragment, useMemo } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
+import React, { Fragment, useMemo, useState } from 'react';
 import DebouncedTextArea from '../../components/debounced-text-area.js';
 import {
   changeCellText,
@@ -29,6 +29,8 @@ const CONTENT_INPUT_DATA_ROLE = 'content-input';
 
 function TableDesigner({ content, onContentChange }) {
   const { rowCount, columnCount } = content;
+  const [activeRowIndex, setActiveRowIndex] = useState(-1);
+  const [activeColumnIndex, setActiveColumnIndex] = useState(-1);
 
   const designerRows = useMemo(() => {
     return createTableDesignerRows(content);
@@ -106,6 +108,24 @@ function TableDesigner({ content, onContentChange }) {
     }
   };
 
+  const handleActiveRowChange = (rowIndex, isActive) => {
+    setActiveRowIndex(currentValue => {
+      if (!isActive && rowIndex === currentValue) {
+        return -1;
+      }
+      return isActive ? rowIndex : currentValue;
+    });
+  };
+
+  const handleActiveColumnChange = (columnIndex, isActive) => {
+    setActiveColumnIndex(currentValue => {
+      if (!isActive && columnIndex === currentValue) {
+        return -1;
+      }
+      return isActive ? columnIndex : currentValue;
+    });
+  };
+
   const renderRowHeaderCell = designerCell => {
     return (
       <td
@@ -119,6 +139,7 @@ function TableDesigner({ content, onContentChange }) {
             cell={designerCell}
             placement="right"
             onCellAction={handleDesignerCellAction}
+            onIsActiveChange={isActive => handleActiveRowChange(designerCell.rowIndex, isActive)}
             />
         </div>
       </td>
@@ -138,6 +159,7 @@ function TableDesigner({ content, onContentChange }) {
             cell={designerCell}
             placement="bottom"
             onCellAction={handleDesignerCellAction}
+            onIsActiveChange={isActive => handleActiveColumnChange(designerCell.columnIndex, isActive)}
             />
         </div>
       </td>
@@ -145,8 +167,12 @@ function TableDesigner({ content, onContentChange }) {
   };
 
   const renderContentCell = designerCell => {
+    const isInActiveRow = designerCell.rowIndex <= activeRowIndex && designerCell.rowIndex + designerCell.rowSpan - 1 >= activeRowIndex;
+    const isInActiveColumn = designerCell.columnIndex <= activeColumnIndex && designerCell.columnIndex + designerCell.columnSpan - 1 >= activeColumnIndex;
+
     const props = {
       className: classNames({
+        'is-active': isInActiveRow || isInActiveColumn,
         'TableDesigner-tableCell': true,
         'TableDesigner-tableCell--content': true,
         'TableDesigner-tableCell--cellTypeHeader': designerCell.cellType === CELL_TYPE.header,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import LinkPopover from '../../components/link-popover.js';
@@ -35,8 +35,15 @@ export const menuItemInfos = {
   [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined }
 };
 
-function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, placement }) {
+function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, onIsActiveChange, placement }) {
   const { t } = useTranslation('table');
+  const [isActive, setIsActive] = useState(false);
+  const [isMouseOver, setIsMouseOver] = useState(false);
+  const [isPopoverVisible, setIsPopoverVisible] = useState(false);
+
+  useEffect(() => setIsActive(isMouseOver || isPopoverVisible), [isMouseOver, isPopoverVisible]);
+
+  useEffect(() => onIsActiveChange(isActive), [isActive, onIsActiveChange]);
 
   const createMenuItem = ({ action, disabled = false, separator = false }) => {
     const menuItemInfo = menuItemInfos[action];
@@ -95,8 +102,8 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
   }
 
   return (
-    <LinkPopover items={items} placement={placement} trigger="click" renderSeparator="onlyWhenSpecified">
-      <a className="TableDesignerMenu">
+    <LinkPopover items={items} placement={placement} trigger="click" renderSeparator="onlyWhenSpecified" onVisibleChange={setIsPopoverVisible}>
+      <a className="TableDesignerMenu" onMouseOver={() => setIsMouseOver(true)} onMouseLeave={() => setIsMouseOver(false)}>
         <span className={`TableDesignerMenu-dot TableDesignerMenu-dot--${dotType}`} />
       </a>
     </LinkPopover>
@@ -120,6 +127,7 @@ TableDesignerMenu.propTypes = {
     'zooming'
   ]),
   onCellAction: PropTypes.func,
+  onIsActiveChange: PropTypes.func,
   placement: PropTypes.oneOf([
     'top',
     'left',
@@ -139,6 +147,7 @@ TableDesignerMenu.propTypes = {
 TableDesignerMenu.defaultProps = {
   dotType: 'normal',
   onCellAction: () => {},
+  onIsActiveChange: () => {},
   placement: 'top'
 };
 
