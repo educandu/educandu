@@ -16,17 +16,18 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   const [dragState, setDragState] = useState(null);
   const [newMarkerState, setNewMarkerState] = useState(null);
   const [newMarkerBounds, setNewMarkerBounds] = useState([]);
-  const [timelineState, setTimelineState] = useState({ markers: [], segments: [], msToPxRatio: 0, bounds: {} });
+  const [timelineState, setTimelineState] = useState({ markers: [], segments: [], msToPxRatio: 0 });
 
   const handleSegmentDelete = key => () => onPartDelete(key);
 
   const handleMarkerMouseDown = (marker, index) => () => {
     const prevMarker = timelineState.markers[index - 1];
     const nextMarker = timelineState.markers[index + 1];
+    const timelineBounds = timelineRef.current.getBoundingClientRect();
 
     const bounds = {
       left: (prevMarker?.left || 0) + timelineState.minSegmentLength,
-      right: (nextMarker?.left || timelineState.bounds.width) - timelineState.minSegmentLength
+      right: (nextMarker?.left || timelineBounds.width) - timelineState.minSegmentLength
     };
 
     setDragState({ marker, bounds });
@@ -39,8 +40,9 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   const handleWindowMouseMove = useCallback(event => {
     // Disable selection of DOM elements (e.g. text, image)
     event.preventDefault();
+    const timelineBounds = timelineRef.current.getBoundingClientRect();
 
-    const currentLeft = event.clientX - timelineState.bounds.left;
+    const currentLeft = event.clientX - timelineBounds.left;
     const marker = timelineState.markers.find(m => m.key === dragState.marker.key);
 
     if (dragState.bounds.left > currentLeft && dragState.bounds.left !== marker.left) {
@@ -79,10 +81,11 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     if (dragState || isTouchDevice()) {
       return;
     }
+    const timelineBounds = timelineRef.current.getBoundingClientRect();
 
-    const timelineBarHeight = timelineState.bounds.height / 3;
-    const segmentsBarMinTop = timelineState.bounds.top + timelineBarHeight;
-    const segmentsBarMaxTop = timelineState.bounds.top + (timelineBarHeight * 2);
+    const timelineBarHeight = timelineBounds.height / 3;
+    const segmentsBarMinTop = timelineBounds.top + timelineBarHeight;
+    const segmentsBarMaxTop = timelineBounds.top + (timelineBarHeight * 2);
 
     const isExceedingVerticalBounds = event.clientY > segmentsBarMaxTop || event.clientY < segmentsBarMinTop;
     if (isExceedingVerticalBounds) {
@@ -90,13 +93,13 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
       return;
     }
 
-    const currentLeft = event.clientX - timelineState.bounds.left;
+    const currentLeft = event.clientX - timelineBounds.left;
     const isInBounds = newMarkerBounds.some(bounds => bounds.leftMin <= currentLeft && currentLeft <= bounds.leftMax);
     setNewMarkerState({ left: currentLeft, isInBounds });
   };
 
   const updateStates = useCallback(() => {
-    const bounds = timelineRef.current.getBoundingClientRect();
+    const timelineBounds = timelineRef.current.getBoundingClientRect();
     const msToPxRatio = timelineRef.current.clientWidth / length;
     const minSegmentLength = MIN_PART_DURATION_IN_MS * msToPxRatio;
     const markers = parts.slice(1).map(part => ({ key: part.key, left: part.startTimecode * msToPxRatio }));
@@ -105,7 +108,7 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
       const segment = { key: part.key, title: part.title };
 
       if (parts.length === 1) {
-        segment.width = bounds.width;
+        segment.width = timelineBounds.width;
         return segment;
       }
       if (index === 0) {
@@ -113,7 +116,7 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
         return segment;
       }
       if (index === parts.length - 1) {
-        segment.width = bounds.width - markers[index - 1].left;
+        segment.width = timelineBounds.width - markers[index - 1].left;
         return segment;
       }
       segment.width = markers[index].left - markers[index - 1].left;
@@ -140,7 +143,7 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     }).filter(bound => bound);
 
     setNewMarkerBounds(markerBounds);
-    setTimelineState({ markers, segments, msToPxRatio, bounds, minSegmentLength });
+    setTimelineState({ markers, segments, msToPxRatio, minSegmentLength });
   }, [parts, length]);
 
   useEffect(() => {
@@ -169,9 +172,8 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   }, [dragState, handleWindowMouseMove, handleWindowMouseUp]);
 
   const renderMarker = (marker, index) => {
-    const classes = classNames('Timeline-marker', { 'is-displayed': isTouchDevice() });
     return (
-      <div key={marker.key} className={classes} style={{ left: `${marker.left}px` }}>
+      <div key={marker.key} className="Timeline-marker" style={{ left: `${marker.left}px` }}>
         <FlagOutlined onMouseDown={handleMarkerMouseDown(marker, index)} />
       </div>
     );
@@ -182,10 +184,8 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
   );
 
   const renderDeleteSegment = segment => {
-    const classes = classNames('Timeline-deleteSegment', { 'is-displayed': isTouchDevice() });
-
     return (
-      <div key={segment.key} className={classes} style={{ width: `${segment.width}px` }}>
+      <div key={segment.key} className="Timeline-deleteSegment" style={{ width: `${segment.width}px` }}>
         {segment.width >= MIN_PART_WIDTH_IN_PX && (
           <Button
             className="Timeline-deleteButton"

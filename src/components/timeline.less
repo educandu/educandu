@@ -5,13 +5,6 @@
   display: flex;
   user-select: none;
   flex-direction: column;
-
-  &:hover .Timeline-marker,
-  &:hover .Timeline-deleteSegment,
-  &.is-dragging .Timeline-marker,
-  &.is-dragging .Timeline-deleteSegment {
-    display: flex;
-  }
 }
 
 .Timeline-markersBar {
@@ -21,14 +14,12 @@
 }
 
 .Timeline-marker {
-  display: none;
   position: absolute;
-  cursor: col-resize;
+  display: flex;
+  align-items: flex-start;
+  height: @timeline-bar-height;
   color: @edu-primary-color-light;
-
-  &.is-displayed {
-    display: flex;
-  }
+  cursor: col-resize;
 }
 
 .Timeline-segmentsBar {
@@ -53,6 +44,8 @@
 
 .Timeline-newMarker {
   position: absolute;
+  display: flex;
+  align-items: flex-start;
   bottom: @timeline-bar-height;
   height: @timeline-bar-height;
   color: @edu-border-color-base;
@@ -74,15 +67,11 @@
 }
 
 .Timeline-deleteSegment {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   background-color: @edu-background-color-light;
   border-right: 1px dotted @edu-border-color-base;
-
-  &.is-displayed {
-    display: flex;
-  }
 
   &:last-of-type {
     border-right: none;
