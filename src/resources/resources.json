@@ -1568,7 +1568,8 @@
     "language": "en",
     "resources": {
       "name": "Interactive media",
-      "determiningDuration": "Determining media duration ..."
+      "determiningDuration": "Determining media duration ...",
+      "defaultChapterTitle": "Chapter"
     }
   },
   {
@@ -1576,7 +1577,8 @@
     "language": "de",
     "resources": {
       "name": "Interaktive Medien",
-      "determiningDuration": "Mediendauer wird entdeckt ..."
+      "determiningDuration": "Mediendauer wird entdeckt ...",
+      "defaultChapterTitle": "Kapitel"
     }
   },
   {

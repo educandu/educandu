@@ -33,7 +33,7 @@ class InteractiveMediaInfo {
     return (await import('./interactive-media-editor.js')).default;
   }
 
-  getDefaultContent() {
+  getDefaultContent(t) {
     return {
       sourceType: SOURCE_TYPE.internal,
       sourceUrl: '',
@@ -47,9 +47,9 @@ class InteractiveMediaInfo {
       showVideo: false,
       chapters: [
         {
-          title: '',
           startTimecode: 0,
-          key: uniqueId.create()
+          key: uniqueId.create(),
+          title: t('interactiveMedia:defaultChapterTitle')
         }
       ]
     };

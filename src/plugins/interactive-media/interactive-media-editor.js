@@ -24,69 +24,66 @@ const RadioButton = Radio.Button;
 
 const videoTypes = ['mp4', 'mov', 'avi', 'mkv'];
 const audioTypes = ['mp3', 'flac', 'aac', 'wav'];
+const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
 
-const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
-const getAspectRatioText = aspectRatio => `${aspectRatio.h}:${aspectRatio.v}`;
-
-const getMediaType = path => {
-  const sanitizedPath = (path || '').trim();
-  const extensionMatches = sanitizedPath.match(/\.([0-9a-z]+)$/i);
-  const extension = extensionMatches && extensionMatches[1];
-
-  if (!extension) {
-    return MEDIA_TYPE.none;
-  }
-  if (audioTypes.includes(extension)) {
-    return MEDIA_TYPE.audio;
-  }
-  if (videoTypes.includes(extension)) {
-    return MEDIA_TYPE.video;
-  }
-  return MEDIA_TYPE.unknown;
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 14 }
 };
-
-function determineMediaDuration(url, containerRef) {
-  return new Promise((resolve, reject) => {
-    try {
-      const element = React.createElement(ReactPlayer, {
-        url,
-        light: false,
-        playing: false,
-        onDuration: durationInSeconds => {
-          const durationInMiliseconds = durationInSeconds * 1000;
-          resolve(durationInMiliseconds);
-          ReactDOM.unmountComponentAtNode(containerRef.current);
-        },
-        onError: error => {
-          reject(error);
-          ReactDOM.unmountComponentAtNode(containerRef.current);
-        }
-      });
-      ReactDOM.render(element, containerRef.current);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
 
 function InteractiveMediaEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const clientConfig = useService(ClientConfig);
-  const { t } = useTranslation('interactiveMedia');
   const hiddenPlayerContainerRef = useRef(null);
+  const { t } = useTranslation('interactiveMedia');
 
-  const { sourceType, sourceUrl, text, width, aspectRatio, showVideo } = content;
+  const getAspectRatioText = givenAspectRatio => `${givenAspectRatio.h}:${givenAspectRatio.v}`;
+  const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
+  const getDefaultChapter = () => ({ key: uniqueId.create(), title: t('defaultChapterTitle'), startTimecode: 0 });
 
-  const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
   const defaultAspectRatio = supportedAspectRatios[0];
-  const getDefaultChapter = () => ({ title: '', startTimecode: 0, key: uniqueId.create() });
+  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
+  const { sourceType, sourceUrl, sourceDuration, chapters, text, width, aspectRatio, showVideo } = content;
 
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
+  const getMediaType = path => {
+    const sanitizedPath = (path || '').trim();
+    const extensionMatches = sanitizedPath.match(/\.([0-9a-z]+)$/i);
+    const extension = extensionMatches && extensionMatches[1];
+
+    if (!extension) {
+      return MEDIA_TYPE.none;
+    }
+    if (audioTypes.includes(extension)) {
+      return MEDIA_TYPE.audio;
+    }
+    if (videoTypes.includes(extension)) {
+      return MEDIA_TYPE.video;
+    }
+    return MEDIA_TYPE.unknown;
   };
 
-  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
-  const [chapters, setChapters] = useState(ensureChaptersOrder(content.chapters));
+  function determineMediaDuration(url, containerRef) {
+    return new Promise((resolve, reject) => {
+      try {
+        const element = React.createElement(ReactPlayer, {
+          url,
+          light: false,
+          playing: false,
+          onDuration: durationInSeconds => {
+            const durationInMiliseconds = durationInSeconds * 1000;
+            resolve(durationInMiliseconds);
+            ReactDOM.unmountComponentAtNode(containerRef.current);
+          },
+          onError: error => {
+            reject(error);
+            ReactDOM.unmountComponentAtNode(containerRef.current);
+          }
+        });
+        ReactDOM.render(element, containerRef.current);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
   const determineSourceDuration = async url => {
     if (!url) {
@@ -111,32 +108,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     }
   };
 
-  const handleChapterAdd = startTimecode => {
-    const newChapter = {
-      key: chapters.length.toString(),
-      title: chapters.length.toString(),
-      startTimecode
-    };
-    setChapters(ensureChaptersOrder([...chapters, newChapter]));
-  };
-
-  const handleChapterDelete = key => {
-    const part = chapters.find(p => p.key === key);
-    const partIndex = chapters.findIndex(p => p.key === key);
-    const nextPart = chapters[partIndex + 1];
-    if (nextPart) {
-      nextPart.startTimecode = part.startTimecode;
-    }
-    const newChapters = removeItemAt(chapters, partIndex);
-    setChapters(newChapters);
-  };
-
-  const handleStartTimecodeChange = (key, newStartTimecode) => {
-    const part = chapters.find(p => p.key === key);
-    part.startTimecode = newStartTimecode;
-    setChapters(chapters.slice());
-  };
-
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
 
@@ -145,6 +116,29 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
     onContentChanged(newContent, isInvalidSourceUrl);
+  };
+
+  const handleChapterAdd = startTimecode => {
+    const chapter = { key: uniqueId.create(), title: t('defaultChapterTitle'), startTimecode };
+    const newChapters = ensureChaptersOrder([...chapters, chapter]);
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterDelete = key => {
+    const chapterIndex = chapters.findIndex(p => p.key === key);
+    const nextChapter = chapters[chapterIndex + 1];
+    if (nextChapter) {
+      nextChapter.startTimecode = chapters[chapterIndex].startTimecode;
+    }
+    const newChapters = removeItemAt(chapters, chapterIndex);
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleStartTimecodeChange = (key, newStartTimecode) => {
+    const chapter = chapters.find(p => p.key === key);
+    chapter.startTimecode = newStartTimecode;
+    const newChapters = [...chapters];
+    changeContent({ chapters: newChapters });
   };
 
   const handleSourceTypeChange = event => {
@@ -275,7 +269,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       </Form>
 
       <Timeline
-        length={content.sourceDuration}
+        length={sourceDuration}
         parts={chapters}
         onPartAdd={handleChapterAdd}
         onPartDelete={handleChapterDelete}
