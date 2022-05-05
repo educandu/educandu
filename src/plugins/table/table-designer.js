@@ -1,9 +1,13 @@
 import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
+import classNames from 'classnames';
 import TableDesignerMenu from './table-designer-menu.js';
+import React, { Fragment, useMemo, useState } from 'react';
 import DebouncedTextArea from '../../components/debounced-text-area.js';
 import {
   changeCellText,
+  changeCellTypesInRow,
+  changeCellTypesInColumn,
+  changeCellType,
   createTableDesignerRows,
   deleteColumn,
   deleteRow,
@@ -17,13 +21,16 @@ import {
   connectToColumnBefore,
   connectToRowAfter,
   connectToRowBefore,
-  disconnectCell
+  disconnectCell,
+  CELL_TYPE
 } from './table-utils.js';
 
 const CONTENT_INPUT_DATA_ROLE = 'content-input';
 
 function TableDesigner({ content, onContentChange }) {
   const { rowCount, columnCount } = content;
+  const [activeRowIndex, setActiveRowIndex] = useState(-1);
+  const [activeColumnIndex, setActiveColumnIndex] = useState(-1);
 
   const designerRows = useMemo(() => {
     return createTableDesignerRows(content);
@@ -35,6 +42,24 @@ function TableDesigner({ content, onContentChange }) {
 
   const handleDesignerCellAction = (action, designerCell) => {
     switch (action) {
+      case DESIGNER_CELL_ACTION.convertToHeaderRow:
+        onContentChange(changeCellTypesInRow(content, designerCell.rowIndex, CELL_TYPE.header));
+        break;
+      case DESIGNER_CELL_ACTION.convertToBodyRow:
+        onContentChange(changeCellTypesInRow(content, designerCell.rowIndex, CELL_TYPE.body));
+        break;
+      case DESIGNER_CELL_ACTION.convertToHeaderColumn:
+        onContentChange(changeCellTypesInColumn(content, designerCell.columnIndex, CELL_TYPE.header));
+        break;
+      case DESIGNER_CELL_ACTION.convertToBodyColumn:
+        onContentChange(changeCellTypesInColumn(content, designerCell.columnIndex, CELL_TYPE.body));
+        break;
+      case DESIGNER_CELL_ACTION.convertToHeaderCell:
+        onContentChange(changeCellType(content, designerCell.rowIndex, designerCell.columnIndex, CELL_TYPE.header));
+        break;
+      case DESIGNER_CELL_ACTION.convertToBodyCell:
+        onContentChange(changeCellType(content, designerCell.rowIndex, designerCell.columnIndex, CELL_TYPE.body));
+        break;
       case DESIGNER_CELL_ACTION.insertRowBefore:
         onContentChange(insertRowBefore(content, designerCell.rowIndex));
         break;
@@ -83,6 +108,24 @@ function TableDesigner({ content, onContentChange }) {
     }
   };
 
+  const handleActiveRowChange = (rowIndex, isActive) => {
+    setActiveRowIndex(currentValue => {
+      if (!isActive && rowIndex === currentValue) {
+        return -1;
+      }
+      return isActive ? rowIndex : currentValue;
+    });
+  };
+
+  const handleActiveColumnChange = (columnIndex, isActive) => {
+    setActiveColumnIndex(currentValue => {
+      if (!isActive && columnIndex === currentValue) {
+        return -1;
+      }
+      return isActive ? columnIndex : currentValue;
+    });
+  };
+
   const renderRowHeaderCell = designerCell => {
     return (
       <td
@@ -96,6 +139,7 @@ function TableDesigner({ content, onContentChange }) {
             cell={designerCell}
             placement="right"
             onCellAction={handleDesignerCellAction}
+            onIsActiveChange={isActive => handleActiveRowChange(designerCell.rowIndex, isActive)}
             />
         </div>
       </td>
@@ -115,6 +159,7 @@ function TableDesigner({ content, onContentChange }) {
             cell={designerCell}
             placement="bottom"
             onCellAction={handleDesignerCellAction}
+            onIsActiveChange={isActive => handleActiveColumnChange(designerCell.columnIndex, isActive)}
             />
         </div>
       </td>
@@ -122,14 +167,25 @@ function TableDesigner({ content, onContentChange }) {
   };
 
   const renderContentCell = designerCell => {
-    return (
-      <td
-        className="TableDesigner-tableCell TableDesigner-tableCell--content"
-        key={designerCell.key}
-        rowSpan={designerCell.rowSpan}
-        colSpan={designerCell.columnSpan}
-        onClick={handleContentCellClick}
-        >
+    const isInActiveRow = designerCell.rowIndex <= activeRowIndex && designerCell.rowIndex + designerCell.rowSpan - 1 >= activeRowIndex;
+    const isInActiveColumn = designerCell.columnIndex <= activeColumnIndex && designerCell.columnIndex + designerCell.columnSpan - 1 >= activeColumnIndex;
+
+    const props = {
+      className: classNames({
+        'is-active': isInActiveRow || isInActiveColumn,
+        'TableDesigner-tableCell': true,
+        'TableDesigner-tableCell--content': true,
+        'TableDesigner-tableCell--cellTypeHeader': designerCell.cellType === CELL_TYPE.header,
+        'TableDesigner-tableCell--cellTypeBody': designerCell.cellType === CELL_TYPE.body
+      }),
+      key: designerCell.key,
+      rowSpan: designerCell.rowSpan,
+      colSpan: designerCell.columnSpan,
+      onClick: handleContentCellClick
+    };
+
+    const children = (
+      <Fragment>
         <DebouncedTextArea
           data-role={CONTENT_INPUT_DATA_ROLE}
           className="TableDesigner-contentInput"
@@ -147,8 +203,17 @@ function TableDesigner({ content, onContentChange }) {
             onCellAction={handleDesignerCellAction}
             />
         </div>
-      </td>
+      </Fragment>
     );
+
+    switch (designerCell.cellType) {
+      case CELL_TYPE.header:
+        return <th {...props}>{children}</th>;
+      case CELL_TYPE.body:
+        return <td {...props}>{children}</td>;
+      default:
+        throw new Error(`Invalid cell type: ${designerCell.cellType}`);
+    }
   };
 
   const renderDefaultCell = designerCell => {
@@ -161,7 +226,7 @@ function TableDesigner({ content, onContentChange }) {
   };
 
   const renderDesignerCell = designerCell => {
-    switch (designerCell.cellType) {
+    switch (designerCell.designerCellType) {
       case DESIGNER_CELL_TYPE.content:
         return renderContentCell(designerCell);
       case DESIGNER_CELL_TYPE.rowHeader:

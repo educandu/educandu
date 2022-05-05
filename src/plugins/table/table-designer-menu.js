@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import LinkPopover from '../../components/link-popover.js';
-import { DESIGNER_CELL_ACTION, DESIGNER_CELL_TYPE } from './table-utils.js';
+import { CELL_TYPE, DESIGNER_CELL_ACTION, DESIGNER_CELL_TYPE } from './table-utils.js';
 import {
   InsertRowAboveOutlined,
   InsertRowBelowOutlined,
@@ -11,10 +11,17 @@ import {
   InsertRowRightOutlined,
   DeleteColumnOutlined,
   MergeCellsOutlined,
-  SplitCellsOutlined
+  SplitCellsOutlined,
+  BgColorsOutlined
 } from '@ant-design/icons';
 
 export const menuItemInfos = {
+  [DESIGNER_CELL_ACTION.convertToHeaderRow]: { translationKey: 'cellAction_convertToHeaderRow', icon: BgColorsOutlined },
+  [DESIGNER_CELL_ACTION.convertToBodyRow]: { translationKey: 'cellAction_convertToBodyRow', icon: BgColorsOutlined },
+  [DESIGNER_CELL_ACTION.convertToHeaderColumn]: { translationKey: 'cellAction_convertToHeaderColumn', icon: BgColorsOutlined },
+  [DESIGNER_CELL_ACTION.convertToBodyColumn]: { translationKey: 'cellAction_convertToBodyColumn', icon: BgColorsOutlined },
+  [DESIGNER_CELL_ACTION.convertToHeaderCell]: { translationKey: 'cellAction_convertToHeaderCell', icon: BgColorsOutlined },
+  [DESIGNER_CELL_ACTION.convertToBodyCell]: { translationKey: 'cellAction_convertToBodyCell', icon: BgColorsOutlined },
   [DESIGNER_CELL_ACTION.insertRowBefore]: { translationKey: 'cellAction_insertRowBefore', icon: InsertRowAboveOutlined },
   [DESIGNER_CELL_ACTION.insertRowAfter]: { translationKey: 'cellAction_insertRowAfter', icon: InsertRowBelowOutlined },
   [DESIGNER_CELL_ACTION.deleteRow]: { translationKey: 'cellAction_deleteRow', icon: DeleteRowOutlined },
@@ -28,8 +35,15 @@ export const menuItemInfos = {
   [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined }
 };
 
-function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, placement }) {
+function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, onIsActiveChange, placement }) {
   const { t } = useTranslation('table');
+  const [isActive, setIsActive] = useState(false);
+  const [isMouseOver, setIsMouseOver] = useState(false);
+  const [isPopoverVisible, setIsPopoverVisible] = useState(false);
+
+  useEffect(() => setIsActive(isMouseOver || isPopoverVisible), [isMouseOver, isPopoverVisible]);
+
+  useEffect(() => onIsActiveChange(isActive), [isActive, onIsActiveChange]);
 
   const createMenuItem = ({ action, disabled = false, separator = false }) => {
     const menuItemInfo = menuItemInfos[action];
@@ -44,9 +58,11 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
   };
 
   let items;
-  switch (cell.cellType) {
+  switch (cell.designerCellType) {
     case DESIGNER_CELL_TYPE.rowHeader:
       items = [
+        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToHeaderRow }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToBodyRow, separator: true }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow })
@@ -54,6 +70,8 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
       break;
     case DESIGNER_CELL_TYPE.columnHeader:
       items = [
+        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToHeaderColumn }),
+        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToBodyColumn, separator: true }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn })
@@ -61,6 +79,10 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
       break;
     case DESIGNER_CELL_TYPE.content:
       items = [
+        createMenuItem({
+          action: cell.cellType === CELL_TYPE.body ? DESIGNER_CELL_ACTION.convertToHeaderCell : DESIGNER_CELL_ACTION.convertToBodyCell,
+          separator: true
+        }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
         createMenuItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow, separator: true }),
@@ -80,8 +102,8 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
   }
 
   return (
-    <LinkPopover items={items} placement={placement} trigger="click" renderSeparator="onlyWhenSpecified">
-      <a className="TableDesignerMenu">
+    <LinkPopover items={items} placement={placement} trigger="click" renderSeparator="onlyWhenSpecified" onVisibleChange={setIsPopoverVisible}>
+      <a className="TableDesignerMenu" onMouseOver={() => setIsMouseOver(true)} onMouseLeave={() => setIsMouseOver(false)}>
         <span className={`TableDesignerMenu-dot TableDesignerMenu-dot--${dotType}`} />
       </a>
     </LinkPopover>
@@ -92,7 +114,8 @@ TableDesignerMenu.propTypes = {
   canDeleteColumn: PropTypes.bool.isRequired,
   canDeleteRow: PropTypes.bool.isRequired,
   cell: PropTypes.shape({
-    cellType: PropTypes.oneOf(Object.values(DESIGNER_CELL_TYPE)).isRequired,
+    designerCellType: PropTypes.oneOf(Object.values(DESIGNER_CELL_TYPE)).isRequired,
+    cellType: PropTypes.oneOf(Object.values(CELL_TYPE)),
     isFirstInRow: PropTypes.bool,
     isLastInRow: PropTypes.bool,
     isFirstInColumn: PropTypes.bool,
@@ -104,6 +127,7 @@ TableDesignerMenu.propTypes = {
     'zooming'
   ]),
   onCellAction: PropTypes.func,
+  onIsActiveChange: PropTypes.func,
   placement: PropTypes.oneOf([
     'top',
     'left',
@@ -123,6 +147,7 @@ TableDesignerMenu.propTypes = {
 TableDesignerMenu.defaultProps = {
   dotType: 'normal',
   onCellAction: () => {},
+  onIsActiveChange: () => {},
   placement: 'top'
 };
 

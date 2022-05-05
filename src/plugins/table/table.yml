@@ -1,6 +1,33 @@
 name:
   en: Table
   de: Tabelle
+columnDistribution:
+  en: Column width
+  de: Spaltenbreite
+columnDistribution_automatic:
+  en: Automatic
+  de: Automatisch
+columnDistribution_even:
+  en: Even
+  de: Gleichmäßig
+cellAction_convertToHeaderRow:
+  en: Convert to header row
+  de: In Kopfzeile konvertieren
+cellAction_convertToBodyRow:
+  en: Convert to body row
+  de: In Datenzeile konvertieren
+cellAction_convertToHeaderColumn:
+  en: Convert to header column
+  de: In Kopfspalte konvertieren
+cellAction_convertToBodyColumn:
+  en: Convert to body cell
+  de: In Datenspalte konvertieren
+cellAction_convertToHeaderCell:
+  en: Convert to header cell
+  de: In Kopfzelle konvertieren
+cellAction_convertToBodyCell:
+  en: Convert to body cell
+  de: In Datenzelle konvertieren
 cellAction_insertRowBefore:
   en: Insert row before
   de: Zeile davor einfügen

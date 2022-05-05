@@ -5,15 +5,24 @@
 }
 
 .TableDisplay-table {
-  width: 100%;
+  margin: 0 auto;
   overflow-x: hidden;
   border-collapse: collapse;
 }
 
 .TableDisplay-cell {
-  border: 1px solid @edu-border-color-base;
   text-align: left;
+  font-weight: normal;
+  border: 1px solid @edu-border-color-base;
   padding: @table-plugin-cell-content-padding;
+
+  &.TableDisplay-cell--header {
+    background-color: @edu-background-color-base;
+  }
+
+  &.TableDisplay-cell--body {
+    background-color: @edu-white;
+  }
 }
 
 .TableEditor {}
@@ -32,6 +41,10 @@
     .TableDisplay-cell;
     position: relative;
     background-color: @edu-white;
+
+    // Fixes this bug in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=688556
+    // Background of cell paints over border when borders are collapsed and tbody, row, or cell is relatively positioned
+    background-clip: padding-box;
   }
 
   &.TableDesigner-tableCell--rowHeader {
@@ -49,12 +62,26 @@
     border: none;
     height: 20px;
   }
+
+  &.TableDesigner-tableCell--cellTypeHeader {
+    .TableDisplay-cell.TableDisplay-cell--header;
+  }
+
+  &.TableDesigner-tableCell--cellTypeBody {
+    .TableDisplay-cell.TableDisplay-cell--body;
+  }
+
+  &.is-active {
+    border-color: @edu-secondary-color-dark !important;
+    background-color: @edu-secondary-color-light !important;
+  }
 }
 
 .TableDesigner-contentInput {
   padding: 0;
   border: none;
   border-radius: 0;
+  background-color: transparent;
 
   &:hover,
   &:focus {

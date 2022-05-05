@@ -1,14 +1,66 @@
 /* eslint-disable max-lines */
 
 import { asciiTableToTableValues } from './table-utils.spec.helper.js';
-import { connectCells, createTableDesignerRows, deleteColumn, deleteRow, DESIGNER_CELL_TYPE, disconnectCell, insertColumn, insertRow } from './table-utils.js';
+import {
+  calculateEvenColumnWidthsInPercent,
+  CELL_TYPE,
+  connectCells,
+  createTableDesignerRows,
+  deleteColumn,
+  deleteRow,
+  DESIGNER_CELL_TYPE,
+  disconnectCell,
+  insertColumn,
+  insertRow
+} from './table-utils.js';
 
 describe('table-utils', () => {
+
+  describe('calculateEvenColumnWidthsInPercent', () => {
+    const testCases = [
+      {
+        description: 'when columnCount is zero',
+        expectation: 'it should return an empty array',
+        columnCount: 0,
+        expectedOutput: []
+      },
+      {
+        description: 'when columnCount is one',
+        expectation: 'it should return an array with the only value of 100',
+        columnCount: 1,
+        expectedOutput: [100]
+      },
+      {
+        description: 'when the columns can be distributed exactly evenly',
+        expectation: 'it should return an array with all identical values',
+        columnCount: 4,
+        expectedOutput: [25, 25, 25, 25]
+      },
+      {
+        description: 'when the columns cannot be distributed exactly evenly',
+        expectation: 'it should return an array with nearly identical values adding up to 100, filling up from the left',
+        columnCount: 3,
+        expectedOutput: [34, 33, 33]
+      }
+    ];
+
+    testCases.forEach(({ description, expectation, columnCount, expectedOutput }) => {
+      describe(description, () => {
+        let result;
+        beforeEach(() => {
+          result = calculateEvenColumnWidthsInPercent(columnCount);
+        });
+        it(expectation, () => {
+          expect(result).toStrictEqual(expectedOutput);
+        });
+      });
+    });
+  });
 
   describe('createTableDesignerRows', () => {
     const createDefaultContentCell = values => ({
       key: '',
-      cellType: DESIGNER_CELL_TYPE.content,
+      designerCellType: DESIGNER_CELL_TYPE.content,
       rowIndex: -1,
       columnIndex: -1,
       rowSpan: 1,
@@ -39,39 +91,39 @@ describe('table-utils', () => {
         `,
         expectedOutput: [
           [
-            { key: `${DESIGNER_CELL_TYPE.corner}`, cellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
+            { key: `${DESIGNER_CELL_TYPE.corner}`, designerCellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-1', rowIndex: 1, columnIndex: 1 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-2', rowIndex: 1, columnIndex: 2 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-1', rowIndex: 1, columnIndex: 1 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-2', rowIndex: 1, columnIndex: 2 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-1', rowIndex: 2, columnIndex: 1 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-2', rowIndex: 2, columnIndex: 2 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-3', rowIndex: 2, columnIndex: 3, isLastInRow: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-1', rowIndex: 2, columnIndex: 1 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-2', rowIndex: 2, columnIndex: 2 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-3', rowIndex: 2, columnIndex: 3, isLastInRow: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-2', rowIndex: 3, columnIndex: 2, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-3', rowIndex: 3, columnIndex: 3, isLastInRow: true, isLastInColumn: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-2', rowIndex: 3, columnIndex: 2, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-3', rowIndex: 3, columnIndex: 3, isLastInRow: true, isLastInColumn: true }) }
           ]
         ]
       },
@@ -91,36 +143,36 @@ describe('table-utils', () => {
         `,
         expectedOutput: [
           [
-            { key: `${DESIGNER_CELL_TYPE.corner}`, cellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
+            { key: `${DESIGNER_CELL_TYPE.corner}`, designerCellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-1', rowIndex: 1, columnIndex: 1 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-2', rowIndex: 1, columnIndex: 2 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-1', rowIndex: 1, columnIndex: 1 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-2', rowIndex: 1, columnIndex: 2 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-1', rowIndex: 2, columnIndex: 1 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-2', rowIndex: 2, columnIndex: 2, rowSpan: 2, columnSpan: 2, isLastInRow: true, isLastInColumn: true, isConnected: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-1', rowIndex: 2, columnIndex: 1 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-2', rowIndex: 2, columnIndex: 2, rowSpan: 2, columnSpan: 2, isLastInRow: true, isLastInColumn: true, isConnected: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) }
           ]
         ]
       },
@@ -140,36 +192,36 @@ describe('table-utils', () => {
       `,
         expectedOutput: [
           [
-            { key: `${DESIGNER_CELL_TYPE.corner}`, cellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
+            { key: `${DESIGNER_CELL_TYPE.corner}`, designerCellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-1', rowIndex: 1, columnIndex: 1, rowSpan: 2, columnSpan: 2, isConnected: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-1', rowIndex: 1, columnIndex: 1, rowSpan: 2, columnSpan: 2, isConnected: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-3', rowIndex: 2, columnIndex: 3, isLastInRow: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-3', rowIndex: 2, columnIndex: 3, isLastInRow: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-2', rowIndex: 3, columnIndex: 2, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-3', rowIndex: 3, columnIndex: 3, isLastInRow: true, isLastInColumn: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-2', rowIndex: 3, columnIndex: 2, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-3', rowIndex: 3, columnIndex: 3, isLastInRow: true, isLastInColumn: true }) }
           ]
         ]
       },
@@ -189,34 +241,34 @@ describe('table-utils', () => {
         `,
         expectedOutput: [
           [
-            { key: `${DESIGNER_CELL_TYPE.corner}`, cellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
+            { key: `${DESIGNER_CELL_TYPE.corner}`, designerCellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-2', rowIndex: 0, columnIndex: 2, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-3', rowIndex: 0, columnIndex: 3, isLastInRow: true, isFirstInColumn: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-1', rowIndex: 1, columnIndex: 1 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-2', rowIndex: 1, columnIndex: 2 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-1', rowIndex: 1, columnIndex: 1 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-2', rowIndex: 1, columnIndex: 2 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-3', rowIndex: 1, columnIndex: 3, isLastInRow: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-0', rowIndex: 2, columnIndex: 0, rowSpan: 2, isFirstInRow: true, isLastInColumn: true, isConnected: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-1', rowIndex: 2, columnIndex: 1, rowSpan: 2, isLastInColumn: true, isConnected: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-2', rowIndex: 2, columnIndex: 2, rowSpan: 2, isLastInColumn: true, isConnected: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-3', rowIndex: 2, columnIndex: 3, rowSpan: 2, isLastInRow: true }), isLastInColumn: true, isConnected: true }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-0', rowIndex: 2, columnIndex: 0, rowSpan: 2, isFirstInRow: true, isLastInColumn: true, isConnected: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-1', rowIndex: 2, columnIndex: 1, rowSpan: 2, isLastInColumn: true, isConnected: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-2', rowIndex: 2, columnIndex: 2, rowSpan: 2, isLastInColumn: true, isConnected: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-3', rowIndex: 2, columnIndex: 3, rowSpan: 2, isLastInRow: true }), isLastInColumn: true, isConnected: true }
           ],
-          [{ key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 }]
+          [{ key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 }]
         ]
       },
       {
@@ -235,35 +287,35 @@ describe('table-utils', () => {
         `,
         expectedOutput: [
           [
-            { key: `${DESIGNER_CELL_TYPE.corner}`, cellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
-            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, cellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
+            { key: `${DESIGNER_CELL_TYPE.corner}`, designerCellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 0 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 1 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 2 },
+            { key: `${DESIGNER_CELL_TYPE.columnHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex: 3 }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '0-2', rowIndex: 0, columnIndex: 2, columnSpan: 2, isLastInRow: true, isFirstInColumn: true, isConnected: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-0`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 0, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-0', rowIndex: 0, columnIndex: 0, isFirstInRow: true, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-1', rowIndex: 0, columnIndex: 1, isFirstInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '0-2', rowIndex: 0, columnIndex: 2, columnSpan: 2, isLastInRow: true, isFirstInColumn: true, isConnected: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-1', rowIndex: 1, columnIndex: 1 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '1-2', rowIndex: 1, columnIndex: 2, columnSpan: 2, isLastInRow: true, isConnected: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-1`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 1, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-0', rowIndex: 1, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-1', rowIndex: 1, columnIndex: 1 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '1-2', rowIndex: 1, columnIndex: 2, columnSpan: 2, isLastInRow: true, isConnected: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-1', rowIndex: 2, columnIndex: 1 }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '2-2', rowIndex: 2, columnIndex: 2, columnSpan: 2, isLastInRow: true, isConnected: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-2`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 2, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-0', rowIndex: 2, columnIndex: 0, isFirstInRow: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-1', rowIndex: 2, columnIndex: 1 }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '2-2', rowIndex: 2, columnIndex: 2, columnSpan: 2, isLastInRow: true, isConnected: true }) }
           ],
           [
-            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, cellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) },
-            { ...createDefaultContentCell({ key: expect.any(String), text: '3-2', rowIndex: 3, columnIndex: 2, columnSpan: 2, isLastInRow: true, isLastInColumn: true, isConnected: true }) }
+            { key: `${DESIGNER_CELL_TYPE.rowHeader}-3`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex: 3, columnIndex: -1 },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-0', rowIndex: 3, columnIndex: 0, isFirstInRow: true, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-1', rowIndex: 3, columnIndex: 1, isLastInColumn: true }) },
+            { ...createDefaultContentCell({ key: expect.any(String), cellType: CELL_TYPE.body, text: '3-2', rowIndex: 3, columnIndex: 2, columnSpan: 2, isLastInRow: true, isLastInColumn: true, isConnected: true }) }
           ]
         ]
       }

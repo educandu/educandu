@@ -2,7 +2,7 @@ import React from 'react';
 import TableIcon from './table-icon.js';
 import TableDisplay from './table-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { createEmptyCell, createTableCellsFlat } from './table-utils.js';
+import { COLUMN_DISTRIBUTION, createEmptyCell, createTableCellsFlat } from './table-utils.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -40,7 +40,9 @@ class TableInfo {
       rowCount: DEFAULT_TABLE_ROW_COUNT,
       columnCount: DEFAULT_TABLE_COLUMN_COUNT,
       cells: createTableCellsFlat(DEFAULT_TABLE_ROW_COUNT, DEFAULT_TABLE_COLUMN_COUNT, (rowIndex, columnIndex) => createEmptyCell(rowIndex, columnIndex)),
-      renderMedia: false
+      columnDistribution: COLUMN_DISTRIBUTION.automatic,
+      renderMedia: false,
+      width: 100
     };
   }
 
