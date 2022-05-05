@@ -1,16 +1,21 @@
 import by from 'thenby';
+import ReactDOM from 'react-dom';
+import reactPlayerNs from 'react-player';
 import { useTranslation } from 'react-i18next';
+import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
-import React, { Fragment, useState } from 'react';
 import Timeline from '../../components/timeline.js';
 import { Form, Input, Radio, Spin, Switch } from 'antd';
 import { MEDIA_TYPE, SOURCE_TYPE } from './constants.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+
+const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -40,14 +45,40 @@ const getMediaType = path => {
   return MEDIA_TYPE.unknown;
 };
 
+function determineMediaDuration(url, containerRef) {
+  return new Promise((resolve, reject) => {
+    try {
+      const element = React.createElement(ReactPlayer, {
+        url,
+        light: false,
+        playing: false,
+        onDuration: durationInSeconds => {
+          const durationInMiliseconds = durationInSeconds * 1000;
+          resolve(durationInMiliseconds);
+          ReactDOM.unmountComponentAtNode(containerRef.current);
+        },
+        onError: error => {
+          reject(error);
+          ReactDOM.unmountComponentAtNode(containerRef.current);
+        }
+      });
+      ReactDOM.render(element, containerRef.current);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 function InteractiveMediaEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('interactiveMedia');
+  const hiddenPlayerContainerRef = useRef(null);
 
   const { sourceType, sourceUrl, text, width, aspectRatio, showVideo } = content;
 
   const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
   const defaultAspectRatio = supportedAspectRatios[0];
+  const getDefaultChapter = () => ({ title: '', startTimecode: 0, key: uniqueId.create() });
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -57,27 +88,27 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const [chapters, setChapters] = useState(ensureChaptersOrder(content.chapters));
 
-  const determineSourceDuration = newSourceUrl => {
-    if (!newSourceUrl) {
+  const determineSourceDuration = async url => {
+    if (!url) {
       return 0;
     }
 
-    const isInvalidSourceUrl
-      = sourceType !== SOURCE_TYPE.internal
-      && validation.validateUrl(newSourceUrl, t).validateStatus === 'error';
+    const completeUrl = sourceType === SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
+    const isInvalidSourceUrl = sourceType !== SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
 
     if (isInvalidSourceUrl) {
       return 0;
     }
 
-    setIsDeterminingDuration(true);
-
-    return new Promise(resolve => {
-      setTimeout(() => {
-        setIsDeterminingDuration(false);
-        resolve(1000);
-      }, 30000);
-    });
+    try {
+      setIsDeterminingDuration(true);
+      const duration = await determineMediaDuration(completeUrl, hiddenPlayerContainerRef);
+      return duration;
+    } catch (error) {
+      return 0;
+    } finally {
+      setIsDeterminingDuration(false);
+    }
   };
 
   const handleChapterAdd = startTimecode => {
@@ -118,34 +149,45 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const handleSourceTypeChange = event => {
     const { value } = event.target;
-    changeContent({ sourceType: value, sourceUrl: '', showVideo: false, aspectRatio: defaultAspectRatio });
+    changeContent({
+      sourceType: value,
+      sourceUrl: '',
+      showVideo: false,
+      aspectRatio: defaultAspectRatio,
+      sourceDuration: 0,
+      chapters: [getDefaultChapter()]
+    });
+  };
+
+  const handleSourceUrlChange = async value => {
+    const newSourceDuration = await determineSourceDuration(value);
+    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    changeContent({
+      sourceUrl: value,
+      showVideo: newShowVideo,
+      aspectRatio: defaultAspectRatio,
+      sourceDuration: newSourceDuration,
+      chapters: [getDefaultChapter()]
+    });
   };
 
   const handleExternalUrlChange = async event => {
     const { value } = event.target;
-    const newSourceDuration = await determineSourceDuration(value);
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
+    await handleSourceUrlChange(value);
   };
 
   const handleInternalUrlChanged = async event => {
     const { value } = event.target;
-    const newSourceDuration = await determineSourceDuration(value);
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
+    await handleSourceUrlChange(value);
   };
 
   const handleYoutubeUrlChanged = async event => {
     const { value } = event.target;
-    const newSourceDuration = await determineSourceDuration(value);
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
+    await handleSourceUrlChange(value);
   };
 
   const handleInternalUrlFileNameChanged = async value => {
-    const newSourceDuration = await determineSourceDuration(value);
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio, sourceDuration: newSourceDuration });
+    await handleSourceUrlChange(value);
   };
 
   const handleAspectRatioChanged = event => {
@@ -239,13 +281,13 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         onPartDelete={handleChapterDelete}
         onStartTimecodeChange={handleStartTimecodeChange}
         />
-
       {isDeterminingDuration && (
         <Fragment>
           <div className="InteractiveMediaEditor-overlay" />
           <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
         </Fragment>
       )}
+      <div ref={hiddenPlayerContainerRef} className="InteractiveMediaEditor-hiddenPlayerContainer" />
     </div>
   );
 }
