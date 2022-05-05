@@ -1,3 +1,9 @@
 name:
   en: Interactive media
   de: Interaktive Medien
+determiningDuration:
+  en: Determining media duration ...
+  de: Mediendauer wird entdeckt ...
+defaultChapterTitle:
+  en: Chapter
+  de: Kapitel

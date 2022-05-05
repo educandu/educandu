@@ -3,10 +3,3 @@ export const SOURCE_TYPE = {
   external: 'external',
   youtube: 'youtube'
 };
-
-export const MEDIA_TYPE = {
-  none: ' none',
-  unknown: 'unknown',
-  audio: 'audio',
-  video: 'video'
-};

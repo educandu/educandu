@@ -1,102 +1,95 @@
 import by from 'thenby';
-import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import reactPlayerNs from 'react-player';
+import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
+import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
-import { Form, Input, Radio, Switch } from 'antd';
 import Timeline from '../../components/timeline.js';
-import { MEDIA_TYPE, SOURCE_TYPE } from './constants.js';
+import { MEDIA_TYPE } from '../../domain/constants.js';
+import { Form, Input, Radio, Spin, Switch } from 'antd';
+import { getMediaType } from '../../utils/media-utils.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
+import InteractiveMediaInfo from './interactive-media-info.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+
+const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const TextArea = Input.TextArea;
 const RadioButton = Radio.Button;
 
-const videoTypes = ['mp4', 'mov', 'avi', 'mkv'];
-const audioTypes = ['mp3', 'flac', 'aac', 'wav'];
+const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
 
-const ensurePartsOrder = parts => parts.sort(by(part => part.startTimecode));
-const getAspectRatioText = aspectRatio => `${aspectRatio.h}:${aspectRatio.v}`;
-
-const getMediaType = path => {
-  const sanitizedPath = (path || '').trim();
-  const extensionMatches = sanitizedPath.match(/\.([0-9a-z]+)$/i);
-  const extension = extensionMatches && extensionMatches[1];
-
-  if (!extension) {
-    return MEDIA_TYPE.none;
-  }
-  if (audioTypes.includes(extension)) {
-    return MEDIA_TYPE.audio;
-  }
-  if (videoTypes.includes(extension)) {
-    return MEDIA_TYPE.video;
-  }
-  return MEDIA_TYPE.unknown;
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 14 }
 };
 
 function InteractiveMediaEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const clientConfig = useService(ClientConfig);
+  const hiddenPlayerContainerRef = useRef(null);
   const { t } = useTranslation('interactiveMedia');
+  const interactiveMediaInfo = useService(InteractiveMediaInfo);
 
-  const { sourceType, sourceUrl, text, width, aspectRatio, showVideo } = content;
+  const getAspectRatioText = givenAspectRatio => `${givenAspectRatio.h}:${givenAspectRatio.v}`;
+  const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
 
-  const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
   const defaultAspectRatio = supportedAspectRatios[0];
+  const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
+  const { sourceType, sourceUrl, sourceDuration, chapters, text, width, aspectRatio, showVideo } = content;
 
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 14 }
-  };
+  function determineMediaDuration(url, containerRef) {
+    return new Promise((resolve, reject) => {
+      try {
+        const element = React.createElement(ReactPlayer, {
+          url,
+          light: false,
+          playing: false,
+          onDuration: durationInSeconds => {
+            const durationInMiliseconds = durationInSeconds * 1000;
+            resolve(durationInMiliseconds);
+            ReactDOM.unmountComponentAtNode(containerRef.current);
+          },
+          onError: error => {
+            reject(error);
+            ReactDOM.unmountComponentAtNode(containerRef.current);
+          }
+        });
+        ReactDOM.render(element, containerRef.current);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
-  const lastTimecode = 7;
-  const initialParts = [
-    {
-      title: 'the brown fox',
-      startTimecode: 0
-    },
-    {
-      title: 'jumped the veeeeeeeeeery looooong fence',
-      startTimecode: 2 * 1000
-    },
-    {
-      title: 'the end',
-      startTimecode: lastTimecode * 1000
+  const determineSourceDuration = async url => {
+    if (!url) {
+      return 0;
     }
-  ].map((part, index) => ({ ...part, key: index.toString() }));
 
-  const [parts, setParts] = useState(ensurePartsOrder(initialParts));
-  const length = (lastTimecode * 1000) + 1000;
+    const completeUrl = sourceType === SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
+    const isInvalidSourceUrl = sourceType !== SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
 
-  const handlePartAdd = startTimecode => {
-    const newPart = {
-      key: parts.length.toString(),
-      title: parts.length.toString(),
-      startTimecode
-    };
-    setParts(ensurePartsOrder([...parts, newPart]));
-  };
-
-  const handlePartDelete = key => {
-    const part = parts.find(p => p.key === key);
-    const partIndex = parts.findIndex(p => p.key === key);
-    const nextPart = parts[partIndex + 1];
-    if (nextPart) {
-      nextPart.startTimecode = part.startTimecode;
+    if (isInvalidSourceUrl) {
+      return 0;
     }
-    const newParts = removeItemAt(parts, partIndex);
-    setParts(newParts);
-  };
 
-  const handleStartTimecodeChange = (key, newStartTimecode) => {
-    const part = parts.find(p => p.key === key);
-    part.startTimecode = newStartTimecode;
-    setParts(parts.slice());
+    try {
+      setIsDeterminingDuration(true);
+      const duration = await determineMediaDuration(completeUrl, hiddenPlayerContainerRef);
+      return duration;
+    } catch (error) {
+      return 0;
+    } finally {
+      setIsDeterminingDuration(false);
+    }
   };
 
   const changeContent = newContentValues => {
@@ -109,32 +102,70 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     onContentChanged(newContent, isInvalidSourceUrl);
   };
 
+  const handleChapterAdd = startTimecode => {
+    const chapter = { key: uniqueId.create(), title: t('defaultChapterTitle'), startTimecode };
+    const newChapters = ensureChaptersOrder([...chapters, chapter]);
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterDelete = key => {
+    const chapterIndex = chapters.findIndex(p => p.key === key);
+    const nextChapter = chapters[chapterIndex + 1];
+    if (nextChapter) {
+      nextChapter.startTimecode = chapters[chapterIndex].startTimecode;
+    }
+    const newChapters = removeItemAt(chapters, chapterIndex);
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleStartTimecodeChange = (key, newStartTimecode) => {
+    const chapter = chapters.find(p => p.key === key);
+    chapter.startTimecode = newStartTimecode;
+    const newChapters = [...chapters];
+    changeContent({ chapters: newChapters });
+  };
+
   const handleSourceTypeChange = event => {
     const { value } = event.target;
-    changeContent({ sourceType: value, sourceUrl: '', showVideo: false, aspectRatio: defaultAspectRatio });
+    changeContent({
+      sourceType: value,
+      sourceUrl: '',
+      showVideo: false,
+      aspectRatio: defaultAspectRatio,
+      sourceDuration: 0,
+      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+    });
   };
 
-  const handleExternalUrlChange = event => {
+  const handleSourceUrlChange = async value => {
+    const newSourceDuration = await determineSourceDuration(value);
+    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    changeContent({
+      sourceUrl: value,
+      showVideo: newShowVideo,
+      aspectRatio: defaultAspectRatio,
+      sourceDuration: newSourceDuration,
+      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+    });
+  };
+
+  const handleExternalUrlChange = async event => {
     const { value } = event.target;
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+    await handleSourceUrlChange(value);
   };
 
-  const handleInternalUrlChanged = event => {
+  const handleInternalUrlChanged = async event => {
     const { value } = event.target;
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+    await handleSourceUrlChange(value);
   };
 
-  const handleYoutubeUrlChanged = event => {
+  const handleYoutubeUrlChanged = async event => {
     const { value } = event.target;
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+    await handleSourceUrlChange(value);
   };
 
-  const handleInternalUrlFileNameChanged = value => {
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
-    changeContent({ sourceUrl: value, showVideo: newShowVideo, aspectRatio: defaultAspectRatio });
+  const handleInternalUrlFileNameChanged = async value => {
+    await handleSourceUrlChange(value);
   };
 
   const handleAspectRatioChanged = event => {
@@ -198,7 +229,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             defaultValue={getAspectRatioText(defaultAspectRatio)}
             value={`${aspectRatio.h}:${aspectRatio.v}`}
             onChange={handleAspectRatioChanged}
-            disabled={[MEDIA_TYPE.audio, MEDIA_TYPE.unknown].includes(getMediaType(sourceUrl))}
+            disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
             >
             {supportedAspectRatios.map(ratio => (
               <RadioButton key={getAspectRatioText(ratio)} value={getAspectRatioText(ratio)}>{getAspectRatioText(ratio)}</RadioButton>
@@ -210,7 +241,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             size="small"
             checked={showVideo}
             onChange={handleShowVideoChanged}
-            disabled={[MEDIA_TYPE.audio, MEDIA_TYPE.unknown].includes(getMediaType(sourceUrl))}
+            disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
             />
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
@@ -221,7 +252,20 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         </Form.Item>
       </Form>
 
-      <Timeline length={length} parts={parts} onPartAdd={handlePartAdd} onPartDelete={handlePartDelete} onStartTimecodeChange={handleStartTimecodeChange} />
+      <Timeline
+        length={sourceDuration}
+        parts={chapters}
+        onPartAdd={handleChapterAdd}
+        onPartDelete={handleChapterDelete}
+        onStartTimecodeChange={handleStartTimecodeChange}
+        />
+      {isDeterminingDuration && (
+        <Fragment>
+          <div className="InteractiveMediaEditor-overlay" />
+          <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
+        </Fragment>
+      )}
+      <div ref={hiddenPlayerContainerRef} className="InteractiveMediaEditor-hiddenPlayerContainer" />
     </div>
   );
 }

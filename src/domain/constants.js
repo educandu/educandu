@@ -90,6 +90,13 @@ export const INVALID_ROOM_INVITATION_REASON = {
   user: 'user'
 };
 
+export const MEDIA_TYPE = {
+  none: 'none',
+  unknown: 'unknown',
+  audio: 'audio',
+  video: 'video'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

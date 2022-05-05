@@ -1,5 +1,6 @@
 import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
+import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
@@ -32,17 +33,27 @@ class InteractiveMediaInfo {
     return (await import('./interactive-media-editor.js')).default;
   }
 
-  getDefaultContent() {
+  getDefaultChapter(t) {
+    return {
+      key: uniqueId.create(),
+      startTimecode: 0,
+      title: t('interactiveMedia:defaultChapterTitle')
+    };
+  }
+
+  getDefaultContent(t) {
     return {
       sourceType: SOURCE_TYPE.internal,
       sourceUrl: '',
+      sourceDuration: 0,
       text: '',
       width: 100,
       aspectRatio: {
         h: 16,
         v: 9
       },
-      showVideo: false
+      showVideo: false,
+      chapters: [this.getDefaultChapter(t)]
     };
   }
 
