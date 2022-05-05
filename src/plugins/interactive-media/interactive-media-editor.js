@@ -10,6 +10,7 @@ import { MEDIA_TYPE, SOURCE_TYPE } from './constants.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
+import InteractiveMediaInfo from './interactive-media-info.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
@@ -35,10 +36,10 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const clientConfig = useService(ClientConfig);
   const hiddenPlayerContainerRef = useRef(null);
   const { t } = useTranslation('interactiveMedia');
+  const interactiveMediaInfo = useService(InteractiveMediaInfo);
 
   const getAspectRatioText = givenAspectRatio => `${givenAspectRatio.h}:${givenAspectRatio.v}`;
   const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
-  const getDefaultChapter = () => ({ key: uniqueId.create(), title: t('defaultChapterTitle'), startTimecode: 0 });
 
   const defaultAspectRatio = supportedAspectRatios[0];
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
@@ -149,7 +150,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       showVideo: false,
       aspectRatio: defaultAspectRatio,
       sourceDuration: 0,
-      chapters: [getDefaultChapter()]
+      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
   };
 
@@ -161,7 +162,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       showVideo: newShowVideo,
       aspectRatio: defaultAspectRatio,
       sourceDuration: newSourceDuration,
-      chapters: [getDefaultChapter()]
+      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
   };
 
