@@ -1569,7 +1569,10 @@
     "resources": {
       "name": "Interactive media",
       "determiningDuration": "Determining media duration ...",
-      "defaultChapterTitle": "Chapter"
+      "defaultChapterTitle": "Chapter",
+      "editChapter": "Edit chapter",
+      "selectPreviousChapter": "Select previous chapter",
+      "selectNextChapter": "Select next chapter"
     }
   },
   {
@@ -1578,7 +1581,10 @@
     "resources": {
       "name": "Interaktive Medien",
       "determiningDuration": "Mediendauer wird entdeckt ...",
-      "defaultChapterTitle": "Kapitel"
+      "defaultChapterTitle": "Kapitel",
+      "editChapter": "Kapitel bearbeiten",
+      "selectPreviousChapter": "Vorheriges Kapitel wählen",
+      "selectNextChapter": "Nächstes Kapitel wählen"
     }
   },
   {

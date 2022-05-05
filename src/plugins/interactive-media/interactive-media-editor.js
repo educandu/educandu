@@ -7,15 +7,16 @@ import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import Timeline from '../../components/timeline.js';
 import { MEDIA_TYPE } from '../../domain/constants.js';
-import { Form, Input, Radio, Spin, Switch } from 'antd';
 import { getMediaType } from '../../utils/media-utils.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
+import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
@@ -42,6 +43,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
 
   const defaultAspectRatio = supportedAspectRatios[0];
+  const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, sourceDuration, chapters, text, width, aspectRatio, showVideo } = content;
 
@@ -127,6 +129,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const handleSourceTypeChange = event => {
     const { value } = event.target;
+    setSelectedChapterIndex(0);
     changeContent({
       sourceType: value,
       sourceUrl: '',
@@ -140,6 +143,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const handleSourceUrlChange = async value => {
     const newSourceDuration = await determineSourceDuration(value);
     const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    setSelectedChapterIndex(0);
     changeContent({
       sourceUrl: value,
       showVideo: newShowVideo,
@@ -184,6 +188,21 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const handleWidthChanged = newValue => {
     changeContent({ width: newValue });
+  };
+
+  const handlePreviousChapterClick = () => {
+    setSelectedChapterIndex(selectedChapterIndex - 1);
+  };
+
+  const handleNextChapterClick = () => {
+    setSelectedChapterIndex(selectedChapterIndex + 1);
+  };
+
+  const handleChapterTitleChange = event => {
+    const { value } = event.target;
+    const newChapters = [...chapters];
+    newChapters[selectedChapterIndex].title = value;
+    changeContent({ chapters: newChapters });
   };
 
   return (
@@ -250,15 +269,51 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <TextArea value={text} onChange={handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
         </Form.Item>
+
+        <div className="InteractiveMediaEditor-timeline">
+          <Timeline
+            length={sourceDuration}
+            parts={chapters}
+            selectedPartIndex={selectedChapterIndex}
+            onPartAdd={handleChapterAdd}
+            onPartDelete={handleChapterDelete}
+            onStartTimecodeChange={handleStartTimecodeChange}
+            />
+        </div>
+
+        {chapters.length && (
+          <Fragment>
+            <div className="InteractiveMediaEditor-chapterSelector">
+              <Tooltip title={t('selectPreviousChapter')}>
+                <Button
+                  type="link"
+                  icon={<LeftOutlined />}
+                  onClick={handlePreviousChapterClick}
+                  disabled={selectedChapterIndex === 0}
+                  />
+              </Tooltip>
+              <span className="InteractiveMediaEditor-selectedChapterTitle">{chapters[selectedChapterIndex].title}</span>
+              <Tooltip title={t('selectNextChapter')}>
+                <Button
+                  type="link"
+                  icon={<RightOutlined />}
+                  onClick={handleNextChapterClick}
+                  disabled={selectedChapterIndex === chapters.length - 1}
+                  />
+              </Tooltip>
+            </div>
+            <div className="Panel">
+              <div className="Panel-header">{t('editChapter')}</div>
+              <div className="Panel-content">
+                <FormItem label={t('common:title')} {...formItemLayout}>
+                  <Input value={chapters[selectedChapterIndex].title} onChange={handleChapterTitleChange} />
+                </FormItem>
+              </div>
+            </div>
+          </Fragment>
+        )}
       </Form>
 
-      <Timeline
-        length={sourceDuration}
-        parts={chapters}
-        onPartAdd={handleChapterAdd}
-        onPartDelete={handleChapterDelete}
-        onStartTimecodeChange={handleStartTimecodeChange}
-        />
       {isDeterminingDuration && (
         <Fragment>
           <div className="InteractiveMediaEditor-overlay" />

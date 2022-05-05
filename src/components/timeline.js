@@ -10,7 +10,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 const MIN_PART_WIDTH_IN_PX = 35;
 const MIN_PART_DURATION_IN_MS = 1000;
 
-function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChange }) {
+function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, onStartTimecodeChange }) {
   const timelineRef = useRef(null);
 
   const [dragState, setDragState] = useState(null);
@@ -179,9 +179,12 @@ function Timeline({ length, parts, onPartAdd, onPartDelete, onStartTimecodeChang
     );
   };
 
-  const renderSegment = segment => (
-    <div key={segment.key} className="Timeline-segment" style={{ width: `${segment.width}px` }}>{segment.title}</div>
-  );
+  const renderSegment = (segment, index) => {
+    const classes = classNames('Timeline-segment', { 'is-selected': index === selectedPartIndex });
+    return (
+      <div key={segment.key} className={classes} style={{ width: `${segment.width}px` }}>{segment.title}</div>
+    );
+  };
 
   const renderDeleteSegment = segment => {
     return (
@@ -237,13 +240,15 @@ Timeline.propTypes = {
     key: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     startTimecode: PropTypes.number.isRequired
-  })).isRequired
+  })).isRequired,
+  selectedPartIndex: PropTypes.number
 };
 
 Timeline.defaultProps = {
   onPartAdd: () => { },
   onPartDelete: () => { },
-  onStartTimecodeChange: () => { }
+  onStartTimecodeChange: () => { },
+  selectedPartIndex: -1
 };
 
 export default Timeline;
