@@ -1,12 +1,14 @@
 import by from 'thenby';
 import ReactDOM from 'react-dom';
 import reactPlayerNs from 'react-player';
+import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import Timeline from '../../components/timeline.js';
+import { MEDIA_TYPE } from '../../domain/constants.js';
 import { Form, Input, Radio, Spin, Switch } from 'antd';
-import { MEDIA_TYPE, SOURCE_TYPE } from './constants.js';
+import { getMediaType } from '../../utils/media-utils.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -23,8 +25,6 @@ const RadioGroup = Radio.Group;
 const TextArea = Input.TextArea;
 const RadioButton = Radio.Button;
 
-const videoTypes = ['mp4', 'mov', 'avi', 'mkv'];
-const audioTypes = ['mp3', 'flac', 'aac', 'wav'];
 const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
 
 const formItemLayout = {
@@ -44,23 +44,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const defaultAspectRatio = supportedAspectRatios[0];
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, sourceDuration, chapters, text, width, aspectRatio, showVideo } = content;
-
-  const getMediaType = path => {
-    const sanitizedPath = (path || '').trim();
-    const extensionMatches = sanitizedPath.match(/\.([0-9a-z]+)$/i);
-    const extension = extensionMatches && extensionMatches[1];
-
-    if (!extension) {
-      return MEDIA_TYPE.none;
-    }
-    if (audioTypes.includes(extension)) {
-      return MEDIA_TYPE.audio;
-    }
-    if (videoTypes.includes(extension)) {
-      return MEDIA_TYPE.video;
-    }
-    return MEDIA_TYPE.unknown;
-  };
 
   function determineMediaDuration(url, containerRef) {
     return new Promise((resolve, reject) => {
@@ -246,7 +229,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             defaultValue={getAspectRatioText(defaultAspectRatio)}
             value={`${aspectRatio.h}:${aspectRatio.v}`}
             onChange={handleAspectRatioChanged}
-            disabled={[MEDIA_TYPE.audio, MEDIA_TYPE.unknown].includes(getMediaType(sourceUrl))}
+            disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
             >
             {supportedAspectRatios.map(ratio => (
               <RadioButton key={getAspectRatioText(ratio)} value={getAspectRatioText(ratio)}>{getAspectRatioText(ratio)}</RadioButton>
@@ -258,7 +241,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             size="small"
             checked={showVideo}
             onChange={handleShowVideoChanged}
-            disabled={[MEDIA_TYPE.audio, MEDIA_TYPE.unknown].includes(getMediaType(sourceUrl))}
+            disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
             />
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>

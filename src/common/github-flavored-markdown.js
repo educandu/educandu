@@ -1,26 +1,15 @@
 import MarkdownIt from 'markdown-it';
+import { MEDIA_TYPE } from '../domain/constants.js';
 import { escapeHtml } from '../utils/string-utils.js';
+import { getMediaType } from '../utils/media-utils.js';
 
 const CDN_URL_PREFIX = 'cdn://';
-
-const audioUrlPattern = new RegExp(`\\.(${['aac', 'm4a', 'mp3', 'oga', 'ogg', 'wav'].join('|')})$`, 'i');
-const videoUrlPattern = new RegExp(`\\.(${['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg'].join('|')})$`, 'i');
 
 // Matches both URLs in e.g.: [![alt](cdn://image.png "image title")](cdn://some-target)
 const imageInsideOfHyperlinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
 
 // Matches the URL in e.g.: ![alt](cdn://image.png "image title")
 const simpleHyperlinkOrImagePattern = /(!?\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
-
-const getMediaType = url => {
-  if (audioUrlPattern.test(url)) {
-    return 'audio';
-  }
-  if (videoUrlPattern.test(url)) {
-    return 'video';
-  }
-  return 'image';
-};
 
 const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRendering) => {
   // Remember original renderer, if overridden, or proxy to default renderer
@@ -40,7 +29,7 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
 
     if (env.renderMedia && allowMediaRendering && targetUrl) {
       const mediaType = getMediaType(targetUrl);
-      if (mediaType === 'audio' || mediaType === 'video') {
+      if (mediaType === MEDIA_TYPE.audio || mediaType === MEDIA_TYPE.video) {
         return `<${mediaType} src="${escapeHtml(targetUrl)}" controls></${mediaType}>`;
       }
     }
