@@ -21,7 +21,8 @@ describe('media-utils', () => {
       { url: 'file.mpg', expectedResult: MEDIA_TYPE.video },
       { url: 'file.mpeg', expectedResult: MEDIA_TYPE.video },
       { url: 'file.avi', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.mkv', expectedResult: MEDIA_TYPE.video }
+      { url: 'file.mkv', expectedResult: MEDIA_TYPE.video },
+      { url: 'file.MKV', expectedResult: MEDIA_TYPE.video }
     ];
 
     testCases.forEach(({ url, expectedResult }) => {

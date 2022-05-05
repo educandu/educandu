@@ -6,7 +6,7 @@ const videoUrlExtensions = ['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg', 'mov', '
 export const getMediaType = url => {
   const sanitizedUrl = (url || '').trim();
   const extensionMatches = sanitizedUrl.match(/\.([0-9a-z]+)$/i);
-  const extension = extensionMatches && extensionMatches[1];
+  const extension = extensionMatches?.[1]?.toLowerCase();
 
   if (!extension) {
     return MEDIA_TYPE.none;
