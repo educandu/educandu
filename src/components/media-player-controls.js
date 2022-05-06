@@ -2,19 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Slider } from 'antd';
+import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import { AudioMutedOutlined, CaretRightOutlined, PauseOutlined, SoundOutlined } from '@ant-design/icons';
-
-function formatMillisecondsAsDuration(milliseconds) {
-  const totalSeconds = Math.round(milliseconds / 1000);
-  const totalMinutes = Math.floor(totalSeconds / 60);
-  const totalHours = Math.floor(totalMinutes / 60);
-
-  const seconds = (totalSeconds % 60).toString().padStart(2, '0');
-  const minutes = (totalMinutes % 60).toString().padStart(2, '0');
-  const hours = totalHours.toString().padStart(2, '0');
-
-  return totalHours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
-}
 
 function MediaPlayerControls({
   durationInMilliseconds,
