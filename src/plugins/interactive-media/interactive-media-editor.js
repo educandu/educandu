@@ -13,6 +13,7 @@ import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import DebouncedInput from '../../components/debounced-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
@@ -153,21 +154,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     });
   };
 
-  const handleExternalUrlChange = async event => {
-    const { value } = event.target;
-    await handleSourceUrlChange(value);
-  };
-
-  const handleInternalUrlChanged = async event => {
-    const { value } = event.target;
-    await handleSourceUrlChange(value);
-  };
-
-  const handleYoutubeUrlChanged = async event => {
-    const { value } = event.target;
-    await handleSourceUrlChange(value);
-  };
-
   const handleInternalUrlFileNameChanged = async value => {
     await handleSourceUrlChange(value);
   };
@@ -217,17 +203,13 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         </FormItem>
         {sourceType === SOURCE_TYPE.external && (
           <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <Input value={sourceUrl} onChange={handleExternalUrlChange} />
+            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} />
           </FormItem>
         )}
         {sourceType === SOURCE_TYPE.internal && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Input
-                addonBefore={`${clientConfig.cdnRootUrl}/`}
-                value={sourceUrl}
-                onChange={handleInternalUrlChanged}
-                />
+              <DebouncedInput addonBefore={`${clientConfig.cdnRootUrl}/`} value={sourceUrl} onChange={handleSourceUrlChange} />
               <StorageFilePicker
                 publicStorage={publicStorage}
                 privateStorage={privateStorage}
@@ -239,7 +221,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         )}
         {sourceType === SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <Input value={sourceUrl} onChange={handleYoutubeUrlChanged} />
+            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} />
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
