@@ -1,7 +1,4 @@
-@image-tiles-description-color: @edu-text-color;
-
-.ImageTiles {
-}
+.ImageTiles {}
 
 .ImageTiles-grid {
   display: grid;
@@ -14,6 +11,10 @@
 .ImageTiles-tile {
   text-align: center;
   overflow-x: hidden;
+
+  &.ImageTiles-tile--noLink {
+    cursor: not-allowed;
+  }
 }
 
 .ImageTiles-img {
@@ -21,5 +22,5 @@
 }
 
 .ImageTiles-description {
-  color: @image-tiles-description-color;
+  color: @edu-text-color;
 }
