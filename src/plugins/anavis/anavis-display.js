@@ -2,10 +2,11 @@ import React from 'react';
 import colorHelper from '../../ui/color-helper.js';
 import Markdown from '../../components/markdown.js';
 import { MEDIA_KIND, SOURCE_TYPE } from './constants.js';
+import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MediaPlayer, { ASPECT_RATIO } from '../../components/media-player.js';
+import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 function AnavisDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
