@@ -60,7 +60,7 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
   };
 
   const handleAccountFinish = ({ username, email }) => {
-    dialogs.confirmWithPassword(user.username, () => saveAccountData({ username, email }));
+    dialogs.confirmWithPassword(user.username, () => saveAccountData({ username: username.trim(), email }));
   };
 
   const handleResetPasswordClick = async () => {

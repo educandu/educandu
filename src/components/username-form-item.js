@@ -24,7 +24,7 @@ function UsernameFormItem({ name, usernamesInUse, ...formItemProps }) {
     },
     {
       validator: (_rule, value) => {
-        return value && usernamesInUse.includes(value.toLowerCase())
+        return value && usernamesInUse.includes(value.trim().toLowerCase())
           ? Promise.reject(new Error(t('usernameIsInUse')))
           : Promise.resolve();
       }

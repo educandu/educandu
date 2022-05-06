@@ -56,7 +56,7 @@ function Register({ PageTemplate, SiteLogo }) {
 
   const handleFinish = values => {
     const { username, password, email } = values;
-    register({ username, password, email });
+    register({ username: username.trim(), password, email });
   };
 
   const agreementValidationRules = [

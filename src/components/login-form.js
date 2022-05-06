@@ -61,7 +61,7 @@ export default function LoginForm({
   const handleFinish = values => {
     clearLoginError();
     const { emailOrUsername, password } = values;
-    login({ emailOrUsername, password });
+    login({ emailOrUsername: emailOrUsername.trim(), password });
   };
 
   const handlePressEnter = () => {
