@@ -19,11 +19,15 @@
 .u-img-color-flip {
   filter: grayscale(100%);
   transition: all .2s ease-in-out;
+
+  &:hover {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
 }
 
-.u-img-color-flip:hover {
-  filter: grayscale(0%);
-  transform: scale(1.05);
+.u-img-color-flip-hover-disabled {
+  filter: grayscale(100%);
 }
 
 .u-danger {

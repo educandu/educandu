@@ -7,53 +7,50 @@ import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { HOVER_EFFECT, IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 
-function getSource(type, url, cdnRootUrl) {
-  switch (type) {
+function getTileImageUrl(tile, cdnRootUrl) {
+  const image = tile.image || {};
+  switch (image.sourceType) {
     case IMAGE_SOURCE_TYPE.external:
-      return url || null;
+      return image.sourceUrl;
     case IMAGE_SOURCE_TYPE.internal:
-      return url ? `${cdnRootUrl}/${url}` : null;
+      return image.sourceUrl ? `${cdnRootUrl}/${image.sourceUrl}` : '';
     default:
-      return null;
+      return '';
   }
 }
+
+const getTileLinkUrl = tile => {
+  const link = tile.link || {};
+  switch (link.sourceType) {
+    case LINK_SOURCE_TYPE.external:
+      return link.sourceUrl;
+    case LINK_SOURCE_TYPE.document:
+      return link.documentId ? urls.getDocUrl({ keyAndSlug: link.documentId }) : '';
+    default:
+      return '';
+  }
+};
 
 function ImageTilesDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  const getTileUrl = tile => {
-    const link = tile.link || {};
-    switch (link.sourceType) {
-      case LINK_SOURCE_TYPE.external:
-        return link.sourceUrl;
-      case LINK_SOURCE_TYPE.document:
-        return urls.getDocUrl({ keyAndSlug: link.documentId });
-      default:
-        return '';
-    }
-  };
-
   const renderTile = (tile, index) => {
+    const linkUrl = getTileLinkUrl(tile);
+    const imageUrl = getTileImageUrl(tile, clientConfig.cdnRootUrl);
+
     const classes = classNames({
       'ImageTiles-tile': true,
-      'u-img-color-flip': content.hoverEffect === HOVER_EFFECT.colorizeZoom
+      'ImageTiles-tile--noLink': !linkUrl,
+      'u-img-color-flip': content.hoverEffect === HOVER_EFFECT.colorizeZoom && linkUrl,
+      'u-img-color-flip-hover-disabled': content.hoverEffect === HOVER_EFFECT.colorizeZoom && !linkUrl
     });
 
-    if (!tile) {
-      return <div key={index.toString()} className={classes} />;
-    }
+    const image = <img className="ImageTiles-img" src={imageUrl} />;
+    const description = <div className="ImageTiles-description"><Markdown>{tile.description}</Markdown></div>;
 
-    return (
-      <a key={index.toString()} className={classes} href={getTileUrl(tile)}>
-        <img
-          className="ImageTiles-img"
-          src={getSource(tile.image.sourceType, tile.image.sourceUrl, clientConfig.cdnRootUrl)}
-          />
-        <div className="ImageTiles-description">
-          <Markdown>{tile.description}</Markdown>
-        </div>
-      </a>
-    );
+    return linkUrl
+      ? <a key={index.toString()} className={classes} href={linkUrl}>{image}{description}</a>
+      : <span key={index.toString()} className={classes}>{image}{description}</span>;
   };
 
   return (
