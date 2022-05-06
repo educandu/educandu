@@ -1496,7 +1496,7 @@
       "imageSource": "Image source",
       "linkSource": "Link source",
       "documentLink": "Document link",
-      "documentKey": "Document key",
+      "documentTitle": "Document title",
       "imageDescription": "Image description"
     }
   },
@@ -1515,7 +1515,7 @@
       "imageSource": "Bild-Quelle",
       "linkSource": "Link-Quelle",
       "documentLink": "Dokument-Link",
-      "documentKey": "Dokument-ID",
+      "documentTitle": "Dokument-Titel",
       "imageDescription": "Bildunterschrift"
     }
   },

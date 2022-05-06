@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
 import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import DocumentPicker from '../../components/document-picker.js';
 import { useService } from '../../components/container-context.js';
 import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
@@ -62,8 +62,7 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
     triggerChange({ link: { sourceUrl: value, sourceType: link.sourceType, documentId: '' } });
   };
 
-  const handleLinkDocumentIdValueChanged = event => {
-    const { value } = event.target;
+  const handleDocumentChange = value => {
     triggerChange({ link: { sourceUrl: '', sourceType: link.sourceType, documentId: value } });
   };
 
@@ -112,8 +111,8 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
         </FormItem>
       )}
       {link.sourceType === LINK_SOURCE_TYPE.document && (
-        <FormItem label={t('documentKey')} {...formItemLayout}>
-          <Input addonBefore={urls.docsPrefix} value={link.documentId} onChange={handleLinkDocumentIdValueChanged} />
+        <FormItem label={t('documentTitle')} {...formItemLayout}>
+          <DocumentPicker documentId={link.documentId} onChange={handleDocumentChange} />
         </FormItem>
       )}
     </React.Fragment>

@@ -3,6 +3,7 @@ import { validate } from '../domain/validation.js';
 import { documentDBSchema } from '../domain/schemas/document-schemas.js';
 
 const documentMetadataProjection = {
+  _id: 1,
   key: 1,
   revision: 1,
   createdOn: 1,
@@ -68,6 +69,10 @@ class DocumentStore {
 
   getDocumentsExtendedMetadataByConditions(conditions, { session } = {}) {
     return this.collection.find({ $and: conditions }, { projection: documentExtendedMetadataProjection, session }).toArray();
+  }
+
+  getDocumentsMetadataByConditions(conditions, { session } = {}) {
+    return this.collection.find({ $and: conditions }, { projection: documentMetadataProjection, session }).toArray();
   }
 
   getDocumentTagsMatchingText(text) {
