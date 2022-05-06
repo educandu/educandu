@@ -41,8 +41,8 @@ function ImageTilesDisplay({ content }) {
     const classes = classNames({
       'ImageTiles-tile': true,
       'ImageTiles-tile--noLink': !linkUrl,
-      'u-img-color-flip': content.hoverEffect === HOVER_EFFECT.colorizeZoom,
-      'u-img-color-flip-disabled': content.hoverEffect === HOVER_EFFECT.colorizeZoom && !linkUrl
+      'u-img-color-flip': content.hoverEffect === HOVER_EFFECT.colorizeZoom && linkUrl,
+      'u-img-color-flip-hover-disabled': content.hoverEffect === HOVER_EFFECT.colorizeZoom && !linkUrl
     });
 
     const image = <img className="ImageTiles-img" src={imageUrl} />;
