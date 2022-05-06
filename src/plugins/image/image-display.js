@@ -101,9 +101,6 @@ function ImageDisplay({ content }) {
     <Fragment>
       <canvas className={`ImageDisplay-mainImage u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
       <img className="ImageDisplay-clipEffectImage" src={src} ref={clipEffectImageRef} />
-      <div className="ImageDisplay-copyrightInfo">
-        <Markdown>{text}</Markdown>
-      </div>
     </Fragment>
   );
 
@@ -112,6 +109,10 @@ function ImageDisplay({ content }) {
     `u-max-width-${maxWidth}`,
     { 'ImageDisplay-mainImage--hoverEffect': shouldApplyHoverEffect }
   );
+
+  const showMainImageCopyright = !shouldApplyHoverEffect;
+  const showEffectImageCopyright = effect?.text
+    && (effect.type === EFFECT_TYPE.reveal || (effect.type === EFFECT_TYPE.hover && shouldApplyHoverEffect));
 
   return (
     <div className="ImageDisplay">
@@ -127,8 +128,8 @@ function ImageDisplay({ content }) {
       )}
       {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}
       <div className="ImageDisplay-copyrightInfo">
-        <Markdown>{text}</Markdown>
-        {effect?.text && <Markdown>{effect.text}</Markdown>}
+        {showMainImageCopyright && <Markdown>{text}</Markdown>}
+        {showEffectImageCopyright && <Markdown>{effect.text}</Markdown>}
       </div>
     </div>
   );
