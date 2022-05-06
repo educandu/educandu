@@ -1,6 +1,7 @@
 import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
-import AudioPlayer from '../../components/audio-player.js';
+import Markdown from '../../components/markdown.js';
+import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
@@ -8,22 +9,28 @@ import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 function AudioDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
 
-  let soundUrl;
+  let sourceUrl;
   switch (content.sourceType) {
-    case SOURCE_TYPE.external:
-      soundUrl = content.sourceUrl || null;
-      break;
     case SOURCE_TYPE.internal:
-      soundUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
+      sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
       break;
     default:
-      soundUrl = null;
+      sourceUrl = content.sourceUrl || null;
       break;
   }
 
   return (
-    <div className="Audio">
-      <AudioPlayer soundUrl={soundUrl} legendMarkdown={content.text} />
+    <div className="AudioDisplay">
+      <div className="AudioDisplay-content u-width-50">
+        {sourceUrl && (
+          <MediaPlayer sourceUrl={sourceUrl} audioOnly />
+        )}
+        {content.text && (
+          <div className="AudioDisplay-text">
+            <Markdown>{content.text}</Markdown>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

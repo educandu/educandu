@@ -4,15 +4,15 @@
 @anavis-part-inner-background-gradient: linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.2) 100%);
 @anavis-vertical-spacing: 0.5em;
 
-.Anavis {}
+.AnavisDisplay {}
 
-.Anavis-row {
+.AnavisDisplay-row {
   display: flex;
   justify-content: center;
   align-items: stretch;
 }
 
-.Anavis-parts {
+.AnavisDisplay-parts {
   display: flex;
   justify-content: stretch;
   align-items: stretch;
@@ -20,7 +20,7 @@
   margin-bottom: @anavis-vertical-spacing;
 }
 
-.Anavis-partOuter {
+.AnavisDisplay-partOuter {
   overflow: auto;
   border: 1px solid @anavis-part-border-color;
   height: 100%;
@@ -29,7 +29,7 @@
   align-items: stretch;
 }
 
-.Anavis-partInner {
+.AnavisDisplay-partInner {
   border: 1px solid @anavis-part-inner-border-color;
   background: @anavis-part-inner-background-gradient;
   display: flex;
@@ -39,21 +39,21 @@
   width: 100%;
 }
 
-.Anavis-partName {
+.AnavisDisplay-partName {
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.Anavis-annotation {
+.AnavisDisplay-annotation {
   display: flex;
   justify-content: stretch;
   align-items: stretch;
   margin: @anavis-vertical-spacing 0;
 }
 
-.Anavis-annotationItem {
+.AnavisDisplay-annotationItem {
   display: flex;
   justify-content: stretch;
   align-items: stretch;
@@ -61,39 +61,17 @@
   overflow: hidden;
 }
 
-.Anavis-annotationItemText {
+.AnavisDisplay-annotationItemText {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.Anavis-players {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: @anavis-vertical-spacing;
+.AudioDisplay-players {
+  margin-top: 0.5em;
 }
 
-.Anavis-mainPlayerContainer {
-
-  &.Anavis-mainPlayerContainer--noDisplay {
-    width: 0;
-    height: 0;
-    overflow: hidden;
-  }
-}
-
-.Anavis-mainPlayerOuter {
-  position: relative;
-}
-
-.Anavis-mainPlayerInner {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.Anavis-text {
+.AnavisDisplay-text {
   padding-top: 20px;
   font-size: 12px;
   text-align: center;

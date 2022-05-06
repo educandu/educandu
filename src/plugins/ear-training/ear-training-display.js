@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
 import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import { shuffleItems } from '../../utils/array-utils.js';
-import AudioPlayer from '../../components/audio-player.js';
+import MediaPlayer from '../../components/media-player.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
@@ -79,9 +79,17 @@ function EarTrainingDisplay({ content }) {
       soundUrl = currentTest.sound.sourceUrl || null;
     }
 
-    return sourceType === SOURCE_TYPE.midi
-      ? <div ref={midiContainerRef} />
-      : <AudioPlayer soundUrl={soundUrl} legendMarkdown={currentTest.sound.text} />;
+    return (
+      <div className="u-width-50">
+        {sourceType === SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
+        {sourceType !== SOURCE_TYPE.midi && soundUrl && <MediaPlayer sourceUrl={soundUrl} audioOnly />}
+        {currentTest.sound.text && (
+          <div>
+            <Markdown>{currentTest.sound.text}</Markdown>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const renderButtons = () => {
