@@ -201,7 +201,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const handleChapterTitleChange = event => {
     const { value } = event.target;
     const newChapters = [...chapters];
-    newChapters[selectedChapterIndex].title = value;
+    newChapters[selectedChapterIndex] = { ...newChapters[selectedChapterIndex], title: value };
     changeContent({ chapters: newChapters });
   };
 
