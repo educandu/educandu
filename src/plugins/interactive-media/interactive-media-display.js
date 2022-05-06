@@ -1,10 +1,11 @@
 import React from 'react';
 import { SOURCE_TYPE } from './constants.js';
 import Markdown from '../../components/markdown.js';
+import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import MediaPlayer, { ASPECT_RATIO } from '../../components/media-player.js';
+import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 function InteractiveMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
