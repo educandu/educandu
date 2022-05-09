@@ -3,6 +3,7 @@ import path from 'path';
 import parseBool from 'parseboolean';
 import educandu from '../../src/index.js';
 import bundleConfig from './bundles/bundle-config.js';
+import TestsController from '../../src/server/tests-controller.js';
 
 // eslint-disable-next-line no-process-env
 const processEnv = process.env;
@@ -57,7 +58,7 @@ const config = {
     idlePollIntervalInMs: 10000,
     maxAttempts: 3
   },
-  additionalControllers: [],
+  additionalControllers: [TestsController],
   consentCookieNamePrefix: 'CONSENT_TEST_APP',
   areRoomsEnabled: parseBool(processEnv.TEST_APP_ARE_ROOMS_ENABLED || false.toString()),
   plugins
