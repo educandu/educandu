@@ -45,7 +45,9 @@ function DocumentPicker({ documentId, onChange }) {
     setDocumentOptions(documents);
   };
 
-  const handleSelect = newDocumentId => {
+  const handleSelect = (newDocumentId, option) => {
+    // Eliminate input text jump between select and re-render
+    setSelectedDocument({ _id: newDocumentId, title: option.children });
     onChange(newDocumentId);
   };
 
