@@ -4,8 +4,8 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import DocumentPicker from '../../components/document-picker.js';
 import { useService } from '../../components/container-context.js';
+import DocumentSelector from '../../components/document-selector.js';
 import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { filePickerStorageShape } from '../../ui/default-prop-types.js';
@@ -112,7 +112,7 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
       )}
       {link.sourceType === LINK_SOURCE_TYPE.document && (
         <FormItem label={t('documentTitle')} {...formItemLayout}>
-          <DocumentPicker documentId={link.documentId} onChange={handleDocumentChange} />
+          <DocumentSelector documentId={link.documentId} onChange={handleDocumentChange} />
         </FormItem>
       )}
     </React.Fragment>

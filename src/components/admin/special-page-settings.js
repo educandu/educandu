@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { Form, Input, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
-import DocumentPicker from '../document-picker.js';
+import DocumentSelector from '../document-selector.js';
 import { settingsDocumentShape } from '../../ui/default-prop-types.js';
 import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 
@@ -54,7 +54,7 @@ function SpecialPageSettings({ settings, onChange }) {
 
   const renderDocumentKey = (text, record, index) => (
     <FormItem style={{ marginBottom: 0 }}>
-      <DocumentPicker documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
+      <DocumentSelector documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
     </FormItem>
   );
 

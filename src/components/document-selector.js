@@ -8,8 +8,8 @@ import DocumentApiClient from '../api-clients/document-api-client.js';
 
 const { Option } = Select;
 
-function DocumentPicker({ documentId, onChange }) {
-  const { t } = useTranslation('documentPicker');
+function DocumentSelector({ documentId, onChange }) {
+  const { t } = useTranslation('documentSelector');
   const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
@@ -78,13 +78,13 @@ function DocumentPicker({ documentId, onChange }) {
   );
 }
 
-DocumentPicker.propTypes = {
+DocumentSelector.propTypes = {
   documentId: PropTypes.string,
   onChange: PropTypes.func.isRequired
 };
 
-DocumentPicker.defaultProps = {
+DocumentSelector.defaultProps = {
   documentId: null
 };
 
-export default DocumentPicker;
+export default DocumentSelector;

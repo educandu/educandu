@@ -4,7 +4,7 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import { Form, Table, Button, Input } from 'antd';
-import DocumentPicker from '../document-picker.js';
+import DocumentSelector from '../document-selector.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
 import { settingsDocumentShape } from '../../ui/default-prop-types.js';
@@ -71,7 +71,7 @@ function SettingsDocumentsTable({ settingsDocuments, onChange }) {
 
   const renderDocumentKey = (text, record, index) => (
     <FormItem validateStatus={getRequiredValidateStatus(record.documentKey)} style={{ marginBottom: 0 }}>
-      <DocumentPicker documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
+      <DocumentSelector documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
     </FormItem>
   );
 

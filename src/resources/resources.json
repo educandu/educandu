@@ -266,14 +266,14 @@
     }
   },
   {
-    "namespace": "documentPicker",
+    "namespace": "documentSelector",
     "language": "en",
     "resources": {
       "searchPlaceholder": "Search document title"
     }
   },
   {
-    "namespace": "documentPicker",
+    "namespace": "documentSelector",
     "language": "de",
     "resources": {
       "searchPlaceholder": "Nach Dokument-Titel suchen"

@@ -4,11 +4,11 @@ import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';
-import DocumentPicker from '../document-picker.js';
 import LicenseSettings from './license-settings.js';
 import ConsentSettings from './consent-settings.js';
 import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
+import DocumentSelector from '../document-selector.js';
 import MarkdownTextarea from '../markdown-textarea.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import DefaultTagsSettings from './default-tags-settings.js';
@@ -129,7 +129,7 @@ function SettingsTab({
       </Card>
       <Card className="SettingsTab-card" title={t('templateDocumentHeader')}>
         <div className="SettingsTab-templateDocument" >
-          <DocumentPicker documentId={settings.templateDocument.documentKey} onChange={handleTemplateDocumentChange} />
+          <DocumentSelector documentId={settings.templateDocument.documentKey} onChange={handleTemplateDocumentChange} />
         </div>
       </Card>
       <Card className="SettingsTab-card" title={t('helpPageHeader')}>
