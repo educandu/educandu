@@ -266,6 +266,20 @@
     }
   },
   {
+    "namespace": "documentPicker",
+    "language": "en",
+    "resources": {
+      "searchPlaceholder": "Search document title"
+    }
+  },
+  {
+    "namespace": "documentPicker",
+    "language": "de",
+    "resources": {
+      "searchPlaceholder": "Nach Dokument-Titel suchen"
+    }
+  },
+  {
     "namespace": "editControlPanel",
     "language": "en",
     "resources": {

@@ -3,14 +3,14 @@ import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
-import { useService } from './container-context.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 
 const { Option } = Select;
 
 function DocumentPicker({ documentId, onChange }) {
   const { t } = useTranslation('documentPicker');
-  const documentApiClient = useService(DocumentApiClient);
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
   const [loading, setLoading] = useState(false);
   const [documentOptions, setDocumentOptions] = useState([]);
@@ -71,7 +71,7 @@ function DocumentPicker({ documentId, onChange }) {
       onSearch={handleSearch}
       onSelect={handleSelect}
       notFoundContent={null}
-      placeholder={t('common:searchPlaceholder')}
+      placeholder={t('searchPlaceholder')}
       >
       {documentOptions.map(doc => <Option key={doc._id}>{doc.title}</Option>)}
     </Select>
