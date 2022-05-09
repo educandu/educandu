@@ -140,25 +140,18 @@ describe('urls', () => {
         expectedResult: '/docs/key/slug?view=edit&templateDocumentKey=XrF7z7jyDrNFkvH7eyj5T'
       },
       {
-        keyAndSlug: 'key/slug/slugathor',
         expectedResult: '/docs/key/slug/slugathor'
       }
     ];
 
-    testCases.forEach(({ keyAndSlug, key, slug, view, templateDocumentKey, expectedResult }) => {
-      describe(`when keyAndSlug is '${keyAndSlug}', key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
+    testCases.forEach(({ key, slug, view, templateDocumentKey, expectedResult }) => {
+      describe(`when key is '${key}', slug is '${slug}', view is '${view}' and templateDocumentKey is '${templateDocumentKey}'`, () => {
         beforeEach(() => {
-          result = sut.getDocUrl({ keyAndSlug, key, slug, view, templateDocumentKey });
+          result = sut.getDocUrl({ key, slug, view, templateDocumentKey });
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);
         });
-      });
-    });
-
-    describe('when keyAndSlug and key is provided', () => {
-      it('should throw an error', () => {
-        expect(() => sut.getDocUrl({ keyAndSlug: 'key/slug/slugathor', key: 'key' })).toThrow();
       });
     });
   });
