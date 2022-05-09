@@ -15,6 +15,7 @@ import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, SOURCE_TYPE, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
+import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -81,12 +82,11 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
   };
 
   const handleAspectRatioChanged = event => {
-    const [h, v] = event.target.value.split(':').map(Number);
     changeContent(oldContent => ({
       ...oldContent,
       media: {
         ...oldContent.media,
-        aspectRatio: { h, v }
+        aspectRatio: event.target.value
       }
     }));
   };
@@ -330,9 +330,10 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
-          <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={handleAspectRatioChanged}>
-            <RadioButton value="16:9">16:9</RadioButton>
-            <RadioButton value="4:3">4:3</RadioButton>
+          <RadioGroup defaultValue={ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
+            {Object.values(ASPECT_RATIO).map(ratio => (
+              <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
+            ))}
           </RadioGroup>
         </Form.Item>
         <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>

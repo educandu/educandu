@@ -8,6 +8,7 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -68,8 +69,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
   };
 
   const handleAspectRatioChanged = event => {
-    const [h, v] = event.target.value.split(':').map(Number);
-    changeContent({ aspectRatio: { h, v } });
+    changeContent({ aspectRatio: event.target.value });
   };
 
   const handleShowVideoChanged = newDhowVideo => {
@@ -156,9 +156,10 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
-          <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={handleAspectRatioChanged}>
-            <RadioButton value="16:9">16:9</RadioButton>
-            <RadioButton value="4:3">4:3</RadioButton>
+          <RadioGroup defaultValue={ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
+            {Object.values(ASPECT_RATIO).map(ratio => (
+              <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
+            ))}
           </RadioGroup>
         </Form.Item>
         <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>

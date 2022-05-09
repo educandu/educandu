@@ -4,6 +4,7 @@ import { SOURCE_TYPE } from './constants.js';
 import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class VideoInfo {
@@ -38,10 +39,7 @@ class VideoInfo {
       sourceUrl: '',
       text: '',
       width: 100,
-      aspectRatio: {
-        h: 16,
-        v: 9
-      },
+      aspectRatio: ASPECT_RATIO.sixteenToNine,
       showVideo: true,
       posterImage: {
         sourceType: SOURCE_TYPE.internal,

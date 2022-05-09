@@ -5,6 +5,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import InteractiveMediaDisplay from './interactive-media-display.js';
+import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class InteractiveMediaInfo {
@@ -48,10 +49,7 @@ class InteractiveMediaInfo {
       sourceDuration: 0,
       text: '',
       width: 100,
-      aspectRatio: {
-        h: 16,
-        v: 9
-      },
+      aspectRatio: ASPECT_RATIO.sixteenToNine,
       showVideo: false,
       chapters: [this.getDefaultChapter(t)]
     };
