@@ -1,3 +1,4 @@
+import by from 'thenby';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,8 @@ function DocumentPicker({ documentId, onChange }) {
   const [documentOptions, setDocumentOptions] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
 
+  const updateDocumentOptions = documents => setDocumentOptions(documents.sort(by(d => d.title, { ignoreCase: true })));
+
   useEffect(() => {
     if (!documentId) {
       setDocumentOptions([]);
@@ -28,7 +31,7 @@ function DocumentPicker({ documentId, onChange }) {
       const { doc } = await documentApiClient.getDocument(documentId);
       const { documents } = await documentApiClient.getDocumentsMetadata(doc.title);
 
-      setDocumentOptions(documents);
+      updateDocumentOptions(documents);
       setSelectedDocument(doc);
       setLoading(false);
     })();
@@ -42,7 +45,8 @@ function DocumentPicker({ documentId, onChange }) {
       documents = response.documents;
     }
 
-    setDocumentOptions(documents);
+    updateDocumentOptions(documents);
+    setSelectedDocument(null);
   };
 
   const handleSelect = (newDocumentId, option) => {
