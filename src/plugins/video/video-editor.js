@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Form, Input, Radio, Switch } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
-import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -156,8 +156,8 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
-          <RadioGroup defaultValue={ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
-            {Object.values(ASPECT_RATIO).map(ratio => (
+          <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
+            {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
           </RadioGroup>

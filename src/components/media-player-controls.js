@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Slider } from 'antd';
-import { PLAY_STATE } from './media-player-constants.js';
+import { MEDIA_PLAY_STATE } from '../domain/constants.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import { AudioMutedOutlined, CaretRightOutlined, PauseOutlined, SoundOutlined } from '@ant-design/icons';
 
@@ -18,7 +18,7 @@ function MediaPlayerControls({
   onVolumeChange,
   standalone
 }) {
-  const showAsPlaying = playState === PLAY_STATE.playing || playState === PLAY_STATE.buffering;
+  const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--standalone': standalone })}>
       <Slider min={0} max={durationInMilliseconds} value={playedMilliseconds} tipFormatter={formatMillisecondsAsDuration} onChange={onSeek} />
@@ -42,7 +42,7 @@ MediaPlayerControls.propTypes = {
   onToggleMute: PropTypes.func.isRequired,
   onTogglePlay: PropTypes.func.isRequired,
   onVolumeChange: PropTypes.func.isRequired,
-  playState: PropTypes.oneOf(Object.values(PLAY_STATE)).isRequired,
+  playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
   playedMilliseconds: PropTypes.number.isRequired,
   standalone: PropTypes.bool,
   volume: PropTypes.number.isRequired

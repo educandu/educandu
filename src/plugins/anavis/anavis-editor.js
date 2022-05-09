@@ -6,6 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -15,7 +16,6 @@ import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, SOURCE_TYPE, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
-import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -330,8 +330,8 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
-          <RadioGroup defaultValue={ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
-            {Object.values(ASPECT_RATIO).map(ratio => (
+          <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
+            {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
           </RadioGroup>

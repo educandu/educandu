@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import Timeline from '../../components/timeline.js';
-import { MEDIA_TYPE } from '../../domain/constants.js';
 import { getMediaType } from '../../utils/media-utils.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { Fragment, useRef, useState } from 'react';
@@ -18,8 +17,8 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
+import { MEDIA_ASPECT_RATIO, MEDIA_TYPE } from '../../domain/constants.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
-import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -220,12 +219,12 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
           <RadioGroup
             size="small"
-            defaultValue={ASPECT_RATIO.sixteenToNine}
+            defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
             value={aspectRatio}
             onChange={handleAspectRatioChanged}
             disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
             >
-            {Object.values(ASPECT_RATIO).map(ratio => (
+            {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
           </RadioGroup>

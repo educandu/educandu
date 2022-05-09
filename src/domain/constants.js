@@ -97,6 +97,19 @@ export const MEDIA_TYPE = {
   video: 'video'
 };
 
+export const MEDIA_PLAY_STATE = {
+  initializing: 'initializing',
+  buffering: 'buffering',
+  stopped: 'stopped',
+  playing: 'playing',
+  pausing: 'pausing'
+};
+
+export const MEDIA_ASPECT_RATIO = {
+  sixteenToNine: '16:9',
+  fourToThree: '4:3'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';
