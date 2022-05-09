@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { getImageSource } from './utils.js';
+import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -13,9 +14,11 @@ function ImageDisplay({ content }) {
   const hoverEffectCanvasRef = useRef();
   const clipEffectImageRef = useRef();
   const clipEffectCanvasRef = useRef();
+  const { t } = useTranslation('image');
   const maxWidth = content.maxWidth || 100;
   const { text, sourceType, sourceUrl, effect } = content;
   const [isMainImageLoaded, setIsMainImageLoaded] = useState(false);
+  const [hasMainImageFailed, setHasMainImageFailed] = useState(false);
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
   const clientConfig = useService(ClientConfig);
@@ -27,11 +30,12 @@ function ImageDisplay({ content }) {
       return;
     }
 
-    const isLoaded = mainImage.complete && mainImage.naturalHeight !== 0;
-    if (isLoaded) {
-      setIsMainImageLoaded(true);
+    if (mainImage.complete) {
+      setIsMainImageLoaded(mainImage.naturalHeight !== 0);
+      setHasMainImageFailed(mainImage.naturalHeight === 0);
     } else {
       mainImage.onload = () => setIsMainImageLoaded(true);
+      mainImage.onerror = () => setHasMainImageFailed(true);
     }
   }, [mainImageRef]);
 
@@ -113,6 +117,14 @@ function ImageDisplay({ content }) {
   const showMainImageCopyright = !shouldApplyHoverEffect;
   const showEffectImageCopyright = effect?.text
     && (effect.type === EFFECT_TYPE.reveal || (effect.type === EFFECT_TYPE.hover && shouldApplyHoverEffect));
+
+  if (hasMainImageFailed) {
+    return (
+      <div className="ImageDisplay">
+        <div className="ImageDisplay-errorMessage">{t('imageLoadingErrorMessage')}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="ImageDisplay">
