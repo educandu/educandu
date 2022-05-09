@@ -52,7 +52,7 @@ export default class Educandu_2022_05_05_09_update_image_tiles_links_to_document
     console.log(`Updated ${lessonsCount} lessons, ${documentsCount} documents, ${documentRevisionsCount} documentRevisions`);
   }
 
-  async down() {
+  down() {
     throw new Error('Not implemented');
   }
 }

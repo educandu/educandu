@@ -4,11 +4,11 @@ import DeleteButton from '../delete-button.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import { Form, Table, Button, Input } from 'antd';
-import DocumentSelector from '../document-selector.js';
+import DocumentPicker from '../document-picker.js';
 import MoveUpIcon from '../icons/general/move-up-icon.js';
 import MoveDownIcon from '../icons/general/move-down-icon.js';
+import { settingsDocumentShape } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
-import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
@@ -16,34 +16,23 @@ const hasValue = value => value && String(value).trim();
 
 const getRequiredValidateStatus = value => hasValue(value) ? 'success' : 'error';
 
-const isValidLinkListItem = item => [item.linkTitle, item.urlPath].every(hasValue);
+const isValidLinkListItem = item => [item.linkTitle, item.documentKey].every(hasValue);
 
-const newLinkListItem = { linkTitle: '', urlPath: '' };
+const newLinkListItem = { linkTitle: '', documentKey: '' };
 
 const settingsDocumentsToLinkList = settingsDocuments => {
-  return settingsDocuments.map((sd, idx) => ({
-    key: idx.toString(),
-    linkTitle: sd?.linkTitle || '',
-    urlPath: [sd?.documentKey || '', sd?.documentSlug || ''].filter(x => x).join('/') || ''
+  return settingsDocuments.map((settingsDoc, index) => ({
+    key: index.toString(),
+    linkTitle: settingsDoc?.linkTitle || '',
+    documentKey: settingsDoc?.documentKey || ''
   }));
 };
 
-const linkListToSettingsDocuments = linkList => {
-  return linkList.map(item => {
-    const urlPathSegments = item.urlPath.split('/');
-    return {
-      linkTitle: item.linkTitle,
-      documentKey: urlPathSegments[0] || '',
-      documentSlug: urlPathSegments.slice(1).join('/') || ''
-    };
-  });
-};
-
-function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
+function SettingsDocumentsTable({ settingsDocuments, onChange }) {
   const { t } = useTranslation('settingsDocumentsTable');
 
   const fireOnChange = updatedLinkList => {
-    onChange(linkListToSettingsDocuments(updatedLinkList), { isValid: updatedLinkList.every(isValidLinkListItem) });
+    onChange(updatedLinkList, { isValid: updatedLinkList.every(isValidLinkListItem) });
   };
 
   const handleMoveClick = (index, offset) => {
@@ -80,13 +69,9 @@ function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
     </FormItem>
   );
 
-  const renderUrlPath = (text, record, index) => (
-    <FormItem validateStatus={getRequiredValidateStatus(record.urlPath)} style={{ marginBottom: 0 }}>
-      <DocumentSelector
-        documents={documents}
-        value={record.urlPath}
-        onChange={value => handleChange(index, 'urlPath', value)}
-        />
+  const renderDocumentKey = (text, record, index) => (
+    <FormItem validateStatus={getRequiredValidateStatus(record.documentKey)} style={{ marginBottom: 0 }}>
+      <DocumentPicker documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
     </FormItem>
   );
 
@@ -101,7 +86,7 @@ function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
   const columns = [
     { title: t('rank'), key: 'rank', width: '64px', render: renderRank },
     { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', render: renderLinkTitle },
-    { title: t('urlPath'), key: 'urlPath', dataIndex: 'urlPath', ellipsis: true, render: renderUrlPath },
+    { title: t('common:documentTitle'), key: 'documentKey', dataIndex: 'documentKey', ellipsis: true, render: renderDocumentKey },
     { title: renderActionsTitle, key: 'actions', width: '40px', render: renderActions }
   ];
 
@@ -121,10 +106,6 @@ function SettingsDocumentsTable({ settingsDocuments, documents, onChange }) {
 }
 
 SettingsDocumentsTable.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.oneOfType([
-    documentMetadataShape,
-    documentShape
-  ])).isRequired,
   onChange: PropTypes.func.isRequired,
   settingsDocuments: PropTypes.arrayOf(settingsDocumentShape).isRequired
 };

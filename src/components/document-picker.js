@@ -54,29 +54,31 @@ function DocumentPicker({ documentId, onChange }) {
   };
 
   return (
-    <div className="DocumentPicker">
-      <Select
-        showSearch
-        className=""
-        allowClear
-        loading={loading}
-        filterOption={false}
-        value={selectedDocument}
-        onClear={handleClear}
-        onSearch={handleSearch}
-        onSelect={handleSelect}
-        notFoundContent={null}
-        placeholder={t('common:searchPlaceholder')}
-        >
-        {documentOptions.map(doc => <Option key={doc._id}>{doc.title}</Option>)}
-      </Select>
-    </div>
+    <Select
+      showSearch
+      className=""
+      allowClear
+      loading={loading}
+      filterOption={false}
+      value={selectedDocument}
+      onClear={handleClear}
+      onSearch={handleSearch}
+      onSelect={handleSelect}
+      notFoundContent={null}
+      placeholder={t('common:searchPlaceholder')}
+      >
+      {documentOptions.map(doc => <Option key={doc._id}>{doc.title}</Option>)}
+    </Select>
   );
 }
 
 DocumentPicker.propTypes = {
-  documentId: PropTypes.string.isRequired,
+  documentId: PropTypes.string,
   onChange: PropTypes.func.isRequired
+};
+
+DocumentPicker.defaultProps = {
+  documentId: null
 };
 
 export default DocumentPicker;

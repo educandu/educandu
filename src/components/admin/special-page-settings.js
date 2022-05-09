@@ -3,9 +3,9 @@ import React, { memo } from 'react';
 import { Form, Input, Table } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
-import DocumentSelector from '../document-selector.js';
+import DocumentPicker from '../document-picker.js';
+import { settingsDocumentShape } from '../../ui/default-prop-types.js';
 import LanguageFlagAndName from '../localization/language-flag-and-name.js';
-import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const FormItem = Form.Item;
 
@@ -16,24 +16,23 @@ const settingsToPageList = (supportedUiLanguages, settings = {}) => {
       key: uiLanguage,
       language: uiLanguage,
       linkTitle: setting?.linkTitle || '',
-      urlPath: [setting?.documentKey || '', setting?.documentSlug || ''].filter(x => x).join('/') || ''
+      documentKey: setting?.documentKey || ''
     };
   });
 };
 
 const pageListToSettings = pageList => {
   return pageList.reduce((map, item) => {
-    const urlPathSegments = item.urlPath.split('/');
     map[item.language] = {
       linkTitle: item.linkTitle,
-      documentKey: urlPathSegments[0] || '',
-      documentSlug: urlPathSegments.slice(1).join('/') || ''
+      documentKey: item.documentKey
     };
     return map;
   }, {});
 };
 
-function SpecialPageSettings({ settings, documents, onChange }) {
+function SpecialPageSettings({ settings, onChange }) {
+
   const { t } = useTranslation('specialPageSettings');
   const { supportedUiLanguages } = useLocale();
 
@@ -53,20 +52,16 @@ function SpecialPageSettings({ settings, documents, onChange }) {
     </FormItem>
   );
 
-  const renderUrlPath = (text, record, index) => (
+  const renderDocumentKey = (text, record, index) => (
     <FormItem style={{ marginBottom: 0 }}>
-      <DocumentSelector
-        documents={documents}
-        value={record.urlPath}
-        onChange={value => handleChange(index, 'urlPath', value)}
-        />
+      <DocumentPicker documentId={record.documentKey} onChange={value => handleChange(index, 'documentKey', value)} />
     </FormItem>
   );
 
   const columns = [
     { title: t('common:language'), key: 'language', dataIndex: 'language', render: renderLanguage },
     { title: t('linkTitle'), key: 'linkTitle', dataIndex: 'linkTitle', render: renderLinkTitle },
-    { title: t('urlPath'), key: 'urlPath', dataIndex: 'urlPath', ellipsis: true, render: renderUrlPath }
+    { title: t('common:documentTitle'), key: 'documentKey', dataIndex: 'documentKey', ellipsis: true, render: renderDocumentKey }
   ];
 
   const data = settingsToPageList(supportedUiLanguages, settings);
@@ -85,10 +80,6 @@ function SpecialPageSettings({ settings, documents, onChange }) {
 }
 
 SpecialPageSettings.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.oneOfType([
-    documentMetadataShape,
-    documentShape
-  ])).isRequired,
   onChange: PropTypes.func.isRequired,
   settings: PropTypes.objectOf(settingsDocumentShape)
 };

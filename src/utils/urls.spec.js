@@ -138,9 +138,6 @@ describe('urls', () => {
         view: 'edit',
         templateDocumentKey: 'XrF7z7jyDrNFkvH7eyj5T',
         expectedResult: '/docs/key/slug?view=edit&templateDocumentKey=XrF7z7jyDrNFkvH7eyj5T'
-      },
-      {
-        expectedResult: '/docs/key/slug/slugathor'
       }
     ];
 

@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { useLocale } from '../locale-context.js';
 import SettingsDocumentsTable from './settings-documents-table.js';
+import { settingsDocumentShape } from '../../ui/default-prop-types.js';
 import LanguageFlagAndName from '../localization/language-flag-and-name.js';
-import { documentMetadataShape, documentShape, settingsDocumentShape } from '../../ui/default-prop-types.js';
 
 const hasValue = value => value && String(value).trim();
 
-const isValidFooterLinkItem = item => [item.linkTitle, item.documentKey, item.documentSlug].every(hasValue);
+const isValidFooterLinkItem = item => [item.linkTitle, item.documentKey].every(hasValue);
 
-function FooterLinksSettings({ footerLinks, documents, onChange }) {
+function FooterLinksSettings({ footerLinks, onChange }) {
   const { supportedUiLanguages } = useLocale();
 
   const handleChange = (lang, items) => {
@@ -32,7 +32,6 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
             <LanguageFlagAndName language={lang} />
           </h3>
           <SettingsDocumentsTable
-            documents={documents}
             settingsDocuments={footerLinks?.[lang] || []}
             onChange={items => handleChange(lang, items)}
             />
@@ -43,10 +42,6 @@ function FooterLinksSettings({ footerLinks, documents, onChange }) {
 }
 
 FooterLinksSettings.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.oneOfType([
-    documentMetadataShape,
-    documentShape
-  ])).isRequired,
   footerLinks: PropTypes.objectOf(PropTypes.arrayOf(settingsDocumentShape)),
   onChange: PropTypes.func.isRequired
 };
