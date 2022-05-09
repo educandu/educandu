@@ -55,14 +55,8 @@ function getUsersUrl() {
   return usersPath;
 }
 
-function getDocUrl({ keyAndSlug, key, slug, view, templateDocumentKey }) {
-  if (keyAndSlug && (key || slug)) {
-    throw new Error('Key and slug can either be set separately or combined, but not both');
-  }
-
-  const keyAndSlugPart = keyAndSlug
-    ? encodeURIParts(keyAndSlug)
-    : concatParts(encodeURIComponent(key), encodeURIParts(slug));
+function getDocUrl({ key, slug, view, templateDocumentKey }) {
+  const keyAndSlugPart = concatParts(encodeURIComponent(key), encodeURIParts(slug));
 
   const url = concatParts(docsPrefix, keyAndSlugPart);
   const queryString = composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);

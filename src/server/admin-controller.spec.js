@@ -8,7 +8,6 @@ describe('admin-controller', () => {
   const sandbox = sinon.createSandbox();
 
   let settingService;
-  let documentService;
   let storageService;
   let batchService;
   let clientDataMappingService;
@@ -23,7 +22,6 @@ describe('admin-controller', () => {
     pageRenderer = {};
     settingService = {};
     storageService = {};
-    documentService = {};
     clientDataMappingService = {};
 
     batchService = {
@@ -32,7 +30,7 @@ describe('admin-controller', () => {
 
     user = { _id: uniqueId.create() };
 
-    sut = new AdminController(settingService, documentService, storageService, batchService, clientDataMappingService, pageRenderer);
+    sut = new AdminController(settingService, storageService, batchService, clientDataMappingService, pageRenderer);
   });
 
   afterEach(() => {

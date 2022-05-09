@@ -25,7 +25,7 @@ const getTileLinkUrl = tile => {
     case LINK_SOURCE_TYPE.external:
       return link.sourceUrl;
     case LINK_SOURCE_TYPE.document:
-      return link.documentId ? urls.getDocUrl({ keyAndSlug: link.documentId }) : '';
+      return link.documentId ? urls.getDocUrl({ key: link.documentId }) : '';
     default:
       return '';
   }

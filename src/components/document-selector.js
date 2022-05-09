@@ -1,63 +1,90 @@
 import by from 'thenby';
 import { Select } from 'antd';
 import PropTypes from 'prop-types';
-import memoizeOne from 'memoize-one';
+import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
-import { documentMetadataShape, documentShape } from '../ui/default-prop-types.js';
+import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import DocumentApiClient from '../api-clients/document-api-client.js';
 
 const { Option } = Select;
 
-const createKeyOptions = memoizeOne(documents => {
-  return documents
-    .map(doc => ({ key: doc.key, value: doc.key, title: `${doc.key} - ${doc.title}` }))
-    .sort(by(x => x.title, { ignoreCase: true }));
-});
+function DocumentSelector({ documentId, onChange }) {
+  const { t } = useTranslation('documentSelector');
+  const documentApiClient = useSessionAwareApiClient(DocumentApiClient);
 
-const createUrlOptions = memoizeOne(documents => {
-  return documents
-    .filter(doc => doc.slug)
-    .map(doc => ({ key: doc.key, value: `${doc.key}/${doc.slug}`, title: `${doc.key}/${doc.slug}` }))
-    .sort(by(x => x.title, { ignoreCase: true }));
-});
+  const [loading, setLoading] = useState(false);
+  const [documentOptions, setDocumentOptions] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState(null);
 
-function DocumentSelector({ size, documents, value, selectBy, onChange }) {
-  const [filteredOptions, setFilteredOptions] = useState(selectBy === 'key' ? createKeyOptions(documents) : createUrlOptions(documents));
+  const updateDocumentOptions = documents => setDocumentOptions(documents.sort(by(d => d.title, { ignoreCase: true })));
 
   useEffect(() => {
-    setFilteredOptions(selectBy === 'key' ? createKeyOptions(documents) : createUrlOptions(documents));
-  }, [documents, selectBy]);
+    if (!documentId) {
+      setDocumentOptions([]);
+      setSelectedDocument(null);
+      return;
+    }
+
+    (async () => {
+      setLoading(true);
+
+      const { doc } = await documentApiClient.getDocument(documentId);
+      const { documents } = await documentApiClient.getDocumentsMetadata(doc.title);
+
+      updateDocumentOptions(documents);
+      setSelectedDocument(doc);
+      setLoading(false);
+    })();
+  }, [documentId, documentApiClient]);
+
+  const handleSearch = async value => {
+    let documents = [];
+
+    if (value.length >= 3) {
+      const response = await documentApiClient.getDocumentsMetadata(value);
+      documents = response.documents;
+    }
+
+    updateDocumentOptions(documents);
+    setSelectedDocument(null);
+  };
+
+  const handleSelect = (newDocumentId, option) => {
+    // Eliminate input text jump between select and re-render
+    setSelectedDocument({ _id: newDocumentId, title: option.children });
+    onChange(newDocumentId);
+  };
+
+  const handleClear = () => {
+    onChange(null);
+  };
 
   return (
     <Select
-      size={size}
-      value={value}
-      onChange={onChange}
-      optionFilterProp="title"
-      style={{ width: '100%' }}
       showSearch
-      autoComplete="none"
+      className=""
+      allowClear
+      loading={loading}
+      filterOption={false}
+      value={selectedDocument}
+      onClear={handleClear}
+      onSearch={handleSearch}
+      onSelect={handleSelect}
+      notFoundContent={null}
+      placeholder={t('searchPlaceholder')}
       >
-      {filteredOptions.map(option => (
-        <Option key={option.key} value={option.value} title={option.title}>{option.title}</Option>
-      ))}
+      {documentOptions.map(doc => <Option key={doc._id}>{doc.title}</Option>)}
     </Select>
   );
 }
 
 DocumentSelector.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.oneOfType([
-    documentMetadataShape,
-    documentShape
-  ])).isRequired,
-  onChange: PropTypes.func.isRequired,
-  selectBy: PropTypes.oneOf(['key', 'url']),
-  size: PropTypes.oneOf(['small', 'middle', 'large']),
-  value: PropTypes.string.isRequired
+  documentId: PropTypes.string,
+  onChange: PropTypes.func.isRequired
 };
 
 DocumentSelector.defaultProps = {
-  selectBy: 'url',
-  size: 'middle'
+  documentId: null
 };
 
 export default DocumentSelector;

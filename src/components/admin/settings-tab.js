@@ -8,8 +8,8 @@ import LicenseSettings from './license-settings.js';
 import ConsentSettings from './consent-settings.js';
 import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
-import MarkdownTextarea from '../markdown-textarea.js';
 import DocumentSelector from '../document-selector.js';
+import MarkdownTextarea from '../markdown-textarea.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import DefaultTagsSettings from './default-tags-settings.js';
 import SpecialPageSettings from './special-page-settings.js';
@@ -17,14 +17,13 @@ import FooterLinksSettings from './footer-links-settings.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import AdminApiClient from '../../api-clients/admin-api-client.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
+import { batchShape, settingsShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
-import { batchShape, documentMetadataShape, settingsShape } from '../../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
 function SettingsTab({
   initialSettings,
-  documents,
   lastDocumentRegenerationBatch,
   lastCdnResourcesConsolidationBatch,
   onDirtyStateChange,
@@ -54,11 +53,8 @@ function SettingsTab({
     handleChange('consentText', value, isValid);
   }, [handleChange]);
 
-  const handleTemplateDocumentChange = useCallback(value => {
-    const urlPathSegments = value.split('/');
-    const documentKey = urlPathSegments[0] || '';
-    const documentSlug = urlPathSegments.slice(1).join('/') || '';
-    handleChange('templateDocument', { documentKey, documentSlug }, true);
+  const handleTemplateDocumentChange = useCallback(documentKey => {
+    handleChange('templateDocument', { documentKey }, true);
   }, [handleChange]);
 
   const handleHelpPageChange = useCallback((value, { isValid }) => {
@@ -117,10 +113,6 @@ function SettingsTab({
     <span>{t('lastExecution')}: <a href={urls.getBatchUrl(batch._id)}>{formatDate(batch.createdOn)}</a></span>
   );
 
-  const templateDocumentURL = settings.templateDocument
-    ? `${settings.templateDocument.documentKey}/${settings.templateDocument.documentSlug}`
-    : '';
-
   return (
     <div className="SettingsTab">
       <Card className="SettingsTab-card" title={t('homepageInfoHeader')}>
@@ -136,30 +128,25 @@ function SettingsTab({
           />
       </Card>
       <Card className="SettingsTab-card" title={t('templateDocumentHeader')}>
-        <DocumentSelector
-          documents={documents}
-          value={templateDocumentURL}
-          onChange={handleTemplateDocumentChange}
-          />
+        <div className="SettingsTab-templateDocument" >
+          <DocumentSelector documentId={settings.templateDocument.documentKey} onChange={handleTemplateDocumentChange} />
+        </div>
       </Card>
       <Card className="SettingsTab-card" title={t('helpPageHeader')}>
         <SpecialPageSettings
           settings={settings.helpPage}
-          documents={documents}
           onChange={handleHelpPageChange}
           />
       </Card>
       <Card className="SettingsTab-card" title={t('termsPageHeader')}>
         <SpecialPageSettings
           settings={settings.termsPage}
-          documents={documents}
           onChange={handleTermsPageChange}
           />
       </Card>
       <Card className="SettingsTab-card" title={t('footerLinksHeader')}>
         <FooterLinksSettings
           footerLinks={settings.footerLinks}
-          documents={documents}
           onChange={handleFooterLinksChange}
           />
       </Card>
@@ -212,7 +199,6 @@ function SettingsTab({
 }
 
 SettingsTab.propTypes = {
-  documents: PropTypes.arrayOf(documentMetadataShape).isRequired,
   initialSettings: settingsShape.isRequired,
   lastCdnResourcesConsolidationBatch: batchShape,
   lastDocumentRegenerationBatch: batchShape,

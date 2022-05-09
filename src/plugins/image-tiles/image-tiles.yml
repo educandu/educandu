@@ -31,9 +31,9 @@ linkSource:
 documentLink:
   en: Document link
   de: Dokument-Link
-documentKey:
-  en: Document key
-  de: Dokument-ID
+documentTitle:
+  en: Document title
+  de: Dokument-Titel
 imageDescription:
   en: Image description
   de: Bildunterschrift

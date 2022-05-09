@@ -83,7 +83,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
     },
     {
       key: 'help',
-      href: helpPage ? urls.getDocUrl({ key: helpPage.documentKey, slug: helpPage.documentSlug }) : '',
+      href: helpPage ? urls.getDocUrl({ key: helpPage.documentKey }) : '',
       text: helpPage?.linkTitle,
       icon: QuestionOutlined,
       permission: null,

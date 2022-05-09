@@ -38,8 +38,7 @@
     "language": "en",
     "resources": {
       "rank": "Rank",
-      "linkTitle": "Link title",
-      "urlPath": "URL path"
+      "linkTitle": "Link title"
     }
   },
   {
@@ -47,8 +46,7 @@
     "language": "de",
     "resources": {
       "rank": "Rang",
-      "linkTitle": "Link-Titel",
-      "urlPath": "URL-Pfad"
+      "linkTitle": "Link-Titel"
     }
   },
   {
@@ -265,6 +263,20 @@
       "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "useTemplateDocument": "Standardvorlage benutzen"
+    }
+  },
+  {
+    "namespace": "documentSelector",
+    "language": "en",
+    "resources": {
+      "searchPlaceholder": "Search document title"
+    }
+  },
+  {
+    "namespace": "documentSelector",
+    "language": "de",
+    "resources": {
+      "searchPlaceholder": "Nach Dokument-Titel suchen"
     }
   },
   {
@@ -1496,7 +1508,7 @@
       "imageSource": "Image source",
       "linkSource": "Link source",
       "documentLink": "Document link",
-      "documentKey": "Document key",
+      "documentTitle": "Document title",
       "imageDescription": "Image description"
     }
   },
@@ -1515,7 +1527,7 @@
       "imageSource": "Bild-Quelle",
       "linkSource": "Link-Quelle",
       "documentLink": "Dokument-Link",
-      "documentKey": "Dokument-ID",
+      "documentTitle": "Dokument-Titel",
       "imageDescription": "Bildunterschrift"
     }
   },
@@ -1833,6 +1845,7 @@
       "lessonsMode": "Lessons handling mode",
       "lessonsMode_exclusive": "exclusive",
       "lessonsMode_collaborative": "collaborative",
+      "documentTitle": "Document title",
       "title": "Title",
       "slug": "URL path",
       "tags": "Tags",
@@ -1952,6 +1965,7 @@
       "lessonsMode": "Unterrichtseinheiten-Bearbeitungsmodus",
       "lessonsMode_exclusive": "exklusiv",
       "lessonsMode_collaborative": "kollaborativ",
+      "documentTitle": "Dokument-Titel",
       "title": "Titel",
       "slug": "URL-Pfad",
       "tags": "Tags",

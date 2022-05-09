@@ -16,6 +16,15 @@ class DocumentApiClient {
       .then(res => res.data);
   }
 
+  getDocumentsMetadata(query) {
+    return this.httpClient
+      .get(
+        `/api/v1/docs/metadata?query=${encodeURIComponent(query)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   createDocument(data) {
     return this.httpClient
       .post(

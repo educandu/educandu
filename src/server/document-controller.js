@@ -18,7 +18,8 @@ import {
   getDocumentParamsSchema,
   getDocumentQuerySchema,
   patchDocSectionsBodySchema,
-  createDocumentDataBodySchema
+  createDocumentDataBodySchema,
+  getDocumentsTitlesQuerySchema
 } from '../domain/schemas/document-schemas.js';
 
 const { NotFound } = httpErrors;
@@ -170,6 +171,16 @@ class DocumentController {
     return res.send({ doc: mappedDoc });
   }
 
+  async handleGetDocsMetadata(req, res) {
+    const { user } = req;
+    const { query } = req.query;
+
+    const documentsMetadata = await this.documentService.findDocumentsMetadata(query);
+    const mappedDocumentsMetadata = await this.clientDataMappingService.mapDocsOrRevisions(documentsMetadata, user);
+
+    return res.send({ documents: mappedDocumentsMetadata });
+  }
+
   async handleDeleteDocSection(req, res) {
     const { user } = req;
     const { documentKey, sectionKey, sectionRevision, reason, deleteAllRevisions } = req.body;
@@ -262,6 +273,12 @@ class DocumentController {
       '/api/v1/docs',
       [needsPermission(permissions.VIEW_DOCS), validateQuery(documentKeyParamsOrQuerySchema)],
       (req, res) => this.handleGetDocs(req, res)
+    );
+
+    router.get(
+      '/api/v1/docs/metadata',
+      [needsPermission(permissions.VIEW_DOCS), validateQuery(getDocumentsTitlesQuerySchema)],
+      (req, res) => this.handleGetDocsMetadata(req, res)
     );
 
     router.get(

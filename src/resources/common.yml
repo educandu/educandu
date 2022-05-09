@@ -180,6 +180,9 @@ lessonsMode_exclusive:
 lessonsMode_collaborative:
   en: collaborative
   de: kollaborativ
+documentTitle:
+  en: Document title
+  de: Dokument-Titel
 title:
   en: Title
   de: Titel

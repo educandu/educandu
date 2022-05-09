@@ -104,6 +104,19 @@ class DocumentService {
     return this.documentStore.getDocumentTagsMatchingText(searchString);
   }
 
+  async findDocumentsMetadata(query) {
+    const sanitizedQuery = escapeStringRegexp(query.trim());
+
+    const queryConditions = [
+      { archived: false },
+      { title: { $regex: sanitizedQuery, $options: 'i' } }
+    ];
+
+    const documentsMetadata = await this.documentStore.getDocumentsMetadataByConditions(queryConditions);
+
+    return documentsMetadata;
+  }
+
   async createDocument({ data, user }) {
     let lock;
     const documentKey = uniqueId.create();

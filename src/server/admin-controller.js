@@ -5,16 +5,14 @@ import { BATCH_TYPE } from '../domain/constants.js';
 import BatchService from '../services/batch-service.js';
 import SettingService from '../services/setting-service.js';
 import StorageService from '../services/storage-service.js';
-import DocumentService from '../services/document-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
 class AdminController {
-  static get inject() { return [SettingService, DocumentService, StorageService, BatchService, ClientDataMappingService, PageRenderer]; }
+  static get inject() { return [SettingService, StorageService, BatchService, ClientDataMappingService, PageRenderer]; }
 
-  constructor(settingService, documentService, storageService, batchService, clientDataMappingService, pageRenderer) {
+  constructor(settingService, storageService, batchService, clientDataMappingService, pageRenderer) {
     this.settingService = settingService;
-    this.documentService = documentService;
     this.storageService = storageService;
     this.batchService = batchService;
     this.clientDataMappingService = clientDataMappingService;
@@ -26,13 +24,11 @@ class AdminController {
 
     const [
       settings,
-      documents,
       storagePlans,
       lastDocumentRegenerationBatch,
       lastCdnResourcesConsolidationBatch
     ] = await Promise.all([
       this.settingService.getAllSettings(),
-      this.documentService.getAllDocumentsMetadata(),
       this.storageService.getAllStoragePlansWithAssignedUserCount(),
       this.batchService.getLastBatch(BATCH_TYPE.documentRegeneration),
       this.batchService.getLastBatch(BATCH_TYPE.cdnResourcesConsolidation)
@@ -40,7 +36,6 @@ class AdminController {
 
     const initialState = {
       settings,
-      documents: await this.clientDataMappingService.mapDocsOrRevisions(documents, user),
       storagePlans,
       lastDocumentRegenerationBatch: lastDocumentRegenerationBatch
         ? await this.clientDataMappingService.mapBatch(lastDocumentRegenerationBatch, user)
