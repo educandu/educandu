@@ -65,8 +65,8 @@ export const requestProps = {
 };
 
 const settingsDocumentProps = {
-  linkTitle: PropTypes.string.isRequired,
-  documentKey: PropTypes.string.isRequired
+  linkTitle: PropTypes.string,
+  documentKey: PropTypes.string
 };
 
 export const settingsDocumentShape = PropTypes.shape(settingsDocumentProps);
