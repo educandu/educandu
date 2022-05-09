@@ -105,7 +105,7 @@ class DocumentService {
   }
 
   async findDocumentsMetadata(query) {
-    const sanitizedQuery = query.trim();
+    const sanitizedQuery = escapeStringRegexp(query.trim());
 
     const queryConditions = [
       { archived: false },
