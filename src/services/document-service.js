@@ -109,7 +109,7 @@ class DocumentService {
 
     const queryConditions = [
       { archived: false },
-      { title: { $regex: `${sanitizedQuery}`, $options: 'i' } }
+      { title: { $regex: sanitizedQuery, $options: 'i' } }
     ];
 
     const documentsMetadata = await this.documentStore.getDocumentsMetadataByConditions(queryConditions);
