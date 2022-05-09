@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
 import React, { useRef, useState } from 'react';
-import { ASPECT_RATIO, PLAY_STATE } from './media-player-constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -12,7 +12,7 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
   const playerRef = useRef();
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
-  const [currentPlayState, setCurrentPlayState] = useState(PLAY_STATE.initializing);
+  const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
 
   const changePlayState = newPlayState => {
     setCurrentPlayState(newPlayState);
@@ -20,27 +20,27 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
   };
 
   const handleReady = () => {
-    changePlayState(previousValue => previousValue === PLAY_STATE.initializing ? PLAY_STATE.stopped : previousValue);
+    changePlayState(previousValue => previousValue === MEDIA_PLAY_STATE.initializing ? MEDIA_PLAY_STATE.stopped : previousValue);
   };
 
   const handleBuffer = () => {
-    changePlayState(PLAY_STATE.buffering);
+    changePlayState(MEDIA_PLAY_STATE.buffering);
   };
 
   const handleBufferEnd = () => {
-    changePlayState(PLAY_STATE.playing);
+    changePlayState(MEDIA_PLAY_STATE.playing);
   };
 
   const handlePlay = () => {
-    changePlayState(PLAY_STATE.playing);
+    changePlayState(MEDIA_PLAY_STATE.playing);
   };
 
   const handlePause = () => {
-    changePlayState(PLAY_STATE.pausing);
+    changePlayState(MEDIA_PLAY_STATE.pausing);
   };
 
   const handleStop = () => {
-    changePlayState(PLAY_STATE.stopped);
+    changePlayState(MEDIA_PLAY_STATE.stopped);
   };
 
   trackRef.current = {
@@ -52,15 +52,15 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
     togglePlay() {
       changePlayState(previousValue => {
         switch (previousValue) {
-          case PLAY_STATE.initializing:
-            return PLAY_STATE.playing;
-          case PLAY_STATE.buffering:
-            return PLAY_STATE.buffering;
-          case PLAY_STATE.playing:
-            return PLAY_STATE.pausing;
-          case PLAY_STATE.pausing:
-          case PLAY_STATE.stopped:
-            return PLAY_STATE.playing;
+          case MEDIA_PLAY_STATE.initializing:
+            return MEDIA_PLAY_STATE.playing;
+          case MEDIA_PLAY_STATE.buffering:
+            return MEDIA_PLAY_STATE.buffering;
+          case MEDIA_PLAY_STATE.playing:
+            return MEDIA_PLAY_STATE.pausing;
+          case MEDIA_PLAY_STATE.pausing:
+          case MEDIA_PLAY_STATE.stopped:
+            return MEDIA_PLAY_STATE.playing;
           default:
             throw new Error(`Invalid play state: ${previousValue}`);
         }
@@ -70,7 +70,7 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
 
   const handleProgress = progress => {
     const millisecondsSinceLastSeek = Date.now() - lastSeekTimestamp;
-    if (millisecondsSinceLastSeek > PROGRESS_SLEEP_AFTER_SEEKING_IN_MS && currentPlayState !== PLAY_STATE.buffering) {
+    if (millisecondsSinceLastSeek > PROGRESS_SLEEP_AFTER_SEEKING_IN_MS && currentPlayState !== MEDIA_PLAY_STATE.buffering) {
       const progressInMilliseconds = progress.playedSeconds * 1000;
       onProgress?.(progressInMilliseconds);
     }
@@ -83,15 +83,15 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
   };
 
   const handleClickPreview = () => {
-    changePlayState(PLAY_STATE.playing);
+    changePlayState(MEDIA_PLAY_STATE.playing);
   };
 
   let paddingTop;
   switch (aspectRatio) {
-    case ASPECT_RATIO.fourToThree:
+    case MEDIA_ASPECT_RATIO.fourToThree:
       paddingTop = `${(3 / 4 * 100).toFixed(2)}%`;
       break;
-    case ASPECT_RATIO.sixteenToNine:
+    case MEDIA_ASPECT_RATIO.sixteenToNine:
     default:
       paddingTop = `${(9 / 16 * 100).toFixed(2)}%`;
       break;
@@ -110,8 +110,8 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
           volume={volume}
           muted={isMuted}
           progressInterval={100}
-          light={currentPlayState === PLAY_STATE.initializing && (posterImageUrl || true)}
-          playing={currentPlayState === PLAY_STATE.playing || currentPlayState === PLAY_STATE.buffering}
+          light={currentPlayState === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
+          playing={currentPlayState === MEDIA_PLAY_STATE.playing || currentPlayState === MEDIA_PLAY_STATE.buffering}
           onReady={handleReady}
           onBuffer={handleBuffer}
           onBufferEnd={handleBufferEnd}
@@ -129,7 +129,7 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
 }
 
 MediaPlayerTrack.propTypes = {
-  aspectRatio: PropTypes.oneOf(Object.values(ASPECT_RATIO)),
+  aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
   isMuted: PropTypes.bool,
   onDuration: PropTypes.func,
@@ -144,7 +144,7 @@ MediaPlayerTrack.propTypes = {
 };
 
 MediaPlayerTrack.defaultProps = {
-  aspectRatio: ASPECT_RATIO.sixteenToNine,
+  aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
   isMuted: false,
   onDuration: () => {},

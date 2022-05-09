@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import Timeline from '../../components/timeline.js';
-import { MEDIA_TYPE } from '../../domain/constants.js';
 import { getMediaType } from '../../utils/media-utils.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import React, { Fragment, useRef, useState } from 'react';
@@ -18,6 +17,7 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
+import { MEDIA_ASPECT_RATIO, MEDIA_TYPE } from '../../domain/constants.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
@@ -26,8 +26,6 @@ const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const TextArea = Input.TextArea;
 const RadioButton = Radio.Button;
-
-const supportedAspectRatios = [{ h: 16, v: 9 }, { h: 4, v: 3 }];
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -40,10 +38,8 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const { t } = useTranslation('interactiveMedia');
   const interactiveMediaInfo = useService(InteractiveMediaInfo);
 
-  const getAspectRatioText = givenAspectRatio => `${givenAspectRatio.h}:${givenAspectRatio.v}`;
   const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
 
-  const defaultAspectRatio = supportedAspectRatios[0];
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, sourceDuration, chapters, text, width, aspectRatio, showVideo } = content;
@@ -135,7 +131,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       sourceType: value,
       sourceUrl: '',
       showVideo: false,
-      aspectRatio: defaultAspectRatio,
       sourceDuration: 0,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
@@ -148,7 +143,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     changeContent({
       sourceUrl: value,
       showVideo: newShowVideo,
-      aspectRatio: defaultAspectRatio,
       sourceDuration: newSourceDuration,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
@@ -159,8 +153,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   };
 
   const handleAspectRatioChanged = event => {
-    const [h, v] = event.target.value.split(':').map(Number);
-    changeContent({ aspectRatio: { h, v } });
+    changeContent({ aspectRatio: event.target.value });
   };
 
   const handleShowVideoChanged = newShowVideo => {
@@ -168,8 +161,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   };
 
   const handleCopyrightInfoChanged = event => {
-    const { value } = event.target;
-    changeContent({ text: value });
+    changeContent({ text: event.target.value });
   };
 
   const handleWidthChanged = newValue => {
@@ -227,13 +219,13 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
           <RadioGroup
             size="small"
-            defaultValue={getAspectRatioText(defaultAspectRatio)}
-            value={`${aspectRatio.h}:${aspectRatio.v}`}
+            defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
+            value={aspectRatio}
             onChange={handleAspectRatioChanged}
             disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
             >
-            {supportedAspectRatios.map(ratio => (
-              <RadioButton key={getAspectRatioText(ratio)} value={getAspectRatioText(ratio)}>{getAspectRatioText(ratio)}</RadioButton>
+            {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
+              <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
           </RadioGroup>
         </Form.Item>

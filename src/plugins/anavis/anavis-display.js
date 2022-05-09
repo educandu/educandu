@@ -6,7 +6,6 @@ import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { ASPECT_RATIO } from '../../components/media-player-constants.js';
 
 function AnavisDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
@@ -22,10 +21,6 @@ function AnavisDisplay({ content }) {
       sourceUrl = media.sourceUrl || null;
       break;
   }
-
-  const aspectRatio = media.aspectRatio?.h === 4 && media.aspectRatio?.v === 3
-    ? ASPECT_RATIO.fourToThree
-    : ASPECT_RATIO.sixteenToNine;
 
   const renderParts = () => {
     return parts.map((part, index) => (
@@ -75,7 +70,7 @@ function AnavisDisplay({ content }) {
         {sourceUrl && (
           <MediaPlayer
             sourceUrl={sourceUrl}
-            aspectRatio={aspectRatio}
+            aspectRatio={media.aspectRatio}
             audioOnly={media.kind === MEDIA_KIND.audio}
             />
         )}

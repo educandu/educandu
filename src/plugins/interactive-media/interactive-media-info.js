@@ -3,6 +3,7 @@ import { SOURCE_TYPE } from './constants.js';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import InteractiveMediaDisplay from './interactive-media-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
@@ -48,10 +49,7 @@ class InteractiveMediaInfo {
       sourceDuration: 0,
       text: '',
       width: 100,
-      aspectRatio: {
-        h: 16,
-        v: 9
-      },
+      aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
       showVideo: false,
       chapters: [this.getDefaultChapter(t)]
     };

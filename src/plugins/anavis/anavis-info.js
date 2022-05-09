@@ -3,6 +3,7 @@ import AnavisIcon from './anavis-icon.js';
 import AnavisDisplay from './anavis-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { MEDIA_KIND, SOURCE_TYPE } from './constants.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -48,10 +49,7 @@ class AnavisInfo {
         sourceType: SOURCE_TYPE.youtube,
         sourceUrl: '',
         text: '',
-        aspectRatio: {
-          h: 16,
-          v: 9
-        }
+        aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine
       }
     };
   }

@@ -6,6 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
+import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -81,12 +82,11 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
   };
 
   const handleAspectRatioChanged = event => {
-    const [h, v] = event.target.value.split(':').map(Number);
     changeContent(oldContent => ({
       ...oldContent,
       media: {
         ...oldContent.media,
-        aspectRatio: { h, v }
+        aspectRatio: event.target.value
       }
     }));
   };
@@ -330,9 +330,10 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
-          <RadioGroup defaultValue="16:9" value={`${aspectRatio.h}:${aspectRatio.v}`} size="small" onChange={handleAspectRatioChanged}>
-            <RadioButton value="16:9">16:9</RadioButton>
-            <RadioButton value="4:3">4:3</RadioButton>
+          <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
+            {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
+              <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
+            ))}
           </RadioGroup>
         </Form.Item>
         <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
