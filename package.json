@@ -109,7 +109,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "^1.0.0",
+    "@educandu/dev-tools": "2.2.0",
     "@educandu/rooms-auth-lambda": "^1.0.1",
     "eslint": "^8.8.0",
     "eslint-plugin-import": "^2.25.4",
