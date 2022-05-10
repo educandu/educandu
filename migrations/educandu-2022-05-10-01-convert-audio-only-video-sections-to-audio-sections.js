@@ -66,6 +66,7 @@ export default class Educandu_2022_05_10_01_convert_audio_only_video_sections_to
           console.log(`Updating lesson ${lesson._id} - section ${lessonSection.key}`);
 
           lessonSection.type = 'audio';
+          delete lessonSection.content.width;
           delete lessonSection.content.showVideo;
           delete lessonSection.content.aspectRatio;
           delete lessonSection.content.posterImage;
