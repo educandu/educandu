@@ -189,7 +189,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>
             <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalLink')}</RadioButton>
+            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
             <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>

@@ -1,4 +1,5 @@
 export const SOURCE_TYPE = {
   internal: 'internal',
-  external: 'external'
+  external: 'external',
+  youtube: 'youtube'
 };
