@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import sinon from 'sinon';
 import Cdn from '../repositories/cdn.js';
 import Database from '../stores/database.js';
@@ -6,8 +7,8 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import { ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('storage-service', () => {
@@ -51,6 +52,8 @@ describe('storage-service', () => {
     sandbox.stub(lockStore, 'releaseLock');
     sandbox.stub(lockStore, 'takeUserLock');
     sandbox.stub(lessonStore, 'deleteLessonsByRoomId');
+    sandbox.stub(lessonStore, 'getLessonById');
+    sandbox.stub(roomStore, 'getRoomById');
     sandbox.stub(roomStore, 'deleteRoomById');
     sandbox.stub(roomStore, 'getRoomIdsByOwnerIdAndAccess');
     sandbox.stub(roomInvitationStore, 'deleteRoomInvitationsByRoomId');
@@ -458,6 +461,198 @@ describe('storage-service', () => {
     it('should release the lock', () => {
       sinon.assert.called(lockStore.releaseLock);
     });
+  });
+
+  describe('getStorageLocations', () => {
+    let result;
+
+    describe('when user is not provided', () => {
+      beforeEach(async () => {
+        result = await sut.getStorageLocations({ documentId: 'document', lessonId: 'lesson' });
+      });
+      it('should return empty array', () => {
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe('when documentId is provided', () => {
+      describe(`and the user has ${ROLE.user} role`, () => {
+        beforeEach(async () => {
+          result = await sut.getStorageLocations({ user: myUser, documentId: 'document' });
+        });
+
+        it('should return the public storage location with deletion disabled', () => {
+          expect(result).toEqual([
+            {
+              type: STORAGE_LOCATION_TYPE.public,
+              rootPath: 'media',
+              initialPath: 'media/document',
+              uploadPath: 'media/document',
+              isDeletionEnabled: false
+            }
+          ]);
+        });
+      });
+
+      describe(`and the user has ${ROLE.admin} role`, () => {
+        beforeEach(async () => {
+          const myAdminUser = await setupTestUser(container, { roles: [ROLE.admin] });
+          result = await sut.getStorageLocations({ user: myAdminUser, documentId: 'document' });
+        });
+
+        it('should return the public storage location with deletion enabled', () => {
+          expect(result).toEqual([
+            {
+              type: STORAGE_LOCATION_TYPE.public,
+              rootPath: 'media',
+              initialPath: 'media/document',
+              uploadPath: 'media/document',
+              isDeletionEnabled: true
+            }
+          ]);
+        });
+      });
+    });
+
+    describe('when lessonId is provided', () => {
+      describe('and the user is room owner and does not have a storage plan', () => {
+        beforeEach(async () => {
+          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, lessonsMode: ROOM_LESSONS_MODE.exclusive, members: [] });
+
+          myUser.storage = { plan: null, usedBytes: 0, reminders: [] };
+
+          result = await sut.getStorageLocations({ user: myUser, documentId: 'document' });
+        });
+
+        it('should return the public storage location', () => {
+          expect(result).toEqual([
+            {
+              type: STORAGE_LOCATION_TYPE.public,
+              rootPath: 'media',
+              initialPath: 'media/document',
+              uploadPath: 'media/document',
+              isDeletionEnabled: false
+            }
+          ]);
+        });
+      });
+
+      describe('and the user is room owner and has a storage plan', () => {
+        beforeEach(async () => {
+          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          roomStore.getRoomById.resolves({ _id: 'room', owner: myUser._id, lessonsMode: ROOM_LESSONS_MODE.exclusive, members: [] });
+
+          myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
+
+          result = await sut.getStorageLocations({ user: myUser, lessonId: 'lesson' });
+        });
+
+        it('should return the public and private storage locations, with private storage deletion enabled', () => {
+          expect(result).toEqual([
+            {
+              type: STORAGE_LOCATION_TYPE.public,
+              rootPath: 'media',
+              initialPath: 'media/lesson',
+              uploadPath: 'media/lesson',
+              isDeletionEnabled: false
+            },
+            {
+              type: STORAGE_LOCATION_TYPE.private,
+              usedBytes: myUser.storage.usedBytes,
+              maxBytes: storagePlan.maxBytes,
+              rootPath: 'rooms/room/media',
+              initialPath: 'rooms/room/media',
+              uploadPath: 'rooms/room/media',
+              isDeletionEnabled: true
+            }
+          ]);
+        });
+      });
+
+      describe('and the user is room collaborator and the room owner does not have a storage plan', () => {
+        beforeEach(async () => {
+          const collaboratorUser = await setupTestUser(container, {
+            username: 'collaborator',
+            email: 'collaborator@test.com'
+          });
+          const ownerUser = await setupTestUser(container, {
+            username: 'owner',
+            email: 'owner@test.com'
+          });
+
+          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          roomStore.getRoomById.resolves({
+            _id: 'room',
+            owner: ownerUser._id,
+            lessonsMode: ROOM_LESSONS_MODE.collaborative,
+            members: [{ userId: collaboratorUser._id }]
+          });
+
+          result = await sut.getStorageLocations({ user: collaboratorUser, lessonId: 'lesson' });
+        });
+
+        it('should return the public storage location', () => {
+          expect(result).toEqual([
+            {
+              type: STORAGE_LOCATION_TYPE.public,
+              rootPath: 'media',
+              initialPath: 'media/lesson',
+              uploadPath: 'media/lesson',
+              isDeletionEnabled: false
+            }
+          ]);
+        });
+      });
+
+      describe('and the user is room collaborator and the room owner has a storage plan', () => {
+        let ownerUser;
+
+        beforeEach(async () => {
+          const collaboratorUser = await setupTestUser(container, {
+            username: 'collaborator',
+            email: 'collaborator@test.com'
+          });
+          ownerUser = await setupTestUser(container, {
+            username: 'owner',
+            email: 'owner@test.com',
+            storage: { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] }
+          });
+
+          lessonStore.getLessonById.resolves({ roomId: 'room' });
+          roomStore.getRoomById.resolves({
+            _id: 'room',
+            owner: ownerUser._id,
+            lessonsMode: ROOM_LESSONS_MODE.collaborative,
+            members: [{ userId: collaboratorUser._id }]
+          });
+
+          result = await sut.getStorageLocations({ user: collaboratorUser, lessonId: 'lesson' });
+        });
+
+        it('should return the public and private storage locations, with private storage deletion enabled', () => {
+          expect(result).toEqual([
+            {
+              type: STORAGE_LOCATION_TYPE.public,
+              rootPath: 'media',
+              initialPath: 'media/lesson',
+              uploadPath: 'media/lesson',
+              isDeletionEnabled: false
+            },
+            {
+              type: STORAGE_LOCATION_TYPE.private,
+              usedBytes: ownerUser.storage.usedBytes,
+              maxBytes: storagePlan.maxBytes,
+              rootPath: 'rooms/room/media',
+              initialPath: 'rooms/room/media',
+              uploadPath: 'rooms/room/media',
+              isDeletionEnabled: true
+            }
+          ]);
+        });
+      });
+    });
+
   });
 
 });

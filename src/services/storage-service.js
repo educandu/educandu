@@ -205,17 +205,20 @@ export default class StorageService {
       const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user._id);
 
       const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
-      const roomOwnerStoragePlan = roomOwner.storage.plan ? await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan) : null;
 
-      locations.push({
-        type: STORAGE_LOCATION_TYPE.private,
-        usedBytes: roomOwner.storage.usedBytes,
-        maxBytes: roomOwnerStoragePlan?.maxBytes || 0,
-        rootPath: `rooms/${room._id}/media`,
-        initialPath: `rooms/${room._id}/media`,
-        uploadPath: `rooms/${room._id}/media`,
-        isDeletionEnabled: isRoomOwner || isRoomCollaborator
-      });
+      if (roomOwner.storage.plan) {
+        const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan);
+
+        locations.push({
+          type: STORAGE_LOCATION_TYPE.private,
+          usedBytes: roomOwner.storage.usedBytes,
+          maxBytes: roomOwnerStoragePlan.maxBytes,
+          rootPath: `rooms/${room._id}/media`,
+          initialPath: `rooms/${room._id}/media`,
+          uploadPath: `rooms/${room._id}/media`,
+          isDeletionEnabled: isRoomOwner || isRoomCollaborator
+        });
+      }
     }
 
     return locations;
