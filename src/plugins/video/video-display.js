@@ -1,8 +1,8 @@
 import React from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
@@ -11,7 +11,7 @@ function VideoDisplay({ content }) {
 
   let sourceUrl;
   switch (content.sourceType) {
-    case SOURCE_TYPE.internal:
+    case MEDIA_SOURCE_TYPE.internal:
       sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
       break;
     default:
@@ -21,7 +21,7 @@ function VideoDisplay({ content }) {
 
   let posterImageUrl;
   switch (content.posterImage?.sourceType) {
-    case SOURCE_TYPE.internal:
+    case MEDIA_SOURCE_TYPE.internal:
       posterImageUrl = content.posterImage.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.posterImage.sourceUrl}` : null;
       break;
     default:
@@ -36,7 +36,6 @@ function VideoDisplay({ content }) {
           <MediaPlayer
             sourceUrl={sourceUrl}
             posterImageUrl={posterImageUrl}
-            audioOnly={!content.showVideo}
             aspectRatio={content.aspectRatio}
             />
         )}

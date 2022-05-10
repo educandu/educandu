@@ -1,11 +1,11 @@
 import React from 'react';
 import AnavisIcon from './anavis-icon.js';
+import { MEDIA_KIND } from './constants.js';
 import AnavisDisplay from './anavis-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { MEDIA_KIND, SOURCE_TYPE } from './constants.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class AnavisInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -46,7 +46,7 @@ class AnavisInfo {
       ],
       media: {
         kind: MEDIA_KIND.video,
-        sourceType: SOURCE_TYPE.youtube,
+        sourceType: MEDIA_SOURCE_TYPE.youtube,
         sourceUrl: '',
         text: '',
         aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine
@@ -68,7 +68,7 @@ class AnavisInfo {
       );
     }
 
-    if (redactedContent.media?.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.media.sourceUrl, targetRoomId)) {
+    if (redactedContent.media?.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.media.sourceUrl, targetRoomId)) {
       redactedContent.media.sourceUrl = '';
     }
 
@@ -80,7 +80,7 @@ class AnavisInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.media?.text));
 
-    if (content.media?.sourceType === SOURCE_TYPE.internal && content.media.sourceUrl) {
+    if (content.media?.sourceType === MEDIA_SOURCE_TYPE.internal && content.media.sourceUrl) {
       cdnResources.push(content.media.sourceUrl);
     }
 

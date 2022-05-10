@@ -1,14 +1,13 @@
 import React, { Fragment } from 'react';
-import { SOURCE_TYPE } from './constants.js';
+import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
-import { Form, Input, Radio, Switch } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -24,35 +23,16 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
     wrapperCol: { span: 14 }
   };
 
-  const { sourceType, sourceUrl, text, width, aspectRatio, showVideo, posterImage } = content;
+  const { sourceType, sourceUrl, text, width, aspectRatio, posterImage } = content;
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
 
     const isInvalidSourceUrl
-      = newContent.sourceType !== SOURCE_TYPE.internal
+      = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
     onContentChanged(newContent, isInvalidSourceUrl);
-  };
-
-  const handleExternalUrlChanged = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value });
-  };
-
-  const handleYoutubeUrlChanged = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value });
-  };
-
-  const handleInternalUrlChanged = event => {
-    const { value } = event.target;
-    changeContent({ sourceUrl: value });
-  };
-
-  const handleInternalUrlFileNameChanged = value => {
-    changeContent({ sourceUrl: value });
   };
 
   const handleTypeChanged = event => {
@@ -60,38 +40,42 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
     changeContent({
       sourceType: value,
       sourceUrl: '',
-      showVideo: true,
       posterImage: {
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: ''
       }
     });
   };
 
-  const handleAspectRatioChanged = event => {
+  const handleSourceUrlValueChange = event => {
+    const { value } = event.target;
+    changeContent({ sourceUrl: value });
+  };
+
+  const handleInternalUrlFileNameChange = value => {
+    changeContent({ sourceUrl: value });
+  };
+
+  const handleAspectRatioChange = event => {
     changeContent({ aspectRatio: event.target.value });
   };
 
-  const handleShowVideoChanged = newDhowVideo => {
-    changeContent({ showVideo: newDhowVideo });
-  };
-
-  const handleCopyrightInfoChanged = event => {
+  const handleCopyrightInfoChange = event => {
     const { value } = event.target;
     changeContent({ text: value });
   };
 
-  const handleWidthChanged = newValue => {
+  const handleWidthChange = newValue => {
     changeContent({ width: newValue });
   };
 
-  const handlePosterImageSourceUrlValueChanged = event => {
+  const handlePosterImageSourceUrlValueChange = event => {
     const { value } = event.target;
-    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+    changeContent({ posterImage: { sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: value } });
   };
 
-  const handlePosterImageSourceUrlFileNameChanged = value => {
-    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+  const handlePosterImageSourceUrlFileNameChange = value => {
+    changeContent({ posterImage: { sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: value } });
   };
 
   const renderPosterImageFormItem = () => (
@@ -100,13 +84,13 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
         <Input
           addonBefore={`${clientConfig.cdnRootUrl}/`}
           value={posterImage.sourceUrl}
-          onChange={handlePosterImageSourceUrlValueChanged}
+          onChange={handlePosterImageSourceUrlValueChange}
           />
         <StorageFilePicker
           publicStorage={publicStorage}
           privateStorage={privateStorage}
           fileName={posterImage.sourceUrl}
-          onFileNameChanged={handlePosterImageSourceUrlFileNameChanged}
+          onFileNameChanged={handlePosterImageSourceUrlFileNameChange}
           />
       </div>
     </FormItem>
@@ -117,59 +101,56 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleTypeChanged}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {sourceType === SOURCE_TYPE.external && (
+        {sourceType === MEDIA_SOURCE_TYPE.external && (
           <Fragment>
             <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-              <Input value={sourceUrl} onChange={handleExternalUrlChanged} />
+              <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
             </FormItem>
             {renderPosterImageFormItem()}
           </Fragment>
         )}
-        {sourceType === SOURCE_TYPE.internal && (
+        {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <Fragment>
             <FormItem label={t('common:internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={sourceUrl}
-                  onChange={handleInternalUrlChanged}
+                  onChange={handleSourceUrlValueChange}
                   />
                 <StorageFilePicker
                   publicStorage={publicStorage}
                   privateStorage={privateStorage}
                   fileName={sourceUrl}
-                  onFileNameChanged={handleInternalUrlFileNameChanged}
+                  onFileNameChanged={handleInternalUrlFileNameChange}
                   />
               </div>
             </FormItem>
             {renderPosterImageFormItem()}
           </Fragment>
         )}
-        {sourceType === SOURCE_TYPE.youtube && (
+        {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <Input value={sourceUrl} onChange={handleYoutubeUrlChanged} />
+            <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
           </FormItem>
         )}
         <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
-          <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChanged}>
+          <RadioGroup defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine} value={aspectRatio} size="small" onChange={handleAspectRatioChange}>
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
           </RadioGroup>
         </Form.Item>
-        <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
-          <Switch size="small" defaultChecked checked={showVideo} onChange={handleShowVideoChanged} />
-        </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
-          <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
+          <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <TextArea value={text} onChange={handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
+          <TextArea value={text} onChange={handleCopyrightInfoChange} autoSize={{ minRows: 3 }} />
         </Form.Item>
       </Form>
     </div>

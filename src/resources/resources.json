@@ -1654,7 +1654,6 @@
     "language": "en",
     "resources": {
       "name": "PDF viewer",
-      "internalLink": "Internal link",
       "caption": "Caption",
       "initialPageNumber": "Initially displayed page",
       "showTextOverlay": "Show text overlay",
@@ -1670,7 +1669,6 @@
     "language": "de",
     "resources": {
       "name": "PDF-Anzeige",
-      "internalLink": "Interner Link",
       "caption": "Legende",
       "initialPageNumber": "Zuerst angezeigte Seite",
       "showTextOverlay": "Text-Overlay anzeigen",
@@ -1891,7 +1889,6 @@
       "renderMedia": "Render media",
       "internalCdn": "Internal CDN",
       "externalLink": "External link",
-      "internalLink": "Internal link",
       "youtube": "Youtube",
       "externalUrl": "External URL",
       "internalUrl": "Internal URL",
@@ -2011,7 +2008,6 @@
       "renderMedia": "Medien wiedergeben",
       "internalCdn": "Internes CDN",
       "externalLink": "Externer Link",
-      "internalLink": "Interner Link",
       "youtube": "Youtube",
       "externalUrl": "Externe URL",
       "internalUrl": "Interne URL",

@@ -1,11 +1,10 @@
 import React from 'react';
 import VideoIcon from './video-icon.js';
-import { SOURCE_TYPE } from './constants.js';
 import VideoDisplay from './video-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class VideoInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -35,14 +34,13 @@ class VideoInfo {
 
   getDefaultContent() {
     return {
-      sourceType: SOURCE_TYPE.internal,
+      sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       text: '',
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-      showVideo: true,
       posterImage: {
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: ''
       }
     };
@@ -60,11 +58,17 @@ class VideoInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (redactedContent.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (
+      redactedContent.sourceType === MEDIA_SOURCE_TYPE.internal
+      && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)
+    ) {
       redactedContent.sourceUrl = '';
     }
 
-    if (redactedContent.posterImage.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)) {
+    if (
+      redactedContent.posterImage.sourceType === MEDIA_SOURCE_TYPE.internal
+      && !isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)
+    ) {
       redactedContent.posterImage.sourceUrl = '';
     }
 
@@ -76,11 +80,11 @@ class VideoInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.text || ''));
 
-    if (content.sourceType === SOURCE_TYPE.internal && content.sourceUrl) {
+    if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
       cdnResources.push(content.sourceUrl);
     }
 
-    if (content.posterImage.sourceType === SOURCE_TYPE.internal && content.posterImage.sourceUrl) {
+    if (content.posterImage.sourceType === MEDIA_SOURCE_TYPE.internal && content.posterImage.sourceUrl) {
       cdnResources.push(content.posterImage.sourceUrl);
     }
 

@@ -1,7 +1,6 @@
 import by from 'thenby';
 import ReactDOM from 'react-dom';
 import reactPlayerNs from 'react-player';
-import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
@@ -17,8 +16,8 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
-import { MEDIA_ASPECT_RATIO, MEDIA_TYPE } from '../../domain/constants.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, MEDIA_TYPE } from '../../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -73,8 +72,8 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       return 0;
     }
 
-    const completeUrl = sourceType === SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
-    const isInvalidSourceUrl = sourceType !== SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
+    const completeUrl = sourceType === MEDIA_SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
+    const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
 
     if (isInvalidSourceUrl) {
       return 0;
@@ -95,7 +94,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     const newContent = { ...content, ...newContentValues };
 
     const isInvalidSourceUrl
-      = newContent.sourceType !== SOURCE_TYPE.internal
+      = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
     onContentChanged(newContent, isInvalidSourceUrl);
@@ -188,17 +187,17 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {sourceType === SOURCE_TYPE.external && (
+        {sourceType === MEDIA_SOURCE_TYPE.external && (
           <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
             <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} />
           </FormItem>
         )}
-        {sourceType === SOURCE_TYPE.internal && (
+        {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <DebouncedInput addonBefore={`${clientConfig.cdnRootUrl}/`} value={sourceUrl} onChange={handleSourceUrlChange} />
@@ -211,7 +210,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             </div>
           </FormItem>
         )}
-        {sourceType === SOURCE_TYPE.youtube && (
+        {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
             <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} />
           </FormItem>

@@ -3,12 +3,6 @@ export const MEDIA_KIND = {
   video: 'video'
 };
 
-export const SOURCE_TYPE = {
-  internal: 'internal',
-  external: 'external',
-  youtube: 'youtube'
-};
-
 export const COLOR_SWATCHES = [
   ['#fffafa', '#ffd700', '#9ef083', '#7fff00', '#228b22', '#4582b4', '#ff0000', '#ca1515', '#800000', '#575757'],
   ['#e6f7ff', '#bae7ff', '#91d5ff', '#69c0ff', '#40a9ff', '#1890ff', '#096dd9', '#0050b3', '#003a8c', '#002766'],
