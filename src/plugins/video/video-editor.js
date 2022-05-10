@@ -1,14 +1,13 @@
 import React, { Fragment } from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Form, Input, Radio, Switch } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -30,7 +29,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
     const newContent = { ...content, ...newContentValues };
 
     const isInvalidSourceUrl
-      = newContent.sourceType !== SOURCE_TYPE.internal
+      = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
     onContentChanged(newContent, isInvalidSourceUrl);
@@ -62,7 +61,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
       sourceUrl: '',
       showVideo: true,
       posterImage: {
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: ''
       }
     });
@@ -87,11 +86,11 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const handlePosterImageSourceUrlValueChanged = event => {
     const { value } = event.target;
-    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+    changeContent({ posterImage: { sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: value } });
   };
 
   const handlePosterImageSourceUrlFileNameChanged = value => {
-    changeContent({ posterImage: { sourceType: SOURCE_TYPE.internal, sourceUrl: value } });
+    changeContent({ posterImage: { sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: value } });
   };
 
   const renderPosterImageFormItem = () => (
@@ -117,12 +116,12 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleTypeChanged}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {sourceType === SOURCE_TYPE.external && (
+        {sourceType === MEDIA_SOURCE_TYPE.external && (
           <Fragment>
             <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
               <Input value={sourceUrl} onChange={handleExternalUrlChanged} />
@@ -130,7 +129,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
             {renderPosterImageFormItem()}
           </Fragment>
         )}
-        {sourceType === SOURCE_TYPE.internal && (
+        {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <Fragment>
             <FormItem label={t('common:internalUrl')} {...formItemLayout}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -150,7 +149,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
             {renderPosterImageFormItem()}
           </Fragment>
         )}
-        {sourceType === SOURCE_TYPE.youtube && (
+        {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
             <Input value={sourceUrl} onChange={handleYoutubeUrlChanged} />
           </FormItem>

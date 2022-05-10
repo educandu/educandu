@@ -1,5 +1,5 @@
 import AudioInfo from './audio-info.js';
-import { SOURCE_TYPE } from './constants.js';
+import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('audio-info', () => {
@@ -11,24 +11,24 @@ describe('audio-info', () => {
   describe('redactContent', () => {
     it('redacts inaccessible recources', () => {
       const result = sut.redactContent({
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/some-sound.mp3',
         text: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
       }, '67890');
       expect(result).toStrictEqual({
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: '',
         text: '[Click here]()'
       });
     });
     it('leaves accessible recources intact', () => {
       const result = sut.redactContent({
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/some-sound.mp3',
         text: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
       }, '12345');
       expect(result).toStrictEqual({
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/some-sound.mp3',
         text: '[Click here](cdn://rooms/12345/media/some-doc.pdf)'
       });
@@ -37,19 +37,19 @@ describe('audio-info', () => {
 
   describe('getCdnResources', () => {
     it('returns resources from the text', () => {
-      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.external, sourceUrl: null, text: '[Hyperlink](cdn://media/my-file.pdf)' });
+      const result = sut.getCdnResources({ sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: null, text: '[Hyperlink](cdn://media/my-file.pdf)' });
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
     it('returns empty list for an external resource', () => {
-      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.external, sourceUrl: 'https://someplace.com/sound.mp3', text: '' });
+      const result = sut.getCdnResources({ sourceType: MEDIA_SOURCE_TYPE.external, sourceUrl: 'https://someplace.com/sound.mp3', text: '' });
       expect(result).toHaveLength(0);
     });
     it('returns empty list for an internal resource without url', () => {
-      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.internal, sourceUrl: null, text: '' });
+      const result = sut.getCdnResources({ sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: null, text: '' });
       expect(result).toHaveLength(0);
     });
     it('returns a list with the url for an internal resource', () => {
-      const result = sut.getCdnResources({ sourceType: SOURCE_TYPE.internal, sourceUrl: 'media/some-sound.mp3', text: '' });
+      const result = sut.getCdnResources({ sourceType: MEDIA_SOURCE_TYPE.internal, sourceUrl: 'media/some-sound.mp3', text: '' });
       expect(result).toEqual(['media/some-sound.mp3']);
     });
   });

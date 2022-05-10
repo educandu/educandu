@@ -6,7 +6,6 @@ import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -14,8 +13,9 @@ import StorageFilePicker from '../../components/storage-file-picker.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
-import { MEDIA_KIND, SOURCE_TYPE, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
+import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -297,17 +297,17 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleSourceTypeValueChanged}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
-        {sourceType === SOURCE_TYPE.external && (
+        {sourceType === MEDIA_SOURCE_TYPE.external && (
           <FormItem label={t('common:externalUrl')} {...formItemLayout}>
             <Input value={sourceUrl} onChange={handleExternalUrlValueChanged} />
           </FormItem>
         )}
-        {sourceType === SOURCE_TYPE.internal && (
+        {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Input
@@ -324,7 +324,7 @@ function AnavisEditor({ content, onContentChanged, publicStorage, privateStorage
             </div>
           </FormItem>
         )}
-        {sourceType === SOURCE_TYPE.youtube && (
+        {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout}>
             <Input value={sourceUrl} onChange={handleYoutubeUrlValueChanged} />
           </FormItem>

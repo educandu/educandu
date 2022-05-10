@@ -1,9 +1,10 @@
 import React from 'react';
+import { MEDIA_KIND } from './constants.js';
 import colorHelper from '../../ui/color-helper.js';
 import Markdown from '../../components/markdown.js';
-import { MEDIA_KIND, SOURCE_TYPE } from './constants.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
@@ -14,7 +15,7 @@ function AnavisDisplay({ content }) {
 
   let sourceUrl;
   switch (media.sourceType) {
-    case SOURCE_TYPE.internal:
+    case MEDIA_SOURCE_TYPE.internal:
       sourceUrl = media.sourceUrl ? `${clientConfig.cdnRootUrl}/${media.sourceUrl}` : null;
       break;
     default:

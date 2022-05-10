@@ -1,12 +1,11 @@
 import React from 'react';
-import { SOURCE_TYPE } from './constants.js';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
-import { MEDIA_ASPECT_RATIO } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import InteractiveMediaDisplay from './interactive-media-display.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 class InteractiveMediaInfo {
   static get inject() { return [GithubFlavoredMarkdown]; }
@@ -44,7 +43,7 @@ class InteractiveMediaInfo {
 
   getDefaultContent(t) {
     return {
-      sourceType: SOURCE_TYPE.internal,
+      sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       sourceDuration: 0,
       text: '',
@@ -67,7 +66,7 @@ class InteractiveMediaInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (redactedContent.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (redactedContent.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
@@ -79,7 +78,7 @@ class InteractiveMediaInfo {
 
     cdnResources.push(...this.gfm.extractCdnResources(content.text || ''));
 
-    if (content.sourceType === SOURCE_TYPE.internal && content.sourceUrl) {
+    if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
       cdnResources.push(content.sourceUrl);
     }
 

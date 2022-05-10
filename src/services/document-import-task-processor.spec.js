@@ -3,9 +3,9 @@ import Cdn from '../repositories/cdn.js';
 import Database from '../stores/database.js';
 import uniqueId from '../utils/unique-id.js';
 import ServerConfig from '../bootstrap/server-config.js';
+import { MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import ExportApiClient from '../api-clients/export-api-client.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
-import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment } from '../test-helper.js';
 
 describe('document-import-task-processor', () => {
@@ -89,7 +89,7 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
                 posterImage: {}
               },
@@ -117,7 +117,7 @@ describe('document-import-task-processor', () => {
               key: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-2.mp4',
                 posterImage: {}
               },
@@ -270,7 +270,7 @@ describe('document-import-task-processor', () => {
                 key: uniqueId.create(),
                 type: 'video',
                 content: {
-                  sourceType: VIDEO_SOURCE_TYPE.internal,
+                  sourceType: MEDIA_SOURCE_TYPE.internal,
                   sourceUrl: 'media/video-3.mp4',
                   posterImage: {}
                 },

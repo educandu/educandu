@@ -1,4 +1,4 @@
-import { SOURCE_TYPE } from './constants.js';
+import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
@@ -11,7 +11,7 @@ describe('interactive-media-info', () => {
   describe('redactContent', () => {
     it('redacts the text', () => {
       const input = {
-        sourceType: SOURCE_TYPE.external,
+        sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
         text: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
       };
@@ -21,7 +21,7 @@ describe('interactive-media-info', () => {
 
     it('redacts the media source url', () => {
       const input = {
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
         text: ''
       };
@@ -31,7 +31,7 @@ describe('interactive-media-info', () => {
 
     it('redacts the media source url', () => {
       const input = {
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
         text: ''
       };
@@ -41,7 +41,7 @@ describe('interactive-media-info', () => {
 
     it('leaves accessible paths intact', () => {
       const input = {
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'rooms/12345/media/my-video.mp4',
         text: '[Click me](cdn://rooms/12345/media/my-file.pdf)'
       };
@@ -53,7 +53,7 @@ describe('interactive-media-info', () => {
   describe('getCdnResources', () => {
     it('returns CDN resources from text', () => {
       const result = sut.getCdnResources({
-        sourceType: SOURCE_TYPE.external,
+        sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: '',
         text: 'This [hyperlink](cdn://media/my-file.pdf) and [another one](https://google.com)'
       });
@@ -62,7 +62,7 @@ describe('interactive-media-info', () => {
 
     it('returns empty list for a YouTube resource', () => {
       const result = sut.getCdnResources({
-        sourceType: SOURCE_TYPE.youtube,
+        sourceType: MEDIA_SOURCE_TYPE.youtube,
         sourceUrl: 'https://youtube.com/something',
         text: ''
       });
@@ -71,7 +71,7 @@ describe('interactive-media-info', () => {
 
     it('returns empty list for an external resource', () => {
       const result = sut.getCdnResources({
-        sourceType: SOURCE_TYPE.external,
+        sourceType: MEDIA_SOURCE_TYPE.external,
         sourceUrl: 'https://someplace.com/video.mp4',
         text: ''
       });
@@ -80,7 +80,7 @@ describe('interactive-media-info', () => {
 
     it('returns empty list for an internal resource without url', () => {
       const result = sut.getCdnResources({
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: null,
         text: ''
       });
@@ -89,7 +89,7 @@ describe('interactive-media-info', () => {
 
     it('returns a list with the url for an internal resource', () => {
       const result = sut.getCdnResources({
-        sourceType: SOURCE_TYPE.internal,
+        sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: 'media/some-video.mp4',
         text: ''
       });

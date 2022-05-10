@@ -5,10 +5,9 @@ import Database from '../stores/database.js';
 import cloneDeep from '../utils/clone-deep.js';
 import LockStore from '../stores/lock-store.js';
 import DocumentService from './document-service.js';
-import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import MarkdownInfo from '../plugins/markdown/markdown-info.js';
+import { DOCUMENT_ORIGIN, MEDIA_SOURCE_TYPE } from '../domain/constants.js';
 import { SOURCE_TYPE as IMAGE_SOURCE_TYPE } from '../plugins/image/constants.js';
-import { SOURCE_TYPE as VIDEO_SOURCE_TYPE } from '../plugins/video/constants.js';
 import { createTestDocument, createTestRevisions, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 const createDefaultSection = () => ({
@@ -84,7 +83,7 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceType: VIDEO_SOURCE_TYPE.internal,
+              sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-1.mp4',
               posterImage: {}
             }
@@ -205,7 +204,7 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceType: VIDEO_SOURCE_TYPE.internal,
+              sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-1.mp4',
               posterImage: {}
             }
@@ -230,7 +229,7 @@ describe('document-service', () => {
             ...createDefaultSection(),
             type: 'video',
             content: {
-              sourceType: VIDEO_SOURCE_TYPE.internal,
+              sourceType: MEDIA_SOURCE_TYPE.internal,
               sourceUrl: 'media/video-2.mp4',
               posterImage: {}
             }
@@ -349,7 +348,7 @@ describe('document-service', () => {
               revision: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
                 posterImage: {}
               },
@@ -373,7 +372,7 @@ describe('document-service', () => {
               revision: uniqueId.create(),
               type: 'video',
               content: {
-                sourceType: VIDEO_SOURCE_TYPE.internal,
+                sourceType: MEDIA_SOURCE_TYPE.internal,
                 sourceUrl: 'media/video-1.mp4',
                 posterImage: {}
               }

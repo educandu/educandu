@@ -1,9 +1,9 @@
 import React from 'react';
 import { Form, Input, Radio } from 'antd';
-import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
@@ -26,7 +26,7 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
-    const isInvalidSourceUrl = newContent.sourceType !== SOURCE_TYPE.internal && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
+    const isInvalidSourceUrl = newContent.sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
     onContentChanged(newContent, isInvalidSourceUrl);
   };
 
@@ -57,8 +57,9 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
           <RadioGroup value={sourceType} onChange={handleSourceTypeValueChanged}>
-            <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-            <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+            <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>
           </RadioGroup>
         </FormItem>
         {sourceType === 'external' && (

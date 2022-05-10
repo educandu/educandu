@@ -110,6 +110,12 @@ export const MEDIA_ASPECT_RATIO = {
   fourToThree: '4:3'
 };
 
+export const MEDIA_SOURCE_TYPE = {
+  internal: 'internal',
+  external: 'external',
+  youtube: 'youtube'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';
