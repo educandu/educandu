@@ -16,8 +16,7 @@ export const filePickerStorageShape = PropTypes.shape({
   uploadPath: PropTypes.string,
   isDeletionEnabled: PropTypes.bool.isRequired,
   usedBytes: PropTypes.number,
-  maxBytes: PropTypes.number,
-  onUsedBytesUpdated: PropTypes.func
+  maxBytes: PropTypes.number
 });
 
 export const sectionDisplayProps = {
@@ -26,9 +25,7 @@ export const sectionDisplayProps = {
 
 export const sectionEditorProps = {
   ...sectionDisplayProps,
-  onContentChanged: PropTypes.func.isRequired,
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired
+  onContentChanged: PropTypes.func.isRequired
 };
 
 export const importSourceProps = {

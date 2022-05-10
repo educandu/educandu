@@ -14,7 +14,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const TextArea = Input.TextArea;
 
-function VideoEditor({ content, onContentChanged, publicStorage, privateStorage }) {
+function VideoEditor({ content, onContentChanged }) {
   const { t } = useTranslation('video');
   const clientConfig = useService(ClientConfig);
 
@@ -87,8 +87,6 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
           onChange={handlePosterImageSourceUrlValueChange}
           />
         <StorageFilePicker
-          publicStorage={publicStorage}
-          privateStorage={privateStorage}
           fileName={posterImage.sourceUrl}
           onFileNameChanged={handlePosterImageSourceUrlFileNameChange}
           />
@@ -124,8 +122,6 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
                   onChange={handleSourceUrlValueChange}
                   />
                 <StorageFilePicker
-                  publicStorage={publicStorage}
-                  privateStorage={privateStorage}
                   fileName={sourceUrl}
                   onFileNameChanged={handleInternalUrlFileNameChange}
                   />

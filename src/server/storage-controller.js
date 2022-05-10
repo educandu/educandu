@@ -1,6 +1,7 @@
 import os from 'os';
 import multer from 'multer';
 import express from 'express';
+import urls from '../utils/urls.js';
 import parseBool from 'parseboolean';
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
@@ -144,6 +145,20 @@ class StorageController {
     const { storagePlanId } = req.params;
     await this.storageService.deleteStoragePlanById(storagePlanId);
     return res.send({});
+  }
+
+  registerMiddleware(router) {
+    router.use(async (req, _res, next) => {
+      const { user } = req;
+      const documentId = urls.getDocIdIfDocUrl(req.originalUrl);
+      const lessonId = urls.getLessonIdIfLessonUrl(req.originalUrl);
+      const locations = await this.storageService.getStorageLocations({ user, documentId, lessonId });
+
+      // eslint-disable-next-line require-atomic-updates
+      req.storage = { locations };
+
+      return next();
+    });
   }
 
   registerApi(router) {

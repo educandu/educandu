@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import selection from '../ui/selection.js';
 import { useTranslation } from 'react-i18next';
 import StorageBrowser from './storage-browser.js';
-import { filePickerStorageShape } from '../ui/default-prop-types.js';
 
-function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged }) {
+function StorageFilePicker({ onFileNameChanged }) {
   const { t } = useTranslation('storageFilePicker');
 
   const [state, setState] = useState({
@@ -73,8 +72,6 @@ function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged })
         modalRender={modalRender}
         >
         <StorageBrowser
-          publicStorage={publicStorage}
-          privateStorage={privateStorage}
           selectionMode={selection.SINGLE}
           onSelectionChanged={handleSelectionChanged}
           />
@@ -84,14 +81,11 @@ function StorageFilePicker({ publicStorage, privateStorage, onFileNameChanged })
 }
 
 StorageFilePicker.propTypes = {
-  onFileNameChanged: PropTypes.func,
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired
+  onFileNameChanged: PropTypes.func
 };
 
 StorageFilePicker.defaultProps = {
-  onFileNameChanged: () => {},
-  privateStorage: null
+  onFileNameChanged: () => {}
 };
 
 export default StorageFilePicker;

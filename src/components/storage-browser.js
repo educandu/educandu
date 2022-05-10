@@ -8,27 +8,28 @@ import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import Logger from '../common/logger.js';
 import selection from '../ui/selection.js';
+import { useUser } from './user-context.js';
 import Highlighter from 'react-highlighter';
 import UsedStorage from './used-storage.js';
 import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
+import cloneDeep from '../utils/clone-deep.js';
 import FileIcon from './icons/general/file-icon.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
 import FolderIcon from './icons/general/folder-icon.js';
 import UploadIcon from './icons/general/upload-icon.js';
-import { useSetUser, useUser } from './user-context.js';
 import PublicIcon from './icons/general/public-icon.js';
+import { userProps } from '../ui/default-prop-types.js';
 import PrivateIcon from './icons/general/private-icon.js';
-import { useStoragePlan } from './storage-plan-context.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
+import { useStorage, useSetStorage } from './storage-context.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-helper.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES } from '../domain/constants.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
-import { filePickerStorageShape, userProps } from '../ui/default-prop-types.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert, Tooltip } from 'antd';
 
 const logger = new Logger(import.meta.url);
@@ -42,7 +43,7 @@ class StorageBrowser extends React.Component {
     this.filterTextInputRef = React.createRef();
 
     const locations = this.mapLocationsFromProps();
-    const currentLocation = locations.find(location => location.key === 'private') || locations[0];
+    const currentLocation = locations.find(location => location.type === STORAGE_LOCATION_TYPE.private) || locations[0];
 
     this.state = {
       records: [],
@@ -118,8 +119,11 @@ class StorageBrowser extends React.Component {
       try {
         const prefix = getPrefix(currentPathSegments);
         const { usedBytes } = await storageApiClient.uploadFiles(currentUploadFiles, prefix, { onProgress });
-        if (this.state.currentLocation.isPrivate) {
-          this.state.currentLocation.onUsedBytesUpdated(usedBytes);
+        if (this.state.currentLocation.type === STORAGE_LOCATION_TYPE.private) {
+          const newStorage = cloneDeep(this.props.storage);
+          const privateStorage = newStorage.locations.find(location => location.type === STORAGE_LOCATION_TYPE.private);
+          privateStorage.usedBytes = usedBytes;
+          this.props.setStorage(newStorage);
         }
       } catch (error) {
         handleApiError({ error, logger, t });
@@ -144,9 +148,6 @@ class StorageBrowser extends React.Component {
       const { currentPathSegments, selectedRowKeys } = this.state;
       this.refreshFiles(currentPathSegments, selectedRowKeys);
     }
-    if (this.props.privateStorage !== prevProps.privateStorage) {
-      this.updateLocations();
-    }
   }
 
   componentWillUnmount() {
@@ -155,38 +156,10 @@ class StorageBrowser extends React.Component {
   }
 
   mapLocationsFromProps() {
-    const locations = [];
-
-    if (this.props.privateStorage) {
-      locations.push({
-        ...this.createPathSegments(this.props.privateStorage),
-        onUsedBytesUpdated: this.props.privateStorage.onUsedBytesUpdated,
-        isDeletionEnabled: this.props.privateStorage.isDeletionEnabled,
-        usedBytes: this.props.privateStorage.usedBytes,
-        maxBytes: this.props.privateStorage.maxBytes,
-        isPrivate: true,
-        key: 'private'
-      });
-    }
-
-    locations.push({
-      ...this.createPathSegments(this.props.publicStorage),
-      isDeletionEnabled: this.props.publicStorage.isDeletionEnabled,
-      isPrivate: false,
-      key: 'public'
-    });
-
-    return locations;
-  }
-
-  updateLocations() {
-    const updatedLocations = this.mapLocationsFromProps();
-    const updatedCurrentLocation = updatedLocations.find(location => location.key === this.state.currentLocation.key);
-
-    this.setState({
-      locations: updatedLocations,
-      currentLocation: updatedCurrentLocation
-    });
+    return this.props.storage.locations.map(location => ({
+      ...location,
+      ...this.createPathSegments(location)
+    }));
   }
 
   createPathSegments(storage) {
@@ -341,7 +314,7 @@ class StorageBrowser extends React.Component {
       return;
     }
 
-    if (this.state.currentLocation.isPrivate) {
+    if (this.state.currentLocation.type === STORAGE_LOCATION_TYPE.private) {
       const availableBytes = Math.max(0, this.state.currentLocation.maxBytes || 0 - this.state.currentLocation.usedBytes);
 
       if (requiredBytes > availableBytes) {
@@ -363,8 +336,11 @@ class StorageBrowser extends React.Component {
 
     try {
       const { usedBytes } = await storageApiClient.deleteCdnObject(prefix, fileName);
-      if (this.state.currentLocation.isPrivate) {
-        this.state.currentLocation.onUsedBytesUpdated(usedBytes);
+      if (this.state.currentLocation.type === STORAGE_LOCATION_TYPE.private) {
+        const newStorage = cloneDeep(this.props.storage);
+        const privateStorage = newStorage.locations.find(location => location.type === STORAGE_LOCATION_TYPE.private);
+        privateStorage.usedBytes = usedBytes;
+        this.props.setStorage(newStorage);
       }
 
       if (selectedRowKeys.includes(objectName)) {
@@ -561,9 +537,9 @@ class StorageBrowser extends React.Component {
     const lockedPathSegmentsCount = currentLocation.rootPathSegments.length;
 
     const rootOptions = this.state.locations.map(location => ({
-      label: t(location.isPrivate ? 'privateStorage' : 'publicStorage'),
-      icon: location.isPrivate ? <PrivateIcon /> : <PublicIcon />,
-      value: location.key
+      label: t(location.type === STORAGE_LOCATION_TYPE.private ? 'privateStorage' : 'publicStorage'),
+      icon: location.type === STORAGE_LOCATION_TYPE.private ? <PrivateIcon /> : <PublicIcon />,
+      value: location.type
     }));
 
     let rootBreadCrumb;
@@ -571,7 +547,7 @@ class StorageBrowser extends React.Component {
       rootBreadCrumb = (
         <Breadcrumb.Item key="root">
           <Select
-            value={currentLocation.key}
+            value={currentLocation.type}
             onChange={this.handleLocationChange}
             bordered={false}
             size="small"
@@ -610,11 +586,11 @@ class StorageBrowser extends React.Component {
     );
   }
 
-  handleLocationChange(newLocationKey) {
+  handleLocationChange(newLocationType) {
     const { locations, selectedRowKeys } = this.state;
     const { onSelectionChanged } = this.props;
 
-    const newLocation = locations.find(location => location.key === newLocationKey);
+    const newLocation = locations.find(location => location.type === newLocationType);
     this.setState({
       selectedRowKeys: [],
       currentLocation: newLocation,
@@ -656,10 +632,10 @@ class StorageBrowser extends React.Component {
           {this.renderBreadCrumbs(currentPathSegments, currentLocation)}
         </div>
         <div className="StorageBrowser-storageDetails">
-          {currentLocation.isPrivate && (
+          {currentLocation.type === STORAGE_LOCATION_TYPE.private && (
             <UsedStorage usedBytes={this.state.currentLocation.usedBytes} maxBytes={this.state.currentLocation.maxBytes} showLabel />
           )}
-          {locations.some(loc => loc.isPrivate) && !currentLocation.isPrivate && (
+          {locations.some(loc => loc.type === STORAGE_LOCATION_TYPE.private) && currentLocation.type !== STORAGE_LOCATION_TYPE.private && (
             <Alert message={t('publicStorageWarning')} type="warning" showIcon />
           )}
         </div>
@@ -710,8 +686,6 @@ StorageBrowser.propTypes = {
   ...userProps,
   formatDate: PropTypes.func.isRequired,
   onSelectionChanged: PropTypes.func,
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired,
   selectionMode: PropTypes.oneOf([selection.NONE, selection.SINGLE, selection.MULTIPLE]),
   storageApiClient: PropTypes.instanceOf(StorageApiClient).isRequired,
   t: PropTypes.func.isRequired,
@@ -721,7 +695,6 @@ StorageBrowser.propTypes = {
 
 StorageBrowser.defaultProps = {
   onSelectionChanged: () => {},
-  privateStorage: null,
   selectionMode: selection.NONE
 };
 
@@ -730,8 +703,8 @@ export default function StorageBrowserWrapper({ ...props }) {
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const user = useUser();
-  const setUser = useSetUser();
-  const storagePlan = useStoragePlan();
+  const storage = useStorage();
+  const setStorage = useSetStorage();
   const { formatDate } = useDateFormat();
   const { uiLanguage, uiLocale } = useLocale();
 
@@ -742,8 +715,8 @@ export default function StorageBrowserWrapper({ ...props }) {
       uiLanguage={uiLanguage}
       formatDate={formatDate}
       user={user}
-      setUser={setUser}
-      storagePlan={storagePlan}
+      storage={storage}
+      setStorage={setStorage}
       t={t}
       {...props}
       />

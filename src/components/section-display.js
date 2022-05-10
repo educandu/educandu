@@ -11,18 +11,16 @@ import DeleteIcon from './icons/general/delete-icon.js';
 import MoveUpIcon from './icons/general/move-up-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import { sectionShape } from '../ui/default-prop-types.js';
 import MoveDownIcon from './icons/general/move-down-icon.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
-import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
 
 function SectionDisplay({
   section,
-  publicStorage,
-  privateStorage,
   canEdit,
   canHardDelete,
   dragHandleProps,
@@ -149,8 +147,6 @@ function SectionDisplay({
     const EditorComponent = pluginRegistry.tryGetEditorComponent(section.type) || NotSupportedSection;
     return (
       <EditorComponent
-        publicStorage={publicStorage}
-        privateStorage={privateStorage}
         content={section.content}
         onContentChanged={onSectionContentChange}
         />
@@ -284,8 +280,6 @@ SectionDisplay.propTypes = {
   onSectionHardDelete: PropTypes.func,
   onSectionMoveDown: PropTypes.func,
   onSectionMoveUp: PropTypes.func,
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired,
   section: sectionShape.isRequired
 };
 
@@ -304,8 +298,7 @@ SectionDisplay.defaultProps = {
   onSectionDuplicate: () => {},
   onSectionHardDelete: () => {},
   onSectionMoveDown: () => {},
-  onSectionMoveUp: () => {},
-  privateStorage: null
+  onSectionMoveUp: () => {}
 };
 
 export default SectionDisplay;

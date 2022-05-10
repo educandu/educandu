@@ -157,8 +157,21 @@ function getLessonUrl({ id, slug, view, templateLessonId }) {
   return queryString ? `${url}?${queryString}` : url;
 }
 
+function getDocIdIfDocUrl(url) {
+  const docPageRegex = new RegExp(`^(?:${docsPrefix})([a-zA-Z0-9]+)\\b`, 'i');
+  const documentId = url.match(docPageRegex)?.[1];
+
+  return documentId;
+}
+
+function getLessonIdIfLessonUrl(url) {
+  const lessonPageRegex = new RegExp(`^(?:${lessonsPrefix})([a-zA-Z0-9]+)\\b`, 'i');
+  const lessonId = url.match(lessonPageRegex)?.[1];
+
+  return lessonId;
+}
+
 export default {
-  docsPrefix,
   createRedirectUrl,
   removeTrailingSlash,
   removeLeadingSlash,
@@ -187,5 +200,7 @@ export default {
   getBatchUrl,
   getImportedDocUrl,
   getImportSourceBaseUrl,
-  getLessonUrl
+  getLessonUrl,
+  getDocIdIfDocUrl,
+  getLessonIdIfLessonUrl
 };

@@ -16,7 +16,7 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStorage }) {
+function PdfViewerEditor({ content, onContentChanged }) {
   const { t } = useTranslation('pdfViewer');
   const clientConfig = useService(ClientConfig);
 
@@ -61,8 +61,6 @@ function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStor
               onChange={handleSourceUrlChange}
               />
             <StorageFilePicker
-              publicStorage={publicStorage}
-              privateStorage={privateStorage}
               fileName={sourceUrl}
               onFileNameChanged={handleCdnFileNameChange}
               />

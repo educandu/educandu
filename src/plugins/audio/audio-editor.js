@@ -13,7 +13,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const { TextArea } = Input;
 
-function AudioEditor({ content, onContentChanged, publicStorage, privateStorage }) {
+function AudioEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audio');
   const clientConfig = useService(ClientConfig);
 
@@ -73,8 +73,6 @@ function AudioEditor({ content, onContentChanged, publicStorage, privateStorage 
                 onChange={handleSourceUrlValueChange}
                 />
               <StorageFilePicker
-                publicStorage={publicStorage}
-                privateStorage={privateStorage}
                 fileName={sourceUrl}
                 onFileNameChanged={handleInternalUrlFileNameChange}
                 />
