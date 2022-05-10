@@ -36,7 +36,6 @@ function VideoDisplay({ content }) {
           <MediaPlayer
             sourceUrl={sourceUrl}
             posterImageUrl={posterImageUrl}
-            audioOnly={!content.showVideo}
             aspectRatio={content.aspectRatio}
             />
         )}

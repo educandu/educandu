@@ -39,7 +39,6 @@ class VideoInfo {
       text: '',
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-      showVideo: true,
       posterImage: {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: ''
@@ -59,11 +58,17 @@ class VideoInfo {
       url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
     );
 
-    if (redactedContent.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (
+      redactedContent.sourceType === MEDIA_SOURCE_TYPE.internal
+      && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)
+    ) {
       redactedContent.sourceUrl = '';
     }
 
-    if (redactedContent.posterImage.sourceType === MEDIA_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)) {
+    if (
+      redactedContent.posterImage.sourceType === MEDIA_SOURCE_TYPE.internal
+      && !isAccessibleStoragePath(redactedContent.posterImage.sourceUrl, targetRoomId)
+    ) {
       redactedContent.posterImage.sourceUrl = '';
     }
 
