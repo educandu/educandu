@@ -1,5 +1,5 @@
 import { MEDIA_TYPE } from '../domain/constants.js';
-import { formatMillisecondsAsDuration, getMediaType } from './media-utils.js';
+import { analyzeMediaUrl, formatMillisecondsAsDuration, getMediaType } from './media-utils.js';
 
 describe('media-utils', () => {
 
@@ -30,6 +30,84 @@ describe('media-utils', () => {
         it(`should return '${expectedResult}'`, () => {
           expect(getMediaType(url)).toBe(expectedResult);
         });
+      });
+    });
+  });
+
+  describe('analyzeMediaUrl', () => {
+    const testCases = [
+      { url: null, expectedError: 'Invalid URL', expectedResult: null },
+      { url: '', expectedError: 'Invalid URL', expectedResult: null },
+      { url: 'not a URL', expectedError: 'Invalid URL', expectedResult: null },
+      { url: 'https://', expectedError: 'Invalid URL', expectedResult: null },
+      {
+        url: 'https://a',
+        expectedError: null,
+        expectedResult: {
+          sanitizedUrl: 'https://a/',
+          isYoutube: false,
+          startTimecode: null,
+          stopTimecode: null,
+          mediaType: MEDIA_TYPE.none
+        }
+      },
+      {
+        url: 'https://a.com/abc.mp3',
+        expectedError: null,
+        expectedResult: {
+          sanitizedUrl: 'https://a.com/abc.mp3',
+          isYoutube: false,
+          startTimecode: null,
+          stopTimecode: null,
+          mediaType: MEDIA_TYPE.audio
+        }
+      },
+      {
+        url: 'https://www.youtube.com/watch?v=4cn8439c2',
+        expectedError: null,
+        expectedResult: {
+          sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
+          isYoutube: true,
+          startTimecode: null,
+          stopTimecode: null,
+          mediaType: MEDIA_TYPE.video
+        }
+      },
+      {
+        url: 'https://www.youtube.com/watch?v=4cn8439c2&start=5',
+        expectedError: null,
+        expectedResult: {
+          sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
+          isYoutube: true,
+          startTimecode: 5000,
+          stopTimecode: null,
+          mediaType: MEDIA_TYPE.video
+        }
+      },
+      {
+        url: 'https://www.youtube.com/watch?v=4cn8439c2&start=5&end=20',
+        expectedError: null,
+        expectedResult: {
+          sanitizedUrl: 'https://www.youtube.com/watch?v=4cn8439c2',
+          isYoutube: true,
+          startTimecode: 5000,
+          stopTimecode: 20000,
+          mediaType: MEDIA_TYPE.video
+        }
+      }
+    ];
+
+    testCases.forEach(({ url, expectedError, expectedResult }) => {
+      describe(`called with url ${JSON.stringify(url)}`, () => {
+        if (expectedError) {
+          it('should throw the expected error', () => {
+            expect(() => analyzeMediaUrl(url)).toThrowError(expectedError);
+          });
+        } else {
+          it('should return the expected result', () => {
+            expect(analyzeMediaUrl(url)).toStrictEqual(expectedResult);
+          });
+        }
       });
     });
   });

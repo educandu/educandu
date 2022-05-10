@@ -46,6 +46,8 @@ class InteractiveMediaInfo {
       sourceType: MEDIA_SOURCE_TYPE.internal,
       sourceUrl: '',
       sourceDuration: 0,
+      startTimecode: null,
+      stopTimecode: null,
       text: '',
       width: 100,
       aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,

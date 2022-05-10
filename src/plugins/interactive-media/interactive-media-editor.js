@@ -1,13 +1,10 @@
 import by from 'thenby';
-import ReactDOM from 'react-dom';
-import reactPlayerNs from 'react-player';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
+import React, { Fragment, useState } from 'react';
 import Timeline from '../../components/timeline.js';
-import { getMediaType } from '../../utils/media-utils.js';
 import { removeItemAt } from '../../utils/array-utils.js';
-import React, { Fragment, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
@@ -18,8 +15,7 @@ import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, MEDIA_TYPE } from '../../domain/constants.js';
-
-const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
+import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration, getMediaType } from '../../utils/media-utils.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -33,7 +29,6 @@ const formItemLayout = {
 
 function InteractiveMediaEditor({ content, onContentChanged, publicStorage, privateStorage }) {
   const clientConfig = useService(ClientConfig);
-  const hiddenPlayerContainerRef = useRef(null);
   const { t } = useTranslation('interactiveMedia');
   const interactiveMediaInfo = useService(InteractiveMediaInfo);
 
@@ -41,50 +36,29 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
 
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
-  const { sourceType, sourceUrl, sourceDuration, chapters, text, width, aspectRatio, showVideo } = content;
+  const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
 
-  function determineMediaDuration(url, containerRef) {
-    return new Promise((resolve, reject) => {
-      try {
-        const element = React.createElement(ReactPlayer, {
-          url,
-          light: false,
-          playing: false,
-          onDuration: durationInSeconds => {
-            const durationInMiliseconds = durationInSeconds * 1000;
-            resolve(durationInMiliseconds);
-            ReactDOM.unmountComponentAtNode(containerRef.current);
-          },
-          onError: error => {
-            reject(error);
-            ReactDOM.unmountComponentAtNode(containerRef.current);
-          }
-        });
-        ReactDOM.render(element, containerRef.current);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
-  const determineSourceDuration = async url => {
-    if (!url) {
-      return 0;
-    }
-
-    const completeUrl = sourceType === MEDIA_SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
-    const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
-
-    if (isInvalidSourceUrl) {
-      return 0;
-    }
-
+  const getMediaInformation = async url => {
     try {
+      const completeUrl = sourceType === MEDIA_SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
+      const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
+
+      if (!url || isInvalidSourceUrl) {
+        throw new Error();
+      }
+
       setIsDeterminingDuration(true);
-      const duration = await determineMediaDuration(completeUrl, hiddenPlayerContainerRef);
-      return duration;
-    } catch (error) {
-      return 0;
+      const { sanitizedUrl, startTimecode, stopTimecode, mediaType } = analyzeMediaUrl(url);
+      const duration = await determineMediaDuration(completeUrl);
+      return { sanitizedUrl, duration, startTimecode, stopTimecode, mediaType };
+    } catch {
+      return {
+        sanitizedUrl: url,
+        duration: 0,
+        startTimecode: null,
+        stopTimecode: null,
+        mediaType: MEDIA_TYPE.unknown
+      };
     } finally {
       setIsDeterminingDuration(false);
     }
@@ -116,7 +90,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     changeContent({ chapters: newChapters });
   };
 
-  const handleStartTimecodeChange = (key, newStartTimecode) => {
+  const handleChapterStartTimecodeChange = (key, newStartTimecode) => {
     const chapter = chapters.find(p => p.key === key);
     chapter.startTimecode = newStartTimecode;
     const newChapters = [...chapters];
@@ -131,18 +105,21 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       sourceUrl: '',
       showVideo: false,
       sourceDuration: 0,
+      sourceStartTimecode: null,
+      sourceStopTimecode: null,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
   };
 
   const handleSourceUrlChange = async value => {
-    const newSourceDuration = await determineSourceDuration(value);
-    const newShowVideo = [MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(value));
+    const { sanitizedUrl, duration, startTimecode, stopTimecode, mediaType } = await getMediaInformation(value);
     setSelectedChapterIndex(0);
     changeContent({
-      sourceUrl: value,
-      showVideo: newShowVideo,
-      sourceDuration: newSourceDuration,
+      sourceUrl: sanitizedUrl,
+      showVideo: mediaType === MEDIA_TYPE.video || mediaType === MEDIA_TYPE.unknown,
+      sourceDuration: duration,
+      sourceStartTimecode: startTimecode,
+      sourceStopTimecode: stopTimecode,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
   };
@@ -215,7 +192,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} />
           </FormItem>
         )}
-        <Form.Item label={t('common:aspectRatio')} {...formItemLayout}>
+        <FormItem label={t('common:aspectRatio')} {...formItemLayout}>
           <RadioGroup
             size="small"
             defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
@@ -227,21 +204,33 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
             ))}
           </RadioGroup>
-        </Form.Item>
-        <Form.Item label={t('common:videoDisplay')} {...formItemLayout}>
+        </FormItem>
+        <FormItem label={t('common:videoDisplay')} {...formItemLayout}>
           <Switch
             size="small"
             checked={showVideo}
             onChange={handleShowVideoChanged}
             disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
             />
-        </Form.Item>
-        <Form.Item label={t('common:width')} {...formItemLayout}>
+        </FormItem>
+        <FormItem label={t('playbackRange')} {...formItemLayout}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Input
+              value={t('playbackRangeInfo', {
+                from: sourceStartTimecode ? formatMillisecondsAsDuration(sourceStartTimecode) : 'start',
+                to: sourceStopTimecode ? formatMillisecondsAsDuration(sourceStopTimecode) : 'end'
+              })}
+              readOnly
+              />
+            <Button type="primary">{t('common:edit')}</Button>
+          </div>
+        </FormItem>
+        <FormItem label={t('common:width')} {...formItemLayout}>
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
-        </Form.Item>
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+        </FormItem>
+        <FormItem label={t('common:copyrightInfos')} {...formItemLayout}>
           <TextArea value={text} onChange={handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
-        </Form.Item>
+        </FormItem>
 
         <div className="InteractiveMediaEditor-timeline">
           <Timeline
@@ -250,7 +239,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             selectedPartIndex={selectedChapterIndex}
             onPartAdd={handleChapterAdd}
             onPartDelete={handleChapterDelete}
-            onStartTimecodeChange={handleStartTimecodeChange}
+            onStartTimecodeChange={handleChapterStartTimecodeChange}
             />
         </div>
 
@@ -293,7 +282,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
           <Spin className="InteractiveMediaEditor-overlaySpinner" tip={t('determiningDuration')} size="large" />
         </Fragment>
       )}
-      <div ref={hiddenPlayerContainerRef} className="InteractiveMediaEditor-hiddenPlayerContainer" />
     </div>
   );
 }

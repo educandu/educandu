@@ -27,6 +27,8 @@ function InteractiveMediaDisplay({ content }) {
             sourceUrl={sourceUrl}
             audioOnly={!content.showVideo}
             aspectRatio={content.aspectRatio}
+            startTimeCode={content.sourceStartTimeCode}
+            stopTimeCode={content.sourceStopTimeCode}
             />
         )}
         {content.text && (
