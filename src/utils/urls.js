@@ -161,14 +161,14 @@ function getDocIdIfDocUrl(url) {
   const docPageRegex = new RegExp(`^(?:${docsPrefix})([a-zA-Z0-9]+)\\b`, 'i');
   const documentId = url.match(docPageRegex)?.[1];
 
-  return documentId;
+  return documentId || null;
 }
 
 function getLessonIdIfLessonUrl(url) {
   const lessonPageRegex = new RegExp(`^(?:${lessonsPrefix})([a-zA-Z0-9]+)\\b`, 'i');
   const lessonId = url.match(lessonPageRegex)?.[1];
 
-  return lessonId;
+  return lessonId || null;
 }
 
 export default {
