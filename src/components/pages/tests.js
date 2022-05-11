@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FilesGridViewer from '../files-grid-viewer.js';
 
 function Tests({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="TestsPage">
-        insert tests here
+        <FilesGridViewer />
       </div>
     </PageTemplate>
   );
