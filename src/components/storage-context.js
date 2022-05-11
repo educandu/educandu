@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { storageShape } from '../ui/default-prop-types.js';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 const StorageContext = React.createContext();
@@ -26,12 +27,11 @@ export function StorageProvider({ value, children }) {
 
 StorageProvider.propTypes = {
   children: PropTypes.node,
-  value: PropTypes.object
+  value: storageShape.isRequired
 };
 
 StorageProvider.defaultProps = {
-  children: null,
-  value: null
+  children: null
 };
 
 export default {
