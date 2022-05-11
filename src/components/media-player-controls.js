@@ -8,6 +8,7 @@ import { AudioMutedOutlined, CaretRightOutlined, PauseOutlined, SoundOutlined } 
 
 function MediaPlayerControls({
   durationInMilliseconds,
+  extraContentTop,
   playedMilliseconds,
   playState,
   volume,
@@ -21,7 +22,14 @@ function MediaPlayerControls({
   const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--standalone': standalone })}>
-      <Slider min={0} max={durationInMilliseconds} value={playedMilliseconds} tipFormatter={formatMillisecondsAsDuration} onChange={onSeek} />
+      {extraContentTop && (
+        <div className="MediaPlayerControls-extraContent MediaPlayerControls-extraContent--top">
+          {extraContentTop}
+        </div>
+      )}
+      <div className="MediaPlayerControls-slider">
+        <Slider min={0} max={durationInMilliseconds} value={playedMilliseconds} tipFormatter={formatMillisecondsAsDuration} onChange={onSeek} />
+      </div>
       <div className="MediaPlayerControls-controls">
         <div className="MediaPlayerControls-controlsGroup">
           <Button type="link" icon={showAsPlaying ? <PauseOutlined /> : <CaretRightOutlined />} onClick={onTogglePlay} />
@@ -37,6 +45,7 @@ function MediaPlayerControls({
 
 MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
+  extraContentTop: PropTypes.node,
   isMuted: PropTypes.bool.isRequired,
   onSeek: PropTypes.func.isRequired,
   onToggleMute: PropTypes.func.isRequired,
@@ -49,6 +58,7 @@ MediaPlayerControls.propTypes = {
 };
 
 MediaPlayerControls.defaultProps = {
+  extraContentTop: null,
   standalone: false
 };
 

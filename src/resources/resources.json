@@ -474,6 +474,26 @@
     }
   },
   {
+    "namespace": "mediaRangeSelector",
+    "language": "en",
+    "resources": {
+      "modalTitle": "Select playback range",
+      "playbackRange": "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
+      "loadingMessage": "Determining media information ...",
+      "errorMessage": "An error occurred while retrieving the media file"
+    }
+  },
+  {
+    "namespace": "mediaRangeSelector",
+    "language": "de",
+    "resources": {
+      "modalTitle": "Abspielbereich auswählen",
+      "playbackRange": "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
+      "loadingMessage": "Medieninformationen werden ermittelt ...",
+      "errorMessage": "Beim Laden der Mediendatei ist ein Fehler aufgetreten"
+    }
+  },
+  {
     "namespace": "newsTab",
     "language": "en",
     "resources": {

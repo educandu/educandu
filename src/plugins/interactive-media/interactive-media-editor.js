@@ -16,6 +16,7 @@ import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, MEDIA_TYPE } from '../../domain/constants.js';
 import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration, getMediaType } from '../../utils/media-utils.js';
+import MediaRangeSelector from '../../components/media-range-selector.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -124,6 +125,14 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     });
   };
 
+  const handleMediaRangeChange = newRange => {
+    changeContent({
+      sourceStartTimecode: newRange.startTimecode,
+      sourceStopTimecode: newRange.stopTimecode,
+      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+    });
+  };
+
   const handleInternalUrlFileNameChanged = async value => {
     await handleSourceUrlChange(value);
   };
@@ -176,7 +185,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
         )}
         {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="u-input-and-button">
               <DebouncedInput addonBefore={`${clientConfig.cdnRootUrl}/`} value={sourceUrl} onChange={handleSourceUrlChange} />
               <StorageFilePicker
                 publicStorage={publicStorage}
@@ -214,7 +223,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             />
         </FormItem>
         <FormItem label={t('playbackRange')} {...formItemLayout}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="u-input-and-button">
             <Input
               value={t('playbackRangeInfo', {
                 from: sourceStartTimecode ? formatMillisecondsAsDuration(sourceStartTimecode) : 'start',
@@ -222,7 +231,11 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
               })}
               readOnly
               />
-            <Button type="primary">{t('common:edit')}</Button>
+            <MediaRangeSelector
+              sourceUrl={sourceUrl}
+              range={{ startTimecode: sourceStartTimecode, stopTimecode: sourceStopTimecode }}
+              onRangeChange={handleMediaRangeChange}
+              />
           </div>
         </FormItem>
         <FormItem label={t('common:width')} {...formItemLayout}>

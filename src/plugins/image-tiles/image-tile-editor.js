@@ -81,7 +81,7 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
       )}
       {image.sourceType === IMAGE_SOURCE_TYPE.internal && (
         <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="u-input-and-button">
             <Input
               addonBefore={`${clientConfig.cdnRootUrl}/`}
               value={image.sourceUrl}

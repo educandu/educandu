@@ -80,7 +80,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
           />
         )}
         {sound.sourceType === SOURCE_TYPE.internal && (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="u-input-and-button">
           <Input
             addonBefore={`${clientConfig.cdnRootUrl}/`}
             value={sound.sourceUrl}

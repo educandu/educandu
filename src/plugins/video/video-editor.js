@@ -80,7 +80,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
 
   const renderPosterImageFormItem = () => (
     <FormItem label={t('posterImageUrl')} {...formItemLayout}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div className="u-input-and-button">
         <Input
           addonBefore={`${clientConfig.cdnRootUrl}/`}
           value={posterImage.sourceUrl}
@@ -117,7 +117,7 @@ function VideoEditor({ content, onContentChanged, publicStorage, privateStorage 
         {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <Fragment>
             <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div className="u-input-and-button">
                 <Input
                   addonBefore={`${clientConfig.cdnRootUrl}/`}
                   value={sourceUrl}

@@ -54,7 +54,7 @@ function PdfViewerEditor({ content, onContentChanged, publicStorage, privateStor
     <div className="PdfViewerEditor">
       <Form layout="horizontal">
         <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-          <div className="PdfViewerEditor-internalSourceSelector">
+          <div className="u-input-and-button">
             <Input
               addonBefore={`${clientConfig.cdnRootUrl}/`}
               value={sourceUrl}
