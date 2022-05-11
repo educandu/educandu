@@ -50,7 +50,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       duration: 0,
       startTimecode: null,
       stopTimecode: null,
-      fileType: MEDIA_TYPE.unknown
+      fileType: FILE_TYPE.unknown
     };
 
     if (!url) {
