@@ -39,6 +39,10 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
 
+  const getFullSourceUrl = url => url && sourceType === MEDIA_SOURCE_TYPE.internal
+    ? `${clientConfig.cdnRootUrl}/${url}`
+    : url || null;
+
   const getMediaInformation = async url => {
     const unknownResult = {
       sanitizedUrl: url,
@@ -59,8 +63,8 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
       }
 
       setIsDeterminingDuration(true);
-      const completeUrl = sourceType === MEDIA_SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
-      const { sanitizedUrl, startTimecode, stopTimecode, mediaType } = analyzeMediaUrl(url);
+      const completeUrl = getFullSourceUrl(url);
+      const { sanitizedUrl, startTimecode, stopTimecode, mediaType } = analyzeMediaUrl(completeUrl);
       const duration = await determineMediaDuration(completeUrl);
       return { sanitizedUrl, duration, startTimecode, stopTimecode, mediaType };
     } catch {
@@ -173,16 +177,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     changeContent({ chapters: newChapters });
   };
 
-  let fullSourceUrl;
-  switch (sourceType) {
-    case MEDIA_SOURCE_TYPE.internal:
-      fullSourceUrl = sourceUrl ? `${clientConfig.cdnRootUrl}/${sourceUrl}` : null;
-      break;
-    default:
-      fullSourceUrl = sourceUrl || null;
-      break;
-  }
-
   return (
     <div className="InteractiveMediaEditor">
       <Form layout="horizontal">
@@ -247,7 +241,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
               readOnly
               />
             <MediaRangeSelector
-              sourceUrl={fullSourceUrl}
+              sourceUrl={getFullSourceUrl(sourceUrl)}
               range={{ startTimecode: sourceStartTimecode, stopTimecode: sourceStopTimecode }}
               onRangeChange={handleMediaRangeChange}
               />
