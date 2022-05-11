@@ -40,26 +40,31 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
   const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
 
   const getMediaInformation = async url => {
-    try {
-      const completeUrl = sourceType === MEDIA_SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
-      const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
+    const unknownResult = {
+      sanitizedUrl: url,
+      duration: 0,
+      startTimecode: null,
+      stopTimecode: null,
+      mediaType: MEDIA_TYPE.unknown
+    };
 
-      if (!url || isInvalidSourceUrl) {
-        throw new Error();
+    if (!url) {
+      return unknownResult;
+    }
+
+    try {
+      const isInvalidSourceUrl = sourceType !== MEDIA_SOURCE_TYPE.internal && validation.validateUrl(url, t).validateStatus === 'error';
+      if (isInvalidSourceUrl) {
+        return unknownResult;
       }
 
       setIsDeterminingDuration(true);
+      const completeUrl = sourceType === MEDIA_SOURCE_TYPE.internal ? `${clientConfig.cdnRootUrl}/${url}` : url;
       const { sanitizedUrl, startTimecode, stopTimecode, mediaType } = analyzeMediaUrl(url);
       const duration = await determineMediaDuration(completeUrl);
       return { sanitizedUrl, duration, startTimecode, stopTimecode, mediaType };
     } catch {
-      return {
-        sanitizedUrl: url,
-        duration: 0,
-        startTimecode: null,
-        stopTimecode: null,
-        mediaType: MEDIA_TYPE.unknown
-      };
+      return unknownResult;
     } finally {
       setIsDeterminingDuration(false);
     }
