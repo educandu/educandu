@@ -4,7 +4,7 @@ import MediaPlayerTrack from './media-player-track.js';
 import MediaPlayerControls from './media-player-controls.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
 
-function MediaPlayer({ sourceUrl, aspectRatio, audioOnly, posterImageUrl }) {
+function MediaPlayer({ sourceUrl, startTimecode, stopTimecode, aspectRatio, audioOnly, posterImageUrl, extraContentTop }) {
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
@@ -37,6 +37,8 @@ function MediaPlayer({ sourceUrl, aspectRatio, audioOnly, posterImageUrl }) {
         sourceUrl={sourceUrl}
         audioOnly={audioOnly}
         aspectRatio={aspectRatio}
+        startTimecode={startTimecode}
+        stopTimecode={stopTimecode}
         onDuration={setDurationInMilliseconds}
         onProgress={setPlayedMilliseconds}
         onPlayStateChange={setPlayState}
@@ -53,6 +55,7 @@ function MediaPlayer({ sourceUrl, aspectRatio, audioOnly, posterImageUrl }) {
         onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
         standalone={audioOnly}
+        extraContentTop={extraContentTop}
         />
     </div>
   );
@@ -61,15 +64,21 @@ function MediaPlayer({ sourceUrl, aspectRatio, audioOnly, posterImageUrl }) {
 MediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
+  extraContentTop: PropTypes.node,
   posterImageUrl: PropTypes.string,
-  sourceUrl: PropTypes.string
+  sourceUrl: PropTypes.string,
+  startTimecode: PropTypes.number,
+  stopTimecode: PropTypes.number
 };
 
 MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
+  extraContentTop: null,
   posterImageUrl: null,
-  sourceUrl: null
+  sourceUrl: null,
+  startTimecode: null,
+  stopTimecode: null
 };
 
 export default MediaPlayer;

@@ -1,0 +1,12 @@
+modalTitle:
+  en: Select playback range
+  de: Abspielbereich auswählen
+playbackRange:
+  en: "Playback range: from {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
+  de: "Abspielbereich: von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
+loadingMessage:
+  en: Determining media information ...
+  de: Medieninformationen werden ermittelt ...
+errorMessage:
+  en: An error occurred while retrieving the media file
+  de: Beim Laden der Mediendatei ist ein Fehler aufgetreten

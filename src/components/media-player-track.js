@@ -8,8 +8,22 @@ const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
 const PROGRESS_SLEEP_AFTER_SEEKING_IN_MS = 500;
 
-function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, posterImageUrl, trackRef, onDuration, onProgress, onPlayStateChange }) {
+function MediaPlayerTrack({
+  sourceUrl,
+  aspectRatio,
+  audioOnly,
+  startTimecode,
+  stopTimecode,
+  volume,
+  isMuted,
+  posterImageUrl,
+  trackRef,
+  onDuration,
+  onProgress,
+  onPlayStateChange
+}) {
   const playerRef = useRef();
+  const [lastProgress, setLastProgress] = useState(0);
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
@@ -19,8 +33,19 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
     onPlayStateChange?.(newPlayState);
   };
 
+  const changeProgress = newProgress => {
+    setLastProgress(newProgress);
+    onProgress?.(newProgress - (startTimecode || 0));
+  };
+
+  const seekToStartIfNecessary = duration => {
+    if (duration && ((startTimecode && lastProgress < startTimecode) || (stopTimecode && lastProgress >= stopTimecode))) {
+      playerRef.current.seekTo((startTimecode || 0) / duration);
+    }
+  };
+
   const handleReady = () => {
-    changePlayState(previousValue => previousValue === MEDIA_PLAY_STATE.initializing ? MEDIA_PLAY_STATE.stopped : previousValue);
+    changePlayState(currentPlayState === MEDIA_PLAY_STATE.initializing ? MEDIA_PLAY_STATE.stopped : currentPlayState);
   };
 
   const handleBuffer = () => {
@@ -46,40 +71,58 @@ function MediaPlayerTrack({ sourceUrl, aspectRatio, audioOnly, volume, isMuted, 
   trackRef.current = {
     seekTo(milliseconds) {
       setLastSeekTimestamp(Date.now());
-      playerRef.current.seekTo(milliseconds / durationInMilliseconds);
-      onProgress?.(milliseconds);
+      const realMilliseconds = milliseconds + (startTimecode || 0);
+      playerRef.current.seekTo(realMilliseconds / durationInMilliseconds);
+      changeProgress(realMilliseconds);
     },
     togglePlay() {
-      changePlayState(previousValue => {
-        switch (previousValue) {
-          case MEDIA_PLAY_STATE.initializing:
-            return MEDIA_PLAY_STATE.playing;
-          case MEDIA_PLAY_STATE.buffering:
-            return MEDIA_PLAY_STATE.buffering;
-          case MEDIA_PLAY_STATE.playing:
-            return MEDIA_PLAY_STATE.pausing;
-          case MEDIA_PLAY_STATE.pausing:
-          case MEDIA_PLAY_STATE.stopped:
-            return MEDIA_PLAY_STATE.playing;
-          default:
-            throw new Error(`Invalid play state: ${previousValue}`);
-        }
-      });
+      let newPlayState;
+      switch (currentPlayState) {
+        case MEDIA_PLAY_STATE.initializing:
+          newPlayState = MEDIA_PLAY_STATE.playing;
+          break;
+        case MEDIA_PLAY_STATE.buffering:
+          newPlayState = MEDIA_PLAY_STATE.buffering;
+          break;
+        case MEDIA_PLAY_STATE.playing:
+          newPlayState = MEDIA_PLAY_STATE.pausing;
+          break;
+        case MEDIA_PLAY_STATE.pausing:
+        case MEDIA_PLAY_STATE.stopped:
+          newPlayState = MEDIA_PLAY_STATE.playing;
+          break;
+        default:
+          throw new Error(`Invalid play state: ${currentPlayState}`);
+      }
+
+      if (newPlayState === MEDIA_PLAY_STATE.playing) {
+        seekToStartIfNecessary(durationInMilliseconds);
+      }
+
+      changePlayState(newPlayState);
     }
   };
 
   const handleProgress = progress => {
+    const progressInMilliseconds = progress.playedSeconds * 1000;
+    if (stopTimecode && progressInMilliseconds > stopTimecode) {
+      setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
+      changeProgress(stopTimecode);
+      handleStop?.();
+      return;
+    }
+
     const millisecondsSinceLastSeek = Date.now() - lastSeekTimestamp;
     if (millisecondsSinceLastSeek > PROGRESS_SLEEP_AFTER_SEEKING_IN_MS && currentPlayState !== MEDIA_PLAY_STATE.buffering) {
-      const progressInMilliseconds = progress.playedSeconds * 1000;
-      onProgress?.(progressInMilliseconds);
+      changeProgress(progressInMilliseconds);
     }
   };
 
   const handleDuration = duration => {
     const durationInMillis = duration * 1000;
     setDurationInMilliseconds(durationInMillis);
-    onDuration?.(durationInMillis);
+    onDuration?.(Math.min(stopTimecode || Number.MAX_VALUE, durationInMillis) - (startTimecode || 0));
+    seekToStartIfNecessary(durationInMillis);
   };
 
   const handleClickPreview = () => {
@@ -137,6 +180,8 @@ MediaPlayerTrack.propTypes = {
   onProgress: PropTypes.func,
   posterImageUrl: PropTypes.string,
   sourceUrl: PropTypes.string.isRequired,
+  startTimecode: PropTypes.number,
+  stopTimecode: PropTypes.number,
   trackRef: PropTypes.shape({
     current: PropTypes.any
   }),
@@ -151,6 +196,8 @@ MediaPlayerTrack.defaultProps = {
   onPlayStateChange: () => {},
   onProgress: () => {},
   posterImageUrl: null,
+  startTimecode: null,
+  stopTimecode: null,
   trackRef: {
     current: null
   },
