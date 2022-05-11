@@ -1,3 +1,38 @@
-.FilesGridViewer {}
+.FilesGridViewer {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: @edu-content-padding;
+  border: 1px solid @edu-border-color-base;
+}
 
-.FilesGridViewer-file {}
+.FilesGridViewer-fileContainer {
+  width: 60px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  color: @edu-text-color;
+
+  &:hover,
+  &:active {
+    text-decoration: none;
+    color: @edu-text-color;
+  }
+}
+
+.FilesGridViewer-file {
+  height: 60px;
+  background-color: yellow;
+}
+
+.FilesGridViewer-navigateToParentButton {
+  display: flex;
+  align-items: baseline;
+}
+
+.FilesGridViewer-navigateToParentIcon {
+  transform: rotate(90deg);
+}

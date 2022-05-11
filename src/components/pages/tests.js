@@ -29,10 +29,25 @@ function Tests({ PageTemplate }) {
     })();
   }, [storageApiClient, convertCdnObjectsToRecords]);
 
+  const handleFileClick = file => {
+    // eslint-disable-next-line no-alert
+    alert(`Clicked file '${file.name}'`);
+  };
+
+  const handleNavigateToParent = () => {
+    // eslint-disable-next-line no-alert
+    alert('Clicked "navigate to parent"');
+  };
+
   return (
     <PageTemplate>
       <div className="TestsPage">
-        <FilesGridViewer files={files} />
+        <FilesGridViewer
+          files={files}
+          canNavigateToParent
+          onFileClick={handleFileClick}
+          onNavigateToParent={handleNavigateToParent}
+          />
       </div>
     </PageTemplate>
   );
