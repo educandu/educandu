@@ -1,6 +1,6 @@
 import cloneDeep from './clone-deep.js';
 
-export function getHostInfo(req) {
+function getHostInfo(req) {
   const proto = req.protocol;
   const host = req.headers.host;
   const origin = `${proto}://${host}`;
@@ -8,7 +8,7 @@ export function getHostInfo(req) {
   return { proto, host, origin, domain };
 }
 
-export function expressReqToRequest(req) {
+function expressReqToRequest(req) {
   return {
     ip: req.ip,
     path: req.path,

@@ -2,29 +2,10 @@ import React from 'react';
 import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
 import reactPlayerNs from 'react-player';
-import { MEDIA_TYPE } from '../domain/constants.js';
+import { getFileType } from './file-utils.js';
+import { FILE_TYPE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
-
-const audioUrlExtensions = ['aac', 'm4a', 'mp3', 'oga', 'ogg', 'wav', 'flac'];
-const videoUrlExtensions = ['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg', 'mov', 'avi', 'mkv'];
-
-export const getMediaType = url => {
-  const sanitizedUrl = (url || '').trim();
-  const extensionMatches = sanitizedUrl.match(/\.([0-9a-z]+)$/i);
-  const extension = extensionMatches?.[1]?.toLowerCase();
-
-  if (!extension) {
-    return MEDIA_TYPE.none;
-  }
-  if (audioUrlExtensions.includes(extension)) {
-    return MEDIA_TYPE.audio;
-  }
-  if (videoUrlExtensions.includes(extension)) {
-    return MEDIA_TYPE.video;
-  }
-  return MEDIA_TYPE.unknown;
-};
 
 export function analyzeMediaUrl(url) {
   const parsedUrl = new URL(url);
@@ -39,7 +20,7 @@ export function analyzeMediaUrl(url) {
       isYoutube: true,
       startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
       stopTimecode: Number.isInteger(endSecond) ? endSecond * 1000 : null,
-      mediaType: MEDIA_TYPE.video
+      fileType: FILE_TYPE.video
     };
   }
 
@@ -48,7 +29,7 @@ export function analyzeMediaUrl(url) {
     isYoutube: false,
     startTimecode: null,
     stopTimecode: null,
-    mediaType: getMediaType(url)
+    fileType: getFileType(url)
   };
 }
 

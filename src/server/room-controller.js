@@ -4,10 +4,10 @@ import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
+import requestUtils from '../utils/request-utils.js';
 import RoomService from '../services/room-service.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
-import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import LessonService from '../services/lesson-service.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
@@ -175,7 +175,7 @@ export default class RoomController {
     const { roomId, email } = req.body;
     const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
 
-    const { origin } = requestHelper.getHostInfo(req);
+    const { origin } = requestUtils.getHostInfo(req);
     const invitationLink = urls.concatParts(origin, urls.getRoomMembershipConfirmationUrl(invitation.token));
     await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.username, email, invitationLink });
 

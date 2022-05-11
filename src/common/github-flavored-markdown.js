@@ -1,7 +1,7 @@
 import MarkdownIt from 'markdown-it';
-import { MEDIA_TYPE } from '../domain/constants.js';
+import { FILE_TYPE } from '../domain/constants.js';
+import { getFileType } from '../utils/file-utils.js';
 import { escapeHtml } from '../utils/string-utils.js';
-import { getMediaType } from '../utils/media-utils.js';
 
 const CDN_URL_PREFIX = 'cdn://';
 
@@ -28,9 +28,9 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
     }
 
     if (env.renderMedia && allowMediaRendering && targetUrl) {
-      const mediaType = getMediaType(targetUrl);
-      if (mediaType === MEDIA_TYPE.audio || mediaType === MEDIA_TYPE.video) {
-        return `<${mediaType} src="${escapeHtml(targetUrl)}" controls></${mediaType}>`;
+      const fileType = getFileType(targetUrl);
+      if (fileType === FILE_TYPE.audio || fileType === FILE_TYPE.video) {
+        return `<${fileType} src="${escapeHtml(targetUrl)}" controls></${fileType}>`;
       }
     }
 

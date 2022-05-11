@@ -1,8 +1,8 @@
 import urls from '../utils/urls.js';
 import createError from 'http-errors';
 import Logger from '../common/logger.js';
+import requestUtils from '../utils/request-utils.js';
 import { ERROR_CODES } from '../domain/constants.js';
-import requestHelper from '../utils/request-helper.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ErrorPageRenderer from './error-page-renderer.js';
 
@@ -61,7 +61,7 @@ class ErrorController {
   consolidateError(err, req) {
     const consolidatedErr = err.status ? err : this.transformToErrorObject(err);
     consolidatedErr.expose = this.serverConfig.exposeErrorDetails;
-    consolidatedErr.request = requestHelper.expressReqToRequest(req);
+    consolidatedErr.request = requestUtils.expressReqToRequest(req);
     return consolidatedErr;
   }
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import { pluginControllerApiPath } from './constants.js';
-import { resolvePathWithinPackage } from '../../utils/file-helper.js';
+import { resolvePathWithinPackage } from '../../utils/path-utils.js';
 
 const staticRoutes = [
   {

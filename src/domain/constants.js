@@ -90,11 +90,14 @@ export const INVALID_ROOM_INVITATION_REASON = {
   user: 'user'
 };
 
-export const MEDIA_TYPE = {
+export const FILE_TYPE = {
   none: 'none',
   unknown: 'unknown',
   audio: 'audio',
-  video: 'video'
+  video: 'video',
+  image: 'image',
+  text: 'text',
+  pdf: 'pdf'
 };
 
 export const MEDIA_PLAY_STATE = {

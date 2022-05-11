@@ -9,6 +9,7 @@ import passportLocal from 'passport-local';
 import Database from '../stores/database.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
+import requestUtils from '../utils/request-utils.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import PageRenderer from '../server/page-renderer.js';
@@ -18,7 +19,6 @@ import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
-import requestHelper, { getHostInfo } from '../utils/request-helper.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
@@ -140,7 +140,7 @@ class UserController {
     const { result, user } = await this.userService.createUser({ username, password, email });
 
     if (result === SAVE_USER_RESULT.success) {
-      const { origin } = requestHelper.getHostInfo(req);
+      const { origin } = requestUtils.getHostInfo(req);
       const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
       await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
@@ -195,7 +195,7 @@ class UserController {
 
     if (user) {
       const resetRequest = await this.userService.createPasswordResetRequest(user);
-      const { origin } = requestHelper.getHostInfo(req);
+      const { origin } = requestUtils.getHostInfo(req);
       const completionLink = urls.concatParts(origin, urls.getCompletePasswordResetUrl(resetRequest._id));
       await this.mailService.sendPasswordResetEmail({ username: user.username, email: user.email, completionLink });
     }
@@ -285,7 +285,7 @@ class UserController {
     if (!this.serverConfig.sessionCookieDomain) {
       router.use((req, res, next) => {
         if (req.session?.cookie) {
-          const { domain } = getHostInfo(req);
+          const { domain } = requestUtils.getHostInfo(req);
           req.session.cookie.domain = domain;
         }
 

@@ -4,6 +4,7 @@ import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import React, { Fragment, useState } from 'react';
 import Timeline from '../../components/timeline.js';
+import { getFileType } from '../../utils/file-utils.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
@@ -15,8 +16,8 @@ import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import MediaRangeSelector from '../../components/media-range-selector.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, MEDIA_TYPE } from '../../domain/constants.js';
-import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration, getMediaType } from '../../utils/media-utils.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, FILE_TYPE } from '../../domain/constants.js';
+import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -49,7 +50,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       duration: 0,
       startTimecode: null,
       stopTimecode: null,
-      mediaType: MEDIA_TYPE.unknown
+      fileType: MEDIA_TYPE.unknown
     };
 
     if (!url) {
@@ -64,9 +65,9 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
       setIsDeterminingDuration(true);
       const completeUrl = getFullSourceUrl(url);
-      const { sanitizedUrl, startTimecode, stopTimecode, mediaType } = analyzeMediaUrl(completeUrl);
+      const { sanitizedUrl, startTimecode, stopTimecode, fileType } = analyzeMediaUrl(completeUrl);
       const duration = await determineMediaDuration(completeUrl);
-      return { sanitizedUrl, duration, startTimecode, stopTimecode, mediaType };
+      return { sanitizedUrl, duration, startTimecode, stopTimecode, fileType };
     } catch {
       return unknownResult;
     } finally {
@@ -122,11 +123,11 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleSourceUrlChange = async value => {
-    const { sanitizedUrl, duration, startTimecode, stopTimecode, mediaType } = await getMediaInformation(value);
+    const { sanitizedUrl, duration, startTimecode, stopTimecode, fileType } = await getMediaInformation(value);
     setSelectedChapterIndex(0);
     changeContent({
       sourceUrl: sanitizedUrl,
-      showVideo: mediaType === MEDIA_TYPE.video || mediaType === MEDIA_TYPE.unknown,
+      showVideo: fileType === FILE_TYPE.video || fileType === FILE_TYPE.unknown,
       sourceDuration: duration,
       sourceStartTimecode: startTimecode,
       sourceStopTimecode: stopTimecode,
@@ -214,7 +215,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             defaultValue={MEDIA_ASPECT_RATIO.sixteenToNine}
             value={aspectRatio}
             onChange={handleAspectRatioChanged}
-            disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
+            disabled={![FILE_TYPE.video, FILE_TYPE.none].includes(getFileType(sourceUrl))}
             >
             {Object.values(MEDIA_ASPECT_RATIO).map(ratio => (
               <RadioButton key={ratio} value={ratio}>{ratio}</RadioButton>
@@ -226,7 +227,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             size="small"
             checked={showVideo}
             onChange={handleShowVideoChanged}
-            disabled={![MEDIA_TYPE.video, MEDIA_TYPE.none].includes(getMediaType(sourceUrl))}
+            disabled={![FILE_TYPE.video, FILE_TYPE.none].includes(getFileType(sourceUrl))}
             />
         </FormItem>
         <FormItem label={t('playbackRange')} {...formItemLayout}>

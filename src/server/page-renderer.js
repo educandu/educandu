@@ -2,8 +2,8 @@ import htmlescape from 'htmlescape';
 import Root from '../components/root.js';
 import { Container } from '../common/di.js';
 import cloneDeep from '../utils/clone-deep.js';
+import requestUtils from '../utils/request-utils.js';
 import PageResolver from '../domain/page-resolver.js';
-import requestHelper from '../utils/request-helper.js';
 import PageRendererBase from './page-renderer-base.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ClientConfig from '../bootstrap/client-config.js';
@@ -29,7 +29,7 @@ class PageRenderer extends PageRendererBase {
     const settings = req.settings;
     const container = this.container;
     const clientConfig = this.clientConfig;
-    const request = requestHelper.expressReqToRequest(req);
+    const request = requestUtils.expressReqToRequest(req);
     const user = this.clientDataMappingService.mapWebsiteUser(req.user);
     const storagePlan = req.storagePlan;
     const storage = req.storage;
