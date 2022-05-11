@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import FilePreview from '../file-preview.js';
 import FilesGridViewer from '../files-grid-viewer.js';
 import { getPathSegments } from '../../ui/path-helper.js';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -41,6 +42,43 @@ function Tests({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="TestsPage">
+        <h1>File preview</h1>
+        <h6>IMAGE (Raster): https://cdn.openmusic.academy/media/mDCkjepG3D61cX4FNBQxts/monteverdi-ninfa-x2mmMBkoJjnRvGghHQDPaQ.jpg</h6>
+        <FilePreview
+          url="https://cdn.openmusic.academy/media/mDCkjepG3D61cX4FNBQxts/monteverdi-ninfa-x2mmMBkoJjnRvGghHQDPaQ.jpg"
+          lastModified={new Date('2022-03-04T09:48:46.524Z')}
+          size={44722}
+          />
+        <hr />
+        <h6>IMAGE (Vector): https://cdn.openmusic.academy/media/7nNYLdkpwLSi7i44qhBpqE/kanon-quintfall-1-cEwMkaVH1gREuT3j2NL4mt.svg</h6>
+        <FilePreview
+          url="https://cdn.openmusic.academy/media/7nNYLdkpwLSi7i44qhBpqE/kanon-quintfall-1-cEwMkaVH1gREuT3j2NL4mt.svg"
+          lastModified={new Date('2022-03-04T09:48:46.524Z')}
+          size={44722}
+          />
+        <hr />
+        <h6>AUDIO: https://cdn.openmusic.academy/media/7nNYLdkpwLSi7i44qhBpqE/kanon-quintfall-1-2tcutSeJZftuDjiwmVeE47.mp3</h6>
+        <FilePreview
+          url="https://cdn.openmusic.academy/media/7nNYLdkpwLSi7i44qhBpqE/kanon-quintfall-1-2tcutSeJZftuDjiwmVeE47.mp3"
+          lastModified={new Date('2022-03-04T09:48:46.524Z')}
+          size={44722}
+          />
+        <hr />
+        <h6>VIDEO: https://cdn.openmusic.academy/media/rRsbyWevSf5k8bRzvL6N8q/Basis%C3%BCbung%20F-Dur_2pJv5pTWv2B5yELgMUoJyB.mp4</h6>
+        <FilePreview
+          url="https://cdn.openmusic.academy/media/rRsbyWevSf5k8bRzvL6N8q/Basis%C3%BCbung%20F-Dur_2pJv5pTWv2B5yELgMUoJyB.mp4"
+          lastModified={new Date('2022-03-04T09:48:46.524Z')}
+          size={44722}
+          />
+        <hr />
+        <h6>PDF: https://cdn.openmusic.academy/media/mrwLZJMxUTxoRdoTWeVfhR/kaiser-beethoven-kreutzwortraetzel-ssTTnMeDDyGLCNGigDMAUE.pdf</h6>
+        <FilePreview
+          url="https://cdn.openmusic.academy/media/mrwLZJMxUTxoRdoTWeVfhR/kaiser-beethoven-kreutzwortraetzel-ssTTnMeDDyGLCNGigDMAUE.pdf"
+          lastModified={new Date('2022-03-04T09:48:46.524Z')}
+          size={44722}
+          />
+        <hr />
+        <h1>File Grid viewer</h1>
         <FilesGridViewer
           files={files}
           canNavigateToParent

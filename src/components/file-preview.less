@@ -1,0 +1,55 @@
+.FilePreview {
+  display: grid;
+  gap: 10px;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+
+.FilePreview-headerArea {
+  grid-row: 1;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.FilePreview-previewArea {
+  grid-row: 2;
+  grid-column: 1;
+  padding: 1em;
+  height: 24em;
+  border-radius: @edu-border-radius-boxy;
+  border: 1px solid @edu-border-color-light;
+  background-color: @edu-background-color-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.FilePreview-detailsArea {
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.FilePreview-detailLabel {
+  font-size: 85%;
+  font-weight: bold;
+}
+
+.FilePreview-detailValue {
+  margin-bottom: .75em;
+
+  &:last-child {
+    margin-bottom: unset;
+  }
+}
+
+.FilePreview-image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.FilePreview-icon {
+  display: block;
+  font-size: 18em;
+}

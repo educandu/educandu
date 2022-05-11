@@ -2,11 +2,10 @@ import urls from '../utils/urls.js';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';
+import LiteralUrlLink from './literal-url-link.js';
 import { useSettings } from './settings-context.js';
 import { useDateFormat } from './locale-context.js';
 import { documentShape, documentRevisionShape } from '../ui/default-prop-types.js';
-
-const ZERO_WIDTH_SPACE = '\u200B';
 
 function CreditsFooter({ doc, revision }) {
   if (!doc && !revision) {
@@ -29,22 +28,8 @@ function CreditsFooter({ doc, revision }) {
 
   const date = formatDate(request.timestamp);
 
-  const renderLongUrlText = urlText => {
-    const parts = urlText.replace(/[^\w]\b/g, c => `${c}${ZERO_WIDTH_SPACE}`).split(ZERO_WIDTH_SPACE);
-    return (
-      <Fragment>
-        {parts.map((part, index) => (
-          <Fragment key={index.toString()}>
-            {!!index && <wbr />}
-            {part}
-          </Fragment>
-        ))}
-      </Fragment>
-    );
-  };
-
-  const renderUrl = () => (<a rel="noopener noreferrer" target="_blank" href={url}>{renderLongUrlText(url)}</a>);
-  const renderOriginalUrl = () => (<a rel="noopener noreferrer" target="_blank" href={originalUrl}>{renderLongUrlText(originalUrl)}</a>);
+  const renderUrl = () => <LiteralUrlLink rel="noopener noreferrer" target="_blank" href={url} />;
+  const renderOriginalUrl = () => <LiteralUrlLink rel="noopener noreferrer" target="_blank" href={originalUrl} />;
 
   const renderUser = user => {
     return user.email
