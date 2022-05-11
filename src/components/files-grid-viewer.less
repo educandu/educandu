@@ -1,5 +1,6 @@
 @files-grid-viewer-file-icon-padding: 10px;
 @files-grid-viewer-file-container-base-width: 60px;
+@files-grid-viewer-file-hover-transition: all .2s ease-in-out;
 @files-grid-viewer-file-container-total-width: @files-grid-viewer-file-container-base-width + 2 * @files-grid-viewer-file-icon-padding;
 
 .FilesGridViewer {
@@ -15,6 +16,7 @@
 .FilesGridViewer-fileContainer {
   width: @files-grid-viewer-file-container-total-width;
   overflow: hidden;
+  text-align: center;
   white-space: nowrap;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -28,10 +30,12 @@
 
   &:hover {
     font-weight: bold;
+    transition: @files-grid-viewer-file-hover-transition;
 
     .FilesGridViewer-fileIcon {
       font-size: 65px;
       padding-top: 5px;
+      transition: @files-grid-viewer-file-hover-transition;
     }
   }
 }
