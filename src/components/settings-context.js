@@ -7,8 +7,3 @@ export const SettingsProvider = settingsContext.Provider;
 export function useSettings() {
   return useContext(settingsContext);
 }
-
-export default {
-  SettingsProvider,
-  useSettings
-};

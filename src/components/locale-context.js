@@ -107,9 +107,3 @@ export function useDateFormat() {
     };
   }, [uiLocale]);
 }
-
-export default {
-  LocaleProvider,
-  useLocale,
-  useDateFormat
-};

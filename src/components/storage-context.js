@@ -33,8 +33,3 @@ StorageProvider.propTypes = {
 StorageProvider.defaultProps = {
   children: null
 };
-
-export default {
-  StorageProvider,
-  useStorage
-};
