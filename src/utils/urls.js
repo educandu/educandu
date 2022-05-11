@@ -1,3 +1,5 @@
+import escapeStringRegexp from 'escape-string-regexp';
+
 const homePath = '/';
 const docsPath = '/docs';
 const adminPath = '/admin';
@@ -19,6 +21,9 @@ const lessonsPrefix = '/lessons/';
 const completeRegistrationPrefix = '/complete-registration/';
 const completePasswordResetPrefix = '/complete-password-reset/';
 const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
+
+const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
+const lessonPageRegex = new RegExp(`^(?:${escapeStringRegexp(lessonsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
 function removeTrailingSlash(path) {
   return String(path).replace(/\/*$/, '');
@@ -158,16 +163,12 @@ function getLessonUrl({ id, slug, view, templateLessonId }) {
 }
 
 function getDocIdIfDocUrl(url) {
-  const docPageRegex = new RegExp(`^(?:${docsPrefix})([a-zA-Z0-9]+)\\b`, 'i');
   const documentId = url.match(docPageRegex)?.[1];
-
   return documentId || null;
 }
 
 function getLessonIdIfLessonUrl(url) {
-  const lessonPageRegex = new RegExp(`^(?:${lessonsPrefix})([a-zA-Z0-9]+)\\b`, 'i');
   const lessonId = url.match(lessonPageRegex)?.[1];
-
   return lessonId || null;
 }
 
