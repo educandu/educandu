@@ -1,15 +1,15 @@
 import sinon from 'sinon';
 import uniqueId from './unique-id.js';
-import { buildCdnFileName } from './file-name-helper.js';
+import { componseUniqueFileName } from './path-utils.js';
 
-describe('file-name-helper', () => {
+describe('path-utils', () => {
   const sandbox = sinon.createSandbox();
 
   beforeAll(() => {
     sandbox.stub(uniqueId, 'create').returns('ch5zqo897tzo8f3');
   });
 
-  describe('buildCdnFileName', () => {
+  describe('componseUniqueFileName', () => {
     const testCases = [
       { fileName: 'hello-world-123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
       { fileName: 'hello_world_123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
@@ -23,7 +23,7 @@ describe('file-name-helper', () => {
 
     testCases.forEach(({ fileName, prefix, expectedOutput }) => {
       it(`should transform fileName '${fileName} with prefix ${prefix === null ? 'null' : `'${prefix}'`} to '${expectedOutput}'`, () => {
-        const actualOutput = buildCdnFileName(fileName, prefix);
+        const actualOutput = componseUniqueFileName(fileName, prefix);
         expect(actualOutput).toBe(expectedOutput);
       });
     });

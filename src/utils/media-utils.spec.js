@@ -1,38 +1,7 @@
-import { MEDIA_TYPE } from '../domain/constants.js';
-import { analyzeMediaUrl, formatMillisecondsAsDuration, getMediaType } from './media-utils.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
+import { analyzeMediaUrl, formatMillisecondsAsDuration } from './media-utils.js';
 
 describe('media-utils', () => {
-
-  describe('getMediaType', () => {
-    const testCases = [
-      { url: '', expectedResult: MEDIA_TYPE.none },
-      { url: 'file.unknown', expectedResult: MEDIA_TYPE.unknown },
-      { url: 'file.aac', expectedResult: MEDIA_TYPE.audio },
-      { url: 'file.m4a', expectedResult: MEDIA_TYPE.audio },
-      { url: 'file.mp3', expectedResult: MEDIA_TYPE.audio },
-      { url: 'file.oga', expectedResult: MEDIA_TYPE.audio },
-      { url: 'file.ogg', expectedResult: MEDIA_TYPE.audio },
-      { url: 'file.wav', expectedResult: MEDIA_TYPE.audio },
-      { url: 'file.flac', expectedResult: MEDIA_TYPE.audio },
-      { url: 'file.mp4', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.m4v', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.ogv', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.webm', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.mpg', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.mpeg', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.avi', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.mkv', expectedResult: MEDIA_TYPE.video },
-      { url: 'file.MKV', expectedResult: MEDIA_TYPE.video }
-    ];
-
-    testCases.forEach(({ url, expectedResult }) => {
-      describe(`called with url '${url}'`, () => {
-        it(`should return '${expectedResult}'`, () => {
-          expect(getMediaType(url)).toBe(expectedResult);
-        });
-      });
-    });
-  });
 
   describe('analyzeMediaUrl', () => {
     const testCases = [
@@ -48,7 +17,7 @@ describe('media-utils', () => {
           isYoutube: false,
           startTimecode: null,
           stopTimecode: null,
-          mediaType: MEDIA_TYPE.none
+          resourceType: RESOURCE_TYPE.none
         }
       },
       {
@@ -59,7 +28,7 @@ describe('media-utils', () => {
           isYoutube: false,
           startTimecode: null,
           stopTimecode: null,
-          mediaType: MEDIA_TYPE.audio
+          resourceType: RESOURCE_TYPE.audio
         }
       },
       {
@@ -70,7 +39,7 @@ describe('media-utils', () => {
           isYoutube: true,
           startTimecode: null,
           stopTimecode: null,
-          mediaType: MEDIA_TYPE.video
+          resourceType: RESOURCE_TYPE.video
         }
       },
       {
@@ -81,7 +50,7 @@ describe('media-utils', () => {
           isYoutube: true,
           startTimecode: 5000,
           stopTimecode: null,
-          mediaType: MEDIA_TYPE.video
+          resourceType: RESOURCE_TYPE.video
         }
       },
       {
@@ -92,7 +61,7 @@ describe('media-utils', () => {
           isYoutube: true,
           startTimecode: 5000,
           stopTimecode: 20000,
-          mediaType: MEDIA_TYPE.video
+          resourceType: RESOURCE_TYPE.video
         }
       }
     ];

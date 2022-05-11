@@ -27,7 +27,7 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { useStorage, useSetStorage } from './storage-context.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
-import { processFilesBeforeUpload } from '../utils/storage-helper.js';
+import { processFilesBeforeUpload } from '../utils/storage-utils.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert, Tooltip } from 'antd';

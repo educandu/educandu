@@ -7,9 +7,9 @@ import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import LessonStore from '../stores/lesson-store.js';
-import fileNameHelper from '../utils/file-name-helper.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import { componseUniqueFileName } from '../utils/path-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
@@ -244,8 +244,8 @@ export default class StorageService {
 
   async _uploadFiles(files, prefix) {
     const uploads = files.map(async file => {
-      const cdnFileName = fileNameHelper.buildCdnFileName(file.originalname, prefix);
-      await this.cdn.uploadObject(cdnFileName, file.path, {});
+      const fileName = componseUniqueFileName(file.originalname, prefix);
+      await this.cdn.uploadObject(fileName, file.path, {});
     });
     await Promise.all(uploads);
   }
