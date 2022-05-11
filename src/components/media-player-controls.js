@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Button, Slider } from 'antd';
+import MuteIcon from './icons/media-player/mute-icon.js';
+import PlayIcon from './icons/media-player/play-icon.js';
+import PauseIcon from './icons/media-player/pause-icon.js';
 import { MEDIA_PLAY_STATE } from '../domain/constants.js';
+import VolumeIcon from './icons/media-player/volume-icon.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
-import { AudioMutedOutlined, CaretRightOutlined, PauseOutlined, SoundOutlined } from '@ant-design/icons';
 
 function MediaPlayerControls({
   durationInMilliseconds,
@@ -32,8 +35,8 @@ function MediaPlayerControls({
       </div>
       <div className="MediaPlayerControls-controls">
         <div className="MediaPlayerControls-controlsGroup">
-          <Button type="link" icon={showAsPlaying ? <PauseOutlined /> : <CaretRightOutlined />} onClick={onTogglePlay} />
-          <Button type="link" icon={isMuted ? <AudioMutedOutlined /> : <SoundOutlined />} onClick={onToggleMute} />
+          <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
+          <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={onToggleMute} />
           <Slider className="MediaPlayerControls-volumeSlider" min={0} max={100} value={isMuted ? 0 : volume * 100} disabled={isMuted} tipFormatter={val => `${val}%`} onChange={val => onVolumeChange(val / 100)} />
           <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
         </div>
