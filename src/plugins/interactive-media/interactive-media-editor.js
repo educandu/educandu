@@ -13,10 +13,10 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
+import MediaRangeSelector from '../../components/media-range-selector.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, MEDIA_TYPE } from '../../domain/constants.js';
 import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration, getMediaType } from '../../utils/media-utils.js';
-import MediaRangeSelector from '../../components/media-range-selector.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -173,6 +173,16 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
     changeContent({ chapters: newChapters });
   };
 
+  let fullSourceUrl;
+  switch (sourceType) {
+    case MEDIA_SOURCE_TYPE.internal:
+      fullSourceUrl = sourceUrl ? `${clientConfig.cdnRootUrl}/${sourceUrl}` : null;
+      break;
+    default:
+      fullSourceUrl = sourceUrl || null;
+      break;
+  }
+
   return (
     <div className="InteractiveMediaEditor">
       <Form layout="horizontal">
@@ -237,7 +247,7 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
               readOnly
               />
             <MediaRangeSelector
-              sourceUrl={sourceUrl}
+              sourceUrl={fullSourceUrl}
               range={{ startTimecode: sourceStartTimecode, stopTimecode: sourceStopTimecode }}
               onRangeChange={handleMediaRangeChange}
               />
