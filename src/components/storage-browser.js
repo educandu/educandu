@@ -148,6 +148,9 @@ class StorageBrowser extends React.Component {
       const { currentPathSegments, selectedRowKeys } = this.state;
       this.refreshFiles(currentPathSegments, selectedRowKeys);
     }
+    if (this.props.storage !== prevProps.storage) {
+      this.updateLocations();
+    }
   }
 
   componentWillUnmount() {
@@ -160,6 +163,16 @@ class StorageBrowser extends React.Component {
       ...location,
       ...this.createPathSegments(location)
     }));
+  }
+
+  updateLocations() {
+    const updatedLocations = this.mapLocationsFromProps();
+    const updatedCurrentLocation = updatedLocations.find(location => location.type === this.state.currentLocation.type);
+
+    this.setState({
+      locations: updatedLocations,
+      currentLocation: updatedCurrentLocation
+    });
   }
 
   createPathSegments(storage) {
