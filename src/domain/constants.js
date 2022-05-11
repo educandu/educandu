@@ -90,7 +90,7 @@ export const INVALID_ROOM_INVITATION_REASON = {
   user: 'user'
 };
 
-export const FILE_TYPE = {
+export const RESOURCE_TYPE = {
   none: 'none',
   unknown: 'unknown',
   audio: 'audio',

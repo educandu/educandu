@@ -2,8 +2,8 @@ import React from 'react';
 import memoizee from 'memoizee';
 import ReactDOM from 'react-dom';
 import reactPlayerNs from 'react-player';
-import { getFileType } from './file-utils.js';
-import { FILE_TYPE } from '../domain/constants.js';
+import { getResourceType } from './resource-utils.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -20,7 +20,7 @@ export function analyzeMediaUrl(url) {
       isYoutube: true,
       startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
       stopTimecode: Number.isInteger(endSecond) ? endSecond * 1000 : null,
-      fileType: FILE_TYPE.video
+      resourceType: RESOURCE_TYPE.video
     };
   }
 
@@ -29,7 +29,7 @@ export function analyzeMediaUrl(url) {
     isYoutube: false,
     startTimecode: null,
     stopTimecode: null,
-    fileType: getFileType(url)
+    resourceType: getResourceType(url)
   };
 }
 

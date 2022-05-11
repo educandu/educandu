@@ -2,8 +2,8 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { FILE_TYPE } from '../domain/constants.js';
-import { getFileType } from '../utils/file-utils.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
+import { getResourceType } from '../utils/resource-utils.js';
 import {
   FileImageOutlined,
   FileOutlined,
@@ -19,16 +19,16 @@ function FilesGridViewer({ files, canNavigateToParent, onNavigateToParent, onFil
   const renderDirectoryIcon = () => <FolderOutlined className="FilesGridViewer-fileIcon" />;
   const renderFileIcon = file => {
     let Icon;
-    const fileType = getFileType(file.path);
+    const resourceType = getResourceType(file.path);
 
-    switch (fileType) {
-      case FILE_TYPE.image:
+    switch (resourceType) {
+      case RESOURCE_TYPE.image:
         Icon = FileImageOutlined;
         break;
-      case FILE_TYPE.pdf:
+      case RESOURCE_TYPE.pdf:
         Icon = FilePdfOutlined;
         break;
-      case FILE_TYPE.text:
+      case RESOURCE_TYPE.text:
         Icon = FileTextOutlined;
         break;
       default:

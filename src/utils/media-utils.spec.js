@@ -1,4 +1,4 @@
-import { FILE_TYPE } from '../domain/constants.js';
+import { RESOURCE_TYPE } from '../domain/constants.js';
 import { analyzeMediaUrl, formatMillisecondsAsDuration } from './media-utils.js';
 
 describe('media-utils', () => {
@@ -17,7 +17,7 @@ describe('media-utils', () => {
           isYoutube: false,
           startTimecode: null,
           stopTimecode: null,
-          fileType: FILE_TYPE.none
+          resourceType: RESOURCE_TYPE.none
         }
       },
       {
@@ -28,7 +28,7 @@ describe('media-utils', () => {
           isYoutube: false,
           startTimecode: null,
           stopTimecode: null,
-          fileType: FILE_TYPE.audio
+          resourceType: RESOURCE_TYPE.audio
         }
       },
       {
@@ -39,7 +39,7 @@ describe('media-utils', () => {
           isYoutube: true,
           startTimecode: null,
           stopTimecode: null,
-          fileType: FILE_TYPE.video
+          resourceType: RESOURCE_TYPE.video
         }
       },
       {
@@ -50,7 +50,7 @@ describe('media-utils', () => {
           isYoutube: true,
           startTimecode: 5000,
           stopTimecode: null,
-          fileType: FILE_TYPE.video
+          resourceType: RESOURCE_TYPE.video
         }
       },
       {
@@ -61,7 +61,7 @@ describe('media-utils', () => {
           isYoutube: true,
           startTimecode: 5000,
           stopTimecode: 20000,
-          fileType: FILE_TYPE.video
+          resourceType: RESOURCE_TYPE.video
         }
       }
     ];
