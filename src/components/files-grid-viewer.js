@@ -1,13 +1,19 @@
 import React from 'react';
+import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
-import { Button } from 'antd';
-import { EnterOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import { FileOutlined, FolderOpenOutlined, FolderOutlined } from '@ant-design/icons';
 
 function FilesGridViewer({ files, canNavigateToParent, onNavigateToParent, onFileClick }) {
+  const { t } = useTranslation('filesGridViewer');
+
   const renderFile = file => {
     return (
       <a className="FilesGridViewer-fileContainer" key={file.path} onClick={() => onFileClick(file)}>
-        <div className="FilesGridViewer-file" />
+        <div>
+          {file.isDirectory && <FolderOutlined className="FilesGridViewer-fileIcon" />}
+          {!file.isDirectory && <FileOutlined className="FilesGridViewer-fileIcon" />}
+        </div>
         <span>{file.name}</span>
       </a>
     );
@@ -16,14 +22,14 @@ function FilesGridViewer({ files, canNavigateToParent, onNavigateToParent, onFil
   return (
     <div className="FilesGridViewer">
       {canNavigateToParent && (
-        <Button
-          type="link"
-          className="FilesGridViewer-navigateToParentButton"
-          onClick={onNavigateToParent}
-          icon={<EnterOutlined className="FilesGridViewer-navigateToParentIcon" />}
-          >
-          ...
-        </Button>
+        <Tooltip title={t('navigateToParent')} placement="topLeft">
+          <a className="FilesGridViewer-fileContainer" onClick={onNavigateToParent}>
+            <div>
+              <FolderOpenOutlined className="FilesGridViewer-fileIcon" />
+            </div>
+            ...
+          </a>
+        </Tooltip>
       )}
       {files.map(file => renderFile(file))}
     </div>
@@ -35,7 +41,7 @@ FilesGridViewer.propTypes = {
   files: PropTypes.arrayOf(PropTypes.shape({
     path: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    size: PropTypes.number
+    isDirectory: PropTypes.bool.isRequired
   })).isRequired,
   onFileClick: PropTypes.func,
   onNavigateToParent: PropTypes.func

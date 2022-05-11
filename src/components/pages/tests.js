@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState } from 'react';
 import FilesGridViewer from '../files-grid-viewer.js';
+import { getPathSegments } from '../../ui/path-helper.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 
@@ -8,26 +9,23 @@ function Tests({ PageTemplate }) {
   const [files, setFiles] = useState([]);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
-  const convertCdnObjectsToRecords = useCallback(objects => {
+  const convertCdnObjectsToFileRecords = useCallback(objects => {
     return objects.map(obj => {
-      const record = {
-        path: obj.name,
-        name: obj.name,
-        size: obj.size,
-        lastModified: obj.lastModified,
-        originalObject: obj
-      };
+      const isDirectory = !obj.name;
+      const path = obj.name || obj.prefix;
+      const segments = getPathSegments(path);
+      const name = segments[segments.length - 1];
 
-      return record;
+      return { name, path, isDirectory };
     });
   }, []);
 
   useEffect(() => {
     (async () => {
       const { objects } = await storageApiClient.getObjects('rooms/hZ8U4z5jf1d2cu23U8oPmV/media/');
-      setFiles(convertCdnObjectsToRecords(objects));
+      setFiles(convertCdnObjectsToFileRecords(objects));
     })();
-  }, [storageApiClient, convertCdnObjectsToRecords]);
+  }, [storageApiClient, convertCdnObjectsToFileRecords]);
 
   const handleFileClick = file => {
     // eslint-disable-next-line no-alert
