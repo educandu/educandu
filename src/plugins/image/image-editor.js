@@ -18,7 +18,7 @@ const { TextArea } = Input;
 
 const defaultClipRegion = { x: 10, y: 10, width: 80, height: 80 };
 
-function ImageEditor({ content, onContentChanged, publicStorage, privateStorage }) {
+function ImageEditor({ content, onContentChanged }) {
   const { t } = useTranslation('image');
   const clientConfig = useService(ClientConfig);
   const [currentImageSource, setCurrentImageSource] = useState(null);
@@ -252,8 +252,6 @@ function ImageEditor({ content, onContentChanged, publicStorage, privateStorage 
           onChange={onInputChangeHandler}
           />
         <StorageFilePicker
-          publicStorage={publicStorage}
-          privateStorage={privateStorage}
           fileName={value}
           onFileNameChanged={inFileChangeHandler}
           />

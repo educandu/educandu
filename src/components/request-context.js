@@ -7,8 +7,3 @@ export const RequestProvider = requestContext.Provider;
 export function useRequest() {
   return useContext(requestContext);
 }
-
-export default {
-  RequestProvider,
-  useRequest
-};

@@ -34,8 +34,3 @@ UserProvider.defaultProps = {
   children: null,
   value: null
 };
-
-export default {
-  UserProvider,
-  useUser
-};

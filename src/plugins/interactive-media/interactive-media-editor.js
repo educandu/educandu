@@ -31,7 +31,7 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 };
 
-function InteractiveMediaEditor({ content, onContentChanged, publicStorage, privateStorage }) {
+function InteractiveMediaEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
   const hiddenPlayerContainerRef = useRef(null);
   const { t } = useTranslation('interactiveMedia');
@@ -202,8 +202,6 @@ function InteractiveMediaEditor({ content, onContentChanged, publicStorage, priv
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <DebouncedInput addonBefore={`${clientConfig.cdnRootUrl}/`} value={sourceUrl} onChange={handleSourceUrlChange} />
               <StorageFilePicker
-                publicStorage={publicStorage}
-                privateStorage={privateStorage}
                 fileName={sourceUrl}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
                 />

@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { Container } from '../common/di.js';
 import { UserProvider } from './user-context.js';
 import { DialogProvider } from './dialog-context.js';
-import { RequestProvider } from './request-context.js';
 import { LocaleProvider } from './locale-context.js';
+import { RequestProvider } from './request-context.js';
+import { StorageProvider } from './storage-context.js';
 import { SettingsProvider } from './settings-context.js';
 import { PageNameProvider } from './page-name-context.js';
 import { useReloadPersistedWindow } from '../ui/hooks.js';
@@ -15,6 +16,7 @@ import { userProps, requestProps, settingsProps, pageNameProps } from '../ui/def
 function Root({
   request,
   user,
+  storage,
   storagePlan,
   container,
   initialState,
@@ -37,14 +39,16 @@ function Root({
             <RequestProvider value={request}>
               <UserProvider value={user}>
                 <StoragePlanProvider value={storagePlan}>
-                  <DialogProvider>
-                    <PageComponent
-                      initialState={initialState}
-                      PageTemplate={PageTemplateComponent}
-                      HomePageTemplate={HomePageTemplateComponent}
-                      SiteLogo={SiteLogoComponent}
-                      />
-                  </DialogProvider>
+                  <StorageProvider value={storage}>
+                    <DialogProvider>
+                      <PageComponent
+                        initialState={initialState}
+                        PageTemplate={PageTemplateComponent}
+                        HomePageTemplate={HomePageTemplateComponent}
+                        SiteLogo={SiteLogoComponent}
+                        />
+                    </DialogProvider>
+                  </StorageProvider>
                 </StoragePlanProvider>
               </UserProvider>
             </RequestProvider>

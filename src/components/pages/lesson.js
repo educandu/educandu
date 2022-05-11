@@ -18,12 +18,11 @@ import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { supportsClipboardPaste } from '../../ui/browser-helper.js';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import { handleApiError, handleError } from '../../ui/error-helper.js';
-import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import EditControlPanel, { EDIT_CONTROL_PANEL_STATUS } from '../edit-control-panel.js';
 import { lessonSectionShape, lessonShape, roomShape } from '../../ui/default-prop-types.js';
 import { confirmDiscardUnsavedChanges, confirmSectionDelete } from '../confirmation-dialogs.js';
-import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
+import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_LESSONS_MODE } from '../../domain/constants.js';
 import { ensureIsExcluded, ensureIsIncluded, insertItemAt, moveItem, removeItemAt, replaceItemAt } from '../../utils/array-utils.js';
 import { createClipboardTextForSection, createNewSectionFromClipboardText, redactSectionContent } from '../../services/section-helper.js';
 
@@ -42,7 +41,7 @@ function Lesson({ PageTemplate, initialState }) {
 
   const startsInEditMode = request.query.view === LESSON_VIEW_QUERY_PARAM.edit;
 
-  const [room, setRoom] = useState(initialState.room);
+  const { room } = initialState;
   const isRoomOwner = user?._id === room.owner.key;
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
   const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user?._id);
@@ -247,14 +246,6 @@ function Lesson({ PageTemplate, initialState }) {
     );
   };
 
-  const handleUsedBytesUpdated = usedBytes => {
-    if (room.owner.storage) {
-      const updatedRoom = cloneDeep(room);
-      updatedRoom.owner.storage.usedBytes = usedBytes;
-      setRoom(updatedRoom);
-    }
-  };
-
   let controlStatus;
   if (invalidSectionKeys.length) {
     controlStatus = EDIT_CONTROL_PANEL_STATUS.invalid;
@@ -267,27 +258,6 @@ function Lesson({ PageTemplate, initialState }) {
   const startsOn = lesson.schedule?.startsOn
     ? formatDate(lesson.schedule.startsOn)
     : '';
-
-  const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;
-
-  const publicStorage = {
-    rootPath: 'media',
-    initialPath: `media/${lesson._id}`,
-    uploadPath: `media/${lesson._id}`,
-    isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
-  };
-
-  const privateStorage = isPrivateRoom && !!room.owner.storage?.plan
-    ? {
-      usedBytes: room.owner.storage.usedBytes,
-      maxBytes: room.owner.storagePlan.maxBytes,
-      rootPath: `rooms/${room._id}/media`,
-      initialPath: `rooms/${room._id}/media`,
-      uploadPath: `rooms/${room._id}/media`,
-      isDeletionEnabled: isRoomOwner || isRoomCollaborator,
-      onUsedBytesUpdated: handleUsedBytesUpdated
-    }
-    : null;
 
   return (
     <Fragment>
@@ -305,8 +275,6 @@ function Lesson({ PageTemplate, initialState }) {
           <SectionsDisplay
             sections={currentSections}
             pendingSectionKeys={pendingTemplateSectionKeys}
-            publicStorage={publicStorage}
-            privateStorage={privateStorage}
             canEdit={isInEditMode}
             onPendingSectionApply={handlePendingSectionApply}
             onPendingSectionDiscard={handlePendingSectionDiscard}
@@ -317,7 +285,6 @@ function Lesson({ PageTemplate, initialState }) {
             onSectionInsert={handleSectionInsert}
             onSectionDuplicate={handleSectionDuplicate}
             onSectionDelete={handleSectionDelete}
-            onUsedBytesUpdated={handleUsedBytesUpdated}
             />
         </div>
       </PageTemplate>

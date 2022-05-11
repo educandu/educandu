@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
-import { filePickerStorageShape } from '../../ui/default-prop-types.js';
 
 const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
-function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateStorage }) {
+function EarTrainingSoundEditor({ sound, onSoundChanged }) {
   const { t } = useTranslation('earTraining');
   const clientConfig = useService(ClientConfig);
 
@@ -87,8 +86,6 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
             onChange={handleInternalUrlChanged}
             />
           <StorageFilePicker
-            publicStorage={publicStorage}
-            privateStorage={privateStorage}
             fileName={sound.sourceUrl}
             onFileNameChanged={handleInternalUrlFileNameChanged}
             />
@@ -133,17 +130,11 @@ function EarTrainingSoundEditor({ sound, onSoundChanged, publicStorage, privateS
 
 EarTrainingSoundEditor.propTypes = {
   onSoundChanged: PropTypes.func.isRequired,
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired,
   sound: PropTypes.shape({
     sourceType: PropTypes.string.isRequired,
     sourceUrl: PropTypes.string,
     text: PropTypes.string
   }).isRequired
-};
-
-EarTrainingSoundEditor.defaultProps = {
-  privateStorage: null
 };
 
 export default EarTrainingSoundEditor;

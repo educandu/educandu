@@ -8,13 +8,12 @@ import { useService } from '../../components/container-context.js';
 import DocumentSelector from '../../components/document-selector.js';
 import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
-import { filePickerStorageShape } from '../../ui/default-prop-types.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
-function ImageTileEditor({ index, image, description, link, publicStorage, privateStorage, onChange }) {
+function ImageTileEditor({ index, image, description, link, onChange }) {
   const { t } = useTranslation('imageTiles');
   const clientConfig = useService(ClientConfig);
 
@@ -88,8 +87,6 @@ function ImageTileEditor({ index, image, description, link, publicStorage, priva
               onChange={handleInternalImageUrlValueChanged}
               />
             <StorageFilePicker
-              publicStorage={publicStorage}
-              privateStorage={privateStorage}
               fileName={image.sourceUrl}
               onFileNameChanged={handleInternalImageUrlFileNameChanged}
               />
@@ -131,14 +128,11 @@ ImageTileEditor.propTypes = {
     sourceUrl: PropTypes.string,
     documentId: PropTypes.string
   }).isRequired,
-  onChange: PropTypes.func.isRequired,
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired
+  onChange: PropTypes.func.isRequired
 };
 
 ImageTileEditor.defaultProps = {
-  description: null,
-  privateStorage: null
+  description: null
 };
 
 export default ImageTileEditor;

@@ -6,19 +6,22 @@ import {
   DOCUMENT_IMPORT_TYPE,
   FAVORITE_TYPE,
   ROOM_ACCESS_LEVEL,
+  STORAGE_LOCATION_TYPE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE
 } from '../domain/constants.js';
 
-export const filePickerStorageShape = PropTypes.shape({
+export const storageLocationShape = PropTypes.shape({
+  type: PropTypes.oneOf(Object.values(STORAGE_LOCATION_TYPE)).isRequired,
+  usedBytes: PropTypes.number,
+  maxBytes: PropTypes.number,
   rootPath: PropTypes.string.isRequired,
   initialPath: PropTypes.string,
   uploadPath: PropTypes.string,
-  isDeletionEnabled: PropTypes.bool.isRequired,
-  usedBytes: PropTypes.number,
-  maxBytes: PropTypes.number,
-  onUsedBytesUpdated: PropTypes.func
+  isDeletionEnabled: PropTypes.bool.isRequired
 });
+
+export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });
 
 export const sectionDisplayProps = {
   content: PropTypes.any
@@ -26,9 +29,7 @@ export const sectionDisplayProps = {
 
 export const sectionEditorProps = {
   ...sectionDisplayProps,
-  onContentChanged: PropTypes.func.isRequired,
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired
+  onContentChanged: PropTypes.func.isRequired
 };
 
 export const importSourceProps = {

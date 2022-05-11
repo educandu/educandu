@@ -26,7 +26,7 @@ const maxTilesPerRowSliderMarks = maxTilesPerRowPossibleValues.reduce((all, val)
 }, {});
 const maxTilesPerRowSliderTipFormatter = val => `${val}`;
 
-function ImageTilesEditor({ content, onContentChanged, publicStorage, privateStorage }) {
+function ImageTilesEditor({ content, onContentChanged }) {
   const { t } = useTranslation('imageTiles');
 
   const { tiles, maxWidth, maxTilesPerRow, hoverEffect } = content;
@@ -138,8 +138,6 @@ function ImageTilesEditor({ content, onContentChanged, publicStorage, privateSto
                   {...tile}
                   index={index}
                   onChange={handleTileChange}
-                  publicStorage={publicStorage}
-                  privateStorage={privateStorage}
                   />
               </div>
             </div>

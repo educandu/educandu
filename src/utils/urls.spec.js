@@ -199,4 +199,50 @@ describe('urls', () => {
       });
     });
   });
+
+  describe('getDocIdIfDocUrl', () => {
+    const testCases = [
+      { url: '', expectedResult: null },
+      { url: '/other-page/AfnjsHSA783nf88fds', expectedResult: null },
+      { url: 'docs/AfnjsHSA783nf88fds', expectedResult: null },
+      { url: '/docs/AfnjsHSA783nf88fds', expectedResult: 'AfnjsHSA783nf88fds' },
+      { url: '/docs/AfnjsHSA783nf88fds/', expectedResult: 'AfnjsHSA783nf88fds' },
+      { url: '/docs/AfnjsHSA783nf88fds/metadata', expectedResult: 'AfnjsHSA783nf88fds' },
+      { url: '/docs/AfnjsHSA783nf88fds?query=value', expectedResult: 'AfnjsHSA783nf88fds' }
+    ];
+
+    testCases.forEach(({ url, expectedResult }) => {
+      describe(`when url is '${url}'`, () => {
+        beforeEach(() => {
+          result = sut.getDocIdIfDocUrl(url);
+        });
+        it(`should return '${expectedResult}'`, () => {
+          expect(result).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('getLessonIdIfLessonUrl', () => {
+    const testCases = [
+      { url: '', expectedResult: null },
+      { url: '/other-page/AfnjsHSA783nf88fds', expectedResult: null },
+      { url: 'lessons/AfnjsHSA783nf88fds', expectedResult: null },
+      { url: '/lessons/AfnjsHSA783nf88fds', expectedResult: 'AfnjsHSA783nf88fds' },
+      { url: '/lessons/AfnjsHSA783nf88fds/', expectedResult: 'AfnjsHSA783nf88fds' },
+      { url: '/lessons/AfnjsHSA783nf88fds/metadata', expectedResult: 'AfnjsHSA783nf88fds' },
+      { url: '/lessons/AfnjsHSA783nf88fds?query=value', expectedResult: 'AfnjsHSA783nf88fds' }
+    ];
+
+    testCases.forEach(({ url, expectedResult }) => {
+      describe(`when url is '${url}'`, () => {
+        beforeEach(() => {
+          result = sut.getLessonIdIfLessonUrl(url);
+        });
+        it(`should return '${expectedResult}'`, () => {
+          expect(result).toBe(expectedResult);
+        });
+      });
+    });
+  });
 });

@@ -116,6 +116,11 @@ export const MEDIA_SOURCE_TYPE = {
   youtube: 'youtube'
 };
 
+export const STORAGE_LOCATION_TYPE = {
+  private: 'private',
+  public: 'public'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

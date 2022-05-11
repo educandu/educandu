@@ -3,15 +3,13 @@ import { Button, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { Fragment, useState } from 'react';
 import SectionDisplay from './section-display.js';
+import { sectionShape } from '../ui/default-prop-types.js';
 import PluginSelectorDialog from './plugin-selector-dialog.js';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { sectionShape, filePickerStorageShape } from '../ui/default-prop-types.js';
 
 function SectionsDisplay({
   sections,
   pendingSectionKeys,
-  publicStorage,
-  privateStorage,
   canEdit,
   canHardDelete,
   onPendingSectionApply,
@@ -71,8 +69,6 @@ function SectionsDisplay({
     return (<SectionDisplay
       key={section.key}
       section={section}
-      publicStorage={publicStorage}
-      privateStorage={privateStorage}
       canEdit={!!dragHandleProps && canEdit}
       canHardDelete={canHardDelete}
       dragHandleProps={dragHandleProps}
@@ -170,8 +166,6 @@ SectionsDisplay.propTypes = {
   onSectionMove: PropTypes.func,
   onSectionPasteFromClipboard: PropTypes.func,
   pendingSectionKeys: PropTypes.arrayOf(PropTypes.string),
-  privateStorage: filePickerStorageShape,
-  publicStorage: filePickerStorageShape.isRequired,
   sections: PropTypes.arrayOf(sectionShape).isRequired
 };
 
@@ -188,8 +182,7 @@ SectionsDisplay.defaultProps = {
   onSectionInsert: () => {},
   onSectionMove: () => {},
   onSectionPasteFromClipboard: () => {},
-  pendingSectionKeys: [],
-  privateStorage: null
+  pendingSectionKeys: []
 };
 
 export default SectionsDisplay;

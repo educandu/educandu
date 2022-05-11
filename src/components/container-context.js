@@ -8,8 +8,3 @@ export function useService(dependecy) {
   const container = useContext(containerContext);
   return container.get(dependecy);
 }
-
-export default {
-  ContainerProvider,
-  useService
-};

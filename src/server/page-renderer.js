@@ -32,6 +32,7 @@ class PageRenderer extends PageRendererBase {
     const request = requestHelper.expressReqToRequest(req);
     const user = this.clientDataMappingService.mapWebsiteUser(req.user);
     const storagePlan = req.storagePlan;
+    const storage = req.storage;
     const resources = this.resourceManager.getAllResourceBundles();
 
     const {
@@ -44,6 +45,7 @@ class PageRenderer extends PageRendererBase {
     const props = {
       request: cloneDeep(request),
       user: cloneDeep(user),
+      storage: cloneDeep(storage),
       storagePlan: cloneDeep(storagePlan),
       container,
       initialState: cloneDeep(initialState),
@@ -58,6 +60,7 @@ class PageRenderer extends PageRendererBase {
 
     const inlineScript = [
       `window.__user__=${htmlescape(user)};`,
+      `window.__storage__=${htmlescape(storage)};`,
       `window.__storagePlan__=${htmlescape(storagePlan)};`,
       `window.__request__=${htmlescape(request)};`,
       `window.__pageName__=${htmlescape(pageName)};`,

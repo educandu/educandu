@@ -8,10 +8,11 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import LessonStore from '../stores/lesson-store.js';
 import fileNameHelper from '../utils/file-name-helper.js';
-import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
+import permissions, { hasUserPermission } from '../domain/permissions.js';
+import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { getPrivateStoragePathForRoomId, getPrefixFromStoragePath, getStoragePathType, STORAGE_PATH_TYPE } from '../ui/path-helper.js';
 
 const { BadRequest } = httpErrors;
@@ -178,6 +179,49 @@ export default class StorageService {
     } finally {
       this.lockStore.releaseLock(lock);
     }
+  }
+
+  async getStorageLocations({ user, documentId, lessonId }) {
+    const locations = [];
+
+    if (!user) {
+      return locations;
+    }
+
+    if (documentId || lessonId) {
+      locations.push({
+        type: STORAGE_LOCATION_TYPE.public,
+        rootPath: 'media',
+        initialPath: `media/${documentId || lessonId}`,
+        uploadPath: `media/${documentId || lessonId}`,
+        isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
+      });
+    }
+
+    if (lessonId) {
+      const lesson = await this.lessonStore.getLessonById(lessonId);
+      const room = await this.roomStore.getRoomById(lesson.roomId);
+      const isRoomOwner = user._id === room.owner;
+      const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user._id);
+
+      const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
+
+      if (roomOwner.storage.plan) {
+        const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan);
+
+        locations.push({
+          type: STORAGE_LOCATION_TYPE.private,
+          usedBytes: roomOwner.storage.usedBytes,
+          maxBytes: roomOwnerStoragePlan.maxBytes,
+          rootPath: `rooms/${room._id}/media`,
+          initialPath: `rooms/${room._id}/media`,
+          uploadPath: `rooms/${room._id}/media`,
+          isDeletionEnabled: isRoomOwner || isRoomCollaborator
+        });
+      }
+    }
+
+    return locations;
   }
 
   async _calculateUserUsedBytes(userId) {

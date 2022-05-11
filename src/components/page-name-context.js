@@ -7,8 +7,3 @@ export const PageNameProvider = pageNameContext.Provider;
 export function usePageName() {
   return useContext(pageNameContext);
 }
-
-export default {
-  PageNameProvider,
-  usePageName
-};
