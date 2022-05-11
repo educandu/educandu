@@ -173,6 +173,8 @@ class StorageBrowser extends React.Component {
       locations: updatedLocations,
       currentLocation: updatedCurrentLocation
     });
+    const { currentPathSegments, selectedRowKeys } = this.state;
+    this.refreshFiles(currentPathSegments, selectedRowKeys);
   }
 
   createPathSegments(storage) {
