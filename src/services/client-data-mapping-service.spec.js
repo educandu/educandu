@@ -1,6 +1,5 @@
 import sinon from 'sinon';
 import UserStore from '../stores/user-store.js';
-import StoragePlanStore from '../stores/storage-plan-store.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
@@ -8,7 +7,6 @@ import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, set
 describe('client-data-mapping-service', () => {
   const sandbox = sinon.createSandbox();
 
-  let storagePlanStore;
   let userStore;
   let container;
   let result;
@@ -19,7 +17,6 @@ describe('client-data-mapping-service', () => {
   beforeAll(async () => {
     container = await setupTestEnvironment();
     userStore = container.get(UserStore);
-    storagePlanStore = container.get(StoragePlanStore);
     sut = container.get(ClientDataMappingService);
   });
 
@@ -310,9 +307,6 @@ describe('client-data-mapping-service', () => {
       username: 'owner',
       storage: { plan: 'basic', usedBytes: 20, reminders: [] }
     };
-    const storagePlan = {
-      maxBytes: 40
-    };
 
     const member1 = {
       _id: 'member1',
@@ -344,7 +338,6 @@ describe('client-data-mapping-service', () => {
     beforeEach(async () => {
       sandbox.stub(userStore, 'getUserById').resolves(owner);
       sandbox.stub(userStore, 'getUsersByIds').resolves([member1, member2]);
-      sandbox.stub(storagePlanStore, 'getStoragePlanById').resolves(storagePlan);
       result = await sut.mapRoom(room, { roles: [ROLE.admin] });
     });
 
@@ -363,9 +356,7 @@ describe('client-data-mapping-service', () => {
           username: owner.username,
           email: owner.email,
           _id: owner._id,
-          key: owner._id,
-          storage: { plan: owner.storage.plan, usedBytes: owner.storage.usedBytes },
-          storagePlan: { maxBytes: storagePlan.maxBytes }
+          key: owner._id
         },
         members: [
           {

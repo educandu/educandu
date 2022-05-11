@@ -111,8 +111,7 @@ class ClientDataMappingService {
     const grantedPermissions = getAllUserPermissions(user);
 
     const owner = await this.userStore.getUserById(room.owner);
-    const storagePlan = owner.storage.plan ? await this.storagePlanStore.getStoragePlanById(owner.storage.plan) : null;
-    mappedRoom.owner = this._mapUser({ user: owner, storagePlan, grantedPermissions });
+    mappedRoom.owner = this._mapUser({ user: owner, grantedPermissions });
 
     const memberUsers = await this.userStore.getUsersByIds(room.members.map(member => member.userId));
 
@@ -153,7 +152,7 @@ class ClientDataMappingService {
     }));
   }
 
-  _mapUser({ user, storagePlan, grantedPermissions }) {
+  _mapUser({ user, grantedPermissions }) {
     if (!user) {
       return null;
     }
@@ -166,11 +165,6 @@ class ClientDataMappingService {
 
     if (grantedPermissions.includes(permissions.SEE_USER_EMAIL)) {
       mappedUser.email = user.email;
-    }
-
-    if (storagePlan) {
-      mappedUser.storage = { plan: user.storage.plan, usedBytes: user.storage.usedBytes };
-      mappedUser.storagePlan = { maxBytes: storagePlan.maxBytes };
     }
 
     return mappedUser;
