@@ -12,8 +12,8 @@ function MediaPlayerTrack({
   sourceUrl,
   aspectRatio,
   audioOnly,
-  startTimeCode,
-  stopTimeCode,
+  startTimecode,
+  stopTimecode,
   volume,
   isMuted,
   posterImageUrl,
@@ -35,12 +35,12 @@ function MediaPlayerTrack({
 
   const changeProgress = newProgress => {
     setLastProgress(newProgress);
-    onProgress?.(newProgress - (startTimeCode || 0));
+    onProgress?.(newProgress - (startTimecode || 0));
   };
 
   const seekToStartIfNecessary = duration => {
-    if (duration && ((startTimeCode && lastProgress < startTimeCode) || (stopTimeCode && lastProgress >= stopTimeCode))) {
-      playerRef.current.seekTo((startTimeCode || 0) / duration);
+    if (duration && ((startTimecode && lastProgress < startTimecode) || (stopTimecode && lastProgress >= stopTimecode))) {
+      playerRef.current.seekTo((startTimecode || 0) / duration);
     }
   };
 
@@ -71,7 +71,7 @@ function MediaPlayerTrack({
   trackRef.current = {
     seekTo(milliseconds) {
       setLastSeekTimestamp(Date.now());
-      const realMilliseconds = milliseconds + (startTimeCode || 0);
+      const realMilliseconds = milliseconds + (startTimecode || 0);
       playerRef.current.seekTo(realMilliseconds / durationInMilliseconds);
       changeProgress(realMilliseconds);
     },
@@ -105,9 +105,9 @@ function MediaPlayerTrack({
 
   const handleProgress = progress => {
     const progressInMilliseconds = progress.playedSeconds * 1000;
-    if (stopTimeCode && progressInMilliseconds > stopTimeCode) {
+    if (stopTimecode && progressInMilliseconds > stopTimecode) {
       setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
-      changeProgress(stopTimeCode);
+      changeProgress(stopTimecode);
       handleStop?.();
       return;
     }
@@ -121,7 +121,7 @@ function MediaPlayerTrack({
   const handleDuration = duration => {
     const durationInMillis = duration * 1000;
     setDurationInMilliseconds(durationInMillis);
-    onDuration?.(Math.min(stopTimeCode || Number.MAX_VALUE, durationInMillis) - (startTimeCode || 0));
+    onDuration?.(Math.min(stopTimecode || Number.MAX_VALUE, durationInMillis) - (startTimecode || 0));
     seekToStartIfNecessary(durationInMillis);
   };
 
@@ -180,8 +180,8 @@ MediaPlayerTrack.propTypes = {
   onProgress: PropTypes.func,
   posterImageUrl: PropTypes.string,
   sourceUrl: PropTypes.string.isRequired,
-  startTimeCode: PropTypes.number,
-  stopTimeCode: PropTypes.number,
+  startTimecode: PropTypes.number,
+  stopTimecode: PropTypes.number,
   trackRef: PropTypes.shape({
     current: PropTypes.any
   }),
@@ -196,8 +196,8 @@ MediaPlayerTrack.defaultProps = {
   onPlayStateChange: () => {},
   onProgress: () => {},
   posterImageUrl: null,
-  startTimeCode: null,
-  stopTimeCode: null,
+  startTimecode: null,
+  stopTimecode: null,
   trackRef: {
     current: null
   },
