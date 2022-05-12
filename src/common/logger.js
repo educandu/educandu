@@ -6,8 +6,8 @@ const getServerLevel = () => process.env.EDUCANDU_LOG_LEVEL || 'debug';
 const getBrowserLevel = () => getCookie(LOG_LEVEL_COOKIE_NAME) || 'debug';
 
 const shortenNodeUrl = url => {
-  const index = url.indexOf('/src/');
-  return index === -1 ? url : url.slice(index);
+  const relativePath = url.match(/(\/(src|dist)\/.+)/)?.[1];
+  return relativePath || url;
 };
 
 const shortenBrowserUrl = url => {
