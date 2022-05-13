@@ -15,6 +15,7 @@ function MediaPlayerControls({
   playedMilliseconds,
   playState,
   volume,
+  marks,
   isMuted,
   onTogglePlay,
   onToggleMute,
@@ -22,7 +23,9 @@ function MediaPlayerControls({
   onVolumeChange,
   standalone
 }) {
+  const isMediaLoaded = !!durationInMilliseconds;
   const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
+
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--standalone': standalone })}>
       {extraContentTop && (
@@ -30,14 +33,29 @@ function MediaPlayerControls({
           {extraContentTop}
         </div>
       )}
-      <div className="MediaPlayerControls-slider">
-        <Slider min={0} max={durationInMilliseconds} value={playedMilliseconds} tipFormatter={formatMillisecondsAsDuration} onChange={onSeek} />
+      <div className="MediaPlayerControls-progressSlider">
+        <Slider
+          min={0}
+          max={durationInMilliseconds}
+          value={playedMilliseconds}
+          marks={isMediaLoaded ? marks : {}}
+          tipFormatter={formatMillisecondsAsDuration}
+          onChange={onSeek}
+          />
       </div>
       <div className="MediaPlayerControls-controls">
         <div className="MediaPlayerControls-controlsGroup">
           <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
           <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={onToggleMute} />
-          <Slider className="MediaPlayerControls-volumeSlider" min={0} max={100} value={isMuted ? 0 : volume * 100} disabled={isMuted} tipFormatter={val => `${val}%`} onChange={val => onVolumeChange(val / 100)} />
+          <Slider
+            className="MediaPlayerControls-volumeSlider"
+            min={0}
+            max={100}
+            value={isMuted ? 0 : volume * 100}
+            tipFormatter={val => `${val}%`}
+            onChange={val => onVolumeChange(val / 100)}
+            disabled={isMuted}
+            />
           <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
         </div>
         <div className="MediaPlayerControls-controlsGroup" />
@@ -50,6 +68,7 @@ MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
   extraContentTop: PropTypes.node,
   isMuted: PropTypes.bool.isRequired,
+  marks: PropTypes.object,
   onSeek: PropTypes.func.isRequired,
   onToggleMute: PropTypes.func.isRequired,
   onTogglePlay: PropTypes.func.isRequired,
@@ -62,6 +81,7 @@ MediaPlayerControls.propTypes = {
 
 MediaPlayerControls.defaultProps = {
   extraContentTop: null,
+  marks: {},
   standalone: false
 };
 
