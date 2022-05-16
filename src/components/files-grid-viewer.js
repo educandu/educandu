@@ -2,48 +2,19 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { RESOURCE_TYPE } from '../domain/constants.js';
-import { getResourceType } from '../utils/resource-utils.js';
-import {
-  FileImageOutlined,
-  FileOutlined,
-  FilePdfOutlined,
-  FileTextOutlined,
-  FolderOpenOutlined,
-  FolderOutlined
-} from '@ant-design/icons';
+import { FolderOpenOutlined } from '@ant-design/icons';
+import { getResourceIcon } from '../utils/resource-utils.js';
 
 function FilesGridViewer({ files, canNavigateToParent, onNavigateToParent, onFileClick }) {
   const { t } = useTranslation('filesGridViewer');
 
-  const renderDirectoryIcon = () => <FolderOutlined className="FilesGridViewer-fileIcon" />;
-  const renderFileIcon = file => {
-    let Icon;
-    const resourceType = getResourceType(file.path);
-
-    switch (resourceType) {
-      case RESOURCE_TYPE.image:
-        Icon = FileImageOutlined;
-        break;
-      case RESOURCE_TYPE.pdf:
-        Icon = FilePdfOutlined;
-        break;
-      case RESOURCE_TYPE.text:
-        Icon = FileTextOutlined;
-        break;
-      default:
-        Icon = FileOutlined;
-        break;
-    }
-    return <Icon className="FilesGridViewer-fileIcon" />;
-  };
-
   const renderFile = file => {
+    const Icon = getResourceIcon({ filePath: file.path, isDirectory: file.isDirectory });
+
     return (
       <a className="FilesGridViewer-fileContainer" key={file.path} onClick={() => onFileClick(file)}>
         <div>
-          {file.isDirectory && renderDirectoryIcon()}
-          {!file.isDirectory && renderFileIcon(file)}
+          <Icon className="FilesGridViewer-fileIcon" />
         </div>
         <span>{file.name}</span>
       </a>

@@ -4,6 +4,7 @@ import { getPathSegments } from '../../ui/path-helper.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
+import FilesListViewer from '../files-list-viewer.js';
 
 function Tests({ PageTemplate }) {
   const [files, setFiles] = useState([]);
@@ -16,7 +17,7 @@ function Tests({ PageTemplate }) {
       const segments = getPathSegments(path);
       const name = segments[segments.length - 1];
 
-      return { name, path, isDirectory };
+      return { name, path, size: obj.size, lastModified: obj.lastModified, isDirectory };
     });
   }, []);
 
@@ -41,6 +42,14 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <FilesGridViewer
+          files={files}
+          canNavigateToParent
+          onFileClick={handleFileClick}
+          onNavigateToParent={handleNavigateToParent}
+          />
+        <br />
+        <br />
+        <FilesListViewer
           files={files}
           canNavigateToParent
           onFileClick={handleFileClick}
