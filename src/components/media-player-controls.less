@@ -27,8 +27,14 @@
 
 .MediaPlayerControls-controlsGroup {
   display: flex;
-  justify-content: flex-start;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-start;
+}
+
+.MediaPlayerControls-volumeControls {
+  display: flex;
+  margin-right: 15px;
 }
 
 .MediaPlayerControls-progressSlider {
@@ -46,5 +52,5 @@
 }
 
 .MediaPlayerControls-timeDisplay {
-  padding-left: 20px;
+  padding: 0 6px
 }

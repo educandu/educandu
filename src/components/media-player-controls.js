@@ -46,16 +46,18 @@ function MediaPlayerControls({
       <div className="MediaPlayerControls-controls">
         <div className="MediaPlayerControls-controlsGroup">
           <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
-          <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={onToggleMute} />
-          <Slider
-            className="MediaPlayerControls-volumeSlider"
-            min={0}
-            max={100}
-            value={isMuted ? 0 : volume * 100}
-            tipFormatter={val => `${val}%`}
-            onChange={val => onVolumeChange(val / 100)}
-            disabled={isMuted}
-            />
+          <div className="MediaPlayerControls-volumeControls">
+            <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={onToggleMute} />
+            <Slider
+              className="MediaPlayerControls-volumeSlider"
+              min={0}
+              max={100}
+              value={isMuted ? 0 : volume * 100}
+              tipFormatter={val => `${val}%`}
+              onChange={val => onVolumeChange(val / 100)}
+              disabled={isMuted}
+              />
+          </div>
           <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
         </div>
         <div className="MediaPlayerControls-controlsGroup" />
