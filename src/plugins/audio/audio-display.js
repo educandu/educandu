@@ -21,7 +21,7 @@ function AudioDisplay({ content }) {
 
   return (
     <div className="AudioDisplay">
-      <div className="AudioDisplay-content u-width-50">
+      <div className="AudioDisplay-content">
         {sourceUrl && (
           <MediaPlayer sourceUrl={sourceUrl} audioOnly />
         )}

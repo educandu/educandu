@@ -80,7 +80,7 @@ function EarTrainingDisplay({ content }) {
     }
 
     return (
-      <div className="u-width-50">
+      <div className="EarTraining-soundPlayer">
         {sourceType === SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
         {sourceType !== SOURCE_TYPE.midi && soundUrl && <MediaPlayer sourceUrl={soundUrl} audioOnly />}
         {currentTest.sound.text && (
