@@ -59,7 +59,6 @@ export default class EducanduServer {
         : res.status(503).type('html').send(`<!DOCTYPE html><p>${message}</p>`);
     });
 
-    this.controllerFactory.registerPluginControllers();
     this.controllerFactory.registerAdditionalControllers(this.serverConfig.additionalControllers);
     const controllers = this.controllerFactory.getAllControllers();
 

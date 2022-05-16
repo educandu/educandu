@@ -1,0 +1,12 @@
+errorRenderingDocument:
+  en: The document cannot be displayed
+  de: Das Dokument kann nicht angezeigt werden
+errorRenderingPage:
+  en: The page cannot be displayed
+  de: Die Seite kann nicht angezeigt werden
+noDocument:
+  en: No document specified
+  de: Kein Dokument angegeben
+loadingDocument:
+  en: Loading document
+  de: Dokument wird geladen

@@ -1048,6 +1048,26 @@
     }
   },
   {
+    "namespace": "pdfDocument",
+    "language": "en",
+    "resources": {
+      "errorRenderingDocument": "The document cannot be displayed",
+      "errorRenderingPage": "The page cannot be displayed",
+      "noDocument": "No document specified",
+      "loadingDocument": "Loading document"
+    }
+  },
+  {
+    "namespace": "pdfDocument",
+    "language": "de",
+    "resources": {
+      "errorRenderingDocument": "Das Dokument kann nicht angezeigt werden",
+      "errorRenderingPage": "Die Seite kann nicht angezeigt werden",
+      "noDocument": "Kein Dokument angegeben",
+      "loadingDocument": "Dokument wird geladen"
+    }
+  },
+  {
     "namespace": "pluginSelectorDialog",
     "language": "en",
     "resources": {
@@ -1695,11 +1715,7 @@
       "caption": "Caption",
       "initialPageNumber": "Initially displayed page",
       "showTextOverlay": "Show text overlay",
-      "showTextOverlayInfo": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n",
-      "errorRenderingDocument": "The document cannot be displayed",
-      "errorRenderingPage": "The page cannot be displayed",
-      "noDocument": "No document specified",
-      "loadingDocument": "Loading document"
+      "showTextOverlayInfo": "Shows a transparent layer on top of the document enabling users to select text.\nPlease note that the placement of the overlayed characters will most likely not\nbe completely in sync with the PDF document due to technical limitations.\n"
     }
   },
   {
@@ -1710,11 +1726,7 @@
       "caption": "Legende",
       "initialPageNumber": "Zuerst angezeigte Seite",
       "showTextOverlay": "Text-Overlay anzeigen",
-      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachten Sie, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n",
-      "errorRenderingDocument": "Das Dokument kann nicht angezeigt werden",
-      "errorRenderingPage": "Die Seite kann nicht angezeigt werden",
-      "noDocument": "Kein Dokument angegeben",
-      "loadingDocument": "Dokument wird geladen"
+      "showTextOverlayInfo": "Zeigt eine transparente Schicht über dem Dokument an, die es Benutzern ermöglicht, Text zu selektieren.\nBitte beachten Sie, dass die Zeichenplatzierung im überlagernden Text aus technischen Gründen nicht\nvollständig mit der des Dokuments übereinstimmen kann.\n"
     }
   },
   {
