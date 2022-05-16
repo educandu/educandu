@@ -345,3 +345,21 @@ videoDisplay:
 source:
   en: Source
   de: Quelle
+size:
+  en: Size
+  de: Größe
+imageResource:
+  en: image
+  de: Bild
+videoResource:
+  en: video
+  de: Video
+audioResource:
+  en: audio
+  de: Audio
+textResource:
+  en: text
+  de: Text
+pdfResource:
+  en: document
+  de: Dokument

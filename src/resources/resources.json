@@ -1947,7 +1947,13 @@
       "width": "Width",
       "copyrightInfos": "Copyright infos",
       "videoDisplay": "Video display",
-      "source": "Source"
+      "source": "Source",
+      "size": "Size",
+      "imageResource": "image",
+      "videoResource": "video",
+      "audioResource": "audio",
+      "textResource": "text",
+      "pdfResource": "document"
     }
   },
   {
@@ -2066,7 +2072,13 @@
       "width": "Breite",
       "copyrightInfos": "Copyright Infos",
       "videoDisplay": "Videoanzeige",
-      "source": "Quelle"
+      "source": "Quelle",
+      "size": "Größe",
+      "imageResource": "Bild",
+      "videoResource": "Video",
+      "audioResource": "Audio",
+      "textResource": "Text",
+      "pdfResource": "Dokument"
     }
   },
   {

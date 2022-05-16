@@ -1,3 +1,4 @@
+import { FileImageOutlined, FileOutlined, FilePdfOutlined, FileTextOutlined, FolderOutlined } from '@ant-design/icons';
 import { RESOURCE_TYPE } from '../domain/constants.js';
 
 const extensionsGroups = [
@@ -20,4 +21,23 @@ export const getResourceType = url => {
   const extensionsGroup = extensionsGroups.find(group => group.extensions.includes(extension));
 
   return extensionsGroup?.type || RESOURCE_TYPE.unknown;
+};
+
+export const getResourceIcon = ({ filePath, isDirectory }) => {
+  if (isDirectory) {
+    return FolderOutlined;
+  }
+
+  const resourceType = getResourceType(filePath);
+
+  switch (resourceType) {
+    case RESOURCE_TYPE.image:
+      return FileImageOutlined;
+    case RESOURCE_TYPE.pdf:
+      return FilePdfOutlined;
+    case RESOURCE_TYPE.text:
+      return FileTextOutlined;
+    default:
+      return FileOutlined;
+  }
 };
