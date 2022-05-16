@@ -46,8 +46,8 @@ function ImageDisplay({ content }) {
     const mainImage = mainImageRef.current;
     const canvas = hoverEffectCanvasRef.current;
     const context = canvas.getContext('2d');
-    canvas.width = mainImage.naturalWidth;
-    canvas.height = mainImage.naturalHeight;
+    canvas.width = mainImage.width;
+    canvas.height = mainImage.height;
 
     const hoverImage = new Image();
     hoverImage.src = getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl);
