@@ -123,6 +123,15 @@ sectionCopiedToClipboard:
 clipboardPasteNotSupported:
   en: Pasting from the clipboard is not supported by this browser.
   de: Das Einfügen aus der Zwischenablage wird von diesem Browser nicht unterstützt.
+copyUrlToClipboard:
+  en: Copy URL into the clipboard
+  de: URL in die Zwischenablage kopieren
+urlCopiedToClipboard:
+  en: The URL was copied to the clipboard
+  de: Die URL wurde in die Zwischenablage kopiert
+copyUrlToClipboardError:
+  en: Error copying the URL into the clipboard due to missing access permissions.
+  de: Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
 accept:
   en: Accept
   de: Akzeptieren
@@ -348,6 +357,9 @@ source:
 size:
   en: Size
   de: Größe
+naturalSize:
+  en: Natural size
+  de: Natürliche Größe
 imageResource:
   en: image
   de: Bild
@@ -363,3 +375,6 @@ textResource:
 pdfResource:
   en: document
   de: Dokument
+pageCount:
+  en: Page count
+  de: Seitenanzahl

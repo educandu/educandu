@@ -1,23 +1,78 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import prettyBytes from 'pretty-bytes';
+import MiniPager from './mini-pager.js';
+import { message, Tooltip } from 'antd';
+import Logger from '../common/logger.js';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
 import LiteralUrlLink from './literal-url-link.js';
+import { useService } from './container-context.js';
+import { handleError } from '../ui/error-helper.js';
 import { useDateFormat } from './locale-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
+import ClientConfig from '../bootstrap/client-config.js';
 import { getResourceType } from '../utils/resource-utils.js';
-import { FileOutlined, FilePdfOutlined, FileTextOutlined } from '@ant-design/icons';
+import { FileOutlined, FileTextOutlined } from '@ant-design/icons';
+import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
+import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from './pdf-document.js';
+
+const logger = new Logger(import.meta.url);
 
 function FilePreview({ lastModified, size, url }) {
-  const { t } = useTranslation('filePreview');
+  const imageRef = useRef();
+  const { t } = useTranslation();
+  const [pdf, setPdf] = useState(null);
   const { formatDate } = useDateFormat();
+  const clientConfig = useService(ClientConfig);
+  const [pdfPageNumber, setPdfPageNumber] = useState(1);
+  const [imageDimensions, setImageDimensions] = useState(null);
 
   const parsedUrl = new URL(url);
   const resourceType = getResourceType(parsedUrl.href);
   const fileName = decodeURIComponent(parsedUrl.pathname.slice(parsedUrl.pathname.lastIndexOf('/') + 1));
   const category = mimeTypeHelper.getCategory(fileName);
+
+  const pdfFile = useMemo(() => ({
+    url,
+    withCredentials: url.startsWith(clientConfig.cdnRootUrl)
+  }), [url, clientConfig.cdnRootUrl]);
+
+  const handleCopyUrlToClipboardClick = async event => {
+    event.preventDefault();
+    event.stopPropagation();
+    try {
+      await window.navigator.clipboard.writeText(url);
+      message.success(t('common:urlCopiedToClipboard'));
+    } catch (error) {
+      handleError({ message: t('common:copyUrlToClipboardError'), error, logger, t, duration: 30 });
+    }
+  };
+
+  useEffect(() => {
+    const image = imageRef.current;
+    if (!image) {
+      return () => {};
+    }
+
+    const setDimensions = img => {
+      if (img.naturalHeight && img.naturalWidth) {
+        setImageDimensions({ height: img.naturalHeight, width: img.naturalWidth });
+      } else {
+        setImageDimensions(null);
+      }
+    };
+
+    if (image.complete) {
+      setDimensions(image);
+    } else {
+      image.onload = () => setDimensions(image);
+      image.onerror = () => setImageDimensions(null);
+    }
+
+    return () => setImageDimensions(null);
+  }, [imageRef]);
 
   const renderAudio = () => (
     <MediaPlayer sourceUrl={url} audioOnly />
@@ -28,11 +83,29 @@ function FilePreview({ lastModified, size, url }) {
   );
 
   const renderImage = () => (
-    <img className="FilePreview-image" src={url} />
+    <img className="FilePreview-image" src={url} ref={imageRef} />
   );
 
   const renderPdf = () => (
-    <div className="FilePreview-icon"><FilePdfOutlined /></div>
+    <div className="FilePreview-pdf">
+      <div className="FilePreview-pdfDocument">
+        <PdfDocument
+          file={pdfFile}
+          pageNumber={pdfPageNumber}
+          stretchDirection={PDF_DOCUMENT_STRETCH_DIRECTION.horizontal}
+          onLoadSuccess={setPdf}
+          />
+      </div>
+      <div className="FilePreview-pdfPager">
+        {pdf?.numPages > 1 && (
+          <MiniPager
+            currentPage={pdfPageNumber}
+            totalPages={pdf?.numPages || 0}
+            onNavigate={setPdfPageNumber}
+            />
+        )}
+      </div>
+    </div>
   );
 
   const renderText = () => (
@@ -97,11 +170,35 @@ function FilePreview({ lastModified, size, url }) {
         <div className="FilePreview-detailValue">
           {formatDate(lastModified)}
         </div>
+        {imageDimensions && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:naturalSize')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {imageDimensions.width}&nbsp;⨉&nbsp;{imageDimensions.height}&nbsp;px
+            </div>
+          </Fragment>
+        )}
+        {pdf && (
+          <Fragment>
+            <div className="FilePreview-detailLabel">
+              {t('common:pageCount')}
+            </div>
+            <div className="FilePreview-detailValue">
+              {pdf.numPages}
+            </div>
+          </Fragment>
+        )}
         <div className="FilePreview-detailLabel">
           {t('common:url')}
         </div>
         <div className="FilePreview-detailValue">
           <LiteralUrlLink rel="noopener noreferrer" target="_blank" href={url} />
+          &nbsp;&nbsp;
+          <Tooltip title={t('common:copyUrlToClipboard')}>
+            <a onClick={handleCopyUrlToClipboardClick}><CopyToClipboardIcon /></a>
+          </Tooltip>
         </div>
       </div>
     </div>
