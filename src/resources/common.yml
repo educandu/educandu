@@ -375,6 +375,12 @@ textResource:
 pdfResource:
   en: document
   de: Dokument
+noneResource:
+  en: Unknown
+  de: Unbekannt
+unknownResource:
+  en: Unknown
+  de: Unbekannt
 pageCount:
   en: Page count
   de: Seitenanzahl

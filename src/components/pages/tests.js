@@ -30,13 +30,28 @@ function Tests({ PageTemplate }) {
   }, [storageApiClient, convertCdnObjectsToFileRecords]);
 
   const handleFileClick = file => {
-    // eslint-disable-next-line no-alert
-    alert(`Clicked file '${file.name}'`);
+    // eslint-disable-next-line no-console
+    console.log(`Clicked file '${file.name}'`);
   };
 
-  const handleNavigateToParent = () => {
-    // eslint-disable-next-line no-alert
-    alert('Clicked "navigate to parent"');
+  const handleNavigateToParentClick = () => {
+    // eslint-disable-next-line no-console
+    console.log('Clicked "navigate to parent"');
+  };
+
+  const handleFileSelectionChange = file => {
+    // eslint-disable-next-line no-console
+    console.log('File selected: ', file?.name || null);
+  };
+
+  const handleDeleteFileClick = file => {
+    // eslint-disable-next-line no-console
+    console.log('Delete file: ', file.name);
+  };
+
+  const handlePreviewFileClick = file => {
+    // eslint-disable-next-line no-console
+    console.log('Preview file: ', file.name);
   };
 
   return (
@@ -92,15 +107,18 @@ function Tests({ PageTemplate }) {
           files={files}
           canNavigateToParent
           onFileClick={handleFileClick}
-          onNavigateToParent={handleNavigateToParent}
+          onNavigateToParentClick={handleNavigateToParentClick}
           />
         <hr />
         <h1>File List viewer</h1>
         <FilesListViewer
           files={files}
+          canDelete
           canNavigateToParent
-          onFileClick={handleFileClick}
-          onNavigateToParent={handleNavigateToParent}
+          onSelectionChange={handleFileSelectionChange}
+          onNavigateToParentClick={handleNavigateToParentClick}
+          onPreviewClick={handlePreviewFileClick}
+          onDeleteClick={handleDeleteFileClick}
           />
       </div>
     </PageTemplate>

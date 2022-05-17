@@ -20,3 +20,53 @@
 .FilesListViewer-fileIcon {
   padding-right: 5px;
 }
+
+.FilesListViewer-row {
+  cursor: pointer;
+
+  &.is-selected {
+    background-color: lighten(@edu-primary-color-light, 40%);
+
+    & > .ant-table-cell.ant-table-cell-row-hover {
+      background-color: lighten(@edu-primary-color-light, 40%);
+    }
+  }
+}
+
+.FilesListViewer-actions {
+  display: none;
+
+  &.are-visible {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+  }
+}
+
+.FilesListViewer-action {
+  text-decoration: none;
+
+  &:hover,
+  &:active {
+    text-decoration: none;
+  }
+
+  &.FilesListViewer-action--preview {
+    color: @edu-green-icon-color;
+
+    &:hover,
+    &:active {
+      color: @edu-green-icon-color;
+    }
+  }
+
+  &.FilesListViewer-action--delete {
+    color: @edu-danger-color;
+
+    &:hover,
+    &:active {
+      color: @edu-danger-color;
+    }
+  }
+}

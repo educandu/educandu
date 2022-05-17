@@ -1958,6 +1958,8 @@
       "audioResource": "audio",
       "textResource": "text",
       "pdfResource": "document",
+      "noneResource": "Unknown",
+      "unknownResource": "Unknown",
       "pageCount": "Page count"
     }
   },
@@ -2088,6 +2090,8 @@
       "audioResource": "Audio",
       "textResource": "Text",
       "pdfResource": "Dokument",
+      "noneResource": "Unbekannt",
+      "unknownResource": "Unbekannt",
       "pageCount": "Seitenanzahl"
     }
   },

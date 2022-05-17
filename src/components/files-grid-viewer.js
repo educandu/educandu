@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpenOutlined } from '@ant-design/icons';
 import { getResourceIcon } from '../utils/resource-utils.js';
 
-function FilesGridViewer({ files, canNavigateToParent, onNavigateToParent, onFileClick }) {
+function FilesGridViewer({ files, canNavigateToParent, onNavigateToParentClick, onFileClick }) {
   const { t } = useTranslation('filesGridViewer');
 
   const renderFile = file => {
@@ -25,7 +25,7 @@ function FilesGridViewer({ files, canNavigateToParent, onNavigateToParent, onFil
     <div className="FilesGridViewer">
       {canNavigateToParent && (
         <Tooltip title={t('navigateToParent')} placement="topLeft">
-          <a className="FilesGridViewer-fileContainer" onClick={onNavigateToParent}>
+          <a className="FilesGridViewer-fileContainer" onClick={onNavigateToParentClick}>
             <div>
               <FolderOpenOutlined className="FilesGridViewer-fileIcon" />
             </div>
@@ -46,13 +46,13 @@ FilesGridViewer.propTypes = {
     isDirectory: PropTypes.bool.isRequired
   })).isRequired,
   onFileClick: PropTypes.func,
-  onNavigateToParent: PropTypes.func
+  onNavigateToParentClick: PropTypes.func
 };
 
 FilesGridViewer.defaultProps = {
   canNavigateToParent: false,
   onFileClick: () => {},
-  onNavigateToParent: () => {}
+  onNavigateToParentClick: () => {}
 };
 
 export default FilesGridViewer;

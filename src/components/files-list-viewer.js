@@ -1,17 +1,59 @@
 import by from 'thenby';
-import { Table } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
-import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import React, { Fragment, useState } from 'react';
 import { FolderOpenOutlined } from '@ant-design/icons';
+import DeleteIcon from './icons/general/delete-icon.js';
+import PreviewIcon from './icons/general/preview-icon.js';
 import { useDateFormat, useLocale } from './locale-context.js';
+import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 
-function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFileClick }) {
+function FilesListViewer({
+  files,
+  canDelete,
+  canNavigateToParent,
+  onNavigateToParentClick,
+  onSelectionChange,
+  onPreviewClick,
+  onDeleteClick
+}) {
   const { locale } = useLocale();
   const { t } = useTranslation('');
   const { formatDate } = useDateFormat();
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const getFile = row => row ? files.find(f => f.name === row.name) : null;
+
+  const handleHeaderRowClick = rowIndex => {
+    if (rowIndex === 1) {
+      onNavigateToParentClick();
+    }
+  };
+
+  const handleRowClick = row => {
+    const newSelectedRow = row.key === selectedRow?.key || selectedRow?.isDirectory ? null : row;
+
+    setSelectedRow(newSelectedRow);
+    onSelectionChange(getFile(newSelectedRow));
+  };
+
+  const handlePreviewClick = (event, row) => {
+    event.stopPropagation();
+    onPreviewClick(getFile(row));
+  };
+
+  const handleDeleteFile = row => {
+    onDeleteClick(getFile(row));
+  };
+
+  const handleDeleteClick = (event, row) => {
+    event.stopPropagation();
+    confirmCdnFileDelete(t, row.name, () => handleDeleteFile(row));
+  };
 
   const renderName = (name, row) => {
     if (row.key === 'navigateToParent') {
@@ -27,9 +69,40 @@ function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFil
     );
   };
 
+  const renderActions = (_isDirectory, row) => {
+    const classes = classNames('FilesListViewer-actions', { 'are-visible': selectedRow?.key === row.key });
+
+    return (
+      <div className={classes}>
+        <Tooltip title={t('common:preview')}>
+          <a
+            className="FilesListViewer-action FilesListViewer-action--preview"
+            onClick={event => handlePreviewClick(event, row)}
+            >
+            <PreviewIcon />
+          </a>
+        </Tooltip>
+        {canDelete && (
+          <Tooltip title={t('common:delete')}>
+            <a
+              className="FilesListViewer-action FilesListViewer-action--delete"
+              onClick={event => handleDeleteClick(event, row)}
+              >
+              <DeleteIcon />
+            </a>
+          </Tooltip>
+        )}
+      </div>
+    );
+  };
+
   const renderNavigateToParentButton = () => (
     <span><FolderOpenOutlined className="FilesListViewer-fileIcon" />...</span>
   );
+
+  const getRowClassName = row => {
+    return row.key === selectedRow?.key ? 'FilesListViewer-row is-selected' : 'FilesListViewer-row';
+  };
 
   const columns = [
     {
@@ -48,7 +121,7 @@ function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFil
     },
     {
       title: () => t('common:size'),
-      dataIndex: 'sizeFormatter',
+      dataIndex: 'sizeFormatted',
       align: 'right',
       width: 100,
       responsive: ['sm'],
@@ -61,6 +134,12 @@ function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFil
       width: 200,
       responsive: ['md'],
       sorter: by('lastModified')
+    },
+    {
+      title: () => t('common:actions'),
+      dataIndex: 'isDirectory',
+      render: renderActions,
+      align: 'right'
     }
   ];
 
@@ -68,7 +147,7 @@ function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFil
     columns.forEach(column => {
       column.children = column.dataIndex === 'name'
         ? [{ title: renderNavigateToParentButton, render: renderName, dataIndex: 'name', key: 'navigateToParent' }]
-        : [{ dataIndex: column.dataIndex, align: column.align }];
+        : [{ dataIndex: column.dataIndex, align: column.align, render: column.render }];
     });
   }
 
@@ -81,21 +160,10 @@ function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFil
       isDirectory: file.isDirectory,
       lastModified: file.lastModified,
       typeTranslated: t(`common:${getResourceType(file.path)}Resource`),
-      sizeFormatter: Number.isFinite(file.size) && !file.isDirectory ? prettyBytes(file.size, { locale }) : '---',
+      sizeFormatted: Number.isFinite(file.size) && !file.isDirectory ? prettyBytes(file.size, { locale }) : '---',
       lastModifiedFormatted: file.lastModified && !file.isDirectory ? formatDate(file.lastModified, 'PPp') : '---'
     };
   });
-
-  const handleHeaderRowClick = rowIndex => {
-    if (rowIndex === 1) {
-      onNavigateToParent();
-    }
-  };
-
-  const handleRowClick = row => {
-    const file = files.find(f => f.path === row.path);
-    onFileClick(file);
-  };
 
   return (
     <div className="FilesListViewer">
@@ -105,6 +173,7 @@ function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFil
         size="middle"
         columns={columns}
         dataSource={rows}
+        rowClassName={getRowClassName}
         onRow={row => ({
           onClick: () => handleRowClick(row)
         })}
@@ -117,20 +186,26 @@ function FilesListViewer({ files, canNavigateToParent, onNavigateToParent, onFil
 }
 
 FilesListViewer.propTypes = {
+  canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(PropTypes.shape({
     path: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     isDirectory: PropTypes.bool.isRequired
   })).isRequired,
-  onFileClick: PropTypes.func,
-  onNavigateToParent: PropTypes.func
+  onDeleteClick: PropTypes.func,
+  onNavigateToParentClick: PropTypes.func,
+  onPreviewClick: PropTypes.func,
+  onSelectionChange: PropTypes.func
 };
 
 FilesListViewer.defaultProps = {
+  canDelete: false,
   canNavigateToParent: false,
-  onFileClick: () => {},
-  onNavigateToParent: () => {}
+  onDeleteClick: () => {},
+  onNavigateToParentClick: () => {},
+  onPreviewClick: () => {},
+  onSelectionChange: () => {}
 };
 
 export default FilesListViewer;
