@@ -5,7 +5,8 @@ import { FlagOutlined } from '@ant-design/icons';
 import CloseIcon from './icons/general/close-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import { isTouchDevice } from '../ui/browser-helper.js';
-import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 const MIN_PART_WIDTH_IN_PX = 35;
 const MIN_PART_DURATION_IN_MS = 1000;
@@ -171,10 +172,23 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
     };
   }, [dragState, handleWindowMouseMove, handleWindowMouseUp]);
 
-  const renderMarker = (marker, index) => {
+  const renderExistingMarker = (marker, index) => {
     return (
-      <div key={marker.key} className="Timeline-marker" style={{ left: `${marker.left}px` }}>
+      <div key={marker.key} className="Timeline-marker Timeline-marker--draggable" style={{ left: `${marker.left}px` }}>
         <FlagOutlined onMouseDown={handleMarkerMouseDown(marker, index)} />
+      </div>
+    );
+  };
+
+  const renderNewMarker = () => {
+    const offset = newMarkerState.isInBounds ? 0 : -5;
+    return (
+      <div key="new-marker" className="Timeline-marker Timeline-marker--new" style={{ left: `${newMarkerState.left + offset}px` }}>
+        <div className={`Timeline-markerTimeCode ${newMarkerState.isInBounds ? 'Timeline-markerTimeCode--valid' : 'Timeline-markerTimeCode--invalid'}`}>
+          {formatMillisecondsAsDuration(Math.round(newMarkerState.left / timelineState.msToPxRatio))}
+        </div>
+        {newMarkerState.isInBounds && <FlagOutlined />}
+        {!newMarkerState.isInBounds && <CloseIcon />}
       </div>
     );
   };
@@ -205,7 +219,8 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
   return (
     <div className={classNames('Timeline', { 'is-dragging': !!dragState })} ref={timelineRef}>
       <div className="Timeline-markersBar">
-        {timelineState.markers.map(renderMarker)}
+        {timelineState.markers.map(renderExistingMarker)}
+        {!!newMarkerState && renderNewMarker()}
       </div>
       <div
         className="Timeline-segmentsBar"
@@ -213,15 +228,7 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
         onMouseMove={handleSegmentsBarMouseMove}
         onMouseLeave={handleSegmentsBarMouseLeave}
         >
-        {!!newMarkerState && (
-          <Fragment>
-            <div className="Timeline-newMarker" style={{ left: `${newMarkerState.left}px` }}>
-              {newMarkerState.isInBounds && <FlagOutlined />}
-              {!newMarkerState.isInBounds && <div className="Timeline-newMarkerCloseIcon"><CloseIcon /></div>}
-            </div>
-            <div className="Timeline-newSegmentStart" style={{ left: `${newMarkerState.left}px` }} />
-          </Fragment>
-        )}
+        {!!newMarkerState && <div className="Timeline-newSegmentStart" style={{ left: `${newMarkerState.left}px` }} />}
         {timelineState.segments.map(renderSegment)}
       </div>
       <div className="Timeline-deletionBar">
