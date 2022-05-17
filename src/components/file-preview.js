@@ -20,7 +20,7 @@ import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from './pdf-document.js';
 
 const logger = new Logger(import.meta.url);
 
-function FilePreview({ lastModified, size, url }) {
+function FilePreview({ createdOn, size, url }) {
   const imageRef = useRef();
   const { t } = useTranslation();
   const [pdf, setPdf] = useState(null);
@@ -168,7 +168,7 @@ function FilePreview({ lastModified, size, url }) {
           {t('common:createdOn')}
         </div>
         <div className="FilePreview-detailValue">
-          {formatDate(lastModified)}
+          {formatDate(createdOn)}
         </div>
         {imageDimensions && (
           <Fragment>
@@ -206,7 +206,7 @@ function FilePreview({ lastModified, size, url }) {
 }
 
 FilePreview.propTypes = {
-  lastModified: PropTypes.instanceOf(Date).isRequired,
+  createdOn: PropTypes.instanceOf(Date).isRequired,
   size: PropTypes.number.isRequired,
   url: PropTypes.string.isRequired
 };
