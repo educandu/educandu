@@ -24,6 +24,19 @@ export function analyzeMediaUrl(url) {
     };
   }
 
+  if (parsedUrl.origin === 'https://youtu.be' && parsedUrl.pathname && !parsedUrl.pathname.slice(1).includes('/')) {
+    const videoId = parsedUrl.pathname.slice(1);
+    const startSecond = Number.parseInt(parsedUrl.searchParams.get('t'), 10);
+
+    return {
+      sanitizedUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
+      isYoutube: true,
+      startTimecode: Number.isInteger(startSecond) ? startSecond * 1000 : null,
+      stopTimecode: null,
+      resourceType: RESOURCE_TYPE.video
+    };
+  }
+
   return {
     sanitizedUrl: parsedUrl.href,
     isYoutube: false,
