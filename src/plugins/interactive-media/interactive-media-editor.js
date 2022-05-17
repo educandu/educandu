@@ -137,10 +137,10 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleSourceUrlBlur = () => {
-    const { sanitizedUrl, startTimecode, stopTimecode } = analyzeMediaUrl(content.sourceUrl);
+    const { sanitizedUrl, startTimecode, stopTimecode } = analyzeMediaUrl(sourceUrl);
     setSelectedChapterIndex(0);
     changeContent({
-      sourceUrl: sanitizedUrl,
+      sourceUrl: sourceType !== MEDIA_SOURCE_TYPE.internal ? sanitizedUrl : sourceUrl,
       sourceStartTimecode: startTimecode,
       sourceStopTimecode: stopTimecode
     });
