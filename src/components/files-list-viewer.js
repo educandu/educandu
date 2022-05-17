@@ -16,10 +16,10 @@ function FilesListViewer({
   files,
   canDelete,
   canNavigateToParent,
-  onNavigateToParentClick,
-  onSelectionChange,
+  onDeleteClick,
   onPreviewClick,
-  onDeleteClick
+  onSelectionChange,
+  onNavigateToParentClick
 }) {
   const { locale } = useLocale();
   const { t } = useTranslation('');

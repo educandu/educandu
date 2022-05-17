@@ -1,8 +1,3 @@
-@files-grid-viewer-file-icon-padding: 10px;
-@files-grid-viewer-file-container-base-width: 60px;
-@files-grid-viewer-file-hover-transition: all .2s ease-in-out;
-@files-grid-viewer-file-container-total-width: @files-grid-viewer-file-container-base-width + 2 * @files-grid-viewer-file-icon-padding;
-
 .FilesGridViewer {
   display: flex;
   gap: 20px;
@@ -14,33 +9,93 @@
 }
 
 .FilesGridViewer-fileContainer {
-  width: @files-grid-viewer-file-container-total-width;
+  padding: 5px;
+  position: relative;
   overflow: hidden;
-  text-align: center;
   white-space: nowrap;
-  text-decoration: none;
   text-overflow: ellipsis;
+  width: 80px;
+}
+
+.FilesGridViewer-file {
+  text-align: center;
+  text-decoration: none;
   color: @edu-text-color;
 
   &:hover,
   &:active {
     text-decoration: none;
-    color: @edu-text-color;
-  }
-
-  &:hover {
-    font-weight: bold;
-    transition: @files-grid-viewer-file-hover-transition;
-
-    .FilesGridViewer-fileIcon {
-      font-size: 65px;
-      padding-top: 5px;
-      transition: @files-grid-viewer-file-hover-transition;
-    }
+    color: @edu-text-color-secondary;
   }
 }
 
 .FilesGridViewer-fileIcon {
   font-size: 60px;
-  padding: @files-grid-viewer-file-icon-padding;
+}
+
+.FilesGridViewer-fileOverlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 75%;
+  background-color: lighten(@edu-primary-color-light, 10%);
+
+  &.is-visible {
+    display: block
+  }
+}
+
+.FilesGridViewer-actions {
+  cursor: pointer;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  &.are-visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+}
+
+.FilesGridViewer-action {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  opacity: 90%;
+  background-color: @edu-white;
+  border-radius: 50%;
+
+  &:hover,
+  &:active {
+    text-decoration: none;
+  }
+
+  &.FilesGridViewer-action--preview {
+    color: @edu-green-icon-color;
+
+    &:hover,
+    &:active {
+      color: @edu-green-icon-color;
+    }
+  }
+
+  &.FilesGridViewer-action--delete {
+    color: @edu-danger-color;
+
+    &:hover,
+    &:active {
+      color: @edu-danger-color;
+    }
+  }
 }

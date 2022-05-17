@@ -1,23 +1,82 @@
-import React from 'react';
 import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpenOutlined } from '@ant-design/icons';
+import DeleteIcon from './icons/general/delete-icon.js';
+import PreviewIcon from './icons/general/preview-icon.js';
 import { getResourceIcon } from '../utils/resource-utils.js';
+import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 
-function FilesGridViewer({ files, canNavigateToParent, onNavigateToParentClick, onFileClick }) {
+function FilesGridViewer({
+  files,
+  canDelete,
+  canNavigateToParent,
+  onDeleteClick,
+  onPreviewClick,
+  onSelectionChange,
+  onNavigateToParentClick
+}) {
   const { t } = useTranslation('filesGridViewer');
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileClick = file => {
+    const newSelectedFile = file.name === selectedFile?.name || selectedFile?.isDirectory ? null : file;
+
+    setSelectedFile(newSelectedFile);
+    onSelectionChange(newSelectedFile);
+  };
+
+  const handlePreviewClick = (event, file) => {
+    event.stopPropagation();
+    onPreviewClick(file);
+  };
+
+  const handleDeleteFile = file => {
+    onDeleteClick(file);
+  };
+
+  const handleDeleteClick = (event, file) => {
+    event.stopPropagation();
+    confirmCdnFileDelete(t, file.name, () => handleDeleteFile(file));
+  };
 
   const renderFile = file => {
     const Icon = getResourceIcon({ filePath: file.path, isDirectory: file.isDirectory });
+    const overlayClasses = classNames('FilesGridViewer-fileOverlay', { 'is-visible': file.name === selectedFile?.name });
+    const actionsClasses = classNames('FilesGridViewer-actions', { 'are-visible': file.name === selectedFile?.name });
 
     return (
-      <a className="FilesGridViewer-fileContainer" key={file.path} onClick={() => onFileClick(file)}>
-        <div>
-          <Icon className="FilesGridViewer-fileIcon" />
+      <div className="FilesGridViewer-fileContainer" key={file.path}>
+        <a className="FilesGridViewer-file" onClick={() => handleFileClick(file)}>
+          <div>
+            <Icon className="FilesGridViewer-fileIcon" />
+          </div>
+          <span>{file.name}</span>
+        </a>
+        <div className={overlayClasses} />
+        <div className={actionsClasses} onClick={() => handleFileClick(file)}>
+          <Tooltip title={t('common:preview')}>
+            <a
+              className="FilesGridViewer-action FilesGridViewer-action--preview"
+              onClick={event => handlePreviewClick(event, file)}
+              >
+              <PreviewIcon />
+            </a>
+          </Tooltip>
+          {canDelete && (
+            <Tooltip title={t('common:delete')}>
+              <a
+                className="FilesGridViewer-action FilesGridViewer-action--delete"
+                onClick={event => handleDeleteClick(event, file)}
+                >
+                <DeleteIcon />
+              </a>
+            </Tooltip>
+          )}
         </div>
-        <span>{file.name}</span>
-      </a>
+      </div>
     );
   };
 
@@ -25,7 +84,7 @@ function FilesGridViewer({ files, canNavigateToParent, onNavigateToParentClick, 
     <div className="FilesGridViewer">
       {canNavigateToParent && (
         <Tooltip title={t('navigateToParent')} placement="topLeft">
-          <a className="FilesGridViewer-fileContainer" onClick={onNavigateToParentClick}>
+          <a className="FilesGridViewer-file" onClick={onNavigateToParentClick}>
             <div>
               <FolderOpenOutlined className="FilesGridViewer-fileIcon" />
             </div>
@@ -39,20 +98,26 @@ function FilesGridViewer({ files, canNavigateToParent, onNavigateToParentClick, 
 }
 
 FilesGridViewer.propTypes = {
+  canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(PropTypes.shape({
     path: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     isDirectory: PropTypes.bool.isRequired
   })).isRequired,
-  onFileClick: PropTypes.func,
-  onNavigateToParentClick: PropTypes.func
+  onDeleteClick: PropTypes.func,
+  onNavigateToParentClick: PropTypes.func,
+  onPreviewClick: PropTypes.func,
+  onSelectionChange: PropTypes.func
 };
 
 FilesGridViewer.defaultProps = {
+  canDelete: false,
   canNavigateToParent: false,
-  onFileClick: () => {},
-  onNavigateToParentClick: () => {}
+  onDeleteClick: () => { },
+  onNavigateToParentClick: () => { },
+  onPreviewClick: () => { },
+  onSelectionChange: () => { }
 };
 
 export default FilesGridViewer;

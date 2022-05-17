@@ -105,8 +105,12 @@ function Tests({ PageTemplate }) {
         <h1>File Grid viewer</h1>
         <FilesGridViewer
           files={files}
+          canDelete
           canNavigateToParent
           onFileClick={handleFileClick}
+          onDeleteClick={handleDeleteFileClick}
+          onPreviewClick={handlePreviewFileClick}
+          onSelectionChange={handleFileSelectionChange}
           onNavigateToParentClick={handleNavigateToParentClick}
           />
         <hr />
@@ -115,10 +119,10 @@ function Tests({ PageTemplate }) {
           files={files}
           canDelete
           canNavigateToParent
+          onDeleteClick={handleDeleteFileClick}
+          onPreviewClick={handlePreviewFileClick}
           onSelectionChange={handleFileSelectionChange}
           onNavigateToParentClick={handleNavigateToParentClick}
-          onPreviewClick={handlePreviewFileClick}
-          onDeleteClick={handleDeleteFileClick}
           />
       </div>
     </PageTemplate>
