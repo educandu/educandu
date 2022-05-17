@@ -159,7 +159,7 @@ function FilesListViewer({
       size: file.size,
       isDirectory: file.isDirectory,
       lastModified: file.lastModified,
-      typeTranslated: t(`common:${getResourceType(file.path)}Resource`),
+      typeTranslated: t(`common:resource_${getResourceType(file.path)}`),
       sizeFormatted: Number.isFinite(file.size) && !file.isDirectory ? prettyBytes(file.size, { locale }) : '---',
       lastModifiedFormatted: file.lastModified && !file.isDirectory ? formatDate(file.lastModified, 'PPp') : '---'
     };

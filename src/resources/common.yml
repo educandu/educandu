@@ -360,25 +360,25 @@ size:
 naturalSize:
   en: Natural size
   de: Natürliche Größe
-imageResource:
+resource_image:
   en: image
   de: Bild
-videoResource:
+resource_video:
   en: video
   de: Video
-audioResource:
+resource_audio:
   en: audio
   de: Audio
-textResource:
+resource_text:
   en: text
   de: Text
-pdfResource:
+resource_pdf:
   en: document
   de: Dokument
-noneResource:
+resource_none:
   en: Unknown
   de: Unbekannt
-unknownResource:
+resource_unknown:
   en: Unknown
   de: Unbekannt
 pageCount:
