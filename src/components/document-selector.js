@@ -47,12 +47,15 @@ function DocumentSelector({ documentId, onChange }) {
 
     updateDocumentOptions(documents);
     setSelectedDocument(null);
+    onChange(null);
   };
 
   const handleSelect = (newDocumentId, option) => {
-    // Eliminate input text jump between select and re-render
-    setSelectedDocument({ _id: newDocumentId, title: option.children });
-    onChange(newDocumentId);
+    if (newDocumentId !== selectedDocument?._id) {
+      // Eliminate input text jump between select and re-render
+      setSelectedDocument({ _id: newDocumentId, title: option.children });
+      onChange(newDocumentId);
+    }
   };
 
   const handleClear = () => {
