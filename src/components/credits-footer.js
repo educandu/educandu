@@ -28,8 +28,8 @@ function CreditsFooter({ doc, revision }) {
 
   const date = formatDate(request.timestamp);
 
-  const renderUrl = () => <LiteralUrlLink rel="noopener noreferrer" target="_blank" href={url} />;
-  const renderOriginalUrl = () => <LiteralUrlLink rel="noopener noreferrer" target="_blank" href={originalUrl} />;
+  const renderUrl = () => <LiteralUrlLink href={url} targetBlank />;
+  const renderOriginalUrl = () => <LiteralUrlLink href={originalUrl} targetBlank />;
 
   const renderUser = user => {
     return user.email
