@@ -37,7 +37,8 @@ describe('resource-utils', () => {
       { url: 'file.gif', expectedResult: RESOURCE_TYPE.image },
       { url: 'file.png', expectedResult: RESOURCE_TYPE.image },
       { url: 'file.tiff', expectedResult: RESOURCE_TYPE.image },
-      { url: 'file.raw', expectedResult: RESOURCE_TYPE.image }
+      { url: 'file.raw', expectedResult: RESOURCE_TYPE.image },
+      { url: 'file.svg', expectedResult: RESOURCE_TYPE.image }
     ];
 
     testCases.forEach(({ url, expectedResult }) => {

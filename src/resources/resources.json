@@ -1870,10 +1870,13 @@
       "viewRevisions": "View revisions",
       "viewDocument": "View document",
       "externalDocumentWarning": "This document is a copy. The original can be edited <0>here</0>.",
-      "copySectionToClipboardError": "Error copying the section into the clipboard due to missing access permissions.",
+      "copySectionToClipboardError": "Error copying the section to the clipboard due to missing access permissions.",
       "pasteSectionFromClipboardError": "Error pasting the section from the clipboard. Either the clipboard contains content that cannot\nbe pasted as a new section or the browser denies access to the clipboard.\n",
       "sectionCopiedToClipboard": "The section was copied to the clipboard",
       "clipboardPasteNotSupported": "Pasting from the clipboard is not supported by this browser.",
+      "copyUrlToClipboard": "Copy URL to the clipboard",
+      "urlCopiedToClipboard": "The URL was copied to the clipboard",
+      "copyUrlToClipboardError": "Error copying the URL to the clipboard due to missing access permissions.",
       "accept": "Accept",
       "logon": "Log on",
       "logoff": "Log off",
@@ -1949,11 +1952,13 @@
       "videoDisplay": "Video display",
       "source": "Source",
       "size": "Size",
+      "naturalSize": "Natural size",
       "imageResource": "image",
       "videoResource": "video",
       "audioResource": "audio",
       "textResource": "text",
-      "pdfResource": "document"
+      "pdfResource": "document",
+      "pageCount": "Page count"
     }
   },
   {
@@ -1999,6 +2004,9 @@
       "pasteSectionFromClipboardError": "Fehler beim Einfügen des Abschnitts aus der Zwischenablage. Die Zwischenablage enthält entweder Inhalt, der nicht\nals neuer Abschnitt eingefügt werden kann, oder der Browser verweigert den Zugriff auf die Zwischenablage.\n",
       "sectionCopiedToClipboard": "Der Abschnitt wurde in die Zwischenablage kopiert",
       "clipboardPasteNotSupported": "Das Einfügen aus der Zwischenablage wird von diesem Browser nicht unterstützt.",
+      "copyUrlToClipboard": "URL in die Zwischenablage kopieren",
+      "urlCopiedToClipboard": "Die URL wurde in die Zwischenablage kopiert",
+      "copyUrlToClipboardError": "Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.",
       "accept": "Akzeptieren",
       "logon": "Anmelden",
       "logoff": "Abmelden",
@@ -2074,11 +2082,13 @@
       "videoDisplay": "Videoanzeige",
       "source": "Quelle",
       "size": "Größe",
+      "naturalSize": "Natürliche Größe",
       "imageResource": "Bild",
       "videoResource": "Video",
       "audioResource": "Audio",
       "textResource": "Text",
-      "pdfResource": "Dokument"
+      "pdfResource": "Dokument",
+      "pageCount": "Seitenanzahl"
     }
   },
   {

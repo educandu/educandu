@@ -108,7 +108,7 @@ externalDocumentWarning:
   en: This document is a copy. The original can be edited <0>here</0>.
   de: Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.
 copySectionToClipboardError:
-  en: Error copying the section into the clipboard due to missing access permissions.
+  en: Error copying the section to the clipboard due to missing access permissions.
   de: Fehler beim Kopieren des Abschnitts in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
 pasteSectionFromClipboardError:
   en: |
@@ -123,6 +123,15 @@ sectionCopiedToClipboard:
 clipboardPasteNotSupported:
   en: Pasting from the clipboard is not supported by this browser.
   de: Das Einfügen aus der Zwischenablage wird von diesem Browser nicht unterstützt.
+copyUrlToClipboard:
+  en: Copy URL to the clipboard
+  de: URL in die Zwischenablage kopieren
+urlCopiedToClipboard:
+  en: The URL was copied to the clipboard
+  de: Die URL wurde in die Zwischenablage kopiert
+copyUrlToClipboardError:
+  en: Error copying the URL to the clipboard due to missing access permissions.
+  de: Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.
 accept:
   en: Accept
   de: Akzeptieren
@@ -348,6 +357,9 @@ source:
 size:
   en: Size
   de: Größe
+naturalSize:
+  en: Natural size
+  de: Natürliche Größe
 imageResource:
   en: image
   de: Bild
@@ -363,3 +375,6 @@ textResource:
 pdfResource:
   en: document
   de: Dokument
+pageCount:
+  en: Page count
+  de: Seitenanzahl
