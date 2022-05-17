@@ -123,15 +123,23 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleSourceUrlChange = async value => {
-    const { sanitizedUrl, duration, startTimecode, stopTimecode, resourceType } = await getMediaInformation(value);
+    const { duration, resourceType } = await getMediaInformation(value);
+    setSelectedChapterIndex(0);
+    changeContent({
+      sourceUrl: value,
+      showVideo: resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown,
+      sourceDuration: duration,
+      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+    });
+  };
+
+  const handleSourceUrlBlur = () => {
+    const { sanitizedUrl, startTimecode, stopTimecode } = analyzeMediaUrl(content.sourceUrl);
     setSelectedChapterIndex(0);
     changeContent({
       sourceUrl: sanitizedUrl,
-      showVideo: resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown,
-      sourceDuration: duration,
       sourceStartTimecode: startTimecode,
-      sourceStopTimecode: stopTimecode,
-      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+      sourceStopTimecode: stopTimecode
     });
   };
 
@@ -190,13 +198,13 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         </FormItem>
         {sourceType === MEDIA_SOURCE_TYPE.external && (
           <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} />
+            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
           </FormItem>
         )}
         {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div className="u-input-and-button">
-              <DebouncedInput addonBefore={`${clientConfig.cdnRootUrl}/`} value={sourceUrl} onChange={handleSourceUrlChange} />
+              <DebouncedInput addonBefore={`${clientConfig.cdnRootUrl}/`} value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
               <StorageFilePicker
                 fileName={sourceUrl}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
@@ -206,7 +214,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         )}
         {sourceType === MEDIA_SOURCE_TYPE.youtube && (
           <FormItem label={t('common:youtubeUrl')} {...formItemLayout} {...validation.validateUrl(sourceUrl, t)} hasFeedback>
-            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} />
+            <DebouncedInput value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
           </FormItem>
         )}
         <FormItem label={t('common:aspectRatio')} {...formItemLayout}>

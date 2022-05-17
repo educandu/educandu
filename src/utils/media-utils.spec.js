@@ -63,6 +63,28 @@ describe('media-utils', () => {
           stopTimecode: 20000,
           resourceType: RESOURCE_TYPE.video
         }
+      },
+      {
+        url: 'https://youtu.be/j440-D5JhjI',
+        expectedError: null,
+        expectedResult: {
+          sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
+          isYoutube: true,
+          startTimecode: null,
+          stopTimecode: null,
+          resourceType: RESOURCE_TYPE.video
+        }
+      },
+      {
+        url: 'https://youtu.be/j440-D5JhjI?t=804',
+        expectedError: null,
+        expectedResult: {
+          sanitizedUrl: 'https://www.youtube.com/watch?v=j440-D5JhjI',
+          isYoutube: true,
+          startTimecode: 804000,
+          stopTimecode: null,
+          resourceType: RESOURCE_TYPE.video
+        }
       }
     ];
 
