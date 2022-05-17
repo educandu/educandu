@@ -192,13 +192,13 @@ function FilePreview({ createdOn, size, url }) {
         )}
         <div className="FilePreview-detailLabel">
           {t('common:url')}
-        </div>
-        <div className="FilePreview-detailValue">
-          <LiteralUrlLink href={url} targetBlank />
           &nbsp;&nbsp;
           <Tooltip title={t('common:copyUrlToClipboard')}>
             <a onClick={handleCopyUrlToClipboardClick}><CopyToClipboardIcon /></a>
           </Tooltip>
+        </div>
+        <div className="FilePreview-detailValue">
+          <LiteralUrlLink href={url} targetBlank />
         </div>
       </div>
     </div>
