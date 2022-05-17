@@ -44,11 +44,13 @@ function Tests({ PageTemplate }) {
       <div className="TestsPage">
         <h1>File preview</h1>
         <h6>IMAGE (Raster)</h6>
-        <FilePreview
-          url="https://cdn.openmusic.academy/media/mDCkjepG3D61cX4FNBQxts/monteverdi-ninfa-x2mmMBkoJjnRvGghHQDPaQ.jpg"
-          createdOn={new Date('2022-03-04T09:48:46.524Z')}
-          size={44722}
-          />
+        <div style={{ backgroundColor: '#f6f6f6', padding: '20px' }}>
+          <FilePreview
+            url="https://cdn.openmusic.academy/media/mDCkjepG3D61cX4FNBQxts/monteverdi-ninfa-x2mmMBkoJjnRvGghHQDPaQ.jpg"
+            createdOn={new Date('2022-03-04T09:48:46.524Z')}
+            size={44722}
+            />
+        </div>
         <hr />
         <h6>IMAGE (Vector)</h6>
         <FilePreview

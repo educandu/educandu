@@ -139,9 +139,6 @@ function FilePreview({ createdOn, size, url }) {
 
   return (
     <div className="FilePreview">
-      <div className="FilePreview-headerArea">
-        {fileName}
-      </div>
       <div className="FilePreview-previewArea">
         {renderPreview()}
       </div>

@@ -1,24 +1,20 @@
 .FilePreview {
   display: grid;
-  gap: 10px;
-  grid-template-rows: auto 1fr;
+  gap: 24px;
+  align-items: center;
+  justify-items: stretch;
+  grid-template-rows: 1fr;
   grid-template-columns: 1fr 1fr;
 }
 
-.FilePreview-headerArea {
-  grid-row: 1;
-  grid-column-start: 1;
-  grid-column-end: 3;
-}
-
 .FilePreview-previewArea {
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 1;
   padding: @edu-content-padding;
-  height: 340px;
+  height: 360px;
   border-radius: @edu-border-radius-boxy;
   border: 1px solid @edu-border-color-light;
-  background-color: @edu-background-color-light;
+  background-color: @edu-white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,7 +22,7 @@
 }
 
 .FilePreview-detailsArea {
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 2;
 }
 
@@ -36,7 +32,7 @@
 }
 
 .FilePreview-detailValue {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 
   &:last-child {
     margin-bottom: unset;
