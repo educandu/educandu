@@ -98,6 +98,9 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       nextChapter.startTimecode = chapters[chapterIndex].startTimecode;
     }
     const newChapters = removeItemAt(chapters, chapterIndex);
+    if (selectedChapterIndex > newChapters.length - 1) {
+      setSelectedChapterIndex(newChapters.length - 1);
+    }
     changeContent({ chapters: newChapters });
   };
 

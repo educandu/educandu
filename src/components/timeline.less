@@ -1,4 +1,6 @@
 @timeline-bar-height: 25px;
+@timeline-marker-bottom: 6px;
+@timeline-markers-bar-height: 36px;
 @timeline-segments-bar-color: @edu-white;
 
 .Timeline {
@@ -10,16 +12,36 @@
 .Timeline-markersBar {
   display: flex;
   position: relative;
-  height: @timeline-bar-height;
+  height: @timeline-markers-bar-height;
 }
 
 .Timeline-marker {
   position: absolute;
+  bottom: @timeline-marker-bottom;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  height: @timeline-bar-height;
-  color: @edu-primary-color-light;
-  cursor: col-resize;
+
+  &.Timeline-marker--draggable {
+    color: @edu-primary-color-light;
+    cursor: col-resize;
+  }
+
+  &.Timeline-marker--new {
+    color: @edu-border-color-base;
+  }
+}
+
+.Timeline-markerTimeCode {
+  font-size: 75%;
+
+  &.Timeline-markerTimeCode--valid {
+    color: @edu-success-color;
+  }
+
+  &.Timeline-markerTimeCode--invalid {
+    color: @edu-error-color;
+  }
 }
 
 .Timeline-segmentsBar {
@@ -44,19 +66,6 @@
   &:last-of-type {
     border-right: none;
   }
-}
-
-.Timeline-newMarker {
-  position: absolute;
-  display: flex;
-  align-items: flex-start;
-  bottom: @timeline-bar-height;
-  height: @timeline-bar-height;
-  color: @edu-border-color-base;
-}
-
-.Timeline-newMarkerCloseIcon {
-  margin-left: -5px;
 }
 
 .Timeline-newSegmentStart {
