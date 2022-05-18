@@ -2,10 +2,11 @@ import by from 'thenby';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
-import React, { Fragment, useState } from 'react';
 import Timeline from '../../components/timeline.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { getResourceType } from '../../utils/resource-utils.js';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
@@ -37,8 +38,15 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const ensureChaptersOrder = chapters => chapters.sort(by(chapter => chapter.startTimecode));
 
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
+  const [selectedChapterDuration, setSelectedChapterDuration] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
+
+  useEffect(() => {
+    const nextChapterStartTimecode = chapters[selectedChapterIndex + 1]?.startTimecode || sourceDuration;
+    setSelectedChapterDuration(nextChapterStartTimecode - chapters[selectedChapterIndex].startTimecode);
+
+  }, [chapters, sourceDuration, selectedChapterIndex]);
 
   const getFullSourceUrl = url => url && sourceType === MEDIA_SOURCE_TYPE.internal
     ? `${clientConfig.cdnRootUrl}/${url}`
@@ -264,16 +272,20 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           <TextArea value={text} onChange={handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
         </FormItem>
 
-        <div className="InteractiveMediaEditor-timeline">
-          <Timeline
-            length={sourceDuration}
-            parts={chapters}
-            selectedPartIndex={selectedChapterIndex}
-            onPartAdd={handleChapterAdd}
-            onPartDelete={handleChapterDelete}
-            onStartTimecodeChange={handleChapterStartTimecodeChange}
-            />
-        </div>
+        <hr className="InteractiveMediaEditor-separator" />
+
+        <h6 className="InteractiveMediaEditor-chapterEditorTitle">{t('editChapter')}</h6>
+
+        <MediaPlayer sourceUrl={getFullSourceUrl(sourceUrl)} audioOnly={showVideo === false} previewMode />
+
+        <Timeline
+          length={sourceDuration}
+          parts={chapters}
+          selectedPartIndex={selectedChapterIndex}
+          onPartAdd={handleChapterAdd}
+          onPartDelete={handleChapterDelete}
+          onStartTimecodeChange={handleChapterStartTimecodeChange}
+          />
 
         {chapters.length && (
           <Fragment>
@@ -281,29 +293,41 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
               <Tooltip title={t('selectPreviousChapter')}>
                 <Button
                   type="link"
+                  size="small"
+                  shape="circle"
                   icon={<LeftOutlined />}
                   onClick={handlePreviousChapterClick}
                   disabled={selectedChapterIndex === 0}
+                  className="InteractiveMediaEditor-chapterSelectorArrow"
                   />
               </Tooltip>
               <span className="InteractiveMediaEditor-selectedChapterTitle">{chapters[selectedChapterIndex].title}</span>
               <Tooltip title={t('selectNextChapter')}>
                 <Button
                   type="link"
+                  size="small"
+                  shape="circle"
                   icon={<RightOutlined />}
                   onClick={handleNextChapterClick}
                   disabled={selectedChapterIndex === chapters.length - 1}
+                  className="InteractiveMediaEditor-chapterSelectorArrow"
                   />
               </Tooltip>
             </div>
-            <div className="Panel">
-              <div className="Panel-header">{t('editChapter')}</div>
-              <div className="Panel-content">
-                <FormItem label={t('common:title')} {...formItemLayout}>
-                  <Input value={chapters[selectedChapterIndex].title} onChange={handleChapterTitleChange} />
-                </FormItem>
-              </div>
-            </div>
+
+            <FormItem label={t('startTimecode')} {...formItemLayout}>
+              <span className="InteractiveMediaEditor-readonlyValue">
+                {formatMillisecondsAsDuration(chapters[selectedChapterIndex].startTimecode)}
+              </span>
+            </FormItem>
+            <FormItem label={t('duration')} {...formItemLayout}>
+              <span className="InteractiveMediaEditor-readonlyValue">
+                {formatMillisecondsAsDuration(selectedChapterDuration)}
+              </span>
+            </FormItem>
+            <FormItem label={t('common:title')} {...formItemLayout}>
+              <Input value={chapters[selectedChapterIndex].title} onChange={handleChapterTitleChange} />
+            </FormItem>
           </Fragment>
         )}
       </Form>

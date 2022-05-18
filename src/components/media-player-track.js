@@ -12,6 +12,7 @@ function MediaPlayerTrack({
   sourceUrl,
   aspectRatio,
   audioOnly,
+  previewMode,
   startTimecode,
   stopTimecode,
   volume,
@@ -140,8 +141,14 @@ function MediaPlayerTrack({
       break;
   }
 
+  const classes = classNames(
+    'MediaPlayerTrack',
+    { 'MediaPlayerTrack--noDisplay': audioOnly },
+    { 'MediaPlayerTrack--previewMode': previewMode }
+  );
+
   return (
-    <div className={classNames({ 'MediaPlayerTrack': true, 'MediaPlayerTrack--noDisplay': audioOnly })}>
+    <div className={classes}>
       <div className="MediaPlayerTrack-aspectRatioContainer" style={{ paddingTop }}>
         <ReactPlayer
           ref={playerRef}
@@ -179,6 +186,7 @@ MediaPlayerTrack.propTypes = {
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
   posterImageUrl: PropTypes.string,
+  previewMode: PropTypes.bool,
   sourceUrl: PropTypes.string.isRequired,
   startTimecode: PropTypes.number,
   stopTimecode: PropTypes.number,
@@ -196,6 +204,7 @@ MediaPlayerTrack.defaultProps = {
   onPlayStateChange: () => {},
   onProgress: () => {},
   posterImageUrl: null,
+  previewMode: false,
   startTimecode: null,
   stopTimecode: null,
   trackRef: {
