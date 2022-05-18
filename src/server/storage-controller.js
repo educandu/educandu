@@ -7,11 +7,12 @@ import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE } from '../domain/constants.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
-import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
+import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath, getPathSegments } from '../ui/path-helper.js';
 import {
   getObjectsQuerySchema,
   postObjectsBodySchema,
@@ -21,7 +22,8 @@ import {
   postStoragePlanBodySchema,
   patchStoragePlanParamsSchema,
   deleteStoragePlanParamsSchema,
-  patchStoragePlanBodySchema
+  patchStoragePlanBodySchema,
+  getCdnObjectsQuerySchema
 } from '../domain/schemas/storage-schemas.js';
 
 const jsonParser = express.json();
@@ -43,14 +45,37 @@ const isRoomOwnerOrCollaborator = ({ room, userId }) => {
 };
 
 class StorageController {
-  static get inject() { return [StorageService, RoomService]; }
+  static get inject() { return [ServerConfig, StorageService, RoomService]; }
 
-  constructor(storageService, roomService) {
+  constructor(serverConfig, storageService, roomService) {
+    this.serverConfig = serverConfig;
     this.storageService = storageService;
     this.roomService = roomService;
   }
 
-  async handleGetCdnObject(req, res) {
+  async handleGetCdnObjects(req, res) {
+    const prefix = `${req.query.parentPath}/`;
+    const objects = await this.storageService.listObjects({ prefix, recursive: false });
+
+    const mappedObjects = objects.map(obj => {
+      const isDirectory = !!obj.prefix;
+      const segments = getPathSegments(isDirectory ? obj.prefix : obj.name);
+      return {
+        displayName: segments[segments.length - 1],
+        parentPath: segments.slice(0, -1).join('/'),
+        fullPath: segments.join('/'),
+        url: [this.serverConfig.cdnRootUrl, ...segments.map(s => encodeURIComponent(s))].join('/'),
+        portableUrl: `cdn://${segments.map(s => encodeURIComponent(s)).join('/')}`,
+        createdOn: isDirectory ? null : obj.lastModified,
+        type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
+        size: isDirectory ? null : obj.size
+      };
+    });
+
+    return res.send({ objects: mappedObjects });
+  }
+
+  async handleGetCdnObjectsOld(req, res) {
     const prefix = req.query.prefix;
     const recursive = parseBool(req.query.recursive);
     const objects = await this.storageService.listObjects({ prefix, recursive });
@@ -163,13 +188,23 @@ class StorageController {
 
   registerApi(router) {
     router.get(
+      '/api/v1/storage/cdn-objects',
+      [
+        needsPermission(permissions.VIEW_FILES),
+        jsonParser,
+        validateQuery(getCdnObjectsQuerySchema)
+      ],
+      (req, res) => this.handleGetCdnObjects(req, res)
+    );
+
+    router.get(
       '/api/v1/storage/objects',
       [
         needsPermission(permissions.VIEW_FILES),
         jsonParser,
         validateQuery(getObjectsQuerySchema)
       ],
-      (req, res) => this.handleGetCdnObject(req, res)
+      (req, res) => this.handleGetCdnObjectsOld(req, res)
     );
 
     router.delete(

@@ -1,32 +1,34 @@
 import by from 'thenby';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
-import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FolderIcon from './icons/files/folder-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
+import { CDN_OBJECT_TYPE } from '../domain/constants.js';
 import PreviewIcon from './icons/general/preview-icon.js';
+import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 
 function FilesListViewer({
   files,
+  selectedFileUrl,
   canDelete,
   canNavigateToParent,
   onDeleteClick,
+  onFileClick,
   onPreviewClick,
-  onSelectionChange,
   onNavigateToParentClick
 }) {
   const { locale } = useLocale();
   const { t } = useTranslation('');
   const { formatDate } = useDateFormat();
-  const [selectedRow, setSelectedRow] = useState(null);
 
-  const getFile = row => row ? files.find(f => f.name === row.name) : null;
+  const getFile = row => row ? files.find(file => file.portableUrl === row.key) : null;
 
   const handleHeaderRowClick = rowIndex => {
     if (rowIndex === 1) {
@@ -35,10 +37,7 @@ function FilesListViewer({
   };
 
   const handleRowClick = row => {
-    const newSelectedRow = row.key === selectedRow?.key || selectedRow?.isDirectory ? null : row;
-
-    setSelectedRow(newSelectedRow);
-    onSelectionChange(getFile(newSelectedRow));
+    onFileClick(getFile(row));
   };
 
   const handlePreviewClick = (event, row) => {
@@ -60,7 +59,7 @@ function FilesListViewer({
       return null;
     }
 
-    const Icon = getResourceIcon({ filePath: row.path, isDirectory: row.isDirectory });
+    const Icon = getResourceIcon({ url: row.url, isDirectory: row.isDirectory });
     return (
       <div className="FilesListViewer-fileName" >
         <Icon />
@@ -70,7 +69,7 @@ function FilesListViewer({
   };
 
   const renderActions = (_isDirectory, row) => {
-    const classes = classNames('FilesListViewer-actions', { 'are-visible': selectedRow?.key === row.key });
+    const classes = classNames('FilesListViewer-actions', { 'are-visible': selectedFileUrl === row.key });
 
     return (
       <div className={classes}>
@@ -101,7 +100,7 @@ function FilesListViewer({
   );
 
   const getRowClassName = row => {
-    return row.key === selectedRow?.key ? 'FilesListViewer-row is-selected' : 'FilesListViewer-row';
+    return row.key === selectedFileUrl ? 'FilesListViewer-row is-selected' : 'FilesListViewer-row';
   };
 
   const columns = [
@@ -129,11 +128,11 @@ function FilesListViewer({
     },
     {
       title: () => t('common:date'),
-      dataIndex: 'lastModifiedFormatted',
+      dataIndex: 'createdOnFormatted',
       align: 'right',
       width: 200,
       responsive: ['md'],
-      sorter: by('lastModified')
+      sorter: by('createdOn')
     },
     {
       title: () => t('common:actions'),
@@ -153,21 +152,21 @@ function FilesListViewer({
 
   const rows = files.map(file => {
     return {
-      key: file.name,
-      name: file.name,
-      path: file.path,
+      key: file.portableUrl,
+      name: file.displayName,
       size: file.size,
-      isDirectory: file.isDirectory,
-      lastModified: file.lastModified,
-      typeTranslated: t(`common:resource_${getResourceType(file.path)}`),
-      sizeFormatted: Number.isFinite(file.size) && !file.isDirectory ? prettyBytes(file.size, { locale }) : '---',
-      lastModifiedFormatted: file.lastModified && !file.isDirectory ? formatDate(file.lastModified, 'PPp') : '---'
+      isDirectory: file.type === CDN_OBJECT_TYPE.directory,
+      createdOn: file.createdOn,
+      typeTranslated: t(`common:resource_${getResourceType(file.url)}`),
+      sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale }) : '---',
+      createdOnFormatted: file.createdOn ? formatDate(file.createdOn, 'PPp') : '---'
     };
   });
 
   return (
     <div className="FilesListViewer">
       <Table
+        style={{ width: '100%' }}
         bordered={false}
         pagination={false}
         size="middle"
@@ -188,24 +187,22 @@ function FilesListViewer({
 FilesListViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
-  files: PropTypes.arrayOf(PropTypes.shape({
-    path: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    isDirectory: PropTypes.bool.isRequired
-  })).isRequired,
+  files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   onDeleteClick: PropTypes.func,
+  onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
-  onSelectionChange: PropTypes.func
+  selectedFileUrl: PropTypes.string
 };
 
 FilesListViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
   onDeleteClick: () => {},
+  onFileClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
-  onSelectionChange: () => {}
+  selectedFileUrl: null
 };
 
 export default FilesListViewer;

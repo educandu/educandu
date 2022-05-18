@@ -124,6 +124,11 @@ export const STORAGE_LOCATION_TYPE = {
   public: 'public'
 };
 
+export const CDN_OBJECT_TYPE = {
+  directory: 'directory',
+  file: 'file'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

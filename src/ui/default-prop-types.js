@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { PAGE_NAME } from '../domain/page-name.js';
 import {
   BATCH_TYPE,
+  CDN_OBJECT_TYPE,
   CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
   DOCUMENT_IMPORT_TYPE,
   FAVORITE_TYPE,
@@ -19,6 +20,17 @@ export const storageLocationShape = PropTypes.shape({
   initialPath: PropTypes.string,
   uploadPath: PropTypes.string,
   isDeletionEnabled: PropTypes.bool.isRequired
+});
+
+export const cdnObjectShape = PropTypes.shape({
+  displayName: PropTypes.string.isRequired,
+  parentPath: PropTypes.string.isRequired,
+  fullPath: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
+  portableUrl: PropTypes.string.isRequired,
+  createdOn: PropTypes.string,
+  type: PropTypes.oneOf(Object.values(CDN_OBJECT_TYPE)).isRequired,
+  size: PropTypes.number
 });
 
 export const storageShape = PropTypes.shape({ locations: PropTypes.arrayOf(storageLocationShape) });

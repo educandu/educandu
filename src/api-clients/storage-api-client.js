@@ -16,6 +16,15 @@ class StorageApiClient {
       .then(res => res.data);
   }
 
+  getCdnObjects(parentPath) {
+    return this.httpClient
+      .get(
+        `/api/v1/storage/cdn-objects?parentPath=${encodeURIComponent(parentPath)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   uploadFiles(files, prefix, { onProgress = () => {} } = {}) {
     const formData = new FormData();
 

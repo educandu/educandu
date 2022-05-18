@@ -6,6 +6,10 @@ export const getObjectsQuerySchema = joi.object({
   recursive: boolStringSchema
 });
 
+export const getCdnObjectsQuerySchema = joi.object({
+  parentPath: joi.string()
+});
+
 export const deleteObjectQuerySchema = joi.object({
   prefix: joi.string()
 });

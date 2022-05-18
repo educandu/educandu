@@ -11,6 +11,7 @@ const { BadRequest, Unauthorized } = httpErrors;
 describe('storage-controller', () => {
   const sandbox = sinon.createSandbox();
 
+  let serverConfig;
   let storageService;
   let roomService;
 
@@ -21,6 +22,13 @@ describe('storage-controller', () => {
   let sut;
 
   beforeEach(() => {
+    serverConfig = {
+      cdnRootUrl: 'https://cdn.localhost'
+    };
+    storageService = {
+      uploadFiles: sandbox.stub(),
+      deleteObject: sandbox.stub()
+    };
     storageService = {
       uploadFiles: sandbox.stub(),
       deleteObject: sandbox.stub()
@@ -35,7 +43,7 @@ describe('storage-controller', () => {
     roomService.getRoomById.resolves(null);
     roomService.getRoomById.withArgs(room._id).resolves(room);
 
-    sut = new StorageController(storageService, roomService);
+    sut = new StorageController(serverConfig, storageService, roomService);
   });
 
   afterEach(() => {
