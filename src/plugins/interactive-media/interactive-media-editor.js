@@ -4,6 +4,7 @@ import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import Timeline from '../../components/timeline.js';
 import { removeItemAt } from '../../utils/array-utils.js';
+import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import InteractiveMediaInfo from './interactive-media-info.js';
@@ -274,16 +275,17 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <hr className="InteractiveMediaEditor-separator" />
 
         <h6 className="InteractiveMediaEditor-chapterEditorTitle">{t('editChapter')}</h6>
-        <div className="InteractiveMediaEditor-timeline">
-          <Timeline
-            length={sourceDuration}
-            parts={chapters}
-            selectedPartIndex={selectedChapterIndex}
-            onPartAdd={handleChapterAdd}
-            onPartDelete={handleChapterDelete}
-            onStartTimecodeChange={handleChapterStartTimecodeChange}
-            />
-        </div>
+
+        <MediaPlayer sourceUrl={getFullSourceUrl(sourceUrl)} audioOnly={showVideo === false} previewMode />
+
+        <Timeline
+          length={sourceDuration}
+          parts={chapters}
+          selectedPartIndex={selectedChapterIndex}
+          onPartAdd={handleChapterAdd}
+          onPartDelete={handleChapterDelete}
+          onStartTimecodeChange={handleChapterStartTimecodeChange}
+          />
 
         {chapters.length && (
           <Fragment>
