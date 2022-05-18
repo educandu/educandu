@@ -184,7 +184,7 @@ function Timeline({ length, parts, selectedPartIndex, onPartAdd, onPartDelete, o
     const offset = newMarkerState.isInBounds ? 0 : -5;
     return (
       <div key="new-marker" className="Timeline-marker Timeline-marker--new" style={{ left: `${newMarkerState.left + offset}px` }}>
-        <div className={`Timeline-markerTimeCode ${newMarkerState.isInBounds ? 'Timeline-markerTimeCode--valid' : 'Timeline-markerTimeCode--invalid'}`}>
+        <div className={`Timeline-markerTimecode ${newMarkerState.isInBounds ? 'Timeline-markerTimecode--valid' : 'Timeline-markerTimecode--invalid'}`}>
           {formatMillisecondsAsDuration(Math.round(newMarkerState.left / timelineState.msToPxRatio))}
         </div>
         {newMarkerState.isInBounds && <FlagOutlined />}

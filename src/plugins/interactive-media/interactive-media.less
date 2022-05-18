@@ -15,23 +15,48 @@
 }
 
 .InteractiveMediaEditor-timeline {
-  margin: 30px 0;
+  margin-top: 30px;
 }
 
 .InteractiveMediaEditor-chapterSelector {
   display: flex;
-  gap: 10px;
-  width: 250px;
   margin: 0 auto;
   align-items: center;
-  justify-content: space-between;
-  margin: 0 auto 10px auto;
+  justify-content: center;
+  margin: 30px auto;
 }
 
 .InteractiveMediaEditor-selectedChapterTitle {
+  width: 200px;
+  padding: 0 5px;
+  user-select: none;
+  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.InteractiveMediaEditor-chapterSelectorArrow {
+  color: @edu-white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.ant-btn {
+    background-color: @edu-secondary-color-dark;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: @edu-white;
+      background-color: lighten(@edu-secondary-color-dark, 5%);
+    }
+  }
+
+  & > button:disabled {
+    color: @edu-white;
+    background-color: @edu-secondary-color-light;
+  }
 }
 
 .InteractiveMediaEditor-overlay {
@@ -55,4 +80,22 @@
   height: 100%;
   font-weight: bold;
   z-index: @edu-z-index-sticky-content-layer;
+}
+
+.InteractiveMediaEditor-separator {
+  margin: 0 -@edu-content-padding;
+  padding-top: 20px;
+  border: 1px dotted @edu-border-color-base;
+  border-style: none none dotted;
+}
+
+.InteractiveMediaEditor-chapterEditorTitle {
+  display: flex;
+  justify-content: center;
+  color: @edu-text-color;
+  padding-top: @edu-content-padding;
+}
+
+.InteractiveMediaEditor-readonlyValue {
+  padding-left: 10px;
 }

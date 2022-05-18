@@ -1642,7 +1642,9 @@
       "selectPreviousChapter": "Select previous chapter",
       "selectNextChapter": "Select next chapter",
       "playbackRange": "Playback range",
-      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}"
+      "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
+      "startTimecode": "Start time",
+      "duration": "Duration"
     }
   },
   {
@@ -1656,7 +1658,9 @@
       "selectPreviousChapter": "Vorheriges Kapitel wählen",
       "selectNextChapter": "Nächstes Kapitel wählen",
       "playbackRange": "Abspielbereich",
-      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}"
+      "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
+      "startTimecode": "Startzeit",
+      "duration": "Zeitdauer"
     }
   },
   {
