@@ -1,9 +1,11 @@
 import by from 'thenby';
+import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import React, { Fragment, useState } from 'react';
 import Timeline from '../../components/timeline.js';
+import { handleError } from '../../ui/error-helper.js';
 import { removeItemAt } from '../../utils/array-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
@@ -18,6 +20,8 @@ import MediaRangeSelector from '../../components/media-range-selector.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
+
+const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -68,8 +72,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       const { sanitizedUrl, startTimecode, stopTimecode, resourceType } = analyzeMediaUrl(completeUrl);
       const duration = await determineMediaDuration(completeUrl);
       return { sanitizedUrl, duration, startTimecode, stopTimecode, resourceType };
-    } catch {
-      return unknownResult;
+    } catch (error) {
+      return { ...unknownResult, error };
     } finally {
       setIsDeterminingDuration(false);
     }
@@ -126,7 +130,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleSourceUrlChange = async value => {
-    const { duration, resourceType } = await getMediaInformation(value);
+    const { duration, resourceType, error } = await getMediaInformation(value);
     setSelectedChapterIndex(0);
     changeContent({
       sourceUrl: value,
@@ -134,6 +138,9 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       sourceDuration: duration,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
+    if (error) {
+      handleError({ error, logger, t });
+    }
   };
 
   const handleSourceUrlBlur = () => {

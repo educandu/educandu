@@ -7,6 +7,8 @@ import { RESOURCE_TYPE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
+const MEDIA_TIMEOUT_IN_MS = 5000;
+
 export function analyzeMediaUrl(url) {
   const parsedUrl = new URL(url);
 
@@ -50,7 +52,7 @@ export const determineMediaDuration = memoizee(url => {
   const div = window.document.createElement('div');
   div.style.display = 'none';
   window.document.body.appendChild(div);
-  return new Promise((resolve, reject) => {
+  const playerPromise = new Promise((resolve, reject) => {
     try {
       const element = React.createElement(ReactPlayer, {
         url,
@@ -73,6 +75,10 @@ export const determineMediaDuration = memoizee(url => {
       reject(error);
     }
   });
+  const timeoutPromise = new Promise((resolve, reject) => {
+    setTimeout(() => reject(new Error(`Timeout determining duration of ${url}`)), MEDIA_TIMEOUT_IN_MS);
+  });
+  return Promise.race([playerPromise, timeoutPromise]);
 }, { promise: true });
 
 export function formatMillisecondsAsDuration(milliseconds) {
