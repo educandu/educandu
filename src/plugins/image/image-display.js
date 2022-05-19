@@ -12,7 +12,6 @@ import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slide
 function ImageDisplay({ content }) {
   const mainImageRef = useRef();
   const hoverEffectCanvasRef = useRef();
-  const clipEffectImageRef = useRef();
   const clipEffectCanvasRef = useRef();
   const { t } = useTranslation('image');
   const maxWidth = content.maxWidth || 100;
@@ -58,20 +57,20 @@ function ImageDisplay({ content }) {
   }, [mainImageRef, effect, clientConfig, isMainImageLoaded]);
 
   useEffect(() => {
-    if (effect?.type !== EFFECT_TYPE.clip) {
+    if (effect?.type !== EFFECT_TYPE.clip || !isMainImageLoaded) {
       return;
     }
-    const img = clipEffectImageRef.current;
+    const mainImage = mainImageRef.current;
     const canvas = clipEffectCanvasRef.current;
     const context = canvas.getContext('2d');
-    const width = img.naturalWidth * (effect.region.width / 100);
-    const height = img.naturalHeight * (effect.region.height / 100);
-    const x = img.naturalWidth * (effect.region.x / 100);
-    const y = img.naturalHeight * (effect.region.y / 100);
+    const width = mainImage.naturalWidth * (effect.region.width / 100);
+    const height = mainImage.naturalHeight * (effect.region.height / 100);
+    const x = mainImage.naturalWidth * (effect.region.x / 100);
+    const y = mainImage.naturalHeight * (effect.region.y / 100);
     canvas.width = width;
     canvas.height = height;
-    context.drawImage(img, x, y, width, height, 0, 0, width, height);
-  }, [clipEffectCanvasRef, clipEffectImageRef, effect]);
+    context.drawImage(mainImage, x, y, width, height, 0, 0, width, height);
+  }, [clipEffectCanvasRef, mainImageRef, effect, isMainImageLoaded]);
 
   const handleMainImageMouseEnter = () => {
     if (effect?.type === EFFECT_TYPE.hover) {
@@ -104,7 +103,7 @@ function ImageDisplay({ content }) {
   const renderClipEffect = () => (
     <Fragment>
       <canvas className={`ImageDisplay-mainImage u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
-      <img className="ImageDisplay-clipEffectImage" src={src} ref={clipEffectImageRef} />
+      <img className="ImageDisplay-clipEffectImage" src={src} ref={mainImageRef} />
     </Fragment>
   );
 
