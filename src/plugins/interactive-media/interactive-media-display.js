@@ -12,7 +12,7 @@ import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 function InteractiveMediaDisplay({ content }) {
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
-  const [interactingChapterIndex, setInteractingChapterIndex] = useState();
+  const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
 
   let sourceUrl;
   switch (content.sourceType) {

@@ -21,7 +21,7 @@ function MediaPlayer({
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
-  const [lastReachedMark, setLastReachedMark] = useState();
+  const [lastReachedMark, setLastReachedMark] = useState(null);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
