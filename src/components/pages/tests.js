@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types';
 import FilePreview from '../file-preview.js';
+import { useService } from '../container-context.js';
 import FilesGridViewer from '../files-grid-viewer.js';
+import FilesListViewer from '../files-list-viewer.js';
 import { getPathSegments } from '../../ui/path-helper.js';
+import ClientConfig from '../../bootstrap/client-config.js';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
-import FilesListViewer from '../files-list-viewer.js';
 
 function Tests({ PageTemplate }) {
   const [files, setFiles] = useState([]);
+  const clientConfig = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const convertCdnObjectsToFileRecords = useCallback(objects => {
@@ -17,14 +20,15 @@ function Tests({ PageTemplate }) {
       const path = obj.name || obj.prefix;
       const segments = getPathSegments(path);
       const name = segments[segments.length - 1];
+      const url = isDirectory ? null : `${clientConfig.cdnRootUrl}/${path}`;
 
-      return { name, path, size: obj.size, lastModified: obj.lastModified, isDirectory };
+      return { name, path, size: obj.size, lastModified: obj.lastModified, isDirectory, url };
     });
-  }, []);
+  }, [clientConfig]);
 
   useEffect(() => {
     (async () => {
-      const { objects } = await storageApiClient.getObjects('rooms/hZ8U4z5jf1d2cu23U8oPmV/media/');
+      const { objects } = await storageApiClient.getObjects('media/wjqSKgjiVoTjRWkFaagQfR/');
       setFiles(convertCdnObjectsToFileRecords(objects));
     })();
   }, [storageApiClient, convertCdnObjectsToFileRecords]);
