@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
@@ -20,9 +20,9 @@ function MediaPlayerTrack({
   isMuted,
   posterImageUrl,
   trackRef,
-  pauseCue,
   onDuration,
   onProgress,
+  onEndReached,
   onPlayStateChange
 }) {
   const playerRef = useRef();
@@ -30,13 +30,6 @@ function MediaPlayerTrack({
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
-
-  useEffect(() => {
-    if (typeof pauseCue !== 'boolean') {
-      return;
-    }
-    setCurrentPlayState(pauseCue ? MEDIA_PLAY_STATE.pausing : MEDIA_PLAY_STATE.playing);
-  }, [pauseCue]);
 
   const changePlayState = newPlayState => {
     setCurrentPlayState(newPlayState);
@@ -74,7 +67,8 @@ function MediaPlayerTrack({
     changePlayState(MEDIA_PLAY_STATE.pausing);
   };
 
-  const handleStop = () => {
+  const handleEnded = () => {
+    onEndReached();
     changePlayState(MEDIA_PLAY_STATE.stopped);
   };
 
@@ -84,6 +78,12 @@ function MediaPlayerTrack({
       const realMilliseconds = milliseconds + (startTimecode || 0);
       playerRef.current.seekTo(realMilliseconds / durationInMilliseconds);
       changeProgress(realMilliseconds);
+    },
+    play() {
+      changePlayState(MEDIA_PLAY_STATE.playing);
+    },
+    pause() {
+      changePlayState(MEDIA_PLAY_STATE.pausing);
     },
     togglePlay() {
       let newPlayState;
@@ -118,7 +118,8 @@ function MediaPlayerTrack({
     if (stopTimecode && progressInMilliseconds > stopTimecode) {
       setCurrentPlayState(MEDIA_PLAY_STATE.stopped);
       changeProgress(stopTimecode);
-      handleStop?.();
+      handleEnded();
+
       return;
     }
 
@@ -177,7 +178,7 @@ function MediaPlayerTrack({
           onStart={handlePlay}
           onPlay={handlePlay}
           onPause={handlePause}
-          onEnded={handleStop}
+          onEnded={handleEnded}
           onDuration={handleDuration}
           onProgress={handleProgress}
           onClickPreview={handleClickPreview}
@@ -192,9 +193,9 @@ MediaPlayerTrack.propTypes = {
   audioOnly: PropTypes.bool,
   isMuted: PropTypes.bool,
   onDuration: PropTypes.func,
+  onEndReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
-  pauseCue: PropTypes.bool,
   posterImageUrl: PropTypes.string,
   previewMode: PropTypes.bool,
   progressIntervalInMilliseconds: PropTypes.number.isRequired,
@@ -212,9 +213,9 @@ MediaPlayerTrack.defaultProps = {
   audioOnly: false,
   isMuted: false,
   onDuration: () => {},
+  onEndReached: () => {},
   onPlayStateChange: () => {},
   onProgress: () => {},
-  pauseCue: null,
   posterImageUrl: null,
   previewMode: false,
   startTimecode: null,

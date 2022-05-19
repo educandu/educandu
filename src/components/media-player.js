@@ -10,39 +10,36 @@ function MediaPlayer({
   stopTimecode,
   aspectRatio,
   audioOnly,
-  pauseCue,
   previewMode,
   posterImageUrl,
   extraContentTop,
   marks,
-  onMarkReached
+  onMarkReached,
+  onEndReached,
+  mediaPlayerRef
 }) {
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
-  const [reachedMarks, setReachedMarks] = useState([]);
+  const [lastReachedMark, setLastReachedMark] = useState();
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [playState, setPlayState] = useState(MEDIA_PLAY_STATE.initializing);
 
   const progressIntervalInMilliseconds = 100;
-  const marksTimecodes = Object.keys(marks).map(Number);
 
-  const isMarkReached = useCallback((markTimecode, currentPlayedMilliseconds) => {
-    const millisecondsBeforeOrAfterMark = Math.abs(markTimecode - currentPlayedMilliseconds);
-    if (millisecondsBeforeOrAfterMark <= progressIntervalInMilliseconds && !reachedMarks.includes(markTimecode)) {
-      setReachedMarks([...reachedMarks, markTimecode]);
-      return true;
-    }
-    return false;
-  }, [reachedMarks]);
+  const isMarkReached = useCallback((mark, currentPlayedMilliseconds) => {
+    const millisecondsBeforeOrAfterMark = Math.abs(mark.timecode - currentPlayedMilliseconds);
+    return millisecondsBeforeOrAfterMark <= progressIntervalInMilliseconds;
+  }, []);
 
   useEffect(() => {
-    const reachedMarkTimecode = marksTimecodes.find(markTimecode => isMarkReached(markTimecode, playedMilliseconds));
-    if (reachedMarkTimecode) {
-      onMarkReached(reachedMarkTimecode);
+    const reachedMark = marks.find(mark => isMarkReached(mark, playedMilliseconds));
+    if (reachedMark && reachedMark.key !== lastReachedMark?.key) {
+      onMarkReached(reachedMark);
+      setLastReachedMark(reachedMark);
     }
-  }, [marksTimecodes, playedMilliseconds, isMarkReached, onMarkReached]);
+  }, [playedMilliseconds, marks, lastReachedMark, isMarkReached, onMarkReached]);
 
   const handleSeek = milliseconds => {
     trackRef.current.seekTo(milliseconds);
@@ -54,6 +51,25 @@ function MediaPlayer({
 
   const handleTogglePlay = () => {
     trackRef.current.togglePlay();
+  };
+
+  const handleEndReached = () => {
+    onEndReached();
+  };
+
+  mediaPlayerRef.current = {
+    play: trackRef.current?.play,
+    pause: trackRef.current?.pause,
+    togglePlay: trackRef.current?.togglePlay,
+    seekTo: trackRef.current?.seekTo,
+    seekToMark: mark => {
+      trackRef.current.seekTo(mark.timecode);
+      setLastReachedMark(mark);
+    },
+    reset: () => {
+      trackRef.current.seekTo(0);
+      setLastReachedMark(null);
+    }
   };
 
   if (!sourceUrl) {
@@ -73,9 +89,9 @@ function MediaPlayer({
         aspectRatio={aspectRatio}
         startTimecode={startTimecode}
         stopTimecode={stopTimecode}
-        pauseCue={pauseCue}
         progressIntervalInMilliseconds={progressIntervalInMilliseconds}
         onDuration={setDurationInMilliseconds}
+        onEndReached={handleEndReached}
         onProgress={setPlayedMilliseconds}
         onPlayStateChange={setPlayState}
         posterImageUrl={posterImageUrl}
@@ -103,9 +119,16 @@ MediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
   extraContentTop: PropTypes.node,
-  marks: PropTypes.object,
+  marks: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    timecode: PropTypes.number.isRequired,
+    text: PropTypes.string
+  })),
+  mediaPlayerRef: PropTypes.shape({
+    current: PropTypes.any
+  }),
+  onEndReached: PropTypes.func,
   onMarkReached: PropTypes.func,
-  pauseCue: PropTypes.bool,
   posterImageUrl: PropTypes.string,
   previewMode: PropTypes.bool,
   sourceUrl: PropTypes.string,
@@ -117,9 +140,12 @@ MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
   extraContentTop: null,
-  marks: {},
+  marks: [],
+  mediaPlayerRef: {
+    current: null
+  },
+  onEndReached: () => {},
   onMarkReached: () => {},
-  pauseCue: null,
   posterImageUrl: null,
   previewMode: false,
   sourceUrl: null,

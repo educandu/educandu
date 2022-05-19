@@ -25,6 +25,10 @@ function MediaPlayerControls({
 }) {
   const isMediaLoaded = !!durationInMilliseconds;
   const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
+  const sliderMarks = marks.reduce((accu, mark) => {
+    accu[mark.timecode] = mark.text;
+    return accu;
+  }, {});
 
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--standalone': standalone })}>
@@ -38,7 +42,7 @@ function MediaPlayerControls({
           min={0}
           max={durationInMilliseconds}
           value={playedMilliseconds}
-          marks={isMediaLoaded ? marks : {}}
+          marks={isMediaLoaded ? sliderMarks : {}}
           tipFormatter={formatMillisecondsAsDuration}
           onChange={onSeek}
           />
@@ -70,7 +74,11 @@ MediaPlayerControls.propTypes = {
   durationInMilliseconds: PropTypes.number.isRequired,
   extraContentTop: PropTypes.node,
   isMuted: PropTypes.bool.isRequired,
-  marks: PropTypes.object,
+  marks: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    timecode: PropTypes.number.isRequired,
+    text: PropTypes.string
+  })),
   onSeek: PropTypes.func.isRequired,
   onToggleMute: PropTypes.func.isRequired,
   onTogglePlay: PropTypes.func.isRequired,
@@ -83,7 +91,7 @@ MediaPlayerControls.propTypes = {
 
 MediaPlayerControls.defaultProps = {
   extraContentTop: null,
-  marks: {},
+  marks: [],
   standalone: false
 };
 
