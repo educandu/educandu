@@ -20,7 +20,7 @@ import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import MediaRangeSelector from '../../components/media-range-selector.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
-import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
+import { trimChaptersToFitRange, analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -162,10 +162,18 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleMediaRangeChange = newRange => {
+    const newChapters = trimChaptersToFitRange({
+      chapters,
+      duration: sourceDuration,
+      range: newRange
+    });
+
+    setSelectedChapterIndex(oldIndex => Math.min(oldIndex, newChapters.length - 1));
+
     changeContent({
       sourceStartTimecode: newRange.startTimecode,
       sourceStopTimecode: newRange.stopTimecode,
-      chapters: [interactiveMediaInfo.getDefaultChapter(t)]
+      chapters: newChapters
     });
   };
 

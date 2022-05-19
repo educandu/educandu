@@ -1,5 +1,5 @@
 import { RESOURCE_TYPE } from '../domain/constants.js';
-import { analyzeMediaUrl, formatMillisecondsAsDuration } from './media-utils.js';
+import { trimChaptersToFitRange, analyzeMediaUrl, formatMillisecondsAsDuration } from './media-utils.js';
 
 describe('media-utils', () => {
 
@@ -89,7 +89,7 @@ describe('media-utils', () => {
     ];
 
     testCases.forEach(({ url, expectedError, expectedResult }) => {
-      describe(`called with url ${JSON.stringify(url)}`, () => {
+      describe(`when called with url ${JSON.stringify(url)}`, () => {
         if (expectedError) {
           it('should throw the expected error', () => {
             expect(() => analyzeMediaUrl(url)).toThrowError(expectedError);
@@ -122,9 +122,72 @@ describe('media-utils', () => {
     ];
 
     testCases.forEach(({ milliseconds, expectedResult }) => {
-      describe(`called with milliseconds = ${milliseconds}`, () => {
+      describe(`when called with milliseconds = ${milliseconds}`, () => {
         it(`should return '${expectedResult}'`, () => {
           expect(formatMillisecondsAsDuration(milliseconds)).toBe(expectedResult);
+        });
+      });
+    });
+  });
+
+  describe('trimChaptersToFitRange', () => {
+    const testCases = [
+      {
+        description: 'when the chapters fit into the whole media (no range set)',
+        expectation: 'should not delete any chapters',
+        input: {
+          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }],
+          duration: 1000,
+          range: { startTimecode: null, stopTimecode: null }
+        },
+        expectedResult: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }]
+      },
+      {
+        description: 'when the chapters fit into the selected media range',
+        expectation: 'should not delete any chapters',
+        input: {
+          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }],
+          duration: 2000,
+          range: { startTimecode: 500, stopTimecode: 1500 }
+        },
+        expectedResult: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 999 }]
+      },
+      {
+        description: 'when the chapters do not fit into the whole media (no range set)',
+        expectation: 'should delete overflowing chapters at the and',
+        input: {
+          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 1000 }],
+          duration: 1000,
+          range: { startTimecode: null, stopTimecode: null }
+        },
+        expectedResult: [{ key: 'aaa', startTimecode: 0 }]
+      },
+      {
+        description: 'when the chapters do not fit into the selected media range',
+        expectation: 'should delete overflowing chapters at the and',
+        input: {
+          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 1000 }],
+          duration: 2000,
+          range: { startTimecode: 500, stopTimecode: 1500 }
+        },
+        expectedResult: [{ key: 'aaa', startTimecode: 0 }]
+      },
+      {
+        description: 'when the media length is 0',
+        expectation: 'should only keep the first chapter (starting at timecode 0)',
+        input: {
+          chapters: [{ key: 'aaa', startTimecode: 0 }, { key: 'bbb', startTimecode: 1000 }],
+          duration: 0,
+          range: { startTimecode: null, stopTimecode: null }
+        },
+        expectedResult: [{ key: 'aaa', startTimecode: 0 }]
+      }
+    ];
+
+    testCases.forEach(({ description, expectation, input, expectedResult }) => {
+      describe(description, () => {
+        it(expectation, () => {
+          expect(trimChaptersToFitRange(input)).toStrictEqual(expectedResult);
         });
       });
     });
