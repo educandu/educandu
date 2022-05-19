@@ -45,7 +45,7 @@ function FilesGridViewer({
 
   const renderFile = file => {
     let fileDisplay;
-    if (!file.isDirectory && file.url && getResourceType(file.url) === RESOURCE_TYPE.image) {
+    if (getResourceType(file.url) === RESOURCE_TYPE.image) {
       fileDisplay = <img className="FilesGridViewer-fileDisplayImage" src={file.url} />;
     } else {
       const Icon = getResourceIcon({ filePath: file.path, isDirectory: file.isDirectory, filled: true });
