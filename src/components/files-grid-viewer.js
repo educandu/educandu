@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { RESOURCE_TYPE } from '../domain/constants.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
-import { getResourceIcon } from '../utils/resource-utils.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
+import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 import { FolderFilledIconComponent } from './icons/files/folder-filled-icon.js';
 
 function FilesGridViewer({
@@ -43,15 +44,21 @@ function FilesGridViewer({
   };
 
   const renderFile = file => {
-    const Icon = getResourceIcon({ filePath: file.path, isDirectory: file.isDirectory, filled: true });
+    let fileDisplay;
+    if (getResourceType(file.url) === RESOURCE_TYPE.image) {
+      fileDisplay = <img className="FilesGridViewer-fileDisplayImage" src={file.url} />;
+    } else {
+      const Icon = getResourceIcon({ filePath: file.path, isDirectory: file.isDirectory, filled: true });
+      fileDisplay = <Icon />;
+    }
     const overlayClasses = classNames('FilesGridViewer-fileOverlay', { 'is-visible': file.name === selectedFile?.name });
     const actionsClasses = classNames('FilesGridViewer-actions', { 'are-visible': file.name === selectedFile?.name });
 
     return (
       <div className="FilesGridViewer-fileContainer" key={file.path}>
         <a className="FilesGridViewer-file" onClick={() => handleFileClick(file)}>
-          <div className="FilesGridViewer-fileIcon">
-            <Icon />
+          <div className="FilesGridViewer-fileDisplay">
+            {fileDisplay}
           </div>
           <span>{file.name}</span>
         </a>
@@ -86,7 +93,7 @@ function FilesGridViewer({
         <Tooltip title={t('navigateToParent')} placement="topLeft">
           <div className="FilesGridViewer-fileContainer">
             <a className="FilesGridViewer-file" onClick={onNavigateToParentClick}>
-              <div className="FilesGridViewer-fileIcon">
+              <div className="FilesGridViewer-fileDisplay">
                 <FolderFilledIconComponent />
               </div>
               <div>...</div>
@@ -103,6 +110,7 @@ FilesGridViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(PropTypes.shape({
+    url: PropTypes.string,
     path: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     isDirectory: PropTypes.bool.isRequired
