@@ -13,9 +13,10 @@ import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { RESOURCE_TYPE } from '../domain/constants.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import { getResourceType } from '../utils/resource-utils.js';
-import { FileOutlined, FileTextOutlined } from '@ant-design/icons';
+import FileTextFilledIcon from './icons/files/file-text-filled-icon.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import FileUnknownFilledIcon from './icons/files/file-unknown-filled-icon.js';
 import PdfDocument, { PDF_DOCUMENT_STRETCH_DIRECTION } from './pdf-document.js';
 
 const logger = new Logger(import.meta.url);
@@ -109,11 +110,11 @@ function FilePreview({ createdOn, size, url }) {
   );
 
   const renderText = () => (
-    <div className="FilePreview-icon"><FileTextOutlined /></div>
+    <div className="FilePreview-icon"><FileTextFilledIcon /></div>
   );
 
   const renderGenericFile = () => (
-    <div className="FilePreview-icon"><FileOutlined /></div>
+    <div className="FilePreview-icon"><FileUnknownFilledIcon /></div>
   );
 
   let renderPreview;

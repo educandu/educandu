@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import React, { Fragment, useState } from 'react';
-import { FolderOpenOutlined } from '@ant-design/icons';
+import FolderIcon from './icons/files/folder-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import { useDateFormat, useLocale } from './locale-context.js';
@@ -62,10 +62,10 @@ function FilesListViewer({
 
     const Icon = getResourceIcon({ filePath: row.path, isDirectory: row.isDirectory });
     return (
-      <Fragment>
-        <Icon className="FilesListViewer-fileIcon" />
+      <div className="FilesListViewer-fileName" >
+        <Icon />
         {name}
-      </Fragment>
+      </div>
     );
   };
 
@@ -97,7 +97,7 @@ function FilesListViewer({
   };
 
   const renderNavigateToParentButton = () => (
-    <span><FolderOpenOutlined className="FilesListViewer-fileIcon" />...</span>
+    <div className="FilesListViewer-fileName"><FolderIcon />...</div>
   );
 
   const getRowClassName = row => {
