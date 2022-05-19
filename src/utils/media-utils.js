@@ -52,6 +52,14 @@ export const determineMediaDuration = memoizee(url => {
   const div = window.document.createElement('div');
   div.style.display = 'none';
   window.document.body.appendChild(div);
+  let cleanedUp = false;
+  const ensureCleanup = () => {
+    if (!cleanedUp) {
+      ReactDOM.unmountComponentAtNode(div);
+      div.remove();
+      cleanedUp = true;
+    }
+  };
   const playerPromise = new Promise((resolve, reject) => {
     try {
       const element = React.createElement(ReactPlayer, {
@@ -59,15 +67,13 @@ export const determineMediaDuration = memoizee(url => {
         light: false,
         playing: false,
         onDuration: durationInSeconds => {
-          const durationInMiliseconds = durationInSeconds * 1000;
+          const durationInMiliseconds = Math.ceil(durationInSeconds * 1000);
           resolve(durationInMiliseconds);
-          ReactDOM.unmountComponentAtNode(div);
-          div.remove();
+          ensureCleanup();
         },
         onError: error => {
           reject(error);
-          ReactDOM.unmountComponentAtNode(div);
-          div.remove();
+          ensureCleanup();
         }
       });
       ReactDOM.render(element, div);
@@ -75,8 +81,11 @@ export const determineMediaDuration = memoizee(url => {
       reject(error);
     }
   });
-  const timeoutPromise = new Promise((resolve, reject) => {
-    setTimeout(() => reject(new Error(`Timeout determining duration of ${url}`)), MEDIA_TIMEOUT_IN_MS);
+  const timeoutPromise = new Promise((_resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error(`Timeout determining duration of ${url}`));
+      ensureCleanup();
+    }, MEDIA_TIMEOUT_IN_MS);
   });
   return Promise.race([playerPromise, timeoutPromise]);
 }, { promise: true });
@@ -95,4 +104,9 @@ export function formatMillisecondsAsDuration(milliseconds) {
   const hours = totalHours.toString().padStart(2, '0');
 
   return totalHours ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+}
+
+export function trimChaptersToFitRange({ chapters, duration, range }) {
+  const newPlaybackDuration = (range.stopTimecode || duration) - (range.startTimecode || 0);
+  return chapters.filter(chapter => chapter.startTimecode === 0 || chapter.startTimecode < newPlaybackDuration);
 }
