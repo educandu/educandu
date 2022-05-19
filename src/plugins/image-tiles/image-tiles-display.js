@@ -39,14 +39,14 @@ function ImageTilesDisplay({ content }) {
     const imageUrl = getTileImageUrl(tile, clientConfig.cdnRootUrl);
 
     const classes = classNames({
-      'ImageTiles-tile': true,
-      'ImageTiles-tile--noLink': !linkUrl,
+      'ImageTilesDisplay-tile': true,
+      'ImageTilesDisplay-tile--noLink': !linkUrl,
       'u-img-color-flip': content.hoverEffect === HOVER_EFFECT.colorizeZoom && linkUrl,
       'u-img-color-flip-hover-disabled': content.hoverEffect === HOVER_EFFECT.colorizeZoom && !linkUrl
     });
 
-    const image = <img className="ImageTiles-img" src={imageUrl} />;
-    const description = <div className="ImageTiles-description"><Markdown>{tile.description}</Markdown></div>;
+    const image = <img className="ImageTilesDisplay-img" src={imageUrl} />;
+    const description = <div className="ImageTilesDisplay-description"><Markdown>{tile.description}</Markdown></div>;
 
     return linkUrl
       ? <a key={index.toString()} className={classes} href={linkUrl}>{image}{description}</a>
@@ -54,9 +54,9 @@ function ImageTilesDisplay({ content }) {
   };
 
   return (
-    <div className={classNames('ImageTiles')}>
+    <div className="ImageTilesDisplay">
       <div
-        className={`ImageTiles-grid u-max-width-${content.maxWidth || 100}`}
+        className={`ImageTilesDisplay-grid u-max-width-${content.maxWidth || 100}`}
         style={{ gridTemplateColumns: `repeat(${content.maxTilesPerRow}, 1fr)` }}
         >
         {content.tiles.map(renderTile)}
