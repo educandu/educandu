@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpenOutlined } from '@ant-design/icons';
 import DeleteIcon from './icons/general/delete-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import { getResourceIcon } from '../utils/resource-utils.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
+import { FolderFilledIconComponent } from './icons/files/folder-filled-icon.js';
 
 function FilesGridViewer({
   files,
@@ -43,15 +43,15 @@ function FilesGridViewer({
   };
 
   const renderFile = file => {
-    const Icon = getResourceIcon({ filePath: file.path, isDirectory: file.isDirectory });
+    const Icon = getResourceIcon({ filePath: file.path, isDirectory: file.isDirectory, filled: true });
     const overlayClasses = classNames('FilesGridViewer-fileOverlay', { 'is-visible': file.name === selectedFile?.name });
     const actionsClasses = classNames('FilesGridViewer-actions', { 'are-visible': file.name === selectedFile?.name });
 
     return (
       <div className="FilesGridViewer-fileContainer" key={file.path}>
         <a className="FilesGridViewer-file" onClick={() => handleFileClick(file)}>
-          <div>
-            <Icon className="FilesGridViewer-fileIcon" />
+          <div className="FilesGridViewer-fileIcon">
+            <Icon />
           </div>
           <span>{file.name}</span>
         </a>
@@ -84,12 +84,14 @@ function FilesGridViewer({
     <div className="FilesGridViewer">
       {canNavigateToParent && (
         <Tooltip title={t('navigateToParent')} placement="topLeft">
-          <a className="FilesGridViewer-file" onClick={onNavigateToParentClick}>
-            <div>
-              <FolderOpenOutlined className="FilesGridViewer-fileIcon" />
-            </div>
-            ...
-          </a>
+          <div className="FilesGridViewer-fileContainer">
+            <a className="FilesGridViewer-file" onClick={onNavigateToParentClick}>
+              <div className="FilesGridViewer-fileIcon">
+                <FolderFilledIconComponent />
+              </div>
+              <div>...</div>
+            </a>
+          </div>
         </Tooltip>
       )}
       {files.map(file => renderFile(file))}
