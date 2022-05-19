@@ -35,7 +35,7 @@ function MediaPlayerTrack({
     if (typeof pauseCue !== 'boolean') {
       return;
     }
-    setCurrentPlayState(pauseCue ? MEDIA_PLAY_STATE.playing : MEDIA_PLAY_STATE.pausing);
+    setCurrentPlayState(pauseCue ? MEDIA_PLAY_STATE.pausing : MEDIA_PLAY_STATE.playing);
   }, [pauseCue]);
 
   const changePlayState = newPlayState => {

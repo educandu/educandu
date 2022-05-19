@@ -1,6 +1,9 @@
+@interactive-media-display-overlay-overflow: 10px;
+
 .InteractiveMediaDisplay {}
 
 .InteractiveMediaDisplay-content {
+  position: relative;
   margin: 0 auto;
 }
 
@@ -94,4 +97,16 @@
 
 .InteractiveMediaEditor-readonlyValue {
   padding-left: 10px;
+}
+
+.InteractiveMediaDisplay-overlay {
+  position: absolute;
+  top: -@interactive-media-display-overlay-overflow;
+  left: -@interactive-media-display-overlay-overflow;
+  width: calc(100% + 2 * @interactive-media-display-overlay-overflow);
+  height: calc(100% + 2 * @interactive-media-display-overlay-overflow);
+  background-color: @edu-background-color-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

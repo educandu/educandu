@@ -1,5 +1,7 @@
+import { Button } from 'antd';
 import React, { useState } from 'react';
 import Markdown from '../../components/markdown.js';
+import { StepForwardOutlined } from '@ant-design/icons';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
@@ -9,7 +11,7 @@ import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 function InteractiveMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
-  const [chapterPauseCue, setChapterPauseCue] = useState();
+  const [isPausingAtChapterEnd, setIsPausingAtChapterEnd] = useState();
 
   let sourceUrl;
   switch (content.sourceType) {
@@ -27,13 +29,12 @@ function InteractiveMediaDisplay({ content }) {
     return accu;
   }, {});
 
-  const handleMarkReached = timecode => {
-    console.log('reached mark ', timecode);
-    setChapterPauseCue(false);
+  const handleMarkReached = () => {
+    setIsPausingAtChapterEnd(true);
+  };
 
-    setTimeout(() => {
-      setChapterPauseCue(true);
-    }, 2000);
+  const handleNextChapterClick = () => {
+    setIsPausingAtChapterEnd(false);
   };
 
   return (
@@ -43,13 +44,18 @@ function InteractiveMediaDisplay({ content }) {
           <MediaPlayer
             marks={marks}
             sourceUrl={sourceUrl}
-            pauseCue={chapterPauseCue}
+            pauseCue={isPausingAtChapterEnd}
             audioOnly={!content.showVideo}
             aspectRatio={content.aspectRatio}
             startTimecode={content.sourceStartTimecode}
             stopTimecode={content.sourceStopTimecode}
             onMarkReached={handleMarkReached}
             />
+        )}
+        {isPausingAtChapterEnd && (
+          <div className="InteractiveMediaDisplay-overlay">
+            <Button type="link" icon={<StepForwardOutlined />} onClick={handleNextChapterClick}>next chapter</Button>
+          </div>
         )}
         {content.text && (
           <div className="InteractiveMediaDisplay-text">
