@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
@@ -9,6 +9,7 @@ import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
 function InteractiveMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
+  const [chapterPauseCue, setChapterPauseCue] = useState();
 
   let sourceUrl;
   switch (content.sourceType) {
@@ -26,6 +27,15 @@ function InteractiveMediaDisplay({ content }) {
     return accu;
   }, {});
 
+  const handleMarkReached = timecode => {
+    console.log('reached mark ', timecode);
+    setChapterPauseCue(false);
+
+    setTimeout(() => {
+      setChapterPauseCue(true);
+    }, 2000);
+  };
+
   return (
     <div className="InteractiveMediaDisplay">
       <div className={`InteractiveMediaDisplay-content u-width-${content.width || 100}`}>
@@ -33,10 +43,12 @@ function InteractiveMediaDisplay({ content }) {
           <MediaPlayer
             marks={marks}
             sourceUrl={sourceUrl}
+            pauseCue={chapterPauseCue}
             audioOnly={!content.showVideo}
             aspectRatio={content.aspectRatio}
             startTimecode={content.sourceStartTimecode}
             stopTimecode={content.sourceStopTimecode}
+            onMarkReached={handleMarkReached}
             />
         )}
         {content.text && (

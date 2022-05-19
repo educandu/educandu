@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
@@ -15,10 +15,12 @@ function MediaPlayerTrack({
   previewMode,
   startTimecode,
   stopTimecode,
+  progressIntervalInMilliseconds,
   volume,
   isMuted,
   posterImageUrl,
   trackRef,
+  pauseCue,
   onDuration,
   onProgress,
   onPlayStateChange
@@ -28,6 +30,13 @@ function MediaPlayerTrack({
   const [lastSeekTimestamp, setLastSeekTimestamp] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
   const [currentPlayState, setCurrentPlayState] = useState(MEDIA_PLAY_STATE.initializing);
+
+  useEffect(() => {
+    if (typeof pauseCue !== 'boolean') {
+      return;
+    }
+    setCurrentPlayState(pauseCue ? MEDIA_PLAY_STATE.playing : MEDIA_PLAY_STATE.pausing);
+  }, [pauseCue]);
 
   const changePlayState = newPlayState => {
     setCurrentPlayState(newPlayState);
@@ -159,7 +168,7 @@ function MediaPlayerTrack({
           controls={false}
           volume={volume}
           muted={isMuted}
-          progressInterval={100}
+          progressInterval={progressIntervalInMilliseconds}
           light={currentPlayState === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
           playing={currentPlayState === MEDIA_PLAY_STATE.playing || currentPlayState === MEDIA_PLAY_STATE.buffering}
           onReady={handleReady}
@@ -185,8 +194,10 @@ MediaPlayerTrack.propTypes = {
   onDuration: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
+  pauseCue: PropTypes.bool,
   posterImageUrl: PropTypes.string,
   previewMode: PropTypes.bool,
+  progressIntervalInMilliseconds: PropTypes.number.isRequired,
   sourceUrl: PropTypes.string.isRequired,
   startTimecode: PropTypes.number,
   stopTimecode: PropTypes.number,
@@ -203,6 +214,7 @@ MediaPlayerTrack.defaultProps = {
   onDuration: () => {},
   onPlayStateChange: () => {},
   onProgress: () => {},
+  pauseCue: null,
   posterImageUrl: null,
   previewMode: false,
   startTimecode: null,
