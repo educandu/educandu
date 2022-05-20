@@ -488,6 +488,20 @@
     }
   },
   {
+    "namespace": "mediaPlayerControls",
+    "language": "en",
+    "resources": {
+      "download": "Download"
+    }
+  },
+  {
+    "namespace": "mediaPlayerControls",
+    "language": "de",
+    "resources": {
+      "download": "Herunterladen"
+    }
+  },
+  {
     "namespace": "mediaRangeSelector",
     "language": "en",
     "resources": {

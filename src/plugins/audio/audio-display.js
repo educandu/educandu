@@ -23,7 +23,7 @@ function AudioDisplay({ content }) {
     <div className="AudioDisplay">
       <div className="AudioDisplay-content">
         {sourceUrl && (
-          <MediaPlayer sourceUrl={sourceUrl} audioOnly />
+          <MediaPlayer sourceUrl={sourceUrl} canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal} audioOnly />
         )}
         {content.text && (
           <div className="AudioDisplay-text">

@@ -1,12 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Button, Slider } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { useService } from './container-context.js';
+import { Menu, Button, Slider, Dropdown } from 'antd';
+import HttpClient from '../api-clients/http-client.js';
 import MuteIcon from './icons/media-player/mute-icon.js';
 import PlayIcon from './icons/media-player/play-icon.js';
-import PauseIcon from './icons/media-player/pause-icon.js';
 import { MEDIA_PLAY_STATE } from '../domain/constants.js';
+import PauseIcon from './icons/media-player/pause-icon.js';
+import DownloadIcon from './icons/general/download-icon.js';
 import VolumeIcon from './icons/media-player/volume-icon.js';
+import SettingsIcon from './icons/main-menu/settings-icon.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 
 function MediaPlayerControls({
@@ -21,14 +26,31 @@ function MediaPlayerControls({
   onToggleMute,
   onSeek,
   onVolumeChange,
-  standalone
+  standalone,
+  sourceUrl,
+  canDownload
 }) {
+  const httpClient = useService(HttpClient);
+  const { t } = useTranslation('mediaPlayerControls');
+
   const isMediaLoaded = !!durationInMilliseconds;
   const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
   const sliderMarks = marks.reduce((accu, mark) => {
     accu[mark.timecode] = mark.text;
     return accu;
   }, {});
+
+  const handleDownloadClick = () => httpClient.download(sourceUrl);
+
+  const renderSettingsMenu = () => {
+    return (
+      <Menu>
+        <Menu.Item key="moveUp" onClick={handleDownloadClick}>
+          <Button type="link" size="small" icon={<DownloadIcon />}>{t('download')}</Button>
+        </Menu.Item>
+      </Menu>
+    );
+  };
 
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--standalone': standalone })}>
@@ -64,13 +86,20 @@ function MediaPlayerControls({
           </div>
           <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
         </div>
-        <div className="MediaPlayerControls-controlsGroup" />
+        <div className="MediaPlayerControls-controlsGroup">
+          {canDownload && sourceUrl && (
+            <Dropdown overlay={renderSettingsMenu} placement="bottomRight" trigger={['click']}>
+              <Button type="link" icon={<SettingsIcon />} />
+            </Dropdown>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 MediaPlayerControls.propTypes = {
+  canDownload: PropTypes.bool,
   durationInMilliseconds: PropTypes.number.isRequired,
   extraContentTop: PropTypes.node,
   isMuted: PropTypes.bool.isRequired,
@@ -85,13 +114,16 @@ MediaPlayerControls.propTypes = {
   onVolumeChange: PropTypes.func.isRequired,
   playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
   playedMilliseconds: PropTypes.number.isRequired,
+  sourceUrl: PropTypes.string,
   standalone: PropTypes.bool,
   volume: PropTypes.number.isRequired
 };
 
 MediaPlayerControls.defaultProps = {
+  canDownload: false,
   extraContentTop: null,
   marks: [],
+  sourceUrl: null,
   standalone: false
 };
 

@@ -76,11 +76,11 @@ function FilePreview({ createdOn, size, url }) {
   }, [imageRef]);
 
   const renderAudio = () => (
-    <MediaPlayer sourceUrl={url} audioOnly />
+    <MediaPlayer sourceUrl={url} canDownload audioOnly />
   );
 
   const renderVideo = () => (
-    <MediaPlayer sourceUrl={url} />
+    <MediaPlayer sourceUrl={url} canDownload />
   );
 
   const renderImage = () => (
