@@ -6,8 +6,11 @@ const Icon = iconNs.default || iconNs;
 export function FileVideoIconComponent() {
   return (
     <svg height="1em" style={{ enableBackground: 'new 0 0 1000 1000' }} width="1em" viewBox="0 0 1000 1000">
-      <path style={{ fill: 'none', stroke: 'currentColor', strokeWidth: '45', strokeLinecap: 'round', strokeMiterlimit: '10' }} d="M837.96 856.26H162.04c-45.31 0-82.03-36.73-82.03-82.03V225.78c0-45.31 36.73-82.03 82.03-82.03h675.92c45.31 0 82.03 36.73 82.03 82.03v548.45c0 45.3-36.72 82.03-82.03 82.03z" />
-      <path style={{ fill: 'currentColor' }} d="M634.83 475.67 453.59 346.16c-19.79-14.14-47.29 0-47.29 24.33v259.02c0 24.32 27.5 38.47 47.29 24.33l181.24-129.51c16.68-11.93 16.68-36.73 0-48.66z" />
+      <path style={{ display: 'inline', fill: 'currentColor', strokeWidth: '1' }} d="M628.616 614.045 434.275 475.173c-21.22-15.162-50.709 0-50.709 26.088v277.744c0 26.079 29.488 41.251 50.709 26.09l194.341-138.873c17.886-12.792 17.886-39.385 0-52.177z" />
+      <g style={{ display: 'inline' }}>
+        <path style={{ fill: 'none', stroke: 'currentColor', strokeWidth: '45', strokeLinecap: 'round', strokeMiterlimit: '10' }} d="M859.09 287.84v607.84c0 43.69-35.42 79.11-79.11 79.11H220.02c-43.69 0-79.11-35.42-79.11-79.11V104.32c0-43.69 35.42-79.11 79.11-79.11h385.24c14.46 0 28.3 5.91 38.3 16.35l200.78 209.59a52.995 52.995 0 0 1 14.75 36.69z" transform="translate(2.086 1.914)" />
+        <path style={{ fill: 'none', stroke: 'currentColor', strokeWidth: '45', strokeLinecap: 'round', strokeMiterlimit: '10' }} d="M598.16 44.47V210.8c0 45.67 37.03 82.7 82.71 82.7h155.85" transform="translate(2.086 1.914)" />
+      </g>
     </svg>
   );
 }
