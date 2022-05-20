@@ -37,6 +37,7 @@ function VideoDisplay({ content }) {
             sourceUrl={sourceUrl}
             posterImageUrl={posterImageUrl}
             aspectRatio={content.aspectRatio}
+            canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
         {content.text && (

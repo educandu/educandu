@@ -82,7 +82,13 @@ function EarTrainingDisplay({ content }) {
     return (
       <div className="EarTraining-soundPlayer">
         {sourceType === SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
-        {sourceType !== SOURCE_TYPE.midi && soundUrl && <MediaPlayer sourceUrl={soundUrl} audioOnly />}
+        {sourceType !== SOURCE_TYPE.midi && soundUrl && (
+          <MediaPlayer
+            audioOnly
+            sourceUrl={soundUrl}
+            canDownload={sourceType === SOURCE_TYPE.internal}
+            />
+        )}
         {currentTest.sound.text && (
           <div>
             <Markdown>{currentTest.sound.text}</Markdown>

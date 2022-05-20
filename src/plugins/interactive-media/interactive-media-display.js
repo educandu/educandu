@@ -81,6 +81,7 @@ function InteractiveMediaDisplay({ content }) {
             stopTimecode={content.sourceStopTimecode}
             onMarkReached={handleMarkReached}
             onEndReached={handleEndReached}
+            canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
         {interactingChapterIndex >= 0 && (

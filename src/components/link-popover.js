@@ -1,9 +1,9 @@
 import { Popover } from 'antd';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import React, { Fragment, useEffect, useState } from 'react';
 import { default as iconsNs } from '@ant-design/icons';
 import { useUser } from '../components/user-context.js';
+import React, { Fragment, useEffect, useState } from 'react';
 import { hasUserPermission } from '../domain/permissions.js';
 
 const Icon = iconsNs.default || iconsNs;

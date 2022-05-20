@@ -30,6 +30,25 @@ class HttpClient {
       throw error.response.data;
     });
   }
+
+  download(url) {
+    const fileNameAndExtension = url.split('/').pop();
+
+    return axios.get(url, { responseType: 'blob' })
+      .then(response => {
+        const urlObject = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = urlObject;
+
+        link.setAttribute('download', fileNameAndExtension);
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+      }).catch(error => {
+        throw error.response.data;
+      });
+  }
 }
 
 export default HttpClient;
