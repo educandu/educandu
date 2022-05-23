@@ -28,7 +28,7 @@ function Tests({ PageTemplate }) {
 
   useEffect(() => {
     (async () => {
-      const { objects } = await storageApiClient.getObjects('media/wjqSKgjiVoTjRWkFaagQfR/');
+      const { objects } = await storageApiClient.getObjects('rooms/hZ8U4z5jf1d2cu23U8oPmV/media/');
       setFiles(convertCdnObjectsToFileRecords(objects));
     })();
   }, [storageApiClient, convertCdnObjectsToFileRecords]);

@@ -14,6 +14,7 @@ import UsedStorage from './used-storage.js';
 import DeleteButton from './delete-button.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
+import { useService } from './container-context.js';
 import FileIcon from './icons/general/file-icon.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
 import { handleApiError } from '../ui/error-helper.js';
@@ -21,14 +22,16 @@ import FolderIcon from './icons/general/folder-icon.js';
 import UploadIcon from './icons/general/upload-icon.js';
 import PublicIcon from './icons/general/public-icon.js';
 import { userProps } from '../ui/default-prop-types.js';
+import ClientConfig from '../bootstrap/client-config.js';
 import PrivateIcon from './icons/general/private-icon.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { useStorage, useSetStorage } from './storage-context.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-utils.js';
+import { getCookie, setLongLastingCookie } from '../common/cookie.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
+import { confirmCdnFileDelete, confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert, Tooltip } from 'antd';
 
@@ -39,8 +42,6 @@ class StorageBrowser extends React.Component {
     super(props);
     autoBind(this);
     this.lastDragElement = null;
-    this.browserRef = React.createRef();
-    this.filterTextInputRef = React.createRef();
 
     const locations = this.mapLocationsFromProps();
     const currentLocation = locations.find(location => location.type === STORAGE_LOCATION_TYPE.private) || locations[0];
@@ -473,6 +474,19 @@ class StorageBrowser extends React.Component {
     this.setState({ filterText: event.target.value });
   }
 
+  handleBeforeUpload() {
+    return new Promise(resolve => {
+      if (this.state.currentLocation.type === STORAGE_LOCATION_TYPE.public && !this.props.getUploadLiabilityCookie()) {
+        confirmPublicUploadLiability(this.props.t, () => {
+          this.props.setUploadLiabilityCookie();
+          resolve(true);
+        }, () => resolve(false));
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
   onCustomUpload({ file, onProgress, onSuccess }) {
     const result = this.collectFilesToUpload([file], { onProgress });
     onSuccess(result);
@@ -622,7 +636,7 @@ class StorageBrowser extends React.Component {
 
   render() {
     const { t } = this.props;
-    const { records, currentPathSegments, locations, currentLocation, currentDropTarget, filterText } = this.state;
+    const { records, currentPathSegments, currentLocation, currentDropTarget, filterText } = this.state;
     const { uploadPathSegments } = currentLocation;
 
     const normalizedFilterText = filterText.toLowerCase().trim();
@@ -650,7 +664,7 @@ class StorageBrowser extends React.Component {
           {currentLocation.type === STORAGE_LOCATION_TYPE.private && (
             <UsedStorage usedBytes={this.state.currentLocation.usedBytes} maxBytes={this.state.currentLocation.maxBytes} showLabel />
           )}
-          {locations.some(loc => loc.type === STORAGE_LOCATION_TYPE.private) && currentLocation.type !== STORAGE_LOCATION_TYPE.private && (
+          {currentLocation.type === STORAGE_LOCATION_TYPE.public && (
             <Alert message={t('publicStorageWarning')} type="warning" showIcon />
           )}
         </div>
@@ -668,6 +682,7 @@ class StorageBrowser extends React.Component {
             multiple
             disabled={!canUpload}
             showUploadList={false}
+            beforeUpload={this.handleBeforeUpload}
             customRequest={this.onCustomUpload}
             className="StorageBrowser-control"
             >
@@ -683,7 +698,6 @@ class StorageBrowser extends React.Component {
         </div>
 
         <div
-          ref={this.browserRef}
           className={browserClassNames}
           onDragOver={canUpload ? this.handleFrameDrag : null}
           onDragLeave={canUpload ? this.handleFrameLeave : null}
@@ -716,6 +730,7 @@ StorageBrowser.defaultProps = {
 export default function StorageBrowserWrapper({ ...props }) {
   const { t } = useTranslation('storageBrowser');
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
+  const { uploadLiabilityCookieName } = useService(ClientConfig);
 
   const user = useUser();
   const storage = useStorage();
@@ -732,6 +747,8 @@ export default function StorageBrowserWrapper({ ...props }) {
       user={user}
       storage={storage}
       setStorage={setStorage}
+      getUploadLiabilityCookie={() => getCookie(uploadLiabilityCookieName)}
+      setUploadLiabilityCookie={() => setLongLastingCookie(uploadLiabilityCookieName, 'true')}
       t={t}
       {...props}
       />

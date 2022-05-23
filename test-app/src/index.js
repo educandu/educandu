@@ -60,6 +60,7 @@ const config = {
   },
   additionalControllers: [TestsController],
   consentCookieNamePrefix: 'CONSENT_TEST_APP',
+  uploadLiabilityCookieName: 'UPLOAD_LIABILITY_TEST_APP',
   areRoomsEnabled: parseBool(processEnv.TEST_APP_ARE_ROOMS_ENABLED || false.toString()),
   plugins
 };
