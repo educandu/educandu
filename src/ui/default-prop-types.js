@@ -46,6 +46,7 @@ export const clientConfigProps = {
     disabledFeatures: PropTypes.arrayOf(PropTypes.string).isRequired,
     importSources: PropTypes.arrayOf(importSourceShape).isRequired,
     consentCookieNamePrefix: PropTypes.string.isRequired,
+    uploadLiabilityCookieName: PropTypes.string.isRequired,
     areRoomsEnabled: PropTypes.bool.isRequired
   }).isRequired
 };

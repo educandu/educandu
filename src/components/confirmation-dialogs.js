@@ -399,3 +399,15 @@ export function confirmDeleteImageTile(t, onOk, onCancel = () => {}) {
     onCancel
   });
 }
+
+export function confirmPublicUploadLiability(t, onOk, onCancel = () => { }) {
+  confirm({
+    title: t('confirmationDialogs:attention'),
+    content: t('confirmationDialogs:confirmPublicUploadLiability'),
+    okText: t('common:ok'),
+    okType: 'danger',
+    cancelText: t('common:cancel'),
+    onOk,
+    onCancel
+  });
+}

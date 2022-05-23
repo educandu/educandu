@@ -54,6 +54,7 @@ const configSchema = joi.object({
   }).default(defaultTaskProcessing),
   additionalControllers: joi.array().items(joi.function().class()).default([]),
   consentCookieNamePrefix: joi.string().required(),
+  uploadLiabilityCookieName: joi.string().required(),
   areRoomsEnabled: joi.bool().default(false),
   additionalHeadHtml: joi.string().default(''),
   plugins: joi.array().items(joi.string().required()).default(['markdown', 'image'])
@@ -79,6 +80,7 @@ class ServerConfig {
       disabledFeatures: this.disabledFeatures,
       importSources: this.importSources.map(({ name, hostName, allowUnsecure }) => ({ name, hostName, allowUnsecure })),
       consentCookieNamePrefix: this.consentCookieNamePrefix,
+      uploadLiabilityCookieName: this.uploadLiabilityCookieName,
       areRoomsEnabled: this.areRoomsEnabled,
       plugins: this.plugins
     };

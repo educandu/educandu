@@ -82,7 +82,8 @@ educandu({
     apiKey: 'FSERFSF56Ggsdfg6FGED'
   }],
   additionalControllers: [],
-  consentCookieNamePrefixPrefix: 'APP_CONSENT_COOKIE_NAME'
+  consentCookieNamePrefix 'APP_CONSENT_COOKIE_NAME'
+  uploadLiabilityCookieName: 'APP_UPLOAD_LIABILITY_COOKIE_NAME'
 });
 ~~~
 
@@ -90,8 +91,8 @@ This should run the entire application and provide you with an admin user as def
 
 ## How to override the styles
 
-In order to override the styles provided by educandu you need to import the main.less of the educandu project and override the less variables provided. An example override implementation is provided by the test-app in the 
-main.less file. We will keep this file updated so any user will know what can be overriden. Alternatively you can go 
+In order to override the styles provided by educandu you need to import the main.less of the educandu project and override the less variables provided. An example override implementation is provided by the test-app in the
+main.less file. We will keep this file updated so any user will know what can be overriden. Alternatively you can go
 to the global-variables.less in educandu and consult the list there.
 
 ## How to run and develop locally
@@ -130,8 +131,8 @@ The gulpfile has a number of useful tasks which can be run with "gulp taskName",
    * registerPages: registers additional pages
    * registerMiddleware: regiters some middleware
    * registerErrorHandler: regiters error handlers
-  
-  
+
+
 An example implementation is given in the test app for registering a redirect from an "/articles" page to the standard "doc/:docKey/*" page of educandu. You can find the additional controller
 in the article-controller.js file.
 
