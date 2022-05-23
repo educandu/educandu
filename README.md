@@ -83,7 +83,7 @@ educandu({
   }],
   additionalControllers: [],
   consentCookieNamePrefixPrefix: 'APP_CONSENT_COOKIE_NAME'
-  uploadLiabilityCookieName: 'APP_UPLOAD_LIABIKITY_COOKIE_NAME'
+  uploadLiabilityCookieName: 'APP_UPLOAD_LIABILITY_COOKIE_NAME'
 });
 ~~~
 
