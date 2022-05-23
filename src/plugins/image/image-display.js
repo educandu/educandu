@@ -52,7 +52,13 @@ function ImageDisplay({ content }) {
     hoverImage.src = getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl);
 
     hoverImage.onload = () => {
-      context.drawImage(hoverImage, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+      const widthFactor = canvas.width / hoverImage.naturalWidth;
+      const heightFactor = canvas.height / hoverImage.naturalHeight;
+      const factorToUse = Math.min(heightFactor, widthFactor);
+      const finalHeight = hoverImage.naturalHeight * factorToUse;
+      const finalWidth = hoverImage.naturalWidth * factorToUse;
+      context.drawImage(hoverImage, 0, 0, hoverImage.naturalWidth, hoverImage.naturalHeight, 0, 0, finalWidth, finalHeight);
+
     };
   }, [mainImageRef, effect, clientConfig, isMainImageLoaded]);
 
