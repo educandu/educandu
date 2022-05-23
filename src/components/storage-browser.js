@@ -27,9 +27,9 @@ import PrivateIcon from './icons/general/private-icon.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { useStorage, useSetStorage } from './storage-context.js';
+import { getCookie, setSessionCookie } from '../common/cookie.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-utils.js';
-import { getCookie, setLongLastingCookie } from '../common/cookie.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { confirmCdnFileDelete, confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
@@ -748,7 +748,7 @@ export default function StorageBrowserWrapper({ ...props }) {
       storage={storage}
       setStorage={setStorage}
       getUploadLiabilityCookie={() => getCookie(uploadLiabilityCookieName)}
-      setUploadLiabilityCookie={() => setLongLastingCookie(uploadLiabilityCookieName, 'true')}
+      setUploadLiabilityCookie={() => setSessionCookie(uploadLiabilityCookieName, 'true')}
       t={t}
       {...props}
       />
