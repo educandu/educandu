@@ -832,9 +832,7 @@
       "confirmTerms": "Please confirm your agreement with the terms and conditions",
       "termsAndConditionsConfirmation": "I have read the <0>terms and conditions</0> and agree to them.",
       "register": "Register",
-      "registrationConfirmationHeader": "One more step remaining…",
-      "registrationConfirmationBody": "Please confirm your registration with the link we have just sent you via email.\nThe link is valid for 24 hours. After completing this step you will be able to log in to your account.\n",
-      "goToLoginPage": "Go to the login page"
+      "registrationConfirmationMessage": "# One more step remaining ...\n\nPlease confirm your registration with the link we have just sent you via email. \\\nThe link is valid **for 24 hours**. After completing this step you will be able to log in to your account.\n\n[Go to the login page]({loginPageUrl})\n"
     }
   },
   {
@@ -844,9 +842,7 @@
       "confirmTerms": "Bitte erklären Sie sich mit den Nutzungsbedingungen einverstanden",
       "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
       "register": "Registrieren",
-      "registrationConfirmationHeader": "Ein Schritt fehlt noch…",
-      "registrationConfirmationBody": "Bitte bestätigen Sie Ihre Registrierung mit dem Link, den wir Ihnen gerade via E-Mail geschickt haben.\nDer Link ist 24 Stunden lang gültig. Nach diesem Schritt können Sie sich in Ihr Konto einloggen.\n",
-      "goToLoginPage": "Zur Anmeldeseite gehen"
+      "registrationConfirmationMessage": "# Ein Schritt fehlt noch ...\n\nBitte bestätigen Sie Ihre Registrierung mit dem Link, den wir Ihnen gerade via E-Mail geschickt haben. \\\nDer Link ist **24 Stunden lang** gültig. Nach diesem Schritt können Sie sich in Ihr Konto einloggen.\n\n[Zur Anmeldeseite gehen]({loginPageUrl})\n"
     }
   },
   {

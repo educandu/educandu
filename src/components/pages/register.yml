@@ -7,16 +7,18 @@ termsAndConditionsConfirmation:
 register:
   en: Register
   de: Registrieren
-registrationConfirmationHeader:
-  en: One more step remaining…
-  de: Ein Schritt fehlt noch…
-registrationConfirmationBody:
+registrationConfirmationMessage:
   en: |
-    Please confirm your registration with the link we have just sent you via email.
-    The link is valid for 24 hours. After completing this step you will be able to log in to your account.
+    # One more step remaining ...
+
+    Please confirm your registration with the link we have just sent you via email. \
+    The link is valid **for 24 hours**. After completing this step you will be able to log in to your account.
+
+    [Go to the login page]({loginPageUrl})
   de: |
-    Bitte bestätigen Sie Ihre Registrierung mit dem Link, den wir Ihnen gerade via E-Mail geschickt haben.
-    Der Link ist 24 Stunden lang gültig. Nach diesem Schritt können Sie sich in Ihr Konto einloggen.
-goToLoginPage:
-  en: Go to the login page
-  de: Zur Anmeldeseite gehen
+    # Ein Schritt fehlt noch ...
+
+    Bitte bestätigen Sie Ihre Registrierung mit dem Link, den wir Ihnen gerade via E-Mail geschickt haben. \
+    Der Link ist **24 Stunden lang** gültig. Nach diesem Schritt können Sie sich in Ihr Konto einloggen.
+
+    [Zur Anmeldeseite gehen]({loginPageUrl})

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import Markdown from '../markdown.js';
 import urls from '../../utils/urls.js';
 import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
@@ -101,11 +102,9 @@ function Register({ PageTemplate, SiteLogo }) {
   );
 
   const registrationConfirmation = (
-    <div className="RegisterPage-confirmation">
-      <h1>{t('registrationConfirmationHeader')}</h1>
-      <p>{t('registrationConfirmationBody')}</p>
-      <p><a href={urls.getLoginUrl()}>{t('goToLoginPage')}</a></p>
-    </div>
+    <Markdown className="RegisterPage-confirmation">
+      {t('registrationConfirmationMessage', { loginPageUrl: urls.getLoginUrl() })}
+    </Markdown>
   );
 
   return (
