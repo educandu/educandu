@@ -1,10 +1,9 @@
 .MediaPlayerControls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 
-  &.MediaPlayerControls--standalone {
-    padding: 15px;
-    background-color: @edu-background-color-light;
-    border-radius: @edu-border-radius-base;
-
+  &.MediaPlayerControls--audioOnly {
     .ant-slider .ant-slider-rail {
       .ant-slider-rail {
         background-color: darken(@edu-background-color-base, 5%);
@@ -19,12 +18,6 @@
   }
 }
 
-.MediaPlayerControls-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .MediaPlayerControls-controlsGroup {
   display: flex;
   flex-wrap: wrap;
@@ -37,7 +30,7 @@
   margin-right: 15px;
 }
 
-.MediaPlayerControls-progressSlider {
+.MediaPlayerControls-progressBar {
   height: 35px;
 
   .ant-slider-mark-text {

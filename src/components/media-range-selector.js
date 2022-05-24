@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { Modal, Button, Spin, Slider } from 'antd';
 import MediaPlayer from './media-player.js';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
+import { Modal, Button, Spin, Slider } from 'antd';
 import { analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../utils/media-utils.js';
 
 function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
@@ -78,7 +78,7 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
         {!isRetrievingMediaInfo && currentMediaInfo && (
           <MediaPlayer
             sourceUrl={currentMediaInfo.sanitizedUrl}
-            extraContentTop={(
+            extraCustomContent={(
               <div className="MediaRangeSelector-rangeSelectorArea">
                 <div className="MediaRangeSelector-rangeDisplay">
                   {t('playbackRange', {
@@ -90,8 +90,8 @@ function MediaRangeSelector({ sourceUrl, range, onRangeChange }) {
                   min={0}
                   max={currentMediaInfo.duration}
                   value={[currentRange.startTimecode ?? 0, currentRange.stopTimecode ?? currentMediaInfo.duration]}
-                  tipFormatter={formatMillisecondsAsDuration}
                   onChange={handleRangeChange}
+                  tooltipVisible={false}
                   range
                   />
               </div>

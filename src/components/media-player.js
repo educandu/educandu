@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import MediaPlayerTrack from './media-player-track.js';
 import MediaPlayerControls from './media-player-controls.js';
+import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
 
@@ -13,7 +15,7 @@ function MediaPlayer({
   previewMode,
   canDownload,
   posterImageUrl,
-  extraContentTop,
+  extraCustomContent,
   marks,
   onMarkReached,
   onEndReached,
@@ -22,6 +24,7 @@ function MediaPlayer({
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
+  const [isSeeking, setIsSeeking] = useState(false);
   const [lastReachedMark, setLastReachedMark] = useState(null);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
@@ -36,11 +39,11 @@ function MediaPlayer({
 
   useEffect(() => {
     const reachedMark = marks.find(mark => isMarkReached(mark, playedMilliseconds));
-    if (reachedMark && reachedMark.key !== lastReachedMark?.key) {
+    if (!isSeeking && reachedMark && reachedMark.key !== lastReachedMark?.key) {
       onMarkReached(reachedMark);
       setLastReachedMark(reachedMark);
     }
-  }, [playedMilliseconds, marks, lastReachedMark, isMarkReached, onMarkReached]);
+  }, [isSeeking, isMarkReached, marks, lastReachedMark, onMarkReached, playedMilliseconds]);
 
   const handleSeek = milliseconds => {
     trackRef.current.seekTo(milliseconds);
@@ -55,7 +58,17 @@ function MediaPlayer({
   };
 
   const handleEndReached = () => {
-    onEndReached();
+    if (!isSeeking) {
+      onEndReached();
+    }
+  };
+
+  const handleSeekStart = () => {
+    setIsSeeking(true);
+  };
+
+  const handleSeekEnd = () => {
+    setIsSeeking(false);
   };
 
   mediaPlayerRef.current = {
@@ -78,10 +91,9 @@ function MediaPlayer({
   }
 
   return (
-    <div className="MediaPlayer">
+    <div className={classNames('MediaPlayer', { 'MediaPlayer--audioOnly': audioOnly })}>
       <MediaPlayerTrack
         trackRef={trackRef}
-        marks={marks}
         volume={volume}
         isMuted={isMuted}
         sourceUrl={sourceUrl}
@@ -97,6 +109,15 @@ function MediaPlayer({
         onPlayStateChange={setPlayState}
         posterImageUrl={posterImageUrl}
         />
+      {extraCustomContent && (<div>{extraCustomContent}</div>)}
+      <MediaPlayerProgressBar
+        marks={marks}
+        onSeek={handleSeek}
+        onSeekStart={handleSeekStart}
+        onSeekEnd={handleSeekEnd}
+        playedMilliseconds={playedMilliseconds}
+        durationInMilliseconds={durationInMilliseconds}
+        />
       <MediaPlayerControls
         sourceUrl={sourceUrl}
         canDownload={canDownload}
@@ -110,9 +131,11 @@ function MediaPlayer({
         onToggleMute={handleToggleMute}
         onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
-        standalone={audioOnly}
-        extraContentTop={extraContentTop}
+        audioOnly={audioOnly}
+        extraCustomContent={extraCustomContent}
         marks={marks}
+        onMarkReached={onMarkReached}
+        onEndReached={onEndReached}
         />
     </div>
   );
@@ -122,7 +145,7 @@ MediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
   canDownload: PropTypes.bool,
-  extraContentTop: PropTypes.node,
+  extraCustomContent: PropTypes.node,
   marks: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
     timecode: PropTypes.number.isRequired,
@@ -144,7 +167,7 @@ MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
   canDownload: false,
-  extraContentTop: null,
+  extraCustomContent: null,
   marks: [],
   mediaPlayerRef: {
     current: null
