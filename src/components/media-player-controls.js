@@ -12,6 +12,7 @@ import PauseIcon from './icons/media-player/pause-icon.js';
 import DownloadIcon from './icons/general/download-icon.js';
 import VolumeIcon from './icons/media-player/volume-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
+import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 
 function MediaPlayerControls({
@@ -33,12 +34,7 @@ function MediaPlayerControls({
   const httpClient = useService(HttpClient);
   const { t } = useTranslation('mediaPlayerControls');
 
-  const isMediaLoaded = !!durationInMilliseconds;
   const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
-  const sliderMarks = marks.reduce((accu, mark) => {
-    accu[mark.timecode] = mark.text;
-    return accu;
-  }, {});
 
   const handleDownloadClick = () => httpClient.download(sourceUrl);
 
@@ -59,14 +55,12 @@ function MediaPlayerControls({
           {extraContentTop}
         </div>
       )}
-      <div className="MediaPlayerControls-progressSlider">
-        <Slider
-          min={0}
-          max={durationInMilliseconds}
-          value={playedMilliseconds}
-          marks={isMediaLoaded ? sliderMarks : {}}
-          tipFormatter={formatMillisecondsAsDuration}
-          onChange={onSeek}
+      <div className="MediaPlayerControls-progressBar">
+        <MediaPlayerProgressBar
+          marks={marks}
+          onSeek={onSeek}
+          playedMilliseconds={playedMilliseconds}
+          durationInMilliseconds={durationInMilliseconds}
           />
       </div>
       <div className="MediaPlayerControls-controls">

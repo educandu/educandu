@@ -1,0 +1,49 @@
+@edu-progress-bar-height: 10px;
+@edu-progress-bar-vertical-padding: 1px;
+
+.MediaPlayerProgressBar {
+  position: relative;
+  width: 100%;
+  height: @edu-progress-bar-height;
+  margin-top: @edu-content-padding;
+  padding: @edu-progress-bar-vertical-padding 0;
+
+  &.is-enabled {
+    &:hover {
+      cursor: pointer;
+      padding: 0;
+
+      & .MediaPlayerProgressBar-baseBar,
+      & .MediaPlayerProgressBar-progress,
+      & .MediaPlayerProgressBar-mark {
+        height: 12px;
+        padding: 0;
+        top: 0;
+      }
+    }
+  }
+}
+
+.MediaPlayerProgressBar-baseBar {
+  width: 100%;
+  height: @edu-progress-bar-height;
+  padding: @edu-progress-bar-vertical-padding 0;
+  background-color: @edu-background-color-base;
+}
+
+.MediaPlayerProgressBar-progress {
+  position: absolute;
+  top: @edu-progress-bar-vertical-padding;
+  left: 0;
+  height: @edu-progress-bar-height;
+  background-color: lighten(@edu-primary-color-light, 25%);
+}
+
+.MediaPlayerProgressBar-mark {
+  position: absolute;
+  top: @edu-progress-bar-vertical-padding;
+  left: 0;
+  height: @edu-progress-bar-height;
+  border-right: 1px dotted @edu-white;
+  border-left: 1px dotted @edu-border-color-base;
+}
