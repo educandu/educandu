@@ -20,10 +20,10 @@ function MediaPlayerProgressBar({
 
   const [msToPxRatio, setMsToPxRatio] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [tooltipTitle, setTooltipTitle] = useState(null);
+  const [tooltipState, setTooltipState] = useState(null);
 
   const stopDragging = () => {
-    setTooltipTitle(null);
+    setTooltipState(null);
     setIsDragging(false);
     onSeekEnd();
   };
@@ -34,20 +34,44 @@ function MediaPlayerProgressBar({
       : 0);
   }, [progressBarRef, durationInMilliseconds]);
 
-  const seekToClientX = useCallback(clientX => {
+  const convertClientXToTimecode = useCallback(clientX => {
     const barLeft = progressBarRef.current.getBoundingClientRect().left;
     const currentLeft = Math.max(clientX - barLeft, 0);
+    const timecode = Math.trunc(currentLeft ? currentLeft / msToPxRatio : 0);
 
-    let seekTimecode = Math.trunc(currentLeft ? currentLeft / msToPxRatio : 0);
+    return timecode > durationInMilliseconds ? durationInMilliseconds : timecode;
+  }, [durationInMilliseconds, msToPxRatio]);
 
-    if (seekTimecode > durationInMilliseconds) {
-      seekTimecode = durationInMilliseconds;
+  const seekToClientX = useCallback(clientX => {
+    const seekToTimecode = convertClientXToTimecode(clientX);
+
+    setTooltipState({
+      title: formatMillisecondsAsDuration(seekToTimecode),
+      left: (seekToTimecode * msToPxRatio) - (TOOLTIP_WIDTH_IN_PX / 2)
+    });
+
+    onSeek(seekToTimecode);
+  }, [onSeek, msToPxRatio, convertClientXToTimecode]);
+
+  const handleBarMouseHover = event => {
+    if (!isMediaLoaded || isDragging || isTouchDevice()) {
+      return;
     }
 
-    setTooltipTitle(formatMillisecondsAsDuration(seekTimecode));
+    const mouseOverTimecode = convertClientXToTimecode(event.clientX);
 
-    onSeek(seekTimecode);
-  }, [onSeek, durationInMilliseconds, msToPxRatio]);
+    setTooltipState({
+      title: formatMillisecondsAsDuration(mouseOverTimecode),
+      left: (mouseOverTimecode * msToPxRatio) - (TOOLTIP_WIDTH_IN_PX / 2)
+    });
+  };
+
+  const handleBarMouseLeave = () => {
+    if (isDragging) {
+      return;
+    }
+    setTooltipState(null);
+  };
 
   const handleBarMouseDown = event => {
     if (!isMediaLoaded || isTouchDevice()) {
@@ -135,12 +159,12 @@ function MediaPlayerProgressBar({
   return (
     <div className={classes} ref={progressBarRef}>
       <div className="MediaPlayerProgressBar-baseBar" />
-      {tooltipTitle && (
+      {tooltipState && (
         <div
           className="MediaPlayerProgressBar-progressTooltip"
-          style={{ width: `${TOOLTIP_WIDTH_IN_PX}px`, left: `${currentProgressInPx - (TOOLTIP_WIDTH_IN_PX / 2)}px` }}
+          style={{ width: `${TOOLTIP_WIDTH_IN_PX}px`, left: `${tooltipState.left}px` }}
           >
-          <div className="MediaPlayerProgressBar-progressTooltipText">{tooltipTitle}</div>
+          <div className="MediaPlayerProgressBar-progressTooltipText">{tooltipState.title}</div>
           <div className="MediaPlayerProgressBar-progressTooltipArrow" />
         </div>
       )}
@@ -150,6 +174,9 @@ function MediaPlayerProgressBar({
         className="MediaPlayerProgressBar-interractionOverlay"
         onMouseDown={handleBarMouseDown}
         onTouchStart={handleBarTouchStart}
+        onMouseOver={handleBarMouseHover}
+        onMouseMove={handleBarMouseHover}
+        onMouseLeave={handleBarMouseLeave}
         />
     </div>
   );
