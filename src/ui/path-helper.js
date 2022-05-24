@@ -1,4 +1,5 @@
-const privateCdnPathPattern = /^rooms\/([^/]+)\/media\//;
+const publicCdnPathPattern = /^media(\/.*)?$/;
+const privateCdnPathPattern = /^rooms\/([^/]+)\/media(\/.*)?$/;
 
 export const STORAGE_PATH_TYPE = {
   unknown: 'unknown',
@@ -7,18 +8,17 @@ export const STORAGE_PATH_TYPE = {
 };
 
 export function getStoragePathType(path) {
-  if (path.startsWith('media/')) {
+  if (publicCdnPathPattern.test(path)) {
     return STORAGE_PATH_TYPE.public;
   }
-  const match = path.match(privateCdnPathPattern);
-  if (match) {
+  if (privateCdnPathPattern.test(path)) {
     return STORAGE_PATH_TYPE.private;
   }
   return STORAGE_PATH_TYPE.unknown;
 }
 
 export function getPrivateStoragePathForRoomId(roomId) {
-  return `rooms/${roomId}/media/`;
+  return `rooms/${roomId}/media`;
 }
 
 export function getRoomIdFromPrivateStoragePath(path) {

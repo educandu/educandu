@@ -63,7 +63,7 @@ describe('path-helper', () => {
 
   describe('getPrivateStoragePathForRoomId', () => {
     it('should return the path', () => {
-      expect(getPrivateStoragePathForRoomId('myRoom')).toBe('rooms/myRoom/media/');
+      expect(getPrivateStoragePathForRoomId('myRoom')).toBe('rooms/myRoom/media');
     });
   });
 

@@ -11,7 +11,6 @@ const { BadRequest, Unauthorized } = httpErrors;
 describe('storage-controller', () => {
   const sandbox = sinon.createSandbox();
 
-  let serverConfig;
   let storageService;
   let roomService;
 
@@ -22,9 +21,6 @@ describe('storage-controller', () => {
   let sut;
 
   beforeEach(() => {
-    serverConfig = {
-      cdnRootUrl: 'https://cdn.localhost'
-    };
     storageService = {
       uploadFiles: sandbox.stub(),
       deleteObject: sandbox.stub()
@@ -43,7 +39,7 @@ describe('storage-controller', () => {
     roomService.getRoomById.resolves(null);
     roomService.getRoomById.withArgs(room._id).resolves(room);
 
-    sut = new StorageController(serverConfig, storageService, roomService);
+    sut = new StorageController(storageService, roomService);
   });
 
   afterEach(() => {
@@ -53,7 +49,7 @@ describe('storage-controller', () => {
   describe('handlePostCdnObject', () => {
     describe('when no files are provided', () => {
       beforeEach(() => {
-        req = { user, files: [], body: { prefix: 'media/' } };
+        req = { user, files: [], body: { parentPath: 'media' } };
         res = {};
       });
 
@@ -64,7 +60,7 @@ describe('storage-controller', () => {
 
     describe('when storage path type is unknown', () => {
       beforeEach(() => {
-        req = { user, files: [{}], body: { prefix: 'other-path/media/' } };
+        req = { user, files: [{}], body: { parentPath: 'other-path/media' } };
         res = {};
       });
 
@@ -75,7 +71,7 @@ describe('storage-controller', () => {
 
     describe('when storage path type is private but the room ID is unknown', () => {
       beforeEach(() => {
-        req = { user, files: [{}], body: { prefix: 'rooms/some-room-id/media/' } };
+        req = { user, files: [{}], body: { parentPath: 'rooms/some-room-id/media' } };
         res = {};
       });
 
@@ -89,7 +85,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
-        req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media/` } };
+        req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = {};
       });
 
@@ -105,7 +101,7 @@ describe('storage-controller', () => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
-        req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media/` } };
+        req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -115,7 +111,11 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.uploadFiles', () => {
-        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, storageClaimingUserId: user._id });
+        sinon.assert.calledWith(storageService.uploadFiles, {
+          parentPath: `rooms/${room._id}/media`,
+          files: req.files,
+          storageClaimingUserId: user._id
+        });
       });
 
       it('should return 201', () => {
@@ -134,7 +134,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
-        req = { user, files: [{}], body: { prefix: `rooms/${room._id}/media/` } };
+        req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
 
@@ -144,7 +144,11 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.uploadFiles (on behalf of the room owner)', () => {
-        sinon.assert.calledWith(storageService.uploadFiles, { prefix: req.body.prefix, files: req.files, storageClaimingUserId: room.owner });
+        sinon.assert.calledWith(storageService.uploadFiles, {
+          parentPath: `rooms/${room._id}/media`,
+          files: req.files,
+          storageClaimingUserId: room.owner
+        });
       });
 
       it('should return 201', () => {
@@ -160,7 +164,7 @@ describe('storage-controller', () => {
   describe('handleDeleteCdnObject', () => {
     describe('when storage path type is unknown', () => {
       beforeEach(() => {
-        req = { user, query: { prefix: 'other-path/media/' }, params: { objectName: 'object-to-delete' } };
+        req = { user, query: { path: 'other-path/media/object-to-delete' } };
         res = {};
       });
 
@@ -171,7 +175,7 @@ describe('storage-controller', () => {
 
     describe('when storage path type is private but the room ID is unknown', () => {
       beforeEach(() => {
-        req = { user, query: { prefix: 'rooms/some-room-id/media/' }, params: { objectName: 'object-to-delete' } };
+        req = { user, query: { path: 'rooms/some-room-id/media/object-to-delete' } };
         res = {};
       });
 
@@ -185,7 +189,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: uniqueId.create() }];
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
-        req = { user, query: { prefix: `rooms/${room._id}/media/` }, params: { objectName: 'object-to-delete' } };
+        req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
         res = {};
       });
 
@@ -201,7 +205,7 @@ describe('storage-controller', () => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
-        req = { user, query: { prefix: `rooms/${room._id}/media/` }, params: { objectName: 'object-to-delete' } };
+        req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
@@ -212,7 +216,10 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, { prefix: req.query.prefix, objectName: req.params.objectName, storageClaimingUserId: user._id });
+        sinon.assert.calledWith(storageService.deleteObject, {
+          path: `rooms/${room._id}/media/object-to-delete`,
+          storageClaimingUserId: user._id
+        });
       });
 
       it('should return 200', () => {
@@ -231,7 +238,7 @@ describe('storage-controller', () => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
-        req = { user, query: { prefix: `rooms/${room._id}/media/` }, params: { objectName: 'object-to-delete' } };
+        req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
@@ -242,10 +249,10 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(
-          storageService.deleteObject,
-          { prefix: req.query.prefix, objectName: req.params.objectName, storageClaimingUserId: room.owner }
-        );
+        sinon.assert.calledWith(storageService.deleteObject, {
+          path: `rooms/${room._id}/media/object-to-delete`,
+          storageClaimingUserId: room.owner
+        });
       });
 
       it('should return 200', () => {
@@ -261,7 +268,7 @@ describe('storage-controller', () => {
       beforeEach(done => {
         room.owner = user._id;
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
-        req = { user, query: { prefix: 'media/' }, params: { objectName: 'object-to-delete' } };
+        req = { user, query: { path: 'media/object-to-delete' } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
@@ -272,7 +279,10 @@ describe('storage-controller', () => {
       });
 
       it('should call storageService.deleteObject', () => {
-        sinon.assert.calledWith(storageService.deleteObject, { prefix: req.query.prefix, objectName: req.params.objectName, storageClaimingUserId: user._id });
+        sinon.assert.calledWith(storageService.deleteObject, {
+          path: 'media/object-to-delete',
+          storageClaimingUserId: user._id
+        });
       });
 
       it('should return 200', () => {

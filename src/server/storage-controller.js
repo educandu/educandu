@@ -2,28 +2,24 @@ import os from 'os';
 import multer from 'multer';
 import express from 'express';
 import urls from '../utils/urls.js';
-import parseBool from 'parseboolean';
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
-import ServerConfig from '../bootstrap/server-config.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE } from '../domain/constants.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
-import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE } from '../domain/constants.js';
-import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath, getPathSegments } from '../ui/path-helper.js';
+import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
 import {
-  getObjectsQuerySchema,
-  postObjectsBodySchema,
-  deleteObjectQuerySchema,
-  deleteObjectParamSchema,
+  getCdnObjectsQuerySchema,
+  postCdnObjectsBodySchema,
+  deleteCdnObjectQuerySchema,
   getStoragePlansQuerySchema,
   postStoragePlanBodySchema,
   patchStoragePlanParamsSchema,
   deleteStoragePlanParamsSchema,
-  patchStoragePlanBodySchema,
-  getCdnObjectsQuerySchema
+  patchStoragePlanBodySchema
 } from '../domain/schemas/storage-schemas.js';
 
 const jsonParser = express.json();
@@ -45,57 +41,31 @@ const isRoomOwnerOrCollaborator = ({ room, userId }) => {
 };
 
 class StorageController {
-  static get inject() { return [ServerConfig, StorageService, RoomService]; }
+  static get inject() { return [StorageService, RoomService]; }
 
-  constructor(serverConfig, storageService, roomService) {
-    this.serverConfig = serverConfig;
+  constructor(storageService, roomService) {
     this.storageService = storageService;
     this.roomService = roomService;
   }
 
   async handleGetCdnObjects(req, res) {
-    const prefix = `${req.query.parentPath}/`;
-    const objects = await this.storageService.listObjects({ prefix, recursive: false });
-
-    const mappedObjects = objects.map(obj => {
-      const isDirectory = !!obj.prefix;
-      const segments = getPathSegments(isDirectory ? obj.prefix : obj.name);
-      return {
-        displayName: segments[segments.length - 1],
-        parentPath: segments.slice(0, -1).join('/'),
-        fullPath: segments.join('/'),
-        url: [this.serverConfig.cdnRootUrl, ...segments.map(s => encodeURIComponent(s))].join('/'),
-        portableUrl: `cdn://${segments.map(s => encodeURIComponent(s)).join('/')}`,
-        createdOn: isDirectory ? null : obj.lastModified,
-        type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
-        size: isDirectory ? null : obj.size
-      };
-    });
-
-    return res.send({ objects: mappedObjects });
-  }
-
-  async handleGetCdnObjectsOld(req, res) {
-    const prefix = req.query.prefix;
-    const recursive = parseBool(req.query.recursive);
-    const objects = await this.storageService.listObjects({ prefix, recursive });
-
+    const { parentPath } = req.query;
+    const objects = await this.storageService.getObjects({ parentPath, recursive: false });
     return res.send({ objects });
   }
 
   async handleDeleteCdnObject(req, res) {
     const { user } = req;
-    const { prefix } = req.query;
-    const { objectName } = req.params;
+    const { path } = req.query;
 
-    const storagePathType = getStoragePathType(prefix);
+    const storagePathType = getStoragePathType(path);
     if (storagePathType === STORAGE_PATH_TYPE.unknown) {
-      throw new BadRequest(`Invalid storage path '${prefix}'`);
+      throw new BadRequest(`Invalid storage path '${path}'`);
     }
 
     let privateRoom;
     if (storagePathType === STORAGE_PATH_TYPE.private) {
-      const roomId = getRoomIdFromPrivateStoragePath(prefix);
+      const roomId = getRoomIdFromPrivateStoragePath(path);
       privateRoom = await this.roomService.getRoomById(roomId);
 
       if (!privateRoom) {
@@ -106,28 +76,29 @@ class StorageController {
         throw new Unauthorized(`User is not authorized to delete from room '${roomId}'`);
       }
     }
+
     const storageClaimingUserId = privateRoom?.owner || user._id;
-    const { usedBytes } = await this.storageService.deleteObject({ prefix, objectName, storageClaimingUserId });
+    const { usedBytes } = await this.storageService.deleteObject({ path, storageClaimingUserId });
 
     return res.send({ usedBytes });
   }
 
   async handlePostCdnObject(req, res) {
     const { user, files } = req;
-    const { prefix } = req.body;
-    const storagePathType = getStoragePathType(prefix);
+    const { parentPath } = req.body;
+    const storagePathType = getStoragePathType(parentPath);
 
     if (!files?.length) {
       throw new BadRequest('No files provided');
     }
 
     if (storagePathType === STORAGE_PATH_TYPE.unknown) {
-      throw new BadRequest(`Invalid storage path '${prefix}'`);
+      throw new BadRequest(`Invalid storage path '${parentPath}'`);
     }
 
     let privateRoom;
     if (storagePathType === STORAGE_PATH_TYPE.private) {
-      const roomId = getRoomIdFromPrivateStoragePath(prefix);
+      const roomId = getRoomIdFromPrivateStoragePath(parentPath);
       privateRoom = await this.roomService.getRoomById(roomId);
 
       if (!privateRoom) {
@@ -140,7 +111,7 @@ class StorageController {
     }
 
     const storageClaimingUserId = privateRoom?.owner || user._id;
-    const { usedBytes } = await this.storageService.uploadFiles({ prefix, files, storageClaimingUserId });
+    const { usedBytes } = await this.storageService.uploadFiles({ parentPath, files, storageClaimingUserId });
 
     return res.status(201).send({ usedBytes });
   }
@@ -188,7 +159,7 @@ class StorageController {
 
   registerApi(router) {
     router.get(
-      '/api/v1/storage/cdn-objects',
+      '/api/v1/storage/objects',
       [
         needsPermission(permissions.VIEW_FILES),
         jsonParser,
@@ -197,22 +168,11 @@ class StorageController {
       (req, res) => this.handleGetCdnObjects(req, res)
     );
 
-    router.get(
+    router.delete(
       '/api/v1/storage/objects',
       [
-        needsPermission(permissions.VIEW_FILES),
-        jsonParser,
-        validateQuery(getObjectsQuerySchema)
-      ],
-      (req, res) => this.handleGetCdnObjectsOld(req, res)
-    );
-
-    router.delete(
-      '/api/v1/storage/objects/:objectName',
-      [
         needsPermission(permissions.DELETE_OWN_FILES),
-        validateQuery(deleteObjectQuerySchema),
-        validateParams(deleteObjectParamSchema)
+        validateQuery(deleteCdnObjectQuerySchema)
       ],
       (req, res) => this.handleDeleteCdnObject(req, res)
     );
@@ -222,7 +182,7 @@ class StorageController {
       [
         needsPermission(permissions.CREATE_FILE),
         uploadLimitExceededMiddleware,
-        multipartParser.array('files'), validateBody(postObjectsBodySchema)
+        multipartParser.array('files'), validateBody(postCdnObjectsBodySchema)
       ],
       (req, res) => this.handlePostCdnObject(req, res)
     );

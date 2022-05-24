@@ -32,10 +32,26 @@ import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-utils.js';
 import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { confirmCdnFileDelete, confirmPublicUploadLiability } from './confirmation-dialogs.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert, Tooltip } from 'antd';
+import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
+
+function mapCdnObjectsToLegacyDataStructure(cdnObjects) {
+  return cdnObjects.map(obj => {
+    const unencodedFullPath = getPathSegments(obj.fullPath).map(s => decodeURIComponent(s)).join('/');
+    return obj.type === CDN_OBJECT_TYPE.directory
+      ? {
+        prefix: `${unencodedFullPath}/`,
+        size: 0
+      }
+      : {
+        name: unencodedFullPath,
+        lastModified: obj.createdOn,
+        size: obj.size
+      };
+  });
+}
 
 class StorageBrowser extends React.Component {
   constructor(props) {
@@ -118,8 +134,8 @@ class StorageBrowser extends React.Component {
       }
 
       try {
-        const prefix = getPrefix(currentPathSegments);
-        const { usedBytes } = await storageApiClient.uploadFiles(currentUploadFiles, prefix, { onProgress });
+        const parentPath = currentPathSegments.join('/');
+        const { usedBytes } = await storageApiClient.uploadFiles(currentUploadFiles, parentPath, { onProgress });
         if (this.state.currentLocation.type === STORAGE_LOCATION_TYPE.private) {
           const newStorage = cloneDeep(this.props.storage);
           const privateStorage = newStorage.locations.find(location => location.type === STORAGE_LOCATION_TYPE.private);
@@ -293,12 +309,12 @@ class StorageBrowser extends React.Component {
 
     const { storageApiClient, t } = this.props;
     const { initialPathSegments, uploadPathSegments } = this.state.currentLocation;
-    const prefix = getPrefix(pathSegments);
+    const parentPath = pathSegments.join('/');
 
     let objects;
     try {
-      const result = await storageApiClient.getObjects(prefix);
-      objects = result.objects;
+      const result = await storageApiClient.getCdnObjects(parentPath);
+      objects = mapCdnObjectsToLegacyDataStructure(result.objects);
     } catch (error) {
       handleApiError({ error, logger, t });
       objects = [];
@@ -347,11 +363,10 @@ class StorageBrowser extends React.Component {
   async handleDeleteFile(fileName) {
     const { storageApiClient, onSelectionChanged, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
-    const prefix = getPrefix(currentPathSegments);
-    const objectName = `${prefix}${fileName}`;
+    const fullPath = [...currentPathSegments, fileName].join('/');
 
     try {
-      const { usedBytes } = await storageApiClient.deleteCdnObject(prefix, fileName);
+      const { usedBytes } = await storageApiClient.deleteCdnObject(fullPath);
       if (this.state.currentLocation.type === STORAGE_LOCATION_TYPE.private) {
         const newStorage = cloneDeep(this.props.storage);
         const privateStorage = newStorage.locations.find(location => location.type === STORAGE_LOCATION_TYPE.private);
@@ -359,14 +374,14 @@ class StorageBrowser extends React.Component {
         this.props.setStorage(newStorage);
       }
 
-      if (selectedRowKeys.includes(objectName)) {
-        onSelectionChanged([], true);
+      if (selectedRowKeys.includes(fullPath)) {
+        onSelectionChanged([]);
       }
     } catch (error) {
       handleApiError({ error, logger, t });
     }
 
-    await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key !== objectName));
+    await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key !== fullPath));
   }
 
   ensureVirtualFolders(currentPathSegments, existingRecords, virtualFolderPathSegments) {

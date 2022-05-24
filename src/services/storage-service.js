@@ -1,4 +1,3 @@
-import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
@@ -7,25 +6,28 @@ import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import LessonStore from '../stores/lesson-store.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import { componseUniqueFileName } from '../utils/path-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { getPrivateStoragePathForRoomId, getPrefixFromStoragePath, getStoragePathType, STORAGE_PATH_TYPE } from '../ui/path-helper.js';
+import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { getPrivateStoragePathForRoomId, getPrefixFromStoragePath, getStoragePathType, STORAGE_PATH_TYPE, getPathSegments } from '../ui/path-helper.js';
 
 const { BadRequest } = httpErrors;
 
 export default class StorageService {
-  static get inject() { return [Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, LockStore, TransactionRunner]; }
+  static get inject() { return [ServerConfig, Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, LockStore, TransactionRunner]; }
 
-  constructor(cdn, roomStore, roomInvitationStore, lessonStore, storagePlanStore, userStore, lockStore, transactionRunner) {
+  // eslint-disable-next-line max-params
+  constructor(serverConfig, cdn, roomStore, roomInvitationStore, lessonStore, storagePlanStore, userStore, lockStore, transactionRunner) {
     this.cdn = cdn;
     this.lockStore = lockStore;
     this.roomStore = roomStore;
     this.userStore = userStore;
     this.lessonStore = lessonStore;
+    this.serverConfig = serverConfig;
     this.storagePlanStore = storagePlanStore;
     this.transactionRunner = transactionRunner;
     this.roomInvitationStore = roomInvitationStore;
@@ -92,7 +94,7 @@ export default class StorageService {
     }
   }
 
-  async uploadFiles({ prefix, files, storageClaimingUserId }) {
+  async uploadFiles({ parentPath, files, storageClaimingUserId }) {
     let lock;
     let usedBytes = 0;
 
@@ -100,14 +102,14 @@ export default class StorageService {
       lock = await this.lockStore.takeUserLock(storageClaimingUserId);
 
       const user = await this.userStore.getUserById(storageClaimingUserId);
-      const storagePathType = getStoragePathType(prefix);
+      const storagePathType = getStoragePathType(parentPath);
 
       if (storagePathType === STORAGE_PATH_TYPE.unknown) {
-        throw new Error(`Invalid storage path '${prefix}'`);
+        throw new Error(`Invalid storage path '${parentPath}'`);
       }
 
       if (storagePathType === STORAGE_PATH_TYPE.public) {
-        await this._uploadFiles(files, prefix);
+        await this._uploadFiles(files, parentPath);
         return { usedBytes };
       }
 
@@ -123,7 +125,7 @@ export default class StorageService {
         throw new Error(`Not enough storage space: available ${prettyBytes(availableBytes)}, required ${prettyBytes(requiredBytes)}`);
       }
 
-      await this._uploadFiles(files, prefix);
+      await this._uploadFiles(files, parentPath);
       usedBytes = await this._updateUserUsedBytes(user._id);
     } finally {
       this.lockStore.releaseLock(lock);
@@ -132,20 +134,38 @@ export default class StorageService {
     return { usedBytes };
   }
 
-  async listObjects({ prefix, recursive }) {
+  async getObjects({ parentPath, recursive }) {
+    const prefix = parentPath ? `${parentPath}/` : '';
     const objects = await this.cdn.listObjects({ prefix, recursive });
-    return objects;
+
+    const mappedObjects = objects.map(obj => {
+      const isDirectory = !!obj.prefix;
+      const segments = getPathSegments(isDirectory ? obj.prefix : obj.name);
+      const encodedSegments = segments.map(s => encodeURIComponent(s));
+      return {
+        displayName: segments[segments.length - 1],
+        parentPath: segments.slice(0, -1).join('/'),
+        fullPath: segments.join('/'),
+        url: [this.serverConfig.cdnRootUrl, ...encodedSegments].join('/'),
+        portableUrl: `cdn://${encodedSegments.join('/')}`,
+        createdOn: isDirectory ? null : obj.lastModified,
+        type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
+        size: isDirectory ? null : obj.size
+      };
+    });
+
+    return mappedObjects;
   }
 
-  async deleteObject({ prefix, objectName, storageClaimingUserId }) {
+  async deleteObject({ path, storageClaimingUserId }) {
     let lock;
     let usedBytes = 0;
 
     try {
       lock = await this.lockStore.takeUserLock(storageClaimingUserId);
-      await this._deleteObjects([urls.concatParts(prefix, objectName)]);
+      await this._deleteObjects([path]);
 
-      if (getStoragePathType(prefix) === STORAGE_PATH_TYPE.private) {
+      if (getStoragePathType(path) === STORAGE_PATH_TYPE.private) {
         usedBytes = await this._updateUserUsedBytes(storageClaimingUserId);
       }
 
@@ -153,7 +173,6 @@ export default class StorageService {
     } finally {
       this.lockStore.releaseLock(lock);
     }
-
   }
 
   async deleteRoomAndResources({ roomId, roomOwnerId }) {
@@ -169,9 +188,9 @@ export default class StorageService {
         await this.roomStore.deleteRoomById(roomId, { session });
       });
 
-      const roomPrivateStorageObjects = await this.listObjects({ prefix: getPrivateStoragePathForRoomId(roomId), recursive: true });
+      const roomPrivateStorageObjects = await this.getObjects({ parentPath: getPrivateStoragePathForRoomId(roomId), recursive: true });
       if (roomPrivateStorageObjects.length) {
-        await this._deleteObjects(roomPrivateStorageObjects.map(({ name }) => name));
+        await this._deleteObjects(roomPrivateStorageObjects.map(({ fullPath }) => fullPath));
         usedBytes = await this._updateUserUsedBytes(roomOwnerId);
       }
 
@@ -237,14 +256,15 @@ export default class StorageService {
     return totalSize;
   }
 
-  async _getFolderSize(prefix) {
+  async _getFolderSize(folderPath) {
+    const prefix = `${folderPath}/`;
     const objects = await this.cdn.listObjects({ prefix, recursive: true });
     return objects.reduce((totalSize, obj) => totalSize + obj.size, 0);
   }
 
-  async _uploadFiles(files, prefix) {
+  async _uploadFiles(files, parentPath) {
     const uploads = files.map(async file => {
-      const fileName = componseUniqueFileName(file.originalname, prefix);
+      const fileName = componseUniqueFileName(file.originalname, parentPath);
       await this.cdn.uploadObject(fileName, file.path, {});
     });
     await Promise.all(uploads);

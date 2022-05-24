@@ -1,25 +1,16 @@
 import joi from 'joi';
-import { boolStringSchema, idOrKeySchema } from './shared-schemas.js';
-
-export const getObjectsQuerySchema = joi.object({
-  prefix: joi.string(),
-  recursive: boolStringSchema
-});
+import { idOrKeySchema } from './shared-schemas.js';
 
 export const getCdnObjectsQuerySchema = joi.object({
   parentPath: joi.string()
 });
 
-export const deleteObjectQuerySchema = joi.object({
-  prefix: joi.string()
+export const deleteCdnObjectQuerySchema = joi.object({
+  path: joi.string()
 });
 
-export const deleteObjectParamSchema = joi.object({
-  objectName: joi.string()
-});
-
-export const postObjectsBodySchema = joi.object({
-  prefix: joi.string().required()
+export const postCdnObjectsBodySchema = joi.object({
+  parentPath: joi.string().required()
 });
 
 export const getStoragePlansQuerySchema = joi.object({
