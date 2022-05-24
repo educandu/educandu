@@ -45,7 +45,7 @@ function Tests({ PageTemplate }) {
 
   const handleOnFileClick = newFile => {
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
-      setCurrentLoadedDirectoryPath(newFile.fullPath);
+      setCurrentLoadedDirectoryPath(newFile.path);
     } else {
       setSelectedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
     }

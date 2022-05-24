@@ -39,7 +39,7 @@ const logger = new Logger(import.meta.url);
 
 function mapCdnObjectsToLegacyDataStructure(cdnObjects) {
   return cdnObjects.map(obj => {
-    const unencodedFullPath = getPathSegments(obj.fullPath).map(s => decodeURIComponent(s)).join('/');
+    const unencodedFullPath = getPathSegments(obj.path).map(s => decodeURIComponent(s)).join('/');
     return obj.type === CDN_OBJECT_TYPE.directory
       ? {
         prefix: `${unencodedFullPath}/`,
@@ -363,10 +363,10 @@ class StorageBrowser extends React.Component {
   async handleDeleteFile(fileName) {
     const { storageApiClient, onSelectionChanged, t } = this.props;
     const { currentPathSegments, selectedRowKeys } = this.state;
-    const fullPath = [...currentPathSegments, fileName].join('/');
+    const path = [...currentPathSegments, fileName].join('/');
 
     try {
-      const { usedBytes } = await storageApiClient.deleteCdnObject(fullPath);
+      const { usedBytes } = await storageApiClient.deleteCdnObject(path);
       if (this.state.currentLocation.type === STORAGE_LOCATION_TYPE.private) {
         const newStorage = cloneDeep(this.props.storage);
         const privateStorage = newStorage.locations.find(location => location.type === STORAGE_LOCATION_TYPE.private);
@@ -374,14 +374,14 @@ class StorageBrowser extends React.Component {
         this.props.setStorage(newStorage);
       }
 
-      if (selectedRowKeys.includes(fullPath)) {
+      if (selectedRowKeys.includes(path)) {
         onSelectionChanged([]);
       }
     } catch (error) {
       handleApiError({ error, logger, t });
     }
 
-    await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key !== fullPath));
+    await this.refreshFiles(currentPathSegments, selectedRowKeys.filter(key => key !== path));
   }
 
   ensureVirtualFolders(currentPathSegments, existingRecords, virtualFolderPathSegments) {

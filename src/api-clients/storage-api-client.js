@@ -36,10 +36,10 @@ class StorageApiClient {
     return request.then(res => res.data);
   }
 
-  deleteCdnObject(fullPath) {
+  deleteCdnObject(path) {
     return this.httpClient
       .delete(
-        `/api/v1/storage/objects?path=${encodeURIComponent(fullPath)}`,
+        `/api/v1/storage/objects?path=${encodeURIComponent(path)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

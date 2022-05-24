@@ -145,7 +145,7 @@ export default class StorageService {
       return {
         displayName: segments[segments.length - 1],
         parentPath: segments.slice(0, -1).join('/'),
-        fullPath: segments.join('/'),
+        path: segments.join('/'),
         url: [this.serverConfig.cdnRootUrl, ...encodedSegments].join('/'),
         portableUrl: `cdn://${encodedSegments.join('/')}`,
         createdOn: isDirectory ? null : obj.lastModified,
@@ -190,7 +190,7 @@ export default class StorageService {
 
       const roomPrivateStorageObjects = await this.getObjects({ parentPath: getPrivateStoragePathForRoomId(roomId), recursive: true });
       if (roomPrivateStorageObjects.length) {
-        await this._deleteObjects(roomPrivateStorageObjects.map(({ fullPath }) => fullPath));
+        await this._deleteObjects(roomPrivateStorageObjects.map(({ path }) => path));
         usedBytes = await this._updateUserUsedBytes(roomOwnerId);
       }
 

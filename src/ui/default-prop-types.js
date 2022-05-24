@@ -25,7 +25,7 @@ export const storageLocationShape = PropTypes.shape({
 export const cdnObjectShape = PropTypes.shape({
   displayName: PropTypes.string.isRequired,
   parentPath: PropTypes.string.isRequired,
-  fullPath: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   portableUrl: PropTypes.string.isRequired,
   createdOn: PropTypes.string,
