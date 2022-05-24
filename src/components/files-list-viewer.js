@@ -151,13 +151,14 @@ function FilesListViewer({
   }
 
   const rows = files.map(file => {
+    const isDirectory = file.type === CDN_OBJECT_TYPE.directory;
     return {
       key: file.portableUrl,
       name: file.displayName,
       size: file.size,
-      isDirectory: file.type === CDN_OBJECT_TYPE.directory,
+      isDirectory,
       createdOn: file.createdOn,
-      typeTranslated: t(`common:resource_${getResourceType(file.url)}`),
+      typeTranslated: t(isDirectory ? 'common:folder' : `common:resource_${getResourceType(file.url)}`),
       sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale }) : '---',
       createdOnFormatted: file.createdOn ? formatDate(file.createdOn, 'PPp') : '---'
     };
