@@ -15,7 +15,7 @@ function Login({ PageTemplate, SiteLogo }) {
     window.location = request.query.redirect || urls.getDefaultLoginRedirectUrl();
   };
 
-  const handleLogonClick = () => {
+  const handleLoginClick = () => {
     formRef.current.submit();
   };
 
@@ -34,9 +34,9 @@ function Login({ PageTemplate, SiteLogo }) {
           <div className="LoginPage-forgotPasswordLink">
             <a href={urls.getResetPasswordUrl()}>{t('forgotPassword')}</a>
           </div>
-          <div className="LoginPage-logonButton">
-            <Button type="primary" size="large" onClick={handleLogonClick} block>
-              {t('common:logon')}
+          <div className="LoginPage-loginButton">
+            <Button type="primary" size="large" onClick={handleLoginClick} block>
+              {t('common:login')}
             </Button>
           </div>
         </div>

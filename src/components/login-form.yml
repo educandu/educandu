@@ -4,8 +4,8 @@ enterEmailOrUsername:
 enterPassword:
   en: Please enter your password
   de: Bitte geben Sie Ihr Kennwort an
-logonFailed:
-  en: Logon failed. Please check your input.
+loginFailed:
+  en: Login failed. Please check your input.
   de: Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.
 emailOrUsername:
   en: Email address or user name

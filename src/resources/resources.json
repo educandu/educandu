@@ -459,7 +459,7 @@
     "resources": {
       "enterEmailOrUsername": "Please enter your email address or user name",
       "enterPassword": "Please enter your password",
-      "logonFailed": "Logon failed. Please check your input.",
+      "loginFailed": "Login failed. Please check your input.",
       "emailOrUsername": "Email address or user name"
     }
   },
@@ -469,7 +469,7 @@
     "resources": {
       "enterEmailOrUsername": "Bitte geben Sie Ihre E-Mail-Adresse oder Ihren Benutzernamen an",
       "enterPassword": "Bitte geben Sie Ihr Kennwort an",
-      "logonFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.",
+      "loginFailed": "Die Anmeldung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Eingabe.",
       "emailOrUsername": "E-Mail-Adresse oder Benutzername"
     }
   },
@@ -477,18 +477,18 @@
     "namespace": "login",
     "language": "en",
     "resources": {
-      "logon": "Log on",
+      "login": "Login",
       "register": "Register",
-      "logonState": "You are logged on as <0>{username}</0>"
+      "loginState": "You are logged on as <0>{username}</0>"
     }
   },
   {
     "namespace": "login",
     "language": "de",
     "resources": {
-      "logon": "Anmelden",
+      "login": "Anmelden",
       "register": "Registrieren",
-      "logonState": "Sie sind angemeldet als <0>{username}</0>"
+      "loginState": "Sie sind angemeldet als <0>{username}</0>"
     }
   },
   {
@@ -663,7 +663,7 @@
     "resources": {
       "savePassword": "Save password",
       "passwordChangedSuccessfully": "Your password was changed successfully.",
-      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}.",
+      "redirectMessage": "You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}.",
       "passwordResetFailure": "The password reset code is invalid or expired.",
       "homeLink": "Home"
     }
@@ -686,7 +686,7 @@
       "registrationSuccess": "Congratulations! You are now successfully registered.",
       "registrationFailure": "The confirmation code is invalid or expired.",
       "homeLink": "Home",
-      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
+      "redirectMessage": "You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
     }
   },
   {
@@ -832,8 +832,9 @@
       "confirmTerms": "Please confirm your agreement with the terms and conditions",
       "termsAndConditionsConfirmation": "I have read the <0>terms and conditions</0> and agree to them.",
       "register": "Register",
-      "registrationInProgress": "We have sent you an email. There you will find the next steps in order to complete the registration.",
-      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
+      "registrationConfirmationHeader": "One more step remaining…",
+      "registrationConfirmationBody": "Please confirm your registration with the link we have just sent you via email.\nThe link is valid for 24 hours. After completing this step you will be able to log in to your account.\n",
+      "goToLoginPage": "Go to the login page"
     }
   },
   {
@@ -843,8 +844,9 @@
       "confirmTerms": "Bitte erklären Sie sich mit den Nutzungsbedingungen einverstanden",
       "termsAndConditionsConfirmation": "Ich habe die <0>Nutzungsbedingungen</0> gelesen und bin damit einverstanden.",
       "register": "Registrieren",
-      "registrationInProgress": "Wir haben Ihnen eine E-Mail geschickt. Dort finden Sie die nächsten Schritte, um Ihre Registrierung abzuschließen.",
-      "redirectMessage": "Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet."
+      "registrationConfirmationHeader": "Ein Schritt fehlt noch…",
+      "registrationConfirmationBody": "Bitte bestätigen Sie Ihre Registrierung mit dem Link, den wir Ihnen gerade via E-Mail geschickt haben.\nDer Link ist 24 Stunden lang gültig. Nach diesem Schritt können Sie sich in Ihr Konto einloggen.\n",
+      "goToLoginPage": "Zur Anmeldeseite gehen"
     }
   },
   {
@@ -857,7 +859,7 @@
       "requestReset": "Request reset",
       "resetInProgressConfirmation": "We have received your request.",
       "resetInProgressNextSteps": "In case the provided email address is registered with our website, you will receive a\nmessage containing the next steps in order to generate a new password within the next minutes.\n",
-      "redirectMessage": "You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
+      "redirectMessage": "You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}."
     }
   },
   {
@@ -1900,8 +1902,8 @@
       "urlCopiedToClipboard": "The URL was copied to the clipboard",
       "copyUrlToClipboardError": "Error copying the URL to the clipboard due to missing access permissions.",
       "accept": "Accept",
-      "logon": "Log on",
-      "logoff": "Log off",
+      "login": "Login",
+      "logout": "Logout",
       "created": "Created",
       "createdOn": "Creation date",
       "completedOn": "Completion date",
@@ -2032,8 +2034,8 @@
       "urlCopiedToClipboard": "Die URL wurde in die Zwischenablage kopiert",
       "copyUrlToClipboardError": "Fehler beim Kopieren der URL in die Zwischenablage aufgrund fehlender Zugriffsberechtigung.",
       "accept": "Akzeptieren",
-      "logon": "Anmelden",
-      "logoff": "Abmelden",
+      "login": "Anmelden",
+      "logout": "Abmelden",
       "created": "Erstellt",
       "createdOn": "Erstellungsdatum",
       "completedOn": "Abgeschlossen am",

@@ -7,9 +7,16 @@ termsAndConditionsConfirmation:
 register:
   en: Register
   de: Registrieren
-registrationInProgress:
-  en: We have sent you an email. There you will find the next steps in order to complete the registration.
-  de: Wir haben Ihnen eine E-Mail geschickt. Dort finden Sie die nächsten Schritte, um Ihre Registrierung abzuschließen.
-redirectMessage:
-  en: You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}.
-  de: Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.
+registrationConfirmationHeader:
+  en: One more step remaining…
+  de: Ein Schritt fehlt noch…
+registrationConfirmationBody:
+  en: |
+    Please confirm your registration with the link we have just sent you via email.
+    The link is valid for 24 hours. After completing this step you will be able to log in to your account.
+  de: |
+    Bitte bestätigen Sie Ihre Registrierung mit dem Link, den wir Ihnen gerade via E-Mail geschickt haben.
+    Der Link ist 24 Stunden lang gültig. Nach diesem Schritt können Sie sich in Ihr Konto einloggen.
+goToLoginPage:
+  en: Go to the login page
+  de: Zur Anmeldeseite gehen

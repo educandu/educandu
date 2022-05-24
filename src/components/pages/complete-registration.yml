@@ -8,5 +8,5 @@ homeLink:
   en: Home
   de: Home
 redirectMessage:
-  en: You will be redirected to the <0>logon page</0> in {seconds, plural, =1 {# second} other {# seconds}}.
+  en: You will be redirected to the <0>login page</0> in {seconds, plural, =1 {# second} other {# seconds}}.
   de: Sie werden in {seconds, plural, =1 {# Sekunde} other {# Sekunden}} auf die <0>Anmeldeseite</0> weitergeleitet.

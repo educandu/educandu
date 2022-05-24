@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import urls from '../../utils/urls.js';
-import Countdown from '../countdown.js';
 import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';
@@ -103,23 +102,9 @@ function Register({ PageTemplate, SiteLogo }) {
 
   const registrationConfirmation = (
     <div className="RegisterPage-confirmation">
-      <p>{t('registrationInProgress')}</p>
-      <Countdown
-        seconds={10}
-        isRunning={!!user}
-        onComplete={() => {
-          window.location = urls.getLoginUrl();
-        }}
-        >
-        {seconds => (
-          <Trans
-            t={t}
-            i18nKey="redirectMessage"
-            values={{ seconds }}
-            components={[<a key="login-link" href={urls.getLoginUrl()} />]}
-            />
-        )}
-      </Countdown>
+      <h1>{t('registrationConfirmationHeader')}</h1>
+      <p>{t('registrationConfirmationBody')}</p>
+      <p><a href={urls.getLoginUrl()}>{t('goToLoginPage')}</a></p>
     </div>
   );
 

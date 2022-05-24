@@ -29,7 +29,7 @@ function Login() {
       <span>
         <Trans
           t={t}
-          i18nKey="logonState"
+          i18nKey="loginState"
           components={[<b key="username" />]}
           values={{ username: user.username }}
           />
@@ -45,7 +45,7 @@ function Login() {
 
   const createAnonymousUserHeader = () => (
     <div>
-      <a onClick={handleLoginClick}>{t('logon')}</a>
+      <a onClick={handleLoginClick}>{t('login')}</a>
       <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a onClick={handleRegisterClick}>{t('register')}</a>
     </div>

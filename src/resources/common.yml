@@ -135,11 +135,11 @@ copyUrlToClipboardError:
 accept:
   en: Accept
   de: Akzeptieren
-logon:
-  en: Log on
+login:
+  en: Login
   de: Anmelden
-logoff:
-  en: Log off
+logout:
+  en: Logout
   de: Abmelden
 created:
   en: Created
