@@ -81,7 +81,6 @@ function MediaPlayer({
     <div className="MediaPlayer">
       <MediaPlayerTrack
         trackRef={trackRef}
-        marks={marks}
         volume={volume}
         isMuted={isMuted}
         sourceUrl={sourceUrl}
@@ -113,6 +112,8 @@ function MediaPlayer({
         standalone={audioOnly}
         extraContentTop={extraContentTop}
         marks={marks}
+        onMarkReached={onMarkReached}
+        onEndReached={onEndReached}
         />
     </div>
   );
