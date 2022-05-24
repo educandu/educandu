@@ -20,13 +20,13 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
 
   useEffect(() => {
     // In order to not have flickering on the page while the new page renders we keep the dimensions
-    // of the old page fixed until `handlePageRenderSuccess` has been called by the next page.
+    // of the old page fixed until the next document or page event has fired.
     const boundingClientRect = viewerRef.current.getBoundingClientRect();
     setViewerStyle({ height: boundingClientRect.height, width: boundingClientRect.width });
     setActualPageNumber(pageNumber);
   }, [pageNumber]);
 
-  const handlePageRenderSuccess = () => {
+  const handleDocumentOrPageEvent = () => {
     setTimeout(() => setViewerStyle({}), 0);
   };
 
@@ -69,6 +69,7 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
             noData={renderNoDataComponent}
             error={renderDocumentErrorComponent}
             onLoadSuccess={onLoadSuccess}
+            onLoadError={handleDocumentOrPageEvent}
             >
             <Page
               key={actualPageNumber}
@@ -77,7 +78,8 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
               width={stretchDirection === PDF_DOCUMENT_STRETCH_DIRECTION.horizontal ? containerWidth : null}
               error={renderPageErrorComponent}
               renderTextLayer={showTextOverlay}
-              onRenderSuccess={handlePageRenderSuccess}
+              onRenderSuccess={handleDocumentOrPageEvent}
+              onRenderError={handleDocumentOrPageEvent}
               />
           </Document>
         </div>
