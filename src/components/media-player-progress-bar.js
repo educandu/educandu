@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+
+const MARK_TIMECODE_WIDTH = 40;
 
 function MediaPlayerProgressBar({ durationInMilliseconds, playedMilliseconds, marks, onSeek }) {
   const progressBarRef = useRef(null);
@@ -11,7 +14,15 @@ function MediaPlayerProgressBar({ durationInMilliseconds, playedMilliseconds, ma
     const leftPx = msToPxRatio * mark.timecode;
 
     return (
-      <div key={mark.key} className="MediaPlayerProgressBar-mark" style={{ left: `${leftPx}px` }} />
+      <Fragment>
+        <div key={mark.key} className="MediaPlayerProgressBar-mark" style={{ left: `${leftPx}px` }} />
+        <div
+          className="MediaPlayerProgressBar-markTimecode"
+          style={{ width: `${MARK_TIMECODE_WIDTH}px`, left: `${leftPx - (MARK_TIMECODE_WIDTH / 2)}px` }}
+          >
+          {formatMillisecondsAsDuration(mark.timecode)}
+        </div>
+      </Fragment>
     );
   };
 

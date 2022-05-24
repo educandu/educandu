@@ -1,5 +1,6 @@
-@edu-progress-bar-height: 10px;
+@edu-progress-bar-height: 8px;
 @edu-progress-bar-vertical-padding: 1px;
+@edu-progress-bar-hover-height: @edu-progress-bar-height + 2 * @edu-progress-bar-vertical-padding;
 
 .MediaPlayerProgressBar {
   position: relative;
@@ -16,7 +17,7 @@
       & .MediaPlayerProgressBar-baseBar,
       & .MediaPlayerProgressBar-progress,
       & .MediaPlayerProgressBar-mark {
-        height: 12px;
+        height: @edu-progress-bar-hover-height;
         padding: 0;
         top: 0;
       }
@@ -46,4 +47,12 @@
   height: @edu-progress-bar-height;
   border-right: 1px dotted @edu-white;
   border-left: 1px dotted @edu-border-color-base;
+}
+
+.MediaPlayerProgressBar-markTimecode {
+  position: absolute;
+  font-size: 10px;
+  text-align: center;
+  color: @edu-text-color;
+  top: @edu-progress-bar-hover-height + 5px;
 }
