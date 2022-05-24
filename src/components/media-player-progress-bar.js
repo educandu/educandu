@@ -7,7 +7,14 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 const TOOLTIP_WIDTH_IN_PX = 60;
 const MARK_TIMECODE_WIDTH_IN_PX = 40;
 
-function MediaPlayerProgressBar({ durationInMilliseconds, playedMilliseconds, marks, onSeek }) {
+function MediaPlayerProgressBar({
+  durationInMilliseconds,
+  playedMilliseconds,
+  marks,
+  onSeek,
+  onSeekStart,
+  onSeekEnd
+}) {
   const progressBarRef = useRef(null);
   const isMediaLoaded = !!durationInMilliseconds;
 
@@ -18,6 +25,7 @@ function MediaPlayerProgressBar({ durationInMilliseconds, playedMilliseconds, ma
   const stopDragging = () => {
     setTooltipTitle(null);
     setIsDragging(false);
+    onSeekEnd();
   };
 
   const updateMsToPxRatio = useCallback(() => {
@@ -45,6 +53,7 @@ function MediaPlayerProgressBar({ durationInMilliseconds, playedMilliseconds, ma
     if (!isMediaLoaded || isTouchDevice()) {
       return;
     }
+    onSeekStart();
     setIsDragging(true);
     seekToClientX(event.clientX);
   };
@@ -53,6 +62,7 @@ function MediaPlayerProgressBar({ durationInMilliseconds, playedMilliseconds, ma
     if (!isMediaLoaded) {
       return;
     }
+    onSeekStart();
     setIsDragging(true);
     seekToClientX(event.touches[0].clientX);
   };
@@ -153,11 +163,15 @@ MediaPlayerProgressBar.propTypes = {
     text: PropTypes.string
   })),
   onSeek: PropTypes.func.isRequired,
+  onSeekEnd: PropTypes.func,
+  onSeekStart: PropTypes.func,
   playedMilliseconds: PropTypes.number.isRequired
 };
 
 MediaPlayerProgressBar.defaultProps = {
-  marks: []
+  marks: [],
+  onSeekEnd: () => {},
+  onSeekStart: () => {}
 };
 
 export default MediaPlayerProgressBar;

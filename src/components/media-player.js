@@ -24,6 +24,7 @@ function MediaPlayer({
   const trackRef = useRef();
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
+  const [isSeeking, setIsSeeking] = useState(false);
   const [lastReachedMark, setLastReachedMark] = useState(null);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
@@ -38,11 +39,11 @@ function MediaPlayer({
 
   useEffect(() => {
     const reachedMark = marks.find(mark => isMarkReached(mark, playedMilliseconds));
-    if (reachedMark && reachedMark.key !== lastReachedMark?.key) {
+    if (!isSeeking && reachedMark && reachedMark.key !== lastReachedMark?.key) {
       onMarkReached(reachedMark);
       setLastReachedMark(reachedMark);
     }
-  }, [playedMilliseconds, marks, lastReachedMark, isMarkReached, onMarkReached]);
+  }, [isSeeking, isMarkReached, marks, lastReachedMark, onMarkReached, playedMilliseconds]);
 
   const handleSeek = milliseconds => {
     trackRef.current.seekTo(milliseconds);
@@ -57,7 +58,17 @@ function MediaPlayer({
   };
 
   const handleEndReached = () => {
-    onEndReached();
+    if (!isSeeking) {
+      onEndReached();
+    }
+  };
+
+  const handleSeekStart = () => {
+    setIsSeeking(true);
+  };
+
+  const handleSeekEnd = () => {
+    setIsSeeking(false);
   };
 
   mediaPlayerRef.current = {
@@ -102,6 +113,8 @@ function MediaPlayer({
       <MediaPlayerProgressBar
         marks={marks}
         onSeek={handleSeek}
+        onSeekStart={handleSeekStart}
+        onSeekEnd={handleSeekEnd}
         playedMilliseconds={playedMilliseconds}
         durationInMilliseconds={durationInMilliseconds}
         />
