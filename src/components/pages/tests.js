@@ -1,66 +1,93 @@
+/* eslint-disable no-console */
+
 import PropTypes from 'prop-types';
+import { message, Select } from 'antd';
 import FilePreview from '../file-preview.js';
-import { useService } from '../container-context.js';
-import FilesGridViewer from '../files-grid-viewer.js';
-import FilesListViewer from '../files-list-viewer.js';
-import { getPathSegments } from '../../ui/path-helper.js';
-import ClientConfig from '../../bootstrap/client-config.js';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useStorage } from '../storage-context.js';
+import React, { useEffect, useState } from 'react';
+import { CDN_OBJECT_TYPE } from '../../domain/constants.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
+import FilesViewer, { FILE_VIEWER_DISPLAY } from '../files-viewer.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
 
 function Tests({ PageTemplate }) {
+  const { locations } = useStorage();
+  const currentLocation = locations[0];
   const [files, setFiles] = useState([]);
-  const clientConfig = useService(ClientConfig);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-
-  const convertCdnObjectsToFileRecords = useCallback(objects => {
-    return objects.map(obj => {
-      const isDirectory = !obj.name;
-      const path = obj.name || obj.prefix;
-      const segments = getPathSegments(path);
-      const name = segments[segments.length - 1];
-      const url = isDirectory ? null : `${clientConfig.cdnRootUrl}/${path}`;
-
-      return { name, path, size: obj.size, lastModified: obj.lastModified, isDirectory, url };
-    });
-  }, [clientConfig]);
+  const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILE_VIEWER_DISPLAY.list);
+  const [currentDisplayedDirectoryPath, setCurrentDisplayedDirectoryPath] = useState(null);
+  const [currentLoadedDirectoryPath, setCurrentLoadedDirectoryPath] = useState(currentLocation.initialPath);
 
   useEffect(() => {
+    if (!currentLoadedDirectoryPath) {
+      return;
+    }
+
     (async () => {
-      const { objects } = await storageApiClient.getObjects('media/wjqSKgjiVoTjRWkFaagQfR/');
-      setFiles(convertCdnObjectsToFileRecords(objects));
+      try {
+        setIsLoading(true);
+        setSelectedFile(null);
+        const responseData = await storageApiClient.getCdnObjects(currentLoadedDirectoryPath);
+        setCurrentDisplayedDirectoryPath(currentLoadedDirectoryPath);
+        setCurrentLoadedDirectoryPath(null);
+        setFiles(responseData.objects);
+      } catch (err) {
+        console.log(err);
+        message.error(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     })();
-  }, [storageApiClient, convertCdnObjectsToFileRecords]);
+  }, [currentLoadedDirectoryPath, storageApiClient]);
 
-  const handleFileClick = file => {
-    // eslint-disable-next-line no-console
-    console.log(`Clicked file '${file.name}'`);
-  };
-
-  const handleNavigateToParentClick = () => {
-    // eslint-disable-next-line no-console
-    console.log('Clicked "navigate to parent"');
-  };
-
-  const handleFileSelectionChange = file => {
-    // eslint-disable-next-line no-console
-    console.log('File selected: ', file?.name || null);
-  };
-
-  const handleDeleteFileClick = file => {
-    // eslint-disable-next-line no-console
-    console.log('Delete file: ', file.name);
-  };
-
-  const handlePreviewFileClick = file => {
-    // eslint-disable-next-line no-console
-    console.log('Preview file: ', file.name);
+  const handleOnFileClick = newFile => {
+    if (newFile.type === CDN_OBJECT_TYPE.directory) {
+      setCurrentLoadedDirectoryPath(newFile.path);
+    } else {
+      setSelectedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
+    }
   };
 
   return (
     <PageTemplate>
       <div className="TestsPage">
+        <h1>Files Viewer</h1>
+        <div>
+          DISPLAY:
+          &nbsp;
+          <Select
+            options={Object.values(FILE_VIEWER_DISPLAY).map(v => ({ label: v, value: v }))}
+            value={filesViewerDisplay}
+            onChange={setFilesViewerDisplay}
+            />
+          <br />
+          CURRENT DIRECTORY:
+          &nbsp;
+          {currentDisplayedDirectoryPath || '---'}
+          <br />
+          SELECTED FILE:
+          &nbsp;
+          {selectedFile?.displayName || '---'}
+        </div>
+        <br />
+        <div style={{ height: '400px', display: 'flex', justifyContent: 'stretch', alignItems: 'stretch', border: '1px solid gray' }}>
+          <FilesViewer
+            files={files}
+            display={filesViewerDisplay}
+            onFileClick={handleOnFileClick}
+            selectedFileUrl={selectedFile?.portableUrl}
+            onDeleteClick={() => console.log('onDeleteClick')}
+            onNavigateToParentClick={() => setCurrentLoadedDirectoryPath(currentDisplayedDirectoryPath.split('/').slice(0, -1).join('/'))}
+            onPreviewClick={() => console.log('onPreviewClick')}
+            canNavigateToParent={currentDisplayedDirectoryPath?.length > currentLocation.rootPath.length}
+            canDelete={currentLocation.isDeletionEnabled}
+            isLoading={isLoading}
+            />
+        </div>
+        <hr />
         <h1>File preview</h1>
         <h6>IMAGE (Raster)</h6>
         <div style={{ backgroundColor: '#f6f6f6', padding: '20px' }}>
@@ -104,29 +131,6 @@ function Tests({ PageTemplate }) {
           url="https://non.existent.com/file.backup"
           createdOn={new Date('2022-03-04T09:48:46.524Z')}
           size={44722}
-          />
-        <hr />
-        <h1>File Grid viewer</h1>
-        <FilesGridViewer
-          files={files}
-          canDelete
-          canNavigateToParent
-          onFileClick={handleFileClick}
-          onDeleteClick={handleDeleteFileClick}
-          onPreviewClick={handlePreviewFileClick}
-          onSelectionChange={handleFileSelectionChange}
-          onNavigateToParentClick={handleNavigateToParentClick}
-          />
-        <hr />
-        <h1>File List viewer</h1>
-        <FilesListViewer
-          files={files}
-          canDelete
-          canNavigateToParent
-          onDeleteClick={handleDeleteFileClick}
-          onPreviewClick={handlePreviewFileClick}
-          onSelectionChange={handleFileSelectionChange}
-          onNavigateToParentClick={handleNavigateToParentClick}
           />
       </div>
     </PageTemplate>

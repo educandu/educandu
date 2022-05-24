@@ -20,7 +20,6 @@ describe('storage-service', () => {
   let roomStore;
   let lockStore;
   let container;
-  let prefix;
   let roomId;
   let myUser;
   let files;
@@ -73,6 +72,7 @@ describe('storage-service', () => {
   describe('uploadFiles', () => {
     let lock;
     let result;
+    let parentPath;
 
     beforeEach(() => {
       lock = { id: uniqueId.create() };
@@ -82,11 +82,11 @@ describe('storage-service', () => {
 
     describe('when the storage type is unknown', () => {
       beforeEach(async () => {
-        prefix = 'other-path/media/';
+        parentPath = 'other-path/media';
         files = [{}];
 
         try {
-          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
+          await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -97,7 +97,7 @@ describe('storage-service', () => {
       });
 
       it('should throw an error', () => {
-        expect(result).toBe(`Invalid storage path '${prefix}'`);
+        expect(result).toBe(`Invalid storage path '${parentPath}'`);
       });
 
       it('should release the lock', () => {
@@ -107,14 +107,14 @@ describe('storage-service', () => {
 
     describe('when the storage type is public', () => {
       beforeEach(async () => {
-        prefix = 'media/';
+        parentPath = 'media';
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
         ];
         cdn.uploadObject.resolves();
 
-        result = await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
+        result = await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -138,7 +138,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is private but the user has no storage plan allocated', () => {
       beforeEach(async () => {
-        prefix = `rooms/${roomId}/media/`;
+        parentPath = `rooms/${roomId}/media`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg' },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg' }
@@ -150,7 +150,7 @@ describe('storage-service', () => {
         );
 
         try {
-          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
+          await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -171,7 +171,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is private but the user has not enough storage space left', () => {
       beforeEach(async () => {
-        prefix = `rooms/${roomId}/media/`;
+        parentPath = `rooms/${roomId}/media`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 5 * 1000 * 1000 },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 5 * 1000 * 1000 }
@@ -181,7 +181,7 @@ describe('storage-service', () => {
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
 
         try {
-          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
+          await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -205,7 +205,7 @@ describe('storage-service', () => {
       let oldFiles;
 
       beforeEach(async () => {
-        prefix = `rooms/${roomId}/media/`;
+        parentPath = `rooms/${roomId}/media`;
         files = [
           { path: 'path/to/file1.jpeg', originalname: 'file1.jpeg', size: 3 * 1000 * 1000 },
           { path: 'path/to/file2.jpeg', originalname: 'file2.jpeg', size: 3 * 1000 * 1000 }
@@ -228,7 +228,7 @@ describe('storage-service', () => {
 
         cdn.uploadObject.resolves();
 
-        result = await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
+        result = await sut.uploadFiles({ parentPath, files, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -264,8 +264,8 @@ describe('storage-service', () => {
 
   describe('deleteObject', () => {
     let lock;
+    let path;
     let result;
-    let fileToDelete;
 
     beforeEach(() => {
       lock = { id: uniqueId.create() };
@@ -274,12 +274,11 @@ describe('storage-service', () => {
     });
 
     describe('when the storage type is unknown', () => {
-      beforeEach(async () => {
-        prefix = 'other-path/media/';
-        fileToDelete = { name: 'file1.jpeg' };
+      path = 'other-path/media/file.jpeg';
 
+      beforeEach(async () => {
         try {
-          await sut.uploadFiles({ prefix, files, storageClaimingUserId: myUser._id });
+          await sut.deleteObject({ path, storageClaimingUserId: myUser._id });
         } catch (error) {
           result = error.message;
         }
@@ -290,7 +289,7 @@ describe('storage-service', () => {
       });
 
       it('should throw an error', () => {
-        expect(result).toBe(`Invalid storage path '${prefix}'`);
+        expect(result).toBe('Invalid storage path \'other-path/media/\'');
       });
 
       it('should release the lock', () => {
@@ -300,8 +299,7 @@ describe('storage-service', () => {
 
     describe('when the storage type is public', () => {
       beforeEach(async () => {
-        prefix = 'media/';
-        fileToDelete = { name: 'file.jpeg' };
+        path = 'media/file.jpeg';
 
         myUser.storage = { plan: storagePlan._id, usedBytes: 2 * 1000 * 1000, reminders: [] };
         await db.users.updateOne({ _id: myUser._id }, { $set: { storage: myUser.storage } });
@@ -309,7 +307,7 @@ describe('storage-service', () => {
         cdn.deleteObjects.resolves();
         roomStore.getRoomIdsByOwnerIdAndAccess.resolves([]);
 
-        await sut.deleteObject({ prefix, objectName: fileToDelete.name, storageClaimingUserId: myUser._id });
+        await sut.deleteObject({ path, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -317,7 +315,7 @@ describe('storage-service', () => {
       });
 
       it('should call cdn.deleteObjects', () => {
-        sinon.assert.calledWith(cdn.deleteObjects, [`${prefix}${fileToDelete.name}`]);
+        sinon.assert.calledWith(cdn.deleteObjects, [path]);
       });
 
       it('should not call roomStore.getRoomIdsByOwnerIdAndAccess', () => {
@@ -342,14 +340,14 @@ describe('storage-service', () => {
       let allOwnedPrivateRoomIds;
 
       beforeEach(async () => {
-        prefix = `rooms/${roomId}/media/`;
-        fileToDelete = { name: 'file.jpeg', size: 1 * 1000 * 1000 };
+        path = `rooms/${roomId}/media/file.jpeg`;
 
         files = [
           { size: 1 * 1000 * 1000 },
           { size: 1 * 1000 * 1000 },
-          fileToDelete
+          { name: `rooms/${roomId}/media/file.jpeg`, size: 1 * 1000 * 1000 }
         ];
+
         allOwnedPrivateRoomIds = [roomId, uniqueId.create()];
 
         const usedBytes = files.reduce((totalSize, file) => totalSize + file.size, 0);
@@ -362,7 +360,7 @@ describe('storage-service', () => {
 
         cdn.deleteObjects.resolves();
 
-        await sut.deleteObject({ prefix, objectName: fileToDelete.name, storageClaimingUserId: myUser._id });
+        await sut.deleteObject({ path, storageClaimingUserId: myUser._id });
       });
 
       it('should take the lock on the user record', () => {
@@ -370,7 +368,7 @@ describe('storage-service', () => {
       });
 
       it('should call cdn.deleteObjects', () => {
-        sinon.assert.calledWith(cdn.deleteObjects, [`${prefix}${fileToDelete.name}`]);
+        sinon.assert.calledWith(cdn.deleteObjects, [path]);
       });
 
       it('should call cdn.listObjects for each room', () => {

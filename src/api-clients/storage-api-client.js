@@ -7,19 +7,19 @@ class StorageApiClient {
     this.httpClient = httpClient;
   }
 
-  getObjects(prefix) {
+  getCdnObjects(parentPath) {
     return this.httpClient
       .get(
-        `/api/v1/storage/objects?prefix=${encodeURIComponent(prefix)}`,
+        `/api/v1/storage/objects?parentPath=${encodeURIComponent(parentPath)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);
   }
 
-  uploadFiles(files, prefix, { onProgress = () => {} } = {}) {
+  uploadFiles(files, parentPath, { onProgress = () => {} } = {}) {
     const formData = new FormData();
 
-    formData.set('prefix', prefix);
+    formData.set('parentPath', parentPath);
     files.forEach(file => formData.append('files', file, file.name));
 
     const request = this.httpClient
@@ -36,10 +36,10 @@ class StorageApiClient {
     return request.then(res => res.data);
   }
 
-  deleteCdnObject(prefix, fileName) {
+  deleteCdnObject(path) {
     return this.httpClient
       .delete(
-        `/api/v1/storage/objects/${fileName}?prefix=${encodeURIComponent(prefix)}`,
+        `/api/v1/storage/objects?path=${encodeURIComponent(path)}`,
         { responseType: 'json' }
       )
       .then(res => res.data);

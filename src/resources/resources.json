@@ -1980,6 +1980,7 @@
       "resource_pdf": "document",
       "resource_none": "Unknown",
       "resource_unknown": "Unknown",
+      "folder": "Folder",
       "pageCount": "Page count"
     }
   },
@@ -2112,6 +2113,7 @@
       "resource_pdf": "Dokument",
       "resource_none": "Unbekannt",
       "resource_unknown": "Unbekannt",
+      "folder": "Verzeichnis",
       "pageCount": "Seitenanzahl"
     }
   },

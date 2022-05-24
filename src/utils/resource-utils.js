@@ -36,12 +36,12 @@ export const getResourceType = url => {
   return extensionsGroup?.type || RESOURCE_TYPE.unknown;
 };
 
-export const getResourceIcon = ({ filePath, isDirectory, filled }) => {
+export const getResourceIcon = ({ url, isDirectory, filled }) => {
   if (isDirectory) {
     return filled ? FolderFilledIcon : FolderIcon;
   }
 
-  const resourceType = getResourceType(filePath);
+  const resourceType = getResourceType(url);
 
   switch (resourceType) {
     case RESOURCE_TYPE.image:
