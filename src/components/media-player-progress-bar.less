@@ -1,5 +1,8 @@
 @edu-progress-bar-height: 8px;
 @edu-progress-bar-vertical-padding: 1px;
+@edu-progress-bar-tooltip-text-height: 20px;
+@edu-progress-bar-tooltip-arrow-size: 5px;
+@edu-progress-bar-tooltip-height: @edu-progress-bar-tooltip-text-height + @edu-progress-bar-tooltip-arrow-size;
 @edu-progress-bar-hover-height: @edu-progress-bar-height + 2 * @edu-progress-bar-vertical-padding;
 
 .MediaPlayerProgressBar {
@@ -40,10 +43,34 @@
   background-color: lighten(@edu-primary-color-light, 25%);
 }
 
+.MediaPlayerProgressBar-progressTooltip {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: @edu-z-index-overlay-layer;
+  top: -@edu-progress-bar-tooltip-height - 10px;
+}
+
+.MediaPlayerProgressBar-progressTooltipText {
+  font-size: 12px;
+  padding: 4px 8px;
+  color: @edu-tooltip-text-color;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-tooltip-background-color;
+}
+
+.MediaPlayerProgressBar-progressTooltipArrow {
+  border-left: @edu-progress-bar-tooltip-arrow-size solid transparent;
+  border-right: @edu-progress-bar-tooltip-arrow-size solid transparent;
+  border-top: @edu-progress-bar-tooltip-arrow-size solid @edu-tooltip-background-color;
+}
+
 .MediaPlayerProgressBar-mark {
   position: absolute;
-  top: @edu-progress-bar-vertical-padding;
   left: 0;
+  top: @edu-progress-bar-vertical-padding;
   height: @edu-progress-bar-height;
   border-right: 1px dotted @edu-white;
   border-left: 1px dotted @edu-border-color-base;
