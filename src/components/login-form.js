@@ -34,7 +34,7 @@ export default function LoginForm({
   }, [form]);
 
   const showLoginError = () => {
-    setLoginError(t('logonFailed'));
+    setLoginError(t('loginFailed'));
   };
 
   const clearLoginError = () => {

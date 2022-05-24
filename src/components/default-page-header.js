@@ -17,7 +17,7 @@ import UsersIcon from './icons/main-menu/users-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import { FEATURE_TOGGLES } from '../domain/constants.js';
 import DefaultHeaderLogo from './default-header-logo.js';
-import LogoffIcon from './icons/main-menu/logoff-icon.js';
+import LogoutIcon from './icons/main-menu/logout-icon.js';
 import ImportsIcon from './icons/main-menu/imports-icon.js';
 import LanguageIcon from './icons/main-menu/language-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
@@ -100,8 +100,8 @@ function DefaultPageHeader({ onUiLanguageClick }) {
     {
       key: 'logout',
       href: urls.getLogoutUrl(),
-      text: t('common:logoff'),
-      icon: LogoffIcon,
+      text: t('common:logout'),
+      icon: LogoutIcon,
       permission: null,
       showWhen: !!user
     }

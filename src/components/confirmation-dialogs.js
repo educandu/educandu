@@ -316,7 +316,7 @@ export function reloginAfterSessionExpired(modal, t, onOk, onCancel) {
   createDialogProps = () => ({
     title: t('confirmationDialogs:sessionExpiredTitle'),
     content: createContent(),
-    okText: t('common:logon'),
+    okText: t('common:login'),
     cancelText: t('common:cancel'),
     onOk: handleOkClick,
     onCancel,

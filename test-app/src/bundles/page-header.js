@@ -17,7 +17,7 @@ import HomeIcon from '../../../src/components/icons/main-menu/home-icon.js';
 import MenuIcon from '../../../src/components/icons/main-menu/menu-icon.js';
 import UsersIcon from '../../../src/components/icons/main-menu/users-icon.js';
 import DefaultHeaderLogo from '../../../src/components/default-header-logo.js';
-import LogoffIcon from '../../../src/components/icons/main-menu/logoff-icon.js';
+import LogoutIcon from '../../../src/components/icons/main-menu/logout-icon.js';
 import ImportsIcon from '../../../src/components/icons/main-menu/imports-icon.js';
 import LanguageIcon from '../../../src/components/icons/main-menu/language-icon.js';
 import SettingsIcon from '../../../src/components/icons/main-menu/settings-icon.js';
@@ -100,8 +100,8 @@ function PageHeader({ onUiLanguageClick }) {
     {
       key: 'logout',
       href: urls.getLogoutUrl(),
-      text: t('common:logoff'),
-      icon: LogoffIcon,
+      text: t('common:logout'),
+      icon: LogoutIcon,
       permission: null,
       showWhen: !!user
     }

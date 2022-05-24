@@ -5,16 +5,16 @@ const bundle1 = [
     namespace: 'loginLogout',
     language: 'en',
     resources: {
-      logon: 'Log on',
-      logoff: 'Log off'
+      login: 'Login',
+      logout: 'Logout'
     }
   },
   {
     namespace: 'loginLogout',
     language: 'de',
     resources: {
-      logon: 'Anmelden',
-      logoff: 'Abmelden'
+      login: 'Anmelden',
+      logout: 'Abmelden'
     }
   }
 ];
@@ -24,7 +24,7 @@ const bundle2 = [
     namespace: 'loginLogout',
     language: 'en',
     resources: {
-      logoff: 'Say goodbye',
+      logout: 'Say goodbye',
       extraKey: 'Not used'
     }
   },
@@ -32,7 +32,7 @@ const bundle2 = [
     namespace: 'loginLogout',
     language: 'de',
     resources: {
-      logon: 'Reinspaziert'
+      login: 'Reinspaziert'
     }
   }
 ];
@@ -42,8 +42,8 @@ const bundle1and2merged = [
     namespace: 'loginLogout',
     language: 'en',
     resources: {
-      logon: 'Log on',
-      logoff: 'Say goodbye',
+      login: 'Login',
+      logout: 'Say goodbye',
       extraKey: 'Not used'
     }
   },
@@ -51,8 +51,8 @@ const bundle1and2merged = [
     namespace: 'loginLogout',
     language: 'de',
     resources: {
-      logon: 'Reinspaziert',
-      logoff: 'Abmelden'
+      login: 'Reinspaziert',
+      logout: 'Abmelden'
     }
   }
 ];

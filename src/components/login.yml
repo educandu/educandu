@@ -1,9 +1,9 @@
-logon:
-  en: Log on
+login:
+  en: Login
   de: Anmelden
 register:
   en: Register
   de: Registrieren
-logonState:
+loginState:
   en: You are logged on as <0>{username}</0>
   de: Sie sind angemeldet als <0>{username}</0>
