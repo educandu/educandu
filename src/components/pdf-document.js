@@ -18,41 +18,56 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
   const [viewerStyle, setViewerStyle] = useState({});
   const [actualPageNumber, setActualPageNumber] = useState(pageNumber);
 
+  const releaseViewerStyle = () => setTimeout(() => setViewerStyle({}), 0);
+
   useEffect(() => {
     // In order to not have flickering on the page while the new page renders we keep the dimensions
-    // of the old page fixed until the next document or page event has fired.
+    // of the old page fixed until `handlePageRenderSuccess` has been called by the next page,
+    // or any of the error components are rendered.
     const boundingClientRect = viewerRef.current.getBoundingClientRect();
     setViewerStyle({ height: boundingClientRect.height, width: boundingClientRect.width });
     setActualPageNumber(pageNumber);
   }, [pageNumber]);
 
-  const handleDocumentOrPageEvent = () => {
-    setTimeout(() => setViewerStyle({}), 0);
+  const handlePageRenderSuccess = () => {
+    releaseViewerStyle();
   };
 
-  const renderLoadingComponent = () => (
-    <Empty description={t('loadingDocument')} image={<Spin size="large" />} />
-  );
+  const renderLoadingComponent = () => {
+    releaseViewerStyle();
+    return (
+      <Empty description={t('loadingDocument')} image={<Spin size="large" />} />
+    );
+  };
 
-  const renderNoDataComponent = () => (
-    <Empty description={t('noDocument')} />
-  );
+  const renderNoDataComponent = () => {
+    releaseViewerStyle();
+    return (
+      <Empty description={t('noDocument')} />
+    );
+  };
 
-  const renderDocumentErrorComponent = () => (
-    <Result
-      status="warning"
-      title={t('common:error')}
-      subTitle={t('errorRenderingDocument')}
-      />
-  );
+  const renderDocumentErrorComponent = () => {
+    releaseViewerStyle();
+    return (
+      <Result
+        status="warning"
+        title={t('common:error')}
+        subTitle={t('errorRenderingDocument')}
+        />
+    );
+  };
 
-  const renderPageErrorComponent = () => (
-    <Result
-      status="warning"
-      title={t('common:error')}
-      subTitle={t('errorRenderingPage')}
-      />
-  );
+  const renderPageErrorComponent = () => {
+    releaseViewerStyle();
+    return (
+      <Result
+        status="warning"
+        title={t('common:error')}
+        subTitle={t('errorRenderingPage')}
+        />
+    );
+  };
 
   return (
     <DimensionsProvider>
@@ -69,7 +84,6 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
             noData={renderNoDataComponent}
             error={renderDocumentErrorComponent}
             onLoadSuccess={onLoadSuccess}
-            onLoadError={handleDocumentOrPageEvent}
             >
             <Page
               key={actualPageNumber}
@@ -78,8 +92,7 @@ function PdfDocument({ file, pageNumber, stretchDirection, showTextOverlay, onLo
               width={stretchDirection === PDF_DOCUMENT_STRETCH_DIRECTION.horizontal ? containerWidth : null}
               error={renderPageErrorComponent}
               renderTextLayer={showTextOverlay}
-              onRenderSuccess={handleDocumentOrPageEvent}
-              onRenderError={handleDocumentOrPageEvent}
+              onRenderSuccess={handlePageRenderSuccess}
               />
           </Document>
         </div>
