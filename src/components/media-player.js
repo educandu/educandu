@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import MediaPlayerTrack from './media-player-track.js';
 import MediaPlayerControls from './media-player-controls.js';
+import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
 
@@ -13,7 +15,7 @@ function MediaPlayer({
   previewMode,
   canDownload,
   posterImageUrl,
-  extraContentTop,
+  extraCustomContent,
   marks,
   onMarkReached,
   onEndReached,
@@ -78,7 +80,7 @@ function MediaPlayer({
   }
 
   return (
-    <div className="MediaPlayer">
+    <div className={classNames('MediaPlayer', { 'MediaPlayer--audioOnly': audioOnly })}>
       <MediaPlayerTrack
         trackRef={trackRef}
         volume={volume}
@@ -96,6 +98,13 @@ function MediaPlayer({
         onPlayStateChange={setPlayState}
         posterImageUrl={posterImageUrl}
         />
+      {extraCustomContent && (<div>{extraCustomContent}</div>)}
+      <MediaPlayerProgressBar
+        marks={marks}
+        onSeek={handleSeek}
+        playedMilliseconds={playedMilliseconds}
+        durationInMilliseconds={durationInMilliseconds}
+        />
       <MediaPlayerControls
         sourceUrl={sourceUrl}
         canDownload={canDownload}
@@ -109,8 +118,8 @@ function MediaPlayer({
         onToggleMute={handleToggleMute}
         onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
-        standalone={audioOnly}
-        extraContentTop={extraContentTop}
+        audioOnly={audioOnly}
+        extraCustomContent={extraCustomContent}
         marks={marks}
         onMarkReached={onMarkReached}
         onEndReached={onEndReached}
@@ -123,7 +132,7 @@ MediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
   canDownload: PropTypes.bool,
-  extraContentTop: PropTypes.node,
+  extraCustomContent: PropTypes.node,
   marks: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
     timecode: PropTypes.number.isRequired,
@@ -145,7 +154,7 @@ MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
   canDownload: false,
-  extraContentTop: null,
+  extraCustomContent: null,
   marks: [],
   mediaPlayerRef: {
     current: null

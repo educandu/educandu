@@ -12,22 +12,18 @@ import PauseIcon from './icons/media-player/pause-icon.js';
 import DownloadIcon from './icons/general/download-icon.js';
 import VolumeIcon from './icons/media-player/volume-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
-import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 
 function MediaPlayerControls({
   durationInMilliseconds,
-  extraContentTop,
   playedMilliseconds,
   playState,
   volume,
-  marks,
   isMuted,
   onTogglePlay,
   onToggleMute,
-  onSeek,
   onVolumeChange,
-  standalone,
+  audioOnly,
   sourceUrl,
   canDownload
 }) {
@@ -49,76 +45,52 @@ function MediaPlayerControls({
   };
 
   return (
-    <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--standalone': standalone })}>
-      {extraContentTop && (
-        <div className="MediaPlayerControls-extraContent MediaPlayerControls-extraContent--top">
-          {extraContentTop}
+    <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--audioOnly': audioOnly })}>
+      <div className="MediaPlayerControls-controlsGroup">
+        <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
+        <div className="MediaPlayerControls-volumeControls">
+          <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={onToggleMute} />
+          <Slider
+            className="MediaPlayerControls-volumeSlider"
+            min={0}
+            max={100}
+            value={isMuted ? 0 : volume * 100}
+            tipFormatter={val => `${val}%`}
+            onChange={val => onVolumeChange(val / 100)}
+            disabled={isMuted}
+            />
         </div>
-      )}
-      <div className="MediaPlayerControls-progressBar">
-        <MediaPlayerProgressBar
-          marks={marks}
-          onSeek={onSeek}
-          playedMilliseconds={playedMilliseconds}
-          durationInMilliseconds={durationInMilliseconds}
-          />
+        <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
       </div>
-      <div className="MediaPlayerControls-controls">
-        <div className="MediaPlayerControls-controlsGroup">
-          <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
-          <div className="MediaPlayerControls-volumeControls">
-            <Button type="link" icon={isMuted ? <MuteIcon /> : <VolumeIcon />} onClick={onToggleMute} />
-            <Slider
-              className="MediaPlayerControls-volumeSlider"
-              min={0}
-              max={100}
-              value={isMuted ? 0 : volume * 100}
-              tipFormatter={val => `${val}%`}
-              onChange={val => onVolumeChange(val / 100)}
-              disabled={isMuted}
-              />
-          </div>
-          <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
-        </div>
-        <div className="MediaPlayerControls-controlsGroup">
-          {canDownload && sourceUrl && (
-            <Dropdown overlay={renderSettingsMenu} placement="bottomRight" trigger={['click']}>
-              <Button type="link" icon={<SettingsIcon />} />
-            </Dropdown>
-          )}
-        </div>
+      <div className="MediaPlayerControls-controlsGroup">
+        {canDownload && sourceUrl && (
+        <Dropdown overlay={renderSettingsMenu} placement="bottomRight" trigger={['click']}>
+          <Button type="link" icon={<SettingsIcon />} />
+        </Dropdown>
+        )}
       </div>
     </div>
   );
 }
 
 MediaPlayerControls.propTypes = {
+  audioOnly: PropTypes.bool,
   canDownload: PropTypes.bool,
   durationInMilliseconds: PropTypes.number.isRequired,
-  extraContentTop: PropTypes.node,
   isMuted: PropTypes.bool.isRequired,
-  marks: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string.isRequired,
-    timecode: PropTypes.number.isRequired,
-    text: PropTypes.string
-  })),
-  onSeek: PropTypes.func.isRequired,
   onToggleMute: PropTypes.func.isRequired,
   onTogglePlay: PropTypes.func.isRequired,
   onVolumeChange: PropTypes.func.isRequired,
   playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
   playedMilliseconds: PropTypes.number.isRequired,
   sourceUrl: PropTypes.string,
-  standalone: PropTypes.bool,
   volume: PropTypes.number.isRequired
 };
 
 MediaPlayerControls.defaultProps = {
+  audioOnly: false,
   canDownload: false,
-  extraContentTop: null,
-  marks: [],
-  sourceUrl: null,
-  standalone: false
+  sourceUrl: null
 };
 
 export default MediaPlayerControls;
