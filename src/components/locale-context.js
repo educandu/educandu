@@ -96,14 +96,30 @@ export function useDateFormat() {
   return useMemo(() => {
     const dateTimeFormat = uiLocale === 'de-DE' ? 'DD.MM.YYYY, HH:mm' : 'MM/DD/YYYY, HH:mm';
     const localePattern = 'L, LT';
+    const numberFormat = new Intl.NumberFormat(uiLocale);
 
     const formatDate = date => date ? moment(date).locale(uiLocale).format(localePattern) : '';
     const formatTimeTo = date => date ? moment().locale(uiLocale).to(date) : '';
+    const formatNumber = value => numberFormat(value);
 
     return {
       formatDate,
       formatTimeTo,
+      formatNumber,
       dateTimeFormat
+    };
+  }, [uiLocale]);
+}
+
+export function useNumberFormat() {
+  const { uiLocale } = useLocale();
+
+  return useMemo(() => {
+    const numberFormatter = new Intl.NumberFormat(uiLocale);
+    const formatNumber = value => numberFormatter.format(value);
+
+    return {
+      formatNumber
     };
   }, [uiLocale]);
 }

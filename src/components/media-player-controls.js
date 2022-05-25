@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
+import { useNumberFormat } from './locale-context.js';
 import { Menu, Button, Slider, Dropdown } from 'antd';
 import HttpClient from '../api-clients/http-client.js';
+import { FastForwardOutlined } from '@ant-design/icons';
 import MuteIcon from './icons/media-player/mute-icon.js';
 import PlayIcon from './icons/media-player/play-icon.js';
 import { MEDIA_PLAY_STATE } from '../domain/constants.js';
@@ -27,23 +29,44 @@ function MediaPlayerControls({
   sourceUrl,
   canDownload
 }) {
+  const { formatNumber } = useNumberFormat();
+
   const httpClient = useService(HttpClient);
   const { t } = useTranslation('mediaPlayerControls');
 
   const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
 
   const handleDownloadClick = () => httpClient.download(sourceUrl);
+  const handlePlaybackSpeedClick = item => { console.log(item); };
 
   const menuItems = [];
 
   if (canDownload && sourceUrl) {
     const downloadItem = (
-      <Menu.Item key="download" onClick={handleDownloadClick}>
-        <Button type="link" size="small" icon={<DownloadIcon />}>{t('download')}</Button>
+      <Menu.Item
+        key="download"
+        onClick={handleDownloadClick}
+        icon={<div className="MediaPlayerControls-downloadItem"><DownloadIcon /></div>}
+        >
+        {t('download')}
       </Menu.Item>
     );
     menuItems.push(downloadItem);
   }
+
+  const playbackSpeed = (
+    <Menu.SubMenu key="playbackSpeed" icon={<FastForwardOutlined />} title={t('playbackSpeed')} onClick={handlePlaybackSpeedClick}>
+      <Menu.Item key="0.25">{formatNumber(0.25)}</Menu.Item>
+      <Menu.Item key="0.50">{formatNumber(0.5)}</Menu.Item>
+      <Menu.Item key="0.75">{formatNumber(0.75)}</Menu.Item>
+      <Menu.Item key="1">{t('normal')}</Menu.Item>
+      <Menu.Item key="1.25">{formatNumber(1.25)}</Menu.Item>
+      <Menu.Item key="1.5">{formatNumber(1.5)}</Menu.Item>
+      <Menu.Item key="1.75">{formatNumber(1.75)}</Menu.Item>
+      <Menu.Item key="2">{formatNumber(2)}</Menu.Item>
+    </Menu.SubMenu>
+  );
+  menuItems.push(playbackSpeed);
 
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--audioOnly': audioOnly })}>
