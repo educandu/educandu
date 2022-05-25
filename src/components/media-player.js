@@ -14,6 +14,7 @@ function MediaPlayer({
   audioOnly,
   previewMode,
   canDownload,
+  canChangePlaybackRate,
   posterImageUrl,
   extraCustomContent,
   marks,
@@ -25,6 +26,7 @@ function MediaPlayer({
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
   const [lastReachedMark, setLastReachedMark] = useState(null);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
@@ -71,6 +73,10 @@ function MediaPlayer({
     setIsSeeking(false);
   };
 
+  const handlePlaybackRateChange = newRate => {
+    setPlaybackRate(newRate);
+  };
+
   mediaPlayerRef.current = {
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
@@ -102,6 +108,7 @@ function MediaPlayer({
         aspectRatio={aspectRatio}
         startTimecode={startTimecode}
         stopTimecode={stopTimecode}
+        playbackRate={playbackRate}
         progressIntervalInMilliseconds={progressIntervalInMilliseconds}
         onDuration={setDurationInMilliseconds}
         onEndReached={handleEndReached}
@@ -121,6 +128,7 @@ function MediaPlayer({
       <MediaPlayerControls
         sourceUrl={sourceUrl}
         canDownload={canDownload}
+        canChangePlaybackRate={canChangePlaybackRate}
         isMuted={isMuted}
         playState={playState}
         durationInMilliseconds={durationInMilliseconds}
@@ -128,6 +136,7 @@ function MediaPlayer({
         progressIntervalInMilliseconds={progressIntervalInMilliseconds}
         volume={volume}
         onSeek={handleSeek}
+        onPlaybackRateChange={handlePlaybackRateChange}
         onToggleMute={handleToggleMute}
         onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
@@ -144,6 +153,7 @@ function MediaPlayer({
 MediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
+  canChangePlaybackRate: PropTypes.bool,
   canDownload: PropTypes.bool,
   extraCustomContent: PropTypes.node,
   marks: PropTypes.arrayOf(PropTypes.shape({
@@ -166,6 +176,7 @@ MediaPlayer.propTypes = {
 MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
+  canChangePlaybackRate: false,
   canDownload: false,
   extraCustomContent: null,
   marks: [],

@@ -1,9 +1,9 @@
 download:
   en: Download
   de: Herunterladen
-playbackSpeed:
-  en: Playback speed
-  de: Wiedergabegeschwindigkeit
+playbackRate:
+  en: Speed
+  de: Geschwindigkeit
 normal:
   en: normal
   de: Normal

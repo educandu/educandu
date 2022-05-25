@@ -496,7 +496,7 @@
     "language": "en",
     "resources": {
       "download": "Download",
-      "playbackSpeed": "Playback speed",
+      "playbackRate": "Speed",
       "normal": "normal"
     }
   },
@@ -505,7 +505,7 @@
     "language": "de",
     "resources": {
       "download": "Herunterladen",
-      "playbackSpeed": "Wiedergabegeschwindigkeit",
+      "playbackRate": "Geschwindigkeit",
       "normal": "Normal"
     }
   },

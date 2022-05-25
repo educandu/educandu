@@ -87,6 +87,7 @@ function EarTrainingDisplay({ content }) {
             audioOnly
             sourceUrl={soundUrl}
             canDownload={sourceType === SOURCE_TYPE.internal}
+            canChangePlaybackRate={content.sourceType === SOURCE_TYPE.internal || content.sourceType === SOURCE_TYPE.youtube}
             />
         )}
         {currentTest.sound.text && (
