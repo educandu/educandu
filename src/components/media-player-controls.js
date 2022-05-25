@@ -34,15 +34,16 @@ function MediaPlayerControls({
 
   const handleDownloadClick = () => httpClient.download(sourceUrl);
 
-  const renderSettingsMenu = () => {
-    return (
-      <Menu>
-        <Menu.Item key="moveUp" onClick={handleDownloadClick}>
-          <Button type="link" size="small" icon={<DownloadIcon />}>{t('download')}</Button>
-        </Menu.Item>
-      </Menu>
+  const menuItems = [];
+
+  if (canDownload && sourceUrl) {
+    const downloadItem = (
+      <Menu.Item key="download" onClick={handleDownloadClick}>
+        <Button type="link" size="small" icon={<DownloadIcon />}>{t('download')}</Button>
+      </Menu.Item>
     );
-  };
+    menuItems.push(downloadItem);
+  }
 
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--audioOnly': audioOnly })}>
@@ -63,10 +64,10 @@ function MediaPlayerControls({
         <div className="MediaPlayerControls-timeDisplay">{formatMillisecondsAsDuration(playedMilliseconds)}&nbsp;/&nbsp;{formatMillisecondsAsDuration(durationInMilliseconds)}</div>
       </div>
       <div className="MediaPlayerControls-controlsGroup">
-        {canDownload && sourceUrl && (
-        <Dropdown overlay={renderSettingsMenu} placement="bottomRight" trigger={['click']}>
-          <Button type="link" icon={<SettingsIcon />} />
-        </Dropdown>
+        {!!menuItems.length && (
+          <Dropdown overlay={<Menu>{menuItems}</Menu>} placement="bottomRight" trigger={['click']}>
+            <Button type="link" icon={<SettingsIcon />} />
+          </Dropdown>
         )}
       </div>
     </div>
