@@ -14,7 +14,6 @@ function MediaPlayer({
   audioOnly,
   previewMode,
   canDownload,
-  canChangePlaybackRate,
   posterImageUrl,
   extraCustomContent,
   marks,
@@ -128,7 +127,6 @@ function MediaPlayer({
       <MediaPlayerControls
         sourceUrl={sourceUrl}
         canDownload={canDownload}
-        canChangePlaybackRate={canChangePlaybackRate}
         isMuted={isMuted}
         playState={playState}
         durationInMilliseconds={durationInMilliseconds}
@@ -153,7 +151,6 @@ function MediaPlayer({
 MediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
   audioOnly: PropTypes.bool,
-  canChangePlaybackRate: PropTypes.bool,
   canDownload: PropTypes.bool,
   extraCustomContent: PropTypes.node,
   marks: PropTypes.arrayOf(PropTypes.shape({
@@ -176,7 +173,6 @@ MediaPlayer.propTypes = {
 MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
   audioOnly: false,
-  canChangePlaybackRate: false,
   canDownload: false,
   extraCustomContent: null,
   marks: [],

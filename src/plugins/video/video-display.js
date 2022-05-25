@@ -38,7 +38,6 @@ function VideoDisplay({ content }) {
             posterImageUrl={posterImageUrl}
             aspectRatio={content.aspectRatio}
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
-            canChangePlaybackRate={content.sourceType === MEDIA_SOURCE_TYPE.internal || content.sourceType === MEDIA_SOURCE_TYPE.youtube}
             />
         )}
         {content.text && (

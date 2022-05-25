@@ -31,8 +31,7 @@ function MediaPlayerControls({
   onPlaybackRateChange,
   audioOnly,
   sourceUrl,
-  canDownload,
-  canChangePlaybackRate
+  canDownload
 }) {
   const httpClient = useService(HttpClient);
   const { formatNumber } = useNumberFormat();
@@ -49,23 +48,17 @@ function MediaPlayerControls({
     onPlaybackRateChange(newPlaybackRate);
   };
 
-  const menuItems = [];
-
-  if (canDownload && sourceUrl) {
-    const downloadItem = (
-      <Menu.Item
-        key="download"
-        onClick={handleDownloadClick}
-        icon={<div className="MediaPlayerControls-downloadItem"><DownloadIcon /></div>}
-        >
-        {t('download')}
-      </Menu.Item>
-    );
-    menuItems.push(downloadItem);
-  }
-
-  if (canChangePlaybackRate) {
-    const playbackRateItem = (
+  const renderSettingsMenu = () => (
+    <Menu>
+      {canDownload && sourceUrl && (
+        <Menu.Item
+          key="download"
+          onClick={handleDownloadClick}
+          icon={<div className="MediaPlayerControls-downloadItem"><DownloadIcon /></div>}
+          >
+          {t('download')}
+        </Menu.Item>
+      )}
       <Menu.SubMenu
         key="playbackRate"
         icon={<FastForwardOutlined />}
@@ -83,9 +76,8 @@ function MediaPlayerControls({
           </Menu.Item>
         ))}
       </Menu.SubMenu>
-    );
-    menuItems.push(playbackRateItem);
-  }
+    </Menu>
+  );
 
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--audioOnly': audioOnly })}>
@@ -110,11 +102,9 @@ function MediaPlayerControls({
           {playbackRate !== NORMAL_PLAYBACK_RATE && (
             <span className="MediaPlayerControls-playbackRate">x {formatNumber(playbackRate)}</span>
           )}
-          {!!menuItems.length && (
-            <Dropdown overlay={<Menu>{menuItems}</Menu>} placement="bottomRight" trigger={['click']}>
-              <Button type="link" icon={<SettingsIcon />} />
-            </Dropdown>
-          )}
+          <Dropdown overlay={renderSettingsMenu()} placement="bottomRight" trigger={['click']}>
+            <Button type="link" icon={<SettingsIcon />} />
+          </Dropdown>
         </div>
       </div>
     </div>
@@ -123,7 +113,6 @@ function MediaPlayerControls({
 
 MediaPlayerControls.propTypes = {
   audioOnly: PropTypes.bool,
-  canChangePlaybackRate: PropTypes.bool,
   canDownload: PropTypes.bool,
   durationInMilliseconds: PropTypes.number.isRequired,
   isMuted: PropTypes.bool.isRequired,
@@ -139,7 +128,6 @@ MediaPlayerControls.propTypes = {
 
 MediaPlayerControls.defaultProps = {
   audioOnly: false,
-  canChangePlaybackRate: false,
   canDownload: false,
   onPlaybackRateChange: () => {},
   sourceUrl: null

@@ -27,7 +27,6 @@ function AudioDisplay({ content }) {
             audioOnly
             sourceUrl={sourceUrl}
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
-            canChangePlaybackRate={content.sourceType === MEDIA_SOURCE_TYPE.internal || content.sourceType === MEDIA_SOURCE_TYPE.youtube}
             />
         )}
         {content.text && (

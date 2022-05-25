@@ -82,7 +82,6 @@ function InteractiveMediaDisplay({ content }) {
             onMarkReached={handleMarkReached}
             onEndReached={handleEndReached}
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
-            canChangePlaybackRate={content.sourceType === MEDIA_SOURCE_TYPE.internal || content.sourceType === MEDIA_SOURCE_TYPE.youtube}
             />
         )}
         {interactingChapterIndex >= 0 && (
