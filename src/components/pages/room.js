@@ -190,7 +190,7 @@ export default function Room({ PageTemplate, initialState }) {
               </Tooltip>
             </Fragment>
           )}
-          <span className="RoomPage-lessonStartsOn">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
+          <span>{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
           <a className="RoomPage-lessonTitle" href={url}>{lesson.title}</a>
           <span className="RoomPage-lessonTimeUntil">{timeUntil}</span>
         </div>
