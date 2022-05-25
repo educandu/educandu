@@ -1,11 +1,12 @@
 /* eslint-disable max-params */
 import express from 'express';
 import passport from 'passport';
-import urls from '../utils/routes.js';
 import httpErrors from 'http-errors';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import routes from '../utils/routes.js';
 import passportLocal from 'passport-local';
+import urlUtils from '../utils/url-utils.js';
 import Database from '../stores/database.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
@@ -141,7 +142,7 @@ class UserController {
 
     if (result === SAVE_USER_RESULT.success) {
       const { origin } = requestUtils.getHostInfo(req);
-      const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
+      const verificationLink = urlUtils.concatParts(origin, routes.getCompleteRegistrationUrl(user.verificationCode));
       await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
 
@@ -196,7 +197,7 @@ class UserController {
     if (user) {
       const resetRequest = await this.userService.createPasswordResetRequest(user);
       const { origin } = requestUtils.getHostInfo(req);
-      const completionLink = urls.concatParts(origin, urls.getCompletePasswordResetUrl(resetRequest._id));
+      const completionLink = urlUtils.concatParts(origin, routes.getCompletePasswordResetUrl(resetRequest._id));
       await this.mailService.sendPasswordResetEmail({ username: user.username, email: user.email, completionLink });
     }
 

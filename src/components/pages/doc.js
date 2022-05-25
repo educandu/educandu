@@ -1,10 +1,11 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../../utils/routes.js';
 import Restricted from '../restricted.js';
+import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
 import FavoriteStar from '../favorite-star.js';
+import urlUtils from '../../utils/url-utils.js';
 import uniqueId from '../../utils/unique-id.js';
 import MetadataTitle from '../metadata-title.js';
 import CreditsFooter from '../credits-footer.js';
@@ -117,14 +118,14 @@ function Doc({ initialState, PageTemplate }) {
   useEffect(() => {
     switch (view) {
       case VIEW.edit:
-        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.edit }));
+        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.edit }));
         break;
       case VIEW.history:
-        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.history }));
+        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug, view: VIEW.history }));
         break;
       case VIEW.display:
       default:
-        history.replaceState(null, '', urls.getDocUrl({ key: doc.key, slug: doc.slug }));
+        history.replaceState(null, '', routes.getDocUrl({ key: doc.key, slug: doc.slug }));
         break;
     }
   }, [user, doc.key, doc.slug, view]);
@@ -322,7 +323,7 @@ function Doc({ initialState, PageTemplate }) {
   };
 
   const handlePermalinkRequest = async () => {
-    const permalinkUrl = urls.createFullyQualifiedUrl(urls.getDocumentRevisionUrl(selectedHistoryRevision._id));
+    const permalinkUrl = urlUtils.createFullyQualifiedUrl(routes.getDocumentRevisionUrl(selectedHistoryRevision._id));
     try {
       await window.navigator.clipboard.writeText(permalinkUrl);
       message.success(t('permalinkCopied'));

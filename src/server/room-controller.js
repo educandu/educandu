@@ -177,7 +177,7 @@ export default class RoomController {
     const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
 
     const { origin } = requestUtils.getHostInfo(req);
-    const invitationLink = routes.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
+    const invitationLink = urlUtils.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
     await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.username, email, invitationLink });
 
     return res.status(201).send(invitation);

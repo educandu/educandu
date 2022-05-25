@@ -1,5 +1,5 @@
 import path from 'path';
-import urls from './routes.js';
+import urlUtils from './url-utils.js';
 import uniqueId from './unique-id.js';
 import slugify from '@sindresorhus/slugify';
 
@@ -10,5 +10,5 @@ export const componseUniqueFileName = (fileName, parentPath = null) => {
   const slugifiedBaseName = slugify(baseName);
   const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
   const newFileName = `${uniqueBaseName}${extension}`;
-  return parentPath ? urls.concatParts(parentPath, newFileName) : newFileName;
+  return parentPath ? urlUtils.concatParts(parentPath, newFileName) : newFileName;
 };
