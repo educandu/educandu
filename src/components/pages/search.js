@@ -2,7 +2,7 @@ import by from 'thenby';
 import { Tag } from 'antd';
 import Table from '../table.js';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import SearchBar from '../search-bar.js';
 import Logger from '../../common/logger.js';
 import TagSelector from '../tag-selector.js';

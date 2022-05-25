@@ -1,3 +1,4 @@
+import urlUtils from './url-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 
 const homePath = '/';
@@ -25,14 +26,6 @@ const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 const lessonPageRegex = new RegExp(`^(?:${escapeStringRegexp(lessonsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
-function removeTrailingSlash(path) {
-  return String(path).replace(/\/*$/, '');
-}
-
-function removeLeadingSlash(path) {
-  return String(path).replace(/^\/*/, '');
-}
-
 function encodeURIParts(path) {
   return (path || '').split('/').map(x => encodeURIComponent(x)).join('/');
 }
@@ -44,7 +37,7 @@ function composeQueryString(keyValuePairs) {
 function concatParts(...parts) {
   const nonEmptyParts = parts.map(part => part?.toString() || '').filter(part => part);
   return nonEmptyParts.length
-    ? nonEmptyParts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`)
+    ? nonEmptyParts.reduce((prev, next) => `${urlUtils.removeTrailingSlash(prev)}/${urlUtils.removeLeadingSlash(next)}`)
     : '';
 }
 
@@ -174,8 +167,6 @@ function getLessonIdIfLessonUrl(url) {
 
 export default {
   createRedirectUrl,
-  removeTrailingSlash,
-  removeLeadingSlash,
   concatParts,
   getDocsUrl,
   getUsersUrl,

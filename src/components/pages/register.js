@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Markdown from '../markdown.js';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { Form, Button, Checkbox } from 'antd';
 import React, { useRef, useState } from 'react';

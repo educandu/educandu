@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Form, Button } from 'antd';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import Countdown from '../countdown.js';
 import React, { useState } from 'react';
 import Logger from '../../common/logger.js';

@@ -1,5 +1,5 @@
 import React from 'react';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import { useLocale } from './locale-context.js';
 import { useSettings } from './settings-context.js';
 

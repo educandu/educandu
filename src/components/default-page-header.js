@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import Login from './login.js';
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import LinkPopover from './link-popover.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';

@@ -1,6 +1,6 @@
 import React from 'react';
 import gravatar from 'gravatar';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import { Avatar, Tooltip } from 'antd';
 import { useUser } from './user-context.js';
 import { Trans, useTranslation } from 'react-i18next';

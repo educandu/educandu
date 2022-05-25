@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import { Breadcrumb, message } from 'antd';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';

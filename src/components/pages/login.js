@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import LoginForm from '../login-form.js';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from '../request-context.js';

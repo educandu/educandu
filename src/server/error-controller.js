@@ -1,4 +1,4 @@
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import createError from 'http-errors';
 import Logger from '../common/logger.js';
 import requestUtils from '../utils/request-utils.js';

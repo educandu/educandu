@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Button, Card } from 'antd';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../../utils/clone-deep.js';

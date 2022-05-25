@@ -1,7 +1,7 @@
 import by from 'thenby';
 import { Table } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import ImportTypeIcon from './import-type-icon.js';
 import { useService } from './container-context.js';

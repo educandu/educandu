@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import SearchBar from '../search-bar.js';
 
 function Index({ HomePageTemplate }) {

@@ -2,7 +2,7 @@ import by from 'thenby';
 import { Button } from 'antd';
 import Table from './table.js';
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import Restricted from './restricted.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import httpErrors from 'http-errors';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';

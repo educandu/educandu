@@ -1,5 +1,5 @@
 import path from 'path';
-import urls from './urls.js';
+import urls from './routes.js';
 import uniqueId from './unique-id.js';
 import slugify from '@sindresorhus/slugify';
 

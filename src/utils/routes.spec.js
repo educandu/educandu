@@ -1,67 +1,7 @@
-import sut from './urls.js';
+import sut from './routes.js';
 
-describe('urls', () => {
+describe('routes', () => {
   let result;
-
-  describe('removeTrailingSlash', () => {
-
-    const testCases = [
-      {
-        path: '/some-path/some-other-path',
-        expectedResult: '/some-path/some-other-path'
-      },
-      {
-        path: '/some-path/some-other-path/',
-        expectedResult: '/some-path/some-other-path'
-      },
-      {
-        path: '/some-path/some-other-path///',
-        expectedResult: '/some-path/some-other-path'
-      }
-    ];
-
-    testCases.forEach(({ path, expectedResult }) => {
-      describe(`when path is '${path}'`, () => {
-        beforeEach(() => {
-          result = sut.removeTrailingSlash(path);
-        });
-        it(`should return '${expectedResult}'`, () => {
-          expect(result).toBe(expectedResult);
-        });
-      });
-    });
-
-  });
-
-  describe('removeLeadingSlash', () => {
-
-    const testCases = [
-      {
-        path: 'some-path/some-other-path/',
-        expectedResult: 'some-path/some-other-path/'
-      },
-      {
-        path: '/some-path/some-other-path/',
-        expectedResult: 'some-path/some-other-path/'
-      },
-      {
-        path: '///some-path/some-other-path/',
-        expectedResult: 'some-path/some-other-path/'
-      }
-    ];
-
-    testCases.forEach(({ path, expectedResult }) => {
-      describe(`when path is '${path}'`, () => {
-        beforeEach(() => {
-          result = sut.removeLeadingSlash(path);
-        });
-        it(`it should return '${expectedResult}'`, () => {
-          expect(result).toBe(expectedResult);
-        });
-      });
-    });
-
-  });
 
   describe('concatParts', () => {
     const testCases = [

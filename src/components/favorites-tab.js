@@ -1,7 +1,7 @@
 import by from 'thenby';
 import Table from './table.js';
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import SortingSelector from './sorting-selector.js';
 import { useDateFormat } from './locale-context.js';

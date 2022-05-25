@@ -1,7 +1,7 @@
 
 import { Modal } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import errorHelper from '../ui/error-helper.js';

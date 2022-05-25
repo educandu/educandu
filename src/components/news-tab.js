@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import { USER_ACTIVITY_TYPE } from '../domain/constants.js';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../../../src/utils/urls.js';
+import urls from '../../../src/utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import Login from '../../../src/components/login.js';
 import { QuestionOutlined } from '@ant-design/icons';

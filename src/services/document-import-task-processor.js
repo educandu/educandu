@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import by from 'thenby';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import UserService from './user-service.js';

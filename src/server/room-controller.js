@@ -1,6 +1,7 @@
 import express from 'express';
-import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
+import routes from '../utils/routes.js';
+import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
@@ -176,7 +177,7 @@ export default class RoomController {
     const { room, owner, invitation } = await this.roomService.createOrUpdateInvitation({ roomId, email, user });
 
     const { origin } = requestUtils.getHostInfo(req);
-    const invitationLink = urls.concatParts(origin, urls.getRoomMembershipConfirmationUrl(invitation.token));
+    const invitationLink = routes.concatParts(origin, routes.getRoomMembershipConfirmationUrl(invitation.token));
     await this.mailService.sendRoomInvitationEmail({ roomName: room.name, ownerName: owner.username, email, invitationLink });
 
     return res.status(201).send(invitation);
@@ -193,7 +194,7 @@ export default class RoomController {
   async handleGetRoomPage(req, res) {
     const { roomId } = req.params;
     const userId = req.user?._id;
-    const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
+    const routeWildcardValue = urlUtils.removeLeadingSlash(req.params['0']);
 
     const room = await this.roomService.getRoomById(roomId);
 
@@ -202,7 +203,7 @@ export default class RoomController {
     }
 
     if (room.slug !== routeWildcardValue) {
-      return res.redirect(301, urls.getRoomUrl(room._id, room.slug));
+      return res.redirect(301, routes.getRoomUrl(room._id, room.slug));
     }
 
     const isPrivateRoom = room.access === ROOM_ACCESS_LEVEL.private;

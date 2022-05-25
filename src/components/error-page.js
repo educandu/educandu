@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import { settingsProps } from '../ui/default-prop-types.js';
 
 function ErrorPage({ error, settings, uiLanguage, i18n }) {

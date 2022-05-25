@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import Countdown from '../countdown.js';
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
