@@ -495,14 +495,18 @@
     "namespace": "mediaPlayerControls",
     "language": "en",
     "resources": {
-      "download": "Download"
+      "download": "Download",
+      "playbackRate": "Speed",
+      "normal": "normal"
     }
   },
   {
     "namespace": "mediaPlayerControls",
     "language": "de",
     "resources": {
-      "download": "Herunterladen"
+      "download": "Herunterladen",
+      "playbackRate": "Geschwindigkeit",
+      "normal": "Normal"
     }
   },
   {

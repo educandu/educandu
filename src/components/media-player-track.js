@@ -20,6 +20,7 @@ function MediaPlayerTrack({
   isMuted,
   posterImageUrl,
   trackRef,
+  playbackRate,
   onDuration,
   onProgress,
   onEndReached,
@@ -169,6 +170,7 @@ function MediaPlayerTrack({
           controls={false}
           volume={volume}
           muted={isMuted}
+          playbackRate={playbackRate}
           progressInterval={progressIntervalInMilliseconds}
           light={currentPlayState === MEDIA_PLAY_STATE.initializing && (posterImageUrl || true)}
           playing={currentPlayState === MEDIA_PLAY_STATE.playing || currentPlayState === MEDIA_PLAY_STATE.buffering}
@@ -196,6 +198,7 @@ MediaPlayerTrack.propTypes = {
   onEndReached: PropTypes.func,
   onPlayStateChange: PropTypes.func,
   onProgress: PropTypes.func,
+  playbackRate: PropTypes.number,
   posterImageUrl: PropTypes.string,
   previewMode: PropTypes.bool,
   progressIntervalInMilliseconds: PropTypes.number.isRequired,
@@ -216,6 +219,7 @@ MediaPlayerTrack.defaultProps = {
   onEndReached: () => {},
   onPlayStateChange: () => {},
   onProgress: () => {},
+  playbackRate: 1,
   posterImageUrl: null,
   previewMode: false,
   startTimecode: null,

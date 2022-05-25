@@ -25,6 +25,7 @@ function MediaPlayer({
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
   const [lastReachedMark, setLastReachedMark] = useState(null);
   const [playedMilliseconds, setPlayedMilliseconds] = useState(0);
   const [durationInMilliseconds, setDurationInMilliseconds] = useState(0);
@@ -71,6 +72,10 @@ function MediaPlayer({
     setIsSeeking(false);
   };
 
+  const handlePlaybackRateChange = newRate => {
+    setPlaybackRate(newRate);
+  };
+
   mediaPlayerRef.current = {
     play: trackRef.current?.play,
     pause: trackRef.current?.pause,
@@ -102,6 +107,7 @@ function MediaPlayer({
         aspectRatio={aspectRatio}
         startTimecode={startTimecode}
         stopTimecode={stopTimecode}
+        playbackRate={playbackRate}
         progressIntervalInMilliseconds={progressIntervalInMilliseconds}
         onDuration={setDurationInMilliseconds}
         onEndReached={handleEndReached}
@@ -128,6 +134,7 @@ function MediaPlayer({
         progressIntervalInMilliseconds={progressIntervalInMilliseconds}
         volume={volume}
         onSeek={handleSeek}
+        onPlaybackRateChange={handlePlaybackRateChange}
         onToggleMute={handleToggleMute}
         onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
