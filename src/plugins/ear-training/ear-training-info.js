@@ -3,7 +3,7 @@ import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
 import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import EarTrainingDisplay from './ear-training-display.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class EarTrainingInfo {

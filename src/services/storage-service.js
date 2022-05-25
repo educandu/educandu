@@ -9,11 +9,10 @@ import LessonStore from '../stores/lesson-store.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
-import { componseUniqueFileName } from '../utils/path-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { getPrivateStoragePathForRoomId, getPrefixFromStoragePath, getStoragePathType, STORAGE_PATH_TYPE, getPathSegments } from '../ui/path-helper.js';
+import { componseUniqueFileName, getPrivateStoragePathForRoomId, getStoragePathType } from '../utils/storage-utils.js';
+import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE, STORAGE_PATH_TYPE } from '../domain/constants.js';
 
 const { BadRequest } = httpErrors;
 
@@ -140,7 +139,8 @@ export default class StorageService {
 
     const mappedObjects = objects.map(obj => {
       const isDirectory = !!obj.prefix;
-      const segments = getPathSegments(isDirectory ? obj.prefix : obj.name);
+      const path = isDirectory ? obj.prefix : obj.name;
+      const segments = path.split('/').filter(seg => !!seg);
       const encodedSegments = segments.map(s => encodeURIComponent(s));
       return {
         displayName: segments[segments.length - 1],
@@ -280,11 +280,15 @@ export default class StorageService {
   }
 
   async _deleteObjects(paths) {
-    const allObjectsToDelete = paths.map(path => ({
-      fullObjectName: path,
-      prefix: getPrefixFromStoragePath(path),
-      storagePathType: getStoragePathType(path)
-    }));
+    const allObjectsToDelete = paths.map(path => {
+      const prefixSegments = (path || '').split('/').filter(seg => seg).slice(0, -1);
+
+      return {
+        fullObjectName: path,
+        prefix: `${prefixSegments.join('/')}/`,
+        storagePathType: getStoragePathType(path)
+      };
+    });
 
     const objectWithUnknownPathType = allObjectsToDelete.find(obj => obj.storagePathType === STORAGE_PATH_TYPE.unknown);
     if (objectWithUnknownPathType) {

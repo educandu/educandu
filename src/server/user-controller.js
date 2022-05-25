@@ -80,7 +80,7 @@ class UserController {
 
   handleGetRegisterPage(req, res) {
     if (req.isAuthenticated()) {
-      return res.redirect(urls.getDefaultLoginRedirectUrl());
+      return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.register, {});
@@ -88,7 +88,7 @@ class UserController {
 
   async handleCompleteRegistrationPage(req, res) {
     if (req.isAuthenticated()) {
-      return res.redirect(urls.getDefaultLoginRedirectUrl());
+      return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
     const user = await this.userService.verifyUser(req.params.verificationCode);
@@ -98,7 +98,7 @@ class UserController {
 
   handleGetLoginPage(req, res) {
     if (req.isAuthenticated()) {
-      return res.redirect(urls.getDefaultLoginRedirectUrl());
+      return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
@@ -110,7 +110,7 @@ class UserController {
       res.clearCookie(this.serverConfig.sessionCookieName);
     }
 
-    return res.redirect(urls.getDefaultLogoutRedirectUrl());
+    return res.redirect(routes.getDefaultLogoutRedirectUrl());
   }
 
   handleGetResetPasswordPage(req, res) {

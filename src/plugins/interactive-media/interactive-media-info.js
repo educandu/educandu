@@ -2,8 +2,8 @@ import React from 'react';
 import uniqueId from '../../utils/unique-id.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import InteractiveMediaIcon from './interactive-media-icon.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
 import InteractiveMediaDisplay from './interactive-media-display.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 

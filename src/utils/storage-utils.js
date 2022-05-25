@@ -1,8 +1,16 @@
+import uniqueId from './unique-id.js';
+import urlUtils from './url-utils.js';
+import slugify from '@sindresorhus/slugify';
 import {
+  STORAGE_PATH_TYPE,
   IMAGE_OPTIMIZATION_THRESHOLD_WIDTH,
   IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES,
   IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES
 } from '../domain/constants.js';
+import { getResourceExtension } from './resource-utils.js';
+
+const publicCdnPathPattern = /^media(\/.*)?$/;
+const privateCdnPathPattern = /^rooms\/([^/]+)\/media(\/.*)?$/;
 
 const getScaledDownDimensions = img => {
   if (img.naturalWidth <= IMAGE_OPTIMIZATION_THRESHOLD_WIDTH) {
@@ -61,4 +69,39 @@ export const processFilesBeforeUpload = ({ files, optimizeImages }) => {
     return files;
   }
   return Promise.all(files.map(file => optimizeImage(file)));
+};
+
+export function getStoragePathType(path) {
+  if (publicCdnPathPattern.test(path)) {
+    return STORAGE_PATH_TYPE.public;
+  }
+  if (privateCdnPathPattern.test(path)) {
+    return STORAGE_PATH_TYPE.private;
+  }
+  return STORAGE_PATH_TYPE.unknown;
+}
+
+export function getPrivateStoragePathForRoomId(roomId) {
+  return `rooms/${roomId}/media`;
+}
+
+export function getRoomIdFromPrivateStoragePath(path) {
+  const match = path.match(privateCdnPathPattern);
+  return match ? match[1] : null;
+}
+
+export function isAccessibleStoragePath(storagePath, fromRoomId) {
+  return storagePath && getStoragePathType(storagePath) === STORAGE_PATH_TYPE.private
+    ? getRoomIdFromPrivateStoragePath(storagePath) === fromRoomId
+    : true;
+}
+
+export const componseUniqueFileName = (fileName, parentPath = null) => {
+  const id = uniqueId.create();
+  const extension = getResourceExtension(fileName);
+  const baseName = fileName.substr(0, fileName.length - extension.length);
+  const slugifiedBaseName = slugify(baseName);
+  const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
+  const newFileName = `${uniqueBaseName}.${extension}`;
+  return parentPath ? urlUtils.concatParts(parentPath, newFileName) : newFileName;
 };

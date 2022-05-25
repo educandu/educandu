@@ -3,7 +3,7 @@ import ImageIcon from './image-icon.js';
 import { SOURCE_TYPE } from './constants.js';
 import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 
 class ImageInfo {
   static get typeName() { return 'image'; }

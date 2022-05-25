@@ -3,7 +3,7 @@ import AudioIcon from './audio-icon.js';
 import AudioDisplay from './audio-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AudioInfo {

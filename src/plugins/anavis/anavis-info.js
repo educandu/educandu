@@ -3,7 +3,7 @@ import AnavisIcon from './anavis-icon.js';
 import { MEDIA_KIND } from './constants.js';
 import AnavisDisplay from './anavis-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 

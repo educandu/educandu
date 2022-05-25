@@ -2,7 +2,7 @@ import React from 'react';
 import MarkdownIcon from './markdown-icon.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import MarkdownDisplay from './markdown-display.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class MarkdownInfo {

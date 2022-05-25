@@ -129,6 +129,12 @@ export const CDN_OBJECT_TYPE = {
   file: 'file'
 };
 
+export const STORAGE_PATH_TYPE = {
+  unknown: 'unknown',
+  public: 'public',
+  private: 'private'
+};
+
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';
 export const LOG_LEVEL_COOKIE_NAME = 'LOG_LEVEL';
 export const COOKIE_SAME_SITE_POLICY = 'lax';

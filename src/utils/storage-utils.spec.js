@@ -1,16 +1,22 @@
+import sinon from 'sinon';
+import uniqueId from './unique-id.js';
+import { STORAGE_PATH_TYPE } from '../domain/constants.js';
 import {
-  isSubPath,
-  getPrefix,
-  getPathSegments,
-  STORAGE_PATH_TYPE,
+  isAccessibleStoragePath,
   getStoragePathType,
   getPrivateStoragePathForRoomId,
   getRoomIdFromPrivateStoragePath,
-  isAccessibleStoragePath
-} from './path-helper.js';
+  componseUniqueFileName
+} from './storage-utils.js';
 
-describe('path-helper', () => {
+describe('storage-utils', () => {
   let result;
+
+  const sandbox = sinon.createSandbox();
+
+  beforeAll(() => {
+    sandbox.stub(uniqueId, 'create').returns('ch5zqo897tzo8f3');
+  });
 
   describe('getStoragePathType', () => {
     const testCases = [
@@ -77,25 +83,23 @@ describe('path-helper', () => {
     });
   });
 
-  describe('getPathSegments', () => {
-    it('should return an array of all non-empty path sements', () => {
-      expect(getPathSegments('my////path/')).toEqual(['my', 'path']);
-    });
-  });
+  describe('componseUniqueFileName', () => {
+    const testCases = [
+      { fileName: 'hello-world-123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'hello_world_123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'hello world 123.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'héllö wøȑlð 123.mp3', prefix: null, expectedOutput: 'helloe-wo-ld-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'Hällo Wörld 123.mp3', prefix: null, expectedOutput: 'haello-woerld-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', prefix: null, expectedOutput: 'hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: 'Hello World 123 !"§.mp3', prefix: 'media/my-folder/', expectedOutput: 'media/my-folder/hello-world-123-ch5zqo897tzo8f3.mp3' },
+      { fileName: '### ###.mp3', prefix: 'media/my-folder/', expectedOutput: 'media/my-folder/ch5zqo897tzo8f3.mp3' }
+    ];
 
-  describe('getPrefix', () => {
-    it('should return the composed prefix (storage path)', () => {
-      expect(getPrefix(['my', '', '', 'path', null])).toEqual('my/path/');
-    });
-  });
-
-  describe('isSubPath', () => {
-    it('should return true when the segments are in the path', () => {
-      expect(isSubPath({ pathSegments: ['rooms', 'roomId', 'media'], subPathSegments: ['rooms', 'roomId', 'media', 'fileName'] })).toBe(true);
-    });
-
-    it('should return false when the segments are not in the path', () => {
-      expect(isSubPath({ pathSegments: ['roomId'], subPathSegments: ['rooms', 'roomId'] })).toBe(false);
+    testCases.forEach(({ fileName, prefix, expectedOutput }) => {
+      it(`should transform fileName '${fileName} with prefix ${prefix === null ? 'null' : `'${prefix}'`} to '${expectedOutput}'`, () => {
+        const actualOutput = componseUniqueFileName(fileName, prefix);
+        expect(actualOutput).toBe(expectedOutput);
+      });
     });
   });
 });
