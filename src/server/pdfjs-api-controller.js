@@ -1,5 +1,5 @@
 import express from 'express';
-import { resolvePathWithinPackage } from '../utils/path-utils.js';
+import { resolvePathWithinPackage } from '../utils/module-utils.js';
 
 class PdfJsApiController {
   registerMiddleware(router) {

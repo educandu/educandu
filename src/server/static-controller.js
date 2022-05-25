@@ -1,6 +1,6 @@
 import express from 'express';
 import ServerConfig from '../bootstrap/server-config.js';
-import { resolvePathWithinPackage } from '../utils/path-utils.js';
+import { resolvePathWithinPackage } from '../utils/module-utils.js';
 
 const staticConfig = [
   {
