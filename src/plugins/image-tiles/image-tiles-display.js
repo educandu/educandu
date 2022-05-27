@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';

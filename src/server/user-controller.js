@@ -1,11 +1,12 @@
 /* eslint-disable max-params */
 import express from 'express';
 import passport from 'passport';
-import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import routes from '../utils/routes.js';
 import passportLocal from 'passport-local';
+import urlUtils from '../utils/url-utils.js';
 import Database from '../stores/database.js';
 import { PAGE_NAME } from '../domain/page-name.js';
 import permissions from '../domain/permissions.js';
@@ -79,7 +80,7 @@ class UserController {
 
   handleGetRegisterPage(req, res) {
     if (req.isAuthenticated()) {
-      return res.redirect(urls.getDefaultLoginRedirectUrl());
+      return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.register, {});
@@ -87,7 +88,7 @@ class UserController {
 
   async handleCompleteRegistrationPage(req, res) {
     if (req.isAuthenticated()) {
-      return res.redirect(urls.getDefaultLoginRedirectUrl());
+      return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
     const user = await this.userService.verifyUser(req.params.verificationCode);
@@ -97,7 +98,7 @@ class UserController {
 
   handleGetLoginPage(req, res) {
     if (req.isAuthenticated()) {
-      return res.redirect(urls.getDefaultLoginRedirectUrl());
+      return res.redirect(routes.getDefaultLoginRedirectUrl());
     }
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.login, {});
@@ -109,7 +110,7 @@ class UserController {
       res.clearCookie(this.serverConfig.sessionCookieName);
     }
 
-    return res.redirect(urls.getDefaultLogoutRedirectUrl());
+    return res.redirect(routes.getDefaultLogoutRedirectUrl());
   }
 
   handleGetResetPasswordPage(req, res) {
@@ -141,7 +142,7 @@ class UserController {
 
     if (result === SAVE_USER_RESULT.success) {
       const { origin } = requestUtils.getHostInfo(req);
-      const verificationLink = urls.concatParts(origin, urls.getCompleteRegistrationUrl(user.verificationCode));
+      const verificationLink = urlUtils.concatParts(origin, routes.getCompleteRegistrationUrl(user.verificationCode));
       await this.mailService.sendRegistrationVerificationEmail({ username, email, verificationLink });
     }
 
@@ -196,7 +197,7 @@ class UserController {
     if (user) {
       const resetRequest = await this.userService.createPasswordResetRequest(user);
       const { origin } = requestUtils.getHostInfo(req);
-      const completionLink = urls.concatParts(origin, urls.getCompletePasswordResetUrl(resetRequest._id));
+      const completionLink = urlUtils.concatParts(origin, routes.getCompletePasswordResetUrl(resetRequest._id));
       await this.mailService.sendPasswordResetEmail({ username: user.username, email: user.email, completionLink });
     }
 

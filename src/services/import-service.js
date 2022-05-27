@@ -1,5 +1,5 @@
 import by from 'thenby';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import DocumentStore from '../stores/document-store.js';
 import ExportApiClient from '../api-clients/export-api-client.js';
 import { DOCUMENT_IMPORT_TYPE, DOCUMENT_ORIGIN } from '../domain/constants.js';

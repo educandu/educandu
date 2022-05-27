@@ -22,10 +22,14 @@ const extensionsGroups = [
   { type: RESOURCE_TYPE.video, extensions: ['mp4', 'm4v', 'ogv', 'webm', 'mpg', 'mpeg', 'mov', 'avi', 'mkv'] }
 ];
 
-export const getResourceType = url => {
-  const sanitizedUrl = (url || '').trim();
+export const getResourceExtension = resource => {
+  const sanitizedUrl = (resource || '').trim();
   const extensionMatches = sanitizedUrl.match(/\.([0-9a-z]+)$/i);
-  const extension = extensionMatches?.[1]?.toLowerCase();
+  return extensionMatches?.[1]?.toLowerCase();
+};
+
+export const getResourceType = url => {
+  const extension = getResourceExtension(url);
 
   if (!extension) {
     return RESOURCE_TYPE.none;

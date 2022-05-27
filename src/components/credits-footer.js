@@ -1,4 +1,4 @@
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRequest } from './request-context.js';

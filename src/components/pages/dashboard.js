@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Avatar, Tabs } from 'antd';
 import NewsTab from '../news-tab.js';
 import RoomsTab from '../rooms-tab.js';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import AccountTab from '../account-tab.js';
 import ProfileTab from '../profile-tab.js';
 import { useUser } from '../user-context.js';

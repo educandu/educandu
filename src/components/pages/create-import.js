@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { useService } from '../container-context.js';

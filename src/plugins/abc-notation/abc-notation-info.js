@@ -2,7 +2,7 @@ import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import AbcNotationIcon from './abc-notation-icon.js';
 import AbcNotationDisplay from './abc-notation-display.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AbcNotationInfo {

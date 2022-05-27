@@ -1,3 +1,4 @@
+import urlUtils from './url-utils.js';
 import escapeStringRegexp from 'escape-string-regexp';
 
 const homePath = '/';
@@ -25,33 +26,6 @@ const roomMembershipConfirmationPrefix = '/room-membership-confirmation/';
 const docPageRegex = new RegExp(`^(?:${escapeStringRegexp(docsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 const lessonPageRegex = new RegExp(`^(?:${escapeStringRegexp(lessonsPrefix)})([a-zA-Z0-9]+)\\b`, 'i');
 
-function removeTrailingSlash(path) {
-  return String(path).replace(/\/*$/, '');
-}
-
-function removeLeadingSlash(path) {
-  return String(path).replace(/^\/*/, '');
-}
-
-function encodeURIParts(path) {
-  return (path || '').split('/').map(x => encodeURIComponent(x)).join('/');
-}
-
-function composeQueryString(keyValuePairs) {
-  return new URLSearchParams(keyValuePairs.filter(([, value]) => value)).toString();
-}
-
-function concatParts(...parts) {
-  const nonEmptyParts = parts.map(part => part?.toString() || '').filter(part => part);
-  return nonEmptyParts.length
-    ? nonEmptyParts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`)
-    : '';
-}
-
-function createRedirectUrl(path, redirect) {
-  return `${path}?redirect=${encodeURIComponent(redirect)}`;
-}
-
 function getDocsUrl() {
   return docsPath;
 }
@@ -61,15 +35,15 @@ function getUsersUrl() {
 }
 
 function getDocUrl({ key, slug, view, templateDocumentKey }) {
-  const keyAndSlugPart = concatParts(encodeURIComponent(key), encodeURIParts(slug));
+  const keyAndSlugPart = urlUtils.concatParts(encodeURIComponent(key), urlUtils.encodeURIParts(slug));
 
-  const url = concatParts(docsPrefix, keyAndSlugPart);
-  const queryString = composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);
+  const url = urlUtils.concatParts(docsPrefix, keyAndSlugPart);
+  const queryString = urlUtils.composeQueryString([['view', view], ['templateDocumentKey', templateDocumentKey]]);
   return queryString ? `${url}?${queryString}` : url;
 }
 
 function getDocumentRevisionUrl(revisionId) {
-  return concatParts(revisionPrefix, revisionId);
+  return urlUtils.concatParts(revisionPrefix, revisionId);
 }
 
 function getAdminUrl() {
@@ -85,19 +59,19 @@ function getCreateImportUrl(sourceName) {
 }
 
 function getBatchUrl(id) {
-  return concatParts(batchesPath, id);
+  return urlUtils.concatParts(batchesPath, id);
 }
 
 function getCompleteRegistrationUrl(verificationCode) {
-  return concatParts(completeRegistrationPrefix, verificationCode);
+  return urlUtils.concatParts(completeRegistrationPrefix, verificationCode);
 }
 
 function getCompletePasswordResetUrl(passwordResetRequestId) {
-  return concatParts(completePasswordResetPrefix, passwordResetRequestId);
+  return urlUtils.concatParts(completePasswordResetPrefix, passwordResetRequestId);
 }
 
 function getRoomMembershipConfirmationUrl(token) {
-  return concatParts(roomMembershipConfirmationPrefix, token);
+  return urlUtils.concatParts(roomMembershipConfirmationPrefix, token);
 }
 
 function getDefaultLoginRedirectUrl() {
@@ -113,7 +87,7 @@ function getHomeUrl(language = null) {
 }
 
 function getLoginUrl(redirect = null) {
-  return redirect ? createRedirectUrl(loginPath, redirect) : loginPath;
+  return redirect ? urlUtils.createRedirectUrl(loginPath, redirect) : loginPath;
 }
 
 function getLogoutUrl() {
@@ -121,7 +95,7 @@ function getLogoutUrl() {
 }
 
 function getDashboardUrl({ tab } = {}) {
-  const queryString = composeQueryString([['tab', tab]]);
+  const queryString = urlUtils.composeQueryString([['tab', tab]]);
   return queryString ? `${dashboardPath}?${queryString}` : dashboardPath;
 }
 
@@ -133,13 +107,6 @@ function getResetPasswordUrl() {
   return resetPasswordPath;
 }
 
-function createFullyQualifiedUrl(pathname) {
-  const url = new URL(document.location);
-  url.pathname = pathname;
-  url.search = '';
-  return url.href;
-}
-
 function getSearchUrl(query) {
   return `${searchPath}?query=${encodeURIComponent((query || '').trim())}`;
 }
@@ -149,16 +116,16 @@ function getImportSourceBaseUrl({ allowUnsecure, hostName }) {
 }
 
 function getImportedDocUrl({ allowUnsecure, hostName, key, slug }) {
-  return concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ key, slug }));
+  return urlUtils.concatParts(getImportSourceBaseUrl({ allowUnsecure, hostName }), getDocUrl({ key, slug }));
 }
 
 function getRoomUrl(id, slug) {
-  return concatParts(roomsPrefix, encodeURIComponent(id), encodeURIParts(slug));
+  return urlUtils.concatParts(roomsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
 }
 
 function getLessonUrl({ id, slug, view, templateLessonId }) {
-  const url = concatParts(lessonsPrefix, encodeURIComponent(id), encodeURIParts(slug));
-  const queryString = composeQueryString([['view', view], ['templateLessonId', templateLessonId]]);
+  const url = urlUtils.concatParts(lessonsPrefix, encodeURIComponent(id), urlUtils.encodeURIParts(slug));
+  const queryString = urlUtils.composeQueryString([['view', view], ['templateLessonId', templateLessonId]]);
   return queryString ? `${url}?${queryString}` : url;
 }
 
@@ -173,10 +140,6 @@ function getLessonIdIfLessonUrl(url) {
 }
 
 export default {
-  createRedirectUrl,
-  removeTrailingSlash,
-  removeLeadingSlash,
-  concatParts,
   getDocsUrl,
   getUsersUrl,
   getDocUrl,
@@ -196,7 +159,6 @@ export default {
   getDashboardUrl,
   getRegisterUrl,
   getResetPasswordUrl,
-  createFullyQualifiedUrl,
   getSearchUrl,
   getBatchUrl,
   getImportedDocUrl,

@@ -3,7 +3,7 @@ import TableIcon from './table-icon.js';
 import TableDisplay from './table-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { COLUMN_DISTRIBUTION, createEmptyCell, createTableCellsFlat } from './table-utils.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 const DEFAULT_TABLE_ROW_COUNT = 3;

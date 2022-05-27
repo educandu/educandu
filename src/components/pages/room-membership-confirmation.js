@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import PropTypes from 'prop-types';
-import urls from '../../utils/urls.js';
+import urls from '../../utils/routes.js';
 import Countdown from '../countdown.js';
 import Logger from '../../common/logger.js';
 import React, { Fragment, useState } from 'react';

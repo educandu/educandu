@@ -4,7 +4,7 @@ import ImageTilesIcon from './image-tiles-icon.js';
 import { IMAGE_SOURCE_TYPE } from './constants.js';
 import ImageTilesDisplay from './image-tiles-display.js';
 import { createDefaultContent } from './image-tiles-utils.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 
 export default class ImageTiles {
   static get typeName() { return 'image-tiles'; }

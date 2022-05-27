@@ -1,16 +1,16 @@
 import os from 'os';
 import multer from 'multer';
 import express from 'express';
-import urls from '../utils/urls.js';
+import urls from '../utils/routes.js';
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
 import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE } from '../domain/constants.js';
+import { getRoomIdFromPrivateStoragePath, getStoragePathType } from '../utils/storage-utils.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
-import { STORAGE_PATH_TYPE, getStoragePathType, getRoomIdFromPrivateStoragePath } from '../ui/path-helper.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE, STORAGE_PATH_TYPE } from '../domain/constants.js';
 import {
   getCdnObjectsQuerySchema,
   postCdnObjectsBodySchema,

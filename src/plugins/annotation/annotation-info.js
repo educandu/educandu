@@ -3,7 +3,7 @@ import { BEHAVIOR, INTENT } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import AnnotationIcon from './annotation-icon.js';
 import AnnotationDisplay from './annotation-display.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class AnnotationInfo {

@@ -1,6 +1,7 @@
 import express from 'express';
-import urls from '../utils/urls.js';
 import httpErrors from 'http-errors';
+import routes from '../utils/routes.js';
+import urlUtils from '../utils/url-utils.js';
 import PageRenderer from './page-renderer.js';
 import permissions from '../domain/permissions.js';
 import { PAGE_NAME } from '../domain/page-name.js';
@@ -45,7 +46,7 @@ class LessonController {
     const { user } = req;
     const { lessonId } = req.params;
     const { view, templateLessonId } = req.query;
-    const routeWildcardValue = urls.removeLeadingSlash(req.params['0']);
+    const routeWildcardValue = urlUtils.removeLeadingSlash(req.params['0']);
 
     const lesson = await this.lessonService.getLessonById(lessonId);
     const templateLesson = templateLessonId ? await this.lessonService.getLessonById(templateLessonId) : null;
@@ -59,7 +60,7 @@ class LessonController {
     }
 
     if (lesson.slug !== routeWildcardValue) {
-      return res.redirect(301, urls.getLessonUrl({ id: lesson._id, slug: lesson.slug, view, templateLessonId }));
+      return res.redirect(301, routes.getLessonUrl({ id: lesson._id, slug: lesson.slug, view, templateLessonId }));
     }
 
     const room = await this.roomService.getRoomById(lesson.roomId);

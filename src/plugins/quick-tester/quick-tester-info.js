@@ -3,7 +3,7 @@ import { TESTS_ORDER } from './constants.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import QuickTesterIcon from './quick-tester-icon.js';
 import QuickTesterDisplay from './quick-tester-display.js';
-import { isAccessibleStoragePath } from '../../ui/path-helper.js';
+import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class QuickTesterInfo {

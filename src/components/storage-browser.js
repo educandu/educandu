@@ -30,12 +30,24 @@ import { useStorage, useSetStorage } from './storage-context.js';
 import { getCookie, setSessionCookie } from '../common/cookie.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import { processFilesBeforeUpload } from '../utils/storage-utils.js';
-import { getPathSegments, getPrefix, isSubPath } from '../ui/path-helper.js';
 import { confirmCdnFileDelete, confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import { Input, Table, Upload, Button, message, Breadcrumb, Select, Checkbox, Alert, Tooltip } from 'antd';
 import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
+
+function getPrefix(segments) {
+  return segments.filter(s => !!s).map(s => `${s}/`).join('');
+}
+
+function getPathSegments(path) {
+  return path.split('/').filter(seg => !!seg);
+}
+
+function isSubPath({ pathSegments, subPathSegments }) {
+  return pathSegments.length <= subPathSegments.length
+    && pathSegments.every((part, index) => part === subPathSegments[index]);
+}
 
 function mapCdnObjectsToLegacyDataStructure(cdnObjects) {
   return cdnObjects.map(obj => {
