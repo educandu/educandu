@@ -1,9 +1,9 @@
 import sinon from 'sinon';
 import uniqueId from './unique-id.js';
-import { STORAGE_PATH_TYPE } from '../domain/constants.js';
+import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   isAccessibleStoragePath,
-  getStoragePathType,
+  getStorageLocationTypeForPath,
   getPrivateStoragePathForRoomId,
   getRoomIdFromPrivateStoragePath,
   componseUniqueFileName
@@ -18,21 +18,21 @@ describe('storage-utils', () => {
     sandbox.stub(uniqueId, 'create').returns('ch5zqo897tzo8f3');
   });
 
-  describe('getStoragePathType', () => {
+  describe('getStorageLocationTypeForPath', () => {
     const testCases = [
-      { path: 'root/media/resourceId/', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: 'mediatech/resourceId/', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: 'media/resourceId/', expectedResult: STORAGE_PATH_TYPE.public },
-      { path: '/root/rooms/media/', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: '/media/rooms/media/', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: '/root/rooms/roomId/media/', expectedResult: STORAGE_PATH_TYPE.unknown },
-      { path: 'rooms/roomId/media/', expectedResult: STORAGE_PATH_TYPE.private }
+      { path: 'root/media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: 'mediatech/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: 'media/resourceId/', expectedResult: STORAGE_LOCATION_TYPE.public },
+      { path: '/root/rooms/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: '/media/rooms/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: '/root/rooms/roomId/media/', expectedResult: STORAGE_LOCATION_TYPE.unknown },
+      { path: 'rooms/roomId/media/', expectedResult: STORAGE_LOCATION_TYPE.private }
     ];
 
     testCases.forEach(({ path, expectedResult }) => {
       describe(`when called with '${path}'`, () => {
         beforeEach(() => {
-          result = getStoragePathType(path);
+          result = getStorageLocationTypeForPath(path);
         });
 
         it(`should return '${expectedResult}'`, () => {

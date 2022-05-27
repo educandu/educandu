@@ -194,7 +194,7 @@ export default class RoomController {
   async handleGetRoomPage(req, res) {
     const { roomId } = req.params;
     const userId = req.user?._id;
-    const routeWildcardValue = urlUtils.removeLeadingSlash(req.params['0']);
+    const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params['0']);
 
     const room = await this.roomService.getRoomById(roomId);
 

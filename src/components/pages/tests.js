@@ -1,24 +1,28 @@
 /* eslint-disable no-console */
 
 import PropTypes from 'prop-types';
-import { message, Select } from 'antd';
 import FilePreview from '../file-preview.js';
 import { useStorage } from '../storage-context.js';
+import DebouncedInput from '../debounced-input.js';
 import React, { useEffect, useState } from 'react';
-import { CDN_OBJECT_TYPE } from '../../domain/constants.js';
+import { Button, message, Modal, Select } from 'antd';
+import ResourceSelector from '../resource-selector.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import FilesViewer, { FILE_VIEWER_DISPLAY } from '../files-viewer.js';
 import StorageApiClient from '../../api-clients/storage-api-client.js';
+import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 function Tests({ PageTemplate }) {
   const { locations } = useStorage();
   const currentLocation = locations[0];
   const [files, setFiles] = useState([]);
+  const [initialUrl, setInitialUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILE_VIEWER_DISPLAY.list);
   const [currentDisplayedDirectoryPath, setCurrentDisplayedDirectoryPath] = useState(null);
+  const [isResourceSelectorModalVisible, setIsResourceSelectorModalVisible] = useState(false);
   const [currentLoadedDirectoryPath, setCurrentLoadedDirectoryPath] = useState(currentLocation.initialPath);
 
   useEffect(() => {
@@ -43,6 +47,10 @@ function Tests({ PageTemplate }) {
     })();
   }, [currentLoadedDirectoryPath, storageApiClient]);
 
+  const handleOpenResourceSelectorModalClick = () => {
+    setIsResourceSelectorModalVisible(true);
+  };
+
   const handleOnFileClick = newFile => {
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
       setCurrentLoadedDirectoryPath(newFile.path);
@@ -54,6 +62,27 @@ function Tests({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="TestsPage">
+        <h1>Storage Browser</h1>
+        <div>
+          INITIAL URL:
+          &nbsp;
+          <DebouncedInput value={initialUrl} onChange={setInitialUrl} />
+          &nbsp;
+          <Button onClick={handleOpenResourceSelectorModalClick}>Open in modal window</Button>
+        </div>
+        <div>
+          <ResourceSelector
+            allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
+            initialUrl={initialUrl}
+            />
+          <Modal visible={isResourceSelectorModalVisible}>
+            <ResourceSelector
+              allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
+              initialUrl={initialUrl}
+              />
+          </Modal>
+        </div>
+        <hr />
         <h1>Files Viewer</h1>
         <div>
           DISPLAY:

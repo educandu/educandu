@@ -120,19 +120,14 @@ export const MEDIA_SOURCE_TYPE = {
 };
 
 export const STORAGE_LOCATION_TYPE = {
-  private: 'private',
-  public: 'public'
+  unknown: 'unknown',
+  public: 'public',
+  private: 'private'
 };
 
 export const CDN_OBJECT_TYPE = {
   directory: 'directory',
   file: 'file'
-};
-
-export const STORAGE_PATH_TYPE = {
-  unknown: 'unknown',
-  public: 'public',
-  private: 'private'
 };
 
 export const UI_LANGUAGE_COOKIE_NAME = 'UILANG';

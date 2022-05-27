@@ -8,9 +8,9 @@ import permissions from '../domain/permissions.js';
 import RoomService from '../services/room-service.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
-import { getRoomIdFromPrivateStoragePath, getStoragePathType } from '../utils/storage-utils.js';
 import { validateBody, validateQuery, validateParams } from '../domain/validation-middleware.js';
-import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE, STORAGE_PATH_TYPE } from '../domain/constants.js';
+import { getRoomIdFromPrivateStoragePath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   getCdnObjectsQuerySchema,
   postCdnObjectsBodySchema,
@@ -58,13 +58,13 @@ class StorageController {
     const { user } = req;
     const { path } = req.query;
 
-    const storagePathType = getStoragePathType(path);
-    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+    const storageLocationType = getStorageLocationTypeForPath(path);
+    if (storageLocationType === STORAGE_LOCATION_TYPE.unknown) {
       throw new BadRequest(`Invalid storage path '${path}'`);
     }
 
-    let privateRoom;
-    if (storagePathType === STORAGE_PATH_TYPE.private) {
+    let privateRoom = null;
+    if (storageLocationType === STORAGE_LOCATION_TYPE.private) {
       const roomId = getRoomIdFromPrivateStoragePath(path);
       privateRoom = await this.roomService.getRoomById(roomId);
 
@@ -86,18 +86,18 @@ class StorageController {
   async handlePostCdnObject(req, res) {
     const { user, files } = req;
     const { parentPath } = req.body;
-    const storagePathType = getStoragePathType(parentPath);
+    const storageLocationType = getStorageLocationTypeForPath(parentPath);
 
     if (!files?.length) {
       throw new BadRequest('No files provided');
     }
 
-    if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+    if (storageLocationType === STORAGE_LOCATION_TYPE.unknown) {
       throw new BadRequest(`Invalid storage path '${parentPath}'`);
     }
 
     let privateRoom;
-    if (storagePathType === STORAGE_PATH_TYPE.private) {
+    if (storageLocationType === STORAGE_LOCATION_TYPE.private) {
       const roomId = getRoomIdFromPrivateStoragePath(parentPath);
       privateRoom = await this.roomService.getRoomById(roomId);
 
