@@ -5,8 +5,20 @@ determiningDuration:
   en: Determining media duration ...
   de: Mediendauer wird ermittelt ...
 defaultChapterTitle:
-  en: Chapter
-  de: Kapitel
+  en: |
+    [Chapter]
+  de: |
+    [Kapitel]
+defaultChapterQuestion:
+  en: |
+    [Question]
+  de: |
+    [Frage]
+defaultChapterAnswer:
+  en: |
+    [Answer]
+  de: |
+    [Antwort]
 editChapter:
   en: Edit chapter
   de: Kapitel bearbeiten
@@ -28,3 +40,15 @@ startTimecode:
 duration:
   en: Duration
   de: Zeitdauer
+question:
+  en: Question
+  de: Frage
+answers:
+  en: Answers
+  de: Antworten
+addAnswer:
+  en: Add answer
+  de: Antwort hinzufügen
+markCorrectAnswer:
+  en: Mark as correct answer
+  de: Als richtige Antwort markieren

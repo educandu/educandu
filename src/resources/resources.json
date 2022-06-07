@@ -1657,14 +1657,20 @@
     "resources": {
       "name": "Interactive media",
       "determiningDuration": "Determining media duration ...",
-      "defaultChapterTitle": "Chapter",
+      "defaultChapterTitle": "[Chapter]\n",
+      "defaultChapterQuestion": "[Question]\n",
+      "defaultChapterAnswer": "[Answer]\n",
       "editChapter": "Edit chapter",
       "selectPreviousChapter": "Select previous chapter",
       "selectNextChapter": "Select next chapter",
       "playbackRange": "Playback range",
       "playbackRangeInfo": "From {from, select, start {the beginning} other {timecode {from}}} to {to, select, end {the end} other {timecode {to}}}",
       "startTimecode": "Start time",
-      "duration": "Duration"
+      "duration": "Duration",
+      "question": "Question",
+      "answers": "Answers",
+      "addAnswer": "Add answer",
+      "markCorrectAnswer": "Mark as correct answer"
     }
   },
   {
@@ -1673,14 +1679,20 @@
     "resources": {
       "name": "Interaktive Medien",
       "determiningDuration": "Mediendauer wird ermittelt ...",
-      "defaultChapterTitle": "Kapitel",
+      "defaultChapterTitle": "[Kapitel]\n",
+      "defaultChapterQuestion": "[Frage]\n",
+      "defaultChapterAnswer": "[Antwort]\n",
       "editChapter": "Kapitel bearbeiten",
       "selectPreviousChapter": "Vorheriges Kapitel wählen",
       "selectNextChapter": "Nächstes Kapitel wählen",
       "playbackRange": "Abspielbereich",
       "playbackRangeInfo": "Von {from, select, start {Anfang} other {Time-Code {from}}} bis {to, select, end {Ende} other {Time-Code {to}}}",
       "startTimecode": "Startzeit",
-      "duration": "Zeitdauer"
+      "duration": "Zeitdauer",
+      "question": "Frage",
+      "answers": "Antworten",
+      "addAnswer": "Antwort hinzufügen",
+      "markCorrectAnswer": "Als richtige Antwort markieren"
     }
   },
   {
