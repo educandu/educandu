@@ -47,10 +47,6 @@ function Tests({ PageTemplate }) {
     })();
   }, [currentLoadedDirectoryPath, storageApiClient]);
 
-  const handleOpenResourceSelectorModalClick = () => {
-    setIsResourceSelectorModalVisible(true);
-  };
-
   const handleOnFileClick = newFile => {
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
       setCurrentLoadedDirectoryPath(newFile.path);
@@ -62,23 +58,30 @@ function Tests({ PageTemplate }) {
   return (
     <PageTemplate>
       <div className="TestsPage">
-        <h1>Storage Browser</h1>
-        <div>
+        <h1>Resource Selector</h1>
+        <div style={{ marginBottom: '25px' }}>
+          <Button onClick={() => setIsResourceSelectorModalVisible(true)}>Open in modal window</Button>
+        </div>
+        <div style={{ marginBottom: '25px' }}>
           INITIAL URL:
           &nbsp;
           <DebouncedInput value={initialUrl} onChange={setInitialUrl} />
-          &nbsp;
-          <Button onClick={handleOpenResourceSelectorModalClick}>Open in modal window</Button>
         </div>
-        <div>
+        <div style={{ height: '400px', border: '1px solid gray' }}>
           <ResourceSelector
             allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
             initialUrl={initialUrl}
             />
-          <Modal visible={isResourceSelectorModalVisible}>
+          <Modal
+            footer={null}
+            closable={false}
+            visible={isResourceSelectorModalVisible}
+            >
             <ResourceSelector
               allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
               initialUrl={initialUrl}
+              onSelect={() => setIsResourceSelectorModalVisible(false)}
+              onCancel={() => setIsResourceSelectorModalVisible(false)}
               />
           </Modal>
         </div>
