@@ -222,7 +222,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChaperAnswerChanged = (index, event) => {
+  const handleChapterAnswerChanged = (index, event) => {
     const { value } = event.target;
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].answers[index] = value;
@@ -231,14 +231,14 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const handleChapterAnswerMarkClick = index => {
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex].correctAnswer = index;
+    newChapters[selectedChapterIndex].correctAnswerIndex = index;
     changeContent({ chapters: newChapters });
   };
 
   const handleChapterAnswerDeleteClick = index => {
     const newChapters = cloneDeep(chapters);
-    if (index === newChapters[selectedChapterIndex].correctAnswer) {
-      newChapters[selectedChapterIndex].correctAnswer = 0;
+    if (index === newChapters[selectedChapterIndex].correctAnswerIndex) {
+      newChapters[selectedChapterIndex].correctAnswerIndex = 0;
     }
 
     newChapters[selectedChapterIndex].answers = removeItemAt(newChapters[selectedChapterIndex].answers, index);
@@ -256,7 +256,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       <Input
         value={answer}
         disabled={!selectedChapterDuration}
-        onChange={event => handleChaperAnswerChanged(index, event)}
+        onChange={event => handleChapterAnswerChanged(index, event)}
         />
       <Tooltip title={t('markCorrectAnswer')}>
         <Button
@@ -264,7 +264,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           icon={<CheckOutlined />}
           className={classNames(
             'InteractiveMediaEditor-answerCheckmark',
-            { 'is-active': chapters[selectedChapterIndex].correctAnswer === index }
+            { 'is-active': chapters[selectedChapterIndex].correctAnswerIndex === index }
           )}
           disabled={!selectedChapterDuration}
           onClick={() => handleChapterAnswerMarkClick(index)}

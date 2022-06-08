@@ -11,7 +11,7 @@ export default class Educandu_2022_06_07_01_add_question_and_answers_to_interact
         $set: {
           'sections.$[sectionElement].content.chapters.$[].question': '[Question]',
           'sections.$[sectionElement].content.chapters.$[].answers': ['[Answer]'],
-          'sections.$[sectionElement].content.chapters.$[].correctAnswer': 0
+          'sections.$[sectionElement].content.chapters.$[].correctAnswerIndex': 0
         }
       },
       {
@@ -34,7 +34,8 @@ export default class Educandu_2022_06_07_01_add_question_and_answers_to_interact
       {
         $unset: {
           'sections.$[sectionElement].content.chapters.$[].question': null,
-          'sections.$[sectionElement].content.chapters.$[].answers': null
+          'sections.$[sectionElement].content.chapters.$[].answers': null,
+          'sections.$[sectionElement].content.chapters.$[].correctAnswerIndex': null
         }
       },
       {

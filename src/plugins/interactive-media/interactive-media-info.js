@@ -40,7 +40,7 @@ class InteractiveMediaInfo {
       title: `[${t('interactiveMedia:chapter')}]`,
       question: `[${t('common:question')}]`,
       answers: [`[${t('common:answer')}]`],
-      correctAnswer: 0
+      correctAnswerIndex: 0
     };
   }
 

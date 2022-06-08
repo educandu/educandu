@@ -30,7 +30,7 @@ MarkdownTextarea.propTypes = {
 
 MarkdownTextarea.defaultProps = {
   disabled: false,
-  onChange: () => '',
+  onChange: () => {},
   value: ''
 };
 
