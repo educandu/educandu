@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Radio, Space } from 'antd';
 import React, { useRef, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
@@ -9,13 +9,17 @@ import { StepForwardOutlined, UndoOutlined } from '@ant-design/icons';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
+const RadioGroup = Radio.Group;
+
 function InteractiveMediaDisplay({ content }) {
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
   const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
 
+  const { sourceType, aspectRatio, showVideo, width, sourceStartTimecode, sourceStopTimecode, text, chapters } = content;
+
   let sourceUrl;
-  switch (content.sourceType) {
+  switch (sourceType) {
     case MEDIA_SOURCE_TYPE.internal:
       sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
       break;
@@ -24,7 +28,7 @@ function InteractiveMediaDisplay({ content }) {
       break;
   }
 
-  const marks = content.chapters
+  const marks = chapters
     .map(chapter => chapter.startTimecode === 0
       ? null
       : { key: chapter.key, timecode: chapter.startTimecode, text: formatMillisecondsAsDuration(chapter.startTimecode) })
@@ -32,12 +36,12 @@ function InteractiveMediaDisplay({ content }) {
 
   const handleMarkReached = nextChapterMark => {
     mediaPlayerRef.current.pause();
-    const nextChapterIndex = content.chapters.findIndex(chapter => chapter.key === nextChapterMark.key);
+    const nextChapterIndex = chapters.findIndex(chapter => chapter.key === nextChapterMark.key);
     setInteractingChapterIndex(nextChapterIndex - 1);
   };
 
   const handleEndReached = () => {
-    setInteractingChapterIndex(content.chapters.length - 1);
+    setInteractingChapterIndex(chapters.length - 1);
   };
 
   const handleResetChaptersClick = () => {
@@ -46,7 +50,7 @@ function InteractiveMediaDisplay({ content }) {
   };
 
   const handleNextChapterClick = () => {
-    const nextChapterMark = marks.find(m => m.key === content.chapters[interactingChapterIndex + 1].key);
+    const nextChapterMark = marks.find(m => m.key === chapters[interactingChapterIndex + 1].key);
 
     mediaPlayerRef.current.seekToMark(nextChapterMark);
     mediaPlayerRef.current.play();
@@ -55,7 +59,7 @@ function InteractiveMediaDisplay({ content }) {
   };
 
   const handleReplayChapterClick = () => {
-    const currentChapterMark = marks.find(m => m.key === content.chapters[interactingChapterIndex].key);
+    const currentChapterMark = marks.find(m => m.key === chapters[interactingChapterIndex].key);
 
     if (currentChapterMark) {
       mediaPlayerRef.current.seekToMark(currentChapterMark);
@@ -67,37 +71,54 @@ function InteractiveMediaDisplay({ content }) {
     setInteractingChapterIndex(-1);
   };
 
+  const renderAnswer = (answer, index) => (
+    <Radio value={index} key={index}><Markdown inline>{answer}</Markdown></Radio>
+  );
+
   return (
     <div className="InteractiveMediaDisplay">
-      <div className={`InteractiveMediaDisplay-content u-width-${content.width || 100}`}>
+      <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
         {sourceUrl && (
           <MediaPlayer
             mediaPlayerRef={mediaPlayerRef}
             marks={marks}
             sourceUrl={sourceUrl}
-            screenMode={content.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-            aspectRatio={content.aspectRatio}
-            startTimecode={content.sourceStartTimecode}
-            stopTimecode={content.sourceStopTimecode}
+            screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+            aspectRatio={aspectRatio}
+            startTimecode={sourceStartTimecode}
+            stopTimecode={sourceStopTimecode}
             onMarkReached={handleMarkReached}
             onEndReached={handleEndReached}
-            canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
+            canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
         {interactingChapterIndex >= 0 && (
           <div className="InteractiveMediaDisplay-overlay">
-            <Button type="link" icon={<UndoOutlined />} onClick={handleReplayChapterClick}>replay chapter</Button>
-            {interactingChapterIndex < content.chapters.length - 1 && (
+            <span className="InteractiveMediaDisplay-overlayTitle">{chapters[interactingChapterIndex].title}</span>
+
+            <div className="InteractiveMediaDisplay-overlayContent">
+              <Markdown>{chapters[interactingChapterIndex].question}</Markdown>
+              <RadioGroup className="InteractiveMediaDisplay-chapterAnswers">
+                <Space direction="vertical">
+                  {chapters[interactingChapterIndex].answers.map(renderAnswer)}
+                </Space>
+              </RadioGroup>
+            </div>
+
+            <div className="InteractiveMediaDisplay-overlayControls">
+              <Button type="link" icon={<UndoOutlined />} onClick={handleReplayChapterClick}>replay chapter</Button>
+              {interactingChapterIndex < chapters.length - 1 && (
               <Button type="link" icon={<StepForwardOutlined />} onClick={handleNextChapterClick}>next chapter</Button>
-            )}
-            {interactingChapterIndex === content.chapters.length - 1 && (
+              )}
+              {interactingChapterIndex === chapters.length - 1 && (
               <Button type="link" icon={<StepForwardOutlined />} onClick={handleResetChaptersClick}>reset chapters</Button>
-            )}
+              )}
+            </div>
           </div>
         )}
-        {content.text && (
+        {text && (
           <div className="InteractiveMediaDisplay-text">
-            <Markdown>{content.text}</Markdown>
+            <Markdown>{text}</Markdown>
           </div>
         )}
       </div>
