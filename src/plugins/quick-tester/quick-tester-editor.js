@@ -56,7 +56,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
 
   const handleAddButtonClick = () => {
     const newTests = tests.slice();
-    newTests.push({ question: `[${t('quickTester:question')}]`, answer: `[${t('quickTester:answer')}]` });
+    newTests.push({ question: `[${t('common:question')}]`, answer: `[${t('common:answer')}]` });
     changeContent({ tests: newTests });
   };
 
@@ -97,7 +97,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
         </ButtonGroup>
       )
     }, {
-      title: () => t('question'),
+      title: () => t('common:question'),
       dataIndex: 'question',
       key: 'question',
       render: (question, item, index) => (
@@ -108,7 +108,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
           />
       )
     }, {
-      title: () => t('answer'),
+      title: () => t('common:answer'),
       dataIndex: 'answer',
       key: 'answer',
       render: (answer, item, index) => (

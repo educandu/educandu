@@ -387,3 +387,9 @@ folder:
 pageCount:
   en: Page count
   de: Seitenanzahl
+question:
+  en: Question
+  de: Frage
+answer:
+  en: Answer
+  de: Antwort
