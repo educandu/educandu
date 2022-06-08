@@ -4,21 +4,9 @@ name:
 determiningDuration:
   en: Determining media duration ...
   de: Mediendauer wird ermittelt ...
-defaultChapterTitle:
-  en: |
-    [Chapter]
-  de: |
-    [Kapitel]
-defaultChapterQuestion:
-  en: |
-    [Question]
-  de: |
-    [Frage]
-defaultChapterAnswer:
-  en: |
-    [Answer]
-  de: |
-    [Antwort]
+chapter:
+  en: Chapter
+  de: Kapitel
 editChapter:
   en: Edit chapter
   de: Kapitel bearbeiten

@@ -38,8 +38,8 @@ class QuickTesterInfo {
       teaser: `[${t('quickTester:teaserLabel')}]`,
       tests: [
         {
-          question: `[${t('quickTester:question')}]`,
-          answer: `[${t('quickTester:answer')}]`
+          question: `[${t('common:question')}]`,
+          answer: `[${t('common:answer')}]`
         }
       ],
       testsOrder: TESTS_ORDER.given,

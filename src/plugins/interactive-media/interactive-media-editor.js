@@ -103,7 +103,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleChapterAdd = startTimecode => {
-    const chapter = { key: uniqueId.create(), title: t('defaultChapterTitle'), startTimecode };
+    const chapter = { key: uniqueId.create(), title: `[${t('chapter')}]`, startTimecode };
     const newChapters = ensureChaptersOrder([...chapters, chapter]);
     changeContent({ chapters: newChapters });
   };
@@ -224,28 +224,39 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ chapters: newChapters });
   };
 
-  const handleChaperAnswerChanged = (index, value) => {
+  const handleChaperAnswerChanged = (index, event) => {
+    const { value } = event.target;
     const newChapters = cloneDeep(chapters);
     newChapters[selectedChapterIndex].answers[index] = value;
     changeContent({ chapters: newChapters });
   };
 
-  const handleAnswerMarkClick = index => {
+  const handleChapterAnswerMarkClick = index => {
     setSelectedChapterAnswerIndex(index);
   };
 
-  const handleNewAnswerClick = () => {
+  const handleChapterAnswerDeleteClick = index => {
     const newChapters = cloneDeep(chapters);
-    newChapters[selectedChapterIndex].answers.push(`${t('defaultChapterAnswer')}`);
+    if (index === selectedChapterAnswerIndex) {
+      setSelectedChapterAnswerIndex(0);
+    }
+
+    newChapters[selectedChapterIndex].answers = removeItemAt(newChapters[selectedChapterIndex].answers, index);
     changeContent({ chapters: newChapters });
   };
 
-  const renderQuestionAnswer = (answer, index) => (
+  const handleNewChapterAnswerClick = () => {
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].answers.push(`[${t('common:answer')}]`);
+    changeContent({ chapters: newChapters });
+  };
+
+  const renderAnswer = (answer, index) => (
     <div className="InteractiveMediaEditor-answer" key={index}>
       <Input
         value={answer}
         disabled={!selectedChapterDuration}
-        onChange={value => handleChaperAnswerChanged(index, value)}
+        onChange={event => handleChaperAnswerChanged(index, event)}
         />
       <Tooltip title={t('markCorrectAnswer')}>
         <Button
@@ -256,10 +267,13 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
             { 'is-active': selectedChapterAnswerIndex === index }
           )}
           disabled={!selectedChapterDuration}
-          onClick={() => handleAnswerMarkClick(index)}
+          onClick={() => handleChapterAnswerMarkClick(index)}
           />
       </Tooltip>
-      <DeleteButton disabled={!selectedChapterDuration || chapters[selectedChapterIndex].answers.length === 1} />
+      <DeleteButton
+        onClick={() => handleChapterAnswerDeleteClick(index)}
+        disabled={!selectedChapterDuration || chapters[selectedChapterIndex].answers.length === 1}
+        />
     </div>
   );
 
@@ -281,7 +295,12 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         {sourceType === MEDIA_SOURCE_TYPE.internal && (
           <FormItem label={t('common:internalUrl')} {...formItemLayout}>
             <div className="u-input-and-button">
-              <DebouncedInput addonBefore={`${clientConfig.cdnRootUrl}/`} value={sourceUrl} onChange={handleSourceUrlChange} onBlur={handleSourceUrlBlur} />
+              <DebouncedInput
+                addonBefore={`${clientConfig.cdnRootUrl}/`}
+                value={sourceUrl}
+                onChange={handleSourceUrlChange}
+                onBlur={handleSourceUrlBlur}
+                />
               <StorageFilePicker
                 fileName={sourceUrl}
                 onFileNameChanged={handleInternalUrlFileNameChanged}
@@ -406,14 +425,15 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 />
             </FormItem>
             <FormItem label={t('answers')} {...formItemLayout}>
-              {(chapters?.[selectedChapterIndex].answers || []).map(renderQuestionAnswer)}
+              {(chapters?.[selectedChapterIndex].answers || []).map(renderAnswer)}
               <Tooltip title={t('addAnswer')}>
                 <Button
                   shape="circle"
                   size="small"
                   type="primary"
                   icon={<PlusOutlined />}
-                  onClick={handleNewAnswerClick}
+                  disabled={!selectedChapterDuration}
+                  onClick={handleNewChapterAnswerClick}
                   />
               </Tooltip>
             </FormItem>

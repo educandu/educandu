@@ -1657,9 +1657,7 @@
     "resources": {
       "name": "Interactive media",
       "determiningDuration": "Determining media duration ...",
-      "defaultChapterTitle": "[Chapter]\n",
-      "defaultChapterQuestion": "[Question]\n",
-      "defaultChapterAnswer": "[Answer]\n",
+      "chapter": "Chapter",
       "editChapter": "Edit chapter",
       "selectPreviousChapter": "Select previous chapter",
       "selectNextChapter": "Select next chapter",
@@ -1679,9 +1677,7 @@
     "resources": {
       "name": "Interaktive Medien",
       "determiningDuration": "Mediendauer wird ermittelt ...",
-      "defaultChapterTitle": "[Kapitel]\n",
-      "defaultChapterQuestion": "[Frage]\n",
-      "defaultChapterAnswer": "[Antwort]\n",
+      "chapter": "Kapitel",
       "editChapter": "Kapitel bearbeiten",
       "selectPreviousChapter": "Vorheriges Kapitel wählen",
       "selectNextChapter": "Nächstes Kapitel wählen",
@@ -1772,8 +1768,6 @@
       "name": "Quick tester",
       "showAnswer": "Show answer",
       "questionHeader": "Question {currentTest} of {testsLength}",
-      "question": "Question",
-      "answer": "Answer",
       "teaserLabel": "Link text",
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
@@ -1788,8 +1782,6 @@
       "name": "Schnelltester",
       "showAnswer": "Antwort anzeigen",
       "questionHeader": "Frage {currentTest} von {testsLength}",
-      "question": "Frage",
-      "answer": "Antwort",
       "teaserLabel": "Link-Text",
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
@@ -1997,7 +1989,9 @@
       "resource_none": "Unknown",
       "resource_unknown": "Unknown",
       "folder": "Folder",
-      "pageCount": "Page count"
+      "pageCount": "Page count",
+      "question": "Question",
+      "answer": "Answer"
     }
   },
   {
@@ -2130,7 +2124,9 @@
       "resource_none": "Unbekannt",
       "resource_unknown": "Unbekannt",
       "folder": "Verzeichnis",
-      "pageCount": "Seitenanzahl"
+      "pageCount": "Seitenanzahl",
+      "question": "Frage",
+      "answer": "Antwort"
     }
   },
   {

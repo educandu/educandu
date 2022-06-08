@@ -37,9 +37,9 @@ class InteractiveMediaInfo {
     return {
       key: uniqueId.create(),
       startTimecode: 0,
-      title: t('interactiveMedia:defaultChapterTitle'),
-      question: t('interactiveMedia:defaultChapterQuestion'),
-      answers: [t('interactiveMedia:defaultChapterAnswer')],
+      title: `[${t('interactiveMedia:chapter')}]`,
+      question: `[${t('common:question')}]`,
+      answers: [`[${t('common:answer')}]`],
       correctAnswer: 0
     };
   }
