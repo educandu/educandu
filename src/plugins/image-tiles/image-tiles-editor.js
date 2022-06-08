@@ -91,8 +91,8 @@ function ImageTilesEditor({ content, onContentChanged }) {
       <Menu.Item key="moveDown" onClick={() => handleMoveDownClick(index)}>
         <Button type="link" size="small" icon={<MoveDownIcon />}>{t('common:moveDown')}</Button>
       </Menu.Item>
-      <Menu.Item key="delete" >
-        <DeleteButton onClick={() => handleDeleteClick(index)}>{t('common:delete')}</DeleteButton>
+      <Menu.Item key="delete" onClick={() => handleDeleteClick(index)}>
+        <DeleteButton type="link" size="small">{t('common:delete')}</DeleteButton>
       </Menu.Item>
     </Menu>
   );
