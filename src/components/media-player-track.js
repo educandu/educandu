@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
 import React, { useRef, useState } from 'react';
+import AudioIcon from './icons/general/audio-icon.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
@@ -154,6 +155,7 @@ function MediaPlayerTrack({
   const classes = classNames(
     'MediaPlayerTrack',
     { 'MediaPlayerTrack--noScreen': screenMode === MEDIA_SCREEN_MODE.none },
+    { 'MediaPlayerTrack--audioMode': screenMode === MEDIA_SCREEN_MODE.audio },
     { 'MediaPlayerTrack--previewMode': screenMode === MEDIA_SCREEN_MODE.preview }
   );
 
@@ -185,6 +187,11 @@ function MediaPlayerTrack({
           onClickPreview={handleClickPreview}
           />
       </div>
+      {screenMode === MEDIA_SCREEN_MODE.audio && currentPlayState !== MEDIA_PLAY_STATE.initializing && (
+        <div className="MediaPlayerTrack--audioModeOverlay">
+          <AudioIcon />
+        </div>
+      )}
     </div>
   );
 }
