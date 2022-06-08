@@ -11,8 +11,8 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { componseUniqueFileName, getPrivateStoragePathForRoomId, getStoragePathType } from '../utils/storage-utils.js';
-import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE, STORAGE_PATH_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { componseUniqueFileName, getPrivateStoragePathForRoomId, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const { BadRequest } = httpErrors;
 
@@ -101,13 +101,13 @@ export default class StorageService {
       lock = await this.lockStore.takeUserLock(storageClaimingUserId);
 
       const user = await this.userStore.getUserById(storageClaimingUserId);
-      const storagePathType = getStoragePathType(parentPath);
+      const storageLocationType = getStorageLocationTypeForPath(parentPath);
 
-      if (storagePathType === STORAGE_PATH_TYPE.unknown) {
+      if (storageLocationType === STORAGE_LOCATION_TYPE.unknown) {
         throw new Error(`Invalid storage path '${parentPath}'`);
       }
 
-      if (storagePathType === STORAGE_PATH_TYPE.public) {
+      if (storageLocationType === STORAGE_LOCATION_TYPE.public) {
         await this._uploadFiles(files, parentPath);
         return { usedBytes };
       }
@@ -165,7 +165,7 @@ export default class StorageService {
       lock = await this.lockStore.takeUserLock(storageClaimingUserId);
       await this._deleteObjects([path]);
 
-      if (getStoragePathType(path) === STORAGE_PATH_TYPE.private) {
+      if (getStorageLocationTypeForPath(path) === STORAGE_LOCATION_TYPE.private) {
         usedBytes = await this._updateUserUsedBytes(storageClaimingUserId);
       }
 
@@ -286,11 +286,11 @@ export default class StorageService {
       return {
         fullObjectName: path,
         prefix: `${prefixSegments.join('/')}/`,
-        storagePathType: getStoragePathType(path)
+        storageLocationType: getStorageLocationTypeForPath(path)
       };
     });
 
-    const objectWithUnknownPathType = allObjectsToDelete.find(obj => obj.storagePathType === STORAGE_PATH_TYPE.unknown);
+    const objectWithUnknownPathType = allObjectsToDelete.find(obj => obj.storageLocationType === STORAGE_LOCATION_TYPE.unknown);
     if (objectWithUnknownPathType) {
       throw new Error(`Invalid storage path '${objectWithUnknownPathType.prefix}'`);
     }

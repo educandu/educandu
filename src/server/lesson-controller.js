@@ -46,7 +46,7 @@ class LessonController {
     const { user } = req;
     const { lessonId } = req.params;
     const { view, templateLessonId } = req.query;
-    const routeWildcardValue = urlUtils.removeLeadingSlash(req.params['0']);
+    const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params['0']);
 
     const lesson = await this.lessonService.getLessonById(lessonId);
     const templateLesson = templateLessonId ? await this.lessonService.getLessonById(templateLessonId) : null;

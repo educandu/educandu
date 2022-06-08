@@ -3,7 +3,7 @@ import sut from './url-utils.js';
 describe('url-utils', () => {
   let result;
 
-  describe('removeTrailingSlash', () => {
+  describe('removeTrailingSlashes', () => {
     const testCases = [
       {
         path: '/some-path/some-other-path',
@@ -22,7 +22,7 @@ describe('url-utils', () => {
     testCases.forEach(({ path, expectedResult }) => {
       describe(`when path is '${path}'`, () => {
         beforeEach(() => {
-          result = sut.removeTrailingSlash(path);
+          result = sut.removeTrailingSlashes(path);
         });
         it(`should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);
@@ -32,7 +32,7 @@ describe('url-utils', () => {
 
   });
 
-  describe('removeLeadingSlash', () => {
+  describe('removeLeadingSlashes', () => {
 
     const testCases = [
       {
@@ -52,7 +52,7 @@ describe('url-utils', () => {
     testCases.forEach(({ path, expectedResult }) => {
       describe(`when path is '${path}'`, () => {
         beforeEach(() => {
-          result = sut.removeLeadingSlash(path);
+          result = sut.removeLeadingSlashes(path);
         });
         it(`it should return '${expectedResult}'`, () => {
           expect(result).toBe(expectedResult);

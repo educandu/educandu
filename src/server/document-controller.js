@@ -49,7 +49,7 @@ class DocumentController {
     const { user } = req;
     const { docKey } = req.params;
     const { view, templateDocumentKey } = req.query;
-    const routeWildcardValue = urlUtils.removeLeadingSlash(req.params[0]);
+    const routeWildcardValue = urlUtils.removeLeadingSlashes(req.params[0]);
 
     const doc = await this.documentService.getDocumentByKey(docKey);
     if (!doc) {

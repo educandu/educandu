@@ -1,8 +1,8 @@
-function removeTrailingSlash(path) {
+function removeTrailingSlashes(path) {
   return String(path).replace(/\/*$/, '');
 }
 
-function removeLeadingSlash(path) {
+function removeLeadingSlashes(path) {
   return String(path).replace(/^\/*/, '');
 }
 
@@ -24,7 +24,7 @@ function createFullyQualifiedUrl(pathname) {
 function concatParts(...parts) {
   const nonEmptyParts = parts.map(part => part?.toString() || '').filter(part => part);
   return nonEmptyParts.length
-    ? nonEmptyParts.reduce((prev, next) => `${removeTrailingSlash(prev)}/${removeLeadingSlash(next)}`)
+    ? nonEmptyParts.reduce((prev, next) => `${removeTrailingSlashes(prev)}/${removeLeadingSlashes(next)}`)
     : '';
 }
 
@@ -33,8 +33,8 @@ function createRedirectUrl(path, redirect) {
 }
 
 export default {
-  removeTrailingSlash,
-  removeLeadingSlash,
+  removeTrailingSlashes,
+  removeLeadingSlashes,
   encodeURIParts,
   composeQueryString,
   createFullyQualifiedUrl,
