@@ -8,13 +8,13 @@ import { Menu, Button, Slider, Dropdown } from 'antd';
 import HttpClient from '../api-clients/http-client.js';
 import MuteIcon from './icons/media-player/mute-icon.js';
 import PlayIcon from './icons/media-player/play-icon.js';
-import { MEDIA_PLAY_STATE } from '../domain/constants.js';
 import PauseIcon from './icons/media-player/pause-icon.js';
 import DownloadIcon from './icons/general/download-icon.js';
 import VolumeIcon from './icons/media-player/volume-icon.js';
 import SettingsIcon from './icons/main-menu/settings-icon.js';
 import { formatMillisecondsAsDuration } from '../utils/media-utils.js';
 import { CheckOutlined, FastForwardOutlined } from '@ant-design/icons';
+import { MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
 
 const NORMAL_PLAYBACK_RATE = 1;
 const PLAYBACK_RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -29,7 +29,7 @@ function MediaPlayerControls({
   onToggleMute,
   onVolumeChange,
   onPlaybackRateChange,
-  audioOnly,
+  screenMode,
   sourceUrl,
   canDownload
 }) {
@@ -80,7 +80,7 @@ function MediaPlayerControls({
   );
 
   return (
-    <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--audioOnly': audioOnly })}>
+    <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       <div className="MediaPlayerControls-controlsGroup">
         <Button type="link" icon={showAsPlaying ? <PauseIcon /> : <PlayIcon />} onClick={onTogglePlay} />
         <div className="MediaPlayerControls-volumeControls">
@@ -112,7 +112,6 @@ function MediaPlayerControls({
 }
 
 MediaPlayerControls.propTypes = {
-  audioOnly: PropTypes.bool,
   canDownload: PropTypes.bool,
   durationInMilliseconds: PropTypes.number.isRequired,
   isMuted: PropTypes.bool.isRequired,
@@ -122,14 +121,15 @@ MediaPlayerControls.propTypes = {
   onVolumeChange: PropTypes.func.isRequired,
   playState: PropTypes.oneOf(Object.values(MEDIA_PLAY_STATE)).isRequired,
   playedMilliseconds: PropTypes.number.isRequired,
+  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   sourceUrl: PropTypes.string,
   volume: PropTypes.number.isRequired
 };
 
 MediaPlayerControls.defaultProps = {
-  audioOnly: false,
   canDownload: false,
   onPlaybackRateChange: () => {},
+  screenMode: MEDIA_SCREEN_MODE.video,
   sourceUrl: null
 };
 

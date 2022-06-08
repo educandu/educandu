@@ -2,9 +2,9 @@ import React from 'react';
 import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 function AudioDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
@@ -24,7 +24,7 @@ function AudioDisplay({ content }) {
       <div className="AudioDisplay-content">
         {sourceUrl && (
           <MediaPlayer
-            audioOnly
+            screenMode={MEDIA_SCREEN_MODE.none}
             sourceUrl={sourceUrl}
             canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
             />

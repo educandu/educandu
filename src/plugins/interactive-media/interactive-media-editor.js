@@ -1,4 +1,5 @@
 import by from 'thenby';
+import classNames from 'classnames';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
@@ -21,9 +22,8 @@ import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import MediaRangeSelector from '../../components/media-range-selector.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
-import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { trimChaptersToFitRange, analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
-import classNames from 'classnames';
 
 const logger = new Logger(import.meta.url);
 
@@ -361,7 +361,10 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
         <h6 className="InteractiveMediaEditor-chapterEditorTitle">{t('editChapter')}</h6>
 
-        <MediaPlayer sourceUrl={getFullSourceUrl(sourceUrl)} audioOnly={showVideo === false} previewMode />
+        <MediaPlayer
+          sourceUrl={getFullSourceUrl(sourceUrl)}
+          screenMode={showVideo ? MEDIA_SCREEN_MODE.preview : MEDIA_SCREEN_MODE.none}
+          />
 
         <Timeline
           length={sourceDuration}

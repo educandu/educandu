@@ -5,6 +5,7 @@ import { shuffleItems } from '../../utils/array-utils.js';
 import MediaPlayer from '../../components/media-player.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
@@ -84,7 +85,7 @@ function EarTrainingDisplay({ content }) {
         {sourceType === SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
         {sourceType !== SOURCE_TYPE.midi && soundUrl && (
           <MediaPlayer
-            audioOnly
+            screenMode={MEDIA_SCREEN_MODE.none}
             sourceUrl={soundUrl}
             canDownload={sourceType === SOURCE_TYPE.internal}
             />
