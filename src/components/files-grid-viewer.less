@@ -26,6 +26,16 @@
     text-decoration: none;
     color: @edu-text-color-secondary;
   }
+
+  &.FilesGridViewer-file--parentLink {
+    color: lighten(@edu-text-color, 25%);
+
+    &:hover,
+    &:active {
+      text-decoration: none;
+      color: lighten(@edu-text-color-secondary, 25%);
+    }
+  }
 }
 
 .FilesGridViewer-fileDisplay {

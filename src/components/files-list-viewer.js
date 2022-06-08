@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
-import FolderIcon from './icons/files/folder-icon.js';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import DeleteIcon from './icons/general/delete-icon.js';
 import { CDN_OBJECT_TYPE } from '../domain/constants.js';
 import PreviewIcon from './icons/general/preview-icon.js';
@@ -16,6 +16,7 @@ import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 
 function FilesListViewer({
   files,
+  parentDirectory,
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
@@ -96,7 +97,12 @@ function FilesListViewer({
   };
 
   const renderNavigateToParentButton = () => (
-    <div className="FilesListViewer-fileName"><FolderIcon />...</div>
+    <div
+      className="FilesListViewer-fileName FilesListViewer-fileName--parentLink"
+      >
+      <ArrowLeftOutlined />
+      {parentDirectory?.displayName || '..'}
+    </div>
   );
 
   const getRowClassName = row => {
@@ -193,6 +199,7 @@ FilesListViewer.propTypes = {
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
+  parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
 
@@ -203,6 +210,7 @@ FilesListViewer.defaultProps = {
   onFileClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
+  parentDirectory: null,
   selectedFileUrl: null
 };
 
