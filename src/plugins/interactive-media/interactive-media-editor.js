@@ -1,7 +1,6 @@
 import by from 'thenby';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
-import uniqueId from '../../utils/unique-id.js';
 import validation from '../../ui/validation.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import Timeline from '../../components/timeline.js';
@@ -48,7 +47,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const [selectedChapterIndex, setSelectedChapterIndex] = useState(0);
   const [selectedChapterDuration, setSelectedChapterDuration] = useState(0);
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
-  const [selectedChapterAnswerIndex, setSelectedChapterAnswerIndex] = useState(0);
   const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
 
   useEffect(() => {
@@ -100,25 +98,6 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
     onContentChanged(newContent, isInvalidSourceUrl);
-  };
-
-  const handleChapterAdd = startTimecode => {
-    const chapter = { key: uniqueId.create(), title: `[${t('chapter')}]`, startTimecode };
-    const newChapters = ensureChaptersOrder([...chapters, chapter]);
-    changeContent({ chapters: newChapters });
-  };
-
-  const handleChapterDelete = key => {
-    const chapterIndex = chapters.findIndex(p => p.key === key);
-    const nextChapter = chapters[chapterIndex + 1];
-    if (nextChapter) {
-      nextChapter.startTimecode = chapters[chapterIndex].startTimecode;
-    }
-    const newChapters = removeItemAt(chapters, chapterIndex);
-    if (selectedChapterIndex > newChapters.length - 1) {
-      setSelectedChapterIndex(newChapters.length - 1);
-    }
-    changeContent({ chapters: newChapters });
   };
 
   const handleChapterStartTimecodeChange = (key, newStartTimecode) => {
@@ -202,6 +181,25 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
     changeContent({ width: newValue });
   };
 
+  const handleChapterAdd = startTimecode => {
+    const chapter = { ...interactiveMediaInfo.getDefaultChapter(t), startTimecode };
+    const newChapters = ensureChaptersOrder([...chapters, chapter]);
+    changeContent({ chapters: newChapters });
+  };
+
+  const handleChapterDelete = key => {
+    const chapterIndex = chapters.findIndex(p => p.key === key);
+    const nextChapter = chapters[chapterIndex + 1];
+    if (nextChapter) {
+      nextChapter.startTimecode = chapters[chapterIndex].startTimecode;
+    }
+    const newChapters = removeItemAt(chapters, chapterIndex);
+    if (selectedChapterIndex > newChapters.length - 1) {
+      setSelectedChapterIndex(newChapters.length - 1);
+    }
+    changeContent({ chapters: newChapters });
+  };
+
   const handlePreviousChapterClick = () => {
     setSelectedChapterIndex(selectedChapterIndex - 1);
   };
@@ -232,13 +230,15 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   };
 
   const handleChapterAnswerMarkClick = index => {
-    setSelectedChapterAnswerIndex(index);
+    const newChapters = cloneDeep(chapters);
+    newChapters[selectedChapterIndex].correctAnswer = index;
+    changeContent({ chapters: newChapters });
   };
 
   const handleChapterAnswerDeleteClick = index => {
     const newChapters = cloneDeep(chapters);
-    if (index === selectedChapterAnswerIndex) {
-      setSelectedChapterAnswerIndex(0);
+    if (index === newChapters[selectedChapterIndex].correctAnswer) {
+      newChapters[selectedChapterIndex].correctAnswer = 0;
     }
 
     newChapters[selectedChapterIndex].answers = removeItemAt(newChapters[selectedChapterIndex].answers, index);
@@ -264,7 +264,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           icon={<CheckOutlined />}
           className={classNames(
             'InteractiveMediaEditor-answerCheckmark',
-            { 'is-active': selectedChapterAnswerIndex === index }
+            { 'is-active': chapters[selectedChapterIndex].correctAnswer === index }
           )}
           disabled={!selectedChapterDuration}
           onClick={() => handleChapterAnswerMarkClick(index)}
