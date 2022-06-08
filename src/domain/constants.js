@@ -113,6 +113,13 @@ export const MEDIA_ASPECT_RATIO = {
   fourToThree: '4:3'
 };
 
+export const MEDIA_SCREEN_MODE = {
+  none: 'none',
+  audio: 'audio',
+  video: 'video',
+  preview: 'preview'
+};
+
 export const MEDIA_SOURCE_TYPE = {
   internal: 'internal',
   external: 'external',

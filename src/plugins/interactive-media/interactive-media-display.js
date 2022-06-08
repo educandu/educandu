@@ -3,11 +3,11 @@ import React, { useRef, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { StepForwardOutlined, UndoOutlined } from '@ant-design/icons';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
+import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 function InteractiveMediaDisplay({ content }) {
   const mediaPlayerRef = useRef();
@@ -75,7 +75,7 @@ function InteractiveMediaDisplay({ content }) {
             mediaPlayerRef={mediaPlayerRef}
             marks={marks}
             sourceUrl={sourceUrl}
-            audioOnly={!content.showVideo}
+            screenMode={content.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
             aspectRatio={content.aspectRatio}
             startTimecode={content.sourceStartTimecode}
             stopTimecode={content.sourceStopTimecode}

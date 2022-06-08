@@ -10,10 +10,10 @@ import { useService } from './container-context.js';
 import { handleError } from '../ui/error-helper.js';
 import { useDateFormat } from './locale-context.js';
 import mimeTypeHelper from '../ui/mime-type-helper.js';
-import { RESOURCE_TYPE } from '../domain/constants.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import { getResourceType } from '../utils/resource-utils.js';
 import FileTextFilledIcon from './icons/files/file-text-filled-icon.js';
+import { MEDIA_SCREEN_MODE, RESOURCE_TYPE } from '../domain/constants.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import React, { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import FileUnknownFilledIcon from './icons/files/file-unknown-filled-icon.js';
@@ -76,7 +76,7 @@ function FilePreview({ createdOn, size, url }) {
   }, [imageRef]);
 
   const renderAudio = () => (
-    <MediaPlayer sourceUrl={url} canDownload audioOnly />
+    <MediaPlayer sourceUrl={url} canDownload screenMode={MEDIA_SCREEN_MODE.none} />
   );
 
   const renderVideo = () => (

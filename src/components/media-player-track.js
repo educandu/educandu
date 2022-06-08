@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import reactPlayerNs from 'react-player';
 import React, { useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
 
 const ReactPlayer = reactPlayerNs.default || reactPlayerNs;
 
@@ -11,8 +11,7 @@ const PROGRESS_SLEEP_AFTER_SEEKING_IN_MS = 500;
 function MediaPlayerTrack({
   sourceUrl,
   aspectRatio,
-  audioOnly,
-  previewMode,
+  screenMode,
   startTimecode,
   stopTimecode,
   progressIntervalInMilliseconds,
@@ -154,8 +153,8 @@ function MediaPlayerTrack({
 
   const classes = classNames(
     'MediaPlayerTrack',
-    { 'MediaPlayerTrack--noDisplay': audioOnly },
-    { 'MediaPlayerTrack--previewMode': previewMode }
+    { 'MediaPlayerTrack--noScreen': screenMode === MEDIA_SCREEN_MODE.none },
+    { 'MediaPlayerTrack--previewMode': screenMode === MEDIA_SCREEN_MODE.preview }
   );
 
   return (
@@ -192,7 +191,6 @@ function MediaPlayerTrack({
 
 MediaPlayerTrack.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  audioOnly: PropTypes.bool,
   isMuted: PropTypes.bool,
   onDuration: PropTypes.func,
   onEndReached: PropTypes.func,
@@ -200,8 +198,8 @@ MediaPlayerTrack.propTypes = {
   onProgress: PropTypes.func,
   playbackRate: PropTypes.number,
   posterImageUrl: PropTypes.string,
-  previewMode: PropTypes.bool,
   progressIntervalInMilliseconds: PropTypes.number.isRequired,
+  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)).isRequired,
   sourceUrl: PropTypes.string.isRequired,
   startTimecode: PropTypes.number,
   stopTimecode: PropTypes.number,
@@ -213,7 +211,6 @@ MediaPlayerTrack.propTypes = {
 
 MediaPlayerTrack.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  audioOnly: false,
   isMuted: false,
   onDuration: () => {},
   onEndReached: () => {},
@@ -221,7 +218,6 @@ MediaPlayerTrack.defaultProps = {
   onProgress: () => {},
   playbackRate: 1,
   posterImageUrl: null,
-  previewMode: false,
   startTimecode: null,
   stopTimecode: null,
   trackRef: {

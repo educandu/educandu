@@ -4,15 +4,14 @@ import MediaPlayerTrack from './media-player-track.js';
 import MediaPlayerControls from './media-player-controls.js';
 import MediaPlayerProgressBar from './media-player-progress-bar.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE } from '../domain/constants.js';
+import { MEDIA_ASPECT_RATIO, MEDIA_PLAY_STATE, MEDIA_SCREEN_MODE } from '../domain/constants.js';
 
 function MediaPlayer({
   sourceUrl,
   startTimecode,
   stopTimecode,
   aspectRatio,
-  audioOnly,
-  previewMode,
+  screenMode,
   canDownload,
   posterImageUrl,
   extraCustomContent,
@@ -96,15 +95,14 @@ function MediaPlayer({
   }
 
   return (
-    <div className={classNames('MediaPlayer', { 'MediaPlayer--audioOnly': audioOnly })}>
+    <div className={classNames('MediaPlayer', { 'MediaPlayer--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>
       <MediaPlayerTrack
         trackRef={trackRef}
         volume={volume}
         isMuted={isMuted}
         sourceUrl={sourceUrl}
-        audioOnly={audioOnly}
-        previewMode={previewMode}
         aspectRatio={aspectRatio}
+        screenMode={screenMode}
         startTimecode={startTimecode}
         stopTimecode={stopTimecode}
         playbackRate={playbackRate}
@@ -129,6 +127,7 @@ function MediaPlayer({
         canDownload={canDownload}
         isMuted={isMuted}
         playState={playState}
+        screenMode={screenMode}
         durationInMilliseconds={durationInMilliseconds}
         playedMilliseconds={playedMilliseconds}
         progressIntervalInMilliseconds={progressIntervalInMilliseconds}
@@ -138,7 +137,6 @@ function MediaPlayer({
         onToggleMute={handleToggleMute}
         onTogglePlay={handleTogglePlay}
         onVolumeChange={setVolume}
-        audioOnly={audioOnly}
         extraCustomContent={extraCustomContent}
         marks={marks}
         onMarkReached={onMarkReached}
@@ -150,7 +148,6 @@ function MediaPlayer({
 
 MediaPlayer.propTypes = {
   aspectRatio: PropTypes.oneOf(Object.values(MEDIA_ASPECT_RATIO)),
-  audioOnly: PropTypes.bool,
   canDownload: PropTypes.bool,
   extraCustomContent: PropTypes.node,
   marks: PropTypes.arrayOf(PropTypes.shape({
@@ -164,7 +161,7 @@ MediaPlayer.propTypes = {
   onEndReached: PropTypes.func,
   onMarkReached: PropTypes.func,
   posterImageUrl: PropTypes.string,
-  previewMode: PropTypes.bool,
+  screenMode: PropTypes.oneOf(Object.values(MEDIA_SCREEN_MODE)),
   sourceUrl: PropTypes.string,
   startTimecode: PropTypes.number,
   stopTimecode: PropTypes.number
@@ -172,7 +169,6 @@ MediaPlayer.propTypes = {
 
 MediaPlayer.defaultProps = {
   aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine,
-  audioOnly: false,
   canDownload: false,
   extraCustomContent: null,
   marks: [],
@@ -182,7 +178,7 @@ MediaPlayer.defaultProps = {
   onEndReached: () => {},
   onMarkReached: () => {},
   posterImageUrl: null,
-  previewMode: false,
+  screenMode: MEDIA_SCREEN_MODE.video,
   sourceUrl: null,
   startTimecode: null,
   stopTimecode: null

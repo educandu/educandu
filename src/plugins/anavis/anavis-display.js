@@ -4,9 +4,9 @@ import colorHelper from '../../ui/color-helper.js';
 import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 
 function AnavisDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
@@ -72,7 +72,7 @@ function AnavisDisplay({ content }) {
           <MediaPlayer
             sourceUrl={sourceUrl}
             aspectRatio={media.aspectRatio}
-            audioOnly={media.kind === MEDIA_KIND.audio}
+            screenMode={media.kind === MEDIA_KIND.audio ? MEDIA_SCREEN_MODE.none : MEDIA_SCREEN_MODE.video}
             />
         )}
         {media.text && (
