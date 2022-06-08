@@ -115,7 +115,7 @@
   }
 
   &.is-active {
-    color: @edu-green-icon-color;
+    color: @edu-success-color;
   }
 }
 
@@ -133,8 +133,9 @@
   overflow: auto;
 }
 
+
 .InteractiveMediaDisplay-overlayTitle {
-  flex: 0 0 0%;
+  flex: none;
   font-size: 12px;
 }
 
@@ -153,12 +154,32 @@
   }
 }
 
-.InteractiveMediaDisplay-chapterAnswers {
+.InteractiveMediaDisplay-answers {
   margin: 30px 0;
 }
 
-.InteractiveMediaDisplay-overlayControls {
-  flex: 0 0 0%;
+.InteractiveMediaDisplay-answer {
   display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.InteractiveMediaDisplay-answerMark {
+  width: 20px;
+}
+
+.InteractiveMediaDisplay-correctAnswerMark {
+  color: @edu-success-color;
+}
+
+.InteractiveMediaDisplay-wrongAnswerMark {
+  color: @edu-error-color;
+}
+
+
+.InteractiveMediaDisplay-overlayControls {
+  flex: none;
+  display: flex;
+  gap: 10px;
   justify-content: flex-end;
 }

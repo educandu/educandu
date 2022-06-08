@@ -40,3 +40,12 @@ addAnswer:
 markCorrectAnswer:
   en: Mark as correct answer
   de: Als richtige Antwort markieren
+continue:
+  en: continue
+  de: fortfahren
+replay:
+  en: replay
+  de: wieder spielen
+reset:
+  en: reset
+  de: zurücksetzen

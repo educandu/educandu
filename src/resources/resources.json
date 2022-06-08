@@ -1668,7 +1668,10 @@
       "question": "Question",
       "answers": "Answers",
       "addAnswer": "Add answer",
-      "markCorrectAnswer": "Mark as correct answer"
+      "markCorrectAnswer": "Mark as correct answer",
+      "continue": "continue",
+      "replay": "replay",
+      "reset": "reset"
     }
   },
   {
@@ -1688,7 +1691,10 @@
       "question": "Frage",
       "answers": "Antworten",
       "addAnswer": "Antwort hinzufügen",
-      "markCorrectAnswer": "Als richtige Antwort markieren"
+      "markCorrectAnswer": "Als richtige Antwort markieren",
+      "continue": "fortfahren",
+      "replay": "wieder spielen",
+      "reset": "zurücksetzen"
     }
   },
   {
