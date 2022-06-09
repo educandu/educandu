@@ -7,14 +7,16 @@ import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import StorageService from './storage-service.js';
 import LessonStore from '../stores/lesson-store.js';
+import ServerConfig from '../bootstrap/server-config.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
-import { ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { CDN_OBJECT_TYPE, ROLE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 
 describe('storage-service', () => {
   const sandbox = sinon.createSandbox();
 
   let roomInvitationStore;
+  let serverConfig;
   let lessonStore;
   let storagePlan;
   let roomStore;
@@ -34,6 +36,7 @@ describe('storage-service', () => {
     lockStore = container.get(LockStore);
     roomStore = container.get(RoomStore);
     lessonStore = container.get(LessonStore);
+    serverConfig = container.get(ServerConfig);
     roomInvitationStore = container.get(RoomInvitationStore);
 
     sut = container.get(StorageService);
@@ -67,6 +70,199 @@ describe('storage-service', () => {
   afterEach(async () => {
     await pruneTestEnvironment(container);
     sandbox.restore();
+  });
+
+  describe('getObjects', () => {
+    beforeEach(() => {
+      sandbox.stub(serverConfig, 'cdnRootUrl').value('https://cdn.domain.com');
+    });
+
+    describe('when neither the current directory nor the parent directory is the root', () => {
+      let result;
+      beforeEach(async () => {
+        cdn.listObjects.withArgs({ prefix: 'media/34q87zc95t9c287eh/', recursive: true }).resolves([
+          { prefix: null, name: 'media/34q87zc95t9c287eh/file-1.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { prefix: null, name: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf', size: 2000, lastModified: '2022-06-09T12:00:00.000Z' },
+          { prefix: null, name: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf', size: 3000, lastModified: '2022-06-09T12:00:00.000Z' }
+        ]);
+
+        result = await sut.getObjects({ parentPath: 'media/34q87zc95t9c287eh', recursive: true });
+      });
+      it('should construct all paths and URLs correctly', () => {
+        expect(result).toStrictEqual({
+          parentDirectory: {
+            displayName: 'media',
+            parentPath: '',
+            path: 'media',
+            url: 'https://cdn.domain.com/media',
+            portableUrl: 'cdn://media',
+            createdOn: null,
+            type: CDN_OBJECT_TYPE.directory,
+            size: null
+          },
+          currentDirectory: {
+            displayName: '34q87zc95t9c287eh',
+            parentPath: 'media',
+            path: 'media/34q87zc95t9c287eh',
+            url: 'https://cdn.domain.com/media/34q87zc95t9c287eh',
+            portableUrl: 'cdn://media/34q87zc95t9c287eh',
+            createdOn: null,
+            type: CDN_OBJECT_TYPE.directory,
+            size: null
+          },
+          objects: [
+            {
+              displayName: 'file-1.pdf',
+              parentPath: 'media/34q87zc95t9c287eh',
+              path: 'media/34q87zc95t9c287eh/file-1.pdf',
+              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-1.pdf',
+              portableUrl: 'cdn://media/34q87zc95t9c287eh/file-1.pdf',
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: CDN_OBJECT_TYPE.file,
+              size: 1000
+            },
+            {
+              displayName: 'file-2 with spaces.pdf',
+              parentPath: 'media/34q87zc95t9c287eh',
+              path: 'media/34q87zc95t9c287eh/file-2 with spaces.pdf',
+              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
+              portableUrl: 'cdn://media/34q87zc95t9c287eh/file-2%20with%20spaces.pdf',
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: CDN_OBJECT_TYPE.file,
+              size: 2000
+            },
+            {
+              displayName: 'file-3 with weird &$#=.pdf',
+              parentPath: 'media/34q87zc95t9c287eh',
+              path: 'media/34q87zc95t9c287eh/file-3 with weird &$#=.pdf',
+              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
+              portableUrl: 'cdn://media/34q87zc95t9c287eh/file-3%20with%20weird%20%26%24%23%3D.pdf',
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: CDN_OBJECT_TYPE.file,
+              size: 3000
+            }
+          ]
+        });
+      });
+    });
+
+    describe('when the parent directory is the root', () => {
+      let result;
+      beforeEach(async () => {
+        cdn.listObjects.withArgs({ prefix: 'media/', recursive: true }).resolves([
+          { prefix: 'media/34q87zc95t9c287eh/', name: null, size: null, lastModified: null },
+          { prefix: 'media/43vzvjz05tzdfz7rf/', name: null, size: null, lastModified: null },
+          { prefix: null, name: 'media/some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+        ]);
+
+        result = await sut.getObjects({ parentPath: 'media', recursive: true });
+      });
+      it('should construct all paths and URLs correctly', () => {
+        expect(result).toStrictEqual({
+          parentDirectory: {
+            displayName: '',
+            parentPath: null,
+            path: '',
+            url: 'https://cdn.domain.com',
+            portableUrl: 'cdn://',
+            createdOn: null,
+            type: CDN_OBJECT_TYPE.directory,
+            size: null
+          },
+          currentDirectory: {
+            displayName: 'media',
+            parentPath: '',
+            path: 'media',
+            url: 'https://cdn.domain.com/media',
+            portableUrl: 'cdn://media',
+            createdOn: null,
+            type: CDN_OBJECT_TYPE.directory,
+            size: null
+          },
+          objects: [
+            {
+              displayName: '34q87zc95t9c287eh',
+              parentPath: 'media',
+              path: 'media/34q87zc95t9c287eh',
+              url: 'https://cdn.domain.com/media/34q87zc95t9c287eh',
+              portableUrl: 'cdn://media/34q87zc95t9c287eh',
+              createdOn: null,
+              type: CDN_OBJECT_TYPE.directory,
+              size: null
+            },
+            {
+              displayName: '43vzvjz05tzdfz7rf',
+              parentPath: 'media',
+              path: 'media/43vzvjz05tzdfz7rf',
+              url: 'https://cdn.domain.com/media/43vzvjz05tzdfz7rf',
+              portableUrl: 'cdn://media/43vzvjz05tzdfz7rf',
+              createdOn: null,
+              type: CDN_OBJECT_TYPE.directory,
+              size: null
+            },
+            {
+              displayName: 'some-file.pdf',
+              parentPath: 'media',
+              path: 'media/some-file.pdf',
+              url: 'https://cdn.domain.com/media/some-file.pdf',
+              portableUrl: 'cdn://media/some-file.pdf',
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: CDN_OBJECT_TYPE.file,
+              size: 1000
+            }
+          ]
+        });
+      });
+    });
+
+    describe('when the current directory is the root', () => {
+      let result;
+      beforeEach(async () => {
+        cdn.listObjects.withArgs({ prefix: '', recursive: true }).resolves([
+          { prefix: 'media/', name: null, size: null, lastModified: null },
+          { prefix: null, name: 'some-file.pdf', size: 1000, lastModified: '2022-06-09T12:00:00.000Z' }
+        ]);
+
+        result = await sut.getObjects({ parentPath: '', recursive: true });
+      });
+      it('should construct all paths and URLs correctly', () => {
+        expect(result).toStrictEqual({
+          parentDirectory: null,
+          currentDirectory: {
+            displayName: '',
+            parentPath: null,
+            path: '',
+            url: 'https://cdn.domain.com',
+            portableUrl: 'cdn://',
+            createdOn: null,
+            type: CDN_OBJECT_TYPE.directory,
+            size: null
+          },
+          objects: [
+            {
+              displayName: 'media',
+              parentPath: '',
+              path: 'media',
+              url: 'https://cdn.domain.com/media',
+              portableUrl: 'cdn://media',
+              createdOn: null,
+              type: CDN_OBJECT_TYPE.directory,
+              size: null
+            },
+            {
+              displayName: 'some-file.pdf',
+              parentPath: '',
+              path: 'some-file.pdf',
+              url: 'https://cdn.domain.com/some-file.pdf',
+              portableUrl: 'cdn://some-file.pdf',
+              createdOn: '2022-06-09T12:00:00.000Z',
+              type: CDN_OBJECT_TYPE.file,
+              size: 1000
+            }
+          ]
+        });
+      });
+    });
   });
 
   describe('uploadFiles', () => {

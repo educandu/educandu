@@ -134,27 +134,60 @@ export default class StorageService {
   }
 
   async getObjects({ parentPath, recursive }) {
-    const prefix = parentPath ? `${parentPath}/` : '';
-    const objects = await this.cdn.listObjects({ prefix, recursive });
+    const currentDirectorySegments = parentPath.split('/').filter(seg => !!seg);
+    const encodedCurrentDirectorySegments = currentDirectorySegments.map(s => encodeURIComponent(s));
 
-    const mappedObjects = objects.map(obj => {
+    const currentDirectory = {
+      displayName: currentDirectorySegments.length ? currentDirectorySegments[currentDirectorySegments.length - 1] : '',
+      parentPath: currentDirectorySegments.length ? currentDirectorySegments.slice(0, -1).join('/') : null,
+      path: currentDirectorySegments.join('/'),
+      url: [this.serverConfig.cdnRootUrl, ...encodedCurrentDirectorySegments].join('/'),
+      portableUrl: `cdn://${encodedCurrentDirectorySegments.join('/')}`,
+      createdOn: null,
+      type: CDN_OBJECT_TYPE.directory,
+      size: null
+    };
+
+    let parentDirectory;
+    if (currentDirectorySegments.length > 0) {
+      const parentDirectorySegments = currentDirectorySegments.slice(0, -1);
+      const encodedParentDirectorySegments = encodedCurrentDirectorySegments.slice(0, -1);
+
+      parentDirectory = {
+        displayName: parentDirectorySegments.length ? parentDirectorySegments[parentDirectorySegments.length - 1] : '',
+        parentPath: parentDirectorySegments.length ? parentDirectorySegments.slice(0, -1).join('/') : null,
+        path: parentDirectorySegments.join('/'),
+        url: [this.serverConfig.cdnRootUrl, ...encodedParentDirectorySegments].join('/'),
+        portableUrl: `cdn://${encodedParentDirectorySegments.join('/')}`,
+        createdOn: null,
+        type: CDN_OBJECT_TYPE.directory,
+        size: null
+      };
+    } else {
+      parentDirectory = null;
+    }
+
+    const prefix = currentDirectorySegments.length ? `${currentDirectorySegments.join('/')}/` : '';
+    const cdnObjects = await this.cdn.listObjects({ prefix, recursive });
+
+    const objects = cdnObjects.map(obj => {
       const isDirectory = !!obj.prefix;
       const path = isDirectory ? obj.prefix : obj.name;
-      const segments = path.split('/').filter(seg => !!seg);
-      const encodedSegments = segments.map(s => encodeURIComponent(s));
+      const objectSegments = path.split('/').filter(seg => !!seg);
+      const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
       return {
-        displayName: segments[segments.length - 1],
-        parentPath: segments.slice(0, -1).join('/'),
-        path: segments.join('/'),
-        url: [this.serverConfig.cdnRootUrl, ...encodedSegments].join('/'),
-        portableUrl: `cdn://${encodedSegments.join('/')}`,
+        displayName: objectSegments[objectSegments.length - 1],
+        parentPath: objectSegments.slice(0, -1).join('/'),
+        path: objectSegments.join('/'),
+        url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
+        portableUrl: `cdn://${encodedObjectSegments.join('/')}`,
         createdOn: isDirectory ? null : obj.lastModified,
         type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
         size: isDirectory ? null : obj.size
       };
     });
 
-    return mappedObjects;
+    return { parentDirectory, currentDirectory, objects };
   }
 
   async deleteObject({ path, storageClaimingUserId }) {
@@ -188,7 +221,7 @@ export default class StorageService {
         await this.roomStore.deleteRoomById(roomId, { session });
       });
 
-      const roomPrivateStorageObjects = await this.getObjects({ parentPath: getPrivateStoragePathForRoomId(roomId), recursive: true });
+      const { objects: roomPrivateStorageObjects } = await this.getObjects({ parentPath: getPrivateStoragePathForRoomId(roomId), recursive: true });
       if (roomPrivateStorageObjects.length) {
         await this._deleteObjects(roomPrivateStorageObjects.map(({ path }) => path));
         usedBytes = await this._updateUserUsedBytes(roomOwnerId);

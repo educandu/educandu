@@ -19,9 +19,10 @@ function Tests({ PageTemplate }) {
   const [initialUrl, setInitialUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [parentDirectory, setParentDirectory] = useState(null);
+  const [currentDirectory, setCurrentDirectory] = useState(null);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILE_VIEWER_DISPLAY.list);
-  const [currentDisplayedDirectoryPath, setCurrentDisplayedDirectoryPath] = useState(null);
   const [isResourceSelectorModalVisible, setIsResourceSelectorModalVisible] = useState(false);
   const [currentLoadedDirectoryPath, setCurrentLoadedDirectoryPath] = useState(currentLocation.initialPath);
 
@@ -33,16 +34,17 @@ function Tests({ PageTemplate }) {
     (async () => {
       try {
         setIsLoading(true);
+        const result = await storageApiClient.getCdnObjects(currentLoadedDirectoryPath);
+        setParentDirectory(result.parentDirectory);
+        setCurrentDirectory(result.currentDirectory);
+        setFiles(result.objects);
         setSelectedFile(null);
-        const responseData = await storageApiClient.getCdnObjects(currentLoadedDirectoryPath);
-        setCurrentDisplayedDirectoryPath(currentLoadedDirectoryPath);
-        setCurrentLoadedDirectoryPath(null);
-        setFiles(responseData.objects);
       } catch (err) {
         console.log(err);
         message.error(err.message);
       } finally {
         setIsLoading(false);
+        setCurrentLoadedDirectoryPath(null);
       }
     })();
   }, [currentLoadedDirectoryPath, storageApiClient]);
@@ -96,9 +98,21 @@ function Tests({ PageTemplate }) {
             onChange={setFilesViewerDisplay}
             />
           <br />
-          CURRENT DIRECTORY:
+          PARENT DIRECTORY PATH:
           &nbsp;
-          {currentDisplayedDirectoryPath || '---'}
+          {parentDirectory?.path || '---'}
+          <br />
+          PARENT DIRECTORY DISPLAY NAME:
+          &nbsp;
+          {parentDirectory?.displayName || '---'}
+          <br />
+          CURRENT DIRECTORY PATH:
+          &nbsp;
+          {currentDirectory?.path || '---'}
+          <br />
+          CURRENT DIRECTORY DISPLAY NAME:
+          &nbsp;
+          {currentDirectory?.displayName || '---'}
           <br />
           SELECTED FILE:
           &nbsp;
@@ -108,13 +122,15 @@ function Tests({ PageTemplate }) {
         <div style={{ height: '400px', display: 'flex', justifyContent: 'stretch', alignItems: 'stretch', border: '1px solid gray' }}>
           <FilesViewer
             files={files}
+            currentDirectory={currentDirectory}
+            parentDirectory={parentDirectory}
             display={filesViewerDisplay}
             onFileClick={handleOnFileClick}
             selectedFileUrl={selectedFile?.portableUrl}
             onDeleteClick={() => console.log('onDeleteClick')}
-            onNavigateToParentClick={() => setCurrentLoadedDirectoryPath(currentDisplayedDirectoryPath.split('/').slice(0, -1).join('/'))}
+            onNavigateToParentClick={() => setCurrentLoadedDirectoryPath(currentDirectory.path.split('/').slice(0, -1).join('/'))}
             onPreviewClick={() => console.log('onPreviewClick')}
-            canNavigateToParent={currentDisplayedDirectoryPath?.length > currentLocation.rootPath.length}
+            canNavigateToParent={currentDirectory?.path?.length > currentLocation.rootPath.length}
             canDelete={currentLocation.isDeletionEnabled}
             isLoading={isLoading}
             />

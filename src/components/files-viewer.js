@@ -13,6 +13,7 @@ export const FILE_VIEWER_DISPLAY = {
 function FilesViewer({
   display,
   files,
+  parentDirectory,
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
@@ -31,6 +32,7 @@ function FilesViewer({
       {!!files.length && (
         <ViewerComponent
           files={files}
+          parentDirectory={parentDirectory}
           selectedFileUrl={selectedFileUrl || null}
           canDelete={canDelete}
           canNavigateToParent={canNavigateToParent}
@@ -59,6 +61,7 @@ FilesViewer.propTypes = {
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
+  parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
 
@@ -72,6 +75,7 @@ FilesViewer.defaultProps = {
   onFileClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
+  parentDirectory: null,
   selectedFileUrl: null
 };
 
