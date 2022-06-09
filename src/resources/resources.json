@@ -1669,9 +1669,9 @@
       "answers": "Answers",
       "addAnswer": "Add answer",
       "markCorrectAnswer": "Mark as correct answer",
-      "continue": "continue",
-      "replay": "replay",
-      "reset": "reset"
+      "continue": "Continue",
+      "replay": "Replay",
+      "reset": "Reset"
     }
   },
   {
@@ -1692,9 +1692,9 @@
       "answers": "Antworten",
       "addAnswer": "Antwort hinzufügen",
       "markCorrectAnswer": "Als richtige Antwort markieren",
-      "continue": "fortfahren",
-      "replay": "wieder spielen",
-      "reset": "zurücksetzen"
+      "continue": "Fortfahren",
+      "replay": "Wiederholen",
+      "reset": "Zurücksetzen"
     }
   },
   {

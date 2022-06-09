@@ -41,11 +41,11 @@ markCorrectAnswer:
   en: Mark as correct answer
   de: Als richtige Antwort markieren
 continue:
-  en: continue
-  de: fortfahren
+  en: Continue
+  de: Fortfahren
 replay:
-  en: replay
-  de: wieder spielen
+  en: Replay
+  de: Wiederholen
 reset:
-  en: reset
-  de: zurücksetzen
+  en: Reset
+  de: Zurücksetzen
