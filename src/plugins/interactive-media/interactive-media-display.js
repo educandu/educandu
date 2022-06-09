@@ -9,7 +9,7 @@ import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
-import { StepForwardOutlined, UndoOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { StepForwardOutlined, UndoOutlined, CheckOutlined, CloseOutlined, FlagOutlined, RedoOutlined } from '@ant-design/icons';
 
 const RadioGroup = Radio.Group;
 
@@ -22,6 +22,7 @@ function InteractiveMediaDisplay({ content }) {
 
   const getDefaultSelectedAnswersPerChapter = () => chapters.reduce((accu, _chapter, index) => ({ ...accu, [index]: null }), {});
 
+  const [chaptersEnded, setChaptersEnded] = useState(false);
   const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
   const [selectedAnswerPerChapter, setSelectedAnswerPerChapter] = useState(getDefaultSelectedAnswersPerChapter());
 
@@ -51,9 +52,14 @@ function InteractiveMediaDisplay({ content }) {
     setInteractingChapterIndex(chapters.length - 1);
   };
 
-  const handleResetChaptersClick = () => {
-    mediaPlayerRef.current.reset();
+  const handleEndChaptersClick = () => {
+    setChaptersEnded(true);
     setInteractingChapterIndex(-1);
+  };
+
+  const handleResetChaptersClick = () => {
+    setChaptersEnded(false);
+    mediaPlayerRef.current.reset();
     setSelectedAnswerPerChapter(getDefaultSelectedAnswersPerChapter());
   };
 
@@ -95,37 +101,63 @@ function InteractiveMediaDisplay({ content }) {
   const renderAnswerRadio = (answer, index) => {
     const isCurrentAnswerSelected = selectedAnswerPerChapter[interactingChapterIndex]?.answerIndex === index;
     const isCorrectAnswerSelected = isCurrentAnswerSelected && selectedAnswerPerChapter[interactingChapterIndex].isCorrectAnswerIndex;
-    const isWrongAnswerSelected = isCurrentAnswerSelected && !selectedAnswerPerChapter[interactingChapterIndex].isCorrectAnswerIndex;
+    const isIncorrectAnswerSelected = isCurrentAnswerSelected && !selectedAnswerPerChapter[interactingChapterIndex].isCorrectAnswerIndex;
 
     return (
       <Radio value={index} key={index}>
-        <div className="InteractiveMediaDisplay-answer">
+        <div className="InteractiveMediaDisplay-overlayChapterAnswer">
           <Markdown inline>{answer}</Markdown>
           <div className="InteractiveMediaDisplay-answerMark">
             {isCorrectAnswerSelected && <div className="InteractiveMediaDisplay-correctAnswerMark"><CheckOutlined /></div>}
-            {isWrongAnswerSelected && <div className="InteractiveMediaDisplay-wrongAnswerMark"><CloseOutlined /></div>}
+            {isIncorrectAnswerSelected && <div className="InteractiveMediaDisplay-incorrectAnswerMark"><CloseOutlined /></div>}
           </div>
         </div>
       </Radio>
     );
   };
 
-  const renderChapterResolution = (answerPerChapter, chapterIndex) => {
+  const renderChapterResolutionDot = (answerPerChapter, chapterIndex) => {
     const classNames = ['InteractiveMediaDisplay-chapterResolution'];
     if (answerPerChapter?.isCorrectAnswerIndex === true) {
       classNames.push('InteractiveMediaDisplay-chapterResolution--correctAnswer');
     }
     if (answerPerChapter?.isCorrectAnswerIndex === false) {
-      classNames.push('InteractiveMediaDisplay-chapterResolution--wrongAnswer');
+      classNames.push('InteractiveMediaDisplay-chapterResolution--incorrectAnswer');
     }
 
     return (
+      <div key={chapterIndex} className="InteractiveMediaDisplay-chapterResolutionContainer">
+        <div className={classNames.join(' ')} />
+      </div>
+    );
+  };
+
+  const renderChapterResolution = (answerPerChapter, chapterIndex) => {
+    return (
       <Tooltip key={chapterIndex} title={chapters[chapterIndex].title}>
-        <div className="InteractiveMediaDisplay-chapterResolutionContainer">
-          <div className={classNames.join(' ')} />
-        </div>
+        {renderChapterResolutionDot(answerPerChapter, chapterIndex)}
       </Tooltip>
     );
+  };
+
+  const renderChapterEndResult = (answerPerChapter, chapterIndex) => {
+    return (
+      <div key={chapterIndex} className="InteractiveMediaDisplay-overlayResultsChapter">
+        <div className="InteractiveMediaDisplay-overlayResultsChapterTitle">{chapters[chapterIndex].title}</div>
+        {renderChapterResolutionDot(answerPerChapter, chapterIndex)}
+      </div>
+    );
+  };
+
+  const renderResultsSummary = () => {
+    const answers = Object.values(selectedAnswerPerChapter);
+
+    return t('resultsSummary', {
+      answerCount: answers.filter(answer => answer).length,
+      totalCount: answers.length,
+      correctCount: answers.filter(answer => answer?.isCorrectAnswerIndex === true).length,
+      incorrectCount: answers.filter(answer => answer?.isCorrectAnswerIndex === false).length
+    });
   };
 
   return (
@@ -147,13 +179,13 @@ function InteractiveMediaDisplay({ content }) {
         )}
         {interactingChapterIndex >= 0 && (
           <div className="InteractiveMediaDisplay-overlay">
-            <div className="InteractiveMediaDisplay-overlayTitle">{chapters[interactingChapterIndex].title}</div>
+            <div className="InteractiveMediaDisplay-overlayChapterTitle">{chapters[interactingChapterIndex].title}</div>
 
-            <div className="InteractiveMediaDisplay-overlayContent">
+            <div className="InteractiveMediaDisplay-overlayChapterContent">
               <Markdown>{chapters[interactingChapterIndex].question}</Markdown>
               <RadioGroup
                 onChange={handleAnswerIndexChange}
-                className="InteractiveMediaDisplay-answers"
+                className="InteractiveMediaDisplay-overlayChapterAnswers"
                 value={selectedAnswerPerChapter[interactingChapterIndex]?.answerIndex}
                 >
                 <Space direction="vertical">
@@ -162,14 +194,28 @@ function InteractiveMediaDisplay({ content }) {
               </RadioGroup>
             </div>
 
-            <div className="InteractiveMediaDisplay-overlayControls">
-              <Button icon={<UndoOutlined />} onClick={handleReplayChapterClick}>{t('replay')}</Button>
+            <div className="InteractiveMediaDisplay-overlayChapterControls">
+              <Button icon={<RedoOutlined />} onClick={handleReplayChapterClick}>{t('replay')}</Button>
               {interactingChapterIndex < chapters.length - 1 && (
-                <Button type="primary" icon={<StepForwardOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
+              <Button type="primary" icon={<StepForwardOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
               )}
               {interactingChapterIndex === chapters.length - 1 && (
-                <Button type="primary" icon={<StepForwardOutlined />} onClick={handleResetChaptersClick}>{t('reset')}</Button>
+              <Button type="primary" icon={<FlagOutlined />} onClick={handleEndChaptersClick}>{t('end')}</Button>
               )}
+            </div>
+          </div>
+        )}
+        {!!chaptersEnded && (
+          <div className="InteractiveMediaDisplay-overlay">
+            <div className="InteractiveMediaDisplay-overlayResults">
+              <div className="InteractiveMediaDisplay-overlayResultsTitle">{t('results')}</div>
+              {Object.values(selectedAnswerPerChapter).map(renderChapterEndResult)}
+              <div className="InteractiveMediaDisplay-overlayResultsSummary">
+                {renderResultsSummary()}
+              </div>
+            </div>
+            <div className="InteractiveMediaDisplay-overlayChapterControls">
+              <Button type="primary" icon={<UndoOutlined />} onClick={handleResetChaptersClick}>{t('reset')}</Button>
             </div>
           </div>
         )}
