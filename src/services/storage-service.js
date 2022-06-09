@@ -137,30 +137,25 @@ export default class StorageService {
     const currentDirectorySegments = parentPath.split('/').filter(seg => !!seg);
     const encodedCurrentDirectorySegments = currentDirectorySegments.map(s => encodeURIComponent(s));
 
-    let currentDirectory;
-    if (currentDirectorySegments.length > 0) {
-      currentDirectory = {
-        displayName: currentDirectorySegments[currentDirectorySegments.length - 1],
-        parentPath: currentDirectorySegments.slice(0, -1).join('/'),
-        path: currentDirectorySegments.join('/'),
-        url: [this.serverConfig.cdnRootUrl, ...encodedCurrentDirectorySegments].join('/'),
-        portableUrl: `cdn://${encodedCurrentDirectorySegments.join('/')}`,
-        createdOn: null,
-        type: CDN_OBJECT_TYPE.directory,
-        size: null
-      };
-    } else {
-      currentDirectory = null;
-    }
+    const currentDirectory = {
+      displayName: currentDirectorySegments.length ? currentDirectorySegments[currentDirectorySegments.length - 1] : '',
+      parentPath: currentDirectorySegments.length ? currentDirectorySegments.slice(0, -1).join('/') : null,
+      path: currentDirectorySegments.join('/'),
+      url: [this.serverConfig.cdnRootUrl, ...encodedCurrentDirectorySegments].join('/'),
+      portableUrl: `cdn://${encodedCurrentDirectorySegments.join('/')}`,
+      createdOn: null,
+      type: CDN_OBJECT_TYPE.directory,
+      size: null
+    };
 
     let parentDirectory;
-    if (currentDirectorySegments.length > 1) {
+    if (currentDirectorySegments.length > 0) {
       const parentDirectorySegments = currentDirectorySegments.slice(0, -1);
       const encodedParentDirectorySegments = encodedCurrentDirectorySegments.slice(0, -1);
 
       parentDirectory = {
-        displayName: parentDirectorySegments[parentDirectorySegments.length - 1],
-        parentPath: parentDirectorySegments.slice(0, -1).join('/'),
+        displayName: parentDirectorySegments.length ? parentDirectorySegments[parentDirectorySegments.length - 1] : '',
+        parentPath: parentDirectorySegments.length ? parentDirectorySegments.slice(0, -1).join('/') : null,
         path: parentDirectorySegments.join('/'),
         url: [this.serverConfig.cdnRootUrl, ...encodedParentDirectorySegments].join('/'),
         portableUrl: `cdn://${encodedParentDirectorySegments.join('/')}`,
