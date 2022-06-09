@@ -3,13 +3,13 @@ import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import DeleteIcon from './icons/general/delete-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
+import FolderFilledNavigateIcon from './icons/files/folder-filled-navigate-icon.js';
 
 function FilesGridViewer({
   files,
@@ -85,7 +85,7 @@ function FilesGridViewer({
           <div className="FilesGridViewer-fileContainer">
             <a className="FilesGridViewer-file FilesGridViewer-file--parentLink" onClick={onNavigateToParentClick}>
               <div className="FilesGridViewer-fileDisplay">
-                <ArrowLeftOutlined />
+                <FolderFilledNavigateIcon />
               </div>
               <div>{parentDirectory?.displayName || '..'}</div>
             </a>
