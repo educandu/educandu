@@ -768,7 +768,9 @@
       "defaultDocumentTitle": "New document",
       "newDocument": "New document",
       "originInternal": "internal",
-      "originExternal": "external"
+      "originExternal": "external",
+      "initialAuthor": "Initial author",
+      "filterPlaceholder": "Filter by title or initial author"
     }
   },
   {
@@ -778,7 +780,9 @@
       "defaultDocumentTitle": "Neues Dokument",
       "newDocument": "Neues Dokument",
       "originInternal": "intern",
-      "originExternal": "extern"
+      "originExternal": "extern",
+      "initialAuthor": "Erstautor",
+      "filterPlaceholder": "Nach Titel oder Erstautor filtern"
     }
   },
   {
