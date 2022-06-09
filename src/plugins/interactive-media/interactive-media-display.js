@@ -1,21 +1,30 @@
-import { Button } from 'antd';
+import { Button, Radio, Space } from 'antd';
+import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
+import cloneDeep from '../../utils/clone-deep.js';
 import Markdown from '../../components/markdown.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { StepForwardOutlined, UndoOutlined } from '@ant-design/icons';
 import { formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 import { MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import { StepForwardOutlined, UndoOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+
+const RadioGroup = Radio.Group;
 
 function InteractiveMediaDisplay({ content }) {
+  const { sourceType, aspectRatio, showVideo, width, sourceStartTimecode, sourceStopTimecode, text, chapters } = content;
+
   const mediaPlayerRef = useRef();
   const clientConfig = useService(ClientConfig);
+  const { t } = useTranslation('interactiveMedia');
+
   const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
+  const [selectedAnswerPerChapter, setSelectedAnswerPerChapter] = useState(chapters.reduce((accu, chapter, index) => ({ ...accu, [index]: null }), {}));
 
   let sourceUrl;
-  switch (content.sourceType) {
+  switch (sourceType) {
     case MEDIA_SOURCE_TYPE.internal:
       sourceUrl = content.sourceUrl ? `${clientConfig.cdnRootUrl}/${content.sourceUrl}` : null;
       break;
@@ -24,7 +33,7 @@ function InteractiveMediaDisplay({ content }) {
       break;
   }
 
-  const marks = content.chapters
+  const marks = chapters
     .map(chapter => chapter.startTimecode === 0
       ? null
       : { key: chapter.key, timecode: chapter.startTimecode, text: formatMillisecondsAsDuration(chapter.startTimecode) })
@@ -32,21 +41,22 @@ function InteractiveMediaDisplay({ content }) {
 
   const handleMarkReached = nextChapterMark => {
     mediaPlayerRef.current.pause();
-    const nextChapterIndex = content.chapters.findIndex(chapter => chapter.key === nextChapterMark.key);
+    const nextChapterIndex = chapters.findIndex(chapter => chapter.key === nextChapterMark.key);
     setInteractingChapterIndex(nextChapterIndex - 1);
   };
 
   const handleEndReached = () => {
-    setInteractingChapterIndex(content.chapters.length - 1);
+    setInteractingChapterIndex(chapters.length - 1);
   };
 
   const handleResetChaptersClick = () => {
     mediaPlayerRef.current.reset();
     setInteractingChapterIndex(-1);
+    setSelectedAnswerPerChapter(chapters.reduce((accu, chapter, index) => ({ ...accu, [index]: null }), {}));
   };
 
   const handleNextChapterClick = () => {
-    const nextChapterMark = marks.find(m => m.key === content.chapters[interactingChapterIndex + 1].key);
+    const nextChapterMark = marks.find(m => m.key === chapters[interactingChapterIndex + 1].key);
 
     mediaPlayerRef.current.seekToMark(nextChapterMark);
     mediaPlayerRef.current.play();
@@ -55,7 +65,7 @@ function InteractiveMediaDisplay({ content }) {
   };
 
   const handleReplayChapterClick = () => {
-    const currentChapterMark = marks.find(m => m.key === content.chapters[interactingChapterIndex].key);
+    const currentChapterMark = marks.find(m => m.key === chapters[interactingChapterIndex].key);
 
     if (currentChapterMark) {
       mediaPlayerRef.current.seekToMark(currentChapterMark);
@@ -67,37 +77,83 @@ function InteractiveMediaDisplay({ content }) {
     setInteractingChapterIndex(-1);
   };
 
+  const handleAnswerIndexChange = event => {
+    const { value } = event.target;
+
+    if (selectedAnswerPerChapter[interactingChapterIndex] === null) {
+      const newSelectedAnswerPerChapter = cloneDeep(selectedAnswerPerChapter);
+      newSelectedAnswerPerChapter[interactingChapterIndex] = value;
+      setSelectedAnswerPerChapter(newSelectedAnswerPerChapter);
+    }
+  };
+
+  const renderAnswer = (answer, index) => {
+    const isCorrectAnswerSelected
+      = selectedAnswerPerChapter[interactingChapterIndex] === index && chapters[interactingChapterIndex].correctAnswerIndex === index;
+    const isWrongAnswerSelected
+      = selectedAnswerPerChapter[interactingChapterIndex] === index && chapters[interactingChapterIndex].correctAnswerIndex !== index;
+
+    return (
+      <Radio value={index} key={index}>
+        <div className="InteractiveMediaDisplay-answer">
+          <Markdown inline>{answer}</Markdown>
+          <div className="InteractiveMediaDisplay-answerMark">
+            {isCorrectAnswerSelected && <div className="InteractiveMediaDisplay-correctAnswerMark"><CheckOutlined /></div>}
+            {isWrongAnswerSelected && <div className="InteractiveMediaDisplay-wrongAnswerMark"><CloseOutlined /></div>}
+          </div>
+        </div>
+      </Radio>
+    );
+  };
+
   return (
     <div className="InteractiveMediaDisplay">
-      <div className={`InteractiveMediaDisplay-content u-width-${content.width || 100}`}>
+      <div className={`InteractiveMediaDisplay-content u-width-${width || 100}`}>
         {sourceUrl && (
           <MediaPlayer
             mediaPlayerRef={mediaPlayerRef}
             marks={marks}
             sourceUrl={sourceUrl}
-            screenMode={content.showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
-            aspectRatio={content.aspectRatio}
-            startTimecode={content.sourceStartTimecode}
-            stopTimecode={content.sourceStopTimecode}
+            screenMode={showVideo ? MEDIA_SCREEN_MODE.video : MEDIA_SCREEN_MODE.audio}
+            aspectRatio={aspectRatio}
+            startTimecode={sourceStartTimecode}
+            stopTimecode={sourceStopTimecode}
             onMarkReached={handleMarkReached}
             onEndReached={handleEndReached}
-            canDownload={content.sourceType === MEDIA_SOURCE_TYPE.internal}
+            canDownload={sourceType === MEDIA_SOURCE_TYPE.internal}
             />
         )}
         {interactingChapterIndex >= 0 && (
           <div className="InteractiveMediaDisplay-overlay">
-            <Button type="link" icon={<UndoOutlined />} onClick={handleReplayChapterClick}>replay chapter</Button>
-            {interactingChapterIndex < content.chapters.length - 1 && (
-              <Button type="link" icon={<StepForwardOutlined />} onClick={handleNextChapterClick}>next chapter</Button>
-            )}
-            {interactingChapterIndex === content.chapters.length - 1 && (
-              <Button type="link" icon={<StepForwardOutlined />} onClick={handleResetChaptersClick}>reset chapters</Button>
-            )}
+            <div className="InteractiveMediaDisplay-overlayTitle">{chapters[interactingChapterIndex].title}</div>
+
+            <div className="InteractiveMediaDisplay-overlayContent">
+              <Markdown>{chapters[interactingChapterIndex].question}</Markdown>
+              <RadioGroup
+                onChange={handleAnswerIndexChange}
+                className="InteractiveMediaDisplay-answers"
+                value={selectedAnswerPerChapter[interactingChapterIndex]}
+                >
+                <Space direction="vertical">
+                  {chapters[interactingChapterIndex].answers.map(renderAnswer)}
+                </Space>
+              </RadioGroup>
+            </div>
+
+            <div className="InteractiveMediaDisplay-overlayControls">
+              <Button icon={<UndoOutlined />} onClick={handleReplayChapterClick}>{t('replay')}</Button>
+              {interactingChapterIndex < chapters.length - 1 && (
+                <Button type="primary" icon={<StepForwardOutlined />} onClick={handleNextChapterClick}>{t('continue')}</Button>
+              )}
+              {interactingChapterIndex === chapters.length - 1 && (
+                <Button type="primary" icon={<StepForwardOutlined />} onClick={handleResetChaptersClick}>{t('reset')}</Button>
+              )}
+            </div>
           </div>
         )}
-        {content.text && (
+        {text && (
           <div className="InteractiveMediaDisplay-text">
-            <Markdown>{content.text}</Markdown>
+            <Markdown>{text}</Markdown>
           </div>
         )}
       </div>
