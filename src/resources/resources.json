@@ -1702,7 +1702,7 @@
       "reset": "Zurücksetzen",
       "results": "Ergebnisse",
       "currentProgress": "Dein aktueller Fortschritt",
-      "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, aus denen {correctCount} richtig und {incorrectCount} falsch."
+      "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
     }
   },
   {
