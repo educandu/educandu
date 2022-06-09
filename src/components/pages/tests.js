@@ -1,61 +1,16 @@
 /* eslint-disable no-console */
 
 import PropTypes from 'prop-types';
+import { Button, Modal } from 'antd';
+import React, { useState } from 'react';
 import FilePreview from '../file-preview.js';
-import { useStorage } from '../storage-context.js';
 import DebouncedInput from '../debounced-input.js';
-import React, { useEffect, useState } from 'react';
-import { Button, message, Modal, Select } from 'antd';
 import ResourceSelector from '../resource-selector.js';
-import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import FilesViewer, { FILE_VIEWER_DISPLAY } from '../files-viewer.js';
-import StorageApiClient from '../../api-clients/storage-api-client.js';
-import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
+import { STORAGE_LOCATION_TYPE } from '../../domain/constants.js';
 
 function Tests({ PageTemplate }) {
-  const { locations } = useStorage();
-  const currentLocation = locations[0];
-  const [files, setFiles] = useState([]);
   const [initialUrl, setInitialUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [parentDirectory, setParentDirectory] = useState(null);
-  const [currentDirectory, setCurrentDirectory] = useState(null);
-  const storageApiClient = useSessionAwareApiClient(StorageApiClient);
-  const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILE_VIEWER_DISPLAY.list);
   const [isResourceSelectorModalVisible, setIsResourceSelectorModalVisible] = useState(false);
-  const [currentLoadedDirectoryPath, setCurrentLoadedDirectoryPath] = useState(currentLocation.initialPath);
-
-  useEffect(() => {
-    if (!currentLoadedDirectoryPath) {
-      return;
-    }
-
-    (async () => {
-      try {
-        setIsLoading(true);
-        const result = await storageApiClient.getCdnObjects(currentLoadedDirectoryPath);
-        setParentDirectory(result.parentDirectory);
-        setCurrentDirectory(result.currentDirectory);
-        setFiles(result.objects);
-        setSelectedFile(null);
-      } catch (err) {
-        console.log(err);
-        message.error(err.message);
-      } finally {
-        setIsLoading(false);
-        setCurrentLoadedDirectoryPath(null);
-      }
-    })();
-  }, [currentLoadedDirectoryPath, storageApiClient]);
-
-  const handleOnFileClick = newFile => {
-    if (newFile.type === CDN_OBJECT_TYPE.directory) {
-      setCurrentLoadedDirectoryPath(newFile.path);
-    } else {
-      setSelectedFile(oldFile => oldFile?.url === newFile.url ? null : newFile);
-    }
-  };
 
   return (
     <PageTemplate>
@@ -69,7 +24,7 @@ function Tests({ PageTemplate }) {
           &nbsp;
           <DebouncedInput value={initialUrl} onChange={setInitialUrl} />
         </div>
-        <div style={{ height: '400px', border: '1px solid gray' }}>
+        <div style={{ border: '1px solid gray', display: 'flex', flexDirection: 'column', justifyContent: 'stretch' }}>
           <ResourceSelector
             allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
             initialUrl={initialUrl}
@@ -86,54 +41,6 @@ function Tests({ PageTemplate }) {
               onCancel={() => setIsResourceSelectorModalVisible(false)}
               />
           </Modal>
-        </div>
-        <hr />
-        <h1>Files Viewer</h1>
-        <div>
-          DISPLAY:
-          &nbsp;
-          <Select
-            options={Object.values(FILE_VIEWER_DISPLAY).map(v => ({ label: v, value: v }))}
-            value={filesViewerDisplay}
-            onChange={setFilesViewerDisplay}
-            />
-          <br />
-          PARENT DIRECTORY PATH:
-          &nbsp;
-          {parentDirectory?.path || '---'}
-          <br />
-          PARENT DIRECTORY DISPLAY NAME:
-          &nbsp;
-          {parentDirectory?.displayName || '---'}
-          <br />
-          CURRENT DIRECTORY PATH:
-          &nbsp;
-          {currentDirectory?.path || '---'}
-          <br />
-          CURRENT DIRECTORY DISPLAY NAME:
-          &nbsp;
-          {currentDirectory?.displayName || '---'}
-          <br />
-          SELECTED FILE:
-          &nbsp;
-          {selectedFile?.displayName || '---'}
-        </div>
-        <br />
-        <div style={{ height: '400px', display: 'flex', justifyContent: 'stretch', alignItems: 'stretch', border: '1px solid gray' }}>
-          <FilesViewer
-            files={files}
-            currentDirectory={currentDirectory}
-            parentDirectory={parentDirectory}
-            display={filesViewerDisplay}
-            onFileClick={handleOnFileClick}
-            selectedFileUrl={selectedFile?.portableUrl}
-            onDeleteClick={() => console.log('onDeleteClick')}
-            onNavigateToParentClick={() => setCurrentLoadedDirectoryPath(currentDirectory.path.split('/').slice(0, -1).join('/'))}
-            onPreviewClick={() => console.log('onPreviewClick')}
-            canNavigateToParent={currentDirectory?.path?.length > currentLocation.rootPath.length}
-            canDelete={currentLocation.isDeletionEnabled}
-            isLoading={isLoading}
-            />
         </div>
         <hr />
         <h1>File preview</h1>

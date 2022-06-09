@@ -18,6 +18,7 @@ function FilesListViewer({
   files,
   parentDirectory,
   selectedFileUrl,
+  maxListHeight,
   canDelete,
   canNavigateToParent,
   onDeleteClick,
@@ -144,6 +145,7 @@ function FilesListViewer({
       title: () => t('common:actions'),
       dataIndex: 'isDirectory',
       render: renderActions,
+      width: 100,
       align: 'right'
     }
   ];
@@ -152,7 +154,7 @@ function FilesListViewer({
     columns.forEach(column => {
       column.children = column.dataIndex === 'name'
         ? [{ title: renderNavigateToParentButton, render: renderName, dataIndex: 'name', key: 'navigateToParent' }]
-        : [{ dataIndex: column.dataIndex, align: column.align, render: column.render }];
+        : [{ dataIndex: column.dataIndex, align: column.align, render: column.render, width: column.width }];
     });
   }
 
@@ -186,6 +188,7 @@ function FilesListViewer({
         onHeaderRow={(_columns, rowIndex) => ({
           onClick: () => handleHeaderRowClick(rowIndex)
         })}
+        scroll={{ y: maxListHeight }}
         />
     </div>
   );
@@ -195,6 +198,7 @@ FilesListViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
+  maxListHeight: PropTypes.number,
   onDeleteClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
@@ -206,6 +210,7 @@ FilesListViewer.propTypes = {
 FilesListViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
+  maxListHeight: null,
   onDeleteClick: () => {},
   onFileClick: () => {},
   onNavigateToParentClick: () => {},

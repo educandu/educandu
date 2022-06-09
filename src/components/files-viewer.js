@@ -15,6 +15,7 @@ function FilesViewer({
   files,
   parentDirectory,
   selectedFileUrl,
+  maxListHeight,
   canDelete,
   canNavigateToParent,
   onDeleteClick,
@@ -32,6 +33,7 @@ function FilesViewer({
       {!!files.length && (
         <ViewerComponent
           files={files}
+          maxListHeight={maxListHeight}
           parentDirectory={parentDirectory}
           selectedFileUrl={selectedFileUrl || null}
           canDelete={canDelete}
@@ -57,6 +59,7 @@ FilesViewer.propTypes = {
   display: PropTypes.oneOf(Object.values(FILE_VIEWER_DISPLAY)),
   files: PropTypes.arrayOf(cdnObjectShape),
   isLoading: PropTypes.bool,
+  maxListHeight: PropTypes.number,
   onDeleteClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
@@ -71,6 +74,7 @@ FilesViewer.defaultProps = {
   display: FILE_VIEWER_DISPLAY.grid,
   files: [],
   isLoading: false,
+  maxListHeight: null,
   onDeleteClick: () => {},
   onFileClick: () => {},
   onNavigateToParentClick: () => {},
