@@ -181,3 +181,44 @@
   gap: 10px;
   justify-content: flex-end;
 }
+
+.InteractiveMediaDisplay-chaptersResolution {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.InteractiveMediaDisplay-chaptersResolutionLabel {
+  margin-right: 10px;
+}
+
+.InteractiveMediaDisplay-chapterResolutionContainer {
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.InteractiveMediaDisplay-chapterResolution {
+  width: 10px;
+  height: 10px;
+  padding: 3px;
+  border-radius: 50%;
+  background-color: @edu-white;
+  box-shadow: inset -3px -3px 4px rgba(0, 0, 0, .1);
+  background-image: linear-gradient(-45deg, @edu-background-color-base 15%, transparent 100%);
+
+  &.InteractiveMediaDisplay-chapterResolution--correctAnswer {
+    background-image: linear-gradient(-45deg, lighten(@edu-success-color, 5%) 15%, transparent 100%);
+  }
+
+  &.InteractiveMediaDisplay-chapterResolution--wrongAnswer {
+    background-image: linear-gradient(-45deg, lighten(@edu-error-color, 15%) 15%, transparent 100%);
+  }
+}

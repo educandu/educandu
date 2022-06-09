@@ -20,8 +20,10 @@ function InteractiveMediaDisplay({ content }) {
   const clientConfig = useService(ClientConfig);
   const { t } = useTranslation('interactiveMedia');
 
+  const getDefaultSelectedAnswersPerChapter = () => chapters.reduce((accu, _chapter, index) => ({ ...accu, [index]: null }), {});
+
   const [interactingChapterIndex, setInteractingChapterIndex] = useState(-1);
-  const [selectedAnswerPerChapter, setSelectedAnswerPerChapter] = useState(chapters.reduce((accu, chapter, index) => ({ ...accu, [index]: null }), {}));
+  const [selectedAnswerPerChapter, setSelectedAnswerPerChapter] = useState(getDefaultSelectedAnswersPerChapter());
 
   let sourceUrl;
   switch (sourceType) {
@@ -52,7 +54,7 @@ function InteractiveMediaDisplay({ content }) {
   const handleResetChaptersClick = () => {
     mediaPlayerRef.current.reset();
     setInteractingChapterIndex(-1);
-    setSelectedAnswerPerChapter(chapters.reduce((accu, chapter, index) => ({ ...accu, [index]: null }), {}));
+    setSelectedAnswerPerChapter(getDefaultSelectedAnswersPerChapter());
   };
 
   const handleNextChapterClick = () => {
@@ -82,16 +84,18 @@ function InteractiveMediaDisplay({ content }) {
 
     if (selectedAnswerPerChapter[interactingChapterIndex] === null) {
       const newSelectedAnswerPerChapter = cloneDeep(selectedAnswerPerChapter);
-      newSelectedAnswerPerChapter[interactingChapterIndex] = value;
+      newSelectedAnswerPerChapter[interactingChapterIndex] = {
+        answerIndex: value,
+        isCorrectAnswerIndex: chapters[interactingChapterIndex].correctAnswerIndex === value
+      };
       setSelectedAnswerPerChapter(newSelectedAnswerPerChapter);
     }
   };
 
-  const renderAnswer = (answer, index) => {
-    const isCorrectAnswerSelected
-      = selectedAnswerPerChapter[interactingChapterIndex] === index && chapters[interactingChapterIndex].correctAnswerIndex === index;
-    const isWrongAnswerSelected
-      = selectedAnswerPerChapter[interactingChapterIndex] === index && chapters[interactingChapterIndex].correctAnswerIndex !== index;
+  const renderAnswerRadio = (answer, index) => {
+    const isCurrentAnswerSelected = selectedAnswerPerChapter[interactingChapterIndex]?.answerIndex === index;
+    const isCorrectAnswerSelected = isCurrentAnswerSelected && selectedAnswerPerChapter[interactingChapterIndex].isCorrectAnswerIndex;
+    const isWrongAnswerSelected = isCurrentAnswerSelected && !selectedAnswerPerChapter[interactingChapterIndex].isCorrectAnswerIndex;
 
     return (
       <Radio value={index} key={index}>
@@ -103,6 +107,22 @@ function InteractiveMediaDisplay({ content }) {
           </div>
         </div>
       </Radio>
+    );
+  };
+
+  const renderChapterResolution = (answerPerChapter, index) => {
+    const classNames = ['InteractiveMediaDisplay-chapterResolution'];
+    if (answerPerChapter?.isCorrectAnswerIndex === true) {
+      classNames.push('InteractiveMediaDisplay-chapterResolution--correctAnswer');
+    }
+    if (answerPerChapter?.isCorrectAnswerIndex === false) {
+      classNames.push('InteractiveMediaDisplay-chapterResolution--wrongAnswer');
+    }
+
+    return (
+      <div key={index} className="InteractiveMediaDisplay-chapterResolutionContainer">
+        <div className={classNames.join(' ')} />
+      </div>
     );
   };
 
@@ -132,10 +152,10 @@ function InteractiveMediaDisplay({ content }) {
               <RadioGroup
                 onChange={handleAnswerIndexChange}
                 className="InteractiveMediaDisplay-answers"
-                value={selectedAnswerPerChapter[interactingChapterIndex]}
+                value={selectedAnswerPerChapter[interactingChapterIndex]?.answerIndex}
                 >
                 <Space direction="vertical">
-                  {chapters[interactingChapterIndex].answers.map(renderAnswer)}
+                  {chapters[interactingChapterIndex].answers.map(renderAnswerRadio)}
                 </Space>
               </RadioGroup>
             </div>
@@ -156,6 +176,10 @@ function InteractiveMediaDisplay({ content }) {
             <Markdown>{text}</Markdown>
           </div>
         )}
+        <div className="InteractiveMediaDisplay-chaptersResolution">
+          <span className="InteractiveMediaDisplay-chaptersResolutionLabel">{t('currentProgress')}:</span>
+          {Object.values(selectedAnswerPerChapter).map(renderChapterResolution)}
+        </div>
       </div>
     </div>
   );

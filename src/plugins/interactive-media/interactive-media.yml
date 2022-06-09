@@ -49,3 +49,6 @@ replay:
 reset:
   en: Reset
   de: Zurücksetzen
+currentProgress:
+  en: Your current progress
+  de: Dein aktueller Fortschritt

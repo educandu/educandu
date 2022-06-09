@@ -1671,7 +1671,8 @@
       "markCorrectAnswer": "Mark as correct answer",
       "continue": "Continue",
       "replay": "Replay",
-      "reset": "Reset"
+      "reset": "Reset",
+      "currentProgress": "Your current progress"
     }
   },
   {
@@ -1694,7 +1695,8 @@
       "markCorrectAnswer": "Als richtige Antwort markieren",
       "continue": "Fortfahren",
       "replay": "Wiederholen",
-      "reset": "Zurücksetzen"
+      "reset": "Zurücksetzen",
+      "currentProgress": "Dein aktueller Fortschritt"
     }
   },
   {
