@@ -492,6 +492,24 @@
     }
   },
   {
+    "namespace": "markdownHelp",
+    "language": "en",
+    "resources": {
+      "inlineTooltipHtml": "<div>\n  <p>In this field you can use the following formatting options:</p>\n  <p>*italic* or _italic_<br />**bold** or __bold__</p>\n  <p>Please enter hyperlinks using this format:</p>\n  <p>[link text](link URL)</p>\n</div>\n",
+      "blockTooltipText": "Please click in order to show formatting options for this field",
+      "blockHelpMarkdown": "This is a simple paragraph. As you can see, no matter how many                  spaces or\nline\nbreaks\nyou enter, they will always be converted into one single space.\n\nTo add forced line breaks, \\\nend lines with multiple spaces<space><space>\nor with a backslash \\\njust like here.\n\nTo start a new paragraph, just leave one empty line on top of the text.\n\nWrap text between asterisks *to make it italic* or double asterisks **to make it bold**. Alternatively you can also use _single_ or __double__ underscores. _You **can** also combine them_.\n\n# This is a first level header\n\n## This is a second level header\n\n### This is a third level header\n\nThere are up to six levels, though it is recommended to not use such a deep hierarchy on websites.\n\n1. This is an ordered list\n2. You can also produce\n    1. multiple levels\n    2. by indenting each level by 4 spaces on the left\n42. As you can see, the numbering doesn't really matter, the list will always start with the number of the first item and then count up.\n\n* This is an unordered list\n* You can also use hyphens instead of asterisks\n    * Also here, lists can be nested\n    * Just indent each level by 4 spaces on the left\n\nAs you have seen, some characters like **_** or **#** have special meaning in certain positions. In order to use them as a normal character, you have to prepend a backslash. For example:\n\n* This is interpreted as a list because of the asterisk in the beginning.\n\n\\* This is just a normal paragraph beginning with an actual asterisk in the text.\n"
+    }
+  },
+  {
+    "namespace": "markdownHelp",
+    "language": "de",
+    "resources": {
+      "inlineTooltipHtml": "<div>\n  <p>In diesem Feld können Sie die folgenden Formatierungsoptionen verwenden:</p>\n  <p>*kursiv* oder _kursiv_<br />**fett** oder __fett__</p>\n  <p>Hyperlinks können Sie in diesem Format eingeben:</p>\n  <p>[Link-Text](Link-URL)</p>\n</div>\n",
+      "blockTooltipText": "Bitte klicken, um Formatierungsoptionen für dieses Feld anzuzeigen",
+      "blockHelpMarkdown": "TBD\n"
+    }
+  },
+  {
     "namespace": "mediaPlayerControls",
     "language": "en",
     "resources": {

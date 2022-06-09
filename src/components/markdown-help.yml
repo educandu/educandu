@@ -1,0 +1,60 @@
+inlineTooltipHtml:
+  en: |
+    <div>
+      <p>In this field you can use the following formatting options:</p>
+      <p>*italic* or _italic_<br />**bold** or __bold__</p>
+      <p>Please enter hyperlinks using this format:</p>
+      <p>[link text](link URL)</p>
+    </div>
+  de: |
+    <div>
+      <p>In diesem Feld können Sie die folgenden Formatierungsoptionen verwenden:</p>
+      <p>*kursiv* oder _kursiv_<br />**fett** oder __fett__</p>
+      <p>Hyperlinks können Sie in diesem Format eingeben:</p>
+      <p>[Link-Text](Link-URL)</p>
+    </div>
+blockTooltipText:
+  en: Please click in order to show formatting options for this field
+  de: Bitte klicken, um Formatierungsoptionen für dieses Feld anzuzeigen
+blockHelpMarkdown:
+  en: |
+    This is a simple paragraph. As you can see, no matter how many                  spaces or
+    line
+    breaks
+    you enter, they will always be converted into one single space.
+
+    To add forced line breaks, \
+    end lines with multiple spaces<space><space>
+    or with a backslash \
+    just like here.
+
+    To start a new paragraph, just leave one empty line on top of the text.
+
+    Wrap text between asterisks *to make it italic* or double asterisks **to make it bold**. Alternatively you can also use _single_ or __double__ underscores. _You **can** also combine them_.
+
+    # This is a first level header
+
+    ## This is a second level header
+
+    ### This is a third level header
+
+    There are up to six levels, though it is recommended to not use such a deep hierarchy on websites.
+
+    1. This is an ordered list
+    2. You can also produce
+        1. multiple levels
+        2. by indenting each level by 4 spaces on the left
+    42. As you can see, the numbering doesn't really matter, the list will always start with the number of the first item and then count up.
+
+    * This is an unordered list
+    * You can also use hyphens instead of asterisks
+        * Also here, lists can be nested
+        * Just indent each level by 4 spaces on the left
+
+    As you have seen, some characters like **_** or **#** have special meaning in certain positions. In order to use them as a normal character, you have to prepend a backslash. For example:
+
+    * This is interpreted as a list because of the asterisk in the beginning.
+
+    \* This is just a normal paragraph beginning with an actual asterisk in the text.
+  de: |
+    TBD

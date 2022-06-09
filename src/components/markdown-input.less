@@ -1,0 +1,74 @@
+@markdown-input-block-min-height: 100px;
+
+.MarkdownInput {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 1fr;
+
+  &.MarkdownInput--withPreview {
+    grid-template-columns: 1fr 1fr;
+
+    @media @edu-media-phone {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.MarkdownInput-input {
+
+  .ant-input-group-addon {
+    color: @edu-text-color;
+    background-color: @edu-secondary-color-light;
+  }
+
+  &.is-disabled {
+    .ant-input-group-addon {
+      cursor: not-allowed;
+      background-color: @edu-disabled-color;
+    }
+  }
+}
+
+.MarkdownInput-textareaContainer {
+  position: relative;
+
+  &.MarkdownInput-textareaContainer--noAutoSize {
+    height: 100%;
+    min-height: 6em;
+  }
+}
+
+.MarkdownInput-blockHelpContainer {
+  position: absolute;
+  bottom: 15px;
+  right: 30px;
+}
+
+.MarkdownInput-textarea {
+  resize: none;
+
+  &.MarkdownInput-textarea--noAutoSize {
+    height: 100%;
+    min-height: 6em;
+  }
+}
+
+.MarkdownInput-preview {
+  min-height: @markdown-input-block-min-height;
+  height: 100%;
+  padding: 4px 11px;
+  border: 1px solid @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
+
+  &.MarkdownInput-preview--inline {
+    overflow-x: auto;
+    min-height: unset;
+    white-space: nowrap;
+  }
+
+  &.is-disabled {
+    cursor: not-allowed;
+    color: @edu-disabled-color;
+    border-color: @edu-border-color-light;
+  }
+}

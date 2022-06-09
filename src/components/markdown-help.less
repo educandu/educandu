@@ -1,0 +1,57 @@
+.MarkdownHelp {
+
+  &.MarkdownHelp--inline {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+
+    &.is-disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &.MarkdownHelp--block {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    font-size: 18px;
+    padding: 4px 12px;
+    border-radius: 5px;
+    background-color: @edu-secondary-color-light;
+    cursor: pointer;
+    opacity: 0.25;
+    transition: all 300ms ease;
+
+    &:hover, &:active, &:focus {
+      opacity: 1;
+      transition: all 300ms ease;
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+
+      &:hover, &:active, &:focus {
+        opacity: 0.25;
+      }
+    }
+  }
+}
+
+.MarkdownHelp-blockHelpContent {}
+
+.MarkdownHelp-blockHelpTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.MarkdownHelp-blockHelpTableCell {
+  vertical-align: text-bottom;
+  padding: 8px 25px 8px 0;
+  width: 50%;
+}
+
+.MarkdownHelp-spaceIndicator {
+  opacity: 0.25;
+}
