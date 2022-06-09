@@ -1671,7 +1671,11 @@
       "markCorrectAnswer": "Mark as correct answer",
       "continue": "Continue",
       "replay": "Replay",
-      "reset": "Reset"
+      "end": "End",
+      "reset": "Reset",
+      "results": "Results",
+      "currentProgress": "Your current progress",
+      "resultsSummary": "{answerCount} out of {totalCount} answered, out of which {correctCount} correctly and {incorrectCount} incorrectly."
     }
   },
   {
@@ -1694,7 +1698,11 @@
       "markCorrectAnswer": "Als richtige Antwort markieren",
       "continue": "Fortfahren",
       "replay": "Wiederholen",
-      "reset": "Zurücksetzen"
+      "end": "Enden",
+      "reset": "Zurücksetzen",
+      "results": "Ergebnisse",
+      "currentProgress": "Dein aktueller Fortschritt",
+      "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
     }
   },
   {
