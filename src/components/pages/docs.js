@@ -75,7 +75,6 @@ function Docs({ initialState, PageTemplate }) {
       title: doc.title,
       createdOn: doc.createdOn,
       updatedOn: doc.updatedOn,
-      updatedBy: doc.updatedBy,
       createdBy: doc.createdBy,
       language: doc.language,
       user: doc.user,
@@ -84,7 +83,7 @@ function Docs({ initialState, PageTemplate }) {
       archived: doc.archived
     })), [t]);
 
-  const [searchText, setSearchText] = useState('');
+  const [filterText, setFilterText] = useState('');
   const [displayedRows, setDisplayedRows] = useState([]);
   const [documents, setDocuments] = useState(initialState.documents);
   const [sorting, setSorting] = useState({ value: 'title', direction: 'desc' });
@@ -117,20 +116,20 @@ function Docs({ initialState, PageTemplate }) {
     const newRows = mapToRows(documents.slice());
     const sorter = sorters[sorting.value];
 
-    const filteredRows = searchText
-      ? newRows.filter(row => row.title.toLowerCase().includes(searchText.toLowerCase())
-        || row.updatedBy.username.toLowerCase().includes(searchText.toLowerCase()))
+    const filteredRows = filterText
+      ? newRows.filter(row => row.title.toLowerCase().includes(filterText.toLowerCase())
+        || row.createdBy.username.toLowerCase().includes(filterText.toLowerCase()))
       : newRows;
     const sortedRows = sorter ? sorter(filteredRows) : filteredRows;
 
     setDisplayedRows(sortedRows);
-  }, [documents, sorting, searchText, sorters, mapToRows]);
+  }, [documents, sorting, filterText, sorters, mapToRows]);
 
   const handleSortingChange = ({ value, direction }) => setSorting({ value, direction });
 
   const handleSearchChange = event => {
-    const newSearchText = event.target.value;
-    setSearchText(newSearchText);
+    const newFilterText = event.target.value;
+    setFilterText(newFilterText);
   };
 
   const handleNewDocumentClick = () => {
@@ -210,10 +209,10 @@ function Docs({ initialState, PageTemplate }) {
     return !!doc && <DocumentInfoCell doc={doc} />;
   };
 
-  const renderUpdatedBy = (_user, row) => {
-    return row.updatedBy.email
-      ? <span>{row.updatedBy.username} | <a href={`mailto:${row.updatedBy.email}`}>{t('common:email')}</a></span>
-      : <span>{row.updatedBy.username}</span>;
+  const renderCreatedBy = (_user, row) => {
+    return row.createdBy.email
+      ? <span>{row.createdBy.username} | <a href={`mailto:${row.createdBy.email}`}>{t('common:email')}</a></span>
+      : <span>{row.createdBy.username}</span>;
   };
 
   const renderActions = (_actions, row) => {
@@ -258,10 +257,10 @@ function Docs({ initialState, PageTemplate }) {
       width: '100px'
     },
     {
-      title: t('common:user'),
+      title: t('initialAuthor'),
       dataIndex: 'user',
       key: 'user',
-      render: renderUpdatedBy,
+      render: renderCreatedBy,
       responsive: ['md'],
       width: '200px'
     },
@@ -298,11 +297,11 @@ function Docs({ initialState, PageTemplate }) {
         <div className="DocsPage-controls">
           <Search
             size="large"
-            className="DocsPage-search"
-            value={searchText}
+            className="DocsPage-filter"
+            value={filterText}
             enterButton={<SearchOutlined />}
             onChange={handleSearchChange}
-            placeholder={t('common:searchPlaceholder')}
+            placeholder={t('filterPlaceholder')}
             />
           <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
         </div>
