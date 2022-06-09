@@ -1,8 +1,8 @@
-import { Button, Radio, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import Markdown from '../../components/markdown.js';
+import { Button, Radio, Space, Tooltip } from 'antd';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
@@ -110,7 +110,7 @@ function InteractiveMediaDisplay({ content }) {
     );
   };
 
-  const renderChapterResolution = (answerPerChapter, index) => {
+  const renderChapterResolution = (answerPerChapter, chapterIndex) => {
     const classNames = ['InteractiveMediaDisplay-chapterResolution'];
     if (answerPerChapter?.isCorrectAnswerIndex === true) {
       classNames.push('InteractiveMediaDisplay-chapterResolution--correctAnswer');
@@ -120,9 +120,11 @@ function InteractiveMediaDisplay({ content }) {
     }
 
     return (
-      <div key={index} className="InteractiveMediaDisplay-chapterResolutionContainer">
-        <div className={classNames.join(' ')} />
-      </div>
+      <Tooltip key={chapterIndex} title={chapters[chapterIndex].title}>
+        <div className="InteractiveMediaDisplay-chapterResolutionContainer">
+          <div className={classNames.join(' ')} />
+        </div>
+      </Tooltip>
     );
   };
 
