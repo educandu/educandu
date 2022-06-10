@@ -206,16 +206,14 @@
   height: 10px;
   padding: 3px;
   border-radius: 50%;
-  background-color: @edu-white;
-  box-shadow: inset -3px -3px 4px rgba(0, 0, 0, .1);
-  background-image: linear-gradient(-45deg, @edu-background-color-base 15%, transparent 100%);
+  background-color: @edu-background-color-base;
 
   &.InteractiveMediaDisplay-chapterResolution--correctAnswer {
-    background-image: linear-gradient(-45deg, lighten(@edu-success-color, 5%) 15%, transparent 100%);
+    background-color: @edu-success-color;
   }
 
   &.InteractiveMediaDisplay-chapterResolution--incorrectAnswer {
-    background-image: linear-gradient(-45deg, lighten(@edu-error-color, 15%) 15%, transparent 100%);
+    background-color: @edu-error-color;
   }
 }
 
