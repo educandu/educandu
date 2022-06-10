@@ -139,7 +139,7 @@ function FilesListViewer({
       title: () => t('common:date'),
       dataIndex: 'createdOnFormatted',
       align: 'right',
-      width: 150,
+      width: 170,
       responsive: ['md'],
       sorter: by('createdOn')
     },
@@ -156,7 +156,7 @@ function FilesListViewer({
     columns.forEach(column => {
       column.children = column.dataIndex === 'name'
         ? [{ title: renderNavigateToParentButton, render: renderName, dataIndex: 'name', key: 'navigateToParent' }]
-        : [{ ...column }];
+        : [{ ...column, title: null, sorter: null }];
     });
   }
 
