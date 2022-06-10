@@ -95,7 +95,6 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
           canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
           canDelete={storageLocation.isDeletionEnabled}
           isLoading={isLoading}
-          maxListHeight={170}
           />
       </div>
       <div className="StorageLocation-buttonsLine">

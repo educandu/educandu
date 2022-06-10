@@ -8,17 +8,19 @@ import { useTranslation } from 'react-i18next';
 import DeleteIcon from './icons/general/delete-icon.js';
 import { CDN_OBJECT_TYPE } from '../domain/constants.js';
 import PreviewIcon from './icons/general/preview-icon.js';
+import DimensionsProvider from './dimensions-provider.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import FolderNavigateIcon from './icons/files/folder-navigate-icon.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
 
+const HEADER_ROW_HEIGHT_IN_PX = 47;
+
 function FilesListViewer({
   files,
   parentDirectory,
   selectedFileUrl,
-  maxListHeight,
   canDelete,
   canNavigateToParent,
   onDeleteClick,
@@ -174,22 +176,29 @@ function FilesListViewer({
 
   return (
     <div className="FilesListViewer">
-      <Table
-        style={{ width: '100%' }}
-        bordered={false}
-        pagination={false}
-        size="middle"
-        columns={columns}
-        dataSource={rows}
-        rowClassName={getRowClassName}
-        onRow={row => ({
-          onClick: () => handleRowClick(row)
-        })}
-        onHeaderRow={(_columns, rowIndex) => ({
-          onClick: () => handleHeaderRowClick(rowIndex)
-        })}
-        scroll={{ y: maxListHeight }}
-        />
+      <DimensionsProvider>
+        {({ containerHeight }) => {
+          const scrollY = containerHeight - (canNavigateToParent ? 2 * HEADER_ROW_HEIGHT_IN_PX : HEADER_ROW_HEIGHT_IN_PX);
+          return (
+            <Table
+              style={{ width: '100%' }}
+              bordered={false}
+              pagination={false}
+              size="middle"
+              columns={columns}
+              dataSource={rows}
+              rowClassName={getRowClassName}
+              onRow={row => ({
+                onClick: () => handleRowClick(row)
+              })}
+              onHeaderRow={(_columns, rowIndex) => ({
+                onClick: () => handleHeaderRowClick(rowIndex)
+              })}
+              scroll={{ y: scrollY }}
+              />
+          );
+        }}
+      </DimensionsProvider>
     </div>
   );
 }
@@ -198,7 +207,6 @@ FilesListViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
-  maxListHeight: PropTypes.number,
   onDeleteClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
@@ -210,7 +218,6 @@ FilesListViewer.propTypes = {
 FilesListViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
-  maxListHeight: null,
   onDeleteClick: () => {},
   onFileClick: () => {},
   onNavigateToParentClick: () => {},

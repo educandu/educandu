@@ -7,7 +7,7 @@ const useDimensions = useDimensionsNs.default || useDimensionsNs;
 export default function DimensionsProvider({ children }) {
   const { observe, width, height } = useDimensions();
   return (
-    <div ref={observe}>{children({ containerWidth: width, containerHeight: height })}</div>
+    <div style={{ height: '100%' }} ref={observe}>{children({ containerWidth: width, containerHeight: height })}</div>
   );
 }
 
