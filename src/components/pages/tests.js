@@ -16,32 +16,29 @@ function Tests({ PageTemplate }) {
     <PageTemplate>
       <div className="TestsPage">
         <h1>Resource Selector</h1>
-        <div style={{ marginBottom: '25px' }}>
-          <Button onClick={() => setIsResourceSelectorModalVisible(true)}>Open in modal window</Button>
-        </div>
+
         <div style={{ marginBottom: '25px' }}>
           INITIAL URL:
           &nbsp;
           <DebouncedInput value={initialUrl} onChange={setInitialUrl} />
         </div>
-        <div style={{ border: '1px solid gray', display: 'flex', flexDirection: 'column', justifyContent: 'stretch' }}>
+        <div style={{ marginBottom: '25px' }}>
+          <Button onClick={() => setIsResourceSelectorModalVisible(true)}>Open in modal window</Button>
+        </div>
+        <Modal
+          closable
+          width="80%"
+          footer={null}
+          onCancel={() => setIsResourceSelectorModalVisible(false)}
+          visible={isResourceSelectorModalVisible}
+          >
           <ResourceSelector
             allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
             initialUrl={initialUrl}
+            onSelect={() => setIsResourceSelectorModalVisible(false)}
+            onCancel={() => setIsResourceSelectorModalVisible(false)}
             />
-          <Modal
-            footer={null}
-            closable={false}
-            visible={isResourceSelectorModalVisible}
-            >
-            <ResourceSelector
-              allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
-              initialUrl={initialUrl}
-              onSelect={() => setIsResourceSelectorModalVisible(false)}
-              onCancel={() => setIsResourceSelectorModalVisible(false)}
-              />
-          </Modal>
-        </div>
+        </Modal>
         <hr />
         <h1>File preview</h1>
         <h6>IMAGE (Raster)</h6>
