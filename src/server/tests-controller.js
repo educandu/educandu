@@ -46,7 +46,7 @@ class TestsController {
         initialPath: `rooms/${privateRoom._id}/media`,
         uploadPath: `rooms/${privateRoom._id}/media`,
         usedBytes: roomOwner.storage.usedBytes,
-        maxBytes: roomOwnerStoragePlan.maxBytes,
+        maxBytes: roomOwnerStoragePlan?.maxBytes,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE) || isRoomOwner || isRoomCollaborator
       });
     }

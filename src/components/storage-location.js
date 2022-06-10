@@ -99,9 +99,9 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
           />
       </div>
       <div className="StorageLocation-storageInfo">
-        {storageLocation.type === STORAGE_LOCATION_TYPE.private && (
-          <UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />
-        )}
+        {storageLocation.type === STORAGE_LOCATION_TYPE.private
+          && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)
+          && (<UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />)}
         {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
           <Alert message={t('publicStorageWarning')} type="warning" showIcon />
         )}
