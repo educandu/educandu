@@ -65,9 +65,9 @@ function FilesListViewer({
 
     const Icon = getResourceIcon({ url: row.url, isDirectory: row.isDirectory });
     return (
-      <div className="FilesListViewer-fileName" >
+      <div className="FilesListViewer-fileNameCell" >
         <Icon />
-        {name}
+        <div className="FilesListViewer-fileName">{name}</div>
       </div>
     );
   };
@@ -101,10 +101,10 @@ function FilesListViewer({
 
   const renderNavigateToParentButton = () => (
     <div
-      className="FilesListViewer-fileName FilesListViewer-fileName--parentLink"
+      className="FilesListViewer-fileNameCell FilesListViewer-fileNameCell--parentLink"
       >
       <FolderNavigateIcon />
-      {parentDirectory?.displayName || '..'}
+      <div className="FilesListViewer-fileName">{parentDirectory?.displayName || '..'}</div>
     </div>
   );
 
@@ -139,7 +139,7 @@ function FilesListViewer({
       title: () => t('common:date'),
       dataIndex: 'createdOnFormatted',
       align: 'right',
-      width: 200,
+      width: 150,
       responsive: ['md'],
       sorter: by('createdOn')
     },
@@ -156,7 +156,7 @@ function FilesListViewer({
     columns.forEach(column => {
       column.children = column.dataIndex === 'name'
         ? [{ title: renderNavigateToParentButton, render: renderName, dataIndex: 'name', key: 'navigateToParent' }]
-        : [{ dataIndex: column.dataIndex, align: column.align, render: column.render, width: column.width }];
+        : [{ ...column }];
     });
   }
 

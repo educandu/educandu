@@ -19,14 +19,18 @@
   }
 }
 
-.FilesListViewer-fileName {
-  gap: 5px;
+.FilesListViewer-fileNameCell {
   display: flex;
   align-items: center;
 
   &.FilesListViewer-fileName--parentLink {
     color: lighten(@edu-text-color, 25%);
   }
+}
+
+.FilesListViewer-fileName {
+  .m-overflow-ellipsis;
+  margin-left: 10px;
 }
 
 .FilesListViewer-row {

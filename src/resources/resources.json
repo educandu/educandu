@@ -1301,8 +1301,8 @@
     "namespace": "storageLocation",
     "language": "en",
     "resources": {
-      "filesView_list": "list",
-      "filesView_grid": "grid"
+      "filesView_list": "List",
+      "filesView_grid": "Grid"
     }
   },
   {
