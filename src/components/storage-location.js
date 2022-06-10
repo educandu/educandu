@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
+import UsedStorage from './used-storage.js';
 import { useTranslation } from 'react-i18next';
-import { Button, message, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { CDN_OBJECT_TYPE } from '../domain/constants.js';
+import { Alert, Button, message, Select } from 'antd';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILE_VIEWER_DISPLAY } from './files-viewer.js';
+import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
 
 function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
@@ -96,6 +97,14 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
           canDelete={storageLocation.isDeletionEnabled}
           isLoading={isLoading}
           />
+      </div>
+      <div className="StorageLocation-storageInfo">
+        {storageLocation.type === STORAGE_LOCATION_TYPE.private
+          && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)
+          && (<UsedStorage usedBytes={storageLocation.usedBytes} maxBytes={storageLocation.maxBytes} showLabel />)}
+        {storageLocation.type === STORAGE_LOCATION_TYPE.public && (
+          <Alert message={t('publicStorageWarning')} type="warning" showIcon />
+        )}
       </div>
       <div className="StorageLocation-buttonsLine">
         {isFullscreen && <Button onClick={onExitFullscreen}>Exit fullscreen mode</Button>}

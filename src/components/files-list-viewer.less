@@ -15,7 +15,7 @@
 
 .FilesListViewer .ant-table .ant-table-thead > tr:nth-of-type(2) {
   &:hover {
-    background-color: @edu-table-row-hover-bg;
+    background-color: @edu-table-row-hover-background-color;
   }
 }
 
@@ -37,10 +37,10 @@
   cursor: pointer;
 
   &.is-selected {
-    background-color: lighten(@edu-primary-color-light, 40%);
+    background-color: @edu-table-selected-row-background-color;
 
     & > .ant-table-cell.ant-table-cell-row-hover {
-      background-color: lighten(@edu-primary-color-light, 40%);
+      background-color: @edu-table-selected-row-background-color;
     }
   }
 }
@@ -61,8 +61,8 @@
   background-color: @edu-white;
   text-decoration: none;
   display: flex;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   align-items: center;
   justify-content: center;
 
