@@ -1,4 +1,6 @@
-.FilesListViewer {}
+.FilesListViewer {
+  height: 100%;
+}
 
 .FilesListViewer .ant-table .ant-table-thead > tr:nth-of-type(2) > th {
   border-right: 1px solid transparent;
@@ -17,14 +19,18 @@
   }
 }
 
-.FilesListViewer-fileName {
-  gap: 5px;
+.FilesListViewer-fileNameCell {
   display: flex;
   align-items: center;
 
   &.FilesListViewer-fileName--parentLink {
     color: lighten(@edu-text-color, 25%);
   }
+}
+
+.FilesListViewer-fileName {
+  .m-overflow-ellipsis;
+  margin-left: 10px;
 }
 
 .FilesListViewer-row {
@@ -51,10 +57,12 @@
 }
 
 .FilesListViewer-action {
+  .m-box-shadow-round;
+  background-color: @edu-white;
   text-decoration: none;
   display: flex;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   align-items: center;
   justify-content: center;
 

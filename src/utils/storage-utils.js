@@ -81,15 +81,26 @@ export function getStorageLocationTypeForPath(path) {
   return STORAGE_LOCATION_TYPE.unknown;
 }
 
-export function getStorageLocationTypeForUrl(url) {
+export function getStorageLocationPathForUrl(url) {
   try {
     const urlObj = new URL(url);
-    return urlObj.protocol === 'cdn:'
-      ? getStorageLocationTypeForPath(urlUtils.removeLeadingSlashes(urlObj.pathname))
-      : STORAGE_LOCATION_TYPE.unknown;
+
+    if (urlObj.protocol !== 'cdn:') {
+      return null;
+    }
+    return urlUtils.removeLeadingSlashes(urlObj.pathname);
   } catch {
-    return STORAGE_LOCATION_TYPE.unknown;
+    return null;
   }
+}
+
+export function getParentPathForStorageLocationPath(pathname) {
+  return (pathname || '').split('/').slice(0, -1).join('/');
+}
+
+export function getStorageLocationTypeForUrl(url) {
+  const storageLocationPath = getStorageLocationPathForUrl(url);
+  return storageLocationPath ? getStorageLocationTypeForPath(storageLocationPath) : STORAGE_LOCATION_TYPE.unknown;
 }
 
 export function getPrivateStoragePathForRoomId(roomId) {

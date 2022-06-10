@@ -1302,6 +1302,22 @@
     }
   },
   {
+    "namespace": "storageLocation",
+    "language": "en",
+    "resources": {
+      "filesView_list": "List",
+      "filesView_grid": "Grid"
+    }
+  },
+  {
+    "namespace": "storageLocation",
+    "language": "de",
+    "resources": {
+      "filesView_list": "List",
+      "filesView_grid": "Grid"
+    }
+  },
+  {
     "namespace": "storagePlanModal",
     "language": "en",
     "resources": {
