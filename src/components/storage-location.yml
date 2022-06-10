@@ -4,3 +4,6 @@ filesView_list:
 filesView_grid:
   en: Grid
   de: Grid
+publicStorageWarning:
+  en: This directory is publicly accessible
+  de: Dieses Verzeichnis ist öffentlich zugänglich
