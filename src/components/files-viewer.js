@@ -29,19 +29,17 @@ function FilesViewer({
 
   return (
     <div className="FilesViewer">
-      {!!files.length && (
-        <ViewerComponent
-          files={files}
-          parentDirectory={parentDirectory}
-          selectedFileUrl={selectedFileUrl || null}
-          canDelete={canDelete}
-          canNavigateToParent={canNavigateToParent}
-          onDeleteClick={onDeleteClick}
-          onFileClick={onFileClick}
-          onPreviewClick={onPreviewClick}
-          onNavigateToParentClick={onNavigateToParentClick}
-          />
-      )}
+      <ViewerComponent
+        files={files}
+        parentDirectory={parentDirectory}
+        selectedFileUrl={selectedFileUrl || null}
+        canDelete={canDelete}
+        canNavigateToParent={canNavigateToParent}
+        onDeleteClick={onDeleteClick}
+        onFileClick={onFileClick}
+        onPreviewClick={onPreviewClick}
+        onNavigateToParentClick={onNavigateToParentClick}
+        />
       {isLoading && (
         <div className="FilesViewer-loadingOverlay">
           <Spin size="large" />
