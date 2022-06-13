@@ -29,8 +29,9 @@ function Tests({ PageTemplate }) {
           closable
           width="80%"
           footer={null}
-          onCancel={() => setIsResourceSelectorModalVisible(false)}
+          destroyOnClose
           visible={isResourceSelectorModalVisible}
+          onCancel={() => setIsResourceSelectorModalVisible(false)}
           >
           <ResourceSelector
             allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}

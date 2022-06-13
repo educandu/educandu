@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import cloneDeep from '../utils/clone-deep.js';
 import { storageShape } from '../ui/default-prop-types.js';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
@@ -12,6 +13,17 @@ export function useStorage() {
 export function useSetStorage() {
   const { setStorage } = useContext(StorageContext);
   return setStorage;
+}
+
+export function useSetStorageLocation() {
+  const { storage, setStorage } = useContext(StorageContext);
+
+  return newLocation => {
+    const newStorage = cloneDeep(storage);
+    newStorage.locations = storage.locations.map(location => location.type === newLocation.type ? newLocation : location);
+
+    setStorage(newStorage);
+  };
 }
 
 export function StorageProvider({ value, children }) {

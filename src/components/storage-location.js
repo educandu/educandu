@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import UsedStorage from './used-storage.js';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
+import cloneDeep from '../utils/clone-deep.js';
 import { Alert, Button, message, Select } from 'antd';
+import { useSetStorageLocation } from './storage-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import React, { useCallback, useEffect, useState } from 'react';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILE_VIEWER_DISPLAY } from './files-viewer.js';
@@ -12,15 +14,35 @@ import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl } fro
 
 function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
   const { t } = useTranslation('storageLocation');
+  const setStorageLocation = useSetStorageLocation();
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [files, setFiles] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [currentLoadedDirectoryPath, setCurrentLoadedDirectoryPath] = useState(null);
-  const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILE_VIEWER_DISPLAY.list);
+  const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILE_VIEWER_DISPLAY.grid);
+
+  const fetchStorageContent = useCallback(async () => {
+    if (!currentLoadedDirectoryPath) {
+      return;
+    }
+
+    try {
+      let result = await storageApiClient.getCdnObjects(currentLoadedDirectoryPath);
+      if (!result.objects.length) {
+        result = await storageApiClient.getCdnObjects(storageLocation.initialPath);
+      }
+      setParentDirectory(result.parentDirectory);
+      setCurrentDirectory(result.currentDirectory);
+      setFiles(result.objects);
+      setSelectedFile(null);
+    } catch (err) {
+      message.error(err.message);
+    }
+  }, [currentLoadedDirectoryPath, storageLocation.initialPath, storageApiClient]);
 
   const handleFileClick = newFile => {
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
@@ -30,9 +52,10 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
     }
   };
 
-  const handleDeleteClick = () => {
-    // eslint-disable-next-line no-console
-    console.log('onDeleteClick');
+  const handleDeleteClick = async file => {
+    const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
+    await fetchStorageContent();
+    setStorageLocation({ ...cloneDeep(storageLocation), usedBytes });
   };
 
   const handlePreviewClick = () => {
@@ -43,33 +66,17 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
     const initialResourceParentDirectoryPath = getParentPathForStorageLocationPath(initialResourcePath);
-    setCurrentLoadedDirectoryPath(initialResourceParentDirectoryPath || storageLocation.initialPath);
-  }, [initialUrl, storageLocation]);
+
+    setCurrentLoadedDirectoryPath(initialResourceParentDirectoryPath.startsWith(storageLocation.rootPath)
+      ? initialResourceParentDirectoryPath
+      : storageLocation.initialPath);
+  }, [initialUrl, storageLocation.initialPath, storageLocation.rootPath]);
 
   useEffect(() => {
-    if (!currentLoadedDirectoryPath) {
-      return;
-    }
-
-    (async () => {
-      try {
-        setIsLoading(true);
-        let result = await storageApiClient.getCdnObjects(currentLoadedDirectoryPath);
-        if (!result.objects.length) {
-          result = await storageApiClient.getCdnObjects(storageLocation.initialPath);
-        }
-        setParentDirectory(result.parentDirectory);
-        setCurrentDirectory(result.currentDirectory);
-        setFiles(result.objects);
-        setSelectedFile(null);
-      } catch (err) {
-        message.error(err.message);
-      } finally {
-        setIsLoading(false);
-        setCurrentLoadedDirectoryPath(null);
-      }
-    })();
-  }, [storageLocation, currentLoadedDirectoryPath, storageApiClient]);
+    setIsLoading(true);
+    fetchStorageContent();
+    setIsLoading(false);
+  }, [fetchStorageContent]);
 
   return (
     <div className="StorageLocation">
