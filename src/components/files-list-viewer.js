@@ -28,7 +28,7 @@ function FilesListViewer({
   onPreviewClick,
   onNavigateToParentClick
 }) {
-  const { locale } = useLocale();
+  const { uiLocale } = useLocale();
   const { t } = useTranslation('');
   const { formatDate } = useDateFormat();
 
@@ -169,7 +169,7 @@ function FilesListViewer({
       isDirectory,
       createdOn: file.createdOn,
       typeTranslated: t(isDirectory ? 'common:folder' : `common:resource_${getResourceType(file.url)}`),
-      sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale }) : '---',
+      sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale: uiLocale }) : '---',
       createdOnFormatted: file.createdOn ? formatDate(file.createdOn, 'PPp') : '---'
     };
   });
