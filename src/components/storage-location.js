@@ -66,8 +66,11 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
     const initialResourceParentDirectoryPath = getParentPathForStorageLocationPath(initialResourcePath);
-    setCurrentLoadedDirectoryPath(initialResourceParentDirectoryPath || storageLocation.initialPath);
-  }, [initialUrl, storageLocation.initialPath]);
+
+    setCurrentLoadedDirectoryPath(initialResourceParentDirectoryPath.startsWith(storageLocation.rootPath)
+      ? initialResourceParentDirectoryPath
+      : storageLocation.initialPath);
+  }, [initialUrl, storageLocation.initialPath, storageLocation.rootPath]);
 
   useEffect(() => {
     setIsLoading(true);
