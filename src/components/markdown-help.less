@@ -46,10 +46,46 @@
   border-collapse: collapse;
 }
 
+.MarkdownHelp-blockHelpTableHeaderCell {
+  text-align: left;
+  vertical-align: text-bottom;
+  padding-bottom: 8px;
+  border-bottom: 1px solid @edu-text-color;
+}
+
+.MarkdownHelp-blockHelpTableHeader {
+  font-size: 150%;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.MarkdownHelp-blockHelpTableHeaderAnnotation {
+  font-size: 85%;
+  font-style: italic;
+  font-weight: normal;
+  margin-bottom: 0;
+}
+
+.MarkdownHelp-blockHelpTableFooterCell {
+  text-align: left;
+  vertical-align: text-bottom;
+  padding-top: 8px;
+  border-top: 1px solid @edu-text-color;
+  font-size: 85%;
+}
+
 .MarkdownHelp-blockHelpTableCell {
   vertical-align: text-bottom;
   padding: 8px 25px 8px 0;
   width: 50%;
+
+  img {
+    vertical-align: text-top;
+  }
+
+  blockquote {
+    margin: 0;
+  }
 }
 
 .MarkdownHelp-spaceIndicator {

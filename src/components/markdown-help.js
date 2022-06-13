@@ -2,11 +2,13 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Markdown from './markdown.js';
 import { Modal, Tooltip } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import MarkdownIcon from './icons/markdown/markdown-icon.js';
 import React, { Fragment, useCallback, useState } from 'react';
 
 const ZERO_WIDTH_SPACE = '\u200B';
+const SIMPLE_URL_REGEX = /((https?:\/\/|(ftp:\/\/)).*|(.*\.[^.]{2,6})(\/.*)?)(:.*)?$/g;
+const insertLineBreaksIntoUrl = url => url.replace(/[^\w]\b/g, c => `${c}${ZERO_WIDTH_SPACE}`);
 
 function MarkdownHelp({ inline, disabled }) {
   const { t } = useTranslation('markdownHelp');
@@ -54,7 +56,7 @@ function MarkdownHelp({ inline, disabled }) {
   );
 
   const renderMarkdownCode = code => {
-    const lines = code.split('\n');
+    const lines = code.replace(SIMPLE_URL_REGEX, insertLineBreaksIntoUrl).split('\n');
     return (
       <Fragment>
         {lines.map((line, lineIndex) => {
@@ -83,6 +85,23 @@ function MarkdownHelp({ inline, disabled }) {
     return (
       <div className="MarkdownHelp-blockHelpContent">
         <table className="MarkdownHelp-blockHelpTable">
+          <thead>
+            <tr>
+              <th className="MarkdownHelp-blockHelpTableHeaderCell">
+                <p className="MarkdownHelp-blockHelpTableHeader">{t('blockHelpTableHeaderLeft')}</p>
+                <p className="MarkdownHelp-blockHelpTableHeaderAnnotation">
+                  <Trans
+                    t={t}
+                    i18nKey="blockHelpTableHeaderAnnotation"
+                    components={[<span key="space-indicator" className="MarkdownHelp-spaceIndicator" />]}
+                    />
+                </p>
+              </th>
+              <th className="MarkdownHelp-blockHelpTableHeaderCell">
+                <p className="MarkdownHelp-blockHelpTableHeader">{t('blockHelpTableHeaderRight')}</p>
+              </th>
+            </tr>
+          </thead>
           <tbody>
             {parts.map((part, index) => (
               <tr key={index.toString()}>
@@ -95,6 +114,13 @@ function MarkdownHelp({ inline, disabled }) {
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="2" className="MarkdownHelp-blockHelpTableFooterCell">
+                <Markdown>{t('blockHelpTableFoot')}</Markdown>
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     );
