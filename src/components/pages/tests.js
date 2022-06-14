@@ -46,7 +46,7 @@ function Tests({ PageTemplate }) {
         <div style={{ backgroundColor: '#f6f6f6', padding: '20px' }}>
           <FilePreview
             url="https://cdn.openmusic.academy/media/mDCkjepG3D61cX4FNBQxts/monteverdi-ninfa-x2mmMBkoJjnRvGghHQDPaQ.jpg"
-            createdOn={new Date('2022-03-04T09:48:46.524Z')}
+            createdOn="2022-03-04T09:48:46.524Z"
             size={44722}
             />
         </div>
@@ -54,35 +54,35 @@ function Tests({ PageTemplate }) {
         <h6>IMAGE (Vector)</h6>
         <FilePreview
           url="https://cdn.openmusic.academy/media/7nNYLdkpwLSi7i44qhBpqE/kanon-quintfall-1-cEwMkaVH1gREuT3j2NL4mt.svg"
-          createdOn={new Date('2022-03-04T09:48:46.524Z')}
+          createdOn="2022-03-04T09:48:46.524Z"
           size={44722}
           />
         <hr />
         <h6>AUDIO</h6>
         <FilePreview
           url="https://cdn.openmusic.academy/media/7nNYLdkpwLSi7i44qhBpqE/kanon-quintfall-1-2tcutSeJZftuDjiwmVeE47.mp3"
-          createdOn={new Date('2022-03-04T09:48:46.524Z')}
+          createdOn="2022-03-04T09:48:46.524Z"
           size={44722}
           />
         <hr />
         <h6>VIDEO</h6>
         <FilePreview
           url="https://cdn.openmusic.academy/media/rRsbyWevSf5k8bRzvL6N8q/Basis%C3%BCbung%20F-Dur_2pJv5pTWv2B5yELgMUoJyB.mp4"
-          createdOn={new Date('2022-03-04T09:48:46.524Z')}
+          createdOn="2022-03-04T09:48:46.524Z"
           size={44722}
           />
         <hr />
         <h6>PDF</h6>
         <FilePreview
           url="https://upload.wikimedia.org/wikipedia/commons/b/b5/Romanorum_pontificum.pdf"
-          createdOn={new Date('2022-03-04T09:48:46.524Z')}
+          createdOn="2022-03-04T09:48:46.524Z"
           size={44722}
           />
         <hr />
         <h6>GENERIC</h6>
         <FilePreview
           url="https://non.existent.com/file.backup"
-          createdOn={new Date('2022-03-04T09:48:46.524Z')}
+          createdOn="2022-03-04T09:48:46.524Z"
           size={44722}
           />
       </div>

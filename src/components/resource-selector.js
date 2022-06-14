@@ -52,16 +52,18 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
 
   return (
     <div className="ResourceSelector">
-      {isFullscreen && renderLocation(currentLocation)}
-      {!isFullscreen && (
-        <Tabs defaultActiveKey={currentLocation?.type} onChange={handleLocationTabChange} size="small">
-          {visibleLocations.map(loc => (
-            <TabPane key={loc.type} tab={loc.type}>
-              {renderLocation(loc)}
-            </TabPane>
-          ))}
-        </Tabs>
-      )}
+      <Tabs
+        size="small"
+        defaultActiveKey={currentLocation?.type}
+        onChange={handleLocationTabChange}
+        renderTabBar={isFullscreen ? () => null : null}
+        >
+        {visibleLocations.map(loc => (
+          <TabPane key={loc.type} tab={loc.type}>
+            {renderLocation(loc)}
+          </TabPane>
+        ))}
+      </Tabs>
     </div>
   );
 }
