@@ -60,6 +60,10 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     }
   };
 
+  const handleSelectClick = () => {
+    onSelect(selectedFile.path);
+  };
+
   const handleDeleteClick = async file => {
     const { usedBytes } = await storageApiClient.deleteCdnObject(file.path);
     await fetchStorageContent();
@@ -75,6 +79,8 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     setWizardScreen(WIZARD_SCREEN.none);
     onExitFullscreen();
   };
+
+  const renderSelectButton = () => <Button type="primary" onClick={handleSelectClick} disabled={!selectedFile}>{t('common:select')}</Button>;
 
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
@@ -131,7 +137,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             <div />
             <div className="StorageLocation-buttonsGroup">
               <Button onClick={onCancel}>{t('common:cancel')}</Button>
-              <Button type="primary" onClick={onSelect}>{t('common:select')}</Button>
+              {renderSelectButton()}
             </div>
           </div>
         </Fragment>
@@ -148,8 +154,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             size={selectedFile.size}
             createdOn={selectedFile.createdOn}
             />
-
-          <Button className="StorageLocation-wizardScreenSelect" type="primary" onClick={onSelect}>{t('common:select')}</Button>
+          <div className="StorageLocation-wizardScreenSelect">{renderSelectButton()}</div>
         </div>
       )}
     </div>
