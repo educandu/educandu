@@ -12,6 +12,11 @@ function Tests({ PageTemplate }) {
   const [initialUrl, setInitialUrl] = useState('');
   const [isResourceSelectorModalVisible, setIsResourceSelectorModalVisible] = useState(false);
 
+  const handleResourceSelectorSelect = filePath => {
+    console.log('selected file path: ', filePath);
+    setIsResourceSelectorModalVisible(false);
+  };
+
   return (
     <PageTemplate>
       <div className="TestsPage">
@@ -36,7 +41,7 @@ function Tests({ PageTemplate }) {
           <ResourceSelector
             allowedLocationTypes={[STORAGE_LOCATION_TYPE.public, STORAGE_LOCATION_TYPE.private]}
             initialUrl={initialUrl}
-            onSelect={() => setIsResourceSelectorModalVisible(false)}
+            onSelect={handleResourceSelectorSelect}
             onCancel={() => setIsResourceSelectorModalVisible(false)}
             />
         </Modal>
