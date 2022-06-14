@@ -5,7 +5,7 @@ import FilesGridViewer from './files-grid-viewer.js';
 import FilesListViewer from './files-list-viewer.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
 
-export const FILE_VIEWER_DISPLAY = {
+export const FILES_VIEWER_DISPLAY = {
   grid: 'grid',
   list: 'list'
 };
@@ -23,7 +23,7 @@ function FilesViewer({
   onNavigateToParentClick,
   isLoading
 }) {
-  const ViewerComponent = display === FILE_VIEWER_DISPLAY.grid
+  const ViewerComponent = display === FILES_VIEWER_DISPLAY.grid
     ? FilesGridViewer
     : FilesListViewer;
 
@@ -52,7 +52,7 @@ function FilesViewer({
 FilesViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
-  display: PropTypes.oneOf(Object.values(FILE_VIEWER_DISPLAY)),
+  display: PropTypes.oneOf(Object.values(FILES_VIEWER_DISPLAY)),
   files: PropTypes.arrayOf(cdnObjectShape),
   isLoading: PropTypes.bool,
   onDeleteClick: PropTypes.func,
@@ -66,7 +66,7 @@ FilesViewer.propTypes = {
 FilesViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
-  display: FILE_VIEWER_DISPLAY.grid,
+  display: FILES_VIEWER_DISPLAY.grid,
   files: [],
   isLoading: false,
   onDeleteClick: () => {},

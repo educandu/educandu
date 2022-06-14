@@ -204,7 +204,7 @@ function FilePreview({ createdOn, size, url }) {
 }
 
 FilePreview.propTypes = {
-  createdOn: PropTypes.instanceOf(Date).isRequired,
+  createdOn: PropTypes.string.isRequired,
   size: PropTypes.number.isRequired,
   url: PropTypes.string.isRequired
 };
