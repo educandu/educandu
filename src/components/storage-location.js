@@ -130,7 +130,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
           <div className="StorageLocation-buttonsLine">
             <div />
             <div className="StorageLocation-buttonsGroup">
-              <Button onClick={onCancel}>Cancel</Button>
+              <Button onClick={onCancel}>{t('common:cancel')}</Button>
               <Button type="primary" onClick={onSelect}>{t('common:select')}</Button>
             </div>
           </div>
