@@ -22,10 +22,7 @@ describe('storage-controller', () => {
 
   beforeEach(() => {
     storageService = {
-      uploadFiles: sandbox.stub(),
-      deleteObject: sandbox.stub()
-    };
-    storageService = {
+      getObjects: sandbox.stub(),
       uploadFiles: sandbox.stub(),
       deleteObject: sandbox.stub()
     };
@@ -44,6 +41,155 @@ describe('storage-controller', () => {
 
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('handleGetCdnObjects', () => {
+    describe('when storage path type is unknown', () => {
+      beforeEach(() => {
+        req = { user, query: { parentPath: 'other-path/media' } };
+        res = {};
+      });
+
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.handleGetCdnObjects(req, res)).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when storage path type is private but the room ID is unknown', () => {
+      beforeEach(() => {
+        req = { user, query: { parentPath: 'rooms/some-room-id/media' } };
+        res = {};
+      });
+
+      it('should throw BadRequest', async () => {
+        await expect(() => sut.handleGetCdnObjects(req, res)).rejects.toThrow(BadRequest);
+      });
+    });
+
+    describe('when storage path type is private but user is not the room owner or a collaborator', () => {
+      beforeEach(() => {
+        room.owner = uniqueId.create();
+        room.members = [{ userId: uniqueId.create() }];
+        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        req = { user, query: { parentPath: `rooms/${room._id}/media` } };
+        res = {};
+      });
+
+      it('should throw Unauthorized', async () => {
+        await expect(() => sut.handleGetCdnObjects(req, res)).rejects.toThrow(Unauthorized);
+      });
+    });
+
+    describe('when storage path type is private and the user is the room owner', () => {
+      let parentDirectory;
+      let currentDirectory;
+      let objects;
+
+      beforeEach(done => {
+        room.owner = user._id;
+        room.members = [{ userId: uniqueId.create() }];
+        room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
+        parentDirectory = `rooms/${room._id}`;
+        currentDirectory = `rooms/${room._id}/media`;
+        objects = [];
+        req = { user, query: { parentPath: currentDirectory } };
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
+
+        sut.handleGetCdnObjects(req, res);
+      });
+
+      it('should call storageService.getObjects', () => {
+        sinon.assert.calledWith(storageService.getObjects, {
+          parentPath: currentDirectory,
+          recursive: false
+        });
+      });
+
+      it('should return 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the objects', () => {
+        expect(res._getData()).toEqual({ parentDirectory, currentDirectory, objects });
+      });
+    });
+
+    describe('when storage path type is private and the user is a room collaborator', () => {
+      let parentDirectory;
+      let currentDirectory;
+      let objects;
+
+      beforeEach(done => {
+        room.owner = uniqueId.create();
+        room.members = [{ userId: user._id }];
+        room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
+        parentDirectory = `rooms/${room._id}`;
+        currentDirectory = `rooms/${room._id}/media`;
+        objects = [];
+        req = { user, query: { parentPath: currentDirectory } };
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
+
+        sut.handleGetCdnObjects(req, res);
+      });
+
+      it('should call storageService.getObjects', () => {
+        sinon.assert.calledWith(storageService.getObjects, {
+          parentPath: currentDirectory,
+          recursive: false
+        });
+      });
+
+      it('should return 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the objects', () => {
+        expect(res._getData()).toEqual({ parentDirectory, currentDirectory, objects });
+      });
+    });
+
+    describe('when storage path type is public', () => {
+      let parentDirectory;
+      let currentDirectory;
+      let objects;
+
+      beforeEach(done => {
+        parentDirectory = '';
+        currentDirectory = 'media';
+        objects = [];
+        req = { user, query: { parentPath: currentDirectory } };
+
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
+
+        sut.handleGetCdnObjects(req, res);
+      });
+
+      it('should call storageService.getObjects', () => {
+        sinon.assert.calledWith(storageService.getObjects, {
+          parentPath: currentDirectory,
+          recursive: false
+        });
+      });
+
+      it('should return 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the objects', () => {
+        expect(res._getData()).toEqual({ parentDirectory, currentDirectory, objects });
+      });
+    });
   });
 
   describe('handlePostCdnObject', () => {
@@ -294,4 +440,5 @@ describe('storage-controller', () => {
       });
     });
   });
+
 });

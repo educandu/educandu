@@ -49,8 +49,12 @@ class StorageController {
   }
 
   async handleGetCdnObjects(req, res) {
+    const { user } = req;
     const { parentPath } = req.query;
+
+    await this._checkPathAccess(parentPath, user);
     const { parentDirectory, currentDirectory, objects } = await this.storageService.getObjects({ parentPath, recursive: false });
+
     return res.send({ parentDirectory, currentDirectory, objects });
   }
 
@@ -58,26 +62,7 @@ class StorageController {
     const { user } = req;
     const { path } = req.query;
 
-    const storageLocationType = getStorageLocationTypeForPath(path);
-    if (storageLocationType === STORAGE_LOCATION_TYPE.unknown) {
-      throw new BadRequest(`Invalid storage path '${path}'`);
-    }
-
-    let privateRoom = null;
-    if (storageLocationType === STORAGE_LOCATION_TYPE.private) {
-      const roomId = getRoomIdFromPrivateStoragePath(path);
-      privateRoom = await this.roomService.getRoomById(roomId);
-
-      if (!privateRoom) {
-        throw new BadRequest(`Unknown room id '${roomId}'`);
-      }
-
-      if (!isRoomOwnerOrCollaborator({ room: privateRoom, userId: user._id })) {
-        throw new Unauthorized(`User is not authorized to delete from room '${roomId}'`);
-      }
-    }
-
-    const storageClaimingUserId = privateRoom?.owner || user._id;
+    const { storageClaimingUserId } = await this._checkPathAccess(path, user);
     const { usedBytes } = await this.storageService.deleteObject({ path, storageClaimingUserId });
 
     return res.send({ usedBytes });
@@ -86,34 +71,45 @@ class StorageController {
   async handlePostCdnObject(req, res) {
     const { user, files } = req;
     const { parentPath } = req.body;
-    const storageLocationType = getStorageLocationTypeForPath(parentPath);
 
     if (!files?.length) {
       throw new BadRequest('No files provided');
     }
 
+    const { storageClaimingUserId } = await this._checkPathAccess(parentPath, user);
+    const { usedBytes } = await this.storageService.uploadFiles({ parentPath, files, storageClaimingUserId });
+
+    return res.status(201).send({ usedBytes });
+  }
+
+  async _checkPathAccess(path, user) {
+    const storageLocationType = getStorageLocationTypeForPath(path);
     if (storageLocationType === STORAGE_LOCATION_TYPE.unknown) {
-      throw new BadRequest(`Invalid storage path '${parentPath}'`);
+      throw new BadRequest(`Invalid storage path '${path}'`);
     }
 
-    let privateRoom;
+    let storageClaimingUserId;
     if (storageLocationType === STORAGE_LOCATION_TYPE.private) {
-      const roomId = getRoomIdFromPrivateStoragePath(parentPath);
-      privateRoom = await this.roomService.getRoomById(roomId);
+      const roomId = getRoomIdFromPrivateStoragePath(path);
+      const privateRoom = await this.roomService.getRoomById(roomId);
 
       if (!privateRoom) {
         throw new BadRequest(`Unknown room id '${roomId}'`);
       }
 
       if (!isRoomOwnerOrCollaborator({ room: privateRoom, userId: user._id })) {
-        throw new Unauthorized(`User is not authorized to upload to room '${roomId}'`);
+        throw new Unauthorized(`User is not authorized to access room '${roomId}'`);
       }
+
+      storageClaimingUserId = privateRoom.owner;
+    } else {
+      storageClaimingUserId = user._id;
     }
 
-    const storageClaimingUserId = privateRoom?.owner || user._id;
-    const { usedBytes } = await this.storageService.uploadFiles({ parentPath, files, storageClaimingUserId });
-
-    return res.status(201).send({ usedBytes });
+    return {
+      storageLocationType,
+      storageClaimingUserId
+    };
   }
 
   async handleGetStoragePlans(req, res) {
