@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import TableDesignerMenu from './table-designer-menu.js';
 import React, { Fragment, useMemo, useState } from 'react';
+import MarkdownHelp from '../../components/markdown-help.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import DebouncedInput from '../../components/debounced-input.js';
 import {
@@ -25,7 +26,6 @@ import {
   disconnectCell,
   CELL_TYPE
 } from './table-utils.js';
-import MarkdownHelp from '../../components/markdown-help.js';
 
 const CONTENT_INPUT_DATA_ROLE = 'content-input';
 
