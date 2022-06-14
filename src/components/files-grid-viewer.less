@@ -12,6 +12,10 @@
   padding: 5px;
   position: relative;
   width: 80px;
+
+  &:hover {
+    .m-box-shadow;
+  }
 }
 
 .FilesGridViewer-file {
@@ -23,6 +27,15 @@
   &:active {
     text-decoration: none;
     color: @edu-text-color-secondary;
+  }
+
+  &.FilesGridViewer-file--parentLink {
+    color: lighten(@edu-text-color, 25%);
+
+    &:hover,
+    &:active {
+      text-decoration: none;
+    }
   }
 }
 
@@ -53,7 +66,8 @@
   background-color: @edu-selection-background-color;
 
   &.is-visible {
-    display: block
+    display: block;
+    user-select: none;
   }
 }
 
@@ -70,20 +84,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 10px;
   }
 }
 
 .FilesGridViewer-action {
-  width: 30px;
-  height: 30px;
+  .m-box-shadow-round;
+  background-color: @edu-white;
+  width: 25px;
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
   opacity: 90%;
-  background-color: @edu-white;
-  border-radius: 50%;
 
   &:hover,
   &:active {
@@ -91,20 +105,20 @@
   }
 
   &.FilesGridViewer-action--preview {
-    color: @edu-green-icon-color;
+    color: @edu-success-color;
 
     &:hover,
     &:active {
-      color: @edu-green-icon-color;
+      color: @edu-success-color;
     }
   }
 
   &.FilesGridViewer-action--delete {
-    color: @edu-danger-color;
+    color: @edu-error-color;
 
     &:hover,
     &:active {
-      color: @edu-danger-color;
+      color: @edu-error-color;
     }
   }
 }

@@ -5,17 +5,21 @@ import classNames from 'classnames';
 import { Table, Tooltip } from 'antd';
 import prettyBytes from 'pretty-bytes';
 import { useTranslation } from 'react-i18next';
-import FolderIcon from './icons/files/folder-icon.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import { CDN_OBJECT_TYPE } from '../domain/constants.js';
 import PreviewIcon from './icons/general/preview-icon.js';
+import DimensionsProvider from './dimensions-provider.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { useDateFormat, useLocale } from './locale-context.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
+import FolderNavigateIcon from './icons/files/folder-navigate-icon.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
+
+const HEADER_ROW_HEIGHT_IN_PX = 47;
 
 function FilesListViewer({
   files,
+  parentDirectory,
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
@@ -24,7 +28,7 @@ function FilesListViewer({
   onPreviewClick,
   onNavigateToParentClick
 }) {
-  const { locale } = useLocale();
+  const { uiLocale } = useLocale();
   const { t } = useTranslation('');
   const { formatDate } = useDateFormat();
 
@@ -61,9 +65,9 @@ function FilesListViewer({
 
     const Icon = getResourceIcon({ url: row.url, isDirectory: row.isDirectory });
     return (
-      <div className="FilesListViewer-fileName" >
+      <div className="FilesListViewer-fileNameCell" >
         <Icon />
-        {name}
+        <div className="FilesListViewer-fileName">{name}</div>
       </div>
     );
   };
@@ -96,7 +100,12 @@ function FilesListViewer({
   };
 
   const renderNavigateToParentButton = () => (
-    <div className="FilesListViewer-fileName"><FolderIcon />...</div>
+    <div
+      className="FilesListViewer-fileNameCell FilesListViewer-fileNameCell--parentLink"
+      >
+      <FolderNavigateIcon />
+      <div className="FilesListViewer-fileName">{parentDirectory?.displayName || '..'}</div>
+    </div>
   );
 
   const getRowClassName = row => {
@@ -130,7 +139,7 @@ function FilesListViewer({
       title: () => t('common:date'),
       dataIndex: 'createdOnFormatted',
       align: 'right',
-      width: 200,
+      width: 170,
       responsive: ['md'],
       sorter: by('createdOn')
     },
@@ -138,6 +147,7 @@ function FilesListViewer({
       title: () => t('common:actions'),
       dataIndex: 'isDirectory',
       render: renderActions,
+      width: 100,
       align: 'right'
     }
   ];
@@ -146,7 +156,7 @@ function FilesListViewer({
     columns.forEach(column => {
       column.children = column.dataIndex === 'name'
         ? [{ title: renderNavigateToParentButton, render: renderName, dataIndex: 'name', key: 'navigateToParent' }]
-        : [{ dataIndex: column.dataIndex, align: column.align, render: column.render }];
+        : [{ ...column, title: null, sorter: null }];
     });
   }
 
@@ -159,28 +169,36 @@ function FilesListViewer({
       isDirectory,
       createdOn: file.createdOn,
       typeTranslated: t(isDirectory ? 'common:folder' : `common:resource_${getResourceType(file.url)}`),
-      sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale }) : '---',
+      sizeFormatted: Number.isFinite(file.size) ? prettyBytes(file.size, { locale: uiLocale }) : '---',
       createdOnFormatted: file.createdOn ? formatDate(file.createdOn, 'PPp') : '---'
     };
   });
 
   return (
     <div className="FilesListViewer">
-      <Table
-        style={{ width: '100%' }}
-        bordered={false}
-        pagination={false}
-        size="middle"
-        columns={columns}
-        dataSource={rows}
-        rowClassName={getRowClassName}
-        onRow={row => ({
-          onClick: () => handleRowClick(row)
-        })}
-        onHeaderRow={(_columns, rowIndex) => ({
-          onClick: () => handleHeaderRowClick(rowIndex)
-        })}
-        />
+      <DimensionsProvider>
+        {({ containerHeight }) => {
+          const scrollY = containerHeight - (canNavigateToParent ? 2 * HEADER_ROW_HEIGHT_IN_PX : HEADER_ROW_HEIGHT_IN_PX);
+          return (
+            <Table
+              style={{ width: '100%' }}
+              bordered={false}
+              pagination={false}
+              size="middle"
+              columns={columns}
+              dataSource={rows}
+              rowClassName={getRowClassName}
+              onRow={row => ({
+                onClick: () => handleRowClick(row)
+              })}
+              onHeaderRow={(_columns, rowIndex) => ({
+                onClick: () => handleHeaderRowClick(rowIndex)
+              })}
+              scroll={{ y: scrollY }}
+              />
+          );
+        }}
+      </DimensionsProvider>
     </div>
   );
 }
@@ -193,6 +211,7 @@ FilesListViewer.propTypes = {
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
+  parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
 
@@ -203,6 +222,7 @@ FilesListViewer.defaultProps = {
   onFileClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
+  parentDirectory: null,
   selectedFileUrl: null
 };
 

@@ -1,5 +1,6 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { useStorage } from './storage-context.js';
 import React, { useEffect, useState } from 'react';
 import StorageLocation from './storage-location.js';
@@ -10,6 +11,7 @@ const { TabPane } = Tabs;
 
 function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect }) {
   const { locations } = useStorage();
+  const { t } = useTranslation('resourceSelector');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [visibleLocations, setVisibleLocations] = useState([]);
@@ -37,7 +39,7 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
         return (
           <StorageLocation
             storageLocation={location}
-            isFullscreen={isFullscreen}
+            initialUrl={initialUrl}
             onEnterFullscreen={() => setIsFullscreen(true)}
             onExitFullscreen={() => setIsFullscreen(false)}
             onSelect={onSelect}
@@ -51,16 +53,18 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
 
   return (
     <div className="ResourceSelector">
-      {isFullscreen && renderLocation(currentLocation)}
-      {!isFullscreen && (
-        <Tabs defaultActiveKey={currentLocation?.type} onChange={handleLocationTabChange} size="small">
-          {visibleLocations.map(loc => (
-            <TabPane key={loc.type} tab={loc.type}>
-              {renderLocation(loc)}
-            </TabPane>
-          ))}
-        </Tabs>
-      )}
+      <Tabs
+        size="small"
+        defaultActiveKey={currentLocation?.type}
+        onChange={handleLocationTabChange}
+        renderTabBar={isFullscreen ? () => null : null}
+        >
+        {visibleLocations.map(location => (
+          <TabPane key={location.type} tab={t(`storage_${location.type}`)}>
+            {renderLocation(location)}
+          </TabPane>
+        ))}
+      </Tabs>
     </div>
   );
 }

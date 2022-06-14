@@ -132,12 +132,12 @@
 }
 
 
-.InteractiveMediaDisplay-overlayTitle {
+.InteractiveMediaDisplay-overlayChapterTitle {
   flex: none;
   font-size: 12px;
 }
 
-.InteractiveMediaDisplay-overlayContent {
+.InteractiveMediaDisplay-overlayChapterContent {
   width: 70%;
   padding: 30px;
   margin: 0 auto;
@@ -152,14 +152,18 @@
   }
 }
 
-.InteractiveMediaDisplay-answers {
+.InteractiveMediaDisplay-overlayChapterAnswers {
   margin: 30px 0;
 }
 
-.InteractiveMediaDisplay-answer {
+.InteractiveMediaDisplay-overlayChapterAnswer {
   display: flex;
   gap: 10px;
   align-items: center;
+
+  &.is-disabled {
+    color: @edu-text-color-secondary;
+  }
 }
 
 .InteractiveMediaDisplay-answerMark {
@@ -170,14 +174,78 @@
   color: @edu-success-color;
 }
 
-.InteractiveMediaDisplay-wrongAnswerMark {
+.InteractiveMediaDisplay-incorrectAnswerMark {
   color: @edu-error-color;
 }
 
 
-.InteractiveMediaDisplay-overlayControls {
+.InteractiveMediaDisplay-overlayChapterControls {
   flex: none;
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+}
+
+.InteractiveMediaDisplay-chaptersResolution {
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.InteractiveMediaDisplay-chaptersResolutionLabel {
+  margin-right: 10px;
+}
+
+.InteractiveMediaDisplay-chapterResolutionContainer {
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.InteractiveMediaDisplay-chapterResolution {
+  width: 10px;
+  height: 10px;
+  padding: 3px;
+  border-radius: 50%;
+  background-color: @edu-background-color-base;
+
+  &.InteractiveMediaDisplay-chapterResolution--correctAnswer {
+    background-color: @edu-success-color;
+  }
+
+  &.InteractiveMediaDisplay-chapterResolution--incorrectAnswer {
+    background-color: @edu-error-color;
+  }
+}
+
+.InteractiveMediaDisplay-overlayResults {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.InteractiveMediaDisplay-overlayResultsTitle {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.InteractiveMediaDisplay-overlayResultsChapter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.InteractiveMediaDisplay-overlayResultsChapterTitle {
+  .m-overflow-ellipsis;
+  width: 300px;
+}
+
+.InteractiveMediaDisplay-overlayResultsSummary {
+  margin-top: 30px;
 }

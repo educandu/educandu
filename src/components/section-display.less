@@ -63,31 +63,31 @@
 
   &.SectionDisplay-actionButton--edit,
   &.SectionDisplay-actionButton--preview {
-    color: @edu-green-icon-color;
+    color: @edu-success-color;
 
     &:hover,
     &:active,
     &:focus {
-      color: @edu-green-icon-color;
-      border-color: @edu-green-icon-color;
+      color: @edu-success-color;
+      border-color: @edu-success-color;
     }
   }
 
   &.SectionDisplay-actionButton--delete {
-    color: @edu-danger-color;
+    color: @edu-error-color;
 
     &:hover,
     &:active,
     &:focus {
-      color: @edu-danger-color;
-      border-color: @edu-danger-color;
+      color: @edu-error-color;
+      border-color: @edu-error-color;
     }
   }
 
   &.SectionDisplay-actionButton--hardDelete {
     display: none;
-    color: @edu-danger-color;
-    border-color: @edu-danger-color;
+    color: @edu-error-color;
+    border-color: @edu-error-color;
   }
 }
 
@@ -150,6 +150,8 @@
 }
 
 .SectionDisplay-overlayButton {
+  .m-box-shadow-round;
+  background-color: @edu-white;
   display: block;
   margin: 0 7px;
   width: 40px;
@@ -157,26 +159,16 @@
   border-radius: 50%;
   box-shadow: 0px 0px 8px @grey-7;
 
-  &.SectionDisplay-overlayButton--apply {
-    color: @edu-white;
-    background-color: @edu-apply-color;
-    border: 1px solid darken(@edu-apply-color, 5%);
+  &:hover {
+    background-color: @edu-white;
+  }
 
-    &:hover {
-      background-color: darken(@edu-apply-color, 15%);
-      border: 1px solid darken(@edu-apply-color, 20%);
-    }
+  &.SectionDisplay-overlayButton--apply {
+    color: @edu-success-color;
   }
 
   &.SectionDisplay-overlayButton--discard {
-    color: @edu-white;
-    background-color: @edu-discard-color;
-    border: 1px solid darken(@edu-discard-color, 5%);
-
-    &:hover {
-      background-color: darken(@edu-discard-color, 15%);
-      border: 1px solid darken(@edu-discard-color, 20%);
-    }
+    color: @edu-error-color;
   }
 }
 

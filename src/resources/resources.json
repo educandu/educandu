@@ -794,7 +794,9 @@
       "defaultDocumentTitle": "New document",
       "newDocument": "New document",
       "originInternal": "internal",
-      "originExternal": "external"
+      "originExternal": "external",
+      "initialAuthor": "Initial author",
+      "filterPlaceholder": "Filter by title or initial author"
     }
   },
   {
@@ -804,7 +806,9 @@
       "defaultDocumentTitle": "Neues Dokument",
       "newDocument": "Neues Dokument",
       "originInternal": "intern",
-      "originExternal": "extern"
+      "originExternal": "extern",
+      "initialAuthor": "Erstautor",
+      "filterPlaceholder": "Nach Titel oder Erstautor filtern"
     }
   },
   {
@@ -1162,6 +1166,22 @@
     }
   },
   {
+    "namespace": "resourceSelector",
+    "language": "en",
+    "resources": {
+      "storage_public": "Public storage",
+      "storage_private": "Private storage"
+    }
+  },
+  {
+    "namespace": "resourceSelector",
+    "language": "de",
+    "resources": {
+      "storage_public": "Öffentlicher Speicher",
+      "storage_private": "Privater Speicher"
+    }
+  },
+  {
     "namespace": "roomCreationModal",
     "language": "en",
     "resources": {
@@ -1321,6 +1341,24 @@
     "language": "de",
     "resources": {
       "modalTitle": "Dateibrowser"
+    }
+  },
+  {
+    "namespace": "storageLocation",
+    "language": "en",
+    "resources": {
+      "filesView_list": "List",
+      "filesView_grid": "Grid",
+      "publicStorageWarning": "This directory is publicly accessible"
+    }
+  },
+  {
+    "namespace": "storageLocation",
+    "language": "de",
+    "resources": {
+      "filesView_list": "List",
+      "filesView_grid": "Grid",
+      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich"
     }
   },
   {
@@ -1697,7 +1735,11 @@
       "markCorrectAnswer": "Mark as correct answer",
       "continue": "Continue",
       "replay": "Replay",
-      "reset": "Reset"
+      "end": "End",
+      "reset": "Reset",
+      "results": "Results",
+      "currentProgress": "Your current progress",
+      "resultsSummary": "{answerCount} out of {totalCount} answered, out of which {correctCount} correctly and {incorrectCount} incorrectly."
     }
   },
   {
@@ -1720,7 +1762,11 @@
       "markCorrectAnswer": "Als richtige Antwort markieren",
       "continue": "Fortfahren",
       "replay": "Wiederholen",
-      "reset": "Zurücksetzen"
+      "end": "Enden",
+      "reset": "Zurücksetzen",
+      "results": "Ergebnisse",
+      "currentProgress": "Dein aktueller Fortschritt",
+      "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
     }
   },
   {

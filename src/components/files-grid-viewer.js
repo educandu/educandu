@@ -9,10 +9,11 @@ import { cdnObjectShape } from '../ui/default-prop-types.js';
 import { confirmCdnFileDelete } from './confirmation-dialogs.js';
 import { CDN_OBJECT_TYPE, RESOURCE_TYPE } from '../domain/constants.js';
 import { getResourceIcon, getResourceType } from '../utils/resource-utils.js';
-import { FolderFilledIconComponent } from './icons/files/folder-filled-icon.js';
+import FolderFilledNavigateIcon from './icons/files/folder-filled-navigate-icon.js';
 
 function FilesGridViewer({
   files,
+  parentDirectory,
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
@@ -82,11 +83,11 @@ function FilesGridViewer({
       {canNavigateToParent && (
         <Tooltip title={t('navigateToParent')} placement="topLeft">
           <div className="FilesGridViewer-fileContainer">
-            <a className="FilesGridViewer-file" onClick={onNavigateToParentClick}>
+            <a className="FilesGridViewer-file FilesGridViewer-file--parentLink" onClick={onNavigateToParentClick}>
               <div className="FilesGridViewer-fileDisplay">
-                <FolderFilledIconComponent />
+                <FolderFilledNavigateIcon />
               </div>
-              <div>...</div>
+              <div>{parentDirectory?.displayName || '..'}</div>
             </a>
           </div>
         </Tooltip>
@@ -104,6 +105,7 @@ FilesGridViewer.propTypes = {
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
+  parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
 
@@ -114,6 +116,7 @@ FilesGridViewer.defaultProps = {
   onFileClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
+  parentDirectory: null,
   selectedFileUrl: null
 };
 

@@ -5,7 +5,7 @@ import FilesGridViewer from './files-grid-viewer.js';
 import FilesListViewer from './files-list-viewer.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
 
-export const FILE_VIEWER_DISPLAY = {
+export const FILES_VIEWER_DISPLAY = {
   grid: 'grid',
   list: 'list'
 };
@@ -13,6 +13,7 @@ export const FILE_VIEWER_DISPLAY = {
 function FilesViewer({
   display,
   files,
+  parentDirectory,
   selectedFileUrl,
   canDelete,
   canNavigateToParent,
@@ -22,24 +23,23 @@ function FilesViewer({
   onNavigateToParentClick,
   isLoading
 }) {
-  const ViewerComponent = display === FILE_VIEWER_DISPLAY.grid
+  const ViewerComponent = display === FILES_VIEWER_DISPLAY.grid
     ? FilesGridViewer
     : FilesListViewer;
 
   return (
     <div className="FilesViewer">
-      {!!files.length && (
-        <ViewerComponent
-          files={files}
-          selectedFileUrl={selectedFileUrl || null}
-          canDelete={canDelete}
-          canNavigateToParent={canNavigateToParent}
-          onDeleteClick={onDeleteClick}
-          onFileClick={onFileClick}
-          onPreviewClick={onPreviewClick}
-          onNavigateToParentClick={onNavigateToParentClick}
-          />
-      )}
+      <ViewerComponent
+        files={files}
+        parentDirectory={parentDirectory}
+        selectedFileUrl={selectedFileUrl || null}
+        canDelete={canDelete}
+        canNavigateToParent={canNavigateToParent}
+        onDeleteClick={onDeleteClick}
+        onFileClick={onFileClick}
+        onPreviewClick={onPreviewClick}
+        onNavigateToParentClick={onNavigateToParentClick}
+        />
       {isLoading && (
         <div className="FilesViewer-loadingOverlay">
           <Spin size="large" />
@@ -52,26 +52,28 @@ function FilesViewer({
 FilesViewer.propTypes = {
   canDelete: PropTypes.bool,
   canNavigateToParent: PropTypes.bool,
-  display: PropTypes.oneOf(Object.values(FILE_VIEWER_DISPLAY)),
+  display: PropTypes.oneOf(Object.values(FILES_VIEWER_DISPLAY)),
   files: PropTypes.arrayOf(cdnObjectShape),
   isLoading: PropTypes.bool,
   onDeleteClick: PropTypes.func,
   onFileClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
+  parentDirectory: cdnObjectShape,
   selectedFileUrl: PropTypes.string
 };
 
 FilesViewer.defaultProps = {
   canDelete: false,
   canNavigateToParent: false,
-  display: FILE_VIEWER_DISPLAY.grid,
+  display: FILES_VIEWER_DISPLAY.grid,
   files: [],
   isLoading: false,
   onDeleteClick: () => {},
   onFileClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
+  parentDirectory: null,
   selectedFileUrl: null
 };
 

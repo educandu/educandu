@@ -1,4 +1,6 @@
-.FilesListViewer {}
+.FilesListViewer {
+  height: 100%;
+}
 
 .FilesListViewer .ant-table .ant-table-thead > tr:nth-of-type(2) > th {
   border-right: 1px solid transparent;
@@ -13,24 +15,32 @@
 
 .FilesListViewer .ant-table .ant-table-thead > tr:nth-of-type(2) {
   &:hover {
-    background-color: @edu-table-row-hover-bg;
+    background-color: @edu-table-row-hover-background-color;
+  }
+}
+
+.FilesListViewer-fileNameCell {
+  display: flex;
+  align-items: center;
+
+  &.FilesListViewer-fileName--parentLink {
+    color: lighten(@edu-text-color, 25%);
   }
 }
 
 .FilesListViewer-fileName {
-  gap: 5px;
-  display: flex;
-  align-items: center;
+  .m-overflow-ellipsis;
+  margin-left: 10px;
 }
 
 .FilesListViewer-row {
   cursor: pointer;
 
   &.is-selected {
-    background-color: lighten(@edu-primary-color-light, 40%);
+    background-color: @edu-table-selected-row-background-color;
 
     & > .ant-table-cell.ant-table-cell-row-hover {
-      background-color: lighten(@edu-primary-color-light, 40%);
+      background-color: @edu-table-selected-row-background-color;
     }
   }
 }
@@ -47,6 +57,8 @@
 }
 
 .FilesListViewer-action {
+  .m-box-shadow-round;
+  background-color: @edu-white;
   text-decoration: none;
   display: flex;
   width: 20px;
@@ -60,20 +72,20 @@
   }
 
   &.FilesListViewer-action--preview {
-    color: @edu-green-icon-color;
+    color: @edu-success-color;
 
     &:hover,
     &:active {
-      color: @edu-green-icon-color;
+      color: @edu-success-color;
     }
   }
 
   &.FilesListViewer-action--delete {
-    color: @edu-danger-color;
+    color: @edu-error-color;
 
     &:hover,
     &:active {
-      color: @edu-danger-color;
+      color: @edu-error-color;
     }
   }
 }
