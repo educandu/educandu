@@ -5,6 +5,7 @@ import ControlPanel from './control-panel.js';
 import { useTranslation } from 'react-i18next';
 import SaveIcon from './icons/general/save-icon.js';
 import EditIcon from './icons/general/edit-icon.js';
+import { useBeforeunload } from 'react-beforeunload';
 import CloseIcon from './icons/general/close-icon.js';
 import EditDocIcon from './icons/multi-color/edit-doc-icon.js';
 import { CloudOutlined, CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
@@ -43,6 +44,12 @@ function EditControlPanel({
     await onSave();
     setIsSaving(false);
   };
+
+  useBeforeunload(event => {
+    if (status === EDIT_CONTROL_PANEL_STATUS.dirty) {
+      event.preventDefault();
+    }
+  });
 
   const renderStatusIcon = () => {
     switch (status) {
