@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
-import MarkdownTextarea from './markdown-textarea.js';
+import MarkdownInput from './markdown-input.js';
 import inputValidators from '../utils/input-validators.js';
 import { roomMetadataShape } from '../ui/default-prop-types.js';
 import { ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../domain/constants.js';
@@ -71,7 +71,7 @@ function RoomMetadataForm({ room, editMode, formRef, onFieldsChange, onSubmit })
       </FormItem>
       {editMode && (
         <FormItem label={t('common:description')} name="description" initialValue={room.description}>
-          <MarkdownTextarea />
+          <MarkdownInput preview renderMedia />
         </FormItem>
       )}
     </Form>

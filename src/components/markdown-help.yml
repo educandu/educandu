@@ -1,0 +1,164 @@
+inlineTooltipHtml:
+  en: |
+    <div>
+      <p>In this field you can use the following formatting options:</p>
+      <p>*italic* or _italic_<br />**bold** or __bold__</p>
+      <p>Please enter links using this format:</p>
+      <p>[link text](link URL)</p>
+    </div>
+  de: |
+    <div>
+      <p>In diesem Feld können Sie die folgenden Formatierungsoptionen verwenden:</p>
+      <p>*kursiv* oder _kursiv_<br />**fett** oder __fett__</p>
+      <p>Links können Sie in diesem Format eingeben:</p>
+      <p>[Link-Text](Link-Adresse)</p>
+    </div>
+blockTooltipText:
+  en: Please click in order to show formatting options for this field
+  de: Bitte klicken, um Formatierungsoptionen für dieses Feld anzuzeigen
+blockHelpTableHeaderLeft:
+  en: What you write
+  de: Was Sie schreiben
+blockHelpTableHeaderRight:
+  en: How it will look
+  de: Wie es dargestellt wird
+blockHelpTableHeaderAnnotation:
+  en: As a visual help, spaces are displayed as <0>•</0> in this column
+  de: Als visuelle Hilfe sind Leerzeichen in dieser Spalte als <0>•</0> dargestellt.
+blockHelpTableFoot:
+  en: |
+    This website uses *Markdown* for text formatting. More specifically, it follows the so-called *CommonMark* specification.
+    Markdown is designed to provide basic text formatting options while at the same trying to keep the text look as natural as possible.
+    For more information and an in-depth explanation, please visit <https://commonmark.org/>.
+    Please be aware that, while the website follows the CommonMark specifications otherwise, the use of raw HTML is disabled.
+  de: |
+    Diese Website benutzt *Markdown* zur Textformatierung. Genauer gesagt folgt sie der sogenannten *CommonMark*-Spezifikation.
+    Markdown bietet grundlegende Formatierungsmöglichkeiten, ohne dabei den Text durch komplizierte Regeln unlesbar zu machen.
+    Für mehr Informationen und eine ausführliche Beschreibung besuchen Sie bitte <https://commonmark.org/>.
+    Wir möchten darauf hinweisen, dass die Website der CommonMark-Spezifikation in allen Punkten außer der Benutzung von HTML folgt, welche nicht zugelassen ist.
+blockHelpMarkdown:
+  en: |
+    This is a simple paragraph. As you can see, no matter how many                  spaces or
+    line
+    breaks
+    you enter, they will always be converted into one single space.
+
+    To actually produce a line break in the result, \
+    end lines with multiple spaces<space><space>
+    or with a backslash \
+    just like here.
+
+    To start a new paragraph, just leave one empty line on top of the text.
+
+    Wrap text between asterisks *to make it italic* or double asterisks **to make it bold**. Alternatively you can also use _single_ or __double__ underscores. _You **can** also combine them_.
+
+    # This is a first level header
+
+    ## This is a second level header
+
+    ### This is a third level header
+
+    There are up to six levels, though it is recommended to not use such a deep hierarchy on websites.
+
+    1. This is an ordered list
+    2. You can also produce
+        1. multiple levels
+        2. by indenting each level by 4 spaces on the left
+    42. As you can see, the numbering doesn't really matter, the list will always start with the number of the first item and then count up.
+
+    * This is an unordered list
+    * You can also use hyphens instead of asterisks:
+        - Also here, lists can be nested
+        - Just indent each level by 4 spaces on the left
+
+    > ### This is a block quote
+    >
+    > To produce it, start the line with the character **>**
+    >
+    > *(The quote spans over all consecutive lines starting with **>**)*
+
+    ***
+
+    This text is placed in between horizontal lines. They are produced by three asterisks like on top of this paragraph.
+
+    ---
+
+    Instead of asterisks, you could also use hyphens (like above) or underscores (like below) with the same outcome.
+
+    ___
+
+    To insert a link you have to surround the link text with square brackets, immediately followed by the link URL in parentheses, like [here](https://en.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart).
+
+    Inserting an image works exactly like inserting a link, but with an additional exclamation mark in front. The text you specify between the square brackets will be shown as an alternative text in case the picture cannot be displayed for some reason (like in the second picture), for example:
+
+    ![Picture of W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)
+    ![Picture of W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)
+
+    Please be aware that URLs are not allowed to contain spaces, otherwise the link will not work or the picture will not be displayed.
+
+    Also, in some places, where explicitly indicated by the option “render media”, you can embed video or audio files using the same format as with images.
+
+    As you have seen, some characters like **_**, **#** or __*__ have special meaning in certain positions. In order to use them as a normal character, you have to prepend a backslash. For example, *this text is italic*, but \*this is just text with asterisks around it\*.
+  de: |
+    Dies ist ein einfacher Absatz. Wie Sie sehen, ungeachtet davon, wie viele                  Leerzeichen
+    oder
+    Zeilenumbrüche
+    Sie eingeben, werden diese stets in ein einzelnes Leerzeichen umgewandelt.
+
+    Um einen tatsächlichen Zeilenumbruch herzustellen, \
+    beenden Sie die Zeile mit mehreren Leerzeichen<space><space>
+    oder, genau wie hier \
+    mit einem Backslash.
+
+    Um einen neuen Absatz zu beginnen, lassen sie eine Zeile über dem entsprechenden Text leer.
+
+    Setzen Sie Text zwischen zwei Sternchen, *um diesen kursiv darzustellen*, oder zwischen zwei Doppelsternchen für **Fettdruck**. Alternativ dazu können Sie auch _Unterstriche_ bzw. __doppelte Unterstriche__ verwenden. _Auch **Kombinationen** sind möglich_.
+
+    # Dies ist eine Überschrift der ersten Ebene
+
+    ## Dies ist eine Überschrift der zweiten Ebene
+
+    ### Dies ist eine Überschrift der dritten Ebene
+
+    Es gibt bis zu sechs Überschriftenebenen, jedoch ist es ratsam, auf Websites möglichst auf eine solch tiefe Hierarchie zu verzichten.
+
+    1. Dies ist eine nummerierte Liste
+    2. Sie können
+        1. mehrere Ebenen verwenden,
+        2. indem Sie jede weitere Ebene durch vier Leerzeichen einrücken
+    42. Wie Sie sehen, spielt die tatsächliche Zahl vor dem Listenpunkt keine Rolle, die Liste beginnt immer mit der Zahl vor dem ersten Punkt und wird dann hochgezählt.
+
+    * Dies ist eine unnummerierte Liste
+    * Sie können auch Trennstriche statt der Sternchen verwenden:
+        - Verschachtelungen sind hier genauso möglich
+        - Genau wie bei der nummerierten Liste müssen Sie die Unterpunkte lediglich um vier Leerzeichen einrücken
+
+    > ### Dies ist ein Blockzitat
+    >
+    > Um es zu erzeugen, starten Sie die Zeile mit dem Zeihen **>**
+    >
+    > *(Das Zitat erstreckt sich über alle aufeinander folgenden Zeilen, die mit **>** beginnen)*
+
+    ***
+
+    Dieser Text befindet sich zwischen horizontalen Trennlinien. Diese entsteht durch die drei Sternchen über diesem Absatz.
+
+    ---
+
+    Anstelle der Sternchen können Sie gleichermaßen Trennstriche (wie oben) bzw. Unterstriche (wie unten) verwenden.
+
+    ___
+
+    Um einen Link einzufügen, müssen Sie den Link-Text mit eckigen Klammern umschließen, direkt gefolgt von der Link-Adresse in runden Klammern, so wie [hier](https://de.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart).
+
+    Das Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwichen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:
+
+    ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)
+    ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)
+
+    Bitte beachten Sie, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.
+
+    Darüberhinaus können Sie auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option „Medien wiedergeben“), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.
+
+    Wie Sie sehen, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, müssen Sie durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \*dieser Text lediglich mit Sternchen umgeben\*.
+

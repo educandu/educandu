@@ -51,3 +51,11 @@
 .ant-table-thead th.ant-table-column-sort::before {
   background-color: @edu-border-color-light  !important;
 }
+
+// Fixes a bug that came with updating antd to 4.21.0
+// Without it, the text selection in an input that has `addonAfter`
+// or `addonBefore` set is taken from the border radius of the input
+// therefore making the selection background rounded on the left side
+.ant-input-affix-wrapper .ant-input {
+  border-radius: 0;
+}

@@ -4,10 +4,10 @@ import { Input, Radio } from 'antd';
 import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 
-const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
@@ -101,9 +101,8 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
       <td style={{ padding: 8 }}>&nbsp;</td>
       <td style={{ padding: 8 }}>{t('common:copyrightInfos')}:</td>
       <td style={{ padding: 8 }}>
-        <TextArea
+        <MarkdownInput
           value={sound.text}
-          autoSize={{ minRows: 3 }}
           onChange={handleTextChanged}
           />
       </td>

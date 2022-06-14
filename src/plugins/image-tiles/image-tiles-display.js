@@ -46,7 +46,11 @@ function ImageTilesDisplay({ content }) {
     });
 
     const image = <img className="ImageTilesDisplay-img" src={imageUrl} />;
-    const description = <div className="ImageTilesDisplay-description"><Markdown>{tile.description}</Markdown></div>;
+    const description = (
+      <div className="ImageTilesDisplay-description">
+        <Markdown inline>{tile.description}</Markdown>
+      </div>
+    );
 
     return linkUrl
       ? <a key={index.toString()} className={classes} href={linkUrl}>{image}{description}</a>

@@ -11,12 +11,12 @@ import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import DeleteButton from '../../components/delete-button.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { getResourceType } from '../../utils/resource-utils.js';
 import DebouncedInput from '../../components/debounced-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import MarkdownTextarea from '../../components/markdown-textarea.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import MediaRangeSelector from '../../components/media-range-selector.js';
@@ -29,7 +29,6 @@ const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
-const TextArea = Input.TextArea;
 const RadioButton = Radio.Button;
 
 const formItemLayout = {
@@ -253,7 +252,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
 
   const renderAnswer = (answer, index) => (
     <div className="InteractiveMediaEditor-answer" key={index}>
-      <Input
+      <MarkdownInput
+        inline
         value={answer}
         disabled={!selectedChapterDuration}
         onChange={event => handleChapterAnswerChanged(index, event)}
@@ -354,7 +354,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
         </FormItem>
         <FormItem label={t('common:copyrightInfos')} {...formItemLayout}>
-          <TextArea value={text} onChange={handleCopyrightInfoChanged} autoSize={{ minRows: 3 }} />
+          <MarkdownInput value={text} onChange={handleCopyrightInfoChanged} />
         </FormItem>
 
         <hr className="InteractiveMediaEditor-separator" />
@@ -421,7 +421,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 />
             </FormItem>
             <FormItem label={t('question')} {...formItemLayout}>
-              <MarkdownTextarea
+              <MarkdownInput
+                preview
                 disabled={!selectedChapterDuration}
                 onChange={handleChapterQuestionChange}
                 value={chapters?.[selectedChapterIndex].question || ''}

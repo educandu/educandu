@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { getImageDimensions, getImageSource } from './utils.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -14,7 +15,6 @@ import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION, SMALL_IMAGE_WIDTH_THRESHOLD } fr
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
-const { TextArea } = Input;
 
 const defaultClipRegion = { x: 10, y: 10, width: 80, height: 80 };
 
@@ -267,7 +267,7 @@ function ImageEditor({ content, onContentChanged }) {
 
   const renderCopyrightInput = (value, onChangeHandler) => (
     <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-      <TextArea value={value} onChange={onChangeHandler} autoSize={{ minRows: 3 }} />
+      <MarkdownInput value={value} onChange={onChangeHandler} />
     </Form.Item>
   );
 

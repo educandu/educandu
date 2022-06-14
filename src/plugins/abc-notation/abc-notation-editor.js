@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
+import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 
@@ -50,7 +51,7 @@ function AbcNotationEditor({ content, onContentChanged }) {
           <ObjectMaxWidthSlider defaultValue={100} value={maxWidth} onChange={handleMaxWidthChanged} />
         </Form.Item>
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <TextArea value={text} onChange={handleCurrentTextChanged} autoSize={{ minRows: 3 }} />
+          <MarkdownInput value={text} onChange={handleCurrentTextChanged} />
         </Form.Item>
       </Form>
     </div>

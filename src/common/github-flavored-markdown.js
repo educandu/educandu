@@ -44,15 +44,20 @@ function educanduFeatures(md) {
   overrideRenderer(md, 'image', 'src', true);
 }
 
-const gfm = new MarkdownIt().use(educanduFeatures);
+const markdownBlock = new MarkdownIt()
+  .use(educanduFeatures);
+
+const markdownInline = new MarkdownIt('zero')
+  .enable(['text', 'escape', 'emphasis', 'link', 'autolink'])
+  .use(educanduFeatures);
 
 class GithubFlavoredMarkdown {
   render(markdown, { cdnRootUrl, renderMedia } = {}) {
-    return gfm.render(markdown, { cdnRootUrl, renderMedia });
+    return markdownBlock.render(markdown, { cdnRootUrl, renderMedia });
   }
 
   renderInline(markdown, { cdnRootUrl, renderMedia } = {}) {
-    return gfm.renderInline(markdown, { cdnRootUrl, renderMedia });
+    return markdownInline.renderInline(markdown, { cdnRootUrl, renderMedia });
   }
 
   extractCdnResources(markdown) {
@@ -61,7 +66,7 @@ class GithubFlavoredMarkdown {
     }
 
     const linkSet = new Set();
-    gfm.render(markdown, { collectCdnUrl: link => {
+    markdownBlock.render(markdown, { collectCdnUrl: link => {
       if (link) {
         linkSet.add(link);
       }

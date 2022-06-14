@@ -6,6 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -20,7 +21,6 @@ import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './con
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const TextArea = Input.TextArea;
 const ButtonGroup = Button.Group;
 
 function AnavisEditor({ content, onContentChanged }) {
@@ -341,7 +341,7 @@ function AnavisEditor({ content, onContentChanged }) {
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
         </Form.Item>
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <TextArea value={text} onChange={handleTextChanged} autoSize={{ minRows: 3 }} />
+          <MarkdownInput value={text} onChange={handleTextChanged} />
         </Form.Item>
       </Form>
       <Dropperx accept="application/json" maxSize={500000} onDrop={handleJsonDrop}>

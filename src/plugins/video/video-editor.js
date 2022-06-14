@@ -3,6 +3,7 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
@@ -12,7 +13,6 @@ import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const TextArea = Input.TextArea;
 
 function VideoEditor({ content, onContentChanged }) {
   const { t } = useTranslation('video');
@@ -146,7 +146,7 @@ function VideoEditor({ content, onContentChanged }) {
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <TextArea value={text} onChange={handleCopyrightInfoChange} autoSize={{ minRows: 3 }} />
+          <MarkdownInput value={text} onChange={handleCopyrightInfoChange} />
         </Form.Item>
       </Form>
     </div>

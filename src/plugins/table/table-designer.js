@@ -2,7 +2,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import TableDesignerMenu from './table-designer-menu.js';
 import React, { Fragment, useMemo, useState } from 'react';
-import DebouncedTextArea from '../../components/debounced-text-area.js';
+import MarkdownHelp from '../../components/markdown-help.js';
+import MarkdownInput from '../../components/markdown-input.js';
+import DebouncedInput from '../../components/debounced-input.js';
 import {
   changeCellText,
   changeCellTypesInRow,
@@ -186,12 +188,15 @@ function TableDesigner({ content, onContentChange }) {
 
     const children = (
       <Fragment>
-        <DebouncedTextArea
+        <DebouncedInput
+          elementType={MarkdownInput}
           data-role={CONTENT_INPUT_DATA_ROLE}
           className="TableDesigner-contentInput"
           value={designerCell.text}
           onChange={newText => handleDesignerCellTextChange(designerCell, newText)}
-          autoSize
+          renderMedia={content.renderMedia}
+          autoSize={{ minRows: 1 }}
+          noHelp
           />
         <div className="TableDesigner-contentCellMenuContainer">
           <TableDesignerMenu
@@ -202,6 +207,9 @@ function TableDesigner({ content, onContentChange }) {
             dotType="zooming"
             onCellAction={handleDesignerCellAction}
             />
+        </div>
+        <div className="TableDesigner-contentCellMarkdownHelpContainer">
+          <MarkdownHelp size="small" />
         </div>
       </Fragment>
     );
@@ -267,7 +275,8 @@ TableDesigner.propTypes = {
       text: PropTypes.string.isRequired
     })).isRequired,
     columnCount: PropTypes.number.isRequired,
-    rowCount: PropTypes.number.isRequired
+    rowCount: PropTypes.number.isRequired,
+    renderMedia: PropTypes.bool.isRequired
   }).isRequired,
   onContentChange: PropTypes.func.isRequired
 };

@@ -1,10 +1,9 @@
 import React from 'react';
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-
-const { TextArea } = Input;
 
 export default function MarkdownEditor({ content, onContentChanged }) {
   const { t } = useTranslation('markdown');
@@ -31,7 +30,7 @@ export default function MarkdownEditor({ content, onContentChanged }) {
     <div>
       <Form>
         <Form.Item label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
-          <TextArea value={text} onChange={handleTextChanged} autoSize={{ minRows: 3 }} />
+          <MarkdownInput value={text} onChange={handleTextChanged} renderMedia={renderMedia} />
         </Form.Item>
         <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={renderMedia} onChange={handleRenderMediaChanged} />
