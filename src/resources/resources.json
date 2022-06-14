@@ -1140,6 +1140,22 @@
     }
   },
   {
+    "namespace": "resourceSelector",
+    "language": "en",
+    "resources": {
+      "storage_public": "Public storage",
+      "storage_private": "Private storage"
+    }
+  },
+  {
+    "namespace": "resourceSelector",
+    "language": "de",
+    "resources": {
+      "storage_public": "Öffentlicher Speicher",
+      "storage_private": "Privater Speicher"
+    }
+  },
+  {
     "namespace": "roomCreationModal",
     "language": "en",
     "resources": {

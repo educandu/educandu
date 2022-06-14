@@ -1,5 +1,6 @@
 import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import { useStorage } from './storage-context.js';
 import React, { useEffect, useState } from 'react';
 import StorageLocation from './storage-location.js';
@@ -10,6 +11,7 @@ const { TabPane } = Tabs;
 
 function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect }) {
   const { locations } = useStorage();
+  const { t } = useTranslation('resourceSelector');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [visibleLocations, setVisibleLocations] = useState([]);
@@ -58,9 +60,9 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
         onChange={handleLocationTabChange}
         renderTabBar={isFullscreen ? () => null : null}
         >
-        {visibleLocations.map(loc => (
-          <TabPane key={loc.type} tab={loc.type}>
-            {renderLocation(loc)}
+        {visibleLocations.map(location => (
+          <TabPane key={location.type} tab={t(`storage_${location.type}`)}>
+            {renderLocation(location)}
           </TabPane>
         ))}
       </Tabs>
