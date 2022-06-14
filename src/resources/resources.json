@@ -1324,7 +1324,12 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "This directory is publicly accessible",
-      "uploadFiles": "Upload files"
+      "uploadFiles": "Upload files",
+      "uploading": "Uploading {count, plural, =1 {file} other {files}}",
+      "successfullyUploaded": "File{count, plural, =1 {} other {s}} succesfully uploaded",
+      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
+      "optimizeImages": "Optimize images for web display",
+      "insufficientPrivateStorge": "Not enough storage space available"
     }
   },
   {
@@ -1334,7 +1339,12 @@
       "filesView_list": "List",
       "filesView_grid": "Grid",
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
-      "uploadFiles": "Dateien hochladen"
+      "uploadFiles": "Dateien hochladen",
+      "uploading": "Datei{count, plural, =1 {} other {en}}-Upload",
+      "successfullyUploaded": "Datei{count, plural, =1 {} other {en}} erfolgreig hochgeladen",
+      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
+      "optimizeImages": "Bilder für Web optimieren",
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar"
     }
   },
   {

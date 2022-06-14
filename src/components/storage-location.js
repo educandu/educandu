@@ -1,9 +1,13 @@
+import debounce from 'debounce';
 import PropTypes from 'prop-types';
+import prettyBytes from 'pretty-bytes';
 import UsedStorage from './used-storage.js';
 import FilePreview from './file-preview.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
+import { useLocale } from './locale-context.js';
 import { useService } from './container-context.js';
+import { handleApiError } from '../ui/error-helper.js';
 import { DoubleLeftOutlined } from '@ant-design/icons';
 import UploadIcon from './icons/general/upload-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
@@ -16,8 +20,8 @@ import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
+import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl, processFileBeforeUpload } from '../utils/storage-utils.js';
 
 const WIZARD_SCREEN = {
   none: 'none',
@@ -25,13 +29,17 @@ const WIZARD_SCREEN = {
 };
 
 function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
+  const { uiLocale } = useLocale();
   const { t } = useTranslation('storageLocation');
   const setStorageLocation = useSetStorageLocation();
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
+  let filesBeingUploaded = [];
+
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
@@ -103,7 +111,73 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     });
   };
 
-  const onCustomUpload = () => {};
+  const canUploadFile = ({ file, currentUsedBytes }) => {
+    if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
+      message.error(t('uploadLimitExceeded', {
+        uploadSize: prettyBytes(file.size, { locale: uiLocale }),
+        uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: uiLocale })
+      }));
+      return false;
+    }
+
+    if (storageLocation.type === STORAGE_LOCATION_TYPE.private) {
+      const availableBytes = Math.max(0, storageLocation.maxBytes || 0 - currentUsedBytes);
+
+      if (file.size > availableBytes) {
+        message.error(t('insufficientPrivateStorge'));
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const uploadFilesDebounced = debounce(async ({ onProgress } = {}) => {
+    if (!filesBeingUploaded.length || isUploading) {
+      return;
+    }
+    setIsUploading(true);
+
+    let uploadInterruped = false;
+    let currentUsedBytes = storageLocation.usedBytes;
+    const hideUploadingMessage = message.loading(t('uploading', { count: filesBeingUploaded.length }), 0);
+
+    try {
+      for (const file of filesBeingUploaded) {
+        if (!canUploadFile({ file, currentUsedBytes })) {
+          uploadInterruped = true;
+          break;
+        }
+        // eslint-disable-next-line no-await-in-loop
+        const { usedBytes } = await storageApiClient.uploadFiles([file], currentDirectory.path, { onProgress });
+        currentUsedBytes = usedBytes;
+      }
+    } catch (error) {
+      handleApiError({ error });
+    } finally {
+      hideUploadingMessage();
+      setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
+      filesBeingUploaded = [];
+
+      if (!uploadInterruped) {
+        message.success(t('successfullyUploaded', { count: filesBeingUploaded.length }));
+      }
+    }
+
+    await fetchStorageContent();
+    setIsUploading(false);
+  }, 300);
+
+  const collectFilesAndUploadDebounced = async file => {
+    const processedFile = await processFileBeforeUpload({ file, optimizeImages: true });
+    filesBeingUploaded.push(processedFile);
+
+    uploadFilesDebounced();
+  };
+
+  const handleCustomUploadRequest = ({ file, onProgress, onSuccess }) => {
+    const result = collectFilesAndUploadDebounced(file, { onProgress });
+    onSuccess(result);
+  };
 
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
@@ -162,9 +236,9 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
               disabled={!canUpload}
               showUploadList={false}
               beforeUpload={handleBeforeUpload}
-              customRequest={onCustomUpload}
+              customRequest={handleCustomUploadRequest}
               >
-              <Button disabled={!canUpload}>
+              <Button disabled={!canUpload || isUploading}>
                 <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
               </Button>
             </Upload>

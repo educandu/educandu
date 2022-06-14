@@ -51,7 +51,7 @@ function FilesGridViewer({
           <div className="FilesGridViewer-fileDisplay">
             {fileDisplay}
           </div>
-          <span>{file.displayName}</span>
+          <span className="FilesGridViewer-fileName">{file.displayName}</span>
         </a>
         <div className={overlayClasses} />
         <div className={actionsClasses} onClick={() => onFileClick(file)}>

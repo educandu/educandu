@@ -64,6 +64,13 @@ const optimizeImage = file => {
   });
 };
 
+export const processFileBeforeUpload = ({ file, optimizeImages }) => {
+  if (!optimizeImages) {
+    return file;
+  }
+  return optimizeImage(file);
+};
+
 export const processFilesBeforeUpload = ({ files, optimizeImages }) => {
   if (!optimizeImages) {
     return files;
