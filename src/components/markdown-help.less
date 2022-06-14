@@ -1,7 +1,7 @@
-@markdown-help-block-help-inactive-opacity: 0.25;
+@markdown-help-block-help-inactive-opacity: 0.45;
 
 .MarkdownHelp {
-  font-size: 18px;
+  font-size: 16px;
   display: grid;
   align-content: center;
   justify-content: center;
@@ -16,7 +16,7 @@
   }
 
   &.MarkdownHelp--block {
-    padding: 4px 12px;
+    padding: 3px 9px;
     border-radius: 5px;
     background-color: @edu-secondary-color-light;
     opacity: @markdown-help-block-help-inactive-opacity;
@@ -37,6 +37,12 @@
         opacity: @markdown-help-block-help-inactive-opacity;
       }
     }
+  }
+}
+
+.MarkdownHelp-blockHelpContent {
+  @media @edu-media-phone {
+    overflow-x: auto;
   }
 }
 
