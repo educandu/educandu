@@ -446,8 +446,6 @@ function Doc({ initialState, PageTemplate }) {
           />
         {isEditViewAllowed && (
           <EditControlPanel
-            canClose
-            canCancel={false}
             startOpen={initialView === VIEW.edit}
             onOpen={handleEditOpen}
             onMetadataOpen={handleEditMetadataOpen}
