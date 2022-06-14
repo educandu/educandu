@@ -7,3 +7,6 @@ filesView_grid:
 publicStorageWarning:
   en: This directory is publicly accessible
   de: Dieses Verzeichnis ist öffentlich zugänglich
+uploadFiles:
+  en: Upload files
+  de: Dateien hochladen

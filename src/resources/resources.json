@@ -1323,7 +1323,8 @@
     "resources": {
       "filesView_list": "List",
       "filesView_grid": "Grid",
-      "publicStorageWarning": "This directory is publicly accessible"
+      "publicStorageWarning": "This directory is publicly accessible",
+      "uploadFiles": "Upload files"
     }
   },
   {
@@ -1332,7 +1333,8 @@
     "resources": {
       "filesView_list": "List",
       "filesView_grid": "Grid",
-      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich"
+      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
+      "uploadFiles": "Dateien hochladen"
     }
   },
   {

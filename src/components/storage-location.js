@@ -3,13 +3,18 @@ import UsedStorage from './used-storage.js';
 import FilePreview from './file-preview.js';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
-import { Alert, Button, message, Select } from 'antd';
+import { useService } from './container-context.js';
 import { DoubleLeftOutlined } from '@ant-design/icons';
+import UploadIcon from './icons/general/upload-icon.js';
+import ClientConfig from '../bootstrap/client-config.js';
 import { useSetStorageLocation } from './storage-context.js';
+import { Alert, Button, message, Select, Upload } from 'antd';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import { getCookie, setSessionCookie } from '../common/cookie.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
+import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { CDN_OBJECT_TYPE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl } from '../utils/storage-utils.js';
@@ -22,6 +27,7 @@ const WIZARD_SCREEN = {
 function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
   const { t } = useTranslation('storageLocation');
   const setStorageLocation = useSetStorageLocation();
+  const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
   const [files, setFiles] = useState([]);
@@ -32,6 +38,8 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [wizardScreen, setWizardScreen] = useState(WIZARD_SCREEN.none);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
+
+  const canUpload = true;
 
   const fetchStorageContent = useCallback(async () => {
     if (!currentDirectoryPath) {
@@ -81,6 +89,21 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   };
 
   const renderSelectButton = () => <Button type="primary" onClick={handleSelectClick} disabled={!selectedFile}>{t('common:select')}</Button>;
+
+  const handleBeforeUpload = () => {
+    return new Promise(resolve => {
+      if (storageLocation.type === STORAGE_LOCATION_TYPE.public && !getCookie(uploadLiabilityCookieName)) {
+        confirmPublicUploadLiability(t, () => {
+          setSessionCookie(uploadLiabilityCookieName, 'true');
+          resolve(true);
+        }, () => resolve(false));
+      } else {
+        resolve(true);
+      }
+    });
+  };
+
+  const onCustomUpload = () => {};
 
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
@@ -134,7 +157,17 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             )}
           </div>
           <div className="StorageLocation-buttonsLine">
-            <div />
+            <Upload
+              multiple
+              disabled={!canUpload}
+              showUploadList={false}
+              beforeUpload={handleBeforeUpload}
+              customRequest={onCustomUpload}
+              >
+              <Button disabled={!canUpload}>
+                <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
+              </Button>
+            </Upload>
             <div className="StorageLocation-buttonsGroup">
               <Button onClick={onCancel}>{t('common:cancel')}</Button>
               {renderSelectButton()}
