@@ -2,18 +2,18 @@ import React from 'react';
 import { TESTS_ORDER } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import DeleteButton from '../../components/delete-button.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Form, Table, Button, Radio, Checkbox, Tooltip } from 'antd';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
-import { Form, Input, Table, Button, Radio, Checkbox, Tooltip } from 'antd';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ButtonGroup = Button.Group;
-const TextArea = Input.TextArea;
 
 function QuickTesterEditor({ content, onContentChanged }) {
   const { t } = useTranslation('quickTester');
@@ -101,8 +101,9 @@ function QuickTesterEditor({ content, onContentChanged }) {
       dataIndex: 'question',
       key: 'question',
       render: (question, item, index) => (
-        <TextArea
-          rows={3}
+        <MarkdownInput
+          autoSize={{ minRows: 3, maxRows: 3 }}
+          renderMedia={content.renderMedia}
           value={question}
           onChange={event => handleInputQuestionChanged(index, event.target.value)}
           />
@@ -112,8 +113,9 @@ function QuickTesterEditor({ content, onContentChanged }) {
       dataIndex: 'answer',
       key: 'answer',
       render: (answer, item, index) => (
-        <TextArea
-          rows={3}
+        <MarkdownInput
+          autoSize={{ minRows: 3, maxRows: 3 }}
+          renderMedia={content.renderMedia}
           value={answer}
           onChange={event => handleInputAnswerChanged(index, event.target.value)}
           />
@@ -138,10 +140,10 @@ function QuickTesterEditor({ content, onContentChanged }) {
     <div className="QuickTesterEditor">
       <Form layout="horizontal">
         <FormItem label={`${t('teaserLabel')}:`} {...formItemLayout}>
-          <Input value={teaser} onChange={handleTeaserValueChanged} />
+          <MarkdownInput inline value={teaser} onChange={handleTeaserValueChanged} />
         </FormItem>
         <FormItem label={`${t('common:title')}:`} {...formItemLayout}>
-          <Input value={title} onChange={handleTitleValueChanged} />
+          <MarkdownInput inline value={title} onChange={handleTitleValueChanged} />
         </FormItem>
         <FormItem label={t('testsOrder')} {...formItemLayout}>
           <RadioGroup value={testsOrder} onChange={handleTestsOrderChanged}>

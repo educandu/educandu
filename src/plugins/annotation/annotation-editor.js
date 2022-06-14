@@ -1,12 +1,12 @@
 import React from 'react';
+import { Checkbox, Form, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { BEHAVIOR, INTENT } from './constants.js';
-import { Checkbox, Form, Input, Radio } from 'antd';
+import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 
-const { TextArea } = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -52,10 +52,10 @@ export default function AnnotationEditor({ content, onContentChanged }) {
     <div>
       <Form>
         <FormItem label={t('common:title')} {...formItemLayout}>
-          <Input value={title} onChange={handleTitleChange} />
+          <MarkdownInput value={title} onChange={handleTitleChange} />
         </FormItem>
         <FormItem label={t('common:text')} {...validation.validateMarkdown(text, t)} {...formItemLayout}>
-          <TextArea value={text} onChange={handleTextChange} autoSize={{ minRows: 3 }} />
+          <MarkdownInput value={text} onChange={handleTextChange} renderMedia={renderMedia} />
         </FormItem>
         <FormItem label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={renderMedia} onChange={handleRenderMediaChange} />

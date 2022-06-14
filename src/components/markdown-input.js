@@ -7,13 +7,13 @@ import MarkdownHelp from './markdown-help.js';
 
 const { TextArea } = Input;
 
-function MarkdownInput({ className, disabled, inline, renderMedia, value, onChange, preview, noHelp, ...rest }) {
+function MarkdownInput({ autoSize, className, disabled, inline, renderMedia, value, onChange, preview, noHelp, ...rest }) {
   return (
     <div className={classNames('MarkdownInput', { 'MarkdownInput--withPreview': preview })}>
       {inline && (
         <Input
           {...rest}
-          className={classNames('MarkdownInput-input', { 'is-disabled': disabled })}
+          className={classNames('MarkdownInput-input', { 'is-disabled': disabled }, className)}
           value={value}
           onChange={onChange}
           disabled={disabled}
@@ -24,11 +24,11 @@ function MarkdownInput({ className, disabled, inline, renderMedia, value, onChan
         <div className={classNames('MarkdownInput-textareaContainer', { 'MarkdownInput-textareaContainer--noAutoSize': preview })}>
           <TextArea
             {...rest}
-            className={classNames('MarkdownInput-textarea', { 'MarkdownInput-textarea--noAutoSize': preview })}
+            className={classNames('MarkdownInput-textarea', { 'MarkdownInput-textarea--noAutoSize': preview }, className)}
             value={value}
             onChange={onChange}
             disabled={disabled}
-            autoSize={!preview}
+            autoSize={preview ? false : autoSize}
             />
           {!noHelp && (
             <div className="MarkdownInput-blockHelpContainer">
@@ -47,6 +47,10 @@ function MarkdownInput({ className, disabled, inline, renderMedia, value, onChan
 }
 
 MarkdownInput.propTypes = {
+  autoSize: PropTypes.shape({
+    minRows: PropTypes.number,
+    maxRows: PropTypes.number
+  }),
   className: PropTypes.string,
   disabled: PropTypes.bool,
   inline: PropTypes.bool,
@@ -58,6 +62,7 @@ MarkdownInput.propTypes = {
 };
 
 MarkdownInput.defaultProps = {
+  autoSize: { minRows: 3 },
   className: '',
   disabled: false,
   inline: false,

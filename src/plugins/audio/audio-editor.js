@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import StorageFilePicker from '../../components/storage-file-picker.js';
@@ -11,7 +12,6 @@ import StorageFilePicker from '../../components/storage-file-picker.js';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const { TextArea } = Input;
 
 function AudioEditor({ content, onContentChanged }) {
   const { t } = useTranslation('audio');
@@ -85,7 +85,7 @@ function AudioEditor({ content, onContentChanged }) {
           </FormItem>
         )}
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <TextArea value={text} onChange={handleCurrentEditorValueChange} autoSize={{ minRows: 3 }} />
+          <MarkdownInput value={text} onChange={handleCurrentEditorValueChange} />
         </Form.Item>
       </Form>
     </div>

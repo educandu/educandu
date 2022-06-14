@@ -10,7 +10,7 @@ const ZERO_WIDTH_SPACE = '\u200B';
 const SIMPLE_URL_REGEX = /((https?:\/\/|(ftp:\/\/)).*|(.*\.[^.]{2,6})(\/.*)?)(:.*)?$/g;
 const insertLineBreaksIntoUrl = url => url.replace(/[^\w]\b/g, c => `${c}${ZERO_WIDTH_SPACE}`);
 
-function MarkdownHelp({ inline, disabled }) {
+function MarkdownHelp({ inline, size, disabled }) {
   const { t } = useTranslation('markdownHelp');
   const [isBlockHelpModalVisible, setIsBlockHelpModalVisible] = useState(false);
   const toggleModal = useCallback(() => setIsBlockHelpModalVisible(val => !val), [setIsBlockHelpModalVisible]);
@@ -38,7 +38,7 @@ function MarkdownHelp({ inline, disabled }) {
 
   const blockHelp = (
     <div
-      className={classNames('MarkdownHelp', 'MarkdownHelp--block', { 'is-disabled': disabled })}
+      className={classNames('MarkdownHelp', 'MarkdownHelp--block', { 'MarkdownHelp--small': size === 'small', 'is-disabled': disabled })}
       onClick={toggleModal}
       >
       <MarkdownIcon />
@@ -144,12 +144,14 @@ function MarkdownHelp({ inline, disabled }) {
 
 MarkdownHelp.propTypes = {
   disabled: PropTypes.bool,
-  inline: PropTypes.bool
+  inline: PropTypes.bool,
+  size: PropTypes.oneOf(['normal', 'small'])
 };
 
 MarkdownHelp.defaultProps = {
   disabled: false,
-  inline: false
+  inline: false,
+  size: 'normal'
 };
 
 export default MarkdownHelp;

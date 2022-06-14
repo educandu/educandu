@@ -10,8 +10,8 @@ inlineTooltipHtml:
     <div>
       <p>In diesem Feld können Sie die folgenden Formatierungsoptionen verwenden:</p>
       <p>*kursiv* oder _kursiv_<br />**fett** oder __fett__</p>
-      <p>links können Sie in diesem Format eingeben:</p>
-      <p>[Link-Text](Link-URL)</p>
+      <p>Links können Sie in diesem Format eingeben:</p>
+      <p>[Link-Text](Link-Adresse)</p>
     </div>
 blockTooltipText:
   en: Please click in order to show formatting options for this field
@@ -92,13 +92,13 @@ blockHelpMarkdown:
     Inserting an image works exactly like inserting a link, but with an additional exclamation mark in front. The text you specify between the square brackets will be shown as an alternative text in case the picture cannot be displayed for some reason (like in the second picture), for example:
 
     ![Picture of W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)
-    ![Picture of W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-a-wrong-address.jpg)
+    ![Picture of W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)
 
     Please be aware that URLs are not allowed to contain spaces, otherwise the link will not work or the picture will not be displayed.
 
     Also, in some places, where explicitly indicated by the option “render media”, you can embed video or audio files using the same format as with images.
 
-    As you have seen, some characters like **_**, **#** or ***** have special meaning in certain positions. In order to use them as a normal character, you have to prepend a backslash. For example, *this text is italic*, but \*this is just text with asterisks around it\*.
+    As you have seen, some characters like **_**, **#** or __*__ have special meaning in certain positions. In order to use them as a normal character, you have to prepend a backslash. For example, *this text is italic*, but \*this is just text with asterisks around it\*.
   de: |
     Dies ist ein einfacher Absatz. Wie Sie sehen, ungeachtet davon, wie viele                  Leerzeichen
     oder
@@ -154,11 +154,11 @@ blockHelpMarkdown:
     Das Einfügen eines Bildes funktioniert auf dieselbe Weise, jedoch mit einem vorangestelltem Ausrufezeichen. Der Text zwichen den eckigen Klammern wird als Alternative angezeigt, falls das Bild nicht geladen oder dargestellt werden kann (wie im zweiten Bild unten), zum Beispiel:
 
     ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Mozart-small.jpg/202px-Mozart-small.jpg)
-    ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-a-wrong-address.jpg)
+    ![Bild von W. A. Mozart](https://upload.wikimedia.org/wikipedia/this-is-an-intentionally-wrong-address.jpg)
 
     Bitte beachten Sie, dass Link- bzw. Bildadressen keine Leerzeichen enthalten dürfen, um korrekt dargestellt zu werden.
 
-    Darüberhinaus können Sie auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option "Medien wiedergeben"), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.
+    Darüberhinaus können Sie auf die gleiche Weise in einigen Feldern (gekennzeichnet mit der Option „Medien wiedergeben“), anstelle von Bildern auch Video- bzw. Audio-Dateien einbinden.
 
-    Wie Sie sehen, haben manche Zeichen wie **_**, **#** oder ***** eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, müssen Sie durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \*dieser Text lediglich mit Sternchen umgeben\*.
+    Wie Sie sehen, haben manche Zeichen wie **_**, **#** oder __*__ eine spezielle Bedeutung, wenn diese in bestimmten Positionen stehen. Um diese Zeichen dennoch als normalen Text darzustellen, müssen Sie durch einen vorangestellten Backslash von dieser Spezialbedeutung entbunden werden. Beispielsweise *ist dieser Text kursiv*, aber \*dieser Text lediglich mit Sternchen umgeben\*.
 

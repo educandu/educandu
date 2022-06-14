@@ -1,9 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
-import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import { Form, Input, Table, Button, Radio } from 'antd';
+import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import DeleteButton from '../../components/delete-button.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -150,7 +151,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     <div>
       <Form layout="horizontal">
         <FormItem label={t('common:title')} {...formItemLayout}>
-          <Input value={content.title} onChange={handleTitleChanged} />
+          <MarkdownInput inline value={content.title} onChange={handleTitleChanged} />
         </FormItem>
         <Form.Item label={t('maximumWidth')} {...formItemLayout}>
           <ObjectMaxWidthSlider defaultValue={100} value={content.maxWidth} onChange={handleMaxWidthChanged} />

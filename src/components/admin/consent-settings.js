@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useLocale } from '../locale-context.js';
+import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
-import MarkdownTextarea from '../markdown-textarea.js';
 import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 
 function ConsentSettings({ consentText, onChange }) {
@@ -22,7 +22,8 @@ function ConsentSettings({ consentText, onChange }) {
           <h3>
             <LanguageFlagAndName language={lang} />
           </h3>
-          <MarkdownTextarea
+          <MarkdownInput
+            preview
             value={consentText?.[lang] || ''}
             onChange={event => handleConsentTextChanged(lang, event.target.value)}
             />

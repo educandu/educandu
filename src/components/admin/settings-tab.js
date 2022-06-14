@@ -3,13 +3,13 @@ import { Button, Card } from 'antd';
 import urls from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
+import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
 import ConsentSettings from './consent-settings.js';
 import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
 import DocumentSelector from '../document-selector.js';
-import MarkdownTextarea from '../markdown-textarea.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import DefaultTagsSettings from './default-tags-settings.js';
 import SpecialPageSettings from './special-page-settings.js';
@@ -116,7 +116,9 @@ function SettingsTab({
   return (
     <div className="SettingsTab">
       <Card className="SettingsTab-card" title={t('homepageInfoHeader')}>
-        <MarkdownTextarea
+        <MarkdownInput
+          preview
+          renderMedia
           value={settings.homepageInfo || ''}
           onChange={handleHomepageInfoChange}
           />

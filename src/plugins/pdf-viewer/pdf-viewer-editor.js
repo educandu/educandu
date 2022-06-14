@@ -3,6 +3,7 @@ import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ClientConfig from '../../bootstrap/client-config.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
@@ -79,7 +80,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
           <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('caption')} {...formItemLayout}>
-          <Input defaultValue={100} value={caption} onChange={handleCaptionChange} />
+          <MarkdownInput inline value={caption} onChange={handleCaptionChange} />
         </Form.Item>
       </Form>
     </div>

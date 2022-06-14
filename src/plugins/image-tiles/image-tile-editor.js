@@ -4,6 +4,7 @@ import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import MarkdownInput from '../../components/markdown-input.js';
 import { useService } from '../../components/container-context.js';
 import DocumentSelector from '../../components/document-selector.js';
 import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
@@ -94,7 +95,7 @@ function ImageTileEditor({ index, image, description, link, onChange }) {
         </FormItem>
       )}
       <FormItem label={t('imageDescription')} {...formItemLayout}>
-        <Input value={description} onChange={handleDescriptionValueChanged} />
+        <MarkdownInput inline value={description} onChange={handleDescriptionValueChanged} />
       </FormItem>
       <FormItem label={t('linkSource')} {...formItemLayout}>
         <RadioGroup value={link.sourceType} onChange={handleLinkSourceTypeValueChanged}>
