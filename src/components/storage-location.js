@@ -19,7 +19,7 @@ const WIZARD_SCREEN = {
   preview: 'preview'
 };
 
-function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
+function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExitFullscreen, onSelect, onCancel }) {
   const { t } = useTranslation('storageLocation');
   const setStorageLocation = useSetStorageLocation();
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
@@ -128,8 +128,7 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
             )}
           </div>
           <div className="StorageLocation-buttonsLine">
-            {isFullscreen && <Button onClick={onExitFullscreen}>Exit fullscreen mode</Button>}
-            {!isFullscreen && <Button onClick={onEnterFullscreen}>Enter fullscreen mode</Button>}
+            <div />
             <div className="StorageLocation-buttonsGroup">
               <Button onClick={onCancel}>Cancel</Button>
               <Button type="primary" onClick={onSelect}>{t('common:select')}</Button>
@@ -159,7 +158,6 @@ function StorageLocation({ storageLocation, initialUrl, isFullscreen, onEnterFul
 
 StorageLocation.propTypes = {
   initialUrl: PropTypes.string,
-  isFullscreen: PropTypes.bool,
   onCancel: PropTypes.func,
   onEnterFullscreen: PropTypes.func,
   onExitFullscreen: PropTypes.func,
@@ -169,7 +167,6 @@ StorageLocation.propTypes = {
 
 StorageLocation.defaultProps = {
   initialUrl: null,
-  isFullscreen: false,
   onCancel: () => {},
   onEnterFullscreen: () => {},
   onExitFullscreen: () => {},

@@ -39,7 +39,6 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
         return (
           <StorageLocation
             storageLocation={location}
-            isFullscreen={isFullscreen}
             initialUrl={initialUrl}
             onEnterFullscreen={() => setIsFullscreen(true)}
             onExitFullscreen={() => setIsFullscreen(false)}
