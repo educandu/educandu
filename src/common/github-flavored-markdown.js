@@ -6,10 +6,13 @@ import { getResourceType } from '../utils/resource-utils.js';
 const CDN_URL_PREFIX = 'cdn://';
 
 // Matches both URLs in e.g.: [![alt](cdn://image.png "image title")](cdn://some-target)
-const imageInsideOfHyperlinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
+const imageInsideOfLinkPattern = /(\[!\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\)]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
 
 // Matches the URL in e.g.: ![alt](cdn://image.png "image title")
-const simpleHyperlinkOrImagePattern = /(!?\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
+const simpleLinkOrImagePattern = /(!?\[[^\]]*\]\()(\S*?)((?:\s+[^)]*)?\s*\))(?!\])/g;
+
+// Matches the URL in e.g.: <cdn://image.png>
+const autoLinkPattern = /(<)([a-zA-Z][a-zA-Z0-9+.-]{1,31}:[^<>]*)(>)/g;
 
 const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRendering) => {
   // Remember original renderer, if overridden, or proxy to default renderer
@@ -18,6 +21,7 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
 
   md.renderer.rules[tokenType] = (tokens, idx, options, env, self) => {
     const token = tokens[idx];
+    const nextToken = tokens[idx + 1];
 
     let targetUrl = token.attrGet(targetAttributeName) || '';
     if (targetUrl.startsWith(CDN_URL_PREFIX)) {
@@ -25,6 +29,9 @@ const overrideRenderer = (md, tokenType, targetAttributeName, allowMediaRenderin
       env.collectCdnUrl?.(targetUrlPath);
       targetUrl = (env.cdnRootUrl ? `${env.cdnRootUrl}/` : CDN_URL_PREFIX) + targetUrlPath;
       token.attrSet(targetAttributeName, targetUrl);
+      if (token.markup === 'autolink') {
+        nextToken.content = targetUrl;
+      }
     }
 
     if (env.renderMedia && allowMediaRendering && targetUrl) {
@@ -92,8 +99,9 @@ class GithubFlavoredMarkdown {
     };
 
     return markdown
-      .replace(imageInsideOfHyperlinkPattern, (_match, g1, g2, g3, g4, g5) => `${g1}${redact(g2)}${g3}${redact(g4)}${g5}`)
-      .replace(simpleHyperlinkOrImagePattern, (_match, g1, g2, g3) => `${g1}${redact(g2)}${g3}`);
+      .replace(imageInsideOfLinkPattern, (_match, g1, g2, g3, g4, g5) => `${g1}${redact(g2)}${g3}${redact(g4)}${g5}`)
+      .replace(simpleLinkOrImagePattern, (_match, g1, g2, g3) => `${g1}${redact(g2)}${g3}`)
+      .replace(autoLinkPattern, (_match, g1, g2, g3) => `${g1}${redact(g2)}${g3}`);
   }
 }
 

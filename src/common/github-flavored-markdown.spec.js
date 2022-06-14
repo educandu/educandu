@@ -20,13 +20,17 @@ describe('GithubFlavoredMarkdown', () => {
       it('changes links and images starting with the cdn protocol only', () => {
         const result = sut.render([
           '[Click here](cdn://media/my-file.png)',
+          '<cdn://media/my-file.png>',
           '![Alt text](cdn://media/another-file.png)',
-          '[Go to Google](https://google.com)'
+          '[Go to Google](https://google.com)',
+          '<https://google.com>'
         ].join('\n\n'), { cdnRootUrl: 'https://cdn.my-domain.com' });
         expect(result.trim()).toBe([
           '<p><a href="https://cdn.my-domain.com/media/my-file.png">Click here</a></p>',
+          '<p><a href="https://cdn.my-domain.com/media/my-file.png">https://cdn.my-domain.com/media/my-file.png</a></p>',
           '<p><img src="https://cdn.my-domain.com/media/another-file.png" alt="Alt text"></p>',
-          '<p><a href="https://google.com">Go to Google</a></p>'
+          '<p><a href="https://google.com">Go to Google</a></p>',
+          '<p><a href="https://google.com">https://google.com</a></p>'
         ].join('\n'));
       });
     });
@@ -53,6 +57,7 @@ describe('GithubFlavoredMarkdown', () => {
       const result = sut.redactCdnResources([
         'This is a [hyperlink](cdn://) and',
         'this is a [hyperlink](cdn://media/example.png) and',
+        'this is too: <cdn://media/example.png>, and',
         'this is an image: ![](cdn://media/example.png  ) and',
         'this is an image: ![alt](cdn://media/example.png  "") and',
         'this is an image: ![alt](cdn://media/example.png "image title") and',
@@ -63,6 +68,7 @@ describe('GithubFlavoredMarkdown', () => {
       expect(result).toEqual([
         'This is a [hyperlink](cdn://) and',
         'this is a [hyperlink](cdn://media/redacted.png) and',
+        'this is too: <cdn://media/redacted.png>, and',
         'this is an image: ![](cdn://media/redacted.png  ) and',
         'this is an image: ![alt](cdn://media/redacted.png  "") and',
         'this is an image: ![alt](cdn://media/redacted.png "image title") and',
@@ -77,11 +83,12 @@ describe('GithubFlavoredMarkdown', () => {
     it('extracts all links and images starting with the cdn protocol only', () => {
       const result = sut.extractCdnResources([
         '[Click here](cdn://media/my-file.png)',
+        'Download this: <cdn://media/my-pdf-file.pdf>',
         '* Image inside a **bold section ![Alt text](cdn://media/another-file.png) within** a list item',
         '[Go to Google](https://google.com)',
         '[Missing image](cdn://)'
       ].join('\n\n'));
-      expect(result).toEqual(['media/my-file.png', 'media/another-file.png']);
+      expect(result).toEqual(['media/my-file.png', 'media/my-pdf-file.pdf', 'media/another-file.png']);
     });
   });
 
