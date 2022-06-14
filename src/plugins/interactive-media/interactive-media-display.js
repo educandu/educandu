@@ -185,10 +185,7 @@ function InteractiveMediaDisplay({ content }) {
               <Markdown>{chapters[interactingChapterIndex].question}</Markdown>
               <RadioGroup
                 onChange={handleAnswerIndexChange}
-                className={classNames(
-                  'InteractiveMediaDisplay-overlayChapterAnswers',
-                  { 'is-readonly': !!selectedAnswerPerChapter[interactingChapterIndex] }
-                )}
+                className="InteractiveMediaDisplay-overlayChapterAnswers"
                 value={selectedAnswerPerChapter[interactingChapterIndex]?.answerIndex}
                 >
                 <Space direction="vertical">
