@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import React, { useRef, useState } from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
@@ -102,10 +103,11 @@ function InteractiveMediaDisplay({ content }) {
     const isCurrentAnswerSelected = selectedAnswerPerChapter[interactingChapterIndex]?.answerIndex === index;
     const isCorrectAnswerSelected = isCurrentAnswerSelected && selectedAnswerPerChapter[interactingChapterIndex].isCorrectAnswerIndex;
     const isIncorrectAnswerSelected = isCurrentAnswerSelected && !selectedAnswerPerChapter[interactingChapterIndex].isCorrectAnswerIndex;
+    const isCurrentAnswerDisabled = !!selectedAnswerPerChapter[interactingChapterIndex] && !isCurrentAnswerSelected;
 
     return (
-      <Radio value={index} key={index}>
-        <div className="InteractiveMediaDisplay-overlayChapterAnswer">
+      <Radio value={index} key={index} disabled={isCurrentAnswerDisabled}>
+        <div className={classNames('InteractiveMediaDisplay-overlayChapterAnswer', { 'is-disabled': isCurrentAnswerDisabled })}>
           <Markdown inline>{answer}</Markdown>
           <div className="InteractiveMediaDisplay-answerMark">
             {isCorrectAnswerSelected && <div className="InteractiveMediaDisplay-correctAnswerMark"><CheckOutlined /></div>}
@@ -117,17 +119,15 @@ function InteractiveMediaDisplay({ content }) {
   };
 
   const renderChapterResolutionDot = (answerPerChapter, chapterIndex) => {
-    const classNames = ['InteractiveMediaDisplay-chapterResolution'];
-    if (answerPerChapter?.isCorrectAnswerIndex === true) {
-      classNames.push('InteractiveMediaDisplay-chapterResolution--correctAnswer');
-    }
-    if (answerPerChapter?.isCorrectAnswerIndex === false) {
-      classNames.push('InteractiveMediaDisplay-chapterResolution--incorrectAnswer');
-    }
+    const classes = classNames(
+      'InteractiveMediaDisplay-chapterResolution',
+      { 'InteractiveMediaDisplay-chapterResolution--correctAnswer': answerPerChapter?.isCorrectAnswerIndex === true },
+      { 'InteractiveMediaDisplay-chapterResolution--incorrectAnswer': answerPerChapter?.isCorrectAnswerIndex === false }
+    );
 
     return (
       <div key={chapterIndex} className="InteractiveMediaDisplay-chapterResolutionContainer">
-        <div className={classNames.join(' ')} />
+        <div className={classes} />
       </div>
     );
   };
