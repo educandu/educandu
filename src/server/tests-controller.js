@@ -22,8 +22,7 @@ class TestsController {
       {
         type: STORAGE_LOCATION_TYPE.public,
         rootPath: 'media',
-        initialPath: 'media',
-        uploadPath: 'media',
+        homePath: 'media',
         usedBytes: 0,
         maxBytes: 0,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
@@ -43,8 +42,7 @@ class TestsController {
       locations.push({
         type: STORAGE_LOCATION_TYPE.private,
         rootPath: `rooms/${privateRoom._id}/media`,
-        initialPath: `rooms/${privateRoom._id}/media`,
-        uploadPath: `rooms/${privateRoom._id}/media`,
+        homePath: `rooms/${privateRoom._id}/media`,
         usedBytes: roomOwner.storage.usedBytes,
         maxBytes: roomOwnerStoragePlan?.maxBytes,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE) || isRoomOwner || isRoomCollaborator

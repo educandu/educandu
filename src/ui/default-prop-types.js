@@ -17,8 +17,7 @@ export const storageLocationShape = PropTypes.shape({
   usedBytes: PropTypes.number,
   maxBytes: PropTypes.number,
   rootPath: PropTypes.string.isRequired,
-  initialPath: PropTypes.string,
-  uploadPath: PropTypes.string,
+  homePath: PropTypes.string,
   isDeletionEnabled: PropTypes.bool.isRequired
 });
 
