@@ -75,8 +75,8 @@ class MinioS3Client {
     await this.tasks.push(cb => this.minioClient.removeObjects(bucketName, objectNames, cb), PRIORITY_UPLOAD);
   }
 
-  async upload(bucketName, objectName, stream, contentType, metadata = {}) {
-    const etag = await this.tasks.push(cb => this.minioClient.putObject(bucketName, objectName, stream, null, { ...metadata, 'Content-Type': contentType }, cb), PRIORITY_UPLOAD);
+  async upload(bucketName, objectName, body, contentType, metadata = {}) {
+    const etag = await this.tasks.push(cb => this.minioClient.putObject(bucketName, objectName, body, null, { ...metadata, 'Content-Type': contentType }, cb), PRIORITY_UPLOAD);
     return {
       name: objectName,
       etag

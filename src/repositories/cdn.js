@@ -1,7 +1,6 @@
 import fs from 'fs';
 import mime from 'mime';
 import axios from 'axios';
-import Stream from 'stream';
 import Logger from '../common/logger.js';
 import MinioS3Client from './minio-s3-client.js';
 import AwsSdkS3Client from './aws-sdk-s3-client.js';
@@ -37,12 +36,12 @@ class Cdn {
     return this.s3Client.objectExists(this.bucketName, objectName);
   }
 
-  uploadObject(objectName, filePath, metadata) {
-    const defaultMetadata = this._getDefaultMetadata();
+  uploadObject(objectName, filePath) {
+    const metadata = this._getDefaultMetadata();
     const stream = fs.createReadStream(filePath);
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
     const contentType = mime.getType(sanitizedObjectName) || defaultContentType;
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, { ...defaultMetadata, ...metadata });
+    return this.s3Client.upload(this.bucketName, sanitizedObjectName, stream, contentType, metadata);
   }
 
   async uploadObjectFromUrl(objectName, url) {
@@ -59,10 +58,10 @@ class Cdn {
     }
   }
 
-  uploadEmptyObject(objectName, metadata) {
-    const defaultMetadata = this._getDefaultMetadata();
+  uploadEmptyObject(objectName) {
+    const metadata = this._getDefaultMetadata();
     const sanitizedObjectName = objectName.replace(/\\/g, '/');
-    return this.s3Client.upload(this.bucketName, sanitizedObjectName, new Stream(), defaultContentType, { ...defaultMetadata, ...metadata });
+    return this.s3Client.upload(this.bucketName, sanitizedObjectName, '', defaultContentType, metadata);
   }
 
   async deleteObject(objectName) {

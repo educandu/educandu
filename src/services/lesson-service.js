@@ -1,9 +1,12 @@
 import by from 'thenby';
 import deepEqual from 'fast-deep-equal';
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
 import LessonStore from '../stores/lesson-store.js';
 import { extractCdnResources } from './section-helper.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import { getPublicHomePath } from '../utils/storage-utils.js';
+import { STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 class LessonService {
   static get inject() {
@@ -26,6 +29,12 @@ class LessonService {
   }
 
   async createLesson({ userId, roomId, title, slug, language, schedule }) {
+    const lessonId = uniqueId.create();
+    const homePath = getPublicHomePath(lessonId);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+
+    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+
     const mappedSchedule = schedule
       ? {
         startsOn: new Date(schedule.startsOn)
@@ -33,7 +42,7 @@ class LessonService {
       : null;
 
     const lesson = {
-      _id: uniqueId.create(),
+      _id: lessonId,
       roomId,
       createdOn: new Date(),
       createdBy: userId,
@@ -47,7 +56,12 @@ class LessonService {
       schedule: mappedSchedule
     };
 
-    await this.lessonStore.saveLesson(lesson);
+    try {
+      await this.lessonStore.saveLesson(lesson);
+    } catch (error) {
+      await this.cdn.deleteObject(directoryMarkerPath);
+      throw error;
+    }
 
     return lesson;
   }

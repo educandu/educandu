@@ -12,7 +12,7 @@ import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { componseUniqueFileName, getPrivateStoragePathForRoomId, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const { BadRequest } = httpErrors;
 
@@ -221,7 +221,7 @@ export default class StorageService {
         await this.roomStore.deleteRoomById(roomId, { session });
       });
 
-      const { objects: roomPrivateStorageObjects } = await this.getObjects({ parentPath: getPrivateStoragePathForRoomId(roomId), recursive: true });
+      const { objects: roomPrivateStorageObjects } = await this.getObjects({ parentPath: getPathForPrivateRoom(roomId), recursive: true });
       if (roomPrivateStorageObjects.length) {
         await this._deleteObjects(roomPrivateStorageObjects.map(({ path }) => path));
         usedBytes = await this._updateUserUsedBytes(roomOwnerId);
@@ -243,8 +243,8 @@ export default class StorageService {
     if (documentId || lessonId) {
       locations.push({
         type: STORAGE_LOCATION_TYPE.public,
-        rootPath: 'media',
-        homePath: `media/${documentId || lessonId}`,
+        rootPath: getPublicRootPath(),
+        homePath: getPublicHomePath(documentId || lessonId),
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
       });
     }
@@ -254,6 +254,7 @@ export default class StorageService {
       const room = await this.roomStore.getRoomById(lesson.roomId);
       const isRoomOwner = user._id === room.owner;
       const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user._id);
+      const rootAndHomePath = getPathForPrivateRoom(room._id);
 
       const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
 
@@ -264,8 +265,8 @@ export default class StorageService {
           type: STORAGE_LOCATION_TYPE.private,
           usedBytes: roomOwner.storage.usedBytes,
           maxBytes: roomOwnerStoragePlan.maxBytes,
-          rootPath: `rooms/${room._id}/media`,
-          homePath: `rooms/${room._id}/media`,
+          rootPath: rootAndHomePath,
+          homePath: rootAndHomePath,
           isDeletionEnabled: isRoomOwner || isRoomCollaborator
         });
       }
@@ -276,7 +277,7 @@ export default class StorageService {
 
   async _calculateUserUsedBytes(userId) {
     const privateRoomsIds = await this.roomStore.getRoomIdsByOwnerIdAndAccess({ ownerId: userId, access: ROOM_ACCESS_LEVEL.private });
-    const storagePaths = privateRoomsIds.map(getPrivateStoragePathForRoomId);
+    const storagePaths = privateRoomsIds.map(getPathForPrivateRoom);
 
     let totalSize = 0;
     for (const storagePath of storagePaths) {
@@ -296,7 +297,7 @@ export default class StorageService {
   async _uploadFiles(files, parentPath) {
     const uploads = files.map(async file => {
       const fileName = componseUniqueFileName(file.originalname, parentPath);
-      await this.cdn.uploadObject(fileName, file.path, {});
+      await this.cdn.uploadObject(fileName, file.path);
     });
     await Promise.all(uploads);
   }
