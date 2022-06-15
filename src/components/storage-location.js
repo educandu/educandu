@@ -53,7 +53,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     try {
       let result = await storageApiClient.getCdnObjects(currentDirectoryPath);
       if (!result.objects.length) {
-        result = await storageApiClient.getCdnObjects(storageLocation.initialPath);
+        result = await storageApiClient.getCdnObjects(storageLocation.homePath);
       }
       setCanUploadToCurrentDirectory(canUploadToPath(result.currentDirectory.path));
       setParentDirectory(result.parentDirectory);
@@ -63,7 +63,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     } catch (err) {
       message.error(err.message);
     }
-  }, [currentDirectoryPath, storageLocation.initialPath, storageApiClient]);
+  }, [currentDirectoryPath, storageLocation.homePath, storageApiClient]);
 
   const handleFileClick = newFile => {
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
@@ -188,8 +188,8 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
 
     setCurrentDirectoryPath(initialResourceParentDirectoryPath.startsWith(storageLocation.rootPath)
       ? initialResourceParentDirectoryPath
-      : storageLocation.initialPath);
-  }, [initialUrl, storageLocation.initialPath, storageLocation.rootPath]);
+      : storageLocation.homePath);
+  }, [initialUrl, storageLocation.homePath, storageLocation.rootPath]);
 
   useEffect(() => {
     setIsLoading(true);

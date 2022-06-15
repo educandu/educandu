@@ -82,7 +82,7 @@ class StorageBrowser extends React.Component {
       currentUploadFiles: [],
       currentDropTarget: null,
       currentUploadMessage: null,
-      currentPathSegments: currentLocation.initialPathSegments,
+      currentPathSegments: currentLocation.homePathSegments,
       locations,
       currentLocation,
       optimizeImages: true
@@ -208,18 +208,13 @@ class StorageBrowser extends React.Component {
 
   createPathSegments(storage) {
     const rootPathSegments = getPathSegments(storage.rootPath);
-    const uploadPathSegments = storage.uploadPath ? getPathSegments(storage.uploadPath) : rootPathSegments;
-    const initialPathSegments = storage.initialPath ? getPathSegments(storage.initialPath) : rootPathSegments;
+    const homePathSegments = storage.homePath ? getPathSegments(storage.homePath) : rootPathSegments;
 
-    if (!isSubPath({ pathSegments: rootPathSegments, subPathSegments: uploadPathSegments })) {
-      throw new Error(`${storage.uploadPath} is not a subpath of root ${storage.rootPath}`);
+    if (!isSubPath({ pathSegments: rootPathSegments, subPathSegments: homePathSegments })) {
+      throw new Error(`${storage.homePath} is not a subpath of root ${storage.rootPath}`);
     }
 
-    if (!isSubPath({ pathSegments: rootPathSegments, subPathSegments: initialPathSegments })) {
-      throw new Error(`${storage.initialPath} is not a subpath of root ${storage.rootPath}`);
-    }
-
-    return { rootPathSegments, uploadPathSegments, initialPathSegments };
+    return { rootPathSegments, homePathSegments };
   }
 
   addToCurrentUploadFiles(files) {
@@ -320,7 +315,7 @@ class StorageBrowser extends React.Component {
     this.setState({ isRefreshing: true });
 
     const { storageApiClient, t } = this.props;
-    const { initialPathSegments, uploadPathSegments } = this.state.currentLocation;
+    const { homePathSegments } = this.state.currentLocation;
     const parentPath = pathSegments.join('/');
 
     let objects;
@@ -333,7 +328,7 @@ class StorageBrowser extends React.Component {
     }
 
     const recordsFromCdn = this.convertObjectsToRecords(objects);
-    const recordsWithVirtualPaths = this.ensureVirtualFolders(pathSegments, recordsFromCdn, [initialPathSegments, uploadPathSegments]);
+    const recordsWithVirtualPaths = this.ensureVirtualFolders(pathSegments, recordsFromCdn, [homePathSegments]);
     const selectedRowKeys = selection.removeInvalidKeys(keysToSelect, recordsWithVirtualPaths.map(r => r.key));
 
     this.setState({
@@ -650,11 +645,11 @@ class StorageBrowser extends React.Component {
     this.setState({
       selectedRowKeys: [],
       currentLocation: newLocation,
-      currentPathSegments: newLocation.initialPathSegments
+      currentPathSegments: newLocation.homePathSegments
     });
 
     onSelectionChanged([]);
-    this.refreshFiles(newLocation.initialPathSegments, selectedRowKeys);
+    this.refreshFiles(newLocation.homePathSegments, selectedRowKeys);
   }
 
   handleOptimizeImagesChange(event) {
@@ -664,13 +659,13 @@ class StorageBrowser extends React.Component {
   render() {
     const { t } = this.props;
     const { records, currentPathSegments, currentLocation, currentDropTarget, filterText } = this.state;
-    const { uploadPathSegments } = currentLocation;
+    const { homePathSegments } = currentLocation;
 
     const normalizedFilterText = filterText.toLowerCase().trim();
     const filteredRecords = records.filter(r => r.displayName && r.displayName.toLowerCase().includes(normalizedFilterText));
 
     const currentPrefix = getPrefix(currentPathSegments);
-    const canUpload = isSubPath({ pathSegments: uploadPathSegments, subPathSegments: currentPathSegments });
+    const canUpload = isSubPath({ pathSegments: homePathSegments, subPathSegments: currentPathSegments });
 
     const browserClassNames = classNames({
       'StorageBrowser-browser': true,

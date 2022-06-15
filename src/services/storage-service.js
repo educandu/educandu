@@ -244,8 +244,7 @@ export default class StorageService {
       locations.push({
         type: STORAGE_LOCATION_TYPE.public,
         rootPath: 'media',
-        initialPath: `media/${documentId || lessonId}`,
-        uploadPath: `media/${documentId || lessonId}`,
+        homePath: `media/${documentId || lessonId}`,
         isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
       });
     }
@@ -266,8 +265,7 @@ export default class StorageService {
           usedBytes: roomOwner.storage.usedBytes,
           maxBytes: roomOwnerStoragePlan.maxBytes,
           rootPath: `rooms/${room._id}/media`,
-          initialPath: `rooms/${room._id}/media`,
-          uploadPath: `rooms/${room._id}/media`,
+          homePath: `rooms/${room._id}/media`,
           isDeletionEnabled: isRoomOwner || isRoomCollaborator
         });
       }

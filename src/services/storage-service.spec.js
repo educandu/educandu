@@ -680,8 +680,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              initialPath: 'media/document',
-              uploadPath: 'media/document',
+              homePath: 'media/document',
               isDeletionEnabled: false
             }
           ]);
@@ -699,8 +698,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              initialPath: 'media/document',
-              uploadPath: 'media/document',
+              homePath: 'media/document',
               isDeletionEnabled: true
             }
           ]);
@@ -724,8 +722,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              initialPath: 'media/document',
-              uploadPath: 'media/document',
+              homePath: 'media/document',
               isDeletionEnabled: false
             }
           ]);
@@ -747,8 +744,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              initialPath: 'media/lesson',
-              uploadPath: 'media/lesson',
+              homePath: 'media/lesson',
               isDeletionEnabled: false
             },
             {
@@ -756,8 +752,7 @@ describe('storage-service', () => {
               usedBytes: myUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
               rootPath: 'rooms/room/media',
-              initialPath: 'rooms/room/media',
-              uploadPath: 'rooms/room/media',
+              homePath: 'rooms/room/media',
               isDeletionEnabled: true
             }
           ]);
@@ -791,8 +786,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              initialPath: 'media/lesson',
-              uploadPath: 'media/lesson',
+              homePath: 'media/lesson',
               isDeletionEnabled: false
             }
           ]);
@@ -829,8 +823,7 @@ describe('storage-service', () => {
             {
               type: STORAGE_LOCATION_TYPE.public,
               rootPath: 'media',
-              initialPath: 'media/lesson',
-              uploadPath: 'media/lesson',
+              homePath: 'media/lesson',
               isDeletionEnabled: false
             },
             {
@@ -838,8 +831,7 @@ describe('storage-service', () => {
               usedBytes: ownerUser.storage.usedBytes,
               maxBytes: storagePlan.maxBytes,
               rootPath: 'rooms/room/media',
-              initialPath: 'rooms/room/media',
-              uploadPath: 'rooms/room/media',
+              homePath: 'rooms/room/media',
               isDeletionEnabled: true
             }
           ]);
