@@ -88,6 +88,16 @@ export function getStorageLocationTypeForPath(path) {
   return STORAGE_LOCATION_TYPE.unknown;
 }
 
+export function canUploadToPath(path) {
+  const publicPathMatch = path.match(publicCdnPathPattern);
+  const privatePathMatch = path.match(privateCdnPathPattern);
+
+  const documentId = publicPathMatch?.[1];
+  const roomId = privatePathMatch?.[1];
+
+  return !!(documentId || roomId);
+}
+
 export function getStorageLocationPathForUrl(url) {
   try {
     const urlObj = new URL(url);

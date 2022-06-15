@@ -21,7 +21,7 @@ import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { getParentPathForStorageLocationPath, getStorageLocationPathForUrl, processFileBeforeUpload } from '../utils/storage-utils.js';
+import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl, processFileBeforeUpload } from '../utils/storage-utils.js';
 
 const WIZARD_SCREEN = {
   none: 'none',
@@ -42,9 +42,8 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [wizardScreen, setWizardScreen] = useState(WIZARD_SCREEN.none);
+  const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
-
-  const canUpload = true;
 
   const fetchStorageContent = useCallback(async () => {
     if (!currentDirectoryPath) {
@@ -56,6 +55,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
       if (!result.objects.length) {
         result = await storageApiClient.getCdnObjects(storageLocation.initialPath);
       }
+      setCanUploadToCurrentDirectory(canUploadToPath(result.currentDirectory.path));
       setParentDirectory(result.parentDirectory);
       setCurrentDirectory(result.currentDirectory);
       setFiles(result.objects);
@@ -236,12 +236,11 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
           <div className="StorageLocation-buttonsLine">
             <Upload
               multiple
-              disabled={!canUpload}
               showUploadList={false}
               beforeUpload={handleBeforeUpload}
               customRequest={handleCustomUploadRequest}
               >
-              <Button disabled={!canUpload || isUploading}>
+              <Button disabled={!canUploadToCurrentDirectory || isUploading}>
                 <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
               </Button>
             </Upload>
