@@ -25,7 +25,7 @@ const extensionsGroups = [
 export const getResourceExtension = resource => {
   const sanitizedUrl = (resource || '').trim();
   const extensionMatches = sanitizedUrl.match(/\.([0-9a-z]+)$/i);
-  return extensionMatches?.[1]?.toLowerCase();
+  return extensionMatches?.[1]?.toLowerCase() || '';
 };
 
 export const getResourceType = url => {
