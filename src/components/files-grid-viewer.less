@@ -22,6 +22,7 @@
   text-align: center;
   text-decoration: none;
   color: @edu-text-color;
+  user-select: none;
 
   &:hover,
   &:active {
@@ -37,6 +38,10 @@
       text-decoration: none;
     }
   }
+}
+
+.FilesGridViewer-fileName {
+  user-select: none;
 }
 
 .FilesGridViewer-fileDisplay {
@@ -67,7 +72,6 @@
 
   &.is-visible {
     display: block;
-    user-select: none;
   }
 }
 

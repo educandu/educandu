@@ -64,6 +64,13 @@ const optimizeImage = file => {
   });
 };
 
+export const processFileBeforeUpload = ({ file, optimizeImages }) => {
+  if (!optimizeImages) {
+    return file;
+  }
+  return optimizeImage(file);
+};
+
 export const processFilesBeforeUpload = ({ files, optimizeImages }) => {
   if (!optimizeImages) {
     return files;
@@ -79,6 +86,16 @@ export function getStorageLocationTypeForPath(path) {
     return STORAGE_LOCATION_TYPE.private;
   }
   return STORAGE_LOCATION_TYPE.unknown;
+}
+
+export function canUploadToPath(path) {
+  const publicPathMatch = path.match(publicCdnPathPattern);
+  const privatePathMatch = path.match(privateCdnPathPattern);
+
+  const documentId = publicPathMatch?.[1];
+  const roomId = privatePathMatch?.[1];
+
+  return !!(documentId || roomId);
 }
 
 export function getStorageLocationPathForUrl(url) {
