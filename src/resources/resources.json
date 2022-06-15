@@ -1326,10 +1326,10 @@
       "publicStorageWarning": "This directory is publicly accessible",
       "uploadFiles": "Upload files",
       "uploading": "Uploading {count, plural, =1 {file} other {files}}",
-      "successfullyUploaded": "File{count, plural, =1 {} other {s}} succesfully uploaded",
+      "successfullyUploaded": "Upload completed",
       "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
       "optimizeImages": "Optimize images for web display",
-      "insufficientPrivateStorge": "Not enough storage space available"
+      "insufficientPrivateStorge": "Not enough storage space available for file"
     }
   },
   {
@@ -1341,10 +1341,10 @@
       "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
       "uploadFiles": "Dateien hochladen",
       "uploading": "Datei{count, plural, =1 {} other {en}}-Upload",
-      "successfullyUploaded": "Datei{count, plural, =1 {} other {en}} erfolgreig hochgeladen",
+      "successfullyUploaded": "Hochladen ist abgeschlossen",
       "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
       "optimizeImages": "Bilder für Web optimieren",
-      "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar"
+      "insufficientPrivateStorge": "Nicht genügend Speicherplatz für die Datei verfügbar"
     }
   },
   {

@@ -35,11 +35,8 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
-  let filesBeingUploaded = [];
-
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
@@ -111,7 +108,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     });
   };
 
-  const canUploadFile = ({ file, currentUsedBytes }) => {
+  const canUploadFile = (file, currentUsedBytes) => {
     if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
       message.error(t('uploadLimitExceeded', {
         uploadSize: prettyBytes(file.size, { locale: uiLocale }),
@@ -121,7 +118,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     }
 
     if (storageLocation.type === STORAGE_LOCATION_TYPE.private) {
-      const availableBytes = Math.max(0, storageLocation.maxBytes || 0 - currentUsedBytes);
+      const availableBytes = Math.max(0, (storageLocation.maxBytes || 0) - currentUsedBytes);
 
       if (file.size > availableBytes) {
         message.error(t('insufficientPrivateStorge'));
@@ -131,40 +128,46 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     return true;
   };
 
+  let isUploading = false;
+  let filesBeingUploaded = [];
+
   const uploadFilesDebounced = debounce(async ({ onProgress } = {}) => {
     if (!filesBeingUploaded.length || isUploading) {
       return;
     }
-    setIsUploading(true);
 
-    let uploadInterruped = false;
-    let currentUsedBytes = storageLocation.usedBytes;
+    isUploading = true;
+    let uploadErrorOccured = false;
+
     const hideUploadingMessage = message.loading(t('uploading', { count: filesBeingUploaded.length }), 0);
+    let currentUsedBytes = storageLocation.usedBytes;
 
     try {
       for (const file of filesBeingUploaded) {
-        if (!canUploadFile({ file, currentUsedBytes })) {
-          uploadInterruped = true;
-          break;
+        if (canUploadFile(file, currentUsedBytes)) {
+          // eslint-disable-next-line no-await-in-loop
+          const { usedBytes } = await storageApiClient.uploadFiles([file], currentDirectory.path, { onProgress });
+          currentUsedBytes = usedBytes;
+        } else {
+          uploadErrorOccured = true;
         }
-        // eslint-disable-next-line no-await-in-loop
-        const { usedBytes } = await storageApiClient.uploadFiles([file], currentDirectory.path, { onProgress });
-        currentUsedBytes = usedBytes;
       }
     } catch (error) {
+      uploadErrorOccured = true;
       handleApiError({ error });
-    } finally {
-      hideUploadingMessage();
-      setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
-      filesBeingUploaded = [];
+    }
+    setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
 
-      if (!uploadInterruped) {
-        message.success(t('successfullyUploaded', { count: filesBeingUploaded.length }));
-      }
+    hideUploadingMessage();
+
+    if (!uploadErrorOccured) {
+      message.success(t('successfullyUploaded'));
     }
 
+    filesBeingUploaded = [];
+    isUploading = false;
+
     await fetchStorageContent();
-    setIsUploading(false);
   }, 300);
 
   const collectFilesAndUploadDebounced = async file => {

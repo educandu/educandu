@@ -14,8 +14,8 @@ uploading:
   en: Uploading {count, plural, =1 {file} other {files}}
   de: Datei{count, plural, =1 {} other {en}}-Upload
 successfullyUploaded:
-  en: File{count, plural, =1 {} other {s}} succesfully uploaded
-  de: Datei{count, plural, =1 {} other {en}} erfolgreig hochgeladen
+  en: Upload completed
+  de: Hochladen ist abgeschlossen
 uploadLimitExceeded:
   en: Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.
   de: Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.
@@ -23,5 +23,5 @@ optimizeImages:
   en: Optimize images for web display
   de: Bilder für Web optimieren
 insufficientPrivateStorge:
-  en: Not enough storage space available
-  de: Nicht genügend Speicherplatz verfügbar
+  en: Not enough storage space available for file
+  de: Nicht genügend Speicherplatz für die Datei verfügbar
