@@ -115,11 +115,10 @@ function HistoryControlPanel({
       startOpen={startOpen}
       openIcon={<ViewHistoryIcon />}
       openIconPositionFromRight={2}
-      canClose
       onOpen={handleOpen}
       onClose={handleClose}
       leftSideContent={renderSlider()}
-      rightSideContent={renderButtons()}
+      contentBeforeClose={renderButtons()}
       />
   );
 }

@@ -9,19 +9,19 @@ function ControlPanel({
   startOpen,
   openIcon,
   openIconPositionFromRight,
-  canClose,
   onOpen,
   onClose,
   leftSideContent,
-  rightSideContent
+  contentBeforeClose,
+  contentAfterClose
 }) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(!canClose || startOpen);
+  const [isOpen, setIsOpen] = useState(startOpen);
   const [isContentVisible, setIsContentVisible] = useState(false);
 
   useEffect(() => {
-    if (!canClose || startOpen) {
+    if (startOpen) {
       setIsContentVisible(true);
       return;
     }
@@ -31,7 +31,7 @@ function ControlPanel({
     } else {
       setIsContentVisible(false);
     }
-  }, [canClose, startOpen, isOpen]);
+  }, [startOpen, isOpen]);
 
   const handleOpenClick = async () => {
     try {
@@ -57,10 +57,9 @@ function ControlPanel({
           {leftSideContent}
         </div>
         <div className="ControlPanel-contentRight">
-          { rightSideContent }
-          { canClose && (
-            <Button className="ControlPanel-closeButton" size="small" icon={<CloseIcon />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
-          )}
+          { contentBeforeClose }
+          <Button className="ControlPanel-closeButton" size="small" icon={<CloseIcon />} onClick={handleCloseClick} ghost>{t('common:close')}</Button>
+          { contentAfterClose }
         </div>
       </div>
 
@@ -82,23 +81,23 @@ function ControlPanel({
 }
 
 ControlPanel.propTypes = {
-  canClose: PropTypes.bool,
+  contentAfterClose: PropTypes.node,
+  contentBeforeClose: PropTypes.node,
   leftSideContent: PropTypes.node,
   onClose: PropTypes.func,
   onOpen: PropTypes.func,
   openIcon: PropTypes.node.isRequired,
   openIconPositionFromRight: PropTypes.oneOf([1, 2]),
-  rightSideContent: PropTypes.node,
   startOpen: PropTypes.bool
 };
 
 ControlPanel.defaultProps = {
-  canClose: true,
+  contentAfterClose: null,
+  contentBeforeClose: null,
   leftSideContent: null,
   onClose: () => Promise.resolve(true),
   onOpen: () => Promise.resolve(),
   openIconPositionFromRight: 1,
-  rightSideContent: null,
   startOpen: false
 };
 

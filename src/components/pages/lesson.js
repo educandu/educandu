@@ -291,8 +291,6 @@ function Lesson({ PageTemplate, initialState }) {
       {(isRoomOwner || isRoomCollaborator) && (
         <Fragment>
           <EditControlPanel
-            canClose
-            canCancel={false}
             startOpen={startsInEditMode}
             onOpen={handleEditOpen}
             onMetadataOpen={handleEditMetadataOpen}

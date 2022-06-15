@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import SaveIcon from './icons/general/save-icon.js';
 import EditIcon from './icons/general/edit-icon.js';
 import { useBeforeunload } from 'react-beforeunload';
-import CloseIcon from './icons/general/close-icon.js';
 import EditDocIcon from './icons/multi-color/edit-doc-icon.js';
 import { CloudOutlined, CloudUploadOutlined, WarningOutlined } from '@ant-design/icons';
 
@@ -19,13 +18,10 @@ export const EDIT_CONTROL_PANEL_STATUS = {
 
 function EditControlPanel({
   startOpen,
-  canCancel,
-  canClose,
   metadata,
   onOpen,
   onMetadataOpen,
   onSave,
-  onCancel,
   onClose,
   status
 }) {
@@ -36,8 +32,6 @@ function EditControlPanel({
   const handleOpen = () => onOpen();
 
   const handleClose = () => onClose();
-
-  const handleCancel = () => onCancel();
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -55,7 +49,7 @@ function EditControlPanel({
     switch (status) {
       case EDIT_CONTROL_PANEL_STATUS.saved:
         return (
-          <Tooltip title={t('statusIconTooltipSaved')}>
+          <Tooltip title={t('statusIconTooltipSaved')} placement="topRight">
             <CloudOutlined
               className="EditControlPanel-statusIcon EditControlPanel-statusIcon--saved"
               />
@@ -63,7 +57,7 @@ function EditControlPanel({
         );
       case EDIT_CONTROL_PANEL_STATUS.dirty:
         return (
-          <Tooltip title={t('statusIconTooltipDirty')}>
+          <Tooltip title={t('statusIconTooltipDirty')} placement="topRight">
             <CloudUploadOutlined
               className="EditControlPanel-statusIcon EditControlPanel-statusIcon--dirty"
               />
@@ -71,7 +65,7 @@ function EditControlPanel({
         );
       case EDIT_CONTROL_PANEL_STATUS.invalid:
         return (
-          <Tooltip title={t('statusIconTooltipInvalid')}>
+          <Tooltip title={t('statusIconTooltipInvalid')} placement="topRight">
             <WarningOutlined
               className="EditControlPanel-statusIcon EditControlPanel-statusIcon--invalid"
               />
@@ -95,8 +89,6 @@ function EditControlPanel({
 
   const renderButtons = () => (
     <div className="EditControlPanel-rightSide">
-      {renderStatusIcon()}
-
       <Button
         ghost
         size="small"
@@ -108,19 +100,7 @@ function EditControlPanel({
         >
         {t('common:save')}
       </Button>
-
-      {canCancel && (
-        <Button
-          ghost
-          size="small"
-          onClick={handleCancel}
-          icon={<CloseIcon />}
-          className="EditControlPanel-rightSideButton"
-          disabled={status === EDIT_CONTROL_PANEL_STATUS.saved}
-          >
-          {t('common:cancel')}
-        </Button>
-      )}
+      {renderStatusIcon()}
     </div>
   );
 
@@ -130,20 +110,16 @@ function EditControlPanel({
       startOpen={startOpen}
       openIcon={<EditDocIcon />}
       openIconPositionFromRight={1}
-      canClose={canClose}
       onOpen={handleOpen}
       onClose={handleClose}
       leftSideContent={renderMetadata()}
-      rightSideContent={renderButtons()}
+      contentAfterClose={renderButtons()}
       />
   );
 }
 
 EditControlPanel.propTypes = {
-  canCancel: PropTypes.bool,
-  canClose: PropTypes.bool,
   metadata: PropTypes.node,
-  onCancel: PropTypes.func,
   onClose: PropTypes.func,
   onMetadataOpen: PropTypes.func,
   onOpen: PropTypes.func,
@@ -153,10 +129,7 @@ EditControlPanel.propTypes = {
 };
 
 EditControlPanel.defaultProps = {
-  canCancel: true,
-  canClose: true,
   metadata: null,
-  onCancel: () => {},
   onClose: () => Promise.resolve(true),
   onMetadataOpen: () => {},
   onOpen: () => Promise.resolve(),
