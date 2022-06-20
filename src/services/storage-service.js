@@ -11,7 +11,7 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const { BadRequest } = httpErrors;
@@ -133,61 +133,8 @@ export default class StorageService {
     return { usedBytes };
   }
 
-  async getObjects({ parentPath, recursive }) {
-    const currentDirectorySegments = parentPath.split('/').filter(seg => !!seg);
-    const encodedCurrentDirectorySegments = currentDirectorySegments.map(s => encodeURIComponent(s));
-
-    const currentDirectory = {
-      displayName: currentDirectorySegments.length ? currentDirectorySegments[currentDirectorySegments.length - 1] : '',
-      parentPath: currentDirectorySegments.length ? currentDirectorySegments.slice(0, -1).join('/') : null,
-      path: currentDirectorySegments.join('/'),
-      url: [this.serverConfig.cdnRootUrl, ...encodedCurrentDirectorySegments].join('/'),
-      portableUrl: `cdn://${encodedCurrentDirectorySegments.join('/')}`,
-      createdOn: null,
-      type: CDN_OBJECT_TYPE.directory,
-      size: null
-    };
-
-    let parentDirectory;
-    if (currentDirectorySegments.length > 0) {
-      const parentDirectorySegments = currentDirectorySegments.slice(0, -1);
-      const encodedParentDirectorySegments = encodedCurrentDirectorySegments.slice(0, -1);
-
-      parentDirectory = {
-        displayName: parentDirectorySegments.length ? parentDirectorySegments[parentDirectorySegments.length - 1] : '',
-        parentPath: parentDirectorySegments.length ? parentDirectorySegments.slice(0, -1).join('/') : null,
-        path: parentDirectorySegments.join('/'),
-        url: [this.serverConfig.cdnRootUrl, ...encodedParentDirectorySegments].join('/'),
-        portableUrl: `cdn://${encodedParentDirectorySegments.join('/')}`,
-        createdOn: null,
-        type: CDN_OBJECT_TYPE.directory,
-        size: null
-      };
-    } else {
-      parentDirectory = null;
-    }
-
-    const prefix = currentDirectorySegments.length ? `${currentDirectorySegments.join('/')}/` : '';
-    const cdnObjects = await this.cdn.listObjects({ prefix, recursive });
-
-    const objects = cdnObjects.map(obj => {
-      const isDirectory = !!obj.prefix;
-      const path = isDirectory ? obj.prefix : obj.name;
-      const objectSegments = path.split('/').filter(seg => !!seg);
-      const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
-      return {
-        displayName: objectSegments[objectSegments.length - 1],
-        parentPath: objectSegments.slice(0, -1).join('/'),
-        path: objectSegments.join('/'),
-        url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
-        portableUrl: `cdn://${encodedObjectSegments.join('/')}`,
-        createdOn: isDirectory ? null : obj.lastModified,
-        type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
-        size: isDirectory ? null : obj.size
-      };
-    });
-
-    return { parentDirectory, currentDirectory, objects };
+  getObjects({ parentPath, recursive }) {
+    return this._getObjects({ parentPath, recursive, includeEmptyObjects: false });
   }
 
   async deleteObject({ path, storageClaimingUserId }) {
@@ -221,7 +168,12 @@ export default class StorageService {
         await this.roomStore.deleteRoomById(roomId, { session });
       });
 
-      const { objects: roomPrivateStorageObjects } = await this.getObjects({ parentPath: getPathForPrivateRoom(roomId), recursive: true });
+      const { objects: roomPrivateStorageObjects } = await this._getObjects({
+        parentPath: getPathForPrivateRoom(roomId),
+        recursive: true,
+        includeEmptyObjects: true
+      });
+
       if (roomPrivateStorageObjects.length) {
         await this._deleteObjects(roomPrivateStorageObjects.map(({ path }) => path));
         usedBytes = await this._updateUserUsedBytes(roomOwnerId);
@@ -309,6 +261,69 @@ export default class StorageService {
 
     await this.userStore.saveUser(user);
     return usedBytes;
+  }
+
+  async _getObjects({ parentPath, recursive, includeEmptyObjects }) {
+    const currentDirectorySegments = parentPath.split('/').filter(seg => !!seg);
+    const encodedCurrentDirectorySegments = currentDirectorySegments.map(s => encodeURIComponent(s));
+
+    const currentDirectory = {
+      displayName: currentDirectorySegments.length ? currentDirectorySegments[currentDirectorySegments.length - 1] : '',
+      parentPath: currentDirectorySegments.length ? currentDirectorySegments.slice(0, -1).join('/') : null,
+      path: currentDirectorySegments.join('/'),
+      url: [this.serverConfig.cdnRootUrl, ...encodedCurrentDirectorySegments].join('/'),
+      portableUrl: `cdn://${encodedCurrentDirectorySegments.join('/')}`,
+      createdOn: null,
+      type: CDN_OBJECT_TYPE.directory,
+      size: null
+    };
+
+    let parentDirectory;
+    if (currentDirectorySegments.length > 0) {
+      const parentDirectorySegments = currentDirectorySegments.slice(0, -1);
+      const encodedParentDirectorySegments = encodedCurrentDirectorySegments.slice(0, -1);
+
+      parentDirectory = {
+        displayName: parentDirectorySegments.length ? parentDirectorySegments[parentDirectorySegments.length - 1] : '',
+        parentPath: parentDirectorySegments.length ? parentDirectorySegments.slice(0, -1).join('/') : null,
+        path: parentDirectorySegments.join('/'),
+        url: [this.serverConfig.cdnRootUrl, ...encodedParentDirectorySegments].join('/'),
+        portableUrl: `cdn://${encodedParentDirectorySegments.join('/')}`,
+        createdOn: null,
+        type: CDN_OBJECT_TYPE.directory,
+        size: null
+      };
+    } else {
+      parentDirectory = null;
+    }
+
+    const prefix = currentDirectorySegments.length ? `${currentDirectorySegments.join('/')}/` : '';
+    const cdnObjects = await this.cdn.listObjects({ prefix, recursive });
+
+    const objects = cdnObjects.map(obj => {
+      const isDirectory = !!obj.prefix;
+      const path = isDirectory ? obj.prefix : obj.name;
+      const objectSegments = path.split('/').filter(seg => !!seg);
+      const lastSegment = objectSegments[objectSegments.length - 1];
+      const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
+
+      if (!includeEmptyObjects && !isDirectory && lastSegment === STORAGE_DIRECTORY_MARKER_NAME) {
+        return null;
+      }
+
+      return {
+        displayName: lastSegment,
+        parentPath: objectSegments.slice(0, -1).join('/'),
+        path: objectSegments.join('/'),
+        url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
+        portableUrl: `cdn://${encodedObjectSegments.join('/')}`,
+        createdOn: isDirectory ? null : obj.lastModified,
+        type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
+        size: isDirectory ? null : obj.size
+      };
+    }).filter(obj => obj);
+
+    return { parentDirectory, currentDirectory, objects };
   }
 
   async _deleteObjects(paths) {
