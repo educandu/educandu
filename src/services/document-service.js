@@ -126,10 +126,8 @@ class DocumentService {
   async createDocument({ data, user }) {
     let lock;
     const documentKey = uniqueId.create();
-    const homePath = getPublicHomePath(documentKey);
-    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
 
-    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+    await this.createUploadDirectoryMarkerForDocument(documentKey);
 
     try {
       lock = await this.lockStore.takeDocumentLock(documentKey);
@@ -158,7 +156,7 @@ class DocumentService {
 
       return newDocument;
     } catch (error) {
-      await this.cdn.deleteObject(directoryMarkerPath);
+      await this.deleteUploadDirectoryMarkerForDocument(documentKey);
       throw error;
     } finally {
       if (lock) {
@@ -370,10 +368,8 @@ class DocumentService {
 
   async importDocumentRevisions({ documentKey, revisions, ancestorId, origin, originUrl }) {
     let lock;
-    const homePath = getPublicHomePath(documentKey);
-    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
 
-    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+    await this.createUploadDirectoryMarkerForDocument(documentKey);
 
     try {
       lock = await this.lockStore.takeDocumentLock(documentKey);
@@ -403,6 +399,11 @@ class DocumentService {
       });
 
       return this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
+    } catch (error) {
+      if (!ancestorId) {
+        await this.deleteUploadDirectoryMarkerForDocument(documentKey);
+      }
+      throw error;
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
@@ -462,6 +463,18 @@ class DocumentService {
         await this.lockStore.releaseLock(lock);
       }
     }
+  }
+
+  async createUploadDirectoryMarkerForDocument(documentKey) {
+    const homePath = getPublicHomePath(documentKey);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+  }
+
+  async deleteUploadDirectoryMarkerForDocument(documentKey) {
+    const homePath = getPublicHomePath(documentKey);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   _buildDocumentRevision(data) {

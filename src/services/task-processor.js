@@ -7,6 +7,7 @@ import ServerConfig from '../bootstrap/server-config.js';
 import DocumentImportTaskProcessor from './document-import-task-processor.js';
 import DocumentRegenerationTaskProcessor from './document-regeneration-task-processor.js';
 import CdnResourcesConsolidationTaskProcessor from './cdn-resources-consolidation-task-processor.js';
+import CdnUploadDirectoryCreationTaskProcessor from './cdn-upload-directory-creation-task-processor.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -18,6 +19,7 @@ export default class TaskProcessor {
       DocumentImportTaskProcessor,
       DocumentRegenerationTaskProcessor,
       CdnResourcesConsolidationTaskProcessor,
+      CdnUploadDirectoryCreationTaskProcessor,
       ServerConfig
     ];
   }
@@ -28,6 +30,7 @@ export default class TaskProcessor {
     documentImportTaskProcessor,
     documentRegenerationTaskProcessor,
     cdnResourcesConsolidationTaskProcessor,
+    cdnUploadDirectoryCreationTaskProcessor,
     serverConfig
   ) {
     this.taskStore = taskStore;
@@ -37,7 +40,8 @@ export default class TaskProcessor {
     this.taskProcessors = {
       [TASK_TYPE.documentImport]: documentImportTaskProcessor,
       [TASK_TYPE.documentRegeneration]: documentRegenerationTaskProcessor,
-      [TASK_TYPE.cdnResourcesConsolidation]: cdnResourcesConsolidationTaskProcessor
+      [TASK_TYPE.cdnResourcesConsolidation]: cdnResourcesConsolidationTaskProcessor,
+      [TASK_TYPE.cdnUploadDirectoryCreation]: cdnUploadDirectoryCreationTaskProcessor
     };
   }
 

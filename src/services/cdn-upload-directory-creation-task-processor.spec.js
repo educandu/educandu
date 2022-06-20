@@ -1,0 +1,92 @@
+import sinon from 'sinon';
+import RoomService from './room-service.js';
+import uniqueId from '../utils/unique-id.js';
+import LessonService from './lesson-service.js';
+import DocumentService from './document-service.js';
+import { CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE } from '../domain/constants.js';
+import { setupTestEnvironment, destroyTestEnvironment } from '../test-helper.js';
+import CdnUploadDirectoryCreationTaskProcessor from './cdn-upload-directory-creation-task-processor.js';
+
+describe('CdnUploadDirectoryCreationTaskProcessor', () => {
+  let container;
+  let documentService;
+  let lessonService;
+  let roomService;
+  const sandbox = sinon.createSandbox();
+
+  let sut;
+
+  beforeAll(async () => {
+    container = await setupTestEnvironment();
+    documentService = container.get(DocumentService);
+    lessonService = container.get(LessonService);
+    roomService = container.get(RoomService);
+    sut = container.get(CdnUploadDirectoryCreationTaskProcessor);
+  });
+
+  afterAll(async () => {
+    await destroyTestEnvironment(container);
+  });
+
+  beforeEach(() => {
+    sandbox.stub(documentService, 'createUploadDirectoryMarkerForDocument');
+    sandbox.stub(lessonService, 'createUploadDirectoryMarkerForLesson');
+    sandbox.stub(roomService, 'createUploadDirectoryMarkerForRoom');
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  describe('process', () => {
+
+    describe('when type is document', () => {
+      const type = CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document;
+      const documentKey = uniqueId.create();
+
+      it('should call createUploadDirectoryMarkerForDocument on documentService', async () => {
+        await sut.process({ taskParams: { type, documentKey } }, {});
+        sinon.assert.calledWith(documentService.createUploadDirectoryMarkerForDocument, documentKey);
+      });
+    });
+
+    describe('when type is lesson', () => {
+      const type = CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson;
+      const lessonId = uniqueId.create();
+
+      it('should call createUploadDirectoryMarkerForLesson on lessonService', async () => {
+        await sut.process({ taskParams: { type, lessonId } }, {});
+        sinon.assert.calledWith(lessonService.createUploadDirectoryMarkerForLesson, lessonId);
+      });
+    });
+
+    describe('when type is room', () => {
+      const type = CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room;
+      const roomId = uniqueId.create();
+
+      it('should call createUploadDirectoryMarkerForRoom on roomService', async () => {
+        await sut.process({ taskParams: { type, roomId } }, {});
+        sinon.assert.calledWith(roomService.createUploadDirectoryMarkerForRoom, roomId);
+      });
+    });
+
+    describe('when type is document and cancellation is requested', () => {
+      const type = CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document;
+      const documentKey = uniqueId.create();
+
+      it('should throw an error', async () => {
+        await expect(() => sut.process({ taskParams: { type, documentKey } }, { cancellationRequested: true })).rejects.toThrow(Error);
+      });
+
+      it('should not call createUploadDirectoryMarkerForDocument', async () => {
+        try {
+          await sut.process({ taskParams: { type, documentKey } }, { cancellationRequested: true });
+          sinon.assert.fail('This code should not have been reached');
+        } catch {
+          sinon.assert.notCalled(documentService.createUploadDirectoryMarkerForDocument);
+        }
+      });
+    });
+
+  });
+});

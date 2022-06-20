@@ -28,6 +28,9 @@ batchTypeDocumentRegeneration:
 batchTypeCdnResourcesConsolidation:
   en: CDN resources consolidation
   de: Konsolidierung der CDN-Ressourcen
+batchTypeCdnUploadDirectoryCreation:
+  en: CDN upload directory creation
+  de: Erstellung der CDN-Upload-Verzichnisse
 batchStatusPending:
   en: Pending
   de: Ausstehend

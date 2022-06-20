@@ -17,13 +17,21 @@ export const DOCUMENT_IMPORT_TYPE = {
 export const BATCH_TYPE = {
   documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
-  cdnResourcesConsolidation: 'cdn-resources-consolidation'
+  cdnResourcesConsolidation: 'cdn-resources-consolidation',
+  cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
 };
 
 export const TASK_TYPE = {
   documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
-  cdnResourcesConsolidation: 'cdn-resources-consolidation'
+  cdnResourcesConsolidation: 'cdn-resources-consolidation',
+  cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
+};
+
+export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
+  room: 'room',
+  lesson: 'lesson',
+  document: 'document'
 };
 
 export const CDN_RESOURCES_CONSOLIDATION_TASK_TYPE = {

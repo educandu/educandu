@@ -61,11 +61,9 @@ export default class RoomService {
 
   async createRoom({ name, slug, access, lessonsMode, user }) {
     const roomId = uniqueId.create();
-    const homePath = getPathForPrivateRoom(roomId);
-    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
 
     if (access === ROOM_ACCESS_LEVEL.private) {
-      await this.cdn.uploadEmptyObject(directoryMarkerPath);
+      await this.createUploadDirectoryMarkerForRoom(roomId);
     }
 
     const newRoom = {
@@ -85,11 +83,25 @@ export default class RoomService {
     try {
       await this.roomStore.saveRoom(newRoom);
     } catch (error) {
-      await this.cdn.deleteObject(directoryMarkerPath);
+      if (access === ROOM_ACCESS_LEVEL.private) {
+        await this.deleteUploadDirectoryMarkerForRoom(roomId);
+      }
       throw error;
     }
 
     return newRoom;
+  }
+
+  async createUploadDirectoryMarkerForRoom(roomId) {
+    const homePath = getPathForPrivateRoom(roomId);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+  }
+
+  async deleteUploadDirectoryMarkerForRoom(roomId) {
+    const homePath = getPathForPrivateRoom(roomId);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   async updateRoom(room) {

@@ -1,4 +1,5 @@
 import Database from './database.js';
+import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 
 class RoomStore {
   static get inject() { return [Database]; }
@@ -13,6 +14,10 @@ class RoomStore {
 
   getRoomsByIds(roomIds, { session } = {}) {
     return this.collection.find({ _id: { $in: roomIds } }, { session }).toArray();
+  }
+
+  getAllPrivateRoomIds({ session } = {}) {
+    return this.collection.distinct('_id', { access: ROOM_ACCESS_LEVEL.private }, { session });
   }
 
   deleteRoomById(roomId, { session } = {}) {

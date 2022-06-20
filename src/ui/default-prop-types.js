@@ -4,6 +4,7 @@ import {
   BATCH_TYPE,
   CDN_OBJECT_TYPE,
   CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
+  CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   DOCUMENT_IMPORT_TYPE,
   FAVORITE_TYPE,
   ROOM_ACCESS_LEVEL,
@@ -300,6 +301,25 @@ export const cdnResourcesConsolidationTaskShape = PropTypes.shape({
   ]).isRequired
 });
 
+export const cdnUploadDirectoryCreationTaskShape = PropTypes.shape({
+  ...commonTaskProps,
+  taskType: PropTypes.oneOf([TASK_TYPE.cdnUploadDirectoryCreation]),
+  taskParams: PropTypes.oneOfType([
+    PropTypes.shape({
+      type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document]),
+      documentKey: PropTypes.string.isRequired
+    }),
+    PropTypes.shape({
+      type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson]),
+      lessonId: PropTypes.string.isRequired
+    }),
+    PropTypes.shape({
+      type: PropTypes.oneOf([CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room]),
+      roomId: PropTypes.string.isRequired
+    })
+  ]).isRequired
+});
+
 export const commonBatchProps = {
   _id: PropTypes.string.isRequired,
   createdBy: userInDocShape.isRequired,
@@ -331,6 +351,13 @@ export const cdnResourcesConsolidationBatchDetailsShape = PropTypes.shape({
   batchType: PropTypes.oneOf([BATCH_TYPE.cdnResourcesConsolidation]).isRequired,
   batchParams: PropTypes.shape({}),
   tasks: PropTypes.arrayOf(cdnResourcesConsolidationTaskShape).isRequired
+});
+
+export const cdnUploadDirectoryCreationBatchDetailsShape = PropTypes.shape({
+  ...commonBatchProps,
+  batchType: PropTypes.oneOf([BATCH_TYPE.cdnUploadDirectoryCreation]).isRequired,
+  batchParams: PropTypes.shape({}),
+  tasks: PropTypes.arrayOf(cdnUploadDirectoryCreationTaskShape).isRequired
 });
 
 export const roomOwnerShape = PropTypes.shape({

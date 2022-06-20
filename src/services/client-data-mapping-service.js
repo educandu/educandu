@@ -179,6 +179,7 @@ class ClientDataMappingService {
         };
       case TASK_TYPE.documentRegeneration:
       case TASK_TYPE.cdnResourcesConsolidation:
+      case TASK_TYPE.cdnUploadDirectoryCreation:
         return {
           ...rawTaskParams
         };
@@ -214,6 +215,7 @@ class ClientDataMappingService {
       case BATCH_TYPE.documentImport:
       case BATCH_TYPE.documentRegeneration:
       case BATCH_TYPE.cdnResourcesConsolidation:
+      case BATCH_TYPE.cdnUploadDirectoryCreation:
         return {
           ...rawBatchParams
         };

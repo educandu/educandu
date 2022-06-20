@@ -26,6 +26,7 @@ function SettingsTab({
   initialSettings,
   lastDocumentRegenerationBatch,
   lastCdnResourcesConsolidationBatch,
+  lastCdnUploadDirectoryCreationBatch,
   onDirtyStateChange,
   onSettingsSaved
 }) {
@@ -103,6 +104,15 @@ function SettingsTab({
   const handleStartCdnResourcesConsolidationClick = async () => {
     try {
       const batch = await adminApiClient.postCdnResourcesConsolidationRequest();
+      window.location = urls.getBatchUrl(batch._id);
+    } catch (error) {
+      handleApiError({ t, logger, error });
+    }
+  };
+
+  const handleStartCdnUploadDirectoryCreationClick = async () => {
+    try {
+      const batch = await adminApiClient.postCdnUploadDirectoryCreationRequest();
       window.location = urls.getBatchUrl(batch._id);
     } catch (error) {
       handleApiError({ t, logger, error });
@@ -188,6 +198,18 @@ function SettingsTab({
           {t('cdnResourcesConsolidationButton')}
         </Button>
       </Card>
+      <Card
+        className="SettingsTab-card SettingsTab-card--danger"
+        title={t('cdnUploadDirectoryCreationHeader')}
+        extra={renderLastBatchExecution(lastCdnUploadDirectoryCreationBatch)}
+        >
+        <Button
+          onClick={handleStartCdnUploadDirectoryCreationClick}
+          danger
+          >
+          {t('cdnUploadDirectoryCreationButton')}
+        </Button>
+      </Card>
       <Button
         type="primary"
         onClick={handleSaveButtonClick}
@@ -203,6 +225,7 @@ function SettingsTab({
 SettingsTab.propTypes = {
   initialSettings: settingsShape.isRequired,
   lastCdnResourcesConsolidationBatch: batchShape,
+  lastCdnUploadDirectoryCreationBatch: batchShape,
   lastDocumentRegenerationBatch: batchShape,
   onDirtyStateChange: PropTypes.func.isRequired,
   onSettingsSaved: PropTypes.func.isRequired
@@ -210,6 +233,7 @@ SettingsTab.propTypes = {
 
 SettingsTab.defaultProps = {
   lastCdnResourcesConsolidationBatch: null,
+  lastCdnUploadDirectoryCreationBatch: null,
   lastDocumentRegenerationBatch: null
 };
 
