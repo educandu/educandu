@@ -63,6 +63,8 @@
       "documentRegenerationButton": "Regenerate documents",
       "cdnResourcesConsolidationHeader": "CDN resources consolidation",
       "cdnResourcesConsolidationButton": "Consolidate CDN resources",
+      "cdnUploadDirectoryCreationHeader": "CDN upload directory creation",
+      "cdnUploadDirectoryCreationButton": "Create CDN upload directories",
       "templateDocumentHeader": "Template for new documents",
       "licenseHeader": "License",
       "lastExecution": "Last execution"
@@ -82,6 +84,8 @@
       "documentRegenerationButton": "Dokumente neu erstellen",
       "cdnResourcesConsolidationHeader": "Konsolidierung der CDN-Ressourcen",
       "cdnResourcesConsolidationButton": "CDN-Ressourcen konsolidieren",
+      "cdnUploadDirectoryCreationHeader": "Erstellung der CDN-Upload-Verzeichnisse",
+      "cdnUploadDirectoryCreationButton": "CDN-Upload-Verzeichnisse erstellen",
       "templateDocumentHeader": "Vorlage für neue Dokumente",
       "licenseHeader": "Lizenz",
       "lastExecution": "Letzte Ausführung"
@@ -633,6 +637,7 @@
       "batchTypeDocumentImport": "Document import",
       "batchTypeDocumentRegeneration": "Document regeneration",
       "batchTypeCdnResourcesConsolidation": "CDN resources consolidation",
+      "batchTypeCdnUploadDirectoryCreation": "CDN upload directory creation",
       "batchStatusPending": "Pending",
       "batchStatusDone": "Done",
       "batchStatusProcessing": "{progress, number, percent} completed",
@@ -659,6 +664,7 @@
       "batchTypeDocumentImport": "Dokumentimport",
       "batchTypeDocumentRegeneration": "Dokumentwiederherstellung",
       "batchTypeCdnResourcesConsolidation": "Konsolidierung der CDN-Ressourcen",
+      "batchTypeCdnUploadDirectoryCreation": "Erstellung der CDN-Upload-Verzichnisse",
       "batchStatusPending": "Ausstehend",
       "batchStatusDone": "Abgeschlossen",
       "batchStatusProcessing": "{progress, number, percent} abgeschlossen",

@@ -2,6 +2,8 @@ import by from 'thenby';
 import httpErrors from 'http-errors';
 import deepEqual from 'fast-deep-equal';
 import Logger from '../common/logger.js';
+import Cdn from '../repositories/cdn.js';
+import urlUtils from '../utils/url-utils.js';
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import TaskStore from '../stores/task-store.js';
@@ -9,12 +11,13 @@ import LockStore from '../stores/lock-store.js';
 import BatchStore from '../stores/batch-store.js';
 import escapeStringRegexp from 'escape-string-regexp';
 import DocumentStore from '../stores/document-store.js';
-import { DOCUMENT_ORIGIN } from '../domain/constants.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import { getPublicHomePath } from '../utils/storage-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import DocumentOrderStore from '../stores/document-order-store.js';
 import DocumentRevisionStore from '../stores/document-revision-store.js';
 import { createSectionRevision, extractCdnResources } from './section-helper.js';
+import { DOCUMENT_ORIGIN, STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -23,6 +26,7 @@ const { BadRequest, NotFound } = httpErrors;
 class DocumentService {
   static get inject() {
     return [
+      Cdn,
       DocumentRevisionStore,
       DocumentOrderStore,
       DocumentStore,
@@ -34,7 +38,9 @@ class DocumentService {
     ];
   }
 
-  constructor(documentRevisionStore, documentOrderStore, documentStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry) {
+  // eslint-disable-next-line max-params
+  constructor(cdn, documentRevisionStore, documentOrderStore, documentStore, batchStore, taskStore, lockStore, transactionRunner, pluginRegistry) {
+    this.cdn = cdn;
     this.documentRevisionStore = documentRevisionStore;
     this.documentOrderStore = documentOrderStore;
     this.documentStore = documentStore;
@@ -121,6 +127,8 @@ class DocumentService {
     let lock;
     const documentKey = uniqueId.create();
 
+    await this.createUploadDirectoryMarkerForDocument(documentKey);
+
     try {
       lock = await this.lockStore.takeDocumentLock(documentKey);
 
@@ -147,6 +155,9 @@ class DocumentService {
       });
 
       return newDocument;
+    } catch (error) {
+      await this.deleteUploadDirectoryMarkerForDocument(documentKey);
+      throw error;
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
@@ -235,7 +246,6 @@ class DocumentService {
         await this.documentStore.deleteDocumentByKey(documentKey, { session });
         await this.documentRevisionStore.deleteDocumentRevisionsByKey(documentKey, { session });
       });
-
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
@@ -359,6 +369,8 @@ class DocumentService {
   async importDocumentRevisions({ documentKey, revisions, ancestorId, origin, originUrl }) {
     let lock;
 
+    await this.createUploadDirectoryMarkerForDocument(documentKey);
+
     try {
       lock = await this.lockStore.takeDocumentLock(documentKey);
 
@@ -387,6 +399,11 @@ class DocumentService {
       });
 
       return this.documentRevisionStore.getAllDocumentRevisionsByKey(documentKey);
+    } catch (error) {
+      if (!ancestorId) {
+        await this.deleteUploadDirectoryMarkerForDocument(documentKey);
+      }
+      throw error;
     } finally {
       if (lock) {
         await this.lockStore.releaseLock(lock);
@@ -446,6 +463,18 @@ class DocumentService {
         await this.lockStore.releaseLock(lock);
       }
     }
+  }
+
+  async createUploadDirectoryMarkerForDocument(documentKey) {
+    const homePath = getPublicHomePath(documentKey);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+  }
+
+  async deleteUploadDirectoryMarkerForDocument(documentKey) {
+    const homePath = getPublicHomePath(documentKey);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   _buildDocumentRevision(data) {

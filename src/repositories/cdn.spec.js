@@ -30,14 +30,13 @@ describe('cdn', () => {
   describe('uploadObject', () => {
     const targetFileName = 'some-folder/sub/test-file.txt';
     const testFileContent = 'Hello World!';
-    const metadata = { someKey: 'someValue' };
     let testFileName;
     let actualResult;
 
     beforeEach(async () => {
       testFileName = path.join(testDir, 'test.txt');
       await writeFile(testFileName, testFileContent, 'utf8');
-      actualResult = await sut.uploadObject(targetFileName, testFileName, metadata);
+      actualResult = await sut.uploadObject(targetFileName, testFileName);
     });
 
     it('should return an object containing the name and etag', () => {

@@ -56,6 +56,7 @@ function Admin({ initialState, PageTemplate }) {
                 initialSettings={settings}
                 lastDocumentRegenerationBatch={initialState.lastDocumentRegenerationBatch}
                 lastCdnResourcesConsolidationBatch={initialState.lastCdnResourcesConsolidationBatch}
+                lastCdnUploadDirectoryCreationBatch={initialState.lastCdnUploadDirectoryCreationBatch}
                 onSettingsSaved={setSettings}
                 onDirtyStateChange={setIsCurrentTabDirty}
                 />
@@ -79,7 +80,8 @@ Admin.propTypes = {
     settings: settingsShape.isRequired,
     storagePlans: PropTypes.arrayOf(storagePlanWithAssignedUserCountShape).isRequired,
     lastCdnResourcesConsolidationBatch: batchShape,
-    lastDocumentRegenerationBatch: batchShape
+    lastDocumentRegenerationBatch: batchShape,
+    lastCdnUploadDirectoryCreationBatch: batchShape
   }).isRequired
 };
 

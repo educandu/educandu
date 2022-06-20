@@ -26,12 +26,14 @@ class AdminController {
       settings,
       storagePlans,
       lastDocumentRegenerationBatch,
-      lastCdnResourcesConsolidationBatch
+      lastCdnResourcesConsolidationBatch,
+      lastCdnUploadDirectoryCreationBatch
     ] = await Promise.all([
       this.settingService.getAllSettings(),
       this.storageService.getAllStoragePlansWithAssignedUserCount(),
       this.batchService.getLastBatch(BATCH_TYPE.documentRegeneration),
-      this.batchService.getLastBatch(BATCH_TYPE.cdnResourcesConsolidation)
+      this.batchService.getLastBatch(BATCH_TYPE.cdnResourcesConsolidation),
+      this.batchService.getLastBatch(BATCH_TYPE.cdnUploadDirectoryCreation)
     ]);
 
     const initialState = {
@@ -42,6 +44,9 @@ class AdminController {
         : null,
       lastCdnResourcesConsolidationBatch: lastCdnResourcesConsolidationBatch
         ? await this.clientDataMappingService.mapBatch(lastCdnResourcesConsolidationBatch, user)
+        : null,
+      lastCdnUploadDirectoryCreationBatch: lastCdnUploadDirectoryCreationBatch
+        ? await this.clientDataMappingService.mapBatch(lastCdnUploadDirectoryCreationBatch, user)
         : null
     };
 
@@ -58,6 +63,13 @@ class AdminController {
   async handlePostCdnResourcesConsolidationRequest(req, res) {
     const { user } = req;
     const batch = await this.batchService.createCdnResourcesConsolidationBatch(user);
+
+    return res.status(201).send(batch);
+  }
+
+  async handlePostCdnUploadDirectoryCreationRequest(req, res) {
+    const { user } = req;
+    const batch = await this.batchService.createCdnUploadDirectoryCreationBatch(user);
 
     return res.status(201).send(batch);
   }
@@ -81,6 +93,12 @@ class AdminController {
       '/api/v1/admin/cdn-resources-consolidation',
       needsPermission(permissions.ADMIN),
       (req, res) => this.handlePostCdnResourcesConsolidationRequest(req, res)
+    );
+
+    router.post(
+      '/api/v1/admin/cdn-upload-directory-creation',
+      needsPermission(permissions.ADMIN),
+      (req, res) => this.handlePostCdnUploadDirectoryCreationRequest(req, res)
     );
   }
 }

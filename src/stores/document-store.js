@@ -51,8 +51,8 @@ class DocumentStore {
     return this.collection.find({ key: documentKey }, { sort: [['order', 1]], session }).toArray();
   }
 
-  getAllDocumentKeys() {
-    return this.collection.distinct('key');
+  getAllDocumentKeys({ session } = {}) {
+    return this.collection.distinct('key', {}, { session });
   }
 
   getDocumentsMetadataByKeys(keys, { session } = {}) {

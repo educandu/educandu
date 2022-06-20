@@ -11,8 +11,8 @@ import StoragePlanStore from '../stores/storage-plan-store.js';
 import TransactionRunner from '../stores/transaction-runner.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import permissions, { hasUserPermission } from '../domain/permissions.js';
-import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { componseUniqueFileName, getPrivateStoragePathForRoomId, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
+import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
+import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
 const { BadRequest } = httpErrors;
 
@@ -133,7 +133,137 @@ export default class StorageService {
     return { usedBytes };
   }
 
-  async getObjects({ parentPath, recursive }) {
+  getObjects({ parentPath, recursive }) {
+    return this._getObjects({ parentPath, recursive, includeEmptyObjects: false });
+  }
+
+  async deleteObject({ path, storageClaimingUserId }) {
+    let lock;
+    let usedBytes = 0;
+
+    try {
+      lock = await this.lockStore.takeUserLock(storageClaimingUserId);
+      await this._deleteObjects([path]);
+
+      if (getStorageLocationTypeForPath(path) === STORAGE_LOCATION_TYPE.private) {
+        usedBytes = await this._updateUserUsedBytes(storageClaimingUserId);
+      }
+
+      return { usedBytes };
+    } finally {
+      this.lockStore.releaseLock(lock);
+    }
+  }
+
+  async deleteRoomAndResources({ roomId, roomOwnerId }) {
+    let lock;
+    let usedBytes = 0;
+
+    try {
+      lock = await this.lockStore.takeUserLock(roomOwnerId);
+
+      await this.transactionRunner.run(async session => {
+        await this.lessonStore.deleteLessonsByRoomId(roomId, { session });
+        await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
+        await this.roomStore.deleteRoomById(roomId, { session });
+      });
+
+      const { objects: roomPrivateStorageObjects } = await this._getObjects({
+        parentPath: getPathForPrivateRoom(roomId),
+        recursive: true,
+        includeEmptyObjects: true
+      });
+
+      if (roomPrivateStorageObjects.length) {
+        await this._deleteObjects(roomPrivateStorageObjects.map(({ path }) => path));
+        usedBytes = await this._updateUserUsedBytes(roomOwnerId);
+      }
+
+      return { usedBytes };
+    } finally {
+      this.lockStore.releaseLock(lock);
+    }
+  }
+
+  async getStorageLocations({ user, documentId, lessonId }) {
+    const locations = [];
+
+    if (!user) {
+      return locations;
+    }
+
+    if (documentId || lessonId) {
+      locations.push({
+        type: STORAGE_LOCATION_TYPE.public,
+        rootPath: getPublicRootPath(),
+        homePath: getPublicHomePath(documentId || lessonId),
+        isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
+      });
+    }
+
+    if (lessonId) {
+      const lesson = await this.lessonStore.getLessonById(lessonId);
+      const room = await this.roomStore.getRoomById(lesson.roomId);
+      const isRoomOwner = user._id === room.owner;
+      const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user._id);
+      const rootAndHomePath = getPathForPrivateRoom(room._id);
+
+      const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
+
+      if (roomOwner.storage.plan) {
+        const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan);
+
+        locations.push({
+          type: STORAGE_LOCATION_TYPE.private,
+          usedBytes: roomOwner.storage.usedBytes,
+          maxBytes: roomOwnerStoragePlan.maxBytes,
+          rootPath: rootAndHomePath,
+          homePath: rootAndHomePath,
+          isDeletionEnabled: isRoomOwner || isRoomCollaborator
+        });
+      }
+    }
+
+    return locations;
+  }
+
+  async _calculateUserUsedBytes(userId) {
+    const privateRoomsIds = await this.roomStore.getRoomIdsByOwnerIdAndAccess({ ownerId: userId, access: ROOM_ACCESS_LEVEL.private });
+    const storagePaths = privateRoomsIds.map(getPathForPrivateRoom);
+
+    let totalSize = 0;
+    for (const storagePath of storagePaths) {
+      // eslint-disable-next-line no-await-in-loop
+      const size = await this._getFolderSize(storagePath);
+      totalSize += size;
+    }
+    return totalSize;
+  }
+
+  async _getFolderSize(folderPath) {
+    const prefix = `${folderPath}/`;
+    const objects = await this.cdn.listObjects({ prefix, recursive: true });
+    return objects.reduce((totalSize, obj) => totalSize + obj.size, 0);
+  }
+
+  async _uploadFiles(files, parentPath) {
+    const uploads = files.map(async file => {
+      const fileName = componseUniqueFileName(file.originalname, parentPath);
+      await this.cdn.uploadObject(fileName, file.path);
+    });
+    await Promise.all(uploads);
+  }
+
+  async _updateUserUsedBytes(userId) {
+    const usedBytes = await this._calculateUserUsedBytes(userId);
+    const user = await this.userStore.getUserById(userId);
+    user.storage = { ...user.storage, usedBytes };
+
+    await this.userStore.saveUser(user);
+    return usedBytes;
+  }
+
+  async _getObjects({ parentPath, recursive, includeEmptyObjects }) {
     const currentDirectorySegments = parentPath.split('/').filter(seg => !!seg);
     const encodedCurrentDirectorySegments = currentDirectorySegments.map(s => encodeURIComponent(s));
 
@@ -174,9 +304,15 @@ export default class StorageService {
       const isDirectory = !!obj.prefix;
       const path = isDirectory ? obj.prefix : obj.name;
       const objectSegments = path.split('/').filter(seg => !!seg);
+      const lastSegment = objectSegments[objectSegments.length - 1];
       const encodedObjectSegments = objectSegments.map(s => encodeURIComponent(s));
+
+      if (!includeEmptyObjects && !isDirectory && lastSegment === STORAGE_DIRECTORY_MARKER_NAME) {
+        return null;
+      }
+
       return {
-        displayName: objectSegments[objectSegments.length - 1],
+        displayName: lastSegment,
         parentPath: objectSegments.slice(0, -1).join('/'),
         path: objectSegments.join('/'),
         url: [this.serverConfig.cdnRootUrl, ...encodedObjectSegments].join('/'),
@@ -185,129 +321,9 @@ export default class StorageService {
         type: isDirectory ? CDN_OBJECT_TYPE.directory : CDN_OBJECT_TYPE.file,
         size: isDirectory ? null : obj.size
       };
-    });
+    }).filter(obj => obj);
 
     return { parentDirectory, currentDirectory, objects };
-  }
-
-  async deleteObject({ path, storageClaimingUserId }) {
-    let lock;
-    let usedBytes = 0;
-
-    try {
-      lock = await this.lockStore.takeUserLock(storageClaimingUserId);
-      await this._deleteObjects([path]);
-
-      if (getStorageLocationTypeForPath(path) === STORAGE_LOCATION_TYPE.private) {
-        usedBytes = await this._updateUserUsedBytes(storageClaimingUserId);
-      }
-
-      return { usedBytes };
-    } finally {
-      this.lockStore.releaseLock(lock);
-    }
-  }
-
-  async deleteRoomAndResources({ roomId, roomOwnerId }) {
-    let lock;
-    let usedBytes = 0;
-
-    try {
-      lock = await this.lockStore.takeUserLock(roomOwnerId);
-
-      await this.transactionRunner.run(async session => {
-        await this.lessonStore.deleteLessonsByRoomId(roomId, { session });
-        await this.roomInvitationStore.deleteRoomInvitationsByRoomId(roomId, { session });
-        await this.roomStore.deleteRoomById(roomId, { session });
-      });
-
-      const { objects: roomPrivateStorageObjects } = await this.getObjects({ parentPath: getPrivateStoragePathForRoomId(roomId), recursive: true });
-      if (roomPrivateStorageObjects.length) {
-        await this._deleteObjects(roomPrivateStorageObjects.map(({ path }) => path));
-        usedBytes = await this._updateUserUsedBytes(roomOwnerId);
-      }
-
-      return { usedBytes };
-    } finally {
-      this.lockStore.releaseLock(lock);
-    }
-  }
-
-  async getStorageLocations({ user, documentId, lessonId }) {
-    const locations = [];
-
-    if (!user) {
-      return locations;
-    }
-
-    if (documentId || lessonId) {
-      locations.push({
-        type: STORAGE_LOCATION_TYPE.public,
-        rootPath: 'media',
-        homePath: `media/${documentId || lessonId}`,
-        isDeletionEnabled: hasUserPermission(user, permissions.DELETE_ANY_STORAGE_FILE)
-      });
-    }
-
-    if (lessonId) {
-      const lesson = await this.lessonStore.getLessonById(lessonId);
-      const room = await this.roomStore.getRoomById(lesson.roomId);
-      const isRoomOwner = user._id === room.owner;
-      const isRoomCollaborator = room.lessonsMode === ROOM_LESSONS_MODE.collaborative && room.members.some(m => m.userId === user._id);
-
-      const roomOwner = isRoomOwner ? user : await this.userStore.getUserById(room.owner);
-
-      if (roomOwner.storage.plan) {
-        const roomOwnerStoragePlan = await this.storagePlanStore.getStoragePlanById(roomOwner.storage.plan);
-
-        locations.push({
-          type: STORAGE_LOCATION_TYPE.private,
-          usedBytes: roomOwner.storage.usedBytes,
-          maxBytes: roomOwnerStoragePlan.maxBytes,
-          rootPath: `rooms/${room._id}/media`,
-          homePath: `rooms/${room._id}/media`,
-          isDeletionEnabled: isRoomOwner || isRoomCollaborator
-        });
-      }
-    }
-
-    return locations;
-  }
-
-  async _calculateUserUsedBytes(userId) {
-    const privateRoomsIds = await this.roomStore.getRoomIdsByOwnerIdAndAccess({ ownerId: userId, access: ROOM_ACCESS_LEVEL.private });
-    const storagePaths = privateRoomsIds.map(getPrivateStoragePathForRoomId);
-
-    let totalSize = 0;
-    for (const storagePath of storagePaths) {
-      // eslint-disable-next-line no-await-in-loop
-      const size = await this._getFolderSize(storagePath);
-      totalSize += size;
-    }
-    return totalSize;
-  }
-
-  async _getFolderSize(folderPath) {
-    const prefix = `${folderPath}/`;
-    const objects = await this.cdn.listObjects({ prefix, recursive: true });
-    return objects.reduce((totalSize, obj) => totalSize + obj.size, 0);
-  }
-
-  async _uploadFiles(files, parentPath) {
-    const uploads = files.map(async file => {
-      const fileName = componseUniqueFileName(file.originalname, parentPath);
-      await this.cdn.uploadObject(fileName, file.path, {});
-    });
-    await Promise.all(uploads);
-  }
-
-  async _updateUserUsedBytes(userId) {
-    const usedBytes = await this._calculateUserUsedBytes(userId);
-    const user = await this.userStore.getUserById(userId);
-    user.storage = { ...user.storage, usedBytes };
-
-    await this.userStore.saveUser(user);
-    return usedBytes;
   }
 
   async _deleteObjects(paths) {

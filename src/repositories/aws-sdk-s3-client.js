@@ -171,11 +171,11 @@ class AwsSdkS3Client {
     }
   }
 
-  async upload(bucketName, objectName, stream, contentType, metadata = {}) {
+  async upload(bucketName, objectName, body, contentType, metadata = {}) {
     const params = {
       Bucket: bucketName,
       Key: objectName,
-      Body: stream,
+      Body: body,
       ContentType: contentType,
       Metadata: metadata
     };

@@ -4,7 +4,7 @@ import { STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import {
   isAccessibleStoragePath,
   getStorageLocationTypeForPath,
-  getPrivateStoragePathForRoomId,
+  getPathForPrivateRoom,
   getRoomIdFromPrivateStoragePath,
   componseUniqueFileName
 } from './storage-utils.js';
@@ -67,9 +67,9 @@ describe('storage-utils', () => {
     });
   });
 
-  describe('getPrivateStoragePathForRoomId', () => {
+  describe('getPathForPrivateRoom', () => {
     it('should return the path', () => {
-      expect(getPrivateStoragePathForRoomId('myRoom')).toBe('rooms/myRoom/media');
+      expect(getPathForPrivateRoom('myRoom')).toBe('rooms/myRoom/media');
     });
   });
 

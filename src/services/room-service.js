@@ -1,17 +1,22 @@
 import moment from 'moment';
 import httpErrors from 'http-errors';
 import Logger from '../common/logger.js';
+import Cdn from '../repositories/cdn.js';
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
 import RoomStore from '../stores/room-store.js';
 import LockStore from '../stores/lock-store.js';
 import UserStore from '../stores/user-store.js';
 import LessonStore from '../stores/lesson-store.js';
 import { ensureIsExcluded } from '../utils/array-utils.js';
 import TransactionRunner from '../stores/transaction-runner.js';
+import { getPathForPrivateRoom } from '../utils/storage-utils.js';
 import RoomInvitationStore from '../stores/room-invitation-store.js';
 import {
   INVALID_ROOM_INVITATION_REASON,
-  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS
+  PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS,
+  ROOM_ACCESS_LEVEL,
+  STORAGE_DIRECTORY_MARKER_NAME
 } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -20,10 +25,11 @@ const logger = new Logger(import.meta.url);
 
 export default class RoomService {
   static get inject() {
-    return [RoomStore, RoomInvitationStore, LessonStore, LockStore, UserStore, TransactionRunner];
+    return [Cdn, RoomStore, RoomInvitationStore, LessonStore, LockStore, UserStore, TransactionRunner];
   }
 
-  constructor(roomStore, roomInvitationStore, lessonStore, lockStore, userStore, transactionRunner) {
+  constructor(cdn, roomStore, roomInvitationStore, lessonStore, lockStore, userStore, transactionRunner) {
+    this.cdn = cdn;
     this.roomStore = roomStore;
     this.lockStore = lockStore;
     this.userStore = userStore;
@@ -54,8 +60,14 @@ export default class RoomService {
   }
 
   async createRoom({ name, slug, access, lessonsMode, user }) {
+    const roomId = uniqueId.create();
+
+    if (access === ROOM_ACCESS_LEVEL.private) {
+      await this.createUploadDirectoryMarkerForRoom(roomId);
+    }
+
     const newRoom = {
-      _id: uniqueId.create(),
+      _id: roomId,
       name,
       slug: slug?.trim() || '',
       access,
@@ -68,8 +80,28 @@ export default class RoomService {
       members: []
     };
 
-    await this.roomStore.saveRoom(newRoom);
+    try {
+      await this.roomStore.saveRoom(newRoom);
+    } catch (error) {
+      if (access === ROOM_ACCESS_LEVEL.private) {
+        await this.deleteUploadDirectoryMarkerForRoom(roomId);
+      }
+      throw error;
+    }
+
     return newRoom;
+  }
+
+  async createUploadDirectoryMarkerForRoom(roomId) {
+    const homePath = getPathForPrivateRoom(roomId);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+  }
+
+  async deleteUploadDirectoryMarkerForRoom(roomId) {
+    const homePath = getPathForPrivateRoom(roomId);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   async updateRoom(room) {

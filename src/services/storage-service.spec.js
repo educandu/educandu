@@ -319,8 +319,8 @@ describe('storage-service', () => {
 
       it('should call cdn.uploadObject for each file', () => {
         sinon.assert.calledTwice(cdn.uploadObject);
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file1-(.+)\.jpeg/), files[0].path, {});
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file2-(.+)\.jpeg/), files[1].path, {});
+        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file1-(.+)\.jpeg/), files[0].path);
+        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/media\/file2-(.+)\.jpeg/), files[1].path);
       });
 
       it('should release the lock', () => {
@@ -433,8 +433,8 @@ describe('storage-service', () => {
 
       it('should call cdn.uploadObject for each file', () => {
         sinon.assert.calledTwice(cdn.uploadObject);
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/rooms\/(.+)\/media\/file1-(.+)\.jpeg/), files[0].path, {});
-        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/rooms\/(.+)\/media\/file2-(.+)\.jpeg/), files[1].path, {});
+        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/rooms\/(.+)\/media\/file1-(.+)\.jpeg/), files[0].path);
+        sinon.assert.calledWith(cdn.uploadObject, sinon.match(/rooms\/(.+)\/media\/file2-(.+)\.jpeg/), files[1].path);
       });
 
       it('should call cdn.listObjects for each room', () => {

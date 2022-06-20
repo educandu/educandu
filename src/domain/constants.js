@@ -17,13 +17,21 @@ export const DOCUMENT_IMPORT_TYPE = {
 export const BATCH_TYPE = {
   documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
-  cdnResourcesConsolidation: 'cdn-resources-consolidation'
+  cdnResourcesConsolidation: 'cdn-resources-consolidation',
+  cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
 };
 
 export const TASK_TYPE = {
   documentImport: 'document-import',
   documentRegeneration: 'document-regeneration',
-  cdnResourcesConsolidation: 'cdn-resources-consolidation'
+  cdnResourcesConsolidation: 'cdn-resources-consolidation',
+  cdnUploadDirectoryCreation: 'cdn-upload-directory-creation'
+};
+
+export const CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE = {
+  room: 'room',
+  lesson: 'lesson',
+  document: 'document'
 };
 
 export const CDN_RESOURCES_CONSOLIDATION_TASK_TYPE = {
@@ -145,9 +153,9 @@ export const IMAGE_OPTIMIZATION_THRESHOLD_WIDTH = 1200;
 export const IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES = 500 * 1000;
 export const IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES = 1.5 * 1000 * 1000;
 
+export const STORAGE_DIRECTORY_MARKER_NAME = '__DIRMARKER__';
 export const LIMIT_PER_STORAGE_UPLOAD_IN_BYTES = 250 * 1000 * 1000;
 
 export const PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS = 24;
 export const PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS = 24;
 export const PENDING_ROOM_INVITATION_EXPIRATION_IN_DAYS = 7;
-

@@ -28,6 +28,12 @@ cdnResourcesConsolidationHeader:
 cdnResourcesConsolidationButton:
   en: Consolidate CDN resources
   de: CDN-Ressourcen konsolidieren
+cdnUploadDirectoryCreationHeader:
+  en: CDN upload directory creation
+  de: Erstellung der CDN-Upload-Verzeichnisse
+cdnUploadDirectoryCreationButton:
+  en: Create CDN upload directories
+  de: CDN-Upload-Verzeichnisse erstellen
 templateDocumentHeader:
   en: Template for new documents
   de: Vorlage für neue Dokumente

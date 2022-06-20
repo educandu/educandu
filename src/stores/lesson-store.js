@@ -24,8 +24,8 @@ class LessonStore {
     return this.collection.findOne({ _id: lessonId }, { session });
   }
 
-  getAllLessonIds() {
-    return this.collection.distinct('_id');
+  getAllLessonIds({ session } = {}) {
+    return this.collection.distinct('_id', {}, { session });
   }
 
   getLessonMetadataById(lessonId, { session } = {}) {

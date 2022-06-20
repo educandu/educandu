@@ -9,10 +9,19 @@ import { handleApiError } from '../../ui/error-helper.js';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import BatchApiClient from '../../api-clients/batch-api-client.js';
-import { BATCH_TYPE, CDN_RESOURCES_CONSOLIDATION_TASK_TYPE } from '../../domain/constants.js';
 import { isTaskSuccessful, taskStatusSorter, doesTaskHaveErrors } from '../../utils/task-utils.js';
 import { WarningOutlined, CheckOutlined, ExclamationCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import { documentImportBatchDetailsShape, documentRegenerationBatchDetailsShape, cdnResourcesConsolidationBatchDetailsShape } from '../../ui/default-prop-types.js';
+import {
+  BATCH_TYPE,
+  CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
+  CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE
+} from '../../domain/constants.js';
+import {
+  documentImportBatchDetailsShape,
+  documentRegenerationBatchDetailsShape,
+  cdnResourcesConsolidationBatchDetailsShape,
+  cdnUploadDirectoryCreationBatchDetailsShape
+} from '../../ui/default-prop-types.js';
 
 const POLL_INTERVAL_IN_MS = 500;
 const logger = new Logger(import.meta.url);
@@ -70,6 +79,8 @@ function Batches({ initialState, PageTemplate }) {
         return t('batchTypeDocumentRegeneration');
       case BATCH_TYPE.cdnResourcesConsolidation:
         return t('batchTypeCdnResourcesConsolidation');
+      case BATCH_TYPE.cdnUploadDirectoryCreation:
+        return t('batchTypeCdnUploadDirectoryCreation');
       default:
         throw new Error(`Invalid batch type '${batchType}'`);
     }
@@ -98,13 +109,13 @@ function Batches({ initialState, PageTemplate }) {
     return <a target="_blank" href={docUrl} rel="noreferrer noopener">{taskParams.title}</a>;
   };
 
-  const renderDocumentKey = taskParams => (
+  const renderDocumentRegenerationEntityId = taskParams => (
     <a target="_blank" href={urls.getDocUrl({ key: taskParams.key })} rel="noreferrer noopener">
       {taskParams.key}
     </a>
   );
 
-  const renderDocumentKeyOrLessonId = taskParams => {
+  const renderCdnResourcesConsolidationEntityId = taskParams => {
     let url;
     let text;
     switch (taskParams.type) {
@@ -123,12 +134,48 @@ function Batches({ initialState, PageTemplate }) {
     return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
   };
 
+  const renderCdnUploadDirectoryCreationEntityId = taskParams => {
+    let url;
+    let text;
+    switch (taskParams.type) {
+      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
+        url = urls.getDocUrl({ key: taskParams.documentKey });
+        text = taskParams.documentKey;
+        break;
+      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson:
+        url = urls.getLessonUrl({ id: taskParams.lessonId });
+        text = taskParams.lessonId;
+        break;
+      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room:
+        url = urls.getRoomUrl({ id: taskParams.roomId });
+        text = taskParams.roomId;
+        break;
+      default:
+        throw new Error(`Invalid task params type '${taskParams.type}'`);
+    }
+
+    return <a target="_blank" href={url} rel="noreferrer noopener">{text}</a>;
+  };
+
   const renderCdnResourcesConsolidationTaskType = taskParams => {
     switch (taskParams.type) {
       case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.document:
         return t('common:document');
       case CDN_RESOURCES_CONSOLIDATION_TASK_TYPE.lesson:
         return t('common:lesson');
+      default:
+        throw new Error(`Invalid task params type '${taskParams.type}'`);
+    }
+  };
+
+  const renderCdnUploadDirectoryCreationTaskType = taskParams => {
+    switch (taskParams.type) {
+      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.document:
+        return t('common:document');
+      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.lesson:
+        return t('common:lesson');
+      case CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE.room:
+        return t('common:room');
       default:
         throw new Error(`Invalid task params type '${taskParams.type}'`);
     }
@@ -165,31 +212,68 @@ function Batches({ initialState, PageTemplate }) {
       />
   );
 
-  let taskTableColumns;
+  const taskTableColumns = [];
   switch (batch.batchType) {
     case BATCH_TYPE.documentImport:
-      taskTableColumns = [
-        { title: t('documentImportType'), key: 'documentImportType', dataIndex: 'taskParams', render: renderDocumentImportType },
-        { title: t('common:document'), key: 'documentTitle', dataIndex: 'taskParams', render: renderDocumentTitle },
-        { title: t('taskStatus'), dataIndex: 'processed', render: renderTaskStatus, sorter: taskStatusSorter }
-      ];
+      taskTableColumns.push({
+        title: t('documentImportType'),
+        key: 'documentImportType',
+        dataIndex: 'taskParams',
+        render: renderDocumentImportType
+      });
+      taskTableColumns.push({
+        title: t('common:document'),
+        key: 'documentTitle',
+        dataIndex: 'taskParams',
+        render: renderDocumentTitle
+      });
       break;
     case BATCH_TYPE.documentRegeneration:
-      taskTableColumns = [
-        { title: t('common:document'), key: 'documentKey', dataIndex: 'taskParams', render: renderDocumentKey },
-        { title: t('taskStatus'), dataIndex: 'processed', render: renderTaskStatus, sorter: taskStatusSorter }
-      ];
+      taskTableColumns.push({
+        title: t('common:document'),
+        key: 'taskParamsTypeEntityId',
+        dataIndex: 'taskParams',
+        render: renderDocumentRegenerationEntityId
+      });
       break;
     case BATCH_TYPE.cdnResourcesConsolidation:
-      taskTableColumns = [
-        { title: `${t('common:document')} / ${t('common:lesson')}`, key: 'documentKeyOrLessonId', dataIndex: 'taskParams', render: renderDocumentKeyOrLessonId },
-        { title: t('common:type'), key: 'taskParamsType', dataIndex: 'taskParams', render: renderCdnResourcesConsolidationTaskType },
-        { title: t('taskStatus'), dataIndex: 'processed', render: renderTaskStatus, sorter: taskStatusSorter }
-      ];
+      taskTableColumns.push({
+        title: `${t('common:document')} / ${t('common:lesson')}`,
+        key: 'taskParamsTypeEntityId',
+        dataIndex: 'taskParams',
+        render: renderCdnResourcesConsolidationEntityId
+      });
+      taskTableColumns.push({
+        title: t('common:type'),
+        key: 'taskParamsType',
+        dataIndex: 'taskParams',
+        render: renderCdnResourcesConsolidationTaskType
+      });
+      break;
+    case BATCH_TYPE.cdnUploadDirectoryCreation:
+      taskTableColumns.push({
+        title: `${t('common:document')} / ${t('common:lesson')} / ${t('common:room')}`,
+        key: 'taskParamsTypeEntityId',
+        dataIndex: 'taskParams',
+        render: renderCdnUploadDirectoryCreationEntityId
+      });
+      taskTableColumns.push({
+        title: t('common:type'),
+        key: 'taskParamsType',
+        dataIndex: 'taskParams',
+        render: renderCdnUploadDirectoryCreationTaskType
+      });
       break;
     default:
       throw new Error(`Invalid batch type '${batch.batchType}'`);
   }
+
+  taskTableColumns.push({
+    title: t('taskStatus'),
+    dataIndex: 'processed',
+    render: renderTaskStatus,
+    sorter: taskStatusSorter
+  });
 
   const batchInfos = [<span key="batch-type">{t('batchType')}: {renderBatchType(batch.batchType)}</span>];
   if (batch.batchType === BATCH_TYPE.documentImport) {
@@ -243,7 +327,12 @@ function Batches({ initialState, PageTemplate }) {
 Batches.propTypes = {
   PageTemplate: PropTypes.func.isRequired,
   initialState: PropTypes.shape({
-    batch: PropTypes.oneOfType([documentImportBatchDetailsShape, documentRegenerationBatchDetailsShape, cdnResourcesConsolidationBatchDetailsShape]).isRequired
+    batch: PropTypes.oneOfType([
+      documentImportBatchDetailsShape,
+      documentRegenerationBatchDetailsShape,
+      cdnResourcesConsolidationBatchDetailsShape,
+      cdnUploadDirectoryCreationBatchDetailsShape
+    ]).isRequired
   }).isRequired
 };
 

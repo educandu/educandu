@@ -120,7 +120,15 @@ export function getStorageLocationTypeForUrl(url) {
   return storageLocationPath ? getStorageLocationTypeForPath(storageLocationPath) : STORAGE_LOCATION_TYPE.unknown;
 }
 
-export function getPrivateStoragePathForRoomId(roomId) {
+export function getPublicRootPath() {
+  return 'media';
+}
+
+export function getPublicHomePath(documentOrLessonId) {
+  return `media/${documentOrLessonId}`;
+}
+
+export function getPathForPrivateRoom(roomId) {
   return `rooms/${roomId}/media`;
 }
 

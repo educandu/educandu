@@ -26,6 +26,16 @@ class AdminApiClient {
       )
       .then(res => res.data);
   }
+
+  postCdnUploadDirectoryCreationRequest() {
+    return this.httpClient
+      .post(
+        '/api/v1/admin/cdn-upload-directory-creation',
+        null,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default AdminApiClient;

@@ -1,16 +1,21 @@
 import by from 'thenby';
 import deepEqual from 'fast-deep-equal';
+import Cdn from '../repositories/cdn.js';
 import uniqueId from '../utils/unique-id.js';
+import urlUtils from '../utils/url-utils.js';
 import LessonStore from '../stores/lesson-store.js';
 import { extractCdnResources } from './section-helper.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
+import { getPublicHomePath } from '../utils/storage-utils.js';
+import { STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
 
 class LessonService {
   static get inject() {
-    return [LessonStore, PluginRegistry];
+    return [Cdn, LessonStore, PluginRegistry];
   }
 
-  constructor(lessonStore, pluginRegistry) {
+  constructor(cdn, lessonStore, pluginRegistry) {
+    this.cdn = cdn;
     this.lessonStore = lessonStore;
     this.pluginRegistry = pluginRegistry;
   }
@@ -26,6 +31,10 @@ class LessonService {
   }
 
   async createLesson({ userId, roomId, title, slug, language, schedule }) {
+    const lessonId = uniqueId.create();
+
+    await this.createUploadDirectoryMarkerForLesson(lessonId);
+
     const mappedSchedule = schedule
       ? {
         startsOn: new Date(schedule.startsOn)
@@ -33,7 +42,7 @@ class LessonService {
       : null;
 
     const lesson = {
-      _id: uniqueId.create(),
+      _id: lessonId,
       roomId,
       createdOn: new Date(),
       createdBy: userId,
@@ -47,9 +56,26 @@ class LessonService {
       schedule: mappedSchedule
     };
 
-    await this.lessonStore.saveLesson(lesson);
+    try {
+      await this.lessonStore.saveLesson(lesson);
+    } catch (error) {
+      await this.deleteUploadDirectoryMarkerForLesson(lessonId);
+      throw error;
+    }
 
     return lesson;
+  }
+
+  async createUploadDirectoryMarkerForLesson(lessonId) {
+    const homePath = getPublicHomePath(lessonId);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.uploadEmptyObject(directoryMarkerPath);
+  }
+
+  async deleteUploadDirectoryMarkerForLesson(lessonId) {
+    const homePath = getPublicHomePath(lessonId);
+    const directoryMarkerPath = urlUtils.concatParts(homePath, STORAGE_DIRECTORY_MARKER_NAME);
+    await this.cdn.deleteObject(directoryMarkerPath);
   }
 
   async updateLessonMetadata(lessonId, { userId, title, slug, language, schedule }) {
