@@ -14,7 +14,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
-const { BadRequest } = httpErrors;
+const { BadRequest, NotFound } = httpErrors;
 
 export default class StorageService {
   static get inject() { return [ServerConfig, Cdn, RoomStore, RoomInvitationStore, LessonStore, StoragePlanStore, UserStore, LockStore, TransactionRunner]; }
@@ -134,7 +134,12 @@ export default class StorageService {
   }
 
   getObjects({ parentPath, recursive }) {
-    return this._getObjects({ parentPath, recursive, includeEmptyObjects: false });
+    return this._getObjects({
+      parentPath,
+      recursive,
+      includeEmptyObjects: false,
+      ignoreNonExistingPath: false
+    });
   }
 
   async deleteObject({ path, storageClaimingUserId }) {
@@ -171,7 +176,8 @@ export default class StorageService {
       const { objects: roomPrivateStorageObjects } = await this._getObjects({
         parentPath: getPathForPrivateRoom(roomId),
         recursive: true,
-        includeEmptyObjects: true
+        includeEmptyObjects: true,
+        ignoreNonExistingPath: true
       });
 
       if (roomPrivateStorageObjects.length) {
@@ -263,7 +269,7 @@ export default class StorageService {
     return usedBytes;
   }
 
-  async _getObjects({ parentPath, recursive, includeEmptyObjects }) {
+  async _getObjects({ parentPath, recursive, includeEmptyObjects, ignoreNonExistingPath }) {
     const currentDirectorySegments = parentPath.split('/').filter(seg => !!seg);
     const encodedCurrentDirectorySegments = currentDirectorySegments.map(s => encodeURIComponent(s));
 
@@ -299,6 +305,10 @@ export default class StorageService {
 
     const prefix = currentDirectorySegments.length ? `${currentDirectorySegments.join('/')}/` : '';
     const cdnObjects = await this.cdn.listObjects({ prefix, recursive });
+
+    if (!ignoreNonExistingPath && !cdnObjects.length) {
+      throw new NotFound();
+    }
 
     const objects = cdnObjects.map(obj => {
       const isDirectory = !!obj.prefix;

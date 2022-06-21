@@ -1,6 +1,6 @@
 import React from 'react';
-import Dropperx from 'dropperx';
 import classNames from 'classnames';
+import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import ColorPicker from '../../components/color-picker.js';
@@ -17,6 +17,8 @@ import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
+
+const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -344,18 +346,20 @@ function AnavisEditor({ content, onContentChanged }) {
           <MarkdownInput value={text} onChange={handleTextChanged} />
         </Form.Item>
       </Form>
-      <Dropperx accept="application/json" maxSize={500000} onDrop={handleJsonDrop}>
-        {({ canDrop }) => (
-          <Table
-            className={classNames({ 'AnavisEditor-table': true, 'u-can-drop': canDrop })}
-            dataSource={dataSource}
-            expandedRowRender={renderExpandedRow}
-            columns={columns}
-            pagination={false}
-            size="small"
-            />
+      <ReactDropzone onDrop={handleJsonDrop} noKeyboard noClick>
+        {({ getRootProps, isDragActive }) => (
+          <div {...getRootProps({ className: classNames({ 'AnavisEditor-table': true, 'u-can-drop': isDragActive }) })}>
+            <Table
+              dataSource={dataSource}
+              expandedRowRender={renderExpandedRow}
+              columns={columns}
+              pagination={false}
+              bordered={false}
+              size="small"
+              />
+          </div>
         )}
-      </Dropperx>
+      </ReactDropzone>
     </div>
   );
 }
