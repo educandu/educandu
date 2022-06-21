@@ -1,6 +1,7 @@
 import React from 'react';
 import { Spin } from 'antd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import FilesGridViewer from './files-grid-viewer.js';
 import FilesListViewer from './files-list-viewer.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
@@ -40,11 +41,9 @@ function FilesViewer({
         onPreviewClick={onPreviewClick}
         onNavigateToParentClick={onNavigateToParentClick}
         />
-      {isLoading && (
-        <div className="FilesViewer-loadingOverlay">
-          <Spin size="large" />
-        </div>
-      )}
+      <div className={classNames('FilesViewer-loadingOverlay', { 'is-disabled': !isLoading })}>
+        <Spin size="large" />
+      </div>
     </div>
   );
 }

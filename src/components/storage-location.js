@@ -1,27 +1,30 @@
-import debounce from 'debounce';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import prettyBytes from 'pretty-bytes';
 import UsedStorage from './used-storage.js';
 import FilePreview from './file-preview.js';
+import reactDropzoneNs from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import cloneDeep from '../utils/clone-deep.js';
 import { useLocale } from './locale-context.js';
 import { useService } from './container-context.js';
+import { Alert, Button, message, Select } from 'antd';
 import { handleApiError } from '../ui/error-helper.js';
 import { DoubleLeftOutlined } from '@ant-design/icons';
 import UploadIcon from './icons/general/upload-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import { useSetStorageLocation } from './storage-context.js';
-import { Alert, Button, message, Select, Upload } from 'antd';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import { getCookie, setSessionCookie } from '../common/cookie.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
 import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
-import React, { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl, processFileBeforeUpload } from '../utils/storage-utils.js';
+
+const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
 const WIZARD_SCREEN = {
   none: 'none',
@@ -35,35 +38,102 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const { uploadLiabilityCookieName } = useService(ClientConfig);
   const storageApiClient = useSessionAwareApiClient(StorageApiClient);
 
+  const dropzoneRef = useRef();
+  const isMounted = useRef(false);
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadQueue, setUploadQueue] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [parentDirectory, setParentDirectory] = useState(null);
   const [currentDirectory, setCurrentDirectory] = useState(null);
-  const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [wizardScreen, setWizardScreen] = useState(WIZARD_SCREEN.none);
+  const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
+  const canAcceptFiles = canUploadToCurrentDirectory && !isUploading && !isLoading;
+
   const fetchStorageContent = useCallback(async () => {
-    if (!currentDirectoryPath) {
+    if (!currentDirectoryPath || !isMounted.current) {
       return;
     }
 
     try {
-      let result = await storageApiClient.getCdnObjects(currentDirectoryPath);
-      if (!result.objects.length) {
-        result = await storageApiClient.getCdnObjects(storageLocation.homePath);
+      setIsLoading(true);
+      const result = await storageApiClient.getCdnObjects(currentDirectoryPath);
+      if (!isMounted.current) {
+        return;
       }
+
       setCanUploadToCurrentDirectory(canUploadToPath(result.currentDirectory.path));
       setParentDirectory(result.parentDirectory);
       setCurrentDirectory(result.currentDirectory);
       setFiles(result.objects);
       setSelectedFile(null);
+      setIsLoading(false);
     } catch (err) {
-      message.error(err.message);
+      setIsLoading(false);
+      if (err.status === 404) {
+        setCurrentDirectoryPath(storageLocation.homePath);
+      } else {
+        message.error(err.message);
+      }
     }
-  }, [currentDirectoryPath, storageLocation.homePath, storageApiClient]);
+  }, [currentDirectoryPath, storageLocation.homePath, storageApiClient, isMounted]);
+
+  const uploadFiles = useCallback(async fileToUpload => {
+    const canUploadFile = (file, currentUsedBytes) => {
+      if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
+        message.error(t('uploadLimitExceeded', {
+          uploadSize: prettyBytes(file.size, { locale: uiLocale }),
+          uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: uiLocale })
+        }));
+        return false;
+      }
+
+      if (storageLocation.type === STORAGE_LOCATION_TYPE.private) {
+        const availableBytes = Math.max(0, (storageLocation.maxBytes || 0) - currentUsedBytes);
+        if (file.size > availableBytes) {
+          message.error(t('insufficientPrivateStorge'));
+          return false;
+        }
+      }
+      return true;
+    };
+
+    const processedFiles = await Promise.all(fileToUpload.map(file => processFileBeforeUpload({ file, optimizeImages: true })));
+    fileToUpload.push(...processedFiles);
+
+    let uploadErrorOccured = false;
+
+    const hideUploadingMessage = message.loading(t('uploading', { count: processedFiles.length }), 0);
+    let currentUsedBytes = storageLocation.usedBytes;
+
+    try {
+      for (const file of processedFiles) {
+        if (canUploadFile(file, currentUsedBytes)) {
+          // eslint-disable-next-line no-await-in-loop
+          const { usedBytes } = await storageApiClient.uploadFiles([file], currentDirectory.path);
+          currentUsedBytes = usedBytes;
+        } else {
+          uploadErrorOccured = true;
+        }
+      }
+    } catch (error) {
+      uploadErrorOccured = true;
+      handleApiError({ error });
+    }
+    setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
+
+    hideUploadingMessage();
+
+    if (!uploadErrorOccured) {
+      message.success(t('successfullyUploaded'));
+    }
+
+    await fetchStorageContent();
+  }, [currentDirectory, storageLocation, setStorageLocation, storageApiClient, t, uiLocale, fetchStorageContent]);
 
   const handleFileClick = newFile => {
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
@@ -93,93 +163,57 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     onExitFullscreen();
   };
 
-  const renderSelectButton = () => <Button type="primary" onClick={handleSelectClick} disabled={!selectedFile}>{t('common:select')}</Button>;
+  const renderSelectButton = () => (
+    <Button
+      type="primary"
+      onClick={handleSelectClick}
+      disabled={!selectedFile || isUploading || isLoading}
+      >
+      {t('common:select')}
+    </Button>
+  );
 
-  const handleBeforeUpload = () => {
-    return new Promise(resolve => {
-      if (storageLocation.type === STORAGE_LOCATION_TYPE.public && !getCookie(uploadLiabilityCookieName)) {
-        confirmPublicUploadLiability(t, () => {
-          setSessionCookie(uploadLiabilityCookieName, 'true');
-          resolve(true);
-        }, () => resolve(false));
-      } else {
-        resolve(true);
+  useEffect(() => {
+    const checkPreconditions = () => {
+      return storageLocation.type === STORAGE_LOCATION_TYPE.public
+        ? new Promise(resolve => {
+          if (!getCookie(uploadLiabilityCookieName)) {
+            confirmPublicUploadLiability(t, () => {
+              setSessionCookie(uploadLiabilityCookieName, 'true');
+              resolve(true);
+            }, () => resolve(false));
+          } else {
+            resolve(true);
+          }
+        })
+        : true;
+    };
+
+    const startUpload = async () => {
+      if (!uploadQueue.length || isUploading) {
+        return;
       }
-    });
-  };
 
-  const canUploadFile = (file, currentUsedBytes) => {
-    if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
-      message.error(t('uploadLimitExceeded', {
-        uploadSize: prettyBytes(file.size, { locale: uiLocale }),
-        uploadLimit: prettyBytes(LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, { locale: uiLocale })
-      }));
-      return false;
-    }
-
-    if (storageLocation.type === STORAGE_LOCATION_TYPE.private) {
-      const availableBytes = Math.max(0, (storageLocation.maxBytes || 0) - currentUsedBytes);
-
-      if (file.size > availableBytes) {
-        message.error(t('insufficientPrivateStorge'));
-        return false;
-      }
-    }
-    return true;
-  };
-
-  let isUploading = false;
-  let filesBeingUploaded = [];
-
-  const uploadFilesDebounced = debounce(async ({ onProgress } = {}) => {
-    if (!filesBeingUploaded.length || isUploading) {
-      return;
-    }
-
-    isUploading = true;
-    let uploadErrorOccured = false;
-
-    const hideUploadingMessage = message.loading(t('uploading', { count: filesBeingUploaded.length }), 0);
-    let currentUsedBytes = storageLocation.usedBytes;
-
-    try {
-      for (const file of filesBeingUploaded) {
-        if (canUploadFile(file, currentUsedBytes)) {
-          // eslint-disable-next-line no-await-in-loop
-          const { usedBytes } = await storageApiClient.uploadFiles([file], currentDirectory.path, { onProgress });
-          currentUsedBytes = usedBytes;
-        } else {
-          uploadErrorOccured = true;
+      try {
+        const preMet = await checkPreconditions();
+        if (!preMet || !uploadQueue.length || isUploading) {
+          return;
         }
+
+        setIsUploading(true);
+        await uploadFiles(uploadQueue);
+      } finally {
+        setUploadQueue([]);
+        setIsUploading(false);
       }
-    } catch (error) {
-      uploadErrorOccured = true;
-      handleApiError({ error });
-    }
-    setStorageLocation({ ...cloneDeep(storageLocation), usedBytes: currentUsedBytes });
+    };
 
-    hideUploadingMessage();
+    startUpload();
 
-    if (!uploadErrorOccured) {
-      message.success(t('successfullyUploaded'));
-    }
+  }, [uploadQueue, isUploading, uploadFiles, storageLocation.type, uploadLiabilityCookieName, t]);
 
-    filesBeingUploaded = [];
-    isUploading = false;
-
-    await fetchStorageContent();
-  }, 300);
-
-  const collectFilesAndUploadDebounced = async file => {
-    const processedFile = await processFileBeforeUpload({ file, optimizeImages: true });
-    filesBeingUploaded.push(processedFile);
-
-    uploadFilesDebounced();
-  };
-
-  const handleCustomUploadRequest = ({ file, onProgress, onSuccess }) => {
-    const result = collectFilesAndUploadDebounced(file, { onProgress });
-    onSuccess(result);
+  const handleUploadButtonClick = () => {
+    dropzoneRef.current.open();
   };
 
   useEffect(() => {
@@ -192,10 +226,21 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   }, [initialUrl, storageLocation.homePath, storageLocation.rootPath]);
 
   useEffect(() => {
-    setIsLoading(true);
     fetchStorageContent();
-    setIsLoading(false);
   }, [fetchStorageContent]);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const getFilesViewerClasses = isDragActive => classNames({
+    'StorageLocation-filesViewer': true,
+    'u-can-drop': isDragActive && canAcceptFiles,
+    'u-cannot-drop': isDragActive && !canAcceptFiles
+  });
 
   return (
     <div className="StorageLocation">
@@ -210,21 +255,30 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
               options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
               />
           </div>
-          <div className="StorageLocation-filesViewer">
-            <FilesViewer
-              files={files}
-              parentDirectory={parentDirectory}
-              display={filesViewerDisplay}
-              onFileClick={handleFileClick}
-              selectedFileUrl={selectedFile?.portableUrl}
-              onDeleteClick={handleDeleteClick}
-              onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
-              onPreviewClick={handlePreviewClick}
-              canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
-              canDelete={storageLocation.isDeletionEnabled}
-              isLoading={isLoading}
-              />
-          </div>
+          <ReactDropzone
+            ref={dropzoneRef}
+            onDrop={canAcceptFiles ? setUploadQueue : null}
+            noKeyboard
+            noClick
+            >
+            {({ getRootProps, isDragActive }) => (
+              <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
+                <FilesViewer
+                  files={files}
+                  parentDirectory={parentDirectory}
+                  display={filesViewerDisplay}
+                  onFileClick={handleFileClick}
+                  selectedFileUrl={selectedFile?.portableUrl}
+                  onDeleteClick={handleDeleteClick}
+                  onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
+                  onPreviewClick={handlePreviewClick}
+                  canNavigateToParent={currentDirectory?.path?.length > storageLocation.rootPath.length}
+                  canDelete={storageLocation.isDeletionEnabled}
+                  isLoading={isLoading}
+                  />
+              </div>
+            )}
+          </ReactDropzone>
           <div className="StorageLocation-storageInfo">
             {storageLocation.type === STORAGE_LOCATION_TYPE.private
             && (storageLocation.usedBytes > 0 || storageLocation.maxBytes > 0)
@@ -234,16 +288,9 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             )}
           </div>
           <div className="StorageLocation-buttonsLine">
-            <Upload
-              multiple
-              showUploadList={false}
-              beforeUpload={handleBeforeUpload}
-              customRequest={handleCustomUploadRequest}
-              >
-              <Button disabled={!canUploadToCurrentDirectory || isUploading}>
-                <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
-              </Button>
-            </Upload>
+            <Button disabled={!canUploadToCurrentDirectory || isLoading} loading={isUploading} onClick={handleUploadButtonClick}>
+              <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
+            </Button>
             <div className="StorageLocation-buttonsGroup">
               <Button onClick={onCancel}>{t('common:cancel')}</Button>
               {renderSelectButton()}
