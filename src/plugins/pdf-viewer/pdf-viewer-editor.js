@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import ResourcePicker from '../../components/resource-picker.js';
 import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import StorageFilePicker from '../../components/storage-file-picker.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;
 
@@ -61,9 +62,9 @@ function PdfViewerEditor({ content, onContentChanged }) {
               value={sourceUrl}
               onChange={handleSourceUrlChange}
               />
-            <StorageFilePicker
-              fileName={sourceUrl}
-              onFileNameChanged={handleCdnFileNameChange}
+            <ResourcePicker
+              url={storageLocationPathToUrl(sourceUrl)}
+              onUrlChange={url => handleCdnFileNameChange(urlToSorageLocationPath(url))}
               />
           </div>
         </FormItem>

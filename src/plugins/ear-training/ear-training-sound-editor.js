@@ -5,8 +5,9 @@ import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
-import StorageFilePicker from '../../components/storage-file-picker.js';
+import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -85,9 +86,9 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
             value={sound.sourceUrl}
             onChange={handleInternalUrlChanged}
             />
-          <StorageFilePicker
-            fileName={sound.sourceUrl}
-            onFileNameChanged={handleInternalUrlFileNameChanged}
+          <ResourcePicker
+            url={storageLocationPathToUrl(sound.sourceUrl)}
+            onUrlChange={url => handleInternalUrlFileNameChanged(urlToSorageLocationPath(url))}
             />
         </div>
         )}

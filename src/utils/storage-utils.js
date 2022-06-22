@@ -11,6 +11,7 @@ import {
 
 const publicCdnPathPattern = /^media(\/.*)?$/;
 const privateCdnPathPattern = /^rooms\/([^/]+)\/media(\/.*)?$/;
+const scalableImageFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
 
 const getScaledDownDimensions = img => {
   if (img.naturalWidth <= IMAGE_OPTIMIZATION_THRESHOLD_WIDTH) {
@@ -21,8 +22,6 @@ const getScaledDownDimensions = img => {
   return { width: IMAGE_OPTIMIZATION_THRESHOLD_WIDTH, height: Math.round(((img.naturalHeight / ratio) + Number.EPSILON) * 100) / 100 };
 };
 
-const scalableFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'];
-
 const shouldOptimizeImage = ({ naturalSize, naturalWidth }) => {
   const widthIsTooBig = naturalWidth > IMAGE_OPTIMIZATION_THRESHOLD_WIDTH && naturalSize > IMAGE_OPTIMIZATION_MAX_SIZE_OVER_THRESHOLD_WIDTH_IN_BYTES;
   const sizeIsTooBig = naturalSize > IMAGE_OPTIMIZATION_MAX_SIZE_UNDER_THRESHOLD_WIDTH_IN_BYTES;
@@ -31,10 +30,6 @@ const shouldOptimizeImage = ({ naturalSize, naturalWidth }) => {
 };
 
 const optimizeImage = file => {
-  if (!scalableFileTypes.includes(file.type)) {
-    return file;
-  }
-
   return new Promise(resolve => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -64,19 +59,13 @@ const optimizeImage = file => {
   });
 };
 
-export const processFileBeforeUpload = ({ file, optimizeImages }) => {
-  if (!optimizeImages) {
-    return file;
-  }
-  return optimizeImage(file);
-};
-
-export const processFilesBeforeUpload = ({ files, optimizeImages }) => {
-  if (!optimizeImages) {
-    return files;
-  }
-  return Promise.all(files.map(file => optimizeImage(file)));
-};
+export function processFilesBeforeUpload(files) {
+  return Promise.all(files.map(file => {
+    return scalableImageFileTypes.includes(file.type)
+      ? optimizeImage(file)
+      : file;
+  }));
+}
 
 export function getStorageLocationTypeForPath(path) {
   if (publicCdnPathPattern.test(path)) {
@@ -143,7 +132,15 @@ export function isAccessibleStoragePath(storagePath, fromRoomId) {
     : true;
 }
 
-export const componseUniqueFileName = (fileName, parentPath = null) => {
+export function urlToSorageLocationPath(url) {
+  return url ? url.replace(/^cdn:\/\//, '') : '';
+}
+
+export function storageLocationPathToUrl(path) {
+  return path ? `cdn://${path}` : '';
+}
+
+export function componseUniqueFileName(fileName, parentPath = null) {
   const id = uniqueId.create();
   const extension = getResourceExtension(fileName);
   const baseName = fileName.substr(0, fileName.length - extension.length);
@@ -151,4 +148,4 @@ export const componseUniqueFileName = (fileName, parentPath = null) => {
   const uniqueBaseName = [slugifiedBaseName, id].filter(x => x).join('-');
   const newFileName = `${uniqueBaseName}.${extension}`;
   return parentPath ? urlUtils.concatParts(parentPath, newFileName) : newFileName;
-};
+}

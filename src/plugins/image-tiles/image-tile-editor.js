@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import DocumentSelector from '../../components/document-selector.js';
 import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
-import StorageFilePicker from '../../components/storage-file-picker.js';
+import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -87,9 +88,9 @@ function ImageTileEditor({ index, image, description, link, onChange }) {
               value={image.sourceUrl}
               onChange={handleInternalImageUrlValueChanged}
               />
-            <StorageFilePicker
-              fileName={image.sourceUrl}
-              onFileNameChanged={handleInternalImageUrlFileNameChanged}
+            <ResourcePicker
+              url={storageLocationPathToUrl(image.sourceUrl)}
+              onUrlChange={url => handleInternalImageUrlFileNameChanged(urlToSorageLocationPath(url))}
               />
           </div>
         </FormItem>

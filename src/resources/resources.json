@@ -1336,20 +1336,6 @@
     }
   },
   {
-    "namespace": "storageFilePicker",
-    "language": "en",
-    "resources": {
-      "modalTitle": "File browser"
-    }
-  },
-  {
-    "namespace": "storageFilePicker",
-    "language": "de",
-    "resources": {
-      "modalTitle": "Dateibrowser"
-    }
-  },
-  {
     "namespace": "storageLocation",
     "language": "en",
     "resources": {

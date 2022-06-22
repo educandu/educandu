@@ -22,7 +22,7 @@ import FilesViewer, { FILES_VIEWER_DISPLAY } from './files-viewer.js';
 import { confirmPublicUploadLiability } from './confirmation-dialogs.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { CDN_OBJECT_TYPE, LIMIT_PER_STORAGE_UPLOAD_IN_BYTES, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
-import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl, processFileBeforeUpload } from '../utils/storage-utils.js';
+import { canUploadToPath, getParentPathForStorageLocationPath, getStorageLocationPathForUrl, processFilesBeforeUpload } from '../utils/storage-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -82,7 +82,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     }
   }, [currentDirectoryPath, storageLocation.homePath, storageApiClient, isMounted]);
 
-  const uploadFiles = useCallback(async fileToUpload => {
+  const uploadFiles = useCallback(async filesToUpload => {
     const canUploadFile = (file, currentUsedBytes) => {
       if (file.size > LIMIT_PER_STORAGE_UPLOAD_IN_BYTES) {
         message.error(t('uploadLimitExceeded', {
@@ -102,12 +102,11 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
       return true;
     };
 
-    const processedFiles = await Promise.all(fileToUpload.map(file => processFileBeforeUpload({ file, optimizeImages: true })));
-    fileToUpload.push(...processedFiles);
+    const hideUploadingMessage = message.loading(t('uploading', { count: filesToUpload.length }), 0);
+
+    const processedFiles = await processFilesBeforeUpload(filesToUpload);
 
     let uploadErrorOccured = false;
-
-    const hideUploadingMessage = message.loading(t('uploading', { count: processedFiles.length }), 0);
     let currentUsedBytes = storageLocation.usedBytes;
 
     try {
@@ -144,7 +143,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   };
 
   const handleSelectClick = () => {
-    onSelect(selectedFile.path);
+    onSelect(selectedFile.portableUrl);
   };
 
   const handleDeleteClick = async file => {
@@ -248,12 +247,14 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
         <Fragment>
           <div className="StorageLocation-buttonsLine">
             <div />
-            <Select
-              value={filesViewerDisplay}
-              onChange={setFilesViewerDisplay}
-              className="StorageLocation-filesViewerSelect"
-              options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
-              />
+            <div className="StorageLocation-filesViewerSelectContainer">
+              <Select
+                value={filesViewerDisplay}
+                onChange={setFilesViewerDisplay}
+                className="StorageLocation-filesViewerSelect"
+                options={Object.values(FILES_VIEWER_DISPLAY).map(v => ({ label: t(`filesView_${v}`), value: v }))}
+                />
+            </div>
           </div>
           <ReactDropzone
             ref={dropzoneRef}

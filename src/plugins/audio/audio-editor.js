@@ -5,9 +5,10 @@ import validation from '../../ui/validation.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import StorageFilePicker from '../../components/storage-file-picker.js';
+import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -72,9 +73,9 @@ function AudioEditor({ content, onContentChanged }) {
                 value={sourceUrl}
                 onChange={handleSourceUrlValueChange}
                 />
-              <StorageFilePicker
-                fileName={sourceUrl}
-                onFileNameChanged={handleInternalUrlFileNameChange}
+              <ResourcePicker
+                url={storageLocationPathToUrl(sourceUrl)}
+                onUrlChange={url => handleInternalUrlFileNameChange(urlToSorageLocationPath(url))}
                 />
             </div>
           </FormItem>
