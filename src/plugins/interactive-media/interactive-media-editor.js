@@ -15,13 +15,14 @@ import MarkdownInput from '../../components/markdown-input.js';
 import InteractiveMediaInfo from './interactive-media-info.js';
 import { getResourceType } from '../../utils/resource-utils.js';
 import DebouncedInput from '../../components/debounced-input.js';
+import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import StorageFilePicker from '../../components/storage-file-picker.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import MediaRangeSelector from '../../components/media-range-selector.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
+import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { trimChaptersToFitRange, analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
@@ -301,9 +302,9 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 onChange={handleSourceUrlChange}
                 onBlur={handleSourceUrlBlur}
                 />
-              <StorageFilePicker
-                fileName={sourceUrl}
-                onFileNameChanged={handleInternalUrlFileNameChanged}
+              <ResourcePicker
+                url={storageLocationPathToUrl(sourceUrl)}
+                onUrlChange={url => handleInternalUrlFileNameChanged(urlToSorageLocationPath(url))}
                 />
             </div>
           </FormItem>

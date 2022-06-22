@@ -7,16 +7,17 @@ import ColorPicker from '../../components/color-picker.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import DeleteButton from '../../components/delete-button.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
-import StorageFilePicker from '../../components/storage-file-picker.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
+import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -317,9 +318,9 @@ function AnavisEditor({ content, onContentChanged }) {
                 value={sourceUrl}
                 onChange={handleInternalUrlValueChanged}
                 />
-              <StorageFilePicker
-                fileName={sourceUrl}
-                onFileNameChanged={handleInternalUrlFileNameChanged}
+              <ResourcePicker
+                url={storageLocationPathToUrl(sourceUrl)}
+                onUrlChange={url => handleInternalUrlFileNameChanged(urlToSorageLocationPath(url))}
                 />
             </div>
           </FormItem>

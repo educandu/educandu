@@ -28,8 +28,8 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
     setCurrentLocation(newCurrentLocation);
   }, [allowedLocationTypes, initialUrl, locations]);
 
-  const handleLocationTabChange = key => {
-    setCurrentLocation(visibleLocations.find(location => location.type === key));
+  const handleLocationTabChange = newLocationType => {
+    setCurrentLocation(visibleLocations.find(location => location.type === newLocationType));
   };
 
   const renderLocation = location => {
@@ -55,7 +55,7 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
     <div className="ResourceSelector">
       <Tabs
         size="small"
-        defaultActiveKey={currentLocation?.type}
+        activeKey={currentLocation?.type || visibleLocations[0]?.type || null}
         onChange={handleLocationTabChange}
         renderTabBar={isFullscreen ? () => null : null}
         >

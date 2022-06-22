@@ -5,11 +5,12 @@ import { Form, Input, Radio, InputNumber } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { getImageDimensions, getImageSource } from './utils.js';
+import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import StorageFilePicker from '../../components/storage-file-picker.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION, SMALL_IMAGE_WIDTH_THRESHOLD } from './constants.js';
 
 const RadioButton = Radio.Button;
@@ -243,7 +244,7 @@ function ImageEditor({ content, onContentChanged }) {
     </FormItem>
   );
 
-  const renderInternalSourceTypeInput = (value, onInputChangeHandler, inFileChangeHandler) => (
+  const renderInternalSourceTypeInput = (value, onInputChangeHandler, onFileChangeHandler) => (
     <FormItem label={t('common:internalUrl')} {...formItemLayout}>
       <div className="u-input-and-button">
         <Input
@@ -251,9 +252,9 @@ function ImageEditor({ content, onContentChanged }) {
           value={value}
           onChange={onInputChangeHandler}
           />
-        <StorageFilePicker
-          fileName={value}
-          onFileNameChanged={inFileChangeHandler}
+        <ResourcePicker
+          url={storageLocationPathToUrl(value)}
+          onUrlChange={url => onFileChangeHandler(urlToSorageLocationPath(url))}
           />
       </div>
     </FormItem>
