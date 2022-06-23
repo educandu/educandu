@@ -20,6 +20,7 @@ function FilesViewer({
   canNavigateToParent,
   onDeleteClick,
   onFileClick,
+  onFileDoubleClick,
   onPreviewClick,
   onNavigateToParentClick,
   isLoading
@@ -38,6 +39,7 @@ function FilesViewer({
         canNavigateToParent={canNavigateToParent}
         onDeleteClick={onDeleteClick}
         onFileClick={onFileClick}
+        onFileDoubleClick={onFileDoubleClick}
         onPreviewClick={onPreviewClick}
         onNavigateToParentClick={onNavigateToParentClick}
         />
@@ -56,6 +58,7 @@ FilesViewer.propTypes = {
   isLoading: PropTypes.bool,
   onDeleteClick: PropTypes.func,
   onFileClick: PropTypes.func,
+  onFileDoubleClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
@@ -70,6 +73,7 @@ FilesViewer.defaultProps = {
   isLoading: false,
   onDeleteClick: () => {},
   onFileClick: () => {},
+  onFileDoubleClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
   parentDirectory: null,

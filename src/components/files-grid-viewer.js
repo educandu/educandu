@@ -3,6 +3,7 @@ import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { useDebouncedCallback } from '../ui/hooks.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
@@ -19,10 +20,12 @@ function FilesGridViewer({
   canNavigateToParent,
   onDeleteClick,
   onFileClick,
+  onFileDoubleClick,
   onPreviewClick,
   onNavigateToParentClick
 }) {
   const { t } = useTranslation('filesGridViewer');
+  const debouncedOnFileClick = useDebouncedCallback(onFileClick, 200);
 
   const handlePreviewClick = (event, file) => {
     event.stopPropagation();
@@ -47,14 +50,14 @@ function FilesGridViewer({
 
     return (
       <div className="FilesGridViewer-fileContainer" key={file.portableUrl}>
-        <a className="FilesGridViewer-file" onClick={() => onFileClick(file)}>
+        <a className="FilesGridViewer-file" onClick={() => debouncedOnFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
           <div className="FilesGridViewer-fileDisplay">
             {fileDisplay}
           </div>
           <span className="FilesGridViewer-fileName">{file.displayName}</span>
         </a>
         <div className={overlayClasses} />
-        <div className={actionsClasses} onClick={() => onFileClick(file)}>
+        <div className={actionsClasses} onClick={() => debouncedOnFileClick(file)}>
           <Tooltip title={t('common:preview')}>
             <a
               className="FilesGridViewer-action FilesGridViewer-action--preview"
@@ -103,6 +106,7 @@ FilesGridViewer.propTypes = {
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   onDeleteClick: PropTypes.func,
   onFileClick: PropTypes.func,
+  onFileDoubleClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
@@ -114,6 +118,7 @@ FilesGridViewer.defaultProps = {
   canNavigateToParent: false,
   onDeleteClick: () => {},
   onFileClick: () => {},
+  onFileDoubleClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
   parentDirectory: null,

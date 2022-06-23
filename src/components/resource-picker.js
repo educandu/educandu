@@ -43,6 +43,7 @@ function ResourcePicker({ url, onUrlChange }) {
         footer={null}
         destroyOnClose
         visible={isModalVisible}
+        onCancel={handleCancel}
         modalRender={modalRender}
         bodyStyle={{ maxHeight: 'calc(90vh - 110px)', overflowY: 'auto' }}
         >

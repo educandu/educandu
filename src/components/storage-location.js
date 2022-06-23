@@ -142,6 +142,14 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     }
   };
 
+  const handleFileDoubleClick = newFile => {
+    if (newFile.type === CDN_OBJECT_TYPE.directory) {
+      setCurrentDirectoryPath(newFile.path);
+    } else {
+      onSelect(newFile.portableUrl);
+    }
+  };
+
   const handleSelectClick = () => {
     onSelect(selectedFile.portableUrl);
   };
@@ -262,13 +270,15 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             noKeyboard
             noClick
             >
-            {({ getRootProps, isDragActive }) => (
+            {({ getRootProps, getInputProps, isDragActive }) => (
               <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
+                <input {...getInputProps()} hidden />
                 <FilesViewer
                   files={files}
                   parentDirectory={parentDirectory}
                   display={filesViewerDisplay}
                   onFileClick={handleFileClick}
+                  onFileDoubleClick={handleFileDoubleClick}
                   selectedFileUrl={selectedFile?.portableUrl}
                   onDeleteClick={handleDeleteClick}
                   onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
@@ -289,8 +299,13 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             )}
           </div>
           <div className="StorageLocation-buttonsLine">
-            <Button disabled={!canUploadToCurrentDirectory || isLoading} loading={isUploading} onClick={handleUploadButtonClick}>
-              <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
+            <Button
+              icon={<UploadIcon />}
+              loading={isUploading}
+              onClick={handleUploadButtonClick}
+              disabled={!canUploadToCurrentDirectory || isLoading}
+              >
+              {t('uploadFiles')}
             </Button>
             <div className="StorageLocation-buttonsGroup">
               <Button onClick={onCancel}>{t('common:cancel')}</Button>

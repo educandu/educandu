@@ -25,6 +25,7 @@ function FilesListViewer({
   canNavigateToParent,
   onDeleteClick,
   onFileClick,
+  onFileDoubleClick,
   onPreviewClick,
   onNavigateToParentClick
 }) {
@@ -42,6 +43,10 @@ function FilesListViewer({
 
   const handleRowClick = row => {
     onFileClick(getFile(row));
+  };
+
+  const handleRowDoubleClick = row => {
+    onFileDoubleClick(getFile(row));
   };
 
   const handlePreviewClick = (event, row) => {
@@ -189,7 +194,8 @@ function FilesListViewer({
               dataSource={rows}
               rowClassName={getRowClassName}
               onRow={row => ({
-                onClick: () => handleRowClick(row)
+                onClick: () => handleRowClick(row),
+                onDoubleClick: () => handleRowDoubleClick(row)
               })}
               onHeaderRow={(_columns, rowIndex) => ({
                 onClick: () => handleHeaderRowClick(rowIndex)
@@ -209,6 +215,7 @@ FilesListViewer.propTypes = {
   files: PropTypes.arrayOf(cdnObjectShape).isRequired,
   onDeleteClick: PropTypes.func,
   onFileClick: PropTypes.func,
+  onFileDoubleClick: PropTypes.func,
   onNavigateToParentClick: PropTypes.func,
   onPreviewClick: PropTypes.func,
   parentDirectory: cdnObjectShape,
@@ -220,6 +227,7 @@ FilesListViewer.defaultProps = {
   canNavigateToParent: false,
   onDeleteClick: () => {},
   onFileClick: () => {},
+  onFileDoubleClick: () => {},
   onNavigateToParentClick: () => {},
   onPreviewClick: () => {},
   parentDirectory: null,
