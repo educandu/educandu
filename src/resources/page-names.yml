@@ -24,4 +24,4 @@ docs:
   de: Dokumente
 lesson:
   en: Lesson - {lessonTitle}
-  de: Unterrichtseinheit - {lessonTitle}
+  de: Einheit - {lessonTitle}
