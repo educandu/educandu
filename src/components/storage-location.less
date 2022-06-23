@@ -5,7 +5,7 @@
 }
 
 .StorageLocation-filesViewer {
-  height: 270px;
+  height: 50vh;
   margin: 20px 0;
   border: 1px solid @edu-border-color-base;
 
@@ -16,6 +16,8 @@
 
 .StorageLocation-buttonsLine {
   display: flex;
+  gap: @edu-controls-group-gap;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
@@ -23,7 +25,7 @@
 .StorageLocation-buttonsGroup {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: @edu-controls-group-gap;
 }
 
 .StorageLocation-filesViewerSelectCotainer {
