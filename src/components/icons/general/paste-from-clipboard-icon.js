@@ -14,9 +14,9 @@ export function PasteFromClipboardIconComponent() {
   );
 }
 
-function PasteFromClipboardIcon() {
+function PasteFromClipboardIcon(props) {
   return (
-    <Icon component={PasteFromClipboardIconComponent} />
+    <Icon component={PasteFromClipboardIconComponent} {...props} />
   );
 }
 

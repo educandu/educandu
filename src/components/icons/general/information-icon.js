@@ -13,9 +13,9 @@ export function InformationIconComponent() {
   );
 }
 
-function InformationIcon() {
+function InformationIcon(props) {
   return (
-    <Icon component={InformationIconComponent} />
+    <Icon component={InformationIconComponent} {...props} />
   );
 }
 

@@ -11,9 +11,9 @@ export function CloseIconComponent() {
   );
 }
 
-function CloseIcon() {
+function CloseIcon(props) {
   return (
-    <Icon component={CloseIconComponent} />
+    <Icon component={CloseIconComponent} {...props} />
   );
 }
 

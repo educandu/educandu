@@ -13,9 +13,9 @@ export function ViewHistoryIconComponent() {
   );
 }
 
-function ViewHistoryIcon() {
+function ViewHistoryIcon(props) {
   return (
-    <Icon component={ViewHistoryIconComponent} />
+    <Icon component={ViewHistoryIconComponent} {...props} />
   );
 }
 

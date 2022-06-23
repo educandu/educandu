@@ -13,9 +13,9 @@ export function LessonCreatedIconComponent() {
   );
 }
 
-function LessonCreatedIcon() {
+function LessonCreatedIcon(props) {
   return (
-    <Icon component={LessonCreatedIconComponent} />
+    <Icon component={LessonCreatedIconComponent} {...props} />
   );
 }
 

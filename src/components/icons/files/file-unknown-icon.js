@@ -12,9 +12,9 @@ export function FileUnknownIconComponent() {
   );
 }
 
-function FileUnknownIcon() {
+function FileUnknownIcon(props) {
   return (
-    <Icon component={FileUnknownIconComponent} />
+    <Icon component={FileUnknownIconComponent} {...props} />
   );
 }
 

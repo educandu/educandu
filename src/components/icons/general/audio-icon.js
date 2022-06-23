@@ -15,9 +15,9 @@ export function AudioIconComponent() {
   );
 }
 
-function AudioIcon() {
+function AudioIcon(props) {
   return (
-    <Icon component={AudioIconComponent} />
+    <Icon component={AudioIconComponent} {...props} />
   );
 }
 

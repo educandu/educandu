@@ -13,9 +13,9 @@ export function ConfirmationIconComponent() {
   );
 }
 
-function ConfirmationIcon() {
+function ConfirmationIcon(props) {
   return (
-    <Icon component={ConfirmationIconComponent} />
+    <Icon component={ConfirmationIconComponent} {...props} />
   );
 }
 

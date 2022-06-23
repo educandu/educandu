@@ -11,9 +11,9 @@ export function SettingsIconComponent() {
   );
 }
 
-function SettingsIcon() {
+function SettingsIcon(props) {
   return (
-    <Icon component={SettingsIconComponent} />
+    <Icon component={SettingsIconComponent} {...props} />
   );
 }
 

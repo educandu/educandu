@@ -12,9 +12,9 @@ export function UploadIconComponent() {
   );
 }
 
-function UploadIcon() {
+function UploadIcon(props) {
   return (
-    <Icon component={UploadIconComponent} />
+    <Icon component={UploadIconComponent} {...props} />
   );
 }
 

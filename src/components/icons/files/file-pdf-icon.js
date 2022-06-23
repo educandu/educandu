@@ -18,9 +18,9 @@ export function FilePdfIconComponent() {
   );
 }
 
-function FilePdfIcon() {
+function FilePdfIcon(props) {
   return (
-    <Icon component={FilePdfIconComponent} />
+    <Icon component={FilePdfIconComponent} {...props} />
   );
 }
 

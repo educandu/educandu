@@ -12,9 +12,9 @@ export function FolderIconComponent() {
   );
 }
 
-function FolderIcon() {
+function FolderIcon(props) {
   return (
-    <Icon component={FolderIconComponent} />
+    <Icon component={FolderIconComponent} {...props} />
   );
 }
 

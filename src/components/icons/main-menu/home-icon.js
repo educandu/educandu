@@ -11,9 +11,9 @@ export function HomeIconComponent() {
   );
 }
 
-function HomeIcon() {
+function HomeIcon(props) {
   return (
-    <Icon component={HomeIconComponent} />
+    <Icon component={HomeIconComponent} {...props} />
   );
 }
 

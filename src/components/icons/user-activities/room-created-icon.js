@@ -16,9 +16,9 @@ export function RoomCreatedIconComponent() {
   );
 }
 
-function RoomCreatedIcon() {
+function RoomCreatedIcon(props) {
   return (
-    <Icon component={RoomCreatedIconComponent} />
+    <Icon component={RoomCreatedIconComponent} {...props} />
   );
 }
 

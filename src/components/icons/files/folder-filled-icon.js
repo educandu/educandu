@@ -12,9 +12,9 @@ export function FolderFilledIconComponent() {
   );
 }
 
-function FolderFilledIcon() {
+function FolderFilledIcon(props) {
   return (
-    <Icon component={FolderFilledIconComponent} />
+    <Icon component={FolderFilledIconComponent} {...props} />
   );
 }
 

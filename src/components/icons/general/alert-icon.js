@@ -13,9 +13,9 @@ export function AlertIconComponent() {
   );
 }
 
-function AlertIcon() {
+function AlertIcon(props) {
   return (
-    <Icon component={AlertIconComponent} />
+    <Icon component={AlertIconComponent} {...props} />
   );
 }
 

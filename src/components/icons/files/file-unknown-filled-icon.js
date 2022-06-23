@@ -12,9 +12,9 @@ export function FileUnknownFilledIconComponent() {
   );
 }
 
-function FileUnknownFilledIcon() {
+function FileUnknownFilledIcon(props) {
   return (
-    <Icon component={FileUnknownFilledIconComponent} />
+    <Icon component={FileUnknownFilledIconComponent} {...props} />
   );
 }
 

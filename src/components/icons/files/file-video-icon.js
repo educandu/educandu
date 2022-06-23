@@ -15,9 +15,9 @@ export function FileVideoIconComponent() {
   );
 }
 
-function FileVideoIcon() {
+function FileVideoIcon(props) {
   return (
-    <Icon component={FileVideoIconComponent} />
+    <Icon component={FileVideoIconComponent} {...props} />
   );
 }
 

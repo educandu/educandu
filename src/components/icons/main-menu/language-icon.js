@@ -13,9 +13,9 @@ export function LanguageIconComponent() {
   );
 }
 
-function LanguageIcon() {
+function LanguageIcon(props) {
   return (
-    <Icon component={LanguageIconComponent} />
+    <Icon component={LanguageIconComponent} {...props} />
   );
 }
 

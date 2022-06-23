@@ -26,13 +26,16 @@ function SortingSelector({ sorting, options, size, onChange }) {
     'SortingSelector--large': size === 'large'
   });
 
+  const items = options.map(option => ({
+    key: option.value,
+    label: option.label
+  }));
+
   const menu = (
-    <Menu onClick={handleChange}>
-      {options.map(option => <Menu.Item key={option.value}>{option.label}</Menu.Item>)}
-    </Menu>
+    <Menu items={items} onClick={handleChange} />
   );
 
-  const selectedOption = options.find(o => o.value === sorting.value);
+  const selectedOption = options.find(option => option.value === sorting.value);
 
   return (
     <div className={sortingSelectorClasses}>

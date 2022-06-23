@@ -12,9 +12,9 @@ export function FileTextIconComponent() {
   );
 }
 
-function FileTextIcon() {
+function FileTextIcon(props) {
   return (
-    <Icon component={FileTextIconComponent} />
+    <Icon component={FileTextIconComponent} {...props} />
   );
 }
 

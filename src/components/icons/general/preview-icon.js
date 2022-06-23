@@ -12,9 +12,9 @@ export function PreviewIconComponent() {
   );
 }
 
-function PreviewIcon() {
+function PreviewIcon(props) {
   return (
-    <Icon component={PreviewIconComponent} />
+    <Icon component={PreviewIconComponent} {...props} />
   );
 }
 

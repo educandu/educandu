@@ -11,9 +11,9 @@ export function LogoutIconComponent() {
   );
 }
 
-function LogoutIcon() {
+function LogoutIcon(props) {
   return (
-    <Icon component={LogoutIconComponent} />
+    <Icon component={LogoutIconComponent} {...props} />
   );
 }
 

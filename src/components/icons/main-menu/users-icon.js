@@ -11,9 +11,9 @@ export function UsersIconComponent() {
   );
 }
 
-function UsersIcon() {
+function UsersIcon(props) {
   return (
-    <Icon component={UsersIconComponent} />
+    <Icon component={UsersIconComponent} {...props} />
   );
 }
 

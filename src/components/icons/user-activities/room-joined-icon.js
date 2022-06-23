@@ -17,9 +17,9 @@ export function RoomJoinedIconComponent() {
   );
 }
 
-function RoomJoinedIcon() {
+function RoomJoinedIcon(props) {
   return (
-    <Icon component={RoomJoinedIconComponent} />
+    <Icon component={RoomJoinedIconComponent} {...props} />
   );
 }
 

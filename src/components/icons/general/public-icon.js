@@ -13,9 +13,9 @@ export function PublicIconComponent() {
   );
 }
 
-function PublicIcon() {
+function PublicIcon(props) {
   return (
-    <Icon component={PublicIconComponent} />
+    <Icon component={PublicIconComponent} {...props} />
   );
 }
 

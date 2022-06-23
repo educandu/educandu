@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import ImageTileEditor from './image-tile-editor.js';
-import DeleteButton from '../../components/delete-button.js';
 import { Form, Menu, Radio, Slider, Button, Dropdown } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import DeleteIcon from '../../components/icons/general/delete-icon.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import { HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW } from './constants.js';
@@ -73,29 +73,47 @@ function ImageTilesEditor({ content, onContentChanged }) {
     changeContent({ tiles: removeItemAt(tiles, index) });
   };
 
-  const handleMoveUpClick = index => moveUpTile(index);
-  const handleMoveDownClick = index => moveDownTile(index);
-  const handleDeleteClick = index => confirmDeleteImageTile(t, () => deleteTile(index));
-
   const handleAddButtonClick = () => {
     const newTiles = tiles.slice();
     newTiles.push(createDefaultTile(newTiles.length + 1, t));
     changeContent({ tiles: newTiles });
   };
 
-  const renderTileMenu = index => (
-    <Menu>
-      <Menu.Item key="moveUp" onClick={() => handleMoveUpClick(index)}>
-        <Button type="link" size="small" icon={<MoveUpIcon />}>{t('common:moveUp')}</Button>
-      </Menu.Item>
-      <Menu.Item key="moveDown" onClick={() => handleMoveDownClick(index)}>
-        <Button type="link" size="small" icon={<MoveDownIcon />}>{t('common:moveDown')}</Button>
-      </Menu.Item>
-      <Menu.Item key="delete" onClick={() => handleDeleteClick(index)}>
-        <DeleteButton type="link" size="small">{t('common:delete')}</DeleteButton>
-      </Menu.Item>
-    </Menu>
-  );
+  const renderTileMenu = index => {
+    const handleTileMenuClick = ({ key }) => {
+      switch (key) {
+        case 'moveUp':
+          return moveUpTile(index);
+        case 'moveDown':
+          return moveDownTile(index);
+        case 'delete':
+          return confirmDeleteImageTile(t, () => deleteTile(index));
+        default:
+          throw new Error(`Unknown key: ${key}`);
+      }
+    };
+
+    const items = [
+      {
+        key: 'moveUp',
+        label: t('common:moveUp'),
+        icon: <MoveUpIcon className="u-dropdown-icon" />
+      },
+      {
+        key: 'moveDown',
+        label: t('common:moveDown'),
+        icon: <MoveDownIcon className="u-dropdown-icon" />
+      },
+      {
+        key: 'delete',
+        label: t('common:delete'),
+        icon: <DeleteIcon className="u-dropdown-icon" />,
+        danger: true
+      }
+    ];
+
+    return <Menu items={items} onClick={handleTileMenuClick} />;
+  };
 
   return (
     <div>

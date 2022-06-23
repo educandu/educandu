@@ -18,9 +18,9 @@ export function FileAudioFilledIconComponent() {
   );
 }
 
-function FileAudioFilledIcon() {
+function FileAudioFilledIcon(props) {
   return (
-    <Icon component={FileAudioFilledIconComponent} />
+    <Icon component={FileAudioFilledIconComponent} {...props} />
   );
 }
 

@@ -20,9 +20,9 @@ export function CookieAlertIconComponent() {
   );
 }
 
-function CookieAlertIcon() {
+function CookieAlertIcon(props) {
   return (
-    <Icon component={CookieAlertIconComponent} />
+    <Icon component={CookieAlertIconComponent} {...props} />
   );
 }
 

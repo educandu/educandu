@@ -13,9 +13,9 @@ export function LessonMarkedFavoriteIconComponent() {
   );
 }
 
-function LessonMarkedFavoriteIcon() {
+function LessonMarkedFavoriteIcon(props) {
   return (
-    <Icon component={LessonMarkedFavoriteIconComponent} />
+    <Icon component={LessonMarkedFavoriteIconComponent} {...props} />
   );
 }
 
