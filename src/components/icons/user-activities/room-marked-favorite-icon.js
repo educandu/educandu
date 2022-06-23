@@ -16,9 +16,9 @@ export function RoomMarkedFavoriteIconComponent() {
   );
 }
 
-function RoomMarkedFavoriteIcon() {
+function RoomMarkedFavoriteIcon(props) {
   return (
-    <Icon component={RoomMarkedFavoriteIconComponent} />
+    <Icon component={RoomMarkedFavoriteIconComponent} {...props} />
   );
 }
 

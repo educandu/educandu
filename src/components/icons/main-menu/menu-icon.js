@@ -11,9 +11,9 @@ export function MenuIconComponent() {
   );
 }
 
-function MenuIcon() {
+function MenuIcon(props) {
   return (
-    <Icon component={MenuIconComponent} />
+    <Icon component={MenuIconComponent} {...props} />
   );
 }
 

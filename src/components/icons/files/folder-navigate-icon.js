@@ -14,9 +14,9 @@ export function FolderNavigateIconComponent() {
   );
 }
 
-function FolderNavigateIcon() {
+function FolderNavigateIcon(props) {
   return (
-    <Icon component={FolderNavigateIconComponent} />
+    <Icon component={FolderNavigateIconComponent} {...props} />
   );
 }
 

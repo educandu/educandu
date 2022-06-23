@@ -12,9 +12,9 @@ export function PrivateIconComponent() {
   );
 }
 
-function PrivateIcon() {
+function PrivateIcon(props) {
   return (
-    <Icon component={PrivateIconComponent} />
+    <Icon component={PrivateIconComponent} {...props} />
   );
 }
 

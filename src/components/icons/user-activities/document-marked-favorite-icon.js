@@ -12,9 +12,9 @@ export function DocumentMarkedFavoriteIconComponent() {
   );
 }
 
-function DocumentMarkedFavoriteIcon() {
+function DocumentMarkedFavoriteIcon(props) {
   return (
-    <Icon component={DocumentMarkedFavoriteIconComponent} />
+    <Icon component={DocumentMarkedFavoriteIconComponent} {...props} />
   );
 }
 

@@ -12,9 +12,9 @@ export function ImportsIconComponent() {
   );
 }
 
-function ImportsIcon() {
+function ImportsIcon(props) {
   return (
-    <Icon component={ImportsIconComponent} />
+    <Icon component={ImportsIconComponent} {...props} />
   );
 }
 

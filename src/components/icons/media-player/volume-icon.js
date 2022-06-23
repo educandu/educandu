@@ -12,9 +12,9 @@ export function VolumeIconComponent() {
   );
 }
 
-function VolumeIcon() {
+function VolumeIcon(props) {
   return (
-    <Icon component={VolumeIconComponent} />
+    <Icon component={VolumeIconComponent} {...props} />
   );
 }
 

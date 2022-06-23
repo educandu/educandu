@@ -11,9 +11,9 @@ export function DashboardIconComponent() {
   );
 }
 
-function DashboardIcon() {
+function DashboardIcon(props) {
   return (
-    <Icon component={DashboardIconComponent} />
+    <Icon component={DashboardIconComponent} {...props} />
   );
 }
 

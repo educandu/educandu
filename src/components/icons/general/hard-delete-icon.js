@@ -12,9 +12,9 @@ export function HardDeleteIconComponent() {
   );
 }
 
-function HardDeleteIcon() {
+function HardDeleteIcon(props) {
   return (
-    <Icon component={HardDeleteIconComponent} />
+    <Icon component={HardDeleteIconComponent} {...props} />
   );
 }
 

@@ -11,9 +11,9 @@ export function PlayIconComponent() {
   );
 }
 
-function PlayIcon() {
+function PlayIcon(props) {
   return (
-    <Icon component={PlayIconComponent} />
+    <Icon component={PlayIconComponent} {...props} />
   );
 }
 

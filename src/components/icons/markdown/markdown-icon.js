@@ -11,9 +11,9 @@ export function MarkdownIconComponent() {
   );
 }
 
-function MarkdownIcon() {
+function MarkdownIcon(props) {
   return (
-    <Icon component={MarkdownIconComponent} />
+    <Icon component={MarkdownIconComponent} {...props} />
   );
 }
 

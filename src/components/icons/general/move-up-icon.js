@@ -11,9 +11,9 @@ export function MoveUpIconComponent() {
   );
 }
 
-function MoveUpIcon() {
+function MoveUpIcon(props) {
   return (
-    <Icon component={MoveUpIconComponent} />
+    <Icon component={MoveUpIconComponent} {...props} />
   );
 }
 

@@ -12,9 +12,9 @@ export function WarningIconComponent() {
   );
 }
 
-function WarningIcon() {
+function WarningIcon(props) {
   return (
-    <Icon component={WarningIconComponent} />
+    <Icon component={WarningIconComponent} {...props} />
   );
 }
 

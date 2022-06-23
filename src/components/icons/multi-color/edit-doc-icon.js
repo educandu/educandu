@@ -11,9 +11,9 @@ export function EditDocIconComponent() {
   );
 }
 
-function EditDocIcon() {
+function EditDocIcon(props) {
   return (
-    <Icon component={EditDocIconComponent} />
+    <Icon component={EditDocIconComponent} {...props} />
   );
 }
 

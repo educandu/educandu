@@ -16,9 +16,9 @@ export function FileImageFilledIconComponent() {
   );
 }
 
-function FileImageFilledIcon() {
+function FileImageFilledIcon(props) {
   return (
-    <Icon component={FileImageFilledIconComponent} />
+    <Icon component={FileImageFilledIconComponent} {...props} />
   );
 }
 

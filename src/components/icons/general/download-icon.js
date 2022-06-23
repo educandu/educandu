@@ -11,9 +11,9 @@ export function DownloadIconComponent() {
   );
 }
 
-function DownloadIcon() {
+function DownloadIcon(props) {
   return (
-    <Icon component={DownloadIconComponent} />
+    <Icon component={DownloadIconComponent} {...props} />
   );
 }
 

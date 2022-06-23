@@ -12,9 +12,9 @@ export function DuplicateIconComponent() {
   );
 }
 
-function DuplicateIcon() {
+function DuplicateIcon(props) {
   return (
-    <Icon component={DuplicateIconComponent} />
+    <Icon component={DuplicateIconComponent} {...props} />
   );
 }
 

@@ -11,9 +11,9 @@ export function DeleteIconComponent() {
   );
 }
 
-function DeleteIcon() {
+function DeleteIcon(props) {
   return (
-    <Icon component={DeleteIconComponent} />
+    <Icon component={DeleteIconComponent} {...props} />
   );
 }
 

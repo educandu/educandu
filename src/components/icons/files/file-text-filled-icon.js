@@ -13,9 +13,9 @@ export function FileTextFilledIconComponent() {
   );
 }
 
-function FileTextFilledIcon() {
+function FileTextFilledIcon(props) {
   return (
-    <Icon component={FileTextFilledIconComponent} />
+    <Icon component={FileTextFilledIconComponent} {...props} />
   );
 }
 

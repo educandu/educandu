@@ -18,9 +18,9 @@ export function FilePdfFilledIconComponent() {
   );
 }
 
-function FilePdfFilledIcon() {
+function FilePdfFilledIcon(props) {
   return (
-    <Icon component={FilePdfFilledIconComponent} />
+    <Icon component={FilePdfFilledIconComponent} {...props} />
   );
 }
 

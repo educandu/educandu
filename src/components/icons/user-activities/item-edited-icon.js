@@ -12,9 +12,9 @@ export function ItemEditedIconComponent() {
   );
 }
 
-function ItemEditedIcon() {
+function ItemEditedIcon(props) {
   return (
-    <Icon component={ItemEditedIconComponent} />
+    <Icon component={ItemEditedIconComponent} {...props} />
   );
 }
 

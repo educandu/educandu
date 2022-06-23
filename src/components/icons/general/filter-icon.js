@@ -11,9 +11,9 @@ export function FilterIconComponent() {
   );
 }
 
-function FilterIcon() {
+function FilterIcon(props) {
   return (
-    <Icon component={FilterIconComponent} />
+    <Icon component={FilterIconComponent} {...props} />
   );
 }
 

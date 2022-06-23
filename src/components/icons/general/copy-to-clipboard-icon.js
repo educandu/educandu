@@ -15,9 +15,9 @@ export function CopyToClipboardIconComponent() {
   );
 }
 
-function CopyToClipboardIcon() {
+function CopyToClipboardIcon(props) {
   return (
-    <Icon component={CopyToClipboardIconComponent} />
+    <Icon component={CopyToClipboardIconComponent} {...props} />
   );
 }
 

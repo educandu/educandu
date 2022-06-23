@@ -16,9 +16,9 @@ export function FileImageIconComponent() {
   );
 }
 
-function FileImageIcon() {
+function FileImageIcon(props) {
   return (
-    <Icon component={FileImageIconComponent} />
+    <Icon component={FileImageIconComponent} {...props} />
   );
 }
 

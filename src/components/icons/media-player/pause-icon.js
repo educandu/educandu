@@ -11,9 +11,9 @@ export function PauseIconComponent() {
   );
 }
 
-function PauseIcon() {
+function PauseIcon(props) {
   return (
-    <Icon component={PauseIconComponent} />
+    <Icon component={PauseIconComponent} {...props} />
   );
 }
 

@@ -12,9 +12,9 @@ export function DocumentCreatedIconComponent() {
   );
 }
 
-function DocumentCreatedIcon() {
+function DocumentCreatedIcon(props) {
   return (
-    <Icon component={DocumentCreatedIconComponent} />
+    <Icon component={DocumentCreatedIconComponent} {...props} />
   );
 }
 

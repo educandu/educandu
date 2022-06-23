@@ -15,9 +15,9 @@ export function MuteIconComponent() {
   );
 }
 
-function MuteIcon() {
+function MuteIcon(props) {
   return (
-    <Icon component={MuteIconComponent} />
+    <Icon component={MuteIconComponent} {...props} />
   );
 }
 

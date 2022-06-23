@@ -12,9 +12,9 @@ export function DocumentsIconComponent() {
   );
 }
 
-function DocumentsIcon() {
+function DocumentsIcon(props) {
   return (
-    <Icon component={DocumentsIconComponent} />
+    <Icon component={DocumentsIconComponent} {...props} />
   );
 }
 

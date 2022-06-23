@@ -41,43 +41,46 @@ function MediaPlayerControls({
 
   const showAsPlaying = playState === MEDIA_PLAY_STATE.playing || playState === MEDIA_PLAY_STATE.buffering;
 
-  const handleDownloadClick = () => httpClient.download(sourceUrl);
-  const handlePlaybackRateClick = item => {
-    const newPlaybackRate = Number(item.key);
-    setPlaybackRate(newPlaybackRate);
-    onPlaybackRateChange(newPlaybackRate);
+  const handleSettingsMenuItemClick = ({ key }) => {
+    if (key === 'download') {
+      httpClient.download(sourceUrl);
+    } else if (key.startsWith('playbackRate-')) {
+      const newPlaybackRate = Number(key.split('-')[1]);
+      setPlaybackRate(newPlaybackRate);
+      onPlaybackRateChange(newPlaybackRate);
+    }
   };
 
-  const renderSettingsMenu = () => (
-    <Menu>
-      {canDownload && sourceUrl && (
-        <Menu.Item
-          key="download"
-          onClick={handleDownloadClick}
-          icon={<div className="MediaPlayerControls-downloadItem"><DownloadIcon /></div>}
-          >
-          {t('download')}
-        </Menu.Item>
-      )}
-      <Menu.SubMenu
-        key="playbackRate"
-        icon={<FastForwardOutlined />}
-        title={t('playbackRate')}
-        onClick={handlePlaybackRateClick}
-        >
-        {PLAYBACK_RATES.map(rate => (
-          <Menu.Item key={rate}>
-            <div className="MediaPlayerControls-playbackRateItem">
-              <div className="MediaPlayerControls-playbackRateItemSelection">
-                {rate === playbackRate && <CheckOutlined />}
-              </div>
-              {rate === NORMAL_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
+  const renderSettingsMenu = () => {
+    const items = [];
+
+    if (canDownload && sourceUrl) {
+      items.push({
+        key: 'download',
+        label: t('download'),
+        icon: <DownloadIcon className="u-dropdown-icon" />
+      });
+    }
+
+    items.push({
+      key: 'playbackRate',
+      label: t('playbackRate'),
+      icon: <FastForwardOutlined />,
+      children: PLAYBACK_RATES.map(rate => ({
+        key: `playbackRate-${rate}`,
+        label: (
+          <div className="MediaPlayerControls-playbackRateItem">
+            <div className="MediaPlayerControls-playbackRateItemSelection">
+              {rate === playbackRate && <CheckOutlined />}
             </div>
-          </Menu.Item>
-        ))}
-      </Menu.SubMenu>
-    </Menu>
-  );
+            {rate === NORMAL_PLAYBACK_RATE ? t('normal') : formatNumber(rate)}
+          </div>
+        )
+      }))
+    });
+
+    return <Menu items={items} onClick={handleSettingsMenuItemClick} />;
+  };
 
   return (
     <div className={classNames('MediaPlayerControls', { 'MediaPlayerControls--noScreen': screenMode === MEDIA_SCREEN_MODE.none })}>

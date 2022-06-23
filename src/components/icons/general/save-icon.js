@@ -12,9 +12,9 @@ export function SaveIconComponent() {
   );
 }
 
-function SaveIcon() {
+function SaveIcon(props) {
   return (
-    <Icon component={SaveIconComponent} />
+    <Icon component={SaveIconComponent} {...props} />
   );
 }
 
