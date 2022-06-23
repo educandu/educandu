@@ -142,6 +142,14 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
     }
   };
 
+  const handleFileDoubleClick = newFile => {
+    if (newFile.type === CDN_OBJECT_TYPE.directory) {
+      setCurrentDirectoryPath(newFile.path);
+    } else {
+      onSelect(newFile.portableUrl);
+    }
+  };
+
   const handleSelectClick = () => {
     onSelect(selectedFile.portableUrl);
   };
@@ -270,6 +278,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
                   parentDirectory={parentDirectory}
                   display={filesViewerDisplay}
                   onFileClick={handleFileClick}
+                  onFileDoubleClick={handleFileDoubleClick}
                   selectedFileUrl={selectedFile?.portableUrl}
                   onDeleteClick={handleDeleteClick}
                   onNavigateToParentClick={() => setCurrentDirectoryPath(getParentPathForStorageLocationPath(currentDirectory.path))}
