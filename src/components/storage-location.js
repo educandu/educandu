@@ -262,8 +262,9 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             noKeyboard
             noClick
             >
-            {({ getRootProps, isDragActive }) => (
+            {({ getRootProps, getInputProps, isDragActive }) => (
               <div {...getRootProps({ className: getFilesViewerClasses(isDragActive) })}>
+                <input {...getInputProps()} hidden />
                 <FilesViewer
                   files={files}
                   parentDirectory={parentDirectory}
@@ -289,8 +290,13 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
             )}
           </div>
           <div className="StorageLocation-buttonsLine">
-            <Button disabled={!canUploadToCurrentDirectory || isLoading} loading={isUploading} onClick={handleUploadButtonClick}>
-              <UploadIcon />&nbsp;<span>{t('uploadFiles')}</span>
+            <Button
+              icon={<UploadIcon />}
+              loading={isUploading}
+              onClick={handleUploadButtonClick}
+              disabled={!canUploadToCurrentDirectory || isLoading}
+              >
+              {t('uploadFiles')}
             </Button>
             <div className="StorageLocation-buttonsGroup">
               <Button onClick={onCancel}>{t('common:cancel')}</Button>
