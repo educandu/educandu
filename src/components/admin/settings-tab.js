@@ -141,7 +141,7 @@ function SettingsTab({
       </Card>
       <Card className="SettingsTab-card" title={t('templateDocumentHeader')}>
         <div className="SettingsTab-templateDocument" >
-          <DocumentSelector documentId={settings.templateDocument.documentKey} onChange={handleTemplateDocumentChange} />
+          <DocumentSelector documentId={settings.templateDocument?.documentKey} onChange={handleTemplateDocumentChange} />
         </div>
       </Card>
       <Card className="SettingsTab-card" title={t('helpPageHeader')}>
