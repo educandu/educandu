@@ -34,6 +34,9 @@ lessonsPlaceholder:
 thisWeek:
   en: This week
   de: Diese Woche
+notScheduled:
+  en: not scheduled
+  de: nicht terminiert
 deleteRoomButton:
   en: Delete room
   de: Raum löschen
