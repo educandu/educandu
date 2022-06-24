@@ -141,7 +141,8 @@ function StoragePlansTab({ initialStoragePlans, onStoragePlansSaved }) {
     {
       title: t('assignedUserCount'),
       dataIndex: 'assignedUserCount',
-      key: 'assignedUserCount'
+      key: 'assignedUserCount',
+      responsive: ['sm']
     },
     {
       title: t('common:actions'),
