@@ -1,5 +1,3 @@
-@interactive-media-display-overlay-overflow: 10px;
-
 .InteractiveMediaDisplay {}
 
 .InteractiveMediaDisplay-content {
@@ -120,10 +118,10 @@
 .InteractiveMediaDisplay-overlay {
   position: absolute;
   padding: @edu-content-padding;
-  top: -@interactive-media-display-overlay-overflow;
-  left: -@interactive-media-display-overlay-overflow;
-  width: calc(100% + 2 * @interactive-media-display-overlay-overflow);
-  height: calc(100% + 2 * @interactive-media-display-overlay-overflow);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: @edu-background-color-light;
   display: flex;
   flex-direction: column;

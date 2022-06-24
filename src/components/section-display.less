@@ -5,6 +5,7 @@
 .SectionDisplay {
   background-color: @edu-white;
   border: 1px dotted transparent;
+  border-radius: @edu-border-radius-base;
   position: relative;
   padding: @edu-content-padding;
   min-height: @section-display-min-height;
@@ -140,6 +141,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: @edu-border-radius-base;
   background-color: @edu-selection-background-color;
   opacity: 70%;
 
@@ -150,16 +152,18 @@
 }
 
 .SectionDisplay-overlayButton {
-  .m-box-shadow-round;
+  .m-box-shadow;
+  border-radius: 50%;
   background-color: @edu-white;
   display: block;
   margin: 0 7px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  box-shadow: 0px 0px 8px @grey-7;
 
   &:hover {
+    .m-box-shadow-dark;
+    border-radius: 50%;
     background-color: @edu-white;
   }
 

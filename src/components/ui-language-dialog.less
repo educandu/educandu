@@ -14,8 +14,25 @@
   width: 100%;
   height: auto;
 
+  &.ant-radio-button-wrapper {
+    border: none;
+  }
+
   &.ant-radio-button-wrapper-checked {
     background-color: @edu-selection-background-color;
+
+    &:focus,
+    &:focus-within {
+      box-shadow: none;
+    }
+
+    &:hover {
+      .m-box-shadow;
+    }
+  }
+
+  &:hover {
+    .m-box-shadow;
   }
 }
 

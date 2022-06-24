@@ -102,17 +102,6 @@
   outline: none !important; // Removes user agent black border when focused by keyboard
 }
 
-.m-selected-item {
-  color: @edu-primary-color-light;
-  border-color: @edu-primary-color-light;
-  background-color: @edu-selection-background-color;
-}
-
-.m-selected-item-focused {
-  .m-selected-item();
-  box-shadow: 0 0 0 @edu-border-radius-base @edu-selection-background-color;
-}
-
 // Mixin for Antd Collapse components to remove left indentation and paddings:
 .m-antd-collapse-without-padding {
   & > .ant-collapse-item > .ant-collapse-header {
@@ -171,15 +160,11 @@
 .m-box-shadow {
   border-radius: @edu-border-radius-base;
   box-shadow: 0px 0px 8px @edu-border-color-base;
-
-  &:hover {
-    box-shadow: 0px 0px 8px @edu-border-color-dark;
-  }
 }
 
-.m-box-shadow-round {
-  .m-box-shadow;
-  border-radius: 50%;
+.m-box-shadow-dark {
+  border-radius: @edu-border-radius-base;
+  box-shadow: 0px 0px 8px @edu-border-color-dark;
 }
 
 .m-border-glow-success {
