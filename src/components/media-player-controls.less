@@ -43,6 +43,10 @@
 .MediaPlayerControls-volumeControls {
   display: flex;
   margin-right: 15px;
+
+  @media @edu-media-phone-portrait {
+    display: none;
+  }
 }
 
 .MediaPlayerControls-progressBar {
@@ -58,5 +62,5 @@
 }
 
 .MediaPlayerControls-timeDisplay {
-  padding: 0 6px
+  padding: 0 6px;
 }
