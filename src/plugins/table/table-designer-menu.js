@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { Dropdown, Menu } from 'antd';
 import { useTranslation } from 'react-i18next';
-import LinkPopover from '../../components/link-popover.js';
+import React, { useEffect, useState } from 'react';
 import { CELL_TYPE, DESIGNER_CELL_ACTION, DESIGNER_CELL_TYPE } from './table-utils.js';
 import {
   InsertRowAboveOutlined,
@@ -35,65 +35,83 @@ export const menuItemInfos = {
   [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined }
 };
 
-function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, onIsActiveChange, placement }) {
+function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, onIsActiveChange }) {
   const { t } = useTranslation('table');
   const [isActive, setIsActive] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
-  const [isPopoverVisible, setIsPopoverVisible] = useState(false);
+  const [isCellActionInProgress, setIsCellActionInProgress] = useState(false);
 
-  useEffect(() => setIsActive(isMouseOver || isPopoverVisible), [isMouseOver, isPopoverVisible]);
+  useEffect(() => setIsActive(isMouseOver || isCellActionInProgress), [isMouseOver, isCellActionInProgress]);
 
   useEffect(() => onIsActiveChange(isActive), [isActive, onIsActiveChange]);
 
-  const createMenuItem = ({ action, disabled = false, separator = false }) => {
+  const createMenuActionItem = ({ action, disabled = false }) => {
     const menuItemInfo = menuItemInfos[action];
+    const IconComponent = menuItemInfo.icon;
     return {
       key: action,
-      text: t(menuItemInfo.translationKey),
-      icon: menuItemInfo.icon,
-      separator,
-      disabled,
-      onClick: () => onCellAction(action, cell)
+      label: t(menuItemInfo.translationKey),
+      icon: <IconComponent />,
+      disabled
     };
+  };
+
+  const createMenuSeparatorItem = () => {
+    return {
+      type: 'divider'
+    };
+  };
+
+  const handleDropdownVisibleChange = newValue => {
+    setIsCellActionInProgress(newValue);
+  };
+
+  const handleMenuItemClick = ({ key }) => {
+    setIsCellActionInProgress(false);
+    onCellAction(key, cell);
   };
 
   let items;
   switch (cell.designerCellType) {
     case DESIGNER_CELL_TYPE.rowHeader:
       items = [
-        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToHeaderRow }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToBodyRow, separator: true }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow })
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToHeaderRow }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToBodyRow }),
+        createMenuSeparatorItem(),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow })
       ];
       break;
     case DESIGNER_CELL_TYPE.columnHeader:
       items = [
-        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToHeaderColumn }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.convertToBodyColumn, separator: true }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn })
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToHeaderColumn }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToBodyColumn }),
+        createMenuSeparatorItem(),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn })
       ];
       break;
     case DESIGNER_CELL_TYPE.content:
       items = [
-        createMenuItem({
+        createMenuActionItem({
           action: cell.cellType === CELL_TYPE.body ? DESIGNER_CELL_ACTION.convertToHeaderCell : DESIGNER_CELL_ACTION.convertToBodyCell,
           separator: true
         }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow, separator: true }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn, separator: true }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToRowBefore, disabled: cell.isFirstInColumn }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToRowAfter, disabled: cell.isLastInColumn }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToColumnBefore, disabled: cell.isFirstInRow }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.connectToColumnAfter, disabled: cell.isLastInRow }),
-        createMenuItem({ action: DESIGNER_CELL_ACTION.disconnectCell, disabled: !cell.isConnected })
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow }),
+        createMenuSeparatorItem(),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn }),
+        createMenuSeparatorItem(),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToRowBefore, disabled: cell.isFirstInColumn }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToRowAfter, disabled: cell.isLastInColumn }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToColumnBefore, disabled: cell.isFirstInRow }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToColumnAfter, disabled: cell.isLastInRow }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.disconnectCell, disabled: !cell.isConnected })
       ];
       break;
     default:
@@ -101,12 +119,14 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
       break;
   }
 
+  const menu = <Menu items={items} onClick={handleMenuItemClick} />;
+
   return (
-    <LinkPopover items={items} placement={placement} trigger="click" renderSeparator="onlyWhenSpecified" onVisibleChange={setIsPopoverVisible}>
+    <Dropdown overlay={menu} trigger={['click']} onVisibleChange={handleDropdownVisibleChange} arrow={{ pointAtCenter: true }}>
       <a className="TableDesignerMenu" onMouseOver={() => setIsMouseOver(true)} onMouseLeave={() => setIsMouseOver(false)}>
         <span className={`TableDesignerMenu-dot TableDesignerMenu-dot--${dotType}`} />
       </a>
-    </LinkPopover>
+    </Dropdown>
   );
 }
 
@@ -127,28 +147,13 @@ TableDesignerMenu.propTypes = {
     'zooming'
   ]),
   onCellAction: PropTypes.func,
-  onIsActiveChange: PropTypes.func,
-  placement: PropTypes.oneOf([
-    'top',
-    'left',
-    'right',
-    'bottom',
-    'topLeft',
-    'topRight',
-    'bottomLeft',
-    'bottomRight',
-    'leftTop',
-    'leftBottom',
-    'rightTop',
-    'rightBottom'
-  ])
+  onIsActiveChange: PropTypes.func
 };
 
 TableDesignerMenu.defaultProps = {
   dotType: 'normal',
   onCellAction: () => {},
-  onIsActiveChange: () => {},
-  placement: 'top'
+  onIsActiveChange: () => {}
 };
 
 export default TableDesignerMenu;
