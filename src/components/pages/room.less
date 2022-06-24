@@ -16,9 +16,9 @@
 }
 
 .RoomPage-lessonInfo {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   padding: 10px;
-  grid-template-columns: 30px 30px @room-date-label-width auto auto;
 
   &.is-highlighted {
     border: 1px solid fade(@edu-primary-color-light, 10%);
@@ -26,30 +26,32 @@
     border-left: none;
     border-right: none;
   }
+}
 
-  @media @edu-media-phone {
+.RoomPage-lessonInfoGroup {
+  display: flex;
+  gap: @edu-content-padding;
+  padding-right: @edu-content-padding;
+}
 
-    & .RoomPage-lessonTitle,
-    & .RoomPage-lessonTimeUntil {
-      grid-column-start: 1;
-      grid-column-end: 6;
-    }
-  }
+.RoomPage-lessonDate {
+  width: @room-date-label-width;
 }
 
 .RoomPage-lessonTitle {
-  padding-left: 5px;
+  @media @edu-media-phone {
+    flex: 1 0 100%;
+  }
 }
 
-.RoomPage-deleteButton {
-  margin-right: @edu-content-padding;
+.RoomPage-lessonButton {
+  flex: 0 0 0%;
 }
 
 .RoomPage-lessonTimeUntil {
   font-size: 13px;
   margin-left: auto;
   margin-right: 0;
-  padding-left: 15px;
 }
 
 .RoomPage-newLessonButton {

@@ -180,17 +180,19 @@ export default function Room({ PageTemplate, initialState }) {
     return (
       <div className="RoomPage-lesson" key={lesson._id}>
         <div className={`RoomPage-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
-          {(isRoomOwner || isRoomCollaborator) && (
+          <div className="RoomPage-lessonInfoGroup">
+            {(isRoomOwner || isRoomCollaborator) && (
             <Fragment>
               <Tooltip title={t('common:clone')}>
-                <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
+                <Button className="RoomPage-lessonButton" size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
               </Tooltip>
               <Tooltip title={t('common:delete')}>
-                <DeleteButton className="RoomPage-deleteButton" onClick={() => handleDeleteLessonClick(lesson)} />
+                <DeleteButton className="RoomPage-lessonButton" onClick={() => handleDeleteLessonClick(lesson)} />
               </Tooltip>
             </Fragment>
-          )}
-          <span>{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
+            )}
+            <span className="RoomPage-lessonDate">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
+          </div>
           <a className="RoomPage-lessonTitle" href={url}>{lesson.title}</a>
           <span className="RoomPage-lessonTimeUntil">{timeUntil}</span>
         </div>
@@ -229,7 +231,7 @@ export default function Room({ PageTemplate, initialState }) {
           type="primary"
           shape="circle"
           icon={<PlusOutlined />}
-          size="large"
+          size="medium"
           onClick={handleCreateInvitationButtonClick}
           />
       ]}
@@ -267,7 +269,7 @@ export default function Room({ PageTemplate, initialState }) {
           type="primary"
           shape="circle"
           icon={<PlusOutlined />}
-          size="large"
+          size="medium"
           onClick={() => handleNewLessonClick()}
           />
       ]}
