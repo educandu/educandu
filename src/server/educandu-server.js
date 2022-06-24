@@ -29,13 +29,6 @@ export default class EducanduServer {
 
     this.app.enable('trust proxy');
 
-    if (Object.keys(this.serverConfig.basicAuthUsers).length) {
-      this.app.use(basicAuth({
-        users: this.serverConfig.basicAuthUsers,
-        challenge: true
-      }));
-    }
-
     this.app.use(useragent.express());
 
     this.app.use(cookieParser());
@@ -66,6 +59,13 @@ export default class EducanduServer {
         ? res.status(503).json({ message })
         : res.status(503).type('html').send(`<!DOCTYPE html><p>${message}</p>`);
     });
+
+    if (Object.keys(this.serverConfig.basicAuthUsers).length) {
+      router.use(basicAuth({
+        users: this.serverConfig.basicAuthUsers,
+        challenge: true
+      }));
+    }
 
     this.controllerFactory.registerAdditionalControllers(this.serverConfig.additionalControllers);
     const controllers = this.controllerFactory.getAllControllers();
