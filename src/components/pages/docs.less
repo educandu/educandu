@@ -17,6 +17,48 @@
   width: 100%;
 }
 
+.DocsPage-actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: 5px;
+}
+
+.DocsPage-action {
+  .m-box-shadow;
+  background-color: @edu-white;
+  width: @edu-control-height-sm;
+  height: @edu-control-height-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  opacity: 90%;
+
+  &:hover,
+  &:active {
+    text-decoration: none;
+  }
+
+  &.DocsPage-action--clone {
+    color: @edu-text-color;
+
+    &:hover,
+    &:active {
+      color: @edu-text-color;
+    }
+  }
+
+  &.DocsPage-action--delete {
+    color: @edu-error-color;
+
+    &:hover,
+    &:active {
+      color: @edu-error-color;
+    }
+  }
+}
+
 .DocsPage-newDocumentButton {
   margin-top: 10px;
 }
