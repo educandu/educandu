@@ -3,6 +3,7 @@ import express from 'express';
 import Logger from '../common/logger.js';
 import cookieParser from 'cookie-parser';
 import useragent from 'express-useragent';
+import basicAuth from 'express-basic-auth';
 import ControllerFactory from './controller-factory.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import { getDisposalInfo, DISPOSAL_PRIORITY } from '../common/di.js';
@@ -27,6 +28,13 @@ export default class EducanduServer {
     this.app.on('error', err => logger.error(err));
 
     this.app.enable('trust proxy');
+
+    if (Object.keys(this.serverConfig.basicAuthUsers).length) {
+      this.app.use(basicAuth({
+        users: this.serverConfig.basicAuthUsers,
+        challenge: true
+      }));
+    }
 
     this.app.use(useragent.express());
 

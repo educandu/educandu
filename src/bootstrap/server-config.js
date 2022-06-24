@@ -57,7 +57,8 @@ const configSchema = joi.object({
   uploadLiabilityCookieName: joi.string().required(),
   areRoomsEnabled: joi.bool().default(false),
   additionalHeadHtml: joi.string().default(''),
-  plugins: joi.array().items(joi.string().required()).default(['markdown', 'image'])
+  plugins: joi.array().items(joi.string().required()).default(['markdown', 'image']),
+  basicAuthUsers: joi.object().default({})
 });
 
 class ServerConfig {
