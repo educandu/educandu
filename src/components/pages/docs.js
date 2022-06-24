@@ -5,22 +5,24 @@ import urls from '../../utils/routes.js';
 import Restricted from '../restricted.js';
 import Logger from '../../common/logger.js';
 import { useUser } from '../user-context.js';
-import { Input, Button, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '../locale-context.js';
 import errorHelper from '../../ui/error-helper.js';
 import { useSettings } from '../settings-context.js';
 import SortingSelector from '../sorting-selector.js';
+import { Input, Button, Switch, Tooltip } from 'antd';
 import DocumentInfoCell from '../document-info-cell.js';
+import DeleteIcon from '../icons/general/delete-icon.js';
 import LanguageIcon from '../localization/language-icon.js';
+import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import { confirmDocumentDelete } from '../confirmation-dialogs.js';
 import { documentMetadataShape } from '../../ui/default-prop-types.js';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentApiClient from '../../api-clients/document-api-client.js';
 import permissions, { hasUserPermission } from '../../domain/permissions.js';
 import { DOCUMENT_ORIGIN, DOC_VIEW_QUERY_PARAM } from '../../domain/constants.js';
-import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import DocumentMetadataModal, { DOCUMENT_METADATA_MODAL_MODE } from '../document-metadata-modal.js';
 
 const { Search } = Input;
@@ -217,15 +219,28 @@ function Docs({ initialState, PageTemplate }) {
 
   const renderActions = (_actions, row) => {
     return (
-      <Fragment>
-        <span><a onClick={() => handleCloneClick(row)}>{t('common:clone')}</a></span>
+      <div className="DocsPage-actions">
+        <Tooltip title={t('common:clone')}>
+          <a
+            className="DocsPage-action DocsPage-action--clone"
+            onClick={() => handleCloneClick(row)}
+            >
+            <DuplicateIcon />
+          </a>
+        </Tooltip>
         {row.origin.startsWith(DOCUMENT_ORIGIN.external) && (
           <Restricted to={permissions.MANAGE_IMPORT}>
-            <br />
-            <span><a onClick={() => handleDeleteClick(row)}>{t('common:delete')}</a></span>
+            <Tooltip title={t('common:delete')}>
+              <a
+                className="DocsPage-action DocsPage-action--delete"
+                onClick={() => handleDeleteClick(row)}
+                >
+                <DeleteIcon />
+              </a>
+            </Tooltip>
           </Restricted>
         )}
-      </Fragment>
+      </div>
     );
   };
 
