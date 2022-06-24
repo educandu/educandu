@@ -139,7 +139,6 @@ function TableDesigner({ content, onContentChange }) {
             canDeleteRow={rowCount > 1}
             canDeleteColumn={columnCount > 1}
             cell={designerCell}
-            placement="right"
             onCellAction={handleDesignerCellAction}
             onIsActiveChange={isActive => handleActiveRowChange(designerCell.rowIndex, isActive)}
             />
@@ -159,7 +158,6 @@ function TableDesigner({ content, onContentChange }) {
             canDeleteRow={rowCount > 1}
             canDeleteColumn={columnCount > 1}
             cell={designerCell}
-            placement="bottom"
             onCellAction={handleDesignerCellAction}
             onIsActiveChange={isActive => handleActiveColumnChange(designerCell.columnIndex, isActive)}
             />
@@ -203,7 +201,6 @@ function TableDesigner({ content, onContentChange }) {
             canDeleteRow={!designerCell.isConnected && !(designerCell.isFirstInColumn && designerCell.isLastInColumn)}
             canDeleteColumn={!designerCell.isConnected && !(designerCell.isFirstInRow && designerCell.isLastInRow)}
             cell={designerCell}
-            placement="bottom"
             dotType="zooming"
             onCellAction={handleDesignerCellAction}
             />
