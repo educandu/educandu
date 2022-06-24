@@ -23,14 +23,13 @@
   cursor: pointer;
   user-select: none;
 
-  &.is-selected {
-    .m-selected-item();
-    .m-hide-browser-keyboard-focus();
+  &:hover {
+    .m-box-shadow;
+  }
 
-    &:focus,
-    &:focus-within {
-      .m-selected-item-focused();
-    }
+  &.is-selected {
+    .m-hide-browser-keyboard-focus;
+    background-color: @edu-selection-background-color;
   }
 }
 

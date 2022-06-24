@@ -3,7 +3,6 @@ import { Tooltip } from 'antd';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { useDebouncedCallback } from '../ui/hooks.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
 import { cdnObjectShape } from '../ui/default-prop-types.js';
@@ -25,7 +24,6 @@ function FilesGridViewer({
   onNavigateToParentClick
 }) {
   const { t } = useTranslation('filesGridViewer');
-  const debouncedOnFileClick = useDebouncedCallback(onFileClick, 200);
 
   const handlePreviewClick = (event, file) => {
     event.stopPropagation();
@@ -45,19 +43,18 @@ function FilesGridViewer({
       const Icon = getResourceIcon({ url: file.url, isDirectory: file.type === CDN_OBJECT_TYPE.directory, filled: true });
       fileDisplay = <Icon />;
     }
-    const overlayClasses = classNames('FilesGridViewer-fileOverlay', { 'is-visible': file.portableUrl === selectedFileUrl });
+    const classes = classNames('FilesGridViewer-fileContainer', { 'is-selected': file.portableUrl === selectedFileUrl });
     const actionsClasses = classNames('FilesGridViewer-actions', { 'are-visible': file.portableUrl === selectedFileUrl });
 
     return (
-      <div className="FilesGridViewer-fileContainer" key={file.portableUrl}>
-        <a className="FilesGridViewer-file" onClick={() => debouncedOnFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
+      <div className={classes} key={file.portableUrl}>
+        <a className="FilesGridViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
           <div className="FilesGridViewer-fileDisplay">
             {fileDisplay}
           </div>
           <span className="FilesGridViewer-fileName">{file.displayName}</span>
         </a>
-        <div className={overlayClasses} />
-        <div className={actionsClasses} onClick={() => debouncedOnFileClick(file)}>
+        <div className={actionsClasses} onClick={() => onFileClick(file)}>
           <Tooltip title={t('common:preview')}>
             <a
               className="FilesGridViewer-action FilesGridViewer-action--preview"
