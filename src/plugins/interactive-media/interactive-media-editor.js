@@ -49,6 +49,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
   const [isDeterminingDuration, setIsDeterminingDuration] = useState(false);
   const { sourceType, sourceUrl, sourceDuration, sourceStartTimecode, sourceStopTimecode, chapters, text, width, aspectRatio, showVideo } = content;
 
+  const playbackDuration = (sourceStopTimecode ?? sourceDuration) - (sourceStartTimecode ?? 0);
+
   useEffect(() => {
     const nextChapterStartTimecode = chapters[selectedChapterIndex + 1]?.startTimecode || sourceDuration;
     setSelectedChapterDuration(nextChapterStartTimecode - chapters[selectedChapterIndex].startTimecode);
@@ -368,7 +370,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
           />
 
         <Timeline
-          length={sourceDuration}
+          length={playbackDuration}
           parts={chapters}
           selectedPartIndex={selectedChapterIndex}
           onPartAdd={handleChapterAdd}
