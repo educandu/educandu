@@ -30,10 +30,7 @@ function HistoryControlPanel({
 
   const isSelectedRevisionLatestRevision = selectedRevisionIndex === revisions.length - 1;
 
-  const marks = revisions.reduce((accu, _item, index) => {
-    accu[index] = '';
-    return accu;
-  }, {});
+  const marks = revisions.reduce((accu, _item, index) => ({ ...accu, [index]: <span /> }), {});
 
   const handleOpen = () => onOpen();
 
