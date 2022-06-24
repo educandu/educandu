@@ -118,7 +118,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
           <div className="DefaultPageHeader-loginButton">
             <Login />
           </div>
-          <Dropdown overlay={menu} placement="bottomRight" trigger={['click']} arrow>
+          <Dropdown overlay={menu} placement="bottomRight" trigger={['click']} arrow={{ pointAtCenter: true }}>
             <Button className="DefaultPageHeader-headerButton" icon={<MenuIcon />} type="link" />
           </Dropdown>
         </div>

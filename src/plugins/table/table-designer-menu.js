@@ -122,7 +122,7 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
   const menu = <Menu items={items} onClick={handleMenuItemClick} />;
 
   return (
-    <Dropdown overlay={menu} trigger={['click']} onVisibleChange={handleDropdownVisibleChange} arrow>
+    <Dropdown overlay={menu} trigger={['click']} onVisibleChange={handleDropdownVisibleChange} arrow={{ pointAtCenter: true }}>
       <a className="TableDesignerMenu" onMouseOver={() => setIsMouseOver(true)} onMouseLeave={() => setIsMouseOver(false)}>
         <span className={`TableDesignerMenu-dot TableDesignerMenu-dot--${dotType}`} />
       </a>
