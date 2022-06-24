@@ -1,12 +1,12 @@
 newLesson:
   en: New lesson
-  de: Neue Unterrichtseinheit
+  de: Neue Einheit
 editLesson:
   en: Edit lesson
-  de: Unterrichtseinheit bearbeiten
+  de: Einheit bearbeiten
 titleRequired:
   en: Please specify a lesson title
-  de: Bitte geben Sie einen Unterrichtseinheit Titel an
+  de: Bitte geben Sie einen Einheit Titel an
 startsOn:
   en: Date
   de: Datum
@@ -30,4 +30,4 @@ sequenceInfoBoxDescription:
   de: |
     Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.
     Das oben angegebenen Datum wird dabei als erster Termin verwendet.
-    An den Titel bzw. URL-Pfad wird für jede Unterrichtseinheit eine laufende Nummer angehängt.
+    An den Titel bzw. URL-Pfad wird für jede Einheit eine laufende Nummer angehängt.

@@ -169,7 +169,7 @@
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
       "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
       "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
-      "deleteLessonConfirmation": "Möchten Sie die Unterrichtseinheit \"{lessonName}\" wirklich löschen?",
+      "deleteLessonConfirmation": "Möchten Sie die Einheit \"{lessonName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
       "pleaseSpecifyAReason": "Bitte geben Sie einen Grund an",
@@ -446,15 +446,15 @@
     "namespace": "lessonMetadataModal",
     "language": "de",
     "resources": {
-      "newLesson": "Neue Unterrichtseinheit",
-      "editLesson": "Unterrichtseinheit bearbeiten",
-      "titleRequired": "Bitte geben Sie einen Unterrichtseinheit Titel an",
+      "newLesson": "Neue Einheit",
+      "editLesson": "Einheit bearbeiten",
+      "titleRequired": "Bitte geben Sie einen Einheit Titel an",
       "startsOn": "Datum",
       "createSequence": "Reihe anlegen",
       "sequenceInterval": "Intervall",
       "sequenceCount": "Anzahl",
       "sequenceInfoBoxHeader": "Veranstaltungsreihen",
-      "sequenceInfoBoxDescription": "Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jede Unterrichtseinheit eine laufende Nummer angehängt.\n"
+      "sequenceInfoBoxDescription": "Hier können Sie mehrere Veranstaltungen gleichzeitig anlegen.\nDas oben angegebenen Datum wird dabei als erster Termin verwendet.\nAn den Titel bzw. URL-Pfad wird für jede Einheit eine laufende Nummer angehängt.\n"
     }
   },
   {
@@ -588,9 +588,9 @@
       "roomUpdatedActivity": "Raum bearbeitet",
       "roomMarkedFavoriteActivity": "Raum als Favorit hinzugefügt",
       "roomJoinedActivity": "Privatem Raum beigetreten",
-      "lessonCreatedActivity": "Neue Unterrichtseinheit erstellt",
-      "lessonUpdatedActivity": "Unterrichtseinheit bearbeitet",
-      "lessonMarkedFavoriteActivity": "Unterrichtseinheit als Favorit hinzugefügt"
+      "lessonCreatedActivity": "Neue Einheit erstellt",
+      "lessonUpdatedActivity": "Einheit bearbeitet",
+      "lessonMarkedFavoriteActivity": "Einheit als Favorit hinzugefügt"
     }
   },
   {
@@ -972,15 +972,15 @@
     "resources": {
       "privateRoomSubtitle": "privater Raum",
       "publicRoomSubtitle": "öffentlicher Raum",
-      "exclusiveLessonsSubtitle": "exklusive Unterrichtseinheiten",
-      "collaborativeLessonsSubtitle": "kollaborative Unterrichtseinheiten",
+      "exclusiveLessonsSubtitle": "exklusive Einheiten",
+      "collaborativeLessonsSubtitle": "kollaborative Einheiten",
       "expires": "Einladung läuft ab am",
       "roomMembersHeader": "Raummitglieder ({count})",
       "invitationsHeader": "Ausstehende Einladungen ({count})",
-      "lessonsTabTitle": "Unterrichtseinheiten",
+      "lessonsTabTitle": "Einheiten",
       "membersTabTitle": "Raummitglieder",
       "settingsTabTitle": "Einstellungen",
-      "lessonsPlaceholder": "Der Raum enthält keine Unterrichtseinheiten",
+      "lessonsPlaceholder": "Der Raum enthält keine Einheiten",
       "thisWeek": "Diese Woche",
       "notScheduled": "nicht terminiert",
       "deleteRoomButton": "Raum löschen",
@@ -1257,7 +1257,7 @@
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
-      "sortedByLessonsMode": "Nach Unterrichtseinheiten-Bearbeitungsmodus sortiert",
+      "sortedByLessonsMode": "Nach Einheiten-Bearbeitungsmodus sortiert",
       "sortedByRole": "Nach Rolle sortiert"
     }
   },
@@ -2111,7 +2111,7 @@
       "revision": "Revision",
       "document": "Dokument",
       "room": "Raum",
-      "lesson": "Unterrichtseinheit",
+      "lesson": "Einheit",
       "viewRevisions": "Revisionen ansehen",
       "viewDocument": "Dokument ansehen",
       "externalDocumentWarning": "Dieses Dokument ist eine Kopie. Das Original kann <0>hier</0> editiert werden.",
@@ -2138,7 +2138,7 @@
       "type": "Typ",
       "accessType_public": "öffentlich",
       "accessType_private": "privat",
-      "lessonsMode": "Unterrichtseinheiten-Bearbeitungsmodus",
+      "lessonsMode": "Einheiten-Bearbeitungsmodus",
       "lessonsMode_exclusive": "exklusiv",
       "lessonsMode_collaborative": "kollaborativ",
       "documentTitle": "Dokument-Titel",
@@ -2238,7 +2238,7 @@
       "imports": "Importe",
       "batches": "Chargen-Details",
       "docs": "Dokumente",
-      "lesson": "Unterrichtseinheit - {lessonTitle}"
+      "lesson": "Einheit - {lessonTitle}"
     }
   },
   {

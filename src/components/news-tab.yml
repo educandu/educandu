@@ -24,10 +24,10 @@ roomJoinedActivity:
   de: Privatem Raum beigetreten
 lessonCreatedActivity:
   en: New lesson created
-  de: Neue Unterrichtseinheit erstellt
+  de: Neue Einheit erstellt
 lessonUpdatedActivity:
   en: Lesson updated
-  de: Unterrichtseinheit bearbeitet
+  de: Einheit bearbeitet
 lessonMarkedFavoriteActivity:
   en: Lesson marked as favorite
-  de: Unterrichtseinheit als Favorit hinzugefügt
+  de: Einheit als Favorit hinzugefügt

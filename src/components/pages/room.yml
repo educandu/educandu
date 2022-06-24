@@ -6,10 +6,10 @@ publicRoomSubtitle:
   de: öffentlicher Raum
 exclusiveLessonsSubtitle:
   en: Exclusive lessons
-  de: exklusive Unterrichtseinheiten
+  de: exklusive Einheiten
 collaborativeLessonsSubtitle:
   en: Collaborative lessons
-  de: kollaborative Unterrichtseinheiten
+  de: kollaborative Einheiten
 expires:
   en: Invitation expires on
   de: Einladung läuft ab am
@@ -21,7 +21,7 @@ invitationsHeader:
   de: Ausstehende Einladungen ({count})
 lessonsTabTitle:
   en: Lessons
-  de: Unterrichtseinheiten
+  de: Einheiten
 membersTabTitle:
   en: Room members
   de: Raummitglieder
@@ -30,7 +30,7 @@ settingsTabTitle:
   de: Einstellungen
 lessonsPlaceholder:
   en: The room does not contain any lessons
-  de: Der Raum enthält keine Unterrichtseinheiten
+  de: Der Raum enthält keine Einheiten
 thisWeek:
   en: This week
   de: Diese Woche

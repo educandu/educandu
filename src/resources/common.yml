@@ -97,7 +97,7 @@ room:
   de: Raum
 lesson:
   en: Lesson
-  de: Unterrichtseinheit
+  de: Einheit
 viewRevisions:
   en: View revisions
   de: Revisionen ansehen
@@ -182,7 +182,7 @@ accessType_private:
   de: privat
 lessonsMode:
   en: Lessons handling mode
-  de: Unterrichtseinheiten-Bearbeitungsmodus
+  de: Einheiten-Bearbeitungsmodus
 lessonsMode_exclusive:
   en: exclusive
   de: exklusiv
