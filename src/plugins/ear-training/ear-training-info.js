@@ -82,9 +82,27 @@ class EarTrainingInfo {
           url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
         );
       }
+      if (test.questionImage) {
+        test.questionImage.text = this.gfm.redactCdnResources(
+          test.questionImage.text,
+          url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        );
+      }
+      if (test.answerImage) {
+        test.answerImage.text = this.gfm.redactCdnResources(
+          test.answerImage.text,
+          url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+        );
+      }
 
       if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && !isAccessibleStoragePath(test.sound.sourceUrl, targetRoomId)) {
         test.sound.sourceUrl = '';
+      }
+      if (test.questionImage?.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(test.questionImage.sourceUrl, targetRoomId)) {
+        test.questionImage.sourceUrl = '';
+      }
+      if (test.answerImage?.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(test.answerImage.sourceUrl, targetRoomId)) {
+        test.answerImage.sourceUrl = '';
       }
     }
 
@@ -97,10 +115,18 @@ class EarTrainingInfo {
     cdnResources.push(...this.gfm.extractCdnResources(content.title || ''));
 
     for (const test of content.tests) {
-      cdnResources.push(...this.gfm.extractCdnResources(test.text || ''));
+      cdnResources.push(...this.gfm.extractCdnResources(test.sound?.text || ''));
+      cdnResources.push(...this.gfm.extractCdnResources(test.questionImage?.text || ''));
+      cdnResources.push(...this.gfm.extractCdnResources(test.answerImage?.text || ''));
 
       if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && test.sound.sourceUrl) {
         cdnResources.push(test.sound.sourceUrl);
+      }
+      if (test.questionImage?.sourceType === IMAGE_SOURCE_TYPE.internal && test.questionImage.sourceUrl) {
+        cdnResources.push(test.questionImage.sourceUrl);
+      }
+      if (test.answerImage?.sourceType === IMAGE_SOURCE_TYPE.internal && test.answerImage.sourceUrl) {
+        cdnResources.push(test.answerImage.sourceUrl);
       }
     }
 

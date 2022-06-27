@@ -1,5 +1,6 @@
 import { SOUND_SOURCE_TYPE } from './constants.js';
 import EarTrainingInfo from './ear-training-info.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 describe('ear-training-info', () => {
@@ -12,21 +13,37 @@ describe('ear-training-info', () => {
     it('redacts inaccessible recources', () => {
       const result = sut.redactContent({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
-        tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', text: '' } }]
+        tests: [
+          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', text: '' } },
+          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-image.jpeg', text: '' } },
+          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-other-image.jpeg', text: '' } }
+        ]
       }, '67890');
       expect(result).toStrictEqual({
         title: '[Click here]()',
-        tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: '', text: '' } }]
+        tests: [
+          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: '', text: '' } },
+          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: '', text: '' } },
+          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: '', text: '' } }
+        ]
       });
     });
     it('leaves accessible recources intact', () => {
       const result = sut.redactContent({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
-        tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', text: '' } }]
+        tests: [
+          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', text: '' } },
+          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-image.jpeg', text: '' } },
+          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-other-image.jpeg', text: '' } }
+        ]
       }, '12345');
       expect(result).toStrictEqual({
         title: '[Click here](cdn://rooms/12345/media/some-doc.pdf)',
-        tests: [{ sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', text: '' } }]
+        tests: [
+          { sound: { sourceType: SOUND_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-sound.mp3', text: '' } },
+          { questionImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-image.jpeg', text: '' } },
+          { answerImage: { sourceType: IMAGE_SOURCE_TYPE.internal, sourceUrl: 'rooms/12345/media/some-other-image.jpeg', text: '' } }
+        ]
       });
     });
   });
@@ -37,11 +54,19 @@ describe('ear-training-info', () => {
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
     it('returns resources from the sound text', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: SOUND_SOURCE_TYPE.midi, text: '[Hyperlink](cdn://media/my-file.pdf)' }] });
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: { text: '[Hyperlink](cdn://media/my-file.pdf)' } }] });
       expect(result).toStrictEqual(['media/my-file.pdf']);
     });
-    it('returns empty list if there is no sound specified', () => {
-      const result = sut.getCdnResources({ title: '', tests: [{ sound: null }] });
+    it('returns resources from the questionImage text', () => {
+      const result = sut.getCdnResources({ title: '', tests: [{ questionImage: { text: '[Hyperlink](cdn://media/my-file.pdf)' } }] });
+      expect(result).toStrictEqual(['media/my-file.pdf']);
+    });
+    it('returns resources from the answerImage text', () => {
+      const result = sut.getCdnResources({ title: '', tests: [{ answerImage: { text: '[Hyperlink](cdn://media/my-file.pdf)' } }] });
+      expect(result).toStrictEqual(['media/my-file.pdf']);
+    });
+    it('returns empty list if there is no sound, questionImage or questionAnswer specified', () => {
+      const result = sut.getCdnResources({ title: '', tests: [{ sound: null, questionImage: null, questionAnswer: null }] });
       expect(result).toHaveLength(0);
     });
     it('returns empty list for a MIDI resource', () => {
