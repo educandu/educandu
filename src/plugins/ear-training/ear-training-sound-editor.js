@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Input, Radio } from 'antd';
-import { SOURCE_TYPE } from './constants.js';
 import { useTranslation } from 'react-i18next';
+import { SOUND_SOURCE_TYPE } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
@@ -24,8 +24,8 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
     const { value } = event.target;
     changeSound({
       sourceType: value,
-      sourceUrl: value === SOURCE_TYPE.midi ? null : '',
-      text: value === SOURCE_TYPE.midi ? null : sound.text || ''
+      sourceUrl: value === SOUND_SOURCE_TYPE.midi ? null : '',
+      text: value === SOUND_SOURCE_TYPE.midi ? null : sound.text || ''
     });
   };
 
@@ -56,9 +56,9 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
           value={sound.sourceType}
           onChange={handleSourceTypeChanged}
           >
-          <RadioButton value={SOURCE_TYPE.midi}>{t('midi')}</RadioButton>
-          <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-          <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+          <RadioButton value={SOUND_SOURCE_TYPE.midi}>{t('midi')}</RadioButton>
+          <RadioButton value={SOUND_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+          <RadioButton value={SOUND_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
         </RadioGroup>
       </td>
       <td style={{ padding: 8 }}>&nbsp;</td>
@@ -69,17 +69,17 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
     <tr>
       <td style={{ padding: 8 }}>&nbsp;</td>
       <td style={{ padding: 8 }}>
-        {sound.sourceType === SOURCE_TYPE.external && `${t('common:externalUrl')}:`}
-        {sound.sourceType === SOURCE_TYPE.internal && `${t('common:internalUrl')}:`}
+        {sound.sourceType === SOUND_SOURCE_TYPE.external && `${t('common:externalUrl')}:`}
+        {sound.sourceType === SOUND_SOURCE_TYPE.internal && `${t('common:internalUrl')}:`}
       </td>
       <td style={{ padding: 8 }}>
-        {sound.sourceType === SOURCE_TYPE.external && (
+        {sound.sourceType === SOUND_SOURCE_TYPE.external && (
         <Input
           value={sound.sourceUrl}
           onChange={handleExternalUrlChanged}
           />
         )}
-        {sound.sourceType === SOURCE_TYPE.internal && (
+        {sound.sourceType === SOUND_SOURCE_TYPE.internal && (
         <div className="u-input-and-button">
           <Input
             addonBefore={`${clientConfig.cdnRootUrl}/`}
@@ -122,7 +122,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
       <tbody>
         {renderSourceRow()}
         {sound.sourceType !== 'midi' && renderUrlRow()}
-        {sound.sourceType !== SOURCE_TYPE.midi && renderTextRow()}
+        {sound.sourceType !== SOUND_SOURCE_TYPE.midi && renderTextRow()}
       </tbody>
     </table>
   );

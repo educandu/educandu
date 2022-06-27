@@ -1,8 +1,8 @@
 import React from 'react';
 import ImageIcon from './image-icon.js';
-import { SOURCE_TYPE } from './constants.js';
 import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 
 class ImageInfo {
@@ -30,7 +30,7 @@ class ImageInfo {
 
   getDefaultContent() {
     return {
-      sourceType: SOURCE_TYPE.internal,
+      sourceType: IMAGE_SOURCE_TYPE.internal,
       sourceUrl: '',
       width: 100,
       text: '',
@@ -45,11 +45,11 @@ class ImageInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
-    if (redactedContent.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
+    if (redactedContent.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
 
-    if (redactedContent.effect?.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.effect.sourceUrl, targetRoomId)) {
+    if (redactedContent.effect?.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.effect.sourceUrl, targetRoomId)) {
       redactedContent.effect.sourceUrl = '';
     }
 
@@ -58,10 +58,10 @@ class ImageInfo {
 
   getCdnResources(content) {
     const resources = [];
-    if (content.sourceType === SOURCE_TYPE.internal && content.sourceUrl) {
+    if (content.sourceType === IMAGE_SOURCE_TYPE.internal && content.sourceUrl) {
       resources.push(content.sourceUrl);
     }
-    if (content.effect?.sourceType === SOURCE_TYPE.internal && content.effect.sourceUrl) {
+    if (content.effect?.sourceType === IMAGE_SOURCE_TYPE.internal && content.effect.sourceUrl) {
       resources.push(content.effect.sourceUrl);
     }
     return [...new Set(resources)];

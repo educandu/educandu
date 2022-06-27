@@ -1,10 +1,10 @@
-import { SOURCE_TYPE } from './constants.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 
 export function getImageSource(cdnRootUrl, sourceType, sourceUrl) {
   switch (sourceType) {
-    case SOURCE_TYPE.external:
+    case IMAGE_SOURCE_TYPE.external:
       return sourceUrl || null;
-    case SOURCE_TYPE.internal:
+    case IMAGE_SOURCE_TYPE.internal:
       return sourceUrl ? `${cdnRootUrl}/${sourceUrl}` : null;
     default:
       return null;

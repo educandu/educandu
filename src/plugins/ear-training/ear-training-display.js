@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
-import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 import MediaPlayer from '../../components/media-player.js';
 import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
+import { SOUND_SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 
@@ -67,27 +67,27 @@ function EarTrainingDisplay({ content }) {
 
   const renderSoundPlayer = () => {
     let soundUrl = null;
-    let sourceType = SOURCE_TYPE.midi;
+    let sourceType = SOUND_SOURCE_TYPE.midi;
     const currentTest = tests[currentIndex];
 
-    if (currentTest.sound && currentTest.sound.sourceType === SOURCE_TYPE.internal) {
-      sourceType = SOURCE_TYPE.internal;
+    if (currentTest.sound && currentTest.sound.sourceType === SOUND_SOURCE_TYPE.internal) {
+      sourceType = SOUND_SOURCE_TYPE.internal;
       soundUrl = currentTest.sound.sourceUrl ? `${clientConfig.cdnRootUrl}/${currentTest.sound.sourceUrl}` : null;
     }
 
-    if (currentTest.sound && currentTest.sound.sourceType === SOURCE_TYPE.external) {
-      sourceType = SOURCE_TYPE.external;
+    if (currentTest.sound && currentTest.sound.sourceType === SOUND_SOURCE_TYPE.external) {
+      sourceType = SOUND_SOURCE_TYPE.external;
       soundUrl = currentTest.sound.sourceUrl || null;
     }
 
     return (
       <div className="EarTraining-soundPlayer">
-        {sourceType === SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
-        {sourceType !== SOURCE_TYPE.midi && soundUrl && (
+        {sourceType === SOUND_SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
+        {sourceType !== SOUND_SOURCE_TYPE.midi && soundUrl && (
           <MediaPlayer
             screenMode={MEDIA_SCREEN_MODE.none}
             sourceUrl={soundUrl}
-            canDownload={sourceType === SOURCE_TYPE.internal}
+            canDownload={sourceType === SOUND_SOURCE_TYPE.internal}
             />
         )}
         {currentTest.sound.text && (

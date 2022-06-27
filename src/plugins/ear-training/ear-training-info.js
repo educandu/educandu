@@ -1,9 +1,10 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingIcon from './ear-training-icon.js';
-import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import EarTrainingDisplay from './ear-training-display.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class EarTrainingInfo {
@@ -38,10 +39,21 @@ class EarTrainingInfo {
       width: 100,
       tests: [
         {
-          startAbcCode: 'X:1',
-          fullAbcCode: 'X:1',
+          mode: TEST_MODE.image,
+          questionImage: {
+            sourceType: IMAGE_SOURCE_TYPE.internal,
+            sourceUrl: null,
+            text: null
+          },
+          answerImage: {
+            sourceType: IMAGE_SOURCE_TYPE.internal,
+            sourceUrl: null,
+            text: null
+          },
+          questionAbcCode: '',
+          answerAbcCode: '',
           sound: {
-            sourceType: SOURCE_TYPE.midi,
+            sourceType: SOUND_SOURCE_TYPE.midi,
             sourceUrl: null,
             text: null
           }
@@ -71,7 +83,7 @@ class EarTrainingInfo {
         );
       }
 
-      if (test.sound?.sourceType === SOURCE_TYPE.internal && !isAccessibleStoragePath(test.sound.sourceUrl, targetRoomId)) {
+      if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && !isAccessibleStoragePath(test.sound.sourceUrl, targetRoomId)) {
         test.sound.sourceUrl = '';
       }
     }
@@ -87,7 +99,7 @@ class EarTrainingInfo {
     for (const test of content.tests) {
       cdnResources.push(...this.gfm.extractCdnResources(test.text || ''));
 
-      if (test.sound?.sourceType === SOURCE_TYPE.internal && test.sound.sourceUrl) {
+      if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && test.sound.sourceUrl) {
         cdnResources.push(test.sound.sourceUrl);
       }
     }

@@ -2,9 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import { Form, Input, Table, Button, Radio } from 'antd';
-import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import DeleteButton from '../../components/delete-button.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import { SOUND_SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
@@ -18,7 +18,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 const ButtonGroup = Button.Group;
 
-const defaultSound = { sourceType: SOURCE_TYPE.midi, sourceUrl: null, text: null };
+const defaultSound = { sourceType: SOUND_SOURCE_TYPE.midi, sourceUrl: null, text: null };
 
 function EarTrainingEditor({ content, onContentChanged }) {
   const { t } = useTranslation('earTraining');

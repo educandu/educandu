@@ -3,9 +3,10 @@ import classNames from 'classnames';
 import urls from '../../utils/routes.js';
 import Markdown from '../../components/markdown.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import { HOVER_EFFECT, LINK_SOURCE_TYPE } from './constants.js';
 import { useService } from '../../components/container-context.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
-import { HOVER_EFFECT, IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
 
 function getTileImageUrl(tile, cdnRootUrl) {
   const image = tile.image || {};

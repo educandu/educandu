@@ -1,8 +1,8 @@
 import React from 'react';
 import cloneDeep from '../../utils/clone-deep.js';
 import ImageTilesIcon from './image-tiles-icon.js';
-import { IMAGE_SOURCE_TYPE } from './constants.js';
 import ImageTilesDisplay from './image-tiles-display.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { createDefaultContent } from './image-tiles-utils.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
 
