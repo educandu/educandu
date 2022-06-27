@@ -31,20 +31,33 @@ const CONTENT_INPUT_DATA_ROLE = 'content-input';
 
 const HEADER_SIZE = '20px';
 
-const getGridStyle = (rowCount, columnCount) => {
+const getDesignerGridStyle = (rowCount, columnCount) => {
   return {
     gridTemplateRows: `${HEADER_SIZE} repeat(${rowCount}, auto)`,
     gridTemplateColumns: `${HEADER_SIZE} repeat(${columnCount}, 1fr)`
   };
 };
 
-const getGridCellStyle = cell => {
+const getDesignerCellStyle = designerCell => {
   return {
-    gridRowStart: cell.rowIndex + 2,
-    gridRowEnd: cell.rowIndex + 2 + (cell.rowSpan || 1),
-    gridColumnStart: cell.columnIndex + 2,
-    gridColumnEnd: cell.columnIndex + 2 + (cell.columnSpan || 1)
+    gridRowStart: designerCell.rowIndex + 2,
+    gridRowEnd: designerCell.rowIndex + 2 + (designerCell.rowSpan || 1),
+    gridColumnStart: designerCell.columnIndex + 2,
+    gridColumnEnd: designerCell.columnIndex + 2 + (designerCell.columnSpan || 1)
   };
+};
+
+const getDeignerCellKey = designerCell => {
+  switch (designerCell.designerCellType) {
+    case DESIGNER_CELL_TYPE.content:
+      return [designerCell.rowIndex, designerCell.columnIndex, designerCell.rowSpan, designerCell.columnSpan, designerCell.cellType].join('|');
+    case DESIGNER_CELL_TYPE.rowHeader:
+      return `${DESIGNER_CELL_TYPE.rowHeader}-${designerCell.rowIndex}`;
+    case DESIGNER_CELL_TYPE.columnHeader:
+      return `${DESIGNER_CELL_TYPE.columnHeader}-${designerCell.columnIndex}`;
+    default:
+      throw new Error(`Invalid designer cell type ${designerCell.designerCellType}`);
+  }
 };
 
 function TableDesigner({ content, onContentChange }) {
@@ -149,8 +162,8 @@ function TableDesigner({ content, onContentChange }) {
   const renderRowHeaderGridCell = designerCell => {
     return (
       <div
-        key={designerCell.key}
-        style={getGridCellStyle(designerCell)}
+        key={getDeignerCellKey(designerCell)}
+        style={getDesignerCellStyle(designerCell)}
         className="TableDesigner-gridCell TableDesigner-gridCell--rowHeader"
         >
         <div className="TableDesigner-headerCellMenuContainer">
@@ -169,8 +182,8 @@ function TableDesigner({ content, onContentChange }) {
   const renderColumnHeaderGridCell = designerCell => {
     return (
       <div
-        key={designerCell.key}
-        style={getGridCellStyle(designerCell)}
+        key={getDeignerCellKey(designerCell)}
+        style={getDesignerCellStyle(designerCell)}
         className="TableDesigner-gridCell TableDesigner-gridCell--columnHeader"
         >
         <div className="TableDesigner-headerCellMenuContainer">
@@ -202,9 +215,9 @@ function TableDesigner({ content, onContentChange }) {
 
     return (
       <div
-        key={designerCell.key}
+        key={getDeignerCellKey(designerCell)}
         className={classes}
-        style={getGridCellStyle(designerCell)}
+        style={getDesignerCellStyle(designerCell)}
         onClick={handleContentCellClick}
         >
         <DebouncedInput
@@ -233,16 +246,6 @@ function TableDesigner({ content, onContentChange }) {
     );
   };
 
-  const renderDefaultGridCell = designerCell => {
-    return (
-      <div
-        style={getGridCellStyle(designerCell)}
-        className="TableDesigner-gridCell"
-        key={designerCell.key}
-        />
-    );
-  };
-
   const renderDesignerGridCell = designerCell => {
     switch (designerCell.designerCellType) {
       case DESIGNER_CELL_TYPE.content:
@@ -252,7 +255,7 @@ function TableDesigner({ content, onContentChange }) {
       case DESIGNER_CELL_TYPE.columnHeader:
         return renderColumnHeaderGridCell(designerCell);
       default:
-        return renderDefaultGridCell(designerCell);
+        throw new Error(`Invalid designer cell type ${designerCell.designerCellType}`);
     }
   };
 
@@ -260,7 +263,7 @@ function TableDesigner({ content, onContentChange }) {
     <div className="TableDesigner">
       <div
         className="TableDesigner-grid"
-        style={getGridStyle(rowCount, columnCount)}
+        style={getDesignerGridStyle(rowCount, columnCount)}
         >
         {designerCells.map(designerCell => renderDesignerGridCell(designerCell))}
       </div>
