@@ -61,7 +61,7 @@ export default class EducanduServer {
     });
 
     if (Object.keys(this.serverConfig.basicAuthUsers).length) {
-      router.use(basicAuth({
+      router.use(/^\/(?!api\/)/, basicAuth({
         users: this.serverConfig.basicAuthUsers,
         challenge: true
       }));
