@@ -45,7 +45,6 @@ function ResourcePicker({ url, onUrlChange }) {
         visible={isModalVisible}
         onCancel={handleCancel}
         modalRender={modalRender}
-        bodyStyle={{ maxHeight: 'calc(90vh - 110px)', overflowY: 'auto' }}
         >
         <ResourceSelector
           allowedLocationTypes={allowedLocationTypes}
