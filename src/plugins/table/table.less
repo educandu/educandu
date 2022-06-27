@@ -28,15 +28,18 @@
 
 .TableDesigner {}
 
-.TableDesigner-table {
-  .TableDisplay-table;
+.TableDesigner-grid {
+  display: grid;
   margin: -20px 0 0 -20px;
   width: ~"calc(100% + 20px)";
 }
 
-.TableDesigner-tableCell {
+.TableDesigner-gridCell {
+  display: grid;
+  align-items: center;
+  justify-items: stretch;
 
-  &.TableDesigner-tableCell--content {
+  &.TableDesigner-gridCell--content {
     .TableDisplay-cell;
     position: relative;
     background-color: @edu-white;
@@ -46,27 +49,25 @@
     background-clip: padding-box;
   }
 
-  &.TableDesigner-tableCell--rowHeader {
+  &.TableDesigner-gridCell--rowHeader {
     .TableDisplay-cell;
     text-align: center;
-    vertical-align: middle;
     border: none;
     width: 20px;
   }
 
-  &.TableDesigner-tableCell--columnHeader {
+  &.TableDesigner-gridCell--columnHeader {
     .TableDisplay-cell;
     text-align: center;
-    vertical-align: middle;
     border: none;
     height: 20px;
   }
 
-  &.TableDesigner-tableCell--cellTypeHeader {
+  &.TableDesigner-gridCell--cellTypeHeader {
     .TableDisplay-cell.TableDisplay-cell--header;
   }
 
-  &.TableDesigner-tableCell--cellTypeBody {
+  &.TableDesigner-gridCell--cellTypeBody {
     .TableDisplay-cell.TableDisplay-cell--body;
   }
 

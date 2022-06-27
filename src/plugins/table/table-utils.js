@@ -14,7 +14,6 @@ export const CELL_TYPE = {
 };
 
 export const DESIGNER_CELL_TYPE = {
-  corner: 'corner',
   columnHeader: 'column-header',
   rowHeader: 'row-header',
   content: 'content'
@@ -87,28 +86,30 @@ export function createTableCellsInRows(rowCount, columnCount, createCell) {
   return rows;
 }
 
-export function createTableDesignerRows(tableModel) {
+export function createTableDesignerCells(tableModel) {
   const { rowCount, columnCount, cells } = tableModel;
-  const rows = [];
+  const designerCells = [];
 
-  const firstRow = [{ key: `${DESIGNER_CELL_TYPE.corner}`, designerCellType: DESIGNER_CELL_TYPE.corner, rowIndex: -1, columnIndex: -1 }];
   for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-    firstRow.push({ key: `${DESIGNER_CELL_TYPE.columnHeader}-${columnIndex}`, designerCellType: DESIGNER_CELL_TYPE.columnHeader, rowIndex: -1, columnIndex });
+    designerCells.push({
+      key: `${DESIGNER_CELL_TYPE.columnHeader}-${columnIndex}`,
+      designerCellType: DESIGNER_CELL_TYPE.columnHeader,
+      rowIndex: -1,
+      columnIndex
+    });
   }
 
-  rows.push(firstRow);
-
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-    const currentRow = [{ key: `${DESIGNER_CELL_TYPE.rowHeader}-${rowIndex}`, designerCellType: DESIGNER_CELL_TYPE.rowHeader, rowIndex, columnIndex: -1 }];
-    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-      currentRow.push(null);
-    }
-
-    rows.push(currentRow);
+    designerCells.push({
+      key: `${DESIGNER_CELL_TYPE.rowHeader}-${rowIndex}`,
+      designerCellType: DESIGNER_CELL_TYPE.rowHeader,
+      rowIndex,
+      columnIndex: -1
+    });
   }
 
   for (const cell of cells) {
-    rows[cell.rowIndex + 1][cell.columnIndex + 1] = {
+    designerCells.push({
       designerCellType: DESIGNER_CELL_TYPE.content,
       isFirstInRow: cell.columnIndex === 0,
       isLastInRow: cell.columnIndex + cell.columnSpan === columnCount,
@@ -116,10 +117,10 @@ export function createTableDesignerRows(tableModel) {
       isLastInColumn: cell.rowIndex + cell.rowSpan === rowCount,
       isConnected: cell.rowSpan > 1 || cell.columnSpan > 1,
       ...cell
-    };
+    });
   }
 
-  return rows.map(cellsInRow => cellsInRow.filter(x => x));
+  return designerCells;
 }
 
 export function changeCellText(tableModel, rowIndex, columnIndex, newText) {

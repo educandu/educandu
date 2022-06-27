@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import React, { useMemo, useState } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
-import React, { Fragment, useMemo, useState } from 'react';
 import MarkdownHelp from '../../components/markdown-help.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import DebouncedInput from '../../components/debounced-input.js';
@@ -10,7 +10,7 @@ import {
   changeCellTypesInRow,
   changeCellTypesInColumn,
   changeCellType,
-  createTableDesignerRows,
+  createTableDesignerCells,
   deleteColumn,
   deleteRow,
   DESIGNER_CELL_ACTION,
@@ -29,13 +29,31 @@ import {
 
 const CONTENT_INPUT_DATA_ROLE = 'content-input';
 
+const HEADER_SIZE = '20px';
+
+const getGridStyle = (rowCount, columnCount) => {
+  return {
+    gridTemplateRows: `${HEADER_SIZE} repeat(${rowCount}, auto)`,
+    gridTemplateColumns: `${HEADER_SIZE} repeat(${columnCount}, 1fr)`
+  };
+};
+
+const getGridCellStyle = cell => {
+  return {
+    gridRowStart: cell.rowIndex + 2,
+    gridRowEnd: cell.rowIndex + 2 + (cell.rowSpan || 1),
+    gridColumnStart: cell.columnIndex + 2,
+    gridColumnEnd: cell.columnIndex + 2 + (cell.columnSpan || 1)
+  };
+};
+
 function TableDesigner({ content, onContentChange }) {
   const { rowCount, columnCount } = content;
   const [activeRowIndex, setActiveRowIndex] = useState(-1);
   const [activeColumnIndex, setActiveColumnIndex] = useState(-1);
 
-  const designerRows = useMemo(() => {
-    return createTableDesignerRows(content);
+  const designerCells = useMemo(() => {
+    return createTableDesignerCells(content);
   }, [content]);
 
   const handleDesignerCellTextChange = (cell, newText) => {
@@ -128,11 +146,12 @@ function TableDesigner({ content, onContentChange }) {
     });
   };
 
-  const renderRowHeaderCell = designerCell => {
+  const renderRowHeaderGridCell = designerCell => {
     return (
-      <td
-        className="TableDesigner-tableCell TableDesigner-tableCell--rowHeader"
+      <div
         key={designerCell.key}
+        style={getGridCellStyle(designerCell)}
+        className="TableDesigner-gridCell TableDesigner-gridCell--rowHeader"
         >
         <div className="TableDesigner-headerCellMenuContainer">
           <TableDesignerMenu
@@ -143,15 +162,16 @@ function TableDesigner({ content, onContentChange }) {
             onIsActiveChange={isActive => handleActiveRowChange(designerCell.rowIndex, isActive)}
             />
         </div>
-      </td>
+      </div>
     );
   };
 
-  const renderColumnHeaderCell = designerCell => {
+  const renderColumnHeaderGridCell = designerCell => {
     return (
-      <td
-        className="TableDesigner-tableCell TableDesigner-tableCell--columnHeader"
+      <div
         key={designerCell.key}
+        style={getGridCellStyle(designerCell)}
+        className="TableDesigner-gridCell TableDesigner-gridCell--columnHeader"
         >
         <div className="TableDesigner-headerCellMenuContainer">
           <TableDesignerMenu
@@ -162,30 +182,29 @@ function TableDesigner({ content, onContentChange }) {
             onIsActiveChange={isActive => handleActiveColumnChange(designerCell.columnIndex, isActive)}
             />
         </div>
-      </td>
+      </div>
     );
   };
 
-  const renderContentCell = designerCell => {
+  const renderContentGridCell = designerCell => {
     const isInActiveRow = designerCell.rowIndex <= activeRowIndex && designerCell.rowIndex + designerCell.rowSpan - 1 >= activeRowIndex;
     const isInActiveColumn = designerCell.columnIndex <= activeColumnIndex && designerCell.columnIndex + designerCell.columnSpan - 1 >= activeColumnIndex;
 
-    const props = {
-      className: classNames({
-        'is-active': isInActiveRow || isInActiveColumn,
-        'TableDesigner-tableCell': true,
-        'TableDesigner-tableCell--content': true,
-        'TableDesigner-tableCell--cellTypeHeader': designerCell.cellType === CELL_TYPE.header,
-        'TableDesigner-tableCell--cellTypeBody': designerCell.cellType === CELL_TYPE.body
-      }),
-      key: designerCell.key,
-      rowSpan: designerCell.rowSpan,
-      colSpan: designerCell.columnSpan,
-      onClick: handleContentCellClick
-    };
+    const classes = classNames({
+      'is-active': isInActiveRow || isInActiveColumn,
+      'TableDesigner-gridCell': true,
+      'TableDesigner-gridCell--content': true,
+      'TableDesigner-gridCell--cellTypeHeader': designerCell.cellType === CELL_TYPE.header,
+      'TableDesigner-gridCell--cellTypeBody': designerCell.cellType === CELL_TYPE.body
+    });
 
-    const children = (
-      <Fragment>
+    return (
+      <div
+        key={designerCell.key}
+        className={classes}
+        style={getGridCellStyle(designerCell)}
+        onClick={handleContentCellClick}
+        >
         <DebouncedInput
           elementType={MarkdownInput}
           data-role={CONTENT_INPUT_DATA_ROLE}
@@ -208,56 +227,41 @@ function TableDesigner({ content, onContentChange }) {
         <div className="TableDesigner-contentCellMarkdownHelpContainer">
           <MarkdownHelp size="small" />
         </div>
-      </Fragment>
+      </div>
     );
-
-    switch (designerCell.cellType) {
-      case CELL_TYPE.header:
-        return <th {...props}>{children}</th>;
-      case CELL_TYPE.body:
-        return <td {...props}>{children}</td>;
-      default:
-        throw new Error(`Invalid cell type: ${designerCell.cellType}`);
-    }
   };
 
-  const renderDefaultCell = designerCell => {
+  const renderDefaultGridCell = designerCell => {
     return (
-      <td
-        className="TableDesigner-tableCell"
+      <div
+        style={getGridCellStyle(designerCell)}
+        className="TableDesigner-gridCell"
         key={designerCell.key}
         />
     );
   };
 
-  const renderDesignerCell = designerCell => {
+  const renderDesignerGridCell = designerCell => {
     switch (designerCell.designerCellType) {
       case DESIGNER_CELL_TYPE.content:
-        return renderContentCell(designerCell);
+        return renderContentGridCell(designerCell);
       case DESIGNER_CELL_TYPE.rowHeader:
-        return renderRowHeaderCell(designerCell);
+        return renderRowHeaderGridCell(designerCell);
       case DESIGNER_CELL_TYPE.columnHeader:
-        return renderColumnHeaderCell(designerCell);
+        return renderColumnHeaderGridCell(designerCell);
       default:
-        return renderDefaultCell(designerCell);
+        return renderDefaultGridCell(designerCell);
     }
-  };
-
-  const renderDesignerRow = designerRow => {
-    return (
-      <tr key={designerRow.map(designerCell => designerCell.key).join()}>
-        {designerRow.map(designerCell => renderDesignerCell(designerCell))}
-      </tr>
-    );
   };
 
   return (
     <div className="TableDesigner">
-      <table className="TableDesigner-table">
-        <tbody>
-          {designerRows.map(designerRow => renderDesignerRow(designerRow))}
-        </tbody>
-      </table>
+      <div
+        className="TableDesigner-grid"
+        style={getGridStyle(rowCount, columnCount)}
+        >
+        {designerCells.map(designerCell => renderDesignerGridCell(designerCell))}
+      </div>
     </div>
   );
 }
