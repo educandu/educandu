@@ -1,4 +1,7 @@
-@table-plugin-cell-content-padding: 5px;
+@table-plugin-cell-padding: 5px;
+@table-plugin-cell-border-color: @edu-border-color-base;
+@table-plugin-cell-header-background-color: @edu-background-color-base;
+@table-plugin-cell-body-background-color: @edu-white;
 
 .TableDisplay {
   overflow-x: auto;
@@ -12,15 +15,15 @@
 .TableDisplay-cell {
   text-align: left;
   font-weight: normal;
-  border: 1px solid @edu-border-color-base;
-  padding: @table-plugin-cell-content-padding;
+  border: 1px solid @table-plugin-cell-border-color;
+  padding: @table-plugin-cell-padding;
 
   &.TableDisplay-cell--header {
-    background-color: @edu-background-color-base;
+    background-color: @table-plugin-cell-header-background-color;
   }
 
   &.TableDisplay-cell--body {
-    background-color: @edu-white;
+    background-color: @table-plugin-cell-body-background-color;
   }
 }
 
@@ -40,39 +43,48 @@
   justify-items: stretch;
 
   &.TableDesigner-gridCell--content {
-    .TableDisplay-cell;
+    text-align: left;
+    font-weight: normal;
+    border-style: solid;
+    border-left-width: 0;
+    border-top-width: 0;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-color: @table-plugin-cell-border-color;
+    padding: @table-plugin-cell-padding;
     position: relative;
     background-color: @edu-white;
 
-    // Fixes this bug in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=688556
-    // Background of cell paints over border when borders are collapsed and tbody, row, or cell is relatively positioned
-    background-clip: padding-box;
+    &.TableDesigner-gridCell--firstInRow {
+      border-left-width: 1px;
+    }
+
+    &.TableDesigner-gridCell--firstInColumn {
+      border-top-width: 1px;
+    }
   }
 
   &.TableDesigner-gridCell--rowHeader {
-    .TableDisplay-cell;
+    padding: @table-plugin-cell-padding;
     text-align: center;
-    border: none;
     width: 20px;
   }
 
   &.TableDesigner-gridCell--columnHeader {
-    .TableDisplay-cell;
+    padding: @table-plugin-cell-padding;
     text-align: center;
-    border: none;
     height: 20px;
   }
 
   &.TableDesigner-gridCell--cellTypeHeader {
-    .TableDisplay-cell.TableDisplay-cell--header;
+    background-color: @table-plugin-cell-header-background-color;
   }
 
   &.TableDesigner-gridCell--cellTypeBody {
-    .TableDisplay-cell.TableDisplay-cell--body;
+    background-color: @table-plugin-cell-body-background-color;
   }
 
   &.is-active {
-    border-color: @edu-secondary-color-dark !important;
     background-color: @edu-secondary-color-light !important;
   }
 }

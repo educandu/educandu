@@ -194,6 +194,8 @@ function TableDesigner({ content, onContentChange }) {
       'is-active': isInActiveRow || isInActiveColumn,
       'TableDesigner-gridCell': true,
       'TableDesigner-gridCell--content': true,
+      'TableDesigner-gridCell--firstInRow': designerCell.isFirstInRow,
+      'TableDesigner-gridCell--firstInColumn': designerCell.isFirstInColumn,
       'TableDesigner-gridCell--cellTypeHeader': designerCell.cellType === CELL_TYPE.header,
       'TableDesigner-gridCell--cellTypeBody': designerCell.cellType === CELL_TYPE.body
     });
