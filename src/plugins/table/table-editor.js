@@ -49,7 +49,7 @@ function TableEditor({ content, onContentChanged }) {
         </Form.Item>
       </Form>
       <div className="Panel">
-        <div className="Panel-content Panel-content--darker">
+        <div className="Panel-content">
           <TableDesigner content={content} onContentChange={updateContent} />
         </div>
       </div>

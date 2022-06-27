@@ -1,22 +1,20 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
-import { Form, Input, Table, Button, Radio } from 'antd';
-import DeleteButton from '../../components/delete-button.js';
+import { Form, Input, Button, Radio } from 'antd';
+import cloneDeep from '../../utils/clone-deep.js';
+import ItemPanel from '../../components/item-panel.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { SOUND_SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
-import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
+import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const ButtonGroup = Button.Group;
 
 const defaultSound = { sourceType: SOUND_SOURCE_TYPE.midi, sourceUrl: null, text: null };
 
@@ -29,9 +27,6 @@ function EarTrainingEditor({ content, onContentChanged }) {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 }
   };
-
-  const dataSource = tests.map((test, i) => ({ key: i, ...test }));
-  const expandedRowKeys = dataSource.map(record => record.key);
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
@@ -61,7 +56,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleDeleteButtonClick = index => {
+  const handleDeleteTest = index => {
     const newTests = removeItemAt(tests, index);
     changeContent({ tests: newTests });
   };
@@ -72,80 +67,26 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleUpCircleButtonClick = index => {
+  const handleMoveTestUp = index => {
     const newTests = swapItemsAt(tests, index, index - 1);
     changeContent({ tests: newTests });
   };
 
-  const handleDownCircleButtonClick = index => {
+  const handleMoveTestDown = index => {
     const newTests = swapItemsAt(tests, index, index + 1);
     changeContent({ tests: newTests });
   };
 
-  const handleTestsOrderChanged = event => {
+  const handleTestsOrderChange = event => {
     changeContent({ testsOrder: event.target.value });
   };
 
-  const renderExpandedRow = (record, index) => (
-    <EarTrainingSoundEditor
-      sound={record.sound || { ...defaultSound }}
-      onSoundChanged={newValue => handleSoundChanged(index, newValue)}
-      />
-  );
-
-  const renderColumns = () => [
-    {
-      width: 80,
-      key: 'upDown',
-      render: (upDown, item, index) => (
-        <ButtonGroup>
-          <Button
-            disabled={index === 0}
-            icon={<MoveUpIcon />}
-            onClick={() => handleUpCircleButtonClick(index)}
-            />
-          <Button
-            disabled={index === tests.length - 1}
-            icon={<MoveDownIcon />}
-            onClick={() => handleDownCircleButtonClick(index)}
-            />
-        </ButtonGroup>
-      )
-    }, {
-      title: () => t('startAbcCode'),
-      key: 'startAbcCode',
-      render: (val, item, index) => (
-        <TextArea
-          value={item.startAbcCode}
-          onChange={event => handleStartAbcCodeChanged(index, event.target.value)}
-          rows={6}
-          />
-      )
-    }, {
-      title: () => t('fullAbcCode'),
-      key: 'fullAbcCode',
-      render: (val, item, index) => (
-        <TextArea
-          value={item.fullAbcCode}
-          onChange={event => handleFullAbcCodeChanged(index, event.target.value)}
-          rows={6}
-          />
-      )
-    }, {
-      title: (
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleAddButtonClick}
-          />
-      ),
-      width: 48,
-      key: 'button',
-      render: (value, item, index) => (
-        <DeleteButton onClick={() => handleDeleteButtonClick(index)} disabled={tests.length < 2} />
-      )
-    }
-  ];
+  const handleTestModeChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].mode = value;
+    changeContent({ tests: newTests });
+  };
 
   return (
     <div>
@@ -157,24 +98,59 @@ function EarTrainingEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={content.width} onChange={handleWidthChanged} />
         </Form.Item>
         <FormItem label={t('testsOrder')} {...formItemLayout}>
-          <RadioGroup value={content.testsOrder} onChange={handleTestsOrderChanged}>
+          <RadioGroup value={content.testsOrder} onChange={handleTestsOrderChange}>
             <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
             <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
           </RadioGroup>
         </FormItem>
       </Form>
-      <Table
-        dataSource={dataSource}
-        columns={renderColumns()}
-        expandable={{
-          expandIconColumnIndex: -1,
-          expandedRowClassName: () => 'EarTraining-expandedEditorRow',
-          expandedRowRender: renderExpandedRow,
-          expandedRowKeys
-        }}
-        pagination={false}
-        size="small"
-        />
+
+      {tests.map((test, index) => (
+        <ItemPanel
+          index={index}
+          key={index.toString()}
+          itemsCount={tests.length}
+          header={t('testNumber', { number: index + 1 })}
+          onMoveUp={handleMoveTestUp}
+          onMoveDown={handleMoveTestDown}
+          onDelete={handleDeleteTest}
+          >
+          <FormItem label={t('testMode')} {...formItemLayout}>
+            <RadioGroup value={test.mode} onChange={event => handleTestModeChange(event, index)}>
+              <RadioButton value={TEST_MODE.image}>{t('testModeImage')}</RadioButton>
+              <RadioButton value={TEST_MODE.abcCode}>{t('testModeAbcCode')}</RadioButton>
+            </RadioGroup>
+          </FormItem>
+          {test.mode === TEST_MODE.image && (
+            <span>image here</span>
+          )}
+          {test.mode === TEST_MODE.abcCode && (
+            <Fragment>
+              <FormItem label={t('startAbcCode')} {...formItemLayout}>
+                <TextArea
+                  value={test.startAbcCode}
+                  onChange={event => handleStartAbcCodeChanged(index, event.target.value)}
+                  rows={6}
+                  />
+              </FormItem>
+              <FormItem label={t('fullAbcCode')} {...formItemLayout}>
+                <TextArea
+                  value={test.fullAbcCode}
+                  onChange={event => handleFullAbcCodeChanged(index, event.target.value)}
+                  rows={6}
+                  />
+              </FormItem>
+              <EarTrainingSoundEditor
+                sound={test.sound || { ...defaultSound }}
+                onSoundChanged={newValue => handleSoundChanged(index, newValue)}
+                />
+            </Fragment>
+          )}
+        </ItemPanel>
+      ))}
+      <Button type="primary" icon={<PlusOutlined />} onClick={handleAddButtonClick}>
+        {t('addTest')}
+      </Button>
     </div>
   );
 }

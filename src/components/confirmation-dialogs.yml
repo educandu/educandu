@@ -58,9 +58,9 @@ sessionExpiredTitle:
 sessionExpiredDescription:
   en: Your session has expired because you have been inactive for some time. Please login in order to continue this process.
   de: Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen.
-confirmDeleteImageTile:
-  en: Do you really want to delete this tile?
-  de: Möchten Sie diese Kachel löschen?
+deleteItemConfirmation:
+  en: Do you really want to delete "{name}"?
+  de: Möchten Sie "{name}" wirklich löschen?
 deleteStoragePlanConfirmation:
   en: Do you really want to delete storage plan "{storagePlanName}"?
   de: Möchten Sie den Speicherplan "{storagePlanName}" wirklich löschen?

@@ -31,3 +31,18 @@ testsOrderGiven:
 testsOrderRandom:
   en: random
   de: zufällig
+testMode:
+  en: Test mode
+  de: Test-Modus
+testModeImage:
+  en: image
+  de: Bild
+testModeAbcCode:
+  en: ABC code
+  de: ABC-Code
+addTest:
+  en: Add test
+  de: Test hinzufügen
+testNumber:
+  en: Test {number}
+  de: Test {number}

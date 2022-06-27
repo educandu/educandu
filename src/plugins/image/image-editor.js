@@ -274,7 +274,7 @@ function ImageEditor({ content, onContentChanged }) {
 
         {effect && (
           <div className="Panel">
-            <div className="Panel-content Panel-content--darker">
+            <div className="Panel-content">
               {[EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(effect.type) && (
               <Fragment>
                 {renderSourceTypeInput(effect.sourceType, handleEffectSourceTypeValueChanged)}

@@ -1,19 +1,16 @@
 import React from 'react';
 import { TESTS_ORDER } from './constants.js';
 import { useTranslation } from 'react-i18next';
-import DeleteButton from '../../components/delete-button.js';
+import ItemPanel from '../../components/item-panel.js';
+import { Form, Button, Radio, Checkbox, Tooltip } from 'antd';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Form, Table, Button, Radio, Checkbox, Tooltip } from 'antd';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
-import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
-import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const ButtonGroup = Button.Group;
 
 function QuickTesterEditor({ content, onContentChanged }) {
   const { t } = useTranslation('quickTester');
@@ -23,7 +20,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
     wrapperCol: { span: 14 }
   };
   const { tests, testsOrder, teaser, title } = content;
-  const dataSource = tests.map((test, i) => ({ key: i, ...test }));
 
   const changeContent = newContentValues => {
     onContentChanged({ ...content, ...newContentValues }, false);
@@ -49,7 +45,7 @@ function QuickTesterEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleDeleteButtonClick = index => {
+  const handleDeleteTest = index => {
     const newTests = removeItemAt(tests, index);
     changeContent({ tests: newTests });
   };
@@ -60,12 +56,12 @@ function QuickTesterEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleUpCircleButtonClick = index => {
+  const handleMoveTestUp = index => {
     const newTests = swapItemsAt(tests, index, index - 1);
     changeContent({ tests: newTests });
   };
 
-  const handleDownCircleButtonClick = index => {
+  const handleMoveTestDown = index => {
     const newTests = swapItemsAt(tests, index, index + 1);
     changeContent({ tests: newTests });
   };
@@ -77,64 +73,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
   const handleRenderMediaChanged = event => {
     changeContent({ renderMedia: event.target.checked });
   };
-
-  const columns = [
-    {
-      width: 80,
-      key: 'upDown',
-      render: (upDown, item, index) => (
-        <ButtonGroup>
-          <Button
-            disabled={index === 0}
-            icon={<MoveUpIcon />}
-            onClick={() => handleUpCircleButtonClick(index)}
-            />
-          <Button
-            disabled={index === tests.length - 1}
-            icon={<MoveDownIcon />}
-            onClick={() => handleDownCircleButtonClick(index)}
-            />
-        </ButtonGroup>
-      )
-    }, {
-      title: () => t('common:question'),
-      dataIndex: 'question',
-      key: 'question',
-      render: (question, item, index) => (
-        <MarkdownInput
-          autoSize={{ minRows: 3, maxRows: 3 }}
-          renderMedia={content.renderMedia}
-          value={question}
-          onChange={event => handleInputQuestionChanged(index, event.target.value)}
-          />
-      )
-    }, {
-      title: () => t('common:answer'),
-      dataIndex: 'answer',
-      key: 'answer',
-      render: (answer, item, index) => (
-        <MarkdownInput
-          autoSize={{ minRows: 3, maxRows: 3 }}
-          renderMedia={content.renderMedia}
-          value={answer}
-          onChange={event => handleInputAnswerChanged(index, event.target.value)}
-          />
-      )
-    }, {
-      title: (
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleAddButtonClick}
-          />
-      ),
-      width: 48,
-      key: 'button',
-      render: (value, item, index) => (
-        <DeleteButton onClick={() => handleDeleteButtonClick(index)} disabled={tests.length < 2} />
-      )
-    }
-  ];
 
   return (
     <div className="QuickTesterEditor">
@@ -158,7 +96,43 @@ function QuickTesterEditor({ content, onContentChanged }) {
           </Tooltip>
         </Form.Item>
       </Form>
-      <Table dataSource={dataSource} columns={columns} pagination={false} size="small" />
+      {tests.map((test, index) => (
+        <ItemPanel
+          index={index}
+          key={index.toString()}
+          itemsCount={tests.length}
+          header={t('testNumber', { number: index + 1 })}
+          onMoveUp={handleMoveTestUp}
+          onMoveDown={handleMoveTestDown}
+          onDelete={handleDeleteTest}
+          >
+          <div className="QuickTesterEditor-testContent">
+            <div>
+              <span className="QuickTesterEditor-testContentLabel">{t('common:question')}</span>
+              <MarkdownInput
+                preview
+                autoSize={{ minRows: 3, maxRows: 3 }}
+                renderMedia={content.renderMedia}
+                value={test.question}
+                onChange={event => handleInputQuestionChanged(index, event.target.value)}
+                />
+            </div>
+            <div>
+              <span className="QuickTesterEditor-testContentLabel">{t('common:answer')}</span>
+              <MarkdownInput
+                preview
+                autoSize={{ minRows: 3, maxRows: 3 }}
+                renderMedia={content.renderMedia}
+                value={test.answer}
+                onChange={event => handleInputAnswerChanged(index, event.target.value)}
+                />
+            </div>
+          </div>
+        </ItemPanel>
+      ))}
+      <Button type="primary" icon={<PlusOutlined />} onClick={handleAddButtonClick}>
+        {t('addTest')}
+      </Button>
     </div>
   );
 }
