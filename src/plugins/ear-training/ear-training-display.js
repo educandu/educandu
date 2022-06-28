@@ -31,11 +31,14 @@ function EarTrainingDisplay({ content }) {
 
   const abcContainerRef = useRef();
   const midiContainerRef = useRef();
+  const questionImageRef = useRef();
+  const answerImageCanvasRef = useRef();
 
   const { title, width } = content;
   const [abcjs, setAbcjs] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const [isCurrentQuestionImageLoaded, setIsCurrentQuestionImageLoaded] = useState(false);
   const [tests, setTests] = useState(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
 
   useEffect(() => {
@@ -53,6 +56,49 @@ function EarTrainingDisplay({ content }) {
       abcjs.renderMidi(midiContainerRef.current, currentTest.answerAbcCode, midiOptions);
     }
   }, [abcjs, tests, currentTestIndex, showResult]);
+
+  useEffect(() => {
+    setIsCurrentQuestionImageLoaded(false);
+
+    const questionImage = questionImageRef.current;
+    if (!questionImage || tests[currentTestIndex].mode !== TEST_MODE.image) {
+      return;
+    }
+
+    if (questionImage.complete) {
+      setIsCurrentQuestionImageLoaded(questionImage.naturalHeight !== 0);
+    } else {
+      questionImage.onload = () => setIsCurrentQuestionImageLoaded(true);
+    }
+  }, [tests, currentTestIndex, questionImageRef]);
+
+  useEffect(() => {
+    if (tests[currentTestIndex].mode !== TEST_MODE.image || !isCurrentQuestionImageLoaded) {
+      return;
+    }
+    const questionImage = questionImageRef.current;
+    const canvas = answerImageCanvasRef.current;
+    const context = canvas.getContext('2d');
+    canvas.width = questionImage.width;
+    canvas.height = questionImage.height;
+
+    const answerImage = new Image();
+    answerImage.src = getImageUrl({
+      cdnRootUrl: clientConfig.cdnRootUrl,
+      sourceType: tests[currentTestIndex].answerImage.sourceType,
+      sourceUrl: tests[currentTestIndex].answerImage.sourceUrl
+    });
+
+    answerImage.onload = () => {
+      const widthFactor = canvas.width / answerImage.naturalWidth;
+      const heightFactor = canvas.height / answerImage.naturalHeight;
+      const factorToUse = Math.min(heightFactor, widthFactor);
+      const finalHeight = answerImage.naturalHeight * factorToUse;
+      const finalWidth = answerImage.naturalWidth * factorToUse;
+      context.drawImage(answerImage, 0, 0, answerImage.naturalWidth, answerImage.naturalHeight, 0, 0, finalWidth, finalHeight);
+
+    };
+  }, [tests, currentTestIndex, showResult, questionImageRef, answerImageCanvasRef, clientConfig, isCurrentQuestionImageLoaded]);
 
   const handleResultClick = () => {
     setShowResult(true);
@@ -103,21 +149,11 @@ function EarTrainingDisplay({ content }) {
     );
   };
 
-  const renderImage = testImage => {
-    return (
-      <Fragment>
-        <img
-          className={classNames('EarTrainingDisplay-image', `u-max-width-${maxWidth}`)}
-          src={getImageUrl({
-            cdnRootUrl: clientConfig.cdnRootUrl,
-            sourceType: testImage.sourceType,
-            sourceUrl: testImage.sourceUrl
-          })}
-          />
-        <Markdown>{testImage.text}</Markdown>
-      </Fragment>
-    );
-  };
+  const questionImageClasses = classNames(
+    'EarTrainingDisplay-questionImage',
+    { 'EarTrainingDisplay-questionImage--toggledOff': showResult },
+    `u-max-width-${maxWidth}`
+  );
 
   return (
     <div className="EarTrainingDisplay fa5">
@@ -125,9 +161,26 @@ function EarTrainingDisplay({ content }) {
         <h3>
           <Markdown inline>{title}</Markdown>
         </h3>
-        {tests[currentTestIndex].mode === TEST_MODE.image && !showResult && renderImage(tests[currentTestIndex].questionImage)}
-        {tests[currentTestIndex].mode === TEST_MODE.image && showResult && renderImage(tests[currentTestIndex].answerImage)}
-        {tests[currentTestIndex].mode === TEST_MODE.abcCode && (<div ref={abcContainerRef} />)}
+        {tests[currentTestIndex].mode === TEST_MODE.image && (
+          <Fragment>
+            <img
+              ref={questionImageRef}
+              className={questionImageClasses}
+              src={getImageUrl({
+                cdnRootUrl: clientConfig.cdnRootUrl,
+                sourceType: tests[currentTestIndex].questionImage.sourceType,
+                sourceUrl: tests[currentTestIndex].questionImage.sourceUrl
+              })}
+              />
+            <Markdown>{tests[currentTestIndex].questionImage.text}</Markdown>
+          </Fragment>
+        )}
+        {tests[currentTestIndex].mode === TEST_MODE.image && (
+          <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-max-width-${maxWidth}`} />
+        )}
+        {tests[currentTestIndex].mode === TEST_MODE.abcCode && (
+          <div ref={abcContainerRef} />
+        )}
 
         {renderSoundPlayer()}
 

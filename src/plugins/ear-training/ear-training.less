@@ -1,7 +1,21 @@
 .EarTrainingDisplay {}
 
-.EarTrainingDisplay-image {
+.EarTrainingDisplay-questionImage {
   display: block;
+  margin: 0 auto;
+  max-width: 100%;
+
+  &.EarTrainingDisplay-questionImage--toggledOff {
+    display: none;
+
+    ~ .EarTrainingDisplay-answerImage {
+      display: block;
+    }
+  }
+}
+
+.EarTrainingDisplay-answerImage {
+  display: none;
   margin: 0 auto;
   max-width: 100%;
 }
