@@ -10,12 +10,12 @@ solve:
 reset:
   en: Reset
   de: Zurücksetzen
-startAbcCode:
-  en: Start ABC code
-  de: Vorgabe-ABC-Code
-fullAbcCode:
-  en: Full ABC code
-  de: Lösungs-ABC-Code
+questionAbcCode:
+  en: Question ABC code
+  de: Frage-ABC-Code
+answerAbcCode:
+  en: Answer ABC code
+  de: Antwort-ABC-Code
 audioSource:
   en: Audio source
   de: Audio-Quelle
@@ -46,3 +46,9 @@ addTest:
 testNumber:
   en: Test {number}
   de: Test {number}
+testQuestionImage:
+  en: Question image
+  de: Frage-Bild
+testAnswerImage:
+  en: Answer image
+  de: AntwortsBild

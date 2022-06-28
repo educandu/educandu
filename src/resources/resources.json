@@ -1585,8 +1585,8 @@
       "nextExercise": "Next exercise",
       "solve": "Solve",
       "reset": "Reset",
-      "startAbcCode": "Start ABC code",
-      "fullAbcCode": "Full ABC code",
+      "questionAbcCode": "Question ABC code",
+      "answerAbcCode": "Answer ABC code",
       "audioSource": "Audio source",
       "midi": "MIDI (auto)",
       "testsOrder": "Display order",
@@ -1596,7 +1596,9 @@
       "testModeImage": "image",
       "testModeAbcCode": "ABC code",
       "addTest": "Add test",
-      "testNumber": "Test {number}"
+      "testNumber": "Test {number}",
+      "testQuestionImage": "Question image",
+      "testAnswerImage": "Answer image"
     }
   },
   {
@@ -1607,8 +1609,8 @@
       "nextExercise": "Nächste Übung",
       "solve": "Auflösen",
       "reset": "Zurücksetzen",
-      "startAbcCode": "Vorgabe-ABC-Code",
-      "fullAbcCode": "Lösungs-ABC-Code",
+      "questionAbcCode": "Frage-ABC-Code",
+      "answerAbcCode": "Antwort-ABC-Code",
       "audioSource": "Audio-Quelle",
       "midi": "MIDI (auto)",
       "testsOrder": "Anzeigereihenfolge",
@@ -1618,7 +1620,9 @@
       "testModeImage": "Bild",
       "testModeAbcCode": "ABC-Code",
       "addTest": "Test hinzufügen",
-      "testNumber": "Test {number}"
+      "testNumber": "Test {number}",
+      "testQuestionImage": "Frage-Bild",
+      "testAnswerImage": "AntwortsBild"
     }
   },
   {

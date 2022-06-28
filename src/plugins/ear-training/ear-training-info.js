@@ -33,32 +33,38 @@ class EarTrainingInfo {
     return (await import('./ear-training-editor.js')).default;
   }
 
+  getDefaultImage() {
+    return {
+      sourceType: IMAGE_SOURCE_TYPE.internal,
+      sourceUrl: null,
+      text: null
+    };
+  }
+
+  getDefaultSound() {
+    return {
+      sourceType: SOUND_SOURCE_TYPE.midi,
+      sourceUrl: null,
+      text: null
+    };
+  }
+
+  getDefaultTest() {
+    return {
+      mode: TEST_MODE.image,
+      questionImage: this.getDefaultImage(),
+      answerImage: this.getDefaultImage(),
+      questionAbcCode: '',
+      answerAbcCode: '',
+      sound: this.getDefaultSound()
+    };
+  }
+
   getDefaultContent(t) {
     return {
       title: `[${t('common:title')}]`,
       width: 100,
-      tests: [
-        {
-          mode: TEST_MODE.image,
-          questionImage: {
-            sourceType: IMAGE_SOURCE_TYPE.internal,
-            sourceUrl: null,
-            text: null
-          },
-          answerImage: {
-            sourceType: IMAGE_SOURCE_TYPE.internal,
-            sourceUrl: null,
-            text: null
-          },
-          questionAbcCode: '',
-          answerAbcCode: '',
-          sound: {
-            sourceType: SOUND_SOURCE_TYPE.midi,
-            sourceUrl: null,
-            text: null
-          }
-        }
-      ],
+      tests: [this.getDefaultTest()],
       testsOrder: TESTS_ORDER.given
     };
   }
