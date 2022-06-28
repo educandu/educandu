@@ -2,11 +2,11 @@ import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { PlusOutlined } from '@ant-design/icons';
-import { Form, Input, Button, Radio } from 'antd';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingInfo from './ear-training-info.js';
 import ItemPanel from '../../components/item-panel.js';
 import { TESTS_ORDER, TEST_MODE } from './constants.js';
+import { Form, Input, Button, Radio, Divider } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
@@ -200,7 +200,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
             {test.mode === TEST_MODE.image && (
               <Fragment>
-                <span>{t('testQuestionImage')}</span>
+                <Divider plain>{t('testQuestion')}</Divider>
                 <FormItem label={t('common:source')} {...formItemLayout}>
                   <RadioGroup value={test.questionImage.sourceType} onChange={event => handleQuestionImageSourceTypeChange(event, index)}>
                     <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
@@ -230,7 +230,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
                   <MarkdownInput value={test.questionImage.text} onChange={event => handleQuestionImageTextChange(event, index)} />
                 </Form.Item>
-                <span>{t('testAnswerImage')}</span>
+                <Divider plain>{t('testAnswer')}</Divider>
                 <FormItem label={t('common:source')} {...formItemLayout}>
                   <RadioGroup value={test.answerImage.sourceType} onChange={event => handleAnswerImageSourceTypeChange(event, index)}>
                     <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
@@ -264,26 +264,30 @@ function EarTrainingEditor({ content, onContentChanged }) {
             )}
             {test.mode === TEST_MODE.abcCode && (
               <Fragment>
-                <FormItem label={t('questionAbcCode')} {...formItemLayout}>
+                <Divider plain>{t('testQuestion')}</Divider>
+                <FormItem label={t('abcCode')} {...formItemLayout}>
                   <TextArea
                     value={test.questionAbcCode}
                     onChange={event => handleQuestionAbcCodeChanged(event, index)}
                     rows={6}
                     />
                 </FormItem>
-                <FormItem label={t('answerAbcCode')} {...formItemLayout}>
+                <Divider plain>{t('testAnswer')}</Divider>
+                <FormItem label={t('abcCode')} {...formItemLayout}>
                   <TextArea
                     value={test.answerAbcCode}
                     onChange={event => handleAnswerAbcCodeChanged(event, index)}
                     rows={6}
                     />
                 </FormItem>
-                <EarTrainingSoundEditor
-                  sound={test.sound || { ...earTrainingInfo.getDefaultSound() }}
-                  onSoundChanged={value => handleSoundChanged(value, index)}
-                  />
               </Fragment>
             )}
+
+            <Divider plain>{t('audio')}</Divider>
+            <EarTrainingSoundEditor
+              sound={test.sound || { ...earTrainingInfo.getDefaultSound() }}
+              onSoundChanged={value => handleSoundChanged(value, index)}
+              />
           </ItemPanel>
         ))}
       </Form>

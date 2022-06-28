@@ -10,15 +10,9 @@ solve:
 reset:
   en: Reset
   de: Zurücksetzen
-questionAbcCode:
-  en: Question ABC code
-  de: Frage-ABC-Code
-answerAbcCode:
-  en: Answer ABC code
-  de: Antwort-ABC-Code
-audioSource:
-  en: Audio source
-  de: Audio-Quelle
+abcCode:
+  en: ABC code
+  de: ABC-Code
 midi:
   en: MIDI (auto)
   de: MIDI (auto)
@@ -46,9 +40,12 @@ addTest:
 testNumber:
   en: Test {number}
   de: Test {number}
-testQuestionImage:
-  en: Question image
-  de: Frage-Bild
-testAnswerImage:
-  en: Answer image
-  de: AntwortsBild
+testQuestion:
+  en: Question
+  de: Frage
+testAnswer:
+  en: Answer
+  de: Antwort
+audio:
+  en: Audio
+  de: Audio

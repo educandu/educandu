@@ -50,7 +50,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
   const renderSourceRow = () => (
     <tr>
       <td style={{ padding: 8 }}>&nbsp;</td>
-      <td style={{ padding: 8 }}>{t('audioSource')}:</td>
+      <td style={{ padding: 8 }}>{t('common:source')}:</td>
       <td style={{ padding: 8 }}>
         <RadioGroup
           value={sound.sourceType}
