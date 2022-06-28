@@ -43,7 +43,7 @@ class EarTrainingInfo {
 
   getDefaultSound() {
     return {
-      sourceType: SOUND_SOURCE_TYPE.midi,
+      sourceType: SOUND_SOURCE_TYPE.internal,
       sourceUrl: null,
       text: null
     };

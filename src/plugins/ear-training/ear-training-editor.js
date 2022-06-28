@@ -5,17 +5,16 @@ import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingInfo from './ear-training-info.js';
 import ItemPanel from '../../components/item-panel.js';
-import { TESTS_ORDER, TEST_MODE } from './constants.js';
 import { Form, Input, Button, Radio, Divider } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
-import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
+import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const { TextArea } = Input;
@@ -61,11 +60,6 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleSoundChanged = (value, index) => {
-    const newTests = tests.map((test, i) => i === index ? { ...test, sound: value } : test);
-    changeContent({ tests: newTests });
-  };
-
   const handleDeleteTest = index => {
     const newTests = removeItemAt(tests, index);
     changeContent({ tests: newTests });
@@ -100,11 +94,13 @@ function EarTrainingEditor({ content, onContentChanged }) {
       newTests[index].answerImage = earTrainingInfo.getDefaultImage();
       newTests[index].questionAbcCode = '';
       newTests[index].answerAbcCode = '';
+      newTests[index].sound = earTrainingInfo.getDefaultSound();
     } else {
       newTests[index].questionImage = null;
       newTests[index].answerImage = null;
       newTests[index].questionAbcCode = DEFAULT_ABC_CODE;
       newTests[index].answerAbcCode = DEFAULT_ABC_CODE;
+      newTests[index].sound = { ...earTrainingInfo.getDefaultSound(), sourceType: SOUND_SOURCE_TYPE.midi };
     }
 
     newTests[index].mode = value;
@@ -115,6 +111,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
     newTests[index].questionImage.sourceType = value;
+    newTests[index].questionImage.sourceUrl = '';
     changeContent({ tests: newTests });
   };
 
@@ -142,6 +139,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
     newTests[index].answerImage.sourceType = value;
+    newTests[index].answerImage.sourceUrl = '';
     changeContent({ tests: newTests });
   };
 
@@ -162,6 +160,37 @@ function EarTrainingEditor({ content, onContentChanged }) {
     const { value } = event.target;
     const newTests = cloneDeep(tests);
     newTests[index].answerImage.text = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundSourceTypeChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+
+    newTests[index].sound.sourceType = value;
+    newTests[index].sound.sourceUrl = value === SOUND_SOURCE_TYPE.midi ? null : '';
+    newTests[index].sound.text = value === SOUND_SOURCE_TYPE.midi ? null : newTests[index].sound.text || '';
+
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundSourceUrlChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundSourceUrlFileNameChange = (value, index) => {
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundTextChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.text = value;
     changeContent({ tests: newTests });
   };
 
@@ -262,32 +291,63 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 </Form.Item>
               </Fragment>
             )}
+
             {test.mode === TEST_MODE.abcCode && (
               <Fragment>
                 <Divider plain>{t('testQuestion')}</Divider>
                 <FormItem label={t('abcCode')} {...formItemLayout}>
                   <TextArea
+                    rows={6}
                     value={test.questionAbcCode}
                     onChange={event => handleQuestionAbcCodeChanged(event, index)}
-                    rows={6}
                     />
                 </FormItem>
                 <Divider plain>{t('testAnswer')}</Divider>
                 <FormItem label={t('abcCode')} {...formItemLayout}>
                   <TextArea
+                    rows={6}
                     value={test.answerAbcCode}
                     onChange={event => handleAnswerAbcCodeChanged(event, index)}
-                    rows={6}
                     />
                 </FormItem>
               </Fragment>
             )}
 
             <Divider plain>{t('audio')}</Divider>
-            <EarTrainingSoundEditor
-              sound={test.sound || { ...earTrainingInfo.getDefaultSound() }}
-              onSoundChanged={value => handleSoundChanged(value, index)}
-              />
+            <FormItem label={t('common:source')} {...formItemLayout}>
+              <RadioGroup value={test.sound.sourceType} onChange={event => handleSoundSourceTypeChange(event, index)}>
+                {test.mode === TEST_MODE.abcCode && (
+                <RadioButton value={SOUND_SOURCE_TYPE.midi}>{t('midi')}</RadioButton>
+                )}
+                <RadioButton value={SOUND_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+                <RadioButton value={SOUND_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+              </RadioGroup>
+            </FormItem>
+            {test.sound.sourceType === SOUND_SOURCE_TYPE.external && (
+              <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(test.sound.sourceUrl, t)} hasFeedback>
+                <Input value={test.sound.sourceUrl} onChange={event => handleSoundSourceUrlChange(event, index)} />
+              </FormItem>
+            )}
+            {test.sound.sourceType === SOUND_SOURCE_TYPE.internal && (
+              <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+                <div className="u-input-and-button">
+                  <Input
+                    addonBefore={`${clientConfig.cdnRootUrl}/`}
+                    value={test.sound.sourceUrl}
+                    onChange={event => handleSoundSourceUrlChange(event, index)}
+                    />
+                  <ResourcePicker
+                    url={storageLocationPathToUrl(test.sound.sourceUrl)}
+                    onUrlChange={url => handleSoundSourceUrlFileNameChange(urlToStorageLocationPath(url), index)}
+                    />
+                </div>
+              </FormItem>
+            )}
+            {test.sound.sourceType !== SOUND_SOURCE_TYPE.midi && (
+              <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+                <MarkdownInput value={test.sound.text} onChange={event => handleSoundTextChange(event, index)} />
+              </Form.Item>
+            )}
           </ItemPanel>
         ))}
       </Form>

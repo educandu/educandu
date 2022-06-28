@@ -18,15 +18,9 @@ import DebouncedInput from '../../components/debounced-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-<<<<<<< HEAD
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import MediaRangeSelector from '../../components/media-range-selector.js';
-=======
-import MediaRangeSelector from '../../components/media-range-selector.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { Button, Divider, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
->>>>>>> 1fe6e1fd (EDU-628 Unify plugin editors dividers)
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
