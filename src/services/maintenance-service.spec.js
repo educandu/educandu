@@ -5,10 +5,14 @@ describe('maintenance-service', () => {
   const sandbox = sinon.createSandbox();
 
   let sut;
+  let cdn;
   let database;
   let lockStore;
 
   beforeAll(() => {
+    cdn = {
+      uploadEmptyObject: () => Promise.reject(new Error('not stubbed'))
+    };
     database = {
       runMigrationScripts: () => Promise.reject(new Error('not stubbed')),
       checkDb: () => Promise.reject(new Error('not stubbed'))
@@ -17,10 +21,11 @@ describe('maintenance-service', () => {
       takeMaintenanceLock: () => Promise.reject(new Error('not stubbed')),
       releaseLock: () => Promise.reject(new Error('not stubbed'))
     };
-    sut = new MaintenanceService(database, lockStore);
+    sut = new MaintenanceService(cdn, database, lockStore);
   });
 
   beforeEach(() => {
+    sandbox.stub(cdn, 'uploadEmptyObject');
     sandbox.stub(database, 'runMigrationScripts');
     sandbox.stub(database, 'checkDb');
     sandbox.stub(lockStore, 'takeMaintenanceLock');
@@ -39,6 +44,7 @@ describe('maintenance-service', () => {
         lockStore.releaseLock.resolves({});
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
+        cdn.uploadEmptyObject.resolves();
 
         await sut.runMaintenance();
       });
@@ -58,6 +64,10 @@ describe('maintenance-service', () => {
       it('should have run the checks', () => {
         sinon.assert.calledOnce(database.checkDb);
       });
+
+      it('should have created the initial CDN directories', () => {
+        sinon.assert.calledTwice(cdn.uploadEmptyObject);
+      });
     });
 
     describe('when the lock is already taken on first try', () => {
@@ -70,6 +80,7 @@ describe('maintenance-service', () => {
         lockStore.releaseLock.resolves({});
         database.runMigrationScripts.resolves();
         database.checkDb.resolves();
+        cdn.uploadEmptyObject.resolves();
 
         await sut.runMaintenance();
       });
@@ -99,6 +110,7 @@ describe('maintenance-service', () => {
         lockStore.releaseLock.resolves({});
         database.runMigrationScripts.rejects(new Error('Migration failed'));
         database.checkDb.resolves();
+        cdn.uploadEmptyObject.resolves();
 
         caughtError = null;
         try {
@@ -126,6 +138,10 @@ describe('maintenance-service', () => {
 
       it('should not have run the checks', () => {
         sinon.assert.notCalled(database.checkDb);
+      });
+
+      it('should not have created the initial CDN directories', () => {
+        sinon.assert.notCalled(cdn.uploadEmptyObject);
       });
     });
 

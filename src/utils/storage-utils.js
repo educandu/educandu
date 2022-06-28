@@ -113,6 +113,10 @@ export function getPublicRootPath() {
   return 'media';
 }
 
+export function getPrivateRoomsRootPath() {
+  return 'rooms';
+}
+
 export function getPublicHomePath(documentOrLessonId) {
   return `media/${documentOrLessonId}`;
 }

@@ -1,16 +1,20 @@
+import Cdn from '../repositories/cdn.js';
 import Logger from '../common/logger.js';
 import Database from '../stores/database.js';
 import { delay } from '../utils/time-utils.js';
 import LockStore from '../stores/lock-store.js';
+import { STORAGE_DIRECTORY_MARKER_NAME } from '../domain/constants.js';
+import { getPrivateRoomsRootPath, getPublicRootPath } from '../utils/storage-utils.js';
 
 const MONGO_DUPLUCATE_KEY_ERROR_CODE = 11000;
 
 const logger = new Logger(import.meta.url);
 
 export default class MaintenanceService {
-  static get inject() { return [Database, LockStore]; }
+  static get inject() { return [Cdn, Database, LockStore]; }
 
-  constructor(database, lockStore) {
+  constructor(cdn, database, lockStore) {
+    this.cdn = cdn;
     this.database = database;
     this.lockStore = lockStore;
   }
@@ -32,6 +36,13 @@ export default class MaintenanceService {
         // eslint-disable-next-line no-await-in-loop
         await this.database.checkDb();
         logger.info('Finished database checks successfully');
+
+        logger.info('Creating basic CDN directories');
+        // eslint-disable-next-line no-await-in-loop
+        await this.cdn.uploadEmptyObject(`${getPublicRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
+        // eslint-disable-next-line no-await-in-loop
+        await this.cdn.uploadEmptyObject(`${getPrivateRoomsRootPath()}/${STORAGE_DIRECTORY_MARKER_NAME}`);
+        logger.info('Finished creating basic CDN directories successfully');
 
         return;
       } catch (error) {
