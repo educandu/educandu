@@ -1,14 +1,16 @@
 import { Button } from 'antd';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
+import { getImageUrl } from '../../utils/url-utils.js';
 import { shuffleItems } from '../../utils/array-utils.js';
 import MediaPlayer from '../../components/media-player.js';
-import React, { useEffect, useRef, useState } from 'react';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
-import { SOUND_SOURCE_TYPE, TESTS_ORDER } from './constants.js';
 import { useService } from '../../components/container-context.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
 
 const abcOptions = {
   paddingtop: 0,
@@ -33,7 +35,7 @@ function EarTrainingDisplay({ content }) {
   const { title, width } = content;
   const [abcjs, setAbcjs] = useState(null);
   const [showResult, setShowResult] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
   const [tests, setTests] = useState(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
 
   useEffect(() => {
@@ -44,24 +46,25 @@ function EarTrainingDisplay({ content }) {
   });
 
   useEffect(() => {
-    if (abcjs) {
-      const currentTest = tests[currentIndex];
+    const currentTest = tests[currentTestIndex];
+
+    if (currentTest.mode === TEST_MODE.abcCode && abcjs) {
       abcjs.renderAbc(abcContainerRef.current, showResult ? currentTest.answerAbcCode : currentTest.questionAbcCode, abcOptions);
       abcjs.renderMidi(midiContainerRef.current, currentTest.answerAbcCode, midiOptions);
     }
-  }, [abcjs, tests, currentIndex, showResult]);
+  }, [abcjs, tests, currentTestIndex, showResult]);
 
   const handleResultClick = () => {
     setShowResult(true);
   };
 
   const handleNextClick = () => {
-    setCurrentIndex(currentIndex + 1);
+    setCurrentTestIndex(currentTestIndex + 1);
     setShowResult(false);
   };
 
   const handleResetClick = () => {
-    setCurrentIndex(0);
+    setCurrentTestIndex(0);
     setShowResult(false);
     setTests(shuffleItems(tests));
   };
@@ -69,7 +72,7 @@ function EarTrainingDisplay({ content }) {
   const renderSoundPlayer = () => {
     let soundUrl = null;
     let sourceType = SOUND_SOURCE_TYPE.midi;
-    const currentTest = tests[currentIndex];
+    const currentTest = tests[currentTestIndex];
 
     if (currentTest.sound && currentTest.sound.sourceType === SOUND_SOURCE_TYPE.internal) {
       sourceType = SOUND_SOURCE_TYPE.internal;
@@ -100,18 +103,42 @@ function EarTrainingDisplay({ content }) {
     );
   };
 
+  const renderImage = testImage => {
+    return (
+      <Fragment>
+        <img
+          className={classNames('EarTrainingDisplay-image', `u-max-width-${maxWidth}`)}
+          src={getImageUrl({
+            cdnRootUrl: clientConfig.cdnRootUrl,
+            sourceType: testImage.sourceType,
+            sourceUrl: testImage.sourceUrl
+          })}
+          />
+        <Markdown>{testImage.text}</Markdown>
+      </Fragment>
+    );
+  };
+
   return (
     <div className="EarTrainingDisplay fa5">
       <div className={`EarTrainingDisplay-testWrapper u-width-${width}`}>
         <h3>
           <Markdown inline>{title}</Markdown>
         </h3>
-        <div ref={abcContainerRef} />
+        {tests[currentTestIndex].mode === TEST_MODE.image && !showResult && renderImage(tests[currentTestIndex].questionImage)}
+        {tests[currentTestIndex].mode === TEST_MODE.image && showResult && renderImage(tests[currentTestIndex].answerImage)}
+        {tests[currentTestIndex].mode === TEST_MODE.abcCode && (<div ref={abcContainerRef} />)}
+
         {renderSoundPlayer()}
+
         <div className="EarTrainingDisplay-buttons">
           <Button onClick={handleResetClick}>{t('reset')}</Button>
-          {!!showResult && currentIndex < tests.length - 1 && <Button type="primary" onClick={handleNextClick}>{t('nextExercise')}</Button>}
-          {!!tests[currentIndex] && !showResult && <Button type="primary" onClick={handleResultClick}>{t('solve')}</Button>}
+          {!showResult && !!tests[currentTestIndex] && (
+            <Button type="primary" onClick={handleResultClick}>{t('solve')}</Button>
+          )}
+          {showResult && currentTestIndex < tests.length - 1 && (
+            <Button type="primary" onClick={handleNextClick}>{t('nextExercise')}</Button>
+          )}
         </div>
       </div>
     </div>
