@@ -1,3 +1,4 @@
+import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
 import { shuffleItems } from '../../utils/array-utils.js';
@@ -45,8 +46,8 @@ function EarTrainingDisplay({ content }) {
   useEffect(() => {
     if (abcjs) {
       const currentTest = tests[currentIndex];
-      abcjs.renderAbc(abcContainerRef.current, showResult ? currentTest.fullAbcCode : currentTest.startAbcCode, abcOptions);
-      abcjs.renderMidi(midiContainerRef.current, currentTest.fullAbcCode, midiOptions);
+      abcjs.renderAbc(abcContainerRef.current, showResult ? currentTest.answerAbcCode : currentTest.questionAbcCode, abcOptions);
+      abcjs.renderMidi(midiContainerRef.current, currentTest.answerAbcCode, midiOptions);
     }
   }, [abcjs, tests, currentIndex, showResult]);
 
@@ -81,7 +82,7 @@ function EarTrainingDisplay({ content }) {
     }
 
     return (
-      <div className="EarTraining-soundPlayer">
+      <div className="EarTrainingDisplay-soundPlayer">
         {sourceType === SOUND_SOURCE_TYPE.midi && <div ref={midiContainerRef} />}
         {sourceType !== SOUND_SOURCE_TYPE.midi && soundUrl && (
           <MediaPlayer
@@ -99,29 +100,18 @@ function EarTrainingDisplay({ content }) {
     );
   };
 
-  const renderButtons = () => {
-    const buttons = [];
-    if (showResult && currentIndex < tests.length - 1) {
-      buttons.push(<button key="next" type="button" onClick={handleNextClick}>{t('nextExercise')}</button>);
-    }
-    if (tests[currentIndex] && !showResult) {
-      buttons.push(<button key="result" type="button" onClick={handleResultClick}>{t('solve')}</button>);
-    }
-    buttons.push(<button key="reset" type="button" onClick={handleResetClick}>{t('reset')}</button>);
-
-    return buttons;
-  };
-
   return (
-    <div className="EarTraining fa5">
-      <div className={`EarTraining-testWrapper u-width-${width}`}>
-        <h3 className="EarTraining-header">
+    <div className="EarTrainingDisplay fa5">
+      <div className={`EarTrainingDisplay-testWrapper u-width-${width}`}>
+        <h3>
           <Markdown inline>{title}</Markdown>
         </h3>
         <div ref={abcContainerRef} />
         {renderSoundPlayer()}
-        <div className="EarTraining-buttons">
-          {renderButtons()}
+        <div className="EarTrainingDisplay-buttons">
+          <Button onClick={handleResetClick}>{t('reset')}</Button>
+          {!!showResult && currentIndex < tests.length - 1 && <Button type="primary" onClick={handleNextClick}>{t('nextExercise')}</Button>}
+          {!!tests[currentIndex] && !showResult && <Button type="primary" onClick={handleResultClick}>{t('solve')}</Button>}
         </div>
       </div>
     </div>

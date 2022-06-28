@@ -74,7 +74,7 @@ function QuickTesterDisplay({ content }) {
 
   const answerDisplay = isAnswerVisible
     ? <Markdown renderMedia={content.renderMedia}>{tests[currentTestIndex].answer}</Markdown>
-    : <Button type="primary" size="large" onClick={showAnswer}>{t('showAnswer')}</Button>;
+    : <Button type="primary" onClick={showAnswer}>{t('showAnswer')}</Button>;
 
   return (
     <div className="QuickTester">
