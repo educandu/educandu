@@ -36,7 +36,14 @@ function EarTrainingEditor({ content, onContentChanged }) {
   };
 
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    const newContent = { ...content, ...newContentValues };
+
+    const hasInvalidSourceUrl = (newContent.tests || [])
+      .some(test => (test.questionImage?.sourceType === IMAGE_SOURCE_TYPE.external && validation.validateUrl(test.questionImage.sourceUrl, t).validateStatus === 'error')
+        || (test.answerImage?.sourceType === IMAGE_SOURCE_TYPE.external && validation.validateUrl(test.answerImage.sourceUrl, t).validateStatus === 'error')
+        || (test.sound.sourceType === SOUND_SOURCE_TYPE.external && validation.validateUrl(test.sound.sourceUrl, t).validateStatus === 'error'));
+
+    onContentChanged(newContent, hasInvalidSourceUrl);
   };
 
   const handleTitleChanged = event => {
@@ -122,7 +129,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleQuestionImageSourceUrlFileNameChange = (value, index) => {
+  const handleQuestionImageFileNameChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].questionImage.sourceUrl = value;
     changeContent({ tests: newTests });
@@ -150,7 +157,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleAnswerImageSourceUrlFileNameChange = (value, index) => {
+  const handleAnswerImageFileNameChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].answerImage.sourceUrl = value;
     changeContent({ tests: newTests });
@@ -181,7 +188,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ tests: newTests });
   };
 
-  const handleSoundSourceUrlFileNameChange = (value, index) => {
+  const handleSoundFileNameChange = (value, index) => {
     const newTests = cloneDeep(tests);
     newTests[index].sound.sourceUrl = value;
     changeContent({ tests: newTests });
@@ -192,6 +199,40 @@ function EarTrainingEditor({ content, onContentChanged }) {
     const newTests = cloneDeep(tests);
     newTests[index].sound.text = value;
     changeContent({ tests: newTests });
+  };
+
+  const renderExternalSourceUrlInput = (index, value, handleSourceUrlChange) => {
+    return (
+      <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(value, t)} hasFeedback>
+        <Input value={value} onChange={event => handleSourceUrlChange(event, index)} />
+      </FormItem>
+    );
+  };
+
+  const renderInternalSourceUrlInput = (index, value, handleSourceUrlChange, handleSourceUrlFileNameChange) => {
+    return (
+      <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+        <div className="u-input-and-button">
+          <Input
+            addonBefore={`${clientConfig.cdnRootUrl}/`}
+            value={value}
+            onChange={event => handleSourceUrlChange(event, index)}
+            />
+          <ResourcePicker
+            url={storageLocationPathToUrl(value)}
+            onUrlChange={url => handleSourceUrlFileNameChange(urlToStorageLocationPath(url), index)}
+            />
+        </div>
+      </FormItem>
+    );
+  };
+
+  const renderTextInput = (index, value, handleValueChange) => {
+    return (
+      <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+        <MarkdownInput value={value} onChange={event => handleValueChange(event, index)} />
+      </Form.Item>
+    );
   };
 
   return (
@@ -236,59 +277,26 @@ function EarTrainingEditor({ content, onContentChanged }) {
                     <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
-                {test.questionImage.sourceType === IMAGE_SOURCE_TYPE.external && (
-                  <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(test.questionImage.sourceUrl, t)} hasFeedback>
-                    <Input value={test.questionImage.sourceUrl} onChange={event => handleQuestionImageSourceUrlChange(event, index)} />
-                  </FormItem>
-                )}
-                {test.questionImage.sourceType === IMAGE_SOURCE_TYPE.internal && (
-                  <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-                    <div className="u-input-and-button">
-                      <Input
-                        addonBefore={`${clientConfig.cdnRootUrl}/`}
-                        value={test.questionImage.sourceUrl}
-                        onChange={event => handleQuestionImageSourceUrlChange(event, index)}
-                        />
-                      <ResourcePicker
-                        url={storageLocationPathToUrl(test.questionImage.sourceUrl)}
-                        onUrlChange={url => handleQuestionImageSourceUrlFileNameChange(urlToStorageLocationPath(url), index)}
-                        />
-                    </div>
-                  </FormItem>
-                )}
-                <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-                  <MarkdownInput value={test.questionImage.text} onChange={event => handleQuestionImageTextChange(event, index)} />
-                </Form.Item>
+                {test.questionImage.sourceType === IMAGE_SOURCE_TYPE.external
+                  && renderExternalSourceUrlInput(index, test.questionImage.sourceUrl, handleQuestionImageSourceUrlChange)}
+                {test.questionImage.sourceType === IMAGE_SOURCE_TYPE.internal
+                  && renderInternalSourceUrlInput(index, test.questionImage.sourceUrl, handleQuestionImageSourceUrlChange, handleQuestionImageFileNameChange)}
+                {renderTextInput(index, test.questionImage.text, handleQuestionImageTextChange)}
+
                 <Divider plain>{t('testAnswer')}</Divider>
+
                 <FormItem label={t('common:source')} {...formItemLayout}>
                   <RadioGroup value={test.answerImage.sourceType} onChange={event => handleAnswerImageSourceTypeChange(event, index)}>
                     <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
                     <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
                   </RadioGroup>
                 </FormItem>
-                {test.answerImage.sourceType === IMAGE_SOURCE_TYPE.external && (
-                  <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(test.answerImage.sourceUrl, t)} hasFeedback>
-                    <Input value={test.answerImage.sourceUrl} onChange={event => handleAnswerImageSourceUrlChange(event, index)} />
-                  </FormItem>
-                )}
-                {test.answerImage.sourceType === IMAGE_SOURCE_TYPE.internal && (
-                  <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-                    <div className="u-input-and-button">
-                      <Input
-                        addonBefore={`${clientConfig.cdnRootUrl}/`}
-                        value={test.answerImage.sourceUrl}
-                        onChange={event => handleAnswerImageSourceUrlChange(event, index)}
-                        />
-                      <ResourcePicker
-                        url={storageLocationPathToUrl(test.answerImage.sourceUrl)}
-                        onUrlChange={url => handleAnswerImageSourceUrlFileNameChange(urlToStorageLocationPath(url), index)}
-                        />
-                    </div>
-                  </FormItem>
-                )}
-                <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-                  <MarkdownInput value={test.answerImage.text} onChange={event => handleAnswerImageTextChange(event, index)} />
-                </Form.Item>
+                {test.answerImage.sourceType === IMAGE_SOURCE_TYPE.external
+                  && renderExternalSourceUrlInput(index, test.answerImage.sourceUrl, handleAnswerImageSourceUrlChange)}
+                {test.answerImage.sourceType === IMAGE_SOURCE_TYPE.internal
+                  && renderInternalSourceUrlInput(index, test.answerImage.sourceUrl, handleAnswerImageSourceUrlChange, handleAnswerImageFileNameChange)}
+                {renderTextInput(index, test.answerImage.text, handleAnswerImageTextChange)}
+
               </Fragment>
             )}
 
@@ -296,24 +304,17 @@ function EarTrainingEditor({ content, onContentChanged }) {
               <Fragment>
                 <Divider plain>{t('testQuestion')}</Divider>
                 <FormItem label={t('abcCode')} {...formItemLayout}>
-                  <TextArea
-                    rows={6}
-                    value={test.questionAbcCode}
-                    onChange={event => handleQuestionAbcCodeChanged(event, index)}
-                    />
+                  <TextArea rows={6} value={test.questionAbcCode} onChange={event => handleQuestionAbcCodeChanged(event, index)} />
                 </FormItem>
                 <Divider plain>{t('testAnswer')}</Divider>
                 <FormItem label={t('abcCode')} {...formItemLayout}>
-                  <TextArea
-                    rows={6}
-                    value={test.answerAbcCode}
-                    onChange={event => handleAnswerAbcCodeChanged(event, index)}
-                    />
+                  <TextArea rows={6} value={test.answerAbcCode} onChange={event => handleAnswerAbcCodeChanged(event, index)} />
                 </FormItem>
               </Fragment>
             )}
 
             <Divider plain>{t('audio')}</Divider>
+
             <FormItem label={t('common:source')} {...formItemLayout}>
               <RadioGroup value={test.sound.sourceType} onChange={event => handleSoundSourceTypeChange(event, index)}>
                 {test.mode === TEST_MODE.abcCode && (
@@ -323,31 +324,12 @@ function EarTrainingEditor({ content, onContentChanged }) {
                 <RadioButton value={SOUND_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
               </RadioGroup>
             </FormItem>
-            {test.sound.sourceType === SOUND_SOURCE_TYPE.external && (
-              <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(test.sound.sourceUrl, t)} hasFeedback>
-                <Input value={test.sound.sourceUrl} onChange={event => handleSoundSourceUrlChange(event, index)} />
-              </FormItem>
-            )}
-            {test.sound.sourceType === SOUND_SOURCE_TYPE.internal && (
-              <FormItem label={t('common:internalUrl')} {...formItemLayout}>
-                <div className="u-input-and-button">
-                  <Input
-                    addonBefore={`${clientConfig.cdnRootUrl}/`}
-                    value={test.sound.sourceUrl}
-                    onChange={event => handleSoundSourceUrlChange(event, index)}
-                    />
-                  <ResourcePicker
-                    url={storageLocationPathToUrl(test.sound.sourceUrl)}
-                    onUrlChange={url => handleSoundSourceUrlFileNameChange(urlToStorageLocationPath(url), index)}
-                    />
-                </div>
-              </FormItem>
-            )}
-            {test.sound.sourceType !== SOUND_SOURCE_TYPE.midi && (
-              <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-                <MarkdownInput value={test.sound.text} onChange={event => handleSoundTextChange(event, index)} />
-              </Form.Item>
-            )}
+            {test.sound.sourceType === SOUND_SOURCE_TYPE.external
+              && renderExternalSourceUrlInput(index, test.sound.sourceUrl, handleSoundSourceUrlChange)}
+            {test.sound.sourceType === SOUND_SOURCE_TYPE.internal
+                && renderInternalSourceUrlInput(index, test.sound.sourceUrl, handleSoundSourceUrlChange, handleSoundFileNameChange)}
+            {test.sound.sourceType !== SOUND_SOURCE_TYPE.midi
+              && renderTextInput(index, test.sound.text, handleSoundTextChange)}
           </ItemPanel>
         ))}
       </Form>
