@@ -22,7 +22,7 @@ import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { Button, Form, Input, Radio, Spin, Switch, Tooltip } from 'antd';
 import MediaRangeSelector from '../../components/media-range-selector.js';
 import { CheckOutlined, LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SCREEN_MODE, MEDIA_SOURCE_TYPE, RESOURCE_TYPE } from '../../domain/constants.js';
 import { trimChaptersToFitRange, analyzeMediaUrl, determineMediaDuration, formatMillisecondsAsDuration } from '../../utils/media-utils.js';
 
@@ -306,7 +306,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
                 />
               <ResourcePicker
                 url={storageLocationPathToUrl(sourceUrl)}
-                onUrlChange={url => handleInternalUrlFileNameChanged(urlToSorageLocationPath(url))}
+                onUrlChange={url => handleInternalUrlFileNameChanged(urlToStorageLocationPath(url))}
                 />
             </div>
           </FormItem>

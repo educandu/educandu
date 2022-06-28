@@ -12,7 +12,7 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -232,7 +232,7 @@ function ImageEditor({ content, onContentChanged }) {
           />
         <ResourcePicker
           url={storageLocationPathToUrl(value)}
-          onUrlChange={url => onFileChangeHandler(urlToSorageLocationPath(url))}
+          onUrlChange={url => onFileChangeHandler(urlToStorageLocationPath(url))}
           />
       </div>
     </FormItem>

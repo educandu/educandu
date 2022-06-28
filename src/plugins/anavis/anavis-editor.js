@@ -17,7 +17,7 @@ import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const ReactDropzone = reactDropzoneNs.default || reactDropzoneNs;
 
@@ -320,7 +320,7 @@ function AnavisEditor({ content, onContentChanged }) {
                 />
               <ResourcePicker
                 url={storageLocationPathToUrl(sourceUrl)}
-                onUrlChange={url => handleInternalUrlFileNameChanged(urlToSorageLocationPath(url))}
+                onUrlChange={url => handleInternalUrlFileNameChanged(urlToStorageLocationPath(url))}
                 />
             </div>
           </FormItem>

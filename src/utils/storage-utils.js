@@ -136,7 +136,7 @@ export function isAccessibleStoragePath(storagePath, fromRoomId) {
     : true;
 }
 
-export function urlToSorageLocationPath(url) {
+export function urlToStorageLocationPath(url) {
   return url ? url.replace(/^cdn:\/\//, '') : '';
 }
 

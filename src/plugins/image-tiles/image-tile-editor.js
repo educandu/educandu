@@ -10,7 +10,7 @@ import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import DocumentSelector from '../../components/document-selector.js';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -91,7 +91,7 @@ function ImageTileEditor({ index, image, description, link, onChange }) {
               />
             <ResourcePicker
               url={storageLocationPathToUrl(image.sourceUrl)}
-              onUrlChange={url => handleInternalImageUrlFileNameChanged(urlToSorageLocationPath(url))}
+              onUrlChange={url => handleInternalImageUrlFileNameChanged(urlToStorageLocationPath(url))}
               />
           </div>
         </FormItem>

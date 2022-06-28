@@ -7,7 +7,7 @@ import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -88,7 +88,7 @@ function EarTrainingSoundEditor({ sound, onSoundChanged }) {
             />
           <ResourcePicker
             url={storageLocationPathToUrl(sound.sourceUrl)}
-            onUrlChange={url => handleInternalUrlFileNameChanged(urlToSorageLocationPath(url))}
+            onUrlChange={url => handleInternalUrlFileNameChanged(urlToStorageLocationPath(url))}
             />
         </div>
         )}

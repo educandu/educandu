@@ -9,7 +9,7 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -89,7 +89,7 @@ function VideoEditor({ content, onContentChanged }) {
           />
         <ResourcePicker
           url={storageLocationPathToUrl(posterImage.sourceUrl)}
-          onUrlChange={url => handlePosterImageSourceUrlFileNameChange(urlToSorageLocationPath(url))}
+          onUrlChange={url => handlePosterImageSourceUrlFileNameChange(urlToStorageLocationPath(url))}
           />
       </div>
     </FormItem>
@@ -124,7 +124,7 @@ function VideoEditor({ content, onContentChanged }) {
                   />
                 <ResourcePicker
                   url={storageLocationPathToUrl(sourceUrl)}
-                  onUrlChange={url => handleInternalUrlFileNameChange(urlToSorageLocationPath(url))}
+                  onUrlChange={url => handleInternalUrlFileNameChange(urlToStorageLocationPath(url))}
                   />
               </div>
             </FormItem>
