@@ -1,4 +1,4 @@
-import { escapeHtml, kebabCaseToCamelCase, shorten } from './string-utils.js';
+import { escapeHtml, isLetter, kebabCaseToCamelCase, shorten, splitAroundWords } from './string-utils.js';
 
 describe('string-utils', () => {
 
@@ -17,21 +17,34 @@ describe('string-utils', () => {
   });
 
   describe('shorten', () => {
-    it('will return a falsy value as empty string', () => {
+    it('returns a falsy value as empty string', () => {
       const result = shorten(null, 5);
       expect(result).toBe('');
     });
-    it('will return empty string as is', () => {
+    it('returns empty string as is', () => {
       const result = shorten('', 5);
       expect(result).toBe('');
     });
-    it('will return a string that has exactly the `maxLength` unchanged', () => {
+    it('returns a string that has exactly the `maxLength` unchanged', () => {
       const result = shorten('12345', 5);
       expect(result).toBe('12345');
     });
-    it('will return a string that is longer than `maxLength` trimmed to `maxLength`', () => {
+    it('returns a string that is longer than `maxLength` trimmed to `maxLength`', () => {
       const result = shorten('123456', 5);
       expect(result).toBe('1234…');
+    });
+  });
+
+  describe('isLetter', () => {
+    it('returns true for Unicode letters', () => {
+      expect(isLetter('Löß')).toBe(true);
+    });
+  });
+
+  describe('splitAroundWords', () => {
+    it('returns an array of tokens keeping all words intact', () => {
+      const result = splitAroundWords('Wörter und Zeichen/Sonderzeichen und Café!');
+      expect(result).toStrictEqual(['Wörter', ' ', 'und', ' ', 'Zeichen', '/', 'Sonderzeichen', ' ', 'und', ' ', 'Café', '!']);
     });
   });
 

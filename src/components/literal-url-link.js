@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-
-const ZERO_WIDTH_SPACE = '\u200B';
+import { ZERO_WIDTH_SPACE } from '../utils/string-utils.js';
 
 function LiteralUrlLink({ href, targetBlank, ...rest }) {
   const parts = (href || '').replace(/[^\w]\b/g, c => `${c}${ZERO_WIDTH_SPACE}`).split(ZERO_WIDTH_SPACE);

@@ -11,6 +11,8 @@ const HTML_ESCAPE_TEST_PATTERN = new RegExp(`[${Object.keys(HTML_REPLACEMENT_MAP
 
 const HTML_ESCAPE_REPLACEMENT_PATTERN = new RegExp(HTML_ESCAPE_TEST_PATTERN.source, 'g');
 
+export const ZERO_WIDTH_SPACE = '\u200B';
+
 export function escapeHtml(str) {
   return HTML_ESCAPE_TEST_PATTERN.test(str)
     ? str.replace(HTML_ESCAPE_REPLACEMENT_PATTERN, c => HTML_REPLACEMENT_MAP[c])
@@ -27,4 +29,28 @@ export function shorten(str, maxLength) {
   }
 
   return `${str.slice(0, maxLength - 1)}…`;
+}
+
+export function isLetter(char) {
+  return (/^\p{L}+$/u).test(char);
+}
+
+export function splitAroundWords(word) {
+  const unicodeChars = Array.from(word);
+  const tokens = [];
+  let isInWord = false;
+  for (const char of unicodeChars) {
+    if (isLetter(char)) {
+      if (isInWord) {
+        tokens[tokens.length - 1] = tokens[tokens.length - 1] + char;
+      } else {
+        tokens.push(char);
+        isInWord = true;
+      }
+    } else {
+      tokens.push(char);
+      isInWord = false;
+    }
+  }
+  return tokens;
 }

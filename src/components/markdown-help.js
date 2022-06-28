@@ -5,10 +5,7 @@ import { Modal, Tooltip } from 'antd';
 import { Trans, useTranslation } from 'react-i18next';
 import MarkdownIcon from './icons/markdown/markdown-icon.js';
 import React, { Fragment, useCallback, useState } from 'react';
-
-const ZERO_WIDTH_SPACE = '\u200B';
-const SIMPLE_URL_REGEX = /((https?:\/\/|(ftp:\/\/)).*|(.*\.[^.]{2,6})(\/.*)?)(:.*)?$/g;
-const insertLineBreaksIntoUrl = url => url.replace(/[^\w]\b/g, c => `${c}${ZERO_WIDTH_SPACE}`);
+import { isLetter, splitAroundWords, ZERO_WIDTH_SPACE } from '../utils/string-utils.js';
 
 function MarkdownHelp({ inline, size, disabled }) {
   const { t } = useTranslation('markdownHelp');
@@ -56,23 +53,25 @@ function MarkdownHelp({ inline, size, disabled }) {
   );
 
   const renderMarkdownCode = code => {
-    const lines = code.replace(SIMPLE_URL_REGEX, insertLineBreaksIntoUrl).split('\n');
     return (
       <Fragment>
-        {lines.map((line, lineIndex) => {
+        {code.split('\n').map((line, lineIndex) => {
           const tokens = line.split(' ');
           return (
             <Fragment key={lineIndex.toString()}>
               {lineIndex !== 0 && <br />}
-              {tokens.map((token, tokenIndex) => {
-                const word = tokenIndex !== 0 && token ? ZERO_WIDTH_SPACE + token : token;
-                return (
-                  <Fragment key={tokenIndex.toString()}>
-                    {tokenIndex !== 0 && <span className="MarkdownHelp-spaceIndicator">•</span>}
-                    {word}
-                  </Fragment>
-                );
-              })}
+              {tokens.map((token, tokenIndex) => (
+                <Fragment key={tokenIndex.toString()}>
+                  {tokenIndex !== 0 && <span className="MarkdownHelp-spaceIndicator">•</span>}
+                  {tokenIndex !== 0 && !!token && ZERO_WIDTH_SPACE}
+                  {splitAroundWords(token).map((word, wordIndex) => (
+                    <Fragment key={wordIndex.toString()}>
+                      {wordIndex !== 0 && isLetter(word) && <wbr />}
+                      {word}
+                    </Fragment>
+                  ))}
+                </Fragment>
+              ))}
             </Fragment>
           );
         })}
