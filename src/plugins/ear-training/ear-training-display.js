@@ -152,7 +152,7 @@ function EarTrainingDisplay({ content }) {
   const questionImageClasses = classNames(
     'EarTrainingDisplay-questionImage',
     { 'EarTrainingDisplay-questionImage--toggledOff': showResult },
-    `u-max-width-${maxWidth}`
+    `u-width-${width}`
   );
 
   return (
@@ -176,7 +176,7 @@ function EarTrainingDisplay({ content }) {
           </Fragment>
         )}
         {tests[currentTestIndex].mode === TEST_MODE.image && (
-          <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-max-width-${maxWidth}`} />
+          <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-width-${width}`} />
         )}
         {tests[currentTestIndex].mode === TEST_MODE.abcCode && (
           <div ref={abcContainerRef} />
