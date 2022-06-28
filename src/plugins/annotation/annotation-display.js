@@ -66,7 +66,7 @@ export default function AnnotationDisplay({ content }) {
   });
 
   return (
-    <div className={`AnnotationDisplay u-max-width-${width}`}>
+    <div className={`AnnotationDisplay u-width-${width}`}>
       {behavior === BEHAVIOR.static && !content.title && renderContent({ standalone: true })}
 
       {behavior === BEHAVIOR.static && content.title && (

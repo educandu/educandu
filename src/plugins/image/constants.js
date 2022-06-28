@@ -14,5 +14,3 @@ export const ORIENTATION = {
   vertical: 'vertical',
   horizontal: 'horizontal'
 };
-
-export const SMALL_IMAGE_WIDTH_THRESHOLD = 1200;

@@ -35,7 +35,7 @@ class EarTrainingInfo {
   getDefaultContent(t) {
     return {
       title: `[${t('common:title')}]`,
-      maxWidth: 100,
+      width: 100,
       tests: [
         {
           startAbcCode: 'X:1',

@@ -16,9 +16,6 @@ startAbcCode:
 fullAbcCode:
   en: Full ABC code
   de: Lösungs-ABC-Code
-maximumWidth:
-  en: Maximum width
-  de: Maximale Breite
 audioSource:
   en: Audio source
   de: Audio-Quelle

@@ -7,7 +7,7 @@ import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 
@@ -144,7 +144,7 @@ function VideoEditor({ content, onContentChanged }) {
           </RadioGroup>
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
-          <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChange} />
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleCopyrightInfoChange} />

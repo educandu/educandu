@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Form, Input, Slider, Checkbox } from 'antd';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 
 const FormItem = Form.Item;
 
@@ -58,7 +58,7 @@ function IframeEditor({ content, onContentChanged }) {
           <Input value={url} onChange={handleExternalUrlValueChanged} />
         </FormItem>
         <Form.Item label={t('common:width')} {...formItemLayout}>
-          <ObjectMaxWidthSlider value={width} onChange={handleWidthValueChanged} />
+          <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
         <Form.Item label={t('height')} {...formItemLayout}>
           <Slider

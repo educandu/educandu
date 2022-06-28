@@ -8,7 +8,7 @@ import ResourcePicker from '../../components/resource-picker.js';
 import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;
@@ -78,7 +78,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
           </Tooltip>
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
-          <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChange} />
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('caption')} {...formItemLayout}>
           <MarkdownInput inline value={caption} onChange={handleCaptionChange} />

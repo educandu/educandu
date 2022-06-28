@@ -9,8 +9,8 @@ import EarTrainingSoundEditor from './ear-training-sound-editor.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -42,8 +42,8 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ title: value });
   };
 
-  const handleMaxWidthChanged = newValue => {
-    changeContent({ maxWidth: newValue });
+  const handleWidthChanged = newValue => {
+    changeContent({ width: newValue });
   };
 
   const handleStartAbcCodeChanged = (index, newValue) => {
@@ -153,8 +153,8 @@ function EarTrainingEditor({ content, onContentChanged }) {
         <FormItem label={t('common:title')} {...formItemLayout}>
           <MarkdownInput inline value={content.title} onChange={handleTitleChanged} />
         </FormItem>
-        <Form.Item label={t('maximumWidth')} {...formItemLayout}>
-          <ObjectMaxWidthSlider defaultValue={100} value={content.maxWidth} onChange={handleMaxWidthChanged} />
+        <Form.Item label={t('common:width')} {...formItemLayout}>
+          <ObjectWidthSlider value={content.width} onChange={handleWidthChanged} />
         </Form.Item>
         <FormItem label={t('testsOrder')} {...formItemLayout}>
           <RadioGroup value={content.testsOrder} onChange={handleTestsOrderChanged}>

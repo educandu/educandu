@@ -12,8 +12,8 @@ import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { MEDIA_ASPECT_RATIO, MEDIA_SOURCE_TYPE } from '../../domain/constants.js';
 import { Form, Input, Radio, Modal, Table, Button, Switch, InputNumber } from 'antd';
 import { MEDIA_KIND, COLOR_SWATCHES, DEFAULT_COLOR, DEFAULT_LENGTH } from './constants.js';
@@ -341,7 +341,7 @@ function AnavisEditor({ content, onContentChanged }) {
           <Switch size="small" defaultChecked checked={kind === MEDIA_KIND.video} onChange={handleShowVideoChanged} />
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
-          <ObjectMaxWidthSlider defaultValue={100} value={width} onChange={handleWidthChanged} />
+          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleTextChanged} />

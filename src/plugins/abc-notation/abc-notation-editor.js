@@ -3,13 +3,13 @@ import { Form, Input, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 
 const { TextArea } = Input;
 
 function AbcNotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('abcNotation');
-  const { abcCode, maxWidth, displayMidi, text } = content;
+  const { abcCode, width, displayMidi, text } = content;
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -29,8 +29,8 @@ function AbcNotationEditor({ content, onContentChanged }) {
     changeContent({ displayMidi: !!checked });
   };
 
-  const handleMaxWidthChanged = newValue => {
-    changeContent({ maxWidth: newValue });
+  const handleWidthChanged = newValue => {
+    changeContent({ width: newValue });
   };
 
   const handleCurrentTextChanged = event => {
@@ -47,8 +47,8 @@ function AbcNotationEditor({ content, onContentChanged }) {
         <Form.Item label={t('midiSound')} {...formItemLayout}>
           <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />
         </Form.Item>
-        <Form.Item label={t('maximumWidth')} {...formItemLayout}>
-          <ObjectMaxWidthSlider defaultValue={100} value={maxWidth} onChange={handleMaxWidthChanged} />
+        <Form.Item label={t('common:width')} {...formItemLayout}>
+          <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
         <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleCurrentTextChanged} />

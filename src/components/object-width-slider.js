@@ -1,7 +1,6 @@
 import React from 'react';
 import { Slider } from 'antd';
 import PropTypes from 'prop-types';
-import { isBrowser } from '../ui/browser-helper.js';
 
 const possibleValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 const maxValue = possibleValues[possibleValues.length - 1];
@@ -11,17 +10,7 @@ const marks = possibleValues.reduce((all, val) => {
 }, {});
 const tipFormatter = val => `${val}%`;
 
-function ObjectMaxWidthSlider({ value, defaultValue, onChange }) {
-  let val = value;
-
-  if (typeof val !== 'number' || !possibleValues.includes(val)) {
-    val = defaultValue;
-
-    if (isBrowser()) {
-      setTimeout(() => onChange(val), 0);
-    }
-  }
-
+function ObjectWidthSlider({ value, onChange }) {
   return (
     <div>
       <Slider
@@ -29,7 +18,7 @@ function ObjectMaxWidthSlider({ value, defaultValue, onChange }) {
         max={maxValue}
         marks={marks}
         step={null}
-        value={val}
+        value={value}
         onChange={onChange}
         tipFormatter={tipFormatter}
         />
@@ -37,15 +26,9 @@ function ObjectMaxWidthSlider({ value, defaultValue, onChange }) {
   );
 }
 
-ObjectMaxWidthSlider.propTypes = {
-  defaultValue: PropTypes.number,
+ObjectWidthSlider.propTypes = {
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.number
+  value: PropTypes.number.isRequired
 };
 
-ObjectMaxWidthSlider.defaultProps = {
-  defaultValue: maxValue,
-  value: null
-};
-
-export default ObjectMaxWidthSlider;
+export default ObjectWidthSlider;
