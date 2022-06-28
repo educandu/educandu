@@ -1,4 +1,5 @@
 import { Container } from '../common/di.js';
+import AmbController from './amb-controller.js';
 import RoomController from './room-controller.js';
 import I18nController from './i18n-controller.js';
 import UserController from './user-controller.js';
@@ -38,7 +39,8 @@ const controllerTypes = [
   LessonController,
   RevisionController,
   PdfJsApiController,
-  AdminController
+  AdminController,
+  AmbController
 ];
 
 class ControllerFactory {

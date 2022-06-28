@@ -46,7 +46,8 @@ const testAppEnv = {
   TEST_APP_EXPOSE_ERROR_DETAILS: true.toString(),
   TEST_APP_ARE_ROOMS_ENABLED: true.toString(),
   TEST_APP_IMPORT_SOURCES: JSON.stringify([{ name: 'ELMU - Integration', hostName: 'integration.elmu.online', apiKey: '03a026b939154f41bb1dabf578a33e11' }]),
-  TEST_APP_SKIP_MAINTENANCE: false.toString()
+  TEST_APP_SKIP_MAINTENANCE: false.toString(),
+  TEST_APP_AMB_API_KEY: '4985nvcz56v1'
 };
 
 const mongoContainer = new MongoContainer({
