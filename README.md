@@ -14,6 +14,7 @@ The educandu framework
 
  | Option | Description | Type | Required |
  | --- | --- | --- | --- |
+ | appName | The name of the application using educandu | `string` | yes |
  | port | Port on which the project is run | `number`, mininum 1 | no, defaults to 80 |
  | mongoConnectionString | The URI for the project's MongoDB | `string` | yes |
  | skipMaintenance | Whether or not to run MongoDB migrations and checks on startup | `boolean` | no, defaults to `false` |
@@ -24,9 +25,9 @@ The educandu framework
  | cdnBucketName | The name of the AWS S3 bucket storing the CDN data | `string` | yes |
  | cdnRootUrl | The root url of the CDN | `string` | yes |
  | sessionSecret | The unique ID of the user session | `string` | no, defaults to a generated unique id |
- | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
  | sessionCookieDomain | The domain attribute to be set on the session cookie | `string` | no, defaults to the request's host header domain |
  | sessionCookieName | The name to be used for the session cookie | `string` | yes |
+ | sessionDurationInMinutes | The validity of the user session in minutes | `number`, minumum 1 | no, defaults to 60 |
  | smtpOptions | The SMTP setup for sending emails to users upon registration or password reset | anything | yes |
  | emailSenderAddress | The email address from which emails are sent | `string` | yes |
  | bundleConfig | The same object that is also used to hydrate the app on the client side | `{ getPageTemplateComponent, getHomePageTemplateComponent, getSiteLogoComponent }` | yes, accepts `null` for either property and it will default to the internal setup
@@ -40,7 +41,11 @@ The educandu framework
  | taskProcessing | Task processing setup | `{ isEnabled, idlePollIntervalInMs, maxAttempts }` | no, defaults to `{ isEnabled: false, idlePollIntervalInMs: 5000, maxAttempts: 3 }` |
  | additionalControllers | Custom controllers | arrayOfControllers: [] | no, defaults to [] |
  | consentCookieNamePrefix | Prefix for the consent cookie name | `string` | no |
+ | uploadLiabilityCookieName | Name for the public storage upload liability cookie | `string` | yes |
  | areRoomsEnabled | Enables rooms | `boolean` | no, defaults to `false` |
+ | additionalHeadHtml | Custom HTML to inject in the `<head>` of the document | `string` | no |
+ | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
+ | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
 
 ## How to use
 
