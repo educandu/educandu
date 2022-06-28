@@ -130,6 +130,8 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       sourceUrl: value,
       showVideo: resourceType === RESOURCE_TYPE.video || resourceType === RESOURCE_TYPE.unknown,
       sourceDuration: duration,
+      sourceStartTimecode: null,
+      sourceStopTimecode: null,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
     if (error) {
