@@ -7,11 +7,11 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import DeleteIcon from '../../components/icons/general/delete-icon.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { HOVER_EFFECT, MAX_ALLOWED_TILES_PER_ROW } from './constants.js';
 import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
 import SettingsIcon from '../../components/icons/main-menu/settings-icon.js';
 import { createDefaultTile, isContentInvalid } from './image-tiles-utils.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { confirmDeleteImageTile } from '../../components/confirmation-dialogs.js';
 
 const RadioButton = Radio.Button;
@@ -29,7 +29,7 @@ const maxTilesPerRowSliderTipFormatter = val => `${val}`;
 function ImageTilesEditor({ content, onContentChanged }) {
   const { t } = useTranslation('imageTiles');
 
-  const { tiles, maxWidth, maxTilesPerRow, hoverEffect } = content;
+  const { tiles, width, maxTilesPerRow, hoverEffect } = content;
 
   const formItemLayout = {
     labelCol: { span: 4 },
@@ -42,8 +42,8 @@ function ImageTilesEditor({ content, onContentChanged }) {
     onContentChanged(newContent, isInvalid);
   };
 
-  const handleMaxWidthValueChanged = value => {
-    changeContent({ maxWidth: value });
+  const handleWidthValueChanged = value => {
+    changeContent({ width: value });
   };
 
   const handleMaxTilesPerRowChanged = value => {
@@ -118,8 +118,8 @@ function ImageTilesEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form layout="horizontal">
-        <Form.Item label={t('maximumWidth')} {...formItemLayout}>
-          <ObjectMaxWidthSlider value={maxWidth} onChange={handleMaxWidthValueChanged} />
+        <Form.Item label={t('common:width')} {...formItemLayout}>
+          <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
         <Form.Item label={t('tilesPerRow')} {...formItemLayout}>
           <Slider

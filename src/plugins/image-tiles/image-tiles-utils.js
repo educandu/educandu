@@ -20,7 +20,7 @@ export function createDefaultContent(t) {
   return {
     tiles: Array.from({ length: DEFAULT_MAX_TILES_PER_ROW }, (_, index) => createDefaultTile(index + 1, t)),
     maxTilesPerRow: DEFAULT_MAX_TILES_PER_ROW,
-    maxWidth: 100,
+    width: 100,
     hoverEffect: HOVER_EFFECT.none
   };
 }

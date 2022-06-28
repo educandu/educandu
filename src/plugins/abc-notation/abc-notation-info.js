@@ -34,7 +34,7 @@ class AbcNotationInfo {
   getDefaultContent() {
     return {
       abcCode: '',
-      maxWidth: 100,
+      width: 100,
       displayMidi: true,
       text: ''
     };

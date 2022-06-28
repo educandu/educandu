@@ -14,13 +14,12 @@ function ImageDisplay({ content }) {
   const hoverEffectCanvasRef = useRef();
   const clipEffectCanvasRef = useRef();
   const { t } = useTranslation('image');
-  const maxWidth = content.maxWidth || 100;
-  const { text, sourceType, sourceUrl, effect } = content;
+  const clientConfig = useService(ClientConfig);
   const [isMainImageLoaded, setIsMainImageLoaded] = useState(false);
   const [hasMainImageFailed, setHasMainImageFailed] = useState(false);
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
-  const clientConfig = useService(ClientConfig);
+  const { text, sourceType, sourceUrl, effect, width } = content;
   const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
 
   useEffect(() => {
@@ -69,13 +68,13 @@ function ImageDisplay({ content }) {
     const mainImage = mainImageRef.current;
     const canvas = clipEffectCanvasRef.current;
     const context = canvas.getContext('2d');
-    const width = mainImage.naturalWidth * (effect.region.width / 100);
-    const height = mainImage.naturalHeight * (effect.region.height / 100);
+    const mainImageWidth = mainImage.naturalWidth * (effect.region.width / 100);
+    const mainImageHeight = mainImage.naturalHeight * (effect.region.height / 100);
     const x = mainImage.naturalWidth * (effect.region.x / 100);
     const y = mainImage.naturalHeight * (effect.region.y / 100);
-    canvas.width = width;
-    canvas.height = height;
-    context.drawImage(mainImage, x, y, width, height, 0, 0, width, height);
+    canvas.width = mainImageWidth;
+    canvas.height = mainImageHeight;
+    context.drawImage(mainImage, x, y, mainImageWidth, mainImageHeight, 0, 0, mainImageWidth, mainImageHeight);
   }, [clipEffectCanvasRef, mainImageRef, effect, isMainImageLoaded]);
 
   const handleMainImageMouseEnter = () => {
@@ -91,7 +90,7 @@ function ImageDisplay({ content }) {
   const renderHoverEffect = () => (
     <canvas
       ref={hoverEffectCanvasRef}
-      className={`ImageDisplay-hoverEffectImage u-max-width-${maxWidth}`}
+      className={`ImageDisplay-hoverEffectImage u-width-${width}`}
       onMouseLeave={handleHoverEffectImageMouseLeave}
       />
   );
@@ -100,7 +99,7 @@ function ImageDisplay({ content }) {
     <ReactCompareSlider
       position={effect.startPosition}
       portrait={effect.orientation === ORIENTATION.vertical}
-      className={`ImageDisplay-mainImage u-max-width-${maxWidth}`}
+      className={`ImageDisplay-mainImage u-width-${width}`}
       itemOne={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)} />}
       itemTwo={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)} />}
       />
@@ -108,14 +107,14 @@ function ImageDisplay({ content }) {
 
   const renderClipEffect = () => (
     <Fragment>
-      <canvas className={`ImageDisplay-mainImage u-max-width-${maxWidth}`} ref={clipEffectCanvasRef} />
+      <canvas className={`ImageDisplay-mainImage u-width-${width}`} ref={clipEffectCanvasRef} />
       <img className="ImageDisplay-clipEffectImage" src={src} ref={mainImageRef} />
     </Fragment>
   );
 
   const mainImageClasses = classNames(
     'ImageDisplay-mainImage',
-    `u-max-width-${maxWidth}`,
+    `u-width-${width}`,
     { 'ImageDisplay-mainImage--hoverEffect': shouldApplyHoverEffect }
   );
 

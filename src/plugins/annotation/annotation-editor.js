@@ -5,7 +5,7 @@ import validation from '../../ui/validation.js';
 import { BEHAVIOR, INTENT } from './constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -77,7 +77,7 @@ export default function AnnotationEditor({ content, onContentChanged }) {
           </RadioGroup>
         </FormItem>
         <FormItem label={t('common:width')} {...formItemLayout}>
-          <ObjectMaxWidthSlider value={width} onChange={handleWidthChange} />
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </FormItem>
       </Form>
     </div>

@@ -1,9 +1,6 @@
 name:
   en: Image tiles
   de: Bildkacheln
-maximumWidth:
-  en: Maximum width
-  de: Maximale Breite
 tilesPerRow:
   en: Tiles per row
   de: Kacheln pro Zeile

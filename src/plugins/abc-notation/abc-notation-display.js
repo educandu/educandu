@@ -30,7 +30,7 @@ function AbcNotationDisplay({ content }) {
 
   return (
     <div className="AbcNotation fa5">
-      <div className={`AbcNotation-wrapper u-max-width-${content.maxWidth || 100}`}>
+      <div className={`AbcNotation-wrapper u-width-${content.width}`}>
         <div ref={abcContainerRef} />
         {content.displayMidi && <div ref={midiContainerRef} />}
         <div className="AbcNotation-copyrightInfo">

@@ -60,7 +60,7 @@ function ImageTilesDisplay({ content }) {
   return (
     <div className="ImageTilesDisplay">
       <div
-        className={`ImageTilesDisplay-grid u-max-width-${content.maxWidth || 100}`}
+        className={`ImageTilesDisplay-grid u-width-${content.width}`}
         style={{ gridTemplateColumns: `repeat(${content.maxTilesPerRow}, 1fr)` }}
         >
         {content.tiles.map(renderTile)}

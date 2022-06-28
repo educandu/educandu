@@ -29,7 +29,7 @@ function EarTrainingDisplay({ content }) {
   const abcContainerRef = useRef();
   const midiContainerRef = useRef();
 
-  const { title, maxWidth } = content;
+  const { title, width } = content;
   const [abcjs, setAbcjs] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -114,7 +114,7 @@ function EarTrainingDisplay({ content }) {
 
   return (
     <div className="EarTraining fa5">
-      <div className={`EarTraining-testWrapper u-max-width-${maxWidth || 100}`}>
+      <div className={`EarTraining-testWrapper u-width-${width}`}>
         <h3 className="EarTraining-header">
           <Markdown inline>{title}</Markdown>
         </h3>

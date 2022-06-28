@@ -10,16 +10,3 @@ export function getImageSource(cdnRootUrl, sourceType, sourceUrl) {
       return null;
   }
 }
-
-export function getImageDimensions(url) {
-  return new Promise(resolve => {
-    const img = window.document.createElement('img');
-    img.onload = () => {
-      const { width, height } = img;
-      resolve({ width, height });
-    };
-    img.onabort = () => resolve(null);
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
-}

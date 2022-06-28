@@ -32,7 +32,7 @@ class ImageInfo {
     return {
       sourceType: SOURCE_TYPE.internal,
       sourceUrl: '',
-      maxWidth: 100,
+      width: 100,
       text: '',
       effect: null
     };

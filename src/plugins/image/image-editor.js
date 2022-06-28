@@ -1,17 +1,17 @@
+import { getImageSource } from './utils.js';
 import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import { getImageDimensions, getImageSource } from './utils.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION } from './constants.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
-import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION, SMALL_IMAGE_WIDTH_THRESHOLD } from './constants.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -23,10 +23,9 @@ function ImageEditor({ content, onContentChanged }) {
   const { t } = useTranslation('image');
   const clientConfig = useService(ClientConfig);
   const [currentImageSource, setCurrentImageSource] = useState(null);
-  const [smallImageSizeWarning, setSmallImageSizeWarning] = useState(null);
   const [clipSizeInPx, setClipSizeInPx] = useState({ width: 0, height: 0 });
 
-  const { sourceType, sourceUrl, maxWidth, text, effect } = content;
+  const { sourceType, sourceUrl, width, text, effect } = content;
   const effectType = effect?.type || EFFECT_TYPE.none;
 
   const formItemLayout = {
@@ -38,33 +37,12 @@ function ImageEditor({ content, onContentChanged }) {
     setCurrentImageSource(getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl));
   }, [clientConfig, sourceType, sourceUrl]);
 
-  useEffect(() => {
-    const src = currentImageSource;
-    if (!src) {
-      setSmallImageSizeWarning(null);
-      return;
-    }
-
-    if (effectType === EFFECT_TYPE.clip) {
-      return;
-    }
-
-    (async () => {
-      if (src !== currentImageSource) {
-        return;
-      }
-      const dimensions = await getImageDimensions(src);
-      setSmallImageSizeWarning(dimensions && dimensions.width < SMALL_IMAGE_WIDTH_THRESHOLD ? t('smallImageSizeWarning') : null);
-    })();
-  }, [currentImageSource, effectType, t]);
-
   const updateClipState = useCallback(() => {
     if (effectType !== EFFECT_TYPE.clip) {
       return;
     }
 
     if (!currentImageSource) {
-      setSmallImageSizeWarning(null);
       setClipSizeInPx({ width: 0, height: 0 });
       return;
     }
@@ -78,8 +56,7 @@ function ImageEditor({ content, onContentChanged }) {
     const clipHeight = Math.round(img.naturalHeight * (effect.region.height / 100));
 
     setClipSizeInPx({ width: clipWidth, height: clipHeight });
-    setSmallImageSizeWarning(clipWidth < SMALL_IMAGE_WIDTH_THRESHOLD ? t('smallClippingSizeWarning') : null);
-  }, [currentImageSource, effectType, effect, t]);
+  }, [currentImageSource, effectType, effect]);
 
   useEffect(() => {
     updateClipState();
@@ -198,8 +175,8 @@ function ImageEditor({ content, onContentChanged }) {
     changeContent({ effect: newEffect });
   };
 
-  const handleMaxWidthValueChanged = value => {
-    changeContent({ maxWidth: value });
+  const handleWidthValueChanged = value => {
+    changeContent({ width: value });
   };
 
   const handleOrientationValueChanged = event => {
@@ -359,13 +336,11 @@ function ImageEditor({ content, onContentChanged }) {
         )}
 
         <Form.Item
-          className="ImageEditor-maxWidthInput"
-          label={t('maximumWidth')}
+          className="ImageEditor-widthInput"
+          label={t('common:width')}
           {...formItemLayout}
-          validateStatus={smallImageSizeWarning ? 'warning' : null}
-          help={smallImageSizeWarning}
           >
-          <ObjectMaxWidthSlider value={maxWidth} onChange={handleMaxWidthValueChanged} />
+          <ObjectWidthSlider value={width} onChange={handleWidthValueChanged} />
         </Form.Item>
       </Form>
     </div>

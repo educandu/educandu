@@ -30,7 +30,7 @@ class DiagramNetInfo {
     return {
       xml: null,
       image: null,
-      maxWidth: 100
+      width: 100
     };
   }
 

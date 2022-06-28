@@ -861,7 +861,7 @@ describe('document-service', () => {
           content: {
             sourceType: 'internal',
             sourceUrl: 'media/image-1.png',
-            maxWidth: 100,
+            width: 100,
             text: 'Unmodified text',
             effect: null
           }
@@ -874,7 +874,7 @@ describe('document-service', () => {
           content: {
             sourceType: 'internal',
             sourceUrl: 'media/image-2.png',
-            maxWidth: 100,
+            width: 100,
             text: 'Initial text',
             effect: null
           }

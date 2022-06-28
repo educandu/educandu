@@ -2,9 +2,9 @@ import React from 'react';
 import { Radio, Checkbox, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import TableDesigner from './table-designer.js';
-import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
 import { COLUMN_DISTRIBUTION } from './table-utils.js';
+import { sectionEditorProps } from '../../ui/default-prop-types.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 
 function TableEditor({ content, onContentChanged }) {
   const { t } = useTranslation('table');
@@ -42,7 +42,7 @@ function TableEditor({ content, onContentChanged }) {
           </Radio.Group>
         </Form.Item>
         <Form.Item label={t('common:width')} {...formItemLayout}>
-          <ObjectMaxWidthSlider value={width} onChange={handleWidthChange} />
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
         <Form.Item label={t('common:renderMedia')} {...formItemLayout}>
           <Checkbox checked={renderMedia} onChange={handleRenderMediaChange} />

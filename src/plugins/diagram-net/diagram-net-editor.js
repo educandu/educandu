@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Form, Button, Modal, Spin } from 'antd';
 import { useLocale } from '../../components/locale-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import ObjectMaxWidthSlider from '../../components/object-max-width-slider.js';
+import ObjectWidthSlider from '../../components/object-width-slider.js';
 import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 const createEmbeddedEditorUrl = lang => [
@@ -52,7 +52,7 @@ function DiagramNetEditor({ content, onContentChanged }) {
   const { uiLanguage } = useLocale();
   const { t } = useTranslation('diagramNet');
 
-  const { image, maxWidth } = content;
+  const { image, width } = content;
 
   const [iframeUrl, setIframeUrl] = useState(null);
   const [isEditorReady, setIsEditorReady] = useState(false);
@@ -110,8 +110,8 @@ function DiagramNetEditor({ content, onContentChanged }) {
     setIframeUrl(createEmbeddedEditorUrl(uiLanguage));
   };
 
-  const handleMaxWidthChanged = value => {
-    changeContent({ maxWidth: value });
+  const handleWidthChange = value => {
+    changeContent({ width: value });
   };
 
   useEffect(() => {
@@ -122,18 +122,18 @@ function DiagramNetEditor({ content, onContentChanged }) {
   }, [handleMessage]);
 
   return (
-    <div>
+    <div className="DiagramNetEditor">
       <Form layout="horizontal">
         {image && (
           <Form.Item label={t('name')} {...formItemLayout}>
-            <img style={{ maxHeight: '80px', maxWidth: '400px', border: '1px solid #d9d9d9' }} src={image} />
+            <img className="DiagramNetEditor-preview" src={image} />
           </Form.Item>
         )}
         <Form.Item label={image ? '\u00A0' : t('name')} {...formItemLayout} colon={!image}>
           <Button type="primary" size="small" onClick={handleEditClick}>{t('editExternally')}</Button>
         </Form.Item>
-        <Form.Item label={t('maximumWidth')} {...formItemLayout}>
-          <ObjectMaxWidthSlider value={maxWidth} onChange={handleMaxWidthChanged} />
+        <Form.Item label={t('common:width')} {...formItemLayout}>
+          <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
       </Form>
       <Modal
