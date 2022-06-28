@@ -47,7 +47,7 @@ const getDesignerCellStyle = designerCell => {
   };
 };
 
-const getDeignerCellKey = designerCell => {
+const getDesignerCellKey = designerCell => {
   switch (designerCell.designerCellType) {
     case DESIGNER_CELL_TYPE.content:
       return [designerCell.rowIndex, designerCell.columnIndex, designerCell.rowSpan, designerCell.columnSpan, designerCell.cellType].join('|');
@@ -162,7 +162,7 @@ function TableDesigner({ content, onContentChange }) {
   const renderRowHeaderGridCell = designerCell => {
     return (
       <div
-        key={getDeignerCellKey(designerCell)}
+        key={getDesignerCellKey(designerCell)}
         style={getDesignerCellStyle(designerCell)}
         className="TableDesigner-gridCell TableDesigner-gridCell--rowHeader"
         >
@@ -182,7 +182,7 @@ function TableDesigner({ content, onContentChange }) {
   const renderColumnHeaderGridCell = designerCell => {
     return (
       <div
-        key={getDeignerCellKey(designerCell)}
+        key={getDesignerCellKey(designerCell)}
         style={getDesignerCellStyle(designerCell)}
         className="TableDesigner-gridCell TableDesigner-gridCell--columnHeader"
         >
@@ -215,7 +215,7 @@ function TableDesigner({ content, onContentChange }) {
 
     return (
       <div
-        key={getDeignerCellKey(designerCell)}
+        key={getDesignerCellKey(designerCell)}
         className={classes}
         style={getDesignerCellStyle(designerCell)}
         onClick={handleContentCellClick}
