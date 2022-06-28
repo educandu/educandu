@@ -13,23 +13,25 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
   const { locations } = useStorage();
   const { t } = useTranslation('resourceSelector');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [visibleLocations, setVisibleLocations] = useState([]);
+  const [currentLocationType, setCurrentLocationType] = useState(null);
 
   useEffect(() => {
     const newVisibleLocations = allowedLocationTypes
       .map(locationType => locations.find(location => location.type === locationType))
       .filter(location => location);
 
-    const desiredLocationType = getStorageLocationTypeForUrl(initialUrl);
-    const newCurrentLocation = newVisibleLocations.find(location => location.type === desiredLocationType) || newVisibleLocations[0];
-
     setVisibleLocations(newVisibleLocations);
-    setCurrentLocation(newCurrentLocation);
+
+    setCurrentLocationType(oldCurrentLocationType => {
+      const desiredLocationType = oldCurrentLocationType || getStorageLocationTypeForUrl(initialUrl);
+      const newCurrentLocation = newVisibleLocations.find(location => location.type === desiredLocationType) || newVisibleLocations[0];
+      return newCurrentLocation?.type || null;
+    });
   }, [allowedLocationTypes, initialUrl, locations]);
 
   const handleLocationTabChange = newLocationType => {
-    setCurrentLocation(visibleLocations.find(location => location.type === newLocationType));
+    setCurrentLocationType(visibleLocations.find(location => location.type === newLocationType)?.type || null);
   };
 
   const renderLocation = location => {
@@ -55,7 +57,7 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
     <div className="ResourceSelector">
       <Tabs
         size="small"
-        activeKey={currentLocation?.type || visibleLocations[0]?.type || null}
+        activeKey={currentLocationType || visibleLocations[0]?.type || null}
         onChange={handleLocationTabChange}
         renderTabBar={isFullscreen ? () => null : null}
         >
