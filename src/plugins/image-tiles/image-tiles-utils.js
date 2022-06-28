@@ -1,5 +1,6 @@
 import validation from '../../ui/validation.js';
-import { DEFAULT_MAX_TILES_PER_ROW, HOVER_EFFECT, IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
+import { DEFAULT_MAX_TILES_PER_ROW, HOVER_EFFECT, LINK_SOURCE_TYPE } from './constants.js';
 
 export function createDefaultTile(number, t) {
   return {

@@ -1,21 +1,40 @@
-.EarTraining {}
+.EarTrainingDisplay {}
 
-.EarTraining-soundPlayer {
-  .m-horizontally-centered;
-  max-width: @edu-breakpoint-sm;
+.EarTrainingDisplay-questionImage {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+
+  &.EarTrainingDisplay-questionImage--toggledOff {
+    display: none;
+
+    ~ .EarTrainingDisplay-answerImage {
+      display: block;
+    }
+  }
 }
 
-.EarTraining-testWrapper {
+.EarTrainingDisplay-answerImage {
+  display: none;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.EarTrainingDisplay-soundPlayer {
+  .m-horizontally-centered;
+  max-width: @edu-breakpoint-sm;
+  margin-top: 20px;
+}
+
+.EarTrainingDisplay-testWrapper {
   margin: 0 auto;
   max-width: 100%;
   text-align: center;
 }
 
-.EarTraining-buttons {
-  margin-top: 10px;
-}
-
-.EarTraining-expandedEditorRow {
-  padding-left: 0;
-  padding-right: 0;
+.EarTrainingDisplay-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: @edu-controls-group-gap;
+  justify-content: center;
 }

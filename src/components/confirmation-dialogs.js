@@ -388,10 +388,10 @@ export function confirmWithPassword(modal, t, username, onOk, onCancel = () => {
   dialog = modal.confirm(createDialogProps());
 }
 
-export function confirmDeleteImageTile(t, onOk, onCancel = () => {}) {
+export function confirmDeleteItem(t, name, onOk, onCancel = () => {}) {
   confirm({
     title: t('confirmationDialogs:areYouSure'),
-    content: t('confirmationDialogs:confirmDeleteImageTile'),
+    content: t('confirmationDialogs:deleteItemConfirmation', { name }),
     okText: t('common:yes'),
     okType: 'danger',
     cancelText: t('common:no'),

@@ -1,27 +1,32 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import validation from '../../ui/validation.js';
 import { PlusOutlined } from '@ant-design/icons';
-import { Form, Input, Table, Button, Radio } from 'antd';
-import { SOURCE_TYPE, TESTS_ORDER } from './constants.js';
-import DeleteButton from '../../components/delete-button.js';
+import cloneDeep from '../../utils/clone-deep.js';
+import EarTrainingInfo from './ear-training-info.js';
+import ItemPanel from '../../components/item-panel.js';
+import { Form, Input, Button, Radio, Divider } from 'antd';
+import ClientConfig from '../../bootstrap/client-config.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
-import EarTrainingSoundEditor from './ear-training-sound-editor.js';
+import ResourcePicker from '../../components/resource-picker.js';
+import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
-import MoveUpIcon from '../../components/icons/general/move-up-icon.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import MoveDownIcon from '../../components/icons/general/move-down-icon.js';
+import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
-const ButtonGroup = Button.Group;
 
-const defaultSound = { sourceType: SOURCE_TYPE.midi, sourceUrl: null, text: null };
-
+const DEFAULT_ABC_CODE = 'X:1';
 function EarTrainingEditor({ content, onContentChanged }) {
   const { t } = useTranslation('earTraining');
+  const clientConfig = useService(ClientConfig);
+  const earTrainingInfo = useService(EarTrainingInfo);
 
   const { tests } = content;
 
@@ -30,11 +35,15 @@ function EarTrainingEditor({ content, onContentChanged }) {
     wrapperCol: { span: 14 }
   };
 
-  const dataSource = tests.map((test, i) => ({ key: i, ...test }));
-  const expandedRowKeys = dataSource.map(record => record.key);
-
   const changeContent = newContentValues => {
-    onContentChanged({ ...content, ...newContentValues }, false);
+    const newContent = { ...content, ...newContentValues };
+
+    const hasInvalidSourceUrl = (newContent.tests || [])
+      .some(test => (test.questionImage?.sourceType === IMAGE_SOURCE_TYPE.external && validation.validateUrl(test.questionImage.sourceUrl, t).validateStatus === 'error')
+        || (test.answerImage?.sourceType === IMAGE_SOURCE_TYPE.external && validation.validateUrl(test.answerImage.sourceUrl, t).validateStatus === 'error')
+        || (test.sound.sourceType === SOUND_SOURCE_TYPE.external && validation.validateUrl(test.sound.sourceUrl, t).validateStatus === 'error'));
+
+    onContentChanged(newContent, hasInvalidSourceUrl);
   };
 
   const handleTitleChanged = event => {
@@ -46,106 +55,185 @@ function EarTrainingEditor({ content, onContentChanged }) {
     changeContent({ width: newValue });
   };
 
-  const handleStartAbcCodeChanged = (index, newValue) => {
-    const newTests = tests.map((test, i) => i === index ? { ...test, startAbcCode: newValue } : test);
+  const handleQuestionAbcCodeChanged = (event, index) => {
+    const { value } = event.target;
+    const newTests = tests.map((test, i) => i === index ? { ...test, questionAbcCode: value } : test);
     changeContent({ tests: newTests });
   };
 
-  const handleFullAbcCodeChanged = (index, newValue) => {
-    const newTests = tests.map((test, i) => i === index ? { ...test, fullAbcCode: newValue } : test);
+  const handleAnswerAbcCodeChanged = (event, index) => {
+    const { value } = event.target;
+    const newTests = tests.map((test, i) => i === index ? { ...test, answerAbcCode: value } : test);
     changeContent({ tests: newTests });
   };
 
-  const handleSoundChanged = (index, newValue) => {
-    const newTests = tests.map((test, i) => i === index ? { ...test, sound: newValue } : test);
-    changeContent({ tests: newTests });
-  };
-
-  const handleDeleteButtonClick = index => {
+  const handleDeleteTest = index => {
     const newTests = removeItemAt(tests, index);
     changeContent({ tests: newTests });
   };
 
   const handleAddButtonClick = () => {
-    const newTests = tests.slice();
-    newTests.push({ startAbcCode: 'X:1', fullAbcCode: 'X:1' });
+    const newTests = cloneDeep(tests);
+    newTests.push(earTrainingInfo.getDefaultTest());
     changeContent({ tests: newTests });
   };
 
-  const handleUpCircleButtonClick = index => {
+  const handleMoveTestUp = index => {
     const newTests = swapItemsAt(tests, index, index - 1);
     changeContent({ tests: newTests });
   };
 
-  const handleDownCircleButtonClick = index => {
+  const handleMoveTestDown = index => {
     const newTests = swapItemsAt(tests, index, index + 1);
     changeContent({ tests: newTests });
   };
 
-  const handleTestsOrderChanged = event => {
+  const handleTestsOrderChange = event => {
     changeContent({ testsOrder: event.target.value });
   };
 
-  const renderExpandedRow = (record, index) => (
-    <EarTrainingSoundEditor
-      sound={record.sound || { ...defaultSound }}
-      onSoundChanged={newValue => handleSoundChanged(index, newValue)}
-      />
-  );
+  const handleTestModeChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
 
-  const renderColumns = () => [
-    {
-      width: 80,
-      key: 'upDown',
-      render: (upDown, item, index) => (
-        <ButtonGroup>
-          <Button
-            disabled={index === 0}
-            icon={<MoveUpIcon />}
-            onClick={() => handleUpCircleButtonClick(index)}
-            />
-          <Button
-            disabled={index === tests.length - 1}
-            icon={<MoveDownIcon />}
-            onClick={() => handleDownCircleButtonClick(index)}
-            />
-        </ButtonGroup>
-      )
-    }, {
-      title: () => t('startAbcCode'),
-      key: 'startAbcCode',
-      render: (val, item, index) => (
-        <TextArea
-          value={item.startAbcCode}
-          onChange={event => handleStartAbcCodeChanged(index, event.target.value)}
-          rows={6}
-          />
-      )
-    }, {
-      title: () => t('fullAbcCode'),
-      key: 'fullAbcCode',
-      render: (val, item, index) => (
-        <TextArea
-          value={item.fullAbcCode}
-          onChange={event => handleFullAbcCodeChanged(index, event.target.value)}
-          rows={6}
-          />
-      )
-    }, {
-      title: (
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleAddButtonClick}
-          />
-      ),
-      width: 48,
-      key: 'button',
-      render: (value, item, index) => (
-        <DeleteButton onClick={() => handleDeleteButtonClick(index)} disabled={tests.length < 2} />
-      )
+    if (value === TEST_MODE.image) {
+      newTests[index].questionImage = earTrainingInfo.getDefaultImage();
+      newTests[index].answerImage = earTrainingInfo.getDefaultImage();
+      newTests[index].questionAbcCode = '';
+      newTests[index].answerAbcCode = '';
+      newTests[index].sound = earTrainingInfo.getDefaultSound();
+    } else {
+      newTests[index].questionImage = null;
+      newTests[index].answerImage = null;
+      newTests[index].questionAbcCode = DEFAULT_ABC_CODE;
+      newTests[index].answerAbcCode = DEFAULT_ABC_CODE;
+      newTests[index].sound = { ...earTrainingInfo.getDefaultSound(), sourceType: SOUND_SOURCE_TYPE.midi };
     }
-  ];
+
+    newTests[index].mode = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleQuestionImageSourceTypeChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].questionImage.sourceType = value;
+    newTests[index].questionImage.sourceUrl = '';
+    changeContent({ tests: newTests });
+  };
+
+  const handleQuestionImageSourceUrlChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].questionImage.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleQuestionImageFileNameChange = (value, index) => {
+    const newTests = cloneDeep(tests);
+    newTests[index].questionImage.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleQuestionImageTextChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].questionImage.text = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleAnswerImageSourceTypeChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].answerImage.sourceType = value;
+    newTests[index].answerImage.sourceUrl = '';
+    changeContent({ tests: newTests });
+  };
+
+  const handleAnswerImageSourceUrlChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].answerImage.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleAnswerImageFileNameChange = (value, index) => {
+    const newTests = cloneDeep(tests);
+    newTests[index].answerImage.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleAnswerImageTextChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].answerImage.text = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundSourceTypeChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+
+    newTests[index].sound.sourceType = value;
+    newTests[index].sound.sourceUrl = value === SOUND_SOURCE_TYPE.midi ? null : '';
+    newTests[index].sound.text = value === SOUND_SOURCE_TYPE.midi ? null : newTests[index].sound.text || '';
+
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundSourceUrlChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundFileNameChange = (value, index) => {
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.sourceUrl = value;
+    changeContent({ tests: newTests });
+  };
+
+  const handleSoundTextChange = (event, index) => {
+    const { value } = event.target;
+    const newTests = cloneDeep(tests);
+    newTests[index].sound.text = value;
+    changeContent({ tests: newTests });
+  };
+
+  const renderExternalSourceUrlInput = (index, value, handleSourceUrlChange) => {
+    return (
+      <FormItem label={t('common:externalUrl')} {...formItemLayout} {...validation.validateUrl(value, t)} hasFeedback>
+        <Input value={value} onChange={event => handleSourceUrlChange(event, index)} />
+      </FormItem>
+    );
+  };
+
+  const renderInternalSourceUrlInput = (index, value, handleSourceUrlChange, handleSourceUrlFileNameChange) => {
+    return (
+      <FormItem label={t('common:internalUrl')} {...formItemLayout}>
+        <div className="u-input-and-button">
+          <Input
+            addonBefore={`${clientConfig.cdnRootUrl}/`}
+            value={value}
+            onChange={event => handleSourceUrlChange(event, index)}
+            />
+          <ResourcePicker
+            url={storageLocationPathToUrl(value)}
+            onUrlChange={url => handleSourceUrlFileNameChange(urlToStorageLocationPath(url), index)}
+            />
+        </div>
+      </FormItem>
+    );
+  };
+
+  const renderTextInput = (index, value, handleValueChange) => {
+    return (
+      <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+        <MarkdownInput value={value} onChange={event => handleValueChange(event, index)} />
+      </Form.Item>
+    );
+  };
 
   return (
     <div>
@@ -157,24 +245,98 @@ function EarTrainingEditor({ content, onContentChanged }) {
           <ObjectWidthSlider value={content.width} onChange={handleWidthChanged} />
         </Form.Item>
         <FormItem label={t('testsOrder')} {...formItemLayout}>
-          <RadioGroup value={content.testsOrder} onChange={handleTestsOrderChanged}>
+          <RadioGroup value={content.testsOrder} onChange={handleTestsOrderChange}>
             <RadioButton value={TESTS_ORDER.given}>{t('testsOrderGiven')}</RadioButton>
             <RadioButton value={TESTS_ORDER.random}>{t('testsOrderRandom')}</RadioButton>
           </RadioGroup>
         </FormItem>
+
+        {tests.map((test, index) => (
+          <ItemPanel
+            index={index}
+            key={index.toString()}
+            itemsCount={tests.length}
+            header={t('testNumber', { number: index + 1 })}
+            onMoveUp={handleMoveTestUp}
+            onMoveDown={handleMoveTestDown}
+            onDelete={handleDeleteTest}
+            >
+            <FormItem label={t('testMode')} {...formItemLayout}>
+              <RadioGroup value={test.mode} onChange={event => handleTestModeChange(event, index)}>
+                <RadioButton value={TEST_MODE.image}>{t('testModeImage')}</RadioButton>
+                <RadioButton value={TEST_MODE.abcCode}>{t('testModeAbcCode')}</RadioButton>
+              </RadioGroup>
+            </FormItem>
+
+            {test.mode === TEST_MODE.image && (
+              <Fragment>
+                <Divider plain>{t('testQuestion')}</Divider>
+                <FormItem label={t('common:source')} {...formItemLayout}>
+                  <RadioGroup value={test.questionImage.sourceType} onChange={event => handleQuestionImageSourceTypeChange(event, index)}>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+                  </RadioGroup>
+                </FormItem>
+                {test.questionImage.sourceType === IMAGE_SOURCE_TYPE.external
+                  && renderExternalSourceUrlInput(index, test.questionImage.sourceUrl, handleQuestionImageSourceUrlChange)}
+                {test.questionImage.sourceType === IMAGE_SOURCE_TYPE.internal
+                  && renderInternalSourceUrlInput(index, test.questionImage.sourceUrl, handleQuestionImageSourceUrlChange, handleQuestionImageFileNameChange)}
+                {renderTextInput(index, test.questionImage.text, handleQuestionImageTextChange)}
+
+                <Divider plain>{t('testAnswer')}</Divider>
+
+                <FormItem label={t('common:source')} {...formItemLayout}>
+                  <RadioGroup value={test.answerImage.sourceType} onChange={event => handleAnswerImageSourceTypeChange(event, index)}>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+                    <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+                  </RadioGroup>
+                </FormItem>
+                {test.answerImage.sourceType === IMAGE_SOURCE_TYPE.external
+                  && renderExternalSourceUrlInput(index, test.answerImage.sourceUrl, handleAnswerImageSourceUrlChange)}
+                {test.answerImage.sourceType === IMAGE_SOURCE_TYPE.internal
+                  && renderInternalSourceUrlInput(index, test.answerImage.sourceUrl, handleAnswerImageSourceUrlChange, handleAnswerImageFileNameChange)}
+                {renderTextInput(index, test.answerImage.text, handleAnswerImageTextChange)}
+
+              </Fragment>
+            )}
+
+            {test.mode === TEST_MODE.abcCode && (
+              <Fragment>
+                <Divider plain>{t('testQuestion')}</Divider>
+                <FormItem label={t('abcCode')} {...formItemLayout}>
+                  <TextArea rows={6} value={test.questionAbcCode} onChange={event => handleQuestionAbcCodeChanged(event, index)} />
+                </FormItem>
+                <Divider plain>{t('testAnswer')}</Divider>
+                <FormItem label={t('abcCode')} {...formItemLayout}>
+                  <TextArea rows={6} value={test.answerAbcCode} onChange={event => handleAnswerAbcCodeChanged(event, index)} />
+                </FormItem>
+              </Fragment>
+            )}
+
+            <Divider plain>{t('audio')}</Divider>
+
+            <FormItem label={t('common:source')} {...formItemLayout}>
+              <RadioGroup value={test.sound.sourceType} onChange={event => handleSoundSourceTypeChange(event, index)}>
+                {test.mode === TEST_MODE.abcCode && (
+                <RadioButton value={SOUND_SOURCE_TYPE.midi}>{t('midi')}</RadioButton>
+                )}
+                <RadioButton value={SOUND_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+                <RadioButton value={SOUND_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+              </RadioGroup>
+            </FormItem>
+            {test.sound.sourceType === SOUND_SOURCE_TYPE.external
+              && renderExternalSourceUrlInput(index, test.sound.sourceUrl, handleSoundSourceUrlChange)}
+            {test.sound.sourceType === SOUND_SOURCE_TYPE.internal
+                && renderInternalSourceUrlInput(index, test.sound.sourceUrl, handleSoundSourceUrlChange, handleSoundFileNameChange)}
+            {test.sound.sourceType !== SOUND_SOURCE_TYPE.midi
+              && renderTextInput(index, test.sound.text, handleSoundTextChange)}
+          </ItemPanel>
+        ))}
       </Form>
-      <Table
-        dataSource={dataSource}
-        columns={renderColumns()}
-        expandable={{
-          expandIconColumnIndex: -1,
-          expandedRowClassName: () => 'EarTraining-expandedEditorRow',
-          expandedRowRender: renderExpandedRow,
-          expandedRowKeys
-        }}
-        pagination={false}
-        size="small"
-        />
+
+      <Button type="primary" icon={<PlusOutlined />} onClick={handleAddButtonClick}>
+        {t('addTest')}
+      </Button>
     </div>
   );
 }

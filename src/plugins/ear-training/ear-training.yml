@@ -10,15 +10,9 @@ solve:
 reset:
   en: Reset
   de: Zurücksetzen
-startAbcCode:
-  en: Start ABC code
-  de: Vorgabe-ABC-Code
-fullAbcCode:
-  en: Full ABC code
-  de: Lösungs-ABC-Code
-audioSource:
-  en: Audio source
-  de: Audio-Quelle
+abcCode:
+  en: ABC code
+  de: ABC-Code
 midi:
   en: MIDI (auto)
   de: MIDI (auto)
@@ -31,3 +25,27 @@ testsOrderGiven:
 testsOrderRandom:
   en: random
   de: zufällig
+testMode:
+  en: Test mode
+  de: Test-Modus
+testModeImage:
+  en: image
+  de: Bild
+testModeAbcCode:
+  en: ABC code
+  de: ABC-Code
+addTest:
+  en: Add test
+  de: Test hinzufügen
+testNumber:
+  en: Test {number}
+  de: Test {number}
+testQuestion:
+  en: Question
+  de: Frage
+testAnswer:
+  en: Answer
+  de: Antwort
+audio:
+  en: Audio
+  de: Audio

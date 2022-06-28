@@ -5,11 +5,6 @@ export const EFFECT_TYPE = {
   clip: 'clip'
 };
 
-export const SOURCE_TYPE = {
-  internal: 'internal',
-  external: 'external'
-};
-
 export const ORIENTATION = {
   vertical: 'vertical',
   horizontal: 'horizontal'

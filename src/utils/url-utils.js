@@ -1,3 +1,5 @@
+import { IMAGE_SOURCE_TYPE } from '../domain/constants.js';
+
 function removeTrailingSlashes(path) {
   return String(path).replace(/\/*$/, '');
 }
@@ -30,6 +32,17 @@ function concatParts(...parts) {
 
 function createRedirectUrl(path, redirect) {
   return `${path}?redirect=${encodeURIComponent(redirect)}`;
+}
+
+export function getImageUrl({ cdnRootUrl, sourceType, sourceUrl }) {
+  switch (sourceType) {
+    case IMAGE_SOURCE_TYPE.external:
+      return sourceUrl || null;
+    case IMAGE_SOURCE_TYPE.internal:
+      return sourceUrl ? `${cdnRootUrl}/${sourceUrl}` : null;
+    default:
+      return null;
+  }
 }
 
 export default {

@@ -9,7 +9,7 @@ import { Form, Input, InputNumber, Switch, Tooltip } from 'antd';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const FormItem = Form.Item;
 
@@ -64,7 +64,7 @@ function PdfViewerEditor({ content, onContentChanged }) {
               />
             <ResourcePicker
               url={storageLocationPathToUrl(sourceUrl)}
-              onUrlChange={url => handleCdnFileNameChange(urlToSorageLocationPath(url))}
+              onUrlChange={url => handleCdnFileNameChange(urlToStorageLocationPath(url))}
               />
           </div>
         </FormItem>

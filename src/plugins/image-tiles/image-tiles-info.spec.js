@@ -1,5 +1,5 @@
-import { IMAGE_SOURCE_TYPE } from './constants.js';
 import ImageTilesInfo from './image-tiles-info.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 
 describe('image-tiles-info', () => {
   let sut;

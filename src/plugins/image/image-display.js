@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import { getImageSource } from './utils.js';
 import { useTranslation } from 'react-i18next';
 import Markdown from '../../components/markdown.js';
+import { getImageUrl } from '../../utils/url-utils.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
@@ -20,7 +20,7 @@ function ImageDisplay({ content }) {
   const [shouldApplyHoverEffect, setShouldApplyHoverEffect] = useState(false);
 
   const { text, sourceType, sourceUrl, effect, width } = content;
-  const src = getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl);
+  const src = getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl });
 
   useEffect(() => {
     const mainImage = mainImageRef.current;
@@ -48,7 +48,11 @@ function ImageDisplay({ content }) {
     canvas.height = mainImage.height;
 
     const hoverImage = new Image();
-    hoverImage.src = getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl);
+    hoverImage.src = getImageUrl({
+      cdnRootUrl: clientConfig.cdnRootUrl,
+      sourceType: effect.sourceType,
+      sourceUrl: effect.sourceUrl
+    });
 
     hoverImage.onload = () => {
       const widthFactor = canvas.width / hoverImage.naturalWidth;
@@ -100,8 +104,14 @@ function ImageDisplay({ content }) {
       position={effect.startPosition}
       portrait={effect.orientation === ORIENTATION.vertical}
       className={`ImageDisplay-mainImage u-width-${width}`}
-      itemOne={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, effect.sourceType, effect.sourceUrl)} />}
-      itemTwo={<ReactCompareSliderImage src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)} />}
+      itemOne={<ReactCompareSliderImage
+        src={getImageUrl({
+          cdnRootUrl: clientConfig.cdnRootUrl,
+          sourceType: effect.sourceType,
+          sourceUrl: effect.sourceUrl
+        })}
+        />}
+      itemTwo={<ReactCompareSliderImage src={getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })} />}
       />
   );
 
@@ -139,7 +149,7 @@ function ImageDisplay({ content }) {
           ref={mainImageRef}
           className={mainImageClasses}
           onMouseEnter={handleMainImageMouseEnter}
-          src={getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl)}
+          src={getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl })}
           />
       )}
       {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}

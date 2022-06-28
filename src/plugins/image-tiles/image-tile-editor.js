@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { Form, Input, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
+import { LINK_SOURCE_TYPE } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import DocumentSelector from '../../components/document-selector.js';
-import { IMAGE_SOURCE_TYPE, LINK_SOURCE_TYPE } from './constants.js';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -90,7 +91,7 @@ function ImageTileEditor({ index, image, description, link, onChange }) {
               />
             <ResourcePicker
               url={storageLocationPathToUrl(image.sourceUrl)}
-              onUrlChange={url => handleInternalImageUrlFileNameChanged(urlToSorageLocationPath(url))}
+              onUrlChange={url => handleInternalImageUrlFileNameChanged(urlToStorageLocationPath(url))}
               />
           </div>
         </FormItem>

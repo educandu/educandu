@@ -1,40 +1,17 @@
-@panel-proposed-background-color: @blue-1;
-@panel-border-color: @edu-border-color-dark;
-@panel-proposed-border-color: @edu-primary-color-light;
-@panel-content-overlay-background-color: fade(@edu-white, 50%);
-
 .Panel {
   background-color: @edu-background-color-light;
-  border: 1px solid @panel-border-color;
+  border: 1px solid @edu-border-color-dark;
   border-radius: @edu-border-radius-base;
   width: 100%;
   margin: 0;
-  transition: border-color 0.5s ease-in-out;
-
-  &.is-highlighted {
-    border-color: @edu-primary-color-light;
-  }
-
-  &.is-invalid {
-    border-color: @edu-error-color;
-  }
-
-  &.is-proposed {
-    background-color: @panel-proposed-background-color;
-    border-color: @panel-proposed-border-color;
-    border-style: dotted;
-  }
 }
 
 .Panel-content {
   background-color: @edu-white;
   border-radius: @edu-border-radius-base;
+  background-color: inherit;
   position: relative;
   padding: 24px;
-
-  &.Panel-content--darker {
-    background-color: inherit;
-  }
 
   & > *:first-child {
     margin-top: 0;
@@ -43,25 +20,4 @@
   & > *:last-child {
     margin-bottom: 0;
   }
-}
-
-.Panel-contentOverlay {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  cursor: not-allowed;
-  background-color: @panel-content-overlay-background-color;
-}
-
-.Panel-header {
-  border-bottom: 1px solid @panel-border-color;
-  padding: 12px 24px;
-}
-
-.Panel-footer {
-  border-top: 1px solid @panel-border-color;
-  padding: 12px 24px;
 }

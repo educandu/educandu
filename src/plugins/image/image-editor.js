@@ -1,17 +1,18 @@
-import { getImageSource } from './utils.js';
 import RegionSelect from 'react-region-select';
 import { useTranslation } from 'react-i18next';
 import validation from '../../ui/validation.js';
 import { Form, Input, Radio, InputNumber } from 'antd';
+import { EFFECT_TYPE, ORIENTATION } from './constants.js';
+import { getImageUrl } from '../../utils/url-utils.js';
 import ClientConfig from '../../bootstrap/client-config.js';
+import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-import { EFFECT_TYPE, SOURCE_TYPE, ORIENTATION } from './constants.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
-import { storageLocationPathToUrl, urlToSorageLocationPath } from '../../utils/storage-utils.js';
+import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -34,7 +35,7 @@ function ImageEditor({ content, onContentChanged }) {
   };
 
   useEffect(() => {
-    setCurrentImageSource(getImageSource(clientConfig.cdnRootUrl, sourceType, sourceUrl));
+    setCurrentImageSource(getImageUrl({ cdnRootUrl: clientConfig.cdnRootUrl, sourceType, sourceUrl }));
   }, [clientConfig, sourceType, sourceUrl]);
 
   const updateClipState = useCallback(() => {
@@ -65,12 +66,12 @@ function ImageEditor({ content, onContentChanged }) {
   const changeContent = newContentValues => {
     const newContent = { ...content, ...newContentValues };
     const isInvalidSourceUrl
-      = newContent.sourceType === SOURCE_TYPE.external
+      = newContent.sourceType === IMAGE_SOURCE_TYPE.external
       && validation.validateUrl(newContent.sourceUrl, t).validateStatus === 'error';
 
     const isInvalidEffectSourceUrl
       = [EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(newContent.effect?.type)
-      && newContent.effect.sourceType === SOURCE_TYPE.external
+      && newContent.effect.sourceType === IMAGE_SOURCE_TYPE.external
       && validation.validateUrl(newContent.effect.sourceUrl, t).validateStatus === 'error';
     onContentChanged(newContent, isInvalidSourceUrl || isInvalidEffectSourceUrl);
   };
@@ -114,7 +115,7 @@ function ImageEditor({ content, onContentChanged }) {
     const { value } = event.target;
 
     const baseEffect = {
-      sourceType: effect?.sourceType || SOURCE_TYPE.internal,
+      sourceType: effect?.sourceType || IMAGE_SOURCE_TYPE.internal,
       sourceUrl: effect?.sourceUrl || '',
       text: effect?.text || ''
     };
@@ -215,8 +216,8 @@ function ImageEditor({ content, onContentChanged }) {
   const renderSourceTypeInput = (value, onChangeHandler) => (
     <FormItem label={t('common:source')} {...formItemLayout}>
       <RadioGroup value={value} onChange={onChangeHandler}>
-        <RadioButton value={SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
-        <RadioButton value={SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
+        <RadioButton value={IMAGE_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
+        <RadioButton value={IMAGE_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
       </RadioGroup>
     </FormItem>
   );
@@ -231,7 +232,7 @@ function ImageEditor({ content, onContentChanged }) {
           />
         <ResourcePicker
           url={storageLocationPathToUrl(value)}
-          onUrlChange={url => onFileChangeHandler(urlToSorageLocationPath(url))}
+          onUrlChange={url => onFileChangeHandler(urlToStorageLocationPath(url))}
           />
       </div>
     </FormItem>
@@ -254,10 +255,10 @@ function ImageEditor({ content, onContentChanged }) {
       <Form layout="horizontal">
         {renderSourceTypeInput(sourceType, handleSourceTypeValueChanged)}
 
-        {sourceType === SOURCE_TYPE.external
+        {sourceType === IMAGE_SOURCE_TYPE.external
           && renderExternalSourceTypeInput(sourceUrl, handleExternalSourceUrlValueChanged)}
 
-        {sourceType === SOURCE_TYPE.internal
+        {sourceType === IMAGE_SOURCE_TYPE.internal
           && renderInternalSourceTypeInput(sourceUrl, handleInternalSourceUrlValueChanged, handleInternalSourceUrlFileNameChanged)}
 
         {renderCopyrightInput(text, handleCopyrightInfoValueChanged)}
@@ -273,15 +274,15 @@ function ImageEditor({ content, onContentChanged }) {
 
         {effect && (
           <div className="Panel">
-            <div className="Panel-content Panel-content--darker">
+            <div className="Panel-content">
               {[EFFECT_TYPE.hover, EFFECT_TYPE.reveal].includes(effect.type) && (
               <Fragment>
                 {renderSourceTypeInput(effect.sourceType, handleEffectSourceTypeValueChanged)}
 
-                {effect.sourceType === SOURCE_TYPE.external
+                {effect.sourceType === IMAGE_SOURCE_TYPE.external
                     && renderExternalSourceTypeInput(effect.sourceUrl, handleEffectExternalSourceUrlValueChanged)}
 
-                {effect.sourceType === SOURCE_TYPE.internal
+                {effect.sourceType === IMAGE_SOURCE_TYPE.internal
                     && renderInternalSourceTypeInput(effect.sourceUrl, handleEffectInternalSourceUrlValueChanged, handleEffectInternalSourceUrlFileNameChanged)}
 
                 {renderCopyrightInput(effect.text, handleEffectCopyrightInfoValueChanged)}
