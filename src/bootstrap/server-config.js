@@ -62,10 +62,10 @@ const configSchema = joi.object({
   ambConfig: joi.object({
     apiKey: joi.string().required(),
     image: joi.string(),
-    publisher: joi.object({
+    publisher: joi.array().items(joi.object({
       type: joi.string().valid('Organization', 'Person').required(),
       name: joi.string().required()
-    })
+    }))
   }).default({})
 });
 
