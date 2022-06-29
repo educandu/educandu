@@ -66,7 +66,7 @@ const configSchema = joi.object({
       type: joi.string().valid('Organization', 'Person').required(),
       name: joi.string().required()
     })
-  })
+  }).default({})
 });
 
 class ServerConfig {

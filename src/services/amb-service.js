@@ -56,7 +56,7 @@ class AmbService {
 
     const allSettings = await this.settingStore.getAllSettings();
     const licenseSetting = allSettings.find(setting => setting._id === 'license');
-    const licenseUrl = licenseSetting?.url || null;
+    const licenseUrl = licenseSetting?.value?.url || null;
 
     return docs.map(doc => {
       const createdByUser = userMap[doc.createdBy];

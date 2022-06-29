@@ -213,6 +213,11 @@ export function createTestDocument(container, user, data) {
   });
 }
 
+export function updateTestDocument({ container, documentKey, user, data }) {
+  const documentService = container.get(DocumentService);
+  return documentService.updateDocument({ documentKey, user, data });
+}
+
 export async function createTestRevisions(container, user, revisions) {
   const documentService = container.get(DocumentService);
   let lastCreatedDocument = null;
