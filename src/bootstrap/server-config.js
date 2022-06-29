@@ -58,7 +58,15 @@ const configSchema = joi.object({
   areRoomsEnabled: joi.bool().default(false),
   additionalHeadHtml: joi.string().default(''),
   plugins: joi.array().items(joi.string().required()).default(['markdown', 'image']),
-  basicAuthUsers: joi.object().default({})
+  basicAuthUsers: joi.object().default({}),
+  ambConfig: joi.object({
+    apiKey: joi.string().required(),
+    image: joi.string(),
+    publisher: joi.object({
+      type: joi.string().valid('Organization', 'Person').required(),
+      name: joi.string().required()
+    })
+  }).default({})
 });
 
 class ServerConfig {

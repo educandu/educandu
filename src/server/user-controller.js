@@ -15,11 +15,11 @@ import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
 import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
-import { exportUser } from '../domain/built-in-users.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
 import StorageService from '../services/storage-service.js';
 import needsPermission from '../domain/needs-permission-middleware.js';
 import sessionsStoreSpec from '../stores/collection-specs/sessions.js';
+import { ambMetadataUser, exportUser } from '../domain/built-in-users.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 import { validateBody, validateParams } from '../domain/validation-middleware.js';
@@ -299,11 +299,17 @@ class UserController {
     router.use(passport.authenticate('apikey', { session: false }));
 
     passport.use('apikey', new ApiKeyStrategy((apikey, cb) => {
-      const { exportApiKey } = this.serverConfig;
+      const { exportApiKey, ambConfig } = this.serverConfig;
 
-      return exportApiKey && apikey === exportApiKey
-        ? cb(null, exportUser)
-        : cb(null, false);
+      if (exportApiKey && apikey === exportApiKey) {
+        return cb(null, exportUser);
+      }
+
+      if (ambConfig?.apiKey && apikey === ambConfig.apiKey) {
+        return cb(null, ambMetadataUser);
+      }
+
+      return cb(null, false);
     }));
 
     passport.use('local', new LocalStrategy({

@@ -63,7 +63,11 @@ const config = {
   uploadLiabilityCookieName: 'UPLOAD_LIABILITY_TEST_APP',
   areRoomsEnabled: parseBool(processEnv.TEST_APP_ARE_ROOMS_ENABLED || false.toString()),
   plugins,
-  basicAuthUsers: JSON.parse(processEnv.TEST_APP_BASIC_AUTH_USERS || '{}')
+  basicAuthUsers: JSON.parse(processEnv.TEST_APP_BASIC_AUTH_USERS || '{}'),
+  ambConfig: {
+    apiKey: processEnv.TEST_APP_AMB_API_KEY,
+    image: './images/educandu-logo-blue.png'
+  }
 };
 
 educandu(config);

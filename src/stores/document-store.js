@@ -29,7 +29,8 @@ const documentExtendedMetadataProjection = {
   tags: 1,
   archived: 1,
   origin: 1,
-  originUrl: 1
+  originUrl: 1,
+  contributors: 1
 };
 
 class DocumentStore {
