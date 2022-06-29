@@ -34,6 +34,14 @@ function createRedirectUrl(path, redirect) {
   return `${path}?redirect=${encodeURIComponent(redirect)}`;
 }
 
+function isFullyQualifiedUrl(pathOrUrl) {
+  return (/^\w+?:\//).test(pathOrUrl);
+}
+
+function ensureIsFullyQualifiedUrl(pathOrUrl, fallbackBase) {
+  return isFullyQualifiedUrl(pathOrUrl) ? pathOrUrl : new URL(pathOrUrl, fallbackBase).href;
+}
+
 export function getImageUrl({ cdnRootUrl, sourceType, sourceUrl }) {
   switch (sourceType) {
     case IMAGE_SOURCE_TYPE.external:
@@ -52,5 +60,7 @@ export default {
   composeQueryString,
   createFullyQualifiedUrl,
   concatParts,
-  createRedirectUrl
+  createRedirectUrl,
+  isFullyQualifiedUrl,
+  ensureIsFullyQualifiedUrl
 };

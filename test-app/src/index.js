@@ -65,7 +65,8 @@ const config = {
   plugins,
   basicAuthUsers: JSON.parse(processEnv.TEST_APP_BASIC_AUTH_USERS || '{}'),
   ambConfig: {
-    apiKey: processEnv.TEST_APP_AMB_API_KEY
+    apiKey: processEnv.TEST_APP_AMB_API_KEY,
+    image: './images/educandu-logo-blue.png'
   }
 };
 

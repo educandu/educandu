@@ -80,7 +80,7 @@ class AmbService {
         result.publisher = this.serverConfig.ambConfig.publisher;
       }
       if (this.serverConfig.ambConfig?.image) {
-        result.image = this.serverConfig.ambConfig.image;
+        result.image = urlUtils.ensureIsFullyQualifiedUrl(this.serverConfig.ambConfig.image, origin);
       }
 
       return result;
