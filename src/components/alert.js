@@ -1,20 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { Alert as AntdAlert } from 'antd';
-import { InfoCircleFilled } from '@ant-design/icons';
+import WarningIcon from './icons/general/warning-icon.js';
+import InformationIcon from './icons/general/information-icon.js';
 
-function Alert({ className, message, description, closable, onClose, afterClose }) {
+export const ALERT_TYPE = {
+  info: 'info',
+  warning: 'warning'
+};
+
+const renderIcon = type => {
+  let Icon;
+  switch (type) {
+    case ALERT_TYPE.warning:
+      Icon = WarningIcon;
+      break;
+    case ALERT_TYPE.info:
+    default:
+      Icon = InformationIcon;
+      break;
+  }
+  return <Icon className={`Alert-icon Alert-icon--${type}`} />;
+};
+
+function Alert({ className, message, description, type, closable, onClose, afterClose }) {
   return (
     <AntdAlert
-      className={['Alert', className].filter(x => x).join(' ')}
+      className={classNames('Alert', `Alert--${type}`, { [className]: !!className })}
       message={message}
       description={description}
       closable={closable}
       onClose={onClose}
       afterClose={afterClose}
-      type="info"
       banner={false}
-      icon={<InfoCircleFilled className="Alert-icon" />}
+      type={type}
+      icon={renderIcon(type)}
       showIcon
       />
   );
@@ -26,7 +47,8 @@ Alert.propTypes = {
   closable: PropTypes.bool,
   description: PropTypes.node,
   message: PropTypes.node.isRequired,
-  onClose: PropTypes.func
+  onClose: PropTypes.func,
+  type: PropTypes.oneOf(Object.values(ALERT_TYPE))
 };
 
 Alert.defaultProps = {
@@ -34,7 +56,8 @@ Alert.defaultProps = {
   className: null,
   closable: false,
   description: null,
-  onClose: () => {}
+  onClose: () => {},
+  type: ALERT_TYPE.info
 };
 
 export default Alert;

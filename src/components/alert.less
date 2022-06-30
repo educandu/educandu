@@ -1,5 +1,6 @@
+@alert-warning-text-color: darken(@edu-text-color, 20%);
+
 .Alert {
-  background-color: @edu-secondary-color-light;
   padding: 20px 16px;
   border-radius: @edu-border-radius-base;
   border: none;
@@ -7,10 +8,32 @@
   & + & {
     margin-top: 12px;
   }
+
+  &.Alert--info {
+    background-color: @edu-secondary-color-light;
+  }
+
+  &.Alert--warning {
+    background-color: lighten(@edu-warning-color, 5%);
+
+    & .ant-alert-message {
+      color: @alert-warning-text-color;
+    }
+  }
 }
 
 .Alert-icon {
-  // has to be important, otherwise Antd overrides it
-  // through `.ant-alert-xyz .ant-alert-icon`
-  color: @edu-secondary-color-dark !important;
+  font-size: 16px;
+
+  &.Alert-icon--info {
+    // has to be important, otherwise Antd overrides it
+    // through `.ant-alert-xyz .ant-alert-icon`
+    color: darken(@edu-secondary-color-dark, 20%) !important;
+  }
+
+  &.Alert-icon--warning {
+    // has to be important, otherwise Antd overrides it
+    // through `.ant-alert-xyz .ant-alert-icon`
+    color: @alert-warning-text-color  !important;
+  }
 }
