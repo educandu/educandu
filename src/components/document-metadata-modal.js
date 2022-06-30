@@ -111,7 +111,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
         description: (description || '').trim(),
         language,
         tags,
-        review: (review || '').trim(),
+        review: hasUserPermission(user, permissions.REVIEW_DOCS) ? (review || '').trim() : initialDocumentMetadata.review,
         templateDocumentKey: useTemplateDocument ? templateDocumentKey : null
       });
       setLoading(false);
