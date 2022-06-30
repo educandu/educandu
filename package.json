@@ -108,7 +108,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@educandu/dev-tools": "2.2.0",
+    "@educandu/dev-tools": "^3.0.0",
     "@educandu/rooms-auth-lambda": "^1.0.1",
     "eslint": "^8.8.0",
     "eslint-plugin-import": "^2.25.4",
@@ -116,6 +116,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "gulp": "^4.0.2",
     "node-mocks-http": "^1.11.0",
-    "sinon": "^11.1.2"
+    "sinon": "^11.1.2",
+    "vitest": "^0.16.0"
   }
 }

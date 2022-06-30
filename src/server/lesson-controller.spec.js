@@ -94,7 +94,7 @@ describe('lesson-controller', () => {
     });
 
     describe('when the lesson slug is different than the URL slug', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = { user, params: { 0: '/url-slug', lessonId }, query: {} };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
@@ -104,7 +104,7 @@ describe('lesson-controller', () => {
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
 
         sut.handleGetLessonPage(req, res);
-      });
+      }));
 
       it('should redirect to the correct lesson url', () => {
         expect(res.statusCode).toBe(301);
@@ -296,7 +296,7 @@ describe('lesson-controller', () => {
     describe('when the user owns the room to contain the lesson', () => {
       let newLesson;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         room = {
           _id: roomId,
           owner: user._id,
@@ -314,7 +314,7 @@ describe('lesson-controller', () => {
         lessonService.createLesson.resolves(newLesson);
 
         sut.handlePostLesson(req, res);
-      });
+      }));
 
       it('should create the lesson', () => {
         sinon.assert.calledWith(lessonService.createLesson, { userId: user._id, ...lesson });
@@ -329,7 +329,7 @@ describe('lesson-controller', () => {
     describe('when the user is a collaborator of the room to contain the lesson', () => {
       let newLesson;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
@@ -347,7 +347,7 @@ describe('lesson-controller', () => {
         lessonService.createLesson.resolves(newLesson);
 
         sut.handlePostLesson(req, res);
-      });
+      }));
 
       it('should create the lesson', () => {
         sinon.assert.calledWith(lessonService.createLesson, { userId: user._id, ...lesson });
@@ -453,7 +453,7 @@ describe('lesson-controller', () => {
       let requestBody;
       let updatedLesson;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         room = {
           _id: uniqueId.create(),
           owner: user._id,
@@ -497,7 +497,7 @@ describe('lesson-controller', () => {
         res.on('end', done);
 
         sut.handlePatchLessonMetadata(req, res);
-      });
+      }));
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
@@ -518,7 +518,7 @@ describe('lesson-controller', () => {
       let requestBody;
       let updatedLesson;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         room = {
           _id: uniqueId.create(),
           owner: uniqueId.create(),
@@ -562,7 +562,7 @@ describe('lesson-controller', () => {
         res.on('end', done);
 
         sut.handlePatchLessonMetadata(req, res);
-      });
+      }));
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
@@ -651,7 +651,7 @@ describe('lesson-controller', () => {
     });
 
     describe('when the user owns the room containing the lesson', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
         room = {
           _id: roomId,
@@ -668,7 +668,7 @@ describe('lesson-controller', () => {
         roomService.getRoomById.withArgs(roomId).resolves(room);
 
         sut.handleDeleteLesson(req, res);
-      });
+      }));
 
       it('should call lessonService.deleteLessonById', () => {
         sinon.assert.calledWith(lessonService.deleteLessonById, lessonId);
@@ -676,7 +676,7 @@ describe('lesson-controller', () => {
     });
 
     describe('when the user is a collaborator of the room containing the lesson', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
         room = {
           _id: roomId,
@@ -693,7 +693,7 @@ describe('lesson-controller', () => {
         roomService.getRoomById.withArgs(roomId).resolves(room);
 
         sut.handleDeleteLesson(req, res);
-      });
+      }));
 
       it('should call lessonService.deleteLessonById', () => {
         sinon.assert.calledWith(lessonService.deleteLessonById, lessonId);

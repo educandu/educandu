@@ -7,7 +7,6 @@ import TableInfo from './table/table-info.js';
 import IframeInfo from './iframe/iframe-info.js';
 import AnavisInfo from './anavis/anavis-info.js';
 import MarkdownInfo from './markdown/markdown-info.js';
-import { resolveAll } from '../utils/promise-utils.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import PdfViewerInfo from './pdf-viewer/pdf-viewer-info.js';
 import AnnotationInfo from './annotation/annotation-info.js';
@@ -69,7 +68,7 @@ class PluginRegistry {
   }
 
   ensureAllEditorsAreLoaded() {
-    return resolveAll([...this.pluginMap.values()].map(plugin => () => plugin.ensureEditorComponentIsResolved()));
+    return Promise.all([...this.pluginMap.values()].map(plugin => plugin.ensureEditorComponentIsResolved()));
   }
 
   getAllInfos() {

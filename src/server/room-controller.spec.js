@@ -84,7 +84,7 @@ describe('room-controller', () => {
     describe('when the request data is valid', () => {
       const createdRoom = {};
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         roomService.createRoom.resolves(createdRoom);
 
         req = {
@@ -95,7 +95,7 @@ describe('room-controller', () => {
         res.on('end', done);
 
         sut.handlePostRoom(req, res);
-      });
+      }));
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
@@ -114,7 +114,7 @@ describe('room-controller', () => {
       let requestBody;
       let updatedRoom;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         room = {
           _id: uniqueId.create(),
           owner: user._id,
@@ -143,7 +143,7 @@ describe('room-controller', () => {
         res.on('end', done);
 
         sut.handlePatchRoom(req, res);
-      });
+      }));
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
@@ -202,7 +202,7 @@ describe('room-controller', () => {
       const room = { roomId: uniqueId.create(), name: 'Mein schöner Raum' };
       const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         roomService.createOrUpdateInvitation.resolves({
           room,
           owner: user,
@@ -221,7 +221,7 @@ describe('room-controller', () => {
         res.on('end', done);
 
         sut.handlePostRoomInvitation(req, res);
-      });
+      }));
 
       it('should respond with status code 201', () => {
         expect(res.statusCode).toBe(201);
@@ -274,7 +274,7 @@ describe('room-controller', () => {
     const room = { roomId: uniqueId.create(), name: 'Mein schöner Raum' };
     const invitation = { token: '94zv87nt2zztc8m3zt2z3845z8txc' };
 
-    beforeEach(done => {
+    beforeEach(() => new Promise(done => {
       roomService.createOrUpdateInvitation.resolves({
         room,
         owner: user,
@@ -287,7 +287,7 @@ describe('room-controller', () => {
       res.on('end', done);
 
       sut.handlePostRoomInvitationConfirm(req, res);
-    });
+    }));
 
     it('should respond with status code 201', () => {
       expect(res.statusCode).toBe(201);
@@ -584,7 +584,7 @@ describe('room-controller', () => {
         slug: 'room-slug'
       };
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = { user, params: { 0: '/url-slug', roomId: room._id } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
         res.on('end', done);
@@ -592,7 +592,7 @@ describe('room-controller', () => {
         roomService.getRoomById.withArgs(room._id).resolves(room);
 
         sut.handleGetRoomPage(req, res);
-      });
+      }));
 
       it('should redirect to the correct room url', () => {
         expect(res.statusCode).toBe(301);
@@ -603,7 +603,7 @@ describe('room-controller', () => {
 
   describe('handleAuthorizeResourcesAccess', () => {
     describe('when there is no authenticated user', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
@@ -616,7 +616,7 @@ describe('room-controller', () => {
 
         roomService.isRoomOwnerOrMember.resolves(false);
         sut.handleAuthorizeResourcesAccess(req, res);
-      });
+      }));
 
       it('should return status 401', () => {
         expect(res.statusCode).toBe(401);
@@ -626,7 +626,7 @@ describe('room-controller', () => {
     describe('when the user is authenticated but not authorized', () => {
       const roomId = '843zvnzn2vw';
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
@@ -639,7 +639,7 @@ describe('room-controller', () => {
 
         roomService.isRoomOwnerOrMember.resolves(false);
         sut.handleAuthorizeResourcesAccess(req, res);
-      });
+      }));
 
       it('should call the room service with the correct roomId and userId', () => {
         sinon.assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
@@ -653,7 +653,7 @@ describe('room-controller', () => {
     describe('when the user is authenticated and authorized', () => {
       const roomId = '843zvnzn2vw';
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'educandu.dev' },
@@ -666,7 +666,7 @@ describe('room-controller', () => {
 
         roomService.isRoomOwnerOrMember.resolves(true);
         sut.handleAuthorizeResourcesAccess(req, res);
-      });
+      }));
 
       it('should call the room service with the correct roomId and userId', () => {
         sinon.assert.calledWith(roomService.isRoomOwnerOrMember, roomId, user._id);
@@ -686,7 +686,7 @@ describe('room-controller', () => {
     const roomB = { _id: uniqueId.create(), name: 'Room B', access: ROOM_ACCESS_LEVEL.private, members: [{ userId: userClare._id }, { userId: userDrake._id }] };
     const roomC = { _id: uniqueId.create(), name: 'Room C', access: ROOM_ACCESS_LEVEL.public, members: [{ userId: userJacky._id }, { userId: userDrake._id }] };
 
-    beforeEach(done => {
+    beforeEach(() => new Promise(done => {
       req = { user, query: { ownerId: user._id, access: ROOM_ACCESS_LEVEL.private } };
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
       res.on('end', done);
@@ -697,7 +697,7 @@ describe('room-controller', () => {
       mailService.sendRoomDeletionNotificationEmails.resolves();
 
       sut.handleDeleteRoomsForUser(req, res);
-    });
+    }));
 
     it('should call storageService.deleteRoomAndResources for each room', () => {
       sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: roomA._id, roomOwnerId: user._id });
@@ -770,7 +770,7 @@ describe('room-controller', () => {
     describe('when the request is valid', () => {
       let room;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
@@ -787,7 +787,7 @@ describe('room-controller', () => {
         res.on('end', done);
 
         sut.handleDeleteOwnRoom(req, res);
-      });
+      }));
 
       it('should call storageService.deleteRoomAndResources', () => {
         sinon.assert.calledWith(storageService.deleteRoomAndResources, { roomId: room._id, roomOwnerId: user._id });
@@ -873,7 +873,7 @@ describe('room-controller', () => {
     describe('when the request is valid', () => {
       let mappedRoom;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         room = {
           name: 'my room',
           _id: uniqueId.create(),
@@ -894,7 +894,7 @@ describe('room-controller', () => {
         res.on('end', done);
 
         sut.handleDeleteRoomMember(req, res);
-      });
+      }));
 
       it('should return status 200', () => {
         expect(res.statusCode).toBe(200);
@@ -958,7 +958,7 @@ describe('room-controller', () => {
     describe('when the request is valid', () => {
       let mappedInvitations;
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         const room = {
           name: 'my room',
           _id: uniqueId.create(),
@@ -984,7 +984,7 @@ describe('room-controller', () => {
         res.on('end', done);
 
         sut.handleDeleteRoomInvitation(req, res);
-      });
+      }));
 
       it('should return status 200', () => {
         expect(res.statusCode).toBe(200);

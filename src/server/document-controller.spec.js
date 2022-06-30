@@ -64,7 +64,7 @@ describe('document-controller', () => {
     });
 
     describe('when the document slug is different than the URL slug', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = {
           user,
           params: { 0: '/other-slug', docKey: doc.key },
@@ -78,7 +78,7 @@ describe('document-controller', () => {
         documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
 
         sut.handleGetDocPage(req, res);
-      });
+      }));
 
       it('should redirect to the correct document url', () => {
         expect(res.statusCode).toBe(301);
@@ -105,7 +105,7 @@ describe('document-controller', () => {
     });
 
     describe('when the template document exists but the document already contains sections', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         templateDocument = { key: uniqueId.create() };
         req = {
           user,
@@ -122,7 +122,7 @@ describe('document-controller', () => {
         documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
 
         sut.handleGetDocPage(req, res);
-      });
+      }));
 
       it('should redirect to the original document url', () => {
         expect(res.statusCode).toBe(302);
