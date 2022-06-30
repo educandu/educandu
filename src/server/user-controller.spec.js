@@ -68,7 +68,7 @@ describe('user-controller', () => {
     const mappedUser = {};
 
     describe('with all data correctly provided', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -82,7 +82,7 @@ describe('user-controller', () => {
         clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUser(req, res);
-      });
+      }));
 
       it('should set the status code on the response to 201', () => {
         expect(res.statusCode).toBe(201);
@@ -104,7 +104,7 @@ describe('user-controller', () => {
     });
 
     describe('when user creation fails', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -117,7 +117,7 @@ describe('user-controller', () => {
         userService.createUser.resolves({ result: SAVE_USER_RESULT.duplicateEmail, user: null });
 
         sut.handlePostUser(req, res);
-      });
+      }));
 
       it('should set the status code on the response to 201', () => {
         expect(res.statusCode).toBe(201);
@@ -146,7 +146,7 @@ describe('user-controller', () => {
     const mappedUser = {};
 
     describe('with all data correctly provided', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -161,7 +161,7 @@ describe('user-controller', () => {
         clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
         sut.handlePostUserAccount(req, res);
-      });
+      }));
 
       it('should call userService.updateUserAccount', () => {
         sinon.assert.calledWith(userService.updateUserAccount, { userId: 1234, provider: 'educandu', username: 'test1234', email: 'test@test.com' });
@@ -179,7 +179,7 @@ describe('user-controller', () => {
     });
 
     describe('when user creation fails', () => {
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -193,7 +193,7 @@ describe('user-controller', () => {
         userService.updateUserAccount.resolves({ result: SAVE_USER_RESULT.duplicateEmail, user: null });
 
         sut.handlePostUserAccount(req, res);
-      });
+      }));
 
       it('should set the status code on the response to 201', () => {
         expect(res.statusCode).toBe(201);
@@ -219,7 +219,7 @@ describe('user-controller', () => {
     describe('with all data correctly provided', () => {
       const profile = { firstName: 'john', lastName: 'doe' };
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -233,7 +233,7 @@ describe('user-controller', () => {
         userService.updateUserProfile.resolves(profile);
 
         sut.handlePostUserProfile(req, res);
-      });
+      }));
 
       it('should call userService.updateUserProfile', () => {
         sinon.assert.calledWith(userService.updateUserProfile, 1234, profile);
@@ -279,7 +279,7 @@ describe('user-controller', () => {
         email: 'john.doe@gmail.com'
       };
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -294,7 +294,7 @@ describe('user-controller', () => {
         userService.createPasswordResetRequest.resolves({ _id: 'resetRequestId' });
 
         sut.handlePostUserPasswordResetRequest(req, res);
-      });
+      }));
 
       it('should call userService.createPasswordResetRequest', () => {
         sinon.assert.calledWith(userService.createPasswordResetRequest, user);
@@ -318,7 +318,7 @@ describe('user-controller', () => {
 
     describe('with unknown email', () => {
 
-      beforeEach(done => {
+      beforeEach(() => new Promise(done => {
         req = httpMocks.createRequest({
           protocol: 'https',
           headers: { host: 'localhost' },
@@ -332,7 +332,7 @@ describe('user-controller', () => {
         userService.getUserByEmailAddress.resolves(null);
 
         sut.handlePostUserPasswordResetRequest(req, res);
-      });
+      }));
 
       it('should not call userService.createPasswordResetRequest', () => {
         sinon.assert.notCalled(userService.createPasswordResetRequest);
@@ -358,7 +358,7 @@ describe('user-controller', () => {
     let res;
     const serviceResponse = { reminders: [{ timestamp: new Date(), createdBy: '12345' }] };
 
-    beforeEach(done => {
+    beforeEach(() => new Promise(done => {
       req = httpMocks.createRequest({
         protocol: 'https',
         headers: { host: 'localhost' },
@@ -372,7 +372,7 @@ describe('user-controller', () => {
       userService.addUserStorageReminder.resolves(serviceResponse);
 
       sut.handlePostUserStorageReminder(req, res);
-    });
+    }));
 
     it('should call userService.addUserStorageReminder', () => {
       sinon.assert.calledWith(userService.addUserStorageReminder, 'abcde', { _id: '12345' });
@@ -393,7 +393,7 @@ describe('user-controller', () => {
     let res;
     const serviceResponse = { reminders: [{ timestamp: new Date(), createdBy: '12345' }] };
 
-    beforeEach(done => {
+    beforeEach(() => new Promise(done => {
       req = httpMocks.createRequest({
         protocol: 'https',
         headers: { host: 'localhost' },
@@ -407,7 +407,7 @@ describe('user-controller', () => {
       userService.deleteAllUserStorageReminders.resolves(serviceResponse);
 
       sut.handleDeleteAllUserStorageReminders(req, res);
-    });
+    }));
 
     it('should call userService.deleteAllUserStorageReminders', () => {
       sinon.assert.calledWith(userService.deleteAllUserStorageReminders, 'abcde');
@@ -441,7 +441,7 @@ describe('user-controller', () => {
       ]
     };
 
-    beforeEach(done => {
+    beforeEach(() => new Promise(done => {
       req = httpMocks.createRequest({
         protocol: 'https',
         headers: { host: 'localhost' },
@@ -456,7 +456,7 @@ describe('user-controller', () => {
       clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
       sut.handlePostFavorite(req, res);
-    });
+    }));
 
     it('should call userService.addFavorite', () => {
       sinon.assert.calledWith(userService.addFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });
@@ -490,7 +490,7 @@ describe('user-controller', () => {
       favorites: []
     };
 
-    beforeEach(done => {
+    beforeEach(() => new Promise(done => {
       req = httpMocks.createRequest({
         protocol: 'https',
         headers: { host: 'localhost' },
@@ -505,7 +505,7 @@ describe('user-controller', () => {
       clientDataMappingService.mapWebsiteUser.returns(mappedUser);
 
       sut.handleDeleteFavorite(req, res);
-    });
+    }));
 
     it('should call userService.deleteFavorite', () => {
       sinon.assert.calledWith(userService.deleteFavorite, { type: FAVORITE_TYPE.document, id: '4589ct29nr76n4x9214', user: requestUser });

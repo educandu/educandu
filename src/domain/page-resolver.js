@@ -1,5 +1,4 @@
 import { PAGE_NAME } from './page-name.js';
-import { resolveAll } from '../utils/promise-utils.js';
 import DefaultSiteLogoComponent from '../components/default-site-logo.js';
 import DefaultPageTemplateComponent from '../components/default-page-template.js';
 
@@ -43,11 +42,11 @@ export default class PageResolver {
       PageTemplateComponent,
       HomePageTemplateComponent,
       SiteLogoComponent
-    ] = await resolveAll([
-      pageImporters[pageName],
-      () => this.bundleConfig.getPageTemplateComponent(pageName),
-      () => this.bundleConfig.getHomePageTemplateComponent(pageName),
-      () => this.bundleConfig.getSiteLogoComponent(pageName)
+    ] = await Promise.all([
+      pageImporters[pageName](),
+      this.bundleConfig.getPageTemplateComponent(pageName),
+      this.bundleConfig.getHomePageTemplateComponent(pageName),
+      this.bundleConfig.getSiteLogoComponent(pageName)
     ]);
 
     return {
@@ -73,7 +72,7 @@ export default class PageResolver {
   async prefillCache() {
     const allPageNames = Object.keys(pageImporters);
     const getEntryFromPageName = async pageName => [pageName, await this.getPageComponentInfo(pageName)];
-    const allEntries = await resolveAll(allPageNames.map(pageName => () => getEntryFromPageName(pageName)));
+    const allEntries = await Promise.all(allPageNames.map(pageName => getEntryFromPageName(pageName)));
     this.cache = Object.fromEntries(allEntries);
   }
 }

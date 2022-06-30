@@ -12,7 +12,7 @@ import {
   esbuild,
   eslint,
   getEnvAsString,
-  jest,
+  vitest,
   less,
   LoadBalancedNodeProcessGroup,
   MaildevContainer,
@@ -88,15 +88,11 @@ export async function fix() {
 }
 
 export function test() {
-  return jest.coverage();
-}
-
-export function testChanged() {
-  return jest.changed();
+  return vitest.coverage();
 }
 
 export function testWatch() {
-  return jest.watch();
+  return vitest.watch();
 }
 
 export async function buildJs() {
