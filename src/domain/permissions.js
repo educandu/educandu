@@ -73,7 +73,7 @@ const adminPermissions = [
 
 const permissionsPerRole = {
   [ROLE.user]: userPermissions,
-  [ROLE.qualityManager]: qualityManagerPermissions,
+  [ROLE.maintainer]: qualityManagerPermissions,
   [ROLE.admin]: adminPermissions
 };
 

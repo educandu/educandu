@@ -74,13 +74,13 @@ describe('permissions', () => {
       });
     });
 
-    describe('when user has role \'quality-manager\'', () => {
+    describe('when user has role \'maintainer\'', () => {
       beforeEach(() => {
-        const user = { permissions: ['custom'], roles: [ROLE.qualityManager] };
+        const user = { permissions: ['custom'], roles: [ROLE.maintainer] };
         result = getAllUserPermissions(user);
       });
 
-      it('should return all quality manager permissions', () => {
+      it('should return all maintainer permissions', () => {
         expect(result).toEqual([
           'custom',
           permissions.EDIT_DOC,
