@@ -28,6 +28,11 @@ export const getResourceExtension = resource => {
   return extensionMatches?.[1]?.toLowerCase() || '';
 };
 
+export const getResourceFullName = resource => {
+  const sanitizedUrl = (resource || '').trim();
+  return sanitizedUrl.split('/').pop();
+};
+
 export const getResourceType = url => {
   const extension = getResourceExtension(url);
 

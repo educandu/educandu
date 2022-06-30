@@ -15,6 +15,7 @@ import UploadIcon from './icons/general/upload-icon.js';
 import ClientConfig from '../bootstrap/client-config.js';
 import { useSetStorageLocation } from './storage-context.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import { getResourceFullName } from '../utils/resource-utils.js';
 import { getCookie, setSessionCookie } from '../common/cookie.js';
 import { storageLocationShape } from '../ui/default-prop-types.js';
 import StorageApiClient from '../api-clients/storage-api-client.js';
@@ -49,6 +50,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const [currentDirectory, setCurrentDirectory] = useState(null);
   const [wizardScreen, setWizardScreen] = useState(WIZARD_SCREEN.none);
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState(null);
+  const [showInitialFileSelection, setShowInitialFileSelection] = useState(true);
   const [canUploadToCurrentDirectory, setCanUploadToCurrentDirectory] = useState(false);
   const [filesViewerDisplay, setFilesViewerDisplay] = useState(FILES_VIEWER_DISPLAY.grid);
 
@@ -70,7 +72,6 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
       setParentDirectory(result.parentDirectory);
       setCurrentDirectory(result.currentDirectory);
       setFiles(result.objects);
-      setSelectedFile(null);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -135,6 +136,7 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   }, [currentDirectory, storageLocation, setStorageLocation, storageApiClient, t, uiLocale, fetchStorageContent]);
 
   const handleFileClick = newFile => {
+    setShowInitialFileSelection(false);
     if (newFile.type === CDN_OBJECT_TYPE.directory) {
       setCurrentDirectoryPath(newFile.path);
     } else {
@@ -222,6 +224,29 @@ function StorageLocation({ storageLocation, initialUrl, onEnterFullscreen, onExi
   const handleUploadButtonClick = () => {
     dropzoneRef.current.open();
   };
+
+  useEffect(() => {
+    if (!selectedFile) {
+      return;
+    }
+    const previouslySelectedFileStillExists = (files || []).some(file => file.portableUrl === selectedFile.portableUrl);
+    if (!previouslySelectedFileStillExists) {
+      setSelectedFile(null);
+    }
+  }, [selectedFile, files]);
+
+  useEffect(() => {
+    if (!files?.length || !showInitialFileSelection) {
+      return;
+    }
+
+    const initialResourceName = getResourceFullName(initialUrl);
+
+    if (initialResourceName) {
+      const preSelectedFile = files.find(file => file.displayName === initialResourceName);
+      setSelectedFile(preSelectedFile);
+    }
+  }, [initialUrl, showInitialFileSelection, files]);
 
   useEffect(() => {
     const initialResourcePath = getStorageLocationPathForUrl(initialUrl);
