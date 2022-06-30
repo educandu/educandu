@@ -272,7 +272,7 @@
       "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
       "useTemplateDocument": "Standardvorlage benutzen",
-      "review": "Kritik"
+      "review": "Review"
     }
   },
   {
