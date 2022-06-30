@@ -1,6 +1,6 @@
 export const ROLE = {
   user: 'user',
-  qualityManager: 'qualityManager',
+  qualityManager: 'quality-manager',
   admin: 'admin'
 };
 

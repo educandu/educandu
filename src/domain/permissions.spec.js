@@ -74,6 +74,34 @@ describe('permissions', () => {
       });
     });
 
+    describe('when user has role \'quality-manager\'', () => {
+      beforeEach(() => {
+        const user = { permissions: ['custom'], roles: [ROLE.qualityManager] };
+        result = getAllUserPermissions(user);
+      });
+
+      it('should return all quality manager permissions', () => {
+        expect(result).toEqual([
+          'custom',
+          permissions.EDIT_DOC,
+          permissions.VIEW_DOCS,
+          permissions.EDIT_FILE,
+          permissions.VIEW_FILES,
+          permissions.DELETE_OWN_FILES,
+          permissions.CREATE_FILE,
+          permissions.OWN_ROOMS,
+          permissions.OWN_LESSONS,
+          permissions.AUTORIZE_ROOMS_RESOURCES,
+          permissions.JOIN_PRIVATE_ROOMS,
+          permissions.HARD_DELETE_SECTION,
+          permissions.SEE_USER_EMAIL,
+          permissions.RESTORE_DOC_REVISIONS,
+          permissions.MANAGE_ARCHIVED_DOCS,
+          permissions.REVIEW_DOCS
+        ]);
+      });
+    });
+
     describe('when user has role \'admin\'', () => {
       beforeEach(() => {
         const user = { permissions: ['custom'], roles: [ROLE.admin] };
@@ -93,15 +121,16 @@ describe('permissions', () => {
           permissions.OWN_LESSONS,
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_PRIVATE_ROOMS,
+          permissions.HARD_DELETE_SECTION,
+          permissions.SEE_USER_EMAIL,
+          permissions.RESTORE_DOC_REVISIONS,
+          permissions.MANAGE_ARCHIVED_DOCS,
+          permissions.REVIEW_DOCS,
           permissions.ADMIN,
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,
-          permissions.HARD_DELETE_SECTION,
           permissions.DELETE_ANY_STORAGE_FILE,
-          permissions.SEE_USER_EMAIL,
           permissions.MIGRATE_DATA,
-          permissions.RESTORE_DOC_REVISIONS,
-          permissions.MANAGE_ARCHIVED_DOCS,
           permissions.MANAGE_IMPORT,
           permissions.MANAGE_SETTINGS,
           permissions.MANAGE_STORAGE_PLANS,

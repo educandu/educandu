@@ -3,6 +3,7 @@ import { ROLE } from './constants.js';
 const ADMIN = 'admin';
 const EDIT_DOC = 'edit-doc';
 const VIEW_DOCS = 'view-docs';
+const REVIEW_DOCS = 'review-docs';
 const EDIT_FILE = 'edit-file';
 const VIEW_FILES = 'view-files';
 const DELETE_OWN_FILES = 'delete-own-files';
@@ -39,25 +40,40 @@ const userPermissions = [
   JOIN_PRIVATE_ROOMS
 ];
 
+const qualityManagerPermissions = [
+  ...new Set([
+    ...userPermissions,
+    HARD_DELETE_SECTION,
+    SEE_USER_EMAIL,
+    RESTORE_DOC_REVISIONS,
+    MANAGE_ARCHIVED_DOCS,
+    REVIEW_DOCS
+  ])
+];
+
 const adminPermissions = [
-  ...userPermissions,
-  ADMIN,
-  EDIT_USERS,
-  VIEW_BATCHES,
-  HARD_DELETE_SECTION,
-  DELETE_ANY_STORAGE_FILE,
-  SEE_USER_EMAIL,
-  MIGRATE_DATA,
-  RESTORE_DOC_REVISIONS,
-  MANAGE_ARCHIVED_DOCS,
-  MANAGE_IMPORT,
-  MANAGE_SETTINGS,
-  MANAGE_STORAGE_PLANS,
-  DELETE_FOREIGN_ROOMS
+  ...new Set([
+    ...userPermissions,
+    ...qualityManagerPermissions,
+    ADMIN,
+    EDIT_USERS,
+    VIEW_BATCHES,
+    HARD_DELETE_SECTION,
+    DELETE_ANY_STORAGE_FILE,
+    SEE_USER_EMAIL,
+    MIGRATE_DATA,
+    RESTORE_DOC_REVISIONS,
+    MANAGE_ARCHIVED_DOCS,
+    MANAGE_IMPORT,
+    MANAGE_SETTINGS,
+    MANAGE_STORAGE_PLANS,
+    DELETE_FOREIGN_ROOMS
+  ])
 ];
 
 const permissionsPerRole = {
   [ROLE.user]: userPermissions,
+  [ROLE.qualityManager]: qualityManagerPermissions,
   [ROLE.admin]: adminPermissions
 };
 
@@ -71,13 +87,14 @@ export function getAllUserPermissions(user) {
   const directPermissions = user?.permissions || [];
   const permissionsBasedOnRoles = (user?.roles || []).map(role => [...permissionsPerRole[role]]).flat();
 
-  return Array.from(new Set([...directPermissions, ...permissionsBasedOnRoles]));
+  return [...new Set([...directPermissions, ...permissionsBasedOnRoles])];
 }
 
 export default {
   ADMIN,
   EDIT_DOC,
   VIEW_DOCS,
+  REVIEW_DOCS,
   EDIT_FILE,
   VIEW_FILES,
   DELETE_OWN_FILES,
