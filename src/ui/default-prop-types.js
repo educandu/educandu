@@ -209,7 +209,8 @@ export const documentMetadataEditShape = PropTypes.shape({
   description: PropTypes.string.isRequired,
   slug: PropTypes.string,
   language: PropTypes.string.isRequired,
-  tags: PropTypes.arrayOf(PropTypes.string).isRequired
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  review: PropTypes.string
 });
 
 export const documentShape = PropTypes.shape({
@@ -226,6 +227,7 @@ export const documentRevisionShape = PropTypes.shape({
   sections: PropTypes.arrayOf(sectionShape).isRequired,
   restoredFrom: PropTypes.string,
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  review: PropTypes.string,
   archived: PropTypes.bool.isRequired,
   origin: PropTypes.string.isRequired,
   originUrl: PropTypes.string.isRequred

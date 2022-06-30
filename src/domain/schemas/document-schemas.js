@@ -21,6 +21,7 @@ export const createDocumentDataBodySchema = joi.object({
   slug: slugSchema,
   language: joi.string().case('lower').required(),
   tags: joi.array().items(joi.string()).required(),
+  review: joi.string().allow(null).allow(''),
   sections: joi.array().items(sectionSchema)
 });
 
@@ -29,7 +30,8 @@ export const documentMetadataBodySchema = joi.object({
   description: joi.string().allow('').max(maxDocumentDescriptionLength).required(),
   slug: slugSchema,
   language: joi.string().case('lower').required(),
-  tags: joi.array().items(joi.string()).required()
+  tags: joi.array().items(joi.string()).required(),
+  review: joi.string().allow(null).allow('')
 });
 
 export const restoreRevisionBodySchema = joi.object({
@@ -74,6 +76,7 @@ export const documentRevisionDBSchema = joi.object({
   sections: joi.array().items(documentSectionDBSchema).required(),
   restoredFrom: joi.string().allow(null).allow('').required(),
   tags: joi.array().items(joi.string()).required(),
+  review: joi.string().allow(null).allow(''),
   archived: joi.bool().required(),
   origin: joi.string().required(),
   originUrl: joi.string().allow(null).allow(''),
@@ -96,6 +99,7 @@ export const documentDBSchema = joi.object({
   sections: joi.array().items(documentSectionDBSchema).required(),
   contributors: joi.array().items(joi.string()).required(),
   tags: joi.array().items(joi.string()).required(),
+  review: joi.string().allow(null).allow(''),
   archived: joi.bool().required(),
   origin: joi.string().required(),
   originUrl: joi.string().allow(null).allow(''),

@@ -214,8 +214,8 @@ class DocumentService {
   }
 
   updateDocumentMetadata({ documentKey, metadata, user }) {
-    const { title, description, slug, language, tags } = metadata;
-    const data = { title, description, slug, language, tags };
+    const { title, description, slug, language, tags, review } = metadata;
+    const data = { title, description, slug, language, tags, review };
     return this.updateDocument({ documentKey, data, user });
   }
 
@@ -493,6 +493,7 @@ class DocumentService {
       language: data.language || '',
       sections: mappedSections,
       tags: data.tags || [],
+      review: data.review || '',
       archived: data.archived || false,
       origin: data.origin || DOCUMENT_ORIGIN.internal,
       originUrl: data.originUrl || '',
@@ -533,6 +534,7 @@ class DocumentService {
       sections: lastRevision.sections,
       contributors,
       tags: lastRevision.tags,
+      review: lastRevision.review,
       archived: lastRevision.archived,
       origin: lastRevision.origin,
       originUrl: lastRevision.originUrl,

@@ -36,6 +36,7 @@ function PageTemplate({ children, fullScreen, alerts }) {
     return (
       <Alert
         key={index}
+        type={alert.type}
         message={alert.message}
         closable={alert.closable || false}
         onClose={alert.onClose || (() => { })}
@@ -62,6 +63,7 @@ function PageTemplate({ children, fullScreen, alerts }) {
 PageTemplate.propTypes = {
   alerts: PropTypes.arrayOf(PropTypes.shape({
     message: PropTypes.node.isRequired,
+    type: PropTypes.string,
     closable: PropTypes.bool,
     onClose: PropTypes.func
   })),

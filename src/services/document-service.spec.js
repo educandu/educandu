@@ -354,7 +354,8 @@ describe('document-service', () => {
               deletedOn: new Date().toISOString()
             }
           ],
-          tags: ['tag-1']
+          tags: ['tag-1'],
+          review: 'review'
         },
         {
           _id: uniqueId.create(),
@@ -377,7 +378,8 @@ describe('document-service', () => {
               }
             }
           ],
-          tags: ['tag-2']
+          tags: ['tag-2'],
+          review: 'review'
         }
       ];
     });

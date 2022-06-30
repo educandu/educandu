@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
+import { ALERT_TYPE } from '../alert.js';
 import Restricted from '../restricted.js';
 import routes from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -64,6 +65,10 @@ function createPageAlerts(doc, currentView, hasPendingTemplateSectionKeys, t) {
 
   if (currentView === VIEW.edit && hasPendingTemplateSectionKeys) {
     alerts.push({ message: t('common:proposedSectionsAlert') });
+  }
+
+  if (doc.review) {
+    alerts.push({ message: doc.review, type: ALERT_TYPE.warning });
   }
 
   return alerts;
