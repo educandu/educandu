@@ -27,6 +27,7 @@ const documentExtendedMetadataProjection = {
   updatedOn: 1,
   updatedBy: 1,
   tags: 1,
+  review: 1,
   archived: 1,
   origin: 1,
   originUrl: 1,

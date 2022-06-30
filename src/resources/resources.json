@@ -259,7 +259,8 @@
       "editDocument": "Edit document",
       "titleRequired": "Please specify a document title",
       "descriptionTooLong": "The description cannot have more than {maxChars, plural, =1 {# character} other {# characters}}",
-      "useTemplateDocument": "Use default template"
+      "useTemplateDocument": "Use default template",
+      "review": "Review"
     }
   },
   {
@@ -270,7 +271,8 @@
       "editDocument": "Dokument bearbeiten",
       "titleRequired": "Bitte geben Sie einen Dokument-Titel an",
       "descriptionTooLong": "Die Beschreibung darf nicht länger als {maxChars} Zeichen sein",
-      "useTemplateDocument": "Standardvorlage benutzen"
+      "useTemplateDocument": "Standardvorlage benutzen",
+      "review": "Kritik"
     }
   },
   {

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import Logger from '../common/logger.js';
+import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useService } from './container-context.js';
 import { useSettings } from './settings-context.js';
@@ -10,6 +11,7 @@ import LanguageSelect from './localization/language-select.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
+import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
@@ -28,6 +30,7 @@ function composeTagOptions(defaultTags, initialDocumentTags = [], tagSuggestions
 }
 
 function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocumentMetadata, templateDocumentKey }) {
+  const user = useUser();
   const formRef = useRef(null);
   const settings = useSettings();
   const defaultTags = settings?.defaultTags || [];
@@ -98,7 +101,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
     }
   };
 
-  const handleOnFinish = async ({ title, description, slug, language, tags, useTemplateDocument }) => {
+  const handleOnFinish = async ({ title, description, slug, language, tags, review, useTemplateDocument }) => {
     try {
       setLoading(true);
 
@@ -108,6 +111,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
         description: (description || '').trim(),
         language,
         tags,
+        review: (review || '').trim(),
         templateDocumentKey: useTemplateDocument ? templateDocumentKey : null
       });
       setLoading(false);
@@ -152,6 +156,11 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
         {templateDocumentKey && (
           <FormItem name="useTemplateDocument" valuePropName="checked">
             <Checkbox>{t('useTemplateDocument')}</Checkbox>
+          </FormItem>
+        )}
+        {hasUserPermission(user, permissions.REVIEW_DOCS) && (
+          <FormItem name="review" label={t('review')}>
+            <TextArea autoSize={{ minRows: 3, maxRows: 10 }} />
           </FormItem>
         )}
       </Form>

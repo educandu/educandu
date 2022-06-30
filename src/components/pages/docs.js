@@ -158,8 +158,8 @@ function Docs({ initialState, PageTemplate }) {
     });
   };
 
-  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags, templateDocumentKey }) => {
-    const newDocument = await documentApiClient.createDocument({ title, description, slug, language, tags });
+  const handleDocumentMetadataModalSave = async ({ title, description, slug, language, tags, review, templateDocumentKey }) => {
+    const newDocument = await documentApiClient.createDocument({ title, description, slug, language, tags, review });
     setModalState(getDefaultModalState({ t, uiLanguage, settings }));
 
     window.location = urls.getDocUrl({
