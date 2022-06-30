@@ -48,12 +48,14 @@ function FilesGridViewer({
 
     return (
       <div className={classes} key={file.portableUrl}>
-        <a className="FilesGridViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
-          <div className="FilesGridViewer-fileDisplay">
-            {fileDisplay}
-          </div>
-          <span className="FilesGridViewer-fileName">{file.displayName}</span>
-        </a>
+        <Tooltip title={file.displayName} placement="bottom">
+          <a className="FilesGridViewer-file" onClick={() => onFileClick(file)} onDoubleClick={() => onFileDoubleClick(file)}>
+            <div className="FilesGridViewer-fileDisplay">
+              {fileDisplay}
+            </div>
+            <span className="FilesGridViewer-fileName">{file.displayName}</span>
+          </a>
+        </Tooltip>
         <div className={actionsClasses} onClick={() => onFileClick(file)}>
           <Tooltip title={t('common:preview')}>
             <a
