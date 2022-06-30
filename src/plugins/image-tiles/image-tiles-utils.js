@@ -5,7 +5,7 @@ import { DEFAULT_MAX_TILES_PER_ROW, HOVER_EFFECT, LINK_SOURCE_TYPE } from './con
 export function createDefaultTile(number, t) {
   return {
     image: {
-      sourceType: IMAGE_SOURCE_TYPE.external,
+      sourceType: IMAGE_SOURCE_TYPE.internal,
       sourceUrl: ''
     },
     description: `[${t('imageTiles:tileNumber', { number })}]`,
