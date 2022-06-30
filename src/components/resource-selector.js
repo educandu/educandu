@@ -25,8 +25,10 @@ function ResourceSelector({ allowedLocationTypes, initialUrl, onCancel, onSelect
 
     setCurrentLocationType(oldCurrentLocationType => {
       const desiredLocationType = oldCurrentLocationType || getStorageLocationTypeForUrl(initialUrl);
-      const newCurrentLocation = newVisibleLocations.find(location => location.type === desiredLocationType) || newVisibleLocations[0];
-      return newCurrentLocation?.type || null;
+      const desiredLocation = newVisibleLocations.find(location => location.type === desiredLocationType);
+      const defaultLocation = newVisibleLocations.find(location => location.type === STORAGE_LOCATION_TYPE.private) || newVisibleLocations[0];
+
+      return desiredLocation?.type || defaultLocation?.type || null;
     });
   }, [allowedLocationTypes, initialUrl, locations]);
 

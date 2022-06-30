@@ -1294,50 +1294,6 @@
     }
   },
   {
-    "namespace": "storageBrowser",
-    "language": "en",
-    "resources": {
-      "fileUpload": "File upload",
-      "searchFilter": "Search filter",
-      "displayNameText": "Name",
-      "categoryText": "Type",
-      "sizeText": "Size",
-      "lastModifiedText": "Date",
-      "action": "Action",
-      "moreActions": "More Actions",
-      "uploadFiles": "Upload files",
-      "publicStorage": "Public storage",
-      "privateStorage": "Private storage",
-      "publicStorageWarning": "This directory is publicly accessible",
-      "insufficientPrivateStorge": "Not enough storage space available",
-      "uploadLimit": "There is a limit of {uploadLimit} per upload",
-      "uploadLimitExceeded": "Upload limit of {uploadLimit} is exceeded. Your upload size is {uploadSize}.",
-      "optimizeImages": "Optimize images for web display"
-    }
-  },
-  {
-    "namespace": "storageBrowser",
-    "language": "de",
-    "resources": {
-      "fileUpload": "Datei-Upload",
-      "searchFilter": "Suchfilter",
-      "displayNameText": "Name",
-      "categoryText": "Typ",
-      "sizeText": "Größe",
-      "lastModifiedText": "Datum",
-      "action": "Aktion",
-      "moreActions": "Weitere Aktionen",
-      "uploadFiles": "Dateien hochladen",
-      "publicStorage": "Öffentlicher Speicher",
-      "privateStorage": "Privater Speicher",
-      "publicStorageWarning": "Dieses Verzeichnis ist öffentlich zugänglich",
-      "insufficientPrivateStorge": "Nicht genügend Speicherplatz verfügbar",
-      "uploadLimit": "Es gibt eine Begrenzung von {uploadLimit} per Upload",
-      "uploadLimitExceeded": "Uploadbegrenzung von {uploadLimit} ist überschritten. Ihre Uploadgröße ist {uploadSize}.",
-      "optimizeImages": "Bilder für Web optimieren"
-    }
-  },
-  {
     "namespace": "storageLocation",
     "language": "en",
     "resources": {
