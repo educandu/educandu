@@ -83,13 +83,17 @@ describe('permissions', () => {
       it('should return all user permissions', () => {
         expect(result).toEqual([
           'custom',
-          permissions.ADMIN,
           permissions.EDIT_DOC,
           permissions.VIEW_DOCS,
           permissions.EDIT_FILE,
           permissions.VIEW_FILES,
           permissions.DELETE_OWN_FILES,
           permissions.CREATE_FILE,
+          permissions.OWN_ROOMS,
+          permissions.OWN_LESSONS,
+          permissions.AUTORIZE_ROOMS_RESOURCES,
+          permissions.JOIN_PRIVATE_ROOMS,
+          permissions.ADMIN,
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,
           permissions.HARD_DELETE_SECTION,
@@ -101,11 +105,7 @@ describe('permissions', () => {
           permissions.MANAGE_IMPORT,
           permissions.MANAGE_SETTINGS,
           permissions.MANAGE_STORAGE_PLANS,
-          permissions.OWN_ROOMS,
-          permissions.DELETE_FOREIGN_ROOMS,
-          permissions.OWN_LESSONS,
-          permissions.AUTORIZE_ROOMS_RESOURCES,
-          permissions.JOIN_PRIVATE_ROOMS
+          permissions.DELETE_FOREIGN_ROOMS
         ]);
       });
     });

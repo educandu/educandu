@@ -69,7 +69,7 @@ export default async function educandu(options) {
         logger.info('User with initial user email address already exists, skipping creation');
       } else {
         logger.info('Creating initial user');
-        await userService.createUser({ ...serverConfig.initialUser, roles: [ROLE.user, ROLE.admin], verified: true });
+        await userService.createUser({ ...serverConfig.initialUser, roles: [ROLE.user, ROLE.qualityManager, ROLE.admin], verified: true });
         logger.info('Initial user sucessfully created');
       }
     }
