@@ -501,7 +501,7 @@
     "resources": {
       "inlineTooltipHtml": "<div>\n  <p>In this field you can use the following formatting options:</p>\n  <p>*italic* or _italic_<br />**bold** or __bold__</p>\n  <p>Please enter links using this format:</p>\n  <p>[link text](link URL)</p>\n</div>\n",
       "blockTooltipText": "Please click in order to show formatting options for this field",
-      "blockHelpTableHeaderLeft": "What you write",
+      "blockHelpTableHeaderLeft": "How you write it",
       "blockHelpTableHeaderRight": "How it will look",
       "blockHelpTableHeaderAnnotation": "As a visual help, spaces are displayed as <0>•</0> in this column",
       "blockHelpTableFoot": "This website uses *Markdown* for text formatting. More specifically, it follows the so-called *CommonMark* specification.\nMarkdown is designed to provide basic text formatting options while at the same trying to keep the text look as natural as possible.\nFor more information and an in-depth explanation, please visit <https://commonmark.org/>.\nPlease be aware that, while the website follows the CommonMark specifications otherwise, the use of raw HTML is disabled.\n",
@@ -514,7 +514,7 @@
     "resources": {
       "inlineTooltipHtml": "<div>\n  <p>In diesem Feld können Sie die folgenden Formatierungsoptionen verwenden:</p>\n  <p>*kursiv* oder _kursiv_<br />**fett** oder __fett__</p>\n  <p>Links können Sie in diesem Format eingeben:</p>\n  <p>[Link-Text](Link-Adresse)</p>\n</div>\n",
       "blockTooltipText": "Bitte klicken, um Formatierungsoptionen für dieses Feld anzuzeigen",
-      "blockHelpTableHeaderLeft": "Was Sie schreiben",
+      "blockHelpTableHeaderLeft": "Wie Sie es schreiben",
       "blockHelpTableHeaderRight": "Wie es dargestellt wird",
       "blockHelpTableHeaderAnnotation": "Als visuelle Hilfe sind Leerzeichen in dieser Spalte als <0>•</0> dargestellt.",
       "blockHelpTableFoot": "Diese Website benutzt *Markdown* zur Textformatierung. Genauer gesagt folgt sie der sogenannten *CommonMark*-Spezifikation.\nMarkdown bietet grundlegende Formatierungsmöglichkeiten, ohne dabei den Text durch komplizierte Regeln unlesbar zu machen.\nFür mehr Informationen und eine ausführliche Beschreibung besuchen Sie bitte <https://commonmark.org/>.\nWir möchten darauf hinweisen, dass die Website der CommonMark-Spezifikation in allen Punkten außer der Benutzung von HTML folgt, welche nicht zugelassen ist.\n",
