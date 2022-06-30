@@ -3,7 +3,7 @@ import { ROLE } from './constants.js';
 const ADMIN = 'admin';
 const EDIT_DOC = 'edit-doc';
 const VIEW_DOCS = 'view-docs';
-const REVIEW_DOCS = 'review-docs';
+const REVIEW_DOC = 'review-doc';
 const EDIT_FILE = 'edit-file';
 const VIEW_FILES = 'view-files';
 const DELETE_OWN_FILES = 'delete-own-files';
@@ -40,30 +40,26 @@ const userPermissions = [
   JOIN_PRIVATE_ROOMS
 ];
 
-const qualityManagerPermissions = [
+const maintainerPermissions = [
   ...new Set([
     ...userPermissions,
     HARD_DELETE_SECTION,
+    DELETE_ANY_STORAGE_FILE,
     SEE_USER_EMAIL,
     RESTORE_DOC_REVISIONS,
     MANAGE_ARCHIVED_DOCS,
-    REVIEW_DOCS
+    REVIEW_DOC
   ])
 ];
 
 const adminPermissions = [
   ...new Set([
     ...userPermissions,
-    ...qualityManagerPermissions,
+    ...maintainerPermissions,
     ADMIN,
     EDIT_USERS,
     VIEW_BATCHES,
-    HARD_DELETE_SECTION,
-    DELETE_ANY_STORAGE_FILE,
-    SEE_USER_EMAIL,
     MIGRATE_DATA,
-    RESTORE_DOC_REVISIONS,
-    MANAGE_ARCHIVED_DOCS,
     MANAGE_IMPORT,
     MANAGE_SETTINGS,
     MANAGE_STORAGE_PLANS,
@@ -73,7 +69,7 @@ const adminPermissions = [
 
 const permissionsPerRole = {
   [ROLE.user]: userPermissions,
-  [ROLE.maintainer]: qualityManagerPermissions,
+  [ROLE.maintainer]: maintainerPermissions,
   [ROLE.admin]: adminPermissions
 };
 
@@ -94,7 +90,7 @@ export default {
   ADMIN,
   EDIT_DOC,
   VIEW_DOCS,
-  REVIEW_DOCS,
+  REVIEW_DOC,
   EDIT_FILE,
   VIEW_FILES,
   DELETE_OWN_FILES,

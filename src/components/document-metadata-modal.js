@@ -111,7 +111,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
         description: (description || '').trim(),
         language,
         tags,
-        review: hasUserPermission(user, permissions.REVIEW_DOCS) ? (review || '').trim() : initialDocumentMetadata.review,
+        review: hasUserPermission(user, permissions.REVIEW_DOC) ? (review || '').trim() : initialDocumentMetadata.review,
         templateDocumentKey: useTemplateDocument ? templateDocumentKey : null
       });
       setLoading(false);
@@ -158,7 +158,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
             <Checkbox>{t('useTemplateDocument')}</Checkbox>
           </FormItem>
         )}
-        {hasUserPermission(user, permissions.REVIEW_DOCS) && (
+        {hasUserPermission(user, permissions.REVIEW_DOC) && (
           <FormItem name="review" label={t('review')}>
             <TextArea autoSize={{ minRows: 3, maxRows: 10 }} />
           </FormItem>

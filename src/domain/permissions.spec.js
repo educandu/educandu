@@ -94,10 +94,11 @@ describe('permissions', () => {
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_PRIVATE_ROOMS,
           permissions.HARD_DELETE_SECTION,
+          permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEE_USER_EMAIL,
           permissions.RESTORE_DOC_REVISIONS,
           permissions.MANAGE_ARCHIVED_DOCS,
-          permissions.REVIEW_DOCS
+          permissions.REVIEW_DOC
         ]);
       });
     });
@@ -122,14 +123,14 @@ describe('permissions', () => {
           permissions.AUTORIZE_ROOMS_RESOURCES,
           permissions.JOIN_PRIVATE_ROOMS,
           permissions.HARD_DELETE_SECTION,
+          permissions.DELETE_ANY_STORAGE_FILE,
           permissions.SEE_USER_EMAIL,
           permissions.RESTORE_DOC_REVISIONS,
           permissions.MANAGE_ARCHIVED_DOCS,
-          permissions.REVIEW_DOCS,
+          permissions.REVIEW_DOC,
           permissions.ADMIN,
           permissions.EDIT_USERS,
           permissions.VIEW_BATCHES,
-          permissions.DELETE_ANY_STORAGE_FILE,
           permissions.MIGRATE_DATA,
           permissions.MANAGE_IMPORT,
           permissions.MANAGE_SETTINGS,
