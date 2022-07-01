@@ -351,7 +351,8 @@
     "resources": {
       "set": "Added",
       "setOn": "Added on",
-      "sortedBySetOn": "Sorted by date of adding"
+      "sortedBySetOn": "Sorted by date of adding",
+      "info": "All documents, rooms and lessons that you have marked as favorite can be found here."
     }
   },
   {
@@ -360,7 +361,8 @@
     "resources": {
       "set": "Hinzugefügt",
       "setOn": "Hinzugefügt am",
-      "sortedBySetOn": "Nach Hinzufügungsdatum sortiert"
+      "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
+      "info": "Alle als Favorit markierte Dokumente, Räume oder Einheiten könnten hier gefunden werden."
     }
   },
   {
@@ -565,7 +567,8 @@
     "namespace": "newsTab",
     "language": "en",
     "resources": {
-      "latestActivitiesHeader": "Latest activities",
+      "info": "Here you can find useful new information about the project and your interaction with it",
+      "latestActivitiesHeader": "Your latest activities",
       "documentCreatedActivity": "New document created",
       "documentUpdatedActivity": "Document updated",
       "documentMarkedFavoriteActivity": "Document marked as favorite",
@@ -582,7 +585,8 @@
     "namespace": "newsTab",
     "language": "de",
     "resources": {
-      "latestActivitiesHeader": "Letzte Aktivitäten",
+      "info": "Here you can find useful new information about the project and your interaction with it",
+      "latestActivitiesHeader": "Deine letzte Aktivitäten",
       "documentCreatedActivity": "Neues Dokument erstellt",
       "documentUpdatedActivity": "Dokument bearbeitet",
       "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
@@ -762,8 +766,9 @@
       "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
       "roomsTabTitle": "Rooms",
-      "storagePlanLabel": "storage plan",
-      "noStoragePlanLabel": "No storage plan"
+      "storageTabTitle": "Your storage plan",
+      "storageTabInfo": "Here you can find details about your storage plan and current space status.",
+      "noStoragePlan": "There is no storage plan associated with your account"
     }
   },
   {
@@ -775,8 +780,9 @@
       "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",
-      "storagePlanLabel": "Speicherplan",
-      "noStoragePlanLabel": "Kein Speicherplan"
+      "storageTabTitle": "Deiner Speicherplan",
+      "storageTabInfo": "Hier findest du Details über ...",
+      "noStoragePlan": "Keiner Speicherplan ist mit Ihrem verbunden"
     }
   },
   {

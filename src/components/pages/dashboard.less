@@ -1,12 +1,5 @@
 .DashboardPage {}
 
-.DashboardPage-usedStorage {
-  width: 100%;
-  display: flex;
-  align-items: baseline;
-  margin: 20px 0 10px 0;
-}
-
 .DashboardPage-headerSection {
   display: grid;
   grid-gap: 35px;
@@ -35,4 +28,28 @@
   display: block;
   font-size: 12px;
   color: @edu-text-color-secondary;
+}
+
+.DashboardPage-tabInfo {
+  .m-info-card;
+  margin-bottom: 40px;
+}
+
+.DashboardPage-storageTabTitle {
+  .m-section-headline;
+}
+
+.DashboardPage-storageTabContent {
+  .m-section-content;
+}
+
+.DashboardPage-storageTabPlanName {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.DashboardPage-storageTabUsedStorage {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
 }

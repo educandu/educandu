@@ -13,9 +13,12 @@ accountTabTitle:
 roomsTabTitle:
   en: Rooms
   de: Räume
-storagePlanLabel:
-  en: storage plan
-  de: Speicherplan
-noStoragePlanLabel:
-  en: No storage plan
-  de: Kein Speicherplan
+storageTabTitle:
+  en: Your storage plan
+  de: Deiner Speicherplan
+storageTabInfo:
+  en: Here you can find details about your storage plan and current space status.
+  de: Hier findest du Details über ...
+noStoragePlan:
+  en: There is no storage plan associated with your account
+  de: Keiner Speicherplan ist mit Ihrem verbunden

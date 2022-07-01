@@ -1,6 +1,9 @@
+info:
+  en: Here you can find useful new information about the project and your interaction with it
+  de: Here you can find useful new information about the project and your interaction with it
 latestActivitiesHeader:
-  en: Latest activities
-  de: Letzte Aktivitäten
+  en: Your latest activities
+  de: Deine letzte Aktivitäten
 documentCreatedActivity:
   en: New document created
   de: Neues Dokument erstellt

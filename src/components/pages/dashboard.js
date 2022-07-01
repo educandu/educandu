@@ -31,7 +31,6 @@ function Dashboard({ initialState, PageTemplate }) {
   const initialTab = request.query.tab || '';
   const { rooms, activities, favorites } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
-  const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
 
   const formItemLayout = {
     labelCol: {
@@ -98,10 +97,17 @@ function Dashboard({ initialState, PageTemplate }) {
           </TabPane>
           {!!(user.storage.plan || user.storage.usedBytes) && (
             <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="storage">
-              <h5>{storagePlanName}</h5>
-              <div className="DashboardPage-usedStorage">
-                <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
-              </div>
+              <div className="DashboardPage-tabInfo">{t('storageTabInfo')}</div>
+              <div className="DashboardPage-storageTabTitle">{t('storageTabTitle')}</div>
+              <section className="DashboardPage-storageTabContent">
+                <div className="DashboardPage-storageTabPlanName">
+                  {!!storagePlan && `${t('common:name')}: "${storagePlan.name}"`}
+                  {!storagePlan && t('noStoragePlan')}
+                </div>
+                <div className="DashboardPage-storageTabUsedStorage">
+                  <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
+                </div>
+              </section>
             </TabPane>
           )}
         </Tabs>
