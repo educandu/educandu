@@ -34,6 +34,11 @@ const defaultMetadata = {
       type: 'Organization',
       name: 'educandu'
     }
+  ],
+  'about': [
+    {
+      id: 'https://w3id.org/kim/hochschulfaechersystematik/n78'
+    }
   ]
 };
 

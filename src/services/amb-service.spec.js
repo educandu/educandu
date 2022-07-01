@@ -112,6 +112,7 @@ describe('amb-service', () => {
                   name: 'educandu'
                 }
               ],
+              'about': [{ id: 'https://w3id.org/kim/hochschulfaechersystematik/n78' }],
               'id': `${origin}/docs/${document._id}`,
               'name': 'Bach concert',
               'creator': [
@@ -186,6 +187,7 @@ describe('amb-service', () => {
                   name: 'Custom Publisher'
                 }
               ],
+              'about': [{ id: 'https://w3id.org/kim/hochschulfaechersystematik/n78' }],
               'id': `${origin}/docs/${document._id}`,
               'name': 'Bach concert',
               'creator': [
