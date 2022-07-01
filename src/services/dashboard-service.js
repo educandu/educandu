@@ -5,6 +5,8 @@ import LessonStore from '../stores/lesson-store.js';
 import DocumentStore from '../stores/document-store.js';
 import { FAVORITE_TYPE, USER_ACTIVITY_TYPE } from '../domain/constants.js';
 
+const completionFunction = Symbol('completion');
+
 class DashboardService {
   static get inject() { return [UserStore, DocumentStore, RoomStore, LessonStore]; }
 
@@ -29,43 +31,50 @@ class DashboardService {
     const createdDocumentActivities = createdDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentCreated,
       timestamp: document.createdOn,
-      data: { _id: document._id, title: document.title }
+      data: { _id: document._id, title: document.title },
+      isDeprecated: false
     }));
 
     const updatedDocumentActivities = updatedDocuments.map(document => ({
       type: USER_ACTIVITY_TYPE.documentUpdated,
       timestamp: document.updatedOn,
-      data: { _id: document._id, title: document.title }
+      data: { _id: document._id, title: document.title },
+      isDeprecated: false
     }));
 
     const createdRoomActivities = createdRooms.map(room => ({
       type: USER_ACTIVITY_TYPE.roomCreated,
       timestamp: room.createdOn,
-      data: { _id: room._id, name: room.name }
+      data: { _id: room._id, name: room.name },
+      isDeprecated: false
     }));
 
     const updatedRoomActivities = updatedRooms.map(room => ({
       type: USER_ACTIVITY_TYPE.roomUpdated,
       timestamp: room.updatedOn,
-      data: { _id: room._id, name: room.name }
+      data: { _id: room._id, name: room.name },
+      isDeprecated: false
     }));
 
     const joinedRoomActivities = joinedRooms.map(room => ({
       type: USER_ACTIVITY_TYPE.roomJoined,
       timestamp: room.members.find(member => member.userId === userId).joinedOn,
-      data: { _id: room._id, name: room.name }
+      data: { _id: room._id, name: room.name },
+      isDeprecated: false
     }));
 
     const createdLessonActivities = createdLessons.map(lesson => ({
       type: USER_ACTIVITY_TYPE.lessonCreated,
       timestamp: lesson.createdOn,
-      data: { _id: lesson._id, title: lesson.title }
+      data: { _id: lesson._id, title: lesson.title },
+      isDeprecated: false
     }));
 
     const updatedLessonActivities = updatedLessons.map(lesson => ({
       type: USER_ACTIVITY_TYPE.lessonUpdated,
       timestamp: lesson.updatedOn,
-      data: { _id: lesson._id, title: lesson.title }
+      data: { _id: lesson._id, title: lesson.title },
+      isDeprecated: false
     }));
 
     const latestFavorites = user.favorites.sort(by(f => f.setOn, 'desc')).slice(0, limit);
@@ -75,27 +84,42 @@ class DashboardService {
           return {
             type: USER_ACTIVITY_TYPE.documentMarkedFavorite,
             timestamp: favorite.setOn,
-            getData: async () => {
+            data: null,
+            isDeprecated: null,
+            [completionFunction]: async () => {
               const document = await this.documentStore.getDocumentMetadataByKey(favorite.id);
-              return { _id: favorite.id, title: document.title };
+              return {
+                data: { _id: favorite.id, title: document.title },
+                isDeprecated: false
+              };
             }
           };
         case FAVORITE_TYPE.room:
           return {
             type: USER_ACTIVITY_TYPE.roomMarkedFavorite,
             timestamp: favorite.setOn,
-            getData: async () => {
+            data: null,
+            isDeprecated: null,
+            [completionFunction]: async () => {
               const room = await this.roomStore.getRoomById(favorite.id);
-              return { _id: favorite.id, name: room.name };
+              return {
+                data: { _id: favorite.id, name: room?.name ?? null },
+                isDeprecated: !room
+              };
             }
           };
         case FAVORITE_TYPE.lesson:
           return {
             type: USER_ACTIVITY_TYPE.lessonMarkedFavorite,
             timestamp: favorite.setOn,
-            getData: async () => {
+            data: null,
+            isDeprecated: null,
+            [completionFunction]: async () => {
               const lesson = await this.lessonStore.getLessonMetadataById(favorite.id);
-              return { _id: favorite.id, title: lesson.title };
+              return {
+                data: { _id: favorite.id, title: lesson?.title ?? null },
+                isDeprecated: !lesson
+              };
             }
           };
         default:
@@ -115,51 +139,19 @@ class DashboardService {
     ]
       .sort(by(item => item.timestamp, 'desc'));
 
-    if (limit && limit !== 0) {
+    if (limit) {
       incompleteActivities = incompleteActivities.slice(0, limit);
     }
 
-    const activities = [];
-    for (const activity of incompleteActivities) {
-      if (activity.getData) {
-        // eslint-disable-next-line no-await-in-loop
-        const data = await activity.getData();
-        delete activity.getData;
-        activities.push({ ...activity, data: { ...data } });
-      } else {
-        activities.push(activity);
+    return Promise.all(incompleteActivities.map(async activity => {
+      if (activity[completionFunction]) {
+        const completionValues = await activity[completionFunction]();
+        delete activity[completionFunction];
+        Object.assign(activity, completionValues);
       }
-    }
 
-    return activities;
-  }
-
-  async getUserFavorites(user) {
-    const documentIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.document).map(d => d.id);
-    const roomIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.room).map(r => r.id);
-    const lessonIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.lesson).map(l => l.id);
-
-    const [documents, rooms, lessons] = await Promise.all([
-      documentIds.length ? await this.documentStore.getDocumentsMetadataByKeys(documentIds) : [],
-      roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [],
-      lessonIds.length ? await this.lessonStore.getLessonsMetadataByIds(lessonIds) : []
-    ]);
-
-    return user.favorites.map(f => {
-      if (f.type === FAVORITE_TYPE.document) {
-        const document = documents.find(d => d._id === f.id);
-        return { ...f, title: document.title };
-      }
-      if (f.type === FAVORITE_TYPE.room) {
-        const room = rooms.find(r => r._id === f.id);
-        return { ...f, title: room.name };
-      }
-      if (f.type === FAVORITE_TYPE.lesson) {
-        const lesson = lessons.find(l => l._id === f.id);
-        return { ...f, title: lesson.title };
-      }
-      return { ...f };
-    });
+      return activity;
+    }));
   }
 }
 

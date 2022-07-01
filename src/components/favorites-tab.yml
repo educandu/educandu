@@ -7,3 +7,6 @@ setOn:
 sortedBySetOn:
   en: Sorted by date of adding
   de: Nach Hinzufügungsdatum sortiert
+targetDeletedMessage:
+  en: The target of this link has been deleted
+  de: Das Ziel dieses Links wurde gelöscht

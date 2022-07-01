@@ -5,13 +5,17 @@ import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import LockStore from '../stores/lock-store.js';
+import RoomStore from '../stores/room-store.js';
+import LessonStore from '../stores/lesson-store.js';
+import DocumentStore from '../stores/document-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import PasswordResetRequestStore from '../stores/password-reset-request-store.js';
 import {
   ROLE,
   SAVE_USER_RESULT,
   PENDING_USER_REGISTRATION_EXPIRATION_IN_HOURS,
-  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS
+  PENDING_PASSWORD_RESET_REQUEST_EXPIRATION_IN_HOURS,
+  FAVORITE_TYPE
 } from '../domain/constants.js';
 
 const { BadRequest, NotFound } = httpErrors;
@@ -23,12 +27,15 @@ const PASSWORD_SALT_ROUNDS = 1024;
 const logger = new Logger(import.meta.url);
 
 class UserService {
-  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, LockStore]; }
+  static get inject() { return [UserStore, StoragePlanStore, PasswordResetRequestStore, DocumentStore, RoomStore, LessonStore, LockStore]; }
 
-  constructor(userStore, storagePlanStore, passwordResetRequestStore, lockStore) {
+  constructor(userStore, storagePlanStore, passwordResetRequestStore, documentStore, roomStore, lessonStore, lockStore) {
     this.userStore = userStore;
     this.storagePlanStore = storagePlanStore;
     this.passwordResetRequestStore = passwordResetRequestStore;
+    this.roomStore = roomStore;
+    this.lessonStore = lessonStore;
+    this.documentStore = documentStore;
     this.lockStore = lockStore;
   }
 
@@ -180,6 +187,34 @@ class UserService {
     user.storage = newStorage;
     await this.userStore.saveUser(user);
     return newStorage;
+  }
+
+  async getFavorites({ user }) {
+    const documentIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.document).map(d => d.id);
+    const roomIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.room).map(r => r.id);
+    const lessonIds = user.favorites.filter(f => f.type === FAVORITE_TYPE.lesson).map(l => l.id);
+
+    const [documents, rooms, lessons] = await Promise.all([
+      documentIds.length ? await this.documentStore.getDocumentsMetadataByKeys(documentIds) : [],
+      roomIds.length ? await this.roomStore.getRoomsByIds(roomIds) : [],
+      lessonIds.length ? await this.lessonStore.getLessonsMetadataByIds(lessonIds) : []
+    ]);
+
+    return user.favorites.map(f => {
+      if (f.type === FAVORITE_TYPE.document) {
+        const document = documents.find(d => d._id === f.id);
+        return { ...f, title: document.title };
+      }
+      if (f.type === FAVORITE_TYPE.room) {
+        const room = rooms.find(r => r._id === f.id);
+        return { ...f, title: room?.name ?? null };
+      }
+      if (f.type === FAVORITE_TYPE.lesson) {
+        const lesson = lessons.find(l => l._id === f.id);
+        return { ...f, title: lesson?.title ?? null };
+      }
+      return { ...f };
+    });
   }
 
   async addFavorite({ type, id, user }) {

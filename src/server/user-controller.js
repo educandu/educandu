@@ -249,6 +249,12 @@ class UserController {
     return res.send(newStorage);
   }
 
+  async handleGetFavorites(req, res) {
+    const { user } = req;
+    const favorites = await this.userService.getFavorites({ user });
+    return res.send({ favorites: this.clientDataMappingService.mapUserFavorites(favorites) });
+  }
+
   async handlePostFavorite(req, res) {
     const { user } = req;
     const { type, id } = req.body;
@@ -439,9 +445,15 @@ class UserController {
       (req, res) => this.handleDeleteAllUserStorageReminders(req, res)
     );
 
+    router.get(
+      '/api/v1/users/favorites',
+      needsAuthentication(),
+      (req, res) => this.handleGetFavorites(req, res)
+    );
+
     router.post(
       '/api/v1/users/favorites',
-      needsPermission(permissions.VIEW_DOCS),
+      needsAuthentication(),
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handlePostFavorite(req, res)
@@ -449,7 +461,7 @@ class UserController {
 
     router.delete(
       '/api/v1/users/favorites',
-      needsPermission(permissions.VIEW_DOCS),
+      needsAuthentication(),
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handleDeleteFavorite(req, res)

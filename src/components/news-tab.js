@@ -18,116 +18,160 @@ function NewsTab({ activities }) {
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('newsTab');
 
-  const renderActivity = ({ icon, timestamp, description, linkText, linkHref }) => (
-    <div className="NewsTab-activity">
-      <div className="NewsTab-activityMetadata">
-        <div className="NewsTab-activityMetadataIcon">{icon}</div>
-        <div>{formatDate(timestamp)}</div>
+  const renderActivity = ({ type, icon, timestamp, description, title, href, isDeprecated }) => {
+    let deprecatedTitle;
+    if (isDeprecated) {
+      switch (type) {
+        case USER_ACTIVITY_TYPE.roomCreated:
+        case USER_ACTIVITY_TYPE.roomUpdated:
+        case USER_ACTIVITY_TYPE.roomMarkedFavorite:
+        case USER_ACTIVITY_TYPE.roomJoined:
+          deprecatedTitle = t('common:deletedRoom');
+          break;
+        case USER_ACTIVITY_TYPE.lessonCreated:
+        case USER_ACTIVITY_TYPE.lessonUpdated:
+        case USER_ACTIVITY_TYPE.lessonMarkedFavorite:
+          deprecatedTitle = t('common:deletedLesson');
+          break;
+        default:
+          throw new Error(`Invalid activity type: ${type}`);
+      }
+    } else {
+      deprecatedTitle = null;
+    }
+
+    return (
+      <div className="NewsTab-activity">
+        <div className="NewsTab-activityMetadata">
+          <div className="NewsTab-activityMetadataIcon">{icon}</div>
+          <div>{formatDate(timestamp)}</div>
+        </div>
+        <div className="NewsTab-activityData">
+          <span className="NewsTab-activityDataDescription">{description}:</span>
+          {isDeprecated && <span>[{deprecatedTitle}]</span>}
+          {!isDeprecated && <a className="NewsTab-activityDataLink" href={href}>{title}</a>}
+        </div>
       </div>
-      <div className="NewsTab-activityData">
-        <span className="NewsTab-activityDataDescription">{description}:</span>
-        <a className="NewsTab-activityDataLink" href={linkHref}>{linkText}</a>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderDocumentCreatedActivity = activity => {
     return renderActivity({
       icon: <DocumentCreatedIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('documentCreatedActivity'),
-      linkText: activity.data.title,
-      linkHref: urls.getDocUrl({ key: activity.data._id })
+      title: activity.data.title,
+      href: urls.getDocUrl({ key: activity.data._id }),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderDocumentUpdatedActivity = activity => {
     return renderActivity({
       icon: <ItemEditedIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('documentUpdatedActivity'),
-      linkText: activity.data.title,
-      linkHref: urls.getDocUrl({ key: activity.data._id })
+      title: activity.data.title,
+      href: urls.getDocUrl({ key: activity.data._id }),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderDocumentMarkedFavoriteActivity = activity => {
     return renderActivity({
       icon: <DocumentMarkedFavoriteIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('documentMarkedFavoriteActivity'),
-      linkText: activity.data.title,
-      linkHref: urls.getDocUrl({ key: activity.data._id })
+      title: activity.data.title,
+      href: urls.getDocUrl({ key: activity.data._id }),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderRoomCreatedActivity = activity => {
     return renderActivity({
       icon: <RoomCreatedIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('roomCreatedActivity'),
-      linkText: activity.data.name,
-      linkHref: urls.getRoomUrl(activity.data._id)
+      title: activity.data.name,
+      href: urls.getRoomUrl(activity.data._id),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderRoomUpdatedActivity = activity => {
     return renderActivity({
       icon: <ItemEditedIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('roomUpdatedActivity'),
-      linkText: activity.data.name,
-      linkHref: urls.getRoomUrl(activity.data._id)
+      title: activity.data.name,
+      href: urls.getRoomUrl(activity.data._id),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderRoomMarkedFavoriteActivity = activity => {
     return renderActivity({
       icon: <RoomMarkedFavoriteIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('roomMarkedFavoriteActivity'),
-      linkText: activity.data.name,
-      linkHref: urls.getRoomUrl(activity.data._id)
+      title: activity.data.name,
+      href: urls.getRoomUrl(activity.data._id),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderRoomJoinedActivity = activity => {
     return renderActivity({
       icon: <RoomJoinedIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('roomJoinedActivity'),
-      linkText: activity.data.name,
-      linkHref: urls.getRoomUrl(activity.data._id)
+      title: activity.data.name,
+      href: urls.getRoomUrl(activity.data._id),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderLessonCreatedActivity = activity => {
     return renderActivity({
       icon: <LessonCreatedIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('lessonCreatedActivity'),
-      linkText: activity.data.title,
-      linkHref: urls.getLessonUrl({ id: activity.data._id })
+      title: activity.data.title,
+      href: urls.getLessonUrl({ id: activity.data._id }),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderLessonUpdatedActivity = activity => {
     return renderActivity({
       icon: <ItemEditedIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('lessonUpdatedActivity'),
-      linkText: activity.data.title,
-      linkHref: urls.getLessonUrl({ id: activity.data._id })
+      title: activity.data.title,
+      href: urls.getLessonUrl({ id: activity.data._id }),
+      isDeprecated: activity.isDeprecated
     });
   };
 
   const renderLessonMarkedFavoriteActivity = activity => {
     return renderActivity({
       icon: <LessonMarkedFavoriteIcon />,
+      type: activity.type,
       timestamp: activity.timestamp,
       description: t('lessonMarkedFavoriteActivity'),
-      linkText: activity.data.title,
-      linkHref: urls.getLessonUrl({ id: activity.data._id })
+      title: activity.data.title,
+      href: urls.getLessonUrl({ id: activity.data._id }),
+      isDeprecated: activity.isDeprecated
     });
   };
 

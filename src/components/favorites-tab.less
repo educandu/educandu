@@ -5,3 +5,36 @@
   justify-content: flex-end;
   margin-bottom: 20px;
 }
+
+.FavoritesTab-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.FavoritesTab-action {
+  .m-box-shadow;
+  background-color: @edu-white;
+  text-decoration: none;
+  display: flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+
+  &:hover,
+  &:active {
+    .m-box-shadow-dark;
+    text-decoration: none;
+  }
+
+  &.FavoritesTab-action--delete {
+    color: @edu-error-color;
+
+    &:hover,
+    &:active {
+      color: @edu-error-color;
+    }
+  }
+}
