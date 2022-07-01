@@ -30,8 +30,8 @@ memberRoomsHeadline:
   de: Räume, in denen Sie Mitglied sind
 noOwnedRooms:
   en: You have not created any rooms yet.
-  de: Sie haben soweit keine Räume erstellt.
+  de: Sie haben noch keine Räume erstellt.
 noMemberRooms:
   en: You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner.
-  de: Sie sind zur Zeit Mitglied von keinen Räume. Um Räume-Mitglied zu werden, muss den Raum-Eigentümer Ihnen eine Einladung schicken.
+  de: Sie sind zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, müssen Sie vom Raum-Eigentümer eingeladen werden.
 

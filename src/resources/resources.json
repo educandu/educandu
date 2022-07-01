@@ -588,7 +588,7 @@
     "language": "de",
     "resources": {
       "info": "Hier finden Sie Neuigkeiten über die Website und Ihre letzten Aktivitäten.",
-      "latestActivitiesHeader": "Deine letzten Aktivitäten",
+      "latestActivitiesHeader": "Ihre letzten Aktivitäten",
       "documentCreatedActivity": "Neues Dokument erstellt",
       "documentUpdatedActivity": "Dokument bearbeitet",
       "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
@@ -784,7 +784,7 @@
       "roomsTabTitle": "Räume",
       "storageTabTitle": "Ihr Speicherplan",
       "storageTabInfo": "Hier finden Sie Details über Ihren Speicherplan und Ihre aktuelle Speichernutzung.",
-      "noStoragePlan": "Keiner Speicherplan ist mit Ihrem Konto verbunden."
+      "noStoragePlan": "Mit Ihrem Konto ist kein Speicherplan verbunden."
     }
   },
   {
@@ -1301,8 +1301,8 @@
       "sortedByRole": "Nach Rolle sortiert",
       "ownedRoomsHeadline": "Räume, die Sie erstellt haben",
       "memberRoomsHeadline": "Räume, in denen Sie Mitglied sind",
-      "noOwnedRooms": "Sie haben soweit keine Räume erstellt.",
-      "noMemberRooms": "Sie sind zur Zeit Mitglied von keinen Räume. Um Räume-Mitglied zu werden, muss den Raum-Eigentümer Ihnen eine Einladung schicken."
+      "noOwnedRooms": "Sie haben noch keine Räume erstellt.",
+      "noMemberRooms": "Sie sind zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, müssen Sie vom Raum-Eigentümer eingeladen werden."
     }
   },
   {
