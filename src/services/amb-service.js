@@ -82,6 +82,9 @@ class AmbService {
       if (this.serverConfig.ambConfig?.image) {
         result.image = urlUtils.ensureIsFullyQualifiedUrl(this.serverConfig.ambConfig.image, origin);
       }
+      if (this.serverConfig.ambConfig?.about) {
+        result.about = this.serverConfig.ambConfig.about;
+      }
 
       return result;
     });
