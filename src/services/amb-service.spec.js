@@ -150,7 +150,12 @@ describe('amb-service', () => {
                 name: 'Custom Publisher'
               }
             ],
-            image: 'https://educandu.dev/image.jpeg'
+            image: 'https://educandu.dev/image.jpeg',
+            about: [
+              {
+                id: 'https://w3id.org/kim/hochschulfaechersystematik/n78'
+              }
+            ]
           });
 
           result = await sut.getDocumentsAmbMetadata({ origin });
@@ -186,6 +191,7 @@ describe('amb-service', () => {
                   name: 'Custom Publisher'
                 }
               ],
+              'about': [{ id: 'https://w3id.org/kim/hochschulfaechersystematik/n78' }],
               'id': `${origin}/docs/${document._id}`,
               'name': 'Bach concert',
               'creator': [

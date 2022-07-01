@@ -7,9 +7,9 @@ import { useDialogs } from './dialog-context.js';
 import UsernameFormItem from './username-form-item.js';
 import { useSetUser, useUser } from './user-context.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
-import React, { useEffect, useRef, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { formItemLayoutShape, tailFormItemLayoutShape } from '../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
@@ -73,16 +73,19 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
   };
 
   return (
-    <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError>
-      <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} initialValue={user.username} {...formItemLayout} />
-      <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} {...formItemLayout} />
-      <FormItem {...tailFormItemLayout}>
-        <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>
-      </FormItem>
-      <FormItem {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">{t('common:save')}</Button>
-      </FormItem>
-    </Form>
+    <Fragment>
+      <div className="DashboardPage-tabInfo">{t('info')}</div>
+      <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError>
+        <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} initialValue={user.username} {...formItemLayout} />
+        <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} {...formItemLayout} />
+        <FormItem {...tailFormItemLayout}>
+          <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>
+        </FormItem>
+        <FormItem {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">{t('common:save')}</Button>
+        </FormItem>
+      </Form>
+    </Fragment>
   );
 }
 

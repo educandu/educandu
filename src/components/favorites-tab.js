@@ -180,6 +180,7 @@ function FavoritesTab() {
 
   return (
     <div className="FavoritesTab">
+      <div className="FavoritesTab-info">{t('info')}</div>
       <div className="FavoritesTab-sortingSelector">
         <SortingSelector size="large" sorting={sorting} options={sortingOptions} onChange={handleSortingChange} />
       </div>

@@ -176,3 +176,28 @@
   border-color: @edu-error-color;
   box-shadow: 0px 0px 8px @edu-error-color;
 }
+
+.m-info-card {
+  width: 100%;
+  display: block;
+  margin-bottom: 40px;
+  padding: @edu-content-padding;
+  color: lighten(@edu-text-color, 5%);
+  border-radius: @edu-border-radius-base;
+  background-color: lighten(@edu-primary-color-light, 35%);
+}
+
+.m-section-headline {
+  font-size: 17px;
+  margin: 10px 0;
+  color: @edu-text-color;
+}
+
+.m-section-content {
+  padding: 20px;
+
+  @media @edu-media-phone {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

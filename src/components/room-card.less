@@ -1,0 +1,57 @@
+@room-card-width: 250px;
+@room-card-padding: @edu-content-padding;
+@room-card-header-width: @room-card-width - 3 * @room-card-padding;
+
+.RoomCard {
+  width: 250px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  padding: @room-card-padding;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-background-color-base;
+}
+
+.RoomCard-name {
+  .m-overflow-ellipsis;
+  width: @room-card-header-width;
+  align-self: center;
+  text-align: center;
+  font-size: 15px;
+}
+
+.RoomCard-owner {
+  .m-overflow-ellipsis;
+  width: @room-card-header-width;
+  align-self: center;
+  text-align: center;
+  font-size: 13px;
+  padding-top: 3px;
+  color: @edu-text-color-secondary;
+}
+
+.RoomCard-infoRow {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  padding: 0 0px 5px 5px;
+  color: lighten(@edu-text-color, 10%);
+
+  &:last-of-type {
+    padding-bottom: 0;
+  }
+}
+
+.RoomCard-infoLabel {
+  flex: 0 0 70px;
+}
+
+.RoomCard-accessCell {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.RoomCard-button {
+  margin-top: auto;
+}

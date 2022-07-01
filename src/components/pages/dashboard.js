@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Avatar, Tabs } from 'antd';
 import NewsTab from '../news-tab.js';
 import RoomsTab from '../rooms-tab.js';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import AccountTab from '../account-tab.js';
 import ProfileTab from '../profile-tab.js';
 import { useUser } from '../user-context.js';
@@ -31,7 +31,6 @@ function Dashboard({ initialState, PageTemplate }) {
   const initialTab = request.query.tab || '';
   const { rooms, activities } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
-  const storagePlanName = storagePlan ? `"${storagePlan.name}" ${t('storagePlanLabel')}` : t('noStoragePlanLabel');
 
   const formItemLayout = {
     labelCol: {
@@ -62,7 +61,7 @@ function Dashboard({ initialState, PageTemplate }) {
   const headerSubtitle = personName ? `${user.username} | ${user.email}` : user.email;
 
   const handleTabChange = tab => {
-    history.replaceState(null, '', urls.getDashboardUrl({ tab }));
+    history.replaceState(null, '', routes.getDashboardUrl({ tab }));
   };
 
   return (
@@ -98,10 +97,21 @@ function Dashboard({ initialState, PageTemplate }) {
           </TabPane>
           {!!(user.storage.plan || user.storage.usedBytes) && (
             <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="storage">
-              <h5>{storagePlanName}</h5>
-              <div className="DashboardPage-usedStorage">
-                <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
-              </div>
+              <div className="DashboardPage-tabInfo">{t('storageTabInfo')}</div>
+              <div className="DashboardPage-storageTabTitle">{t('storageTabTitle')}</div>
+              <section className="DashboardPage-storageTabContent">
+                <div className="DashboardPage-storageTabPlanName">
+                  {!!storagePlan && `${t('common:name')}: "${storagePlan.name}"`}
+                  {!storagePlan && t('noStoragePlan')}
+                </div>
+                <div className="DashboardPage-storageTabUsedStorage">
+                  <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
+                </div>
+              </section>
+              <div className="DashboardPage-storageTabTitle">Privater Speicher benutzung</div>
+              <section className="DashboardPage-storageTabContent">
+                Details about how the user can use the private storage space. How they can clear it up, how it gets cleared when rooms get removed and so on.
+              </section>
             </TabPane>
           )}
         </Tabs>

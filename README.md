@@ -46,7 +46,7 @@ The educandu framework
  | additionalHeadHtml | Custom HTML to inject in the `<head>` of the document | `string` | no |
  | plugins | List of plugins available to platform users when they create website content | `array` of `string` | no, defaults to `['markdown', 'image']` |
  | basicAuthUsers | When provided, the web pages become protected by a basic auth layer through which the provided users can authenticate. This way non-production environments can be protected. | `object` with usernames as keys and passwords as values | no |
- | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }] }` | no, however if provided, `apiKey` is mandatory |
+ | ambConfig | Configuration for the AMB endpoint (https://dini-ag-kim.github.io/amb/) | `{ apiKey: <string>, image: <string>, publisher: [{ type: <'Organization'/'Person'>, name: <string> }] }, about: [{ id: <category URL from https://skohub.io/dini-ag-kim/hochschulfaechersystematik/heads/master/w3id.org/kim/hochschulfaechersystematik/scheme.en.html>}]` | no, however if provided, `apiKey` is mandatory |
 
 ## How to use
 

@@ -1,17 +1,30 @@
 .RoomsTab {}
 
-.RoomsTab-createRoomButton {
-  margin-top: 10px;
+.RoomsTab-info {
+  .m-info-card;
 }
 
-.RoomsTab-accessCell {
-  display: flex;
-  gap: @edu-controls-group-gap;
-  align-items: center;
+.RoomsTab-roomsGroupHeadline {
+  .m-section-headline;
+  margin-top: 30px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
 }
 
-.RoomsTab-sortingSelector {
+.RoomsTab-roomsGroup {
+  .m-section-content;
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  @media @edu-media-phone {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.RoomsTab-noRoomsInGroup {
+  width: 100%;
 }

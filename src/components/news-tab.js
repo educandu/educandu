@@ -217,7 +217,8 @@ function NewsTab({ activities }) {
     <div>
       {!!activities.length && (
         <section>
-          <h5 className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</h5>
+          <div className="NewsTab-info">{t('info')}</div>
+          <div className="NewsTab-activitiesHeader">{t('latestActivitiesHeader')}</div>
           <div className="NewsTab-activities">
             {renderActivities()}
           </div>
