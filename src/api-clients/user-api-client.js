@@ -125,6 +125,15 @@ class UserApiClient {
       .then(res => res.data);
   }
 
+  getFavorites() {
+    return this.httpClient
+      .get(
+        '/api/v1/users/favorites',
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
+
   addFavorite({ type, id }) {
     return this.httpClient
       .post(

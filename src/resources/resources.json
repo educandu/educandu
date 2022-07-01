@@ -354,6 +354,7 @@
       "set": "Added",
       "setOn": "Added on",
       "sortedBySetOn": "Sorted by date of adding",
+      "targetDeletedMessage": "The target of this link has been deleted",
       "info": "Here you can find all documents, rooms and lessons that you have marked as favorite."
     }
   },
@@ -364,6 +365,7 @@
       "set": "Hinzugefügt",
       "setOn": "Hinzugefügt am",
       "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
+      "targetDeletedMessage": "Das Ziel dieses Links wurde gelöscht",
       "info": "Hier finden Sie alle Dokumente, Räume und Einheiten, die Sie als Favorit markiert haben."
     }
   },
@@ -2075,7 +2077,10 @@
       "folder": "Folder",
       "pageCount": "Page count",
       "question": "Question",
-      "answer": "Answer"
+      "answer": "Answer",
+      "deletedDocument": "Deleted document",
+      "deletedRoom": "Deleted room",
+      "deletedLesson": "Deleted lesson"
     }
   },
   {
@@ -2210,7 +2215,10 @@
       "folder": "Verzeichnis",
       "pageCount": "Seitenanzahl",
       "question": "Frage",
-      "answer": "Antwort"
+      "answer": "Antwort",
+      "deletedDocument": "Gelöschtes Dokument",
+      "deletedRoom": "Gelöschter Raum",
+      "deletedLesson": "Gelöschte Einheit"
     }
   },
   {

@@ -2,8 +2,16 @@ import httpErrors from 'http-errors';
 import UserService from './user-service.js';
 import uniqueId from '../utils/unique-id.js';
 import Database from '../stores/database.js';
-import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser } from '../test-helper.js';
 import { FAVORITE_TYPE } from '../domain/constants.js';
+import {
+  destroyTestEnvironment,
+  setupTestEnvironment,
+  pruneTestEnvironment,
+  setupTestUser,
+  createTestRoom,
+  createTestLesson,
+  createTestDocument
+} from '../test-helper.js';
 
 const { NotFound } = httpErrors;
 
@@ -246,6 +254,75 @@ describe('user-service', () => {
       });
       it('should replace them with an empty array', () => {
         expect(result.reminders).toHaveLength(0);
+      });
+    });
+  });
+
+  describe('getFavorites', () => {
+    let result;
+
+    describe('when there are no favorites', () => {
+      beforeEach(async () => {
+        result = await sut.getFavorites({ user });
+      });
+
+      it('should return an empty array', () => {
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe('when there are favorites', () => {
+      let document;
+      let room;
+      let lesson;
+
+      beforeEach(async () => {
+        room = await createTestRoom(container, { name: 'Favorite room' });
+        lesson = await createTestLesson(container, { title: 'Favorite lesson' });
+        document = await createTestDocument(container, user, { title: 'Favorite document' });
+
+        const favorites = [
+          {
+            type: FAVORITE_TYPE.room,
+            setOn: new Date('2022-03-09T10:01:00.000Z'),
+            id: room._id
+          },
+          {
+            type: FAVORITE_TYPE.lesson,
+            setOn: new Date('2022-03-09T10:02:00.000Z'),
+            id: lesson._id
+          },
+          {
+            type: FAVORITE_TYPE.document,
+            setOn: new Date('2022-03-09T10:03:00.000Z'),
+            id: document._id
+          }
+        ];
+
+        result = await sut.getFavorites({ user: { ...user, favorites } });
+      });
+
+      it('should return an array containing the user favorites', () => {
+        expect(result).toEqual([
+          {
+            id: room._id,
+            type: FAVORITE_TYPE.room,
+            setOn: new Date('2022-03-09T10:01:00.000Z'),
+            title: 'Favorite room'
+          },
+          {
+            id: lesson._id,
+            type: FAVORITE_TYPE.lesson,
+            setOn: new Date('2022-03-09T10:02:00.000Z'),
+            title: 'Favorite lesson'
+          },
+          {
+            id: document._id,
+            type: FAVORITE_TYPE.document,
+            setOn: new Date('2022-03-09T10:03:00.000Z'),
+            title: 'Favorite document'
+          }
+        ]);
       });
     });
   });

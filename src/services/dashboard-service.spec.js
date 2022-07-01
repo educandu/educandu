@@ -159,6 +159,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.documentMarkedFavorite,
             timestamp: new Date('2022-03-09T10:13:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: favoriteDocument._id,
               title: 'Created popular document [other]'
@@ -167,6 +168,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.lessonMarkedFavorite,
             timestamp: new Date('2022-03-09T10:12:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: favoriteLesson._id,
               title: 'Created popular lesson [other]'
@@ -175,6 +177,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.roomMarkedFavorite,
             timestamp: new Date('2022-03-09T10:11:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: favoriteRoom._id,
               name: 'Created popular room [other]'
@@ -183,6 +186,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.lessonUpdated,
             timestamp: new Date('2022-03-09T10:10:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: updatedLesson._id,
               title: 'Updated lesson'
@@ -191,6 +195,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.lessonCreated,
             timestamp: new Date('2022-03-09T10:08:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: createdLesson._id,
               title: 'Created lesson'
@@ -199,6 +204,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.roomJoined,
             timestamp: new Date('2022-03-09T10:07:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: joinedRoom._id,
               name: 'Created room [other]'
@@ -207,6 +213,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.roomUpdated,
             timestamp: new Date('2022-03-09T10:05:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: createdRoom._id,
               name: 'Updated room'
@@ -215,6 +222,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.roomCreated,
             timestamp: new Date('2022-03-09T10:03:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: createdRoom._id,
               name: 'Updated room'
@@ -223,6 +231,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.documentUpdated,
             timestamp: new Date('2022-03-09T10:01:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: updatedDocument._id,
               title: 'Updated document'
@@ -231,6 +240,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.documentCreated,
             timestamp: new Date('2022-03-09T10:00:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: createdDocument._id,
               title: 'Created document'
@@ -287,6 +297,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.documentCreated,
             timestamp: new Date('2022-03-09T10:01:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: latestCreatedDocument._id,
               title: 'Created document 2'
@@ -324,6 +335,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.documentUpdated,
             timestamp: new Date('2022-03-09T10:02:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: updatedDocument._id,
               title: 'Document update 2'
@@ -360,6 +372,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.roomCreated,
             timestamp: new Date('2022-03-09T10:01:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: latestCreatedRoom._id,
               name: 'Created room 2'
@@ -405,6 +418,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.roomUpdated,
             timestamp: new Date('2022-03-09T10:02:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: updatedRoom._id,
               name: 'Room update 2'
@@ -443,6 +457,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.roomJoined,
             timestamp: new Date('2022-03-09T10:04:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: latestJoinedRoom._id,
               name: 'Joined room 2'
@@ -477,6 +492,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.lessonCreated,
             timestamp: new Date('2022-03-09T10:01:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: latestCreatedLesson._id,
               title: 'Created lesson 2'
@@ -519,6 +535,7 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.lessonUpdated,
             timestamp: new Date('2022-03-09T10:02:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: updatedLesson._id,
               title: 'Lesson update 2'
@@ -565,77 +582,11 @@ describe('dashboard-service', () => {
           {
             type: USER_ACTIVITY_TYPE.documentMarkedFavorite,
             timestamp: new Date('2022-03-09T10:03:00.000Z'),
+            isDeprecated: false,
             data: {
               _id: latestFavorite._id,
               title: 'Favorite 3'
             }
-          }
-        ]);
-      });
-    });
-  });
-
-  describe('getUserFavorites', () => {
-    describe('when there are no favorites', () => {
-      beforeEach(async () => {
-        result = await sut.getUserFavorites(user);
-      });
-
-      it('should return an empty array', () => {
-        expect(result).toEqual([]);
-      });
-    });
-
-    describe('when there favorites', () => {
-      let document;
-      let room;
-      let lesson;
-
-      beforeEach(async () => {
-        room = await createTestRoom(container, { name: 'Favorite room' });
-        lesson = await createTestLesson(container, { title: 'Favorite lesson' });
-        document = await createTestDocument(container, user, { title: 'Favorite document' });
-
-        const favorites = [
-          {
-            type: FAVORITE_TYPE.room,
-            setOn: new Date('2022-03-09T10:01:00.000Z'),
-            id: room._id
-          },
-          {
-            type: FAVORITE_TYPE.lesson,
-            setOn: new Date('2022-03-09T10:02:00.000Z'),
-            id: lesson._id
-          },
-          {
-            type: FAVORITE_TYPE.document,
-            setOn: new Date('2022-03-09T10:03:00.000Z'),
-            id: document._id
-          }
-        ];
-
-        result = await sut.getUserFavorites({ ...user, favorites });
-      });
-
-      it('should return an array containing the user favorites', () => {
-        expect(result).toEqual([
-          {
-            id: room._id,
-            type: FAVORITE_TYPE.room,
-            setOn: new Date('2022-03-09T10:01:00.000Z'),
-            title: 'Favorite room'
-          },
-          {
-            id: lesson._id,
-            type: FAVORITE_TYPE.lesson,
-            setOn: new Date('2022-03-09T10:02:00.000Z'),
-            title: 'Favorite lesson'
-          },
-          {
-            id: document._id,
-            type: FAVORITE_TYPE.document,
-            setOn: new Date('2022-03-09T10:03:00.000Z'),
-            title: 'Favorite document'
           }
         ]);
       });

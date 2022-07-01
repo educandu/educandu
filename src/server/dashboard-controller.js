@@ -6,7 +6,7 @@ import DashboardService from '../services/dashboard-service.js';
 import needsAuthentication from '../domain/needs-authentication-middleware.js';
 import ClientDataMappingService from '../services/client-data-mapping-service.js';
 
-class UserController {
+class DashboardController {
   static get inject() { return [ServerConfig, PageRenderer, DashboardService, RoomService, ClientDataMappingService]; }
 
   constructor(serverConfig, pageRenderer, dashboardService, roomService, clientDataMappingService) {
@@ -24,13 +24,11 @@ class UserController {
       rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
     }
     const activities = await this.dashboardService.getUserActivities({ userId: user._id, limit: 10 });
-    const favorites = await this.dashboardService.getUserFavorites(user);
 
     const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
     const mappedActivities = this.clientDataMappingService.mapUserActivities(activities);
-    const mappedFavorites = this.clientDataMappingService.mapUserFavorites(favorites);
 
-    const initialState = { rooms: mappedRooms, activities: mappedActivities, favorites: mappedFavorites };
+    const initialState = { rooms: mappedRooms, activities: mappedActivities };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.dashboard, initialState);
   }
@@ -44,4 +42,4 @@ class UserController {
   }
 }
 
-export default UserController;
+export default DashboardController;

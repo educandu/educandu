@@ -393,3 +393,12 @@ question:
 answer:
   en: Answer
   de: Antwort
+deletedDocument:
+  en: Deleted document
+  de: Gelöschtes Dokument
+deletedRoom:
+  en: Deleted room
+  de: Gelöschter Raum
+deletedLesson:
+  en: Deleted lesson
+  de: Gelöschte Einheit

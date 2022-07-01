@@ -7,6 +7,9 @@ setOn:
 sortedBySetOn:
   en: Sorted by date of adding
   de: Nach Hinzufügungsdatum sortiert
+targetDeletedMessage:
+  en: The target of this link has been deleted
+  de: Das Ziel dieses Links wurde gelöscht
 info:
   en: Here you can find all documents, rooms and lessons that you have marked as favorite.
   de: Hier finden Sie alle Dokumente, Räume und Einheiten, die Sie als Favorit markiert haben.

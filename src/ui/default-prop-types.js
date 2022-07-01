@@ -6,7 +6,6 @@ import {
   CDN_RESOURCES_CONSOLIDATION_TASK_TYPE,
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   DOCUMENT_IMPORT_TYPE,
-  FAVORITE_TYPE,
   ROOM_ACCESS_LEVEL,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
@@ -429,12 +428,6 @@ export const userActivitiesShape = PropTypes.shape({
     _id: PropTypes.string,
     title: PropTypes.string,
     name: PropTypes.string
-  }).isRequired
-});
-
-export const userFavoritesShape = PropTypes.shape({
-  id: PropTypes.string.isRequired,
-  setOn: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  type: PropTypes.oneOf(Object.values(FAVORITE_TYPE)).isRequired
+  }).isRequired,
+  isDeprecated: PropTypes.bool.isRequired
 });
