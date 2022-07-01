@@ -66,7 +66,12 @@ const config = {
   basicAuthUsers: JSON.parse(processEnv.TEST_APP_BASIC_AUTH_USERS || '{}'),
   ambConfig: {
     apiKey: processEnv.TEST_APP_AMB_API_KEY,
-    image: './images/educandu-logo-blue.png'
+    image: './images/educandu-logo-blue.png',
+    about: [
+      {
+        id: 'https://w3id.org/kim/hochschulfaechersystematik/n78'
+      }
+    ]
   }
 };
 

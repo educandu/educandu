@@ -65,6 +65,9 @@ const configSchema = joi.object({
     publisher: joi.array().items(joi.object({
       type: joi.string().valid('Organization', 'Person').required(),
       name: joi.string().required()
+    })),
+    about: joi.array().items(joi.object({
+      id: joi.string().required()
     }))
   }).default({})
 });
