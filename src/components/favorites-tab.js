@@ -35,7 +35,7 @@ const getDisplayTitle = (favorite, t) => {
 
   switch (favorite.type) {
     case FAVORITE_TYPE.document:
-      throw new Error('Documents cannot be deleted');
+      return `[${t('common:deletedDocument')}]`;
     case FAVORITE_TYPE.room:
       return `[${t('common:deletedRoom')}]`;
     case FAVORITE_TYPE.lesson:

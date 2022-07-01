@@ -22,6 +22,11 @@ function NewsTab({ activities }) {
     let deprecatedTitle;
     if (isDeprecated) {
       switch (type) {
+        case USER_ACTIVITY_TYPE.documentCreated:
+        case USER_ACTIVITY_TYPE.documentUpdated:
+        case USER_ACTIVITY_TYPE.documentMarkedFavorite:
+          deprecatedTitle = t('common:deletedDocument');
+          break;
         case USER_ACTIVITY_TYPE.roomCreated:
         case USER_ACTIVITY_TYPE.roomUpdated:
         case USER_ACTIVITY_TYPE.roomMarkedFavorite:

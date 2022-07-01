@@ -203,7 +203,7 @@ class UserService {
     return user.favorites.map(f => {
       if (f.type === FAVORITE_TYPE.document) {
         const document = documents.find(d => d._id === f.id);
-        return { ...f, title: document.title };
+        return { ...f, title: document?.title ?? null };
       }
       if (f.type === FAVORITE_TYPE.room) {
         const room = rooms.find(r => r._id === f.id);

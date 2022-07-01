@@ -2036,6 +2036,7 @@
       "pageCount": "Page count",
       "question": "Question",
       "answer": "Answer",
+      "deletedDocument": "Deleted document",
       "deletedRoom": "Deleted room",
       "deletedLesson": "Deleted lesson"
     }
@@ -2173,6 +2174,7 @@
       "pageCount": "Seitenanzahl",
       "question": "Frage",
       "answer": "Antwort",
+      "deletedDocument": "Gelöschtes Dokument",
       "deletedRoom": "Gelöschter Raum",
       "deletedLesson": "Gelöschte Einheit"
     }

@@ -89,8 +89,8 @@ class DashboardService {
             [completionFunction]: async () => {
               const document = await this.documentStore.getDocumentMetadataByKey(favorite.id);
               return {
-                data: { _id: favorite.id, title: document.title },
-                isDeprecated: false
+                data: { _id: favorite.id, title: document?.title ?? null },
+                isDeprecated: !document
               };
             }
           };
