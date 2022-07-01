@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Avatar, Tabs } from 'antd';
 import NewsTab from '../news-tab.js';
 import RoomsTab from '../rooms-tab.js';
-import urls from '../../utils/routes.js';
+import routes from '../../utils/routes.js';
 import AccountTab from '../account-tab.js';
 import ProfileTab from '../profile-tab.js';
 import { useUser } from '../user-context.js';
@@ -61,7 +61,7 @@ function Dashboard({ initialState, PageTemplate }) {
   const headerSubtitle = personName ? `${user.username} | ${user.email}` : user.email;
 
   const handleTabChange = tab => {
-    history.replaceState(null, '', urls.getDashboardUrl({ tab }));
+    history.replaceState(null, '', routes.getDashboardUrl({ tab }));
   };
 
   return (

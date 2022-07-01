@@ -1196,6 +1196,28 @@
     }
   },
   {
+    "namespace": "roomCard",
+    "language": "en",
+    "resources": {
+      "lessonsMode": "Mode",
+      "button": "Enter room",
+      "updated": "Updated",
+      "joined": "Joined",
+      "members": "Members"
+    }
+  },
+  {
+    "namespace": "roomCard",
+    "language": "de",
+    "resources": {
+      "lessonsMode": "Modus",
+      "button": "Raum betreten",
+      "updated": "Aktualisiert",
+      "joined": "Eingetreten",
+      "members": "Mitglieder"
+    }
+  },
+  {
     "namespace": "roomCreationModal",
     "language": "en",
     "resources": {
@@ -1247,26 +1269,36 @@
     "namespace": "roomsTab",
     "language": "en",
     "resources": {
+      "info": "Here you find all the rooms you have created and also the rooms that you are a member of.",
       "joined": "Joined",
       "role": "Role",
       "member": "Member",
       "sortedByOwner": "Sorted by owner",
       "sortedByAccess": "Sorted by access",
       "sortedByLessonsMode": "Sorted by lessons handling mode",
-      "sortedByRole": "Sorted by role"
+      "sortedByRole": "Sorted by role",
+      "ownedRoomsHeadline": "Rooms you own",
+      "memberRoomsHeadline": "Rooms that you are a member of",
+      "noOwnedRooms": "You have not created any rooms so far.",
+      "noMemberRooms": "You are currently not a member in any room. To become a member to a room, you need to be invited by the room owner."
     }
   },
   {
     "namespace": "roomsTab",
     "language": "de",
     "resources": {
+      "info": "Here you find all the rooms you have created and also the rooms that you are a member of.",
       "joined": "Eingetreten",
       "role": "Rolle",
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
       "sortedByLessonsMode": "Nach Einheiten-Bearbeitungsmodus sortiert",
-      "sortedByRole": "Nach Rolle sortiert"
+      "sortedByRole": "Nach Rolle sortiert",
+      "ownedRoomsHeadline": "Räume, die du besitzt",
+      "memberRoomsHeadline": "Räume, in dennen du Mitglied bist",
+      "noOwnedRooms": "Du hast soweit keine Räume erstellt.",
+      "noMemberRooms": "You are currently not a member in any room. To become a member to a room, you need to be invited by the room owner."
     }
   },
   {

@@ -1,3 +1,6 @@
+info:
+  en: Here you find all the rooms you have created and also the rooms that you are a member of.
+  de: Here you find all the rooms you have created and also the rooms that you are a member of.
 joined:
   en: Joined
   de: Eingetreten
@@ -19,3 +22,16 @@ sortedByLessonsMode:
 sortedByRole:
   en: Sorted by role
   de: Nach Rolle sortiert
+ownedRoomsHeadline:
+  en: Rooms you own
+  de: Räume, die du besitzt
+memberRoomsHeadline:
+  en: Rooms that you are a member of
+  de: Räume, in dennen du Mitglied bist
+noOwnedRooms:
+  en: You have not created any rooms so far.
+  de: Du hast soweit keine Räume erstellt.
+noMemberRooms:
+  en: You are currently not a member in any room. To become a member to a room, you need to be invited by the room owner.
+  de: You are currently not a member in any room. To become a member to a room, you need to be invited by the room owner.
+
