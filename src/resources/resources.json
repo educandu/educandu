@@ -770,7 +770,7 @@
       "roomsTabTitle": "Rooms",
       "storageTabTitle": "Your storage plan",
       "storageTabInfo": "Here you can find details about your storage plan and current space status.",
-      "noStoragePlan": "There is no storage plan associated with your account"
+      "noStoragePlan": "There is no storage plan associated with your account."
     }
   },
   {
@@ -784,7 +784,7 @@
       "roomsTabTitle": "Räume",
       "storageTabTitle": "Ihr Speicherplan",
       "storageTabInfo": "Hier finden Sie Details über Ihren Speicherplan und Ihre aktuelle Speichernutzung.",
-      "noStoragePlan": "Keiner Speicherplan ist mit Ihrem verbunden"
+      "noStoragePlan": "Keiner Speicherplan ist mit Ihrem Konto verbunden."
     }
   },
   {
@@ -1283,8 +1283,8 @@
       "sortedByRole": "Sorted by role",
       "ownedRoomsHeadline": "Rooms that you created",
       "memberRoomsHeadline": "Rooms that you are a member of",
-      "noOwnedRooms": "You have not created any rooms so far.",
-      "noMemberRooms": "You are currently not a member in any room. To become a member to a room, you need to be invited by the room owner."
+      "noOwnedRooms": "You have not created any rooms yet.",
+      "noMemberRooms": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner."
     }
   },
   {
@@ -1301,8 +1301,8 @@
       "sortedByRole": "Nach Rolle sortiert",
       "ownedRoomsHeadline": "Räume, die Sie erstellt haben",
       "memberRoomsHeadline": "Räume, in denen Sie Mitglied sind",
-      "noOwnedRooms": "Du hast soweit keine Räume erstellt.",
-      "noMemberRooms": "You are currently not a member in any room. To become a member to a room, you need to be invited by the room owner."
+      "noOwnedRooms": "Sie haben soweit keine Räume erstellt.",
+      "noMemberRooms": "Sie sind zur Zeit Mitglied von keinen Räume. Um Räume-Mitglied zu werden, muss den Raum-Eigentümer Ihnen eine Einladung schicken."
     }
   },
   {

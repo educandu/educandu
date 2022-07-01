@@ -20,5 +20,5 @@ storageTabInfo:
   en: Here you can find details about your storage plan and current space status.
   de: Hier finden Sie Details über Ihren Speicherplan und Ihre aktuelle Speichernutzung.
 noStoragePlan:
-  en: There is no storage plan associated with your account
-  de: Keiner Speicherplan ist mit Ihrem verbunden
+  en: There is no storage plan associated with your account.
+  de: Keiner Speicherplan ist mit Ihrem Konto verbunden.
