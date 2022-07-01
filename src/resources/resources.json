@@ -3,6 +3,7 @@
     "namespace": "accountTab",
     "language": "en",
     "resources": {
+      "info": "Here you can change your account information as well as close your account.",
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
       "passwordResetEmailSent": "The password reset link has been sent to {email}"
@@ -12,6 +13,7 @@
     "namespace": "accountTab",
     "language": "de",
     "resources": {
+      "info": "Hier können Sie Ihre Konto-Informationen bearbeiten sowie Ihr Konto schließen.",
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet"
@@ -351,7 +353,8 @@
     "resources": {
       "set": "Added",
       "setOn": "Added on",
-      "sortedBySetOn": "Sorted by date of adding"
+      "sortedBySetOn": "Sorted by date of adding",
+      "info": "Here you can find all documents, rooms and lessons that you have marked as favorite."
     }
   },
   {
@@ -360,7 +363,8 @@
     "resources": {
       "set": "Hinzugefügt",
       "setOn": "Hinzugefügt am",
-      "sortedBySetOn": "Nach Hinzufügungsdatum sortiert"
+      "sortedBySetOn": "Nach Hinzufügungsdatum sortiert",
+      "info": "Hier finden Sie alle Dokumente, Räume und Einheiten, die Sie als Favorit markiert haben."
     }
   },
   {
@@ -565,7 +569,8 @@
     "namespace": "newsTab",
     "language": "en",
     "resources": {
-      "latestActivitiesHeader": "Latest activities",
+      "info": "Here you can find news about the website and your latest activities.",
+      "latestActivitiesHeader": "Your latest activities",
       "documentCreatedActivity": "New document created",
       "documentUpdatedActivity": "Document updated",
       "documentMarkedFavoriteActivity": "Document marked as favorite",
@@ -582,7 +587,8 @@
     "namespace": "newsTab",
     "language": "de",
     "resources": {
-      "latestActivitiesHeader": "Letzte Aktivitäten",
+      "info": "Hier finden Sie Neuigkeiten über die Website und Ihre letzten Aktivitäten.",
+      "latestActivitiesHeader": "Ihre letzten Aktivitäten",
       "documentCreatedActivity": "Neues Dokument erstellt",
       "documentUpdatedActivity": "Dokument bearbeitet",
       "documentMarkedFavoriteActivity": "Dokument als Favorit hinzugefügt",
@@ -762,8 +768,9 @@
       "profileTabTitle": "Profile",
       "accountTabTitle": "Account",
       "roomsTabTitle": "Rooms",
-      "storagePlanLabel": "storage plan",
-      "noStoragePlanLabel": "No storage plan"
+      "storageTabTitle": "Your storage plan",
+      "storageTabInfo": "Here you can find details about your storage plan and current space status.",
+      "noStoragePlan": "There is no storage plan associated with your account."
     }
   },
   {
@@ -775,8 +782,9 @@
       "profileTabTitle": "Profil",
       "accountTabTitle": "Konto",
       "roomsTabTitle": "Räume",
-      "storagePlanLabel": "Speicherplan",
-      "noStoragePlanLabel": "Kein Speicherplan"
+      "storageTabTitle": "Ihr Speicherplan",
+      "storageTabInfo": "Hier finden Sie Details über Ihren Speicherplan und Ihre aktuelle Speichernutzung.",
+      "noStoragePlan": "Mit Ihrem Konto ist kein Speicherplan verbunden."
     }
   },
   {
@@ -1143,6 +1151,7 @@
     "namespace": "profileTab",
     "language": "en",
     "resources": {
+      "info": "Here you can provide additional information about yourself. This information is currently not publicly accessible.",
       "changePicture": "Change profile picture",
       "howToChangePicture": "How can I change my profile picture?",
       "firstName": "First name(s)",
@@ -1160,6 +1169,7 @@
     "namespace": "profileTab",
     "language": "de",
     "resources": {
+      "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind zur Zeit nicht öffentlich sichtbar.",
       "changePicture": "Profilbild ändern",
       "howToChangePicture": "Wie ändere ich mein Profilbild?",
       "firstName": "Vorname(n)",
@@ -1187,6 +1197,28 @@
     "resources": {
       "storage_public": "Öffentlicher Speicher",
       "storage_private": "Privater Speicher"
+    }
+  },
+  {
+    "namespace": "roomCard",
+    "language": "en",
+    "resources": {
+      "lessonsMode": "Mode",
+      "button": "Enter room",
+      "updated": "Updated",
+      "joined": "Joined",
+      "members": "Members"
+    }
+  },
+  {
+    "namespace": "roomCard",
+    "language": "de",
+    "resources": {
+      "lessonsMode": "Modus",
+      "button": "Raum betreten",
+      "updated": "Aktualisiert",
+      "joined": "Eingetreten",
+      "members": "Mitglieder"
     }
   },
   {
@@ -1241,26 +1273,36 @@
     "namespace": "roomsTab",
     "language": "en",
     "resources": {
+      "info": "Here you find all the rooms you have created and the rooms that you are a member of.",
       "joined": "Joined",
       "role": "Role",
       "member": "Member",
       "sortedByOwner": "Sorted by owner",
       "sortedByAccess": "Sorted by access",
       "sortedByLessonsMode": "Sorted by lessons handling mode",
-      "sortedByRole": "Sorted by role"
+      "sortedByRole": "Sorted by role",
+      "ownedRoomsHeadline": "Rooms that you created",
+      "memberRoomsHeadline": "Rooms that you are a member of",
+      "noOwnedRooms": "You have not created any rooms yet.",
+      "noMemberRooms": "You are currently not a member in any room. To become a member of a room, you need to be invited by the room owner."
     }
   },
   {
     "namespace": "roomsTab",
     "language": "de",
     "resources": {
+      "info": "Hier finden Sie alle Räume, die Sie erstellt haben und in denen Sie Mitglied sind.",
       "joined": "Eingetreten",
       "role": "Rolle",
       "member": "Mitglied",
       "sortedByOwner": "Nach Eigentümer sortiert",
       "sortedByAccess": "Nach Zugang sortiert",
       "sortedByLessonsMode": "Nach Einheiten-Bearbeitungsmodus sortiert",
-      "sortedByRole": "Nach Rolle sortiert"
+      "sortedByRole": "Nach Rolle sortiert",
+      "ownedRoomsHeadline": "Räume, die Sie erstellt haben",
+      "memberRoomsHeadline": "Räume, in denen Sie Mitglied sind",
+      "noOwnedRooms": "Sie haben noch keine Räume erstellt.",
+      "noMemberRooms": "Sie sind zur Zeit kein Mitglied eines Raumes. Um Mitglied in einem Raum zu werden, müssen Sie vom Raum-Eigentümer eingeladen werden."
     }
   },
   {
@@ -1725,7 +1767,7 @@
       "end": "Enden",
       "reset": "Zurücksetzen",
       "results": "Ergebnisse",
-      "currentProgress": "Dein aktueller Fortschritt",
+      "currentProgress": "Ihr aktueller Fortschritt",
       "resultsSummary": "{answerCount} von {totalCount} Fragen beantwortet, davon {correctCount} richtig und {incorrectCount} falsch."
     }
   },
