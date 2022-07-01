@@ -1,6 +1,6 @@
 info:
-  en: Here you find all the rooms you have created and also the rooms that you are a member of.
-  de: Here you find all the rooms you have created and also the rooms that you are a member of.
+  en: Here you find all the rooms you have created and the rooms that you are a member of.
+  de: Hier finden Sie alle Räume, die Sie erstellt haben und in denen Sie Mitglied sind.
 joined:
   en: Joined
   de: Eingetreten
@@ -23,11 +23,11 @@ sortedByRole:
   en: Sorted by role
   de: Nach Rolle sortiert
 ownedRoomsHeadline:
-  en: Rooms you own
-  de: Räume, die du besitzt
+  en: Rooms that you created
+  de: Räume, die Sie erstellt haben
 memberRoomsHeadline:
   en: Rooms that you are a member of
-  de: Räume, in dennen du Mitglied bist
+  de: Räume, in denen Sie Mitglied sind
 noOwnedRooms:
   en: You have not created any rooms so far.
   de: Du hast soweit keine Räume erstellt.
