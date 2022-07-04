@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Card } from 'antd';
+import { Button, Collapse } from 'antd';
 import urls from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
 import { useTranslation } from 'react-i18next';
@@ -125,91 +125,102 @@ function SettingsTab({
 
   return (
     <div className="SettingsTab">
-      <Card className="SettingsTab-card" title={t('homepageInfoHeader')}>
-        <MarkdownInput
-          preview
-          renderMedia
-          value={settings.homepageInfo || ''}
-          onChange={handleHomepageInfoChange}
-          />
-      </Card>
-      <Card className="SettingsTab-card" title={t('consentHeader')}>
-        <ConsentSettings
-          consentText={settings.consentText}
-          onChange={handleConsentTextChange}
-          />
-      </Card>
-      <Card className="SettingsTab-card" title={t('templateDocumentHeader')}>
-        <div className="SettingsTab-templateDocument" >
-          <DocumentSelector documentId={settings.templateDocument?.documentKey} onChange={handleTemplateDocumentChange} />
-        </div>
-      </Card>
-      <Card className="SettingsTab-card" title={t('helpPageHeader')}>
-        <SpecialPageSettings
-          settings={settings.helpPage}
-          onChange={handleHelpPageChange}
-          />
-      </Card>
-      <Card className="SettingsTab-card" title={t('termsPageHeader')}>
-        <SpecialPageSettings
-          settings={settings.termsPage}
-          onChange={handleTermsPageChange}
-          />
-      </Card>
-      <Card className="SettingsTab-card" title={t('footerLinksHeader')}>
-        <FooterLinksSettings
-          footerLinks={settings.footerLinks}
-          onChange={handleFooterLinksChange}
-          />
-      </Card>
-      <Card className="SettingsTab-card" title={t('defaultTagsHeader')}>
-        <DefaultTagsSettings
-          defaultTags={settings.defaultTags || []}
-          onChange={handleDefaultTagsChange}
-          />
-      </Card>
-      <Card className="SettingsTab-card" title={t('licenseHeader')}>
-        <LicenseSettings
-          license={settings.license}
-          onChange={handleLicenseChange}
-          />
-      </Card>
-      <Card
-        className="SettingsTab-card SettingsTab-card--danger"
-        title={t('documentRegenerationHeader')}
-        extra={renderLastBatchExecution(lastDocumentRegenerationBatch)}
-        >
-        <Button
-          onClick={handleStartDocumentRegenerationClick}
-          danger
-          >
-          {t('documentRegenerationButton')}
-        </Button>
-      </Card>
-      <Card
-        className="SettingsTab-card SettingsTab-card--danger"
-        title={t('cdnResourcesConsolidationHeader')}
-        extra={renderLastBatchExecution(lastCdnResourcesConsolidationBatch)}
-        >
-        <Button
-          onClick={handleStartCdnResourcesConsolidationClick}
-          danger
-          >
-          {t('cdnResourcesConsolidationButton')}
-        </Button>
-      </Card>
-      <Card
-        className="SettingsTab-card SettingsTab-card--danger"
-        title={t('cdnUploadDirectoryCreationHeader')}
-        extra={renderLastBatchExecution(lastCdnUploadDirectoryCreationBatch)}
-        >
-        <Button
-          onClick={handleStartCdnUploadDirectoryCreationClick}
-          danger
-          >
-          {t('cdnUploadDirectoryCreationButton')}
-        </Button>
-      </Card>
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('homepageInfoHeader')} key="panel">
+          <MarkdownInput
+            preview
+            renderMedia
+            value={settings.homepageInfo || ''}
+            onChange={handleHomepageInfoChange}
+            />
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('consentHeader')} key="consent">
+          <ConsentSettings
+            consentText={settings.consentText}
+            onChange={handleConsentTextChange}
+            />
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('templateDocumentHeader')} key="templateDocument">
+          <div className="SettingsTab-templateDocument" >
+            <DocumentSelector documentId={settings.templateDocument?.documentKey} onChange={handleTemplateDocumentChange} />
+          </div>
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('helpPageHeader')} key="helpPage">
+          <SpecialPageSettings
+            settings={settings.helpPage}
+            onChange={handleHelpPageChange}
+            />
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('termsPageHeader')} key="termsPage">
+          <SpecialPageSettings
+            settings={settings.termsPage}
+            onChange={handleTermsPageChange}
+            />
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('footerLinksHeader')} key="footerLinks">
+          <FooterLinksSettings
+            footerLinks={settings.footerLinks}
+            onChange={handleFooterLinksChange}
+            />
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('defaultTagsHeader')} key="defaultTags">
+          <DefaultTagsSettings
+            defaultTags={settings.defaultTags || []}
+            onChange={handleDefaultTagsChange}
+            />
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('licenseHeader')} key="license">
+          <LicenseSettings
+            license={settings.license}
+            onChange={handleLicenseChange}
+            />
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse SettingsTab-collapse--danger">
+        <Collapse.Panel header={t('dataMigration')} key="dataMigration">
+          <div className="SettingsTab-collapseRow">
+            <Button onClick={handleStartDocumentRegenerationClick} danger>
+              {t('documentRegenerationButton')}
+            </Button>
+            {renderLastBatchExecution(lastDocumentRegenerationBatch)}
+          </div>
+          <div className="SettingsTab-collapseRow">
+            <Button onClick={handleStartCdnResourcesConsolidationClick} danger>
+              {t('cdnResourcesConsolidationButton')}
+            </Button>
+            {renderLastBatchExecution(lastCdnResourcesConsolidationBatch)}
+          </div>
+          <div className="SettingsTab-collapseRow">
+            <Button onClick={handleStartCdnUploadDirectoryCreationClick} danger>
+              {t('cdnUploadDirectoryCreationButton')}
+            </Button>
+            {renderLastBatchExecution(lastCdnUploadDirectoryCreationBatch)}
+          </div>
+        </Collapse.Panel>
+      </Collapse>
+
       <Button
         type="primary"
         onClick={handleSaveButtonClick}

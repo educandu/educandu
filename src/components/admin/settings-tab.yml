@@ -43,3 +43,6 @@ licenseHeader:
 lastExecution:
   en: Last execution
   de: Letzte Ausführung
+dataMigration:
+  en: Data migration
+  de: Datenmigration
