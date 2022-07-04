@@ -108,10 +108,6 @@ function Dashboard({ initialState, PageTemplate }) {
                   <UsedStorage usedBytes={user.storage.usedBytes} maxBytes={storagePlan?.maxBytes} showLabel />
                 </div>
               </section>
-              <div className="DashboardPage-storageTabTitle">Privater Speicher benutzung</div>
-              <section className="DashboardPage-storageTabContent">
-                Details about how the user can use the private storage space. How they can clear it up, how it gets cleared when rooms get removed and so on.
-              </section>
             </TabPane>
           )}
         </Tabs>
