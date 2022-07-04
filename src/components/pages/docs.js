@@ -88,7 +88,7 @@ function Docs({ initialState, PageTemplate }) {
   const [filterText, setFilterText] = useState('');
   const [displayedRows, setDisplayedRows] = useState([]);
   const [documents, setDocuments] = useState(initialState.documents);
-  const [sorting, setSorting] = useState({ value: 'title', direction: 'desc' });
+  const [sorting, setSorting] = useState({ value: 'updatedOn', direction: 'desc' });
   const [modalState, setModalState] = useState(getDefaultModalState({ t, uiLanguage, settings }));
 
   const sortingOptions = [
