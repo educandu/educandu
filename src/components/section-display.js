@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Button, Tooltip } from 'antd';
+import Markdown from './markdown.js';
+import { Button, Modal, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from './locale-context.js';
 import { isMacOs } from '../ui/browser-helper.js';
@@ -30,7 +31,6 @@ function SectionDisplay({
   isDragged,
   isOtherSectionDragged,
   isPending,
-  onOpenHelp,
   onPendingSectionApply,
   onPendingSectionDiscard,
   onSectionDuplicate,
@@ -57,6 +57,7 @@ function SectionDisplay({
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isHelpModelVisible, setIsHelpModalVisible] = useState(false);
 
   const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
 
@@ -138,8 +139,8 @@ function SectionDisplay({
       type: 'openHelp',
       tooltip: renderActionTooltip('openHelp'),
       icon: <InformationIcon key="openHelp" />,
-      handleAction: () => onOpenHelp(),
-      isVisible: !!settings.pluginsHelptexts?.[section.type]?.[uiLanguage],
+      handleAction: () => setIsHelpModalVisible(true),
+      isVisible: !!settings.pluginsHelpTexts?.[section.type]?.[uiLanguage],
       isEnabled: true
     }
   ].filter(action => action.isVisible);
@@ -274,6 +275,15 @@ function SectionDisplay({
           </div>
         </Fragment>
       )}
+
+      <Modal
+        footer={null}
+        visible={isHelpModelVisible}
+        onCancel={() => setIsHelpModalVisible(false)}
+        destroyOnClose
+        >
+        <Markdown>{settings.pluginsHelpTexts?.[section.type]?.[uiLanguage]}</Markdown>
+      </Modal>
     </section>
   );
 }
@@ -285,7 +295,6 @@ SectionDisplay.propTypes = {
   isDragged: PropTypes.bool,
   isOtherSectionDragged: PropTypes.bool,
   isPending: PropTypes.bool,
-  onOpenHelp: PropTypes.func,
   onPendingSectionApply: PropTypes.func,
   onPendingSectionDiscard: PropTypes.func,
   onSectionContentChange: PropTypes.func,
@@ -305,7 +314,6 @@ SectionDisplay.defaultProps = {
   isDragged: false,
   isOtherSectionDragged: false,
   isPending: false,
-  onOpenHelp: () => {},
   onPendingSectionApply: () => {},
   onPendingSectionDiscard: () => {},
   onSectionContentChange: () => {},

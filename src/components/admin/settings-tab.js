@@ -79,9 +79,9 @@ function SettingsTab({
     handleChange('defaultTags', value, isValid);
   }, [handleChange]);
 
-  const handlePluginHelptextChange = useCallback((pluginType, value, { isValid }) => {
-    const newPluginsHelptexts = { ...cloneDeep(settings.pluginsHelptexts), [pluginType]: value };
-    handleChange('pluginsHelptexts', newPluginsHelptexts, isValid);
+  const handlePluginHelpTextChange = useCallback((pluginType, value, { isValid }) => {
+    const newPluginsHelpTexts = { ...cloneDeep(settings.pluginsHelpTexts), [pluginType]: value };
+    handleChange('pluginsHelpTexts', newPluginsHelpTexts, isValid);
   }, [settings, handleChange]);
 
   const handleLicenseChange = useCallback((value, { isValid }) => {
@@ -149,6 +149,7 @@ function SettingsTab({
       <Collapse className="SettingsTab-collapse">
         <Collapse.Panel header={t('consentHeader')} key="consent">
           <MarkdownSettingInSupportedLanguages
+            required
             settingValue={settings.consentText}
             onChange={handleConsentTextChange}
             />
@@ -200,7 +201,7 @@ function SettingsTab({
       </Collapse>
 
       <Collapse className="SettingsTab-collapse">
-        <Collapse.Panel header={t('pluginsHelptextsHeader')} key="plugisHelptexts">
+        <Collapse.Panel header={t('pluginsHelpTextsHeader')} key="plugisHelpTexts">
           <Tabs type="line" size="small">
             {pluginRegistry.getAllInfos().map(pluginInfo => (
               <Tabs.TabPane
@@ -209,8 +210,9 @@ function SettingsTab({
                 tab={t(`${kebabCaseToCamelCase(pluginInfo.type)}:name`)}
                 >
                 <MarkdownSettingInSupportedLanguages
-                  settingValue={settings.pluginsHelptexts?.[pluginInfo.type]}
-                  onChange={(value, { isValid }) => handlePluginHelptextChange(pluginInfo.type, value, { isValid })}
+                  required
+                  settingValue={settings.pluginsHelpTexts?.[pluginInfo.type]}
+                  onChange={(value, { isValid }) => handlePluginHelpTextChange(pluginInfo.type, value, { isValid })}
                   />
               </Tabs.TabPane>
             ))}

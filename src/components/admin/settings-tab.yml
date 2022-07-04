@@ -46,6 +46,6 @@ dataMigrationHeader:
 lastExecution:
   en: Last execution
   de: Letzte Ausführung
-pluginsHelptextsHeader:
-  en: Plugins helptexts
+pluginsHelpTextsHeader:
+  en: Plugins help texts
   de: Plugins-Hilfetexte

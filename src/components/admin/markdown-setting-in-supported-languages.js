@@ -5,13 +5,13 @@ import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import LanguageFlagAndName from '../localization/language-flag-and-name.js';
 
-function MarkdownSettingInSupportedLanguages({ settingValue, onChange }) {
+function MarkdownSettingInSupportedLanguages({ settingValue, onChange, required }) {
   const { supportedUiLanguages } = useLocale();
 
   const handleSettingTextChanged = (lang, value) => {
     const updatedSettingValue = cloneDeep(settingValue);
     updatedSettingValue[lang] = value;
-    onChange(updatedSettingValue, { isValid: !!value.trim().length });
+    onChange(updatedSettingValue, { isValid: required ? !!value.trim().length : true });
   };
 
   return (
@@ -35,10 +35,12 @@ function MarkdownSettingInSupportedLanguages({ settingValue, onChange }) {
 
 MarkdownSettingInSupportedLanguages.propTypes = {
   onChange: PropTypes.func.isRequired,
+  required: PropTypes.bool,
   settingValue: PropTypes.objectOf(PropTypes.string)
 };
 
 MarkdownSettingInSupportedLanguages.defaultProps = {
+  required: false,
   settingValue: {}
 };
 
