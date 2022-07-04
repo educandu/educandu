@@ -1,5 +1,6 @@
 import by from 'thenby';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import Markdown from '../markdown.js';
 import urls from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
@@ -16,11 +17,11 @@ import DeleteIcon from '../icons/general/delete-icon.js';
 import PublicIcon from '../icons/general/public-icon.js';
 import { handleApiError } from '../../ui/error-helper.js';
 import PrivateIcon from '../icons/general/private-icon.js';
+import React, { useEffect, useRef, useState } from 'react';
 import { ensureIsExcluded } from '../../utils/array-utils.js';
 import DuplicateIcon from '../icons/general/duplicate-icon.js';
 import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
 import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
@@ -34,6 +35,8 @@ const { TabPane } = Tabs;
 
 const logger = new Logger(import.meta.url);
 
+const sortLessons = lessons => [...lessons].sort(by(l => l.schedule).thenBy(l => l.schedule?.startsOn || l.createdOn));
+
 export default function Room({ PageTemplate, initialState }) {
   const user = useUser();
   const now = new Date();
@@ -44,7 +47,7 @@ export default function Room({ PageTemplate, initialState }) {
   const lessonApiClient = useSessionAwareApiClient(LessonApiClient);
 
   const [room, setRoom] = useState(initialState.room);
-  const [lessons, setLessons] = useState(initialState.lessons);
+  const [lessons, setLessons] = useState(sortLessons(initialState.lessons));
   const [invitations, setInvitations] = useState(initialState.invitations.sort(by(x => x.sentOn)));
   const [isRoomUpdateButtonDisabled, setIsRoomUpdateButtonDisabled] = useState(true);
   const [isRoomInvitationModalVisible, setIsRoomInvitationModalVisible] = useState(false);
@@ -165,7 +168,7 @@ export default function Room({ PageTemplate, initialState }) {
   const handleDeleteLessonClick = lesson => {
     confirmLessonDelete(t, lesson.title, async () => {
       await lessonApiClient.deleteLesson(lesson._id);
-      setLessons(ensureIsExcluded(lessons, lesson));
+      setLessons(sortLessons(ensureIsExcluded(lessons, lesson)));
     });
   };
 
@@ -187,30 +190,38 @@ export default function Room({ PageTemplate, initialState }) {
     const url = urls.getLessonUrl({ id: lesson._id, slug: lesson.slug });
 
     const startsOn = lesson.schedule?.startsOn;
-    const isUpcomingLesson = upcommingLesson?._id === lesson._id;
+    const renderIcons = isRoomOwner || isRoomCollaborator;
+    const dueDate = upcommingLesson?._id === lesson._id ? formatTimeTo(startsOn) : null;
 
-    const timeUntil = isUpcomingLesson ? formatTimeTo(startsOn) : null;
+    const containerClasses = classNames({
+      'RoomPage-lessonInfo': true,
+      'RoomPage-lessonInfo--withIcons': renderIcons,
+      'RoomPage-lessonInfo--withDueDate': dueDate
+    });
 
     return (
-      <div className="RoomPage-lesson" key={lesson._id}>
-        <div className={`RoomPage-lessonInfo ${isUpcomingLesson ? 'is-highlighted' : ''}`}>
-          <div className="RoomPage-lessonInfoGroup">
-            {(isRoomOwner || isRoomCollaborator) && (
-            <Fragment>
-              <Tooltip title={t('common:clone')}>
-                <Button className="RoomPage-lessonButton" size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
-              </Tooltip>
-              <Tooltip title={t('common:delete')}>
-                <DeleteButton className="RoomPage-lessonButton" onClick={() => handleDeleteLessonClick(lesson)} />
-              </Tooltip>
-            </Fragment>
-            )}
-            <span className="RoomPage-lessonDate">{startsOn ? formatDate(startsOn) : t('notScheduled')}</span>
+      <div key={lesson._id} className={containerClasses}>
+        {renderIcons && (
+          <div className="RoomPage-lessonInfoItem RoomPage-lessonInfoItem--icons">
+            <Tooltip title={t('common:clone')}>
+              <Button size="small" type="link" icon={<DuplicateIcon />} onClick={() => handleNewLessonClick(lesson)} />
+            </Tooltip>
+            <Tooltip title={t('common:delete')}>
+              <DeleteButton onClick={() => handleDeleteLessonClick(lesson)} />
+            </Tooltip>
           </div>
-          <a className="RoomPage-lessonTitle" href={url}>{lesson.title}</a>
-          <span className="RoomPage-lessonTimeUntil">{timeUntil}</span>
+        )}
+        <div className="RoomPage-lessonInfoItem">
+          {startsOn && <span className="RoomPage-lessonDate">{formatDate(startsOn)}</span>}
+          <a href={url}>{lesson.title}</a>
         </div>
-      </div>);
+        {dueDate && (
+          <div className="RoomPage-lessonInfoItem">
+            {dueDate}
+          </div>
+        )}
+      </div>
+    );
   };
 
   const renderRoomMembers = () => {
