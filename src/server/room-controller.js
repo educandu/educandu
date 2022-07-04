@@ -139,14 +139,15 @@ export default class RoomController {
       throw new NotFound();
     }
 
-    if (room.owner !== user._id) {
+    if (room.owner !== user._id && memberUserId !== user._id) {
       throw new Forbidden();
     }
 
     const updatedRoom = await this.roomService.removeRoomMember({ room, memberUserId });
     const mappedRoom = await this.clientDataMappingService.mapRoom(updatedRoom);
-    await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.username, memberUser });
-
+    if (memberUserId !== user._id) {
+      await this.mailService.sendRoomMemberRemovalNotificationEmail({ roomName: room.name, ownerName: user.username, memberUser });
+    }
     return res.send({ room: mappedRoom });
   }
 

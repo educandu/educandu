@@ -849,7 +849,7 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the user is not the room owner', () => {
+    describe('when the user is not the room owner or a member', () => {
       beforeEach(() => {
         room = {
           name: 'my room',
@@ -870,7 +870,7 @@ describe('room-controller', () => {
       });
     });
 
-    describe('when the request is valid', () => {
+    describe('when the user is the room owner', () => {
       let mappedRoom;
 
       beforeEach(() => new Promise(done => {
@@ -910,6 +910,45 @@ describe('room-controller', () => {
           ownerName: 'dagobert-the-third',
           memberUser
         });
+      });
+    });
+
+    describe('when the user is a room member (and is leaving the room)', () => {
+      let mappedRoom;
+
+      beforeEach(() => new Promise(done => {
+        room = {
+          name: 'my room',
+          _id: uniqueId.create(),
+          owner: uniqueId.create(),
+          members: [{ userId: memberUser._id }, { userId: uniqueId.create() }]
+        };
+        const updatedRoom = { ...room, members: [room.members[1]] };
+        mappedRoom = { ...updatedRoom };
+
+        roomService.getRoomById.withArgs(room._id).resolves(room);
+        userService.getUserById.withArgs(memberUser._id).resolves(memberUser);
+        roomService.removeRoomMember.withArgs({ room, memberUserId: memberUser._id }).resolves(updatedRoom);
+        clientDataMappingService.mapRoom.withArgs(updatedRoom).resolves(mappedRoom);
+        mailService.sendRoomMemberRemovalNotificationEmail.resolves();
+
+        req = { memberUser, params: { roomId: room._id, memberUserId: memberUser._id } };
+        res = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        res.on('end', done);
+
+        sut.handleDeleteRoomMember(req, res);
+      }));
+
+      it('should return status 200', () => {
+        expect(res.statusCode).toBe(200);
+      });
+
+      it('should return the updated room', () => {
+        expect(res._getData()).toEqual({ room: mappedRoom });
+      });
+
+      it('should have not called mailService.sendRoomMemberRemovalNotificationEmail', () => {
+        sinon.assert.notCalled(mailService.sendRoomMemberRemovalNotificationEmail);
       });
     });
   });

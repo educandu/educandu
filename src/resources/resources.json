@@ -142,6 +142,7 @@
       "deleteRoomConfirmation": "Do you really want to delete room \"{roomName}\"?",
       "deleteRoomMemberConfirmation": "Do you really want remove member \"{memberUsername}\" from the room?",
       "deleteRoomInvitationConfirmation": "Do you really want revoke room invitation send to \"{invitationEmail}\"?",
+      "leaveRoomConfirmation": "Do you really want to leave room \"{roomName}\"?",
       "deleteLessonConfirmation": "Do you really want to delete lesson \"{lessonName}\"?",
       "deleteCdnDocumentConfirmation": "Do you really want to delete the CDN file \"{fileName}\"?",
       "thisActionIsIrreversible": "This action is irreversible!",
@@ -171,6 +172,7 @@
       "deleteRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich löschen?",
       "deleteRoomMemberConfirmation": "Möchten Sie das Mitglied \"{memberUsername}\" wirklich vom Raum entfernen?",
       "deleteRoomInvitationConfirmation": "Möchten Sie die Raumeinladung für \"{invitationEmail}\" wirklich widerrufen?",
+      "leaveRoomConfirmation": "Möchten Sie den Raum \"{roomName}\" wirklich verlassen?",
       "deleteLessonConfirmation": "Möchten Sie die Einheit \"{lessonName}\" wirklich löschen?",
       "deleteCdnDocumentConfirmation": "Möchten Sie die Datei \"{fileName}\" wirklich vom CDN löschen?",
       "thisActionIsIrreversible": "Diese Aktion ist unwiderrufbar!",
@@ -975,7 +977,8 @@
       "deleteRoomTitle": "Delete this room",
       "deleteRoomDescription": "All room data and resources will be deleted.",
       "removeMember": "Remove member",
-      "revokeInvitation": "Revoke invitation"
+      "revokeInvitation": "Revoke invitation",
+      "leaveRoom": "Leave room"
     }
   },
   {
@@ -1002,7 +1005,8 @@
       "deleteRoomTitle": "Diesen Raum löschen",
       "deleteRoomDescription": "Alle Raum-Daten und -Ressourcen werden gelöscht.",
       "removeMember": "Mitglied entfernen",
-      "revokeInvitation": "Einladung widerrufen"
+      "revokeInvitation": "Einladung widerrufen",
+      "leaveRoom": "Raum verlassen"
     }
   },
   {
