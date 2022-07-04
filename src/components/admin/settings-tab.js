@@ -36,8 +36,8 @@ function SettingsTab({
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('settingsTab');
   const pluginRegistry = useService(PluginRegistry);
-  const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
   const adminApiClient = useSessionAwareApiClient(AdminApiClient);
+  const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
 
   const [dirtyKeys, setDirtyKeys] = useState([]);
   const [invalidKeys, setInvalidKeys] = useState([]);
