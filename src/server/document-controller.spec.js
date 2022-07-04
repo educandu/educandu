@@ -64,20 +64,20 @@ describe('document-controller', () => {
     });
 
     describe('when the document slug is different than the URL slug', () => {
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         req = {
           user,
           params: { 0: '/other-slug', docKey: doc.key },
           query: { view: 'edit', templateDocumentKey: uniqueId.create() }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         doc.slug = 'doc-slug';
 
         documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
 
-        sut.handleGetDocPage(req, res);
+        sut.handleGetDocPage(req, res).catch(reject);
       }));
 
       it('should redirect to the correct document url', () => {
@@ -105,7 +105,7 @@ describe('document-controller', () => {
     });
 
     describe('when the template document exists but the document already contains sections', () => {
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         templateDocument = { key: uniqueId.create() };
         req = {
           user,
@@ -113,7 +113,7 @@ describe('document-controller', () => {
           query: { templateDocumentKey: templateDocument.key }
         };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         doc.slug = 'doc-slug';
         doc.sections = [{}];
@@ -121,7 +121,7 @@ describe('document-controller', () => {
         documentService.getDocumentByKey.withArgs(doc.key).resolves(doc);
         documentService.getDocumentByKey.withArgs(templateDocument.key).resolves(templateDocument);
 
-        sut.handleGetDocPage(req, res);
+        sut.handleGetDocPage(req, res).catch(reject);
       }));
 
       it('should redirect to the original document url', () => {

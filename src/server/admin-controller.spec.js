@@ -39,7 +39,7 @@ describe('admin-controller', () => {
 
   describe('handlePostDocumentRegenerationRequest', () => {
     const batch = { _id: uniqueId.create() };
-    beforeEach(() => new Promise(done => {
+    beforeEach(() => new Promise((resolve, reject) => {
       batchService.createDocumentRegenerationBatch.resolves(batch);
 
       req = httpMocks.createRequest({
@@ -49,9 +49,9 @@ describe('admin-controller', () => {
       req.user = user;
 
       res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-      res.on('end', done);
+      res.on('end', resolve);
 
-      sut.handlePostDocumentRegenerationRequest(req, res);
+      sut.handlePostDocumentRegenerationRequest(req, res).catch(reject);
     }));
 
     it('should call createDocumentRegenerationBatch with the user', () => {

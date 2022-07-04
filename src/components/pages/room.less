@@ -4,11 +4,17 @@
 
 .RoomPage-subtitle {
   display: flex;
-  gap: 8px;
   font-size: 12px;
-  align-items: center;
+  gap: @edu-controls-group-gap;
+  justify-content: space-between;
+  padding: 0 @edu-content-padding;
   color: @edu-text-color-secondary;
-  padding-left: @edu-content-padding;
+}
+
+.RoomPage-subtitleGroup {
+  display: flex;
+  gap: 7px;
+  align-items: center;
 }
 
 .RoomPage-description {

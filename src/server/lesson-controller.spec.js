@@ -94,16 +94,16 @@ describe('lesson-controller', () => {
     });
 
     describe('when the lesson slug is different than the URL slug', () => {
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         req = { user, params: { 0: '/url-slug', lessonId }, query: {} };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         lesson = { _id: lessonId, slug: 'lesson-slug' };
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
 
-        sut.handleGetLessonPage(req, res);
+        sut.handleGetLessonPage(req, res).catch(reject);
       }));
 
       it('should redirect to the correct lesson url', () => {
@@ -296,7 +296,7 @@ describe('lesson-controller', () => {
     describe('when the user owns the room to contain the lesson', () => {
       let newLesson;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room = {
           _id: roomId,
           owner: user._id,
@@ -308,12 +308,12 @@ describe('lesson-controller', () => {
 
         req = { user, body: lesson };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
         lessonService.createLesson.resolves(newLesson);
 
-        sut.handlePostLesson(req, res);
+        sut.handlePostLesson(req, res).catch(reject);
       }));
 
       it('should create the lesson', () => {
@@ -329,7 +329,7 @@ describe('lesson-controller', () => {
     describe('when the user is a collaborator of the room to contain the lesson', () => {
       let newLesson;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room = {
           _id: roomId,
           owner: uniqueId.create(),
@@ -341,12 +341,12 @@ describe('lesson-controller', () => {
 
         req = { user, body: lesson };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         roomService.getRoomById.withArgs(roomId).resolves(room);
         lessonService.createLesson.resolves(newLesson);
 
-        sut.handlePostLesson(req, res);
+        sut.handlePostLesson(req, res).catch(reject);
       }));
 
       it('should create the lesson', () => {
@@ -453,7 +453,7 @@ describe('lesson-controller', () => {
       let requestBody;
       let updatedLesson;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room = {
           _id: uniqueId.create(),
           owner: user._id,
@@ -494,9 +494,9 @@ describe('lesson-controller', () => {
         req.user = user;
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
-        sut.handlePatchLessonMetadata(req, res);
+        sut.handlePatchLessonMetadata(req, res).catch(reject);
       }));
 
       it('should respond with status code 201', () => {
@@ -518,7 +518,7 @@ describe('lesson-controller', () => {
       let requestBody;
       let updatedLesson;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room = {
           _id: uniqueId.create(),
           owner: uniqueId.create(),
@@ -559,9 +559,9 @@ describe('lesson-controller', () => {
         req.user = user;
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
-        sut.handlePatchLessonMetadata(req, res);
+        sut.handlePatchLessonMetadata(req, res).catch(reject);
       }));
 
       it('should respond with status code 201', () => {
@@ -651,7 +651,7 @@ describe('lesson-controller', () => {
     });
 
     describe('when the user owns the room containing the lesson', () => {
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
         room = {
           _id: roomId,
@@ -662,12 +662,12 @@ describe('lesson-controller', () => {
 
         req = { user, params: { lessonId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
 
-        sut.handleDeleteLesson(req, res);
+        sut.handleDeleteLesson(req, res).catch(reject);
       }));
 
       it('should call lessonService.deleteLessonById', () => {
@@ -676,7 +676,7 @@ describe('lesson-controller', () => {
     });
 
     describe('when the user is a collaborator of the room containing the lesson', () => {
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         lesson = { _id: lessonId, roomId, title: 'title', slug: 'slug', language: 'language', schedule: {} };
         room = {
           _id: roomId,
@@ -687,12 +687,12 @@ describe('lesson-controller', () => {
 
         req = { user, params: { lessonId } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         lessonService.getLessonById.withArgs(lessonId).resolves(lesson);
         roomService.getRoomById.withArgs(roomId).resolves(room);
 
-        sut.handleDeleteLesson(req, res);
+        sut.handleDeleteLesson(req, res).catch(reject);
       }));
 
       it('should call lessonService.deleteLessonById', () => {

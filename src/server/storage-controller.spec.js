@@ -85,7 +85,7 @@ describe('storage-controller', () => {
       let currentDirectory;
       let objects;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
@@ -95,11 +95,11 @@ describe('storage-controller', () => {
         req = { user, query: { parentPath: currentDirectory } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
 
-        sut.handleGetCdnObjects(req, res);
+        sut.handleGetCdnObjects(req, res).catch(reject);
       }));
 
       it('should call storageService.getObjects', () => {
@@ -123,7 +123,7 @@ describe('storage-controller', () => {
       let currentDirectory;
       let objects;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
@@ -133,11 +133,11 @@ describe('storage-controller', () => {
         req = { user, query: { parentPath: currentDirectory } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
 
-        sut.handleGetCdnObjects(req, res);
+        sut.handleGetCdnObjects(req, res).catch(reject);
       }));
 
       it('should call storageService.getObjects', () => {
@@ -161,18 +161,18 @@ describe('storage-controller', () => {
       let currentDirectory;
       let objects;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         parentDirectory = '';
         currentDirectory = 'media';
         objects = [];
         req = { user, query: { parentPath: currentDirectory } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.getObjects.resolves({ parentDirectory, currentDirectory, objects });
 
-        sut.handleGetCdnObjects(req, res);
+        sut.handleGetCdnObjects(req, res).catch(reject);
       }));
 
       it('should call storageService.getObjects', () => {
@@ -243,17 +243,17 @@ describe('storage-controller', () => {
     describe('when storage path type is private and the user is the room owner', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
         req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.uploadFiles.resolves({ usedBytes: expectedUsedBytes });
 
-        sut.handlePostCdnObject(req, res);
+        sut.handlePostCdnObject(req, res).catch(reject);
       }));
 
       it('should call storageService.uploadFiles', () => {
@@ -276,17 +276,17 @@ describe('storage-controller', () => {
     describe('when storage path type is private and the user is a room collaborator', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
         req = { user, files: [{}], body: { parentPath: `rooms/${room._id}/media` } };
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.uploadFiles.resolves({ usedBytes: expectedUsedBytes });
 
-        sut.handlePostCdnObject(req, res);
+        sut.handlePostCdnObject(req, res).catch(reject);
       }));
 
       it('should call storageService.uploadFiles (on behalf of the room owner)', () => {
@@ -347,18 +347,18 @@ describe('storage-controller', () => {
     describe('when storage path type is private and the user is the room owner', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.members = [{ userId: uniqueId.create() }];
         room.lessonsMode = ROOM_LESSONS_MODE.exclusive;
         req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.deleteObject.resolves({ usedBytes: expectedUsedBytes });
 
-        sut.handleDeleteCdnObject(req, res);
+        sut.handleDeleteCdnObject(req, res).catch(reject);
       }));
 
       it('should call storageService.deleteObject', () => {
@@ -380,18 +380,18 @@ describe('storage-controller', () => {
     describe('when storage path type is private and the user a room collaborator', () => {
       const expectedUsedBytes = 2 * 1000 * 1000;
 
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room.owner = uniqueId.create();
         room.members = [{ userId: user._id }];
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
         req = { user, query: { path: `rooms/${room._id}/media/object-to-delete` } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.deleteObject.resolves({ usedBytes: expectedUsedBytes });
 
-        sut.handleDeleteCdnObject(req, res);
+        sut.handleDeleteCdnObject(req, res).catch(reject);
       }));
 
       it('should call storageService.deleteObject', () => {
@@ -411,17 +411,17 @@ describe('storage-controller', () => {
     });
 
     describe('when storage path type is public', () => {
-      beforeEach(() => new Promise(done => {
+      beforeEach(() => new Promise((resolve, reject) => {
         room.owner = user._id;
         room.lessonsMode = ROOM_LESSONS_MODE.collaborative;
         req = { user, query: { path: 'media/object-to-delete' } };
 
         res = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        res.on('end', done);
+        res.on('end', resolve);
 
         storageService.deleteObject.resolves({ usedBytes: 0 });
 
-        sut.handleDeleteCdnObject(req, res);
+        sut.handleDeleteCdnObject(req, res).catch(reject);
       }));
 
       it('should call storageService.deleteObject', () => {

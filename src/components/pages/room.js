@@ -22,12 +22,13 @@ import RoomApiClient from '../../api-clients/room-api-client.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import LessonApiClient from '../../api-clients/lesson-api-client.js';
+import RoomExitedIcon from '../icons/user-activities/room-exited-icon.js';
 import RoomInvitationCreationModal from '../room-invitation-creation-modal.js';
 import LessonMetadataModal, { LESSON_MODAL_MODE } from '../lesson-metadata-modal.js';
 import { Space, List, Button, Tabs, Card, message, Tooltip, Breadcrumb } from 'antd';
 import { roomShape, invitationShape, lessonMetadataShape } from '../../ui/default-prop-types.js';
 import { FAVORITE_TYPE, LESSON_VIEW_QUERY_PARAM, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE } from '../../domain/constants.js';
-import { confirmLessonDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete } from '../confirmation-dialogs.js';
+import { confirmLessonDelete, confirmRoomDelete, confirmRoomMemberDelete, confirmRoomInvitationDelete, confirmLeaveRoom } from '../confirmation-dialogs.js';
 
 const { TabPane } = Tabs;
 
@@ -77,8 +78,21 @@ export default function Room({ PageTemplate, initialState }) {
     }
   };
 
+  const handleLeaveRoom = async () => {
+    try {
+      await roomApiClient.deleteRoomMember({ roomId: room._id, memberUserId: user._id });
+      window.location = urls.getDashboardUrl({ tab: 'rooms' });
+    } catch (error) {
+      handleApiError({ error, t, logger });
+    }
+  };
+
   const handleDeleteRoomClick = () => {
     confirmRoomDelete(t, room.name, handleRoomDelete);
+  };
+
+  const handleLeaveRoomClick = () => {
+    confirmLeaveRoom(t, room.name, handleLeaveRoom);
   };
 
   const handleInvitationModalClose = newInvitation => {
@@ -291,8 +305,13 @@ export default function Room({ PageTemplate, initialState }) {
           extra={<FavoriteStar type={FAVORITE_TYPE.room} id={room._id} />}
           />
         <div className="RoomPage-subtitle">
-          {room.access === ROOM_ACCESS_LEVEL.private ? <PrivateIcon /> : <PublicIcon />}
-          <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+          <div className="RoomPage-subtitleGroup">
+            {room.access === ROOM_ACCESS_LEVEL.private ? <PrivateIcon /> : <PublicIcon />}
+            <span>{t(`${room.access}RoomSubtitle`)} | {t(`${room.lessonsMode}LessonsSubtitle`)} | {t('common:owner')}: {room.owner.username}</span>
+          </div>
+          {!isRoomOwner && (
+            <a className="RoomPage-subtitleGroup" onClick={handleLeaveRoomClick}><RoomExitedIcon />{t('leaveRoom')}</a>
+          )}
         </div>
 
         {!isRoomOwner && renderRoomLessonsCard()}
