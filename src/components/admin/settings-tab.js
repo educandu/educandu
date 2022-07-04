@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
-import { Button, Collapse } from 'antd';
 import urls from '../../utils/routes.js';
 import Logger from '../../common/logger.js';
+import { Button, Collapse, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../markdown-input.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import LicenseSettings from './license-settings.js';
-import ConsentSettings from './consent-settings.js';
+import { useService } from '../container-context.js';
 import { useDateFormat } from '../locale-context.js';
 import React, { useState, useCallback } from 'react';
 import DocumentSelector from '../document-selector.js';
@@ -14,11 +14,14 @@ import { handleApiError } from '../../ui/error-helper.js';
 import DefaultTagsSettings from './default-tags-settings.js';
 import SpecialPageSettings from './special-page-settings.js';
 import FooterLinksSettings from './footer-links-settings.js';
+import PluginRegistry from '../../plugins/plugin-registry.js';
 import { useSessionAwareApiClient } from '../../ui/api-helper.js';
 import AdminApiClient from '../../api-clients/admin-api-client.js';
+import { kebabCaseToCamelCase } from '../../utils/string-utils.js';
 import SettingsApiClient from '../../api-clients/settings-api-client.js';
 import { batchShape, settingsShape } from '../../ui/default-prop-types.js';
 import { ensureIsExcluded, ensureIsIncluded } from '../../utils/array-utils.js';
+import MarkdownSettingInSupportedLanguages from './markdown-setting-in-supported-languages.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -30,13 +33,15 @@ function SettingsTab({
   onDirtyStateChange,
   onSettingsSaved
 }) {
-  const { t } = useTranslation('settingsTab');
   const { formatDate } = useDateFormat();
+  const { t } = useTranslation('settingsTab');
+  const pluginRegistry = useService(PluginRegistry);
   const settingsApiClient = useSessionAwareApiClient(SettingsApiClient);
   const adminApiClient = useSessionAwareApiClient(AdminApiClient);
-  const [settings, setSettings] = useState(cloneDeep(initialSettings));
+
   const [dirtyKeys, setDirtyKeys] = useState([]);
   const [invalidKeys, setInvalidKeys] = useState([]);
+  const [settings, setSettings] = useState(cloneDeep(initialSettings));
   const [lastSavedSettings, setLastSavedSettings] = useState(settings);
 
   const handleChange = useCallback((key, value, isValid) => {
@@ -73,6 +78,11 @@ function SettingsTab({
   const handleDefaultTagsChange = useCallback((value, { isValid }) => {
     handleChange('defaultTags', value, isValid);
   }, [handleChange]);
+
+  const handlePluginHelptextChange = useCallback((pluginType, value, { isValid }) => {
+    const newPluginsHelptexts = { ...cloneDeep(settings.pluginsHelptexts), [pluginType]: value };
+    handleChange('pluginsHelptexts', newPluginsHelptexts, isValid);
+  }, [settings, handleChange]);
 
   const handleLicenseChange = useCallback((value, { isValid }) => {
     handleChange('license', value, isValid);
@@ -138,8 +148,8 @@ function SettingsTab({
 
       <Collapse className="SettingsTab-collapse">
         <Collapse.Panel header={t('consentHeader')} key="consent">
-          <ConsentSettings
-            consentText={settings.consentText}
+          <MarkdownSettingInSupportedLanguages
+            settingValue={settings.consentText}
             onChange={handleConsentTextChange}
             />
         </Collapse.Panel>
@@ -190,6 +200,25 @@ function SettingsTab({
       </Collapse>
 
       <Collapse className="SettingsTab-collapse">
+        <Collapse.Panel header={t('pluginsHelptextsHeader')} key="plugisHelptexts">
+          <Tabs type="line" size="small">
+            {pluginRegistry.getAllInfos().map(pluginInfo => (
+              <Tabs.TabPane
+                key={pluginInfo.type}
+                className="SettingsTab-collapsTabPane"
+                tab={t(`${kebabCaseToCamelCase(pluginInfo.type)}:name`)}
+                >
+                <MarkdownSettingInSupportedLanguages
+                  settingValue={settings.pluginsHelptexts?.[pluginInfo.type]}
+                  onChange={(value, { isValid }) => handlePluginHelptextChange(pluginInfo.type, value, { isValid })}
+                  />
+              </Tabs.TabPane>
+            ))}
+          </Tabs>
+        </Collapse.Panel>
+      </Collapse>
+
+      <Collapse className="SettingsTab-collapse">
         <Collapse.Panel header={t('licenseHeader')} key="license">
           <LicenseSettings
             license={settings.license}
@@ -199,7 +228,7 @@ function SettingsTab({
       </Collapse>
 
       <Collapse className="SettingsTab-collapse SettingsTab-collapse--danger">
-        <Collapse.Panel header={t('dataMigration')} key="dataMigration">
+        <Collapse.Panel header={t('dataMigrationHeader')} key="dataMigration">
           <div className="SettingsTab-collapseRow">
             <Button onClick={handleStartDocumentRegenerationClick} danger>
               {t('documentRegenerationButton')}

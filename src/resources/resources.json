@@ -69,8 +69,9 @@
       "cdnUploadDirectoryCreationButton": "Create CDN upload directories",
       "templateDocumentHeader": "Template for new documents",
       "licenseHeader": "License",
+      "dataMigrationHeader": "Data migration",
       "lastExecution": "Last execution",
-      "dataMigration": "Data migration"
+      "pluginsHelptextsHeader": "Plugins helptexts"
     }
   },
   {
@@ -91,8 +92,9 @@
       "cdnUploadDirectoryCreationButton": "CDN-Upload-Verzeichnisse erstellen",
       "templateDocumentHeader": "Vorlage für neue Dokumente",
       "licenseHeader": "Lizenz",
+      "dataMigrationHeader": "Datenmigration",
       "lastExecution": "Letzte Ausführung",
-      "dataMigration": "Datenmigration"
+      "pluginsHelptextsHeader": "Plugins-Hilfetexte"
     }
   },
   {
