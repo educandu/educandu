@@ -26,6 +26,10 @@ class RoomInvitationStore {
     return this.collection.findOne({ roomId, email }, { session });
   }
 
+  getRoomInvitationsByEmail(email, { session } = {}) {
+    return this.collection.find({ email }, { session }).toArray();
+  }
+
   getRoomInvitationMetadataByRoomId(roomId, { session } = {}) {
     return this.collection.find({ roomId }, { session, projection: roomInvitationMetadataProjection }).toArray();
   }

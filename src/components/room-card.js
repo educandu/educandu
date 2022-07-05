@@ -1,26 +1,23 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import Markdown from './markdown.js';
 import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { useDateFormat } from './locale-context.js';
 import PublicIcon from './icons/general/public-icon.js';
-import { roomShape } from '../ui/default-prop-types.js';
 import PrivateIcon from './icons/general/private-icon.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
+import { invitationBasicShape, roomMemberShape, roomMetadataProps } from '../ui/default-prop-types.js';
 
-const MAX_NAME_LENGTH = 70;
-
-function RoomCard({ room }) {
+function RoomCard({ room, invitation }) {
   const user = useUser();
   const { formatDate } = useDateFormat();
   const { t } = useTranslation('roomCard');
 
-  const userAsMember = room.members.find(member => member.userId === user._id);
-
-  const renderName = () => {
-    return room.name.length > MAX_NAME_LENGTH ? `${room.name.substring(0, MAX_NAME_LENGTH)}...` : room.name;
-  };
+  const userAsMember = room.members?.find(member => member.userId === user._id);
 
   const renderOwner = () => {
     return (
@@ -47,9 +44,9 @@ function RoomCard({ room }) {
   };
 
   return (
-    <div className="RoomCard">
-      <div className="RoomCard-name">{renderName()}</div>
-      {!!userAsMember && renderOwner()}
+    <div className={classNames('RoomCard', { 'RoomCard--disabled': !!invitation })}>
+      <div className="RoomCard-name">{room.name}</div>
+      {!!(userAsMember || invitation) && renderOwner()}
       <Divider />
       <div className="RoomCard-infoRow">
         <span className="RoomCard-infoLabel">{t('common:access')}:</span>
@@ -59,15 +56,19 @@ function RoomCard({ room }) {
         <span className="RoomCard-infoLabel">{t('lessonsMode')}:</span>
         <div>{t(`common:lessonsMode_${room.lessonsMode}`)}</div>
       </div>
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('common:created')}:</span>
-        <div>{formatDate(room.createdOn)}</div>
-      </div>
-      <div className="RoomCard-infoRow">
-        <span className="RoomCard-infoLabel">{t('updated')}:</span>
-        <div>{formatDate(room.updatedOn)}</div>
-      </div>
-      {!userAsMember && (
+      {!!room.createdOn && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('common:created')}:</span>
+          <div>{formatDate(room.createdOn)}</div>
+        </div>
+      )}
+      {!!room.updatedOn && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('updated')}:</span>
+          <div>{formatDate(room.updatedOn)}</div>
+        </div>
+      )}
+      {!userAsMember && !!room.members && (
         <div className="RoomCard-infoRow">
           <span className="RoomCard-infoLabel">{t('members')}:</span>
           <div>{room.members.length}</div>
@@ -79,13 +80,41 @@ function RoomCard({ room }) {
           <div>{formatDate(userAsMember.joinedOn)}</div>
         </div>
       )}
-      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}>{t('button')}</Button>
+      {!!invitation?.sentOn && (
+        <div className="RoomCard-infoRow">
+          <span className="RoomCard-infoLabel">{t('invited')}:</span>
+          <div>{formatDate(invitation.sentOn)}</div>
+        </div>
+      )}
+      {!!invitation?.expires && (
+        <div className="RoomCard-infoRow RoomCard-infoRow--textBlock">
+          <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expires) })}</Markdown>
+        </div>
+      )}
+      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick} disabled={!!invitation}>{t('button')}</Button>
     </div>
   );
 }
 
+const looseRoomProps = {
+  ...roomMetadataProps,
+  _id: PropTypes.string,
+  createdOn: PropTypes.string,
+  updatedOn: PropTypes.string,
+  owner: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string
+  }),
+  members: PropTypes.arrayOf(roomMemberShape)
+};
+
 RoomCard.propTypes = {
-  room: roomShape.isRequired
+  invitation: invitationBasicShape,
+  room: PropTypes.shape(looseRoomProps).isRequired
+};
+
+RoomCard.defaultProps = {
+  invitation: null
 };
 
 export default RoomCard;

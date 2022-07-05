@@ -10,6 +10,12 @@ updated:
 joined:
   en: Joined
   de: Eingetreten
+invited:
+  en: Invited
+  de: Eingeladen
 members:
   en: Members
   de: Mitglieder
+acceptInvitation:
+  en: The invitation received by email is valid until **{date}**.
+  de: Die per E-Mail geschickte Einladung ist bis **{date}** gültig.

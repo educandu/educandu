@@ -1,16 +1,18 @@
 import uniqueId from '../utils/unique-id.js';
 import cloneDeep from '../utils/clone-deep.js';
 import UserStore from '../stores/user-store.js';
+import RoomStore from '../stores/room-store.js';
 import StoragePlanStore from '../stores/storage-plan-store.js';
 import { BATCH_TYPE, TASK_TYPE } from '../domain/constants.js';
 import permissions, { getAllUserPermissions } from '../domain/permissions.js';
 import { extractUserIdsFromDocsOrRevisions } from '../domain/data-extractors.js';
 
 class ClientDataMappingService {
-  static get inject() { return [UserStore, StoragePlanStore]; }
+  static get inject() { return [UserStore, StoragePlanStore, RoomStore]; }
 
-  constructor(userStore, storagePlanStore) {
+  constructor(userStore, storagePlanStore, roomStore) {
     this.userStore = userStore;
+    this.roomStore = roomStore;
     this.storagePlanStore = storagePlanStore;
   }
 
@@ -106,6 +108,25 @@ class ClientDataMappingService {
     return mappedBatches[0];
   }
 
+  async mapRoomInvitationWithBasicRoomData(invitation) {
+    const room = await this.roomStore.getRoomById(invitation.roomId);
+    const owner = await this.userStore.getUserById(room.owner);
+
+    return {
+      _id: invitation._id,
+      sentOn: invitation.sentOn.toISOString(),
+      expires: invitation.expires.toISOString(),
+      room: {
+        name: room.name,
+        access: room.access,
+        lessonsMode: room.lessonsMode,
+        owner: {
+          username: owner.username
+        }
+      }
+    };
+  }
+
   async mapRoom(room, user) {
     const mappedRoom = cloneDeep(room);
     const grantedPermissions = getAllUserPermissions(user);
@@ -124,7 +145,11 @@ class ClientDataMappingService {
       };
     });
 
-    return mappedRoom;
+    return {
+      ...mappedRoom,
+      createdOn: mappedRoom.createdOn.toISOString(),
+      updatedOn: mappedRoom.updatedOn.toISOString()
+    };
   }
 
   mapRoomInvitations(invitations) {

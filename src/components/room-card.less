@@ -10,6 +10,10 @@
   padding: @room-card-padding;
   border-radius: @edu-border-radius-base;
   background-color: @edu-background-color-base;
+
+  &.RoomCard--disabled {
+    background-color: lighten(@edu-background-color-base, 3%);
+  }
 }
 
 .RoomCard-name {
@@ -40,6 +44,10 @@
   &:last-of-type {
     padding-bottom: 0;
   }
+
+  &.RoomCard-infoRow--textBlock {
+    margin-top: 5px;
+  }
 }
 
 .RoomCard-infoLabel {
@@ -54,4 +62,14 @@
 
 .RoomCard-button {
   margin-top: auto;
+
+  &:disabled {
+    background-color: @edu-background-color-base;
+    color: lighten(@edu-text-color, 10%);
+
+    &:hover {
+      background-color: @edu-background-color-base;
+      color: lighten(@edu-text-color, 10%);
+    }
+  }
 }
