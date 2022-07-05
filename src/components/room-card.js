@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import Markdown from './markdown.js';
 import { Button, Divider } from 'antd';
 import routes from '../utils/routes.js';
@@ -44,7 +43,7 @@ function RoomCard({ room, invitation }) {
   };
 
   return (
-    <div className={classNames('RoomCard', { 'RoomCard--disabled': !!invitation })}>
+    <div className="RoomCard">
       <div className="RoomCard-name">{room.name}</div>
       {!!(userAsMember || invitation) && renderOwner()}
       <Divider />
@@ -91,7 +90,8 @@ function RoomCard({ room, invitation }) {
           <Markdown>{t('acceptInvitation', { date: formatDate(invitation.expires) })}</Markdown>
         </div>
       )}
-      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick} disabled={!!invitation}>{t('button')}</Button>
+      <Button className="RoomCard-button" type="primary" onClick={handleButtonClick}>{t('button')}</Button>
+      {!!invitation && <div className="RoomCard-disablingOverlay" />}
     </div>
   );
 }
