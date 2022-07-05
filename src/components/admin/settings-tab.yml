@@ -40,6 +40,12 @@ templateDocumentHeader:
 licenseHeader:
   en: License
   de: Lizenz
+dataMigrationHeader:
+  en: Data migration
+  de: Datenmigration
 lastExecution:
   en: Last execution
   de: Letzte Ausführung
+pluginsHelpTextsHeader:
+  en: Help texts for plugins
+  de: Hilfetexte für Plugins

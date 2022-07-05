@@ -58,6 +58,9 @@ moveUp:
 moveDown:
   en: Move down
   de: Nach unten verschieben
+openHelp:
+  en: Open help
+  de: Hilfe öffnen
 confirm:
   en: Confirm
   de: Bestätigen

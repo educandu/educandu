@@ -69,7 +69,9 @@
       "cdnUploadDirectoryCreationButton": "Create CDN upload directories",
       "templateDocumentHeader": "Template for new documents",
       "licenseHeader": "License",
-      "lastExecution": "Last execution"
+      "dataMigrationHeader": "Data migration",
+      "lastExecution": "Last execution",
+      "pluginsHelpTextsHeader": "Help texts for plugins"
     }
   },
   {
@@ -90,7 +92,9 @@
       "cdnUploadDirectoryCreationButton": "CDN-Upload-Verzeichnisse erstellen",
       "templateDocumentHeader": "Vorlage für neue Dokumente",
       "licenseHeader": "Lizenz",
-      "lastExecution": "Letzte Ausführung"
+      "dataMigrationHeader": "Datenmigration",
+      "lastExecution": "Letzte Ausführung",
+      "pluginsHelpTextsHeader": "Hilfetexte für Plugins"
     }
   },
   {
@@ -1971,6 +1975,7 @@
       "clone": "Clone",
       "moveUp": "Move up",
       "moveDown": "Move down",
+      "openHelp": "Open help",
       "confirm": "Confirm",
       "error": "Error",
       "date": "Date",
@@ -2109,6 +2114,7 @@
       "clone": "Klonen",
       "moveUp": "Nach oben verschieben",
       "moveDown": "Nach unten verschieben",
+      "openHelp": "Hilfe öffnen",
       "confirm": "Bestätigen",
       "error": "Fehler",
       "date": "Datum",

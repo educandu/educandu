@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Button, Tooltip } from 'antd';
+import Markdown from './markdown.js';
+import { Button, Modal, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from './locale-context.js';
 import { isMacOs } from '../ui/browser-helper.js';
 import DeletedSection from './deleted-section.js';
 import React, { Fragment, useState } from 'react';
-import { useService } from './container-context.js';
 import EditIcon from './icons/general/edit-icon.js';
+import { useService } from './container-context.js';
+import { useSettings } from './settings-context.js';
 import DeleteIcon from './icons/general/delete-icon.js';
 import MoveUpIcon from './icons/general/move-up-icon.js';
 import PreviewIcon from './icons/general/preview-icon.js';
@@ -16,6 +19,7 @@ import MoveDownIcon from './icons/general/move-down-icon.js';
 import NotSupportedSection from './not-supported-section.js';
 import DuplicateIcon from './icons/general/duplicate-icon.js';
 import HardDeleteIcon from './icons/general/hard-delete-icon.js';
+import InformationIcon from './icons/general/information-icon.js';
 import CopyToClipboardIcon from './icons/general/copy-to-clipboard-icon.js';
 import { CheckOutlined, CloseOutlined, DragOutlined } from '@ant-design/icons';
 
@@ -38,6 +42,8 @@ function SectionDisplay({
   onSectionHardDelete
 }) {
   const { t } = useTranslation();
+  const settings = useSettings();
+  const { uiLanguage } = useLocale();
   const pluginRegistry = useService(PluginRegistry);
 
   const isHardDeleteEnabled = canHardDelete && !section.deletedOn;
@@ -51,6 +57,7 @@ function SectionDisplay({
   });
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isHelpModelVisible, setIsHelpModalVisible] = useState(false);
 
   const macOSKeyMappings = { ctrl: 'cmd', alt: 'opt' };
 
@@ -126,6 +133,14 @@ function SectionDisplay({
       icon: <MoveDownIcon key="moveDown" />,
       handleAction: () => onSectionMoveDown(),
       isVisible: true,
+      isEnabled: true
+    },
+    {
+      type: 'openHelp',
+      tooltip: renderActionTooltip('openHelp'),
+      icon: <InformationIcon key="openHelp" />,
+      handleAction: () => setIsHelpModalVisible(true),
+      isVisible: !!settings.pluginsHelpTexts?.[section.type]?.[uiLanguage],
       isEnabled: true
     }
   ].filter(action => action.isVisible);
@@ -260,6 +275,15 @@ function SectionDisplay({
           </div>
         </Fragment>
       )}
+
+      <Modal
+        footer={null}
+        visible={isHelpModelVisible}
+        onCancel={() => setIsHelpModalVisible(false)}
+        destroyOnClose
+        >
+        <Markdown>{settings.pluginsHelpTexts?.[section.type]?.[uiLanguage]}</Markdown>
+      </Modal>
     </section>
   );
 }
