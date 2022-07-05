@@ -71,7 +71,7 @@
       "licenseHeader": "License",
       "dataMigrationHeader": "Data migration",
       "lastExecution": "Last execution",
-      "pluginsHelpTextsHeader": "Plugins help texts"
+      "pluginsHelpTextsHeader": "Help texts for plugins"
     }
   },
   {
@@ -94,7 +94,7 @@
       "licenseHeader": "Lizenz",
       "dataMigrationHeader": "Datenmigration",
       "lastExecution": "Letzte Ausführung",
-      "pluginsHelpTextsHeader": "Plugins-Hilfetexte"
+      "pluginsHelpTextsHeader": "Hilfetexte für Plugins"
     }
   },
   {
