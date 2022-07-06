@@ -1,11 +1,10 @@
 import React from 'react';
-import { Form, Input, Switch } from 'antd';
+import { Form, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import MarkdownInput from '../../components/markdown-input.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-
-const { TextArea } = Input;
+import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 
 function AbcNotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('abcNotation');
@@ -42,7 +41,7 @@ function AbcNotationEditor({ content, onContentChanged }) {
     <div>
       <Form layout="horizontal">
         <Form.Item label={t('abcCode')} {...formItemLayout}>
-          <TextArea value={abcCode} onChange={handleCurrentAbcCodeChanged} autoSize={{ minRows: 5 }} />
+          <NeverScrollingTextArea value={abcCode} onChange={handleCurrentAbcCodeChanged} minRows={5} />
         </Form.Item>
         <Form.Item label={t('midiSound')} {...formItemLayout}>
           <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />

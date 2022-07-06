@@ -8,43 +8,65 @@ const { TextArea } = Input;
 
 const EMPTY_OBJECT = {};
 
-const handleComponentClick = event => {
-  if (event.target === event.currentTarget) {
-    const textarea = event.target.querySelector('textarea');
-    if (textarea) {
-      textarea.focus();
-      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-    }
+const selectSiblingTextarea = (element, selectStart) => {
+  const textarea = element.parentNode.querySelector('textarea');
+  if (textarea) {
+    const position = selectStart ? 0 : textarea.value.length;
+    textarea.focus();
+    textarea.setSelectionRange(position, position);
   }
 };
 
-function NeverScrollingTextArea({ disabled, minRows, ...textAreaProps }) {
+const handleTopContainerClick = event => {
+  return (event.target === event.currentTarget) && selectSiblingTextarea(event.target, true);
+};
+
+const handleBottomContainerClick = event => {
+  return (event.target === event.currentTarget) && selectSiblingTextarea(event.target, false);
+};
+
+function NeverScrollingTextArea({ className, disabled, embeddable, minRows, verticalAlign, ...textAreaProps }) {
   const context = useContext(FormItemInputContext);
 
-  const componentClasses = classNames({
-    'NeverScrollingTextArea': true,
-    'is-disabled': disabled,
-    'has-error': context.status === 'error',
-    'has-warning': context.status === 'warning'
-  });
+  const componentClasses = classNames(
+    'NeverScrollingTextArea',
+    {
+      'NeverScrollingTextArea--topAligned': verticalAlign === 'top',
+      'NeverScrollingTextArea--centerAligned': verticalAlign === 'center',
+      'NeverScrollingTextArea--bottomAligned': verticalAlign === 'bottom',
+      'NeverScrollingTextArea--embeddable': embeddable,
+      'is-disabled': disabled,
+      'has-error': context.status === 'error',
+      'has-warning': context.status === 'warning'
+    },
+    className
+  );
 
   return (
-    <div className={componentClasses} onClick={disabled ? null : handleComponentClick}>
+    <div className={componentClasses}>
+      <div onClick={disabled ? null : handleTopContainerClick} />
       <FormItemInputContext.Provider value={EMPTY_OBJECT}>
         <TextArea {...textAreaProps} autoSize={{ minRows }} disabled={disabled} />
       </FormItemInputContext.Provider>
+      <div onClick={disabled ? null : handleBottomContainerClick} />
     </div>
   );
 }
 
 NeverScrollingTextArea.propTypes = {
+  className: PropTypes.string,
   disabled: PropTypes.bool,
-  minRows: PropTypes.number
+  embeddable: PropTypes.bool,
+  minRows: PropTypes.number,
+  verticalAlign: PropTypes.oneOf(['top', 'center', 'bottom'])
 };
 
 NeverScrollingTextArea.defaultProps = {
+  className: null,
   disabled: false,
-  minRows: 3
+  embeddable: false,
+  minRows: 3,
+  verticalAlign: 'top'
 };
 
 export default NeverScrollingTextArea;

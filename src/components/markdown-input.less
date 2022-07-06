@@ -32,25 +32,17 @@
 
 .MarkdownInput-textareaContainer {
   position: relative;
-
-  &.MarkdownInput-textareaContainer--noAutoSize {
-    height: 100%;
-    min-height: 6em;
-  }
+  display: grid;
 }
 
 .MarkdownInput-blockHelpContainer {
   position: absolute;
   bottom: 10px;
-  right: 20px;
-}
+  right: 10px;
 
-.MarkdownInput-textarea {
-  resize: none;
-
-  &.MarkdownInput-textarea--noAutoSize {
-    height: 100%;
-    min-height: 6em;
+  &.MarkdownInput-blockHelpContainer--embeddable {
+    bottom: 3px;
+    right: 3px;
   }
 }
 

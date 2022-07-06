@@ -15,9 +15,9 @@ import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
+import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
-const { TextArea } = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -304,11 +304,11 @@ function EarTrainingEditor({ content, onContentChanged }) {
               <Fragment>
                 <Divider plain>{t('testQuestion')}</Divider>
                 <FormItem label={t('abcCode')} {...formItemLayout}>
-                  <TextArea rows={6} value={test.questionAbcCode} onChange={event => handleQuestionAbcCodeChanged(event, index)} />
+                  <NeverScrollingTextArea minRows={6} value={test.questionAbcCode} onChange={event => handleQuestionAbcCodeChanged(event, index)} />
                 </FormItem>
                 <Divider plain>{t('testAnswer')}</Divider>
                 <FormItem label={t('abcCode')} {...formItemLayout}>
-                  <TextArea rows={6} value={test.answerAbcCode} onChange={event => handleAnswerAbcCodeChanged(event, index)} />
+                  <NeverScrollingTextArea minRows={6} value={test.answerAbcCode} onChange={event => handleAnswerAbcCodeChanged(event, index)} />
                 </FormItem>
               </Fragment>
             )}
