@@ -1,13 +1,17 @@
 import React from 'react';
 import { Slider } from 'antd';
 import PropTypes from 'prop-types';
+import { range } from '../utils/array-utils.js';
 
-const possibleValues = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+const possibleValues = range({ from: 0, to: 100, step: 5 });
 const maxValue = possibleValues[possibleValues.length - 1];
+
 const marks = possibleValues.reduce((all, val) => {
-  const node = <span>{`${val}%`}</span>;
+  const markLabel = val % 20 === 0 ? `${val}%` : '';
+  const node = <span>{markLabel}</span>;
   return { ...all, [val]: node };
 }, {});
+
 const tipFormatter = val => `${val}%`;
 
 function ObjectWidthSlider({ value, onChange }) {
