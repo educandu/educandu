@@ -1,0 +1,42 @@
+.NeverScrollingTextArea {
+  .m-control-border-base;
+  background-color: @edu-component-background;
+  cursor: text;
+
+  textarea {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  &.is-disabled {
+    .m-control-border-disabled;
+    cursor: not-allowed;
+  }
+
+  &:not(.is-disabled) {
+    &:hover {
+      .m-control-border-hover;
+    }
+
+    &:focus-within {
+      .m-control-border-focus;
+    }
+
+    &.has-warning {
+      .m-control-border-warning;
+
+      &:focus-within {
+        .m-control-border-warning-focus;
+      }
+    }
+
+    &.has-error {
+      .m-control-border-error;
+
+      &:focus-within {
+        .m-control-border-error-focus;
+      }
+    }
+  }
+}

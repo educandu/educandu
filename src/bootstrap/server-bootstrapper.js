@@ -8,6 +8,7 @@ import resources from '../resources/resources.json';
 import PageResolver from '../domain/page-resolver.js';
 import PluginRegistry from '../plugins/plugin-registry.js';
 import ResourceManager from '../resources/resource-manager.js';
+import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -61,6 +62,9 @@ export async function createContainer(configValues = {}) {
   logger.info('Loading plugin editors');
   const pluginRegistry = container.get(PluginRegistry);
   await pluginRegistry.ensureAllEditorsAreLoaded();
+
+  logger.info('Preload modules');
+  await ensurePreResolvedModulesAreLoaded();
 
   return container;
 }

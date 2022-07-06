@@ -42,7 +42,7 @@
 // // Background color for `<body>`
 // @body-background: #fff;
 // // Base background color for most components
-// @component-background: #fff;
+@component-background: @edu-component-background;
 // // Popover background color
 // @popover-background: @component-background;
 // @popover-customize-border-color: @border-color-split;
@@ -136,10 +136,10 @@
 // @border-style-base: solid; // style of a components border
 
 // // Outline
-// @outline-blur-size: 0;
-// @outline-width: 2px;
-// @outline-color: @primary-color;
-// @outline-fade: 20%;
+@outline-blur-size: 0;
+@outline-width: 2px;
+@outline-color: @primary-color;
+@outline-fade: 20%;
 
 @background-color-light: @edu-background-color-light;
 @background-color-base: @edu-background-color-base;
@@ -348,9 +348,9 @@
 // @zindex-image: 1080;
 
 // // Animation
-// @animation-duration-slow: 0.3s; // Modal
-// @animation-duration-base: 0.2s;
-// @animation-duration-fast: 0.1s; // Tooltip
+@animation-duration-slow: @edu-animation-duration-slow; // Modal
+@animation-duration-base: @edu-animation-duration-base;
+@animation-duration-fast: @edu-animation-duration-fast; // Tooltip
 
 // //CollapsePanel
 // @collapse-panel-border-radius: @border-radius-base;
@@ -402,7 +402,7 @@
 // @input-placeholder-color: hsv(0, 0, 75%);
 // @input-color: @text-color;
 // @input-icon-color: @input-color;
-// @input-border-color: @border-color-base;
+@input-border-color: @edu-border-color-base;
 // @input-bg: @component-background;
 // @input-number-hover-border-color: @input-hover-border-color;
 // @input-number-handler-active-bg: #f4f4f4;
@@ -410,7 +410,7 @@
 // @input-number-handler-bg: @component-background;
 // @input-number-handler-border-color: @border-color-base;
 // @input-addon-bg: @background-color-light;
-// @input-hover-border-color: @primary-5;
+@input-hover-border-color: @edu-border-color-active;
 // @input-disabled-bg: @disabled-bg;
 // @input-outline-offset: 0 0;
 // @input-icon-hover-color: fade(@black, 85%);
