@@ -7,16 +7,15 @@ import { useDialogs } from './dialog-context.js';
 import UsernameFormItem from './username-form-item.js';
 import { useSetUser, useUser } from './user-context.js';
 import { SAVE_USER_RESULT } from '../domain/constants.js';
+import React, { useEffect, useRef, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { formItemLayoutShape, tailFormItemLayoutShape } from '../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
 const FormItem = Form.Item;
 
-function AccountTab({ formItemLayout, tailFormItemLayout }) {
+function AccountTab() {
   const user = useUser();
   const setUser = useSetUser();
   const dialogs = useDialogs();
@@ -73,25 +72,28 @@ function AccountTab({ formItemLayout, tailFormItemLayout }) {
   };
 
   return (
-    <Fragment>
-      <div className="DashboardPage-tabInfo">{t('info')}</div>
-      <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError>
-        <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} initialValue={user.username} {...formItemLayout} />
-        <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} {...formItemLayout} />
-        <FormItem {...tailFormItemLayout}>
-          <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>
-        </FormItem>
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">{t('common:save')}</Button>
-        </FormItem>
-      </Form>
-    </Fragment>
+    <div className="AccountTab">
+      <div className="AccountTab-tabInfo">{t('info')}</div>
+      <div className="AccountTab-headline">{t('credentialsHeadline')}</div>
+      <section className="AccountTab-section">
+        <Form ref={formRef} onFinish={handleAccountFinish} scrollToFirstError layout="vertical">
+          <UsernameFormItem name="username" usernamesInUse={state.forbiddenUsernames} initialValue={user.username} />
+          <EmailFormItem name="email" emailsInUse={state.forbiddenEmails} initialValue={user.email} />
+          <FormItem>
+            <a onClick={handleResetPasswordClick}>{t('resetPassword')}</a>
+          </FormItem>
+          <FormItem>
+            <Button type="primary" htmlType="submit">{t('common:save')}</Button>
+          </FormItem>
+        </Form>
+      </section>
+      <div className="AccountTab-headline">{t('deleteAccountHeadline')}</div>
+      <section className="AccountTab-section AccountTab-section--wide">
+        <div>{t('deleteAccountDetails')}</div>
+        <Button className="AccountTab-deleteAccountButton">{t('deleteAccount')}</Button>
+      </section>
+    </div>
   );
 }
-
-AccountTab.propTypes = {
-  formItemLayout: formItemLayoutShape.isRequired,
-  tailFormItemLayout: tailFormItemLayoutShape.isRequired
-};
 
 export default AccountTab;

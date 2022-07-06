@@ -32,30 +32,6 @@ function Dashboard({ initialState, PageTemplate }) {
   const { rooms, invitations, activities } = initialState;
   const gravatarUrl = gravatar.url(user.email, { s: AVATAR_SIZE, d: 'mp' });
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 }
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 }
-    }
-  };
-
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0
-      },
-      sm: {
-        span: 16,
-        offset: 8
-      }
-    }
-  };
-
   const personName = [user.profile?.firstName, user.profile?.lastName].filter(name => name).join(' ');
   const headerTitle = personName || user.username;
   const headerSubtitle = personName ? `${user.username} | ${user.email}` : user.email;
@@ -90,10 +66,10 @@ function Dashboard({ initialState, PageTemplate }) {
               <RoomsTab rooms={rooms} invitations={invitations} />
             </TabPane>)}
           <TabPane className="Tabs-tabPane" tab={t('profileTabTitle')} key="profile">
-            <ProfileTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
+            <ProfileTab />
           </TabPane>
           <TabPane className="Tabs-tabPane" tab={t('accountTabTitle')} key="account">
-            <AccountTab formItemLayout={formItemLayout} tailFormItemLayout={tailFormItemLayout} />
+            <AccountTab />
           </TabPane>
           {!!(user.storage.plan || user.storage.usedBytes) && (
             <TabPane className="Tabs-tabPane" tab={t('common:storage')} key="storage">

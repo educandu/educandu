@@ -2,7 +2,7 @@ import by from 'thenby';
 import Alert from './alert.js';
 import gravatar from 'gravatar';
 import memoizee from 'memoizee';
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import Logger from '../common/logger.js';
 import localeCompare from 'locale-compare';
 import errorHelper from '../ui/error-helper.js';
@@ -15,7 +15,6 @@ import { useSessionAwareApiClient } from '../ui/api-helper.js';
 import CountryNameProvider from '../data/country-name-provider.js';
 import { Form, Input, Avatar, Button, Select, message } from 'antd';
 import CountryFlagAndName from './localization/country-flag-and-name.js';
-import { formItemLayoutShape, tailFormItemLayoutShape } from '../ui/default-prop-types.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -30,7 +29,7 @@ const createCountryNames = memoizee((countryNameProvider, uiLanguage) => {
     .sort(by(x => x.name, { cmp: localeCompare(uiLanguage) }));
 }, { max: 1 });
 
-function ProfileTab({ formItemLayout, tailFormItemLayout }) {
+function ProfileTab() {
   const user = useUser();
   const setUser = useSetUser();
   const { uiLanguage } = useLocale();
@@ -67,7 +66,7 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
   };
 
   const handleShowAvatarDescriptionClick = () => {
-    setShowAvatarDescription(true);
+    setShowAvatarDescription(previousValue => !previousValue);
   };
 
   const handleAvatarDescriptionAfterClose = () => {
@@ -85,14 +84,13 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
   );
 
   return (
-    <Fragment>
-      <div className="DashboardPage-tabInfo">{t('info')}</div>
-      <Form onFinish={handleProfileFinish} scrollToFirstError>
-        <FormItem {...tailFormItemLayout}>
+    <div className="ProfileTab">
+      <div className="ProfileTab-tabInfo">{t('info')}</div>
+      <div className="ProfileTab-headline">{t('personalInfoHeadline')}</div>
+      <section className="ProfileTab-section">
+        <div className="ProfileTab-avatar">
           <Avatar className="Avatar" shape="circle" size={AVATAR_SIZE} src={gravatarUrl} alt={user.username} />
-          <br />
           <a onClick={handleShowAvatarDescriptionClick}>{t('changePicture')}</a>
-          <br />
           {showAvatarDescription && (
           <Alert
             message={t('howToChangePicture')}
@@ -101,50 +99,47 @@ function ProfileTab({ formItemLayout, tailFormItemLayout }) {
             afterClose={handleAvatarDescriptionAfterClose}
             />
           )}
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('firstName')} name="firstName" initialValue={profile.firstName || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('lastName')} name="lastName" initialValue={profile.lastName || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('street')} name="street" initialValue={profile.street || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('streetSupplement')} name="streetSupplement" initialValue={profile.streetSupplement || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('postalCode')} name="postalCode" initialValue={profile.postalCode || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('city')} name="city" initialValue={profile.city || ''}>
-          <Input type="text" />
-        </FormItem>
-        <FormItem {...formItemLayout} label={t('country')} name="country" initialValue={profile.country || ''}>
-          <Select
-            optionFilterProp="title"
-            showSearch
-            allowClear
-            autoComplete="none"
-            >
-            {createCountryNames(countryNameProvider, uiLanguage).map(cn => (
-              <Option key={cn.key} value={cn.key} title={cn.name}>
-                <CountryFlagAndName code={cn.key} name={cn.name} />
-              </Option>
-            ))}
-          </Select>
-        </FormItem>
-        <FormItem {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">{t('common:save')}</Button>
-        </FormItem>
-      </Form>
-    </Fragment>
+        </div>
+        <Form onFinish={handleProfileFinish} scrollToFirstError layout="vertical">
+          <FormItem label={t('firstName')} name="firstName" initialValue={profile.firstName || ''}>
+            <Input type="text" />
+          </FormItem>
+          <FormItem label={t('lastName')} name="lastName" initialValue={profile.lastName || ''}>
+            <Input type="text" />
+          </FormItem>
+          <FormItem label={t('street')} name="street" initialValue={profile.street || ''}>
+            <Input type="text" />
+          </FormItem>
+          <FormItem label={t('streetSupplement')} name="streetSupplement" initialValue={profile.streetSupplement || ''}>
+            <Input type="text" />
+          </FormItem>
+          <FormItem label={t('postalCode')} name="postalCode" initialValue={profile.postalCode || ''}>
+            <Input type="text" />
+          </FormItem>
+          <FormItem label={t('city')} name="city" initialValue={profile.city || ''}>
+            <Input type="text" />
+          </FormItem>
+          <FormItem label={t('country')} name="country" initialValue={profile.country || ''}>
+            <Select
+              optionFilterProp="title"
+              showSearch
+              allowClear
+              autoComplete="none"
+              >
+              {createCountryNames(countryNameProvider, uiLanguage).map(cn => (
+                <Option key={cn.key} value={cn.key} title={cn.name}>
+                  <CountryFlagAndName code={cn.key} name={cn.name} />
+                </Option>
+              ))}
+            </Select>
+          </FormItem>
+          <FormItem>
+            <Button type="primary" htmlType="submit">{t('common:save')}</Button>
+          </FormItem>
+        </Form>
+      </section>
+    </div>
   );
 }
-
-ProfileTab.propTypes = {
-  formItemLayout: formItemLayoutShape.isRequired,
-  tailFormItemLayout: tailFormItemLayoutShape.isRequired
-};
 
 export default ProfileTab;

@@ -1,6 +1,12 @@
 info:
   en: Here you can change your account information as well as close your account.
   de: Hier können Sie Ihre Konto-Informationen bearbeiten sowie Ihr Konto schließen.
+credentialsHeadline:
+  en: Credentials
+  de: Zugangsdaten
+deleteAccountHeadline:
+  en: Delete account
+  de: Konto löschen
 resetPassword:
   en: Reset password
   de: Kennwort wiederherstellen
@@ -10,3 +16,9 @@ updateSuccessMessage:
 passwordResetEmailSent:
   en: The password reset link has been sent to {email}
   de: Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet
+deleteAccountDetails:
+  en: All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.
+  de: All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.
+deleteAccount:
+  en: Delete account
+  de: Konto löschen

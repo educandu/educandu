@@ -4,9 +4,13 @@
     "language": "en",
     "resources": {
       "info": "Here you can change your account information as well as close your account.",
+      "credentialsHeadline": "Credentials",
+      "deleteAccountHeadline": "Delete account",
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
-      "passwordResetEmailSent": "The password reset link has been sent to {email}"
+      "passwordResetEmailSent": "The password reset link has been sent to {email}",
+      "deleteAccountDetails": "All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.",
+      "deleteAccount": "Delete account"
     }
   },
   {
@@ -14,9 +18,13 @@
     "language": "de",
     "resources": {
       "info": "Hier können Sie Ihre Konto-Informationen bearbeiten sowie Ihr Konto schließen.",
+      "credentialsHeadline": "Zugangsdaten",
+      "deleteAccountHeadline": "Konto löschen",
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
-      "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet"
+      "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
+      "deleteAccountDetails": "All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.",
+      "deleteAccount": "Konto löschen"
     }
   },
   {
@@ -1160,6 +1168,7 @@
     "language": "en",
     "resources": {
       "info": "Here you can provide additional information about yourself. This information is currently not publicly accessible.",
+      "personalInfoHeadline": "Personal info",
       "changePicture": "Change profile picture",
       "howToChangePicture": "How can I change my profile picture?",
       "firstName": "First name(s)",
@@ -1178,6 +1187,7 @@
     "language": "de",
     "resources": {
       "info": "Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind zur Zeit nicht öffentlich sichtbar.",
+      "personalInfoHeadline": "Persönlichen Daten",
       "changePicture": "Profilbild ändern",
       "howToChangePicture": "Wie ändere ich mein Profilbild?",
       "firstName": "Vorname(n)",
