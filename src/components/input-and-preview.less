@@ -1,0 +1,19 @@
+.InputAndPreview {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 1fr 1fr;
+
+  @media @edu-media-phone {
+    grid-template-columns: 1fr;
+  }
+}
+
+.InputAndPreview--input {
+  display: grid;
+}
+
+.InputAndPreview--preview {
+  .m-control-border-base;
+  padding: 4px 11px;
+  display: grid;
+}
