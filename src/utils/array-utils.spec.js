@@ -7,7 +7,8 @@ import {
   shuffleItems,
   replaceItemAt,
   replaceItem,
-  splitIntoChunks
+  splitIntoChunks,
+  range
 } from './array-utils.js';
 
 describe('array-utils', () => {
@@ -193,4 +194,35 @@ describe('array-utils', () => {
     });
   });
 
+  describe('range', () => {
+    const testCases = [
+      { from: 0, to: 0, expectedResult: [0] },
+      { from: 0, to: 0, step: 0, expectedResult: [0] },
+      { from: 3, to: 1, step: 1, expectedResult: [3, 2, 1] },
+      { from: 3, to: 1, step: -1, expectedResult: [3, 2, 1] },
+      { from: -3, to: 1, step: 1, expectedResult: [-3, -2, -1, 0, 1] },
+      { from: -3, to: 1, step: -1, expectedResult: [-3, -2, -1, 0, 1] },
+      { from: -3, to: -1, step: 1, expectedResult: [-3, -2, -1] },
+      { from: -3, to: -1, step: -1, expectedResult: [-3, -2, -1] },
+      { from: 3, to: -1, step: 1, expectedResult: [3, 2, 1, 0, -1] },
+      { from: 3, to: -1, step: -1, expectedResult: [3, 2, 1, 0, -1] },
+      { from: 1, to: 3, step: 1, expectedResult: [1, 2, 3] },
+      { from: 1, to: 3, step: -1, expectedResult: [1, 2, 3] },
+      { from: -1, to: 3, step: 1, expectedResult: [-1, 0, 1, 2, 3] },
+      { from: -1, to: 3, step: -1, expectedResult: [-1, 0, 1, 2, 3] },
+      { from: -1, to: -3, step: 1, expectedResult: [-1, -2, -3] },
+      { from: -1, to: -3, step: -1, expectedResult: [-1, -2, -3] },
+      { from: 1, to: -3, step: 1, expectedResult: [1, 0, -1, -2, -3] },
+      { from: 1, to: -3, step: -1, expectedResult: [1, 0, -1, -2, -3] },
+      { from: 0, to: 20, step: 5, expectedResult: [0, 5, 10, 15, 20] },
+      { from: 0, to: 20, step: -5, expectedResult: [0, 5, 10, 15, 20] }
+    ];
+
+    testCases.forEach(({ from, to, step, expectedResult }) => {
+      it(`returns [${expectedResult}] when { from: ${from}, to: ${to}, step: ${step} }`, () => {
+        const result = range({ from, to, step });
+        expect(result).toEqual(expectedResult);
+      });
+    });
+  });
 });

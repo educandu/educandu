@@ -99,3 +99,10 @@ export function splitIntoChunks(items, maxLength) {
 export function ensureIsArray(items) {
   return Array.isArray(items) ? items : [items];
 }
+
+export function range({ from, to, step }) {
+  let actualStep = Math.abs(step || 1);
+  actualStep = from <= to ? actualStep : -actualStep;
+
+  return [...Array(Math.floor((to - from) / actualStep) + 1)].map((_, i) => from + (i * actualStep));
+}
