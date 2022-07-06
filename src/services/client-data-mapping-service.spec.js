@@ -1,8 +1,9 @@
 import sinon from 'sinon';
+import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import ClientDataMappingService from './client-data-mapping-service.js';
 import { BATCH_TYPE, FAVORITE_TYPE, ROLE, ROOM_ACCESS_LEVEL, TASK_TYPE } from '../domain/constants.js';
-import { destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
+import { createTestRoom, destroyTestEnvironment, pruneTestEnvironment, setupTestEnvironment, setupTestUser } from '../test-helper.js';
 
 describe('client-data-mapping-service', () => {
   const sandbox = sinon.createSandbox();
@@ -322,6 +323,8 @@ describe('client-data-mapping-service', () => {
       _id: 'roomId',
       name: 'my room',
       owner: 'owner',
+      createdOn: new Date(),
+      updatedOn: new Date(),
       members: [
         {
           userId: 'member1',
@@ -352,6 +355,8 @@ describe('client-data-mapping-service', () => {
     it('should return the mapped result', () => {
       expect(result).toEqual({
         ...room,
+        createdOn: room.createdOn.toISOString(),
+        updatedOn: room.createdOn.toISOString(),
         owner: {
           username: owner.username,
           email: owner.email,
@@ -390,6 +395,34 @@ describe('client-data-mapping-service', () => {
           expires: invitations[0].expires.toISOString()
         }
       ]);
+    });
+  });
+
+  describe('mapRoomInvitationWithBasicRoomData', () => {
+    let room;
+    let invitation;
+
+    beforeEach(async () => {
+      room = await createTestRoom(container, { owner: user1._id });
+      invitation = { _id: uniqueId.create(), roomId: room._id, sentOn: new Date(), expires: new Date() };
+
+      result = await sut.mapRoomInvitationWithBasicRoomData(invitation);
+    });
+
+    it('shoult map room data into the basic invitation data', () => {
+      expect(result).toEqual({
+        _id: invitation._id,
+        sentOn: invitation.sentOn.toISOString(),
+        expires: invitation.expires.toISOString(),
+        room: {
+          name: room.name,
+          access: room.access,
+          lessonsMode: room.lessonsMode,
+          owner: {
+            username: user1.username
+          }
+        }
+      });
     });
   });
 

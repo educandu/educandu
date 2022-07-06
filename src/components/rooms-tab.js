@@ -8,10 +8,9 @@ import { useUser } from './user-context.js';
 import { useTranslation } from 'react-i18next';
 import { PlusOutlined } from '@ant-design/icons';
 import permissions from '../domain/permissions.js';
-import { roomShape } from '../ui/default-prop-types.js';
 import RoomCreationModal from './room-creation-modal.js';
 
-function RoomsTab({ rooms }) {
+function RoomsTab({ rooms, invitations }) {
   const user = useUser();
   const { t } = useTranslation('roomsTab');
 
@@ -46,7 +45,8 @@ function RoomsTab({ rooms }) {
       <div className="RoomsTab-roomsGroupHeadline">{t('memberRoomsHeadline')}</div>
       <section className="RoomsTab-roomsGroup">
         {memberOfRooms.map(room => <RoomCard key={room._id} room={room} />)}
-        {!memberOfRooms.length && <div className="RoomsTab-noRoomsInGroup">{t('noMemberRooms')}</div>}
+        {invitations.map(invitation => <RoomCard key={invitation._id} room={invitation.room} invitation={invitation} />)}
+        {!memberOfRooms.length && !invitations.length && <div className="RoomsTab-noRoomsInGroup">{t('noMemberRooms')}</div>}
       </section>
 
       <RoomCreationModal isVisible={isRoomCreationModalVisible} onClose={handleRoomCreationModalClose} />
@@ -55,11 +55,13 @@ function RoomsTab({ rooms }) {
 }
 
 RoomsTab.defaultProps = {
+  invitations: [],
   rooms: []
 };
 
 RoomsTab.propTypes = {
-  rooms: PropTypes.arrayOf(roomShape)
+  invitations: PropTypes.arrayOf(PropTypes.object),
+  rooms: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default RoomsTab;

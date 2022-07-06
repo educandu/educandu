@@ -7,6 +7,7 @@ import {
   CDN_UPLOAD_DIRECTORY_CREATION_TASK_TYPE,
   DOCUMENT_IMPORT_TYPE,
   ROOM_ACCESS_LEVEL,
+  ROOM_LESSONS_MODE,
   STORAGE_LOCATION_TYPE,
   TASK_TYPE,
   USER_ACTIVITY_TYPE
@@ -377,6 +378,7 @@ export const roomMetadataProps = {
   name: PropTypes.string.isRequired,
   slug: PropTypes.string,
   access: PropTypes.oneOf(Object.values(ROOM_ACCESS_LEVEL)).isRequired,
+  lessonsMode: PropTypes.oneOf(Object.values(ROOM_LESSONS_MODE)).isRequired,
   description: PropTypes.string
 };
 
@@ -389,10 +391,17 @@ export const roomShape = PropTypes.shape({
   members: PropTypes.arrayOf(roomMemberShape)
 });
 
-export const invitationShape = PropTypes.shape({
-  email: PropTypes.string.isRequired,
+export const invitationBasicProps = {
+  _id: PropTypes.string.isRequired,
   sentOn: PropTypes.string.isRequired,
   expires: PropTypes.string.isRequired
+};
+
+export const invitationBasicShape = PropTypes.shape(invitationBasicProps);
+
+export const invitationShape = PropTypes.shape({
+  ...invitationBasicProps,
+  email: PropTypes.string.isRequired
 });
 
 export const lessonMetadataProps = {

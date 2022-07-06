@@ -20,15 +20,18 @@ class DashboardController {
   async handleGetDashboardPage(req, res) {
     const { user } = req;
     let rooms = [];
+    let invitations = [];
     if (this.serverConfig.areRoomsEnabled) {
       rooms = await this.roomService.getRoomsOwnedOrJoinedByUser(user._id);
+      invitations = await this.roomService.getRoomInvitationsByEmail(user.email);
     }
     const activities = await this.dashboardService.getUserActivities({ userId: user._id, limit: 10 });
 
     const mappedRooms = await Promise.all(rooms.map(room => this.clientDataMappingService.mapRoom(room, user)));
     const mappedActivities = this.clientDataMappingService.mapUserActivities(activities);
+    const mappedInvitations = await Promise.all(invitations.map(invitation => this.clientDataMappingService.mapRoomInvitationWithBasicRoomData(invitation)));
 
-    const initialState = { rooms: mappedRooms, activities: mappedActivities };
+    const initialState = { rooms: mappedRooms, invitations: mappedInvitations, activities: mappedActivities };
 
     return this.pageRenderer.sendPage(req, res, PAGE_NAME.dashboard, initialState);
   }

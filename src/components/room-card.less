@@ -3,6 +3,7 @@
 @room-card-header-width: @room-card-width - 3 * @room-card-padding;
 
 .RoomCard {
+  position: relative;
   width: 250px;
   height: 300px;
   display: flex;
@@ -10,6 +11,17 @@
   padding: @room-card-padding;
   border-radius: @edu-border-radius-base;
   background-color: @edu-background-color-base;
+}
+
+.RoomCard-disablingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 50%;
+  border-radius: @edu-border-radius-base;
+  background-color: @edu-white;
 }
 
 .RoomCard-name {
@@ -39,6 +51,10 @@
 
   &:last-of-type {
     padding-bottom: 0;
+  }
+
+  &.RoomCard-infoRow--textBlock {
+    margin-top: 5px;
   }
 }
 

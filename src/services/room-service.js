@@ -54,6 +54,10 @@ export default class RoomService {
     return this.roomStore.getRoomsOwnedOrJoinedByUser(userId);
   }
 
+  getRoomInvitationsByEmail(email) {
+    return this.roomInvitationStore.getRoomInvitationsByEmail(email);
+  }
+
   async isRoomOwnerOrMember(roomId, userId) {
     const room = await this.roomStore.getRoomsByIdOwnedOrJoinedByUser({ roomId, userId });
     return !!room;
