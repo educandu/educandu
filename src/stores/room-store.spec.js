@@ -1,4 +1,5 @@
 import RoomStore from './room-store.js';
+import uniqueId from '../utils/unique-id.js';
 import { ROOM_ACCESS_LEVEL } from '../domain/constants.js';
 import { destroyTestEnvironment, setupTestEnvironment, pruneTestEnvironment, setupTestUser, createTestRoom } from '../test-helper.js';
 
@@ -108,6 +109,68 @@ describe('room-store', () => {
     it('should not find rooms owned by other users', async () => {
       const room = await sut.getRoomByIdAndOwnerId({ roomId: otherRoom._id, ownerId: myUser._id });
       expect(room).toBeNull();
+    });
+  });
+
+  describe('deleteRoomsMemberById', () => {
+    let ownedRoom;
+    let memberOfRoom;
+
+    beforeEach(async () => {
+      const roomId1 = uniqueId.create();
+      const roomId2 = uniqueId.create();
+
+      await Promise.all([
+        createTestRoom(
+          container,
+          {
+            _id: roomId1,
+            name: 'owned room',
+            owner: myUser._id,
+            members: [
+              {
+                userId: otherUser._id,
+                joinedOn: new Date()
+              },
+              {
+                userId: uniqueId.create(),
+                joinedOn: new Date()
+              }
+            ]
+          }
+        ),
+        createTestRoom(
+          container,
+          {
+            _id: roomId2,
+            name: 'member of room',
+            owner: otherUser._id,
+            members: [
+              {
+                userId: myUser._id,
+                joinedOn: new Date()
+              },
+              {
+                userId: uniqueId.create(),
+                joinedOn: new Date()
+              }
+            ]
+          }
+        )
+      ]);
+
+      await sut.deleteRoomsMemberById(myUser._id);
+      ownedRoom = await sut.getRoomById(roomId1);
+      memberOfRoom = await sut.getRoomById(roomId2);
+    });
+
+    it('should not change the members of the owned room', () => {
+      expect(ownedRoom.members).toHaveLength(2);
+    });
+
+    it('should remove the user from the room he is a member of', () => {
+      expect(memberOfRoom.members).toHaveLength(1);
+      expect(memberOfRoom.members[0].userId).not.toEqual(myUser._id);
     });
   });
 });

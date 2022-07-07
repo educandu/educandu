@@ -5,12 +5,11 @@
     "resources": {
       "info": "Here you can change your account information as well as close your account.",
       "credentialsHeadline": "Credentials",
-      "deleteAccountHeadline": "Delete account",
       "resetPassword": "Reset password",
       "updateSuccessMessage": "Your account was updated successfully.",
       "passwordResetEmailSent": "The password reset link has been sent to {email}",
-      "deleteAccountDetails": "All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.",
-      "deleteAccount": "Delete account"
+      "closeAccountDetails": "All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.",
+      "closeAccount": "Close account"
     }
   },
   {
@@ -19,12 +18,11 @@
     "resources": {
       "info": "Hier können Sie Ihre Konto-Informationen bearbeiten sowie Ihr Konto schließen.",
       "credentialsHeadline": "Zugangsdaten",
-      "deleteAccountHeadline": "Konto löschen",
       "resetPassword": "Kennwort wiederherstellen",
       "updateSuccessMessage": "Ihr Konto wurde erfolgreich aktualisiert.",
       "passwordResetEmailSent": "Der Link zum Zurücksetzen des Kennworts wurde an {email} gesendet",
-      "deleteAccountDetails": "All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.",
-      "deleteAccount": "Konto löschen"
+      "closeAccountDetails": "All documents, public rooms and publicly uploaded resources will remain on the website and your username will be displayed as the collaborator. All other data (personal information, private rooms and privately uploaded resources) will be removed. You will no longer be able to log into the platform.",
+      "closeAccount": "Konto schließen"
     }
   },
   {
@@ -168,7 +166,8 @@
       "sessionExpiredDescription": "Your session has expired because you have been inactive for some time. Please login in order to continue this process.",
       "deleteItemConfirmation": "Do you really want to delete \"{name}\"?",
       "deleteStoragePlanConfirmation": "Do you really want to delete storage plan \"{storagePlanName}\"?",
-      "confirmPublicUploadLiability": "You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files."
+      "confirmPublicUploadLiability": "You are about to save a file to the public storage. Please note that you cannot delete a file in the public storage once it has been uploaded and that you may be held personally responsible for any copyright infringements caused by your files.",
+      "closeAccountConfirmation": "Do you really want to close your account?"
     }
   },
   {
@@ -198,7 +197,8 @@
       "sessionExpiredDescription": "Ihre Sitzung ist abgelaufen, da Sie für einige Zeit inaktiv waren. Bitte melden Sie sich erneut an, um diesen Vorgang fortzusetzen.",
       "deleteItemConfirmation": "Möchten Sie \"{name}\" wirklich löschen?",
       "deleteStoragePlanConfirmation": "Möchten Sie den Speicherplan \"{storagePlanName}\" wirklich löschen?",
-      "confirmPublicUploadLiability": "Sie sind dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachten Sie, dass Sie eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass Sie für alle Rechtsverstöße in Ihrer Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden können."
+      "confirmPublicUploadLiability": "Sie sind dabei, eine Datei in den öffentlichen Bereich zu speichern. Bitte beachten Sie, dass Sie eine Datei im öffentlichen Bereich nach dem Upload nicht mehr löschen können und dass Sie für alle Rechtsverstöße in Ihrer Datei von den Rechteinhabern ggf. persönlich verantwortlich gemacht werden können.",
+      "closeAccountConfirmation": "Möchten Sie wicklich Ihr Konto schließen?"
     }
   },
   {

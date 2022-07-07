@@ -50,6 +50,10 @@ export default class RoomService {
     return this.roomStore.getRoomsByOwnerId(userId);
   }
 
+  getPrivateRoomsOwnedByUser(userId) {
+    return this.roomStore.getPrivateRoomsByOwnerId(userId);
+  }
+
   getRoomsOwnedOrJoinedByUser(userId) {
     return this.roomStore.getRoomsOwnedOrJoinedByUser(userId);
   }
@@ -228,6 +232,10 @@ export default class RoomService {
     const updatedRoom = await this.updateRoom({ ...room, members: remainingMembers });
 
     return updatedRoom;
+  }
+
+  async removeAllRoomsMember(memberUserId) {
+    await this.roomStore.deleteRoomsMemberById(memberUserId);
   }
 
   async deleteRoomInvitation({ room, invitation }) {

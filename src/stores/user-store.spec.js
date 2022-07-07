@@ -54,95 +54,62 @@ describe('user-store', () => {
     });
   });
 
-  describe('findUserByUsernameOrEmail', () => {
-    describe('when provider doesn\'t match', () => {
-      beforeEach(async () => {
-        result = await sut.findUserByUsernameOrEmail({ provider: 'unknown', username: user.username, email: user.email });
-      });
-      it('should return null', () => {
-        expect(result).toEqual(null);
-      });
+  describe('findActiveUsersByEmailOrUsername', () => {
+    let matchingUsernameUser;
+    let matchingEmailUser;
+    let otherProviderUser;
+    let closedAccountUser;
+
+    beforeEach(async () => {
+      matchingUsernameUser = await setupTestUser(container, { username: 'username', email: 'other_1' });
+      matchingEmailUser = await setupTestUser(container, { username: 'other_2', email: 'email' });
+      otherProviderUser = await setupTestUser(container, { username: 'other_3', email: 'other_3' });
+      await sut.saveUser({ ...otherProviderUser, username: 'username', provider: 'other_3' });
+      closedAccountUser = await setupTestUser(container, { username: 'other_4', email: 'other_4' });
+      await sut.saveUser({ ...closedAccountUser, email: 'email', accountClosedOn: new Date() });
+
+      result = await sut.findActiveUsersByEmailOrUsername({ provider: 'educandu', username: 'username', email: 'email' });
     });
 
-    describe('when neider username nor email matches', () => {
-      beforeEach(async () => {
-        result = await sut.findUserByUsernameOrEmail({ provider: user.provider, username: 'unknown', email: 'unknown' });
-      });
-      it('should return null', () => {
-        expect(result).toEqual(null);
-      });
-    });
-
-    describe('when username matches', () => {
-      beforeEach(async () => {
-        result = await sut.findUserByUsernameOrEmail({ provider: user.provider, username: user.username, email: 'unknown' });
-      });
-      it('should return the user', () => {
-        expect(result).toEqual(user);
-      });
-    });
-
-    describe('when email matches', () => {
-      beforeEach(async () => {
-        result = await sut.findUserByUsernameOrEmail({ provider: user.provider, username: 'unknown', email: user.email });
-      });
-      it('should return the user', () => {
-        expect(result).toEqual(user);
-      });
+    it('should return all matching active users', () => {
+      expect(result).toEqual([matchingUsernameUser, matchingEmailUser]);
     });
   });
 
-  describe('findDifferentUserByUsernameOrEmail', () => {
-    describe('when the only user with the same provider and username is the given user', () => {
+  describe('findActiveUserByProviderAndEmail', () => {
+    describe('when provider doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.findDifferentUserByUsernameOrEmail({ userId: user._id, provider: user.provider, username: user.username, email: 'unknown' });
+        result = await sut.findActiveUserByProviderAndEmail({ provider: 'unknown', email: user.email });
       });
       it('should return null', () => {
         expect(result).toEqual(null);
       });
     });
 
-    describe('when the only user with the same provider and email is the given user', () => {
+    describe('when email doesn\'t match', () => {
       beforeEach(async () => {
-        result = await sut.findDifferentUserByUsernameOrEmail({ userId: user._id, provider: user.provider, username: 'unknown', email: user.email });
+        result = await sut.findActiveUserByProviderAndEmail({ provider: user.provider, email: 'unknown' });
       });
       it('should return null', () => {
         expect(result).toEqual(null);
       });
     });
 
-    describe('when there is another user with the same username but different provider', () => {
+    describe('when account is closed', () => {
       beforeEach(async () => {
-        result = await sut.findDifferentUserByUsernameOrEmail({ userId: 'unknown', provider: 'unknown', username: user.username, email: 'unknown' });
+        const currentUser = await setupTestUser(container, { username: 'jim', email: 'jim@jameson.com', provider: 'educandu', accountClosedOn: new Date() });
+        result = await sut.findActiveUserByProviderAndEmail({ provider: currentUser.provider, currentUser: user.email });
       });
       it('should return null', () => {
         expect(result).toEqual(null);
       });
     });
 
-    describe('when there is another user with the same email but different provider', () => {
+    describe('when account is open', () => {
       beforeEach(async () => {
-        result = await sut.findDifferentUserByUsernameOrEmail({ userId: 'unknown', provider: 'unknown', username: 'unknown', email: user.email });
+        result = await sut.findActiveUserByProviderAndEmail({ provider: user.provider, email: user.email });
       });
-      it('should return null', () => {
-        expect(result).toEqual(null);
-      });
-    });
-
-    describe('when there is another user with the same username and provider', () => {
-      beforeEach(async () => {
-        result = await sut.findDifferentUserByUsernameOrEmail({ userId: 'unknown', provider: user.provider, username: user.username, email: 'unknown' });
-      });
-      it('should return the other user', () => {
-        expect(result).toEqual(user);
-      });
-    });
-
-    describe('when there is another user with the same email and provider', () => {
-      beforeEach(async () => {
-        result = await sut.findDifferentUserByUsernameOrEmail({ userId: 'unknown', provider: user.provider, username: 'unknown', email: user.email });
-      });
-      it('should return the other user', () => {
+      it('should return the user', () => {
         expect(result).toEqual(user);
       });
     });

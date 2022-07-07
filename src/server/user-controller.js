@@ -13,6 +13,7 @@ import permissions from '../domain/permissions.js';
 import requestUtils from '../utils/request-utils.js';
 import UserService from '../services/user-service.js';
 import MailService from '../services/mail-service.js';
+import RoomService from '../services/room-service.js';
 import PageRenderer from '../server/page-renderer.js';
 import ServerConfig from '../bootstrap/server-config.js';
 import ApiKeyStrategy from '../domain/api-key-strategy.js';
@@ -39,7 +40,7 @@ import {
   loginBodySchema
 } from '../domain/schemas/user-schemas.js';
 
-const { NotFound } = httpErrors;
+const { NotFound, Forbidden } = httpErrors;
 
 const jsonParser = express.json();
 const LocalStrategy = passportLocal.Strategy;
@@ -54,6 +55,7 @@ class UserController {
       PasswordResetRequestService,
       MailService,
       ClientDataMappingService,
+      RoomService,
       PageRenderer
     ];
   }
@@ -66,15 +68,17 @@ class UserController {
     passwordResetRequestService,
     mailService,
     clientDataMappingService,
+    roomService,
     pageRenderer
   ) {
     this.database = database;
     this.userService = userService;
     this.mailService = mailService;
+    this.roomService = roomService;
     this.serverConfig = serverConfig;
     this.pageRenderer = pageRenderer;
-    this.clientDataMappingService = clientDataMappingService;
     this.storageService = storageService;
+    this.clientDataMappingService = clientDataMappingService;
     this.passwordResetRequestService = passwordResetRequestService;
   }
 
@@ -267,6 +271,25 @@ class UserController {
     const { type, id } = req.body;
     const updatedUser = await this.userService.deleteFavorite({ type, id, user });
     return res.send(this.clientDataMappingService.mapWebsiteUser(updatedUser));
+  }
+
+  async handleCloseUserAccount(req, res) {
+    const { user } = req;
+    const { userId } = req.params;
+
+    if (user._id !== userId) {
+      throw new Forbidden();
+    }
+
+    const userPrivateRooms = await this.roomService.getPrivateRoomsOwnedByUser(userId);
+    for (const room of userPrivateRooms) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: userId });
+    }
+    await this.roomService.removeAllRoomsMember(userId);
+    await this.userService.closeUserAccount(userId);
+
+    return res.status(204).end();
   }
 
   registerMiddleware(router) {
@@ -465,6 +488,13 @@ class UserController {
       jsonParser,
       validateBody(favoriteBodySchema),
       (req, res) => this.handleDeleteFavorite(req, res)
+    );
+
+    router.delete(
+      '/api/v1/users/:userId',
+      needsAuthentication(),
+      validateParams(userIdParamsSchema),
+      (req, res) => this.handleCloseUserAccount(req, res)
     );
   }
 }

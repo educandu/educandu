@@ -24,12 +24,20 @@ class RoomStore {
     return this.collection.deleteOne({ _id: roomId }, { session });
   }
 
+  deleteRoomsMemberById(userId, { session } = {}) {
+    return this.collection.updateMany({}, { $pull: { members: { userId: { $eq: userId } } } }, { session });
+  }
+
   getRoomByIdAndOwnerId({ roomId, ownerId }, { session } = {}) {
     return this.collection.findOne({ _id: roomId, owner: ownerId }, { session });
   }
 
   getRoomsByOwnerId(ownerId, { session } = {}) {
     return this.collection.find({ owner: ownerId }, { session }).toArray();
+  }
+
+  getPrivateRoomsByOwnerId(ownerId, { session } = {}) {
+    return this.collection.find({ owner: ownerId, access: ROOM_ACCESS_LEVEL.private }, { session }).toArray();
   }
 
   async getRoomIdsByOwnerIdAndAccess({ ownerId, access }, { session } = {}) {

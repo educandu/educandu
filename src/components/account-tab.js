@@ -1,3 +1,4 @@
+import routes from '../utils/routes.js';
 import Logger from '../common/logger.js';
 import { Form, Button, message } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +11,7 @@ import { SAVE_USER_RESULT } from '../domain/constants.js';
 import React, { useEffect, useRef, useState } from 'react';
 import UserApiClient from '../api-clients/user-api-client.js';
 import { useSessionAwareApiClient } from '../ui/api-helper.js';
+import { confirmCloseAccount } from './confirmation-dialogs.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -71,6 +73,17 @@ function AccountTab() {
     }
   };
 
+  const handleCloseAccountClick = () => {
+    try {
+      confirmCloseAccount(t, async () => {
+        await userApiClient.closeUserAccount({ userId: user._id });
+        window.location = routes.getLogoutUrl();
+      });
+    } catch (error) {
+      errorHelper.handleApiError({ error, logger, t });
+    }
+  };
+
   return (
     <div className="AccountTab">
       <div className="AccountTab-tabInfo">{t('info')}</div>
@@ -87,10 +100,10 @@ function AccountTab() {
           </FormItem>
         </Form>
       </section>
-      <div className="AccountTab-headline">{t('deleteAccountHeadline')}</div>
+      <div className="AccountTab-headline">{t('closeAccount')}</div>
       <section className="AccountTab-section AccountTab-section--wide">
-        <div>{t('deleteAccountDetails')}</div>
-        <Button className="AccountTab-deleteAccountButton">{t('deleteAccount')}</Button>
+        <div>{t('closeAccountDetails')}</div>
+        <Button className="AccountTab-closeAccountButton" onClick={handleCloseAccountClick}>{t('closeAccount')}</Button>
       </section>
     </div>
   );

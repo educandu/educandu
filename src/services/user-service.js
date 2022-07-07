@@ -55,14 +55,14 @@ class UserService {
     logger.info(`Updating account data for user with id ${userId}`);
     const lowerCasedEmail = email.toLowerCase();
 
-    const otherExistingUser = await this.userStore.findDifferentUserByUsernameOrEmail({
-      userId, provider, username, email: lowerCasedEmail
-    });
+    const existingUserWithUsername = await this.userStore.findUserByProviderAndUsername({ provider, username });
+    if (existingUserWithUsername && existingUserWithUsername._id !== userId) {
+      return { result: SAVE_USER_RESULT.duplicateUsername, user: null };
+    }
 
-    if (otherExistingUser) {
-      return otherExistingUser.email === lowerCasedEmail
-        ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
-        : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
+    const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
+    if (existingActiveUserWithEmail && existingActiveUserWithEmail._id !== userId) {
+      return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
     }
 
     const user = await this.userStore.getUserById(userId);
@@ -96,6 +96,19 @@ class UserService {
     user.lockedOut = lockedOut;
     await this.userStore.saveUser(user);
     return user.lockedOut;
+  }
+
+  async closeUserAccount(userId) {
+    const user = await this.getUserById(userId);
+    const clearedUserData = {
+      ...this._buildEmptyUser(),
+      _id: userId,
+      email: user.email,
+      username: user.username,
+      provider: user.provider,
+      accountClosedOn: new Date()
+    };
+    await this.userStore.saveUser(clearedUserData);
   }
 
   async updateUserStoragePlan(userId, storagePlanId) {
@@ -232,11 +245,14 @@ class UserService {
   async createUser({ username, password, email, provider = DEFAULT_PROVIDER_NAME, roles = [DEFAULT_ROLE_NAME], verified = false }) {
     const lowerCasedEmail = email.toLowerCase();
 
-    const existingUser = await this.userStore.findUserByUsernameOrEmail({ provider, username, email: lowerCasedEmail });
-    if (existingUser) {
-      return existingUser.email === lowerCasedEmail
-        ? { result: SAVE_USER_RESULT.duplicateEmail, user: null }
-        : { result: SAVE_USER_RESULT.duplicateUsername, user: null };
+    const existingUserWithUsername = await this.userStore.findUserByProviderAndUsername({ provider, username });
+    if (existingUserWithUsername) {
+      return { result: SAVE_USER_RESULT.duplicateUsername, user: null };
+    }
+
+    const existingActiveUserWithEmail = await this.userStore.findActiveUserByProviderAndEmail({ provider, email: lowerCasedEmail });
+    if (existingActiveUserWithEmail) {
+      return { result: SAVE_USER_RESULT.duplicateEmail, user: null };
     }
 
     const user = this._buildEmptyUser();
@@ -290,7 +306,7 @@ class UserService {
 
     const lowerCasedEmailOrUsername = emailOrUsername.toLowerCase() || '';
 
-    const possibleMatches = await this.userStore.findUsersByEmailOrUsername({
+    const possibleMatches = await this.userStore.findActiveUsersByEmailOrUsername({
       email: lowerCasedEmailOrUsername,
       username: emailOrUsername,
       provider
@@ -376,7 +392,8 @@ class UserService {
         usedBytes: 0,
         reminders: []
       },
-      favorites: []
+      favorites: [],
+      accountClosedOn: null
     };
   }
 }
