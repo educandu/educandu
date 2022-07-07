@@ -1,10 +1,10 @@
 import LoginForm from './login-form.js';
 import React, { createRef } from 'react';
-import { Modal, Input, Checkbox, Form } from 'antd';
+import { Modal, Checkbox, Form } from 'antd';
+import NeverScrollingTextArea from './never-scrolling-text-area.js';
 
 const FormItem = Form.Item;
 const confirm = Modal.confirm;
-const TextArea = Input.TextArea;
 
 export function confirmDiscardUnsavedChanges(t, onOk, onCancel = () => {}) {
   confirm({
@@ -159,7 +159,7 @@ export function confirmSectionHardDelete(
         <br />
         <Form ref={formRef}>
           <FormItem name="reason" initialValue="">
-            <TextArea onChange={updateDialog} />
+            <NeverScrollingTextArea onChange={updateDialog} />
           </FormItem>
           <br />
           <br />

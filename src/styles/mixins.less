@@ -177,6 +177,56 @@
   box-shadow: 0px 0px 8px @edu-error-color;
 }
 
+.m-control-border-transition {
+  transition: border-color @edu-animation-duration-slow, box-shadow @edu-animation-duration-slow;
+}
+
+.m-control-border-base {
+  .m-control-border-transition;
+  border: 1px solid @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
+  outline: @edu-outline-blur-size;
+}
+
+.m-control-border-disabled {
+  .m-control-border-transition;
+  border: 1px solid @edu-border-color-light;
+  outline: none;
+}
+
+.m-control-border-hover {
+  .m-control-border-transition;
+  border-color: @edu-border-color-active;
+}
+
+.m-control-border-focus {
+  .m-control-border-transition;
+  border-color: @edu-border-color-active;
+  box-shadow: 0 0 0 @edu-outline-width fade(@edu-border-color-active, @edu-outline-fade);
+}
+
+.m-control-border-warning {
+  .m-control-border-transition;
+  border-color: @edu-warning-color;
+}
+
+.m-control-border-warning-focus {
+  .m-control-border-transition;
+  border-color: @edu-warning-color;
+  box-shadow: 0 0 0 @edu-outline-width fade(@edu-warning-color, @edu-outline-fade);
+}
+
+.m-control-border-error {
+  .m-control-border-transition;
+  border-color: @edu-error-color;
+}
+
+.m-control-border-error-focus {
+  .m-control-border-transition;
+  border-color: @edu-error-color;
+  box-shadow: 0 0 0 @edu-outline-width fade(@edu-error-color, @edu-outline-fade);
+}
+
 .m-info-card {
   width: 100%;
   display: block;

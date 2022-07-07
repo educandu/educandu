@@ -1,11 +1,12 @@
 import React from 'react';
-import { Form, Input, Switch } from 'antd';
+import { Form, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
+import AbcNotation from '../../components/abc-notation.js';
 import MarkdownInput from '../../components/markdown-input.js';
+import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
-
-const { TextArea } = Input;
+import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 
 function AbcNotationEditor({ content, onContentChanged }) {
   const { t } = useTranslation('abcNotation');
@@ -14,6 +15,11 @@ function AbcNotationEditor({ content, onContentChanged }) {
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 }
+  };
+
+  const formItemLayoutVertical = {
+    labelCol: { span: 24 },
+    wrapperCol: { span: 24 }
   };
 
   const changeContent = newContentValues => {
@@ -41,8 +47,11 @@ function AbcNotationEditor({ content, onContentChanged }) {
   return (
     <div>
       <Form layout="horizontal">
-        <Form.Item label={t('abcCode')} {...formItemLayout}>
-          <TextArea value={abcCode} onChange={handleCurrentAbcCodeChanged} autoSize={{ minRows: 5 }} />
+        <Form.Item label={t('abcCode')} {...formItemLayoutVertical}>
+          <InputAndPreview
+            input={<NeverScrollingTextArea minRows={6} value={abcCode} onChange={handleCurrentAbcCodeChanged} />}
+            preview={<AbcNotation abcCode={abcCode} />}
+            />
         </Form.Item>
         <Form.Item label={t('midiSound')} {...formItemLayout}>
           <Switch checked={!!displayMidi} onChange={handleDisplayMidiChanged} />

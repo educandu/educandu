@@ -8,6 +8,7 @@ import inputValidators from '../utils/input-validators.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Form, Input, Modal, Checkbox, Select } from 'antd';
 import LanguageSelect from './localization/language-select.js';
+import NeverScrollingTextArea from './never-scrolling-text-area.js';
 import errorHelper, { handleApiError } from '../ui/error-helper.js';
 import DocumentApiClient from '../api-clients/document-api-client.js';
 import { documentMetadataEditShape } from '../ui/default-prop-types.js';
@@ -15,7 +16,6 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { maxDocumentDescriptionLength } from '../domain/validation-constants.js';
 
 const FormItem = Form.Item;
-const TextArea = Input.TextArea;
 
 const logger = new Logger(import.meta.url);
 
@@ -137,7 +137,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
           <Input />
         </FormItem>
         <FormItem name="description" label={t('common:description')} rules={descriptionValidationRules}>
-          <TextArea autoSize={{ minRows: 3, maxRows: 10 }} />
+          <NeverScrollingTextArea />
         </FormItem>
         <FormItem name="language" label={t('common:language')}>
           <LanguageSelect />
@@ -160,7 +160,7 @@ function DocumentMetadataModal({ isVisible, mode, onSave, onClose, initialDocume
         )}
         {hasUserPermission(user, permissions.REVIEW_DOC) && (
           <FormItem name="review" label={t('review')}>
-            <TextArea autoSize={{ minRows: 3, maxRows: 10 }} />
+            <NeverScrollingTextArea />
           </FormItem>
         )}
       </Form>

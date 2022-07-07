@@ -1,9 +1,8 @@
 import React from 'react';
-import { Input, message } from 'antd';
+import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
-
-const { TextArea } = Input;
+import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 
 function IntervalTrainerEditor({ content, onContentChanged }) {
   const { t } = useTranslation('intervalTrainer');
@@ -29,7 +28,7 @@ function IntervalTrainerEditor({ content, onContentChanged }) {
 
   return (
     <div>
-      <TextArea value={json} onChange={handleJSONValueChanged} autoSize={{ minRows: 3 }} />
+      <NeverScrollingTextArea value={json} onChange={handleJSONValueChanged} />
     </div>
   );
 }

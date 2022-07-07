@@ -111,7 +111,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
               <span className="QuickTesterEditor-testContentLabel">{t('common:question')}</span>
               <MarkdownInput
                 preview
-                autoSize={{ minRows: 3, maxRows: 3 }}
                 renderMedia={content.renderMedia}
                 value={test.question}
                 onChange={event => handleInputQuestionChanged(index, event.target.value)}
@@ -121,7 +120,6 @@ function QuickTesterEditor({ content, onContentChanged }) {
               <span className="QuickTesterEditor-testContentLabel">{t('common:answer')}</span>
               <MarkdownInput
                 preview
-                autoSize={{ minRows: 3, maxRows: 3 }}
                 renderMedia={content.renderMedia}
                 value={test.answer}
                 onChange={event => handleInputAnswerChanged(index, event.target.value)}

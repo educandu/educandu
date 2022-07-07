@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useMemo, useState } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
-import MarkdownHelp from '../../components/markdown-help.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import DebouncedInput from '../../components/debounced-input.js';
 import {
@@ -223,12 +222,11 @@ function TableDesigner({ content, onContentChange }) {
         <DebouncedInput
           elementType={MarkdownInput}
           data-role={CONTENT_INPUT_DATA_ROLE}
-          className="TableDesigner-contentInput"
           value={designerCell.text}
           onChange={newText => handleDesignerCellTextChange(designerCell, newText)}
           renderMedia={content.renderMedia}
-          autoSize={{ minRows: 1 }}
-          noHelp
+          minRows={1}
+          embeddable
           />
         <div className="TableDesigner-contentCellMenuContainer">
           <TableDesignerMenu
@@ -238,9 +236,6 @@ function TableDesigner({ content, onContentChange }) {
             dotType="zooming"
             onCellAction={handleDesignerCellAction}
             />
-        </div>
-        <div className="TableDesigner-contentCellMarkdownHelpContainer">
-          <MarkdownHelp size="small" />
         </div>
       </div>
     );

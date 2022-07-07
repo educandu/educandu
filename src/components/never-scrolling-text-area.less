@@ -1,0 +1,65 @@
+.NeverScrollingTextArea {
+  .m-control-border-base;
+  background-color: @edu-component-background;
+  cursor: text;
+  display: grid;
+  grid-auto-flow: row;
+
+  textarea {
+    resize: none !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: inherit !important;
+  }
+
+  &.NeverScrollingTextArea--topAligned {
+    grid-template-rows: 0 auto 1fr;
+  }
+
+  &.NeverScrollingTextArea--centerAligned {
+    grid-template-rows: 1fr auto 1fr;
+  }
+
+  &.NeverScrollingTextArea--bottomAligned {
+    grid-template-rows: 1fr auto 0;
+  }
+
+  &.NeverScrollingTextArea--embeddable {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: inherit !important;
+  }
+
+  &.is-disabled {
+    .m-control-border-disabled;
+    cursor: not-allowed;
+  }
+
+  &:not(.is-disabled) {
+    &:hover {
+      .m-control-border-hover;
+    }
+
+    &:focus-within {
+      .m-control-border-focus;
+    }
+
+    &.has-warning {
+      .m-control-border-warning;
+
+      &:focus-within {
+        .m-control-border-warning-focus;
+      }
+    }
+
+    &.has-error {
+      .m-control-border-error;
+
+      &:focus-within {
+        .m-control-border-error-focus;
+      }
+    }
+  }
+}

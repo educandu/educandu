@@ -6,6 +6,7 @@ import { Container } from '../common/di.js';
 import ClientConfig from './client-config.js';
 import PageResolver from '../domain/page-resolver.js';
 import ResourceManager from '../resources/resource-manager.js';
+import { ensurePreResolvedModulesAreLoaded } from '../utils/pre-resolved-modules.js';
 
 const logger = new Logger(import.meta.url);
 
@@ -31,6 +32,9 @@ export async function hydrateApp({ bundleConfig }) {
     HomePageTemplateComponent,
     SiteLogoComponent
   } = await pageResolver.getPageComponentInfo(window.__pageName__);
+
+  logger.info('Preload modules');
+  await ensurePreResolvedModulesAreLoaded();
 
   const props = {
     user: window.__user__,

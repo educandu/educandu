@@ -5,19 +5,21 @@ import { PlusOutlined } from '@ant-design/icons';
 import cloneDeep from '../../utils/clone-deep.js';
 import EarTrainingInfo from './ear-training-info.js';
 import ItemPanel from '../../components/item-panel.js';
+import AbcNotation from '../../components/abc-notation.js';
 import { Form, Input, Button, Radio, Divider } from 'antd';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import ResourcePicker from '../../components/resource-picker.js';
 import { useService } from '../../components/container-context.js';
+import InputAndPreview from '../../components/input-and-preview.js';
 import { sectionEditorProps } from '../../ui/default-prop-types.js';
 import { swapItemsAt, removeItemAt } from '../../utils/array-utils.js';
 import ObjectWidthSlider from '../../components/object-width-slider.js';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
+import NeverScrollingTextArea from '../../components/never-scrolling-text-area.js';
 import { storageLocationPathToUrl, urlToStorageLocationPath } from '../../utils/storage-utils.js';
 
-const { TextArea } = Input;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -33,6 +35,11 @@ function EarTrainingEditor({ content, onContentChanged }) {
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 14 }
+  };
+
+  const formItemLayoutVertical = {
+    labelCol: { span: 24 },
+    wrapperCol: { span: 24 }
   };
 
   const changeContent = newContentValues => {
@@ -303,13 +310,19 @@ function EarTrainingEditor({ content, onContentChanged }) {
             {test.mode === TEST_MODE.abcCode && (
               <Fragment>
                 <Divider plain>{t('testQuestion')}</Divider>
-                <FormItem label={t('abcCode')} {...formItemLayout}>
-                  <TextArea rows={6} value={test.questionAbcCode} onChange={event => handleQuestionAbcCodeChanged(event, index)} />
-                </FormItem>
+                <Form.Item label={t('abcCode')} {...formItemLayoutVertical}>
+                  <InputAndPreview
+                    input={<NeverScrollingTextArea minRows={6} value={test.questionAbcCode} onChange={event => handleQuestionAbcCodeChanged(event, index)} />}
+                    preview={<AbcNotation abcCode={test.questionAbcCode} />}
+                    />
+                </Form.Item>
                 <Divider plain>{t('testAnswer')}</Divider>
-                <FormItem label={t('abcCode')} {...formItemLayout}>
-                  <TextArea rows={6} value={test.answerAbcCode} onChange={event => handleAnswerAbcCodeChanged(event, index)} />
-                </FormItem>
+                <Form.Item label={t('abcCode')} {...formItemLayoutVertical}>
+                  <InputAndPreview
+                    input={<NeverScrollingTextArea minRows={6} value={test.answerAbcCode} onChange={event => handleAnswerAbcCodeChanged(event, index)} />}
+                    preview={<AbcNotation abcCode={test.answerAbcCode} />}
+                    />
+                </Form.Item>
               </Fragment>
             )}
 

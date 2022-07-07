@@ -43,15 +43,15 @@
   justify-items: stretch;
 
   &.TableDesigner-gridCell--content {
-    text-align: left;
-    font-weight: normal;
+    display: grid;
+    align-items: stretch;
+    justify-items: stretch;
     border-style: solid;
     border-left-width: 0;
     border-top-width: 0;
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-color: @table-plugin-cell-border-color;
-    padding: @table-plugin-cell-padding;
     position: relative;
     background-color: @edu-white;
 
@@ -65,13 +65,11 @@
   }
 
   &.TableDesigner-gridCell--rowHeader {
-    padding: @table-plugin-cell-padding;
     text-align: center;
     width: 20px;
   }
 
   &.TableDesigner-gridCell--columnHeader {
-    padding: @table-plugin-cell-padding;
     text-align: center;
     height: 20px;
   }
@@ -89,19 +87,6 @@
   }
 }
 
-.TableDesigner-contentInput {
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background-color: transparent;
-
-  &:hover,
-  &:focus {
-    border: none;
-    box-shadow: none;
-  }
-}
-
 .TableDesigner-headerCellMenuContainer {
   display: flex;
   align-items: center;
@@ -112,12 +97,6 @@
   position: absolute;
   top: 0;
   right: 0;
-}
-
-.TableDesigner-contentCellMarkdownHelpContainer {
-  position: absolute;
-  bottom: 3px;
-  right: 3px;
 }
 
 .TableDesignerMenu {
