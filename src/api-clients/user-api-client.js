@@ -153,6 +153,15 @@ class UserApiClient {
       )
       .then(res => res.data);
   }
+
+  closeUserAccount({ userId }) {
+    return this.httpClient
+      .delete(
+        `/api/v1/users/${encodeURIComponent(userId)}`,
+        { responseType: 'json' }
+      )
+      .then(res => res.data);
+  }
 }
 
 export default UserApiClient;

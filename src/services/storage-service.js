@@ -1,6 +1,7 @@
 import httpErrors from 'http-errors';
 import prettyBytes from 'pretty-bytes';
 import Cdn from '../repositories/cdn.js';
+import Logger from '../common/logger.js';
 import uniqueId from '../utils/unique-id.js';
 import UserStore from '../stores/user-store.js';
 import RoomStore from '../stores/room-store.js';
@@ -14,6 +15,7 @@ import permissions, { hasUserPermission } from '../domain/permissions.js';
 import { CDN_OBJECT_TYPE, ROOM_ACCESS_LEVEL, ROOM_LESSONS_MODE, STORAGE_DIRECTORY_MARKER_NAME, STORAGE_LOCATION_TYPE } from '../domain/constants.js';
 import { componseUniqueFileName, getPathForPrivateRoom, getPublicHomePath, getPublicRootPath, getStorageLocationTypeForPath } from '../utils/storage-utils.js';
 
+const logger = new Logger(import.meta.url);
 const { BadRequest, NotFound } = httpErrors;
 
 export default class StorageService {
@@ -166,6 +168,7 @@ export default class StorageService {
 
     try {
       lock = await this.lockStore.takeUserLock(roomOwnerId);
+      logger.info(`Deleting room with ID ${roomId}`);
 
       await this.transactionRunner.run(async session => {
         await this.lessonStore.deleteLessonsByRoomId(roomId, { session });

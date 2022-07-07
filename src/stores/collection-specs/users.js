@@ -2,10 +2,10 @@ export default {
   name: 'users',
   indexes: [
     {
-      name: '_idx_email',
-      key: { email: 1 },
+      name: '_idx_email_accountClosedOn_',
+      key: { email: 1, accountClosedOn: 1 },
       unique: true,
-      partialFilterExpression: { email: { $type: 'string' } }
+      partialFilterExpression: { $and: [{ email: { $type: 'string' } }, { accountClosedOn: null }] }
     },
     {
       name: '_idx_username_provider_',

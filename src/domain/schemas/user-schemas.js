@@ -1,6 +1,6 @@
 import joi from 'joi';
-import { FAVORITE_TYPE, ROLE } from '../constants.js';
 import { idOrKeySchema } from './shared-schemas.js';
+import { FAVORITE_TYPE, ROLE } from '../constants.js';
 import { minPasswordLength, minUsernameLength, passwordValidationPattern } from '../validation-constants.js';
 
 const usernameSchema = joi.string().min(minUsernameLength);

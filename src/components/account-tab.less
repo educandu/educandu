@@ -1,0 +1,32 @@
+.AccountTab {}
+
+.AccountTab-tabInfo {
+  .m-info-card;
+}
+
+.AccountTab-headline {
+  .m-section-headline;
+}
+
+.AccountTab-section {
+  .m-section-content-narrow;
+
+  &.AccountTab-section--wide {
+    max-width: none;
+  }
+}
+
+.AccountTab-closeAccountButton {
+  margin-top: 15px;
+  color: @edu-white;
+  background-color: @edu-error-color;
+  border-color: @edu-error-color;
+
+  &:hover,
+  &:active,
+  &:visited {
+    color: @edu-white;
+    background-color: lighten(@edu-error-color, 8%);
+    border-color: lighten(@edu-error-color, 8%);
+  }
+}

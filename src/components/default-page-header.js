@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from './login.js';
 import PropTypes from 'prop-types';
-import urls from '../utils/routes.js';
+import routes from '../utils/routes.js';
 import { useUser } from './user-context.js';
 import { Button, Dropdown, Menu } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -36,49 +36,49 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'home',
       label: t('pageNames:home'),
       icon: <HomeIcon />,
-      onClick: () => { window.location = urls.getHomeUrl(); },
+      onClick: () => { window.location = routes.getHomeUrl(); },
       showWhen: true
     },
     {
       key: 'dashboard',
       label: t('pageNames:dashboard'),
       icon: <DashboardIcon />,
-      onClick: () => { window.location = urls.getDashboardUrl(); },
+      onClick: () => { window.location = routes.getDashboardUrl(); },
       showWhen: !!user
     },
     {
       key: 'docs',
       label: t('pageNames:docs'),
       icon: <DocumentsIcon />,
-      onClick: () => { window.location = urls.getDocsUrl(); },
+      onClick: () => { window.location = routes.getDocsUrl(); },
       showWhen: hasUserPermission(user, permissions.VIEW_DOCS)
     },
     {
       key: 'users',
       label: t('pageNames:users'),
       icon: <UsersIcon />,
-      onClick: () => { window.location = urls.getUsersUrl(); },
+      onClick: () => { window.location = routes.getUsersUrl(); },
       showWhen: hasUserPermission(user, permissions.EDIT_USERS)
     },
     {
       key: 'admin',
       label: t('pageNames:admin'),
       icon: <SettingsIcon />,
-      onClick: () => { window.location = urls.getAdminUrl(); },
+      onClick: () => { window.location = routes.getAdminUrl(); },
       showWhen: hasUserPermission(user, permissions.ADMIN)
     },
     {
       key: 'import',
       label: t('pageNames:imports'),
       icon: <ImportsIcon />,
-      onClick: () => { window.location = urls.getImportsUrl(); },
+      onClick: () => { window.location = routes.getImportsUrl(); },
       showWhen: hasUserPermission(user, permissions.MANAGE_IMPORT) && !clientConfig.disabledFeatures.includes(FEATURE_TOGGLES.import)
     },
     {
       key: 'help',
       label: helpPage?.linkTitle,
       icon: <QuestionOutlined />,
-      onClick: () => { window.location = helpPage ? urls.getDocUrl({ key: helpPage.documentKey }) : ''; },
+      onClick: () => { window.location = helpPage ? routes.getDocUrl({ key: helpPage.documentKey }) : ''; },
       showWhen: !!helpPage
     },
     {
@@ -92,7 +92,7 @@ function DefaultPageHeader({ onUiLanguageClick }) {
       key: 'logout',
       label: t('common:logout'),
       icon: <LogoutIcon />,
-      onClick: () => { window.location = urls.getLogoutUrl(); },
+      onClick: () => { window.location = routes.getLogoutUrl(); },
       showWhen: !!user
     }
   ].filter(item => item.showWhen);

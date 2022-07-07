@@ -1,6 +1,9 @@
 info:
   en: Here you can provide additional information about yourself. This information is currently not publicly accessible.
   de: Hier können Sie zusätzliche Informationen zu Ihrer Person angeben. Die Daten sind zur Zeit nicht öffentlich sichtbar.
+personalInfoHeadline:
+  en: Personal info
+  de: Persönlichen Daten
 changePicture:
   en: Change profile picture
   de: Profilbild ändern

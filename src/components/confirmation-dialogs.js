@@ -423,3 +423,15 @@ export function confirmPublicUploadLiability(t, onOk, onCancel = () => { }) {
     onCancel
   });
 }
+
+export function confirmCloseAccount(t, onOk, onCancel = () => { }) {
+  confirm({
+    title: t('confirmationDialogs:areYouSure'),
+    content: t('confirmationDialogs:closeAccountConfirmation'),
+    okText: t('common:yes'),
+    okType: 'danger',
+    cancelText: t('common:no'),
+    onOk,
+    onCancel
+  });
+}

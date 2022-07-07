@@ -11,7 +11,7 @@ class UserStore {
     return this.collection.find().toArray();
   }
 
-  findUsersByEmailOrUsername({ provider, email, username }, { session } = {}) {
+  findActiveUsersByEmailOrUsername({ provider, email, username }, { session } = {}) {
     const queryFilters = [];
 
     if (email) {
@@ -27,7 +27,7 @@ class UserStore {
     }
 
     return this.collection
-      .find({ $and: [{ provider }, { $or: queryFilters }] }, { session })
+      .find({ $and: [{ provider }, { accountClosedOn: null }, { $or: queryFilters }] }, { session })
       .toArray();
   }
 
@@ -35,23 +35,12 @@ class UserStore {
     return this.collection.findOne({ provider, verificationCode }, { session });
   }
 
-  findUserByUsernameOrEmail({ provider, username, email }, { session } = {}) {
-    return this.collection.findOne({
-      $and: [
-        { provider },
-        { $or: [{ username }, { email }] }
-      ]
-    }, { session });
+  findUserByProviderAndUsername({ provider, username }, { session } = {}) {
+    return this.collection.findOne({ $and: [{ provider }, { username }] }, { session });
   }
 
-  findDifferentUserByUsernameOrEmail({ userId, provider, username, email }, { session } = {}) {
-    return this.collection.findOne({
-      $and: [
-        { _id: { $ne: userId } },
-        { provider },
-        { $or: [{ username }, { email }] }
-      ]
-    }, { session });
+  findActiveUserByProviderAndEmail({ provider, email }, { session } = {}) {
+    return this.collection.findOne({ $and: [{ provider }, { email }, { accountClosedOn: null }] }, { session });
   }
 
   getUserById(id, { session } = {}) {
