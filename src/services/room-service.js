@@ -234,7 +234,7 @@ export default class RoomService {
     return updatedRoom;
   }
 
-  async removeAllRoomsMember(memberUserId) {
+  async removeMembershipFromAllRoomsForUser(memberUserId) {
     await this.roomStore.deleteRoomsMemberById(memberUserId);
   }
 

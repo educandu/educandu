@@ -286,7 +286,7 @@ class UserController {
       // eslint-disable-next-line no-await-in-loop
       await this.storageService.deleteRoomAndResources({ roomId: room._id, roomOwnerId: userId });
     }
-    await this.roomService.removeAllRoomsMember(userId);
+    await this.roomService.removeMembershipFromAllRoomsForUser(userId);
     await this.userService.closeUserAccount(userId);
 
     return res.status(204).end();
