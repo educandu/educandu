@@ -1,14 +1,15 @@
+import { Radio, Tooltip } from 'antd';
 import { TESTS_ORDER } from './constants.js';
-import { Button, Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { SwapOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import QuickTesterIcon from './quick-tester-icon.js';
 import Collapsible from '../../components/collapsible.js';
 import CardSelector from '../../components/card-selector.js';
+import IterationPanel from '../../components/iteration-panel.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { ensureIsIncluded, shuffleItems } from '../../utils/array-utils.js';
-import { LeftOutlined, ReloadOutlined, RightOutlined, SwapOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -24,7 +25,7 @@ function QuickTesterDisplay({ content }) {
     setViewedTestIndices(previousIndices => ensureIsIncluded(previousIndices, currentTestIndex));
   }, [currentTestIndex]);
 
-  const resetTests = () => {
+  const handleResetTestsClick = () => {
     setCurrentTestIndex(0);
     setViewedTestIndices([0]);
     setIsCurrentTestAnswerVisible(false);
@@ -79,27 +80,13 @@ function QuickTesterDisplay({ content }) {
                 </Tooltip>
               )}
             </div>
-            <div className="QuickTesterDisplay-buttons">
-              <Button
-                shape="circle"
-                icon={<LeftOutlined />}
-                disabled={currentTestIndex === 0}
-                onClick={handlePreviousTestClick}
-                />
-              <Tooltip title={t('common:reset')}>
-                <Button
-                  shape="circle"
-                  icon={<ReloadOutlined />}
-                  onClick={resetTests}
-                  />
-              </Tooltip>
-              <Button
-                shape="circle"
-                icon={<RightOutlined />}
-                disabled={currentTestIndex === tests.length - 1}
-                onClick={handleNextTestClick}
-                />
-            </div>
+            <IterationPanel
+              items={testCards}
+              selectedItemIndex={currentTestIndex}
+              onNextClick={handleNextTestClick}
+              onPreviousClick={handlePreviousTestClick}
+              onResetClick={handleResetTestsClick}
+              />
           </div>
           <div className="QuickTesterDisplay-test">
             {!isCurrentTestAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.question}</Markdown>}

@@ -10,6 +10,7 @@ function CardSelector({ cards, selectedCardIndex, previouslySelectedCardIndices,
       'is-selected': selectedCardIndex === index,
       'was-selected': previouslySelectedCardIndices.includes(index)
     });
+
     return (
       <Tooltip title={card.tooltip} key={index}>
         <div className={classes} onClick={() => onCardSelected(index)}>
