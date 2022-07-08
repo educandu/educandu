@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 
 import { asciiTableToTableValues } from './table-utils.spec.helper.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import {
   calculateEvenColumnWidthsInPercent,
   CELL_TYPE,
@@ -71,6 +72,8 @@ describe('table-utils', () => {
       isFirstInColumn: false,
       isLastInColumn: false,
       isConnected: false,
+      verticalAlignment: VERTICAL_ALIGNMENT.top,
+      horizontalAlignment: HORIZONTAL_ALIGNMENT.left,
       ...values
     });
 

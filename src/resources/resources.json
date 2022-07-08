@@ -1913,9 +1913,17 @@
       "cellAction_connectToColumnAfter": "Connect with cell on the right",
       "cellAction_disconnectAllCells": "Disconnect cells",
       "cellAction_disconnectCell": "Disconnect cells",
+      "cellAction_setVerticalAlignmentToTop": "Align content on top",
+      "cellAction_setVerticalAlignmentToMiddle": "Center content vertically",
+      "cellAction_setVerticalAlignmentToBottom": "Align content on bottom",
+      "cellAction_setHorizontalAlignmentToLeft": "Align content on the left",
+      "cellAction_setHorizontalAlignmentToCenter": "Center content horizontally",
+      "cellAction_setHorizontalAlignmentToRight": "Align content on the right",
       "menuGroup_insert": "Insert",
       "menuGroup_delete": "Delete",
-      "menuGroup_connect": "Connect"
+      "menuGroup_connect": "Connect",
+      "menuGroup_verticalAlignment": "Vertical alignment",
+      "menuGroup_horizontalAlignment": "Horizontal alignment"
     }
   },
   {
@@ -1946,9 +1954,17 @@
       "cellAction_connectToColumnAfter": "Mit Zelle rechts verbinden",
       "cellAction_disconnectAllCells": "Zellenverbindungen aufheben",
       "cellAction_disconnectCell": "Zellenverbindung aufheben",
+      "cellAction_setVerticalAlignmentToTop": "Inhalt oben ausrichten",
+      "cellAction_setVerticalAlignmentToMiddle": "Inhalt vertikal zentrieren",
+      "cellAction_setVerticalAlignmentToBottom": "Inhalt unten ausrichten",
+      "cellAction_setHorizontalAlignmentToLeft": "Inhalt linksbündig ausrichten",
+      "cellAction_setHorizontalAlignmentToCenter": "Inhalt horizontal zentrieren",
+      "cellAction_setHorizontalAlignmentToRight": "Inhalt rechtsbündig ausrichten",
       "menuGroup_insert": "Einfügen",
       "menuGroup_delete": "Löschen",
-      "menuGroup_connect": "Verbinden"
+      "menuGroup_connect": "Verbinden",
+      "menuGroup_verticalAlignment": "Vertikale Ausrichtung",
+      "menuGroup_horizontalAlignment": "Horizontale Ausrichtung"
     }
   },
   {

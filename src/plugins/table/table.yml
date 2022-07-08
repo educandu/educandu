@@ -70,6 +70,24 @@ cellAction_disconnectAllCells:
 cellAction_disconnectCell:
   en: Disconnect cells
   de: Zellenverbindung aufheben
+cellAction_setVerticalAlignmentToTop:
+  en: Align content on top
+  de: Inhalt oben ausrichten
+cellAction_setVerticalAlignmentToMiddle:
+  en: Center content vertically
+  de: Inhalt vertikal zentrieren
+cellAction_setVerticalAlignmentToBottom:
+  en: Align content on bottom
+  de: Inhalt unten ausrichten
+cellAction_setHorizontalAlignmentToLeft:
+  en: Align content on the left
+  de: Inhalt linksbündig ausrichten
+cellAction_setHorizontalAlignmentToCenter:
+  en: Center content horizontally
+  de: Inhalt horizontal zentrieren
+cellAction_setHorizontalAlignmentToRight:
+  en: Align content on the right
+  de: Inhalt rechtsbündig ausrichten
 menuGroup_insert:
   en: Insert
   de: Einfügen
@@ -79,3 +97,9 @@ menuGroup_delete:
 menuGroup_connect:
   en: Connect
   de: Verbinden
+menuGroup_verticalAlignment:
+  en: Vertical alignment
+  de: Vertikale Ausrichtung
+menuGroup_horizontalAlignment:
+  en: Horizontal alignment
+  de: Horizontale Ausrichtung

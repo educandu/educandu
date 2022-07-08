@@ -1,10 +1,11 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, max-len */
 
 import { Form, Input } from 'antd';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import ResourcePicker from '../resource-picker.js';
 import NeverScrollingTextArea from '../never-scrolling-text-area.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 function Tests({ PageTemplate }) {
   const [ta1, setTa1] = useState('Hello World');
@@ -24,11 +25,11 @@ function Tests({ PageTemplate }) {
           <NeverScrollingTextArea value={ta2} onChange={event => setTa2(event.target.value)} minRows={4} />
           <NeverScrollingTextArea value={ta3} onChange={event => setTa3(event.target.value)} minRows={5} />
         </div>
-        <h1>NeverScrollingTextArea (vertical-alignment)</h1>
+        <h1>NeverScrollingTextArea (alignment)</h1>
         <div style={{ display: 'grid', gridAutoFlow: 'column', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: '#f5f5f5', padding: '5px', minHeight: '100px' }}>
-          <NeverScrollingTextArea value={ta4} onChange={event => setTa4(event.target.value)} minRows={1} verticalAlign="top" />
-          <NeverScrollingTextArea value={ta5} onChange={event => setTa5(event.target.value)} minRows={1} verticalAlign="center" />
-          <NeverScrollingTextArea value={ta6} onChange={event => setTa6(event.target.value)} minRows={1} verticalAlign="bottom" />
+          <NeverScrollingTextArea value={ta4} onChange={event => setTa4(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.top} horizontalAlignment={HORIZONTAL_ALIGNMENT.left} />
+          <NeverScrollingTextArea value={ta5} onChange={event => setTa5(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.middle} horizontalAlignment={HORIZONTAL_ALIGNMENT.center} />
+          <NeverScrollingTextArea value={ta6} onChange={event => setTa6(event.target.value)} minRows={1} verticalAlignment={VERTICAL_ALIGNMENT.bottom} horizontalAlignment={HORIZONTAL_ALIGNMENT.right} />
         </div>
         <h1>NeverScrollingTextArea (in Form)</h1>
         <Form initialValues={{ ta1: 'Hello World', ta2: 'Hello World', ta3: 'Hello World', ta4: 'Hello World', ta5: 'Hello World', ta6: 'Hello World' }}>

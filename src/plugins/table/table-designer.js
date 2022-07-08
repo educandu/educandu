@@ -4,9 +4,12 @@ import React, { useMemo, useState } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import DebouncedInput from '../../components/debounced-input.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 import {
   changeCellText,
   changeCellType,
+  changeVerticalAlignment,
+  changeHorizontalAlignment,
   createTableDesignerCells,
   deleteColumn,
   deleteRow,
@@ -24,8 +27,6 @@ import {
   disconnectCell,
   CELL_TYPE
 } from './table-utils.js';
-
-const CONTENT_INPUT_DATA_ROLE = 'content-input';
 
 const HEADER_SIZE = '20px';
 
@@ -121,18 +122,26 @@ function TableDesigner({ content, onContentChange }) {
       case DESIGNER_CELL_ACTION.disconnectCell:
         onContentChange(disconnectCell(content, designerCell.rowIndex, designerCell.columnIndex));
         break;
+      case DESIGNER_CELL_ACTION.setVerticalAlignmentToTop:
+        onContentChange(changeVerticalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, VERTICAL_ALIGNMENT.top));
+        break;
+      case DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle:
+        onContentChange(changeVerticalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, VERTICAL_ALIGNMENT.middle));
+        break;
+      case DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom:
+        onContentChange(changeVerticalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, VERTICAL_ALIGNMENT.bottom));
+        break;
+      case DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft:
+        onContentChange(changeHorizontalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, HORIZONTAL_ALIGNMENT.left));
+        break;
+      case DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter:
+        onContentChange(changeHorizontalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, HORIZONTAL_ALIGNMENT.center));
+        break;
+      case DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight:
+        onContentChange(changeHorizontalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, HORIZONTAL_ALIGNMENT.right));
+        break;
       default:
         throw new Error(`Invalid action: '${action}'`);
-    }
-  };
-
-  const handleContentCellClick = event => {
-    if (event.target === event.currentTarget) {
-      const textarea = event.target.querySelector(`[data-role="${CONTENT_INPUT_DATA_ROLE}"]`);
-      if (textarea) {
-        textarea.focus();
-        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-      }
     }
   };
 
@@ -224,11 +233,11 @@ function TableDesigner({ content, onContentChange }) {
         key={getDesignerCellKey(designerCell)}
         className={classes}
         style={getDesignerCellStyle(designerCell)}
-        onClick={handleContentCellClick}
         >
         <DebouncedInput
           elementType={MarkdownInput}
-          data-role={CONTENT_INPUT_DATA_ROLE}
+          verticalAlignment={designerCell.verticalAlignment}
+          horizontalAlignment={designerCell.horizontalAlignment}
           value={designerCell.text}
           onChange={newText => handleDesignerCellTextChange(designerCell, newText)}
           renderMedia={content.renderMedia}

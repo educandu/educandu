@@ -2,6 +2,7 @@ import by from 'thenby';
 import deepEqual from 'fast-deep-equal';
 import uniqueId from '../../utils/unique-id.js';
 import { insertItemAt, removeItemAt } from '../../utils/array-utils.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 export const COLUMN_DISTRIBUTION = {
   automatic: 'automatic',
@@ -40,7 +41,13 @@ export const DESIGNER_CELL_ACTION = {
   connectToColumnBefore: 'connect-to-column-before',
   connectToColumnAfter: 'connect-to-column-after',
   disconnectAllCells: 'disconnect-all-cells',
-  disconnectCell: 'disconnect-cell'
+  disconnectCell: 'disconnect-cell',
+  setVerticalAlignmentToTop: 'set-vertical-alignment-to-top',
+  setVerticalAlignmentToMiddle: 'set-vertical-alignment-to-middle',
+  setVerticalAlignmentToBottom: 'set-vertical-alignment-to-bottom',
+  setHorizontalAlignmentToLeft: 'set-horizontal-alignment-to-left',
+  setHorizontalAlignmentToCenter: 'set-horizontal-alignment-to-center',
+  setHorizontalAlignmentToRight: 'set-horizontal-alignment-to-right'
 };
 
 export function isCellHit(cell, rowIndex, columnIndex) {
@@ -69,7 +76,17 @@ export function calculateEvenColumnWidthsInPercent(columnCount) {
 }
 
 export function createEmptyCell(rowIndex, columnIndex) {
-  return { key: uniqueId.create(), rowIndex, columnIndex, rowSpan: 1, columnSpan: 1, cellType: CELL_TYPE.body, text: '' };
+  return {
+    key: uniqueId.create(),
+    rowIndex,
+    columnIndex,
+    rowSpan: 1,
+    columnSpan: 1,
+    cellType: CELL_TYPE.body,
+    text: '',
+    verticalAlignment: VERTICAL_ALIGNMENT.top,
+    horizontalAlignment: HORIZONTAL_ALIGNMENT.left
+  };
 }
 
 export function visitAllCells(rowCount, columnCount, visitorCallback) {
@@ -140,36 +157,31 @@ export function createTableDesignerCells(tableModel) {
   return designerCells;
 }
 
-export function changeCellText(tableModel, rowIndex, columnIndex, newText) {
+function changeCellProps(tableModel, rowIndex, columnIndex, changedCellProps) {
   return {
     ...tableModel,
     cells: tableModel.cells.map(cell => {
-      if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
-        return {
-          ...cell,
-          text: newText
-        };
-      }
-
-      return cell;
+      return cell.rowIndex === rowIndex && cell.columnIndex === columnIndex
+        ? { ...cell, ...changedCellProps }
+        : cell;
     })
   };
 }
 
-export function changeCellType(tableModel, rowIndex, columnIndex, newCellType) {
-  return {
-    ...tableModel,
-    cells: tableModel.cells.map(cell => {
-      if (isCellHit(cell, rowIndex, columnIndex)) {
-        return {
-          ...cell,
-          cellType: newCellType
-        };
-      }
+export function changeCellText(tableModel, rowIndex, columnIndex, newText) {
+  return changeCellProps(tableModel, rowIndex, columnIndex, { text: newText });
+}
 
-      return cell;
-    })
-  };
+export function changeCellType(tableModel, rowIndex, columnIndex, newCellType) {
+  return changeCellProps(tableModel, rowIndex, columnIndex, { cellType: newCellType });
+}
+
+export function changeVerticalAlignment(tableModel, rowIndex, columnIndex, newVerticalAlignment) {
+  return changeCellProps(tableModel, rowIndex, columnIndex, { verticalAlignment: newVerticalAlignment });
+}
+
+export function changeHorizontalAlignment(tableModel, rowIndex, columnIndex, newHorizontalAlignment) {
+  return changeCellProps(tableModel, rowIndex, columnIndex, { horizontalAlignment: newHorizontalAlignment });
 }
 
 function getMatrixDimensions(matrix) {

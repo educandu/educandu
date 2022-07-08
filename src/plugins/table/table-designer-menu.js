@@ -12,19 +12,29 @@ import {
   DeleteColumnOutlined,
   MergeCellsOutlined,
   SplitCellsOutlined,
-  BgColorsOutlined
+  BgColorsOutlined,
+  VerticalAlignTopOutlined,
+  VerticalAlignMiddleOutlined,
+  VerticalAlignBottomOutlined,
+  AlignLeftOutlined,
+  AlignCenterOutlined,
+  AlignRightOutlined
 } from '@ant-design/icons';
 
 const MENU_GROUP = {
   insert: 'insert',
   delete: 'delete',
-  connect: 'connect'
+  connect: 'connect',
+  verticalAlignment: 'vertical-alignment',
+  horizontalAlignment: 'horizontal-alignment'
 };
 
 export const menuGroupInfos = {
   [MENU_GROUP.insert]: { translationKey: 'menuGroup_insert', icon: null },
   [MENU_GROUP.delete]: { translationKey: 'menuGroup_delete', icon: null },
-  [MENU_GROUP.connect]: { translationKey: 'menuGroup_connect', icon: null }
+  [MENU_GROUP.connect]: { translationKey: 'menuGroup_connect', icon: null },
+  [MENU_GROUP.verticalAlignment]: { translationKey: 'menuGroup_verticalAlignment', icon: null },
+  [MENU_GROUP.horizontalAlignment]: { translationKey: 'menuGroup_horizontalAlignment', icon: null }
 };
 
 export const menuItemInfos = {
@@ -47,7 +57,13 @@ export const menuItemInfos = {
   [DESIGNER_CELL_ACTION.connectToColumnBefore]: { translationKey: 'cellAction_connectToColumnBefore', icon: MergeCellsOutlined },
   [DESIGNER_CELL_ACTION.connectToColumnAfter]: { translationKey: 'cellAction_connectToColumnAfter', icon: MergeCellsOutlined },
   [DESIGNER_CELL_ACTION.disconnectAllCells]: { translationKey: 'cellAction_disconnectAllCells', icon: SplitCellsOutlined },
-  [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined }
+  [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined },
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToTop]: { translationKey: 'cellAction_setVerticalAlignmentToTop', icon: VerticalAlignTopOutlined },
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle]: { translationKey: 'cellAction_setVerticalAlignmentToMiddle', icon: VerticalAlignMiddleOutlined },
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom]: { translationKey: 'cellAction_setVerticalAlignmentToBottom', icon: VerticalAlignBottomOutlined },
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft]: { translationKey: 'cellAction_setHorizontalAlignmentToLeft', icon: AlignLeftOutlined },
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter]: { translationKey: 'cellAction_setHorizontalAlignmentToCenter', icon: AlignCenterOutlined },
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight]: { translationKey: 'cellAction_setHorizontalAlignmentToRight', icon: AlignRightOutlined }
 };
 
 function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, onIsActiveChange }) {
@@ -122,6 +138,23 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertAllToHeaderCells }),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertAllToBodyCells }),
         createMenuSeparatorItem(),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.verticalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToTop }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom })
+          ]
+        }),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.horizontalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight })
+          ]
+        }),
+        createMenuSeparatorItem(),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.disconnectAllCells })
       ];
       break;
@@ -129,6 +162,23 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
       items = [
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToHeaderRow }),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToBodyRow }),
+        createMenuSeparatorItem(),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.verticalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToTop }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom })
+          ]
+        }),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.horizontalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight })
+          ]
+        }),
         createMenuSeparatorItem(),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
@@ -140,6 +190,23 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToHeaderColumn }),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToBodyColumn }),
         createMenuSeparatorItem(),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.verticalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToTop }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom })
+          ]
+        }),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.horizontalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight })
+          ]
+        }),
+        createMenuSeparatorItem(),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn })
@@ -148,6 +215,23 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
     case DESIGNER_CELL_TYPE.content:
       items = [
         createMenuActionItem({ action: cell.cellType === CELL_TYPE.body ? DESIGNER_CELL_ACTION.convertToHeaderCell : DESIGNER_CELL_ACTION.convertToBodyCell }),
+        createMenuSeparatorItem(),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.verticalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToTop }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom })
+          ]
+        }),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.horizontalAlignment,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight })
+          ]
+        }),
         createMenuSeparatorItem(),
         createMenuActionGroupItem({
           groupName: MENU_GROUP.insert,
