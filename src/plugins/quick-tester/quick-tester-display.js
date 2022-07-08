@@ -8,7 +8,7 @@ import Collapsible from '../../components/collapsible.js';
 import CardSelector from '../../components/card-selector.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import { ensureIsIncluded, shuffleItems } from '../../utils/array-utils.js';
-import { LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
+import { LeftOutlined, ReloadOutlined, RightOutlined, SwapOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -16,8 +16,8 @@ const RadioGroup = Radio.Group;
 function QuickTesterDisplay({ content }) {
   const { t } = useTranslation('quickTester');
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
-  const [isAnswerVisible, setIsAnswerVisible] = useState(false);
   const [viewedTestIndices, setViewedTestIndices] = useState([0]);
+  const [isCurrentTestAnswerVisible, setIsCurrentTestAnswerVisible] = useState(false);
   const [tests, setTests] = useState(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
 
   useEffect(() => {
@@ -26,31 +26,31 @@ function QuickTesterDisplay({ content }) {
 
   const resetTests = () => {
     setCurrentTestIndex(0);
-    setIsAnswerVisible(false);
     setViewedTestIndices([0]);
+    setIsCurrentTestAnswerVisible(false);
     setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   };
 
   const handleAnswerVisibilityChange = event => {
     const { value } = event.target;
-    setIsAnswerVisible(value);
+    setIsCurrentTestAnswerVisible(value);
   };
 
   const handleTestCardSelected = testIndex => {
     if (currentTestIndex !== testIndex) {
-      setIsAnswerVisible(false);
       setCurrentTestIndex(testIndex);
+      setIsCurrentTestAnswerVisible(false);
     }
   };
 
   const handlePreviousTestClick = () => {
-    setIsAnswerVisible(false);
     setCurrentTestIndex(i => i - 1);
+    setIsCurrentTestAnswerVisible(false);
   };
 
   const handleNextTestClick = () => {
-    setIsAnswerVisible(false);
     setCurrentTestIndex(i => i + 1);
+    setIsCurrentTestAnswerVisible(false);
   };
 
   const testCards = tests.map((test, index) => ({ label: (index + 1).toString(), tooltip: t('testNumber', { number: index }) }));
@@ -66,12 +66,19 @@ function QuickTesterDisplay({ content }) {
         <div className="QuickTesterDisplay-content">
           <Markdown inline>{content.title}</Markdown>
           <div className="QuickTesterDisplay-controlPanel">
-            <CardSelector
-              cards={testCards}
-              selectedCardIndex={currentTestIndex}
-              previouslySelectedCardIndices={viewedTestIndices}
-              onCardSelected={handleTestCardSelected}
-              />
+            <div>
+              <CardSelector
+                cards={testCards}
+                selectedCardIndex={currentTestIndex}
+                previouslySelectedCardIndices={viewedTestIndices}
+                onCardSelected={handleTestCardSelected}
+                />
+              {content.testsOrder === TESTS_ORDER.random && (
+                <Tooltip title={t('randomizedTests')}>
+                  <SwapOutlined className="QuickTesterDisplay-randomTestsIcon" />
+                </Tooltip>
+              )}
+            </div>
             <div className="QuickTesterDisplay-buttons">
               <Button
                 shape="circle"
@@ -95,10 +102,10 @@ function QuickTesterDisplay({ content }) {
             </div>
           </div>
           <div className="QuickTesterDisplay-test">
-            {!isAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.question}</Markdown>}
-            {isAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.answer}</Markdown>}
+            {!isCurrentTestAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.question}</Markdown>}
+            {isCurrentTestAnswerVisible && <Markdown renderMedia={content.renderMedia}>{tests?.[currentTestIndex]?.answer}</Markdown>}
           </div>
-          <RadioGroup className="QuickTesterDisplay-radioGroup" value={isAnswerVisible} onChange={handleAnswerVisibilityChange}>
+          <RadioGroup className="QuickTesterDisplay-radioGroup" value={isCurrentTestAnswerVisible} onChange={handleAnswerVisibilityChange}>
             <RadioButton className="QuickTesterDisplay-radioButton" value={false}>{t('common:question')}</RadioButton>
             <RadioButton className="QuickTesterDisplay-radioButton" value>{t('common:answer')}</RadioButton>
           </RadioGroup>

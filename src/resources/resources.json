@@ -1872,7 +1872,8 @@
       "testsOrderRandom": "random",
       "renderMediaInfo": "Will be applied to the question and answer text, not the link text and title",
       "testNumber": "Test {number}",
-      "addTest": "Add test"
+      "addTest": "Add test",
+      "randomizedTests": "The tests are randomised"
     }
   },
   {
@@ -1886,7 +1887,8 @@
       "testsOrderRandom": "zufällig",
       "renderMediaInfo": "Bezieht sich nur auf den Fragen- und Antworttext, nicht auf den Link-Text und Titel",
       "testNumber": "Test {number}",
-      "addTest": "Test hinzufügen"
+      "addTest": "Test hinzufügen",
+      "randomizedTests": "Die Tests sind randomisiert"
     }
   },
   {
