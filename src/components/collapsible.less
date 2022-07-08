@@ -1,0 +1,126 @@
+@collapsible-padding: 16px;
+@collapsible-header-green-background-color: #d3ffde;
+@collapsible-header-green-border-color: darken(@collapsible-header-green-background-color, 10%);
+@collapsible-header-blue-background-color: #e8f2ff;
+@collapsible-header-blue-border-color: darken(@collapsible-header-blue-background-color, 8%);
+@collapsible-header-orange-background-color: #ffeed2;
+@collapsible-header-orange-border-color: darken(@collapsible-header-orange-background-color, 8%);
+@collapsible-header-red-background-color: #ffe0d0;
+@collapsible-header-red-border-color: darken(@collapsible-header-red-background-color, 8%);
+
+.Collapsible {
+  margin: 0 auto;
+}
+
+.Collapsible-header {
+  display: flex;
+  align-items: center;
+  overflow-x: hidden;
+  text-decoration: none;
+  color: @edu-text-color;
+  gap: @edu-content-padding;
+  padding: 12px @collapsible-padding;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-light;
+  background-color: @edu-background-color-light;
+
+  &:hover,
+  &:active,
+  &:visited {
+    color: @edu-text-color;
+  }
+
+  &.is-above-content {
+    border-radius: @edu-border-radius-base @edu-border-radius-base 0 0;
+  }
+
+  &.Collapsible-header--green {
+    background-color: @collapsible-header-green-background-color;
+    border-color: @collapsible-header-green-border-color;
+  }
+
+  &.Collapsible-header--blue {
+    background-color: @collapsible-header-blue-background-color;
+    border-color: @collapsible-header-blue-border-color;
+  }
+
+  &.Collapsible-header--orange {
+    background-color: @collapsible-header-orange-background-color;
+    border-color: @collapsible-header-orange-border-color;
+  }
+
+  &.Collapsible-header--red {
+    background-color: @collapsible-header-red-background-color;
+    border-color: @collapsible-header-red-border-color;
+  }
+}
+
+.Collapsible-headerArrow {
+  display: inline-block;
+  font-size: 12px;
+  margin-right: 0;
+  margin-left: auto;
+  transition: all 0.3s ease;
+
+  &.is-rotated-downwards {
+    transform: rotate(90deg);
+  }
+}
+
+.Collapsible-icon {
+  font-size: 16px;
+  display: flex;
+
+  &.Collapsible-icon--standalone {
+    font-size: 28px;
+    align-self: center;
+  }
+}
+
+.Collapsible-content {
+  overflow-x: hidden;
+  padding: @collapsible-padding;
+  border: 1px solid @edu-border-color-light;
+  border-radius: 0 0 @edu-border-radius-base @edu-border-radius-base;
+  border-top: none;
+
+  &.Collapsible-content--standalone {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-radius: @edu-border-radius-base;
+    border: 1px solid @edu-border-color-light;
+
+    &.Collapsible-content--green {
+      background-color: @collapsible-header-green-background-color;
+    }
+
+    &.Collapsible-content--blue {
+      background-color: @collapsible-header-blue-background-color;
+    }
+
+    &.Collapsible-content--orange {
+      background-color: @collapsible-header-orange-background-color;
+    }
+
+    &.Collapsible-content--red {
+      background-color: @collapsible-header-red-background-color;
+    }
+  }
+
+  &.Collapsible-content--green {
+    border-color: @collapsible-header-green-border-color;
+  }
+
+  &.Collapsible-content--blue {
+    border-color: @collapsible-header-blue-border-color;
+  }
+
+  &.Collapsible-content--orange {
+    border-color: @collapsible-header-orange-border-color;
+  }
+
+  &.Collapsible-content--red {
+    border-color: @collapsible-header-red-border-color;
+  }
+}

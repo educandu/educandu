@@ -1,92 +1,55 @@
-@quick-tester-panel-padding: 6px 12px;
-
-.QuickTester {}
-
-.QuickTester-content {
-  max-width: 60%;
+.QuickTesterDisplay {
+  width: 50%;
   margin: 0 auto;
-  text-align: center;
-  border: 1px solid @edu-background-color-base;
-  border-radius: 3px;
-  overflow: hidden;
-  color: @edu-text-color;
 
   @media @edu-media-phone {
-    max-width: 100%;
+    width: 100%;
   }
 }
 
-.QuickTester-initLink {
-  display: block;
-  text-align: center;
-  padding: @quick-tester-panel-padding;
-  background-color: @edu-background-color-base;
-  transition: all ease 500ms;
-
-  &:hover {
-    background-color: @edu-background-color-light;
-    transition: all ease 500ms;
-  }
-}
-
-.QuickTester-header {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  padding: @quick-tester-panel-padding;
-  color: @edu-text-color;
-  background-color: @edu-background-color-base;
-}
-
-.QuickTester-title {
-  grid-column: 2;
-  font-weight: bold;
+.QuickTesterDisplay-content {
   display: flex;
+  gap: 15px;
   align-items: center;
+  flex-direction: column;
 }
 
-.QuickTester-closeButton {
-  .m-inverted-button();
-  grid-column: 3;
-  text-align: right;
+.QuickTesterDisplay-controlPanel {
+  width: 100%;
+  padding: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: @edu-controls-group-gap;
+  justify-content: space-between;
 }
 
-.QuickTester-test {
-  padding: @quick-tester-panel-padding;
+.QuickTesterDisplay-radioGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.QuickTester-progress {
-  height: 6px;
-  background-color: @edu-success-color;
-  transition: all ease 500ms;
+.QuickTesterDisplay-radioButton {
+  display: flex;
+  user-select: none;
+  justify-content: center;
 }
 
-.QuickTester-question {
-  padding: 12px 0;
-}
-
-.QuickTester-questionHeader {
-  font-size: 80%;
-  margin-bottom: 6px;
-}
-
-.QuickTester-answer {
-  min-height: 120px;
-  padding: 24px 0;
+.QuickTesterDisplay-test {
+  min-height: 200px;
+  padding: 10px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 120%;
-  font-weight: bold;
+  border-radius: @edu-border-radius-base;
+  border: 1px solid @edu-border-color-light;
 }
 
-.QuickTester-buttons {
-  padding: @quick-tester-panel-padding;
-}
-
-.QuickTester-button {
-  display: inline-block;
-  margin: 0 6px;
+.QuickTesterDisplay-randomTestsIcon {
+  margin-left: 5px;
+  font-size: 10px;
 }
 
 .QuickTesterEditor {}
