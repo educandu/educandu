@@ -409,6 +409,6 @@ reset:
   en: Reset
   de: Zurücksetzen
 randomizedTests:
-  en: The tests are randomised
-  de: Die Tests sind randomisiert
+  en: The tests are arranged in random order
+  de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
 

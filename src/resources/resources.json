@@ -2097,7 +2097,7 @@
       "deletedRoom": "Deleted room",
       "deletedLesson": "Deleted lesson",
       "reset": "Reset",
-      "randomizedTests": "The tests are randomised"
+      "randomizedTests": "The tests are arranged in random order"
     }
   },
   {
@@ -2238,7 +2238,7 @@
       "deletedRoom": "Gelöschter Raum",
       "deletedLesson": "Gelöschte Einheit",
       "reset": "Zurücksetzen",
-      "randomizedTests": "Die Tests sind randomisiert"
+      "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet"
     }
   },
   {
