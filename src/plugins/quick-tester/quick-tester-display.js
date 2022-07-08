@@ -1,31 +1,46 @@
-import { Button, Radio } from 'antd';
-import React, { useState } from 'react';
 import { TESTS_ORDER } from './constants.js';
+import { Button, Radio, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
 import Markdown from '../../components/markdown.js';
 import QuickTesterIcon from './quick-tester-icon.js';
-import { shuffleItems } from '../../utils/array-utils.js';
 import Collapsible from '../../components/collapsible.js';
+import CardSelector from '../../components/card-selector.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
+import { ensureIsIncluded, shuffleItems } from '../../utils/array-utils.js';
 import { LeftOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+
 function QuickTesterDisplay({ content }) {
   const { t } = useTranslation('quickTester');
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
   const [isAnswerVisible, setIsAnswerVisible] = useState(false);
+  const [viewedTestIndices, setViewedTestIndices] = useState([0]);
   const [tests, setTests] = useState(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
+
+  useEffect(() => {
+    setViewedTestIndices(previousIndices => ensureIsIncluded(previousIndices, currentTestIndex));
+  }, [currentTestIndex]);
 
   const resetTests = () => {
     setCurrentTestIndex(0);
     setIsAnswerVisible(false);
+    setViewedTestIndices([0]);
     setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   };
 
   const handleAnswerVisibilityChange = event => {
     const { value } = event.target;
     setIsAnswerVisible(value);
+  };
+
+  const handleTestCardSelected = testIndex => {
+    if (currentTestIndex !== testIndex) {
+      setIsAnswerVisible(false);
+      setCurrentTestIndex(testIndex);
+    }
   };
 
   const handlePreviousTestClick = () => {
@@ -38,6 +53,8 @@ function QuickTesterDisplay({ content }) {
     setCurrentTestIndex(i => i + 1);
   };
 
+  const testCards = tests.map((test, index) => ({ label: (index + 1).toString(), tooltip: t('testNumber', { number: index }) }));
+
   return (
     <div className="QuickTesterDisplay">
       <Collapsible
@@ -49,7 +66,12 @@ function QuickTesterDisplay({ content }) {
         <div className="QuickTesterDisplay-content">
           <Markdown inline>{content.title}</Markdown>
           <div className="QuickTesterDisplay-controlPanel">
-            <div>cards</div>
+            <CardSelector
+              cards={testCards}
+              selectedCardIndex={currentTestIndex}
+              previouslySelectedCardIndices={viewedTestIndices}
+              onCardSelected={handleTestCardSelected}
+              />
             <div className="QuickTesterDisplay-buttons">
               <Button
                 shape="circle"
@@ -57,11 +79,13 @@ function QuickTesterDisplay({ content }) {
                 disabled={currentTestIndex === 0}
                 onClick={handlePreviousTestClick}
                 />
-              <Button
-                shape="circle"
-                icon={<ReloadOutlined />}
-                onClick={resetTests}
-                />
+              <Tooltip title={t('common:reset')}>
+                <Button
+                  shape="circle"
+                  icon={<ReloadOutlined />}
+                  onClick={resetTests}
+                  />
+              </Tooltip>
               <Button
                 shape="circle"
                 icon={<RightOutlined />}

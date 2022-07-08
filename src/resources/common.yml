@@ -405,3 +405,6 @@ deletedRoom:
 deletedLesson:
   en: Deleted lesson
   de: Gelöschte Einheit
+reset:
+  en: Reset
+  de: Zurücksetzen

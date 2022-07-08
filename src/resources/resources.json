@@ -1606,7 +1606,6 @@
       "name": "Ear training",
       "nextExercise": "Next exercise",
       "solve": "Solve",
-      "reset": "Reset",
       "abcCode": "ABC code",
       "midi": "MIDI (auto)",
       "testsOrder": "Display order",
@@ -1629,7 +1628,6 @@
       "name": "Gehörbildung",
       "nextExercise": "Nächste Übung",
       "solve": "Auflösen",
-      "reset": "Zurücksetzen",
       "abcCode": "ABC-Code",
       "midi": "MIDI (auto)",
       "testsOrder": "Anzeigereihenfolge",
@@ -2097,7 +2095,8 @@
       "answer": "Answer",
       "deletedDocument": "Deleted document",
       "deletedRoom": "Deleted room",
-      "deletedLesson": "Deleted lesson"
+      "deletedLesson": "Deleted lesson",
+      "reset": "Reset"
     }
   },
   {
@@ -2236,7 +2235,8 @@
       "answer": "Antwort",
       "deletedDocument": "Gelöschtes Dokument",
       "deletedRoom": "Gelöschter Raum",
-      "deletedLesson": "Gelöschte Einheit"
+      "deletedLesson": "Gelöschte Einheit",
+      "reset": "Zurücksetzen"
     }
   },
   {

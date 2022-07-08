@@ -185,7 +185,7 @@ function EarTrainingDisplay({ content }) {
         {renderSoundPlayer()}
 
         <div className="EarTrainingDisplay-buttons">
-          <Button onClick={handleResetClick}>{t('reset')}</Button>
+          <Button onClick={handleResetClick}>{t('common:reset')}</Button>
           {!showResult && !!tests[currentTestIndex] && (
             <Button type="primary" onClick={handleResultClick}>{t('solve')}</Button>
           )}
