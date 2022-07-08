@@ -50,7 +50,7 @@ export const DESIGNER_CELL_ACTION = {
   setHorizontalAlignmentToRight: 'set-horizontal-alignment-to-right'
 };
 
-export function isCellHit(cell, rowIndex, columnIndex) {
+export function isCellAffected(cell, rowIndex, columnIndex) {
   const cellIsInRow = rowIndex === -1 || (cell.rowIndex <= rowIndex && cell.rowIndex + cell.rowSpan - 1 >= rowIndex);
   const cellIsInColumn = columnIndex === -1 || (cell.columnIndex <= columnIndex && cell.columnIndex + cell.columnSpan - 1 >= columnIndex);
   return cellIsInRow && cellIsInColumn;
@@ -161,7 +161,7 @@ function changeCellProps(tableModel, rowIndex, columnIndex, changedCellProps) {
   return {
     ...tableModel,
     cells: tableModel.cells.map(cell => {
-      return isCellHit(cell, rowIndex, columnIndex)
+      return isCellAffected(cell, rowIndex, columnIndex)
         ? { ...cell, ...changedCellProps }
         : cell;
     })
@@ -484,7 +484,7 @@ export function disconnectCell(tableModel, rowIndex, columnIndex) {
   let shouldLookForMoreCombinedCells = true;
 
   while (shouldLookForMoreCombinedCells) {
-    const startCell = newTableModel.cells.find(cell => (cell.rowSpan !== 1 || cell.columnSpan !== 1) && isCellHit(cell, rowIndex, columnIndex));
+    const startCell = newTableModel.cells.find(cell => (cell.rowSpan !== 1 || cell.columnSpan !== 1) && isCellAffected(cell, rowIndex, columnIndex));
     if (startCell) {
       const newStartCell = { ...startCell, rowSpan: 1, columnSpan: 1 };
       newTableModel = modifyTableAsMatrix({

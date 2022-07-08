@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import DebouncedInput from '../../components/debounced-input.js';
-import { changeCellText, createTableDesignerCells, DESIGNER_CELL_TYPE, isCellHit, CELL_TYPE, executeDesignerAction } from './table-utils.js';
+import { changeCellText, createTableDesignerCells, DESIGNER_CELL_TYPE, isCellAffected, CELL_TYPE, executeDesignerAction } from './table-utils.js';
 
 const HEADER_SIZE = '20px';
 
@@ -126,7 +126,7 @@ function TableDesigner({ content, onContentChange }) {
   };
 
   const renderContentGridCell = designerCell => {
-    const isCellActive = activeDesignerCellMenu && isCellHit(designerCell, activeDesignerCellMenu.rowIndex, activeDesignerCellMenu.columnIndex);
+    const isCellActive = activeDesignerCellMenu && isCellAffected(designerCell, activeDesignerCellMenu.rowIndex, activeDesignerCellMenu.columnIndex);
 
     const classes = classNames({
       'is-active': isCellActive,
