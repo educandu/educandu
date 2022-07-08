@@ -13,16 +13,34 @@
     background-color: inherit !important;
   }
 
-  &.NeverScrollingTextArea--topAligned {
+  &.NeverScrollingTextArea--verticalAlignmentTop {
     grid-template-rows: 0 auto 1fr;
   }
 
-  &.NeverScrollingTextArea--centerAligned {
+  &.NeverScrollingTextArea--verticalAlignmentMiddle {
     grid-template-rows: 1fr auto 1fr;
   }
 
-  &.NeverScrollingTextArea--bottomAligned {
+  &.NeverScrollingTextArea--verticalAlignmentBottom {
     grid-template-rows: 1fr auto 0;
+  }
+
+  &.NeverScrollingTextArea--horizontalAlignmentLeft {
+    textarea {
+      text-align: left;
+    }
+  }
+
+  &.NeverScrollingTextArea--horizontalAlignmentCenter {
+    textarea {
+      text-align: center;
+    }
+  }
+
+  &.NeverScrollingTextArea--horizontalAlignmentRight {
+    textarea {
+      text-align: right;
+    }
   }
 
   &.NeverScrollingTextArea--embeddable {

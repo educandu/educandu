@@ -10,6 +10,12 @@ columnDistribution_automatic:
 columnDistribution_even:
   en: Even
   de: Gleichmäßig
+cellAction_convertAllToHeaderCells:
+  en: Convert to header cells
+  de: In Kopfzellen konvertieren
+cellAction_convertAllToBodyCells:
+  en: Convert to body cells
+  de: In Datenzellen konvertieren
 cellAction_convertToHeaderRow:
   en: Convert to header row
   de: In Kopfzeile konvertieren
@@ -58,6 +64,42 @@ cellAction_connectToColumnBefore:
 cellAction_connectToColumnAfter:
   en: Connect with cell on the right
   de: Mit Zelle rechts verbinden
+cellAction_disconnectAllCells:
+  en: Disconnect cells
+  de: Zellenverbindungen aufheben
 cellAction_disconnectCell:
   en: Disconnect cells
   de: Zellenverbindung aufheben
+cellAction_setVerticalAlignmentToTop:
+  en: Align content on top
+  de: Inhalt oben ausrichten
+cellAction_setVerticalAlignmentToMiddle:
+  en: Center content vertically
+  de: Inhalt vertikal zentrieren
+cellAction_setVerticalAlignmentToBottom:
+  en: Align content on bottom
+  de: Inhalt unten ausrichten
+cellAction_setHorizontalAlignmentToLeft:
+  en: Align content on the left
+  de: Inhalt linksbündig ausrichten
+cellAction_setHorizontalAlignmentToCenter:
+  en: Center content horizontally
+  de: Inhalt horizontal zentrieren
+cellAction_setHorizontalAlignmentToRight:
+  en: Align content on the right
+  de: Inhalt rechtsbündig ausrichten
+menuGroup_insert:
+  en: Insert
+  de: Einfügen
+menuGroup_delete:
+  en: Delete
+  de: Löschen
+menuGroup_connect:
+  en: Connect
+  de: Verbinden
+menuGroup_verticalAlignment:
+  en: Vertical alignment
+  de: Vertikale Ausrichtung
+menuGroup_horizontalAlignment:
+  en: Horizontal alignment
+  de: Horizontale Ausrichtung

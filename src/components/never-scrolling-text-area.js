@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 import { FormItemInputContext } from '../utils/pre-resolved-modules.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../domain/constants.js';
 
 const { TextArea } = Input;
 
@@ -25,15 +26,18 @@ const handleBottomContainerClick = event => {
   return (event.target === event.currentTarget) && selectSiblingTextarea(event.target, false);
 };
 
-function NeverScrollingTextArea({ className, disabled, embeddable, minRows, verticalAlign, ...textAreaProps }) {
+function NeverScrollingTextArea({ className, disabled, embeddable, horizontalAlignment, minRows, verticalAlignment, ...textAreaProps }) {
   const context = useContext(FormItemInputContext);
 
   const componentClasses = classNames(
     'NeverScrollingTextArea',
     {
-      'NeverScrollingTextArea--topAligned': verticalAlign === 'top',
-      'NeverScrollingTextArea--centerAligned': verticalAlign === 'center',
-      'NeverScrollingTextArea--bottomAligned': verticalAlign === 'bottom',
+      'NeverScrollingTextArea--verticalAlignmentTop': verticalAlignment === VERTICAL_ALIGNMENT.top,
+      'NeverScrollingTextArea--verticalAlignmentMiddle': verticalAlignment === VERTICAL_ALIGNMENT.middle,
+      'NeverScrollingTextArea--verticalAlignmentBottom': verticalAlignment === VERTICAL_ALIGNMENT.bottom,
+      'NeverScrollingTextArea--horizontalAlignmentLeft': horizontalAlignment === HORIZONTAL_ALIGNMENT.left,
+      'NeverScrollingTextArea--horizontalAlignmentCenter': horizontalAlignment === HORIZONTAL_ALIGNMENT.center,
+      'NeverScrollingTextArea--horizontalAlignmentRight': horizontalAlignment === HORIZONTAL_ALIGNMENT.right,
       'NeverScrollingTextArea--embeddable': embeddable,
       'is-disabled': disabled,
       'has-error': context.status === 'error',
@@ -57,16 +61,18 @@ NeverScrollingTextArea.propTypes = {
   className: PropTypes.string,
   disabled: PropTypes.bool,
   embeddable: PropTypes.bool,
+  horizontalAlignment: PropTypes.oneOf(Object.values(HORIZONTAL_ALIGNMENT)),
   minRows: PropTypes.number,
-  verticalAlign: PropTypes.oneOf(['top', 'center', 'bottom'])
+  verticalAlignment: PropTypes.oneOf(Object.values(VERTICAL_ALIGNMENT))
 };
 
 NeverScrollingTextArea.defaultProps = {
   className: null,
   disabled: false,
   embeddable: false,
+  horizontalAlignment: HORIZONTAL_ALIGNMENT.left,
   minRows: 3,
-  verticalAlign: 'top'
+  verticalAlignment: VERTICAL_ALIGNMENT.top
 };
 
 export default NeverScrollingTextArea;

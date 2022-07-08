@@ -2,6 +2,7 @@ import by from 'thenby';
 import deepEqual from 'fast-deep-equal';
 import uniqueId from '../../utils/unique-id.js';
 import { insertItemAt, removeItemAt } from '../../utils/array-utils.js';
+import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
 
 export const COLUMN_DISTRIBUTION = {
   automatic: 'automatic',
@@ -14,12 +15,15 @@ export const CELL_TYPE = {
 };
 
 export const DESIGNER_CELL_TYPE = {
+  tableHeader: 'table-header',
   columnHeader: 'column-header',
   rowHeader: 'row-header',
   content: 'content'
 };
 
 export const DESIGNER_CELL_ACTION = {
+  convertAllToHeaderCells: 'convert-all-to-header-cells',
+  convertAllToBodyCells: 'convert-all-to-body-cells',
   convertToHeaderRow: 'convert-to-header-row',
   convertToBodyRow: 'convert-to-body-row',
   convertToHeaderColumn: 'convert-to-header-column',
@@ -36,8 +40,21 @@ export const DESIGNER_CELL_ACTION = {
   connectToRowAfter: 'connect-to-row-after',
   connectToColumnBefore: 'connect-to-column-before',
   connectToColumnAfter: 'connect-to-column-after',
-  disconnectCell: 'disconnect-cell'
+  disconnectAllCells: 'disconnect-all-cells',
+  disconnectCell: 'disconnect-cell',
+  setVerticalAlignmentToTop: 'set-vertical-alignment-to-top',
+  setVerticalAlignmentToMiddle: 'set-vertical-alignment-to-middle',
+  setVerticalAlignmentToBottom: 'set-vertical-alignment-to-bottom',
+  setHorizontalAlignmentToLeft: 'set-horizontal-alignment-to-left',
+  setHorizontalAlignmentToCenter: 'set-horizontal-alignment-to-center',
+  setHorizontalAlignmentToRight: 'set-horizontal-alignment-to-right'
 };
+
+export function isCellAffected(cell, rowIndex, columnIndex) {
+  const cellIsInRow = rowIndex === -1 || (cell.rowIndex <= rowIndex && cell.rowIndex + cell.rowSpan - 1 >= rowIndex);
+  const cellIsInColumn = columnIndex === -1 || (cell.columnIndex <= columnIndex && cell.columnIndex + cell.columnSpan - 1 >= columnIndex);
+  return cellIsInRow && cellIsInColumn;
+}
 
 export function calculateEvenColumnWidthsInPercent(columnCount) {
   if (!columnCount) {
@@ -59,7 +76,17 @@ export function calculateEvenColumnWidthsInPercent(columnCount) {
 }
 
 export function createEmptyCell(rowIndex, columnIndex) {
-  return { key: uniqueId.create(), rowIndex, columnIndex, rowSpan: 1, columnSpan: 1, cellType: CELL_TYPE.body, text: '' };
+  return {
+    key: uniqueId.create(),
+    rowIndex,
+    columnIndex,
+    rowSpan: 1,
+    columnSpan: 1,
+    cellType: CELL_TYPE.body,
+    text: '',
+    verticalAlignment: VERTICAL_ALIGNMENT.top,
+    horizontalAlignment: HORIZONTAL_ALIGNMENT.left
+  };
 }
 
 export function visitAllCells(rowCount, columnCount, visitorCallback) {
@@ -89,6 +116,13 @@ export function createTableCellsInRows(rowCount, columnCount, createCell) {
 export function createTableDesignerCells(tableModel) {
   const { rowCount, columnCount, cells } = tableModel;
   const designerCells = [];
+
+  designerCells.push({
+    key: DESIGNER_CELL_TYPE.tableHeader,
+    designerCellType: DESIGNER_CELL_TYPE.tableHeader,
+    columnIndex: -1,
+    rowIndex: -1
+  });
 
   for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
     designerCells.push({
@@ -123,68 +157,31 @@ export function createTableDesignerCells(tableModel) {
   return designerCells;
 }
 
-export function changeCellText(tableModel, rowIndex, columnIndex, newText) {
+function changeCellProps(tableModel, rowIndex, columnIndex, changedCellProps) {
   return {
     ...tableModel,
     cells: tableModel.cells.map(cell => {
-      if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
-        return {
-          ...cell,
-          text: newText
-        };
-      }
-
-      return cell;
+      return isCellAffected(cell, rowIndex, columnIndex)
+        ? { ...cell, ...changedCellProps }
+        : cell;
     })
   };
+}
+
+export function changeCellText(tableModel, rowIndex, columnIndex, newText) {
+  return changeCellProps(tableModel, rowIndex, columnIndex, { text: newText });
 }
 
 export function changeCellType(tableModel, rowIndex, columnIndex, newCellType) {
-  return {
-    ...tableModel,
-    cells: tableModel.cells.map(cell => {
-      if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
-        return {
-          ...cell,
-          cellType: newCellType
-        };
-      }
-
-      return cell;
-    })
-  };
+  return changeCellProps(tableModel, rowIndex, columnIndex, { cellType: newCellType });
 }
 
-export function changeCellTypesInRow(tableModel, rowIndex, newCellType) {
-  return {
-    ...tableModel,
-    cells: tableModel.cells.map(cell => {
-      if (cell.rowIndex <= rowIndex && cell.rowIndex + cell.rowSpan - 1 >= rowIndex) {
-        return {
-          ...cell,
-          cellType: newCellType
-        };
-      }
-
-      return cell;
-    })
-  };
+export function changeVerticalAlignment(tableModel, rowIndex, columnIndex, newVerticalAlignment) {
+  return changeCellProps(tableModel, rowIndex, columnIndex, { verticalAlignment: newVerticalAlignment });
 }
 
-export function changeCellTypesInColumn(tableModel, columnIndex, newCellType) {
-  return {
-    ...tableModel,
-    cells: tableModel.cells.map(cell => {
-      if (cell.columnIndex <= columnIndex && cell.columnIndex + cell.columnSpan - 1 >= columnIndex) {
-        return {
-          ...cell,
-          cellType: newCellType
-        };
-      }
-
-      return cell;
-    })
-  };
+export function changeHorizontalAlignment(tableModel, rowIndex, columnIndex, newHorizontalAlignment) {
+  return changeCellProps(tableModel, rowIndex, columnIndex, { horizontalAlignment: newHorizontalAlignment });
 }
 
 function getMatrixDimensions(matrix) {
@@ -483,10 +480,59 @@ export function connectToColumnAfter(tableModel, rowIndex, columnIndex) {
 }
 
 export function disconnectCell(tableModel, rowIndex, columnIndex) {
-  const startCell = getCellAt(tableModel, rowIndex, columnIndex);
-  const newStartCell = { ...startCell, rowSpan: 1, columnSpan: 1 };
-  return modifyTableAsMatrix({
-    ...tableModel,
-    cells: tableModel.cells.map(cell => cell === startCell ? newStartCell : cell)
-  }, matrix => matrix, true);
+  let newTableModel = tableModel;
+  let shouldLookForMoreCombinedCells = true;
+
+  while (shouldLookForMoreCombinedCells) {
+    const startCell = newTableModel.cells.find(cell => (cell.rowSpan !== 1 || cell.columnSpan !== 1) && isCellAffected(cell, rowIndex, columnIndex));
+    if (startCell) {
+      const newStartCell = { ...startCell, rowSpan: 1, columnSpan: 1 };
+      newTableModel = modifyTableAsMatrix({
+        ...newTableModel,
+        cells: newTableModel.cells.map(cell => cell === startCell ? newStartCell : cell)
+      }, matrix => matrix, true);
+    } else {
+      shouldLookForMoreCombinedCells = false;
+    }
+  }
+
+  return newTableModel;
+}
+
+const designerActionExecutors = {
+  [DESIGNER_CELL_ACTION.convertAllToHeaderCells]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertToHeaderRow]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertToHeaderColumn]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertToHeaderCell]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertAllToBodyCells]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.convertToBodyRow]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.convertToBodyColumn]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.convertToBodyCell]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.insertRowBefore]: (t, c) => insertRowBefore(t, c.rowIndex),
+  [DESIGNER_CELL_ACTION.insertRowAfter]: (t, c) => insertRowAfter(t, c.rowIndex),
+  [DESIGNER_CELL_ACTION.deleteRow]: (t, c) => deleteRow(t, c.rowIndex),
+  [DESIGNER_CELL_ACTION.insertColumnBefore]: (t, c) => insertColumnBefore(t, c.columnIndex),
+  [DESIGNER_CELL_ACTION.insertColumnAfter]: (t, c) => insertColumnAfter(t, c.columnIndex),
+  [DESIGNER_CELL_ACTION.deleteColumn]: (t, c) => deleteColumn(t, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToRowBefore]: (t, c) => connectToRowBefore(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToRowAfter]: (t, c) => connectToRowAfter(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToColumnBefore]: (t, c) => connectToColumnBefore(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToColumnAfter]: (t, c) => connectToColumnAfter(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.disconnectAllCells]: (t, c) => disconnectCell(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.disconnectCell]: (t, c) => disconnectCell(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToTop]: (t, c) => changeVerticalAlignment(t, c.rowIndex, c.columnIndex, VERTICAL_ALIGNMENT.top),
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle]: (t, c) => changeVerticalAlignment(t, c.rowIndex, c.columnIndex, VERTICAL_ALIGNMENT.middle),
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom]: (t, c) => changeVerticalAlignment(t, c.rowIndex, c.columnIndex, VERTICAL_ALIGNMENT.bottom),
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft]: (t, c) => changeHorizontalAlignment(t, c.rowIndex, c.columnIndex, HORIZONTAL_ALIGNMENT.left),
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter]: (t, c) => changeHorizontalAlignment(t, c.rowIndex, c.columnIndex, HORIZONTAL_ALIGNMENT.center),
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight]: (t, c) => changeHorizontalAlignment(t, c.rowIndex, c.columnIndex, HORIZONTAL_ALIGNMENT.right)
+};
+
+export function executeDesignerAction(tableModel, designerCell, action) {
+  const execute = designerActionExecutors[action];
+  if (!execute) {
+    throw new Error(`Invalid action: '${action}'`);
+  }
+
+  return execute(tableModel, designerCell);
 }

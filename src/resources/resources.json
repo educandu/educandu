@@ -1903,6 +1903,8 @@
       "columnDistribution": "Column width",
       "columnDistribution_automatic": "Automatic",
       "columnDistribution_even": "Even",
+      "cellAction_convertAllToHeaderCells": "Convert to header cells",
+      "cellAction_convertAllToBodyCells": "Convert to body cells",
       "cellAction_convertToHeaderRow": "Convert to header row",
       "cellAction_convertToBodyRow": "Convert to body row",
       "cellAction_convertToHeaderColumn": "Convert to header column",
@@ -1919,7 +1921,19 @@
       "cellAction_connectToRowAfter": "Connect with cell below",
       "cellAction_connectToColumnBefore": "Connect with cell on the left",
       "cellAction_connectToColumnAfter": "Connect with cell on the right",
-      "cellAction_disconnectCell": "Disconnect cells"
+      "cellAction_disconnectAllCells": "Disconnect cells",
+      "cellAction_disconnectCell": "Disconnect cells",
+      "cellAction_setVerticalAlignmentToTop": "Align content on top",
+      "cellAction_setVerticalAlignmentToMiddle": "Center content vertically",
+      "cellAction_setVerticalAlignmentToBottom": "Align content on bottom",
+      "cellAction_setHorizontalAlignmentToLeft": "Align content on the left",
+      "cellAction_setHorizontalAlignmentToCenter": "Center content horizontally",
+      "cellAction_setHorizontalAlignmentToRight": "Align content on the right",
+      "menuGroup_insert": "Insert",
+      "menuGroup_delete": "Delete",
+      "menuGroup_connect": "Connect",
+      "menuGroup_verticalAlignment": "Vertical alignment",
+      "menuGroup_horizontalAlignment": "Horizontal alignment"
     }
   },
   {
@@ -1930,6 +1944,8 @@
       "columnDistribution": "Spaltenbreite",
       "columnDistribution_automatic": "Automatisch",
       "columnDistribution_even": "Gleichmäßig",
+      "cellAction_convertAllToHeaderCells": "In Kopfzellen konvertieren",
+      "cellAction_convertAllToBodyCells": "In Datenzellen konvertieren",
       "cellAction_convertToHeaderRow": "In Kopfzeile konvertieren",
       "cellAction_convertToBodyRow": "In Datenzeile konvertieren",
       "cellAction_convertToHeaderColumn": "In Kopfspalte konvertieren",
@@ -1946,7 +1962,19 @@
       "cellAction_connectToRowAfter": "Mit Zelle darunter verbinden",
       "cellAction_connectToColumnBefore": "Mit Zelle links verbinden",
       "cellAction_connectToColumnAfter": "Mit Zelle rechts verbinden",
-      "cellAction_disconnectCell": "Zellenverbindung aufheben"
+      "cellAction_disconnectAllCells": "Zellenverbindungen aufheben",
+      "cellAction_disconnectCell": "Zellenverbindung aufheben",
+      "cellAction_setVerticalAlignmentToTop": "Inhalt oben ausrichten",
+      "cellAction_setVerticalAlignmentToMiddle": "Inhalt vertikal zentrieren",
+      "cellAction_setVerticalAlignmentToBottom": "Inhalt unten ausrichten",
+      "cellAction_setHorizontalAlignmentToLeft": "Inhalt linksbündig ausrichten",
+      "cellAction_setHorizontalAlignmentToCenter": "Inhalt horizontal zentrieren",
+      "cellAction_setHorizontalAlignmentToRight": "Inhalt rechtsbündig ausrichten",
+      "menuGroup_insert": "Einfügen",
+      "menuGroup_delete": "Löschen",
+      "menuGroup_connect": "Verbinden",
+      "menuGroup_verticalAlignment": "Vertikale Ausrichtung",
+      "menuGroup_horizontalAlignment": "Horizontale Ausrichtung"
     }
   },
   {
