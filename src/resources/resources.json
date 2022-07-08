@@ -1872,8 +1872,7 @@
       "testsOrderRandom": "random",
       "renderMediaInfo": "Will be applied to the question and answer text, not the link text and title",
       "testNumber": "Test {number}",
-      "addTest": "Add test",
-      "randomizedTests": "The tests are randomised"
+      "addTest": "Add test"
     }
   },
   {
@@ -1887,8 +1886,7 @@
       "testsOrderRandom": "zufällig",
       "renderMediaInfo": "Bezieht sich nur auf den Fragen- und Antworttext, nicht auf den Link-Text und Titel",
       "testNumber": "Test {number}",
-      "addTest": "Test hinzufügen",
-      "randomizedTests": "Die Tests sind randomisiert"
+      "addTest": "Test hinzufügen"
     }
   },
   {
@@ -2098,7 +2096,8 @@
       "deletedDocument": "Deleted document",
       "deletedRoom": "Deleted room",
       "deletedLesson": "Deleted lesson",
-      "reset": "Reset"
+      "reset": "Reset",
+      "randomizedTests": "The tests are randomised"
     }
   },
   {
@@ -2238,7 +2237,8 @@
       "deletedDocument": "Gelöschtes Dokument",
       "deletedRoom": "Gelöschter Raum",
       "deletedLesson": "Gelöschte Einheit",
-      "reset": "Zurücksetzen"
+      "reset": "Zurücksetzen",
+      "randomizedTests": "Die Tests sind randomisiert"
     }
   },
   {

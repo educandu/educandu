@@ -408,3 +408,7 @@ deletedLesson:
 reset:
   en: Reset
   de: Zurücksetzen
+randomizedTests:
+  en: The tests are randomised
+  de: Die Tests sind randomisiert
+

@@ -22,6 +22,3 @@ testNumber:
 addTest:
   en: Add test
   de: Test hinzufügen
-randomizedTests:
-  en: The tests are randomised
-  de: Die Tests sind randomisiert

@@ -1,8 +1,52 @@
 .EarTrainingDisplay {}
 
+.EarTrainingDisplay-contentWrapper {
+  .m-horizontally-centered;
+  max-width: 100%;
+  text-align: center;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+}
+
+.EarTrainingDisplay-controlPanel {
+  .m-horizontally-centered;
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+
+  @media @edu-media-phone {
+    width: 100%;
+  }
+}
+
+.EarTrainingDisplay-randomTestsIcon {
+  margin-left: 5px;
+  font-size: 10px;
+}
+
+.EarTrainingDisplay-radioGroup {
+  .m-horizontally-centered;
+  display: grid;
+  max-width: fit-content;
+  grid-template-columns: 1fr 1fr;
+}
+
+.EarTrainingDisplay-radioButton {
+  display: flex;
+  user-select: none;
+  justify-content: center;
+}
+
+.EarTrainingDisplay-test {
+  padding: 10px;
+  border: 1px solid @edu-border-color-base;
+  border-radius: @edu-border-radius-base;
+}
+
 .EarTrainingDisplay-questionImage {
+  .m-horizontally-centered;
   display: block;
-  margin: 0 auto;
   max-width: 100%;
 
   &.EarTrainingDisplay-questionImage--toggledOff {
@@ -15,8 +59,8 @@
 }
 
 .EarTrainingDisplay-answerImage {
+  .m-horizontally-centered;
   display: none;
-  margin: 0 auto;
   max-width: 100%;
 }
 
@@ -24,12 +68,6 @@
   .m-horizontally-centered;
   max-width: @edu-breakpoint-sm;
   margin-top: 20px;
-}
-
-.EarTrainingDisplay-testWrapper {
-  margin: 0 auto;
-  max-width: 100%;
-  text-align: center;
 }
 
 .EarTrainingDisplay-buttons {
