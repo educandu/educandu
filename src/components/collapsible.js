@@ -24,8 +24,8 @@ export default function Collapsible({ title, icon, color, width, children, isCol
     }
 
     const iconClasses = classNames({
-      'Collapsibl-icon': true,
-      'Collapsibl-icon--standalone': standalone
+      'Collapsible-icon': true,
+      'Collapsible-icon--standalone': standalone
     });
 
     return (<div className={iconClasses}>{icon}</div>);
