@@ -161,7 +161,7 @@ function changeCellProps(tableModel, rowIndex, columnIndex, changedCellProps) {
   return {
     ...tableModel,
     cells: tableModel.cells.map(cell => {
-      return cell.rowIndex === rowIndex && cell.columnIndex === columnIndex
+      return isCellHit(cell, rowIndex, columnIndex)
         ? { ...cell, ...changedCellProps }
         : cell;
     })
@@ -497,4 +497,42 @@ export function disconnectCell(tableModel, rowIndex, columnIndex) {
   }
 
   return newTableModel;
+}
+
+const designerActionExecutors = {
+  [DESIGNER_CELL_ACTION.convertAllToHeaderCells]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertToHeaderRow]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertToHeaderColumn]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertToHeaderCell]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.header),
+  [DESIGNER_CELL_ACTION.convertAllToBodyCells]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.convertToBodyRow]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.convertToBodyColumn]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.convertToBodyCell]: (t, c) => changeCellType(t, c.rowIndex, c.columnIndex, CELL_TYPE.body),
+  [DESIGNER_CELL_ACTION.insertRowBefore]: (t, c) => insertRowBefore(t, c.rowIndex),
+  [DESIGNER_CELL_ACTION.insertRowAfter]: (t, c) => insertRowAfter(t, c.rowIndex),
+  [DESIGNER_CELL_ACTION.deleteRow]: (t, c) => deleteRow(t, c.rowIndex),
+  [DESIGNER_CELL_ACTION.insertColumnBefore]: (t, c) => insertColumnBefore(t, c.columnIndex),
+  [DESIGNER_CELL_ACTION.insertColumnAfter]: (t, c) => insertColumnAfter(t, c.columnIndex),
+  [DESIGNER_CELL_ACTION.deleteColumn]: (t, c) => deleteColumn(t, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToRowBefore]: (t, c) => connectToRowBefore(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToRowAfter]: (t, c) => connectToRowAfter(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToColumnBefore]: (t, c) => connectToColumnBefore(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.connectToColumnAfter]: (t, c) => connectToColumnAfter(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.disconnectAllCells]: (t, c) => disconnectCell(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.disconnectCell]: (t, c) => disconnectCell(t, c.rowIndex, c.columnIndex),
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToTop]: (t, c) => changeVerticalAlignment(t, c.rowIndex, c.columnIndex, VERTICAL_ALIGNMENT.top),
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle]: (t, c) => changeVerticalAlignment(t, c.rowIndex, c.columnIndex, VERTICAL_ALIGNMENT.middle),
+  [DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom]: (t, c) => changeVerticalAlignment(t, c.rowIndex, c.columnIndex, VERTICAL_ALIGNMENT.bottom),
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft]: (t, c) => changeHorizontalAlignment(t, c.rowIndex, c.columnIndex, HORIZONTAL_ALIGNMENT.left),
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter]: (t, c) => changeHorizontalAlignment(t, c.rowIndex, c.columnIndex, HORIZONTAL_ALIGNMENT.center),
+  [DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight]: (t, c) => changeHorizontalAlignment(t, c.rowIndex, c.columnIndex, HORIZONTAL_ALIGNMENT.right)
+};
+
+export function executeDesignerAction(tableModel, designerCell, action) {
+  const execute = designerActionExecutors[action];
+  if (!execute) {
+    throw new Error(`Invalid action: '${action}'`);
+  }
+
+  return execute(tableModel, designerCell);
 }

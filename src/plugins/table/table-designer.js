@@ -4,29 +4,7 @@ import React, { useMemo, useState } from 'react';
 import TableDesignerMenu from './table-designer-menu.js';
 import MarkdownInput from '../../components/markdown-input.js';
 import DebouncedInput from '../../components/debounced-input.js';
-import { HORIZONTAL_ALIGNMENT, VERTICAL_ALIGNMENT } from '../../domain/constants.js';
-import {
-  changeCellText,
-  changeCellType,
-  changeVerticalAlignment,
-  changeHorizontalAlignment,
-  createTableDesignerCells,
-  deleteColumn,
-  deleteRow,
-  DESIGNER_CELL_ACTION,
-  DESIGNER_CELL_TYPE,
-  insertColumnAfter,
-  insertColumnBefore,
-  insertRowAfter,
-  insertRowBefore,
-  isCellHit,
-  connectToColumnAfter,
-  connectToColumnBefore,
-  connectToRowAfter,
-  connectToRowBefore,
-  disconnectCell,
-  CELL_TYPE
-} from './table-utils.js';
+import { changeCellText, createTableDesignerCells, DESIGNER_CELL_TYPE, isCellHit, CELL_TYPE, executeDesignerAction } from './table-utils.js';
 
 const HEADER_SIZE = '20px';
 
@@ -73,76 +51,8 @@ function TableDesigner({ content, onContentChange }) {
     onContentChange(changeCellText(content, cell.rowIndex, cell.columnIndex, newText));
   };
 
-  // eslint-disable-next-line complexity
   const handleDesignerCellAction = (action, designerCell) => {
-    switch (action) {
-      case DESIGNER_CELL_ACTION.convertAllToHeaderCells:
-      case DESIGNER_CELL_ACTION.convertToHeaderRow:
-      case DESIGNER_CELL_ACTION.convertToHeaderColumn:
-      case DESIGNER_CELL_ACTION.convertToHeaderCell:
-        onContentChange(changeCellType(content, designerCell.rowIndex, designerCell.columnIndex, CELL_TYPE.header));
-        break;
-      case DESIGNER_CELL_ACTION.convertAllToBodyCells:
-      case DESIGNER_CELL_ACTION.convertToBodyRow:
-      case DESIGNER_CELL_ACTION.convertToBodyColumn:
-      case DESIGNER_CELL_ACTION.convertToBodyCell:
-        onContentChange(changeCellType(content, designerCell.rowIndex, designerCell.columnIndex, CELL_TYPE.body));
-        break;
-      case DESIGNER_CELL_ACTION.insertRowBefore:
-        onContentChange(insertRowBefore(content, designerCell.rowIndex));
-        break;
-      case DESIGNER_CELL_ACTION.insertRowAfter:
-        onContentChange(insertRowAfter(content, designerCell.rowIndex));
-        break;
-      case DESIGNER_CELL_ACTION.deleteRow:
-        onContentChange(deleteRow(content, designerCell.rowIndex));
-        break;
-      case DESIGNER_CELL_ACTION.insertColumnBefore:
-        onContentChange(insertColumnBefore(content, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.insertColumnAfter:
-        onContentChange(insertColumnAfter(content, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.deleteColumn:
-        onContentChange(deleteColumn(content, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.connectToRowBefore:
-        onContentChange(connectToRowBefore(content, designerCell.rowIndex, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.connectToRowAfter:
-        onContentChange(connectToRowAfter(content, designerCell.rowIndex, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.connectToColumnBefore:
-        onContentChange(connectToColumnBefore(content, designerCell.rowIndex, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.connectToColumnAfter:
-        onContentChange(connectToColumnAfter(content, designerCell.rowIndex, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.disconnectAllCells:
-      case DESIGNER_CELL_ACTION.disconnectCell:
-        onContentChange(disconnectCell(content, designerCell.rowIndex, designerCell.columnIndex));
-        break;
-      case DESIGNER_CELL_ACTION.setVerticalAlignmentToTop:
-        onContentChange(changeVerticalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, VERTICAL_ALIGNMENT.top));
-        break;
-      case DESIGNER_CELL_ACTION.setVerticalAlignmentToMiddle:
-        onContentChange(changeVerticalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, VERTICAL_ALIGNMENT.middle));
-        break;
-      case DESIGNER_CELL_ACTION.setVerticalAlignmentToBottom:
-        onContentChange(changeVerticalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, VERTICAL_ALIGNMENT.bottom));
-        break;
-      case DESIGNER_CELL_ACTION.setHorizontalAlignmentToLeft:
-        onContentChange(changeHorizontalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, HORIZONTAL_ALIGNMENT.left));
-        break;
-      case DESIGNER_CELL_ACTION.setHorizontalAlignmentToCenter:
-        onContentChange(changeHorizontalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, HORIZONTAL_ALIGNMENT.center));
-        break;
-      case DESIGNER_CELL_ACTION.setHorizontalAlignmentToRight:
-        onContentChange(changeHorizontalAlignment(content, designerCell.rowIndex, designerCell.columnIndex, HORIZONTAL_ALIGNMENT.right));
-        break;
-      default:
-        throw new Error(`Invalid action: '${action}'`);
-    }
+    onContentChange(executeDesignerAction(content, designerCell, action));
   };
 
   const handleDesignerCellIsActiveChange = (isActive, designerCell) => {
