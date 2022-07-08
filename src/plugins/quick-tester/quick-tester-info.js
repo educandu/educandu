@@ -35,7 +35,7 @@ class QuickTesterInfo {
   getDefaultContent(t) {
     return {
       title: `[${t('common:title')}]`,
-      teaser: `[${t('quickTester:teaserLabel')}]`,
+      teaser: `[${t('quickTester:teaser')}]`,
       tests: [
         {
           question: `[${t('common:question')}]`,

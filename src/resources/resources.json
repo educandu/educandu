@@ -1868,9 +1868,7 @@
     "language": "en",
     "resources": {
       "name": "Quick tester",
-      "showAnswer": "Show answer",
-      "questionHeader": "Question {currentTest} of {testsLength}",
-      "teaserLabel": "Link text",
+      "teaser": "Teaser",
       "testsOrder": "Display order",
       "testsOrderGiven": "as specified",
       "testsOrderRandom": "random",
@@ -1884,9 +1882,7 @@
     "language": "de",
     "resources": {
       "name": "Schnelltester",
-      "showAnswer": "Antwort anzeigen",
-      "questionHeader": "Frage {currentTest} von {testsLength}",
-      "teaserLabel": "Link-Text",
+      "teaser": "Teaser",
       "testsOrder": "Anzeigereihenfolge",
       "testsOrderGiven": "wie angegeben",
       "testsOrderRandom": "zufällig",

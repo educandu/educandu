@@ -92,7 +92,7 @@ Collapsible.propTypes = {
   icon: PropTypes.node,
   isCollapsed: PropTypes.bool,
   isCollapsible: PropTypes.bool,
-  title: PropTypes.string,
+  title: PropTypes.node,
   width: PropTypes.number
 };
 
