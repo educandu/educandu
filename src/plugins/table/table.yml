@@ -10,6 +10,12 @@ columnDistribution_automatic:
 columnDistribution_even:
   en: Even
   de: Gleichmäßig
+cellAction_convertAllToHeaderCells:
+  en: Convert to header cells
+  de: In Kopfzellen konvertieren
+cellAction_convertAllToBodyCells:
+  en: Convert to body cells
+  de: In Datenzellen konvertieren
 cellAction_convertToHeaderRow:
   en: Convert to header row
   de: In Kopfzeile konvertieren
@@ -58,6 +64,18 @@ cellAction_connectToColumnBefore:
 cellAction_connectToColumnAfter:
   en: Connect with cell on the right
   de: Mit Zelle rechts verbinden
+cellAction_disconnectAllCells:
+  en: Disconnect cells
+  de: Zellenverbindungen aufheben
 cellAction_disconnectCell:
   en: Disconnect cells
   de: Zellenverbindung aufheben
+menuGroup_insert:
+  en: Insert
+  de: Einfügen
+menuGroup_delete:
+  en: Delete
+  de: Löschen
+menuGroup_connect:
+  en: Connect
+  de: Verbinden

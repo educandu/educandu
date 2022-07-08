@@ -14,12 +14,15 @@ export const CELL_TYPE = {
 };
 
 export const DESIGNER_CELL_TYPE = {
+  tableHeader: 'table-header',
   columnHeader: 'column-header',
   rowHeader: 'row-header',
   content: 'content'
 };
 
 export const DESIGNER_CELL_ACTION = {
+  convertAllToHeaderCells: 'convert-all-to-header-cells',
+  convertAllToBodyCells: 'convert-all-to-body-cells',
   convertToHeaderRow: 'convert-to-header-row',
   convertToBodyRow: 'convert-to-body-row',
   convertToHeaderColumn: 'convert-to-header-column',
@@ -36,8 +39,15 @@ export const DESIGNER_CELL_ACTION = {
   connectToRowAfter: 'connect-to-row-after',
   connectToColumnBefore: 'connect-to-column-before',
   connectToColumnAfter: 'connect-to-column-after',
+  disconnectAllCells: 'disconnect-all-cells',
   disconnectCell: 'disconnect-cell'
 };
+
+export function isCellHit(cell, rowIndex, columnIndex) {
+  const cellIsInRow = rowIndex === -1 || (cell.rowIndex <= rowIndex && cell.rowIndex + cell.rowSpan - 1 >= rowIndex);
+  const cellIsInColumn = columnIndex === -1 || (cell.columnIndex <= columnIndex && cell.columnIndex + cell.columnSpan - 1 >= columnIndex);
+  return cellIsInRow && cellIsInColumn;
+}
 
 export function calculateEvenColumnWidthsInPercent(columnCount) {
   if (!columnCount) {
@@ -89,6 +99,13 @@ export function createTableCellsInRows(rowCount, columnCount, createCell) {
 export function createTableDesignerCells(tableModel) {
   const { rowCount, columnCount, cells } = tableModel;
   const designerCells = [];
+
+  designerCells.push({
+    key: DESIGNER_CELL_TYPE.tableHeader,
+    designerCellType: DESIGNER_CELL_TYPE.tableHeader,
+    columnIndex: -1,
+    rowIndex: -1
+  });
 
   for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
     designerCells.push({
@@ -143,39 +160,7 @@ export function changeCellType(tableModel, rowIndex, columnIndex, newCellType) {
   return {
     ...tableModel,
     cells: tableModel.cells.map(cell => {
-      if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
-        return {
-          ...cell,
-          cellType: newCellType
-        };
-      }
-
-      return cell;
-    })
-  };
-}
-
-export function changeCellTypesInRow(tableModel, rowIndex, newCellType) {
-  return {
-    ...tableModel,
-    cells: tableModel.cells.map(cell => {
-      if (cell.rowIndex <= rowIndex && cell.rowIndex + cell.rowSpan - 1 >= rowIndex) {
-        return {
-          ...cell,
-          cellType: newCellType
-        };
-      }
-
-      return cell;
-    })
-  };
-}
-
-export function changeCellTypesInColumn(tableModel, columnIndex, newCellType) {
-  return {
-    ...tableModel,
-    cells: tableModel.cells.map(cell => {
-      if (cell.columnIndex <= columnIndex && cell.columnIndex + cell.columnSpan - 1 >= columnIndex) {
+      if (isCellHit(cell, rowIndex, columnIndex)) {
         return {
           ...cell,
           cellType: newCellType
@@ -483,10 +468,21 @@ export function connectToColumnAfter(tableModel, rowIndex, columnIndex) {
 }
 
 export function disconnectCell(tableModel, rowIndex, columnIndex) {
-  const startCell = getCellAt(tableModel, rowIndex, columnIndex);
-  const newStartCell = { ...startCell, rowSpan: 1, columnSpan: 1 };
-  return modifyTableAsMatrix({
-    ...tableModel,
-    cells: tableModel.cells.map(cell => cell === startCell ? newStartCell : cell)
-  }, matrix => matrix, true);
+  let newTableModel = tableModel;
+  let shouldLookForMoreCombinedCells = true;
+
+  while (shouldLookForMoreCombinedCells) {
+    const startCell = newTableModel.cells.find(cell => (cell.rowSpan !== 1 || cell.columnSpan !== 1) && isCellHit(cell, rowIndex, columnIndex));
+    if (startCell) {
+      const newStartCell = { ...startCell, rowSpan: 1, columnSpan: 1 };
+      newTableModel = modifyTableAsMatrix({
+        ...newTableModel,
+        cells: newTableModel.cells.map(cell => cell === startCell ? newStartCell : cell)
+      }, matrix => matrix, true);
+    } else {
+      shouldLookForMoreCombinedCells = false;
+    }
+  }
+
+  return newTableModel;
 }

@@ -6,8 +6,6 @@ import MarkdownInput from '../../components/markdown-input.js';
 import DebouncedInput from '../../components/debounced-input.js';
 import {
   changeCellText,
-  changeCellTypesInRow,
-  changeCellTypesInColumn,
   changeCellType,
   createTableDesignerCells,
   deleteColumn,
@@ -18,6 +16,7 @@ import {
   insertColumnBefore,
   insertRowAfter,
   insertRowBefore,
+  isCellHit,
   connectToColumnAfter,
   connectToColumnBefore,
   connectToRowAfter,
@@ -48,12 +47,14 @@ const getDesignerCellStyle = designerCell => {
 
 const getDesignerCellKey = designerCell => {
   switch (designerCell.designerCellType) {
-    case DESIGNER_CELL_TYPE.content:
-      return [designerCell.rowIndex, designerCell.columnIndex, designerCell.rowSpan, designerCell.columnSpan, designerCell.cellType].join('|');
-    case DESIGNER_CELL_TYPE.rowHeader:
-      return `${DESIGNER_CELL_TYPE.rowHeader}-${designerCell.rowIndex}`;
+    case DESIGNER_CELL_TYPE.tableHeader:
+      return DESIGNER_CELL_TYPE.tableHeader;
     case DESIGNER_CELL_TYPE.columnHeader:
       return `${DESIGNER_CELL_TYPE.columnHeader}-${designerCell.columnIndex}`;
+    case DESIGNER_CELL_TYPE.rowHeader:
+      return `${DESIGNER_CELL_TYPE.rowHeader}-${designerCell.rowIndex}`;
+    case DESIGNER_CELL_TYPE.content:
+      return [designerCell.rowIndex, designerCell.columnIndex, designerCell.rowSpan, designerCell.columnSpan, designerCell.cellType].join('|');
     default:
       throw new Error(`Invalid designer cell type ${designerCell.designerCellType}`);
   }
@@ -61,8 +62,7 @@ const getDesignerCellKey = designerCell => {
 
 function TableDesigner({ content, onContentChange }) {
   const { rowCount, columnCount } = content;
-  const [activeRowIndex, setActiveRowIndex] = useState(-1);
-  const [activeColumnIndex, setActiveColumnIndex] = useState(-1);
+  const [activeDesignerCellMenu, setActiveDesignerCellMenu] = useState(null);
 
   const designerCells = useMemo(() => {
     return createTableDesignerCells(content);
@@ -72,23 +72,18 @@ function TableDesigner({ content, onContentChange }) {
     onContentChange(changeCellText(content, cell.rowIndex, cell.columnIndex, newText));
   };
 
+  // eslint-disable-next-line complexity
   const handleDesignerCellAction = (action, designerCell) => {
     switch (action) {
+      case DESIGNER_CELL_ACTION.convertAllToHeaderCells:
       case DESIGNER_CELL_ACTION.convertToHeaderRow:
-        onContentChange(changeCellTypesInRow(content, designerCell.rowIndex, CELL_TYPE.header));
-        break;
-      case DESIGNER_CELL_ACTION.convertToBodyRow:
-        onContentChange(changeCellTypesInRow(content, designerCell.rowIndex, CELL_TYPE.body));
-        break;
       case DESIGNER_CELL_ACTION.convertToHeaderColumn:
-        onContentChange(changeCellTypesInColumn(content, designerCell.columnIndex, CELL_TYPE.header));
-        break;
-      case DESIGNER_CELL_ACTION.convertToBodyColumn:
-        onContentChange(changeCellTypesInColumn(content, designerCell.columnIndex, CELL_TYPE.body));
-        break;
       case DESIGNER_CELL_ACTION.convertToHeaderCell:
         onContentChange(changeCellType(content, designerCell.rowIndex, designerCell.columnIndex, CELL_TYPE.header));
         break;
+      case DESIGNER_CELL_ACTION.convertAllToBodyCells:
+      case DESIGNER_CELL_ACTION.convertToBodyRow:
+      case DESIGNER_CELL_ACTION.convertToBodyColumn:
       case DESIGNER_CELL_ACTION.convertToBodyCell:
         onContentChange(changeCellType(content, designerCell.rowIndex, designerCell.columnIndex, CELL_TYPE.body));
         break;
@@ -122,6 +117,7 @@ function TableDesigner({ content, onContentChange }) {
       case DESIGNER_CELL_ACTION.connectToColumnAfter:
         onContentChange(connectToColumnAfter(content, designerCell.rowIndex, designerCell.columnIndex));
         break;
+      case DESIGNER_CELL_ACTION.disconnectAllCells:
       case DESIGNER_CELL_ACTION.disconnectCell:
         onContentChange(disconnectCell(content, designerCell.rowIndex, designerCell.columnIndex));
         break;
@@ -140,22 +136,34 @@ function TableDesigner({ content, onContentChange }) {
     }
   };
 
-  const handleActiveRowChange = (rowIndex, isActive) => {
-    setActiveRowIndex(currentValue => {
-      if (!isActive && rowIndex === currentValue) {
-        return -1;
+  const handleDesignerCellIsActiveChange = (isActive, designerCell) => {
+    setActiveDesignerCellMenu(currentValue => {
+      if (!isActive && currentValue?.rowIndex === designerCell.rowIndex && currentValue?.columnIndex === designerCell.columnIndex) {
+        return null;
       }
-      return isActive ? rowIndex : currentValue;
+
+      return isActive ? { rowIndex: designerCell.rowIndex, columnIndex: designerCell.columnIndex } : currentValue;
     });
   };
 
-  const handleActiveColumnChange = (columnIndex, isActive) => {
-    setActiveColumnIndex(currentValue => {
-      if (!isActive && columnIndex === currentValue) {
-        return -1;
-      }
-      return isActive ? columnIndex : currentValue;
-    });
+  const renderTableHeaderGridCell = designerCell => {
+    return (
+      <div
+        key={getDesignerCellKey(designerCell)}
+        style={getDesignerCellStyle(designerCell)}
+        className="TableDesigner-gridCell TableDesigner-gridCell--tableHeader"
+        >
+        <div className="TableDesigner-headerCellMenuContainer">
+          <TableDesignerMenu
+            canDeleteRow={rowCount > 1}
+            canDeleteColumn={columnCount > 1}
+            cell={designerCell}
+            onCellAction={handleDesignerCellAction}
+            onIsActiveChange={handleDesignerCellIsActiveChange}
+            />
+        </div>
+      </div>
+    );
   };
 
   const renderRowHeaderGridCell = designerCell => {
@@ -171,7 +179,7 @@ function TableDesigner({ content, onContentChange }) {
             canDeleteColumn={columnCount > 1}
             cell={designerCell}
             onCellAction={handleDesignerCellAction}
-            onIsActiveChange={isActive => handleActiveRowChange(designerCell.rowIndex, isActive)}
+            onIsActiveChange={handleDesignerCellIsActiveChange}
             />
         </div>
       </div>
@@ -191,7 +199,7 @@ function TableDesigner({ content, onContentChange }) {
             canDeleteColumn={columnCount > 1}
             cell={designerCell}
             onCellAction={handleDesignerCellAction}
-            onIsActiveChange={isActive => handleActiveColumnChange(designerCell.columnIndex, isActive)}
+            onIsActiveChange={handleDesignerCellIsActiveChange}
             />
         </div>
       </div>
@@ -199,11 +207,10 @@ function TableDesigner({ content, onContentChange }) {
   };
 
   const renderContentGridCell = designerCell => {
-    const isInActiveRow = designerCell.rowIndex <= activeRowIndex && designerCell.rowIndex + designerCell.rowSpan - 1 >= activeRowIndex;
-    const isInActiveColumn = designerCell.columnIndex <= activeColumnIndex && designerCell.columnIndex + designerCell.columnSpan - 1 >= activeColumnIndex;
+    const isCellActive = activeDesignerCellMenu && isCellHit(designerCell, activeDesignerCellMenu.rowIndex, activeDesignerCellMenu.columnIndex);
 
     const classes = classNames({
-      'is-active': isInActiveRow || isInActiveColumn,
+      'is-active': isCellActive,
       'TableDesigner-gridCell': true,
       'TableDesigner-gridCell--content': true,
       'TableDesigner-gridCell--firstInRow': designerCell.isFirstInRow,
@@ -235,6 +242,7 @@ function TableDesigner({ content, onContentChange }) {
             cell={designerCell}
             dotType="zooming"
             onCellAction={handleDesignerCellAction}
+            onIsActiveChange={handleDesignerCellIsActiveChange}
             />
         </div>
       </div>
@@ -243,12 +251,14 @@ function TableDesigner({ content, onContentChange }) {
 
   const renderDesignerGridCell = designerCell => {
     switch (designerCell.designerCellType) {
-      case DESIGNER_CELL_TYPE.content:
-        return renderContentGridCell(designerCell);
-      case DESIGNER_CELL_TYPE.rowHeader:
-        return renderRowHeaderGridCell(designerCell);
+      case DESIGNER_CELL_TYPE.tableHeader:
+        return renderTableHeaderGridCell(designerCell);
       case DESIGNER_CELL_TYPE.columnHeader:
         return renderColumnHeaderGridCell(designerCell);
+      case DESIGNER_CELL_TYPE.rowHeader:
+        return renderRowHeaderGridCell(designerCell);
+      case DESIGNER_CELL_TYPE.content:
+        return renderContentGridCell(designerCell);
       default:
         throw new Error(`Invalid designer cell type ${designerCell.designerCellType}`);
     }

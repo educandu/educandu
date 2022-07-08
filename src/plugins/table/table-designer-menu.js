@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Dropdown, Menu } from 'antd';
 import { useTranslation } from 'react-i18next';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CELL_TYPE, DESIGNER_CELL_ACTION, DESIGNER_CELL_TYPE } from './table-utils.js';
 import {
   InsertRowAboveOutlined,
@@ -15,7 +15,21 @@ import {
   BgColorsOutlined
 } from '@ant-design/icons';
 
+const MENU_GROUP = {
+  insert: 'insert',
+  delete: 'delete',
+  connect: 'connect'
+};
+
+export const menuGroupInfos = {
+  [MENU_GROUP.insert]: { translationKey: 'menuGroup_insert', icon: null },
+  [MENU_GROUP.delete]: { translationKey: 'menuGroup_delete', icon: null },
+  [MENU_GROUP.connect]: { translationKey: 'menuGroup_connect', icon: null }
+};
+
 export const menuItemInfos = {
+  [DESIGNER_CELL_ACTION.convertAllToHeaderCells]: { translationKey: 'cellAction_convertAllToHeaderCells', icon: BgColorsOutlined },
+  [DESIGNER_CELL_ACTION.convertAllToBodyCells]: { translationKey: 'cellAction_convertAllToBodyCells', icon: BgColorsOutlined },
   [DESIGNER_CELL_ACTION.convertToHeaderRow]: { translationKey: 'cellAction_convertToHeaderRow', icon: BgColorsOutlined },
   [DESIGNER_CELL_ACTION.convertToBodyRow]: { translationKey: 'cellAction_convertToBodyRow', icon: BgColorsOutlined },
   [DESIGNER_CELL_ACTION.convertToHeaderColumn]: { translationKey: 'cellAction_convertToHeaderColumn', icon: BgColorsOutlined },
@@ -32,18 +46,48 @@ export const menuItemInfos = {
   [DESIGNER_CELL_ACTION.connectToRowAfter]: { translationKey: 'cellAction_connectToRowAfter', icon: MergeCellsOutlined },
   [DESIGNER_CELL_ACTION.connectToColumnBefore]: { translationKey: 'cellAction_connectToColumnBefore', icon: MergeCellsOutlined },
   [DESIGNER_CELL_ACTION.connectToColumnAfter]: { translationKey: 'cellAction_connectToColumnAfter', icon: MergeCellsOutlined },
+  [DESIGNER_CELL_ACTION.disconnectAllCells]: { translationKey: 'cellAction_disconnectAllCells', icon: SplitCellsOutlined },
   [DESIGNER_CELL_ACTION.disconnectCell]: { translationKey: 'cellAction_disconnectCell', icon: SplitCellsOutlined }
 };
 
 function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCellAction, onIsActiveChange }) {
+  const isInitialMount = useRef(true);
   const { t } = useTranslation('table');
+  const onIsActiveChangeRef = useRef(null);
   const [isActive, setIsActive] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
   const [isCellActionInProgress, setIsCellActionInProgress] = useState(false);
 
-  useEffect(() => setIsActive(isMouseOver || isCellActionInProgress), [isMouseOver, isCellActionInProgress]);
+  onIsActiveChangeRef.current = onIsActiveChange;
 
-  useEffect(() => onIsActiveChange(isActive), [isActive, onIsActiveChange]);
+  useEffect(() => {
+    setIsActive(isMouseOver || isCellActionInProgress);
+  }, [isMouseOver, isCellActionInProgress]);
+
+  useEffect(() => {
+    const noop = () => {};
+
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return noop;
+    }
+
+    onIsActiveChangeRef.current(isActive, cell);
+    return isActive ? () => onIsActiveChangeRef.current(false, cell) : noop;
+  }, [isActive, onIsActiveChangeRef, cell]);
+
+  const createMenuActionGroupItem = ({ groupName, children, disabled = false }) => {
+    const menuGroupInfo = menuGroupInfos[groupName];
+    const IconComponent = menuGroupInfo.icon;
+
+    return {
+      key: groupName,
+      label: t(menuGroupInfo.translationKey),
+      icon: IconComponent ? <IconComponent /> : null,
+      children,
+      disabled
+    };
+  };
 
   const createMenuActionItem = ({ action, disabled = false }) => {
     const menuItemInfo = menuItemInfos[action];
@@ -73,6 +117,14 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
 
   let items;
   switch (cell.designerCellType) {
+    case DESIGNER_CELL_TYPE.tableHeader:
+      items = [
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertAllToHeaderCells }),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertAllToBodyCells }),
+        createMenuSeparatorItem(),
+        createMenuActionItem({ action: DESIGNER_CELL_ACTION.disconnectAllCells })
+      ];
+      break;
     case DESIGNER_CELL_TYPE.rowHeader:
       items = [
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.convertToHeaderRow }),
@@ -95,22 +147,35 @@ function TableDesignerMenu({ canDeleteColumn, canDeleteRow, cell, dotType, onCel
       break;
     case DESIGNER_CELL_TYPE.content:
       items = [
-        createMenuActionItem({
-          action: cell.cellType === CELL_TYPE.body ? DESIGNER_CELL_ACTION.convertToHeaderCell : DESIGNER_CELL_ACTION.convertToBodyCell,
-          separator: true
+        createMenuActionItem({ action: cell.cellType === CELL_TYPE.body ? DESIGNER_CELL_ACTION.convertToHeaderCell : DESIGNER_CELL_ACTION.convertToBodyCell }),
+        createMenuSeparatorItem(),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.insert,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter })
+          ]
         }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowBefore }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertRowAfter }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow }),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.delete,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteRow, disabled: !canDeleteRow }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn })
+          ]
+        }),
         createMenuSeparatorItem(),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnBefore }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.insertColumnAfter }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.deleteColumn, disabled: !canDeleteColumn }),
-        createMenuSeparatorItem(),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToRowBefore, disabled: cell.isFirstInColumn }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToRowAfter, disabled: cell.isLastInColumn }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToColumnBefore, disabled: cell.isFirstInRow }),
-        createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToColumnAfter, disabled: cell.isLastInRow }),
+        createMenuActionGroupItem({
+          groupName: MENU_GROUP.connect,
+          children: [
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToRowBefore, disabled: cell.isFirstInColumn }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToRowAfter, disabled: cell.isLastInColumn }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToColumnBefore, disabled: cell.isFirstInRow }),
+            createMenuActionItem({ action: DESIGNER_CELL_ACTION.connectToColumnAfter, disabled: cell.isLastInRow })
+          ],
+          disabled: cell.isFirstInColumn && cell.isLastInColumn && cell.isFirstInRow && cell.isLastInRow
+        }),
         createMenuActionItem({ action: DESIGNER_CELL_ACTION.disconnectCell, disabled: !cell.isConnected })
       ];
       break;
