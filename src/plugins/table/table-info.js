@@ -67,10 +67,10 @@ class TableInfo {
     const cdnResources = [];
 
     for (const cell of content.cells) {
-      cdnResources.push(...this.gfm.extractCdnResources(cell.text || ''));
+      cdnResources.push(...this.gfm.extractCdnResources(cell.text));
     }
 
-    return [...new Set(cdnResources)];
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

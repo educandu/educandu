@@ -54,7 +54,7 @@ class MarkdownInfo {
   }
 
   getCdnResources(content) {
-    return this.gfm.extractCdnResources(content.text || '');
+    return this.gfm.extractCdnResources(content.text);
   }
 }
 

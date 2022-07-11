@@ -4,11 +4,15 @@ import ImageDisplay from './image-display.js';
 import cloneDeep from '../../utils/clone-deep.js';
 import { IMAGE_SOURCE_TYPE } from '../../domain/constants.js';
 import { isAccessibleStoragePath } from '../../utils/storage-utils.js';
+import GithubFlavoredMarkdown from '../../common/github-flavored-markdown.js';
 
 class ImageInfo {
+  static get inject() { return [GithubFlavoredMarkdown]; }
+
   static get typeName() { return 'image'; }
 
-  constructor() {
+  constructor(gfm) {
+    this.gfm = gfm;
     this.type = 'image';
   }
 
@@ -45,6 +49,18 @@ class ImageInfo {
   redactContent(content, targetRoomId) {
     const redactedContent = cloneDeep(content);
 
+    redactedContent.copyrightNotice = this.gfm.redactCdnResources(
+      redactedContent.copyrightNotice,
+      url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+    );
+
+    if (redactedContent.effect) {
+      redactedContent.effect.copyrightNotice = this.gfm.redactCdnResources(
+        redactedContent.effect.copyrightNotice,
+        url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
+      );
+    }
+
     if (redactedContent.sourceType === IMAGE_SOURCE_TYPE.internal && !isAccessibleStoragePath(redactedContent.sourceUrl, targetRoomId)) {
       redactedContent.sourceUrl = '';
     }
@@ -57,14 +73,18 @@ class ImageInfo {
   }
 
   getCdnResources(content) {
-    const resources = [];
+    const cdnResources = [];
+
+    cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
+    cdnResources.push(...this.gfm.extractCdnResources(content.effect?.copyrightNotice));
+
     if (content.sourceType === IMAGE_SOURCE_TYPE.internal && content.sourceUrl) {
-      resources.push(content.sourceUrl);
+      cdnResources.push(content.sourceUrl);
     }
     if (content.effect?.sourceType === IMAGE_SOURCE_TYPE.internal && content.effect.sourceUrl) {
-      resources.push(content.effect.sourceUrl);
+      cdnResources.push(content.effect.sourceUrl);
     }
-    return [...new Set(resources)];
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

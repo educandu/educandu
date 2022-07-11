@@ -68,7 +68,7 @@ class AudioInfo {
       cdnResources.push(content.sourceUrl);
     }
 
-    return cdnResources;
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

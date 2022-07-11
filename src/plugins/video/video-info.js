@@ -78,7 +78,7 @@ class VideoInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice || ''));
+    cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
 
     if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
       cdnResources.push(content.sourceUrl);
@@ -88,7 +88,7 @@ class VideoInfo {
       cdnResources.push(content.posterImage.sourceUrl);
     }
 
-    return cdnResources;
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

@@ -118,12 +118,12 @@ class EarTrainingInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.title || ''));
+    cdnResources.push(...this.gfm.extractCdnResources(content.title));
 
     for (const test of content.tests) {
-      cdnResources.push(...this.gfm.extractCdnResources(test.sound?.copyrightNotice || ''));
-      cdnResources.push(...this.gfm.extractCdnResources(test.questionImage?.copyrightNotice || ''));
-      cdnResources.push(...this.gfm.extractCdnResources(test.answerImage?.copyrightNotice || ''));
+      cdnResources.push(...this.gfm.extractCdnResources(test.sound?.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.questionImage?.copyrightNotice));
+      cdnResources.push(...this.gfm.extractCdnResources(test.answerImage?.copyrightNotice));
 
       if (test.sound?.sourceType === SOUND_SOURCE_TYPE.internal && test.sound.sourceUrl) {
         cdnResources.push(test.sound.sourceUrl);
@@ -135,8 +135,7 @@ class EarTrainingInfo {
         cdnResources.push(test.answerImage.sourceUrl);
       }
     }
-
-    return cdnResources;
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

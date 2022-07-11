@@ -84,7 +84,7 @@ class AnavisInfo {
       cdnResources.push(content.media.sourceUrl);
     }
 
-    return cdnResources;
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 

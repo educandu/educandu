@@ -81,13 +81,13 @@ class InteractiveMediaInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice || ''));
+    cdnResources.push(...this.gfm.extractCdnResources(content.copyrightNotice));
 
     if (content.sourceType === MEDIA_SOURCE_TYPE.internal && content.sourceUrl) {
       cdnResources.push(content.sourceUrl);
     }
 
-    return cdnResources;
+    return [...new Set(cdnResources)].filter(cdnResource => cdnResource);
   }
 }
 
