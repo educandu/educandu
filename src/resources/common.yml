@@ -413,6 +413,6 @@ randomizedTests:
   de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
 youtubeCopyrightNotice:
   en: |
-    © Source: [Youtube]({link})
+    Source: [Youtube]({link})
   de: |
-    © Quelle: [Youtube]({link})
+    Quelle: [Youtube]({link})

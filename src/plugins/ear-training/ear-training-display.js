@@ -6,10 +6,11 @@ import Markdown from '../../components/markdown.js';
 import { getImageUrl } from '../../utils/url-utils.js';
 import MediaPlayer from '../../components/media-player.js';
 import ClientConfig from '../../bootstrap/client-config.js';
-import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import CardSelector from '../../components/card-selector.js';
+import { MEDIA_SCREEN_MODE } from '../../domain/constants.js';
 import IterationPanel from '../../components/iteration-panel.js';
 import { useService } from '../../components/container-context.js';
+import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { SOUND_SOURCE_TYPE, TESTS_ORDER, TEST_MODE } from './constants.js';
@@ -170,11 +171,7 @@ function EarTrainingDisplay({ content }) {
             canDownload={sourceType === SOUND_SOURCE_TYPE.internal}
             />
         )}
-        {currentTest.sound.copyrightNotice && (
-          <div>
-            <Markdown>{currentTest.sound.copyrightNotice}</Markdown>
-          </div>
-        )}
+        <CopyrightNotice value={currentTest.sound.copyrightNotice} />
       </div>
     );
   };
@@ -230,13 +227,13 @@ function EarTrainingDisplay({ content }) {
                     sourceUrl: tests[currentTestIndex].questionImage.sourceUrl
                   })}
                   />
-                {!isCurrentTestAnswerVisible && <Markdown>{tests[currentTestIndex].questionImage.copyrightNotice}</Markdown>}
+                {!isCurrentTestAnswerVisible && <CopyrightNotice value={tests[currentTestIndex].questionImage.copyrightNotice} />}
               </Fragment>
             )}
             {tests[currentTestIndex].mode === TEST_MODE.image && (
               <Fragment>
                 <canvas ref={answerImageCanvasRef} className={`EarTrainingDisplay-answerImage u-width-${width}`} />
-                {isCurrentTestAnswerVisible && <Markdown>{tests[currentTestIndex].answerImage.copyrightNotice}</Markdown>}
+                {isCurrentTestAnswerVisible && <CopyrightNotice value={tests[currentTestIndex].answerImage.copyrightNotice} /> }
               </Fragment>
             )}
             {tests[currentTestIndex].mode === TEST_MODE.abcCode && (

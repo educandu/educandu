@@ -2126,7 +2126,7 @@
       "deletedLesson": "Deleted lesson",
       "reset": "Reset",
       "randomizedTests": "The tests are arranged in random order",
-      "youtubeCopyrightNotice": "© Source: [Youtube]({link})\n"
+      "youtubeCopyrightNotice": "Source: [Youtube]({link})\n"
     }
   },
   {
@@ -2268,7 +2268,7 @@
       "deletedLesson": "Gelöschte Einheit",
       "reset": "Zurücksetzen",
       "randomizedTests": "Die Tests sind in einer zufälligen Reihenfolge angeordnet",
-      "youtubeCopyrightNotice": "© Quelle: [Youtube]({link})\n"
+      "youtubeCopyrightNotice": "Quelle: [Youtube]({link})\n"
     }
   },
   {

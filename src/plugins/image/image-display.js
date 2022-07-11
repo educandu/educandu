@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import Markdown from '../../components/markdown.js';
 import { getImageUrl } from '../../utils/url-utils.js';
 import { EFFECT_TYPE, ORIENTATION } from './constants.js';
 import ClientConfig from '../../bootstrap/client-config.js';
 import { useService } from '../../components/container-context.js';
+import CopyrightNotice from '../../components/copyright-notice.js';
 import { sectionDisplayProps } from '../../ui/default-prop-types.js';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
@@ -153,10 +153,8 @@ function ImageDisplay({ content }) {
           />
       )}
       {effect?.type === EFFECT_TYPE.hover && renderHoverEffect()}
-      <div className="ImageDisplay-copyrightNotice">
-        {showMainImageCopyright && <Markdown>{copyrightNotice}</Markdown>}
-        {showEffectImageCopyright && <Markdown>{effect.copyrightNotice}</Markdown>}
-      </div>
+      {showMainImageCopyright && <CopyrightNotice value={copyrightNotice} />}
+      {showEffectImageCopyright && <CopyrightNotice value={effect.copyrightNotice} />}
     </div>
   );
 }
