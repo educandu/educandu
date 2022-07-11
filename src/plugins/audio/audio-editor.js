@@ -33,12 +33,16 @@ function AudioEditor({ content, onContentChanged }) {
 
   const handleSourceTypeValueChange = event => {
     const { value } = event.target;
-    changeContent({ sourceType: value, sourceUrl: '' });
+    changeContent({ sourceType: value, sourceUrl: '', copyrightNotice: '' });
   };
 
   const handleSourceUrlValueChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value });
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: value })
+      : copyrightNotice;
+
+    changeContent({ sourceUrl: value, copyrightNotice: newCopyrightNotice });
   };
 
   const handleInternalUrlFileNameChange = value => {

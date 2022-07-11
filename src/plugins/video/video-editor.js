@@ -36,11 +36,12 @@ function VideoEditor({ content, onContentChanged }) {
     onContentChanged(newContent, isInvalidSourceUrl);
   };
 
-  const handleTypeChanged = event => {
+  const handleSourceTypeChanged = event => {
     const { value } = event.target;
     changeContent({
       sourceType: value,
       sourceUrl: '',
+      copyrightNotice: '',
       posterImage: {
         sourceType: MEDIA_SOURCE_TYPE.internal,
         sourceUrl: ''
@@ -50,7 +51,11 @@ function VideoEditor({ content, onContentChanged }) {
 
   const handleSourceUrlValueChange = event => {
     const { value } = event.target;
-    changeContent({ sourceUrl: value });
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: value })
+      : copyrightNotice;
+
+    changeContent({ sourceUrl: value, copyrightNotice: newCopyrightNotice });
   };
 
   const handleInternalUrlFileNameChange = value => {
@@ -99,7 +104,7 @@ function VideoEditor({ content, onContentChanged }) {
     <div>
       <Form layout="horizontal">
         <FormItem label={t('common:source')} {...formItemLayout}>
-          <RadioGroup value={sourceType} onChange={handleTypeChanged}>
+          <RadioGroup value={sourceType} onChange={handleSourceTypeChanged}>
             <RadioButton value={MEDIA_SOURCE_TYPE.external}>{t('common:externalLink')}</RadioButton>
             <RadioButton value={MEDIA_SOURCE_TYPE.internal}>{t('common:internalCdn')}</RadioButton>
             <RadioButton value={MEDIA_SOURCE_TYPE.youtube}>{t('common:youtube')}</RadioButton>

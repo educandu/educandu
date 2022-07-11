@@ -50,7 +50,7 @@ function AnavisEditor({ content, onContentChanged }) {
   const handleSourceUrlValueChanged = newValue => {
     const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
       ? t('common:youtubeCopyrightNotice', { link: newValue })
-      : '';
+      : copyrightNotice;
 
     changeContent(oldContent => ({
       ...oldContent,

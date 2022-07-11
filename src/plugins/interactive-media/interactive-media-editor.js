@@ -119,12 +119,17 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       sourceDuration: 0,
       sourceStartTimecode: null,
       sourceStopTimecode: null,
+      copyrightNotice: '',
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
   };
 
   const handleSourceUrlChange = async value => {
     const { duration, resourceType, error } = await getMediaInformation(value);
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: value })
+      : copyrightNotice;
+
     setSelectedChapterIndex(0);
     changeContent({
       sourceUrl: value,
@@ -132,6 +137,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
       sourceDuration: duration,
       sourceStartTimecode: null,
       sourceStopTimecode: null,
+      copyrightNotice: newCopyrightNotice,
       chapters: [interactiveMediaInfo.getDefaultChapter(t)]
     });
     if (error) {
