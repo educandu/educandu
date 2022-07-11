@@ -48,7 +48,7 @@ class AnavisInfo {
         kind: MEDIA_KIND.video,
         sourceType: MEDIA_SOURCE_TYPE.youtube,
         sourceUrl: '',
-        text: '',
+        copyrightNotice: '',
         aspectRatio: MEDIA_ASPECT_RATIO.sixteenToNine
       }
     };
@@ -62,8 +62,8 @@ class AnavisInfo {
     const redactedContent = cloneDeep(content);
 
     if (redactedContent.media) {
-      redactedContent.media.text = this.gfm.redactCdnResources(
-        redactedContent.media.text,
+      redactedContent.media.copyrightNotice = this.gfm.redactCdnResources(
+        redactedContent.media.copyrightNotice,
         url => isAccessibleStoragePath(url, targetRoomId) ? url : ''
       );
     }
@@ -78,7 +78,7 @@ class AnavisInfo {
   getCdnResources(content) {
     const cdnResources = [];
 
-    cdnResources.push(...this.gfm.extractCdnResources(content.media?.text));
+    cdnResources.push(...this.gfm.extractCdnResources(content.media?.copyrightNotice));
 
     if (content.media?.sourceType === MEDIA_SOURCE_TYPE.internal && content.media.sourceUrl) {
       cdnResources.push(content.media.sourceUrl);

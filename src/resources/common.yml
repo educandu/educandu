@@ -348,9 +348,9 @@ aspectRatio:
 width:
   en: Width
   de: Breite
-copyrightInfos:
-  en: Copyright infos
-  de: Copyright Infos
+copyrightNotice:
+  en: Copyright notice
+  de: Urheberschutzvermerk
 videoDisplay:
   en: Video display
   de: Videoanzeige
@@ -411,4 +411,8 @@ reset:
 randomizedTests:
   en: The tests are arranged in random order
   de: Die Tests sind in einer zufälligen Reihenfolge angeordnet
-
+youtubeCopyrightNotice:
+  en: |
+    © Source: [Youtube]({link})
+  de: |
+    © Quelle: [Youtube]({link})

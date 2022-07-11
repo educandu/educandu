@@ -75,9 +75,9 @@ function AnavisDisplay({ content }) {
             screenMode={media.kind === MEDIA_KIND.audio ? MEDIA_SCREEN_MODE.none : MEDIA_SCREEN_MODE.video}
             />
         )}
-        {media.text && (
-          <div className="AnavisDisplay-text">
-            <Markdown>{media.text}</Markdown>
+        {media.copyrightNotice && (
+          <div className="AnavisDisplay-copyrightNotice">
+            <Markdown>{media.copyrightNotice}</Markdown>
           </div>
         )}
       </div>

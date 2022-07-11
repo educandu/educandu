@@ -59,7 +59,7 @@ function AbcNotationEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleCurrentTextChanged} />
         </Form.Item>
       </Form>

@@ -358,7 +358,7 @@ function InteractiveMediaEditor({ content, onContentChanged }) {
         <FormItem label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </FormItem>
-        <FormItem label={t('common:copyrightInfos')} {...formItemLayout}>
+        <FormItem label={t('common:copyrightNotice')} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleCopyrightInfoChanged} />
         </FormItem>
 

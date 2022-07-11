@@ -85,7 +85,7 @@ function AudioEditor({ content, onContentChanged }) {
             <Input value={sourceUrl} onChange={handleSourceUrlValueChange} />
           </FormItem>
         )}
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleCurrentEditorValueChange} />
         </Form.Item>
       </Form>

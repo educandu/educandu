@@ -146,7 +146,7 @@ function VideoEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChange} />
         </Form.Item>
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
           <MarkdownInput value={text} onChange={handleCopyrightInfoChange} />
         </Form.Item>
       </Form>

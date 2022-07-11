@@ -245,7 +245,7 @@ function ImageEditor({ content, onContentChanged }) {
   );
 
   const renderCopyrightInput = (value, onChangeHandler) => (
-    <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+    <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
       <MarkdownInput value={value} onChange={onChangeHandler} />
     </Form.Item>
   );

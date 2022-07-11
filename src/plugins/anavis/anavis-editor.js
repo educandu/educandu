@@ -31,7 +31,7 @@ function AnavisEditor({ content, onContentChanged }) {
   const clientConfig = useService(ClientConfig);
 
   const { width, parts, media } = content;
-  const { kind, sourceType, sourceUrl, text, aspectRatio } = media;
+  const { kind, sourceType, sourceUrl, copyrightNotice, aspectRatio } = media;
   const dataSource = parts.map((part, i) => ({ key: i, ...part }));
 
   const formItemLayout = {
@@ -48,11 +48,16 @@ function AnavisEditor({ content, onContentChanged }) {
   };
 
   const handleSourceUrlValueChanged = newValue => {
+    const newCopyrightNotice = sourceType === MEDIA_SOURCE_TYPE.youtube
+      ? t('common:youtubeCopyrightNotice', { link: newValue })
+      : '';
+
     changeContent(oldContent => ({
       ...oldContent,
       media: {
         ...oldContent.media,
-        sourceUrl: newValue
+        sourceUrl: newValue,
+        copyrightNotice: newCopyrightNotice
       }
     }));
   };
@@ -79,7 +84,8 @@ function AnavisEditor({ content, onContentChanged }) {
       media: {
         ...oldContent.media,
         sourceType: event.target.value,
-        sourceUrl: ''
+        sourceUrl: '',
+        copyrightNotice: ''
       }
     }));
   };
@@ -104,12 +110,12 @@ function AnavisEditor({ content, onContentChanged }) {
     }));
   };
 
-  const handleTextChanged = event => {
+  const handleCopyrightNoticeChanged = event => {
     changeContent(oldContent => ({
       ...oldContent,
       media: {
         ...oldContent.media,
-        text: event.target.value
+        copyrightNotice: event.target.value
       }
     }));
   };
@@ -343,8 +349,8 @@ function AnavisEditor({ content, onContentChanged }) {
         <Form.Item label={t('common:width')} {...formItemLayout}>
           <ObjectWidthSlider value={width} onChange={handleWidthChanged} />
         </Form.Item>
-        <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
-          <MarkdownInput value={text} onChange={handleTextChanged} />
+        <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
+          <MarkdownInput value={copyrightNotice} onChange={handleCopyrightNoticeChanged} />
         </Form.Item>
       </Form>
       <ReactDropzone onDrop={handleJsonDrop} noKeyboard noClick>

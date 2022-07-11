@@ -236,7 +236,7 @@ function EarTrainingEditor({ content, onContentChanged }) {
 
   const renderTextInput = (index, value, handleValueChange) => {
     return (
-      <Form.Item label={t('common:copyrightInfos')} {...formItemLayout}>
+      <Form.Item label={t('common:copyrightNotice')} {...formItemLayout}>
         <MarkdownInput value={value} onChange={event => handleValueChange(event, index)} />
       </Form.Item>
     );
