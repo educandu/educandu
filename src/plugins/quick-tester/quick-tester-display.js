@@ -59,7 +59,7 @@ function QuickTesterDisplay({ content }) {
     setTests(content.testsOrder === TESTS_ORDER.random ? shuffleItems(content.tests) : content.tests);
   };
 
-  const testCards = tests.map((test, index) => ({ label: (index + 1).toString(), tooltip: t('testNumber', { number: index }) }));
+  const testCards = tests.map((test, index) => ({ label: (index + 1).toString(), tooltip: t('testNumber', { number: index + 1 }) }));
 
   return (
     <div className="QuickTesterDisplay">
